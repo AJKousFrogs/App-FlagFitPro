@@ -17,6 +17,7 @@ import {
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import { DialogService } from "../../../core/ui/dialog.service";
 
 /**
  * Rich Text Editor Component - Angular 21
@@ -135,6 +136,7 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 })
 export class RichTextComponent implements ControlValueAccessor {
   private sanitizer = inject(DomSanitizer);
+  private dialogService = inject(DialogService);
 
   contentEditable = viewChild<ElementRef<HTMLDivElement>>("contentEditable");
 
@@ -230,8 +232,12 @@ export class RichTextComponent implements ControlValueAccessor {
     return document.queryCommandState(command);
   }
 
-  createLink(): void {
-    const url = prompt("Enter URL:");
+  async createLink(): Promise<void> {
+    const url = await this.dialogService.prompt(
+      "Enter URL:",
+      "",
+      "Insert Link",
+    );
     if (url) {
       this.executeCommand("createLink", url);
     }

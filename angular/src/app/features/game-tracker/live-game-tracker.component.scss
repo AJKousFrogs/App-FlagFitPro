@@ -19,8 +19,8 @@
   align-items: center;
   padding: var(--space-4);
   background: var(--surface-overlay-darkest);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(0.625rem);
+  backdrop-filter: blur(0.625rem);
 }
 
 .team {
@@ -50,7 +50,7 @@
 
 .quarter {
   font-size: var(--ds-font-size-md);
-  opacity: 0.8;
+  opacity: var(--opacity-strong);
 }
 
 .field-container {
@@ -67,7 +67,7 @@
 
 .ball-marker {
   cursor: pointer;
-  filter: drop-shadow(0 2px 4px var(--surface-overlay));
+  filter: drop-shadow(0 0.125rem 0.25rem var(--surface-overlay));
   transition: r var(--transition-fast);
 }
 
@@ -102,8 +102,8 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-2xl);
   font-weight: var(--ds-font-weight-semibold);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(0.625rem);
+  backdrop-filter: blur(0.625rem);
   transition: transform var(--transition-base);
   cursor: pointer;
 }
@@ -113,7 +113,7 @@
 }
 
 .field-action:disabled {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   cursor: not-allowed;
 }
 
@@ -123,8 +123,8 @@
   align-items: center;
   padding: var(--space-4);
   background: var(--surface-overlay-dark);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(0.625rem);
+  backdrop-filter: blur(0.625rem);
 }
 
 .action-history {

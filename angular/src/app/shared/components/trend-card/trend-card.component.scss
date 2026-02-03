@@ -4,8 +4,8 @@
 // ============================================================================
 
 .trend-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--space-10);
+  height: var(--space-10);
   border-radius: var(--radius-lg);
   background: var(--color-brand-primary-subtle);
   color: var(--color-brand-primary);

@@ -148,7 +148,7 @@ interface Meal {
                 <p-progressBar
                   [value]="(goal.current / goal.target) * 100"
                   [showValue]="false"
-                  [style]="getProgressStyle(goal)"
+                  [styleClass]="getProgressClass(goal)"
                 >
                 </p-progressBar>
 
@@ -354,17 +354,11 @@ export class NutritionDashboardComponent {
     }
   }
 
-  getProgressStyle(goal: NutritionGoal): Record<string, string> {
+  getProgressClass(goal: NutritionGoal): string {
     const percentage = (goal.current / goal.target) * 100;
-    let color: string = COLORS.PRIMARY_LIGHT; // Green for achieved
-
-    if (percentage < 50) {
-      color = COLORS.ERROR; // Red for low
-    } else if (percentage < 80) {
-      color = COLORS.WARNING; // Yellow for medium
-    }
-
-    return { "--p-progressbar-value-bg": color };
+    if (percentage < 50) return "progress-low";
+    if (percentage < 80) return "progress-medium";
+    return "progress-high";
   }
 
   getNutrientSources(nutrient: string): string[] {

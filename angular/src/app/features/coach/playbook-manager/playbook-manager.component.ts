@@ -27,7 +27,6 @@ import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -115,7 +114,7 @@ const ROUTES = [
     TableModule,
     TableModule,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -125,9 +124,7 @@ const ROUTES = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="playbook-manager-page">
+<div class="playbook-manager-page">
         <app-page-header
           title="Playbook Manager"
           subtitle="Create and manage team plays"

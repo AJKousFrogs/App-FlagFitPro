@@ -14,8 +14,8 @@
   right: 0;
   bottom: 0;
   background: var(--surface-overlay);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
+  -webkit-backdrop-filter: blur(0.25rem);
   z-index: var(--z-modal);
   animation: overlayFadeIn 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
@@ -27,7 +27,7 @@
   }
   to {
     opacity: 1;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(0.25rem);
   }
 }
 
@@ -47,7 +47,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: var(--chart-min-height-lg); /* 400px */
+  width: var(--chart-min-height-lg); /* 25rem */
   max-width: 90vw;
   transform: translateX(-100%);
   transition: transform var(--transition-slow) var(--ease-micro-bounce);
@@ -61,7 +61,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: var(--chart-min-height-lg); /* 400px */
+  width: var(--chart-min-height-lg); /* 25rem */
   max-width: 90vw;
   transform: translateX(100%);
   transition: transform var(--transition-slow) var(--ease-micro-bounce);
@@ -75,7 +75,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: var(--chart-min-height-lg); /* 400px */
+  height: var(--chart-min-height-lg); /* 25rem */
   max-height: 90vh;
   transform: translateY(-100%);
   transition: transform var(--transition-slow) var(--ease-micro-bounce);
@@ -89,7 +89,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--chart-min-height-lg); /* 400px */
+  height: var(--chart-min-height-lg); /* 25rem */
   max-height: 90vh;
   transform: translateY(100%);
   transition: transform var(--transition-slow) var(--ease-micro-bounce);
@@ -104,7 +104,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-5, var(--ds-font-size-xl));
-  border-bottom: 1px solid
+  border-bottom: 0.0625rem solid
     var(--color-border-secondary, var(--color-border-primary));
   background: var(--surface-secondary, var(--surface-secondary));
 }
@@ -128,9 +128,9 @@
   justify-content: center;
   border-radius: var(--radius-lg);
   transition:
-    background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-micro-bounce);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -148,7 +148,7 @@
 .drawer-close:focus-visible {
   outline: var(--focus-outline-width) solid var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+  box-shadow: 0 0 0 0.1875rem rgba(var(--ds-primary-green-rgb), 0.3);
 }
 
 .drawer-close:focus:not(:focus-visible) {
@@ -162,7 +162,7 @@
 }
 
 .drawer-content::-webkit-scrollbar {
-  width: var(--indicator-size-sm); /* 8px */
+  width: var(--indicator-size-sm); /* 0.5rem */
 }
 
 .drawer-content::-webkit-scrollbar-track {

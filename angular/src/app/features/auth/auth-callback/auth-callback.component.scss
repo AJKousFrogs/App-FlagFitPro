@@ -44,6 +44,11 @@
   margin: 0;
 }
 
+.auth-callback-spinner {
+  width: var(--space-12);
+  height: var(--space-12);
+}
+
 .error-icon i {
   font-size: var(--ds-font-size-3xl);
   color: var(--color-error);

@@ -16,7 +16,6 @@ import { DatePicker } from "primeng/datepicker";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Skeleton } from "primeng/skeleton";
-import { Toast } from "primeng/toast";
 import { ProgressBar } from "primeng/progressbar";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -72,7 +71,7 @@ interface AthleteMetrics {
     DatePicker,
     StatusTagComponent,
     Skeleton,
-    Toast,
+
     ProgressBar,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -80,8 +79,7 @@ interface AthleteMetrics {
     ButtonComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <app-main-layout>
+<app-main-layout>
       <div class="ai-training-scheduler-page">
         <app-page-header
           title="AI Training Scheduler"

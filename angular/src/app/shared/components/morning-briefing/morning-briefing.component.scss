@@ -107,7 +107,7 @@
   background-color: var(--surface-secondary);
   border-radius: var(--radius-lg);
   border: var(--border-1) solid var(--color-border-default);
-  min-width: 100px;
+  min-width: 6.25rem;
 
   // Decision 14: subtle hover
   transition:
@@ -240,7 +240,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.85;
+    opacity: var(--opacity-strong);
   }
 }
 
@@ -321,7 +321,7 @@
 }
 
 .close-btn {
-  width: var(--touch-target-sm); /* 36px */
+  width: var(--touch-target-sm); /* 2.25rem */
   height: var(--touch-target-sm);
   border: none;
   background: var(--surface-tertiary);
@@ -444,8 +444,8 @@
 // Accessibility: visually hidden but readable by screen readers
 .visually-hidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.0625rem;
+  height: 0.0625rem;
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
@@ -722,27 +722,27 @@
 
 .zone-low {
   background: var(--color-status-info);
-  opacity: 0.4;
+  opacity: var(--opacity-minimal);
 }
 
 .zone-optimal {
   background: var(--color-status-success);
-  opacity: 0.6;
+  opacity: var(--opacity-muted);
 }
 
 .zone-high {
   background: var(--color-status-danger);
-  opacity: 0.4;
+  opacity: var(--opacity-minimal);
 }
 
 .acwr-indicator {
   position: absolute;
   top: calc(-1 * var(--indicator-size-xs));
-  width: var(--indicator-size-lg); /* 16px */
-  height: var(--indicator-size-lg); /* 16px */
+  width: var(--indicator-size-lg); /* 1rem */
+  height: var(--indicator-size-lg); /* 1rem */
   border-radius: var(--radius-full);
   background: var(--color-surface-primary);
-  border: 3px solid var(--color-status-success);
+  border: 0.1875rem solid var(--color-status-success);
   transform: translateX(-50%);
   transition: left var(--motion-base) var(--ease-standard);
 
@@ -765,7 +765,7 @@
 
 .acwr-value-display {
   text-align: center;
-  min-width: var(--card-min-height-sm); /* 80px */
+  min-width: var(--card-min-height-sm); /* 5rem */
 
   .value {
     display: block;
@@ -943,8 +943,8 @@
     *,
     *::before,
     *::after {
-      animation-duration: 0.01ms;
-      transition-duration: 0.01ms;
+      animation-duration: var(--transition-instant);
+      transition-duration: var(--transition-instant);
     }
   }
 }
@@ -976,7 +976,7 @@
 }
 
 .sleep-number-input {
-  width: var(--input-min-width-md); /* 150px */
+  width: var(--input-min-width-md); /* 9.375rem */
 
   // PrimeNG inputnumber overrides moved to _exceptions.scss (DS-EXC-028)
 }

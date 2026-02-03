@@ -26,7 +26,7 @@
 }
 
 .toast-icon-wrapper {
-  width: var(--space-10); /* 40px */
+  width: var(--space-10); /* 2.5rem */
   height: var(--space-10);
   border-radius: var(--radius-lg);
   display: flex;
@@ -127,7 +127,7 @@
 @keyframes toast-slide-in-center {
   from {
     opacity: 0;
-    transform: translateY(-20px) scale(0.95);
+    transform: translateY(-1.25rem) scale(0.95);
   }
   to {
     opacity: 1;

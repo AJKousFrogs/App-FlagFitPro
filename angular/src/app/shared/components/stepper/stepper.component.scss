@@ -8,7 +8,7 @@
 .stepper-container {
   width: 100%;
   padding: var(--space-4) 0;
-  border-bottom: 1px solid var(--color-border-muted);
+  border-bottom: 0.0625rem solid var(--color-border-muted);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -55,7 +55,7 @@
   &:hover:not(.disabled) {
     .step-label {
       color: var(--ds-primary-green);
-      transform: translateY(-1px);
+      transform: translateY(-0.0625rem);
     }
 
     .step-indicator {
@@ -74,8 +74,8 @@
       background: var(--ds-primary-green);
       color: var(--color-text-on-primary);
       box-shadow:
-        0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.1),
-        0 4px 12px rgba(var(--ds-primary-green-rgb), 0.2);
+        0 0 0 0.25rem rgba(var(--ds-primary-green-rgb), 0.1),
+        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.2);
       transform: scale(1.1);
     }
 
@@ -97,17 +97,17 @@
   }
 
   &.disabled {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
     cursor: not-allowed;
   }
 }
 
 .step-indicator {
-  width: var(--avatar-size-md); /* 40px */
-  height: var(--avatar-size-md); /* 40px */
+  width: var(--avatar-size-md); /* 2.5rem */
+  height: var(--avatar-size-md); /* 2.5rem */
   border-radius: var(--radius-full);
   background: var(--surface-secondary);
-  border: 2px solid var(--color-border-primary);
+  border: 0.125rem solid var(--color-border-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,9 +154,9 @@
 
 .step-connector {
   position: absolute;
-  top: 20px;
-  left: calc(50% + 20px);
-  right: calc(-50% + 20px);
+  top: 1.25rem;
+  left: calc(50% + 1.25rem);
+  right: calc(-50% + 1.25rem);
   height: var(--border-2);
   background: var(--color-border-primary);
   z-index: 1;
@@ -186,12 +186,12 @@
 
   .stepper-step {
     padding: var(--space-2) var(--space-1);
-    min-width: var(--card-min-height-sm); /* 80px */
+    min-width: var(--card-min-height-sm); /* 5rem */
   }
 
   .step-indicator {
-    width: var(--touch-target-sm); /* 36px */
-    height: var(--touch-target-sm); /* 36px */
+    width: var(--touch-target-sm); /* 2.25rem */
+    height: var(--touch-target-sm); /* 2.25rem */
   }
 
   .step-label {
@@ -211,17 +211,17 @@
 
   .stepper-step {
     padding: var(--space-2) var(--space-1);
-    min-width: var(--badge-min-width-md); /* 70px */
+    min-width: var(--badge-min-width-md); /* 4.375rem */
   }
 
   .step-indicator {
-    width: var(--avatar-size-sm); /* 32px */
-    height: var(--avatar-size-sm); /* 32px */
+    width: var(--avatar-size-sm); /* 2rem */
+    height: var(--avatar-size-sm); /* 2rem */
   }
 
   .step-label {
-    font-size: var(--ds-font-size-compact-md); /* 11px */
-    max-width: 70px;
+    font-size: var(--ds-font-size-compact-md); /* 0.6875rem */
+    max-width: 4.375rem;
   }
 
   .step-connector {

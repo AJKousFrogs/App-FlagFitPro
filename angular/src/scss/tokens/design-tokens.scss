@@ -65,12 +65,12 @@
   --ds-letter-spacing-0-08em: 0.08em;
   --ds-letter-spacing-0-1em: 0.1em;
   --ds-letter-spacing-0-5em: 0.5em;
-  --ds-letter-spacing-0-25px: 0.25px;
-  --ds-letter-spacing-0-5px: 0.5px;
-  --ds-letter-spacing-0-75px: 0.75px;
-  --ds-letter-spacing-1px: 1px;
-  --ds-letter-spacing-1-5px: 1.5px;
-  --ds-letter-spacing-2px: 2px;
+  --ds-letter-spacing-0-25px: 0.0156rem;
+  --ds-letter-spacing-0-5px: 0.0313rem;
+  --ds-letter-spacing-0-75px: 0.0469rem;
+  --ds-letter-spacing-1px: 0.0625rem;
+  --ds-letter-spacing-1-5px: 0.0938rem;
+  --ds-letter-spacing-2px: 0.125rem;
   --ds-text-transform-none: none;
   --ds-text-transform-uppercase: uppercase;
   --ds-text-transform-lowercase: lowercase;
@@ -101,13 +101,13 @@
   --ds-radius-xl: 0.75rem; /* 12px */
   --ds-radius-2xl: 1rem; /* 16px */
   --ds-radius-3xl: 1.5rem; /* 24px */
-  --ds-radius-full: 9999px;
+  --ds-radius-full: 9999rem;
 
   /* Elevation */
-  --ds-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --ds-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.15);
-  --ds-shadow-3: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --ds-shadow-4: 0 12px 48px rgba(0, 0, 0, 0.15);
+  --ds-shadow-1: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.1);
+  --ds-shadow-2: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+  --ds-shadow-3: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
+  --ds-shadow-4: 0 0.75rem 3rem rgba(0, 0, 0, 0.15);
 
   /* Semantic colors */
   --ds-color-brand: var(--color-brand-primary);

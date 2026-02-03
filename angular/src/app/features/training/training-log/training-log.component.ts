@@ -37,7 +37,6 @@ import { InputNumber } from "primeng/inputnumber";
 
 import { Textarea } from "primeng/textarea";
 
-import { Toast } from "primeng/toast";
 import { Message } from "primeng/message";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -67,7 +66,7 @@ interface SessionType {
     Slider,
     InputNumber,
     Textarea,
-    Toast,
+
     Message,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -75,8 +74,7 @@ interface SessionType {
     CardShellComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <app-main-layout>
+<app-main-layout>
       <div class="training-log-page">
         <app-page-header
           title="Log Training Session"
@@ -868,7 +866,6 @@ export class TrainingLogComponent implements OnInit {
       // Check if we should queue this action for offline sync
       if (this.offlineQueue.shouldQueue(error)) {
         const formValue = this.sessionForm.value;
-        const user = this.authService.getUser();
         const sessionData = {
           session_type: formValue.sessionType,
           session_date:

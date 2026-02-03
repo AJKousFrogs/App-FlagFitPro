@@ -18,7 +18,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: 0.0625rem solid var(--ds-border-subtle);
   padding-bottom: var(--space-2);
   overflow-x: auto;
 
@@ -87,11 +87,11 @@
 .resource-card {
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--ds-border-default);
+  border: 0.0625rem solid var(--ds-border-default);
   padding: var(--space-4);
 
   &.featured {
-    border-left: 4px solid var(--ds-primary-green);
+    border-left: 0.25rem solid var(--ds-primary-green);
   }
 
   .resource-icon {
@@ -136,7 +136,7 @@
     gap: var(--space-2);
     margin-top: var(--space-3);
     padding-top: var(--space-3);
-    border-top: 1px solid var(--ds-border-subtle);
+    border-top: 0.0625rem solid var(--ds-border-subtle);
 
     .favorited {
       color: var(--primitive-warning-500);
@@ -161,7 +161,7 @@
   padding: var(--space-3);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--ds-border-default);
+  border: 0.0625rem solid var(--ds-border-default);
   cursor: pointer;
   transition:
     background-color var(--motion-base) var(--ease-standard),
@@ -206,10 +206,10 @@
   padding: var(--space-3);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--ds-border-default);
+  border: 0.0625rem solid var(--ds-border-default);
 
   &.team-resource {
-    border-left: 4px solid var(--ds-primary-green);
+    border-left: 0.25rem solid var(--ds-primary-green);
   }
 
   .resource-icon-small {

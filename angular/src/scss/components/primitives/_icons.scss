@@ -8,7 +8,7 @@
  * DESIGN CONTRACT:
  * - Icon sizes: Use standardized size classes only
  * - Icon colors: Inherit from parent or use semantic colors
- * - Interactive icons: 44px minimum touch target
+ * - Interactive icons: 2.75rem minimum touch target
  * 
  * USAGE:
  *   <i class="pi pi-check icon-sm"></i>
@@ -134,8 +134,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px; // iOS minimum touch target
-    min-height: 44px;
+    min-width: 2.75rem; // iOS minimum touch target
+    min-height: 2.75rem;
     padding: var(--space-2);
     background: transparent;
     border: none;
@@ -161,7 +161,7 @@
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: var(--opacity-dimmed);
       cursor: not-allowed;
     }
 
@@ -173,8 +173,8 @@
 
   // Smaller icon button
   .icon-button--sm {
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
     padding: var(--space-1);
 
     i,
@@ -185,8 +185,8 @@
 
   // Larger icon button
   .icon-button--lg {
-    min-width: 48px;
-    min-height: 48px;
+    min-width: 3rem;
+    min-height: 3rem;
     padding: var(--space-3);
 
     i,
@@ -220,24 +220,24 @@
 
   .icon-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
+    top: -0.25rem;
+    right: -0.25rem;
+    min-width: 1rem;
+    height: 1rem;
+    padding: 0 0.25rem;
     background: var(--color-status-error);
     color: var(--color-text-on-primary);
     font-size: var(--font-compact-md);
     font-weight: var(--font-weight-bold);
-    line-height: 16px;
+    line-height: 1rem;
     text-align: center;
     border-radius: var(--radius-full);
   }
 
   .icon-badge--dot {
-    min-width: 8px;
-    width: 8px;
-    height: 8px;
+    min-width: 0.5rem;
+    width: 0.5rem;
+    height: 0.5rem;
     padding: 0;
   }
 
@@ -290,7 +290,7 @@
     --icon-size-inline: var(--ds-icon-size-inline); // Inline with text
     --icon-size-button: var(--ds-icon-size-button); // Inside buttons
     --icon-size-nav: var(--ds-icon-size-lg); // Navigation items
-    --icon-size-header: var(--ds-icon-size-lg); // Section headers (20px)
+    --icon-size-header: var(--ds-icon-size-lg); // Section headers (1.25rem)
     --icon-size-page-header: var(--ds-icon-size-xl); // Page headers
     --icon-size-empty-state: var(--ds-icon-size-3xl); // Empty states
   }

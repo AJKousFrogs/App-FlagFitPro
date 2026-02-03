@@ -1344,17 +1344,28 @@ export class ProfileComponent implements OnInit {
         throw error;
       }
 
-      const invitations: PendingInvitation[] = (data || []).map((inv: any) => ({
-        id: inv.id,
-        teamId: inv.team_id,
-        teamName: inv.teams?.name || "Unknown Team",
-        role: inv.role,
-        message: "", // No message column in table
-        invitedBy: "Team Admin", // Can't join to auth.users directly
-        createdAt: inv.created_at,
-        expiresAt: inv.expires_at,
-        isExpired: new Date(inv.expires_at) < new Date(),
-      }));
+      type InvitationRow = {
+        id: string;
+        team_id: string;
+        teams?: { name?: string }[] | { name?: string } | null;
+        role: string;
+        created_at: string;
+        expires_at: string;
+      };
+      const rows = (data || []) as InvitationRow[];
+      const invitations: PendingInvitation[] = rows.map((inv) => ({
+          id: inv.id,
+          teamId: inv.team_id,
+          teamName: Array.isArray(inv.teams)
+            ? inv.teams[0]?.name || "Unknown Team"
+            : inv.teams?.name || "Unknown Team",
+          role: inv.role,
+          message: "", // No message column in table
+          invitedBy: "Team Admin", // Can't join to auth.users directly
+          createdAt: inv.created_at,
+          expiresAt: inv.expires_at,
+          isExpired: new Date(inv.expires_at) < new Date(),
+        }));
 
       this.pendingInvitations.set(invitations);
     } catch (error) {

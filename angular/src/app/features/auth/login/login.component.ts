@@ -22,7 +22,6 @@ import { Card } from "primeng/card";
 
 import { InputText } from "primeng/inputtext";
 
-import { Toast } from "primeng/toast";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../core/services/auth.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -45,11 +44,10 @@ import {
     Card,
     ButtonComponent,
     InputText,
-    Toast,
+
   ],
   template: `
-    <p-toast></p-toast>
-    <div class="login-page">
+<div class="login-page">
       <p-card class="login-card">
         <ng-template pTemplate="header">
           <div class="login-logo">

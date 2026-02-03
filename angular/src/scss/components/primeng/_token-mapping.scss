@@ -73,7 +73,7 @@
     // ============================================
 
     --p-card-background: var(--color-surface-primary);
-    --p-card-border-radius: var(--radius-lg); /* 8px - Design System standard */
+    --p-card-border-radius: var(--radius-lg); /* 0.5rem - Design System standard */
     --p-card-shadow: var(--shadow-sm);
     --p-card-padding: var(--space-5);
     --p-card-border: none; /* BORDERLESS per user preference */
@@ -118,7 +118,7 @@
 
     --p-dialog-border-radius: var(
       --radius-lg
-    ); /* 8px - Design System standard */
+    ); /* 0.5rem - Design System standard */
 
     --p-dialog-shadow: var(--shadow-3);
     --p-dialog-background: var(--color-surface-primary);
@@ -199,10 +199,10 @@
     --p-dropdown-panel-border-color: var(--color-border-default);
     --p-dropdown-panel-margin-top: var(--space-1);
     --p-dropdown-panel-max-height: var(--panel-max-height-md);
-    --p-dropdown-trigger-width: var(--space-10); /* 40px */
-    --p-form-control-icon-width: var(--space-10); /* 40px */
-    --p-calendar-trigger-width: var(--button-height-md); /* 44px */
-    --p-calendar-input-icon-padding: var(--button-height-md); /* 44px */
+    --p-dropdown-trigger-width: var(--space-10); /* 2.5rem */
+    --p-form-control-icon-width: var(--space-10); /* 2.5rem */
+    --p-calendar-trigger-width: var(--button-height-md); /* 2.75rem */
+    --p-calendar-input-icon-padding: var(--button-height-md); /* 2.75rem */
 
     // Option items
     --p-select-option-padding: var(--space-2) var(--space-3);
@@ -232,7 +232,7 @@
     --p-datatable-row-selected-background: var(--color-surface-selected);
     --p-datatable-border-color: var(--color-border-muted);
 
-    // Compact variant (Decision 24: 40px rows)
+    // Compact variant (Decision 24: 2.5rem rows)
     --p-datatable-sm-row-padding: var(--space-2) var(--space-3);
 
     // ============================================
@@ -295,7 +295,7 @@
 
     // ============================================
     // CHECKBOX / RADIO (Decision 42)
-    // Checkbox: 20px box, 6px radius, green check when checked
+    // Checkbox: 1.25rem box, 0.375rem radius, green check when checked
     // ============================================
 
     --p-checkbox-width: var(--space-5);
@@ -320,7 +320,7 @@
 
     // ============================================
     // TOGGLESWITCH (Decision 9B)
-    // Toggle: 44px hit area, visible track + thumb
+    // Toggle: 2.75rem hit area, visible track + thumb
     // Green = ON, neutral = OFF
     // ============================================
 

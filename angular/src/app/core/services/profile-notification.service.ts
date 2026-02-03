@@ -89,7 +89,6 @@ export class ProfileNotificationService {
   ): void {
     // Always show notification for incomplete profiles
     // This ensures users see it on every login until they complete their profile
-    const missingCount = missingFields.length;
     const missingList =
       missingFields.length <= 3
         ? missingFields.join(", ")

@@ -14,10 +14,10 @@
 }
 
 .ring-outer {
-  width: 120px;
-  height: 120px;
+  width: 7.5rem;
+  height: 7.5rem;
   border-radius: 50%;
-  border: 4px solid var(--brand-primary-700);
+  border: var(--border-4) solid var(--color-status-success);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +47,7 @@
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .ring-details {
@@ -75,7 +75,7 @@
   padding: var(--space-3);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
-  border: 1px solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
 }
 
 .bar-header {
@@ -128,13 +128,13 @@
 }
 
 .compact-score {
-  width: 32px;
-  height: 32px;
+  width: var(--space-8);
+  height: var(--space-8);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--color-text-on-primary);
   font-weight: var(--ds-font-weight-bold);
   font-size: var(--ds-font-size-md);
 }
@@ -145,10 +145,10 @@
 }
 
 .mini-ring {
-  width: 48px;
-  height: 48px;
+  width: var(--space-12);
+  height: var(--space-12);
   border-radius: 50%;
-  border: 3px solid var(--brand-primary-700);
+  border: var(--border-2) solid var(--color-status-success);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,7 +168,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: var(--border-1) solid var(--surface-border);
 }
 
 .header-content {
@@ -203,10 +203,10 @@
 }
 
 .score-ring {
-  width: 120px;
-  height: 120px;
+  width: 7.5rem;
+  height: 7.5rem;
   border-radius: 50%;
-  border: 4px solid var(--brand-primary-700);
+  border: var(--border-4) solid var(--color-status-success);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -221,6 +221,10 @@
 
 .progress-section {
   padding: 0 var(--space-2);
+}
+
+.progressbar-height-sm {
+  height: var(--space-2);
 }
 
 // PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-025)
@@ -293,12 +297,12 @@
 .clickable {
   cursor: pointer;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--transition-base) var(--ease-standard),
+    box-shadow var(--transition-base) var(--ease-standard);
 }
 
 .clickable:hover {
-  transform: translateY(-2px);
+  transform: translateY(calc(var(--space-0-5) * -1));
 }
 
 .clickable:active {
@@ -313,12 +317,84 @@
   padding: var(--space-4);
 }
 
+.status-excellent .ring-outer,
+.status-excellent .score-ring,
+.status-excellent .mini-ring {
+  border-color: var(--color-status-success);
+}
+
+.status-good .ring-outer,
+.status-good .score-ring,
+.status-good .mini-ring {
+  border-color: var(--color-status-info);
+}
+
+.status-moderate .ring-outer,
+.status-moderate .score-ring,
+.status-moderate .mini-ring {
+  border-color: var(--color-status-warning);
+}
+
+.status-poor .ring-outer,
+.status-poor .score-ring,
+.status-poor .mini-ring {
+  border-color: var(--color-status-error);
+}
+
+.bar-title.status-excellent .status-icon {
+  color: var(--color-status-success);
+}
+
+.bar-title.status-good .status-icon {
+  color: var(--color-status-info);
+}
+
+.bar-title.status-moderate .status-icon {
+  color: var(--color-status-warning);
+}
+
+.bar-title.status-poor .status-icon {
+  color: var(--color-status-error);
+}
+
+.compact-score.status-excellent {
+  background: var(--color-status-success);
+}
+
+.compact-score.status-good {
+  background: var(--color-status-info);
+}
+
+.compact-score.status-moderate {
+  background: var(--color-status-warning);
+}
+
+.compact-score.status-poor {
+  background: var(--color-status-error);
+}
+
+.tone-success {
+  color: var(--color-status-success);
+}
+
+.tone-info {
+  color: var(--color-status-info);
+}
+
+.tone-warning {
+  color: var(--color-status-warning);
+}
+
+.tone-error {
+  color: var(--color-status-error);
+}
+
 /* Responsive */
 @include respond-to(md) {
   .ring-outer,
   .score-ring {
-    width: 100px;
-    height: 100px;
+    width: 6.25rem;
+    height: 6.25rem;
   }
 
   .score-value {
@@ -326,8 +402,8 @@
   }
 
   .mini-ring {
-    width: 40px;
-    height: 40px;
+    width: var(--space-10);
+    height: var(--space-10);
     font-size: var(--ds-font-size-xs);
   }
 }

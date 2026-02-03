@@ -12,8 +12,8 @@
  * - CSS layers handle specificity properly
  * 
  * Key Requirements:
- * - Minimum 44x44px touch targets (Apple HIG)
- * - 16px font size to prevent iOS zoom
+ * - Minimum 44x2.75rem touch targets (Apple HIG)
+ * - 1rem font size to prevent iOS zoom
  * - Proper spacing between interactive elements
  * - Clear visual feedback for touch
  * ================================================================
@@ -138,7 +138,7 @@
     .p-select,
     .p-textarea,
     .p-inputnumber-input {
-      min-height: 44px;
+      min-height: var(--touch-target-md);
       font-size: var(--ds-font-size-md); // CRITICAL: Prevents iOS zoom
       padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-md);
@@ -155,7 +155,8 @@
       &:focus-visible {
         outline: none;
         border-color: var(--ds-primary-green);
-        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
+        box-shadow: 0 0 0 var(--space-0-75)
+          rgba(var(--ds-primary-green-rgb), 0.15);
       }
 
       // Disabled state
@@ -175,7 +176,7 @@
     // Textarea specific
     textarea,
     .p-textarea {
-      min-height: 88px; // 2x button height
+      min-height: calc(var(--touch-target-md) * 2); // 2x button height
       resize: vertical;
       line-height: var(--ds-line-height-body);
     }
@@ -207,8 +208,8 @@
 
       &::-webkit-search-cancel-button {
         -webkit-appearance: none;
-        height: 20px;
-        width: 20px;
+        height: var(--space-5);
+        width: var(--space-5);
         background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23666' d='M10 8.586L14.95 3.636 16.364 5.05 11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10 3.636 5.05 5.05 3.636z'/%3E%3C/svg%3E");
         cursor: pointer;
       }
@@ -222,8 +223,8 @@
 
       // Larger touch target for calendar icon
       &::-webkit-calendar-picker-indicator {
-        width: 24px;
-        height: 24px;
+        width: var(--space-6);
+        height: var(--space-6);
         cursor: pointer;
       }
     }
@@ -237,10 +238,10 @@
     // Native checkboxes and radios
     input[type="checkbox"],
     input[type="radio"] {
-      min-width: 24px;
-      min-height: 24px;
-      width: 24px;
-      height: 24px;
+      min-width: var(--space-6);
+      min-height: var(--space-6);
+      width: var(--space-6);
+      height: var(--space-6);
       margin: var(--space-2);
       cursor: pointer;
       accent-color: var(--ds-primary-green);
@@ -255,13 +256,13 @@
 
     // PrimeNG checkboxes
     .p-checkbox {
-      width: 24px;
-      height: 24px;
+      width: var(--space-6);
+      height: var(--space-6);
 
       .p-checkbox-box {
-        width: 24px;
-        height: 24px;
-        border-width: 2px;
+        width: var(--space-6);
+        height: var(--space-6);
+        border-width: var(--border-2);
       }
 
       .p-checkbox-icon {
@@ -271,18 +272,18 @@
 
     // PrimeNG radio buttons
     .p-radiobutton {
-      width: 24px;
-      height: 24px;
+      width: var(--space-6);
+      height: var(--space-6);
 
       .p-radiobutton-box {
-        width: 24px;
-        height: 24px;
-        border-width: 2px;
+        width: var(--space-6);
+        height: var(--space-6);
+        border-width: var(--border-2);
       }
 
       .p-radiobutton-icon {
-        width: 12px;
-        height: 12px;
+        width: var(--space-3);
+        height: var(--space-3);
       }
     }
 
@@ -300,10 +301,10 @@
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        min-height: 44px; // Touch target
+        min-height: var(--touch-target-md); // Touch target
         padding: var(--space-2);
         border-radius: var(--radius-md);
-        transition: background 0.2s ease;
+        transition: background var(--transition-base) var(--ease-standard);
 
         &:active {
           background: var(--surface-ground);
@@ -319,8 +320,8 @@
   @include respond-to(md) {
     .p-toggleswitch,
     .toggle-switch {
-      width: 48px;
-      height: 28px;
+      width: var(--space-12);
+      height: calc(var(--space-6) + var(--space-1));
 
       .p-toggleswitch-slider,
       .toggle-slider {
@@ -329,15 +330,15 @@
 
       .p-toggleswitch-handle,
       .toggle-handle {
-        width: 24px;
-        height: 24px;
+        width: var(--space-6);
+        height: var(--space-6);
       }
 
       // Increase touch area
       &::before {
         content: "";
         position: absolute;
-        inset: -8px;
+        inset: calc(var(--space-2) * -1);
       }
     }
   }
@@ -349,20 +350,20 @@
   @include respond-to(md) {
     .p-slider,
     input[type="range"] {
-      height: 8px;
+      height: var(--space-2);
 
       // Larger thumb for touch
       .p-slider-handle,
       &::-webkit-slider-thumb {
-        width: 24px;
-        height: 24px;
+        width: var(--space-6);
+        height: var(--space-6);
         border-radius: var(--radius-full);
         cursor: pointer;
       }
 
       &::-moz-range-thumb {
-        width: 24px;
-        height: 24px;
+        width: var(--space-6);
+        height: var(--space-6);
         border-radius: var(--radius-full);
         cursor: pointer;
       }
@@ -371,8 +372,8 @@
       &::before {
         content: "";
         position: absolute;
-        top: -12px;
-        bottom: -12px;
+        top: calc(var(--space-3) * -1);
+        bottom: calc(var(--space-3) * -1);
         left: 0;
         right: 0;
       }
@@ -460,7 +461,7 @@
 
   @include respond-to(md) {
     a {
-      min-height: 44px;
+      min-height: var(--touch-target-md);
       display: inline-flex;
       align-items: center;
       padding: var(--space-1) 0;
@@ -468,14 +469,14 @@
 
       // Active state
       &:active {
-        opacity: 0.7;
+        opacity: var(--opacity-subtle);
       }
     }
 
     // Text links (not buttons)
     a:not(.btn):not(.p-button) {
       text-decoration: underline;
-      text-underline-offset: 2px;
+      text-underline-offset: var(--space-0-5);
     }
   }
 
@@ -493,7 +494,7 @@
       border-color: var(--primitive-error-500);
 
       &:focus-visible {
-        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        box-shadow: 0 0 0 var(--space-0-75) rgba(239, 68, 68, 0.15);
       }
     }
 
@@ -506,7 +507,7 @@
       border-color: var(--primitive-success-500);
 
       &:focus-visible {
-        box-shadow: 0 0 0 3px rgba(99, 173, 14, 0.15);
+        box-shadow: 0 0 0 var(--space-0-75) rgba(99, 173, 14, 0.15);
       }
     }
   }

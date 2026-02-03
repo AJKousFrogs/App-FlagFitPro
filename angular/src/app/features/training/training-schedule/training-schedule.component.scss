@@ -34,7 +34,7 @@
 
 .training-hub-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
   gap: var(--space-3);
 }
 
@@ -44,7 +44,7 @@
   gap: var(--space-1);
   padding: var(--space-4);
   border-radius: var(--radius-md);
-  border: 1px solid var(--surface-border);
+  border: 0.0625rem solid var(--surface-border);
   background: var(--surface-card);
   color: inherit;
   text-decoration: none;
@@ -54,7 +54,7 @@
 }
 
 .training-hub-link:hover {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   box-shadow: var(--shadow-sm);
 }
 
@@ -86,7 +86,7 @@
   font-size: var(--ds-font-size-3xl);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 .card-empty-state__content {
@@ -276,7 +276,7 @@
   margin-top: var(--space-1);
 
   @include respond-to(md) {
-    font-size: var(--ds-font-size-xs); // ~12px (closest to 11px)
+    font-size: var(--ds-font-size-xs); // ~0.75rem (closest to 0.6875rem)
   }
 }
 
@@ -554,11 +554,11 @@
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-md);
   transition:
-    opacity 0.2s ease,
-    transform 0.2s ease,
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    opacity var(--transition-base) var(--ease-standard),
+    transform var(--transition-base) var(--ease-standard),
+    background-color var(--transition-base) var(--ease-standard),
+    border-color var(--transition-base) var(--ease-standard),
+    box-shadow var(--transition-base) var(--ease-standard);
   cursor: pointer;
 
   &:hover {
@@ -685,11 +685,11 @@
   margin-top: var(--space-2);
 
   i {
-    font-size: var(--ds-font-size-xs); // 12px
+    font-size: var(--ds-font-size-xs); // 0.75rem
   }
 
   @include respond-to(md) {
-    font-size: var(--ds-font-size-xs); // 10px
+    font-size: var(--ds-font-size-xs); // 0.625rem
     padding: var(--space-1) var(--space-1);
   }
 }
@@ -1132,7 +1132,7 @@
   margin: 0;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
 }
 
 .substitute-workout__equipment {

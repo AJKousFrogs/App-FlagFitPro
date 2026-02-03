@@ -22,6 +22,7 @@ import { COLORS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "../../../core/services/logger.service";
+import { STATUS_COLORS } from "../../../core/utils/design-tokens.util";
 
 interface PerformanceMetric {
   id: string;
@@ -32,6 +33,8 @@ interface PerformanceMetric {
   trendValue: number;
   target: number;
   color: string;
+  tone: "success" | "warning" | "error" | "info";
+  displayColor: string;
   icon: string;
 }
 
@@ -56,7 +59,7 @@ interface PerformanceMetric {
           <p-card class="metric-card" [class]="'metric-' + metric.id">
             <div class="metric-header">
               <div class="metric-info">
-                <i [class]="metric.icon" [style.color]="metric.color"></i>
+                <i [class]="metric.icon" [ngClass]="'tone-' + metric.tone"></i>
                 <h4>{{ metric.label }}</h4>
               </div>
               <app-status-tag
@@ -74,7 +77,7 @@ interface PerformanceMetric {
                   [max]="metric.target * 1.2"
                   [size]="120"
                   [strokeWidth]="8"
-                  [valueColor]="metric.color"
+                  [valueColor]="metric.displayColor"
                   [rangeColor]="'var(--p-surface-200)'"
                   [readonly]="true"
                   [showValue]="false"
@@ -90,7 +93,7 @@ interface PerformanceMetric {
                 <p-progressBar
                   [value]="(metric.value / metric.target) * 100"
                   [showValue]="false"
-                  [style]="{ '--p-progressbar-value-bg': metric.color }"
+                  [styleClass]="'metric-progress tone-' + metric.tone"
                 >
                 </p-progressBar>
                 <span class="progress-text">
@@ -259,9 +262,34 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
           trendValue: m.trendValue || 0,
           target: m.target || m.goal || 100,
           color: m.color || COLORS.PRIMARY_LIGHT,
+          tone: this.getToneFromColor(m.color),
+          displayColor: this.getDisplayColor(this.getToneFromColor(m.color)),
           icon: m.icon || "pi pi-chart-line",
         })),
       );
+    }
+  }
+
+  private getToneFromColor(color?: string): "success" | "warning" | "error" | "info" {
+    if (!color) return "success";
+    const normalized = color.toLowerCase();
+    if (normalized.includes("ef4444") || normalized.includes("red")) return "error";
+    if (normalized.includes("f59e0b") || normalized.includes("orange") || normalized.includes("amber"))
+      return "warning";
+    if (normalized.includes("3b82f6") || normalized.includes("blue")) return "info";
+    return "success";
+  }
+
+  private getDisplayColor(tone: "success" | "warning" | "error" | "info"): string {
+    switch (tone) {
+      case "warning":
+        return STATUS_COLORS.warning;
+      case "error":
+        return STATUS_COLORS.error;
+      case "info":
+        return STATUS_COLORS.info;
+      default:
+        return STATUS_COLORS.success;
     }
   }
 

@@ -359,7 +359,7 @@ export class TournamentModeService {
       return {
         phase: "pre-game",
         suggestion: "Light, easily digestible foods only",
-        foods: ["Banana", "Toast", "Small protein bar"],
+        foods: ["Banana", "", "Small protein bar"],
         timing: "30-60 min before game",
       };
     }

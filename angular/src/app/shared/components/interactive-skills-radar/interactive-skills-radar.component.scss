@@ -12,7 +12,7 @@
 }
 
 .radar-container {
-  min-height: 400px;
+  min-height: 25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,7 +44,7 @@
   padding: var(--space-4);
   background: var(--surface-card);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-secondary);
+  border: 0.0625rem solid var(--color-border-secondary);
 }
 
 .sub-skill-name {
@@ -53,7 +53,7 @@
   font-size: var(--ds-font-size-md);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .skills-container {
     flex-direction: row;
   }
@@ -63,12 +63,12 @@
   }
 
   .skills-breakdown {
-    flex: 0 0 350px;
+    flex: 0 0 21.875rem;
   }
 }
 
 @include respond-to(md) {
   .radar-container {
-    min-height: 300px;
+    min-height: 18.75rem;
   }
 }

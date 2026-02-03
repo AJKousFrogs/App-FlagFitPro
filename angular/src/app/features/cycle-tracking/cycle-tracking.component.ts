@@ -31,7 +31,6 @@ import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -301,7 +300,7 @@ const RETENTION_OPTIONS = [
     TableModule,
     TableModule,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -310,9 +309,7 @@ const RETENTION_OPTIONS = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="cycle-tracking-page">
+<div class="cycle-tracking-page">
         <app-page-header
           title="Cycle Tracking"
           subtitle="Personalized training based on your cycle"
@@ -727,7 +724,7 @@ const RETENTION_OPTIONS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Auto-delete data older than..."
-                [style]="{ width: '300px' }"
+                styleClass="retention-select"
               ></p-select>
             </div>
 
@@ -755,7 +752,7 @@ const RETENTION_OPTIONS = [
         [modal]="true"
         [visible]="showLogDialog()"
         (visibleChange)="showLogDialog.set($event)"
-        [style]="{ width: '500px' }"
+        styleClass="dialog-max-w-lg"
         [breakpoints]="{ '640px': '95vw' }"
         [draggable]="false"
       >
@@ -770,7 +767,7 @@ const RETENTION_OPTIONS = [
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -782,7 +779,7 @@ const RETENTION_OPTIONS = [
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
                 placeholder="Select date"
               ></p-datepicker>
             </div>
@@ -858,7 +855,7 @@ const RETENTION_OPTIONS = [
         [modal]="true"
         [visible]="showDeleteDialog()"
         (visibleChange)="showDeleteDialog.set($event)"
-        [style]="{ width: '400px' }"
+        styleClass="dialog-max-w-sm"
         [draggable]="false"
       >
         <div class="delete-warning">

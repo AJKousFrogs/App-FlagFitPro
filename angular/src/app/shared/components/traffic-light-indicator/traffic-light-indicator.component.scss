@@ -11,8 +11,8 @@
 }
 
 .traffic-light {
-  width: 24px;
-  height: 64px;
+  width: var(--space-6);
+  height: var(--space-16);
   background: var(--color-neutral-800);
   border-radius: var(--radius-xl);
   padding: var(--space-1);
@@ -25,7 +25,7 @@
 .light {
   flex: 1;
   border-radius: var(--radius-full);
-  opacity: 0.3;
+  opacity: var(--opacity-quarter);
   transition:
     opacity var(--transition-base),
     box-shadow var(--transition-base);
@@ -33,7 +33,7 @@
 
 .light.active {
   opacity: 1;
-  box-shadow: 0 0 12px currentColor;
+  box-shadow: 0 0 var(--space-3) currentColor;
 }
 
 .light.green {
@@ -56,7 +56,7 @@
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .label.green {

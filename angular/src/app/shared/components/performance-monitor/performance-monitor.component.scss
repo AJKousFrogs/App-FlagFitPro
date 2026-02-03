@@ -9,17 +9,17 @@
   position: fixed;
   bottom: var(--space-4);
   left: var(--space-4);
-  width: var(--dialog-max-width-xs); /* 320px */
+  width: var(--dialog-max-width-xs); /* 20rem */
   max-width: calc(100vw - 2rem);
   background: var(--surface-primary);
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-2);
   padding: var(--space-4);
-  z-index: 1001;
+  z-index: var(--z-index-modal);
   transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
+    transform var(--transition-slow) var(--ease-standard),
+    opacity var(--transition-slow) var(--ease-standard);
   max-height: calc(100vh - 2rem);
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
@@ -31,7 +31,7 @@
   align-items: center;
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--color-border-primary);
+  border-bottom: 0.0625rem solid var(--color-border-primary);
 }
 
 .monitor-header h4 {
@@ -53,7 +53,7 @@
   padding: var(--space-3);
   border-radius: var(--radius-md);
   background: var(--surface-secondary);
-  border-left: 4px solid var(--color-border-secondary);
+  border-left: 0.25rem solid var(--color-border-secondary);
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
@@ -118,7 +118,7 @@
 .performance-actions {
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-primary);
+  border-top: 0.0625rem solid var(--color-border-primary);
 }
 
 .action-buttons {
@@ -130,7 +130,7 @@
 
 .action-buttons p-button {
   flex: 1;
-  min-width: var(--input-min-width-sm); /* 120px */
+  min-width: var(--input-min-width-sm); /* 7.5rem */
 }
 
 @include respond-to(md) {

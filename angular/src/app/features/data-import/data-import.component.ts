@@ -29,7 +29,6 @@ import { Message } from "primeng/message";
 import { Select } from "primeng/select";
 import { Stepper, StepList, Step } from "primeng/stepper";
 import { TableModule } from "primeng/table";
-import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -193,7 +192,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     Step,
     TableModule,
     TableModule,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -202,9 +201,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="data-import-page">
+<div class="data-import-page">
         <app-page-header
           title="Import Data"
           subtitle="Bring in training data from external sources"
@@ -274,7 +271,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   >
                     <ng-template pTemplate="content">
                       <div class="upload-placeholder">
-                        <i class="pi pi-cloud-upload"></i>
+                        <i class="pi pi-cloud-upload upload-placeholder__icon"></i>
                         <p>Drop file here or click to browse</p>
                         <span
                           >Accepted: {{ selectedType()!.formats.join(", ") }} |
@@ -325,7 +322,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                 <!-- File Summary -->
                 <div class="file-summary">
                   <div class="summary-header">
-                    <i class="pi pi-file"></i>
+                    <i class="pi pi-file summary-header__icon"></i>
                     <span>{{ importPreview()!.fileName }}</span>
                     <span class="file-size">{{
                       importPreview()!.fileSize
@@ -442,9 +439,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     [class.success]="importResult()!.success"
                   >
                     @if (importResult()!.success) {
-                      <i class="pi pi-check-circle"></i>
+                      <i class="pi pi-check-circle result-icon__glyph"></i>
                     } @else {
-                      <i class="pi pi-times-circle"></i>
+                      <i class="pi pi-times-circle result-icon__glyph"></i>
                     }
                   </div>
 
@@ -462,7 +459,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                       <h4>Import Summary</h4>
                       <ul>
                         <li>
-                          <i class="pi pi-check"></i>
+                          <i class="pi pi-check result-list-icon"></i>
                           {{ importResult()!.itemsImported }} items imported
                         </li>
                         @for (
@@ -470,7 +467,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                           track warning
                         ) {
                           <li class="warning">
-                            <i class="pi pi-exclamation-triangle"></i>
+                            <i
+                              class="pi pi-exclamation-triangle result-list-icon result-list-icon--warning"
+                            ></i>
                             {{ warning }}
                           </li>
                         }
@@ -482,7 +481,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                       <ul>
                         @for (step of importResult()!.nextSteps; track step) {
                           <li>
-                            <i class="pi pi-arrow-right"></i>
+                            <i class="pi pi-arrow-right result-list-icon"></i>
                             {{ step }}
                           </li>
                         }
@@ -607,7 +606,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   </li>
                 </ul>
                 <p class="privacy-note">
-                  <i class="pi pi-lock"></i>
+                  <i class="pi pi-lock privacy-note__icon"></i>
                   Your data is encrypted and never shared
                 </p>
               </div>

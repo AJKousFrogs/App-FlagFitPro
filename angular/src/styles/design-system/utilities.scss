@@ -93,12 +93,12 @@
   --ds-search-padding-x: var(--space-0);
   --ds-search-border: none;
   --ds-search-background: transparent;
-  --ds-search-input-height: var(--avatar-size-xl, 56px);
+  --ds-search-input-height: var(--avatar-size-xl);
   --ds-search-input-radius: var(--radius-full);
   --ds-search-input-border: var(--border-2) solid var(--color-border-secondary);
   --ds-search-input-shadow: var(--shadow-1);
   --ds-search-input-focus-shadow: var(--shadow-focus), var(--shadow-2);
-  --ds-search-input-focus-transform: translateY(-1px);
+  --ds-search-input-focus-transform: translateY(calc(var(--border-1) * -1));
 }
 
 /* Search input wrapper (contains icon + input) */
@@ -216,9 +216,9 @@
    ================================================================ */
 
 /* Mobile-optimized search adjustments */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .ds-search-bar--hero {
-    --ds-search-input-height: var(--touch-target-md, 44px);
+    --ds-search-input-height: var(--touch-target-md);
   }
 }
 
@@ -288,7 +288,7 @@
 
 .instagram-embed-error-icon {
   font-size: var(--ds-icon-size-2xl);
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
 }
 
 .instagram-embed-link {

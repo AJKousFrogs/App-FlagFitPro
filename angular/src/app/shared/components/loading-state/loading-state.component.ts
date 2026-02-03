@@ -16,7 +16,7 @@ import { ProgressSpinner } from "primeng/progressspinner";
   template: `
     <div class="loading-state" [class.compact]="compact()">
       <p-progressSpinner
-        [style]="{ width: size() + 'px', height: size() + 'px' }"
+        [styleClass]="spinnerSizeClass()"
         strokeWidth="4"
         animationDuration="1s"
       ></p-progressSpinner>
@@ -33,18 +33,18 @@ import { ProgressSpinner } from "primeng/progressspinner";
         align-items: center;
         justify-content: center;
         padding: var(--space-12);
-        min-height: 300px;
+        min-height: var(--chart-min-height-md);
       }
 
       .loading-state.compact {
         padding: var(--space-6);
-        min-height: 200px;
+        min-height: var(--chart-min-height-sm);
       }
 
       .loading-message {
         margin-top: var(--space-4);
         font-size: var(--ds-font-size-md);
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
         text-align: center;
       }
 
@@ -53,10 +53,25 @@ import { ProgressSpinner } from "primeng/progressspinner";
         margin-top: var(--space-3);
       }
 
+      .spinner-size-sm {
+        width: var(--space-10);
+        height: var(--space-10);
+      }
+
+      .spinner-size-md {
+        width: var(--space-12);
+        height: var(--space-12);
+      }
+
+      .spinner-size-lg {
+        width: var(--space-16);
+        height: var(--space-16);
+      }
+
       @media (max-width: 768px) {
         .loading-state {
           padding: var(--space-6);
-          min-height: 200px;
+          min-height: var(--chart-min-height-sm);
         }
 
         .loading-message {
@@ -71,4 +86,11 @@ export class LoadingStateComponent {
   message = input<string | null>("Loading...");
   size = input<number>(50);
   compact = input<boolean>(false);
+
+  spinnerSizeClass(): string {
+    const value = this.size();
+    if (value <= 40) return "spinner-size-sm";
+    if (value <= 56) return "spinner-size-md";
+    return "spinner-size-lg";
+  }
 }

@@ -19,7 +19,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60px;
+  height: 3.75rem;
   pointer-events: none;
   opacity: 0;
   transform: translateY(-100%);
@@ -58,5 +58,5 @@
 }
 
 .pull-indicator.refreshing + .pull-content {
-  transform: translateY(60px);
+  transform: translateY(3.75rem);
 }

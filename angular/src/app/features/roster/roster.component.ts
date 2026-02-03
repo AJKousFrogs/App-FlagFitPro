@@ -38,7 +38,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ConfirmationService, PrimeTemplate } from "primeng/api";
+import { PrimeTemplate } from "primeng/api";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Dialog } from "primeng/dialog";
@@ -47,6 +47,7 @@ import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -101,7 +102,6 @@ import {
   selector: "app-roster",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ConfirmationService],
   imports: [
     StatusTagComponent,
     Dialog,
@@ -927,7 +927,7 @@ export class RosterComponent implements OnInit {
   private readonly metricsService = inject(PlayerMetricsService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
-  private confirmationService = inject(ConfirmationService);
+  private confirmDialog = inject(ConfirmDialogService);
 
   // Page state
   isPageLoading = signal(true);
@@ -1140,9 +1140,10 @@ export class RosterComponent implements OnInit {
 
     this.isSaving.set(true);
 
-    const result = this.editingPlayer()
+    const editingPlayer = this.editingPlayer();
+    const result = editingPlayer
       ? await this.rosterService.updatePlayer(
-          this.editingPlayer()!.id,
+          editingPlayer.id,
           formData as Partial<Player>,
         )
       : await this.rosterService.addPlayer(formData as Partial<Player>);
@@ -1162,23 +1163,23 @@ export class RosterComponent implements OnInit {
     this.isSaving.set(false);
   }
 
-  confirmRemovePlayer(player: Player): void {
-    this.confirmationService.confirm({
+  async confirmRemovePlayer(player: Player): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
       message: `Are you sure you want to remove ${player.name} from the team?`,
-      header: "Confirm Removal",
+      title: "Confirm Removal",
       icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
-      accept: async () => {
-        const result = await this.rosterService.removePlayer(player.id);
-        if (result.success) {
-          this.toastService.success(`${player.name} has been removed`);
-        } else {
-          this.toastService.error(
-            result.error || TOAST.ERROR.PLAYER_REMOVE_FAILED,
-          );
-        }
-      },
+      acceptSeverity: "danger",
+      rejectSeverity: "secondary",
+      defaultFocus: "reject",
     });
+    if (!confirmed) return;
+
+    const result = await this.rosterService.removePlayer(player.id);
+    if (result.success) {
+      this.toastService.success(`${player.name} has been removed`);
+    } else {
+      this.toastService.error(result.error || TOAST.ERROR.PLAYER_REMOVE_FAILED);
+    }
   }
 
   // Player details
@@ -1270,27 +1271,29 @@ export class RosterComponent implements OnInit {
     this.isSaving.set(false);
   }
 
-  confirmBulkRemove(): void {
+  async confirmBulkRemove(): Promise<void> {
     const count = this.selectedPlayerIds().size;
-    this.confirmationService.confirm({
+    const confirmed = await this.confirmDialog.confirm({
       message: `Are you sure you want to remove ${count} player(s)?`,
-      header: "Confirm Bulk Removal",
+      title: "Confirm Bulk Removal",
       icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
-      accept: async () => {
-        const ids = Array.from(this.selectedPlayerIds());
-        const result = await this.rosterService.bulkRemovePlayers(ids);
-
-        if (result.success) {
-          this.toastService.success(`Removed ${count} players`);
-          this.clearSelection();
-        } else {
-          this.toastService.error(
-            result.error || TOAST.ERROR.PLAYERS_REMOVE_FAILED,
-          );
-        }
-      },
+      acceptSeverity: "danger",
+      rejectSeverity: "secondary",
+      defaultFocus: "reject",
     });
+    if (!confirmed) return;
+
+    const ids = Array.from(this.selectedPlayerIds());
+    const result = await this.rosterService.bulkRemovePlayers(ids);
+
+    if (result.success) {
+      this.toastService.success(`Removed ${count} players`);
+      this.clearSelection();
+    } else {
+      this.toastService.error(
+        result.error || TOAST.ERROR.PLAYERS_REMOVE_FAILED,
+      );
+    }
   }
 
   // Filters
@@ -1374,21 +1377,21 @@ export class RosterComponent implements OnInit {
   }
 
   async cancelInvitation(invitation: TeamInvitation): Promise<void> {
-    this.confirmationService.confirm({
+    const confirmed = await this.confirmDialog.confirm({
       message: `Cancel invitation for ${invitation.email}?`,
-      header: "Cancel Invitation",
+      title: "Cancel Invitation",
       icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
-      accept: async () => {
-        const result = await this.rosterService.cancelInvitation(invitation.id);
-        if (result.success) {
-          this.toastService.success(TOAST.SUCCESS.INVITATION_CANCELLED);
-        } else {
-          this.toastService.error(
-            result.error || "Failed to cancel invitation",
-          );
-        }
-      },
+      acceptSeverity: "danger",
+      rejectSeverity: "secondary",
+      defaultFocus: "reject",
     });
+    if (!confirmed) return;
+
+    const result = await this.rosterService.cancelInvitation(invitation.id);
+    if (result.success) {
+      this.toastService.success(TOAST.SUCCESS.INVITATION_CANCELLED);
+    } else {
+      this.toastService.error(result.error || "Failed to cancel invitation");
+    }
   }
 }

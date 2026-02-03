@@ -35,7 +35,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: var(--chart-min-height-lg); /* 400px */
+  width: var(--chart-min-height-lg); /* 25rem */
   max-width: 100vw;
   height: 100vh;
   height: 100dvh;
@@ -107,7 +107,7 @@
 @keyframes pulse-glow {
   0%,
   100% {
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
   }
   50% {
     opacity: 1;
@@ -295,10 +295,10 @@
 @keyframes pulse {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: var(--opacity-minimal);
   }
   50% {
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
   }
 }
 
@@ -339,7 +339,7 @@
   margin: 0;
   font-size: var(--ds-font-size-md);
   color: var(--text-secondary);
-  max-width: var(--grid-card-min-md); /* 260px */
+  max-width: var(--grid-card-min-md); /* 16.25rem */
   line-height: var(--ds-line-height-normal);
 }
 
@@ -369,9 +369,9 @@
   padding: var(--space-4) var(--space-5);
   cursor: pointer;
   transition:
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity var(--transition-slow) var(--ease-standard),
+    transform var(--transition-slow) var(--ease-standard),
+    background-color var(--transition-slow) var(--ease-standard);
   position: relative;
   border-left: var(--border-3) solid transparent;
 
@@ -631,7 +631,7 @@
 
 .view-all-btn:hover {
   background: var(--ds-primary-green-hover);
-  transform: translateY(-1px);
+  transform: translateY(-0.0625rem);
   box-shadow: var(--shadow-md);
 }
 
@@ -641,7 +641,7 @@
 }
 
 .view-all-btn:hover i {
-  transform: translateX(3px);
+  transform: translateX(0.1875rem);
 }
 
 /* Additional category-specific icon colors */

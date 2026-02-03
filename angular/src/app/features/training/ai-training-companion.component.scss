@@ -7,7 +7,7 @@
 
 .training-companion {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
+  bottom: calc(env(safe-area-inset-bottom, 0rem) + var(--space-4));
   right: var(--space-4);
   z-index: var(--z-index-dropdown);
   transition:
@@ -101,7 +101,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
 }
 
@@ -318,7 +318,7 @@
 /* AI Disabled Banner Styles */
 .ai-disabled-banner {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
+  bottom: calc(env(safe-area-inset-bottom, 0rem) + var(--space-4));
   right: var(--space-4);
   z-index: var(--z-index-dropdown);
   background: var(--surface-primary);

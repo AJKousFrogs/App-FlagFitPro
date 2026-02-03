@@ -11,7 +11,6 @@ import { TitleCasePipe } from "@angular/common";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Message } from "primeng/message";
-import { Toast } from "primeng/toast";
 import { ToastService } from "../../../core/services/toast.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { formatDate } from "../../../shared/utils/date.utils";
@@ -45,10 +44,9 @@ interface InvitationData {
   selector: "app-accept-invitation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Card, Message, Toast, TitleCasePipe, ButtonComponent],
+  imports: [RouterModule, Card, Message, TitleCasePipe, ButtonComponent],
   template: `
-    <p-toast></p-toast>
-    <div class="accept-invitation-page">
+<div class="accept-invitation-page">
       <p-card class="accept-invitation-card">
         <ng-template pTemplate="header">
           <div class="accept-invitation-logo">

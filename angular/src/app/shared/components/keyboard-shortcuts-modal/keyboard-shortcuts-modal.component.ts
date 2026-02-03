@@ -15,43 +15,38 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { PrimeTemplate } from "primeng/api";
-import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../button/button.component";
 import { Divider } from "primeng/divider";
+import { AppDialogComponent } from "../dialog/dialog.component";
 import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortcuts.service";
 
 @Component({
   selector: "app-keyboard-shortcuts-modal",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Dialog, PrimeTemplate, Divider, ButtonComponent],
+  imports: [CommonModule, AppDialogComponent, Divider, ButtonComponent],
   template: `
-    <p-dialog
+    <app-dialog
       [visible]="shortcutsService.isHelpModalOpen()"
-      (visibleChange)="onVisibleChange($event)"
+      (visibleChange)="handleVisibleChange($event)"
       [modal]="true"
       [closable]="true"
       [draggable]="false"
       [resizable]="false"
-      [style]="{ width: '600px', maxWidth: '95vw', maxHeight: '85vh' }"
-      styleClass="shortcuts-modal"
-      header="Keyboard Shortcuts"
+      styleClass="shortcuts-modal layout-w-xl dialog-w-xl dialog-max-h"
     >
-      <ng-template pTemplate="header">
-        <div class="modal-header">
-          <div class="header-icon">
-            <i class="pi pi-keyboard"></i>
-          </div>
-          <div class="header-text">
-            <h2>Keyboard Shortcuts</h2>
-            <p>
-              Press <kbd>{{ shortcutsService.modifierKey() }}</kbd> +
-              <kbd>/</kbd> or <kbd>?</kbd> to toggle
-            </p>
-          </div>
+      <div class="modal-header">
+        <div class="header-icon">
+          <i class="pi pi-keyboard"></i>
         </div>
-      </ng-template>
+        <div class="header-text">
+          <h2>Keyboard Shortcuts</h2>
+          <p>
+            Press <kbd>{{ shortcutsService.modifierKey() }}</kbd> +
+            <kbd>/</kbd> or <kbd>?</kbd> to toggle
+          </p>
+        </div>
+      </div>
 
       <div class="shortcuts-content">
         <!-- Navigation -->
@@ -217,7 +212,7 @@ import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortc
           >
         </div>
       </ng-template>
-    </p-dialog>
+    </app-dialog>
   `,
   styleUrl: "./keyboard-shortcuts-modal.component.scss",
 })
@@ -257,7 +252,7 @@ export class KeyboardShortcutsModalComponent {
         ?.filter((s) => s.enabled !== false) || [],
   );
 
-  onVisibleChange(visible: boolean): void {
+  handleVisibleChange(visible: boolean): void {
     if (!visible) {
       this.shortcutsService.closeHelpModal();
     }

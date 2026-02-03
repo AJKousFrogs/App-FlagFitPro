@@ -11,9 +11,9 @@ import { MessageService } from "primeng/api";
 import { Toast } from "primeng/toast";
 
 /**
- * Toast Component - Angular 21 Premium Edition
+ *Component - Angular 21 Premium Edition
  *
- * A wrapper around PrimeNG Toast with premium animations
+ * A wrapper around PrimeNG with premium animations
  * Place this component once in your app root
  * Features:
  * - Slide-in animations

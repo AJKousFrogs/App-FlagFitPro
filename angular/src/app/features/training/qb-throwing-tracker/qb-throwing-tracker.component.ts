@@ -27,7 +27,6 @@ import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { Toast } from "primeng/toast";
 import { Tooltip } from "primeng/tooltip";
 import { MessageService, PrimeTemplate } from "primeng/api";
 
@@ -96,15 +95,13 @@ interface SessionTypeOption {
     Select,
     Slider,
     StatusTagComponent,
-    Toast,
+
     Tooltip,
     ButtonComponent,
   ],
   providers: [MessageService],
   template: `
-    <p-toast></p-toast>
-
-    <div class="qb-throwing-tracker">
+<div class="qb-throwing-tracker">
       <!-- Progression Status Card -->
       @if (progressionStatus()) {
         <div class="status-card">
@@ -457,7 +454,7 @@ interface SessionTypeOption {
             [(ngModel)]="formData.notes"
             rows="2"
             placeholder="What did you work on?"
-            [style]="{ width: '100%' }"
+            class="w-full"
           ></textarea>
         </div>
       </div>

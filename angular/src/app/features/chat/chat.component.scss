@@ -17,11 +17,11 @@
 }
 
 .icon-2xl {
-  font-size: var(--ds-font-size-3xl); // 36px
+  font-size: var(--ds-font-size-3xl); // 2.25rem
 }
 
 .icon-3xl {
-  font-size: var(--ds-font-size-3xl); // 48px
+  font-size: var(--ds-font-size-3xl); // 3rem
 }
 
 .icon-secondary {
@@ -131,7 +131,7 @@
    ============================================ */
 
 .channels-sidebar {
-  width: var(--chart-min-height-md); /* 300px */
+  width: var(--chart-min-height-md); /* 18.75rem */
   border-right: none;
   background: var(--surface-primary);
   padding: var(--space-5);
@@ -194,7 +194,7 @@
 
 .channel-item:hover {
   background: var(--surface-tertiary);
-  transform: translateX(4px);
+  transform: translateX(0.25rem);
 }
 
 .channel-item:hover::before {
@@ -289,7 +289,7 @@
 .no-channel-selected i {
   font-size: var(--ds-font-size-3xl);
   color: var(--ds-primary-green);
-  opacity: 0.3;
+  opacity: var(--opacity-quarter);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -349,8 +349,8 @@
 .messages-scroll {
   flex: 1;
   width: 100%;
-  height: calc(100vh - 280px);
-  height: calc(100dvh - 280px);
+  height: calc(100vh - 17.5rem);
+  height: calc(100dvh - 17.5rem);
 }
 
 .messages-list {
@@ -777,7 +777,7 @@
     transform: scale(1);
   }
   50% {
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
     transform: scale(1.2);
   }
 }
@@ -812,6 +812,34 @@
 .member-avatar-container {
   position: relative;
   flex-shrink: 0;
+}
+
+.avatar-token {
+  color: var(--color-text-on-primary);
+}
+
+.avatar-color-1 {
+  background: var(--color-chart-1);
+}
+
+.avatar-color-2 {
+  background: var(--color-chart-2);
+}
+
+.avatar-color-3 {
+  background: var(--color-chart-3);
+}
+
+.avatar-color-4 {
+  background: var(--color-chart-4);
+}
+
+.avatar-color-5 {
+  background: var(--color-chart-5);
+}
+
+.avatar-color-6 {
+  background: var(--color-chart-6);
 }
 
 .online-indicator {
@@ -881,8 +909,8 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms;
-    transition-duration: 0.01ms;
+    animation-duration: var(--transition-instant);
+    transition-duration: var(--transition-instant);
   }
 }
 
@@ -897,7 +925,7 @@
   }
 
   .channels-sidebar {
-    width: var(--grid-card-min-md); /* 260px */
+    width: var(--grid-card-min-md); /* 16.25rem */
   }
 }
 
@@ -907,8 +935,8 @@
 
 @include respond-to(md) {
   .chat-page {
-    height: calc(100vh - var(--header-height-mobile, 56px));
-    height: calc(100dvh - var(--header-height-mobile, 56px));
+    height: calc(100vh - var(--header-height-mobile, 3.5rem));
+    height: calc(100dvh - var(--header-height-mobile, 3.5rem));
   }
 
   .chat-header {
@@ -1026,11 +1054,3 @@
   border-radius: var(--radius-sm);
   font-weight: var(--ds-font-weight-medium);
 }
-
-/*
- * EXCEPTION: Avatar styling with background colors
- * Reason: Avatars use computed colors from getAvatarColor function
- * Scope: Avatars in chat messages and member lists
- * Owner: @design-system
- * Note: Inline [style] binding is acceptable for dynamic avatar colors
- */

@@ -34,6 +34,7 @@ import {
 } from "../../core/services/officials.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
+import { DialogService } from "../../core/ui/dialog.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -480,6 +481,7 @@ export class OfficialsComponent implements OnInit {
   private authService = inject(AuthService);
   private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
+  private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
 
@@ -781,8 +783,12 @@ export class OfficialsComponent implements OnInit {
       });
   }
 
-  removeAssignment(assignment: GameOfficial): void {
-    if (!confirm("Remove this official from the game?")) return;
+  async removeAssignment(assignment: GameOfficial): Promise<void> {
+    const confirmed = await this.dialogService.confirm(
+      "Remove this official from the game?",
+      "Remove Official",
+    );
+    if (!confirmed) return;
 
     this.officialsService
       .removeGameOfficial(assignment.id)

@@ -259,7 +259,7 @@ interface PositionGroup {
           header="Assign Player"
           [(visible)]="showAssignDialog"
           [modal]="true"
-          [style]="{ width: '400px' }"
+          styleClass="dialog-max-w-sm"
         >
           <div class="assign-dialog">
             <p class="assign-info">
@@ -275,7 +275,7 @@ interface PositionGroup {
               placeholder="Select a player"
               [filter]="true"
               filterBy="name"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-select>
           </div>
           <ng-template pTemplate="footer">

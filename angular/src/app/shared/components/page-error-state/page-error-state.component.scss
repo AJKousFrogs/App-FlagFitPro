@@ -13,14 +13,14 @@
   justify-content: center;
   padding: var(--space-8);
   text-align: center;
-  min-height: 200px;
+  min-height: 12.5rem;
 }
 
 .error-state__icon {
   font-size: var(--ds-font-size-3rem);
   color: var(--color-status-error);
   margin-bottom: var(--space-4);
-  opacity: 0.9;
+  opacity: var(--opacity-strong);
 }
 
 .error-state__title {
@@ -34,7 +34,7 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-4) 0;
-  max-width: 300px;
+  max-width: 18.75rem;
   line-height: var(--ds-line-height-normal);
 }
 

@@ -27,7 +27,6 @@ import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -36,6 +35,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { DialogService } from "../../../core/ui/dialog.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -115,7 +115,7 @@ const RECURRING_OPTIONS = [
     RadioButton,
     Select,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -125,9 +125,7 @@ const RECURRING_OPTIONS = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="calendar-coach-page">
+<div class="calendar-coach-page">
         <app-page-header
           title="Team Calendar"
           subtitle="Manage team schedule and RSVPs"
@@ -647,6 +645,7 @@ export class CalendarCoachComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
+  private readonly dialogService = inject(DialogService);
 
   // Constants exposed to template
   protected readonly UI_LIMITS = UI_LIMITS;
@@ -951,7 +950,11 @@ export class CalendarCoachComponent implements OnInit {
   }
 
   async cancelEvent(event: TeamEvent): Promise<void> {
-    if (!confirm(`Are you sure you want to cancel ${event.title}?`)) {
+    const confirmed = await this.dialogService.confirm(
+      `Are you sure you want to cancel ${event.title}?`,
+      "Cancel Event",
+    );
+    if (!confirmed) {
       return;
     }
 

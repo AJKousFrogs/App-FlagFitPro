@@ -1,10 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { firstValueFrom, Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
-import {
-  getInvertedStatusHexColor,
-  getStatusHexColor,
-} from "../utils/design-tokens.util";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
@@ -25,7 +21,7 @@ export interface RecoveryMetric {
   unit: string;
   percentage: number;
   icon: string;
-  color: string;
+  tone: "success" | "warning" | "error";
 }
 
 export interface RecoveryProtocol {
@@ -370,16 +366,19 @@ export class RecoveryService {
             100,
         );
 
-        return {
-          overallScore,
-          metrics: [
+        const metrics: RecoveryMetric[] = [
             {
               name: "Sleep Quality",
               value: sleepQuality,
               unit: "/10",
               percentage: sleepQuality * 10,
               icon: "pi pi-moon",
-              color: getStatusHexColor(sleepQuality, 7, 5), // ≥7 green, ≥5 warning, <5 error
+              tone:
+                sleepQuality >= 7
+                  ? "success"
+                  : sleepQuality >= 5
+                    ? "warning"
+                    : "error", // ≥7 success, ≥5 warning, <5 error
             },
             {
               name: "Energy Level",
@@ -387,7 +386,12 @@ export class RecoveryService {
               unit: "/10",
               percentage: energyLevel * 10,
               icon: "pi pi-bolt",
-              color: getStatusHexColor(energyLevel, 7, 5), // ≥7 green, ≥5 warning, <5 error
+              tone:
+                energyLevel >= 7
+                  ? "success"
+                  : energyLevel >= 5
+                    ? "warning"
+                    : "error", // ≥7 success, ≥5 warning, <5 error
             },
             {
               name: "Muscle Soreness",
@@ -395,7 +399,12 @@ export class RecoveryService {
               unit: "/10",
               percentage: (10 - soreness) * 10, // Invert: lower soreness = better
               icon: "pi pi-exclamation-circle",
-              color: getInvertedStatusHexColor(soreness, 3, 6), // ≤3 green, ≤6 warning, >6 error
+              tone:
+                soreness <= 3
+                  ? "success"
+                  : soreness <= 6
+                    ? "warning"
+                    : "error", // ≤3 success, ≤6 warning, >6 error
             },
             {
               name: "Stress Level",
@@ -403,10 +412,21 @@ export class RecoveryService {
               unit: "/10",
               percentage: (10 - stressLevel) * 10, // Invert: lower stress = better
               icon: "pi pi-info-circle",
-              color: getInvertedStatusHexColor(stressLevel, 3, 6), // ≤3 green, ≤6 warning, >6 error
+              tone:
+                stressLevel <= 3
+                  ? "success"
+                  : stressLevel <= 6
+                    ? "warning"
+                    : "error", // ≤3 success, ≤6 warning, >6 error
             },
-          ],
+          ];
+
+        const recoveryData: RecoveryData = {
+          overallScore,
+          metrics,
         };
+
+        return recoveryData;
       })(),
     ).pipe(
       catchError((error) => {

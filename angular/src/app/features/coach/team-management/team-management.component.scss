@@ -13,7 +13,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: 0.0625rem solid var(--ds-border-subtle);
   padding-bottom: var(--space-2);
   overflow-x: auto;
 
@@ -130,7 +130,7 @@
 .position-summary {
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--ds-border-subtle);
+  border-top: 0.0625rem solid var(--ds-border-subtle);
 
   h4 {
     margin: 0 0 var(--space-3) 0;
@@ -197,11 +197,11 @@
   .section-title {
     margin: 0 0 var(--space-3) 0;
     padding-bottom: var(--space-2);
-    border-bottom: 2px solid var(--ds-primary-green);
+    border-bottom: 0.125rem solid var(--ds-primary-green);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-secondary);
-    letter-spacing: var(--ds-letter-spacing-1px);
+    letter-spacing: var(--ds-letter-spacing-0-08em);
   }
 }
 
@@ -228,7 +228,7 @@
   padding: var(--space-2) var(--space-3);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--ds-border-default);
+  border-left: 0.1875rem solid var(--ds-border-default);
 
   &.starter {
     border-left-color: var(--ds-primary-green);
@@ -277,7 +277,7 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-secondary);
     text-transform: var(--ds-text-transform-uppercase);
-    letter-spacing: var(--ds-letter-spacing-1px);
+    letter-spacing: var(--ds-letter-spacing-0-08em);
   }
 }
 
@@ -473,7 +473,7 @@
   display: flex;
   gap: var(--space-3);
   padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: 0.0625rem solid var(--ds-border-subtle);
   margin-bottom: var(--space-3);
 
   .player-info {
@@ -501,7 +501,7 @@
   padding: var(--space-3);
   background: var(--primitive-error-50);
   border-radius: var(--radius-md);
-  border: 1px solid var(--primitive-error-200);
+  border: 0.0625rem solid var(--primitive-error-200);
 
   h5 {
     margin: 0 0 var(--space-2) 0;

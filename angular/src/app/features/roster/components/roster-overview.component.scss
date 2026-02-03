@@ -38,7 +38,7 @@
 }
 
 .overview-stat:hover {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 .overview-value {
@@ -55,25 +55,25 @@
 }
 
 /* Responsive */
-@media (min-width: 1400px) {
+@media (min-width: 87.5rem) {
   .team-overview-grid {
     grid-template-columns: repeat(6, 1fr);
   }
 }
 
-@media (min-width: 1200px) and (max-width: 1399px) {
+@media (min-width: 75rem) and (max-width: 87.4375rem) {
   .team-overview-grid {
     grid-template-columns: repeat(5, 1fr);
   }
 }
 
-@media (min-width: 1024px) and (max-width: 1199px) {
+@media (min-width: 64rem) and (max-width: 74.9375rem) {
   .team-overview-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 48.0625rem) and (max-width: 64rem) {
   .team-overview-grid {
     grid-template-columns: repeat(3, 1fr);
   }

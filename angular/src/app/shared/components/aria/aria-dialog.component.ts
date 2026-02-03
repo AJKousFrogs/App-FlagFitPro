@@ -151,10 +151,9 @@ export class AriaDialogComponent {
         if (!dialog) return;
 
         // Priority 1: Custom selector
-        if (this.initialFocusSelector()) {
-          const customFocus = dialog.querySelector(
-            this.initialFocusSelector()!,
-          );
+        const selector = this.initialFocusSelector();
+        if (selector) {
+          const customFocus = dialog.querySelector(selector);
           if (customFocus instanceof HTMLElement) {
             customFocus.focus();
             return;

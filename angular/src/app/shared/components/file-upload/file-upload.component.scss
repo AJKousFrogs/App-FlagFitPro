@@ -12,7 +12,7 @@
 }
 
 .upload-dropzone {
-  border: 2px dashed var(--color-border-primary);
+  border: 0.125rem dashed var(--color-border-primary);
   border-radius: var(--radius-md);
   padding: var(--space-6, var(--ds-font-size-2xl));
   background: var(--surface-primary);
@@ -20,7 +20,7 @@
   transition:
     background-color var(--motion-slow) var(--ease-standard),
     border-color var(--motion-slow) var(--ease-standard);
-  min-height: 200px;
+  min-height: 12.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,7 +37,7 @@
 }
 
 .upload-dropzone.disabled {
-  opacity: 0.6;
+  opacity: var(--opacity-muted);
   cursor: not-allowed;
 }
 
@@ -90,7 +90,7 @@
   padding: var(--space-3, var(--ds-font-size-xs));
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
 }
 
 .file-info {

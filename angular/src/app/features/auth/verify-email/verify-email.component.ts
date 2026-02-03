@@ -9,7 +9,6 @@ import {
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Message } from "primeng/message";
-import { Toast } from "primeng/toast";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -31,11 +30,10 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   selector: "app-verify-email",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Card, ButtonComponent, Message, Toast],
+  imports: [RouterModule, Card, ButtonComponent, Message,],
 
   template: `
-    <p-toast></p-toast>
-    <div class="verify-email-page">
+<div class="verify-email-page">
       <p-card class="verify-email-card">
         <ng-template pTemplate="header">
           <div class="verify-email-logo">

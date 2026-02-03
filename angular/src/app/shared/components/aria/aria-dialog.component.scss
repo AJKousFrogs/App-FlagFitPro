@@ -26,14 +26,14 @@
   opacity: 1;
   transition:
     opacity var(--transition-base) ease,
-    visibility 0s linear;
+    visibility var(--transition-instant) linear;
 }
 
 // Ensure backdrop doesn't transition on close (instant hide after fade)
 .aria-dialog-backdrop:not(.visible) {
   transition:
     opacity var(--transition-base) ease,
-    visibility 0s linear var(--transition-base);
+    visibility var(--transition-instant) linear var(--transition-base);
 }
 
 .aria-dialog {
@@ -55,7 +55,7 @@
 @keyframes dialogEnter {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+    transform: scale(0.95) translateY(-0.625rem);
   }
   to {
     opacity: 1;
@@ -66,17 +66,17 @@
 /* Size variants */
 .size-sm {
   width: 100%;
-  max-width: var(--dialog-max-width-sm); /* 400px */
+  max-width: var(--dialog-max-width-sm); /* 25rem */
 }
 
 .size-md {
   width: 100%;
-  max-width: var(--dialog-max-width-md); /* 560px */
+  max-width: var(--dialog-max-width-md); /* 35rem */
 }
 
 .size-lg {
   width: 100%;
-  max-width: var(--dialog-max-width-lg); /* 800px */
+  max-width: var(--dialog-max-width-lg); /* 50rem */
 }
 
 .size-full {

@@ -356,7 +356,7 @@ export class TeamPerformanceRankingService {
       try {
         // This will handle deduplication - won't unlock if already unlocked
         this.achievementsService.unlockAchievement(achievementId).subscribe();
-      } catch (error) {
+      } catch (_error) {
         this.logger.warn(
           "[TeamRanking] Failed to unlock achievement:",
           achievementId,

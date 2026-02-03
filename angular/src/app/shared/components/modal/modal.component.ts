@@ -39,7 +39,6 @@ import { ButtonComponent } from "../button/button.component";
       [draggable]="draggable()"
       [resizable]="resizable()"
       [header]="header()"
-      [style]="dialogStyle()"
       [styleClass]="dialogStyleClass()"
       [position]="position()"
       [blockScroll]="blockScroll()"
@@ -140,6 +139,31 @@ import { ButtonComponent } from "../button/button.component";
           0 12px 24px -8px rgba(0, 0, 0, 0.15);
         overflow: hidden;
         animation: modal-scale-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      app-modal .p-dialog.modal-sm {
+        width: var(--dialog-width-sm);
+        max-width: var(--dialog-width-xl);
+      }
+
+      app-modal .p-dialog.modal-md {
+        width: var(--dialog-width-md);
+        max-width: var(--dialog-width-xl);
+      }
+
+      app-modal .p-dialog.modal-lg {
+        width: var(--dialog-width-lg);
+        max-width: var(--dialog-width-xl);
+      }
+
+      app-modal .p-dialog.modal-xl {
+        width: var(--layout-width-3xl);
+        max-width: var(--dialog-width-xl);
+      }
+
+      app-modal .p-dialog.modal-full {
+        width: var(--dialog-width-xl);
+        height: var(--dialog-max-height);
       }
 
       @keyframes modal-scale-in {
@@ -549,17 +573,6 @@ export class ModalComponent {
   // Computed values
   showCustomHeader = computed(() => {
     return !!this.headerIcon() || !!this.headerSubtitle();
-  });
-
-  dialogStyle = computed(() => {
-    const sizeMap: Record<string, Record<string, string>> = {
-      sm: { width: "400px", maxWidth: "95vw" },
-      md: { width: "560px", maxWidth: "95vw" },
-      lg: { width: "800px", maxWidth: "95vw" },
-      xl: { width: "1140px", maxWidth: "95vw" },
-      full: { width: "95vw", height: "90vh" },
-    };
-    return sizeMap[this.size()] || sizeMap["md"];
   });
 
   dialogStyleClass = computed(() => {

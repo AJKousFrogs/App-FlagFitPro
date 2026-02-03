@@ -6,7 +6,6 @@ import {
   signal,
 } from "@angular/core";
 
-import { Toast } from "primeng/toast";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingMetricsService } from "../../core/services/training-metrics.service";
@@ -17,11 +16,10 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
   selector: "app-import-dataset",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Toast],
+  imports: [CommonModule,],
 
   template: `
-    <p-toast></p-toast>
-    <div
+<div
       class="import-dataset-container bg-surface-primary p-6 rounded-lg shadow-medium max-w-4xl mx-auto"
     >
       <div class="header mb-6">

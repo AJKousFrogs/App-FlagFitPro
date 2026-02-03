@@ -33,6 +33,7 @@ import { Tooltip } from "primeng/tooltip";
 
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
+import { DialogService } from "../../../../core/ui/dialog.service";
 
 export interface Tournament {
   id: string;
@@ -377,7 +378,7 @@ interface EventTypeOption {
             id="externalUrl"
             [(ngModel)]="formData.externalUrl"
             placeholder="https://..."
-            [style]="{ width: '100%' }"
+            class="w-full"
           />
         </div>
 
@@ -389,7 +390,7 @@ interface EventTypeOption {
             [(ngModel)]="formData.notes"
             rows="2"
             placeholder="Any additional notes..."
-            [style]="{ width: '100%' }"
+            class="w-full"
           ></textarea>
         </div>
       </div>
@@ -414,6 +415,7 @@ interface EventTypeOption {
 export class TournamentCalendarComponent {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly dialogService = inject(DialogService);
 
   // Angular 21 signal inputs/outputs
   readonly isCoach = input(false);
@@ -509,7 +511,11 @@ export class TournamentCalendarComponent {
   }
 
   async deleteTournament(tournament: Tournament): Promise<void> {
-    if (!confirm(`Delete "${tournament.name}"?`)) return;
+    const confirmed = await this.dialogService.confirm(
+      `Delete "${tournament.name}"?`,
+      "Delete Tournament",
+    );
+    if (!confirmed) return;
 
     try {
       await firstValueFrom(

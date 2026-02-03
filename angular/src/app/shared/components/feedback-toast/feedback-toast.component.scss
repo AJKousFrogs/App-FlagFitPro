@@ -11,7 +11,7 @@
   flex-direction: column;
   gap: var(--space-3);
   z-index: var(--z-index-notification);
-  max-width: var(--chart-min-height-lg); /* 400px */
+  max-width: var(--chart-min-height-lg); /* 25rem */
 }
 
 .toast-item {
@@ -39,20 +39,20 @@
 
 .success {
   background: var(--ds-primary-green);
-  border-left: 4px solid var(--ds-primary-green-hover);
+  border-left: var(--space-1) solid var(--ds-primary-green-hover);
 }
 .error {
   background: var(--color-status-error);
-  border-left: 4px solid var(--primitive-error-600);
+  border-left: var(--space-1) solid var(--primitive-error-600);
 }
 .warning {
   background: var(--color-status-warning);
-  border-left: 4px solid var(--primitive-warning-500);
+  border-left: var(--space-1) solid var(--primitive-warning-500);
   color: var(--color-text-primary);
 }
 .info {
   background: var(--color-status-info);
-  border-left: 4px solid var(--primitive-primary-600);
+  border-left: var(--space-1) solid var(--primitive-primary-600);
 }
 
 .toast-content {
@@ -73,9 +73,9 @@
 
 .toast-action-btn {
   background: var(--overlay-white-20);
-  border: 1px solid var(--overlay-white-30);
+  border: var(--border-1) solid var(--overlay-white-30);
   color: var(--color-text-on-primary);
-  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
   border-radius: var(--radius-md);
   cursor: pointer;
   font-size: var(--ds-font-size-sm);
@@ -93,7 +93,7 @@
   color: var(--color-text-on-primary);
   font-size: var(--ds-font-size-2xl);
   cursor: pointer;
-  opacity: 0.8;
+  opacity: var(--opacity-strong);
   padding: 0;
   margin-left: var(--space-2); // 0.5rem
   line-height: var(--ds-line-height-1);

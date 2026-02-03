@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
 }
 
@@ -45,7 +45,7 @@
 .recovery-metrics {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
   gap: var(--space-4);
 }
 
@@ -60,6 +60,18 @@
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-2);
+}
+
+.metric-header .tone-success {
+  color: var(--color-status-success);
+}
+
+.metric-header .tone-warning {
+  color: var(--color-status-warning);
+}
+
+.metric-header .tone-error {
+  color: var(--color-status-error);
 }
 
 .metric-name {
@@ -85,9 +97,21 @@
   color: var(--color-text-secondary);
 }
 
+.metric-progress.tone-success {
+  --p-progressbar-value-bg: var(--color-status-success);
+}
+
+.metric-progress.tone-warning {
+  --p-progressbar-value-bg: var(--color-status-warning);
+}
+
+.metric-progress.tone-error {
+  --p-progressbar-value-bg: var(--color-status-error);
+}
+
 .protocols-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(21.875rem, 1fr));
   gap: var(--space-4);
 }
 
@@ -102,7 +126,7 @@
 }
 
 .protocol-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   box-shadow: var(--shadow-md);
 }
 

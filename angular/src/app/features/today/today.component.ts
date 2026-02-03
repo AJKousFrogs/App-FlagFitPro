@@ -34,6 +34,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { MessageService, PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
@@ -42,7 +43,6 @@ import { Dialog } from "primeng/dialog";
 import { ProgressBar } from "primeng/progressbar";
 import { Skeleton } from "primeng/skeleton";
 
-import { Toast } from "primeng/toast";
 
 import { from } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -128,13 +128,14 @@ interface QuickFormData {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     RouterModule,
     Card,
     Dialog,
     PrimeTemplate,
     ProgressBar,
     Skeleton,
-    Toast,
+
     MainLayoutComponent,
     ProtocolBlockComponent,
     ButtonComponent,
@@ -474,7 +475,7 @@ interface QuickFormData {
         margin: 0 0 var(--space-3);
         font-size: var(--ds-font-size-sm);
         line-height: var(--ds-line-height-1-6);
-        opacity: 0.95;
+        opacity: 0.9;
       }
 
       /* --------------------------------------------------------------------------
@@ -756,6 +757,23 @@ interface QuickFormData {
         color: var(--color-status-warning);
       }
 
+      .energy-icon--1 {
+        opacity: 0.4;
+      }
+
+      .energy-icon--2 {
+        opacity: 0.6;
+      }
+
+      .energy-icon--3 {
+        opacity: 0.9;
+      }
+
+      .energy-icon--4,
+      .energy-icon--5 {
+        opacity: 1;
+      }
+
       .energy-btn:hover {
         border-color: var(--color-brand-primary);
       }
@@ -885,6 +903,66 @@ interface QuickFormData {
         animation-delay: var(--delay);
         transform: translateX(var(--x));
         opacity: 0;
+      }
+
+      .confetti-piece--1 {
+        --delay: 0.1s;
+        --x: -150px;
+      }
+
+      .confetti-piece--2 {
+        --delay: 0.2s;
+        --x: -120px;
+      }
+
+      .confetti-piece--3 {
+        --delay: 0.3s;
+        --x: -90px;
+      }
+
+      .confetti-piece--4 {
+        --delay: 0.4s;
+        --x: -60px;
+      }
+
+      .confetti-piece--5 {
+        --delay: 0.5s;
+        --x: -30px;
+      }
+
+      .confetti-piece--6 {
+        --delay: 0.6s;
+        --x: 0px;
+      }
+
+      .confetti-piece--7 {
+        --delay: 0.7s;
+        --x: 30px;
+      }
+
+      .confetti-piece--8 {
+        --delay: 0.8s;
+        --x: 60px;
+      }
+
+      .confetti-piece--9 {
+        --delay: 0.9s;
+        --x: 90px;
+      }
+
+      .confetti-piece--10 {
+        --delay: 1s;
+        --x: 120px;
+      }
+
+      .confetti-piece--11 {
+        --delay: 1.1s;
+        --x: 150px;
+      }
+
+      .confetti-piece--12 {
+        --delay: 1.2s;
+        --x: 180px;
       }
 
       .confetti-piece:nth-child(2n) {
@@ -1864,8 +1942,40 @@ export class TodayComponent {
 
       // Map exercises to PrescribedExercise format
       // API returns exercises in the format from transformExercise()
+      type ApiExercise = {
+        id?: string;
+        exerciseId?: string;
+        exercise?: {
+          id?: string;
+          name?: string;
+          slug?: string;
+          category?: ExerciseCategory;
+          videoUrl?: string;
+          videoId?: string;
+          howText?: string;
+          defaultSets?: number;
+          difficultyLevel?: "beginner" | "intermediate" | "advanced";
+          loadContributionAu?: number;
+          isHighIntensity?: boolean;
+        };
+        name?: string;
+        slug?: string;
+        category?: ExerciseCategory;
+        videoUrl?: string;
+        videoId?: string;
+        howText?: string;
+        aiNote?: string;
+        prescribedSets?: number;
+        prescribedReps?: number;
+        prescribedHoldSeconds?: number;
+        prescribedDurationSeconds?: number;
+        sequenceOrder?: number;
+        status?: string;
+        loadContributionAu?: number;
+        isHighIntensity?: boolean;
+      };
       const exercises: PrescribedExercise[] = apiBlock.exercises.map(
-        (ex: any, index: number) => ({
+        (ex: ApiExercise, index: number) => ({
           id: ex.id || `${blockType}-${index}`,
           exerciseId: ex.exerciseId || ex.id || `${blockType}-${index}`,
           // Nested exercise object with video data for UI rendering

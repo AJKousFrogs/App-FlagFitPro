@@ -17,8 +17,8 @@
 /* Ring */
 .timer-ring {
   position: relative;
-  width: 180px;
-  height: 180px;
+  width: 11.25rem;
+  height: 11.25rem;
 }
 
 .ring-svg {
@@ -34,8 +34,8 @@
 .ring-progress {
   stroke-linecap: round;
   transition:
-    stroke-dashoffset 0.3s linear,
-    stroke 0.3s ease;
+    stroke-dashoffset var(--transition-slow) linear,
+    stroke var(--transition-slow) var(--ease-standard);
 }
 
 .ring-progress.status-success {
@@ -99,8 +99,8 @@
 /* Pulse animation */
 .pulse-ring {
   position: absolute;
-  inset: -10px;
-  border: 3px solid var(--color-status-error);
+  inset: -0.625rem;
+  border: 0.1875rem solid var(--color-status-error);
   border-radius: 50%;
   animation: pulse-ring 1s ease-out infinite;
 }
@@ -108,7 +108,7 @@
 @keyframes pulse-ring {
   0% {
     transform: scale(1);
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
   100% {
     transform: scale(1.15);
@@ -133,7 +133,7 @@
 .preset-btn {
   padding: var(--space-2) var(--space-3);
   background: var(--surface-secondary);
-  border: 1px solid var(--color-border-secondary);
+  border: 0.0625rem solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
@@ -160,8 +160,8 @@
 /* Progress bar */
 .progress-bar-container {
   width: 100%;
-  max-width: 300px;
-  height: 8px;
+  max-width: 18.75rem;
+  height: 0.5rem;
   background: var(--color-border-secondary);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -171,8 +171,8 @@
   height: 100%;
   border-radius: var(--radius-full);
   transition:
-    width 0.3s linear,
-    background-color 0.3s ease;
+    width var(--transition-slow) linear,
+    background-color var(--transition-slow) var(--ease-standard);
 }
 
 .progress-bar.status-success {

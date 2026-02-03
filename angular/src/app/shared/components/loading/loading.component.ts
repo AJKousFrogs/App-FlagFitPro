@@ -26,7 +26,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
               strokeWidth="4"
               fill="transparent"
               animationDuration=".5s"
-              [style]="{ width: size() + 'px', height: size() + 'px' }"
+              [styleClass]="spinnerSizeClass()"
             ></p-progressSpinner>
             @if (message()) {
               <p class="loading-message">{{ message() }}</p>
@@ -39,7 +39,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
           <div class="loading-spinner" [class.compact]="compact()">
             <p-progressSpinner
               strokeWidth="4"
-              [style]="{ width: size() + 'px', height: size() + 'px' }"
+              [styleClass]="spinnerSizeClass()"
             ></p-progressSpinner>
             @if (message()) {
               <span class="loading-message-inline">{{ message() }}</span>
@@ -103,4 +103,11 @@ export class AppLoadingComponent {
   message = input<string | null>(null);
   size = input<number>(50);
   compact = input<boolean>(false);
+
+  spinnerSizeClass(): string {
+    const value = this.size();
+    if (value <= 40) return "spinner-size-sm";
+    if (value <= 56) return "spinner-size-md";
+    return "spinner-size-lg";
+  }
 }

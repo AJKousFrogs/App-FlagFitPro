@@ -72,13 +72,13 @@
 
   &:hover {
     border-color: var(--ds-primary-green);
-    transform: translateY(-4px);
+    transform: translateY(-0.25rem);
     box-shadow: var(--shadow-md);
     background: var(--surface-hover);
   }
 
   &:active {
-    transform: translateY(-2px);
+    transform: translateY(-0.125rem);
   }
 
   // Tablet: Reduce padding
@@ -100,7 +100,7 @@
 
   // Icon styling
   i {
-    font-size: var(--ds-font-size-3xl); // 32px - feature icon
+    font-size: var(--ds-font-size-3xl); // 2rem - feature icon
     color: var(--ds-primary-green);
     margin-bottom: var(--space-4);
     transition: transform var(--transition-fast);
@@ -109,7 +109,7 @@
     @include respond-to(md) {
       font-size: calc(
         var(--ds-font-size-2xl) + var(--space-1)
-      ); // 28px on mobile
+      ); // 1.75rem on mobile
       margin-bottom: var(--space-3);
     }
   }
@@ -120,27 +120,27 @@
 
   // Card title
   h3 {
-    font-size: var(--ds-font-size-2xl); // 18px
+    font-size: var(--ds-font-size-2xl); // 1.125rem
     font-weight: var(--ds-font-weight-semibold); // 600
     color: var(--color-text-primary);
     margin: 0 0 var(--space-2) 0;
     line-height: var(--ds-line-height-h3);
 
     @include respond-to(md) {
-      font-size: var(--ds-font-size-md); // 16px on mobile
+      font-size: var(--ds-font-size-md); // 1rem on mobile
       margin-bottom: var(--space-1);
     }
   }
 
   // Card description
   p {
-    font-size: var(--ds-font-size-md); // 14px
+    font-size: var(--ds-font-size-md); // 0.875rem
     color: var(--color-text-secondary);
     margin: 0;
     line-height: var(--ds-line-height-body);
 
     @include respond-to(md) {
-      font-size: var(--ds-font-size-xs); // 12px on mobile
+      font-size: var(--ds-font-size-xs); // 0.75rem on mobile
       line-height: var(--ds-line-height-body-sm);
     }
   }

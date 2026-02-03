@@ -34,9 +34,9 @@
   padding: var(--space-3) var(--space-4);
   background: var(--surface-primary);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border-secondary);
+  border: 0.0625rem solid var(--color-border-secondary);
   flex-shrink: 0;
-  min-width: 120px;
+  min-width: 7.5rem;
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast),
@@ -50,12 +50,12 @@
 
 .compact .stat-item {
   padding: var(--space-2) var(--space-3);
-  min-width: 100px;
+  min-width: 6.25rem;
 }
 
 /* Icon */
 .stat-icon {
-  width: var(--touch-target-sm); /* 36px */
+  width: var(--touch-target-sm); /* 2.25rem */
   height: var(--touch-target-sm);
   border-radius: var(--radius-md);
   display: flex;
@@ -66,8 +66,8 @@
 }
 
 .compact .stat-icon {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   font-size: var(--ds-font-size-md);
 }
 
@@ -112,7 +112,7 @@
 // CANONICAL: Uses stat-block pattern tokens
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 .stat-block__value {
-  font-size: var(--ds-font-size-2xl); // 24px - canonical
+  font-size: var(--ds-font-size-2xl); // 1.5rem - canonical
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-tight);
@@ -120,7 +120,7 @@
 }
 
 .compact .stat-block__value {
-  font-size: var(--ds-font-size-2xl); // 18px - compact variant
+  font-size: var(--ds-font-size-2xl); // 1.125rem - compact variant
 }
 
 .stat-unit {
@@ -131,7 +131,7 @@
 
 // CANONICAL: Uses stat-block label pattern
 .stat-block__label {
-  font-size: var(--ds-font-size-xs); // 13px - canonical
+  font-size: var(--ds-font-size-xs); // 0.8125rem - canonical
   font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-muted);
   letter-spacing: var(--ds-letter-spacing-caption);
@@ -167,7 +167,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 0.1875rem;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
@@ -216,11 +216,11 @@
 
 .variant-glass .stat-item {
   background: var(--surface-secondary);
-  border: 1px solid var(--color-border-muted);
+  border: 0.0625rem solid var(--color-border-muted);
 }
 
 /* Responsive */
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .stats-container {
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -228,12 +228,12 @@
 
   .stat-item {
     flex: 1;
-    min-width: 140px;
-    max-width: 200px;
+    min-width: 8.75rem;
+    max-width: 12.5rem;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64rem) {
   .stat-item {
     max-width: none;
   }

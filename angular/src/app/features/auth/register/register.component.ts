@@ -18,7 +18,6 @@ import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { InputText } from "primeng/inputtext";
 
-import { Toast } from "primeng/toast";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -41,12 +40,11 @@ import {
     Card,
     ButtonComponent,
     InputText,
-    Toast,
+
     Checkbox,
   ],
   template: `
-    <p-toast></p-toast>
-    <div class="register-page">
+<div class="register-page">
       <p-card class="register-card">
         <ng-template pTemplate="header">
           <div class="register-logo">

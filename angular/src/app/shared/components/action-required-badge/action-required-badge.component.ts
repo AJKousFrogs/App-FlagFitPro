@@ -124,7 +124,7 @@ export type ActionType =
           opacity: 1;
         }
         50% {
-          opacity: 0.8;
+          opacity: 0.9;
         }
       }
 

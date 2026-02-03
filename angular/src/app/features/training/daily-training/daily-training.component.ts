@@ -788,7 +788,7 @@ interface ScheduleBlock {
         font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
         text-transform: var(--ds-text-transform-uppercase);
-        letter-spacing: var(--ds-letter-spacing-0-5px);
+        letter-spacing: var(--ds-letter-spacing-0-03em);
       }
 
       .status-value {
@@ -856,7 +856,7 @@ interface ScheduleBlock {
       }
 
       .schedule-block.completed {
-        opacity: 0.8;
+        opacity: 0.9;
         background: var(--p-green-50);
       }
 

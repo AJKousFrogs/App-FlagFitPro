@@ -9,11 +9,10 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { Slider } from "primeng/slider";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
+import { AppDialogComponent } from "../dialog/dialog.component";
 
 @Component({
   selector: "app-rest-timer",
@@ -21,8 +20,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Dialog,
-    PrimeTemplate,
+    AppDialogComponent,
     Slider,
     FormsModule,
     ButtonComponent,
@@ -47,42 +45,39 @@ import { IconButtonComponent } from "../button/icon-button.component";
     }
 
     <!-- Timer Dialog -->
-    <p-dialog
+    <app-dialog
       [(visible)]="dialogVisible"
       [modal]="false"
       [draggable]="true"
       [resizable]="false"
       [closable]="false"
-      [style]="{ width: '320px' }"
-      position="bottomright"
-      styleClass="rest-timer-dialog"
+      styleClass="rest-timer-dialog dialog-max-w-xs"
+      (hide)="close()"
     >
-      <ng-template pTemplate="header">
-        <div class="timer-header">
-          <span class="timer-title">
-            <i class="pi pi-clock" aria-hidden="true"></i>
-            Rest Timer
-          </span>
-          <div class="header-actions">
-            <app-icon-button
-              icon="pi-minus"
-              variant="text"
-              size="sm"
-              (clicked)="minimize()"
-              ariaLabel="Minimize timer"
-              tooltip="Minimize"
-            />
-            <app-icon-button
-              icon="pi-times"
-              variant="text"
-              size="sm"
-              (clicked)="close()"
-              ariaLabel="Close timer"
-              tooltip="Close"
-            />
-          </div>
+      <div class="timer-header">
+        <span class="timer-title">
+          <i class="pi pi-clock" aria-hidden="true"></i>
+          Rest Timer
+        </span>
+        <div class="header-actions">
+          <app-icon-button
+            icon="pi-minus"
+            variant="text"
+            size="sm"
+            (clicked)="minimize()"
+            ariaLabel="Minimize timer"
+            tooltip="Minimize"
+          />
+          <app-icon-button
+            icon="pi-times"
+            variant="text"
+            size="sm"
+            (clicked)="close()"
+            ariaLabel="Close timer"
+            tooltip="Close"
+          />
         </div>
-      </ng-template>
+      </div>
 
       <div class="timer-body">
         <!-- Timer Display -->
@@ -183,7 +178,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
           </button>
         </div>
       </div>
-    </p-dialog>
+    </app-dialog>
   `,
   styleUrl: "./rest-timer.component.scss",
 })

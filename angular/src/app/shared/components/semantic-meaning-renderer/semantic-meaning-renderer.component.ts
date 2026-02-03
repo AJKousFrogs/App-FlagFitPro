@@ -22,6 +22,7 @@ import {
   inject,
   ChangeDetectionStrategy,
   ViewContainerRef,
+  Type,
   viewChild,
   ComponentRef,
   OnDestroy,
@@ -163,12 +164,7 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
 
     // Create component based on render decision
     try {
-      let componentClass:
-        | typeof RiskBadgeComponent
-        | typeof IncompleteDataBadgeComponent
-        | typeof ActionRequiredBadgeComponent
-        | typeof ActionPanelComponent
-        | typeof CoachOverrideBadgeComponent;
+      let componentClass: Type<unknown>;
 
       switch (decision.component) {
         case "app-risk-badge":
@@ -196,12 +192,14 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
 
       // Create component instance
 
-      this.componentRef = target.createComponent(componentClass as any);
+      this.componentRef = target.createComponent(componentClass);
 
       // Set component inputs using setInput() for signal input compatibility
-      Object.keys(decision.props).forEach((key) => {
-        this.componentRef!.setInput(key, decision.props[key]);
-      });
+      if (this.componentRef) {
+        Object.keys(decision.props).forEach((key) => {
+          this.componentRef?.setInput(key, decision.props[key]);
+        });
+      }
 
       // Trigger change detection
       this.componentRef.changeDetectorRef.markForCheck();

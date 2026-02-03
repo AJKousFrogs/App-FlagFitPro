@@ -35,7 +35,7 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
-import { COLORS, TIMEOUTS } from "../../core/constants/app.constants";
+import { TIMEOUTS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
@@ -49,6 +49,7 @@ import {
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
+import { DialogService } from "../../core/ui/dialog.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -330,23 +331,20 @@ import { getInitials } from "../../shared/utils/format.utils";
                       }
 
                       <div class="message-row">
-                        <p-avatar
-                          [label]="
-                            getInitialsStr(
-                              message.author?.full_name ||
-                                message.author?.email ||
-                                'U'
-                            )
-                          "
-                          styleClass="mr-2"
-                          shape="circle"
-                          [style]="{
-                            'background-color': getAvatarColor(
-                              message.author?.full_name || ''
-                            ),
-                            color: 'var(--color-text-on-primary)',
-                          }"
-                        ></p-avatar>
+                      <p-avatar
+                        [label]="
+                          getInitialsStr(
+                            message.author?.full_name ||
+                              message.author?.email ||
+                              'U'
+                          )
+                        "
+                        [styleClass]="
+                          'mr-2 avatar-token ' +
+                          getAvatarColorClass(message.author?.full_name || '')
+                        "
+                        shape="circle"
+                      ></p-avatar>
 
                         <div class="message-content">
                           <div class="message-header">
@@ -683,10 +681,9 @@ import { getInitials } from "../../shared/utils/format.utils";
                         "
                         shape="circle"
                         size="large"
-                        [style]="{
-                          'background-color': getAvatarColor(member.full_name),
-                          color: 'var(--color-text-on-primary)',
-                        }"
+                        [styleClass]="
+                          'avatar-token ' + getAvatarColorClass(member.full_name)
+                        "
                       ></p-avatar>
                       @if (member.is_online) {
                         <span class="online-indicator"></span>
@@ -741,10 +738,9 @@ import { getInitials } from "../../shared/utils/format.utils";
                         "
                         shape="circle"
                         size="large"
-                        [style]="{
-                          'background-color': getAvatarColor(member.full_name),
-                          color: 'var(--color-text-on-primary)',
-                        }"
+                        [styleClass]="
+                          'avatar-token ' + getAvatarColorClass(member.full_name)
+                        "
                       ></p-avatar>
                       @if (member.is_online) {
                         <span class="online-indicator"></span>
@@ -813,8 +809,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
   private channelService = inject(ChannelService);
-  private notificationService = inject(TeamNotificationService);
   private presenceService = inject(PresenceService);
+  private notificationService = inject(TeamNotificationService);
+  private dialogService = inject(DialogService);
 
   // State from services
   readonly currentChannel = this.channelService.currentChannel;
@@ -1142,7 +1139,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async deleteMessage(message: ChatMessage): Promise<void> {
-    if (!confirm("Delete this message?")) return;
+    const confirmed = await this.dialogService.confirm("Delete this message?");
+    if (!confirmed) return;
 
     try {
       await this.channelService.deleteMessage(message.id);
@@ -1152,9 +1150,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  startEditing(message: ChatMessage): void {
+  async startEditing(message: ChatMessage): Promise<void> {
     // Would implement inline editing UI
-    const newContent = prompt("Edit message:", message.message);
+    const newContent = await this.dialogService.prompt(
+      "Edit message:",
+      message.message,
+      "Edit Message",
+    );
     if (newContent && newContent !== message.message) {
       this.channelService.editMessage(message.id, newContent);
     }
@@ -1317,9 +1319,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     return getInitials(name);
   }
 
-  getAvatarColor(name: string): string {
-    const index = name.charCodeAt(0) % COLORS.CHART.length;
-    return COLORS.CHART[index];
+  getAvatarColorClass(name: string): string {
+    const paletteSize = 6;
+    const index = name.charCodeAt(0) % paletteSize;
+    return `avatar-color-${index + 1}`;
   }
 
   scrollToBottom(): void {

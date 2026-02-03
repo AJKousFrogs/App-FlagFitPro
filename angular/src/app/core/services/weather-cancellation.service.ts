@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, from, of, forkJoin } from "rxjs";
+import { Observable, from, of } from "rxjs";
 import { map, catchError, switchMap, tap } from "rxjs/operators";
 import { WeatherData, WeatherService } from "./weather.service";
 import { SupabaseService } from "./supabase.service";
@@ -780,7 +780,7 @@ export class WeatherCancellationService {
    * Generate cool-down protocol
    */
   private generateCoolDown(
-    workoutType: SubstituteWorkout["workoutType"],
+    _workoutType: SubstituteWorkout["workoutType"],
   ): string {
     return `
 5-10 minutes cool-down:

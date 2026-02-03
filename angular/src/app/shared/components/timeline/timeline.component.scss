@@ -21,7 +21,7 @@
   left: var(--space-2); // 0.5rem
   top: 0;
   bottom: 0;
-  width: 2px;
+  width: 0.125rem;
   background: var(--color-border-primary);
 }
 
@@ -42,7 +42,7 @@
   height: 1rem;
   border-radius: 50%;
   background: var(--ds-primary-green);
-  border: 3px solid var(--surface-primary);
+  border: 0.1875rem solid var(--surface-primary);
   z-index: 1;
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@
 
 .timeline-content {
   background: var(--surface-primary);
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-md);
   padding: var(--space-4);
 }
@@ -96,8 +96,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: var(--space-10); // 2.5rem = 40px
-  height: 2px;
+  top: var(--space-10); // 2.5rem = 2.5rem
+  height: 0.125rem;
   background: var(--color-border-primary);
 }
 

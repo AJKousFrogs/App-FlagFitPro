@@ -18,9 +18,10 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -28,7 +29,6 @@ import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -124,24 +124,22 @@ const POSITIONS = [
     CommonModule,
     FormsModule,
     Card,
-    Dialog,
     ProgressBar,
     Select,
     TableModule,
-    TableModule,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="tournament-management-page">
+<div class="tournament-management-page">
         <app-page-header
           title="Tournament Management"
           subtitle="Manage registrations and lineups"
@@ -350,12 +348,17 @@ const POSITIONS = [
       </div>
 
       <!-- Tournament Detail Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showDetailDialog"
-        [header]="selectedTournament()?.name || 'Tournament'"
-        [modal]="true"
         styleClass="tournament-detail-dialog"
+        (hide)="showDetailDialog = false"
       >
+        <app-dialog-header
+          [title]="selectedTournament()?.name || 'Tournament Detail'"
+          subtitle="RSVPs, lineups, and schedule for your selected event"
+          icon="calendar"
+          (close)="showDetailDialog = false"
+        ></app-dialog-header>
         @if (selectedTournament()) {
           <div class="detail-tabs">
             <button
@@ -616,7 +619,7 @@ const POSITIONS = [
             }
           }
         }
-      </p-dialog>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./tournament-management.component.scss",

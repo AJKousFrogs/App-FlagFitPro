@@ -105,7 +105,7 @@
       opacity: 1;
     }
     50% {
-      opacity: 0.7;
+      opacity: var(--opacity-subtle);
     }
   }
 
@@ -152,7 +152,7 @@
 
   .password-toggle-btn {
     position: absolute;
-    right: 12px;
+    right: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -193,10 +193,10 @@
       transform: translateX(0);
     }
     25% {
-      transform: translateX(-4px);
+      transform: translateX(-0.25rem);
     }
     75% {
-      transform: translateX(4px);
+      transform: translateX(0.25rem);
     }
   }
 
@@ -257,7 +257,7 @@
       }
 
       &:focus-visible + .checkmark {
-        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);
+        box-shadow: 0 0 0 0.1875rem rgba(var(--ds-primary-green-rgb), 0.2);
       }
     }
 
@@ -265,7 +265,7 @@
       width: var(--avatar-size-xs);
       height: var(--avatar-size-xs);
       min-width: var(--avatar-size-xs);
-      border: 2px solid var(--color-border-primary);
+      border: 0.125rem solid var(--color-border-primary);
       border-radius: var(--radius-sm);
       background: var(--surface-primary);
       transition:
@@ -282,7 +282,7 @@
         width: var(--indicator-size-xs);
         height: var(--indicator-size-md);
         border: solid white;
-        border-width: 0 2px 2px 0;
+        border-width: 0 0.125rem 0.125rem 0;
         transform: rotate(45deg);
         margin-bottom: var(--space-1);
       }
@@ -320,7 +320,7 @@
     &::after {
       content: "";
       flex: 1;
-      height: 1px;
+      height: 0.0625rem;
       background: var(--color-border-secondary);
     }
   }
@@ -370,7 +370,7 @@
     &.alert-info {
       background: var(--color-status-info-light);
       color: var(--primitive-info-700);
-      border: 1px solid var(--primitive-info-200);
+      border: 0.0625rem solid var(--primitive-info-200);
     }
   }
 
@@ -418,7 +418,7 @@
 
     .login-card {
       background: var(--primitive-neutral-800);
-      border: 1px solid var(--primitive-neutral-700);
+      border: 0.0625rem solid var(--primitive-neutral-700);
     }
 
     .login-logo {
@@ -449,7 +449,7 @@
 // Reduced motion - transition override
 @media (prefers-reduced-motion: reduce) {
   * {
-    transition-duration: 0.01ms;
+    transition-duration: var(--transition-instant);
   }
 }
 

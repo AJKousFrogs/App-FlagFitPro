@@ -21,7 +21,7 @@ label.required::after {
   color: var(--color-status-error);
 }
 
-/* Native input/textarea styling defers to global form control system (44px height, 8px radius) */
+/* Native input/textarea styling defers to global form control system (2.75rem height, 0.5rem radius) */
 input,
 textarea {
   width: 100%;
@@ -29,7 +29,7 @@ textarea {
 
 /* Textarea-specific layout */
 textarea {
-  min-height: 100px;
+  min-height: 6.25rem;
   resize: vertical;
 }
 

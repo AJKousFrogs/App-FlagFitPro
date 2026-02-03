@@ -17,7 +17,6 @@ import { Dialog } from "primeng/dialog";
 import { Paginator } from "primeng/paginator";
 import { Ripple } from "primeng/ripple";
 
-import { Toast } from "primeng/toast";
 import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
@@ -68,7 +67,7 @@ interface Category {
     Ripple,
     Dialog,
     PrimeTemplate,
-    Toast,
+
     MainLayoutComponent,
     ButtonComponent,
     SearchInputComponent,
@@ -470,9 +469,8 @@ interface Category {
         }
       </p-dialog>
 
-      <!-- Toast for notifications -->
-      <p-toast position="top-right" />
-    </app-main-layout>
+      <!--for notifications -->
+</app-main-layout>
   `,
   styleUrl: "./exercise-library.component.scss",
 })
@@ -545,10 +543,49 @@ export class ExerciseLibraryComponent implements OnInit {
   }
 
   loadExercises(): void {
-    this.apiService.get<any[]>("/api/exercises").subscribe({
+    type ExerciseApi = {
+      id: string;
+      name: string;
+      slug: string;
+      category?: string;
+      subcategory?: string;
+      difficulty_level?: string;
+      target_muscles?: string[];
+      equipment_required?: string[];
+      description?: string;
+      video_url?: string;
+      video_id?: string;
+      how_text?: string;
+      feel_text?: string;
+      compensation_text?: string;
+      default_sets?: number;
+      default_reps?: number;
+      default_hold_seconds?: number;
+      default_duration_seconds?: number;
+      calories_burned?: number;
+      intensity?: string;
+      movement_pattern?: string;
+      position_specific?: string | string[];
+      load_contribution_au?: number;
+      is_high_intensity?: boolean;
+      requires_timer?: boolean;
+      is_featured?: boolean;
+      created_at?: string;
+      updated_at?: string;
+    };
+    this.apiService.get<ExerciseApi[]>("/api/exercises").subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          const mappedExercises: Exercise[] = response.data.map((ex: any) => ({
+          const mappedExercises: Exercise[] = response.data.map((ex) => {
+            const positionSpecific = Array.isArray(ex.position_specific)
+              ? ex.position_specific
+              : ex.position_specific
+                ? ex.position_specific
+                    .split(",")
+                    .map((value) => value.trim())
+                    .filter(Boolean)
+                : undefined;
+            return {
             id: ex.id,
             name: ex.name,
             slug: ex.slug,
@@ -571,10 +608,11 @@ export class ExerciseLibraryComponent implements OnInit {
             default_reps: ex.default_reps,
             default_hold_seconds: ex.default_hold_seconds,
             default_duration_seconds: ex.default_duration_seconds,
-            position_specific: ex.position_specific,
+            position_specific: positionSpecific,
             load_contribution_au: ex.load_contribution_au,
             is_high_intensity: ex.is_high_intensity,
-          }));
+          };
+        });
 
           this.exercises.set(mappedExercises);
           this.applyFilters();

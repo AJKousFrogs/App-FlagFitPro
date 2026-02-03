@@ -50,15 +50,15 @@
 
 /**
  * Minimum Touch Target Size
- * WCAG 2.5.5 Target Size (Enhanced) - 44x44px minimum
+ * WCAG 2.5.5 Target Size (Enhanced) - 44x2.75rem minimum
  */
-$touch-target-min: 44px;
-$touch-target-comfortable: 48px;
-$touch-target-large: 56px;
+$touch-target-min: var(--touch-target-md);
+$touch-target-comfortable: var(--touch-target-lg);
+$touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 
 /**
  * Touch-friendly button mixin
- * Ensures minimum 44x44px tap target
+ * Ensures minimum 44x2.75rem tap target
  */
 @mixin touch-target($size: $touch-target-min) {
   min-height: $size;
@@ -66,7 +66,7 @@ $touch-target-large: 56px;
 
   // Add padding to ensure hit area
   @include touch-device {
-    padding: max(#{math.div($size, 4)}, space(3));
+    padding: max(calc(#{$size} / 4), space(3));
   }
 }
 
@@ -126,7 +126,7 @@ $touch-target-large: 56px;
 /**
  * Responsive grid that adapts to tablet
  */
-@mixin responsive-grid($min-width: 280px, $gap: space(4)) {
+@mixin responsive-grid($min-width: 17.5rem, $gap: space(4)) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
   gap: $gap;
@@ -164,7 +164,10 @@ $touch-target-large: 56px;
  */
 @mixin stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(calc(var(--grid-min-width-sm) + var(--space-2)), 1fr)
+  );
   gap: space(4);
 
   @include tablet-layout {
@@ -263,7 +266,7 @@ $touch-target-large: 56px;
 /**
  * Responsive modal sizing
  */
-@mixin responsive-modal($max-width: 600px) {
+@mixin responsive-modal($max-width: 37.5rem) {
   width: $max-width;
   max-width: 95vw;
 
@@ -284,11 +287,11 @@ $touch-target-large: 56px;
 /**
  * Responsive sidebar
  */
-@mixin responsive-sidebar($width: 280px) {
+@mixin responsive-sidebar($width: var(--sidebar-width)) {
   width: $width;
 
   @include tablet-layout {
-    width: 240px;
+    width: calc(var(--sidebar-width) - var(--space-2));
   }
 
   @include respond-to(lg) {
@@ -323,7 +326,7 @@ $touch-target-large: 56px;
     td {
       padding: space(3) space(4);
       text-align: left;
-      border-bottom: 1px solid var(--color-border-secondary);
+      border-bottom: var(--border-1) solid var(--color-border-secondary);
     }
 
     th {
@@ -360,7 +363,7 @@ $touch-target-large: 56px;
       justify-content: space-between;
       align-items: center;
       padding: space(2) 0;
-      border-bottom: 1px solid var(--color-border-secondary);
+      border-bottom: var(--border-1) solid var(--color-border-secondary);
 
       &:last-child {
         border-bottom: none;
@@ -425,9 +428,9 @@ $touch-target-large: 56px;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px;
+    height: space(10);
     background: var(--surface-primary);
-    border-top: 1px solid var(--color-border-secondary);
+    border-top: var(--border-1) solid var(--color-border-secondary);
     z-index: get-z-index(fixed);
     padding-bottom: env(safe-area-inset-bottom);
   }

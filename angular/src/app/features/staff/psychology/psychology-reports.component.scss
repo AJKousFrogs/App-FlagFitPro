@@ -119,13 +119,6 @@
         display: flex;
         flex-wrap: wrap;
         gap: var(--ds-spacing-xs);
-
-        .section-tag {
-          font-size: var(--ds-font-size-xs);
-          padding: var(--space-1) var(--space-2);
-          background: var(--surface-ground);
-          border-radius: var(--ds-radius-sm);
-        }
       }
     }
   }
@@ -177,7 +170,7 @@
   }
 
   p-chart {
-    height: 300px;
+    height: 18.75rem;
   }
 
   .dual-cards {
@@ -289,28 +282,12 @@
         margin: 0 0 var(--ds-spacing-sm);
         font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
-
-        i {
-          color: var(--orange-500);
-        }
       }
 
       ul {
         margin: 0;
         padding-left: var(--ds-spacing-lg);
         font-size: var(--ds-font-size-md);
-
-        li {
-          margin-bottom: var(--ds-spacing-xs);
-        }
-      }
-
-      &.positive h5 i {
-        color: var(--green-500);
-      }
-
-      &.concerning h5 i {
-        color: var(--blue-500);
       }
     }
   }
@@ -372,36 +349,6 @@
       .state-metric {
         display: flex;
         flex-direction: column;
-
-        .metric-label {
-          font-size: var(--ds-font-size-xs);
-          color: var(--text-color-secondary);
-        }
-
-        .metric-with-trend {
-          display: flex;
-          align-items: center;
-          gap: var(--ds-spacing-xs);
-
-          .metric-value {
-            font-weight: var(--ds-font-weight-semibold);
-          }
-
-          i {
-            font-size: var(--ds-font-size-md);
-
-            &.positive {
-              color: var(--green-500);
-            }
-            &.negative {
-              color: var(--red-500);
-            }
-          }
-        }
-
-        .metric-value {
-          font-weight: var(--ds-font-weight-semibold);
-        }
       }
     }
   }
@@ -430,11 +377,6 @@
         gap: var(--ds-spacing-sm);
 
         // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-044)
-
-        span {
-          font-weight: var(--ds-font-weight-semibold);
-          min-width: var(--space-10);
-        }
       }
     }
 
@@ -447,6 +389,34 @@
       }
     }
   }
+}
+
+:is(.patterns-grid .pattern-section) ul li {
+  margin-bottom: var(--ds-spacing-xs);
+}
+
+:is(.mental-state .state-metrics) .state-metric .metric-label {
+  font-size: var(--ds-font-size-xs);
+  color: var(--text-color-secondary);
+}
+
+:is(.mental-state .state-metrics) .state-metric .metric-with-trend {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-spacing-xs);
+}
+
+:is(.mental-state .state-metrics) .state-metric .metric-with-trend .metric-value {
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+:is(.mental-state .state-metrics) .state-metric .metric-value {
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+:is(.self-assessment .readiness .readiness-bar) span {
+  font-weight: var(--ds-font-weight-semibold);
+  min-width: var(--space-10);
 }
 
 // Generate Dialog
@@ -521,6 +491,37 @@
       }
     }
   }
+}
+
+.reports-section .section-tag {
+  font-size: var(--ds-font-size-xs);
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-ground);
+  border-radius: var(--ds-radius-sm);
+}
+
+.pattern-icon {
+  color: var(--orange-500);
+}
+
+.pattern-section.positive .pattern-icon {
+  color: var(--green-500);
+}
+
+.pattern-section.concerning .pattern-icon {
+  color: var(--blue-500);
+}
+
+.trend-icon {
+  font-size: var(--ds-font-size-md);
+}
+
+.trend-icon.positive {
+  color: var(--green-500);
+}
+
+.trend-icon.negative {
+  color: var(--red-500);
 }
 
 // Pre-Comp Form

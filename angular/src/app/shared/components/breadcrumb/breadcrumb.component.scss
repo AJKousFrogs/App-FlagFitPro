@@ -38,7 +38,7 @@
   transition:
     color var(--motion-fast) var(--ease-standard),
     background var(--motion-fast) var(--ease-standard);
-  min-height: 28px; // Accessible tap target
+  min-height: 1.75rem; // Accessible tap target
 }
 
 .breadcrumb-link:hover {

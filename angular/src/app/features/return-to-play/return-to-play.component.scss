@@ -13,7 +13,7 @@
 .empty-icon {
   font-size: var(--ds-font-size-3xl);
   color: var(--color-text-secondary);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   margin-bottom: var(--space-4);
 }
 
@@ -196,7 +196,7 @@
   }
 
   &.upcoming {
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
   }
 }
 
@@ -587,7 +587,7 @@
     padding: var(--space-2);
 
     .stage-name {
-      font-size: var(--ds-font-size-xs); /* 10px - compact label */
+      font-size: var(--ds-font-size-xs); /* 0.625rem - compact label */
     }
   }
 

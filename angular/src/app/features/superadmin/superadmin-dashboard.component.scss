@@ -100,7 +100,7 @@
 .approval-card {
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   overflow: hidden;
   transition: border-color var(--transition-base) var(--ease-standard);
 }
@@ -109,11 +109,11 @@
 // @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .approval-card.team {
-  border-left: 4px solid var(--color-status-warning);
+  border-left: 0.25rem solid var(--color-status-warning);
 }
 
 .approval-card.role {
-  border-left: 4px solid var(--primitive-purple-500);
+  border-left: 0.25rem solid var(--primitive-purple-500);
 }
 
 .approval-header {
@@ -122,7 +122,7 @@
   align-items: center;
   padding: var(--space-3) var(--space-4);
   background: var(--surface-tertiary);
-  border-bottom: 1px solid var(--color-border-primary);
+  border-bottom: 0.0625rem solid var(--color-border-primary);
 }
 
 .approval-date {
@@ -198,7 +198,7 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   background: var(--surface-tertiary);
-  border-top: 1px solid var(--color-border-primary);
+  border-top: 0.0625rem solid var(--color-border-primary);
 }
 
 /* Quick Actions */
@@ -226,7 +226,7 @@
   gap: var(--space-3);
   padding: var(--space-6);
   background: white;
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: var(--color-text-secondary);
@@ -271,7 +271,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border-primary);
+  border-bottom: 0.0625rem solid var(--color-border-primary);
 }
 
 .modal-header h3 {
@@ -306,7 +306,7 @@
 .modal-body textarea {
   width: 100%;
   padding: var(--space-3);
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
   resize: vertical;
@@ -327,7 +327,7 @@
   justify-content: flex-end;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-top: 1px solid var(--color-border-primary);
+  border-top: 0.0625rem solid var(--color-border-primary);
 }
 
 /* Responsive */

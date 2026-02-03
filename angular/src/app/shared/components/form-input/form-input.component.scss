@@ -6,8 +6,8 @@
 .form-input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2); /* 8px label-to-input gap */
-  margin-bottom: var(--space-4); /* 16px between form fields */
+  gap: var(--space-2); /* 0.5rem label-to-input gap */
+  margin-bottom: var(--space-4); /* 1rem between form fields */
 }
 
 .input-label {
@@ -30,7 +30,7 @@
   font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-secondary);
   background: var(--surface-100);
-  padding: var(--space-1) var(--space-3); /* 4px 12px for breathing room */
+  padding: var(--space-1) var(--space-3); /* 0.25rem 0.75rem for breathing room */
   border-radius: var(--radius-lg);
 }
 
@@ -40,13 +40,13 @@
   align-items: center;
 }
 
-/* Native input styling defers to global form control system (44px height, 8px radius) */
+/* Native input styling defers to global form control system (2.75rem height, 0.5rem radius) */
 input {
   width: 100%;
 }
 
 input.has-prefix {
-  padding-left: var(--space-10); /* 40px for icon + padding */
+  padding-left: var(--space-10); /* 2.5rem for icon + padding */
 }
 
 input.has-suffix {

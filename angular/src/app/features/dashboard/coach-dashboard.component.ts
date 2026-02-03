@@ -174,8 +174,10 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               <div class="priority-athletes-strip">
                 <div class="strip-header">
                   <span class="strip-title"
-                    ><i class="pi pi-exclamation-triangle"></i> Needs Attention
-                    Now</span
+                    ><i
+                      class="pi pi-exclamation-triangle strip-title-icon"
+                    ></i>
+                    Needs Attention Now</span
                   >
                   <p-badge
                     [value]="riskAlerts().length.toString()"
@@ -247,8 +249,8 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               <div class="priority-athletes-strip missing-data-strip">
                 <div class="strip-header">
                   <span class="strip-title"
-                    ><i class="pi pi-exclamation-circle"></i> Data
-                    Incomplete</span
+                    ><i class="pi pi-exclamation-circle strip-title-icon"></i>
+                    Data Incomplete</span
                   >
                   <p-badge
                     [value]="playersWithMissingData().length.toString()"

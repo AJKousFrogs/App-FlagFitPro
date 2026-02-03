@@ -28,16 +28,16 @@
   --ds-state-active-bg-dark: rgba(255, 255, 255, 0.12);
 
   /* Focus ring - consistent green ring for accessibility */
-  --ds-state-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.3);
-  --ds-state-focus-outline: 2px solid var(--ds-primary-green);
-  --ds-state-focus-outline-offset: 2px;
+  --ds-state-focus-ring: var(--shadow-focus);
+  --ds-state-focus-outline: var(--border-2) solid var(--ds-primary-green);
+  --ds-state-focus-outline-offset: var(--focus-outline-offset);
 
   /* Disabled */
   --ds-state-disabled-opacity: 0.5;
   --ds-state-disabled-cursor: not-allowed;
 
   /* Transition timing - prevents blur on first render */
-  --ds-state-transition-duration: 150ms;
+  --ds-state-transition-duration: var(--transition-fast);
   --ds-state-transition-timing: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ds-state-transition: var(--ds-state-transition-duration)
     var(--ds-state-transition-timing);
@@ -49,10 +49,13 @@
    ========================================================================== */
 
 /* Applied via JS on document ready, removed after first paint */
-html.ds-initial-render,
-html.ds-initial-render * {
-  transition: none !important;
-  animation-duration: 0.01ms !important;
+@layer overrides {
+  /* Ticket: DS-EXC-021 | Remove by: 2026-06-01 */
+  html.ds-initial-render,
+  html.ds-initial-render * {
+    transition: none;
+    animation-duration: var(--transition-instant);
+  }
 }
 
 /* ==========================================================================
@@ -84,9 +87,9 @@ html.ds-initial-render * {
 
 @mixin ds-focus-ring($color: var(--ds-primary-green)) {
   &:focus-visible {
-    outline: 2px solid $color;
+    outline: var(--focus-outline-width) solid $color;
     outline-offset: var(--ds-state-focus-outline-offset);
-    box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.25);
+    box-shadow: var(--shadow-focus);
   }
 
   /* Hide outline for mouse users */
@@ -166,8 +169,8 @@ html.ds-initial-render * {
       background-color: $hover-bg;
       color: $hover-color;
       border-color: $hover-border;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(8, 153, 73, 0.25);
+      transform: translateY(calc(var(--space-0-5) * -1));
+      box-shadow: var(--hover-shadow-md);
     }
   }
 
@@ -176,7 +179,7 @@ html.ds-initial-render * {
       .disabled
     ) {
     transform: translateY(0) scale(0.98);
-    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+    box-shadow: var(--shadow-sm);
   }
 
   /* Touch device active */
@@ -185,7 +188,7 @@ html.ds-initial-render * {
         .disabled
       ) {
       transform: scale(0.97);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 
@@ -215,10 +218,10 @@ html.ds-initial-render * {
 
   /* FOCUS */
   &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
     border-color: var(--ds-primary-green);
-    box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.2);
+    box-shadow: var(--shadow-focus);
   }
 
   &:focus:not(:focus-visible) {
@@ -245,7 +248,7 @@ html.ds-initial-render * {
 
     &:focus-visible {
       border-color: var(--color-status-error);
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+      box-shadow: var(--shadow-error-focus);
     }
   }
 
@@ -256,7 +259,7 @@ html.ds-initial-render * {
 
     &:focus-visible {
       border-color: var(--color-status-success);
-      box-shadow: 0 0 0 3px rgba(99, 173, 14, 0.2);
+      box-shadow: var(--shadow-success-focus);
     }
   }
 }
@@ -275,14 +278,14 @@ html.ds-initial-render * {
     /* HOVER - Desktop only */
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+        transform: translateY(calc(var(--space-0-5) * -1));
+        box-shadow: var(--shadow-md);
       }
     }
 
     /* ACTIVE/PRESSED */
     &:active {
-      transform: translateY(-2px) scale(0.99);
+      transform: translateY(calc(var(--space-0-5) * -1)) scale(0.99);
     }
 
     /* Touch device active */
@@ -298,7 +301,7 @@ html.ds-initial-render * {
     /* Non-interactive cards just get subtle hover elevation */
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+        box-shadow: var(--shadow-md);
       }
     }
   }
@@ -327,7 +330,7 @@ html.ds-initial-render * {
   &[aria-selected="true"] {
     background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
     color: var(--ds-primary-green);
-    font-weight: var(--ds-font-weight-semibold, 600);
+    font-weight: var(--ds-font-weight-semibold, var(--font-weight-semibold));
   }
 
   /* FOCUS */
@@ -415,7 +418,7 @@ html.ds-initial-render * {
   /* HOVER */
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
-      box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.1);
+      box-shadow: var(--shadow-focus);
     }
   }
 
@@ -497,7 +500,7 @@ html.ds-initial-render * {
     min-height: inherit;
 
     /* Subtle visual indication */
-    opacity: 0.8;
+    opacity: var(--opacity-strong);
   }
 }
 
@@ -508,12 +511,14 @@ html.ds-initial-render * {
 
 @mixin ds-reduced-motion {
   @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    animation: none;
+    @at-root #{&} {
+      transition: none;
+      animation: none;
+    }
 
-    &:hover,
-    &:active,
-    &:focus-visible {
+    @at-root #{&}:hover,
+      #{&}:active,
+      #{&}:focus-visible {
       transform: none;
     }
   }

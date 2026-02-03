@@ -76,7 +76,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
       <p-dialog
         [(visible)]="showDetails"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '800px' }"
+        styleClass="dialog-w-xl dialog-max-w-2xl"
         [closable]="true"
         header="Evidence-Based Configuration Details"
       >

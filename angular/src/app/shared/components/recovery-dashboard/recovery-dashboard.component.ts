@@ -41,7 +41,7 @@ interface RecoveryMetric {
   unit: string;
   percentage: number;
   icon: string;
-  color: string;
+  tone: "success" | "warning" | "error";
 }
 
 // Using RecoveryProtocol and RecoverySession from recovery.service.ts
@@ -132,7 +132,7 @@ interface ChartOptions {
             @for (metric of recoveryMetrics(); track metric.name) {
               <div class="metric">
                 <div class="metric-header">
-                  <i [class]="metric.icon" [style.color]="metric.color"></i>
+                  <i [class]="metric.icon" [ngClass]="'tone-' + metric.tone"></i>
                   <span class="metric-name">{{ metric.name }}</span>
                 </div>
                 <div class="metric-value">
@@ -142,7 +142,7 @@ interface ChartOptions {
                 <p-progressBar
                   [value]="metric.percentage"
                   [showValue]="false"
-                  [style]="{ '--p-progressbar-value-bg': metric.color }"
+                  [styleClass]="'metric-progress tone-' + metric.tone"
                 >
                 </p-progressBar>
               </div>
@@ -308,7 +308,7 @@ interface ChartOptions {
         header="Protocol Details"
         [(visible)]="showProtocolDialog"
         [modal]="true"
-        [style]="{ width: '600px', maxWidth: '95vw' }"
+        styleClass="layout-w-xl dialog-w-xl dialog-max-w-xl"
         [draggable]="false"
         [resizable]="false"
       >

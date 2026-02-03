@@ -89,7 +89,7 @@ export const successCircleAnimation: AnimationTriggerMetadata = trigger(
         "500ms cubic-bezier(0.34, 1.56, 0.64, 1)",
         keyframes([
           style({ opacity: 0, transform: "scale(0)", offset: 0 }),
-          style({ opacity: 0.3, transform: "scale(1.5)", offset: 0.5 }),
+          style({ opacity: 0.25, transform: "scale(1.5)", offset: 0.5 }),
           style({ opacity: 0, transform: "scale(2)", offset: 1 }),
         ]),
       ),
@@ -276,7 +276,7 @@ export const achievementUnlockAnimation: AnimationTriggerMetadata = trigger(
 // ================================
 
 /**
- * Toast notification slide-in animation
+ *notification slide-in animation
  * Usage: [@toastSlide]
  */
 export const toastSlideAnimation: AnimationTriggerMetadata = trigger(
@@ -333,7 +333,7 @@ export const confettiParticleAnimation: AnimationTriggerMetadata = trigger(
             offset: 0.3,
           }),
           style({
-            opacity: 0.8,
+            opacity: 0.9,
             transform:
               "translateY(50px) translateX({{ x2 }}px) rotate({{ rotation2 }}deg) scale(0.8)",
             offset: 0.7,

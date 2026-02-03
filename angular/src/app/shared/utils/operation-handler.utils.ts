@@ -5,7 +5,7 @@
  * - Automatic error state reset before operations
  * - Loading state management
  * - Error state clearing on success
- * - Toast notifications
+ * -notifications
  * - Offline queue fallback
  *
  * Use this for ANY component operation that involves API calls or async work.
@@ -36,8 +36,8 @@
  * @version 1.0.0
  */
 
-import { WritableSignal, Signal, signal, DestroyRef } from "@angular/core";
-import { Observable, firstValueFrom, Subscription } from "rxjs";
+import { WritableSignal, DestroyRef } from "@angular/core";
+import { Observable, firstValueFrom } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";

@@ -25,11 +25,8 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   WeatherCancellationService,
-  WeatherAlert,
-  SubstituteWorkout,
   WeatherSensitiveSession,
 } from "../../../core/services/weather-cancellation.service";
-import { WeatherData } from "../../../core/services/weather.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -806,7 +803,7 @@ export class TrainingScheduleComponent implements OnInit {
             date: dateParam,
           });
         }
-      } catch (error) {
+      } catch (_error) {
         this.logger.warn("Invalid date query parameter", { date: dateParam });
       }
     }
@@ -844,7 +841,7 @@ export class TrainingScheduleComponent implements OnInit {
                 .checkWeatherForTraining(outdoorSession)
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe({
-                  next: ({ weather, alert }) => {
+                  next: ({ weather: _weather, alert }) => {
                     if (alert) {
                       this.logger.info("Weather alert detected", {
                         severity: alert.severity,

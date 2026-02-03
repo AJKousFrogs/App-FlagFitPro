@@ -18,8 +18,6 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -92,7 +90,7 @@ interface AdminTeam {
     TableModule,
     TableModule,
     Tag,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -101,9 +99,7 @@ interface AdminTeam {
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="admin-page">
+<div class="admin-page">
         <app-page-header
           title="Superadmin Dashboard"
           subtitle="System administration and monitoring"
@@ -534,12 +530,23 @@ export class SuperadminDashboardComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      type AdminDashboardResponse = {
+        success?: boolean;
+        data?: {
+          stats?: PlatformStats;
+          activity?: ActivityLog[];
+          services?: ServiceStatus[];
+          users?: AdminUser[];
+          teams?: AdminTeam[];
+        };
+      };
+      const response = (await firstValueFrom(
         this.api.get("/api/admin/dashboard"),
-      );
+      )) as AdminDashboardResponse;
       if (response?.success && response.data) {
-        this.stats.set(response.data.stats || {});
+        if (response.data.stats) {
+          this.stats.set(response.data.stats);
+        }
         this.recentActivity.set(response.data.activity || []);
         this.services.set(response.data.services || []);
         this.users.set(response.data.users || []);
@@ -559,7 +566,6 @@ export class SuperadminDashboardComponent implements OnInit {
    * All data should come from the actual database via the API.
    * Empty states are now shown when no data is available.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private loadDemoData(): void {
     // NO-OP: Mock data removed to ensure data integrity
     // Admin dashboard now shows empty states when API returns no data

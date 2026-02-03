@@ -170,7 +170,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       header="Override History"
       [(visible)]="showHistory"
       [modal]="true"
-      [style]="{ width: '700px' }"
+      styleClass="dialog-w-lg"
       [dismissableMask]="true"
       (onShow)="loadHistory()"
     >

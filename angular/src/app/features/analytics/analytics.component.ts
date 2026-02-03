@@ -5,7 +5,6 @@ import {
   Component,
   computed,
   HostListener,
-  QueryList,
   viewChildren,
   inject,
   signal,
@@ -42,10 +41,7 @@ import { NotificationService } from "../../core/services/notification.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import {
-  TeamPerformanceRankingService,
-  PerformanceAchievement,
-} from "../../core/services/team-performance-ranking.service";
+import { TeamPerformanceRankingService } from "../../core/services/team-performance-ranking.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";

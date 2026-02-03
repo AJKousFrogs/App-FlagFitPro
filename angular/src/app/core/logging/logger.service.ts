@@ -264,11 +264,17 @@ export class LoggerService {
       // Handle PostgrestError and similar objects
       if ("message" in error && typeof error.message === "string") {
         const err = new Error(error.message);
+        type ErrorWithDetails = Error & {
+          code?: string | number;
+          details?: unknown;
+        };
         if ("code" in error) {
-          (err as any).code = error.code;
+          (err as ErrorWithDetails).code = (error as { code?: string | number })
+            .code;
         }
         if ("details" in error) {
-          (err as any).details = error.details;
+          (err as ErrorWithDetails).details = (error as { details?: unknown })
+            .details;
         }
         return err;
       }
@@ -398,7 +404,7 @@ export class LoggerService {
    * Send error to external tracking service (Sentry, etc.)
    * @param log - Structured log entry
    */
-  private sendToErrorTracking(log: StructuredLog): void {
+  private sendToErrorTracking(_log: StructuredLog): void {
     // TODO: Integrate with error tracking service
     // Example: Sentry.captureException(log.error, { contexts: log.context });
   }

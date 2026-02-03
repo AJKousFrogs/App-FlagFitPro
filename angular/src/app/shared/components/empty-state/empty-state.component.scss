@@ -12,14 +12,14 @@
   justify-content: center;
   padding: var(--space-12);
   text-align: center;
-  min-height: 300px;
+  min-height: 18.75rem;
   animation: empty-state-fade-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes empty-state-fade-in {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(1.25rem);
   }
   to {
     opacity: 1;
@@ -29,13 +29,13 @@
 
 .empty-state.compact {
   padding: var(--space-6);
-  min-height: 200px;
+  min-height: 12.5rem;
 }
 
 .empty-icon {
   font-size: var(--ds-font-size-4-5rem);
   margin-bottom: var(--space-4);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   animation: empty-icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
 }
 
@@ -45,7 +45,7 @@
     transform: scale(0.5);
   }
   to {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
     transform: scale(1);
   }
 }
@@ -66,7 +66,7 @@
 @keyframes empty-text-slide {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(0.625rem);
   }
   to {
     opacity: 1;
@@ -82,7 +82,7 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
-  max-width: 500px;
+  max-width: 31.25rem;
   animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
 }
 
@@ -96,7 +96,7 @@
   padding: 0;
   margin: var(--space-4) 0;
   text-align: left;
-  max-width: 400px;
+  max-width: 25rem;
   animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
 }
 
@@ -124,7 +124,7 @@
   animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 40rem) {
   .empty-actions {
     flex-direction: row;
   }
@@ -148,7 +148,7 @@
   font-size: var(--ds-font-size-md);
   color: var(--ds-primary-green);
   text-decoration: none;
-  transition: color 150ms ease-in-out;
+  transition: color var(--transition-fast) var(--ease-standard);
 }
 
 .empty-help-link:hover {
@@ -166,7 +166,7 @@ p-button {
 @include respond-to(md) {
   .empty-state {
     padding: var(--space-6);
-    min-height: 200px;
+    min-height: 12.5rem;
   }
 
   .empty-icon {

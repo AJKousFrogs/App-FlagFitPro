@@ -30,8 +30,8 @@
 }
 
 .vs-badge {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +63,7 @@
   padding: var(--space-4);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
-  border: 2px solid transparent;
+  border: 0.125rem solid transparent;
 }
 
 .player-header.player1 {
@@ -121,7 +121,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border-secondary);
+  border-bottom: 0.0625rem solid var(--color-border-secondary);
 }
 
 .card-header h4 {
@@ -133,13 +133,13 @@
   display: flex;
   justify-content: center;
   padding: var(--space-4);
-  max-height: 400px;
+  max-height: 25rem;
 }
 
 /* Stats Comparison */
 .stats-comparison {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(21.875rem, 1fr));
   gap: var(--space-4);
 }
 
@@ -209,7 +209,7 @@
 
 .comparison-bar {
   display: flex;
-  height: 6px;
+  height: 0.375rem;
   background: var(--color-border-secondary);
   border-radius: var(--radius-sm);
   margin-top: var(--space-1);
@@ -271,7 +271,7 @@
   padding: var(--space-8);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
-  border: 2px dashed var(--color-border-secondary);
+  border: 0.125rem dashed var(--color-border-secondary);
 }
 
 .empty-state i {

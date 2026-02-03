@@ -33,6 +33,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TeamStatisticsService } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
+import { DialogService } from "../../core/ui/dialog.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -533,6 +534,7 @@ export class EquipmentComponent implements OnInit {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
+  private dialogService = inject(DialogService);
 
   // State
   equipment = signal<EquipmentItem[]>([]);
@@ -768,8 +770,12 @@ export class EquipmentComponent implements OnInit {
     }
   }
 
-  deleteItem(item: EquipmentItem): void {
-    if (!confirm(`Delete ${item.name}?`)) return;
+  async deleteItem(item: EquipmentItem): Promise<void> {
+    const confirmed = await this.dialogService.confirm(
+      `Delete ${item.name}?`,
+      "Delete Item",
+    );
+    if (!confirmed) return;
 
     this.equipmentService
       .deleteEquipmentItem(item.id)

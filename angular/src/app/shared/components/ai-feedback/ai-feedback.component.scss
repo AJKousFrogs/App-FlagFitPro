@@ -24,9 +24,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--color-border-secondary);
+  width: var(--space-8);
+  height: var(--space-8);
+  border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-secondary);
@@ -48,7 +48,7 @@
 }
 
 .feedback-btn.disabled {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   cursor: not-allowed;
 }
 
@@ -106,13 +106,13 @@
 }
 
 .type-label i {
-  width: 16px;
+  width: var(--space-4);
   color: var(--color-text-secondary);
 }
 
 .outcome-question {
   padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .outcome-options {
@@ -123,7 +123,7 @@
 .outcome-btn {
   flex: 1;
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-secondary);
@@ -146,8 +146,8 @@
 
 @include respond-to(sm) {
   .feedback-btn {
-    width: 28px;
-    height: 28px;
+    width: calc(var(--space-6) + var(--space-1)); // 1.75rem
+    height: calc(var(--space-6) + var(--space-1)); // 1.75rem
   }
 
   .feedback-btn i {

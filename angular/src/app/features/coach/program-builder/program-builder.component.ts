@@ -17,11 +17,10 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -34,12 +33,14 @@ import {
   programStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { DialogService } from "../../../core/ui/dialog.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -155,27 +156,24 @@ const PHASE_PRESETS = [
     Card,
     Checkbox,
     DatePicker,
-    Dialog,
-    PrimeTemplate,
     InputNumber,
     InputText,
     ProgressBar,
     Select,
     TableModule,
-    TableModule,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="program-builder-page">
+<div class="program-builder-page">
         <app-page-header
           title="Training Programs"
           subtitle="Build and assign training plans"
@@ -401,13 +399,17 @@ const PHASE_PRESETS = [
       </div>
 
       <!-- Create/Edit Program Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showCreateDialog"
-        [header]="isEditing() ? 'Edit Program' : 'Create Training Program'"
-        [modal]="true"
-        [closable]="true"
         styleClass="program-dialog"
+        (hide)="showCreateDialog = false"
       >
+        <app-dialog-header
+          [title]="isEditing() ? 'Edit Program' : 'Create Training Program'"
+          subtitle="Build multi-week programs with phases, assigns, and weekly templates"
+          icon="list"
+          (close)="showCreateDialog = false"
+        ></app-dialog-header>
         <div class="program-form">
           <!-- Program Details -->
           <div class="form-section">
@@ -596,8 +598,7 @@ const PHASE_PRESETS = [
             </div>
           </div>
         </div>
-
-        <ng-template pTemplate="footer">
+        <div class="dialog-actions">
           <app-button variant="secondary" (clicked)="saveDraft()"
             >Save as Draft</app-button
           >
@@ -610,8 +611,8 @@ const PHASE_PRESETS = [
             (clicked)="publishNewProgram()"
             >Publish Program</app-button
           >
-        </ng-template>
-      </p-dialog>
+        </div>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./program-builder.component.scss",
@@ -620,6 +621,7 @@ export class ProgramBuilderComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
+  private readonly dialogService = inject(DialogService);
 
   // Expose constants to template
   DAYS = DAYS;
@@ -854,8 +856,12 @@ export class ProgramBuilderComponent implements OnInit {
     });
   }
 
-  deleteProgram(program: TrainingProgram): void {
-    if (!confirm(`Delete "${program.name}"?`)) return;
+  async deleteProgram(program: TrainingProgram): Promise<void> {
+    const confirmed = await this.dialogService.confirm(
+      `Delete "${program.name}"?`,
+      "Delete Program",
+    );
+    if (!confirmed) return;
 
     this.programs.update((progs) => progs.filter((p) => p.id !== program.id));
 

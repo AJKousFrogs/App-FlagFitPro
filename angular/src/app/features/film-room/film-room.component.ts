@@ -26,7 +26,6 @@ import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
@@ -85,7 +84,7 @@ interface DiscussionMessage {
     Select,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
@@ -94,9 +93,7 @@ interface DiscussionMessage {
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="film-room-page">
+<div class="film-room-page">
         <app-page-header
           title="Film Room"
           subtitle="Watch assigned game film and review coach feedback"
@@ -158,7 +155,7 @@ interface DiscussionMessage {
             optionValue="value"
             placeholder="Status"
             [showClear]="true"
-            [style]="{ width: '160px' }"
+            styleClass="filter-select"
           ></p-select>
         </div>
 
@@ -251,7 +248,6 @@ interface DiscussionMessage {
         [header]="selectedFilm()?.title || 'Film Details'"
         [modal]="true"
         [closable]="true"
-        [style]="{ width: '95vw', maxWidth: '1000px' }"
         styleClass="film-detail-dialog"
       >
         @if (selectedFilm(); as film) {

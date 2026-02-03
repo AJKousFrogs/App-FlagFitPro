@@ -14,7 +14,7 @@
 }
 
 .rich-text-editor {
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-md);
   background: var(--surface-primary);
   overflow: hidden;
@@ -25,7 +25,7 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-2);
-  border-bottom: 1px solid var(--color-border-primary);
+  border-bottom: 0.0625rem solid var(--color-border-primary);
   background: var(--surface-secondary);
   flex-wrap: wrap;
 }
@@ -56,15 +56,15 @@
 }
 
 .toolbar-separator {
-  width: 1px;
+  width: 0.0625rem;
   height: var(--space-6);
   background: var(--color-border-primary);
   margin: 0 var(--space-1);
 }
 
 .rich-text-content {
-  min-height: 200px;
-  max-height: 400px;
+  min-height: 12.5rem;
+  max-height: 25rem;
   overflow-y: auto;
   padding: var(--space-4);
   font-size: var(--ds-font-size-md);

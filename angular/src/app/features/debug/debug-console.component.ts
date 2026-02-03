@@ -14,7 +14,15 @@ interface DebugLog {
   timestamp: Date;
   level: "info" | "success" | "warning" | "error";
   message: string;
-  details?: any;
+  details?: unknown;
+}
+
+interface QueryStats {
+  total: number;
+  successful: number;
+  failed: number;
+  avgDuration: number;
+  byTable: Record<string, number>;
 }
 
 /**
@@ -410,13 +418,13 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
   realtimeActive = false;
   showStatsPanel = false;
   logs: DebugLog[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stats: any = null;
+  stats: QueryStats | null = null;
 
   private supabase!: SupabaseClient;
   private userId!: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private realtimeSubscription: any;
+  private realtimeSubscription:
+    | ReturnType<SupabaseDebugService["subscribeWithConflictDetection"]>
+    | null = null;
 
   async ngOnInit() {
     // Initialize Supabase client
@@ -691,7 +699,7 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
     this.addLog("success", "Logs exported");
   }
 
-  private addLog(level: DebugLog["level"], message: string, details?: any) {
+  private addLog(level: DebugLog["level"], message: string, details?: unknown) {
     this.logs.unshift({
       timestamp: new Date(),
       level,
@@ -705,7 +713,7 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getTestData(): any {
+  private getTestData(): Record<string, unknown> {
     const baseData = {
       user_id: this.userId,
       created_at: new Date().toISOString(),
@@ -746,7 +754,7 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  objectEntries(obj: any): [string, any][] {
+  objectEntries(obj: Record<string, unknown>): [string, unknown][] {
     return Object.entries(obj);
   }
 }

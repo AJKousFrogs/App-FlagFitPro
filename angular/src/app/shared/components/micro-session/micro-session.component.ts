@@ -97,7 +97,7 @@ type SessionStatus =
         [modal]="true"
         [closable]="currentStatus() !== 'in_progress'"
         [dismissableMask]="currentStatus() !== 'in_progress'"
-        [style]="{ width: '500px', maxWidth: '95vw' }"
+        styleClass="dialog-w-xl dialog-max-w-lg"
         (onHide)="onDialogHide()"
       >
         <ng-container *ngTemplateOutlet="sessionContent"></ng-container>

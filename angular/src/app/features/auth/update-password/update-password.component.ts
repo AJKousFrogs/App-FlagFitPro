@@ -18,7 +18,6 @@ import { Card } from "primeng/card";
 
 import { Message } from "primeng/message";
 import { Password } from "primeng/password";
-import { Toast } from "primeng/toast";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -44,11 +43,10 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     ButtonComponent,
     Password,
     Message,
-    Toast,
+
   ],
   template: `
-    <p-toast></p-toast>
-    <div class="update-password-page">
+<div class="update-password-page">
       <p-card class="update-password-card">
         <ng-template pTemplate="header">
           <div class="update-password-logo">

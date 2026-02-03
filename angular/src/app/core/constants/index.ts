@@ -5,7 +5,7 @@
  * This is the single source of truth for all application constants.
  *
  * @example
- * // Toast messages
+ * //messages
  * import { TOAST } from '@core/constants';
  * this.toastService.success(TOAST.SUCCESS.SAVED);
  * this.toastService.error(TOAST.ERROR.NETWORK);
@@ -84,7 +84,7 @@ export {
   PERFORMANCE,
 } from "./app.constants";
 
-// Toast messages
+//messages
 export {
   TOAST,
   TOAST_SUCCESS,

@@ -152,7 +152,7 @@ textarea::placeholder,
 [disabled],
 .p-disabled,
 .p-component:disabled {
-  opacity: 0.5; // Reduced from 0.38 to ensure 3:1 contrast
+  opacity: var(--opacity-half); // Reduced from 0.38 to ensure 3:1 contrast
   cursor: not-allowed;
 }
 
@@ -160,8 +160,8 @@ textarea::placeholder,
 a:not([class*="p-button"]) {
   color: var(--ds-primary-green);
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+  text-decoration-thickness: var(--border-1);
+  text-underline-offset: var(--space-0-5);
 
   &:hover {
     color: var(--ds-primary-green-hover);
@@ -173,8 +173,8 @@ a:not([class*="p-button"]) {
 
   // Ensure links are distinguishable without color alone
   &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
+    outline: var(--border-2) solid var(--ds-primary-green);
+    outline-offset: var(--space-0-5);
     border-radius: var(--radius-sm);
   }
 }
@@ -318,7 +318,7 @@ small:not(.p-error) {
     --color-border-accessible: var(--color-border-accessible-hc);
 
     // Increase border widths
-    --input-border-width: 2px;
+    --input-border-width: var(--border-2);
   }
 
   // Ensure all borders are visible
@@ -329,7 +329,7 @@ small:not(.p-error) {
   .p-inputtext,
   .p-button,
   .p-card {
-    border-width: 2px;
+    border-width: var(--border-2);
   }
 
   // Remove subtle backgrounds that reduce contrast
@@ -340,8 +340,8 @@ small:not(.p-error) {
 
   // Ensure focus states are highly visible
   :focus-visible {
-    outline: 3px solid black;
-    outline-offset: 2px;
+    outline: var(--space-0-75) solid black;
+    outline-offset: var(--space-0-5);
   }
 }
 
@@ -357,11 +357,11 @@ small:not(.p-error) {
 
   button,
   .p-button {
-    border: 2px solid ButtonText;
+    border: var(--border-2) solid ButtonText;
   }
 
   :focus-visible {
-    outline: 3px solid Highlight;
+    outline: var(--space-0-75) solid Highlight;
   }
 
   // Ensure icons are visible

@@ -23,7 +23,6 @@ import { SelectButton } from "primeng/selectbutton";
 import { Slider } from "primeng/slider";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
@@ -70,12 +69,11 @@ interface EquipmentOption {
     Chip,
     StatusTagComponent,
     SelectButton,
-    Toast,
+
     ButtonComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <p-card header="Create Training Session">
+<p-card header="Create Training Session">
       <form [formGroup]="trainingForm" class="smart-training-form">
         <!-- AI Suggestions Banner -->
         @if (aiSuggestions().length > 0) {

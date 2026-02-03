@@ -11,7 +11,7 @@
     var(--surface-primary) 0%,
     var(--primitive-warning-50) 100%
   );
-  border: 2px solid var(--primitive-warning-300);
+  border: var(--border-2) solid var(--primitive-warning-300);
   border-radius: var(--radius-xl);
   padding: var(--space-5);
   margin-bottom: var(--space-4);
@@ -32,7 +32,7 @@
 }
 
 .trophy-icon {
-  width: var(--touch-target-md); /* 44px */
+  width: var(--touch-target-md); /* 2.75rem */
   height: var(--touch-target-md);
   background: var(--primitive-warning-100);
   border-radius: var(--radius-lg);
@@ -78,7 +78,7 @@
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .progress-count {
@@ -95,8 +95,8 @@
 }
 
 .game-dot {
-  width: var(--avatar-size-sm); /* 32px */
-  height: var(--avatar-size-sm); /* 32px */
+  width: var(--avatar-size-sm); /* 2rem */
+  height: var(--avatar-size-sm); /* 2rem */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -111,7 +111,7 @@
 }
 
 .game-dot.upcoming {
-  border: 2px dashed var(--color-border-secondary);
+  border: var(--border-2) dashed var(--color-border-secondary);
   background: transparent;
 }
 
@@ -273,6 +273,10 @@
   // Component-specific styles remain here
 }
 
+.progressbar-height-sm {
+  height: var(--space-2);
+}
+
 .hydration-details {
   display: flex;
   justify-content: flex-end;
@@ -299,7 +303,7 @@
   gap: var(--space-1);
   padding: var(--space-2);
   background: var(--primitive-info-50);
-  border: 1px solid var(--primitive-info-200);
+  border: var(--border-1) solid var(--primitive-info-200);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
@@ -349,7 +353,7 @@
   padding: var(--ds-space-1) var(--ds-space-2);
   border-radius: var(--radius-lg);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .phase-badge.phase-pre-game {
@@ -406,8 +410,8 @@
   }
 
   .game-dot {
-    width: var(--avatar-size-sm); /* 32px - scaled */
-    height: var(--avatar-size-sm); /* 32px - scaled */
+    width: var(--avatar-size-sm); /* 2rem - scaled */
+    height: var(--avatar-size-sm); /* 2rem - scaled */
     font-size: var(--ds-font-size-xs);
   }
 

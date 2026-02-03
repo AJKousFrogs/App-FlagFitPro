@@ -17,7 +17,6 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { Select } from "primeng/select";
 import { MultiSelect } from "primeng/multiselect";
 import { Dialog } from "primeng/dialog";
-import { Toast } from "primeng/toast";
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Slider } from "primeng/slider";
@@ -56,7 +55,7 @@ import { capitalize } from "../../shared/utils/format.utils";
     MultiSelect,
     Dialog,
     PrimeTemplate,
-    Toast,
+
     ProgressBar,
     Tabs,
     TabList,
@@ -76,8 +75,7 @@ import { capitalize } from "../../shared/utils/format.utils";
   ],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-      <div class="exercisedb-manager">
+<div class="exercisedb-manager">
         <app-page-header
           title="Exercise Database Manager"
           subtitle="Curate and manage flag football exercises from ExerciseDB"

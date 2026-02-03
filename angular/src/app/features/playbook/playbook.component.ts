@@ -26,7 +26,6 @@ import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
@@ -91,7 +90,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     Message,
     ProgressBar,
     Select,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
@@ -101,9 +100,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="playbook-page">
+<div class="playbook-page">
         <app-page-header
           title="Playbook"
           subtitle="Study and memorize team plays for your position"

@@ -4,7 +4,7 @@
  * Player Dashboard - Mobile Responsive Styles
  * ================================================================
  * Optimized for Chrome Mobile & Safari iOS
- * Breakpoints: xs (0-479px), sm (480-639px), md (640-767px), lg (768px+)
+ * Breakpoints: xs (0-29.9375rem), sm (480-39.9375rem), md (640-47.9375rem), lg (48rem+)
  * ================================================================
  */
 
@@ -50,8 +50,8 @@
   flex-direction: column;
   height: 100%; /* Match heights within grid */
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--transition-base) var(--ease-standard),
+    box-shadow var(--transition-base) var(--ease-standard);
 
   &:hover {
     transform: var(--transform-hover-lift);
@@ -81,8 +81,8 @@
 }
 
 .stat-icon {
-  width: var(--space-12); /* 48px */
-  height: var(--space-12); /* 48px */
+  width: var(--space-12); /* 3rem */
+  height: var(--space-12); /* 3rem */
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -92,8 +92,8 @@
 
   // Mobile: Smaller icons, no margin
   @include respond-to(sm) {
-    width: var(--space-10); /* 40px */
-    height: var(--space-10); /* 40px */
+    width: var(--space-10); /* 2.5rem */
+    height: var(--space-10); /* 2.5rem */
     font-size: var(--ds-font-size-xl);
     margin-bottom: 0;
     margin-right: var(--space-3);
@@ -160,8 +160,8 @@
 }
 
 .merlin-avatar {
-  width: var(--space-20); /* 80px */
-  height: var(--space-20); /* 80px */
+  width: var(--space-20); /* 5rem */
+  height: var(--space-20); /* 5rem */
   border-radius: var(--radius-full);
   background: linear-gradient(
     135deg,
@@ -178,8 +178,8 @@
 
   // Mobile: Smaller avatar
   @include respond-to(md) {
-    width: var(--space-16); /* 64px */
-    height: var(--space-16); /* 64px */
+    width: var(--space-16); /* 4rem */
+    height: var(--space-16); /* 4rem */
     font-size: var(--ds-font-size-3xl);
   }
 }
@@ -243,17 +243,17 @@
 
 .chart-container {
   position: relative;
-  height: calc(var(--space-12) * 6.25); /* 300px */
+  height: calc(var(--space-12) * 6.25); /* 18.75rem */
   padding: var(--space-2);
 
   // Mobile: Smaller chart
   @include respond-to(md) {
-    height: calc(var(--space-10) * 6.25); /* 250px */
+    height: calc(var(--space-10) * 6.25); /* 15.625rem */
     padding: var(--space-1);
   }
 
   @include respond-to(sm) {
-    height: calc(var(--space-10) * 5); /* 200px */
+    height: calc(var(--space-10) * 5); /* 12.5rem */
   }
 
   // Canvas responsive styling moved to _exceptions.scss (DS-EXC-002)
@@ -279,7 +279,7 @@
   padding: var(--space-3);
   background: var(--surface-ground);
   border-radius: var(--radius-md);
-  border-left: var(--border-4) solid var(--ds-primary-green); /* 4px - closest token to 3px */
+  border-left: var(--border-4) solid var(--ds-primary-green); /* 0.25rem - closest token to 0.1875rem */
 
   // Mobile: Compact padding
   @include respond-to(md) {
@@ -346,7 +346,7 @@
 
   // Touch-friendly on mobile
   @include respond-to(md) {
-    min-height: calc(var(--space-8) * 2.25); /* 72px - Apple HIG minimum */
+    min-height: calc(var(--space-8) * 2.25); /* 4.5rem - Apple HIG minimum */
     padding: var(--space-3);
   }
 
@@ -365,8 +365,8 @@
 }
 
 .action-icon {
-  width: var(--space-12); /* 48px */
-  height: var(--space-12); /* 48px */
+  width: var(--space-12); /* 3rem */
+  height: var(--space-12); /* 3rem */
   border-radius: var(--radius-md);
   background: var(--ds-primary-green);
   color: white;
@@ -377,8 +377,8 @@
   flex-shrink: 0;
 
   @include respond-to(md) {
-    width: var(--space-10); /* 40px */
-    height: var(--space-10); /* 40px */
+    width: var(--space-10); /* 2.5rem */
+    height: var(--space-10); /* 2.5rem */
     font-size: var(--ds-font-size-xl);
   }
 }
@@ -439,8 +439,8 @@
 }
 
 .no-program-icon {
-  width: var(--space-20); /* 80px */
-  height: var(--space-20); /* 80px */
+  width: var(--space-20); /* 5rem */
+  height: var(--space-20); /* 5rem */
   border-radius: var(--radius-full);
   background: var(--color-status-error-subtle);
   color: var(--color-status-error);
@@ -451,8 +451,8 @@
   font-size: var(--ds-font-size-3xl);
 
   @include respond-to(md) {
-    width: var(--space-16); /* 64px */
-    height: var(--space-16); /* 64px */
+    width: var(--space-16); /* 4rem */
+    height: var(--space-16); /* 4rem */
     font-size: var(--ds-font-size-3xl);
   }
 }
@@ -471,7 +471,7 @@
 .no-program-message {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  max-width: var(--content-max-width-sm); /* 640px - closest token to 600px */
+  max-width: var(--content-max-width-sm); /* 40rem - closest token to 37.5rem */
   margin: 0 auto var(--space-4);
   line-height: var(--ds-line-height-relaxed);
 
@@ -490,7 +490,7 @@
   @include respond-to(sm) {
     flex-direction: column;
     align-items: stretch;
-    max-width: calc(var(--space-12) * 6.25); /* 300px */
+    max-width: calc(var(--space-12) * 6.25); /* 18.75rem */
     margin: 0 auto;
   }
 }
@@ -512,8 +512,8 @@
 }
 
 .acwr-icon-building {
-  width: var(--space-12); /* 48px */
-  height: var(--space-12); /* 48px */
+  width: var(--space-12); /* 3rem */
+  height: var(--space-12); /* 3rem */
   border-radius: var(--radius-lg);
   background: linear-gradient(
     135deg,
@@ -524,14 +524,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--ds-font-size-2xl); /* 24px */
+  font-size: var(--ds-font-size-2xl); /* 1.5rem */
   flex-shrink: 0;
   opacity: var(--opacity-subtle); // Dimmed to indicate "building"
 
   @include respond-to(md) {
-    width: var(--space-10); /* 40px */
-    height: var(--space-10); /* 40px */
-    font-size: var(--ds-font-size-xl); /* 20px */
+    width: var(--space-10); /* 2.5rem */
+    height: var(--space-10); /* 2.5rem */
+    font-size: var(--ds-font-size-xl); /* 1.25rem */
   }
 }
 
@@ -560,7 +560,7 @@
 
 .acwr-progress-bar {
   flex: 1;
-  height: var(--space-2); /* 8px */
+  height: var(--space-2); /* 0.5rem */
   background: var(--surface-border);
   border-radius: var(--radius-full);
   overflow: hidden;

@@ -31,16 +31,12 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { TableModule } from "primeng/table";
-import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import {
-  DIALOG_STYLES,
-  TABLE_COLUMN_WIDTHS,
-} from "../../core/utils/design-tokens.util";
+import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -127,7 +123,7 @@ const PAYMENT_METHOD_CONFIG: Record<
     PrimeTemplate,
     TableModule,
     TableModule,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -137,9 +133,7 @@ const PAYMENT_METHOD_CONFIG: Record<
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="payments-page">
+<div class="payments-page">
         <app-page-header
           title="My Payments"
           subtitle="View fees and payment history"

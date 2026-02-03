@@ -7,23 +7,23 @@
    
    TYPOGRAPHY CONTRACT (STRICTLY ENFORCED):
    ────────────────────────────────────────
-   H1: Page titles/greetings - Bold (700), 32px, line-height 1.2
-   H2: Section headers - Semibold (600), 24px, line-height 1.25
-   H3: Card titles/subsections - Regular (400), 20px, line-height 1.3
-   H4: Small headings - Light (300), 16px, line-height 1.35
-   Body: Regular text - Regular (400), 16px, line-height 1.5
-   Body-sm: Small body/helper - Regular (400), 14px, line-height 1.45
-   Label: Form labels/table headers - Semibold (600), 14px, line-height 1.2
-   Caption: Smallest text - Regular (400), 12px, line-height 1.3
+   H1: Page titles/greetings - Bold (700), 2rem, line-height 1.2
+   H2: Section headers - Semibold (600), 1.5rem, line-height 1.25
+   H3: Card titles/subsections - Regular (400), 1.25rem, line-height 1.3
+   H4: Small headings - Light (300), 1rem, line-height 1.35
+   Body: Regular text - Regular (400), 1rem, line-height 1.5
+   Body-sm: Small body/helper - Regular (400), 0.875rem, line-height 1.45
+   Label: Form labels/table headers - Semibold (600), 0.875rem, line-height 1.2
+   Caption: Smallest text - Regular (400), 0.75rem, line-height 1.3
    
    PRIMENG COMPONENT MAPPING:
-   - p-card header title → H3 (20px/600 for card headers)
-   - p-dialog header title → H2 (24px/600)
-   - Tab labels → Body-sm (14px/600)
-   - Table headers → Label (14px/600)
-   - Form labels → Label (14px/600)
-   - Helper/description text → Body-sm (14px/400)
-   - Error text → Body-sm (14px/400) with error color
+   - p-card header title → H3 (1.25rem/600 for card headers)
+   - p-dialog header title → H2 (1.5rem/600)
+   - Tab labels → Body-sm (0.875rem/600)
+   - Table headers → Label (0.875rem/600)
+   - Form labels → Label (0.875rem/600)
+   - Helper/description text → Body-sm (0.875rem/400)
+   - Error text → Body-sm (0.875rem/400) with error color
    
    MARGIN RULES:
    - All headings have margin-block-end: 0.5em by default
@@ -52,7 +52,7 @@ h6 {
 
 /* H1 - Page Titles / Hero Greetings */
 h1 {
-  font-size: var(--font-h1-size, 2rem); /* 32px */
+  font-size: var(--font-h1-size, 2rem); /* 2rem */
   font-weight: var(--font-h1-weight, 700); /* bold */
   line-height: var(--font-h1-line-height, 1.2);
   letter-spacing: var(--letter-spacing-tight, -0.02em);
@@ -60,7 +60,7 @@ h1 {
 
 /* H2 - Section Headers / Dialog Titles */
 h2 {
-  font-size: var(--font-h2-size, 1.5rem); /* 24px */
+  font-size: var(--font-h2-size, 1.5rem); /* 1.5rem */
   font-weight: var(--font-h2-weight, 600); /* semibold */
   line-height: var(--font-h2-line-height, 1.25);
   letter-spacing: var(--letter-spacing-normal, 0);
@@ -68,7 +68,7 @@ h2 {
 
 /* H3 - Card Titles / Subsection Titles */
 h3 {
-  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-size: var(--font-h3-size, 1.25rem); /* 1.25rem */
   font-weight: var(--font-h3-weight, 400); /* regular */
   line-height: var(--font-h3-line-height, 1.3);
   letter-spacing: var(--letter-spacing-normal, 0);
@@ -76,7 +76,7 @@ h3 {
 
 /* H4 - Small Headings / Group Labels */
 h4 {
-  font-size: var(--font-h4-size, 1rem); /* 16px */
+  font-size: var(--font-h4-size, 1rem); /* 1rem */
   font-weight: var(--font-h4-weight, 300); /* light */
   line-height: var(--font-h4-line-height, 1.35);
   letter-spacing: var(--letter-spacing-normal, 0);
@@ -84,7 +84,7 @@ h4 {
 
 /* H5/H6 - Smallest Headings (rarely used) */
 h5 {
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-weight-medium, 500);
   line-height: var(--line-height-base, 1.5);
   text-transform: uppercase;
@@ -93,7 +93,7 @@ h5 {
 }
 
 h6 {
-  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-size: var(--font-caption-size, 0.75rem); /* 0.75rem */
   font-weight: var(--font-weight-medium, 500);
   line-height: var(--font-caption-line-height, 1.3);
   text-transform: uppercase;
@@ -104,13 +104,13 @@ h6 {
 /* Responsive H1 */
 @include respond-to(md) {
   h1 {
-    font-size: var(--font-h2-size); /* 28px on mobile */
+    font-size: var(--font-h2-size); /* 1.75rem on mobile */
   }
 }
 
 @include respond-to(sm) {
   h1 {
-    font-size: var(--font-h2-size); /* 24px on small mobile */
+    font-size: var(--font-h2-size); /* 1.5rem on small mobile */
   }
 }
 
@@ -124,7 +124,7 @@ h6 {
 .page-title,
 .hero-title {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h1-size, 2rem); /* 32px */
+  font-size: var(--font-h1-size, 2rem); /* 2rem */
   font-weight: var(--font-h1-weight, 700); /* bold */
   line-height: var(--font-h1-line-height, 1.2);
   letter-spacing: var(--letter-spacing-tight, -0.02em);
@@ -136,7 +136,7 @@ h6 {
   .ff-h1,
   .page-title,
   .hero-title {
-    font-size: var(--font-h2-size); /* 28px */
+    font-size: var(--font-h2-size); /* 1.75rem */
   }
 }
 
@@ -144,7 +144,7 @@ h6 {
   .ff-h1,
   .page-title,
   .hero-title {
-    font-size: var(--font-h2-size); /* 24px */
+    font-size: var(--font-h2-size); /* 1.5rem */
   }
 }
 
@@ -153,19 +153,19 @@ h6 {
 .section-title,
 .dialog-title {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h2-size, 1.5rem); /* 24px */
+  font-size: var(--font-h2-size, 1.5rem); /* 1.5rem */
   font-weight: var(--font-h2-weight, 600); /* semibold */
   line-height: var(--font-h2-line-height, 1.25);
   letter-spacing: var(--letter-spacing-normal, 0);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-3, 0.75rem) 0; /* 12px margin-bottom */
+  margin: 0 0 var(--space-3, 0.75rem) 0; /* 0.75rem margin-bottom */
 }
 
 @include respond-to(md) {
   .ff-h2,
   .section-title,
   .dialog-title {
-    font-size: var(--font-h3-size); /* 20px */
+    font-size: var(--font-h3-size); /* 1.25rem */
   }
 }
 
@@ -174,7 +174,7 @@ h6 {
 .card-title,
 .subsection-title {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-size: var(--font-h3-size, 1.25rem); /* 1.25rem */
   font-weight: var(
     --font-weight-semibold
   ); /* semibold for card headers specifically */
@@ -189,7 +189,7 @@ h6 {
 .label-title,
 .group-title {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h4-size, 1rem); /* 16px */
+  font-size: var(--font-h4-size, 1rem); /* 1rem */
   font-weight: var(--font-h4-weight, 300); /* light */
   line-height: var(--font-h4-line-height, 1.35);
   letter-spacing: var(--letter-spacing-normal, 0);
@@ -202,7 +202,7 @@ h6 {
 .body-text,
 .text-base {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-size: var(--font-body-size, 1rem); /* 1rem */
   font-weight: var(--font-body-weight, 400); /* regular */
   line-height: var(--font-body-line-height, 1.5);
   color: var(--color-text-primary);
@@ -214,7 +214,7 @@ h6 {
 .description,
 .helper-text {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-body-sm-weight, 400); /* regular */
   line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-text-secondary);
@@ -225,7 +225,7 @@ h6 {
 .form-label,
 .table-header {
   font-family: var(--font-family-sans);
-  font-size: var(--font-label-size, 0.875rem); /* 14px */
+  font-size: var(--font-label-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-label-weight, 600); /* semibold */
   line-height: var(--font-label-line-height, 1.2);
   color: var(--color-text-primary);
@@ -238,7 +238,7 @@ h6 {
 .meta,
 .timestamp {
   font-family: var(--font-family-sans);
-  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-size: var(--font-caption-size, 0.75rem); /* 0.75rem */
   font-weight: var(--font-caption-weight, 400); /* regular */
   line-height: var(--font-caption-line-height, 1.3);
   color: var(--color-text-muted);
@@ -247,7 +247,7 @@ h6 {
 /* Badge Role - Small Labels / Tags */
 .ff-badge {
   font-family: var(--font-family-sans);
-  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-size: var(--font-caption-size, 0.75rem); /* 0.75rem */
   font-weight: var(--font-weight-medium, 500);
   line-height: var(--line-height-tight, 1.2);
   letter-spacing: var(--letter-spacing-normal, 0);
@@ -263,7 +263,7 @@ h6 {
 .metric-xl,
 .stat-value-xl {
   font-family: var(--font-family-sans);
-  font-size: var(--font-size-metric-lg, 2rem); /* 32px */
+  font-size: var(--font-size-metric-lg, 2rem); /* 2rem */
   font-weight: var(--font-weight-bold, 700);
   line-height: var(--line-height-tight, 1.2);
   color: var(--color-text-primary);
@@ -275,7 +275,7 @@ h6 {
 .metric-lg,
 .stat-value {
   font-family: var(--font-family-sans);
-  font-size: var(--font-size-metric-md, 1.5rem); /* 24px */
+  font-size: var(--font-size-metric-md, 1.5rem); /* 1.5rem */
   font-weight: var(--font-weight-bold, 700);
   line-height: var(--line-height-tight, 1.2);
   color: var(--color-text-primary);
@@ -287,7 +287,7 @@ h6 {
 .metric-md,
 .stat-value-sm {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-size: var(--font-h3-size, 1.25rem); /* 1.25rem */
   font-weight: var(--font-weight-semibold, 600);
   line-height: var(--line-height-tight, 1.2);
   color: var(--color-text-primary);
@@ -298,7 +298,7 @@ h6 {
 .ff-metric-label,
 .stat-label {
   font-family: var(--font-family-sans);
-  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-size: var(--font-caption-size, 0.75rem); /* 0.75rem */
   font-weight: var(--font-weight-regular, 400);
   line-height: var(--line-height-base, 1.5);
   color: var(--color-text-muted);
@@ -314,7 +314,7 @@ h6 {
 body,
 p {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-size: var(--font-body-size, 1rem); /* 1rem */
   font-weight: var(--font-body-weight, 400);
   line-height: var(--font-body-line-height, 1.5);
   color: var(--color-text-primary);
@@ -332,7 +332,7 @@ p {
 .text-lg,
 .body-lg,
 .lead {
-  font-size: var(--font-body-size, 1.125rem); /* 18px */
+  font-size: var(--font-body-size, 1.125rem); /* 1.125rem */
   line-height: var(--line-height-relaxed, 1.625);
 }
 
@@ -340,14 +340,14 @@ p {
 .text-sm,
 .body-sm,
 .description {
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-text-secondary);
 }
 
 /* Extra Small Text */
 .text-xs {
-  font-size: var(--font-caption-size, 0.75rem); /* 12px */
+  font-size: var(--font-caption-size, 0.75rem); /* 0.75rem */
   line-height: var(--font-caption-line-height, 1.3);
   color: var(--color-text-muted);
 }
@@ -360,7 +360,7 @@ p {
 label,
 .label {
   font-family: var(--font-family-sans);
-  font-size: var(--font-label-size, 0.875rem); /* 14px */
+  font-size: var(--font-label-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-label-weight, 600); /* semibold */
   line-height: var(--font-label-line-height, 1.2);
   color: var(--color-text-primary);
@@ -371,7 +371,7 @@ label,
 /* Error Text - uses body-sm with error color */
 .error-text,
 .p-error {
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-body-sm-weight, 400);
   line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-status-error);
@@ -380,7 +380,7 @@ label,
 
 /* Success Text */
 .success-text {
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-body-sm-weight, 400);
   color: var(--color-status-success);
   margin-top: var(--space-1, 0.25rem);
@@ -391,29 +391,29 @@ label,
    Single source of truth for PrimeNG typography
    ================================================================ */
 
-/* Dialog Header - H2 (24px/600) */
+/* Dialog Header - H2 (1.5rem/600) */
 .p-dialog .p-dialog-header {
   .p-dialog-title {
     font-family: var(--font-family-sans);
-    font-size: var(--font-h2-size, 1.5rem); /* 24px */
-    font-weight: var(--font-h2-weight, 600); /* semibold */
-    line-height: var(--font-h2-line-height, 1.25);
+    font-size: var(--font-h2-size, 1.5rem); /* 1.5rem */
+    font-weight: var(--font-h2-weight, var(--font-weight-semibold)); /* semibold */
+    line-height: var(--font-h2-line-height, var(--line-height-snug));
     color: var(--color-text-primary);
   }
 }
 
-/* Card Header - H3 (20px/600 for section title style) */
+/* Card Header - H3 (1.25rem/600 for section title style) */
 .p-card .p-card-title {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h3-size, 1.25rem); /* 20px */
-  font-weight: 600; /* semibold for card headers */
-  line-height: var(--font-h3-line-height, 1.3);
+  font-size: var(--font-h3-size, 1.25rem); /* 1.25rem */
+  font-weight: var(--font-weight-semibold); /* semibold for card headers */
+  line-height: var(--font-h3-line-height, var(--line-height-base));
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .p-card .p-card-subtitle {
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-body-sm-weight, 400);
   line-height: var(--font-body-sm-line-height, 1.45);
   color: var(--color-text-secondary);
@@ -430,19 +430,19 @@ label,
   margin-block-end: 0;
 }
 
-/* Tab Headers - Body-sm (14px/600) */
+/* Tab Headers - Body-sm (0.875rem/600) */
 .p-tabview .p-tabview-nav-link,
 .p-tabs .p-tab {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-weight-semibold); /* semibold for tab labels */
   line-height: var(--font-body-sm-line-height, 1.45);
 }
 
-/* Table Headers - Label (14px/600) */
+/* Table Headers - Label (0.875rem/600) */
 .p-datatable .p-datatable-thead > tr > th {
   font-family: var(--font-family-sans);
-  font-size: var(--font-label-size, 0.875rem); /* 14px */
+  font-size: var(--font-label-size, 0.875rem); /* 0.875rem */
   font-weight: var(--font-label-weight, 600); /* semibold */
   line-height: var(--font-label-line-height, 1.2);
   text-transform: uppercase;
@@ -450,60 +450,60 @@ label,
   color: var(--color-text-secondary);
 }
 
-/* Table Body Cells - Body (16px/400) */
+/* Table Body Cells - Body (1rem/400) */
 .p-datatable .p-datatable-tbody > tr > td {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-size: var(--font-body-size, 1rem); /* 1rem */
   font-weight: var(--font-body-weight, 400);
   line-height: var(--font-body-line-height, 1.5);
   color: var(--color-text-primary);
 }
 
-/* Panel Headers - H3 (20px/600) */
+/* Panel Headers - H3 (1.25rem/600) */
 .p-panel .p-panel-header,
 .p-fieldset .p-fieldset-legend {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-size: var(--font-h3-size, 1.25rem); /* 1.25rem */
   font-weight: var(--font-weight-semibold); /* semibold for panel headers */
   line-height: var(--font-h3-line-height, 1.3);
   color: var(--color-text-primary);
 }
 
-/* Accordion Headers - H3 (20px/600) */
+/* Accordion Headers - H3 (1.25rem/600) */
 .p-accordion .p-accordion-header-link {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-size: var(--font-h3-size, 1.25rem); /* 1.25rem */
   font-weight: var(--font-weight-semibold); /* semibold */
   line-height: var(--font-h3-line-height, 1.3);
 }
 
-/* Menu Items - Body (16px/400) */
+/* Menu Items - Body (1rem/400) */
 .p-menu .p-menuitem-text,
 .p-tieredmenu .p-menuitem-text,
 .p-contextmenu .p-menuitem-text {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-size, 1rem); /* 16px */
+  font-size: var(--font-body-size, 1rem); /* 1rem */
   font-weight: var(--font-body-weight, 400);
   line-height: var(--font-body-line-height, 1.5);
 }
 
-/* Empty State Titles - H3 (20px/400) */
+/* Empty State Titles - H3 (1.25rem/400) */
 .empty-state-title,
 .no-data-title {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h3-size, 1.25rem); /* 20px */
+  font-size: var(--font-h3-size, 1.25rem); /* 1.25rem */
   font-weight: var(--font-h3-weight, 400); /* regular */
   line-height: var(--font-h3-line-height, 1.3);
   color: var(--color-text-primary);
 }
 
-/* Empty State Description - Body-sm (14px/400) */
+/* Empty State Description - Body-sm (0.875rem/400) */
 .empty-state-description,
 .no-data-description {
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
-  font-weight: var(--font-body-sm-weight, 400);
-  line-height: var(--font-body-sm-line-height, 1.45);
+  font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
+  font-weight: var(--font-body-sm-weight, var(--font-weight-regular));
+  line-height: var(--font-body-sm-line-height, var(--line-height-relaxed));
   color: var(--color-text-muted);
 }
 
@@ -515,7 +515,7 @@ a,
 .link {
   color: var(--color-brand-primary);
   text-decoration: none;
-  transition: color var(--transition-fast, 150ms ease);
+  transition: color var(--transition-fast) var(--ease-standard);
 
   &:hover {
     color: var(--color-brand-primary-hover);
@@ -523,9 +523,9 @@ a,
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-brand-primary);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm, 2px);
+    outline: var(--space-0-5) solid var(--color-brand-primary);
+    outline-offset: var(--space-0-5);
+    border-radius: var(--radius-sm);
   }
 }
 
@@ -608,7 +608,7 @@ a,
 
 /* No Margin Utility */
 .no-margin {
-  margin: 0 !important;
+  margin: 0;
 }
 
 /* Text Colors */

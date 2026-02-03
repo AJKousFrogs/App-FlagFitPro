@@ -76,7 +76,7 @@
 }
 
 .olympic-rings {
-  font-size: var(--ds-font-size-3xl); /* 32px - feature icon */
+  font-size: var(--ds-font-size-3xl); /* 2rem - feature icon */
 }
 
 .olympic-buttons {
@@ -93,13 +93,13 @@
   gap: var(--space-4);
   padding: var(--space-4);
   border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--radius-lg); /* 8px - consistent with stat cards */
+  border-radius: var(--radius-lg); /* 0.5rem - consistent with stat cards */
   background: var(--surface-primary);
   cursor: pointer;
   transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease,
-    transform 150ms ease;
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
   box-shadow: var(--shadow-sm);
   text-align: left;
 
@@ -135,7 +135,7 @@
 
 .venue-flag {
   font-size: var(--ds-font-size-2xl);
-  width: var(--space-10); /* 40px icon container */
+  width: var(--space-10); /* 2.5rem icon container */
   height: var(--space-10);
   display: flex;
   align-items: center;
@@ -762,13 +762,13 @@
   gap: var(--space-4);
   padding: var(--space-4);
   border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--radius-lg); /* 8px - consistent with stat cards */
+  border-radius: var(--radius-lg); /* 0.5rem - consistent with stat cards */
   background: var(--surface-primary);
   cursor: pointer;
   transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease,
-    transform 150ms ease;
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
   box-shadow: var(--shadow-sm);
   text-align: left;
 
@@ -798,9 +798,9 @@
   }
 
   i {
-    font-size: var(--ds-font-size-2xl); /* 18px - consistent icon size */
+    font-size: var(--ds-font-size-2xl); /* 1.125rem - consistent icon size */
     color: var(--ds-primary-green);
-    width: var(--space-10); /* 40px icon container */
+    width: var(--space-10); /* 2.5rem icon container */
     height: var(--space-10);
     display: flex;
     align-items: center;
@@ -1382,7 +1382,7 @@
 }
 
 // ===== RESPONSIVE BREAKPOINTS =====
-@media (min-width: 1400px) {
+@media (min-width: 87.5rem) {
   .protocol-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -1396,7 +1396,7 @@
   }
 }
 
-@media (min-width: 1200px) and (max-width: 1399px) {
+@media (min-width: 75rem) and (max-width: 87.4375rem) {
   .protocol-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1406,7 +1406,7 @@
   }
 }
 
-@media (min-width: 1024px) and (max-width: 1199px) {
+@media (min-width: 64rem) and (max-width: 74.9375rem) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1416,7 +1416,7 @@
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 48.0625rem) and (max-width: 64rem) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1499,7 +1499,7 @@
   }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
+@media (min-width: 30.0625rem) and (max-width: 48rem) {
   .olympic-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1575,7 +1575,7 @@
   }
 }
 
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 31.25rem) and (orientation: landscape) {
   .travel-recovery-page {
     padding: var(--space-3);
   }
@@ -1608,7 +1608,7 @@
   .checklist-item,
   .exercise-card,
   .protocol-section {
-    min-height: var(--touch-target-md); /* 44px */
+    min-height: var(--touch-target-md); /* 2.75rem */
   }
 }
 

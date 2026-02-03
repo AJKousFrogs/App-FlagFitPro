@@ -117,8 +117,7 @@ interface TeamWellnessSummary {
           <p-progressBar
             [value]="summary().checkInRate"
             [showValue]="false"
-            [style]="{ height: '6px' }"
-            [styleClass]="getCheckInClass()"
+            [styleClass]="getCheckInClass() + ' progressbar-height-xs'"
           ></p-progressBar>
           <span class="card-label"
             >{{ summary().checkInRate }}% compliance</span

@@ -102,13 +102,13 @@
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: var(--space-2);
+    height: var(--space-2);
   }
 
   ::-webkit-scrollbar-thumb {
     background-color: var(--color-border-default);
-    border-radius: 4px;
+    border-radius: var(--space-1);
   }
 }
 
@@ -140,10 +140,10 @@ body {
   .p-button,
   .card,
   .p-card {
-    border: 2px solid currentColor;
+    border: var(--border-2) solid currentColor;
   }
 
   *:focus-visible {
-    outline: 3px solid CanvasText;
+    outline: var(--space-0-75) solid CanvasText;
   }
 }

@@ -681,7 +681,7 @@ interface ScoutingReport {
           header="Create Scouting Report"
           [(visible)]="showNewReportDialog"
           [modal]="true"
-          [style]="{ width: '700px' }"
+          styleClass="dialog-w-lg"
           [dismissableMask]="true"
         >
           <div class="report-form">
@@ -801,7 +801,7 @@ interface ScoutingReport {
           header="Scouting Report"
           [(visible)]="showViewReportDialog"
           [modal]="true"
-          [style]="{ width: '800px' }"
+          styleClass="dialog-w-lg"
           [dismissableMask]="true"
         >
           @if (viewingReport()) {
@@ -934,7 +934,7 @@ interface ScoutingReport {
           header="Add Opponent"
           [(visible)]="showAddOpponentDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          styleClass="dialog-max-w-lg"
           [dismissableMask]="true"
         >
           <div class="opponent-form">

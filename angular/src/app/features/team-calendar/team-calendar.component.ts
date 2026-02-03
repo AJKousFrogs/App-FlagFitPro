@@ -28,7 +28,6 @@ import { Select } from "primeng/select";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -103,7 +102,7 @@ const EVENT_TYPE_CONFIG: Record<
     Select,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -111,9 +110,7 @@ const EVENT_TYPE_CONFIG: Record<
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="calendar-page">
+<div class="calendar-page">
         <app-page-header
           title="Team Calendar"
           subtitle="Upcoming events and your RSVPs"

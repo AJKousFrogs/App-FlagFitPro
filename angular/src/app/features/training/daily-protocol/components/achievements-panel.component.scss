@@ -172,7 +172,7 @@
     background: var(--surface-ground);
     border-radius: var(--radius-lg);
     border: var(--border-1) solid var(--surface-border);
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
 
     &.earned {
       opacity: 1;
@@ -394,6 +394,6 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
   }
 }

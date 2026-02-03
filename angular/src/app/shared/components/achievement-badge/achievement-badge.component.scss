@@ -26,7 +26,7 @@
 }
 
 .achievement-badge:hover {
-  transform: translateY(-4px);
+  transform: translateY(-0.25rem);
   box-shadow: var(--shadow-lg);
 }
 
@@ -35,11 +35,11 @@
 }
 
 .achievement-badge.locked {
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
 }
 
 .achievement-badge.locked:hover {
-  opacity: 0.85;
+  opacity: var(--opacity-strong);
 }
 
 /* Badge container */
@@ -57,10 +57,10 @@
 /* Glow effect */
 .badge-glow {
   position: absolute;
-  inset: -10px;
+  inset: -0.625rem;
   border-radius: var(--radius-full);
-  opacity: 0.5;
-  filter: blur(15px);
+  opacity: var(--opacity-dimmed);
+  filter: blur(0.9375rem);
   transition: opacity var(--transition-slow) ease;
 }
 
@@ -115,7 +115,7 @@
 }
 
 .achievement-badge:hover .badge-glow {
-  opacity: 0.8;
+  opacity: var(--opacity-strong);
 }
 
 /* Badge shape */
@@ -218,7 +218,7 @@
 }
 
 .locked .badge-icon {
-  opacity: 0.3;
+  opacity: var(--opacity-quarter);
 }
 
 /* Tier indicator */
@@ -268,7 +268,7 @@
 @keyframes rarity-pulse {
   0%,
   100% {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
   50% {
     opacity: 1;
@@ -278,19 +278,19 @@
 @keyframes legendary-glow {
   0%,
   100% {
-    box-shadow: 0 0 10px var(--color-rarity-legendary);
+    box-shadow: 0 0 0.625rem var(--color-rarity-legendary);
   }
   50% {
     box-shadow:
-      0 0 20px var(--color-rarity-legendary),
-      0 0 30px var(--color-rarity-legendary);
+      0 0 1.25rem var(--color-rarity-legendary),
+      0 0 1.875rem var(--color-rarity-legendary);
   }
 }
 
 /* Badge info */
 .badge-info {
   text-align: center;
-  max-width: var(--input-min-width-md); /* 150px */
+  max-width: var(--input-min-width-md); /* 9.375rem */
 }
 
 .badge-title {
@@ -344,7 +344,7 @@
 .progress-text {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  min-width: var(--touch-target-sm); /* 36px */
+  min-width: var(--touch-target-sm); /* 2.25rem */
   text-align: right;
 }
 
@@ -417,7 +417,7 @@
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-60px)
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-3.75rem)
       scale(0);
     opacity: 0;
   }

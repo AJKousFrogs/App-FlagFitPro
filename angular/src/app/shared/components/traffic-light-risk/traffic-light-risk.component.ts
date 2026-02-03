@@ -15,6 +15,12 @@ import {
   Component,
   input,
   computed,
+  ElementRef,
+  Renderer2,
+  ViewChild,
+  afterNextRender,
+  effect,
+  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RiskZone } from "../../../core/models/acwr.models";
@@ -28,6 +34,10 @@ import { RiskZone } from "../../../core/models/acwr.models";
   styleUrls: ["./traffic-light-risk.component.scss"],
 })
 export class TrafficLightRiskComponent {
+  private renderer = inject(Renderer2);
+
+  @ViewChild("scaleMarker") private scaleMarker?: ElementRef<HTMLDivElement>;
+
   // Angular signals for inputs
   riskZone = input.required<RiskZone>();
   acwrValue = input.required<number>();
@@ -52,6 +62,20 @@ export class TrafficLightRiskComponent {
       return 90 + Math.min(((value - 1.5) / 0.5) * 10, 10);
     }
   });
+
+  constructor() {
+    afterNextRender(() => {
+      effect(() => {
+        const marker = this.scaleMarker?.nativeElement;
+        if (!marker) return;
+        this.renderer.setStyle(
+          marker,
+          "left",
+          `${this.markerPosition()}%`,
+        );
+      });
+    });
+  }
 
   // Get CSS class for ACWR value color
   getAcwrClass(): string {

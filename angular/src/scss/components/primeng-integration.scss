@@ -261,7 +261,7 @@
 /* Dialog Padding */
 .p-dialog .p-dialog-header {
   padding: var(--space-5) var(--space-6);
-  border-bottom: 1px solid var(--color-border-primary);
+  border-bottom: var(--border-1) solid var(--color-border-primary);
 }
 
 .p-dialog .p-dialog-content {
@@ -270,12 +270,12 @@
 
 .p-dialog .p-dialog-footer {
   padding: var(--space-4) var(--space-6) var(--space-5);
-  border-top: 1px solid var(--color-border-primary);
+  border-top: var(--border-1) solid var(--color-border-primary);
 }
 
 /* ================================================================
    FORM CONTROL NORMALIZATION - SINGLE SOURCE OF TRUTH
-   All form controls: 44px height, 8px radius, consistent padding
+   All form controls: 2.75rem height, 0.5rem radius, consistent padding
    ================================================================ */
 
 /* Base Form Control Styles */
@@ -287,16 +287,17 @@
 .p-datepicker .p-inputtext,
 .p-inputnumber .p-inputtext,
 .p-autocomplete .p-inputtext {
-  height: var(--p-form-control-height, 44px);
-  min-height: var(--p-form-control-min-height, 44px);
-  border-radius: var(--p-form-control-border-radius, 8px);
-  padding: var(--p-form-control-padding-y, 10px)
-    var(--p-form-control-padding-x, 16px);
-  font-size: var(--p-form-control-font-size, 16px);
+  height: var(--p-form-control-height, var(--touch-target-md));
+  min-height: var(--p-form-control-min-height, var(--touch-target-md));
+  border-radius: var(--p-form-control-border-radius, var(--radius-lg));
+  padding: var(--p-form-control-padding-y, calc(var(--space-2) + var(--space-0-5)))
+    var(--p-form-control-padding-x, var(--space-4)); /* 0.625rem/1rem */
+  font-size: var(--p-form-control-font-size, var(--font-body-size));
   font-weight: var(--p-form-control-font-weight, 400);
   line-height: var(--p-form-control-line-height, 1.5);
   background: var(--p-input-background, var(--surface-primary));
-  border: var(--p-input-border-width, 1px) solid var(--p-input-border-color);
+  border: var(--p-input-border-width, var(--border-1)) solid
+    var(--p-input-border-color);
   color: var(--p-input-text-color, var(--color-text-primary));
   transition:
     border-color 0.15s ease,
@@ -306,7 +307,7 @@
 
 /* Password input: reserve space for toggle icon */
 .p-password .p-password-input {
-  padding-right: var(--space-10, 2.5rem);
+  padding-right: var(--touch-target-md);
 }
 
 .p-password .p-password-toggle-mask-icon {
@@ -319,7 +320,7 @@
 .p-select .p-placeholder,
 .p-multiselect .p-placeholder {
   color: var(--p-input-placeholder-color);
-  font-size: var(--p-input-placeholder-font-size, 14px);
+  font-size: var(--p-input-placeholder-font-size, var(--font-body-sm-size));
   font-weight: var(--font-weight-normal);
 }
 
@@ -347,7 +348,8 @@
 .p-datepicker .p-inputtext:focus-visible,
 .p-inputnumber .p-inputtext:focus-visible {
   border-color: var(--p-input-focus-border-color);
-  box-shadow: 0 0 0 var(--p-input-focus-ring-width, 3px)
+  box-shadow: 0 0 0
+      var(--p-input-focus-ring-width, var(--space-0-75))
     var(--p-input-focus-ring-color);
   outline: none;
 }
@@ -368,7 +370,8 @@
 .p-select.p-invalid.p-focus,
 .p-multiselect.p-invalid.p-focus {
   border-color: var(--p-input-invalid-border-color);
-  box-shadow: 0 0 0 var(--p-input-focus-ring-width, 3px)
+  box-shadow: 0 0 0
+      var(--p-input-focus-ring-width, var(--space-0-75))
     var(--p-input-invalid-focus-ring-color);
 }
 
@@ -393,7 +396,7 @@
 
 /* ================================================================
    DROPDOWN/SELECT LABEL ALIGNMENT
-   Ensure label text is vertically centered in 44px height
+   Ensure label text is vertically centered in 2.75rem height
    ================================================================ */
 
 .p-dropdown .p-dropdown-label,
@@ -403,7 +406,7 @@
   display: flex;
   align-items: center;
   height: 100%;
-  font-size: var(--p-form-control-font-size, 16px);
+  font-size: var(--p-form-control-font-size, var(--font-body-size));
   font-weight: var(--p-form-control-font-weight, 400);
   color: var(--p-input-text-color, var(--color-text-primary));
 }
@@ -412,7 +415,7 @@
 .p-dropdown .p-dropdown-trigger,
 .p-select .p-select-dropdown,
 .p-multiselect .p-multiselect-trigger {
-  width: 2.5rem;
+  width: var(--space-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -443,11 +446,11 @@
 .p-select-overlay,
 .p-multiselect-panel,
 .p-autocomplete-panel {
-  border-radius: var(--p-dropdown-panel-border-radius, 8px);
+  border-radius: var(--p-dropdown-panel-border-radius, var(--radius-lg));
   box-shadow: var(--p-dropdown-panel-shadow);
-  border: 1px solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
   background: var(--surface-primary);
-  margin-top: 4px;
+  margin-top: var(--space-1);
   overflow: hidden;
 }
 
@@ -456,7 +459,7 @@
 .p-select-list-container,
 .p-multiselect-items-wrapper {
   padding: var(--space-2);
-  max-height: 300px;
+  max-height: var(--panel-max-height-md);
   overflow-y: auto;
 }
 
@@ -465,9 +468,9 @@
 .p-select-option,
 .p-multiselect-item,
 .p-listbox-option {
-  padding: var(--p-dropdown-option-padding, 12px 16px);
-  border-radius: var(--p-dropdown-option-border-radius, 6px);
-  min-height: var(--p-dropdown-option-min-height, 40px);
+  padding: var(--p-dropdown-option-padding, var(--space-3) var(--space-4));
+  border-radius: var(--p-dropdown-option-border-radius, var(--radius-md));
+  min-height: var(--p-dropdown-option-min-height, var(--space-10));
   font-size: var(--p-dropdown-option-font-size, var(--font-body-size));
   font-weight: 400;
   color: var(--color-text-primary);
@@ -518,8 +521,8 @@
 
 .p-calendar .p-inputtext,
 .p-datepicker .p-inputtext {
-  border-radius: var(--p-form-control-border-radius, 8px);
-  padding-right: 2.75rem; /* Space for calendar icon */
+  border-radius: var(--p-form-control-border-radius, var(--radius-lg));
+  padding-right: var(--touch-target-md); /* Space for calendar icon */
 }
 
 .p-calendar .p-datepicker-trigger,
@@ -528,15 +531,15 @@
   right: 0;
   top: 0;
   height: 100%;
-  width: 2.75rem;
+  width: var(--touch-target-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-secondary);
   background: transparent;
   border: none;
-  border-radius: 0 var(--p-form-control-border-radius, 8px)
-    var(--p-form-control-border-radius, 8px) 0;
+  border-radius: 0 var(--p-form-control-border-radius, var(--radius-lg))
+    var(--p-form-control-border-radius, var(--radius-lg)) 0;
   cursor: pointer;
   transition: color 0.15s ease;
 }
@@ -555,17 +558,17 @@
 }
 
 .p-inputnumber .p-inputtext {
-  border-radius: var(--p-form-control-border-radius, 8px);
+  border-radius: var(--p-form-control-border-radius, var(--radius-lg));
 }
 
 .p-inputnumber-buttons-stacked .p-inputtext {
-  border-radius: var(--p-form-control-border-radius, 8px) 0 0
-    var(--p-form-control-border-radius, 8px);
+  border-radius: var(--p-form-control-border-radius, var(--radius-lg)) 0 0
+    var(--p-form-control-border-radius, var(--radius-lg));
 }
 
 .p-inputnumber-button {
   background: var(--surface-secondary);
-  border: 1px solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
   color: var(--color-text-secondary);
   transition:
     background-color 0.15s ease,
@@ -603,8 +606,11 @@
    ================================================================ */
 
 .p-inputswitch {
-  width: var(--p-inputswitch-width, 50px);
-  height: var(--p-inputswitch-height, 28px);
+  width: var(--p-inputswitch-width, var(--space-12));
+  height: var(
+    --p-inputswitch-height,
+    calc(var(--space-6) + var(--space-1))
+  );
   position: relative;
   display: inline-block;
 }
@@ -615,7 +621,7 @@
   cursor: pointer;
   inset: 0;
   background: var(--p-inputswitch-background);
-  border-radius: var(--p-inputswitch-border-radius, 13px);
+  border-radius: var(--p-inputswitch-border-radius, var(--radius-full));
   transition:
     background-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -627,14 +633,14 @@
 .p-inputswitch .p-inputswitch-slider::before {
   content: "";
   position: absolute;
-  height: var(--p-inputswitch-handle-size, 20px);
-  width: var(--p-inputswitch-handle-size, 20px);
-  left: 3px;
-  top: 3px;
+  height: var(--p-inputswitch-handle-size, var(--space-5));
+  width: var(--p-inputswitch-handle-size, var(--space-5));
+  left: var(--space-0-75);
+  top: var(--space-0-75);
   background: var(--p-inputswitch-handle-background);
   border-radius: 50%;
   transition: left 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
 }
 
 /* Hover state - unchecked */
@@ -650,7 +656,9 @@
 
 /* Move thumb to the right when checked */
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider::before {
-  left: calc(100% - var(--p-inputswitch-handle-size, 20px) - 3px);
+  left: calc(
+    100% - var(--p-inputswitch-handle-size, var(--space-5)) - var(--space-0-75)
+  );
 }
 
 /* Hover state - checked */
@@ -663,7 +671,7 @@
   outline: none;
   box-shadow:
     0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2),
-    0 2px 4px rgba(0, 0, 0, 0.1);
+    0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 }
 
 /* Disabled state */
@@ -846,10 +854,10 @@
   --p-button-padding-y: var(--space-3, 0.75rem);
   --p-button-padding-x: var(--space-6, 1.5rem);
   --p-button-border-radius: var(--radius-button, var(--radius-lg, 0.5rem));
-  --p-button-icon-only-width: 44px;
-  --p-button-icon-only-height: 44px;
+  --p-button-icon-only-width: var(--touch-target-md);
+  --p-button-icon-only-height: var(--touch-target-md);
   --p-button-raised-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
+    0 0.0625rem 0.125rem rgba(0, 0, 0, 0.05), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
   --p-button-gap: var(--space-2);
   --p-button-font-weight: var(--font-weight-medium, 500);
   --p-button-sm-font-size: var(--font-body-sm-size, 0.875rem);
@@ -867,7 +875,7 @@
   --p-card-border-radius: var(
     --radius-lg,
     0.5rem
-  ); /* 8px - Design System standard */
+  ); /* 0.5rem - Design System standard */
 
   --p-card-body-padding: var(--space-4, 1rem);
   --p-card-body-gap: var(--space-3, 0.75rem);
@@ -877,52 +885,52 @@
   --p-card-title-font-size: var(
     --font-h3-size,
     1.25rem
-  ); /* 20px - H3 for card titles */
+  ); /* 1.25rem - H3 for card titles */
 
   --p-card-title-font-weight: var(
     --font-weight-semibold
   ); /* semibold for card headers */
 
-  --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
+  --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
   --p-card-subtitle-font-weight: var(--font-body-sm-weight, 400);
   --p-card-subtitle-color: var(
     --color-text-secondary,
     var(--primitive-neutral-500)
   );
-  --p-card-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1));
+  --p-card-shadow: var(--shadow-sm, 0 0.0625rem 0.1875rem 0 rgb(0 0 0 / 0.1));
 
   /* ================================================================
      FORM CONTROL TOKENS - NORMALIZED DESIGN CONTRACT
      ================================================================
      All single-line form controls share these properties:
-     - Height: 44px
-     - Border-radius: 8px (NOT pill)
+     - Height: 2.75rem
+     - Border-radius: 0.5rem (NOT pill)
      - Padding: var(--space-4) horizontal, vertically centered
-     - Typography: 16px/400 for values, 13-14px for placeholders
+     - Typography: 1rem/400 for values, 13-0.875rem for placeholders
      - Focus: Green border + subtle green ring (box-shadow)
      ================================================================ */
 
   /* Shared Form Control Geometry */
-  --p-form-control-height: 44px;
-  --p-form-control-min-height: 44px;
+  --p-form-control-height: var(--touch-target-md);
+  --p-form-control-min-height: var(--touch-target-md);
   --p-form-control-border-radius: var(--radius-lg);
-  --p-form-control-padding-x: 16px;
-  --p-form-control-padding-y: 10px; /* (44px - 24px line-height) / 2 */
+  --p-form-control-padding-x: var(--space-4);
+  --p-form-control-padding-y: calc(var(--space-2) + var(--space-0-5)); /* 0.625rem */
   --p-form-control-font-size: var(--font-body-size);
   --p-form-control-font-weight: 400;
   --p-form-control-line-height: 1.5;
 
   /* Input */
-  --p-input-background: var(--surface-primary, #fff);
+  --p-input-background: var(--surface-primary);
   --p-input-border-color: var(
     --color-border-primary,
     var(--primitive-neutral-300)
   );
-  --p-input-border-width: 1px;
-  --p-input-hover-border-color: var(--primitive-neutral-400, #a3a3a3);
+  --p-input-border-width: var(--border-1);
+  --p-input-hover-border-color: var(--primitive-neutral-400);
   --p-input-focus-border-color: var(--ds-primary-green);
   --p-input-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.15);
-  --p-input-focus-ring-width: 3px;
+  --p-input-focus-ring-width: var(--space-0-75);
   --p-input-padding-y: var(--p-form-control-padding-y);
   --p-input-padding-x: var(--p-form-control-padding-x);
   --p-input-border-radius: var(--p-form-control-border-radius);
@@ -938,7 +946,7 @@
   --p-input-text-color: var(--color-text-primary, var(--primitive-neutral-900));
 
   /* Input States */
-  --p-input-invalid-border-color: var(--color-status-error, #ef4444);
+  --p-input-invalid-border-color: var(--color-status-error);
   --p-input-invalid-focus-ring-color: rgba(239, 68, 68, 0.15);
   --p-input-disabled-background: var(
     --surface-secondary,
@@ -987,18 +995,19 @@
   /* Dropdown Panel Tokens */
   --p-dropdown-panel-border-radius: var(--radius-lg);
   --p-dropdown-panel-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+    0 0.625rem 2.5rem rgba(0, 0, 0, 0.12), 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
   --p-dropdown-option-padding: var(--space-3) var(--space-4);
   --p-dropdown-option-border-radius: var(--radius-md);
-  --p-dropdown-option-min-height: 40px;
+  --p-dropdown-option-min-height: var(--space-10);
   --p-dropdown-option-font-size: var(--font-body-size);
 
   /* Checkbox/Radio */
-  --p-checkbox-width: 20px;
-  --p-checkbox-height: 20px;
+  --p-checkbox-width: var(--space-5);
+  --p-checkbox-height: var(--space-5);
   --p-checkbox-border-radius: var(--radius-md);
-  --p-checkbox-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
-  --p-control-row-min-height: 44px;
+  --p-checkbox-focus-ring: 0 0 0 var(--space-0-75)
+    rgba(8, 153, 73, 0.15);
+  --p-control-row-min-height: var(--touch-target-md);
   --p-control-disabled-opacity: 0.6;
   --p-checkbox-border-color: var(
     --color-border-primary,
@@ -1007,9 +1016,10 @@
   --p-checkbox-checked-background: var(--ds-primary-green);
   --p-checkbox-checked-border-color: var(--ds-primary-green);
   --p-checkbox-icon-checked-color: var(--color-text-on-primary);
-  --p-toggleswitch-width: 44px;
-  --p-toggleswitch-height: 24px;
-  --p-toggleswitch-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
+  --p-toggleswitch-width: var(--touch-target-md);
+  --p-toggleswitch-height: var(--space-6);
+  --p-toggleswitch-focus-ring: 0 0 0 var(--space-0-75)
+    rgba(8, 153, 73, 0.15);
 
   /* Tag/Badge */
   --p-tag-font-size: var(--font-size-badge, 0.75rem);
@@ -1035,13 +1045,13 @@
   --p-dialog-border-radius: var(
     --radius-lg,
     0.5rem
-  ); /* 8px - Design System standard */
+  ); /* 0.5rem - Design System standard */
 
   --p-dialog-header-padding: var(--space-4, 1rem);
   --p-dialog-header-font-size: var(
     --font-h2-size,
     1.5rem
-  ); /* 24px - H2 for dialog titles */
+  ); /* 1.5rem - H2 for dialog titles */
 
   --p-dialog-header-font-weight: var(--font-h2-weight, 600); /* semibold */
   --p-dialog-header-line-height: var(--font-h2-line-height, 1.25);
@@ -1113,7 +1123,7 @@
   --p-datatable-header-font-size: var(
     --font-label-size,
     0.875rem
-  ); /* 14px - label */
+  ); /* 0.875rem - label */
 
   --p-datatable-header-font-weight: var(
     --font-label-weight,
@@ -1121,7 +1131,7 @@
   ); /* semibold */
 
   --p-datatable-header-line-height: var(--font-label-line-height, 1.2);
-  --p-datatable-body-font-size: var(--font-body-size, 1rem); /* 16px - body */
+  --p-datatable-body-font-size: var(--font-body-size, 1rem); /* 1rem - body */
   --p-datatable-body-font-weight: var(--font-body-weight, 400);
   --p-datatable-row-hover-background: var(
     --surface-secondary,
@@ -1155,7 +1165,7 @@
   --p-tabview-tab-font-size: var(
     --font-body-sm-size,
     0.875rem
-  ); /* 14px - body-sm */
+  ); /* 0.875rem - body-sm */
 
   --p-tabview-tab-font-weight: var(
     --font-weight-semibold
@@ -1176,7 +1186,7 @@
     --color-border-secondary,
     var(--primitive-neutral-200)
   );
-  --p-panel-header-font-size: var(--font-h3-size, 1.25rem); /* 20px - H3 */
+  --p-panel-header-font-size: var(--font-h3-size, 1.25rem); /* 1.25rem - H3 */
   --p-panel-header-font-weight: 600; /* semibold */
   --p-panel-header-line-height: var(--font-h3-line-height, 1.3);
   --p-panel-content-border-color: var(
@@ -1190,7 +1200,7 @@
     var(--primitive-neutral-100)
   );
   --p-progressbar-value-background: var(--ds-primary-green);
-  --p-progressbar-border-radius: var(--radius-full, 9999px);
+  --p-progressbar-border-radius: var(--radius-full, 624.9375rem);
 
   /* Slider */
   --p-slider-background: var(--surface-tertiary, var(--primitive-neutral-100));
@@ -1198,9 +1208,9 @@
   --p-slider-handle-background: var(--ds-primary-green);
 
   /* InputSwitch (Toggle) */
-  --p-inputswitch-width: 48px;
-  --p-inputswitch-height: 26px;
-  --p-inputswitch-border-radius: 13px;
+  --p-inputswitch-width: var(--space-12);
+  --p-inputswitch-height: calc(var(--space-6) + var(--space-0-5));
+  --p-inputswitch-border-radius: var(--radius-full);
   --p-inputswitch-background: var(--primitive-neutral-300);
   --p-inputswitch-hover-background: var(--primitive-neutral-400);
   --p-inputswitch-checked-background: var(--ds-primary-green);
@@ -1208,7 +1218,7 @@
     --color-brand-primary-dark,
     var(--primitive-primary-800)
   );
-  --p-inputswitch-handle-size: 20px;
+  --p-inputswitch-handle-size: var(--space-5);
   --p-inputswitch-handle-background: var(--color-text-on-primary);
 
   /* ================================================================
@@ -1222,13 +1232,13 @@
      FOCUS STATES - Accessibility
      ================================================================ */
 
-  --p-focus-ring-width: 2px;
+  --p-focus-ring-width: var(--space-0-5);
   --p-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
-  --p-focus-ring-offset: 2px;
+  --p-focus-ring-offset: var(--space-0-5);
   --p-focus-ring-style: solid;
-  --p-inputtext-focus-ring-width: 2px;
+  --p-inputtext-focus-ring-width: var(--space-0-5);
   --p-inputtext-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
-  --p-inputtext-focus-ring-offset: 2px;
+  --p-inputtext-focus-ring-offset: var(--space-0-5);
   --p-inputtext-focus-border-color: var(--ds-primary-green);
 
   /* ================================================================

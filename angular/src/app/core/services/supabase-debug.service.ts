@@ -18,8 +18,18 @@ export class SupabaseDebugService {
     operation: string;
     duration: number;
     success: boolean;
-    error?: any;
+    error?: unknown;
   }> = [];
+  private readonly maxQueryLogs = 100;
+
+  private isSupabaseError(error: unknown): error is {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  } {
+    return typeof error === "object" && error !== null;
+  }
 
   /**
    * Enable debug mode to log all Supabase operations
@@ -43,9 +53,13 @@ export class SupabaseDebugService {
   async testUpsert(
     supabase: SupabaseClient,
     table: string,
-    data: any,
+    data: Record<string, unknown> | Record<string, unknown>[],
     options: { upsert?: boolean; onConflict?: string } = {},
-  ): Promise<{ success: boolean; error?: any; data?: any }> {
+  ): Promise<{
+    success: boolean;
+    error?: unknown;
+    data?: Array<Record<string, unknown>> | null;
+  }> {
     const startTime = performance.now();
     const operation = options.upsert ? "upsert" : "insert";
 
@@ -54,7 +68,7 @@ export class SupabaseDebugService {
 
     try {
       const query = supabase.from(table);
-      let result: any;
+      let result: { data?: Array<Record<string, unknown>> | null; error?: unknown };
 
       if (options.upsert) {
         result = await query.upsert(data, {
@@ -68,15 +82,18 @@ export class SupabaseDebugService {
 
       if (result.error) {
         console.error("❌ Error:", result.error);
-        console.error("Error code:", result.error.code);
-        console.error("Error message:", result.error.message);
-        console.error("Error details:", result.error.details);
-        console.error("Error hint:", result.error.hint);
+        if (this.isSupabaseError(result.error)) {
+          console.error("Error code:", result.error.code);
+          console.error("Error message:", result.error.message);
+          console.error("Error details:", result.error.details);
+          console.error("Error hint:", result.error.hint);
+        }
 
         // Log specific RLS-related errors
         if (
-          result.error.code === "42501" ||
-          result.error.message?.includes("policy")
+          this.isSupabaseError(result.error) &&
+          (result.error.code === "42501" ||
+            result.error.message?.includes("policy"))
         ) {
           console.error("🔒 RLS Policy violation detected");
           console.error("Check if auth.uid() matches user_id in the data");
@@ -87,8 +104,9 @@ export class SupabaseDebugService {
 
         // Log schema-related errors
         if (
-          result.error.code === "42703" ||
-          result.error.message?.includes("column")
+          this.isSupabaseError(result.error) &&
+          (result.error.code === "42703" ||
+            result.error.message?.includes("column"))
         ) {
           console.error("📋 Schema issue detected");
           console.error("Column does not exist in table");
@@ -127,10 +145,17 @@ export class SupabaseDebugService {
     supabase: SupabaseClient,
     table: string,
     userId: string,
-  ): Promise<{ passed: boolean; results: any[] }> {
+  ): Promise<{
+    passed: boolean;
+    results: Array<{ operation: string; success: boolean; error?: unknown }>;
+  }> {
     console.group(`[SupabaseDebug] Testing RLS policies for ${table}`);
 
-    const results = [];
+    const results: Array<{
+      operation: string;
+      success: boolean;
+      error?: unknown;
+    }> = [];
     const testData = this.getTestDataForTable(table, userId);
 
     // Test SELECT
@@ -155,13 +180,14 @@ export class SupabaseDebugService {
     });
 
     // Test UPDATE (if insert succeeded)
-    if (insertResult.success && insertResult.data?.[0]) {
+    const firstInsertRow = insertResult.data?.[0];
+    if (insertResult.success && firstInsertRow && "id" in firstInsertRow) {
       console.log("Testing UPDATE...");
       const updateData = { ...testData, updated_at: new Date().toISOString() };
       const updateResult = await supabase
         .from(table)
         .update(updateData)
-        .eq("id", insertResult.data[0].id);
+        .eq("id", firstInsertRow.id);
       results.push({
         operation: "UPDATE",
         success: !updateResult.error,
@@ -174,7 +200,7 @@ export class SupabaseDebugService {
       const deleteResult = await supabase
         .from(table)
         .delete()
-        .eq("id", insertResult.data[0].id);
+        .eq("id", firstInsertRow.id);
       results.push({
         operation: "DELETE",
         success: !deleteResult.error,
@@ -213,16 +239,19 @@ export class SupabaseDebugService {
           table_name: table,
         });
 
-        const hasUserIdIndex = indexData?.some((idx: any) =>
+        type IndexRow = { columns?: string[]; indexname?: string };
+        const indexRows = Array.isArray(indexData)
+          ? (indexData as IndexRow[])
+          : [];
+        const hasUserIdIndex = indexRows.some((idx) =>
           idx.columns?.includes("user_id"),
         );
 
         results.push({
           table,
           hasIndex: !!hasUserIdIndex,
-          indexName: indexData?.find((idx: any) =>
-            idx.columns?.includes("user_id"),
-          )?.indexname,
+          indexName: indexRows.find((idx) => idx.columns?.includes("user_id"))
+            ?.indexname,
         });
       } else {
         results.push({
@@ -246,14 +275,21 @@ export class SupabaseDebugService {
     supabase: SupabaseClient,
     table: string,
     userId: string,
-    onUpdate: (payload: any) => void,
-    onConflict: (local: any, remote: any) => any,
-  ): any {
+    onUpdate: (payload: unknown) => void,
+    onConflict: (
+      local: Record<string, unknown>,
+      remote: Record<string, unknown>,
+    ) => Record<string, unknown>,
+  ): {
+    channel: unknown;
+    updateLocal: (recordId: string, data: Record<string, unknown>) => void;
+    unsubscribe: () => void;
+  } {
     console.log(
       `[SupabaseDebug] Setting up realtime with conflict detection for ${table}`,
     );
 
-    const localVersion: { [key: string]: any } = {};
+    const localVersion: Record<string, Record<string, unknown>> = {};
 
     const channel = supabase
       .channel(`${table}_${userId}`)
@@ -267,20 +303,25 @@ export class SupabaseDebugService {
         },
         (payload) => {
           console.log(`[SupabaseDebug] Realtime change detected:`, payload);
+          const typedPayload = payload as {
+            eventType: string;
+            new: Record<string, unknown>;
+            old: Record<string, unknown>;
+          };
 
           if (
-            payload.eventType === "UPDATE" ||
-            payload.eventType === "INSERT"
+            typedPayload.eventType === "UPDATE" ||
+            typedPayload.eventType === "INSERT"
           ) {
-            const remoteData = payload.new;
-            const recordId = remoteData.id;
+            const remoteData = typedPayload.new;
+            const recordId = String(remoteData.id);
 
             // Check for conflict
             if (localVersion[recordId]) {
               const localUpdatedAt = new Date(
-                localVersion[recordId].updated_at,
+                String(localVersion[recordId].updated_at),
               );
-              const remoteUpdatedAt = new Date(remoteData.updated_at);
+              const remoteUpdatedAt = new Date(String(remoteData.updated_at));
 
               if (localUpdatedAt > remoteUpdatedAt) {
                 console.warn("⚠️ Conflict detected: Local version is newer");
@@ -303,10 +344,10 @@ export class SupabaseDebugService {
             onUpdate(remoteData);
           }
 
-          if (payload.eventType === "DELETE") {
-            const recordId = payload.old.id;
+          if (typedPayload.eventType === "DELETE") {
+            const recordId = String(typedPayload.old.id);
             delete localVersion[recordId];
-            onUpdate(payload);
+            onUpdate(typedPayload);
           }
         },
       )
@@ -316,7 +357,7 @@ export class SupabaseDebugService {
 
     return {
       channel,
-      updateLocal: (recordId: string, data: any) => {
+      updateLocal: (recordId: string, data: Record<string, unknown>) => {
         localVersion[recordId] = data;
       },
       unsubscribe: () => {
@@ -346,7 +387,9 @@ export class SupabaseDebugService {
       return { valid: false, missing: expectedColumns, extra: [] };
     }
 
-    const actualColumns = data?.map((col: any) => col.column_name) || [];
+    const actualColumns = Array.isArray(data)
+      ? data.map((col) => String((col as { column_name?: string }).column_name))
+      : [];
     const missing = expectedColumns.filter(
       (col) => !actualColumns.includes(col),
     );
@@ -412,7 +455,7 @@ export class SupabaseDebugService {
     operation: string,
     duration: number,
     success: boolean,
-    error?: any,
+    error?: unknown,
   ): void {
     if (!this.debugMode) return;
 
@@ -426,12 +469,15 @@ export class SupabaseDebugService {
     });
 
     // Keep only last 100 queries
-    if (this.queryLog.length > 100) {
+    if (this.queryLog.length > this.maxQueryLogs) {
       this.queryLog.shift();
     }
   }
 
-  private getTestDataForTable(table: string, userId: string): any {
+  private getTestDataForTable(
+    table: string,
+    userId: string,
+  ): Record<string, unknown> {
     const baseData = {
       user_id: userId,
       created_at: new Date().toISOString(),

@@ -34,7 +34,7 @@
 }
 
 .stat-icon {
-  font-size: var(--ds-font-size-3xl); /* 2rem/32px */
+  font-size: var(--ds-font-size-3xl); /* 2rem/2rem */
   color: var(--ds-primary-green);
 
   &.success {
@@ -61,7 +61,7 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 0.0625rem solid var(--surface-border);
   cursor: pointer;
   transition: background-color var(--transition-base);
 
@@ -83,7 +83,7 @@
   background-color: var(--ds-primary-green-subtle);
   border-radius: var(--radius-lg);
   color: var(--ds-primary-green);
-  font-size: var(--ds-font-size-xl); /* 1.25rem/20px */
+  font-size: var(--ds-font-size-xl); /* 1.25rem/1.25rem */
 }
 
 .event-details {
@@ -101,7 +101,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
-  font-size: var(--ds-font-size-md); /* 0.875rem/14px */
+  font-size: var(--ds-font-size-md); /* 0.875rem/0.875rem */
   color: var(--color-text-secondary);
 
   span {
@@ -130,7 +130,7 @@
   min-width: var(--avatar-size-sm);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-full);
-  font-size: var(--ds-font-size-xs); /* 0.75rem/12px */
+  font-size: var(--ds-font-size-xs); /* 0.75rem/0.75rem */
   font-weight: var(--ds-font-weight-semibold);
 
   &.success {
@@ -160,7 +160,7 @@
   gap: var(--space-2);
 
   .rate-bar {
-    width: 80px;
+    width: 5rem;
     height: var(--indicator-size-sm);
     border-radius: var(--radius-sm);
   }
@@ -235,7 +235,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  max-height: 400px;
+  max-height: 25rem;
   overflow-y: auto;
 }
 

@@ -21,7 +21,6 @@ import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { Stepper, StepList, Step } from "primeng/stepper";
-import { Toast } from "primeng/toast";
 import { Subject, Subscription, debounceTime, firstValueFrom } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -72,7 +71,6 @@ interface InjuryEntry {
     Stepper,
     StepList,
     Step,
-    Toast,
     DatePicker,
     Checkbox,
     ProgressBar,
@@ -82,7 +80,6 @@ interface InjuryEntry {
     IconButtonComponent,
   ],
   template: `
-    <p-toast></p-toast>
     <app-main-layout>
       <div class="onboarding-page">
         <app-page-header

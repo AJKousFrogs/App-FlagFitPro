@@ -10,7 +10,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 10000;
+  z-index: var(--z-index-skiplink);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -75,8 +75,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--avatar-size-sm); /* 32px */
-  height: var(--avatar-size-sm); /* 32px */
+  width: var(--avatar-size-sm); /* 2rem */
+  height: var(--avatar-size-sm); /* 2rem */
   background: var(--overlay-white-20);
   border-radius: 50%;
 }
@@ -98,7 +98,7 @@
 
 .status-message {
   font-size: var(--ds-font-size-xs);
-  opacity: 0.9;
+  opacity: var(--opacity-strong);
 }
 
 .banner-actions {

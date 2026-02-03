@@ -78,7 +78,7 @@ interface DailyState {
         [modal]="true"
         [closable]="true"
         [dismissableMask]="true"
-        [style]="{ width: '420px', maxWidth: '95vw' }"
+        styleClass="dialog-w-xl dialog-max-w-md"
         (onHide)="onSkip()"
       >
         <ng-container *ngTemplateOutlet="formContent"></ng-container>

@@ -16,23 +16,23 @@
 
 /* Sizes */
 .size-sm {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
 }
 
 .size-md {
-  width: 120px;
-  height: 120px;
+  width: 7.5rem;
+  height: 7.5rem;
 }
 
 .size-lg {
-  width: 160px;
-  height: 160px;
+  width: 10rem;
+  height: 10rem;
 }
 
 .size-xl {
-  width: 200px;
-  height: 200px;
+  width: 12.5rem;
+  height: 12.5rem;
 }
 
 /* SVG */
@@ -49,7 +49,8 @@
 .ring-progress {
   stroke: var(--progress-color, var(--color-brand-primary));
   stroke-linecap: round;
-  transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: stroke-dashoffset calc(var(--transition-slower) * 2)
+    var(--ease-standard);
 }
 
 .ring-progress.status-success {
@@ -74,8 +75,8 @@
 
 /* Glow effect */
 .ring-glow {
-  opacity: 0.3;
-  filter: blur(4px);
+  opacity: var(--opacity-quarter);
+  filter: blur(0.25rem);
 }
 
 .ring-glow.status-success {
@@ -139,7 +140,7 @@
 .ring-unit {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
   margin-left: var(--space-1);
 }
 
@@ -165,8 +166,8 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -191,7 +192,7 @@
 /* Trend indicator */
 .trend-indicator {
   position: absolute;
-  bottom: -8px;
+  bottom: -0.5rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -221,10 +222,10 @@
 @keyframes ring-pulse {
   0%,
   100% {
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
   }
   50% {
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
   }
 }
 

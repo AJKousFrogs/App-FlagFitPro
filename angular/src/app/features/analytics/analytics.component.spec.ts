@@ -101,7 +101,7 @@ describe("AnalyticsComponent", () => {
       },
     };
 
-    // Mock MessageService for PrimeNG Toast
+    // Mock MessageService for PrimeNG
     const mockMessageService = {
       add: vi.fn(),
       addAll: vi.fn(),

@@ -12,12 +12,12 @@
  *   <p-table class="table-compact" ...>
  * 
  * DENSITY (Decision 24):
- *   Default row: 52px
- *   Compact row: 40px
+ *   Default row: 3.25rem
+ *   Compact row: 2.5rem
  * 
  * VARIANTS:
- *   .table-default   - Standard table (52px rows)
- *   .table-compact   - Dense table (40px rows)
+ *   .table-default   - Standard table (3.25rem rows)
+ *   .table-compact   - Dense table (2.5rem rows)
  *   .table-striped   - Alternating row colors
  *   .table-bordered  - Cell borders
  */
@@ -34,13 +34,13 @@
   }
 
   // ============================================
-  // DEFAULT TABLE (52px rows)
+  // DEFAULT TABLE (3.25rem rows)
   // ============================================
 
   .table-default {
     .p-datatable-thead > tr > th {
       padding: var(--space-3) var(--space-4);
-      /* Typography: Label (14px/600) - unified system */
+      /* Typography: Label (0.875rem/600) - unified system */
       font-size: var(--font-label-size);
       font-weight: var(--font-label-weight);
       line-height: var(--font-label-line-height);
@@ -54,7 +54,7 @@
     .p-datatable-tbody > tr {
       > td {
         padding: var(--space-4);
-        /* Typography: Body (16px/400) - unified system */
+        /* Typography: Body (1rem/400) - unified system */
         font-size: var(--font-body-size);
         font-weight: var(--font-body-weight);
         line-height: var(--font-body-line-height);
@@ -85,13 +85,13 @@
   }
 
   // ============================================
-  // COMPACT TABLE (40px rows)
+  // COMPACT TABLE (2.5rem rows)
   // ============================================
 
   .table-compact {
     .p-datatable-thead > tr > th {
       padding: var(--space-2) var(--space-3);
-      /* Typography: Caption (12px/400) for compact - unified system */
+      /* Typography: Caption (0.75rem/400) for compact - unified system */
       font-size: var(--font-caption-size);
       font-weight: var(--font-label-weight);
       line-height: var(--font-caption-line-height);
@@ -105,7 +105,7 @@
     .p-datatable-tbody > tr {
       > td {
         padding: var(--space-2) var(--space-3);
-        /* Typography: Body-sm (14px/400) for compact - unified system */
+        /* Typography: Body-sm (0.875rem/400) for compact - unified system */
         font-size: var(--font-body-sm-size);
         font-weight: var(--font-body-sm-weight);
         line-height: var(--font-body-sm-line-height);
@@ -180,7 +180,7 @@
   }
 
   .cell-truncate {
-    max-width: 200px;
+    max-width: 12.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -207,8 +207,8 @@
   }
 
   .status-dot {
-    width: 8px;
-    height: 8px;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: var(--radius-full);
     flex-shrink: 0;
 
@@ -259,7 +259,7 @@
     font-size: var(--font-body-sm-size);
     color: var(--color-text-muted);
     margin: 0 0 var(--space-4) 0;
-    max-width: 320px;
+    max-width: 20rem;
   }
 
   // ============================================
@@ -268,7 +268,7 @@
 
   .table-loading {
     position: relative;
-    min-height: 200px;
+    min-height: 12.5rem;
 
     &::after {
       content: "";
@@ -316,7 +316,7 @@
   // ============================================
 
   .p-datatable .p-selection-column {
-    width: 48px;
+    width: 3rem;
     text-align: center;
   }
 

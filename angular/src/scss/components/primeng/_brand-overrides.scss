@@ -166,12 +166,12 @@
   }
 
   // ============================================
-  // TAGS - Design Contract: min-height 28px, proper padding
+  // TAGS - Design Contract: min-height 1.75rem, proper padding
   // ============================================
 
   .p-tag {
     // Geometry - ensure proper padding and touch targets
-    padding: var(--space-2) var(--space-3); // 8px 12px
+    padding: var(--space-2) var(--space-3); // 0.5rem 0.75rem
     min-height: var(--tag-height-md);
     border-radius: var(--p-tag-border-radius, var(--radius-md));
     font-size: var(--p-tag-font-size, var(--font-body-sm-size));
@@ -185,7 +185,7 @@
     .p-tag-icon,
     i,
     .pi {
-      font-size: var(--font-body-sm-size); /* 14px - relative to parent */
+      font-size: var(--font-body-sm-size); /* 0.875rem - relative to parent */
     }
 
     &.p-tag-success {
@@ -216,7 +216,7 @@
 
     // Confidence badge variant (used in confidence indicator)
     &.confidence-badge {
-      padding: var(--space-1) var(--space-3); // 4px 12px - slightly smaller
+      padding: var(--space-1) var(--space-3); // 0.25rem 0.75rem - slightly smaller
       min-height: var(--tag-height-sm);
       font-size: var(--font-caption-size);
     }
@@ -224,7 +224,7 @@
     // Stat tag variant (used in dashboards)
     &.stat-tag,
     &.event-type-tag {
-      padding: var(--space-1) var(--space-2); // 4px 8px
+      padding: var(--space-1) var(--space-2); // 0.25rem 0.5rem
       min-height: var(--tag-height-xs);
       font-size: var(--font-caption-size);
     }
@@ -364,7 +364,7 @@
     }
   }
 
-  // Additional form controls with 44px height
+  // Additional form controls with 2.75rem height
   .p-dropdown,
   .p-multiselect {
     height: var(--p-inputtext-min-height);
@@ -589,8 +589,8 @@
   }
 
   // ============================================
-  // CHECKBOX - 20px box, 6px radius, green check
-  // Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+  // CHECKBOX - 1.25rem box, 0.375rem radius, green check
+  // Focus ring: 0 0 0 0.1875rem rgba(8, 153, 73, 0.15)
   // Disabled: opacity 0.6, not interactive
   // ============================================
 
@@ -694,14 +694,14 @@
   }
 
   // ============================================
-  // TOGGLESWITCH - 44px hit area, visible track + thumb
+  // TOGGLESWITCH - 2.75rem hit area, visible track + thumb
   // Green = ON, neutral = OFF
-  // Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+  // Focus ring: 0 0 0 0.1875rem rgba(8, 153, 73, 0.15)
   // Disabled: opacity 0.6, not interactive
   // ============================================
 
   .p-toggleswitch {
-    // Ensure 44px hit area for accessibility
+    // Ensure 2.75rem hit area for accessibility
     // NOTE: !important flags removed - CSS layers handle cascade properly
     display: inline-flex;
     align-items: center;
@@ -783,8 +783,8 @@
         background: var(--p-toggleswitch-checked-background);
 
         &::before {
-          // Calculate: 44px track - 18px handle - 3px right padding = 23px left position
-          // Right edge will be at 23px + 18px = 41px, leaving 3px padding on right ✓
+          // Calculate: 2.75rem track - 1.125rem handle - 0.1875rem right padding = 1.4375rem left position
+          // Right edge will be at 1.4375rem + 1.125rem = 2.5625rem, leaving 0.1875rem padding on right ✓
           transform: none; // Remove transform to use left positioning
           left: calc(
             100% - var(--p-toggleswitch-handle-size) - var(
@@ -853,7 +853,7 @@
   }
 
   // ============================================
-  // TABS - Design Contract: 44px min-height, proper padding
+  // TABS - Design Contract: 2.75rem min-height, proper padding
   // ============================================
 
   .p-tabs {
@@ -880,7 +880,7 @@
     }
 
     .p-tab {
-      padding: var(--space-3) var(--space-4); // 12px 16px
+      padding: var(--space-3) var(--space-4); // 0.75rem 1rem
       background: transparent;
       border: none;
       border-radius: var(--radius-md);
@@ -1415,7 +1415,7 @@
 
   // ============================================
   // INPUT GROUP - Search inputs with icons
-  // Design Contract: 44px height, proper icon padding
+  // Design Contract: 2.75rem height, proper icon padding
   // ============================================
 
   .p-inputgroup {

@@ -38,21 +38,21 @@
 
 .orientation-horizontal .connector {
   position: absolute;
-  top: var(--space-4); // 16px
-  height: 3px;
+  top: var(--space-4); // 1rem
+  height: var(--space-0-75);
   background: var(--color-border-secondary);
 }
 
 .orientation-horizontal .connector-before {
   right: 50%;
   left: 0;
-  margin-right: var(--space-4); // 16px
+  margin-right: var(--space-4); // 1rem
 }
 
 .orientation-horizontal .connector-after {
   left: 50%;
   right: 0;
-  margin-left: var(--space-4); // 16px
+  margin-left: var(--space-4); // 1rem
 }
 
 .orientation-horizontal .connector.filled {
@@ -69,8 +69,8 @@
   display: flex;
   align-items: flex-start;
   position: relative;
-  padding-left: var(--space-10); // 40px
-  min-height: 3.75rem; // 60px
+  padding-left: var(--space-10); // 2.5rem
+  min-height: calc(var(--touch-target-md) + var(--space-4)); // 3.75rem
 }
 
 .orientation-vertical .item-content {
@@ -86,21 +86,21 @@
 
 .orientation-vertical .connector {
   position: absolute;
-  left: 15px;
-  width: 3px;
+  left: calc(var(--space-3) + var(--space-0-75)); // 0.9375rem
+  width: var(--space-0-75);
   background: var(--color-border-secondary);
 }
 
 .orientation-vertical .connector-before {
   top: 0;
   bottom: 50%;
-  margin-bottom: var(--space-4); // 16px
+  margin-bottom: var(--space-4); // 1rem
 }
 
 .orientation-vertical .connector-after {
   top: 50%;
   bottom: 0;
-  margin-top: var(--space-4); // 16px
+  margin-top: var(--space-4); // 1rem
 }
 
 .orientation-vertical .connector.filled {
@@ -109,8 +109,8 @@
 
 /* Status dot */
 .status-dot {
-  width: var(--avatar-sm); // 32px
-  height: var(--avatar-sm); // 32px
+  width: var(--avatar-sm); // 2rem
+  height: var(--avatar-sm); // 2rem
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -132,7 +132,7 @@
 .status-current .status-dot {
   background: var(--color-brand-primary);
   color: var(--ds-color-brand-contrast);
-  box-shadow: 0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.2);
+  box-shadow: 0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.2);
 }
 
 .status-upcoming .status-dot {
@@ -151,16 +151,16 @@
 }
 
 .dot-inner {
-  width: 8px;
-  height: 8px;
+  width: var(--space-2);
+  height: var(--space-2);
   border-radius: 50%;
   background: currentColor;
 }
 
 /* Current pulse */
 .current-pulse {
-  width: 10px;
-  height: 10px;
+  width: calc(var(--space-2) + var(--space-0-5)); // 0.625rem
+  height: calc(var(--space-2) + var(--space-0-5)); // 0.625rem
   border-radius: 50%;
   background: var(--ds-color-brand-contrast);
   animation: current-pulse 2s ease-in-out infinite;
@@ -174,7 +174,7 @@
   }
   50% {
     transform: scale(1.3);
-    opacity: 0.8;
+    opacity: var(--opacity-strong);
   }
 }
 
@@ -237,8 +237,8 @@
 }
 
 .variant-compact .status-dot {
-  width: 24px;
-  height: 24px;
+  width: var(--space-6);
+  height: var(--space-6);
   font-size: var(--ds-font-size-xs);
 }
 
@@ -252,15 +252,15 @@
 }
 
 .variant-compact .orientation-horizontal .connector {
-  top: var(--space-3); // 12px
+  top: var(--space-3); // 0.75rem
 }
 
 .variant-compact .orientation-horizontal .connector-before {
-  margin-right: var(--space-3); // 12px
+  margin-right: var(--space-3); // 0.75rem
 }
 
 .variant-compact .orientation-horizontal .connector-after {
-  margin-left: var(--space-3); // 12px
+  margin-left: var(--space-3); // 0.75rem
 }
 
 /* Hover effects */
@@ -275,20 +275,20 @@
   }
 
   .orientation-horizontal .status-dot {
-    width: var(--badge-lg); // 28px
-    height: var(--badge-lg); // 28px
+    width: var(--badge-lg); // 1.75rem
+    height: var(--badge-lg); // 1.75rem
   }
 
   .orientation-horizontal .connector {
-    top: 0.875rem; // 14px (between space-3 and space-4)
+    top: calc(var(--space-3) + var(--space-0-5)); // 0.875rem
   }
 
   .orientation-horizontal .connector-before {
-    margin-right: 0.875rem; // 14px
+    margin-right: calc(var(--space-3) + var(--space-0-5)); // 0.875rem
   }
 
   .orientation-horizontal .connector-after {
-    margin-left: 0.875rem; // 14px
+    margin-left: calc(var(--space-3) + var(--space-0-5)); // 0.875rem
   }
 }
 

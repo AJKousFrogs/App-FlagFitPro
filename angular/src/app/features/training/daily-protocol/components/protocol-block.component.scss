@@ -233,7 +233,7 @@
 .exercise-checkbox:has(input:checked) .exercise-name,
 .exercise-checkbox:has(input:checked) .exercise-prescription {
   text-decoration: line-through;
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
 }
 
 .exercise-name {
@@ -307,8 +307,8 @@
   }
 
   .block-icon {
-    width: var(--icon-container-md); // 40px
-    height: var(--icon-container-md); // 40px
+    width: var(--icon-container-md); // 2.5rem
+    height: var(--icon-container-md); // 2.5rem
     font-size: var(--ds-font-size-md);
   }
 

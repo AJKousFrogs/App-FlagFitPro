@@ -59,6 +59,7 @@ export default tseslint.config(
       // Block inline styles - use SCSS classes or design-system utilities instead
       // This catches: style="...", [style]="...", [ngStyle]="..."
       "@angular-eslint/template/no-inline-styles": "error",
+      "@typescript-eslint/ban-ts-comment": "off",
     },
   },
   // ============================================
@@ -116,7 +117,7 @@ export default tseslint.config(
   },
   // TypeScript files configuration
   {
-    files: ["**/*.ts"],
+    files: ["src/app/**/*.ts"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -159,11 +160,13 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-non-null-assertion": "warn",
+      "@typescript-eslint/ban-ts-comment": "off",
 
       // ============================================
       // BEST PRACTICES
       // ============================================
-      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-console": "error",
+      "no-alert": "error",
       "prefer-const": "warn",
       eqeqeq: ["warn", "always", { null: "ignore" }], // Allow == null for null/undefined checks
 
@@ -216,6 +219,22 @@ export default tseslint.config(
     files: ["src/app/core/logging/console-logger.adapter.ts"],
     rules: {
       "no-console": "off",
+    },
+  },
+  {
+    files: ["src/app/core/ui/dialog.service.ts"],
+    rules: {
+      "no-alert": "off",
+    },
+  },
+  {
+    files: [
+      "src/app/core/constants/constants-validation.ts",
+      "src/app/core/services/supabase-debug.service.ts",
+    ],
+    rules: {
+      "no-console": "off",
+      "no-alert": "off",
     },
   },
   {

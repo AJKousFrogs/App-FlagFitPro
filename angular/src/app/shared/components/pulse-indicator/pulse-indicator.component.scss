@@ -23,23 +23,23 @@
 
 /* Sizes */
 .size-xs .pulse-container {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 .size-sm .pulse-container {
-  width: 12px;
-  height: 12px;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .size-md .pulse-container {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 
 .size-lg .pulse-container {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 /* Core dot */
@@ -50,23 +50,23 @@
 }
 
 .size-xs .pulse-dot {
-  width: 6px;
-  height: 6px;
+  width: 0.375rem;
+  height: 0.375rem;
 }
 
 .size-sm .pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 .size-md .pulse-dot {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
 }
 
 .size-lg .pulse-dot {
-  width: 12px;
-  height: 12px;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 /* Pulse rings */
@@ -88,7 +88,7 @@
 @keyframes pulse-expand {
   0% {
     transform: scale(0.8);
-    opacity: 0.8;
+    opacity: var(--opacity-strong);
   }
   100% {
     transform: scale(2.5);
@@ -100,7 +100,7 @@
 .status-live .pulse-dot,
 .status-online .pulse-dot {
   background: var(--color-status-success);
-  box-shadow: 0 0 8px var(--color-status-success);
+  box-shadow: 0 0 0.5rem var(--color-status-success);
 }
 
 .status-live .pulse-ring,
@@ -123,7 +123,7 @@
 
 .status-warning .pulse-dot {
   background: var(--color-status-warning);
-  box-shadow: 0 0 8px var(--color-status-warning);
+  box-shadow: 0 0 0.5rem var(--color-status-warning);
 }
 
 .status-warning .pulse-ring {
@@ -132,7 +132,7 @@
 
 .status-error .pulse-dot {
   background: var(--color-status-error);
-  box-shadow: 0 0 8px var(--color-status-error);
+  box-shadow: 0 0 0.5rem var(--color-status-error);
 }
 
 .status-error .pulse-ring {
@@ -145,7 +145,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.4;
+    opacity: var(--opacity-minimal);
   }
 }
 

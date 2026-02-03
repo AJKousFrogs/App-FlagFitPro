@@ -43,7 +43,7 @@
 .no-results i {
   font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-4);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 .no-results h3 {
@@ -63,7 +63,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--ds-font-size-2xl); /* H2: Section titles - 18px */
+  font-size: var(--ds-font-size-2xl); /* H2: Section titles - 1.125rem */
   font-weight: var(--ds-font-weight-semibold); /* H2: Semibold (600) */
   line-height: var(--ds-line-height-tight);
   margin-bottom: var(--space-6);
@@ -191,7 +191,7 @@
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .metric-card .metric-value {
@@ -266,7 +266,7 @@
   padding: var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-secondary);
+  border: 0.0625rem solid var(--color-border-secondary);
 }
 
 .benchmark-header {
@@ -368,17 +368,17 @@
 
   &.risk-level-moderate {
     background: var(--color-status-warning-bg);
-    border: 1px solid var(--color-status-warning);
+    border: 0.0625rem solid var(--color-status-warning);
   }
 
   &.risk-level-high {
     background: rgba(var(--primitive-warning-500-rgb), 0.15);
-    border: 1px solid var(--color-status-warning);
+    border: 0.0625rem solid var(--color-status-warning);
   }
 
   &.risk-level-critical {
     background: var(--color-status-error-bg);
-    border: 1px solid var(--color-status-error);
+    border: 0.0625rem solid var(--color-status-error);
   }
 
   h3 {
@@ -518,7 +518,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  max-height: 400px;
+  max-height: 25rem;
   overflow-y: auto;
 }
 
@@ -535,7 +535,7 @@
 .empty-invitations i {
   font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-4);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 .empty-invitations p {
@@ -561,7 +561,7 @@
 }
 
 .invitation-item.expired {
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
   background: var(--color-error-bg);
   border-color: var(--color-status-error);
 }
@@ -601,19 +601,19 @@
 }
 
 /* Responsive */
-@media (min-width: 1400px) {
+@media (min-width: 87.5rem) {
   .roster-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (min-width: 1200px) and (max-width: 1399px) {
+@media (min-width: 75rem) and (max-width: 87.4375rem) {
   .roster-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 1024px) and (max-width: 1199px) {
+@media (min-width: 64rem) and (max-width: 74.9375rem) {
   .roster-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -681,7 +681,7 @@
   }
 
   .invitations-list {
-    max-height: 300px;
+    max-height: 18.75rem;
   }
 
   .status-options {
@@ -715,7 +715,7 @@
 /* Touch devices */
 @media (hover: none) and (pointer: coarse) {
   .header-actions button {
-    min-height: var(--touch-target-md); /* 44px */
+    min-height: var(--touch-target-md); /* 2.75rem */
     min-width: var(--touch-target-md);
   }
 }

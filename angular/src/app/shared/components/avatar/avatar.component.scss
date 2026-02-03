@@ -24,7 +24,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border: 2px solid var(--overlay-white-15);
+  border: 0.125rem solid var(--overlay-white-15);
   box-shadow: var(--shadow-1);
   transition:
     transform var(--transition-base) ease,
@@ -37,31 +37,31 @@
 }
 
 .avatar-sm {
-  width: var(--space-8); // 2rem / 32px
-  height: var(--space-8); // 2rem / 32px
+  width: var(--space-8); // 2rem / 2rem
+  height: var(--space-8); // 2rem / 2rem
   font-size: var(--ds-font-size-xs);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .avatar-md {
-  width: var(--avatar-size-md); // 2.75rem / 44px
-  height: var(--avatar-size-md); // 2.75rem / 44px
+  width: var(--avatar-size-md); // 2.75rem / 2.75rem
+  height: var(--avatar-size-md); // 2.75rem / 2.75rem
   font-size: var(--ds-font-size-md);
-  letter-spacing: var(--ds-letter-spacing-0-75px);
+  letter-spacing: var(--ds-letter-spacing-wide);
 }
 
 .avatar-lg {
-  width: var(--avatar-size-xl); // 3.5rem / 56px
-  height: var(--avatar-size-xl); // 3.5rem / 56px
+  width: var(--avatar-size-xl); // 3.5rem / 3.5rem
+  height: var(--avatar-size-xl); // 3.5rem / 3.5rem
   font-size: var(--ds-font-size-md);
-  letter-spacing: var(--ds-letter-spacing-1px);
+  letter-spacing: var(--ds-letter-spacing-0-08em);
 }
 
 .avatar-xl {
-  width: var(--avatar-size-2xl); // 5rem / 80px
-  height: var(--avatar-size-2xl); // 5rem / 80px
+  width: var(--avatar-size-2xl); // 5rem / 5rem
+  height: var(--avatar-size-2xl); // 5rem / 5rem
   font-size: var(--ds-font-size-2xl);
-  letter-spacing: var(--ds-letter-spacing-1-5px);
+  letter-spacing: var(--ds-letter-spacing-0-1em);
 }
 
 .avatar-square {
@@ -78,10 +78,10 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  width: var(--space-3); // 0.75rem / 12px
-  height: var(--space-3); // 0.75rem / 12px
+  width: var(--space-3); // 0.75rem / 0.75rem
+  height: var(--space-3); // 0.75rem / 0.75rem
   border-radius: 50%;
-  border: 2px solid var(--surface-primary);
+  border: 0.125rem solid var(--surface-primary);
 }
 
 .badge-online {

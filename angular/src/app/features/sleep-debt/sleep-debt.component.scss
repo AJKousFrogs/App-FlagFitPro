@@ -20,8 +20,8 @@
 }
 
 .debt-circle {
-  width: 160px;
-  height: 160px;
+  width: 10rem;
+  height: 10rem;
   border-radius: 50%;
   margin: 0 auto var(--space-3);
   display: flex;
@@ -92,7 +92,7 @@
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     margin-top: var(--space-1);
-    letter-spacing: var(--ds-letter-spacing-1px);
+    letter-spacing: var(--ds-letter-spacing-0-08em);
   }
 }
 
@@ -197,10 +197,6 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
 
-    i {
-      font-size: var(--ds-font-size-2xl);
-      color: var(--primitive-yellow-500);
-    }
   }
 
   .recommendation-content {
@@ -224,14 +220,19 @@
         padding: var(--space-2);
         background: var(--ds-surface-base);
         border-radius: var(--radius-md);
-
-        i {
-          color: var(--ds-primary-green);
-          margin-top: var(--space-1);
-        }
       }
     }
   }
+}
+
+.rec-header__icon {
+  font-size: var(--ds-font-size-2xl);
+  color: var(--primitive-yellow-500);
+}
+
+.rec-list-icon {
+  color: var(--ds-primary-green);
+  margin-top: var(--space-1);
 }
 
 // Chart Card
@@ -285,7 +286,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 200px;
+  height: 12.5rem;
   color: var(--ds-text-tertiary);
 
   i {
@@ -310,8 +311,8 @@
   }
 
   .debt-circle {
-    width: 140px;
-    height: 140px;
+    width: 8.75rem;
+    height: 8.75rem;
 
     .debt-value {
       font-size: var(--ds-font-size-2xl);

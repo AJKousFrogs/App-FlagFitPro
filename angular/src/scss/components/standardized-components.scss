@@ -195,7 +195,7 @@
   @media (hover: none) and (pointer: coarse) {
     &:active:not(:disabled) {
       transform: var(--transform-active-press);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 }
@@ -227,7 +227,7 @@
   @media (hover: none) and (pointer: coarse) {
     &:active:not(:disabled) {
       transform: var(--transform-active-press);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 }
@@ -283,7 +283,7 @@
   @media (hover: none) and (pointer: coarse) {
     &:active:not(:disabled) {
       transform: var(--transform-active-press);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 }
@@ -320,7 +320,7 @@
   @media (hover: none) and (pointer: coarse) {
     &:active:not(:disabled) {
       transform: var(--transform-active-press);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 }
@@ -355,7 +355,7 @@
   @media (hover: none) and (pointer: coarse) {
     &:active:not(:disabled) {
       transform: var(--transform-active-press);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 }
@@ -390,7 +390,7 @@
   @media (hover: none) and (pointer: coarse) {
     &:active:not(:disabled) {
       transform: var(--transform-active-press);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 }
@@ -896,7 +896,7 @@ select {
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: var(--opacity-muted);
     }
   }
 
@@ -926,7 +926,7 @@ select {
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: var(--opacity-muted);
     }
   }
 
@@ -1361,7 +1361,7 @@ select {
       }
 
       &.disabled {
-        opacity: 0.6;
+        opacity: var(--opacity-muted);
         cursor: not-allowed;
         pointer-events: none;
       }
@@ -1528,7 +1528,7 @@ select {
 
         &::after {
           content: " ↕";
-          opacity: 0.3;
+          opacity: var(--opacity-minimal);
           margin-left: var(--space-1);
         }
 
@@ -2051,7 +2051,7 @@ select {
 }
 
 /* Hide on Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .hide-desktop {
     display: none;
   }
@@ -2175,7 +2175,7 @@ select {
   position: sticky;
 }
 
-/* Safari/iOS input zoom prevention (font-size >= 16px) */
+/* Safari/iOS input zoom prevention (font-size >= 1rem) */
 @include respond-to(md) {
   input[type="text"],
   input[type="email"],
@@ -2308,7 +2308,7 @@ select {
 
   /* Firefox select arrow fix */
   select {
-    text-indent: 0.01px;
+    text-indent: 0.01em;
     text-overflow: "";
   }
 }
@@ -2337,7 +2337,7 @@ select {
 }
 
 /* Landscape orientation fixes for mobile */
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 31.25rem) and (orientation: landscape) {
   .modal {
     max-height: var(--layout-height-full);
     overflow-y: auto;

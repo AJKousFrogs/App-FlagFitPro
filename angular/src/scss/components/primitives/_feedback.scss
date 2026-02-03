@@ -64,7 +64,7 @@
     padding: var(--space-1);
     cursor: pointer;
     color: inherit;
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
     transition: opacity var(--motion-fast) var(--ease-standard);
 
     &:hover {
@@ -135,19 +135,19 @@
     justify-content: center;
     text-align: center;
     padding: var(--space-10) var(--space-6);
-    min-height: 240px;
+    min-height: 15rem;
   }
 
   .empty-state--compact {
     padding: var(--space-6) var(--space-4);
-    min-height: 160px;
+    min-height: 10rem;
   }
 
   .empty-state__icon {
     font-size: var(--font-h1-size);
     color: var(--color-text-muted);
     margin-bottom: var(--space-4);
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
 
   .empty-state__title {
@@ -161,7 +161,7 @@
     font-size: var(--font-body-sm-size);
     color: var(--color-text-muted);
     margin: 0 0 var(--space-5) 0;
-    max-width: 320px;
+    max-width: 20rem;
   }
 
   .empty-state__actions {
@@ -203,13 +203,13 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-10) var(--space-6);
-    min-height: 200px;
+    min-height: 12.5rem;
   }
 
   .loading-state__spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--color-surface-secondary);
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0.1875rem solid var(--color-surface-secondary);
     border-top-color: var(--ds-primary-green);
     border-radius: var(--radius-full);
     animation: spin 0.8s linear infinite;
@@ -235,9 +235,9 @@
   }
 
   .loading-inline__spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--color-surface-secondary);
+    width: 1rem;
+    height: 1rem;
+    border: 0.125rem solid var(--color-surface-secondary);
     border-top-color: var(--ds-primary-green);
     border-radius: var(--radius-full);
     animation: spin 0.8s linear infinite;
@@ -270,19 +270,19 @@
   }
 
   .skeleton--avatar {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: var(--radius-full);
   }
 
   .skeleton--button {
-    height: 44px;
-    width: 120px;
+    height: 2.75rem;
+    width: 7.5rem;
     border-radius: var(--radius-lg);
   }
 
   .skeleton--card {
-    height: 200px;
+    height: 12.5rem;
     border-radius: var(--radius-xl);
   }
 
@@ -301,7 +301,7 @@
 
   .progress {
     width: 100%;
-    height: 8px;
+    height: 0.5rem;
     background: var(--color-surface-secondary);
     border-radius: var(--radius-full);
     overflow: hidden;
@@ -315,11 +315,11 @@
   }
 
   .progress--sm {
-    height: 4px;
+    height: 0.25rem;
   }
 
   .progress--lg {
-    height: 12px;
+    height: 0.75rem;
   }
 
   // ============================================
@@ -331,7 +331,7 @@
     .loading-inline__spinner {
       animation: none;
       border-top-color: var(--ds-primary-green);
-      opacity: 0.7;
+      opacity: var(--opacity-subtle);
     }
 
     .skeleton {

@@ -11,7 +11,7 @@
  * - Decision 8: Semantic color tokens
  * - Decision 14: Border-first cards
  * - Decision 19: Specific transitions
- * - Decision 41: Checkbox standards (44px hit target)
+ * - Decision 41: Checkbox standards (2.75rem hit target)
  */
 
 @use "styles/variables" as *;
@@ -24,7 +24,7 @@
 .supplement-card {
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--primitive-neutral-200);
+  border: 0.0625rem solid var(--primitive-neutral-200);
   box-shadow: var(--shadow-1);
   overflow: hidden;
   height: 100%;
@@ -41,7 +41,7 @@
     align-items: center;
     padding: var(--space-4, var(--ds-font-size-md))
       var(--space-5, var(--ds-font-size-xl));
-    border-bottom: 1px solid var(--primitive-neutral-100);
+    border-bottom: 0.0625rem solid var(--primitive-neutral-100);
   }
 
   .header-title {
@@ -74,7 +74,7 @@
     color: var(--color-text-secondary);
     background: var(--surface-secondary);
     padding: var(--ds-space-1) var(--ds-space-2);
-    border-radius: var(--radius-md, 8px);
+    border-radius: var(--radius-md, 0.5rem);
     box-shadow: var(--shadow-1);
   }
 
@@ -89,17 +89,17 @@
   }
 
   .progress-bar {
-    height: var(--indicator-size-sm); /* 8px */
+    height: var(--indicator-size-sm); /* 0.5rem */
     background: var(--primitive-neutral-200);
-    border-radius: var(--radius-full, 9999px);
+    border-radius: var(--radius-full, 624.9375rem);
     overflow: hidden;
-    margin-bottom: var(--space-2, 8px);
+    margin-bottom: var(--space-2, 0.5rem);
   }
 
   .progress-fill {
     height: 100%;
     background: var(--ds-primary-green);
-    border-radius: var(--radius-full, 9999px);
+    border-radius: var(--radius-full, 624.9375rem);
     transition: width var(--transition-base) var(--ease-standard);
 
     &.complete {
@@ -136,7 +136,7 @@
 
   .supplement-list {
     padding: var(--space-3, var(--ds-font-size-xs)) 0;
-    max-height: var(--chart-min-height-lg); /* 400px */
+    max-height: var(--chart-min-height-lg); /* 25rem */
     overflow-y: auto;
     flex: 1;
   }
@@ -146,7 +146,7 @@
     &:not(:last-child) {
       margin-bottom: var(--space-3, var(--ds-font-size-xs));
       padding-bottom: var(--space-3, var(--ds-font-size-xs));
-      border-bottom: 1px solid var(--primitive-neutral-100);
+      border-bottom: 0.0625rem solid var(--primitive-neutral-100);
     }
   }
 
@@ -159,7 +159,7 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     text-transform: var(--ds-text-transform-uppercase);
-    letter-spacing: var(--ds-letter-spacing-0-5px);
+    letter-spacing: var(--ds-letter-spacing-0-03em);
 
     i {
       font-size: var(--ds-font-size-md);
@@ -174,7 +174,7 @@
     gap: var(--space-3, var(--ds-font-size-xs));
     padding: var(--ds-space-2) var(--ds-space-5);
     cursor: pointer;
-    transition: background-color 150ms ease;
+    transition: background-color var(--transition-fast) var(--ease-standard);
 
     &:hover {
       background: var(--color-surface-hover);
@@ -192,12 +192,12 @@
     }
   }
 
-  // Decision 41: 44px minimum hit target
+  // Decision 41: 2.75rem minimum hit target
   .item-checkbox {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: var(--touch-target-md); /* 44px */
+    min-width: var(--touch-target-md); /* 2.75rem */
     min-height: var(--touch-target-md);
   }
 
@@ -311,7 +311,7 @@
 
   @include respond-to(sm) {
     .supplement-card {
-      border-radius: var(--radius-lg, 8px);
+      border-radius: var(--radius-lg, 0.5rem);
     }
 
     .supplement-header {
@@ -353,7 +353,7 @@
     &:focus-visible {
       outline: var(--focus-outline-width) solid var(--ds-primary-green);
       outline-offset: var(--focus-outline-offset);
-      border-radius: var(--radius-sm, 4px);
+      border-radius: var(--radius-sm, 0.25rem);
     }
   }
 }

@@ -66,9 +66,8 @@ interface WalkthroughStep {
       [closable]="false"
       [draggable]="false"
       [resizable]="false"
-      [style]="{ width: '520px', maxWidth: '95vw' }"
       [showHeader]="false"
-      styleClass="walkthrough-dialog"
+      styleClass="walkthrough-dialog dialog-w-xl dialog-max-w-xl"
     >
       <div class="walkthrough-content">
         <!-- Progress -->

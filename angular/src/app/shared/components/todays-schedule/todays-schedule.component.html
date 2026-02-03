@@ -3,7 +3,7 @@
   <div header-actions class="header-progress">
     <span class="progress-text">{{ completedCount() }}/{{ totalCount() }}</span>
     <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+      <div class="progress-fill" #progressFill></div>
     </div>
   </div>
 

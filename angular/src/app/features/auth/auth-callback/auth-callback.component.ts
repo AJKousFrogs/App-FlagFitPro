@@ -10,7 +10,6 @@ import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Message } from "primeng/message";
 import { ProgressSpinner } from "primeng/progressspinner";
-import { Toast } from "primeng/toast";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -42,17 +41,16 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     ButtonComponent,
     Message,
     ProgressSpinner,
-    Toast,
+
   ],
   template: `
-    <p-toast></p-toast>
-    <div class="auth-callback-page">
+<div class="auth-callback-page">
       <p-card class="auth-callback-card">
         @if (isProcessing()) {
           <div class="processing-state">
             <p-progressSpinner
               strokeWidth="4"
-              [style]="{ width: '50px', height: '50px' }"
+              styleClass="auth-callback-spinner"
             ></p-progressSpinner>
             <h2>{{ processingMessage() }}</h2>
             <p class="processing-description">Please wait...</p>

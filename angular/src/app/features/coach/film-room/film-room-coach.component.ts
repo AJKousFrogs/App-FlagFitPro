@@ -28,7 +28,6 @@ import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -101,7 +100,7 @@ const TAG_TYPES = [
     RadioButton,
     Select,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -109,9 +108,7 @@ const TAG_TYPES = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="film-room-page">
+<div class="film-room-page">
         <app-page-header
           title="Film Room"
           subtitle="Manage game and practice film"

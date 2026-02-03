@@ -272,7 +272,7 @@ interface TeamMember {
         header="Create Training Session"
         [(visible)]="showCreateSessionDialog"
         [modal]="true"
-        [style]="{ width: '550px' }"
+        styleClass="dialog-w-md"
         [closable]="true"
       >
         <div class="session-form">

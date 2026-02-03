@@ -136,8 +136,7 @@ interface UpcomingGame {
           <p-progressBar
             [value]="readinessPercent()"
             [showValue]="false"
-            [style]="{ height: '8px' }"
-            [styleClass]="getProgressClass()"
+            [styleClass]="getProgressClass() + ' progressbar-height-sm'"
           ></p-progressBar>
         </div>
 

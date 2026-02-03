@@ -53,7 +53,7 @@
     /* Design system tokens take precedence */
     .p-button {
       border-radius: var(--radius-lg);
-      min-height: 44px; /* Touch target */
+      min-height: var(--touch-target-md); /* Touch target */
     }
 
     /* Primary buttons - GREEN background, WHITE text */
@@ -74,7 +74,7 @@
     /* Outlined buttons - GREEN border & text */
     .p-button.p-button-outlined {
       background: transparent;
-      border: 2px solid var(--ds-primary-green);
+      border: var(--border-2) solid var(--ds-primary-green);
       color: var(--ds-primary-green);
     }
 

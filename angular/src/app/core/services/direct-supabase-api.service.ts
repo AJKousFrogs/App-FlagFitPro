@@ -98,6 +98,12 @@ interface TrainingSession {
   rpe: number | null;
 }
 
+type ProtocolReadiness = {
+  readiness_score: number | null;
+  confidence_metadata?: ConfidenceMetadata | null;
+  acwr_value: number | null;
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -379,11 +385,10 @@ export class DirectSupabaseApiService {
    * Compute confidence_metadata dynamically based on current wellness data
    * This ensures we reflect the latest check-in status
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async computeConfidenceMetadata(
     userId: string,
     date: string,
-    protocol: any,
+    protocol: ProtocolReadiness,
   ): Promise<ConfidenceMetadata> {
     // Check for today's wellness check-in (table is daily_wellness_checkin)
     // Note: Use calculated_readiness or overall_readiness_score (not readiness_score which doesn't exist)
@@ -1364,7 +1369,7 @@ export class DirectSupabaseApiService {
   /**
    * Get user's practice days from preferences
    */
-  private async getUserPracticeDays(userId: string): Promise<string[]> {
+  private async getUserPracticeDays(_userId: string): Promise<string[]> {
     try {
       // First try to get from user_preferences by email
       const user = this.authService.getUser();
@@ -1943,8 +1948,10 @@ export class DirectSupabaseApiService {
 
     if (hasStress && hasSoreness) {
       // Full calculation with all 4 metrics
-      const stressScore = ((10 - data.stressLevel!) / 10) * 100; // Invert stress
-      const sorenessScore = ((10 - data.muscleSoreness!) / 10) * 100; // Invert soreness
+      const stressLevel = data.stressLevel ?? 0;
+      const sorenessLevel = data.muscleSoreness ?? 0;
+      const stressScore = ((10 - stressLevel) / 10) * 100; // Invert stress
+      const sorenessScore = ((10 - sorenessLevel) / 10) * 100; // Invert soreness
 
       readiness = Math.round(
         sleepScore * 0.3 +
@@ -1954,7 +1961,8 @@ export class DirectSupabaseApiService {
       );
     } else if (hasStress) {
       // Calculation with sleep, energy, stress (redistribute soreness weight)
-      const stressScore = ((10 - data.stressLevel!) / 10) * 100;
+      const stressLevel = data.stressLevel ?? 0;
+      const stressScore = ((10 - stressLevel) / 10) * 100;
       readiness = Math.round(
         sleepScore * 0.375 + // 30 + (20 * 30/80)
           energyScore * 0.3125 + // 25 + (20 * 25/80)
@@ -1962,7 +1970,8 @@ export class DirectSupabaseApiService {
       );
     } else if (hasSoreness) {
       // Calculation with sleep, energy, soreness (redistribute stress weight)
-      const sorenessScore = ((10 - data.muscleSoreness!) / 10) * 100;
+      const sorenessLevel = data.muscleSoreness ?? 0;
+      const sorenessScore = ((10 - sorenessLevel) / 10) * 100;
       readiness = Math.round(
         sleepScore * 0.4 + // 30 + (25 * 30/75)
           energyScore * 0.333 + // 25 + (25 * 25/75)

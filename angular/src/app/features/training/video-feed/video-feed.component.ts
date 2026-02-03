@@ -34,11 +34,10 @@ import { Router } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-
-import { Dialog } from "primeng/dialog";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { Ripple } from "primeng/ripple";
 import { Skeleton } from "primeng/skeleton";
-import { Toast } from "primeng/toast";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
@@ -80,18 +79,18 @@ interface FilterChip {
     FormsModule,
     Skeleton,
     Tooltip,
-    Dialog,
-    Toast,
+
     Avatar,
     Ripple,
     MainLayoutComponent,
     ButtonComponent,
     StatusTagComponent,
     SearchInputComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <app-main-layout>
+<app-main-layout>
       <div class="video-feed-page">
         <!-- Hero Header -->
         <header class="feed-header">
@@ -440,17 +439,20 @@ interface FilterChip {
         </section>
 
         <!-- Video Player Dialog -->
-        <p-dialog
+        <app-dialog
           [(visible)]="showVideoDialog"
-          [modal]="true"
+          styleClass="video-dialog"
           [draggable]="false"
           [resizable]="false"
           [dismissableMask]="true"
-          [closable]="true"
-          [showHeader]="true"
-          [header]="selectedVideo()?.title || 'Training Video'"
-          styleClass="video-dialog"
+          (hide)="showVideoDialog.set(false)"
         >
+          <app-dialog-header
+            icon="film"
+            [title]="selectedVideo()?.title || 'Training Video'"
+            subtitle="Watch coach-led sessions in premium resolution"
+            (close)="showVideoDialog.set(false)"
+          ></app-dialog-header>
           @if (selectedVideo(); as video) {
             <div class="video-dialog-content">
               <!-- Instagram Embed -->
@@ -508,7 +510,7 @@ interface FilterChip {
               </div>
             </div>
           }
-        </p-dialog>
+        </app-dialog>
       </div>
     </app-main-layout>
   `,
@@ -533,7 +535,7 @@ export class VideoFeedComponent {
   // 🎥 OPTIONAL: Hover preview feature (disabled by default)
   enableHoverPreview = signal(false); // Set to true to enable hover-to-play
   hoveringVideoId = signal<string | null>(null);
-  private hoverTimer: any = null;
+  private hoverTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Filter state
   activePositionFilters = signal<Set<FlagPosition>>(new Set());

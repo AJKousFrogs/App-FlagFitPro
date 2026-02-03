@@ -10,7 +10,7 @@
 }
 
 .no-data-card {
-  border: 2px dashed var(--color-border-secondary);
+  border: 0.125rem dashed var(--color-border-secondary);
   background: linear-gradient(
     135deg,
     var(--surface-secondary) 0%,
@@ -34,12 +34,12 @@
   padding: var(--space-6);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  border: 1px dashed var(--color-border-secondary);
+  border: 0.0625rem dashed var(--color-border-secondary);
 }
 
 .no-data-icon {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
   background: linear-gradient(
     135deg,
@@ -54,8 +54,8 @@
 }
 
 .compact .no-data-icon {
-  width: 60px;
-  height: 60px;
+  width: 3.75rem;
+  height: 3.75rem;
 }
 
 .no-data-icon i {
@@ -79,7 +79,7 @@
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(var(--primitive-primary-500-rgb), 0.4);
+    box-shadow: 0 0 1.25rem rgba(var(--primitive-primary-500-rgb), 0.4);
   }
 }
 
@@ -97,7 +97,7 @@
 .no-data-message {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  max-width: 500px;
+  max-width: 31.25rem;
   margin-bottom: var(--space-6);
   line-height: var(--ds-line-height-1-6);
 }
@@ -109,7 +109,7 @@
 
 .benefits-section {
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   margin-bottom: var(--space-6);
   text-align: left;
 }
@@ -120,7 +120,7 @@
   color: var(--color-text-secondary);
   margin-bottom: var(--space-3);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .benefits-list {
@@ -176,7 +176,7 @@
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-xs);
   color: var(--color-status-success);
-  max-width: 400px;
+  max-width: 25rem;
 }
 
 .safety-note i {
@@ -190,8 +190,8 @@
   }
 
   .no-data-icon {
-    width: 60px;
-    height: 60px;
+    width: 3.75rem;
+    height: 3.75rem;
   }
 
   .no-data-icon i {

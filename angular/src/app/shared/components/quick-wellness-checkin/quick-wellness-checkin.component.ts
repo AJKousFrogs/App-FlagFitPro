@@ -27,9 +27,9 @@ import { Router, RouterModule } from "@angular/router";
 // PrimeNG
 import { ButtonComponent } from "../button/button.component";
 import { Checkbox } from "primeng/checkbox";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { Textarea } from "primeng/textarea";
+import { AppDialogComponent } from "../dialog/dialog.component";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -45,7 +45,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
     CommonModule,
     FormsModule,
     RouterModule,
-    Dialog,
+    AppDialogComponent,
     InputNumber,
     Checkbox,
     Textarea,
@@ -53,15 +53,13 @@ import { WellnessService } from "../../../core/services/wellness.service";
     ButtonComponent,
   ],
   template: `
-    <p-dialog
+    <app-dialog
       [(visible)]="visible"
       [modal]="true"
       [closable]="true"
       [draggable]="false"
-      [style]="{ width: '420px', maxWidth: '95vw' }"
-      [showHeader]="false"
-      styleClass="quick-checkin-dialog"
-      (onHide)="onClose()"
+      styleClass="quick-checkin-dialog dialog-w-xl dialog-max-w-md"
+      (hide)="onClose()"
     >
       <div class="quick-checkin">
         <!-- Header -->
@@ -179,7 +177,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
           </div>
         }
       </div>
-    </p-dialog>
+    </app-dialog>
   `,
   styleUrl: "./quick-wellness-checkin.component.scss",
 })

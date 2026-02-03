@@ -24,7 +24,7 @@ export interface DebugConfig {
 
 export interface SignalLogEntry {
   signalName: string;
-  value: any;
+  value: unknown;
   timestamp: number;
   componentName?: string;
 }
@@ -42,7 +42,7 @@ export interface ApiLogEntry {
   status?: number;
   duration?: number;
   timestamp: number;
-  error?: any;
+  error?: unknown;
 }
 
 @Injectable({
@@ -77,7 +77,18 @@ export class DebugService {
    */
   private initializeDebugMode(): void {
     if (typeof window !== "undefined") {
-      (window as any).angularDebug = {
+      type DebugWindow = Window & {
+        angularDebug?: {
+          getSignalLogs: () => SignalLogEntry[];
+          getEffectLogs: () => EffectLogEntry[];
+          getApiLogs: () => ApiLogEntry[];
+          clearLogs: () => void;
+          setConfig: (config: Partial<DebugConfig>) => void;
+          getConfig: () => DebugConfig;
+        };
+      };
+      const debugWindow = window as DebugWindow;
+      debugWindow.angularDebug = {
         getSignalLogs: () => this.getSignalLogs(),
         getEffectLogs: () => this.getEffectLogs(),
         getApiLogs: () => this.getApiLogs(),
@@ -174,7 +185,7 @@ export class DebugService {
     method: string,
     status?: number,
     duration?: number,
-    error?: any,
+    error?: unknown,
   ): void {
     if (!this.config.enableApiLogging) return;
 
@@ -189,8 +200,6 @@ export class DebugService {
 
     this.addApiLog(entry);
 
-    const statusColor =
-      status && status >= 200 && status < 300 ? "#4caf50" : "#f44336";
     const statusText = status ? `[${status}]` : error ? "[ERROR]" : "[PENDING]";
 
     this.logger.debug(`🌐 API Call ${method} ${statusText}`, {
@@ -207,7 +216,7 @@ export class DebugService {
   /**
    * Log component lifecycle event
    */
-  logLifecycle(componentName: string, event: string, data?: any): void {
+  logLifecycle(componentName: string, event: string, data?: unknown): void {
     if (!this.config.enableSignalLogging) return;
 
     this.logger.debug(`🔄 Lifecycle [${componentName}] ${event}`, {
@@ -222,7 +231,6 @@ export class DebugService {
     if (!this.config.enablePerformanceLogging) return;
 
     const isWarning = threshold && duration > threshold;
-    const color = isWarning ? "#ff9800" : "#4caf50";
     const prefix = isWarning ? "⚠️" : "⏱️";
 
     this.logger.debug(`${prefix} Performance: ${label}`, {

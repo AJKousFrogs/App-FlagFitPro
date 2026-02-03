@@ -40,8 +40,8 @@
 
 .success-circle {
   position: absolute;
-  width: calc(var(--checkmark-size) + 20px);
-  height: calc(var(--checkmark-size) + 20px);
+  width: calc(var(--checkmark-size) + 1.25rem);
+  height: calc(var(--checkmark-size) + 1.25rem);
   background: var(--ds-primary-green-subtle);
   border-radius: 50%;
   opacity: 0;
@@ -64,10 +64,10 @@
     transform: scale(0);
   }
   50% {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
   100% {
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
     transform: scale(1);
   }
 }
@@ -76,11 +76,11 @@
   0%,
   100% {
     transform: scale(1);
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
   }
   50% {
     transform: scale(1.1);
-    opacity: 0.2;
+    opacity: var(--opacity-quarter);
   }
 }
 
@@ -112,7 +112,7 @@
 }
 
 .success-icon.variant-outlined {
-  border: 2px solid var(--checkmark-color);
+  border: 0.125rem solid var(--checkmark-color);
   border-radius: var(--radius-full);
 }
 
@@ -172,7 +172,7 @@
   color: var(--ds-primary-green);
   text-align: center;
   opacity: 0;
-  transform: translateY(5px);
+  transform: translateY(0.3125rem);
 }
 
 .animated .success-label {
@@ -216,7 +216,7 @@
   }
 
   .success-circle {
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
     transform: scale(1);
   }
 

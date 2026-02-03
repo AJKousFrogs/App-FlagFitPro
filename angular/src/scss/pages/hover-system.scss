@@ -69,15 +69,19 @@
   ); /* White text on green hover */
 
   /* Shadow on hover - green-tinted for brand consistency */
-  --hover-shadow-sm: 0 2px 8px rgba(8, 153, 73, 0.12);
-  --hover-shadow-md: 0 4px 16px rgba(8, 153, 73, 0.15);
-  --hover-shadow-lg: 0 8px 24px rgba(8, 153, 73, 0.18);
-  --hover-shadow-xl: 0 12px 32px rgba(8, 153, 73, 0.22);
+  --hover-shadow-sm: 0 var(--space-0-5) var(--space-2)
+    rgba(var(--ds-primary-green-rgb), 0.12);
+  --hover-shadow-md: 0 var(--space-1) var(--space-4)
+    rgba(var(--ds-primary-green-rgb), 0.15);
+  --hover-shadow-lg: 0 var(--space-2) var(--space-6)
+    rgba(var(--ds-primary-green-rgb), 0.18);
+  --hover-shadow-xl: 0 var(--space-3) var(--space-8)
+    rgba(var(--ds-primary-green-rgb), 0.22);
 
   /* Transform values */
-  --hover-lift-subtle: translateY(-1px);
-  --hover-lift-normal: translateY(-2px);
-  --hover-lift-strong: translateY(-4px);
+  --hover-lift-subtle: translateY(calc(var(--space-0-5) * -0.5));
+  --hover-lift-normal: translateY(calc(var(--space-0-5) * -1));
+  --hover-lift-strong: translateY(calc(var(--space-1) * -1));
   --hover-scale-subtle: scale(1.02);
   --hover-scale-normal: scale(1.05);
   --hover-scale-icon: scale(1.1);
@@ -89,8 +93,9 @@
   --hover-transition-bounce: 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Focus ring (accessibility) */
-  --hover-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.3);
-  --hover-focus-outline: 2px solid var(--ds-primary-green);
+  --hover-focus-ring: 0 0 0 var(--space-0-75)
+    rgba(var(--ds-primary-green-rgb), 0.3);
+  --hover-focus-outline: var(--space-0-5) solid var(--ds-primary-green);
 }
 
 /* ================================================================
@@ -143,7 +148,7 @@
   &:focus-visible {
     box-shadow: var(--hover-focus-ring);
     outline: var(--hover-focus-outline);
-    outline-offset: 2px;
+    outline-offset: var(--space-0-5);
   }
 
   /* Mobile touch feedback - CRITICAL for touch devices */
@@ -239,7 +244,7 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 3px;
+    width: var(--space-0-75);
     background: var(--ds-primary-green);
     transform: scaleY(0);
     transition: transform var(--hover-transition-fast);
@@ -257,7 +262,7 @@
     &:hover {
       background-color: var(--hover-bg-tertiary);
       color: var(--ds-primary-green);
-      padding-left: calc(var(--space-4, 1rem) + 4px);
+      padding-left: calc(var(--space-4, 1rem) + var(--space-1));
     }
   }
 }
@@ -276,10 +281,10 @@
   &::after {
     content: "";
     position: absolute;
-    bottom: -2px;
+    bottom: calc(var(--space-0-5) * -1);
     left: 0;
     width: 0;
-    height: 2px;
+    height: var(--space-0-5);
     background: currentColor;
     transition: width var(--hover-transition-normal);
   }
@@ -296,7 +301,7 @@
 
   &:focus-visible {
     outline: var(--hover-focus-outline);
-    outline-offset: 2px;
+    outline-offset: var(--space-0-5);
   }
 }
 
@@ -561,7 +566,7 @@
       &:hover {
         background-color: var(--hover-bg-tertiary);
         color: var(--ds-primary-green);
-        padding-left: calc(var(--space-4, 1rem) + 4px);
+        padding-left: calc(var(--space-4, 1rem) + var(--space-1));
 
         .p-menuitem-icon {
           color: var(--ds-primary-green);
@@ -594,7 +599,7 @@
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background-color: var(--hover-bg-ultra-light);
-        transform: translateX(4px);
+        transform: translateX(var(--space-1));
       }
     }
 
@@ -682,7 +687,7 @@
   .p-avatar-group .p-avatar {
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        transform: scale(1.15) translateY(-4px);
+        transform: scale(1.15) translateY(calc(var(--space-1) * -1));
         z-index: var(--z-dropdown);
       }
     }
@@ -693,7 +698,7 @@
      ================================ */
 
   .p-progressbar-value {
-    transition: width 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: width var(--transition-slower) cubic-bezier(0.25, 0.1, 0.25, 1);
 
     /* Shine effect on hover */
     &::after {
@@ -732,7 +737,7 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
     &:hover {
       color: var(--hover-text-primary);
       text-decoration: underline;
-      text-underline-offset: 2px;
+      text-underline-offset: var(--space-0-5);
     }
   }
 }
@@ -814,8 +819,8 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
   *,
   *::before,
   *::after {
-    transition-duration: 0.01ms;
-    animation-duration: 0.01ms;
+    transition-duration: var(--transition-instant);
+    animation-duration: var(--transition-instant);
   }
 
   .hover-card:hover,
@@ -838,10 +843,10 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
   --hover-bg-tertiary: rgba(16, 201, 107, 0.1);
   --hover-bg-ultra-light: rgba(16, 201, 107, 0.05);
   --hover-border-subtle: rgba(16, 201, 107, 0.3);
-  --hover-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --hover-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --hover-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --hover-shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
+  --hover-shadow-sm: 0 var(--space-0-5) var(--space-2) rgba(0, 0, 0, 0.3);
+  --hover-shadow-md: 0 var(--space-1) var(--space-4) rgba(0, 0, 0, 0.4);
+  --hover-shadow-lg: 0 var(--space-2) var(--space-6) rgba(0, 0, 0, 0.5);
+  --hover-shadow-xl: 0 var(--space-3) var(--space-8) rgba(0, 0, 0, 0.6);
 }
 
 /* ================================================================

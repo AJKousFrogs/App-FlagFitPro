@@ -21,7 +21,7 @@
 
 /* Status Card */
 .status-card {
-  border-left: 4px solid var(--ds-primary-green);
+  border-left: 0.25rem solid var(--ds-primary-green);
 }
 
 .status-grid {
@@ -40,7 +40,7 @@
 .status-label {
   font-size: var(--ds-font-size-xs);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
   color: var(--color-text-muted);
 }
 
@@ -71,7 +71,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
 }
 
@@ -87,7 +87,7 @@
 
 .info-notice {
   background: var(--ds-primary-green-ultra-subtle);
-  border: 1px solid var(--ds-primary-green-subtle);
+  border: 0.0625rem solid var(--ds-primary-green-subtle);
 }
 
 .info-notice i {
@@ -106,7 +106,7 @@
 
 .warning-notice {
   background: rgba(var(--primitive-warning-500-rgb), 0.05);
-  border: 1px solid rgba(var(--primitive-warning-500-rgb), 0.2);
+  border: 0.0625rem solid rgba(var(--primitive-warning-500-rgb), 0.2);
 }
 
 .warning-notice i {
@@ -192,7 +192,7 @@
     var(--ds-primary-green-ultra-subtle),
     white
   );
-  border: 1px solid var(--ds-primary-green-subtle);
+  border: 0.0625rem solid var(--ds-primary-green-subtle);
 }
 
 .olympic-tracks {
@@ -206,7 +206,7 @@
   padding: var(--space-4);
   background: white;
   border-radius: var(--radius-md);
-  border-left: 4px solid var(--ds-primary-green);
+  border-left: 0.25rem solid var(--ds-primary-green);
 }
 
 .track-card h4 {
@@ -266,8 +266,8 @@
   content: "";
   height: var(--avatar-size-xs);
   width: var(--avatar-size-xs);
-  left: 3px;
-  bottom: 3px;
+  left: 0.1875rem;
+  bottom: 0.1875rem;
   background-color: white;
   transition: var(--transition-slow) var(--ease-standard);
   border-radius: 50%;
@@ -278,11 +278,11 @@
 }
 
 .toggle input:checked + .toggle-slider::before {
-  transform: translateX(22px);
+  transform: translateX(1.375rem);
 }
 
 .toggle input:disabled + .toggle-slider {
-  opacity: 0.6;
+  opacity: var(--opacity-muted);
   cursor: not-allowed;
 }
 
@@ -310,7 +310,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border-primary);
+  border-bottom: 0.0625rem solid var(--color-border-primary);
 }
 
 .modal-header h3 {
@@ -342,7 +342,7 @@
   justify-content: flex-end;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-top: 1px solid var(--color-border-primary);
+  border-top: 0.0625rem solid var(--color-border-primary);
 }
 
 .form-group {
@@ -361,7 +361,7 @@
 .form-group textarea {
   width: 100%;
   padding: var(--space-3);
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
 }

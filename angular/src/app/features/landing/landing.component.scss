@@ -41,26 +41,26 @@
 .hero-gradient-2 {
   position: absolute;
   border-radius: var(--radius-full);
-  filter: blur(120px);
-  opacity: 0.4;
+  filter: blur(7.5rem);
+  opacity: var(--opacity-minimal);
   animation: float 20s ease-in-out infinite;
 }
 
 .hero-gradient-1 {
-  width: 600px;
-  height: 600px;
+  width: 37.5rem;
+  height: 37.5rem;
   background: var(--color-brand-primary);
-  top: -250px;
-  right: -200px;
+  top: -15.625rem;
+  right: -12.5rem;
   animation-delay: 0s;
 }
 
 .hero-gradient-2 {
-  width: 500px;
-  height: 500px;
+  width: 31.25rem;
+  height: 31.25rem;
   background: var(--color-brand-secondary);
-  bottom: -200px;
-  left: -150px;
+  bottom: -12.5rem;
+  left: -9.375rem;
   animation-delay: -10s;
 }
 
@@ -70,13 +70,13 @@
     transform: translate(0, 0) scale(1);
   }
   25% {
-    transform: translate(30px, -30px) scale(1.05);
+    transform: translate(1.875rem, -1.875rem) scale(1.05);
   }
   50% {
-    transform: translate(-20px, var(--ds-font-size-xl)) scale(0.95);
+    transform: translate(-1.25rem, var(--ds-font-size-xl)) scale(0.95);
   }
   75% {
-    transform: translate(20px, 10px) scale(1.02);
+    transform: translate(1.25rem, 0.625rem) scale(1.02);
   }
 }
 
@@ -93,7 +93,7 @@
   height: var(--indicator-size-xs);
   background: var(--color-brand-primary);
   border-radius: var(--radius-full);
-  opacity: 0.3;
+  opacity: var(--opacity-quarter);
   animation: particle-float 15s ease-in-out infinite;
 }
 
@@ -101,11 +101,11 @@
   0%,
   100% {
     transform: translateY(0) scale(1);
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
   }
   50% {
-    transform: translateY(-100px) scale(1.5);
-    opacity: 0.6;
+    transform: translateY(-6.25rem) scale(1.5);
+    opacity: var(--opacity-muted);
   }
 }
 
@@ -124,10 +124,10 @@
 /* Staggered animation for hero content */
 .animate-item {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(1.875rem);
   transition:
-    opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity var(--transition-slower) var(--ease-standard),
+    transform var(--transition-slower) var(--ease-standard);
   transition-delay: calc(var(--delay, 0) * 0.15s);
 }
 
@@ -173,8 +173,8 @@
 }
 
 .hero-logo {
-  width: 100px;
-  height: 100px;
+  width: 6.25rem;
+  height: 6.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,7 +193,7 @@
 .merlin-icon {
   font-size: var(--ds-font-size-3xl);
   line-height: var(--ds-line-height-1);
-  filter: drop-shadow(0 2px 4px var(--surface-overlay-light));
+  filter: drop-shadow(0 0.125rem 0.25rem var(--surface-overlay-light));
 }
 
 @keyframes logo-pulse {
@@ -315,7 +315,7 @@
   font-weight: var(--ds-font-weight-bold);
   line-height: var(--ds-line-height-1);
   color: var(--color-text-primary);
-  opacity: 0.3;
+  opacity: var(--opacity-quarter);
   padding-top: 0;
 }
 
@@ -366,7 +366,7 @@
 .hero-stat {
   text-align: center;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(1.25rem);
   animation: stat-appear 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: calc(0.8s + var(--stat-delay, 0) * 0.1s);
 }
@@ -443,7 +443,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(8px);
+    transform: translateY(0.5rem);
   }
 }
 
@@ -479,8 +479,8 @@
     transform: translateX(-50%) translateY(0);
   }
   50% {
-    opacity: 0.3;
-    transform: translateX(-50%) translateY(10px);
+    opacity: var(--opacity-quarter);
+    transform: translateX(-50%) translateY(0.625rem);
   }
 }
 
@@ -535,8 +535,8 @@
 }
 
 .feature-icon-wrapper {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -634,7 +634,7 @@
   }
 
   &:hover i {
-    transform: translateX(4px);
+    transform: translateX(0.25rem);
   }
 }
 
@@ -721,7 +721,7 @@
 
   &:hover {
     color: var(--color-brand-primary);
-    transform: translateX(4px);
+    transform: translateX(0.25rem);
   }
 }
 
@@ -751,8 +751,8 @@
   }
 
   .hero-logo {
-    width: 80px;
-    height: 80px;
+    width: 5rem;
+    height: 5rem;
   }
 
   .merlin-icon {

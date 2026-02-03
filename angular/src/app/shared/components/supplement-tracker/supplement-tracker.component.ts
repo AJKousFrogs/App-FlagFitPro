@@ -17,8 +17,13 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  Renderer2,
+  ViewChild,
+  afterNextRender,
   computed,
+  effect,
   inject,
+  ElementRef,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -194,6 +199,9 @@ export class SupplementTrackerComponent implements OnInit {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
+  private renderer = inject(Renderer2);
+
+  @ViewChild("progressFill") private progressFill?: ElementRef<HTMLDivElement>;
 
   // State
   isLoading = signal(true);
@@ -254,6 +262,16 @@ export class SupplementTrackerComponent implements OnInit {
       }))
       .filter((group) => group.supplements.length > 0),
   );
+
+  constructor() {
+    afterNextRender(() => {
+      effect(() => {
+        const fill = this.progressFill?.nativeElement;
+        if (!fill) return;
+        this.renderer.setStyle(fill, "width", `${this.progressPercent()}%`);
+      });
+    });
+  }
 
   ngOnInit(): void {
     this.loadSupplements();

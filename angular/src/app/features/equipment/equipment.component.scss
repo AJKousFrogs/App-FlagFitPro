@@ -61,7 +61,7 @@
 }
 
 .summary-card.alert {
-  border-left: 4px solid var(--orange-500);
+  border-left: 0.25rem solid var(--orange-500);
 }
 
 // .card-header - REMOVED (use app-card-shell component)
@@ -98,7 +98,7 @@
   height: var(--indicator-size-md);
   border-radius: 50%;
   margin-left: var(--space-2);
-  border: 1px solid var(--surface-border);
+  border: 0.0625rem solid var(--surface-border);
 }
 
 .quantity-cell {

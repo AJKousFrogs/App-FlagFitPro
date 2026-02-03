@@ -16,7 +16,7 @@ import { ProgressSpinner } from "primeng/progressspinner";
     <div class="page-loading-state">
       <div class="loading-content">
         <p-progressSpinner
-          [style]="{ width: '60px', height: '60px' }"
+          styleClass="page-loading-spinner"
           strokeWidth="4"
           animationDuration="1s"
         ></p-progressSpinner>
@@ -33,28 +33,33 @@ import { ProgressSpinner } from "primeng/progressspinner";
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 400px;
-        padding: var(--space-12, var(--ds-font-size-3rem));
+        min-height: var(--chart-min-height-lg);
+        padding: var(--space-12);
       }
 
       .loading-content {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--space-4, var(--ds-font-size-md));
+        gap: var(--space-4);
+      }
+
+      .page-loading-spinner {
+        width: var(--space-16);
+        height: var(--space-16);
       }
 
       .loading-message {
         margin: 0;
         font-size: var(--ds-font-size-md);
-        color: var(--text-secondary, #666);
+        color: var(--color-text-secondary);
         text-align: center;
       }
 
       @media (max-width: 768px) {
         .page-loading-state {
-          padding: var(--space-6, var(--ds-font-size-2xl));
-          min-height: 300px;
+          padding: var(--space-6);
+          min-height: var(--chart-min-height-md);
         }
 
         .loading-message {

@@ -17,6 +17,7 @@ import { SuperadminService } from "../../core/services/superadmin.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { NotificationService } from "../../core/services/notification.service";
+import { DialogService } from "../../core/ui/dialog.service";
 
 interface SuperadminUser {
   user_id: string;
@@ -322,6 +323,7 @@ export class SuperadminSettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private notificationService = inject(NotificationService);
+  private dialogService = inject(DialogService);
 
   // State
   superadmins = signal<SuperadminUser[]>([]);
@@ -378,7 +380,11 @@ export class SuperadminSettingsComponent implements OnInit {
   }
 
   async removeSuperadmin(userId: string): Promise<void> {
-    if (!confirm("Are you sure you want to remove this superadmin?")) return;
+    const confirmed = await this.dialogService.confirm(
+      "Are you sure you want to remove this superadmin?",
+      "Remove Superadmin",
+    );
+    if (!confirmed) return;
 
     const success = await this.superadminService.removeSuperadmin(userId);
     if (success) {

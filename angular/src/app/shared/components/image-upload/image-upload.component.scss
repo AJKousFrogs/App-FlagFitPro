@@ -12,7 +12,7 @@
 }
 
 .image-upload-area {
-  border: 2px dashed var(--color-border-primary);
+  border: 0.125rem dashed var(--color-border-primary);
   border-radius: var(--radius-md);
   padding: var(--space-6, var(--ds-font-size-2xl));
   background: var(--surface-primary);
@@ -20,7 +20,7 @@
   transition:
     background-color var(--motion-slow) var(--ease-standard),
     border-color var(--motion-slow) var(--ease-standard);
-  min-height: var(--chart-min-height-sm); /* 200px */
+  min-height: var(--chart-min-height-sm); /* 12.5rem */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,7 +37,7 @@
 }
 
 .image-upload-area.disabled {
-  opacity: 0.6;
+  opacity: var(--opacity-muted);
   cursor: not-allowed;
 }
 
@@ -82,7 +82,7 @@
   display: inline-block;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
 }
 
 .preview-image {
@@ -140,9 +140,9 @@
 }
 
 .resize-controls input {
-  width: var(--card-min-height-sm); /* 80px */
+  width: var(--card-min-height-sm); /* 5rem */
   padding: var(--space-1, 0.25rem) var(--space-2, var(--ds-font-size-0-5rem));
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-md);
 }
 

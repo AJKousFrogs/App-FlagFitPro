@@ -12,9 +12,9 @@
  *   These primitives provide additional patterns and utilities.
  * 
  * SIZES (Decision 25):
- *   sm:  400px
- *   md:  560px (default)
- *   lg:  800px
+ *   sm:  25rem
+ *   md:  35rem (default)
+ *   lg:  50rem
  *   xl:  90vw
  * 
  * FOOTER ALIGNMENT:
@@ -29,15 +29,15 @@
   // Or use these helper classes on the dialog container
 
   .dialog-sm {
-    max-width: 400px;
+    max-width: 25rem;
   }
 
   .dialog-md {
-    max-width: 560px;
+    max-width: 35rem;
   }
 
   .dialog-lg {
-    max-width: 800px;
+    max-width: 50rem;
   }
 
   .dialog-xl {
@@ -100,7 +100,7 @@
 
   .confirm-dialog {
     text-align: center;
-    max-width: 400px;
+    max-width: 25rem;
   }
 
   .confirm-dialog__icon {
@@ -163,7 +163,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 400px;
+    width: 25rem;
     max-width: 90vw;
     border-left: var(--border-1) solid var(--color-border-default);
   }
@@ -172,7 +172,7 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 400px;
+    width: 25rem;
     max-width: 90vw;
     border-right: var(--border-1) solid var(--color-border-default);
   }
@@ -207,8 +207,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 2rem;
+    height: 2rem;
     border-radius: var(--radius-md);
     background: transparent;
     border: none;
@@ -255,7 +255,7 @@
   }
 
   .backdrop--blur {
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(0.25rem);
   }
 
   // ============================================
@@ -273,7 +273,7 @@
   @keyframes dialog-scale-in {
     from {
       opacity: 0;
-      transform: scale(0.95) translateY(-8px);
+      transform: scale(0.95) translateY(-0.5rem);
     }
     to {
       opacity: 1;
@@ -329,7 +329,7 @@
     border: var(--border-1) solid var(--color-border-default);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-3);
-    max-width: 320px;
+    max-width: 20rem;
     overflow: hidden;
   }
 
@@ -357,8 +357,8 @@
   // ============================================
 
   .overlay-menu {
-    min-width: 180px;
-    max-width: 320px;
+    min-width: 11.25rem;
+    max-width: 20rem;
     padding: var(--space-2);
   }
 
@@ -391,7 +391,7 @@
     }
 
     &--disabled {
-      opacity: 0.5;
+      opacity: var(--opacity-dimmed);
       pointer-events: none;
     }
   }
@@ -402,7 +402,7 @@
   }
 
   .overlay-menu__divider {
-    height: 1px;
+    height: 0.0625rem;
     background: var(--color-border-muted);
     margin: var(--space-2) 0;
   }
@@ -460,17 +460,17 @@
   @media (forced-colors: active) {
     .drawer,
     .popover {
-      border: 2px solid CanvasText;
+      border: 0.125rem solid CanvasText;
     }
 
     .backdrop {
       background: Canvas;
-      opacity: 0.8;
+      opacity: var(--opacity-strong);
     }
 
     .drawer__close:focus-visible,
     .overlay-menu__item:focus-visible {
-      outline: 3px solid CanvasText;
+      outline: 0.1875rem solid CanvasText;
     }
   }
 }

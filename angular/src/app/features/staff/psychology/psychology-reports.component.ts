@@ -579,8 +579,8 @@ interface ReportPrivacySettings {
                         ) {
                           <div class="pattern-section">
                             <h5>
-                              <i class="pi pi-exclamation-triangle"></i> Stress
-                              Triggers
+                              <i class="pi pi-exclamation-triangle pattern-icon"></i>
+                              Stress Triggers
                             </h5>
                             <ul>
                               @for (
@@ -599,8 +599,8 @@ interface ReportPrivacySettings {
                         ) {
                           <div class="pattern-section positive">
                             <h5>
-                              <i class="pi pi-thumbs-up"></i> Positive
-                              Correlations
+                              <i class="pi pi-thumbs-up pattern-icon"></i>
+                              Positive Correlations
                             </h5>
                             <ul>
                               @for (
@@ -619,8 +619,8 @@ interface ReportPrivacySettings {
                         ) {
                           <div class="pattern-section concerning">
                             <h5>
-                              <i class="pi pi-info-circle"></i> Patterns to
-                              Discuss
+                              <i class="pi pi-info-circle pattern-icon"></i>
+                              Patterns to Discuss
                             </h5>
                             <ul>
                               @for (
@@ -694,19 +694,20 @@ interface ReportPrivacySettings {
                                     }}/10</span
                                   >
                                   <i
-                                    [class]="
+                                    [ngClass]="[
                                       getTrendIcon(
                                         report.leadUpPeriod.confidenceTrend
-                                      )
-                                    "
-                                    [ngClass]="{
-                                      positive:
-                                        report.leadUpPeriod.confidenceTrend ===
-                                        'rising',
-                                      negative:
-                                        report.leadUpPeriod.confidenceTrend ===
-                                        'falling',
-                                    }"
+                                      ),
+                                      'trend-icon',
+                                      report.leadUpPeriod.confidenceTrend ===
+                                      'rising'
+                                        ? 'positive'
+                                        : '',
+                                      report.leadUpPeriod.confidenceTrend ===
+                                      'falling'
+                                        ? 'negative'
+                                        : '',
+                                    ]"
                                   ></i>
                                 </div>
                               </div>
@@ -719,20 +720,21 @@ interface ReportPrivacySettings {
                                     }}/10</span
                                   >
                                   <i
-                                    [class]="
+                                    [ngClass]="[
                                       getTrendIcon(
                                         report.leadUpPeriod.anxietyTrend,
                                         true
-                                      )
-                                    "
-                                    [ngClass]="{
-                                      negative:
-                                        report.leadUpPeriod.anxietyTrend ===
-                                        'rising',
-                                      positive:
-                                        report.leadUpPeriod.anxietyTrend ===
-                                        'falling',
-                                    }"
+                                      ),
+                                      'trend-icon',
+                                      report.leadUpPeriod.anxietyTrend ===
+                                      'falling'
+                                        ? 'positive'
+                                        : '',
+                                      report.leadUpPeriod.anxietyTrend ===
+                                      'rising'
+                                        ? 'negative'
+                                        : '',
+                                    ]"
                                   ></i>
                                 </div>
                               </div>

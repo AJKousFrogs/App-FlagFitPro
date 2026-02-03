@@ -47,6 +47,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { NutritionService } from "../../../core/services/nutrition.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { DialogService } from "../../../core/ui/dialog.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -596,6 +597,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private supabaseService = inject(SupabaseService);
   private destroyRef = inject(DestroyRef);
   private nutritionService = inject(NutritionService);
+  private dialogService = inject(DialogService);
 
   // State
   games = signal<GameSchedule[]>([]);
@@ -1369,26 +1371,26 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     return this.expandedWindows.has(windowId);
   }
 
-  clearAllData(): void {
-    if (
-      confirm(
-        "Are you sure you want to clear all tournament data? This will remove your schedule, nutrition windows, and hydration logs.",
-      )
-    ) {
-      // Clear all data
-      this.games.set([]);
-      this.nutritionWindows.set([]);
-      this.hydrationLogs.set([]);
-      this.tournamentName.set("Tournament Day");
-      this.editGames = [];
-      this.editTournamentName = "Tournament Day";
-      this.expandedWindows.clear();
+  async clearAllData(): Promise<void> {
+    const confirmed = await this.dialogService.confirm(
+      "Are you sure you want to clear all tournament data? This will remove your schedule, nutrition windows, and hydration logs.",
+      "Clear Tournament Data",
+    );
+    if (!confirmed) return;
 
-      // Clear localStorage
-      localStorage.removeItem("tournament_schedule");
-      localStorage.removeItem("hydration_logs_" + new Date().toDateString());
+    // Clear all data
+    this.games.set([]);
+    this.nutritionWindows.set([]);
+    this.hydrationLogs.set([]);
+    this.tournamentName.set("Tournament Day");
+    this.editGames = [];
+    this.editTournamentName = "Tournament Day";
+    this.expandedWindows.clear();
 
-      this.toastService.success("All tournament data cleared successfully!");
-    }
+    // Clear localStorage
+    localStorage.removeItem("tournament_schedule");
+    localStorage.removeItem("hydration_logs_" + new Date().toDateString());
+
+    this.toastService.success("All tournament data cleared successfully!");
   }
 }

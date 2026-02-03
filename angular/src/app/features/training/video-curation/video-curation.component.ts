@@ -26,7 +26,6 @@ import {
 import { CommonModule } from "@angular/common";
 
 // PrimeNG Components
-import { Toast } from "primeng/toast";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Badge } from "primeng/badge";
@@ -64,7 +63,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Toast,
+
     ConfirmDialog,
     Tabs,
     TabList,
@@ -84,8 +83,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
     VideoCurationPreviewDialogComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <p-confirmDialog></p-confirmDialog>
+<p-confirmDialog></p-confirmDialog>
     <app-main-layout>
       <div class="curation-page">
         <!-- Header -->

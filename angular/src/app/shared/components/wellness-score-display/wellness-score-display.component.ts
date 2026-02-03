@@ -30,7 +30,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { COLORS } from "../../../core/constants/app.constants";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
@@ -53,7 +52,7 @@ export interface WellnessMetric {
   icon: string;
   label: string;
   value: string | number;
-  color: string;
+  tone: "success" | "info" | "warning" | "error";
   score?: number;
 }
 
@@ -90,9 +89,10 @@ export interface WellnessMetric {
         <div
           class="wellness-ring"
           [class.clickable]="clickable()"
+          [ngClass]="statusClass()"
           (click)="handleClick()"
         >
-          <div class="ring-outer" [style.border-color]="statusColor()">
+          <div class="ring-outer">
             <div class="ring-inner">
               <span class="score-value">{{ overallScore() }}</span>
               <span class="score-label">{{ statusLabel() }}</span>
@@ -104,7 +104,7 @@ export interface WellnessMetric {
                 <div class="metric-pill" [pTooltip]="metric.label">
                   <i
                     [class]="'pi ' + metric.icon"
-                    [style.color]="metric.color"
+                    [ngClass]="'tone-' + metric.tone"
                   ></i>
                   <span>{{ metric.value }}</span>
                 </div>
@@ -122,8 +122,8 @@ export interface WellnessMetric {
           (click)="handleClick()"
         >
           <div class="bar-header">
-            <div class="bar-title">
-              <i class="pi pi-heart" [style.color]="statusColor()"></i>
+            <div class="bar-title" [ngClass]="statusClass()">
+              <i class="pi pi-heart status-icon"></i>
               <span>Wellness</span>
             </div>
             <app-status-tag
@@ -135,8 +135,7 @@ export interface WellnessMetric {
           <p-progressBar
             [value]="overallScore()"
             [showValue]="false"
-            [style]="{ height: '8px' }"
-            [styleClass]="'wellness-progress ' + statusClass()"
+            [styleClass]="'wellness-progress ' + statusClass() + ' progressbar-height-sm'"
           ></p-progressBar>
           <div class="bar-footer">
             <span class="score-text">{{ overallScore() }}/100</span>
@@ -146,7 +145,7 @@ export interface WellnessMetric {
                   <span class="metric-inline" [pTooltip]="metric.label">
                     <i
                       [class]="'pi ' + metric.icon"
-                      [style.color]="metric.color"
+                      [ngClass]="'tone-' + metric.tone"
                     ></i>
                     {{ metric.value }}
                   </span>
@@ -165,7 +164,7 @@ export interface WellnessMetric {
           (click)="handleClick()"
           [pTooltip]="'Wellness: ' + statusLabel()"
         >
-          <div class="compact-score" [style.background]="statusColor()">
+          <div class="compact-score" [ngClass]="statusClass()">
             {{ overallScore() }}
           </div>
           <i class="pi pi-heart"></i>
@@ -182,7 +181,7 @@ export interface WellnessMetric {
             'Wellness Score: ' + overallScore() + '/100 (' + statusLabel() + ')'
           "
         >
-          <div class="mini-ring" [style.border-color]="statusColor()">
+          <div class="mini-ring" [ngClass]="statusClass()">
             <span>{{ overallScore() }}</span>
           </div>
         </div>
@@ -213,7 +212,7 @@ export interface WellnessMetric {
           <div class="full-content">
             <!-- Score Ring -->
             <div class="score-section">
-              <div class="score-ring" [style.border-color]="statusColor()">
+              <div class="score-ring" [ngClass]="statusClass()">
                 <span class="score-value">{{ overallScore() }}</span>
                 <span class="score-label">{{ statusLabel() }}</span>
               </div>
@@ -224,8 +223,7 @@ export interface WellnessMetric {
               <p-progressBar
                 [value]="overallScore()"
                 [showValue]="false"
-                [style]="{ height: '8px' }"
-                [styleClass]="'wellness-progress ' + statusClass()"
+                [styleClass]="'wellness-progress ' + statusClass() + ' progressbar-height-sm'"
               ></p-progressBar>
             </div>
 
@@ -236,7 +234,7 @@ export interface WellnessMetric {
                   <div class="metric-item">
                     <i
                       [class]="'pi ' + metric.icon"
-                      [style.color]="metric.color"
+                      [ngClass]="'tone-' + metric.tone"
                     ></i>
                     <div class="metric-info">
                       <span class="metric-label">{{ metric.label }}</span>
@@ -284,7 +282,6 @@ export class WellnessScoreDisplayComponent implements OnInit {
   loading = signal(true);
   overallScore = signal(0);
   statusLabel = signal("N/A");
-  statusColor = signal("var(--brand-primary-700)");
   metrics = signal<WellnessMetric[]>([]);
 
   // Computed
@@ -326,8 +323,6 @@ export class WellnessScoreDisplayComponent implements OnInit {
 
             this.overallScore.set(Math.round(score * 10));
             this.statusLabel.set(status.status);
-            this.statusColor.set(status.color);
-
             // Build metrics array
             const metricsData: WellnessMetric[] = [];
 
@@ -336,7 +331,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
                 icon: "pi-moon",
                 label: "Sleep",
                 value: `${latestData.sleep}h`,
-                color: COLORS.INFO,
+                tone: "info",
                 score: latestData.sleep,
               });
             }
@@ -346,7 +341,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
                 icon: "pi-bolt",
                 label: "Energy",
                 value: `${latestData.energy}/10`,
-                color: COLORS.WARNING,
+                tone: "warning",
                 score: latestData.energy,
               });
             }
@@ -362,8 +357,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
                 icon: "pi-shield",
                 label: "Stress",
                 value: stressLabel,
-                color:
-                  latestData.stress <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.AMBER,
+                tone: latestData.stress <= 3 ? "success" : "warning",
                 score: 10 - latestData.stress, // Invert for display
               });
             }
@@ -373,10 +367,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
                 icon: "pi-heart",
                 label: "Soreness",
                 value: `${latestData.soreness}/10`,
-                color:
-                  latestData.soreness <= 3
-                    ? COLORS.PRIMARY_LIGHT
-                    : COLORS.ERROR,
+                tone: latestData.soreness <= 3 ? "success" : "error",
                 score: 10 - latestData.soreness,
               });
             }
@@ -386,7 +377,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
                 icon: "pi-cloud",
                 label: "Hydration",
                 value: `${latestData.hydration}/10`,
-                color: COLORS.INFO,
+                tone: "info",
                 score: latestData.hydration,
               });
             }
@@ -408,7 +399,6 @@ export class WellnessScoreDisplayComponent implements OnInit {
   private setNoDataState(): void {
     this.overallScore.set(0);
     this.statusLabel.set("No data");
-    this.statusColor.set(COLORS.SLATE);
     this.metrics.set([]);
   }
 

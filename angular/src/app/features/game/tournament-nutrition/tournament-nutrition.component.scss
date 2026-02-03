@@ -53,8 +53,8 @@
     position: absolute;
     top: -50%;
     right: -10%;
-    width: var(--chart-min-height-lg); /* 400px */
-    height: var(--chart-min-height-lg); /* 400px */
+    width: var(--chart-min-height-lg); /* 25rem */
+    height: var(--chart-min-height-lg); /* 25rem */
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.15) 0%,
@@ -69,8 +69,8 @@
     position: absolute;
     bottom: -30%;
     left: -5%;
-    width: var(--chart-min-height-md); /* 300px */
-    height: var(--chart-min-height-md); /* 300px */
+    width: var(--chart-min-height-md); /* 18.75rem */
+    height: var(--chart-min-height-md); /* 18.75rem */
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.1) 0%,
@@ -584,8 +584,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: var(--chart-min-height-sm); /* 200px */
-    height: var(--chart-min-height-sm); /* 200px */
+    width: var(--chart-min-height-sm); /* 12.5rem */
+    height: var(--chart-min-height-sm); /* 12.5rem */
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.05) 0%,
@@ -1495,10 +1495,10 @@
       position: absolute;
       bottom: calc(-1 * var(--indicator-size-xs));
       left: 0;
-      height: var(--indicator-size-xs); /* 4px */
+      height: var(--indicator-size-xs); /* 0.25rem */
       width: 0;
       background: var(--ds-primary-green);
-      transition: width 0.4s ease;
+      transition: width var(--transition-slower) var(--ease-standard);
     }
   }
 
@@ -1666,8 +1666,8 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms;
-    transition-duration: 0.01ms;
+    animation-duration: var(--transition-instant);
+    transition-duration: var(--transition-instant);
   }
 
   .tip-item:hover .tip-icon,

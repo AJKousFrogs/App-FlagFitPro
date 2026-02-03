@@ -65,7 +65,7 @@ button {
       background: var(--color-text-on-primary, white);
       color: var(--ds-primary-green);
       border-color: var(--ds-primary-green);
-      transform: translateY(-1px);
+      transform: translateY(-0.0625rem);
     }
   }
 
@@ -100,7 +100,7 @@ button {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
       background: var(--color-text-on-primary, white);
       color: var(--color-status-error);
-      border: 1px solid var(--color-status-error);
+      border: 0.0625rem solid var(--color-status-error);
     }
   }
 
@@ -110,7 +110,7 @@ button {
 
   &:focus-visible {
     outline-color: var(--color-status-error);
-    box-shadow: 0 0 0 4px rgba(var(--primitive-error-500-rgb), 0.25);
+    box-shadow: 0 0 0 0.25rem rgba(var(--primitive-error-500-rgb), 0.25);
   }
 }
 
@@ -140,8 +140,8 @@ button {
 
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.0625rem;
+  height: 0.0625rem;
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;

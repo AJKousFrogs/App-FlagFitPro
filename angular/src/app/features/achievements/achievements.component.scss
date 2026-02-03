@@ -120,7 +120,7 @@
     background-color var(--motion-base) var(--ease-standard),
     border-color var(--motion-base) var(--ease-standard),
     box-shadow var(--motion-base) var(--ease-standard);
-  border: 1px solid var(--ds-border-subtle);
+  border: var(--border-1) solid var(--ds-border-subtle);
 
   &.unlocked {
     .achievement-badge {
@@ -133,7 +133,7 @@
   }
 
   &.locked {
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
 
     h4 {
       color: var(--ds-text-secondary);
@@ -141,7 +141,7 @@
   }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(calc(var(--space-0-5) * -1));
     box-shadow: var(--shadow-2);
   }
 }
@@ -156,7 +156,7 @@
   align-items: center;
   justify-content: center;
   background: var(--ds-surface-base);
-  border: 2px solid var(--ds-border-default);
+  border: var(--border-2) solid var(--ds-border-default);
 
   &.locked {
     background: var(--ds-surface-base);
@@ -167,14 +167,14 @@
     font-size: var(--ds-font-size-2xl);
 
     &.locked {
-      opacity: 0.5;
+      opacity: var(--opacity-dimmed);
     }
   }
 
   .badge-check {
     position: absolute;
-    bottom: -4px;
-    right: -4px;
+    bottom: calc(var(--space-1) * -1);
+    right: calc(var(--space-1) * -1);
     width: var(--avatar-size-xs);
     height: var(--avatar-size-xs);
     border-radius: 50%;
@@ -184,7 +184,7 @@
     align-items: center;
     justify-content: center;
     font-size: var(--ds-font-size-xs);
-    border: 2px solid var(--ds-surface-elevated);
+    border: var(--border-2) solid var(--ds-surface-elevated);
   }
 }
 
@@ -262,7 +262,7 @@
     margin-bottom: var(--space-4);
     overflow-x: auto;
     padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--ds-border-subtle);
   }
 
   .category-tab {
@@ -271,7 +271,7 @@
     gap: var(--space-2);
     padding: var(--space-2) var(--space-3);
     background: transparent;
-    border: 1px solid var(--ds-border-default);
+    border: var(--border-1) solid var(--ds-border-default);
     border-radius: var(--radius-full);
     cursor: pointer;
     transition:
@@ -360,7 +360,7 @@
   .leaderboard-footer {
     padding: var(--space-3);
     text-align: center;
-    border-top: 1px solid var(--ds-border-subtle);
+    border-top: var(--border-1) solid var(--ds-border-subtle);
     font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }

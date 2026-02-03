@@ -16,6 +16,10 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
+  Renderer2,
+  ViewChild,
+  afterNextRender,
   inject,
   signal,
 } from "@angular/core";
@@ -58,6 +62,9 @@ export interface ScheduleItem {
 export class TodaysScheduleComponent {
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly logger = inject(LoggerService);
+  private readonly renderer = inject(Renderer2);
+
+  @ViewChild("progressFill") private progressFill?: ElementRef<HTMLDivElement>;
 
   // State - local writable signal initialized from service
   readonly isLoading = this.trainingService.isRefreshing;
@@ -69,6 +76,14 @@ export class TodaysScheduleComponent {
     effect(() => {
       const items = this.trainingService.todaysScheduleItems();
       this.scheduleItems.set(items as ScheduleItem[]);
+    });
+
+    afterNextRender(() => {
+      effect(() => {
+        const fill = this.progressFill?.nativeElement;
+        if (!fill) return;
+        this.renderer.setStyle(fill, "width", `${this.progressPercent()}%`);
+      });
     });
   }
 

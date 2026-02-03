@@ -9,11 +9,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
-import {
-  ConfirmationService,
-  MessageService,
-  PrimeTemplate,
-} from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
@@ -25,7 +21,6 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -37,6 +32,7 @@ import {
 } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 import {
   CreateTournamentDto,
   Tournament,
@@ -82,7 +78,6 @@ interface TournamentBudget {
     Select,
     InputNumber,
     Checkbox,
-    Toast,
     ConfirmDialog,
     PrimeTemplate,
     MainLayoutComponent,
@@ -92,10 +87,9 @@ interface TournamentBudget {
     IconButtonComponent,
     StatusTagComponent,
   ],
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
       <p-confirmDialog></p-confirmDialog>
 
       <div class="tournaments-page">
@@ -1478,7 +1472,7 @@ export class TournamentsComponent implements OnInit {
   private teamMembershipService = inject(TeamMembershipService);
   private supabaseService = inject(SupabaseService);
   private messageService = inject(MessageService);
-  private confirmationService = inject(ConfirmationService);
+  private confirmDialog = inject(ConfirmDialogService);
   private logger = inject(LoggerService);
   private elementRef = inject(ElementRef);
 
@@ -1821,31 +1815,33 @@ export class TournamentsComponent implements OnInit {
     }
   }
 
-  confirmDelete(tournament: Tournament): void {
-    this.confirmationService.confirm({
+  async confirmDelete(tournament: Tournament): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
       message: `Are you sure you want to delete "${tournament.name}"?`,
-      header: "Delete Tournament",
+      title: "Delete Tournament",
       icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
-      accept: async () => {
-        const success = await this.tournamentService.deleteTournament(
-          tournament.id,
-        );
-        if (success) {
-          this.messageService.add({
-            severity: "success",
-            summary: "Deleted",
-            detail: "Tournament deleted successfully",
-          });
-        } else {
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to delete tournament",
-          });
-        }
-      },
+      acceptSeverity: "danger",
+      rejectSeverity: "secondary",
+      defaultFocus: "reject",
     });
+    if (!confirmed) return;
+
+    const success = await this.tournamentService.deleteTournament(
+      tournament.id,
+    );
+    if (success) {
+      this.messageService.add({
+        severity: "success",
+        summary: "Deleted",
+        detail: "Tournament deleted successfully",
+      });
+    } else {
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to delete tournament",
+      });
+    }
   }
 
   viewDetails(tournament: Tournament): void {

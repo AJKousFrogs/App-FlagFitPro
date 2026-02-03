@@ -15,7 +15,6 @@ import { PrimeTemplate } from "primeng/api";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -60,7 +59,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     ToggleSwitch,
     Select,
     InputText,
-    Toast,
+
     Dialog,
     PrimeTemplate,
     Divider,
@@ -76,8 +75,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     StatusTagComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <app-main-layout>
+<app-main-layout>
       <div class="privacy-controls-page">
         <app-page-header
           title="Privacy Controls"
@@ -873,7 +871,7 @@ export class PrivacyControlsComponent implements OnInit {
         this.exporting.set(false);
         this.exportProgress.set(0);
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       this.toastService.error("Failed to export data");
       this.exporting.set(false);
       this.exportProgress.set(0);

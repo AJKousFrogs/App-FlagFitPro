@@ -32,7 +32,7 @@
   // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 
   .stat-divider {
-    width: 1px;
+    width: 0.0625rem;
     height: var(--avatar-size-md);
     background: var(--ds-border-subtle);
   }
@@ -65,6 +65,15 @@
       width: 100%;
     }
   }
+}
+
+.filter-select {
+  width: var(--input-min-width-md);
+}
+
+.film-detail-dialog {
+  width: var(--dialog-width-xl);
+  max-width: var(--layout-width-3xl);
 }
 
 // Films Grid
@@ -274,7 +283,7 @@
   padding: var(--space-3);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border-left: 3px solid;
+  border-left: 0.1875rem solid;
   cursor: pointer;
   transition:
     background-color var(--motion-base) var(--ease-standard),
@@ -339,7 +348,7 @@
 .discussion-thread {
   margin-top: var(--space-3);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--ds-border-subtle);
+  border-top: 0.0625rem solid var(--ds-border-subtle);
 }
 
 .thread-message {
@@ -404,7 +413,7 @@
   display: flex;
   justify-content: center;
   padding-top: var(--space-3);
-  border-top: 1px solid var(--ds-border-subtle);
+  border-top: 0.0625rem solid var(--ds-border-subtle);
 }
 
 // Responsive

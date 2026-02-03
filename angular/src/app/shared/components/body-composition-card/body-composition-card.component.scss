@@ -40,13 +40,13 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-4) 0;
-  max-width: 200px;
+  max-width: 12.5rem;
 }
 
 .primary-metric {
   text-align: center;
   padding: var(--space-4) 0;
-  border-bottom: 1px solid var(--color-border-subtle);
+  border-bottom: 0.0625rem solid var(--color-border-subtle);
   margin-bottom: var(--space-4);
 }
 
@@ -132,7 +132,7 @@
 }
 
 .fat-bar {
-  height: 4px;
+  height: 0.25rem;
   background: var(--color-border-primary);
   border-radius: var(--radius-full);
   margin-top: var(--space-2);
@@ -142,7 +142,7 @@
 .fat-fill {
   height: 100%;
   border-radius: var(--radius-full);
-  transition: width 300ms ease;
+  transition: width var(--transition-slow) var(--ease-standard);
 
   &.low {
     background: var(--color-status-info);
@@ -176,13 +176,13 @@
     color: var(--ds-primary-green-hover);
 
     i {
-      transform: translateX(2px);
+      transform: translateX(0.125rem);
     }
   }
 
   i {
     font-size: var(--ds-font-size-xs);
-    transition: transform 150ms ease;
+    transition: transform var(--transition-fast) var(--ease-standard);
   }
 }
 

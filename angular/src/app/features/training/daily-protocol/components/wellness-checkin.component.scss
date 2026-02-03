@@ -116,7 +116,7 @@
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
       text-transform: var(--ds-text-transform-uppercase);
-      letter-spacing: var(--ds-letter-spacing-0-5px);
+      letter-spacing: var(--ds-letter-spacing-0-03em);
       font-weight: var(--ds-font-weight-medium);
     }
   }
@@ -200,7 +200,7 @@
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       text-transform: var(--ds-text-transform-uppercase);
-      letter-spacing: var(--ds-letter-spacing-0-25px);
+      letter-spacing: var(--ds-letter-spacing-0-02em);
     }
   }
 }
@@ -281,7 +281,7 @@
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
     text-transform: var(--ds-text-transform-uppercase);
-    letter-spacing: var(--ds-letter-spacing-0-5px);
+    letter-spacing: var(--ds-letter-spacing-0-03em);
     font-weight: var(--ds-font-weight-medium);
   }
 

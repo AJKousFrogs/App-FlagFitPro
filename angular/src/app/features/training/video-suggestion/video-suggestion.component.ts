@@ -43,8 +43,9 @@ import {
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { Chip } from "primeng/chip";
-import { Dialog } from "primeng/dialog";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
@@ -52,7 +53,6 @@ import { Skeleton } from "primeng/skeleton";
 
 import { Textarea } from "primeng/textarea";
 
-import { Toast } from "primeng/toast";
 
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -102,8 +102,7 @@ interface VideoSuggestion {
     InputText,
     Textarea,
     MultiSelect,
-    Toast,
-    Dialog,
+
     Skeleton,
     Chip,
     Divider,
@@ -112,10 +111,11 @@ interface VideoSuggestion {
     IconButtonComponent,
     CardShellComponent,
     StatusTagComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <app-main-layout>
+<app-main-layout>
       <div class="suggestion-page">
         <!-- Hero Header -->
         <header class="page-header">
@@ -560,14 +560,19 @@ interface VideoSuggestion {
         </section>
 
         <!-- Video Preview Dialog -->
-        <p-dialog
+        <app-dialog
           [(visible)]="showVideoDialog"
-          [modal]="true"
+          styleClass="video-preview-dialog"
           [draggable]="false"
           [dismissableMask]="true"
-          [header]="selectedVideo()?.title || 'Video'"
-          styleClass="video-preview-dialog"
+          (hide)="showVideoDialog.set(false)"
         >
+          <app-dialog-header
+            icon="play"
+            [title]="selectedVideo()?.title || 'Video Preview'"
+            subtitle="Preview coach-submitted content before sharing"
+            (close)="showVideoDialog.set(false)"
+          ></app-dialog-header>
           @if (selectedVideo(); as video) {
             <div class="preview-content">
               <div class="preview-embed" [innerHTML]="videoEmbedHtml()"></div>
@@ -599,7 +604,7 @@ interface VideoSuggestion {
               </div>
             </div>
           }
-        </p-dialog>
+        </app-dialog>
       </div>
     </app-main-layout>
   `,

@@ -21,7 +21,7 @@
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-0.625rem);
   }
   to {
     opacity: 1;
@@ -38,7 +38,7 @@
 }
 
 .banner-icon {
-  width: var(--space-10); /* 40px */
+  width: var(--space-10); /* 2.5rem */
   height: var(--space-10);
   display: flex;
   align-items: center;
@@ -88,13 +88,13 @@
 
 .announcement-author {
   color: var(--color-text-on-primary);
-  opacity: 0.85;
+  opacity: var(--opacity-strong);
   font-size: var(--ds-font-size-md);
 }
 
 .announcement-time {
   color: var(--color-text-on-primary);
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
   font-size: var(--ds-font-size-xs);
 }
 
@@ -127,7 +127,7 @@
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-on-primary);
   background: var(--overlay-white-15);
-  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
   border-radius: var(--radius-md);
 }
 
@@ -140,7 +140,7 @@
 
   .banner-content {
     flex: 1;
-    min-width: var(--chart-min-height-sm); /* 200px */
+    min-width: var(--chart-min-height-sm); /* 12.5rem */
   }
 
   .banner-actions {

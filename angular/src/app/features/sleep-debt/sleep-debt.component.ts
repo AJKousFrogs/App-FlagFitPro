@@ -17,11 +17,10 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 
 import { ProgressBar } from "primeng/progressbar";
-import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -83,7 +82,7 @@ const DEBT_THRESHOLDS = {
     Card,
     LazyChartComponent,
     ProgressBar,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     StatusTagComponent,
@@ -91,9 +90,7 @@ const DEBT_THRESHOLDS = {
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="sleep-debt-page">
+<div class="sleep-debt-page">
         <app-page-header
           title="Sleep Debt Tracker"
           subtitle="Understanding your sleep deficit and its impact on performance"
@@ -329,7 +326,7 @@ const DEBT_THRESHOLDS = {
           <p-card styleClass="recommendation-card">
             <ng-template pTemplate="header">
               <div class="rec-header">
-                <i class="pi pi-lightbulb"></i>
+                <i class="pi pi-lightbulb rec-header__icon"></i>
                 <span>AI Recommendation</span>
               </div>
             </ng-template>
@@ -341,26 +338,26 @@ const DEBT_THRESHOLDS = {
               </p>
               <ul class="rec-list">
                 <li>
-                  <i class="pi pi-clock"></i>
+                  <i class="pi pi-clock rec-list-icon"></i>
                   Add 30-60 minutes to your sleep time for the next
                   {{ sleepDebtAnalysis()!.recoveryDays }} nights
                 </li>
                 <li>
-                  <i class="pi pi-minus-circle"></i>
+                  <i class="pi pi-minus-circle rec-list-icon"></i>
                   Reduce training intensity to
                   {{ multipliers.trainingCapacity * 100 | number: "1.0-0" }}%
                   until debt is cleared
                 </li>
                 <li>
-                  <i class="pi pi-sun"></i>
+                  <i class="pi pi-sun rec-list-icon"></i>
                   Consider a 20-minute power nap between 1-3pm
                 </li>
                 <li>
-                  <i class="pi pi-ban"></i>
+                  <i class="pi pi-ban rec-list-icon"></i>
                   Avoid caffeine after 2pm
                 </li>
                 <li>
-                  <i class="pi pi-calendar"></i>
+                  <i class="pi pi-calendar rec-list-icon"></i>
                   Keep consistent bed/wake times (even weekends)
                 </li>
               </ul>

@@ -22,9 +22,9 @@
   top: 0;
   height: 100vh;
   height: 100dvh; /* Use dynamic viewport height for mobile browsers */
-  width: var(--sidebar-width, 250px);
+  width: var(--sidebar-width, 15.625rem);
   background: var(--surface-primary);
-  border-right: 1px solid var(--color-border-primary);
+  border-right: 0.0625rem solid var(--color-border-primary);
   z-index: calc(var(--z-modal) + 10); /* Higher than overlay to prevent blur */
   transition: transform var(--transition-slow) var(--ease-standard);
   overflow-y: auto;
@@ -43,7 +43,7 @@
   position: absolute;
   top: var(--space-3);
   right: var(--space-3);
-  width: var(--touch-target-md); /* 44px */
+  width: var(--touch-target-md); /* 2.75rem */
   height: var(--touch-target-md);
   border: none;
   background: var(--surface-tertiary);
@@ -77,7 +77,7 @@
 .sidebar-close-btn:focus-visible {
   outline: var(--focus-outline-width) solid var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-green-rgb), 0.25);
 }
 
 .sidebar-close-btn:focus:not(:focus-visible) {
@@ -92,7 +92,7 @@
   gap: var(--space-3);
   cursor: pointer;
   background: var(--surface-primary);
-  border-bottom: 1px solid var(--color-border-primary);
+  border-bottom: 0.0625rem solid var(--color-border-primary);
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast),
@@ -147,7 +147,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border-secondary);
+  border-bottom: 0.0625rem solid var(--color-border-secondary);
   background: var(--surface-secondary);
 }
 
@@ -219,7 +219,7 @@
 .me-group-container {
   margin-top: var(--space-2);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: 0.0625rem solid var(--color-border-secondary);
 }
 
 .me-group-header {
@@ -238,7 +238,7 @@
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
-  min-height: var(--touch-target-md); /* 44px WCAG */
+  min-height: var(--touch-target-md); /* 2.75rem WCAG */
 }
 
 // Desktop-only hover
@@ -253,7 +253,7 @@
 .me-group-header:focus-visible {
   outline: var(--focus-outline-width) solid var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(var(--ds-primary-green-rgb), 0.25);
 }
 
 .me-group-header:focus:not(:focus-visible) {
@@ -265,7 +265,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--indicator-size-lg); /* 16px */
+  width: var(--indicator-size-lg); /* 1rem */
   transition: transform var(--transition-fast);
 }
 
@@ -282,7 +282,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-0.5rem);
   }
   to {
     opacity: 1;
@@ -292,7 +292,7 @@
 
 .sidebar-footer {
   padding: var(--space-4);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: 0.0625rem solid var(--color-border-secondary);
   margin-top: auto;
 }
 
@@ -308,16 +308,16 @@
   height: 100dvh; /* Use dynamic viewport height for mobile browsers */
   background: var(--surface-overlay);
   z-index: calc(var(--z-modal) + 5); /* Below sidebar but above content */
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(0.25rem);
+  backdrop-filter: blur(0.25rem);
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 // ============================================
 // TABLET: Collapsed sidebar (icons only)
-// Design System: --bp-tablet: 768px, --bp-laptop: 1024px
+// Design System: --bp-tablet: 48rem, --bp-laptop: 64rem
 // ============================================
-@media (max-width: 1024px) and (min-width: 769px) {
+@media (max-width: 64rem) and (min-width: 48.0625rem) {
   .sidebar {
     width: var(--sidebar-collapsed-width, var(--ds-font-size-4rem));
   }
@@ -369,7 +369,7 @@
 
 // ============================================
 // MOBILE: Hidden sidebar with overlay
-// Design System: --bp-tablet: 768px (≤768px is mobile)
+// Design System: --bp-tablet: 48rem (≤48rem is mobile)
 // ============================================
 @include respond-to(md) {
   .sidebar {
@@ -377,8 +377,8 @@
     width: min(
       85vw,
       var(--dialog-max-width-xs)
-    ); /* Responsive width, max 320px */
-    max-width: var(--dialog-max-width-xs); /* 320px */
+    ); /* Responsive width, max 20rem */
+    max-width: var(--dialog-max-width-xs); /* 20rem */
     box-shadow: var(--shadow-xl); /* Enhanced shadow for mobile */
     will-change: transform; /* Optimize animation performance */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
@@ -412,10 +412,10 @@
 
 // ============================================
 // MOBILE: Specific fixes for Samsung Galaxy S24 and similar devices
-// Samsung Galaxy S24: 1080x2340px (360x780 logical)
-// Samsung Galaxy S24 Ultra: 1440x3088px (480x1029 logical)
+// Samsung Galaxy S24: 1080x146.25rem (360x780 logical)
+// Samsung Galaxy S24 Ultra: 1440x193rem (480x1029 logical)
 // ============================================
-@media (max-width: 768px) and (min-height: 700px) {
+@media (max-width: 48rem) and (min-height: 43.75rem) {
   .sidebar {
     /* Ensure full height coverage on tall mobile screens */
     height: 100dvh;

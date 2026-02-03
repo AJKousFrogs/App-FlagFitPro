@@ -23,7 +23,7 @@
     <div class="progress-bar">
       <div
         class="progress-fill"
-        [style.width.%]="progressPercent()"
+        #progressFill
         [class.complete]="progressPercent() === 100"
       ></div>
     </div>

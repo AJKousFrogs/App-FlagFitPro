@@ -30,7 +30,6 @@ import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
@@ -205,7 +204,7 @@ const RTP_STAGES: RtpStage[] = [
     TableModule,
     TableModule,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -214,9 +213,7 @@ const RTP_STAGES: RtpStage[] = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="injury-management-page">
+<div class="injury-management-page">
         <app-page-header
           title="Injury Management"
           subtitle="Track injuries and recovery"

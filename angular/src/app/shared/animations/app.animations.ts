@@ -250,7 +250,7 @@ export const bounceIn = trigger("bounceIn", [
       `${ANIMATION_TIMINGS.slower} ${ANIMATION_EASING.bounce}`,
       keyframes([
         style({ transform: "scale(0.3)", opacity: 0, offset: 0 }),
-        style({ transform: "scale(1.05)", opacity: 0.8, offset: 0.5 }),
+        style({ transform: "scale(1.05)", opacity: 0.9, offset: 0.5 }),
         style({ transform: "scale(0.95)", opacity: 0.9, offset: 0.7 }),
         style({ transform: "scale(1)", opacity: 1, offset: 1 }),
       ]),
@@ -590,7 +590,7 @@ export const backdrop = trigger("backdrop", [
 ]);
 
 /**
- * Toast Enter/Exit Animation
+ *Enter/Exit Animation
  * For toast notifications with slide and bounce
  */
 export const toastEnterExit = trigger("toastEnterExit", [

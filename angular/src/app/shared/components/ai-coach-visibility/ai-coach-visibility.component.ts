@@ -324,7 +324,7 @@ interface CoachVisibilityRecord {
         header="Add Coach Note"
         [(visible)]="noteDialogVisible"
         [modal]="true"
-        [style]="{ width: '450px' }"
+        styleClass="dialog-max-w-md"
         [closable]="true"
       >
         <div class="dialog-content">
@@ -358,7 +358,7 @@ interface CoachVisibilityRecord {
         header="Override Recommendation"
         [(visible)]="overrideDialogVisible"
         [modal]="true"
-        [style]="{ width: '450px' }"
+        styleClass="dialog-max-w-md"
         [closable]="true"
       >
         <div class="dialog-content">

@@ -83,7 +83,7 @@
   cursor: text;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
-  transition: background 150ms ease;
+  transition: background var(--transition-fast) var(--ease-standard);
 }
 
 .cell-value.editable:hover {
@@ -93,14 +93,14 @@
 .inline-edit-input {
   width: 100%;
   padding: var(--space-1) var(--space-2);
-  border: 2px solid var(--color-brand-primary);
+  border: 0.125rem solid var(--color-brand-primary);
   border-radius: var(--radius-sm);
   font-size: var(--ds-font-size-md);
 }
 
 .inline-edit-input:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--color-brand-primary-rgb), 0.2);
+  box-shadow: 0 0 0 0.1875rem rgba(var(--color-brand-primary-rgb), 0.2);
 }
 
 /* Actions cell */
@@ -129,7 +129,7 @@ tr.selected {
 .empty-message i {
   font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-3);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 /* Mobile Card View */
@@ -141,7 +141,7 @@ tr.selected {
 
 .mobile-card {
   background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  border: 0.0625rem solid var(--surface-border);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   transition:
@@ -157,7 +157,7 @@ tr.selected {
 .card-select {
   margin-bottom: var(--space-3);
   padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 0.0625rem solid var(--surface-border);
 }
 
 .card-content {
@@ -177,7 +177,7 @@ tr.selected {
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .field-value {
@@ -190,7 +190,7 @@ tr.selected {
   gap: var(--space-2);
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--surface-border);
+  border-top: 0.0625rem solid var(--surface-border);
 }
 
 .card-actions p-button {
@@ -200,7 +200,7 @@ tr.selected {
 /* ================================
    RESPONSIVE - Container Queries
    ================================ */
-@container (width < 768px) {
+@container (width < 48rem) {
   .table-toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -238,7 +238,7 @@ tr.selected {
 .mobile-view {
   .mobile-card {
     // Touch target compliance
-    min-block-size: var(--touch-target-min, 44px);
+    min-block-size: var(--touch-target-min, 2.75rem);
 
     // Safe area padding for bottom cards
     &:last-child {
@@ -250,7 +250,7 @@ tr.selected {
     // Ensure buttons are touch-friendly
     button,
     app-button {
-      min-block-size: 44px;
+      min-block-size: 2.75rem;
     }
   }
 }

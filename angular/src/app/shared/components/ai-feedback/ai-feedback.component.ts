@@ -114,7 +114,7 @@ interface FeedbackData {
         header="Provide Feedback"
         [(visible)]="dialogVisible"
         [modal]="true"
-        [style]="{ width: '400px' }"
+        styleClass="dialog-max-w-sm"
         [closable]="true"
         [draggable]="false"
       >

@@ -35,7 +35,7 @@
 
 .avatar-glow {
   position: absolute;
-  inset: -4px;
+  inset: calc(var(--space-1) * -1);
   background: var(--ds-primary-green-ultra-subtle);
   border-radius: var(--radius-full);
   animation: pulse-glow 3s ease-in-out infinite;
@@ -45,11 +45,11 @@
   0%,
   100% {
     transform: scale(1);
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
   50% {
     transform: scale(1.1);
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
   }
 }
 
@@ -59,7 +59,7 @@
   border-radius: var(--radius-full);
   position: relative;
   z-index: 1;
-  border: 2px solid var(--surface-primary);
+  border: var(--border-2) solid var(--surface-primary);
   background: var(--ds-primary-green);
   display: flex;
   align-items: center;
@@ -73,12 +73,12 @@
 
 .online-indicator {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
+  bottom: var(--space-0-5);
+  right: var(--space-0-5);
   width: var(--indicator-size-md);
   height: var(--indicator-size-md);
   background: var(--ds-primary-green);
-  border: 2px solid var(--surface-primary);
+  border: var(--border-2) solid var(--surface-primary);
   border-radius: var(--radius-full);
   z-index: var(--z-index-above-content);
 }
@@ -137,7 +137,7 @@
 }
 
 .icon-btn {
-  width: var(--touch-target-md); /* 44px for better touch target */
+  width: var(--touch-target-md); /* 2.75rem for better touch target */
   height: var(--touch-target-md);
   display: flex;
   align-items: center;
@@ -168,13 +168,13 @@
 
 .badge-dot {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: calc(var(--space-1) + var(--space-0-5));
+  right: calc(var(--space-1) + var(--space-0-5));
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
   background: var(--ds-primary-green);
   border-radius: var(--radius-full);
-  border: 2px solid var(--surface-primary);
+  border: var(--border-2) solid var(--surface-primary);
 }
 
 /* ========================================
@@ -209,7 +209,7 @@
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   background: var(--ds-primary-green-ultra-subtle);
-  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
   border-radius: var(--radius-lg);
 }
 
@@ -242,7 +242,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(var(--space-5));
   }
   to {
     opacity: 1;
@@ -257,8 +257,8 @@
 
 .hero-icon {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: var(--space-20);
+  height: var(--space-20);
   margin: 0 auto var(--space-6);
   display: flex;
   align-items: center;
@@ -281,9 +281,9 @@
 .ring-3 {
   position: absolute;
   inset: 0;
-  border: 2px solid var(--ds-primary-green);
+  border: var(--border-2) solid var(--ds-primary-green);
   border-radius: var(--radius-full);
-  opacity: 0.2;
+  opacity: var(--opacity-quarter);
 }
 
 .ring-1 {
@@ -303,7 +303,7 @@
 @keyframes ring-expand {
   0% {
     transform: scale(0.8);
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
   }
   100% {
     transform: scale(1.5);
@@ -400,7 +400,7 @@
   font-size: var(--ds-font-size-md);
   color: var(--ds-primary-green);
   opacity: 0;
-  transform: translateX(-8px);
+  transform: translateX(calc(var(--space-2) * -1));
   transition:
     opacity var(--transition-fast),
     transform var(--transition-fast);
@@ -452,7 +452,7 @@
 @keyframes messageIn {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(var(--space-3)) scale(0.98);
   }
   to {
     opacity: 1;
@@ -470,7 +470,7 @@
 }
 
 .message-avatar {
-  width: var(--touch-target-sm); /* 36px */
+  width: var(--touch-target-sm); /* 2.25rem */
   height: var(--touch-target-sm);
   flex-shrink: 0;
   background: var(--ds-primary-green);
@@ -629,10 +629,12 @@
   60%,
   100% {
     transform: translateY(0);
-    opacity: 0.4;
+    opacity: var(--opacity-minimal);
   }
   30% {
-    transform: translateY(-6px);
+    transform: translateY(
+      calc((var(--space-1) + var(--space-0-5)) * -1)
+    );
     opacity: 1;
   }
 }
@@ -736,7 +738,7 @@
 
 .verified-time {
   font-weight: var(--ds-font-weight-regular);
-  opacity: 0.8;
+  opacity: var(--opacity-strong);
 }
 
 /* Citations */
@@ -828,7 +830,7 @@
   gap: var(--space-1);
   font-size: var(--ds-font-size-xs);
   color: var(--ds-primary-green);
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
   transition: opacity var(--transition-fast);
 }
 
@@ -871,7 +873,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-5); /* 12px 20px for breathing room */
+  padding: var(--space-3) var(--space-5); /* 0.75rem 1.25rem for breathing room */
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
@@ -880,7 +882,7 @@
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
   border: none;
-  min-height: var(--touch-target-md); /* 44px minimum for touch target */
+  min-height: var(--touch-target-md); /* 2.75rem minimum for touch target */
 }
 
 .action-btn.primary {
@@ -889,7 +891,7 @@
 }
 
 .action-btn.primary:hover {
-  transform: translateY(-2px);
+  transform: translateY(calc(var(--space-0-5) * -1));
   box-shadow: var(--hover-shadow-md);
 }
 
@@ -905,7 +907,7 @@
 
 .action-btn.micro-session .duration-badge {
   background: var(--overlay-white-20);
-  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
 }
@@ -978,7 +980,7 @@
 /* Scroll to bottom */
 .scroll-to-bottom {
   position: absolute;
-  bottom: 160px;
+  bottom: calc(var(--space-20) * 2);
   left: 50%;
   transform: translateX(-50%);
   width: var(--avatar-size-md);
@@ -1030,7 +1032,7 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   background: var(--surface-secondary);
-  border: 1px dashed var(--color-border-secondary);
+  border: var(--border-1) dashed var(--color-border-secondary);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
@@ -1063,7 +1065,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-3);
   margin-bottom: var(--space-2);
-  max-height: 200px;
+  max-height: 12.5rem; /* 12.5rem */
   overflow-y: auto;
   z-index: var(--z-sticky);
 }
@@ -1130,7 +1132,7 @@
   resize: none;
   padding: var(--space-3) 0;
   min-height: var(--space-6);
-  max-height: 120px;
+  max-height: 7.5rem; /* 7.5rem */
   line-height: var(--ds-line-height-normal);
 }
 
@@ -1152,7 +1154,7 @@
 }
 
 .input-icon-btn {
-  width: var(--touch-target-sm); /* 36px */
+  width: var(--touch-target-sm); /* 2.25rem */
   height: var(--touch-target-sm);
   display: flex;
   align-items: center;
@@ -1173,7 +1175,7 @@
 }
 
 .input-icon-btn:disabled {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   cursor: not-allowed;
 }
 
@@ -1189,8 +1191,8 @@
 
 .recording-pulse {
   position: absolute;
-  inset: -4px;
-  border: 2px solid var(--color-status-error);
+  inset: calc(var(--space-1) * -1);
+  border: var(--border-2) solid var(--color-status-error);
   border-radius: var(--radius-full);
   animation: recording-pulse 1.5s ease-out infinite;
 }
@@ -1198,7 +1200,7 @@
 @keyframes recording-pulse {
   0% {
     transform: scale(1);
-    opacity: 0.8;
+    opacity: var(--opacity-strong);
   }
   100% {
     transform: scale(1.4);
@@ -1261,7 +1263,7 @@
 
 .voice-note {
   font-size: var(--ds-font-size-xs);
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
 }
 
 /* Highlight search results */
@@ -1277,8 +1279,8 @@
 
 @include respond-to(md) {
   .chat-container {
-    height: calc(100vh - 60px);
-    height: calc(100dvh - 60px);
+    height: calc(100vh - (var(--space-12) + var(--space-3)));
+    height: calc(100dvh - (var(--space-12) + var(--space-3)));
   }
 
   .chat-header {
@@ -1312,11 +1314,11 @@
 
   .input-section {
     padding: var(--space-3) var(--space-4) var(--space-5);
-    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0));
   }
 
   .send-btn {
-    width: var(--touch-target-md); /* 44px */
+    width: var(--touch-target-md); /* 2.75rem */
     height: var(--touch-target-md);
   }
 }

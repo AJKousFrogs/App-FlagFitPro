@@ -15,7 +15,6 @@ import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
 
-import { Toast } from "primeng/toast";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -31,11 +30,10 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     Card,
     ButtonComponent,
     InputText,
-    Toast,
+
   ],
   template: `
-    <p-toast></p-toast>
-    <div class="reset-password-page">
+<div class="reset-password-page">
       <p-card class="reset-password-card">
         <ng-template pTemplate="header">
           <div class="reset-password-logo">

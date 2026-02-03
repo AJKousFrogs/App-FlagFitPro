@@ -15,7 +15,7 @@ import { CookieConsentBannerComponent } from "./shared/components/cookie-consent
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
 import { ConfirmDialog } from "primeng/confirmdialog";
-import { Toast } from "primeng/toast";
+import { ToastComponent } from "./shared/components/toast/toast.component";
 import { PlatformDetectionService } from "./core/services/platform-detection.service";
 
 @Component({
@@ -28,7 +28,7 @@ import { PlatformDetectionService } from "./core/services/platform-detection.ser
     CookieConsentBannerComponent,
     LoadingOverlayComponent,
     ConfirmDialog,
-    Toast,
+    ToastComponent,
   ],
   template: `
     <app-skip-to-content />
@@ -39,7 +39,7 @@ import { PlatformDetectionService } from "./core/services/platform-detection.ser
     <app-loading-overlay />
     <p-confirmDialog></p-confirmDialog>
     <!-- UX AUDIT FIX: Global toast component - prevents duplicate toasts across components -->
-    <p-toast position="top-right" [preventOpenDuplicates]="true"></p-toast>
+    <app-toast position="top-right" [preventDuplicates]="true"></app-toast>
   `,
   styleUrl: "./app.component.scss",
 })

@@ -25,7 +25,6 @@ import { InputText } from "primeng/inputtext";
 import { Password } from "primeng/password";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 
 import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
@@ -78,7 +77,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
     Password,
     Dialog,
     Divider,
-    Toast,
+
     ToggleSwitch,
     RouterLink,
   ],
@@ -885,7 +884,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       }
 
       // Track if user exists for later toast message
-      let existingUser: any = null;
+      type ExistingUser = { id?: string } | null;
+      let existingUser: ExistingUser = null;
 
       // Try to update user data in Supabase users table
       try {
@@ -929,7 +929,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           .eq("id", user.id)
           .maybeSingle();
 
-        existingUser = data;
+        existingUser = data as ExistingUser;
 
         this.logger.info("User exists check:", { exists: !!existingUser });
 
@@ -1015,6 +1015,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           if (teamChanged) {
             // Team transfer: Delete old membership and create new one
             this.logger.info("Team transfer detected, creating new membership");
+            const newTeamId = settings.profile.teamId;
+            if (!newTeamId) {
+              this.logger.warn("Team transfer requested without team ID");
+              return;
+            }
 
             // Delete old membership
             const { error: deleteError } = await this.supabaseService.client
@@ -1038,7 +1043,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
                 .from("team_members")
                 .insert({
                   user_id: user.id,
-                  team_id: settings.profile.teamId!,
+                  team_id: newTeamId,
                   role: "player",
                   position: settings.profile.position || null,
                   jersey_number: parsedJersey,

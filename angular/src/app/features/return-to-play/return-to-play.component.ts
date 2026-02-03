@@ -30,7 +30,6 @@ import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import {
@@ -293,7 +292,7 @@ const SEVERITY_LEVELS = [
     TableModule,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -302,9 +301,7 @@ const SEVERITY_LEVELS = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="return-to-play-page">
+<div class="return-to-play-page">
         <app-page-header
           title="Return-to-Play Protocol"
           subtitle="Guided recovery from injury"

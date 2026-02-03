@@ -195,34 +195,6 @@
         display: flex;
         flex-wrap: wrap;
         gap: var(--ds-spacing-xs);
-
-        .player-badge {
-          font-size: var(--ds-font-size-xs);
-          padding: var(--space-1) var(--space-2);
-          border-radius: var(--ds-radius-sm);
-          background: var(--surface-ground);
-          cursor: help;
-
-          &.high {
-            background: var(--red-50);
-            color: var(--red-700);
-          }
-
-          &.medium {
-            background: var(--orange-50);
-            color: var(--orange-700);
-          }
-
-          &.low {
-            background: var(--green-50);
-            color: var(--green-700);
-          }
-        }
-
-        .more-players {
-          font-size: var(--ds-font-size-xs);
-          color: var(--text-color-secondary);
-        }
       }
     }
 
@@ -244,6 +216,34 @@
       }
     }
   }
+}
+
+.opponents-section .player-badge {
+  font-size: var(--ds-font-size-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--ds-radius-sm);
+  background: var(--surface-ground);
+  cursor: help;
+}
+
+.opponents-section .player-badge.high {
+  background: var(--red-50);
+  color: var(--red-700);
+}
+
+.opponents-section .player-badge.medium {
+  background: var(--orange-50);
+  color: var(--orange-700);
+}
+
+.opponents-section .player-badge.low {
+  background: var(--green-50);
+  color: var(--green-700);
+}
+
+.opponents-section .more-players {
+  font-size: var(--ds-font-size-xs);
+  color: var(--text-color-secondary);
 }
 
 // Tendencies Section
@@ -299,7 +299,7 @@
 
     .formation-bar {
       display: grid;
-      grid-template-columns: 100px 1fr 50px;
+      grid-template-columns: 6.25rem 1fr 3.125rem;
       align-items: center;
       gap: var(--ds-spacing-sm);
 
@@ -313,17 +313,6 @@
         background: var(--surface-ground);
         border-radius: var(--ds-radius-sm);
         overflow: hidden;
-
-        .bar-fill {
-          height: 100%;
-          background: var(--primary-color);
-          border-radius: var(--ds-radius-sm);
-          transition: width var(--transition-slow) var(--ease-standard);
-
-          &.defensive {
-            background: var(--orange-500);
-          }
-        }
       }
 
       .percentage {
@@ -472,10 +461,6 @@
       ul {
         margin: 0;
         padding-left: var(--ds-spacing-lg);
-
-        li {
-          margin-bottom: var(--ds-spacing-xs);
-        }
       }
     }
   }
@@ -512,6 +497,26 @@
       }
     }
   }
+}
+
+:is(.reports-section .formation-bars) .formation-bar .bar-container .bar-fill {
+  height: 100%;
+  background: var(--primary-color);
+  border-radius: var(--ds-radius-sm);
+  transition: width var(--transition-slow) var(--ease-standard);
+}
+
+:is(
+    .reports-section .formation-bars
+  )
+  .formation-bar
+  .bar-container
+  .bar-fill.defensive {
+  background: var(--orange-500);
+}
+
+:is(.reports-section .plan-grid) .plan-item ul li {
+  margin-bottom: var(--ds-spacing-xs);
 }
 
 // Forms
@@ -577,7 +582,7 @@
   i {
     font-size: var(--ds-font-size-3xl);
     color: var(--text-color-secondary);
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
     margin-bottom: var(--ds-spacing-md);
   }
 

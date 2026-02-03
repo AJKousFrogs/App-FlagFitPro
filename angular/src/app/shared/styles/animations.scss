@@ -38,7 +38,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(var(--space-5, 20px));
+    transform: translateY(var(--space-5, 1.25rem));
   }
   to {
     opacity: 1;
@@ -49,7 +49,7 @@
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(calc(-1 * var(--space-5, 20px)));
+    transform: translateY(calc(-1 * var(--space-5, 1.25rem)));
   }
   to {
     opacity: 1;
@@ -100,7 +100,7 @@
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(var(--space-8, 32px));
+    transform: translateY(var(--space-8, 2rem));
   }
   to {
     opacity: 1;
@@ -184,7 +184,7 @@
     transform: scale(1);
   }
   50% {
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
     transform: scale(0.95);
   }
 }
@@ -194,7 +194,7 @@
     box-shadow: 0 0 0 0 rgba(var(--ds-primary-green-rgb), 0.7);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(var(--ds-primary-green-rgb), 0);
+    box-shadow: 0 0 0 0.625rem rgba(var(--ds-primary-green-rgb), 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(var(--ds-primary-green-rgb), 0);
@@ -209,17 +209,17 @@
   }
   50% {
     border-color: var(--ds-primary-green);
-    box-shadow: 0 0 0 8px rgba(var(--ds-primary-green-rgb), 0);
+    box-shadow: 0 0 0 0.5rem rgba(var(--ds-primary-green-rgb), 0);
   }
 }
 
 @keyframes pulseGlow {
   0%,
   100% {
-    box-shadow: 0 0 5px rgba(var(--ds-primary-green-rgb), 0.5);
+    box-shadow: 0 0 0.3125rem rgba(var(--ds-primary-green-rgb), 0.5);
   }
   50% {
-    box-shadow: 0 0 20px rgba(var(--ds-primary-green-rgb), 0.8);
+    box-shadow: 0 0 1.25rem rgba(var(--ds-primary-green-rgb), 0.8);
   }
 }
 
@@ -233,7 +233,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-0.625rem);
   }
 }
 
@@ -269,13 +269,13 @@
   50%,
   70%,
   90% {
-    transform: translateX(-5px);
+    transform: translateX(-0.3125rem);
   }
   20%,
   40%,
   60%,
   80% {
-    transform: translateX(5px);
+    transform: translateX(0.3125rem);
   }
 }
 
@@ -289,13 +289,13 @@
   50%,
   70%,
   90% {
-    transform: translateY(calc(-1 * var(--space-1, 4px)));
+    transform: translateY(calc(-1 * var(--space-1, 0.25rem)));
   }
   20%,
   40%,
   60%,
   80% {
-    transform: translateY(var(--space-1, 4px));
+    transform: translateY(var(--space-1, 0.25rem));
   }
 }
 
@@ -305,22 +305,22 @@
 
 @keyframes shimmer {
   0% {
-    background-position: -1000px 0;
+    background-position: -62.5rem 0;
   }
   100% {
-    background-position: 1000px 0;
+    background-position: 62.5rem 0;
   }
 }
 
 @keyframes skeletonLoading {
   0% {
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
   }
   50% {
     opacity: 1;
   }
   100% {
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
   }
 }
 
@@ -394,16 +394,16 @@
   }
   to {
     opacity: 1;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(0.25rem);
+    -webkit-backdrop-filter: blur(0.25rem);
   }
 }
 
 @keyframes backdropFadeOut {
   from {
     opacity: 1;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(0.25rem);
+    -webkit-backdrop-filter: blur(0.25rem);
   }
   to {
     opacity: 0;
@@ -419,7 +419,7 @@
 @keyframes modalScaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(-20px);
+    transform: scale(0.95) translateY(-1.25rem);
   }
   to {
     opacity: 1;
@@ -434,7 +434,7 @@
   }
   to {
     opacity: 0;
-    transform: scale(0.95) translateY(-20px);
+    transform: scale(0.95) translateY(-1.25rem);
   }
 }
 
@@ -457,8 +457,10 @@
  */
 @mixin no-motion {
   @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    transition: none;
+    @at-root #{&} {
+      animation: none;
+      transition: none;
+    }
   }
 }
 

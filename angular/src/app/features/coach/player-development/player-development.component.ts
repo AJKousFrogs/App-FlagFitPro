@@ -34,7 +34,6 @@ import {
   goalStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -130,7 +129,7 @@ const COMPARE_OPTIONS = [
     TableModule,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -138,9 +137,7 @@ const COMPARE_OPTIONS = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="player-development-page">
+<div class="player-development-page">
         <app-page-header
           title="Player Development"
           subtitle="Track progress and set goals"

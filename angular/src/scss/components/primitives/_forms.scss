@@ -39,7 +39,7 @@
 
   .form-field--horizontal {
     display: grid;
-    grid-template-columns: minmax(120px, 200px) 1fr;
+    grid-template-columns: minmax(7.5rem, 12.5rem) 1fr;
     gap: var(--space-4);
     align-items: start;
     margin-bottom: var(--space-4);
@@ -78,7 +78,7 @@
     font-weight: var(--font-weight-normal);
     cursor: pointer;
     margin-bottom: 0;
-    min-height: 44px; // Touch target (Decision 42)
+    min-height: 2.75rem; // Touch target (Decision 42)
   }
 
   // ============================================
@@ -94,10 +94,10 @@
   // Screen reader only required text
   .form-required--sr-only {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: 0.0625rem;
+    height: 0.0625rem;
     padding: 0;
-    margin: -1px;
+    margin: -0.0625rem;
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
@@ -136,7 +136,7 @@
   @keyframes form-error-enter {
     from {
       opacity: 0;
-      transform: translateY(-4px);
+      transform: translateY(-0.25rem);
     }
     to {
       opacity: 1;
@@ -220,7 +220,7 @@
 
   .form-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
     gap: var(--space-4);
     margin-bottom: var(--space-5);
   }
@@ -293,7 +293,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    min-height: 44px; // Touch target
+    min-height: 2.75rem; // Touch target
   }
 
   // ============================================
@@ -359,7 +359,7 @@
   // ============================================
 
   .form-field--disabled {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
     pointer-events: none;
 
     .form-label {
@@ -382,20 +382,20 @@
   // INPUT HEIGHT UTILITIES
   // ============================================
   // Standardized heights for all form inputs
-  // Default: 44px (meets iOS touch target requirement)
+  // Default: 2.75rem (meets iOS touch target requirement)
 
   .form-input--sm {
-    min-height: var(--input-height-sm) !important;
+    min-height: var(--input-height-sm);
     height: var(--input-height-sm);
   }
 
   .form-input--md {
-    min-height: var(--input-height-md) !important;
+    min-height: var(--input-height-md);
     height: var(--input-height-md);
   }
 
   .form-input--lg {
-    min-height: var(--input-height-lg) !important;
+    min-height: var(--input-height-lg);
     height: var(--input-height-lg);
   }
 

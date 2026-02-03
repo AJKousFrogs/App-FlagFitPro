@@ -8,6 +8,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
@@ -63,6 +64,7 @@ interface WellnessMetric {
   selector: "app-wellness",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     FormsModule,
     RouterModule,
     Card,
@@ -90,17 +92,16 @@ interface WellnessMetric {
       ></app-loading>
 
       <!-- Error State -->
-      @if (hasPageError()) {
+      <ng-container *ngIf="hasPageError()">
         <app-page-error-state
           title="Unable to load wellness data"
           [message]="pageErrorMessage()"
           (retry)="retryLoad()"
         ></app-page-error-state>
-      }
+      </ng-container>
 
       <!-- Content -->
-      @else {
-        <div class="wellness-page">
+      <div *ngIf="!hasPageError()" class="wellness-page">
           <app-page-header
             title="Wellness & Recovery"
             subtitle="Track your health, recovery, and wellness metrics"
@@ -502,8 +503,8 @@ interface WellnessMetric {
             </div>
           </app-card>
         </div>
-      }
-      <!-- End of @else for content -->
+      </div>
+      <!-- End of content -->
     </app-main-layout>
   `,
   styleUrl: "./wellness.component.scss",

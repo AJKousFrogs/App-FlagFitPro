@@ -17,7 +17,7 @@
 }
 
 @mixin respond-above($breakpoint) {
-  @media (min-width: get-breakpoint($breakpoint) + 1px) {
+  @media (min-width: get-breakpoint($breakpoint) + 0.0625rem) {
     @content;
   }
 }
@@ -80,7 +80,7 @@
 }
 
 // Grid responsive
-@mixin grid-responsive($min-width: 250px, $gap: var(--space-4)) {
+@mixin grid-responsive($min-width: 15.625rem, $gap: var(--space-4)) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
   gap: $gap;
@@ -105,7 +105,7 @@
 }
 
 // Standard page container with tokenized padding and responsive scale.
-@mixin page-container($max-width: 1400px) {
+@mixin page-container($max-width: 87.5rem) {
   padding: var(--space-6);
   max-width: $max-width;
   margin: 0 auto;
@@ -337,10 +337,10 @@
 // Visually hidden (accessible to screen readers)
 @mixin visually-hidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: var(--border-1);
+  height: var(--border-1);
   padding: 0;
-  margin: -1px;
+  margin: calc(var(--border-1) * -1);
   overflow: hidden;
   clip-path: inset(0);
   white-space: nowrap;
@@ -495,7 +495,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: var(--opacity-half);
   }
 }
 
@@ -617,12 +617,12 @@
 // Focus visible (keyboard navigation)
 @mixin focus-visible {
   &:focus-visible {
-    outline: var(--focus-outline-width, 2px) solid
+    outline: var(--focus-outline-width, var(--border-2)) solid
       var(--focus-ring-color, var(--ds-primary-green));
-    outline-offset: var(--focus-outline-offset, 2px);
+    outline-offset: var(--focus-outline-offset, var(--space-0-5));
     box-shadow: var(
       --focus-ring-shadow,
-      0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3)
+      var(--shadow-focus)
     );
   }
 
@@ -644,7 +644,7 @@
 }
 
 // Touch-friendly tap target
-@mixin tap-target($min-size: 44px) {
+@mixin tap-target($min-size: 2.75rem) {
   min-height: $min-size;
   min-width: $min-size;
 

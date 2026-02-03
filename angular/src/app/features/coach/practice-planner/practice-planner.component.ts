@@ -29,7 +29,6 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
@@ -124,7 +123,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     Select,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -132,9 +131,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="practice-planner-page">
+<div class="practice-planner-page">
         <app-page-header
           title="Practice Planner"
           subtitle="Design detailed practice sessions"

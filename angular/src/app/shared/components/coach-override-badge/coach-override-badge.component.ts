@@ -122,7 +122,7 @@ export type CoachOverridePlacement =
       .override-timestamp {
         margin-left: var(--space-2);
         font-size: var(--ds-font-size-md);
-        opacity: 0.8;
+        opacity: 0.9;
         font-weight: var(--ds-font-weight-regular);
       }
 

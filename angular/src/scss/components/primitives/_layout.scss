@@ -15,10 +15,10 @@
  *   </div>
  * 
  * BREAKPOINTS (Decision 35):
- *   Mobile:  ≤480px
- *   Tablet:  ≤768px
- *   Desktop: ≤1024px
- *   Wide:    >1024px
+ *   Mobile:  ≤30rem
+ *   Tablet:  ≤48rem
+ *   Desktop: ≤64rem
+ *   Wide:    >64rem
  */
 
 @layer primitives {
@@ -151,15 +151,15 @@
 
   // Auto-fit grid (responsive)
   .grid-auto-fit {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
   }
 
   .grid-auto-fit-sm {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
   }
 
   .grid-auto-fit-lg {
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(22.5rem, 1fr));
   }
 
   // ============================================
@@ -399,7 +399,7 @@
     align-items: center;
     gap: var(--space-2);
     margin: 0;
-    font-size: var(--font-size-h2); // 18px
+    font-size: var(--font-size-h2); // 1.125rem
     font-weight: var(--font-weight-semibold); // 600 - ALWAYS semibold
     line-height: var(--line-height-tight);
     color: var(--color-text-primary);
@@ -408,7 +408,7 @@
     .pi {
       font-size: var(--font-h3-size); // Standardized icon size
       color: var(--ds-primary-green);
-      opacity: 0.9;
+      opacity: var(--opacity-strong);
     }
   }
 
@@ -462,7 +462,7 @@
     }
   }
 
-  @media (min-width: 769px) {
+  @media (min-width: 48.0625rem) {
     .hide-desktop {
       display: none;
     }

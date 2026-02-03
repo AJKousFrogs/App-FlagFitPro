@@ -227,7 +227,7 @@
 .stat-action-icon {
   font-size: var(--ds-font-size-md);
   margin-left: var(--space-1);
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
 }
 
 @keyframes bounce {
@@ -447,8 +447,8 @@
   box-shadow: var(--shadow-2);
   cursor: pointer;
   transition:
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform var(--transition-slower) var(--ease-micro-bounce),
+    box-shadow var(--transition-slower) var(--ease-micro-bounce);
   position: relative;
   animation: scaleIn 400ms ease-out backwards;
 }
@@ -461,7 +461,7 @@
 
 // .video-card:hover REMOVED - use app-card-shell with state="interactive"
 // @see docs/CARD_SHELL_CONTRACT.md §2.8
-// Note: translateY(-12px) was non-standard; contract specifies -2px
+// Note: translateY(-0.75rem) was non-standard; contract specifies -0.125rem
 
 .video-card.bookmarked {
   border: var(--border-3) solid var(--ds-primary-green);
@@ -524,7 +524,7 @@
 }
 
 .video-card:hover .thumbnail-overlay {
-  opacity: 0.8;
+  opacity: var(--opacity-strong);
 }
 
 .thumbnail-placeholder {
@@ -540,7 +540,7 @@
 .play-icon {
   font-size: var(--ds-font-size-4rem); /* Larger, more visible */
   color: white;
-  opacity: 0.95;
+  opacity: var(--opacity-strong);
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
@@ -702,7 +702,7 @@
 }
 
 .tag {
-  padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
@@ -1055,7 +1055,7 @@
   }
 
   .search-input {
-    height: var(--button-height-lg); /* 52px */
+    height: var(--button-height-lg); /* 3.25rem */
     font-size: var(--ds-font-size-md);
   }
 
@@ -1182,8 +1182,8 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms;
-    transition-duration: 0.01ms;
+    animation-duration: var(--transition-instant);
+    transition-duration: var(--transition-instant);
   }
 
   .play-icon,

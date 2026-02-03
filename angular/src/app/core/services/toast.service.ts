@@ -1,5 +1,5 @@
 /**
- * Toast Notification Service
+ *Notification Service
  *
  * Centralized service for displaying toast notifications using PrimeNG MessageService.
  * Provides simple, type-safe methods for common notification types.

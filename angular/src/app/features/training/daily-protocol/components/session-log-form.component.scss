@@ -59,7 +59,7 @@
   color: var(--color-text-tertiary);
   font-size: var(--ds-font-size-xs);
   cursor: help;
-  transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
+  transition: color var(--transition-fast) var(--ease-standard);
   margin-left: var(--space-1);
 
   &:hover {
@@ -171,7 +171,7 @@
 .load-formula {
   font-size: var(--ds-font-size-xs);
   color: var(--ds-primary-green-hover);
-  opacity: 0.8;
+  opacity: var(--opacity-strong);
 }
 
 /* Actions */

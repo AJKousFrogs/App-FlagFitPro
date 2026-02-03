@@ -325,6 +325,62 @@
 }
 
 // ================================
+// DIALOG & PANEL SIZE UTILITIES
+// ================================
+
+.dialog-w-sm {
+  width: var(--dialog-width-sm);
+}
+.dialog-w-md {
+  width: var(--dialog-width-md);
+}
+.dialog-w-lg {
+  width: var(--dialog-width-lg);
+}
+.dialog-w-xl {
+  width: var(--dialog-width-xl);
+}
+
+.dialog-max-w-xs {
+  max-width: var(--dialog-max-width-xs);
+}
+.dialog-max-w-sm {
+  max-width: var(--dialog-max-width-sm);
+}
+.dialog-max-w-md {
+  max-width: var(--dialog-max-width-md);
+}
+.dialog-max-w-lg {
+  max-width: var(--dialog-max-width-lg);
+}
+.dialog-max-w-xl {
+  max-width: var(--dialog-max-width-xl);
+}
+.dialog-max-w-2xl {
+  max-width: var(--dialog-max-width-2xl);
+}
+
+.dialog-max-h {
+  max-height: var(--dialog-max-height);
+}
+
+.layout-w-sm {
+  width: var(--layout-width-sm);
+}
+.layout-w-md {
+  width: var(--layout-width-md);
+}
+.layout-w-lg {
+  width: var(--layout-width-lg);
+}
+.layout-w-xl {
+  width: var(--layout-width-xl);
+}
+.layout-w-2xl {
+  width: var(--layout-width-2xl);
+}
+
+// ================================
 // BORDER RADIUS UTILITIES
 // ================================
 

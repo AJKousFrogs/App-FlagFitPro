@@ -36,7 +36,6 @@ import {
   paymentStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -137,7 +136,7 @@ const BALANCE_FILTERS = [
     TableModule,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -145,9 +144,7 @@ const BALANCE_FILTERS = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="payment-management-page">
+<div class="payment-management-page">
         <app-page-header
           title="Payment Management"
           subtitle="Track team dues and payments"

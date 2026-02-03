@@ -8,7 +8,7 @@
 
 .error-summary {
   background: var(--primitive-error-50);
-  border: 3px solid var(--primitive-error-500);
+  border: 0.1875rem solid var(--primitive-error-500);
   border-radius: var(--radius-lg, var(--ds-font-size-xs));
   padding: var(--space-5, var(--ds-font-size-xl));
   margin-bottom: var(--space-6, var(--ds-font-size-3xl));
@@ -77,7 +77,7 @@
   font-weight: var(--ds-font-weight-medium);
   cursor: pointer;
   text-decoration: underline;
-  transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
+  transition: color var(--transition-fast) var(--ease-standard);
 
   &:hover {
     color: var(--primitive-error-800);
@@ -87,7 +87,7 @@
   &:focus-visible {
     outline: var(--focus-outline-width) solid var(--primitive-error-600);
     outline-offset: var(--focus-outline-offset);
-    border-radius: var(--radius-sm, 4px);
+    border-radius: var(--radius-sm, 0.25rem);
   }
 
   strong {
@@ -101,10 +101,10 @@
   gap: var(--ds-space-2);
   padding: var(--ds-space-2) var(--ds-space-3);
   background: white;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md, 0.5rem);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  border-left: 3px solid var(--primitive-warning-400);
+  border-left: 0.1875rem solid var(--primitive-warning-400);
 
   i {
     color: var(--primitive-warning-600);
@@ -124,9 +124,8 @@
   font-size: var(--ds-font-size-md);
   cursor: pointer;
   padding: var(--ds-space-2);
-  border-radius: var(--radius-sm, 4px);
-  transition: background-color var(--motion-fast, 150ms)
-    var(--ease-standard, ease);
+  border-radius: var(--radius-sm, 0.25rem);
+  transition: background-color var(--transition-fast) var(--ease-standard);
 
   &:hover {
     background: var(--primitive-error-100);
@@ -166,7 +165,7 @@
 // High contrast mode support (accessibility)
 @media (prefers-contrast: high) {
   .error-summary {
-    border-width: 4px;
+    border-width: 0.25rem;
   }
 
   .error-link {

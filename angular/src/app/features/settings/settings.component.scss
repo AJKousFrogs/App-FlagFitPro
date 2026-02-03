@@ -16,7 +16,7 @@
   justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border-secondary);
+  border-bottom: 0.0625rem solid var(--color-border-secondary);
 }
 
 .control-row:last-child {
@@ -104,7 +104,7 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
   /* HOVER FIX: Keep border-width constant to prevent layout shift */
-  border: 2px solid transparent;
+  border: 0.125rem solid transparent;
   /* HOVER FIX: Transition only safe properties (no layout-affecting props) */
   transition:
     background-color var(--transition-fast),
@@ -127,7 +127,7 @@
 
 .settings-nav-item:hover {
   background: var(--surface-tertiary);
-  /* HOVER FIX: Border width stays 2px, only color changes */
+  /* HOVER FIX: Border width stays 0.125rem, only color changes */
   border-color: var(--ds-primary-green);
   color: var(--ds-primary-green);
 }
@@ -194,7 +194,7 @@
   margin: 0 calc(var(--space-3) * -1);
   border-radius: var(--radius-xl);
   /* HOVER FIX: Keep border-width constant to prevent layout shift */
-  border: 2px solid transparent;
+  border: 0.125rem solid transparent;
   /* HOVER FIX: Transition all safe properties that might change on hover */
   transition:
     background-color var(--transition-fast),
@@ -205,7 +205,7 @@
 
 .notification-item:hover {
   background: var(--surface-secondary);
-  /* HOVER FIX: Border stays 2px, no layout shift */
+  /* HOVER FIX: Border stays 0.125rem, no layout shift */
   /* Border color stays transparent unless you want to add a subtle border */
 }
 
@@ -219,7 +219,7 @@
 }
 
 .notification-label {
-  font-size: var(--ds-font-size-md); /* 16px - clear title size */
+  font-size: var(--ds-font-size-md); /* 1rem - clear title size */
   font-weight: var(--ds-font-weight-semibold); /* Semibold for emphasis */
   color: var(--color-text-primary);
   /* ALIGNMENT FIX: Consistent line-height prevents text shift */
@@ -231,7 +231,7 @@
 .notification-desc {
   font-size: var(
     --ds-font-size-compact-lg
-  ); /* 13px - smaller for description */
+  ); /* 0.8125rem - smaller for description */
   font-weight: var(--ds-font-weight-regular); /* Regular weight */
   color: var(--color-text-muted);
   /* ALIGNMENT FIX: Consistent line-height */
@@ -254,7 +254,7 @@
   margin-top: var(--space-6);
   margin-bottom: var(--space-2);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: 0.0625rem solid var(--color-border-secondary);
 
   h4 {
     font-size: var(--ds-font-size-md);
@@ -312,7 +312,7 @@
 
 .time-picker {
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border-primary);
+  border: 0.0625rem solid var(--color-border-primary);
   border-radius: var(--radius-md);
   background: var(--surface-primary);
   color: var(--color-text-primary);
@@ -321,7 +321,7 @@
   &:focus-visible {
     outline: none;
     border-color: var(--ds-primary-green);
-    box-shadow: 0 0 0 2px var(--ds-primary-green-ultra-subtle);
+    box-shadow: 0 0 0 0.125rem var(--ds-primary-green-ultra-subtle);
   }
 }
 
@@ -362,7 +362,7 @@
   text-transform: var(--ds-text-transform-uppercase);
   letter-spacing: var(--ds-letter-spacing-wide);
   color: var(--color-text-muted);
-  min-width: var(--badge-lg); // 28px
+  min-width: var(--badge-lg); // 1.75rem
   text-align: right;
   transition: color var(--transition-fast);
 }
@@ -390,10 +390,10 @@
 
 /* ================================================================
    MOBILE RESPONSIVENESS FIXES
-   Target devices: iPhone 11-17 (414-430px), Samsung S23-S25 (412-430px)
+   Target devices: iPhone 11-17 (414-26.875rem), Samsung S23-S25 (412-26.875rem)
    ================================================================ */
 
-/* iPhone 15-17 Pro Max, Samsung S25 Ultra (430px viewport) */
+/* iPhone 15-17 Pro Max, Samsung S25 Ultra (26.875rem viewport) */
 @include respond-to(xs) {
   .form-row.two-columns {
     flex-direction: column;
@@ -406,7 +406,7 @@
   }
 }
 
-/* iPhone 11-14, Samsung S23/S24 (412-414px viewport) */
+/* iPhone 11-14, Samsung S23/S24 (412-25.875rem viewport) */
 @include respond-to(xs) {
   .settings-nav {
     flex-direction: column;
@@ -450,7 +450,7 @@
 
   .dialog-header {
     padding: var(--space-4);
-    padding-right: 56px;
+    padding-right: 3.5rem;
   }
 
   .dialog-icon {
@@ -478,7 +478,7 @@
   margin: 0 calc(var(--space-3) * -1);
   border-radius: var(--radius-xl);
   /* HOVER FIX: Keep border-width constant */
-  border: 2px solid transparent;
+  border: 0.125rem solid transparent;
   /* HOVER FIX: Transition safe properties only */
   transition:
     background-color var(--transition-fast),
@@ -491,7 +491,7 @@
 
 .security-item:hover {
   background: var(--surface-secondary);
-  /* HOVER FIX: Border stays 2px, no layout shift */
+  /* HOVER FIX: Border stays 0.125rem, no layout shift */
 }
 
 .security-info {
@@ -505,7 +505,7 @@
 
 .security-info h4 {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--ds-font-size-md); /* 16px - clear title size */
+  font-size: var(--ds-font-size-md); /* 1rem - clear title size */
   font-weight: var(--ds-font-weight-semibold); /* Semibold for emphasis */
   color: var(--color-text-primary);
   /* ALIGNMENT FIX: Consistent line-height prevents text shift */
@@ -518,7 +518,7 @@
   margin: 0;
   font-size: var(
     --ds-font-size-compact-lg
-  ); /* 13px - smaller for description */
+  ); /* 0.8125rem - smaller for description */
   font-weight: var(--ds-font-weight-regular); /* Regular weight */
   color: var(--color-text-muted);
   /* ALIGNMENT FIX: Consistent line-height */
@@ -554,9 +554,9 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-5) var(--space-6);
-  padding-right: 72px; /* Space for close button */
+  padding-right: 4.5rem; /* Space for close button */
   background: var(--surface-primary);
-  border-bottom: 1px solid var(--color-border-muted);
+  border-bottom: 0.0625rem solid var(--color-border-muted);
   position: relative;
   margin-bottom: var(--space-2); /* Breathing room before form */
 }
@@ -583,7 +583,7 @@
 
 .dialog-title-section h2 {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--ds-font-size-xl); /* 20px */
+  font-size: var(--ds-font-size-xl); /* 1.25rem */
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-h3);
@@ -591,7 +591,7 @@
 
 .dialog-title-section p {
   margin: 0;
-  font-size: var(--ds-font-size-sm); /* 14px */
+  font-size: var(--ds-font-size-sm); /* 0.875rem */
   color: var(--color-text-muted);
   line-height: var(--ds-line-height-body-sm);
 }
@@ -614,7 +614,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--ds-font-size-sm); /* 14px */
+  font-size: var(--ds-font-size-sm); /* 0.875rem */
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
@@ -622,7 +622,7 @@
 .form-field label i {
   font-size: var(--ds-font-size-md);
   color: var(--ds-primary-green);
-  opacity: 0.8;
+  opacity: var(--opacity-strong);
 }
 
 .input-wrapper {
@@ -646,7 +646,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--ds-font-size-compact-lg); /* 13px */
+  font-size: var(--ds-font-size-compact-lg); /* 0.8125rem */
   color: var(--color-text-muted);
   transition: color var(--transition-fast);
 }
@@ -655,7 +655,7 @@
   font-size: var(--ds-font-size-sm);
   transition: color var(--transition-fast);
   flex-shrink: 0;
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 .requirement.met {
@@ -703,7 +703,7 @@
   gap: var(--space-3);
   padding: var(--space-4) var(--space-6);
   background: var(--surface-secondary);
-  border-top: 1px solid var(--color-border-muted);
+  border-top: 0.0625rem solid var(--color-border-muted);
   /* ALIGNMENT FIX: Lock min-height for consistency across all dialogs */
   min-height: var(--card-min-height-sm);
 }
@@ -750,9 +750,9 @@
 }
 
 .warning-icon-large {
-  width: var(--icon-container-lg); // 48px
-  height: var(--icon-container-lg); // 48px
-  min-width: var(--icon-container-lg); // 48px
+  width: var(--icon-container-lg); // 3rem
+  height: var(--icon-container-lg); // 3rem
+  min-width: var(--icon-container-lg); // 3rem
   border-radius: var(--radius-xl);
   background: rgba(var(--primitive-error-500-rgb), 0.1);
   display: flex;
@@ -884,8 +884,8 @@
 }
 
 .app-icon {
-  width: var(--icon-container-lg); // 48px
-  height: var(--icon-container-lg); // 48px
+  width: var(--icon-container-lg); // 3rem
+  height: var(--icon-container-lg); // 3rem
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
@@ -929,8 +929,8 @@
 }
 
 .qr-wrapper {
-  width: 200px;
-  height: 200px;
+  width: 12.5rem;
+  height: 12.5rem;
   margin: 0 auto var(--space-6);
   padding: var(--space-4);
   background: var(--surface-primary);
@@ -1101,8 +1101,8 @@
 }
 
 .session-device-icon {
-  width: var(--icon-container-lg); // 48px
-  height: var(--icon-container-lg); // 48px
+  width: var(--icon-container-lg); // 3rem
+  height: var(--icon-container-lg); // 3rem
   border-radius: var(--radius-xl);
   background: var(--surface-primary);
   border: var(--border-1) solid var(--color-border-secondary);
@@ -1186,9 +1186,9 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background: transparent; /* Outlined style - transparent background */
-  /* HOVER FIX: Border width stays constant (2px) */
-  border: 2px solid var(--color-border-primary);
-  border-radius: var(--radius-lg); /* 8px */
+  /* HOVER FIX: Border width stays constant (0.125rem) */
+  border: 0.125rem solid var(--color-border-primary);
+  border-radius: var(--radius-lg); /* 0.5rem */
   cursor: pointer;
   /* HOVER FIX: Only transition safe properties (no width/height/font changes) */
   transition:
@@ -1197,12 +1197,12 @@
     box-shadow var(--motion-fast) var(--ease-standard),
     color var(--motion-fast) var(--ease-standard);
   color: var(--color-text-primary);
-  min-height: var(--touch-target-md); /* 44px - locked height */
+  min-height: var(--touch-target-md); /* 2.75rem - locked height */
 }
 
 .theme-option:hover {
   background: var(--surface-secondary);
-  /* HOVER FIX: Border stays 2px, only color changes */
+  /* HOVER FIX: Border stays 0.125rem, only color changes */
   border-color: var(--ds-primary-green);
   /* No need to re-specify border-radius - it's inherited */
 }
@@ -1212,7 +1212,7 @@
     var(--ds-primary-green-rgb),
     0.08
   ); /* Subtle tint instead of solid */
-  /* HOVER FIX: Border width stays 2px, only color changes */
+  /* HOVER FIX: Border width stays 0.125rem, only color changes */
   border-color: var(--ds-primary-green);
   color: var(--ds-primary-green);
 }
@@ -1225,7 +1225,7 @@
 .theme-option i {
   font-size: var(
     --ds-font-size-2xl
-  ); /* 18px - appropriate for inline with text */
+  ); /* 1.125rem - appropriate for inline with text */
   color: var(--color-text-secondary);
 }
 
@@ -1288,7 +1288,7 @@
     rgba(var(--ds-primary-green-rgb), 0.05) 0%,
     rgba(var(--ds-primary-green-rgb), 0.02) 100%
   );
-  border-radius: var(--radius-lg); /* 8px */
+  border-radius: var(--radius-lg); /* 0.5rem */
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
 }
 
@@ -1316,7 +1316,7 @@
 
 .privacy-controls-link .link-info h4 {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--ds-font-size-md); /* 16px - consistent with other headings */
+  font-size: var(--ds-font-size-md); /* 1rem - consistent with other headings */
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
@@ -1325,7 +1325,7 @@
   margin: 0;
   font-size: var(
     --ds-font-size-compact-lg
-  ); /* 13px - consistent with descriptions */
+  ); /* 0.8125rem - consistent with descriptions */
   color: var(--color-text-muted);
   line-height: var(--ds-line-height-body-sm);
 }
@@ -1368,7 +1368,7 @@
     flex-direction: row;
     justify-content: flex-start;
     padding: var(--space-3);
-    border-radius: var(--radius-lg); /* 8px */
+    border-radius: var(--radius-lg); /* 0.5rem */
   }
 
   .theme-option i {
@@ -1392,7 +1392,7 @@
  * - _brand-overrides.scss (structural styles)
  * 
  * Local overrides removed to ensure consistent appearance.
- * All toggles now use: 44px width, var(--ds-font-size-2xl) height, green=ON, neutral=OFF
+ * All toggles now use: 2.75rem width, var(--ds-font-size-2xl) height, green=ON, neutral=OFF
  */
 
 /*
@@ -1403,7 +1403,7 @@
  */
 .security-item app-button {
   flex-shrink: 0;
-  width: 120px;
+  width: 7.5rem;
   min-width: var(--input-min-width-sm);
   max-width: var(--input-min-width-sm);
 }
@@ -1414,14 +1414,14 @@
   position: absolute;
   top: var(--space-5);
   right: var(--space-5);
-  width: var(--touch-target-sm); /* 36px */
+  width: var(--touch-target-sm); /* 2.25rem */
   height: var(--touch-target-sm);
   min-width: var(--touch-target-sm);
   min-height: var(--touch-target-sm);
   padding: 0;
-  border-radius: var(--radius-lg); /* 8px */
+  border-radius: var(--radius-lg); /* 0.5rem */
   background: var(--surface-secondary);
-  border: 1px solid var(--color-border-muted);
+  border: 0.0625rem solid var(--color-border-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1439,7 +1439,7 @@
 
 .dialog-close-btn .btn {
   padding: 0;
-  min-width: var(--touch-target-sm); /* 36px */
+  min-width: var(--touch-target-sm); /* 2.25rem */
   width: var(--touch-target-sm);
   height: var(--touch-target-sm);
   display: flex;
@@ -1567,7 +1567,7 @@
     rgba(var(--ds-primary-green-rgb), 0.08) 0%,
     rgba(var(--ds-primary-green-rgb), 0.04) 100%
   );
-  border: 1px solid rgba(var(--ds-primary-green-rgb), 0.2);
+  border: 0.0625rem solid rgba(var(--ds-primary-green-rgb), 0.2);
   border-radius: var(--radius-lg);
   animation: slideIn 0.2s ease-out;
 }
@@ -1575,7 +1575,7 @@
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-0.25rem);
   }
   to {
     opacity: 1;
@@ -1642,7 +1642,7 @@
 
 .suggestion-apply-btn:hover {
   background: var(--ds-primary-green-dark);
-  transform: translateY(-1px);
+  transform: translateY(-0.0625rem);
 }
 
 .suggestion-apply-btn:active {
@@ -1683,7 +1683,7 @@
   justify-content: center;
   padding: var(--space-4);
   background: var(--surface-secondary);
-  border: 2px solid var(--color-border-muted);
+  border: 0.125rem solid var(--color-border-muted);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition:
@@ -1806,7 +1806,7 @@
   gap: var(--space-3);
   padding: var(--space-4);
   background: var(--color-info-bg);
-  border-left: 4px solid var(--color-info);
+  border-left: 0.25rem solid var(--color-info);
   border-radius: var(--radius-md);
 }
 
@@ -1852,7 +1852,7 @@
 .form-field textarea {
   width: 100%;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border-secondary);
+  border: 0.0625rem solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   background: var(--surface-primary);
   color: var(--color-text-primary);

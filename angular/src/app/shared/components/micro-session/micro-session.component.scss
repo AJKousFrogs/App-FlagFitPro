@@ -4,7 +4,7 @@
 // ============================================================================
 
 .micro-session-card {
-  max-width: 500px;
+  max-width: 31.25rem;
 }
 
 .card-header {
@@ -194,7 +194,7 @@
 }
 
 .current-step.paused {
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
 }
 
 .step-instruction {
@@ -211,8 +211,8 @@
 }
 
 .timer-circle {
-  width: var(--avatar-size-3xl); // 6.25rem / 100px - closest token
-  height: var(--avatar-size-3xl); // 6.25rem / 100px - closest token
+  width: var(--avatar-size-3xl); // 6.25rem / 6.25rem - closest token
+  height: var(--avatar-size-3xl); // 6.25rem / 6.25rem - closest token
   border-radius: var(--radius-full);
   display: flex;
   flex-direction: column;
@@ -347,7 +347,7 @@
 .slider-value {
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
-  min-width: 50px;
+  min-width: 3.125rem;
   text-align: right;
 }
 

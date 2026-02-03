@@ -190,56 +190,6 @@
       font-size: var(--ds-font-size-md);
     }
 
-    .phase-timeline {
-      display: flex;
-      gap: var(--ds-spacing-xs);
-
-      .phase-step {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-1);
-
-        .phase-number {
-          width: var(--space-8);
-          height: var(--space-8);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: var(--ds-font-size-xs);
-          font-weight: var(--ds-font-weight-semibold);
-          background: var(--surface-ground);
-          color: var(--text-color-secondary);
-        }
-
-        .phase-name {
-          font-size: var(--ds-font-size-xs);
-          text-align: center;
-          color: var(--text-color-secondary);
-        }
-
-        &.completed {
-          .phase-number {
-            background: var(--green-500);
-            color: var(--surface-0);
-          }
-        }
-
-        &.current {
-          .phase-number {
-            background: var(--primary-color);
-            color: var(--surface-0);
-          }
-          .phase-name {
-            color: var(--primary-color);
-            font-weight: var(--ds-font-weight-semibold);
-          }
-        }
-      }
-    }
-
     .days-in-phase {
       font-size: var(--ds-font-size-xs);
       color: var(--text-color-secondary);
@@ -267,12 +217,6 @@
         gap: var(--ds-spacing-xs);
 
         // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-045)
-
-        span {
-          font-size: var(--ds-font-size-xs);
-          font-weight: var(--ds-font-weight-medium);
-          min-width: var(--space-10);
-        }
       }
     }
   }
@@ -291,29 +235,55 @@
       margin: 0;
       padding: 0;
       list-style: none;
-
-      li {
-        display: flex;
-        align-items: center;
-        gap: var(--ds-spacing-sm);
-        padding: var(--ds-spacing-xs) 0;
-        font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
-
-        i {
-          font-size: var(--ds-font-size-md);
-        }
-
-        &.met {
-          color: var(--green-600);
-
-          i {
-            color: var(--green-500);
-          }
-        }
-      }
     }
   }
+}
+
+.rtp-section .phase-timeline {
+  display: flex;
+  gap: var(--ds-spacing-xs);
+}
+
+.rtp-section .phase-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.rtp-section .phase-number {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  background: var(--surface-ground);
+  color: var(--text-color-secondary);
+}
+
+.rtp-section .phase-name {
+  font-size: var(--ds-font-size-xs);
+  text-align: center;
+  color: var(--text-color-secondary);
+}
+
+.rtp-section .phase-step.completed .phase-number {
+  background: var(--green-500);
+  color: var(--surface-0);
+}
+
+.rtp-section .phase-step.current .phase-number {
+  background: var(--primary-color);
+  color: var(--surface-0);
+}
+
+.rtp-section .phase-step.current .phase-name {
+  color: var(--primary-color);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 // Risk Section
@@ -591,24 +561,6 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--ds-spacing-md);
-
-      .risk-section {
-        h5 {
-          margin: 0 0 var(--ds-spacing-sm);
-          font-size: var(--ds-font-size-md);
-          color: var(--text-color-secondary);
-        }
-
-        ul {
-          margin: 0;
-          padding-left: var(--ds-spacing-md);
-          font-size: var(--ds-font-size-md);
-
-          li {
-            margin-bottom: var(--space-1);
-          }
-        }
-      }
     }
   }
 
@@ -642,10 +594,6 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: var(--ds-spacing-sm);
-
-        .injury-type {
-          font-weight: var(--ds-font-weight-semibold);
-        }
       }
 
       .injury-details {
@@ -673,6 +621,53 @@
       }
     }
   }
+}
+
+:is(.progress-metrics .metric-bar) span {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  min-width: var(--space-10);
+}
+
+:is(.phase-criteria .criteria-list) li {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-spacing-sm);
+  padding: var(--ds-spacing-xs) 0;
+  font-size: var(--ds-font-size-md);
+  color: var(--text-color-secondary);
+}
+
+:is(.phase-criteria .criteria-list) li i {
+  font-size: var(--ds-font-size-md);
+}
+
+:is(.phase-criteria .criteria-list) li.met {
+  color: var(--green-600);
+}
+
+:is(.phase-criteria .criteria-list) li.met i {
+  color: var(--green-500);
+}
+
+:is(.risk-profile .risk-sections) .risk-section h5 {
+  margin: 0 0 var(--ds-spacing-sm);
+  font-size: var(--ds-font-size-md);
+  color: var(--text-color-secondary);
+}
+
+:is(.risk-profile .risk-sections) .risk-section ul {
+  margin: 0;
+  padding-left: var(--ds-spacing-md);
+  font-size: var(--ds-font-size-md);
+}
+
+:is(.risk-profile .risk-sections) .risk-section ul li {
+  margin-bottom: var(--space-1);
+}
+
+:is(.active-injuries .injury-card) .injury-header .injury-type {
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .position-risk-content {

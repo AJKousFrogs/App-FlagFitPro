@@ -111,6 +111,7 @@ export { ToastComponent } from "./toast/toast.component";
 // ============================================================================
 // DIALOG COMPONENTS
 // ============================================================================
+export { AppDialogComponent } from "./dialog/dialog.component";
 export { DialogFooterComponent } from "./dialog-footer/dialog-footer.component";
 export { DialogHeaderComponent } from "./dialog-header/dialog-header.component";
 

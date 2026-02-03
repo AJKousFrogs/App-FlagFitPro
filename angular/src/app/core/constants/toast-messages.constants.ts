@@ -1,5 +1,5 @@
 /**
- * Toast Message Constants
+ *Message Constants
  *
  * Centralized toast messages for consistent UX across the application.
  * Eliminates 400+ inconsistent toast message strings.

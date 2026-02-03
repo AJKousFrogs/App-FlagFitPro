@@ -11,8 +11,8 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease;
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 }
 
 // .exercise-card:hover REMOVED - use app-card-shell
@@ -182,7 +182,7 @@
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .prescription-badges {
@@ -273,7 +273,7 @@
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .instruction-block.how .instruction-label {

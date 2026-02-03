@@ -23,19 +23,19 @@
 }
 
 .actions-header {
-  width: 120px;
+  width: 7.5rem;
   text-align: center;
 }
 
 .actions-cell {
   position: relative;
-  width: 120px;
+  width: 7.5rem;
   overflow: visible;
 }
 
 .swipe-actions {
   position: absolute;
-  right: -120px;
+  right: -7.5rem;
   top: 0;
   height: 100%;
   display: flex;
@@ -52,7 +52,7 @@
 }
 
 .action-btn {
-  width: var(--touch-target-md); /* 44px */
+  width: var(--touch-target-md); /* 2.75rem */
   height: var(--touch-target-md);
   border-radius: 50%;
   border: none;
@@ -87,8 +87,8 @@
 /* Screen reader only utility */
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.0625rem;
+  height: 0.0625rem;
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
@@ -108,7 +108,7 @@
   outline-offset: var(--focus-outline-offset);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .swipe-row {
     transition: none;
   }

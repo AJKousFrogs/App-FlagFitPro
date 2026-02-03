@@ -16,7 +16,7 @@ import { catchError, map } from "rxjs/operators";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { Supplement, SupplementCompliance } from "../models/supplement.models";
+import { Supplement } from "../models/supplement.models";
 
 interface ComplianceStatus {
   status: string;

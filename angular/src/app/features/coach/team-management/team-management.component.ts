@@ -32,12 +32,12 @@ import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { DialogService } from "../../../core/ui/dialog.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getInitials } from "../../../shared/utils/format.utils";
@@ -139,7 +139,7 @@ const STATUS_CONFIG: Record<
     TableModule,
     StatusTagComponent,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -147,9 +147,7 @@ const STATUS_CONFIG: Record<
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="team-management-page">
+<div class="team-management-page">
         <app-page-header
           title="Team Management"
           subtitle="Manage roster, depth chart, invitations, and team settings"
@@ -858,6 +856,7 @@ export class TeamManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
+  private readonly dialogService = inject(DialogService);
 
   // State
   readonly activeTab = signal<
@@ -1129,8 +1128,12 @@ export class TeamManagementComponent implements OnInit {
     this.showEditPlayerDialog = false;
   }
 
-  removePlayer(player: TeamMember): void {
-    if (!confirm(`Remove ${player.name} from the team?`)) return;
+  async removePlayer(player: TeamMember): Promise<void> {
+    const confirmed = await this.dialogService.confirm(
+      `Remove ${player.name} from the team?`,
+      "Remove Player",
+    );
+    if (!confirmed) return;
 
     this.teamMembers.update((members) =>
       members.filter((m) => m.id !== player.id),

@@ -31,7 +31,7 @@
    ============================================ */
 
 /* Poppins Font - Locally Hosted (critical for text rendering) */
-@import "./assets/fonts/poppins.css";
+@use "./assets/fonts/poppins";
 
 /* PrimeIcons - imported from node_modules */
 @import "primeicons/primeicons.css";
@@ -135,7 +135,7 @@ body > * {
 /* ================================================================
    NATIVE FORM ELEMENT NORMALIZATION
    Ensures native inputs match PrimeNG form controls visually
-   Design Contract: 44px height, 8px radius, consistent states
+   Design Contract: 2.75rem height, 0.5rem radius, consistent states
    
    IMPORTANT: Excludes PrimeNG internal inputs to prevent conflicts:
    - .p-toggleswitch-input (toggle switches)
@@ -172,7 +172,7 @@ textarea {
     background-color var(--transition-fast) ease;
 }
 
-/* Single-line inputs: 44px height */
+/* Single-line inputs: 2.75rem height */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
     [type="file"]
   ):not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input),

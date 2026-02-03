@@ -40,7 +40,6 @@ import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import {
   TeamPerformanceRankingService,
-  MetricRanking,
   PerformanceAchievement,
 } from "../../core/services/team-performance-ranking.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";

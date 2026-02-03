@@ -547,8 +547,23 @@ export class DecisionDetailComponent implements OnInit {
       this.decision.set(decision);
 
       // Load related decisions if available
-      if ((decision as any).relatedDecisions) {
-        this.relatedDecisions.set((decision as any).relatedDecisions);
+      const related = (
+        decision as DecisionLedgerEntry & {
+          relatedDecisions?: DecisionLedgerEntry[];
+        }
+      ).relatedDecisions;
+      if (related) {
+        this.relatedDecisions.set(
+          related.map((entry) => ({
+            id: entry.id,
+            title: entry.decisionSummary,
+            category: entry.decisionCategory,
+            outcome: entry.reviewOutcome ?? entry.status,
+            decisionSummary: entry.decisionSummary,
+            relation:
+              (entry as { relation?: string }).relation ?? "related decision",
+          })),
+        );
       }
     } catch (error) {
       this.error.set(

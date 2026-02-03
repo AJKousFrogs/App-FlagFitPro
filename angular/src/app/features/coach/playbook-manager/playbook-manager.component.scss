@@ -14,7 +14,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: 0.0625rem solid var(--ds-border-subtle);
   padding-bottom: var(--space-2);
   overflow-x: auto;
 
@@ -115,7 +115,7 @@
 .play-card {
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--ds-border-default);
+  border: 0.0625rem solid var(--ds-border-default);
   overflow: hidden;
   transition: box-shadow var(--transition-base) var(--ease-standard);
 
@@ -125,7 +125,7 @@
 }
 
 .play-diagram {
-  height: 150px;
+  height: 9.375rem;
   background: linear-gradient(
     to bottom,
     var(--field-grass-dark),
@@ -150,7 +150,7 @@
     .mini-field {
       position: relative;
       width: 80%;
-      height: 80px;
+      height: 5rem;
 
       .end-zone {
         position: absolute;
@@ -159,21 +159,21 @@
         right: 0;
         height: var(--avatar-size-xs);
         background: var(--overlay-white-10);
-        border-bottom: 2px dashed var(--overlay-white-30);
+        border-bottom: 0.125rem dashed var(--overlay-white-30);
       }
 
       .line-of-scrimmage {
         position: absolute;
-        bottom: 15px;
+        bottom: 0.9375rem;
         left: 0;
         right: 0;
-        height: 2px;
+        height: 0.125rem;
         background: var(--overlay-white-50);
       }
 
       .player-positions {
         position: absolute;
-        bottom: 25px;
+        bottom: 1.5625rem;
         left: 0;
         right: 0;
         display: flex;
@@ -203,7 +203,7 @@
 
 .play-info {
   padding: var(--space-3);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: 0.0625rem solid var(--ds-border-subtle);
 
   h4 {
     margin: 0 0 var(--space-1) 0;
@@ -221,7 +221,7 @@
 
 .memorization-bar {
   padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: 0.0625rem solid var(--ds-border-subtle);
 
   .mem-label {
     font-size: var(--ds-font-size-xs);
@@ -294,7 +294,7 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
     padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--ds-border-subtle);
+    border-bottom: 0.0625rem solid var(--ds-border-subtle);
   }
 }
 
@@ -315,11 +315,11 @@
       text-align: center;
       font-size: var(--ds-font-size-xs);
       color: var(--overlay-white-80);
-      border-bottom: 2px dashed var(--overlay-white-30);
+      border-bottom: 0.125rem dashed var(--overlay-white-30);
     }
 
     .play-area {
-      height: 150px;
+      height: 9.375rem;
       position: relative;
       display: flex;
       justify-content: center;
@@ -328,7 +328,7 @@
     }
 
     .player-marker {
-      width: var(--touch-target-sm); /* 36px */
+      width: var(--touch-target-sm); /* 2.25rem */
       height: var(--touch-target-sm);
       border-radius: 50%;
       background: var(--color-text-on-primary);
@@ -350,7 +350,7 @@
       text-align: center;
       font-size: var(--ds-font-size-xs);
       color: var(--overlay-white-80);
-      border-top: 2px solid var(--overlay-white-50);
+      border-top: 0.125rem solid var(--overlay-white-50);
     }
   }
 
@@ -413,7 +413,7 @@
   padding: var(--space-2);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--ds-border-default);
+  border-left: 0.1875rem solid var(--ds-border-default);
 
   &.primary {
     border-left-color: var(--ds-primary-green);

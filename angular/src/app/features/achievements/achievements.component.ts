@@ -17,14 +17,13 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -265,16 +264,14 @@ const CATEGORY_LABELS: Record<
     Select,
     TableModule,
     StatusTagComponent,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
   ],
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="achievements-page">
+<div class="achievements-page">
         <app-page-header
           title="Achievements"
           subtitle="Earn badges and points for your training milestones"

@@ -90,11 +90,11 @@
 }
 
 .calendar-grid.week-view .calendar-day {
-  min-height: 150px;
+  min-height: 9.375rem;
 }
 
 .calendar-day {
-  min-height: 80px;
+  min-height: 5rem;
   padding: var(--space-2);
   border-radius: var(--radius-md);
   background: var(--surface-secondary);
@@ -103,7 +103,7 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-  border: 2px solid transparent;
+  border: var(--border-2) solid transparent;
 }
 
 .calendar-day:hover {
@@ -116,11 +116,11 @@
 }
 
 .calendar-day.other-month {
-  opacity: 0.4;
+  opacity: var(--opacity-minimal);
 }
 
 .calendar-day.past {
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
 }
 
 .calendar-day.has-workouts {
@@ -143,8 +143,8 @@
 .today .day-number {
   background: var(--color-brand-primary);
   color: white;
-  width: 24px;
-  height: 24px;
+  width: var(--space-6);
+  height: var(--space-6);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -159,14 +159,14 @@
 }
 
 .workout-dot {
-  width: 8px;
-  height: 8px;
+  width: var(--space-2);
+  height: var(--space-2);
   border-radius: 50%;
   cursor: help;
 }
 
 .workout-dot.completed {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 .more-indicator {
@@ -221,7 +221,7 @@
 }
 
 .workout-item.completed {
-  opacity: 0.6;
+  opacity: var(--opacity-muted);
   text-decoration: line-through;
 }
 
@@ -252,7 +252,7 @@
   gap: var(--space-3);
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .legend-item {
@@ -264,8 +264,8 @@
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: calc(var(--space-2) + var(--space-0-5));
+  height: calc(var(--space-2) + var(--space-0-5));
   border-radius: 50%;
 }
 
@@ -297,7 +297,7 @@
 
 @include respond-to(md) {
   .calendar-day {
-    min-height: 60px;
+    min-height: 3.75rem;
     padding: var(--space-1);
   }
 

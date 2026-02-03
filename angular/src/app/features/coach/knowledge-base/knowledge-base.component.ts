@@ -27,7 +27,6 @@ import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -98,7 +97,7 @@ const VISIBILITY_OPTIONS = [
     RadioButton,
     Select,
     Textarea,
-    Toast,
+
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -107,9 +106,7 @@ const VISIBILITY_OPTIONS = [
   providers: [MessageService],
   template: `
     <app-main-layout>
-      <p-toast></p-toast>
-
-      <div class="knowledge-base-page">
+<div class="knowledge-base-page">
         <app-page-header
           title="Knowledge Base"
           subtitle="Coaching resources and team knowledge"

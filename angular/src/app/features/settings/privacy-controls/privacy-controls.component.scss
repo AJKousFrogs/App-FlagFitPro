@@ -175,7 +175,7 @@
   gap: var(--space-3);
   padding: var(--space-4);
   background: var(--primitive-warning-50);
-  border: 1px solid var(--primitive-warning-200);
+  border: 0.0625rem solid var(--primitive-warning-200);
   border-radius: var(--radius-md);
   margin-top: var(--space-4);
 }
@@ -194,7 +194,7 @@
 .consent-info {
   margin-top: var(--space-3);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: 0.0625rem solid var(--color-border-secondary);
 }
 
 .consent-info small {
@@ -278,7 +278,7 @@
 .empty-state i {
   font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-4);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 .team-header {
@@ -350,7 +350,7 @@
 }
 
 .category-chips p-chip:hover {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 // PrimeNG chip override moved to _exceptions.scss (DS-EXC-047)

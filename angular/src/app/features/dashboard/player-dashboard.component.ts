@@ -1280,7 +1280,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         background: transparent;
         border: none;
         color: var(--color-text-on-primary);
-        opacity: 0.8;
+        opacity: 0.9;
         cursor: pointer;
         padding: var(--space-2);
         border-radius: var(--radius-sm);
@@ -1332,7 +1332,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       .announcement-meta {
         font-size: var(--ds-font-size-sm);
         color: var(--color-text-on-primary);
-        opacity: 0.85;
+        opacity: 0.9;
         margin-left: 0;
         white-space: nowrap;
       }
@@ -1548,7 +1548,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       .card-header-icon {
         font-size: var(--ds-font-size-md);
         color: var(--color-brand-primary);
-        opacity: 0.85;
+        opacity: 0.9;
       }
 
       .card-header-title {
@@ -1657,7 +1657,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .schedule-item.completed {
-        opacity: 0.55;
+        opacity: 0.6;
       }
 
       .item-time {

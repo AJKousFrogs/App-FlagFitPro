@@ -67,7 +67,7 @@
 }
 
 .aria-tab:disabled {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   cursor: not-allowed;
 }
 

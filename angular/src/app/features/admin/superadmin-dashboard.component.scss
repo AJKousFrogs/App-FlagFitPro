@@ -22,7 +22,7 @@
   padding: var(--space-4);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--ds-border-default);
+  border: var(--border-1) solid var(--ds-border-default);
 
   &.warning {
     border-color: var(--primitive-warning-500);
@@ -82,7 +82,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-4);
-  border-bottom: 1px solid var(--ds-border-default);
+  border-bottom: var(--border-1) solid var(--ds-border-default);
 
   h3 {
     margin: 0;
@@ -107,7 +107,7 @@
   gap: var(--space-2);
   padding: var(--space-4);
   background: var(--ds-surface-base);
-  border: 1px solid var(--ds-border-default);
+  border: var(--border-1) solid var(--ds-border-default);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition:
@@ -146,7 +146,8 @@
   padding: var(--space-3);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--ds-text-tertiary);
+  border-left: calc(var(--border-2) + var(--border-1)) solid
+    var(--ds-text-tertiary);
 
   &.type-new_team {
     border-left-color: var(--ds-primary-green);
@@ -210,7 +211,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   &:last-child {
     border-bottom: none;
@@ -257,7 +258,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .admin-page {
     padding: var(--space-3);
   }

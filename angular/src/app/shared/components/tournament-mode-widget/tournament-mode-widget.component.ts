@@ -32,6 +32,7 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { TournamentModeService } from "../../../core/services/tournament-mode.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { DialogService } from "../../../core/ui/dialog.service";
 
 @Component({
   selector: "app-tournament-mode-widget",
@@ -148,8 +149,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
           <p-progressBar
             [value]="stats()?.hydrationProgress || 0"
             [showValue]="false"
-            [style]="{ height: '8px' }"
-            [styleClass]="getHydrationClass()"
+            [styleClass]="getHydrationClass() + ' progressbar-height-sm'"
           ></p-progressBar>
           <div class="hydration-details">
             <span>{{ tournament()!.hydrationConsumed }}ml</span>
@@ -221,6 +221,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 export class TournamentModeWidgetComponent {
   private tournamentService = inject(TournamentModeService);
   private toastService = inject(ToastService);
+  private dialogService = inject(DialogService);
 
   // Computed values
   isInTournament = this.tournamentService.isInTournament;
@@ -263,14 +264,14 @@ export class TournamentModeWidgetComponent {
     this.toastService.success(`+${ml}ml logged! 💧`);
   }
 
-  confirmEndTournament(): void {
-    if (
-      confirm(
-        "Are you sure you want to end this tournament? This action cannot be undone.",
-      )
-    ) {
-      this.tournamentService.endTournament();
-      this.toastService.info(TOAST.INFO.TOURNAMENT_ENDED);
-    }
+  async confirmEndTournament(): Promise<void> {
+    const confirmed = await this.dialogService.confirm(
+      "Are you sure you want to end this tournament? This action cannot be undone.",
+      "End Tournament",
+    );
+    if (!confirmed) return;
+
+    this.tournamentService.endTournament();
+    this.toastService.info(TOAST.INFO.TOURNAMENT_ENDED);
   }
 }

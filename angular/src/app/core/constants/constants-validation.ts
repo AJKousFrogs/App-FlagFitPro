@@ -10,10 +10,9 @@
  * - Other critical constant relationships
  */
 
-import { isDevMode, inject } from "@angular/core";
+import { isDevMode } from "@angular/core";
 import { WELLNESS } from "./wellness.constants";
 import { TRAINING } from "./app.constants";
-import { LoggerService } from "../services/logger.service";
 
 /**
  * Validates that weights sum to expected value (default 1.0)
@@ -102,22 +101,6 @@ export function validateAllConstants(): void {
       `HIGH_SPEED_M_S (${TRAINING.HIGH_SPEED_M_S}) must be less than SPRINT_M_S (${TRAINING.SPRINT_M_S})`,
     );
   }
-}
-
-/**
- * Check if running in development environment
- * @returns true if running on localhost
- */
-function isDevelopment(): boolean {
-  if (typeof window === "undefined") {
-    return false;
-  }
-  const hostname = window.location?.hostname;
-  return (
-    hostname === "localhost" ||
-    hostname === "127.0.0.1" ||
-    hostname?.includes("localhost")
-  );
 }
 
 // Run validation in development mode only

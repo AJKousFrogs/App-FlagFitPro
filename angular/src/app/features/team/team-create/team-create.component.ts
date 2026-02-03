@@ -15,7 +15,6 @@ import {
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { InputText } from "primeng/inputtext";
-import { Toast } from "primeng/toast";
 import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -33,7 +32,7 @@ import { AuthService } from "../../../core/services/auth.service";
     ReactiveFormsModule,
     Card,
     InputText,
-    Toast,
+
     Select,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -41,8 +40,7 @@ import { AuthService } from "../../../core/services/auth.service";
     ButtonComponent,
   ],
   template: `
-    <p-toast></p-toast>
-    <app-main-layout>
+<app-main-layout>
       <div class="team-create-page">
         <app-page-header
           title="Create New Team"

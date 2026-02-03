@@ -30,29 +30,29 @@
     padding: var(--space-4);
     border: none; /* BORDERLESS */
     box-shadow: none;
-    min-height: 200px;
+    min-height: 12.5rem;
     position: relative;
 
     // Ensure canvas fills container
     canvas {
       max-width: 100%;
-      height: auto !important;
+      height: auto;
     }
   }
 
   // Size variants
   .chart-container--sm {
-    min-height: 150px;
+    min-height: 9.375rem;
     padding: var(--space-3);
   }
 
   .chart-container--lg {
-    min-height: 300px;
+    min-height: 18.75rem;
     padding: var(--space-5);
   }
 
   .chart-container--xl {
-    min-height: 400px;
+    min-height: 25rem;
     padding: var(--space-6);
   }
 
@@ -113,8 +113,8 @@
   }
 
   .chart-legend-dot {
-    width: 10px;
-    height: 10px;
+    width: 0.625rem;
+    height: 0.625rem;
     border-radius: var(--radius-full); // Dots are circular
     flex-shrink: 0;
   }
@@ -129,7 +129,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
+    min-height: 12.5rem;
     text-align: center;
     padding: var(--space-6);
     color: var(--color-text-muted);
@@ -139,7 +139,7 @@
   .chart-empty i {
     font-size: var(--font-h1-size);
     margin-bottom: var(--space-3);
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
 
   .chart-empty-text {
@@ -154,11 +154,11 @@
   @include respond-to(md) {
     .chart-container {
       padding: var(--space-3);
-      min-height: 180px;
+      min-height: 11.25rem;
     }
 
     .chart-container--lg {
-      min-height: 250px;
+      min-height: 15.625rem;
     }
 
     .chart-header {
@@ -174,7 +174,7 @@
   @include respond-to(sm) {
     .chart-container {
       padding: var(--space-2);
-      min-height: 150px;
+      min-height: 9.375rem;
     }
 
     .chart-title {
@@ -189,9 +189,9 @@
 
   :root {
     --chart-primary: var(--ds-primary-green);
-    --chart-secondary: var(--ds-primary-blue, #3b82f6);
-    --chart-tertiary: var(--ds-primary-orange, #f97316);
-    --chart-quaternary: var(--ds-primary-purple, #8b5cf6);
+    --chart-secondary: var(--ds-primary-blue);
+    --chart-tertiary: var(--ds-primary-orange);
+    --chart-quaternary: var(--ds-primary-purple);
     --chart-success: var(--color-status-success);
     --chart-warning: var(--color-status-warning);
     --chart-error: var(--color-status-error);

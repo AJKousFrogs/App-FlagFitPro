@@ -56,14 +56,14 @@
 
 // Status badge - Sharp rectangular style (matches "Optimal" tag exactly)
 .status-badge {
-  padding: var(--space-2) var(--space-4); /* 8px 16px for breathing room */
+  padding: var(--space-2) var(--space-4); /* 0.5rem 1rem for breathing room */
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   text-transform: var(--ds-text-transform-none);
   letter-spacing: var(--ds-letter-spacing-normal);
   line-height: var(--ds-line-height-tight);
-  min-height: var(--space-8); /* 32px minimum height */
+  min-height: var(--space-8); /* 2rem minimum height */
 }
 
 // Status variants - Solid backgrounds with appropriate text colors
@@ -94,9 +94,9 @@
 
 // Risk badge - Sharp rectangular style (matches "Optimal" tag exactly)
 .risk-badge {
-  padding: var(--space-2) var(--space-4); /* 8px 16px for breathing room */
+  padding: var(--space-2) var(--space-4); /* 0.5rem 1rem for breathing room */
   border-radius: var(--radius-md);
-  min-height: var(--space-8); /* 32px minimum height */
+  min-height: var(--space-8); /* 2rem minimum height */
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   text-transform: var(--ds-text-transform-none);
@@ -133,7 +133,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
   }
 }
 
@@ -187,7 +187,7 @@
 }
 
 .separator {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 // =========================================================================
@@ -220,7 +220,7 @@
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-5px);
+  letter-spacing: var(--ds-letter-spacing-0-03em);
 }
 
 .metric-value {
@@ -286,13 +286,13 @@
     left: 40%;
     width: 25%;
     background: var(--color-status-success);
-    opacity: 0.3;
+    opacity: var(--opacity-quarter);
   }
 }
 
 .acwr-marker {
   position: absolute;
-  top: -2px;
+  top: -0.125rem;
   width: var(--space-3);
   height: var(--space-3);
   background: var(--color-text-primary);
@@ -429,7 +429,7 @@
 @media (hover: none) and (pointer: coarse) {
   // .player-card:hover REMOVED - card-shell handles touch devices
   .card-actions button {
-    min-height: var(--touch-target-md); /* 44px */
+    min-height: var(--touch-target-md); /* 2.75rem */
     min-width: var(--touch-target-md);
   }
 }

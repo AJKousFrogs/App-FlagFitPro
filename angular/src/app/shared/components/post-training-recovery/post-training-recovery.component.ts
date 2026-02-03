@@ -78,9 +78,8 @@ interface RecoveryRecommendation {
       [closable]="true"
       [draggable]="false"
       [resizable]="false"
-      [style]="{ width: '500px', maxWidth: '95vw' }"
       [showHeader]="false"
-      styleClass="post-training-dialog"
+      styleClass="post-training-dialog dialog-w-xl dialog-max-w-lg"
       (onHide)="onClose()"
     >
       <div class="post-training-content">

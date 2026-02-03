@@ -38,14 +38,13 @@ import { ProgressBar } from "primeng/progressbar";
           <p-progressBar
             [value]="value()"
             [showValue]="false"
-            [style]="progressBarStyle()"
+            [styleClass]="progressBarClass()"
           >
           </p-progressBar>
         } @else if (variant() === "circular") {
           <div
             class="circular-progress"
-            [style.width]="size() + 'px'"
-            [style.height]="size() + 'px'"
+            [ngClass]="circularSizeClass()"
           >
             <svg class="circular-svg" viewBox="0 0 100 100">
               <circle
@@ -157,11 +156,20 @@ export class ProgressIndicatorComponent {
     return `progress-indicator-container ${sizeClass}`.trim();
   });
 
-  progressBarStyle = computed(() => {
-    return {
-      height:
-        this.size() === "sm" ? "4px" : this.size() === "lg" ? "12px" : "8px",
-    };
+  progressBarClass = computed(() => {
+    return this.size() === "sm"
+      ? "progress-bar-sm"
+      : this.size() === "lg"
+        ? "progress-bar-lg"
+        : "progress-bar-md";
+  });
+
+  circularSizeClass = computed(() => {
+    return this.size() === "sm"
+      ? "circular-size-sm"
+      : this.size() === "lg"
+        ? "circular-size-lg"
+        : "circular-size-md";
   });
 
   circumference = computed(() => {

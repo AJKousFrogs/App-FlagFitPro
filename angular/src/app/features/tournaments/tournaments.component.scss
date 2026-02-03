@@ -591,7 +591,7 @@
 
 /* Player Availability List */
 .player-availability-list {
-  max-height: var(--chart-min-height-md); /* 300px */
+  max-height: var(--chart-min-height-md); /* 18.75rem */
   overflow-y: auto;
 }
 
@@ -713,8 +713,8 @@
    RESPONSIVE BREAKPOINTS - Full Coverage
    ================================================================ */
 
-/* Extra Large Screens (> 1400px) */
-@media (min-width: 1400px) {
+/* Extra Large Screens (> 87.5rem) */
+@media (min-width: 87.5rem) {
   .tournaments-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -728,8 +728,8 @@
   }
 }
 
-/* Large Screens (1200px - 1399px) */
-@media (min-width: 1200px) and (max-width: 1399px) {
+/* Large Screens (75rem - 87.4375rem) */
+@media (min-width: 75rem) and (max-width: 87.4375rem) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -739,8 +739,8 @@
   }
 }
 
-/* Medium-Large Screens (1024px - 1199px) */
-@media (min-width: 1024px) and (max-width: 1199px) {
+/* Medium-Large Screens (64rem - 74.9375rem) */
+@media (min-width: 64rem) and (max-width: 74.9375rem) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -754,8 +754,8 @@
   }
 }
 
-/* Tablet Landscape (769px - 1023px) */
-@media (min-width: 769px) and (max-width: 1024px) {
+/* Tablet Landscape (48.0625rem - 63.9375rem) */
+@media (min-width: 48.0625rem) and (max-width: 64rem) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -773,7 +773,7 @@
   }
 }
 
-/* Tablet Portrait (768px) */
+/* Tablet Portrait (48rem) */
 @include respond-to(md) {
   .header-actions {
     flex-direction: column;
@@ -832,8 +832,8 @@
   }
 }
 
-/* Mobile Large (481px - 767px) */
-@media (min-width: 481px) and (max-width: 768px) {
+/* Mobile Large (30.0625rem - 47.9375rem) */
+@media (min-width: 30.0625rem) and (max-width: 48rem) {
   .availability-options {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -843,7 +843,7 @@
   }
 }
 
-/* Mobile Small (< 480px) */
+/* Mobile Small (< 30rem) */
 @include respond-to(sm) {
   .tournaments-page {
     padding: var(--space-3);
@@ -880,7 +880,7 @@
   }
 }
 
-/* Extra Small Screens (< 375px) */
+/* Extra Small Screens (< 23.4375rem) */
 @include respond-to(xs) {
   .tournaments-page {
     padding: var(--space-2);
@@ -897,7 +897,7 @@
 }
 
 /* Landscape Mode on Mobile */
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 31.25rem) and (orientation: landscape) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -913,7 +913,7 @@
 
   .availability-option,
   .header-actions button {
-    min-height: var(--touch-target-md); /* 44px */
+    min-height: var(--touch-target-md); /* 2.75rem */
   }
 }
 
