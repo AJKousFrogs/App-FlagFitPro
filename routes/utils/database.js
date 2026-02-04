@@ -6,10 +6,14 @@
  * @version 1.0.0
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import { serverLogger } from "./server-logger.js";
+import {
+  supabaseAdmin,
+  supabaseAnon,
+  assertSupabaseServerConfig,
+} from "./supabase-clients.js";
 
 dotenv.config();
 
@@ -17,28 +21,17 @@ dotenv.config();
 // SUPABASE CLIENT (Preferred for most operations)
 // =============================================================================
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseServiceKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+assertSupabaseServerConfig({ requireAdmin: false, requireAnon: false });
 
-let supabase = null;
+const supabase = supabaseAdmin ?? supabaseAnon;
 
-if (supabaseUrl && supabaseServiceKey) {
-  try {
-    supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
-    serverLogger.success("Supabase client initialized successfully");
-  } catch (error) {
-    serverLogger.error("Failed to initialize Supabase client:", error);
-  }
+if (supabase) {
+  serverLogger.success("Supabase client initialized successfully");
 } else {
-  serverLogger.warn(
-    "Supabase credentials not configured - some features may be unavailable",
+  serverLogger.error(
+    "Supabase credentials not configured - backend requires admin or anon key",
   );
+  throw new Error("Supabase backend client not configured");
 }
 
 // =============================================================================

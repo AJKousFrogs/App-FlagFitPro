@@ -14,8 +14,10 @@ import {
   computed,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -383,6 +385,7 @@ interface DiscussionMessage {
 })
 export class FilmRoomComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -496,7 +499,7 @@ export class FilmRoomComponent implements OnInit {
 
     this.api
       .post("/api/film-room/watched", { filmId: film.id, watched: newStatus })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.messageService.add({
             severity: "success",
@@ -596,7 +599,7 @@ export class FilmRoomComponent implements OnInit {
         momentId,
         message: this.replyMessage,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.messageService.add({
             severity: "success",

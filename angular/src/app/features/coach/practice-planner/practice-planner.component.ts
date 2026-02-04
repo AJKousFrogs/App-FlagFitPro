@@ -14,8 +14,10 @@ import {
   computed,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService, PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -604,6 +606,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
 })
 export class PracticePlannerComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -887,7 +890,7 @@ export class PracticePlannerComponent implements OnInit {
   saveAndNotify(): void {
     if (!this.formData.title) return;
 
-    this.api.post("/api/coach/practices", this.formData).subscribe({
+    this.api.post("/api/coach/practices", this.formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "success",

@@ -118,7 +118,6 @@ export { DialogHeaderComponent } from "./dialog-header/dialog-header.component";
 // ============================================================================
 // UTILITY COMPONENTS
 // ============================================================================
-export { TooltipComponent } from "./tooltip/tooltip.component";
 
 // ============================================================================
 // UX FLOW COMPONENTS (New for improved athlete experience)
@@ -172,9 +171,6 @@ export {
 // ============================================================================
 // LOADING & SKELETON COMPONENTS
 // ============================================================================
-export { EmptyStateComponent as EmptyStateV2Component } from "./empty-state-v2/empty-state.component";
-// NOTE: EmptyStateV2Component uses selector "app-empty-state-v2" (simpler version)
-// EmptyStateComponent uses selector "app-empty-state" (enhanced version with RouterLink, benefits list, etc.)
 export { EmptyStateComponent } from "./empty-state/empty-state.component";
 export { AppLoadingComponent } from "./loading/loading.component";
 export {

@@ -6,8 +6,10 @@ import {
   inject,
   OnInit,
   signal,
+  DestroyRef,
   viewChild,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import {
   FormBuilder,
@@ -86,6 +88,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
 })
 export class SettingsComponent implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private toastService = inject(ToastService);
@@ -488,7 +491,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     // Subscribe to theme changes from form
     this.preferencesForm
       .get("theme")
-      ?.valueChanges.subscribe((theme: ThemeMode) => {
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((theme: ThemeMode) => {
         if (theme) {
           this.themeService.setMode(theme);
         }

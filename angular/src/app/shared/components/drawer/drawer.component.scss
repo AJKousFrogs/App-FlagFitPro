@@ -119,6 +119,8 @@
 .drawer-close {
   width: var(--space-10);
   height: var(--space-10);
+  min-width: var(--touch-target-md);
+  min-height: var(--touch-target-md);
   background: none;
   border: none;
   cursor: pointer;

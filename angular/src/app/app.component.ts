@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   inject,
 } from "@angular/core";
@@ -11,6 +12,7 @@ import {
   RouterOutlet,
 } from "@angular/router";
 import { filter } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
@@ -45,6 +47,7 @@ import { PlatformDetectionService } from "./core/services/platform-detection.ser
 })
 export class AppComponent implements OnInit {
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   // Ensure platform classes (iOS/Safari/Android) are applied globally.
   private platformDetection = inject(PlatformDetectionService);
 
@@ -56,6 +59,7 @@ export class AppComponent implements OnInit {
           (event) =>
             event instanceof NavigationEnd || event instanceof NavigationError,
         ),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

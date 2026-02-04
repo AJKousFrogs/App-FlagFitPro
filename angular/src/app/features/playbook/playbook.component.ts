@@ -14,8 +14,10 @@ import {
   computed,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 
@@ -493,6 +495,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
 })
 export class PlaybookComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -612,7 +615,7 @@ export class PlaybookComponent implements OnInit {
     this.showPlayDetail = true;
 
     // Record study time
-    this.api.post("/api/playbook/study", { playId: play.id }).subscribe({
+    this.api.post("/api/playbook/study", { playId: play.id }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       error: (err) => this.logger.error("Failed to record study time", err),
     });
   }
@@ -642,7 +645,7 @@ export class PlaybookComponent implements OnInit {
         playId: play.id,
         memorized: newStatus,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.messageService.add({
             severity: "success",

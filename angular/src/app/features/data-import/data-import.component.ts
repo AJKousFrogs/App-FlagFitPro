@@ -15,8 +15,10 @@ import {
   computed,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -620,6 +622,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 })
 export class DataImportComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -856,7 +859,7 @@ export class DataImportComponent implements OnInit {
     });
 
     // In real implementation, this would fetch the file
-    this.api.post("/api/import/fetch-url", { url: this.importUrl }).subscribe({
+    this.api.post("/api/import/fetch-url", { url: this.importUrl }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (_response: unknown) => {
         // Process fetched data
         this.messageService.add({

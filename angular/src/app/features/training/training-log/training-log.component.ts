@@ -20,8 +20,10 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
+  DestroyRef,
   OnInit,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
 import {
   FormBuilder,
@@ -543,6 +545,7 @@ interface SessionType {
 })
 export class TrainingLogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
@@ -655,7 +658,7 @@ export class TrainingLogComponent implements OnInit {
 
   constructor() {
     // Watch for form changes - late logging detection can be added later
-    // this.sessionForm.valueChanges.subscribe(() => {
+    // this.sessionForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
     //   this.detectLateLoggingAndConflicts();
     // });
 
@@ -697,7 +700,7 @@ export class TrainingLogComponent implements OnInit {
 
     this.sessionForm
       .get("sessionDate")
-      ?.valueChanges.subscribe(() => this.updateOverrideMessage());
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.updateOverrideMessage());
     void this.updateOverrideMessage();
   }
 

@@ -16,6 +16,34 @@ YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+FAILED=0
+
+# ============================================================
+# Decision 0: Generated CSS outputs must be bannered
+# ============================================================
+CSS_ROOT="$(dirname "$0")/../src/css"
+BANNER="/* GENERATED FILE - DO NOT EDIT."
+
+if [ -d "$CSS_ROOT" ]; then
+  echo "📋 Decision 0: Checking generated CSS banner in src/css..."
+  MISSING_BANNER=0
+  while IFS= read -r -d '' file; do
+    first_line="$(head -n 1 "$file" || true)"
+    if [[ "$first_line" != "$BANNER"* ]]; then
+      echo -e "${RED}❌ Missing generated banner: ${file}${NC}"
+      MISSING_BANNER=1
+    fi
+  done < <(find "$CSS_ROOT" -type f -name "*.css" -print0)
+
+  if [ "$MISSING_BANNER" -eq 1 ]; then
+    echo -e "${YELLOW}   Fix: Run npm run sass:compile${NC}"
+    FAILED=1
+  else
+    echo -e "${GREEN}   ✓ Generated CSS banners present${NC}"
+  fi
+  echo ""
+fi
+
 # Paths (relative to angular/ directory)
 TOKENS="src/scss/tokens/design-system-tokens.scss"
 OVERRIDES_DIR="src/assets/styles/overrides"
@@ -28,8 +56,6 @@ echo "============================================"
 echo "🔍 Design System Enforcement Checks"
 echo "============================================"
 echo ""
-
-FAILED=0
 
 # ============================================================
 # Decision 1: Hex colors only in tokens file
@@ -115,6 +141,35 @@ if [ -n "$TRANS_ALL" ]; then
   FAILED=1
 else
   echo -e "${GREEN}   ✓ No transition: all${NC}"
+fi
+echo ""
+
+# ============================================================
+# Decision 23: No imports from generated src/css
+# ============================================================
+echo "📋 Decision 23: Checking for imports from src/css..."
+
+GENERATED_IMPORTS=$(grep -RIn \
+  --include="*.scss" \
+  --include="*.css" \
+  --include="*.ts" \
+  --include="*.html" \
+  --exclude-dir=node_modules \
+  --exclude-dir=.angular \
+  --exclude-dir=dist \
+  -E "src/css/" src \
+  || true)
+
+if [ -n "$GENERATED_IMPORTS" ]; then
+  echo -e "${RED}❌ Imports from generated src/css found:${NC}"
+  echo "$GENERATED_IMPORTS" | head -20
+  GEN_COUNT=$(echo "$GENERATED_IMPORTS" | wc -l | tr -d ' ')
+  echo ""
+  echo -e "${YELLOW}   Total: $GEN_COUNT violations${NC}"
+  echo "   Fix: Import SCSS sources instead (styles.scss or scss entrypoints)"
+  FAILED=1
+else
+  echo -e "${GREEN}   ✓ No imports from generated src/css${NC}"
 fi
 echo ""
 

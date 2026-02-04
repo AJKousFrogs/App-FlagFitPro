@@ -5,7 +5,6 @@
  * @version 2.3.0 - Modular routes migration
  */
 
-import { createClient } from "@supabase/supabase-js";
 import chokidar from "chokidar";
 import cors from "cors";
 import "dotenv/config";
@@ -35,7 +34,7 @@ import performanceDataRoutes from "./routes/performance-data.routes.js";
 import playerProgramsRoutes from "./routes/player-programs.routes.js";
 import rosterRoutes from "./routes/roster.routes.js";
 import teamsRoutes from "./routes/teams.routes.js";
-import trainingRoutes from "./routes/training.routes.js";
+import { createTrainingRouter } from "./routes/training.routes.js";
 import weatherRoutes from "./routes/weather.routes.js";
 import wellnessRoutes from "./routes/wellness.routes.js";
 import stubsRoutes from "./routes/stubs.routes.js";
@@ -51,20 +50,22 @@ import { authenticateToken } from "./routes/middleware/auth.middleware.js";
 
 // Import validation utilities (centralized - avoids duplication)
 import { isValidUUID } from "./routes/utils/validation.js";
+import {
+  assertSupabaseServerConfig,
+  isSupabaseAdminConfigured,
+  supabaseAdmin,
+  supabaseAnon,
+} from "./routes/utils/supabase-clients.js";
 
-// Initialize Supabase client for real data
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_KEY ||
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.SUPABASE_ANON_KEY ||
-  process.env.VITE_SUPABASE_ANON_KEY;
+assertSupabaseServerConfig({ requireAdmin: true });
 
-const supabase =
-  supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+const supabase = supabaseAdmin ?? supabaseAnon;
 
 if (supabase) {
   console.log("✅ Supabase client initialized - using REAL data");
+  if (!isSupabaseAdminConfigured()) {
+    console.warn("⚠️ Supabase admin key missing - using anon client");
+  }
 } else {
   console.warn(
     "⚠️ Supabase not configured - API endpoints will return 503 errors",
@@ -266,8 +267,11 @@ app.use("/api/", (req, res, next) => {
 // Primary API paths - modular routes handle all traffic
 // =============================================================================
 
+const trainingRoutesV1 = createTrainingRouter({ apiVersion: "v1" });
+const trainingRoutesV2 = createTrainingRouter({ apiVersion: "v2" });
+
 // Primary paths (production)
-app.use("/api/training", trainingRoutes);
+app.use("/api/training", trainingRoutesV1);
 app.use("/api/wellness", wellnessRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notifications", notificationsRoutes);
@@ -288,7 +292,7 @@ app.use("/api/teams", teamsRoutes);
 app.use("/api/weather", weatherRoutes);
 
 // Versioned paths for explicit version targeting
-app.use("/api/v2/training", trainingRoutes);
+app.use("/api/v2/training", trainingRoutesV2);
 app.use("/api/v2/wellness", wellnessRoutes);
 app.use("/api/v2/analytics", analyticsRoutes);
 app.use("/api/v2/notifications", notificationsRoutes);
@@ -943,75 +947,6 @@ app.get("/api/load-management/acwr", async (req, res) => {
 // See: routes/weather.routes.js
 // =============================================================================
 
-// ============================================
-// TRAINING SUGGESTIONS ENDPOINT - REAL DATA
-// ============================================
-
-app.get("/api/training/suggestions", async (req, res) => {
-  res.json({ success: true, data: [] });
-});
-
-app.post("/api/training/suggestions", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { athleteId, currentAcwr, readinessScore } = req.body;
-
-    // Check for pre-generated suggestions in DB
-    const { data: suggestions, error } = await supabase
-      .from("training_suggestions")
-      .select("*")
-      .eq("athlete_id", athleteId)
-      .eq("is_active", true)
-      .order("priority_score", { ascending: false });
-
-    if (error && error.code !== "PGRST116") {
-      throw error;
-    }
-
-    if (!suggestions || suggestions.length === 0) {
-      return res.json({
-        success: true,
-        data: {
-          athleteId,
-          suggestions: [],
-          message: "No specific training suggestions found for current metrics",
-        },
-      });
-    }
-
-    res.json({
-      success: true,
-      data: {
-        athleteId,
-        suggestions: suggestions.map((s) => ({
-          id: s.id,
-          type: s.type,
-          name: s.title,
-          duration: s.duration_minutes,
-          reason: s.reason,
-          priority: s.priority,
-        })),
-        currentMetrics: {
-          acwr: currentAcwr || null,
-          readiness: readinessScore || null,
-        },
-        generatedAt: new Date().toISOString(),
-      },
-    });
-  } catch (error) {
-    console.error("[Suggestions] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load training suggestions" });
-  }
-});
-
-// ============================================
 // READINESS CALCULATION ENDPOINT
 // ============================================
 
@@ -1559,27 +1494,13 @@ app.post("/api/ai-chat", authenticateToken, async (req, res) => {
   }
 
   try {
-    // Dynamically import Supabase client (since server.js uses ESM)
-    const { createClient } = await import("@supabase/supabase-js");
-
-    // Read env vars
-    const supabaseUrl =
-      process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const supabaseKey =
-      process.env.SUPABASE_SERVICE_KEY ||
-      process.env.SUPABASE_SERVICE_ROLE_KEY ||
-      process.env.SUPABASE_ANON_KEY ||
-      process.env.VITE_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
+    if (!supabase) {
       console.error("[AI Chat] Missing Supabase credentials");
       return res.status(500).json({
         success: false,
         error: "Server configuration error - missing database credentials",
       });
     }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Get or create session ID
     const chatSessionId = session_id || `dev-session-${Date.now()}`;

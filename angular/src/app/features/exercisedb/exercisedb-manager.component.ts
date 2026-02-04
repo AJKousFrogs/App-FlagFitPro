@@ -5,8 +5,10 @@ import {
   signal,
   computed,
   effect,
+  DestroyRef,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
@@ -855,6 +857,7 @@ import { capitalize } from "../../shared/utils/format.utils";
 })
 export class ExerciseDBManagerComponent implements OnInit {
   private exerciseDBService = inject(ExerciseDBService);
+  private destroyRef = inject(DestroyRef);
   private messageService = inject(MessageService);
 
   // Design system tokens
@@ -1017,20 +1020,20 @@ export class ExerciseDBManagerComponent implements OnInit {
   }
 
   loadExercises(): void {
-    this.exerciseDBService.getCuratedExercises().subscribe((exercises) => {
+    this.exerciseDBService.getCuratedExercises().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((exercises) => {
       this.exercises.set(exercises);
       this.applyFilters();
     });
   }
 
   loadFilters(): void {
-    this.exerciseDBService.getFilterOptions().subscribe((filters) => {
+    this.exerciseDBService.getFilterOptions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((filters) => {
       this.filters.set(filters);
     });
   }
 
   loadImportLogs(): void {
-    this.exerciseDBService.getImportLogs().subscribe((logs) => {
+    this.exerciseDBService.getImportLogs().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((logs) => {
       this.importLogs.set(logs);
     });
   }
@@ -1125,7 +1128,7 @@ export class ExerciseDBManagerComponent implements OnInit {
 
     this.exerciseDBService
       .approveExercise(exercise.id, this.approvalData)
-      .subscribe((result) => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
         if (result.success) {
           this.messageService.add({
             severity: "success",
@@ -1161,7 +1164,7 @@ export class ExerciseDBManagerComponent implements OnInit {
         equipment_filter: this.importEquipment || undefined,
         auto_approve: this.autoApprove,
       })
-      .subscribe((result) => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
         if (result.success) {
           this.lastImportStats.set(result.stats || null);
           this.messageService.add({

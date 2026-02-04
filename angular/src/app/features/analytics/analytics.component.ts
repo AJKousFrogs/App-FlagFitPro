@@ -7,8 +7,10 @@ import {
   HostListener,
   viewChildren,
   inject,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
@@ -1193,6 +1195,7 @@ export class AnalyticsComponent implements AfterViewInit {
   // Angular 21: Use viewChildren() signal instead of @ViewChildren()
   chartRefs = viewChildren<UIChart>(UIChart);
   private readonly apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly playerStatsService = inject(PlayerStatisticsService);
   private readonly authService = inject(AuthService);
   private readonly trainingStatsService = inject(
@@ -1423,7 +1426,7 @@ export class AnalyticsComponent implements AfterViewInit {
     if (!currentUser?.id) return;
 
     // Load comprehensive training stats
-    this.trainingStatsService.getTrainingStats().subscribe({
+    this.trainingStatsService.getTrainingStats().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (stats) => {
         this.trainingStats.set(stats);
 
@@ -1491,7 +1494,7 @@ export class AnalyticsComponent implements AfterViewInit {
     if (!currentUser?.id) return;
 
     // Load all games for current player
-    this.playerStatsService.getPlayerAllGames(currentUser.id).subscribe({
+    this.playerStatsService.getPlayerAllGames(currentUser.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (games) => {
         this.playerGameStats.set(games);
       },
@@ -1504,7 +1507,7 @@ export class AnalyticsComponent implements AfterViewInit {
     const currentSeason = new Date().getFullYear().toString();
     this.playerStatsService
       .getPlayerSeasonStats(currentUser.id, currentSeason)
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (stats) => {
           this.playerSeasonStats.set(stats);
         },
@@ -1516,7 +1519,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load multi-season stats
     this.playerStatsService
       .getPlayerMultiSeasonStats(currentUser.id)
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (stats) => {
           this.playerMultiSeasonStats.set(stats);
         },
@@ -1547,7 +1550,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load analytics summary for metrics
     this.apiService
       .get(API_ENDPOINTS.analytics.summary, { userId: currentUser.id })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           if (
             response.success &&
@@ -1569,7 +1572,7 @@ export class AnalyticsComponent implements AfterViewInit {
         userId: currentUser.id,
         weeks: 7,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           if (response.success && response.data) {
             this.performanceChartData.set({
@@ -1601,7 +1604,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load team chemistry
     this.apiService
       .get(API_ENDPOINTS.analytics.teamChemistry, { userId: currentUser.id })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           if (response.success && response.data) {
             this.chemistryChartData.set({
@@ -1634,7 +1637,7 @@ export class AnalyticsComponent implements AfterViewInit {
         userId: currentUser.id,
         period: "30days",
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           if (response.success && response.data) {
             this.distributionChartData.set({
@@ -1666,7 +1669,7 @@ export class AnalyticsComponent implements AfterViewInit {
       .get(API_ENDPOINTS.analytics.positionPerformance, {
         userId: currentUser.id,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           if (response.success && response.data) {
             this.positionChartData.set({
@@ -1697,7 +1700,7 @@ export class AnalyticsComponent implements AfterViewInit {
         userId: currentUser.id,
         weeks: 7,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           if (response.success && response.data) {
             const speedData = response.data as {
@@ -1996,7 +1999,7 @@ export class AnalyticsComponent implements AfterViewInit {
         type: "goals",
         userId: currentUser.id,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           const data = response.data as
             | {
@@ -2070,7 +2073,7 @@ export class AnalyticsComponent implements AfterViewInit {
           action: "share_with_coach",
           ...reportData,
         })
-        .subscribe({
+        .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: (_response) => {
             this.isSharing.set(false);
             this.showShareDialog.set(false);
@@ -2147,7 +2150,7 @@ export class AnalyticsComponent implements AfterViewInit {
         type: "gap_analysis",
         userId: currentUser.id,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           const data = response.data as
             | { gaps?: { area: string; current: number; target: number }[] }

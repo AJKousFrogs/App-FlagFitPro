@@ -30,6 +30,16 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .notifications-backdrop {
+    animation: none;
+  }
+
+  .notifications-panel {
+    transition: none;
+  }
+}
+
 /* Panel */
 .notifications-panel {
   position: fixed;
@@ -126,6 +136,7 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
+  min-height: var(--touch-target-md);
   border: none;
   border-radius: var(--radius-md);
   background: transparent;
@@ -155,6 +166,8 @@
 .close-btn {
   width: var(--space-10);
   height: var(--space-10);
+  min-width: var(--touch-target-md);
+  min-height: var(--touch-target-md);
   border: none;
   border-radius: var(--radius-full);
   background: var(--surface-ground);

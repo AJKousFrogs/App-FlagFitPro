@@ -83,6 +83,8 @@
   background: transparent;
   border: none;
   padding: var(--space-2);
+  min-width: var(--touch-target-md);
+  min-height: var(--touch-target-md);
   cursor: pointer;
   color: var(--color-text-secondary);
   border-radius: 50%;
@@ -100,4 +102,10 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
   padding: var(--space-4);
+}
+
+@include respond-to(xs) {
+  .more-menu-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

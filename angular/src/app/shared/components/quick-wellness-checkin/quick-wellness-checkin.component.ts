@@ -16,6 +16,7 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   input,
   output,
@@ -23,6 +24,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 // PrimeNG
 import { ButtonComponent } from "../button/button.component";
@@ -183,6 +185,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
 })
 export class QuickWellnessCheckinComponent {
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   private wellnessService = inject(WellnessService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
@@ -235,24 +238,27 @@ export class QuickWellnessCheckinComponent {
         date: new Date().toISOString().split("T")[0],
       };
 
-      this.wellnessService.logWellness(wellnessData).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.updateStreak();
-            this.toastService.success(TOAST.SUCCESS.CHECKIN_SAVED);
-            this.submitted.emit();
-            this.visible = false;
-          } else {
-            this.toastService.error(response.error || TOAST.ERROR.SAVE_FAILED);
-          }
-          this.isSubmitting.set(false);
-        },
-        error: (err) => {
-          this.logger.error("Error submitting quick check-in:", err);
-          this.toastService.error(TOAST.ERROR.CHECKIN_SAVE_FAILED);
-          this.isSubmitting.set(false);
-        },
-      });
+      this.wellnessService
+        .logWellness(wellnessData)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.updateStreak();
+              this.toastService.success(TOAST.SUCCESS.CHECKIN_SAVED);
+              this.submitted.emit();
+              this.visible = false;
+            } else {
+              this.toastService.error(response.error || TOAST.ERROR.SAVE_FAILED);
+            }
+            this.isSubmitting.set(false);
+          },
+          error: (err) => {
+            this.logger.error("Error submitting quick check-in:", err);
+            this.toastService.error(TOAST.ERROR.CHECKIN_SAVE_FAILED);
+            this.isSubmitting.set(false);
+          },
+        });
     } catch (error) {
       this.logger.error("Error in quick check-in submit:", error);
       this.isSubmitting.set(false);

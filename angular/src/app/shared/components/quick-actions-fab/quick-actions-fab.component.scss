@@ -89,9 +89,24 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .fab-backdrop,
+  .action-item {
+    animation: none;
+  }
+
+  .main-fab,
+  .action-label,
+  .action-icon,
+  .fab-close {
+    transition: none;
+  }
+}
+
 /* Action Label - Raised style (0.5rem radius), Poppins font */
 .action-label {
-  min-width: var(--input-min-width-md); /* 9.375rem */
+  min-width: var(--input-min-width-sm); /* 7.5rem */
+  max-width: min(90vw, 14rem);
   padding: var(--space-4) var(--space-5);
   background: var(--surface-card);
   border-radius: var(--radius-lg); /* Raised style - NOT pill */
@@ -100,6 +115,8 @@
   color: var(--text-color);
   white-space: nowrap;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
   box-shadow: var(--shadow-sm), var(--shadow-md);
   transition:
     background-color var(--motion-fast) var(--ease-standard),

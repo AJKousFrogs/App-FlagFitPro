@@ -14,8 +14,10 @@ import {
   computed,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -432,6 +434,7 @@ const EVENT_TYPE_CONFIG: Record<
 })
 export class TeamCalendarComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -570,7 +573,7 @@ export class TeamCalendarComponent implements OnInit {
       ),
     );
 
-    this.api.post("/api/team-calendar/rsvp", submission).subscribe({
+    this.api.post("/api/team-calendar/rsvp", submission).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "success",
@@ -586,7 +589,7 @@ export class TeamCalendarComponent implements OnInit {
 
   syncToCalendar(): void {
     // Generate ICS file or link to calendar sync
-    this.api.get("/api/team-calendar/sync-url").subscribe({
+    this.api.get("/api/team-calendar/sync-url").pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response: unknown) => {
         const url = (response as { url?: string })?.url;
         if (url) {

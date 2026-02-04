@@ -322,6 +322,20 @@ button {
   outline: none;
 }
 
+/* Default focus ring for interactive elements */
+:where(
+    button,
+    [role="button"],
+    a,
+    input,
+    select,
+    textarea,
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
+}
+
 /* High contrast mode support */
 @media (forced-colors: active) {
   .btn-primary,

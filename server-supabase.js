@@ -3,24 +3,24 @@
  * Provides real data access for local development
  */
 
-import { createClient } from "@supabase/supabase-js";
+import {
+  assertSupabaseServerConfig,
+  isSupabaseAdminConfigured,
+  supabaseAdmin,
+  supabaseAnon,
+} from "./routes/utils/supabase-clients.js";
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_KEY ||
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.SUPABASE_ANON_KEY ||
-  process.env.VITE_SUPABASE_ANON_KEY;
+assertSupabaseServerConfig({ requireAnon: true });
 
-if (!supabaseUrl || !supabaseKey) {
+export const supabase = supabaseAdmin ?? supabaseAnon;
+
+if (!supabase) {
   console.warn(
     "[Server] Warning: Supabase credentials not found. Some features will return mock data.",
   );
+} else if (!isSupabaseAdminConfigured()) {
+  console.warn("[Server] Supabase admin key missing - using anon client");
 }
-
-export const supabase =
-  supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 export const isSupabaseConfigured = () => !!supabase;
 

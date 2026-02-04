@@ -441,7 +441,7 @@
 .message-wrapper {
   display: flex;
   gap: var(--space-3);
-  max-width: 85%;
+  max-width: min(85%, 40rem);
   animation: messageIn 0.3s ease-out;
 }
 

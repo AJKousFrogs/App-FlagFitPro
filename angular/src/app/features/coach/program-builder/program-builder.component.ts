@@ -14,8 +14,10 @@ import {
   computed,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
@@ -619,6 +621,7 @@ const PHASE_PRESETS = [
 })
 export class ProgramBuilderComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
   private readonly dialogService = inject(DialogService);
@@ -796,7 +799,7 @@ export class ProgramBuilderComponent implements OnInit {
       startDate: this.formData.startDate.toISOString(),
     };
 
-    this.api.post("/api/coach/programs/draft", program).subscribe({
+    this.api.post("/api/coach/programs/draft", program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "success",
@@ -828,7 +831,7 @@ export class ProgramBuilderComponent implements OnInit {
       assignedCount: this.selectedPlayerCount(),
     };
 
-    this.api.post("/api/coach/programs", program).subscribe({
+    this.api.post("/api/coach/programs", program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "success",
@@ -843,7 +846,7 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   publishProgram(program: TrainingProgram): void {
-    this.api.put(`/api/coach/programs/${program.id}/publish`, {}).subscribe({
+    this.api.put(`/api/coach/programs/${program.id}/publish`, {}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "success",
@@ -865,7 +868,7 @@ export class ProgramBuilderComponent implements OnInit {
 
     this.programs.update((progs) => progs.filter((p) => p.id !== program.id));
 
-    this.api.delete(`/api/coach/programs/${program.id}`).subscribe({
+    this.api.delete(`/api/coach/programs/${program.id}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "info",

@@ -6,8 +6,10 @@ import {
   computed,
   inject,
   signal,
+  DestroyRef,
   viewChild,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
@@ -476,6 +478,7 @@ interface Category {
 })
 export class ExerciseLibraryComponent implements OnInit {
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private messageService = inject(MessageService);
   private trainingService = inject(UnifiedTrainingService);
   private sanitizer = inject(DomSanitizer);
@@ -573,7 +576,7 @@ export class ExerciseLibraryComponent implements OnInit {
       created_at?: string;
       updated_at?: string;
     };
-    this.apiService.get<ExerciseApi[]>("/api/exercises").subscribe({
+    this.apiService.get<ExerciseApi[]>("/api/exercises").pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           const mappedExercises: Exercise[] = response.data.map((ex) => {

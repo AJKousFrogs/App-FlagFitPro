@@ -17,6 +17,7 @@ import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
+import { getSupabaseAdmin } from "./utils/supabase-clients.js";
 import {
   isValidUUID,
   sanitizeText,
@@ -31,8 +32,10 @@ import {
   validateRPE,
 } from "./utils/validation.js";
 
-const router = express.Router();
-const ROUTE_NAME = "training";
+export function createTrainingRouter({ apiVersion = "v2" } = {}) {
+  const router = express.Router();
+  const ROUTE_NAME = "training";
+  const isV1 = apiVersion === "v1";
 
 // =============================================================================
 // HEALTH CHECK
@@ -624,129 +627,211 @@ router.delete(
 // TRAINING SUGGESTIONS
 // =============================================================================
 
-/**
- * GET /suggestions
- * Get training suggestions based on user's training history
- */
-router.get(
-  "/suggestions",
-  rateLimit("READ"),
-  optionalAuth,
-  authorizeUserAccess,
-  async (req, res) => {
-    if (!supabase) {
-      return sendSuccess(res, {
-        suggestions: [
-          {
-            type: "recovery",
-            message:
-              "Based on your recent training load, consider a recovery day",
-            priority: "medium",
-          },
-        ],
-      });
-    }
+if (isV1) {
+  /**
+   * GET /suggestions (v1)
+   * Legacy behavior from server.js inline handler
+   */
+  router.get(
+    "/suggestions",
+    rateLimit("READ"),
+    authenticateToken,
+    async (_req, res) => {
+      return res.json({ success: true, data: [] });
+    },
+  );
 
-    try {
-      const userId = req.userId || req.query.userId;
-      const suggestions = [];
-
-      if (userId && isValidUUID(userId)) {
-        // Get recent training data to generate smart suggestions
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-        const { data: recentSessions } = await supabase
-          .from("training_sessions")
-          .select("session_date, rpe, duration_minutes, session_type")
-          .eq("user_id", userId)
-          .eq("status", "completed")
-          .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
-          .order("session_date", { ascending: false });
-
-        const sessionCount = recentSessions?.length || 0;
-        const avgRpe =
-          sessionCount > 0
-            ? recentSessions.reduce((sum, s) => sum + (s.rpe || 5), 0) /
-              sessionCount
-            : 0;
-
-        // Generate suggestions based on data
-        if (sessionCount === 0) {
-          suggestions.push({
-            type: "motivation",
-            message:
-              "You haven't trained in a while. Start with a light session to get back on track!",
-            priority: "high",
-          });
-        } else if (avgRpe > 7) {
-          suggestions.push({
-            type: "recovery",
-            message:
-              "Your average RPE is high. Consider a recovery or deload session.",
-            priority: "high",
-          });
-        } else if (avgRpe < 5 && sessionCount >= 3) {
-          suggestions.push({
-            type: "intensity",
-            message:
-              "Your RPE has been low - you may be ready to increase intensity.",
-            priority: "medium",
-          });
-        }
-
-        if (sessionCount >= 5) {
-          suggestions.push({
-            type: "consistency",
-            message: "Great consistency this week! Keep up the momentum.",
-            priority: "low",
-          });
-        }
+  /**
+   * POST /suggestions (v1)
+   * Legacy behavior from server.js inline handler
+   */
+  router.post(
+    "/suggestions",
+    rateLimit("CREATE"),
+    authenticateToken,
+    async (req, res) => {
+      const supabaseAdmin = getSupabaseAdmin();
+      if (!supabaseAdmin) {
+        return res
+          .status(503)
+          .json({ success: false, error: "Database not configured" });
       }
 
-      // Add default suggestion if none generated
-      if (suggestions.length === 0) {
-        suggestions.push({
-          type: "general",
-          message:
-            "Log your training sessions to receive personalized suggestions.",
-          priority: "low",
+      try {
+        const { athleteId, currentAcwr, readinessScore } = req.body;
+
+        const { data: suggestions, error } = await supabaseAdmin
+          .from("training_suggestions")
+          .select("*")
+          .eq("athlete_id", athleteId)
+          .eq("is_active", true)
+          .order("priority_score", { ascending: false });
+
+        if (error && error.code !== "PGRST116") {
+          throw error;
+        }
+
+        if (!suggestions || suggestions.length === 0) {
+          return res.json({
+            success: true,
+            data: {
+              athleteId,
+              suggestions: [],
+              message:
+                "No specific training suggestions found for current metrics",
+            },
+          });
+        }
+
+        return res.json({
+          success: true,
+          data: {
+            athleteId,
+            suggestions: suggestions.map((s) => ({
+              id: s.id,
+              type: s.type,
+              name: s.title,
+              duration: s.duration_minutes,
+              reason: s.reason,
+              priority: s.priority,
+            })),
+            currentMetrics: {
+              acwr: currentAcwr || null,
+              readiness: readinessScore || null,
+            },
+            generatedAt: new Date().toISOString(),
+          },
+        });
+      } catch (error) {
+        serverLogger.error(`[${ROUTE_NAME}] Suggestions error:`, error);
+        return res.status(500).json({
+          success: false,
+          error: "Failed to load training suggestions",
+        });
+      }
+    },
+  );
+} else {
+  /**
+   * GET /suggestions (v2)
+   * Current behavior from routes/training.routes.js prior to v1 parity change
+   */
+  router.get(
+    "/suggestions",
+    rateLimit("READ"),
+    optionalAuth,
+    authorizeUserAccess,
+    async (req, res) => {
+      if (!supabase) {
+        return sendSuccess(res, {
+          suggestions: [
+            {
+              type: "recovery",
+              message:
+                "Based on your recent training load, consider a recovery day",
+              priority: "medium",
+            },
+          ],
         });
       }
 
-      return sendSuccess(res, { suggestions });
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Suggestions error:`, error);
-      return sendSuccess(res, {
-        suggestions: [
-          {
-            type: "general",
-            message: "Keep training consistently for best results.",
-            priority: "low",
-          },
-        ],
-      });
-    }
-  },
-);
+      try {
+        const userId = req.userId || req.query.userId;
+        const suggestions = [];
 
-/**
- * POST /suggestions
- * Submit training feedback for better suggestions
- */
-router.post(
-  "/suggestions",
-  rateLimit("CREATE"),
-  authenticateToken,
-  async (req, res) => {
-    // Store feedback for ML model training
-    serverLogger.info(
-      `[${ROUTE_NAME}] Suggestion feedback from ${req.userId}:`,
-      req.body,
-    );
-    return sendSuccess(res, null, "Feedback recorded");
-  },
-);
+        if (userId && isValidUUID(userId)) {
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+          const { data: recentSessions } = await supabase
+            .from("training_sessions")
+            .select("session_date, rpe, duration_minutes, session_type")
+            .eq("user_id", userId)
+            .eq("status", "completed")
+            .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
+            .order("session_date", { ascending: false });
+
+          const sessionCount = recentSessions?.length || 0;
+          const avgRpe =
+            sessionCount > 0
+              ? recentSessions.reduce((sum, s) => sum + (s.rpe || 5), 0) /
+                sessionCount
+              : 0;
+
+          if (sessionCount === 0) {
+            suggestions.push({
+              type: "motivation",
+              message:
+                "You haven't trained in a while. Start with a light session to get back on track!",
+              priority: "high",
+            });
+          } else if (avgRpe > 7) {
+            suggestions.push({
+              type: "recovery",
+              message:
+                "Your average RPE is high. Consider a recovery or deload session.",
+              priority: "high",
+            });
+          } else if (avgRpe < 5 && sessionCount >= 3) {
+            suggestions.push({
+              type: "intensity",
+              message:
+                "Your RPE has been low - you may be ready to increase intensity.",
+              priority: "medium",
+            });
+          }
+
+          if (sessionCount >= 5) {
+            suggestions.push({
+              type: "consistency",
+              message: "Great consistency this week! Keep up the momentum.",
+              priority: "low",
+            });
+          }
+        }
+
+        if (suggestions.length === 0) {
+          suggestions.push({
+            type: "general",
+            message:
+              "Log your training sessions to receive personalized suggestions.",
+            priority: "low",
+          });
+        }
+
+        return sendSuccess(res, { suggestions });
+      } catch (error) {
+        serverLogger.error(`[${ROUTE_NAME}] Suggestions error:`, error);
+        return sendSuccess(res, {
+          suggestions: [
+            {
+              type: "general",
+              message: "Keep training consistently for best results.",
+              priority: "low",
+            },
+          ],
+        });
+      }
+    },
+  );
+
+  /**
+   * POST /suggestions (v2)
+   * Feedback-only behavior
+   */
+  router.post(
+    "/suggestions",
+    rateLimit("CREATE"),
+    authenticateToken,
+    async (req, res) => {
+      serverLogger.info(
+        `[${ROUTE_NAME}] Suggestion feedback from ${req.userId}:`,
+        req.body,
+      );
+      return sendSuccess(res, null, "Feedback recorded");
+    },
+  );
+}
 
 // =============================================================================
 // TRAINING PROGRAMS (Annual/Periodized Programs)
@@ -1244,4 +1329,7 @@ router.use((req, res) => {
   });
 });
 
-export default router;
+  return router;
+}
+
+export default createTrainingRouter({ apiVersion: "v2" });

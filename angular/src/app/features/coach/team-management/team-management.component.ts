@@ -15,8 +15,10 @@ import {
   computed,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService, PrimeTemplate } from "primeng/api";
 import { Avatar } from "primeng/avatar";
@@ -854,6 +856,7 @@ const STATUS_CONFIG: Record<
 })
 export class TeamManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
   private readonly dialogService = inject(DialogService);
@@ -1029,7 +1032,7 @@ export class TeamManagementComponent implements OnInit {
       status: "pending",
     };
 
-    this.api.post("/api/team/invite", this.inviteForm).subscribe({
+    this.api.post("/api/team/invite", this.inviteForm).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.invitations.update((inv) => [...inv, newInvitation]);
         this.messageService.add({
@@ -1055,7 +1058,7 @@ export class TeamManagementComponent implements OnInit {
   resendInvitation(inv: Invitation): void {
     this.api
       .post("/api/team/invite/resend", { invitationId: inv.id })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.messageService.add({
             severity: "success",
@@ -1070,7 +1073,7 @@ export class TeamManagementComponent implements OnInit {
   cancelInvitation(inv: Invitation): void {
     this.invitations.update((invs) => invs.filter((i) => i.id !== inv.id));
 
-    this.api.delete(`/api/team/invite/${inv.id}`).subscribe({
+    this.api.delete(`/api/team/invite/${inv.id}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "info",
@@ -1114,7 +1117,7 @@ export class TeamManagementComponent implements OnInit {
       ),
     );
 
-    this.api.put(`/api/team/members/${player.id}`, this.editForm).subscribe({
+    this.api.put(`/api/team/members/${player.id}`, this.editForm).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "success",
@@ -1139,7 +1142,7 @@ export class TeamManagementComponent implements OnInit {
       members.filter((m) => m.id !== player.id),
     );
 
-    this.api.delete(`/api/team/members/${player.id}`).subscribe({
+    this.api.delete(`/api/team/members/${player.id}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "info",
@@ -1162,7 +1165,7 @@ export class TeamManagementComponent implements OnInit {
   }
 
   saveSettings(): void {
-    this.api.put("/api/team/settings", this.teamSettings()).subscribe({
+    this.api.put("/api/team/settings", this.teamSettings()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: "success",

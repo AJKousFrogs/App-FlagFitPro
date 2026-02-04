@@ -2,8 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  DestroyRef,
   OnInit,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
@@ -245,6 +247,7 @@ interface Team {
 })
 export class SuperadminTeamsComponent implements OnInit {
   private superadminService = inject(SuperadminService);
+  private destroyRef = inject(DestroyRef);
 
   teams: Team[] = [];
   filteredTeams: Team[] = [];
@@ -312,7 +315,7 @@ export class SuperadminTeamsComponent implements OnInit {
   }
 
   approveTeam(team: Team): void {
-    this.superadminService.approveTeam(team.id, "Approved").subscribe(() => {
+    this.superadminService.approveTeam(team.id, "Approved").pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       team.status = "active";
       this.filterTeams();
     });

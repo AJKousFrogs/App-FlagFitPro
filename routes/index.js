@@ -7,6 +7,7 @@
  */
 
 export { default as trainingRoutes } from "./training.routes.js";
+export { createTrainingRouter } from "./training.routes.js";
 export { default as wellnessRoutes } from "./wellness.routes.js";
 export { default as analyticsRoutes } from "./analytics.routes.js";
 export { default as notificationsRoutes } from "./notifications.routes.js";

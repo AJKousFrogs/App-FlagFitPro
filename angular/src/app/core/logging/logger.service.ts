@@ -9,10 +9,6 @@
 
 import { Inject, Injectable, Optional, isDevMode } from "@angular/core";
 
-// Re-export toError from centralized location for backward compatibility
-// The canonical implementation is in core/utils/error-utils.ts
-export { toError } from "../utils/error-utils";
-
 import type { LogLevel, Logger } from "@core/logging/logger";
 import { LOGGER } from "@core/logging/logger.token";
 

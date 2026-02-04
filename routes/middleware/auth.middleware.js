@@ -6,48 +6,22 @@
  * @version 1.0.0
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { serverLogger } from "../utils/server-logger.js";
+import {
+  assertSupabaseServerConfig,
+  supabaseAdmin,
+} from "../utils/supabase-clients.js";
 
 // Initialize Supabase client for auth
 // CRITICAL: Backend MUST use SERVICE_ROLE_KEY for token validation
 // Never use ANON_KEY on backend - it won't work for getUser() validation
-const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseServiceKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+assertSupabaseServerConfig({ requireAdmin: true });
 
-let supabaseAuth = null;
+const supabaseAuth = supabaseAdmin;
 
-if (supabaseUrl && supabaseServiceKey) {
-  try {
-    supabaseAuth = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
-    serverLogger.info(
-      "[Auth Middleware] Supabase auth client initialized with SERVICE_ROLE_KEY",
-    );
-  } catch (error) {
-    serverLogger.error("Failed to initialize Supabase auth client:", error);
-  }
-} else {
-  serverLogger.error(
-    "[Auth Middleware] CRITICAL: SUPABASE_SERVICE_ROLE_KEY not found! " +
-      "Backend authentication will fail. Check environment variables:",
-    {
-      hasUrl: !!supabaseUrl,
-      hasServiceKey: !!supabaseServiceKey,
-      envVars: {
-        SUPABASE_SERVICE_ROLE_KEY: supabaseServiceKey ? "SET" : "MISSING",
-        SUPABASE_SERVICE_KEY: supabaseServiceKey ? "SET" : "MISSING",
-        SUPABASE_URL: supabaseUrl ? "SET" : "MISSING",
-        VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ? "SET" : "MISSING",
-      },
-    },
-  );
-}
+serverLogger.info(
+  "[Auth Middleware] Supabase auth client initialized with SERVICE_ROLE_KEY",
+);
 
 /**
  * Authentication middleware - validates Bearer token via Supabase

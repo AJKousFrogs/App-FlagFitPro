@@ -21,8 +21,10 @@ import {
   ViewChild,
   afterNextRender,
   inject,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterModule } from "@angular/router";
 import { Skeleton } from "primeng/skeleton";
 import { Tag } from "primeng/tag";
@@ -61,6 +63,7 @@ export interface ScheduleItem {
 })
 export class TodaysScheduleComponent {
   private readonly trainingService = inject(UnifiedTrainingService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly renderer = inject(Renderer2);
 
@@ -341,7 +344,7 @@ export class TodaysScheduleComponent {
           timeOfDay: "morning" as const,
           date,
         })
-        .subscribe({
+        .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           error: (err: unknown) =>
             this.logger.error("Failed to log supplement:", err),
         });

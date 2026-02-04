@@ -27,6 +27,13 @@
   overflow: hidden;
 }
 
+.games-list-card {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
 /* ================================================================
    VISIBILITY INFO BANNER
    ================================================================ */
@@ -769,6 +776,11 @@
       z-index: 1;
       background: var(--surface-card);
       box-shadow: var(--shadow-sm);
+    }
+
+    :global(th:first-child) {
+      z-index: 2;
+      background: var(--surface-secondary);
     }
 
     // Compact table cells

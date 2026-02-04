@@ -3,8 +3,10 @@ import {
   Component,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
@@ -295,6 +297,7 @@ import {
 })
 export class SuperadminDashboardComponent implements OnInit {
   private superadminService = inject(SuperadminService);
+  private destroyRef = inject(DestroyRef);
 
   // State
   pendingApprovals = this.superadminService.pendingApprovals;
@@ -329,7 +332,7 @@ export class SuperadminDashboardComponent implements OnInit {
     if (approval.request_type === "team_creation" && approval.team_id) {
       this.superadminService
         .approveTeam(approval.team_id, "Approved via dashboard")
-        .subscribe();
+        .pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     } else if (
       approval.request_type === "role_elevation" &&
       approval.team_id &&
@@ -341,7 +344,7 @@ export class SuperadminDashboardComponent implements OnInit {
           approval.user_id,
           "Approved via dashboard",
         )
-        .subscribe();
+        .pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
   }
 
@@ -364,7 +367,7 @@ export class SuperadminDashboardComponent implements OnInit {
     if (approval.request_type === "team_creation" && approval.team_id) {
       this.superadminService
         .rejectTeam(approval.team_id, this.rejectReason)
-        .subscribe(() => {
+        .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           this.closeRejectModal();
         });
     }

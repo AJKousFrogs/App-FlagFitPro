@@ -10,7 +10,7 @@
   padding: var(--space-4) 0;
   border-bottom: 0.0625rem solid var(--color-border-muted);
   position: sticky;
-  top: 0;
+  top: var(--header-height, var(--ds-font-size-4rem));
   z-index: var(--z-sticky);
   background: var(--surface-primary);
   box-shadow: var(--shadow-sm);
@@ -202,6 +202,7 @@
 @include respond-to(md) {
   .stepper-container {
     padding: var(--space-3) 0;
+    top: var(--header-height-mobile, 3.5rem);
   }
 
   .stepper-nav {

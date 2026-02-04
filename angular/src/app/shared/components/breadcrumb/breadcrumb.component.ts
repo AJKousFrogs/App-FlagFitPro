@@ -19,12 +19,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   OnInit,
   signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { filter } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 export interface BreadcrumbItem {
   label: string;
@@ -86,6 +88,7 @@ export interface BreadcrumbItem {
 })
 export class BreadcrumbComponent implements OnInit {
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   items = signal<BreadcrumbItem[]>([]);
 
@@ -154,7 +157,10 @@ export class BreadcrumbComponent implements OnInit {
 
     // Rebuild breadcrumbs on navigation
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((event) => {
         this.buildBreadcrumbs((event as NavigationEnd).url);
       });

@@ -464,7 +464,10 @@
   border: none;
   box-shadow: none;
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
 
   // First row - no top border (card header provides separation)
   .table-row-first td {

@@ -66,6 +66,15 @@ export class SupabaseService {
       );
     }
 
+    if (this.isServiceRoleKey(environment.supabase.anonKey)) {
+      this.logger.error(
+        "[SupabaseService] Service role key detected in client configuration.",
+      );
+      throw new Error(
+        "Supabase service role keys must not be used in the client.",
+      );
+    }
+
     this.supabase = createClient(
       environment.supabase.url,
       environment.supabase.anonKey,
@@ -157,6 +166,20 @@ export class SupabaseService {
     while (!this._isInitialized() && waited < maxWait) {
       await new Promise((resolve) => setTimeout(resolve, interval));
       waited += interval;
+    }
+  }
+
+  private isServiceRoleKey(key: string): boolean {
+    try {
+      if (typeof atob !== "function") return false;
+      const payload = key.split(".")[1];
+      if (!payload) return false;
+      const padded = payload.padEnd(payload.length + (4 - (payload.length % 4)) % 4, "=");
+      const decoded = atob(padded.replace(/-/g, "+").replace(/_/g, "/"));
+      const data = JSON.parse(decoded) as { role?: string };
+      return data?.role === "service_role";
+    } catch {
+      return false;
     }
   }
 

@@ -414,7 +414,7 @@
 
 .message-content {
   flex: 1;
-  max-width: 70%;
+  max-width: min(70%, 40rem);
   background: var(--surface-tertiary);
   padding: var(--space-4);
   border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg)
@@ -983,7 +983,7 @@
   }
 
   .message-content {
-    max-width: 85%;
+    max-width: min(85%, 40rem);
   }
 
   .message-input-container {
@@ -1015,7 +1015,7 @@
   }
 
   .message-content {
-    max-width: 90%;
+    max-width: min(90%, 40rem);
     padding: var(--space-3);
   }
 

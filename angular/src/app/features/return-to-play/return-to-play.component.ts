@@ -13,8 +13,10 @@ import {
   Component,
   inject,
   OnInit,
+  DestroyRef,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { MessageService, PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
@@ -822,6 +824,7 @@ const SEVERITY_LEVELS = [
 })
 export class ReturnToPlayComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -1034,7 +1037,7 @@ export class ReturnToPlayComponent implements OnInit {
         criterionIndex: index,
         completed: event.checked,
       })
-      .subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         error: (err) => this.logger.error("Failed to update criterion", err),
       });
   }
