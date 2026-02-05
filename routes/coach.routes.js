@@ -11,12 +11,16 @@ import {
   authenticateToken,
   requireRole,
 } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
+import {
+  COACH_STAFF_ROLE_LIST,
+  COACH_STAFF_ROLE_SET,
+} from "./utils/roles.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-  createSuccessResponse,
   getErrorMessage,
   isValidUUID,
   safeAverage,
@@ -28,13 +32,7 @@ import {
 
 const router = express.Router();
 const ROUTE_NAME = "coach";
-const STAFF_ROLES = new Set([
-  "coach",
-  "head_coach",
-  "assistant_coach",
-  "admin",
-  "owner",
-]);
+const STAFF_ROLES = COACH_STAFF_ROLE_SET;
 
 const columnCache = new Map();
 
@@ -132,7 +130,7 @@ router.get(
   "/dashboard",
   rateLimit("READ"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
   async (req, res) => {
     if (!supabase) {
       return sendSuccess(res, { teamMembers: [], stats: {} });
@@ -218,7 +216,7 @@ router.get(
   "/team",
   rateLimit("READ"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
   async (req, res) => {
     if (!supabase) {
       return sendSuccess(res, { team: null, members: [] });
@@ -278,7 +276,7 @@ router.get(
   "/training-analytics",
   rateLimit("READ"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
   async (req, res) => {
     if (!supabase) {
       return sendSuccess(res, {
@@ -369,12 +367,9 @@ router.post(
   "/training-session",
   rateLimit("CREATE"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamId = await resolveCoachTeamId(req, res);
       if (!teamId) {
@@ -469,9 +464,8 @@ router.post(
         throw error;
       }
 
-      return res
-        .status(201)
-        .json(createSuccessResponse(data, "Training session recorded"));
+      res.status(201);
+      return sendSuccess(res, data, "Training session recorded");
     } catch (error) {
       const errorMessage = getErrorMessage(
         error,
@@ -500,12 +494,9 @@ router.get(
   "/calendar",
   rateLimit("READ"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamId = await resolveCoachTeamId(req, res);
       if (!teamId) {
@@ -548,12 +539,9 @@ router.post(
   "/calendar",
   rateLimit("CREATE"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamId = await resolveCoachTeamId(req, res);
       if (!teamId) {
@@ -591,7 +579,8 @@ router.post(
         throw error;
       }
 
-      return res.status(201).json(createSuccessResponse(data, "Event created"));
+      res.status(201);
+      return sendSuccess(res, data, "Event created");
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to create event");
       serverLogger.error(
@@ -617,12 +606,9 @@ router.put(
   "/calendar",
   rateLimit("CREATE"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamId = await resolveCoachTeamId(req, res);
       if (!teamId) {
@@ -682,12 +668,9 @@ router.delete(
   "/calendar",
   rateLimit("CREATE"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamId = await resolveCoachTeamId(req, res);
       if (!teamId) {
@@ -735,12 +718,9 @@ router.get(
   "/events/upcoming",
   rateLimit("READ"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamId = await resolveCoachTeamId(req, res);
       if (!teamId) {
@@ -786,7 +766,7 @@ router.get(
   "/games",
   rateLimit("READ"),
   authenticateToken,
-  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  requireRole(...COACH_STAFF_ROLE_LIST),
   async (req, res) => {
     if (!supabase) {
       return sendSuccess(res, []);

@@ -43,7 +43,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
+import { TrainingSafetyDataService } from "../services/training-safety-data.service";
 import {
   METRIC_INSUFFICIENT_DATA,
   DATA_STATE_MESSAGES,
@@ -376,7 +376,7 @@ export class TrainingSafetyComponent implements OnInit {
   private returnToPlayService = inject(ReturnToPlayService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
-  private supabaseService = inject(SupabaseService);
+  private trainingSafetyDataService = inject(TrainingSafetyDataService);
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
 
@@ -478,14 +478,11 @@ export class TrainingSafetyComponent implements OnInit {
   private async loadAgeRecoveryData(userId: string): Promise<void> {
     try {
       // Get user's date of birth from profile
-      const { data: profile } = await this.supabaseService.client
-        .from("users")
-        .select("date_of_birth")
-        .eq("id", userId)
-        .single();
+      const { dateOfBirth } =
+        await this.trainingSafetyDataService.getUserProfileDob(userId);
 
-      if (profile?.date_of_birth) {
-        const dob = new Date(profile.date_of_birth);
+      if (dateOfBirth) {
+        const dob = new Date(dateOfBirth);
         const age = calculateAge(dob);
 
         // Set age group and recovery parameters
@@ -525,12 +522,11 @@ export class TrainingSafetyComponent implements OnInit {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-      const { data: wellnessEntries } = await this.supabaseService.client
-        .from("daily_wellness_checkin")
-        .select("sleep_quality, checkin_date")
-        .eq("user_id", userId)
-        .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
-        .order("checkin_date", { ascending: false });
+      const { entries: wellnessEntries } =
+        await this.trainingSafetyDataService.getWellnessEntries({
+          userId,
+          sinceDate: sevenDaysAgo.toISOString().split("T")[0],
+        });
 
       if (wellnessEntries && wellnessEntries.length > 0) {
         // Calculate sleep debt (assuming 8 hours is optimal)
@@ -579,11 +575,11 @@ export class TrainingSafetyComponent implements OnInit {
       const weekStart = new Date();
       weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Start of week (Sunday)
 
-      const { data: workoutLogs } = await this.supabaseService.client
-        .from("workout_logs")
-        .select("notes, duration_minutes, rpe")
-        .eq("player_id", userId)
-        .gte("completed_at", weekStart.toISOString());
+      const { logs: workoutLogs } =
+        await this.trainingSafetyDataService.getWorkoutLogsSince({
+          userId,
+          sinceDate: weekStart.toISOString(),
+        });
 
       // Count movement types from workout notes
       let sprints = 0,
@@ -655,19 +651,19 @@ export class TrainingSafetyComponent implements OnInit {
       lastWeekStart.setDate(lastWeekStart.getDate() - 7);
 
       // Get this week's sessions
-      const { data: thisWeekSessions } = await this.supabaseService.client
-        .from("workout_logs")
-        .select("completed_at, rpe, duration_minutes")
-        .eq("player_id", userId)
-        .gte("completed_at", weekStart.toISOString());
+      const { logs: thisWeekSessions } =
+        await this.trainingSafetyDataService.getWorkoutLogsSince({
+          userId,
+          sinceDate: weekStart.toISOString(),
+        });
 
       // Get last week's sessions for comparison
-      const { data: lastWeekSessions } = await this.supabaseService.client
-        .from("workout_logs")
-        .select("rpe, duration_minutes")
-        .eq("player_id", userId)
-        .gte("completed_at", lastWeekStart.toISOString())
-        .lt("completed_at", weekStart.toISOString());
+      const { logs: lastWeekSessions } =
+        await this.trainingSafetyDataService.getWorkoutLogsBetween({
+          userId,
+          startDate: lastWeekStart.toISOString(),
+          endDate: weekStart.toISOString(),
+        });
 
       if (thisWeekSessions) {
         this.totalSessionsThisWeek.set(thisWeekSessions.length);
@@ -682,9 +678,11 @@ export class TrainingSafetyComponent implements OnInit {
 
         // Calculate consecutive training days
         const trainingDates = new Set(
-          thisWeekSessions.map((s: { completed_at: string }) =>
-            new Date(s.completed_at).toDateString(),
-          ),
+          thisWeekSessions
+            .map((s: { completed_at?: string | null }) =>
+              s.completed_at ? new Date(s.completed_at).toDateString() : null,
+            )
+            .filter((date): date is string => Boolean(date)),
         );
         let consecutive = 0;
         const today = new Date();
@@ -721,24 +719,22 @@ export class TrainingSafetyComponent implements OnInit {
   private async loadRTPStatus(userId: string): Promise<void> {
     try {
       // Check for active return-to-play protocols
-      const { data: rtpProtocol } = await this.supabaseService.client
-        .from("injury_tracking")
-        .select("*")
-        .eq("player_id", userId)
-        .eq("status", "in_recovery")
-        .order("injury_date", { ascending: false })
-        .limit(1)
-        .single();
+      const { protocol: rtpProtocol } =
+        await this.trainingSafetyDataService.getActiveRtpProtocol(userId);
 
       if (rtpProtocol) {
         this.hasActiveRTP.set(true);
         this.rtpInjuryType.set(rtpProtocol.injury_type || "Unknown");
 
-        const injuryDate = new Date(rtpProtocol.injury_date);
-        const daysInProtocol = Math.floor(
-          (Date.now() - injuryDate.getTime()) / (1000 * 60 * 60 * 24),
-        );
-        this.rtpDaysInProtocol.set(daysInProtocol);
+        if (rtpProtocol.injury_date) {
+          const injuryDate = new Date(rtpProtocol.injury_date);
+          const daysInProtocol = Math.floor(
+            (Date.now() - injuryDate.getTime()) / (1000 * 60 * 60 * 24),
+          );
+          this.rtpDaysInProtocol.set(daysInProtocol);
+        } else {
+          this.rtpDaysInProtocol.set(0);
+        }
 
         // Estimate progress based on typical recovery times
         const typicalRecovery: Record<string, number> = {
@@ -749,9 +745,11 @@ export class TrainingSafetyComponent implements OnInit {
           concussion: 14,
           default: 21,
         };
+        const injuryKey = rtpProtocol.injury_type?.toLowerCase();
         const expectedDays =
-          typicalRecovery[rtpProtocol.injury_type?.toLowerCase()] ||
+          (injuryKey ? typicalRecovery[injuryKey] : undefined) ??
           typicalRecovery["default"];
+        const daysInProtocol = this.rtpDaysInProtocol();
         const progress = Math.min(
           100,
           Math.round((daysInProtocol / expectedDays) * 100),

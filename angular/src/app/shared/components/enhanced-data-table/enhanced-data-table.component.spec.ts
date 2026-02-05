@@ -5,11 +5,19 @@ import {
   EnhancedDataTableComponent,
   EnhancedTableColumn,
 } from "./enhanced-data-table.component";
+import { LoggerService } from "../../../core/services/logger.service";
 
 describe("EnhancedDataTableComponent", () => {
   let component: EnhancedDataTableComponent;
   let fixture: ComponentFixture<EnhancedDataTableComponent>;
   let localStorageMock: Map<string, string>;
+  let mockLoggerService: {
+    info: ReturnType<typeof vi.fn>;
+    error: ReturnType<typeof vi.fn>;
+    warn: ReturnType<typeof vi.fn>;
+    debug: ReturnType<typeof vi.fn>;
+    success: ReturnType<typeof vi.fn>;
+  };
 
   const mockColumns: EnhancedTableColumn[] = [
     { field: "name", header: "Name", sortable: true, editable: true },
@@ -67,8 +75,17 @@ describe("EnhancedDataTableComponent", () => {
     // Mock window.innerWidth using vi.stubGlobal for the whole window
     vi.stubGlobal("innerWidth", 1024);
 
+    mockLoggerService = {
+      info: vi.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
+      debug: vi.fn(),
+      success: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [EnhancedDataTableComponent],
+      providers: [{ provide: LoggerService, useValue: mockLoggerService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EnhancedDataTableComponent);
@@ -360,21 +377,12 @@ describe("EnhancedDataTableComponent", () => {
 
     it("should handle malformed localStorage data gracefully", () => {
       localStorageMock.set("test-table", "invalid JSON");
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
 
       expect(() => (component as any).loadPreferences()).not.toThrow();
-      const hasMessage = consoleSpy.mock.calls.some((call) =>
-        call.includes("Failed to load table preferences"),
-      );
-      const hasError = consoleSpy.mock.calls.some((call) =>
-        call.some((arg) => arg instanceof Error),
-      );
-      expect(hasMessage).toBe(true);
-      expect(hasError).toBe(true);
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerService.error).toHaveBeenCalled();
+      const [message, error] = mockLoggerService.error.mock.calls[0];
+      expect(message).toContain("Failed to load table preferences");
+      expect(error).toBeInstanceOf(Error);
     });
 
     it("should reset preferences correctly", () => {

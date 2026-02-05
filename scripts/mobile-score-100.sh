@@ -47,7 +47,7 @@ cat > ngsw-config.json << 'EOF'
         "files": [
           "/favicon.ico",
           "/index.html",
-          "/manifest.json",
+          "/manifest.webmanifest",
           "/*.css",
           "/*.js"
         ]

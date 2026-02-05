@@ -43,7 +43,6 @@ import {
   toLogContext,
 } from "../../core/services/logger.service";
 import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import {
@@ -814,7 +813,6 @@ export class AiCoachChatComponent implements AfterViewChecked {
   private readonly authService = inject(AuthService);
   private readonly logger = inject(LoggerService);
   private readonly toast = inject(ToastService);
-  private readonly supabaseService = inject(SupabaseService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly route = inject(ActivatedRoute);
@@ -862,8 +860,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
   // Voice input
   isRecording = signal(false);
   speechSupported = signal(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private recognition: any = null;
+  private recognition: SpeechRecognition | null = null;
 
   // Autocomplete
   autocompleteSuggestions = signal<AutocompleteSuggestion[]>([]);
@@ -1139,8 +1136,11 @@ export class AiCoachChatComponent implements AfterViewChecked {
    */
   private initializeSpeechRecognition(): void {
     // Check for browser support - use any type for cross-browser compatibility
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const windowWithSpeech = window as any;
+    const windowWithSpeech = window as Window &
+      typeof globalThis & {
+        SpeechRecognition?: SpeechRecognitionConstructor;
+        webkitSpeechRecognition?: SpeechRecognitionConstructor;
+      };
     const SpeechRecognitionAPI =
       windowWithSpeech.SpeechRecognition ||
       windowWithSpeech.webkitSpeechRecognition;
@@ -1151,13 +1151,13 @@ export class AiCoachChatComponent implements AfterViewChecked {
     }
 
     this.speechSupported.set(true);
-    this.recognition = new SpeechRecognitionAPI();
-    this.recognition.continuous = false;
-    this.recognition.interimResults = true;
-    this.recognition.lang = "en-US";
+    const recognition = new SpeechRecognitionAPI();
+    this.recognition = recognition;
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const results = event.results;
       let transcript = "";
 
@@ -1175,8 +1175,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
       }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       this.logger.error("Speech recognition error:", event.error);
       this.stopRecording();
       if (event.error !== "aborted") {
@@ -1184,7 +1183,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
       }
     };
 
-    this.recognition.onend = () => {
+    recognition.onend = () => {
       this.isRecording.set(false);
     };
   }

@@ -7,7 +7,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../api.service";
 
 export interface PerformanceTrendsData {

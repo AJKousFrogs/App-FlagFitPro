@@ -45,7 +45,7 @@
   padding: var(--space-8);
   justify-content: center;
   width: 100%;
-  min-height: 12.5rem;
+  min-height: var(--chart-min-height-sm);
 }
 
 .loading-spinner.compact {

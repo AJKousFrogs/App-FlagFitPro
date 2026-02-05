@@ -12,8 +12,7 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, from, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { Observable, catchError, from, map, of } from "rxjs";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";

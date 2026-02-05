@@ -20,6 +20,8 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
+import { HttpBackend, HttpClient } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
 import { LoggerService } from "./logger.service";
 import {
   FlagPosition,
@@ -489,6 +491,7 @@ const FEATURED_CREATORS: InstagramCreator[] = [
   providedIn: "root",
 })
 export class InstagramVideoService {
+  private readonly http = new HttpClient(inject(HttpBackend));
   private logger = inject(LoggerService);
 
   // Reactive state with signals
@@ -726,16 +729,9 @@ export class InstagramVideoService {
       // Instagram oEmbed endpoint
       const oEmbedUrl = `https://graph.facebook.com/v18.0/instagram_oembed?url=${encodeURIComponent(url)}&access_token=${this.getAccessToken()}&omitscript=true`;
 
-      const response = await fetch(oEmbedUrl);
-
-      if (!response.ok) {
-        this.logger.warn(
-          `[InstagramVideoService] oEmbed request failed: ${response.status}`,
-        );
-        return null;
-      }
-
-      const data: InstagramEmbedResponse = await response.json();
+      const data = await firstValueFrom(
+        this.http.get<InstagramEmbedResponse>(oEmbedUrl),
+      );
 
       // Cache the result
       const cache = new Map(this._embedCache());

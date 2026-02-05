@@ -11,7 +11,7 @@ import {
   Router,
   RouterOutlet,
 } from "@angular/router";
-import { filter } from "rxjs/operators";
+import { filter } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";

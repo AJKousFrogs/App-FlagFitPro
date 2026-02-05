@@ -9,7 +9,7 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { interval } from "rxjs";
-import { map, shareReplay, startWith, switchMap } from "rxjs/operators";
+import { map, shareReplay, startWith, switchMap } from "rxjs";
 import {
   AnalyticsDataService,
   PerformanceTrendsData,

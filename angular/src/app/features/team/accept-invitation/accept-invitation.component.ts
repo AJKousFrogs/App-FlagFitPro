@@ -12,8 +12,8 @@ import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Message } from "primeng/message";
 import { ToastService } from "../../../core/services/toast.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { formatDate } from "../../../shared/utils/date.utils";
+import { TeamInvitationDataService } from "../services/team-invitation-data.service";
 
 interface InvitationData {
   id: string;
@@ -177,7 +177,7 @@ export class AcceptInvitationComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+  private teamInvitationDataService = inject(TeamInvitationDataService);
 
   isLoading = signal(true);
   isProcessing = signal(false);
@@ -212,27 +212,8 @@ export class AcceptInvitationComponent implements OnInit {
   async loadInvitation(token: string): Promise<void> {
     try {
       // Query the team_invitations table with the token
-      const { data: invitation, error } = await this.supabaseService.client
-        .from("team_invitations")
-        .select(
-          `
-          id,
-          team_id,
-          email,
-          role,
-          position,
-          jersey_number,
-          status,
-          expires_at,
-          invited_by,
-          teams!team_invitations_team_id_fkey (
-            id,
-            name
-          )
-        `,
-        )
-        .eq("token", token)
-        .single();
+      const { invitation, error } =
+        await this.teamInvitationDataService.getInvitationByToken(token);
 
       if (error) {
         if (error.code === "PGRST116") {
@@ -273,17 +254,15 @@ export class AcceptInvitationComponent implements OnInit {
       // Get inviter information
       let inviterName = "a team member";
       if (invitation.invited_by) {
-        const { data: inviter } = await this.supabaseService.client
-          .from("users")
-          .select("first_name, last_name, email")
-          .eq("id", invitation.invited_by)
-          .single();
+        const { inviter } = await this.teamInvitationDataService.getInviter(
+          invitation.invited_by,
+        );
 
         if (inviter) {
           inviterName =
             inviter.first_name && inviter.last_name
               ? `${inviter.first_name} ${inviter.last_name}`
-              : inviter.email;
+              : inviter.email ?? "a team member";
         }
       }
 
@@ -310,7 +289,7 @@ export class AcceptInvitationComponent implements OnInit {
       this.teamName.set(teamNameValue);
 
       // Check if user is logged in
-      const currentUser = this.supabaseService.getCurrentUser();
+      const currentUser = this.teamInvitationDataService.getCurrentUser();
       if (!currentUser) {
         this.needsLogin.set(true);
       }
@@ -333,7 +312,7 @@ export class AcceptInvitationComponent implements OnInit {
     const invitation = this.invitationData();
     if (!invitation) return;
 
-    const currentUser = this.supabaseService.getCurrentUser();
+    const currentUser = this.teamInvitationDataService.getCurrentUser();
     if (!currentUser) {
       this.needsLogin.set(true);
       return;
@@ -344,37 +323,26 @@ export class AcceptInvitationComponent implements OnInit {
     try {
       // Start a transaction-like operation
       // 1. Update invitation status to 'accepted'
-      const { error: updateError } = await this.supabaseService.client
-        .from("team_invitations")
-        .update({
-          status: "accepted",
-          accepted_at: new Date().toISOString(),
-        })
-        .eq("id", invitation.id);
+      const { error: updateError } =
+        await this.teamInvitationDataService.acceptInvitation(invitation.id);
 
       if (updateError) {
         throw updateError;
       }
 
       // 2. Create team_members record
-      const { error: memberError } = await this.supabaseService.client
-        .from("team_members")
-        .insert({
-          team_id: invitation.teamId,
-          user_id: currentUser.id,
+      const { error: memberError } =
+        await this.teamInvitationDataService.createTeamMember({
+          teamId: invitation.teamId,
+          userId: currentUser.id,
           role: invitation.role || "player",
           position: invitation.position,
-          jersey_number: invitation.jerseyNumber,
-          status: "active",
-          joined_at: new Date().toISOString(),
+          jerseyNumber: invitation.jerseyNumber,
         });
 
       if (memberError) {
         // If member creation fails, try to revert invitation status
-        await this.supabaseService.client
-          .from("team_invitations")
-          .update({ status: "pending", accepted_at: null })
-          .eq("id", invitation.id);
+        await this.teamInvitationDataService.revertInvitation(invitation.id);
 
         // Check if user is already a member
         if (memberError.code === "23505") {
@@ -422,12 +390,8 @@ export class AcceptInvitationComponent implements OnInit {
 
     try {
       // Update invitation status to 'declined'
-      const { error } = await this.supabaseService.client
-        .from("team_invitations")
-        .update({
-          status: "declined",
-        })
-        .eq("id", invitation.id);
+      const { error } =
+        await this.teamInvitationDataService.declineInvitation(invitation.id);
 
       if (error) {
         throw error;

@@ -5,10 +5,13 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   OnDestroy,
+  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
+import { ApiService } from "../../../core/services/api.service";
 
 export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
 
@@ -74,6 +77,7 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
   styleUrl: "./offline-banner.component.scss",
 })
 export class OfflineBannerComponent implements OnInit, OnDestroy {
+  private readonly api = inject(ApiService);
   connectionStatus = signal<ConnectionStatus>("online");
   pendingSyncCount = signal(0);
   dismissed = signal(false);
@@ -209,7 +213,11 @@ export class OfflineBannerComponent implements OnInit, OnDestroy {
     // Fallback: measure response time
     try {
       const start = performance.now();
-      await fetch("/api/health", { method: "HEAD", cache: "no-store" });
+      await firstValueFrom(
+        this.api.head("/api/health", {
+          headers: { "Cache-Control": "no-store" },
+        }),
+      );
       const duration = performance.now() - start;
 
       if (duration > 3000) {

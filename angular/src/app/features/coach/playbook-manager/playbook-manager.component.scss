@@ -125,7 +125,7 @@
 }
 
 .play-diagram {
-  height: 9.375rem;
+  height: var(--size-150);
   background: linear-gradient(
     to bottom,
     var(--field-grass-dark),
@@ -319,7 +319,7 @@
     }
 
     .play-area {
-      height: 9.375rem;
+      height: var(--size-150);
       position: relative;
       display: flex;
       justify-content: center;

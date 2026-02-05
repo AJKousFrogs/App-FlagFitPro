@@ -111,8 +111,8 @@ describe("resolveTodayState", () => {
     expect(result.banners[0].text).toContain("Last check-in was");
     expect(result.banners[1].type).toBe("info");
     expect(result.banners[1].text).toContain("Flag Practice Today");
-    expect(result.blocksDisplayed).toContain("pre_practice_activation");
-    expect(result.blocksDisplayed).toContain("flag_practice");
+    expect(result.blocksDisplayed).toContain("warm_up");
+    expect(result.blocksDisplayed).toContain("main_session");
     expect(result.merlinPosture).toBe("warning");
   });
 
@@ -295,7 +295,7 @@ describe("resolveTodayState", () => {
     expect(result.banners[0].text).toContain("Tapering");
     expect(result.banners[0].text).toContain("Regional Championship");
     expect(result.banners[0].text).toContain("4 days out");
-    expect(result.blocksDisplayed).toContain("taper_session");
+    expect(result.blocksDisplayed).toContain("main_session");
     expect(result.merlinPosture).toBe("warning");
     expect(result.headerContext?.taperContext).toContain(
       "Regional Championship",
@@ -460,8 +460,8 @@ describe("resolveTodayState", () => {
     expect(result.banners[0].type).toBe("info");
     expect(result.banners[0].text).toContain("Film Room Today");
     expect(result.banners[0].text).toContain("10:00");
-    expect(result.blocksDisplayed).toContain("film_room");
-    expect(result.blocksDisplayed).not.toContain("main_session");
+    expect(result.blocksDisplayed).toContain("warm_up");
+    expect(result.blocksDisplayed).toContain("main_session");
     expect(result.merlinPosture).toBe("explanatory");
     expect(result.headerContext?.filmRoomTime).toBe("10:00");
   });

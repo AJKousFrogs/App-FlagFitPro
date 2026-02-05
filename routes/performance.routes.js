@@ -8,12 +8,12 @@
 
 import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-  createSuccessResponse,
   getErrorMessage,
   sendError,
   sendErrorResponse,
@@ -334,11 +334,8 @@ router.get(
   "/metrics",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     const athleteId = resolveAthleteId(req, res);
     if (!athleteId) {
       return;
@@ -464,7 +461,7 @@ router.get(
             : "No performance data available yet. Log training sessions or tests to see metrics.",
       };
 
-      return res.json(createSuccessResponse(response));
+      return sendSuccess(res, response);
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to fetch metrics");
       serverLogger.error(
@@ -486,11 +483,8 @@ router.get(
   "/heatmap",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const athleteId = resolveAthleteId(req, res);
       if (!athleteId) {
@@ -575,17 +569,15 @@ router.get(
 
       const hasTrainingData = cells.some((cell) => cell.sessions > 0);
 
-      return res.json(
-        createSuccessResponse({
-          cells,
-          timeRange,
-          hasData: hasTrainingData,
-          totalSessions: cells.reduce((sum, cell) => sum + cell.sessions, 0),
-          message: hasTrainingData
-            ? null
-            : "No training sessions found for this period.",
-        }),
-      );
+      return sendSuccess(res, {
+        cells,
+        timeRange,
+        hasData: hasTrainingData,
+        totalSessions: cells.reduce((sum, cell) => sum + cell.sessions, 0),
+        message: hasTrainingData
+          ? null
+          : "No training sessions found for this period.",
+      });
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to fetch heatmap");
       serverLogger.error(
@@ -607,11 +599,8 @@ router.get(
   "/records",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const athleteId = resolveAthleteId(req, res);
       if (!athleteId) {
@@ -645,11 +634,8 @@ router.get(
   "/records/latest",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const athleteId = resolveAthleteId(req, res);
       if (!athleteId) {
@@ -684,11 +670,8 @@ router.get(
   "/trends",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const athleteId = resolveAthleteId(req, res);
       if (!athleteId) {
@@ -769,11 +752,8 @@ router.get(
   "/speed-insights",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const athleteId = resolveAthleteId(req, res);
       if (!athleteId) {
@@ -833,11 +813,12 @@ router.get(
   },
 );
 
-router.get("/live", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
+router.get(
+  "/live",
+  rateLimit("READ"),
+  authenticateToken,
+  requireSupabase,
+  async (req, res) => {
   try {
     const athleteId = resolveAthleteId(req, res);
     if (!athleteId) {
@@ -862,6 +843,7 @@ router.get("/live", rateLimit("READ"), authenticateToken, async (req, res) => {
       500,
     );
   }
-});
+  },
+);
 
 export default router;

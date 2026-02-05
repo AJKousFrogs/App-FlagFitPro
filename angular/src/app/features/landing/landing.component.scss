@@ -51,7 +51,7 @@
   height: 37.5rem;
   background: var(--color-brand-primary);
   top: -15.625rem;
-  right: -12.5rem;
+  right: calc(var(--size-200) * -1);
   animation-delay: 0s;
 }
 
@@ -59,8 +59,8 @@
   width: 31.25rem;
   height: 31.25rem;
   background: var(--color-brand-secondary);
-  bottom: -12.5rem;
-  left: -9.375rem;
+  bottom: calc(var(--size-200) * -1);
+  left: calc(var(--size-150) * -1);
   animation-delay: -10s;
 }
 

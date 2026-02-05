@@ -286,7 +286,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 12.5rem;
+  height: var(--chart-min-height-sm);
   color: var(--ds-text-tertiary);
 
   i {
@@ -311,8 +311,8 @@
   }
 
   .debt-circle {
-    width: 8.75rem;
-    height: 8.75rem;
+    width: var(--grid-card-min-xs);
+    height: var(--grid-card-min-xs);
 
     .debt-value {
       font-size: var(--ds-font-size-2xl);

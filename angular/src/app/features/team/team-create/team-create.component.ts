@@ -20,8 +20,8 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { TeamCreateDataService } from "../services/team-create-data.service";
 
 @Component({
   selector: "app-team-create",
@@ -139,8 +139,8 @@ export class TeamCreateComponent {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
+  private teamCreateDataService = inject(TeamCreateDataService);
 
   isSubmitting = signal(false);
 
@@ -200,41 +200,33 @@ export class TeamCreateComponent {
       }
 
       // Create team in Supabase
-      const { data: team, error: teamError } = await this.supabaseService.client
-        .from("teams")
-        .insert({
+      const { team, error: teamError } =
+        await this.teamCreateDataService.createTeam({
           name: formData.name,
           description: formData.description || null,
           location: formData.location || null,
           sport: formData.sport,
           visibility: formData.visibility,
-          owner_id: currentUser.id,
-          created_by: currentUser.id,
-        })
-        .select()
-        .single();
+          ownerId: currentUser.id,
+        });
 
       if (teamError) {
         throw new Error(teamError.message);
       }
+      if (!team) {
+        throw new Error("Failed to create team");
+      }
 
       // Add creator as team member with owner role
-      const { error: memberError } = await this.supabaseService.client
-        .from("team_members")
-        .insert({
-          team_id: team.id,
-          user_id: currentUser.id,
-          role: "owner",
-          status: "active",
-          joined_at: new Date().toISOString(),
+      const { error: memberError } =
+        await this.teamCreateDataService.createOwnerMembership({
+          teamId: team.id,
+          userId: currentUser.id,
         });
 
       if (memberError) {
         // Rollback team creation if member insert fails
-        await this.supabaseService.client
-          .from("teams")
-          .delete()
-          .eq("id", team.id);
+        await this.teamCreateDataService.rollbackTeam(team.id);
         throw new Error("Failed to add you as team owner. Please try again.");
       }
 

@@ -99,7 +99,7 @@
   }
 }
 
-@media (min-width: 87.5rem) {
+@include respond-min(xxl-wide) {
   .analytics-grid {
     grid-template-columns: repeat(4, 1fr);
   }

@@ -35,6 +35,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ApiResponse } from "../../../core/models/common.models";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -768,8 +769,8 @@ export class CalendarCoachComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{ events?: TeamEvent[] }> =
+        await firstValueFrom(
         this.api.get("/api/coach/calendar"),
       );
       if (response?.success && response.data) {
@@ -886,8 +887,7 @@ export class CalendarCoachComponent implements OnInit {
       if (this.isEditing() && this.selectedEvent()) {
         // Update existing event
         const selectedEventId = this.selectedEvent()?.id;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const response: any = await firstValueFrom(
+        const response: ApiResponse<unknown> = await firstValueFrom(
           this.api.put(`/api/coach/calendar?id=${selectedEventId}`, eventData),
         );
         if (response?.success) {
@@ -900,8 +900,7 @@ export class CalendarCoachComponent implements OnInit {
         }
       } else {
         // Create new event
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const response: any = await firstValueFrom(
+        const response: ApiResponse<unknown> = await firstValueFrom(
           this.api.post("/api/coach/calendar", eventData),
         );
         if (response?.success) {
@@ -959,8 +958,7 @@ export class CalendarCoachComponent implements OnInit {
     }
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<unknown> = await firstValueFrom(
         this.api.delete(`/api/coach/calendar?id=${event.id}`),
       );
       if (response?.success) {

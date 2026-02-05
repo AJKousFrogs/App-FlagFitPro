@@ -29,9 +29,9 @@ import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { ApiService } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { CoachSessionDataService } from "./services/coach-session-data.service";
 
 /**
  * Interface for consent information returned from API
@@ -372,7 +372,7 @@ interface TeamMember {
 export class CoachComponent implements OnInit {
   private apiService = inject(ApiService);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+  private coachSessionDataService = inject(CoachSessionDataService);
   private router = inject(Router);
 
   stats = signal<
@@ -489,26 +489,24 @@ export class CoachComponent implements OnInit {
     this.isCreatingSession.set(true);
 
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.coachSessionDataService.getCurrentUser();
       if (!user) {
         this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
 
       // Save to Supabase
-      const { error } = await this.supabaseService.client
-        .from("training_sessions")
-        .insert({
-          coach_id: user.id,
+      const { error } = await this.coachSessionDataService.createTrainingSession(
+        {
+          coachId: user.id,
           title: this.newSession.title,
-          session_type: this.newSession.type,
-          scheduled_at: this.newSession.date.toISOString(),
-          duration_minutes: this.newSession.duration,
+          sessionType: this.newSession.type,
+          scheduledAt: this.newSession.date.toISOString(),
+          durationMinutes: this.newSession.duration,
           location: this.newSession.location,
           notes: this.newSession.notes,
-          status: "scheduled",
-          created_at: new Date().toISOString(),
-        });
+        },
+      );
 
       if (error) {
         throw new Error(error.message);

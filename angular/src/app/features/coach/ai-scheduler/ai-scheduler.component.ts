@@ -31,6 +31,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -625,8 +626,8 @@ export class AiSchedulerComponent implements OnInit {
 
   async loadData(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{ events?: TargetEvent[] }> =
+        await firstValueFrom(
         this.api.get("/api/coach/events/upcoming"),
       );
       if (response?.success && response.data?.events) {

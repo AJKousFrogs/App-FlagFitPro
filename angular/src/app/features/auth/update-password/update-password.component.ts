@@ -19,10 +19,10 @@ import { Card } from "primeng/card";
 import { Message } from "primeng/message";
 import { Password } from "primeng/password";
 import { LoggerService } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
  * Update Password Component
@@ -152,7 +152,7 @@ export class UpdatePasswordComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+  private authFlowDataService = inject(AuthFlowDataService);
   private logger = inject(LoggerService);
 
   passwordForm: FormGroup;
@@ -190,10 +190,8 @@ export class UpdatePasswordComponent implements OnInit {
     try {
       // Supabase automatically handles the hash fragment and establishes a session
       // when the page loads with recovery tokens
-      const {
-        data: { session },
-        error,
-      } = await this.supabaseService.client.auth.getSession();
+      const { data, error } = await this.authFlowDataService.getSession();
+      const session = data.session;
 
       if (error) {
         this.logger.error("Error checking recovery session:", error);
@@ -222,9 +220,9 @@ export class UpdatePasswordComponent implements OnInit {
           // Tokens present but session not established - might need to wait
           // Try getting session again after a short delay
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          const {
-            data: { session: retrySession },
-          } = await this.supabaseService.client.auth.getSession();
+          const { data: retryData } =
+            await this.authFlowDataService.getSession();
+          const retrySession = retryData.session;
 
           this.isValidRecoverySession.set(!!retrySession);
         } else {
@@ -312,7 +310,7 @@ export class UpdatePasswordComponent implements OnInit {
     const newPassword = this.passwordForm.value.password;
 
     try {
-      const { error } = await this.supabaseService.updateUser({
+      const { error } = await this.authFlowDataService.updateAuthUser({
         password: newPassword,
       });
 
@@ -325,7 +323,7 @@ export class UpdatePasswordComponent implements OnInit {
       );
 
       // Sign out and redirect to login
-      await this.supabaseService.signOut();
+      await this.authFlowDataService.signOut();
 
       setTimeout(() => {
         this.router.navigate(["/login"]);

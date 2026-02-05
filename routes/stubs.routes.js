@@ -7,14 +7,18 @@
  */
 
 import express from "express";
+import { createErrorResponse } from "./utils/validation.js";
 
 const router = express.Router();
 
 const notImplemented = (feature) => (req, res) => {
+  const { response } = createErrorResponse(
+    "Endpoint not implemented",
+    "NOT_IMPLEMENTED",
+    501,
+  );
   res.status(501).json({
-    success: false,
-    error: "Endpoint not implemented",
-    code: "NOT_IMPLEMENTED",
+    ...response,
     feature,
     method: req.method,
     path: req.originalUrl,

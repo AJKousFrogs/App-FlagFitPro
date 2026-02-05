@@ -8,6 +8,7 @@
 
 import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -37,11 +38,7 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get games list with optional date filtering
  */
-router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
+router.get("/", rateLimit("READ"), authenticateToken, requireSupabase, async (req, res) => {
   try {
     const { startDate, endDate, limit } = req.query;
     let query = supabase.from("games").select("*");
@@ -87,11 +84,8 @@ router.get(
   "/tournaments",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { data: tournaments, error } = await supabase
         .from("tournaments")

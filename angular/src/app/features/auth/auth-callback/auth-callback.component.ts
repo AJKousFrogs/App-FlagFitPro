@@ -12,9 +12,9 @@ import { Message } from "primeng/message";
 import { ProgressSpinner } from "primeng/progressspinner";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
  * Auth Callback Component
@@ -97,7 +97,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 export class AuthCallbackComponent implements OnInit {
   private router = inject(Router);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+  private authFlowDataService = inject(AuthFlowDataService);
   private logger = inject(LoggerService);
 
   isProcessing = signal(true);
@@ -118,7 +118,7 @@ export class AuthCallbackComponent implements OnInit {
 
     if (!hash || hash.length < 2) {
       // No hash fragment - check if already authenticated
-      const session = this.supabaseService.getSession();
+      const session = this.authFlowDataService.getCurrentSession();
       if (session) {
         this.success.set(true);
         this.successMessage.set("You are already signed in!");
@@ -197,12 +197,10 @@ export class AuthCallbackComponent implements OnInit {
       this.logger.debug("[Auth] Processing auth callback", { type });
 
       // Set the session using the tokens
-      const { data, error } = await this.supabaseService.client.auth.setSession(
-        {
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        },
-      );
+      const { data, error } = await this.authFlowDataService.setSession({
+        accessToken,
+        refreshToken,
+      });
 
       if (error) {
         this.logger.error("[Auth] Session establishment failed", {
@@ -212,7 +210,7 @@ export class AuthCallbackComponent implements OnInit {
         throw error;
       }
 
-      if (!data.session) {
+      if (!data?.session?.user) {
         this.logger.error("[Auth] No session returned from setSession", {
           type,
         });
@@ -306,15 +304,12 @@ export class AuthCallbackComponent implements OnInit {
    * Checks if onboarding is needed
    */
   private async redirectAfterAuth(): Promise<void> {
-    const user = this.supabaseService.getCurrentUser();
+    const user = this.authFlowDataService.getCurrentUser();
 
     if (user) {
       // Check if user has completed onboarding
-      const { data: userData } = await this.supabaseService.client
-        .from("users")
-        .select("onboarding_completed")
-        .eq("id", user.id)
-        .single();
+      const { data: userData } =
+        await this.authFlowDataService.getUserOnboardingStatus(user.id);
 
       if (userData && !userData.onboarding_completed) {
         this.router.navigate(["/onboarding"]);

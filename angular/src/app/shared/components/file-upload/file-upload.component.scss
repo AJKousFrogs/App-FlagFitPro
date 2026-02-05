@@ -20,7 +20,7 @@
   transition:
     background-color var(--motion-slow) var(--ease-standard),
     border-color var(--motion-slow) var(--ease-standard);
-  min-height: 12.5rem;
+  min-height: var(--chart-min-height-sm);
   display: flex;
   align-items: center;
   justify-content: center;

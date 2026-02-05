@@ -28,7 +28,7 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
-import { catchError, tap, map } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs";
 import { ApiService } from "./api.service";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { LoggerService } from "./logger.service";

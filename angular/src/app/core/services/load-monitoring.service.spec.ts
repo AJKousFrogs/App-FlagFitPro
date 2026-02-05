@@ -12,6 +12,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { LoadMonitoringService } from "./load-monitoring.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { NORMAL_ATHLETE } from "../../../testing/athlete-fixtures";
 import {
   InternalLoad,
   ExternalLoad,
@@ -349,6 +350,76 @@ describe("LoadMonitoringService", () => {
 
       // Lower stress should result in lower factor (better wellness)
       expect(lowStressFactor).toBeLessThan(highStressFactor);
+    });
+  });
+
+  // ============================================================================
+  // Readiness Score Calculation Tests
+  // ============================================================================
+
+  describe("Readiness Score Calculation", () => {
+    const toWellnessMetrics = (entry: {
+      sleep?: number | null;
+      energy?: number | null;
+      stress?: number | null;
+      soreness?: number | null;
+      mood?: number | null;
+    }): WellnessMetrics => ({
+      sleepQuality: (entry.sleep ?? undefined) as unknown as number,
+      sleepDuration: 7,
+      muscleSoreness: (entry.soreness ?? undefined) as unknown as number,
+      stressLevel: (entry.stress ?? undefined) as unknown as number,
+      energyLevel: (entry.energy ?? undefined) as unknown as number,
+      mood: (entry.mood ?? 7) as number,
+    });
+
+    it("should calculate readiness score using full metrics (fixture A day 1)", () => {
+      const wellness = toWellnessMetrics(NORMAL_ATHLETE.wellness[0]);
+
+      const score = service.calculateReadinessScore(wellness);
+
+      // sleep 8, energy 7, stress 3, soreness 3 → 73
+      expect(score).toBe(73);
+    });
+
+    it("should return null when sleep quality is missing", () => {
+      const wellness: WellnessMetrics = {
+        sleepQuality: undefined as unknown as number,
+        sleepDuration: 7,
+        muscleSoreness: 4,
+        stressLevel: 4,
+        energyLevel: 6,
+        mood: 7,
+      };
+
+      expect(service.calculateReadinessScore(wellness)).toBeNull();
+    });
+
+    it("should return null when energy level is missing", () => {
+      const wellness: WellnessMetrics = {
+        sleepQuality: 7,
+        sleepDuration: 7,
+        muscleSoreness: 4,
+        stressLevel: 4,
+        energyLevel: undefined as unknown as number,
+        mood: 7,
+      };
+
+      expect(service.calculateReadinessScore(wellness)).toBeNull();
+    });
+
+    it("should calculate readiness from sleep and energy only", () => {
+      const wellness: WellnessMetrics = {
+        sleepQuality: 8,
+        sleepDuration: 7,
+        muscleSoreness: undefined as unknown as number,
+        stressLevel: undefined as unknown as number,
+        energyLevel: 6,
+        mood: 7,
+      };
+
+      // 80 * 0.55 + 60 * 0.45 = 71
+      expect(service.calculateReadinessScore(wellness)).toBe(71);
     });
   });
 

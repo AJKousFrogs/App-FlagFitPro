@@ -39,6 +39,7 @@ import {
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getInitials } from "../../../shared/utils/format.utils";
@@ -73,6 +74,20 @@ interface DailyCheckin {
   functionLevel: number;
   confidenceLevel: number;
   notes: string;
+}
+
+interface AthleteInjurySummary {
+  id: string;
+  name: string;
+  position: string;
+  clearanceStatus?: "cleared" | "limited" | "restricted";
+  currentInjury?: {
+    location?: string;
+    type?: string;
+    grade?: string;
+    rtpProgress?: number;
+    expectedReturn?: string;
+  };
 }
 
 interface RtpStage {
@@ -975,8 +990,8 @@ export class InjuryManagementComponent implements OnInit {
 
     try {
       // Use staff-physiotherapist API for injury data
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{ athletes?: AthleteInjurySummary[] }> =
+        await firstValueFrom(
         this.api.get("/api/staff-physiotherapist/athletes"),
       );
       if (response?.success && response.data?.athletes) {
@@ -1006,7 +1021,7 @@ export class InjuryManagementComponent implements OnInit {
               severity: this.mapGradeToSeverity(athlete.currentInjury.grade),
               injuryDate: new Date().toISOString(),
               howItHappened: "",
-              description: athlete.currentInjury.type,
+              description: athlete.currentInjury.type || "Injury",
               status:
                 athlete.clearanceStatus === "cleared"
                   ? "cleared"

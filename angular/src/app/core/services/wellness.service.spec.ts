@@ -15,6 +15,7 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
 import { ApiService } from "./api.service";
+import { NORMAL_ATHLETE } from "../../../testing/athlete-fixtures";
 
 // Mock data
 const MOCK_WELLNESS_ENTRY: WellnessData = {
@@ -224,6 +225,24 @@ describe("WellnessService", () => {
       const score = service.getWellnessScore(emptyEntry);
       expect(score).toBe(0);
     });
+
+    it("should match fixture A wellness score example", () => {
+      const fixtureEntry = NORMAL_ATHLETE.wellness[0];
+      const data: WellnessData = {
+        date: fixtureEntry.date,
+        sleep: fixtureEntry.sleep ?? undefined,
+        energy: fixtureEntry.energy ?? undefined,
+        stress: fixtureEntry.stress ?? undefined,
+        soreness: fixtureEntry.soreness ?? undefined,
+        mood: fixtureEntry.mood ?? undefined,
+        hydration: fixtureEntry.hydration ?? undefined,
+      };
+
+      const score = service.getWellnessScore(data);
+
+      // Example in CALCULATION_SPEC.md → 7.3
+      expect(score).toBe(7.3);
+    });
   });
 
   // ============================================================================
@@ -267,6 +286,35 @@ describe("WellnessService", () => {
       expect(service.getWellnessStatus(6).status).toBe("good");
       expect(service.getWellnessStatus(4).status).toBe("fair");
       expect(service.getWellnessStatus(3.9).status).toBe("poor");
+    });
+  });
+
+  // ============================================================================
+  // Wellness Averages Tests
+  // ============================================================================
+
+  describe("Wellness Averages", () => {
+    it("should calculate averages from fixture data", () => {
+      const fixtureData: WellnessData[] = NORMAL_ATHLETE.wellness.map(
+        (entry) => ({
+          date: entry.date,
+          sleep: entry.sleep ?? undefined,
+          energy: entry.energy ?? undefined,
+          stress: entry.stress ?? undefined,
+          soreness: entry.soreness ?? undefined,
+          mood: entry.mood ?? undefined,
+          hydration: entry.hydration ?? undefined,
+        }),
+      );
+
+      const averages = (service as any).calculateAverages(fixtureData);
+
+      expect(averages.sleep).toBe(7.5);
+      expect(averages.energy).toBe(7.0);
+      expect(averages.stress).toBe(3.7);
+      expect(averages.soreness).toBe(3.5);
+      expect(averages.mood).toBe(7.0);
+      expect(averages.hydration).toBe(7.5);
     });
   });
 

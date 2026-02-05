@@ -34,6 +34,7 @@ import { Tooltip } from "primeng/tooltip";
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { DialogService } from "../../../../core/ui/dialog.service";
+import { ApiResponse } from "../../../../core/models/common.models";
 
 export interface Tournament {
   id: string;
@@ -448,8 +449,7 @@ export class TournamentCalendarComponent {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<Tournament[] | null> = await firstValueFrom(
         this.api.get("/api/tournament-calendar"),
       );
       if (response?.success && response.data) {

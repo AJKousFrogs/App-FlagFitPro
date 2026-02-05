@@ -159,6 +159,22 @@ All error handling infrastructure has been consolidated and standardized:
 - **Consistent Error Types**: Backend and frontend aligned
 - **ESLint Enforcement**: no-console rule enforced in source files
 
+## Supabase Availability Notes (2026-02-04)
+
+As part of backend cleanup, DB availability checks were standardized via
+`routes/middleware/supabase-availability.middleware.js` for endpoints that
+return `DB_ERROR` 503 when Supabase is missing. The following routes intentionally
+retain non-error fallback behavior and were left as exceptions:
+
+- `routes/notifications.routes.js`
+Uses `sendSuccess` fallbacks for offline/disabled DB scenarios.
+- `routes/community.routes.js`
+Uses `sendSuccess` fallbacks for offline/disabled DB scenarios.
+- `routes/training.routes.js` (v1 `/suggestions`)
+Uses Supabase admin client and returns `DB_ERROR` when admin client is absent.
+
+These are documented for future consolidation work if product behavior changes.
+
 ## Migration Guide for Developers
 
 ### If you were using ErrorHandler.init()

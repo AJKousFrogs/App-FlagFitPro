@@ -16,9 +16,9 @@ import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
 
 import { LoggerService } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 @Component({
   selector: "app-reset-password",
@@ -93,7 +93,7 @@ export class ResetPasswordComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+  private authFlowDataService = inject(AuthFlowDataService);
   private logger = inject(LoggerService);
 
   resetForm: FormGroup;
@@ -134,10 +134,10 @@ export class ResetPasswordComponent {
       // Build the redirect URL for the update-password page
       const redirectTo = `${window.location.origin}/update-password`;
 
-      const { error } =
-        await this.supabaseService.client.auth.resetPasswordForEmail(email, {
-          redirectTo,
-        });
+      const { error } = await this.authFlowDataService.resetPasswordForEmail({
+        email,
+        redirectTo,
+      });
 
       if (error) {
         throw error;

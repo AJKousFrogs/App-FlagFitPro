@@ -1,4 +1,6 @@
 import { Injectable, inject } from "@angular/core";
+import { HttpBackend, HttpClient } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
 import { LoggerService } from "./logger.service";
 
 export interface CompressionOptions {
@@ -66,6 +68,7 @@ const DEFAULT_OPTIONS: RequiredCompressionOptions = {
   providedIn: "root",
 })
 export class ImageCompressionService {
+  private readonly http = new HttpClient(inject(HttpBackend));
   private logger = inject(LoggerService);
   private supportsWebP: boolean | null = null;
 
@@ -234,11 +237,9 @@ export class ImageCompressionService {
     options: CompressionOptions = {},
   ): Promise<CompressionResult> {
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
-      }
-      const blob = await response.blob();
+      const blob = await firstValueFrom(
+        this.http.get(url, { responseType: "blob" }),
+      );
       return this.compressImage(blob, options);
     } catch (error) {
       this.logger.error("Failed to compress image from URL:", error);
@@ -254,8 +255,9 @@ export class ImageCompressionService {
     options: CompressionOptions = {},
   ): Promise<CompressionResult> {
     try {
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
+      const blob = await firstValueFrom(
+        this.http.get(dataUrl, { responseType: "blob" }),
+      );
       return this.compressImage(blob, options);
     } catch (error) {
       this.logger.error("Failed to compress image from data URL:", error);

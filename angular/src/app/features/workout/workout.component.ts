@@ -18,13 +18,13 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { ApiService } from "../../core/services/api.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
 import { formatDate } from "../../shared/utils/date.utils";
+import { WorkoutDataService } from "./services/workout-data.service";
 
 interface WorkoutExercise {
   id: string;
@@ -181,11 +181,11 @@ interface Workout {
 })
 export class WorkoutComponent implements OnInit {
   private apiService = inject(ApiService);
-  private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
+  private workoutDataService = inject(WorkoutDataService);
 
   activeWorkout = signal<Workout | null>(null);
   workoutHistory = signal<Workout[]>([]);
@@ -204,27 +204,8 @@ export class WorkoutComponent implements OnInit {
 
     try {
       // Load workout logs from Supabase
-      const { data: workoutLogs, error } = await this.supabaseService.client
-        .from("workout_logs")
-        .select(
-          `
-          id,
-          session_id,
-          completed_at,
-          rpe,
-          duration_minutes,
-          notes,
-          training_sessions (
-            id,
-            name,
-            session_type,
-            exercises
-          )
-        `,
-        )
-        .eq("player_id", user.id)
-        .order("completed_at", { ascending: false })
-        .limit(20);
+      const { workoutLogs, error } =
+        await this.workoutDataService.fetchWorkoutLogs(user.id);
 
       if (error) {
         this.logger.warn(
@@ -235,17 +216,20 @@ export class WorkoutComponent implements OnInit {
         return;
       }
 
-      if (workoutLogs && workoutLogs.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const workouts: Workout[] = workoutLogs.map((log: any) => {
+      if (workoutLogs.length > 0) {
+        const workouts: Workout[] = workoutLogs.map((log) => {
           // Parse exercises from training session if available
           let exercises: WorkoutExercise[] = [];
-          if (log.training_sessions?.exercises) {
+          const session = Array.isArray(log.training_sessions)
+            ? log.training_sessions[0]
+            : log.training_sessions;
+
+          if (session?.exercises) {
             try {
               const parsedExercises =
-                typeof log.training_sessions.exercises === "string"
-                  ? JSON.parse(log.training_sessions.exercises)
-                  : log.training_sessions.exercises;
+                typeof session.exercises === "string"
+                  ? JSON.parse(session.exercises)
+                  : session.exercises;
 
               exercises = (parsedExercises || []).map(
                 (ex: Record<string, unknown>, idx: number) => ({
@@ -303,11 +287,10 @@ export class WorkoutComponent implements OnInit {
 
           return {
             id: log.id,
-            name:
-              log.training_sessions?.name || this.inferWorkoutName(log.notes),
+            name: session?.name || this.inferWorkoutName(log.notes ?? null),
             date: formatDate(log.completed_at, "P"),
             exercises,
-            duration: log.duration_minutes,
+            duration: log.duration_minutes ?? undefined,
             completed: true,
           };
         });
@@ -376,15 +359,12 @@ export class WorkoutComponent implements OnInit {
 
     try {
       // Save as workout log
-      const { error } = await this.supabaseService.client
-        .from("workout_logs")
-        .insert({
-          player_id: user.id,
-          completed_at: new Date().toISOString(),
-          duration_minutes: workout.duration || 60,
-          rpe: 5, // Default RPE, can be adjusted
-          notes: `${workout.name}: ${workout.exercises.map((e) => e.name).join(", ")}`,
-        });
+      const { error } = await this.workoutDataService.createWorkoutLog({
+        playerId: user.id,
+        durationMinutes: workout.duration || 60,
+        rpe: 5,
+        notes: `${workout.name}: ${workout.exercises.map((e) => e.name).join(", ")}`,
+      });
 
       if (error) throw error;
 
@@ -410,15 +390,12 @@ export class WorkoutComponent implements OnInit {
 
     try {
       // Save completed workout to database
-      const { error } = await this.supabaseService.client
-        .from("workout_logs")
-        .insert({
-          player_id: user.id,
-          completed_at: new Date().toISOString(),
-          duration_minutes: workout.duration || 60,
-          rpe: 6, // Slightly higher RPE for completed workout
-          notes: `Completed: ${workout.name} - ${workout.exercises.filter((e) => e.completed).length}/${workout.exercises.length} exercises`,
-        });
+      const { error } = await this.workoutDataService.createWorkoutLog({
+        playerId: user.id,
+        durationMinutes: workout.duration || 60,
+        rpe: 6,
+        notes: `Completed: ${workout.name} - ${workout.exercises.filter((e) => e.completed).length}/${workout.exercises.length} exercises`,
+      });
 
       if (error) throw error;
 

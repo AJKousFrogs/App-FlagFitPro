@@ -22,8 +22,8 @@
  * These can be overridden at different breakpoints
  */
 :root {
-  --profile-header-bg-height: 8.75rem;
-  --profile-avatar-size: 8.75rem;
+  --profile-header-bg-height: var(--grid-card-min-xs);
+  --profile-avatar-size: var(--grid-card-min-xs);
   --profile-avatar-border-width: 0.3125rem;
   --header-height-profile: 5rem;
   --header-height-profile-mobile: 3.75rem;
@@ -191,7 +191,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: var(--profile-header-bg-height, 8.75rem);
+  height: var(--profile-header-bg-height, var(--grid-card-min-xs));
   background: var(--gradient-primary);
   overflow: hidden;
 
@@ -235,14 +235,14 @@
 
 .profile-page .avatar-wrapper {
   position: relative;
-  width: var(--profile-avatar-size, 8.75rem);
-  height: var(--profile-avatar-size, 8.75rem);
+  width: var(--profile-avatar-size, var(--grid-card-min-xs));
+  height: var(--profile-avatar-size, var(--grid-card-min-xs));
 }
 
 .profile-page .profile-avatar-img,
 .profile-page .profile-avatar-fallback {
-  width: var(--profile-avatar-size, 8.75rem);
-  height: var(--profile-avatar-size, 8.75rem);
+  width: var(--profile-avatar-size, var(--grid-card-min-xs));
+  height: var(--profile-avatar-size, var(--grid-card-min-xs));
   border-radius: var(--radius-full);
   border: var(--profile-avatar-border-width, 0.3125rem) solid var(--surface-primary);
   box-shadow: var(--shadow-lg);

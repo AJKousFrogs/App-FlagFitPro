@@ -36,13 +36,13 @@ import {
   getProgramIdForPosition,
   normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { RosterService } from "../roster/roster.service";
+import { OnboardingDataService } from "./services/onboarding-data.service";
 
 interface OnboardingStep {
   label: string;
@@ -1639,7 +1639,7 @@ interface InjuryEntry {
 export class OnboardingComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+  private onboardingDataService = inject(OnboardingDataService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private playerProgramService = inject(PlayerProgramService);
@@ -2354,7 +2354,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   async checkEmailVerification(): Promise<void> {
     try {
       // Refresh session to get latest verification status
-      const { data, error } = await this.supabaseService.client.auth.getUser();
+      const { data, error } = await this.onboardingDataService.getAuthUser();
 
       if (error) {
         this.logger.error(
@@ -2364,7 +2364,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const isVerified = !!data.user?.email_confirmed_at;
+      const isVerified = !!data?.user?.email_confirmed_at;
       this.isEmailVerified.set(isVerified);
 
       if (isVerified) {
@@ -2386,7 +2386,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   async resendVerificationEmail(): Promise<void> {
     this.isResendingVerification.set(true);
     try {
-      const user = this.supabaseService.currentUser();
+      const user = this.onboardingDataService.getCurrentUser();
       if (!user?.email) {
         this.toastService.error(
           "No email address found. Please try logging in again.",
@@ -2394,10 +2394,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const { error } = await this.supabaseService.client.auth.resend({
-        type: "signup",
-        email: user.email,
-      });
+      const { error } =
+        await this.onboardingDataService.resendVerificationEmail(user.email);
 
       if (error) {
         throw error;
@@ -2581,25 +2579,27 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private async loadUserProfile(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const user = this.supabaseService.currentUser();
+      const user = this.onboardingDataService.getCurrentUser();
       if (!user) {
         this.router.navigate(["/login"]);
         return;
       }
 
       // Per audit: use maybeSingle() since user profile may not exist yet (avoids 406)
-      const { data, error } = await this.supabaseService.client
-        .from("users")
-        .select("full_name, first_name, last_name, position, experience_level")
-        .eq("email", user.email)
-        .maybeSingle();
+      if (!user.email) {
+        this.logger.warn("[Onboarding] User email missing for profile lookup");
+        return;
+      }
+
+      const { data, error } =
+        await this.onboardingDataService.fetchUserProfileByEmail(user.email);
 
       if (data && !error) {
         this.onboardingData.name =
           data.full_name ||
           `${data.first_name || ""} ${data.last_name || ""}`.trim();
-        this.onboardingData.position = data.position;
-        this.onboardingData.experience = data.experience_level;
+        this.onboardingData.position = data.position ?? null;
+        this.onboardingData.experience = data.experience_level ?? null;
       }
     } catch (error) {
       this.logger.error("Failed to load user profile:", error);
@@ -2977,11 +2977,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    */
   private async loadTeams(): Promise<void> {
     try {
-      const { data: teamsData, error } = await this.supabaseService.client
-        .from("teams")
-        .select("id, name")
-        .eq("approval_status", "approved")
-        .order("name");
+      const { teams: teamsData, error } =
+        await this.onboardingDataService.fetchApprovedTeams();
 
       if (!error && teamsData && teamsData.length > 0) {
         // Convert database teams to options format
@@ -3164,7 +3161,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     this.isCompleting.set(true);
 
     try {
-      const user = this.supabaseService.currentUser();
+      const user = this.onboardingDataService.getCurrentUser();
       if (!user) {
         throw new Error("User not authenticated");
       }
@@ -3215,15 +3212,15 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         onboarding_completed_at: new Date().toISOString(),
       };
 
-      const { error: updateError } = await this.supabaseService.client
-        .from("users")
-        .update(profileDataWithOnboarding)
-        .eq("email", user.email);
+      const { error: updateError } =
+        await this.onboardingDataService.updateUserProfileByEmail(
+          user.email ?? "",
+          profileDataWithOnboarding,
+        );
 
       if (updateError) {
-        const { error: insertError } = await this.supabaseService.client
-          .from("users")
-          .insert({
+        const { error: insertError } =
+          await this.onboardingDataService.insertUserProfile({
             email: user.email,
             ...profileDataWithOnboarding,
             is_active: true,
@@ -3245,7 +3242,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
             : this.onboardingData.staffRole || "coach"
         : "player";
 
-      await this.supabaseService.updateUser({
+      await this.onboardingDataService.updateAuthUser({
         data: {
           role: authRole,
           user_type: this.onboardingData.userType,
@@ -3372,9 +3369,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await this.supabaseService.client
-        .from("user_preferences")
-        .upsert(preferences, { onConflict: "email" });
+      const { error } =
+        await this.onboardingDataService.upsertUserPreferences(preferences);
 
       if (error) {
         this.logger.info(
@@ -3451,9 +3447,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await this.supabaseService.client
-        .from("athlete_training_config")
-        .upsert(config, { onConflict: "user_id" });
+      const { error } =
+        await this.onboardingDataService.upsertAthleteTrainingConfig(config);
 
       if (error) {
         this.logger.warn(
@@ -3553,11 +3548,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       // First, try to find existing team by name
       // Per audit: use maybeSingle() since team may not exist yet (avoids 406)
-      const { data: existingTeam } = await this.supabaseService.client
-        .from("teams")
-        .select("id")
-        .ilike("name", teamName)
-        .maybeSingle();
+      const { team: existingTeam } =
+        await this.onboardingDataService.findTeamByName(teamName);
 
       if (existingTeam) {
         teamId = existingTeam.id;
@@ -3566,21 +3558,21 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         );
       } else {
         // Create new team - single() is OK here since we're inserting and expect exactly one row back
-        const { data: newTeam, error: teamError } =
-          await this.supabaseService.client
-            .from("teams")
-            .insert({
-              name: teamName,
-              created_by: userId,
-            })
-            .select()
-            .single();
+        const { team: newTeam, error: teamError } =
+          await this.onboardingDataService.createTeam({
+            name: teamName,
+            createdBy: userId,
+          });
 
         if (teamError) {
           this.logger.warn(
             "[Onboarding] Failed to create team:",
             teamError.message,
           );
+          return;
+        }
+        if (!newTeam) {
+          this.logger.warn("[Onboarding] Team creation returned no team");
           return;
         }
         teamId = newTeam.id;
@@ -3597,19 +3589,17 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // 2. Add user to team_members with role='player'
       // Check if already a member
       // Per audit: use maybeSingle() since membership may not exist yet (avoids 406)
-      const { data: existingMember } = await this.supabaseService.client
-        .from("team_members")
-        .select("id")
-        .eq("team_id", teamId)
-        .eq("user_id", userId)
-        .maybeSingle();
+      const { member: existingMember } =
+        await this.onboardingDataService.findTeamMember({
+          teamId,
+          userId,
+        });
 
       if (!existingMember) {
-        const { error: memberError } = await this.supabaseService.client
-          .from("team_members")
-          .insert({
-            team_id: teamId,
-            user_id: userId,
+        const { error: memberError } =
+          await this.onboardingDataService.addTeamMember({
+            teamId,
+            userId,
             role: "player",
           });
 
@@ -3692,11 +3682,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       // First, try to find existing team by name
       // Per audit: use maybeSingle() since team may not exist yet (avoids 406)
-      const { data: existingTeam } = await this.supabaseService.client
-        .from("teams")
-        .select("id")
-        .ilike("name", teamName)
-        .maybeSingle();
+      const { team: existingTeam } =
+        await this.onboardingDataService.findTeamByName(teamName);
 
       if (existingTeam) {
         teamId = existingTeam.id;
@@ -3705,21 +3692,21 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         );
       } else {
         // Create new team with staff member as creator - single() OK for insert
-        const { data: newTeam, error: teamError } =
-          await this.supabaseService.client
-            .from("teams")
-            .insert({
-              name: teamName,
-              created_by: userId,
-            })
-            .select()
-            .single();
+        const { team: newTeam, error: teamError } =
+          await this.onboardingDataService.createTeam({
+            name: teamName,
+            createdBy: userId,
+          });
 
         if (teamError) {
           this.logger.warn(
             "[Onboarding] Failed to create team:",
             teamError.message,
           );
+          return;
+        }
+        if (!newTeam) {
+          this.logger.warn("[Onboarding] Team creation returned no team");
           return;
         }
         teamId = newTeam.id;
@@ -3756,19 +3743,17 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       // Check if already a member
       // Per audit: use maybeSingle() since membership may not exist yet (avoids 406)
-      const { data: existingMember } = await this.supabaseService.client
-        .from("team_members")
-        .select("id")
-        .eq("team_id", teamId)
-        .eq("user_id", userId)
-        .maybeSingle();
+      const { member: existingMember } =
+        await this.onboardingDataService.findTeamMember({
+          teamId,
+          userId,
+        });
 
       if (!existingMember) {
-        const { error: memberError } = await this.supabaseService.client
-          .from("team_members")
-          .insert({
-            team_id: teamId,
-            user_id: userId,
+        const { error: memberError } =
+          await this.onboardingDataService.addTeamMember({
+            teamId,
+            userId,
             role: memberRole,
           });
 

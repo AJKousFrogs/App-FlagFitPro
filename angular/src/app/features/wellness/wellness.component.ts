@@ -40,6 +40,8 @@ import {
   CardComponent,
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
+import { SimpleChartData } from "../../core/models/chart.models";
+import { WellnessData } from "../../core/services/wellness.service";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface WellnessAlert {
@@ -537,10 +539,8 @@ export class WellnessComponent {
   readonly metrics = signal<WellnessMetric[]>([]);
   readonly wellnessStats = signal<StatItem[]>([]);
   // Chart data - uses Chart.js format
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly sleepChartData = signal<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly recoveryChartData = signal<any>(null);
+  readonly sleepChartData = signal<SimpleChartData | null>(null);
+  readonly recoveryChartData = signal<SimpleChartData | null>(null);
   readonly wellnessAlerts = signal<WellnessAlert[]>([]);
 
   // Confidence tracking
@@ -934,8 +934,7 @@ export class WellnessComponent {
   /**
    * Generate wellness alerts based on current data
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private generateWellnessAlerts(data: any[]): void {
+  private generateWellnessAlerts(data: WellnessData[]): void {
     const alerts: WellnessAlert[] = [];
 
     if (data.length >= 2) {
@@ -976,7 +975,7 @@ export class WellnessComponent {
 
     // Check for high soreness + magnesium gap
     const latestData = data[0];
-    if (latestData?.soreness >= 7) {
+    if (typeof latestData?.soreness === "number" && latestData.soreness >= 7) {
       alerts.push({
         id: "supplement-rec",
         severity: "info",

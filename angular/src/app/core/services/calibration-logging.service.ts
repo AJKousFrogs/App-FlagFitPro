@@ -12,7 +12,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { map } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
 

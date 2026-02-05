@@ -32,6 +32,7 @@ import { MessageService, PrimeTemplate } from "primeng/api";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ApiResponse } from "../../../core/models/common.models";
 
 interface ThrowingSession {
   id: string;
@@ -506,14 +507,24 @@ export class QbThrowingTrackerComponent {
 
   async loadData(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{
+        progression?: ProgressionStatus;
+        weeklyStats?: WeeklyStats[];
+        recentSessions?: ThrowingSession[];
+      }> = await firstValueFrom(
         this.api.get("/api/qb-throwing"),
       );
       if (response?.success) {
-        this.progressionStatus.set(response.data.progression);
-        this.weeklyStats.set(response.data.weeklyStats || []);
-        this.recentSessions.set(response.data.recentSessions || []);
+        const data = response.data;
+        if (!data) {
+          this.progressionStatus.set(null);
+          this.weeklyStats.set([]);
+          this.recentSessions.set([]);
+          return;
+        }
+        this.progressionStatus.set(data.progression ?? null);
+        this.weeklyStats.set(data.weeklyStats || []);
+        this.recentSessions.set(data.recentSessions || []);
       }
     } catch (err) {
       this.logger.error("Failed to load QB throwing data", err);

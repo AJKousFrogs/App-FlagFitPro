@@ -160,7 +160,7 @@
 /* Progress bar */
 .progress-bar-container {
   width: 100%;
-  max-width: 18.75rem;
+  max-width: var(--element-max-width-sm);
   height: 0.5rem;
   background: var(--color-border-secondary);
   border-radius: var(--radius-full);

@@ -20,7 +20,7 @@ import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
+import { TrainingScheduleDataService } from "../services/training-schedule-data.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
@@ -684,7 +684,7 @@ interface MonthlyStats {
   styleUrl: "./training-schedule.component.scss",
 })
 export class TrainingScheduleComponent implements OnInit {
-  private supabaseService = inject(SupabaseService);
+  private trainingScheduleDataService = inject(TrainingScheduleDataService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private router = inject(Router);
@@ -906,23 +906,12 @@ export class TrainingScheduleComponent implements OnInit {
       const endOfWeek = endDate;
 
       // 1. Fetch actual training sessions (logged/completed sessions)
-      const { data: actualSessions, error: sessionsError } =
-        await this.supabaseService.client
-          .from("training_sessions")
-          .select(
-            `
-          id,
-          session_date,
-          session_type,
-          duration_minutes,
-          status,
-          notes
-        `,
-          )
-          .eq("user_id", user.id)
-          .gte("session_date", startOfWeek.toISOString().split("T")[0])
-          .lte("session_date", endOfWeek.toISOString().split("T")[0])
-          .order("session_date", { ascending: true });
+      const { sessions: actualSessions, error: sessionsError } =
+        await this.trainingScheduleDataService.fetchActualSessions({
+          userId: user.id,
+          startDate: startOfWeek.toISOString().split("T")[0],
+          endDate: endOfWeek.toISOString().split("T")[0],
+        });
 
       if (sessionsError) {
         throw new Error(sessionsError.message);
@@ -930,37 +919,11 @@ export class TrainingScheduleComponent implements OnInit {
 
       // 2. Fetch scheduled sessions from training templates (52-week program)
       // Find weeks that contain any day in our selected week range
-      const { data: scheduledTemplates, error: templatesError } =
-        await this.supabaseService.client
-          .from("training_session_templates")
-          .select(
-            `
-          id,
-          session_name,
-          session_type,
-          day_of_week,
-          duration_minutes,
-          intensity_level,
-          description,
-          is_team_practice,
-          is_outdoor,
-          weather_sensitive,
-          training_weeks!inner (
-            id,
-            week_number,
-            start_date,
-            end_date
-          )
-        `,
-          )
-          .lte(
-            "training_weeks.start_date",
-            endOfWeek.toISOString().split("T")[0],
-          )
-          .gte(
-            "training_weeks.end_date",
-            startOfWeek.toISOString().split("T")[0],
-          );
+      const { templates: scheduledTemplates, error: templatesError } =
+        await this.trainingScheduleDataService.fetchScheduledTemplates({
+          startDate: startOfWeek.toISOString().split("T")[0],
+          endDate: endOfWeek.toISOString().split("T")[0],
+        });
 
       // Map actual sessions
       const mappedActualSessions: TrainingSession[] = (
@@ -1014,6 +977,9 @@ export class TrainingScheduleComponent implements OnInit {
               weekStart.getDate() + (template.day_of_week || 0),
             );
 
+            const templateRecord =
+              template as unknown as Record<string, unknown>;
+
             return {
               id: template.id,
               date: sessionDate,
@@ -1025,14 +991,11 @@ export class TrainingScheduleComponent implements OnInit {
                 : ("scheduled" as const),
               isTemplate: true,
               isTeamPractice:
-                ((template as Record<string, unknown>)
-                  .is_team_practice as boolean) || false,
+                (templateRecord.is_team_practice as boolean) || false,
               isOutdoor:
-                ((template as Record<string, unknown>).is_outdoor as boolean) ||
-                false,
+                (templateRecord.is_outdoor as boolean) || false,
               weatherSensitive:
-                ((template as Record<string, unknown>)
-                  .weather_sensitive as boolean) || false,
+                (templateRecord.weather_sensitive as boolean) || false,
             };
           });
 
@@ -1148,13 +1111,8 @@ export class TrainingScheduleComponent implements OnInit {
     }
 
     try {
-      const { error } = await this.supabaseService.client
-        .from("training_sessions")
-        .update({
-          status: "completed",
-          completed_at: new Date().toISOString(),
-        })
-        .eq("id", session.id);
+      const { error } =
+        await this.trainingScheduleDataService.markSessionComplete(session.id);
 
       if (error) {
         throw new Error(error.message);
@@ -1193,18 +1151,13 @@ export class TrainingScheduleComponent implements OnInit {
     try {
       // Create a new training session from the template
       // Note: athlete_id is required by RLS policy, user_id is for backward compatibility
-      const { data, error } = await this.supabaseService.client
-        .from("training_sessions")
-        .insert({
-          athlete_id: user.id,
-          user_id: user.id,
-          session_date: session.date.toISOString().split("T")[0],
-          session_type: session.type,
-          duration_minutes: session.duration,
-          status: "in_progress",
-        })
-        .select("id")
-        .single();
+      const { sessionId, error } =
+        await this.trainingScheduleDataService.startTemplateSession({
+          userId: user.id,
+          sessionDate: session.date.toISOString().split("T")[0],
+          sessionType: session.type,
+          durationMinutes: session.duration,
+        });
 
       if (error) {
         throw new Error(error.message);
@@ -1216,7 +1169,7 @@ export class TrainingScheduleComponent implements OnInit {
           s.id === session.id
             ? {
                 ...s,
-                id: data.id,
+                id: sessionId ?? session.id,
                 status: "in_progress" as const,
                 isTemplate: false,
               }
@@ -1230,7 +1183,7 @@ export class TrainingScheduleComponent implements OnInit {
       // The training log allows logging RPE, duration, and completing the session
       this.router.navigate(["/training/log"], {
         queryParams: {
-          sessionId: data.id,
+          sessionId: sessionId ?? session.id,
           type: session.type,
           duration: session.duration,
         },
@@ -1336,12 +1289,12 @@ export class TrainingScheduleComponent implements OnInit {
         0,
       );
 
-      const { data: sessions, error } = await this.supabaseService.client
-        .from("training_sessions")
-        .select("session_date, session_type, status")
-        .eq("user_id", user.id)
-        .gte("session_date", startOfMonth.toISOString().split("T")[0])
-        .lte("session_date", endOfMonth.toISOString().split("T")[0]);
+      const { sessions, error } =
+        await this.trainingScheduleDataService.fetchDateMarkers({
+          userId: user.id,
+          startDate: startOfMonth.toISOString().split("T")[0],
+          endDate: endOfMonth.toISOString().split("T")[0],
+        });
 
       if (error) {
         this.logger.warn("Failed to load date markers:", toLogContext(error));
@@ -1381,12 +1334,12 @@ export class TrainingScheduleComponent implements OnInit {
         0,
       );
 
-      const { data: sessions, error } = await this.supabaseService.client
-        .from("training_sessions")
-        .select("status, duration_minutes")
-        .eq("user_id", user.id)
-        .gte("session_date", startOfMonth.toISOString().split("T")[0])
-        .lte("session_date", endOfMonth.toISOString().split("T")[0]);
+      const { sessions, error } =
+        await this.trainingScheduleDataService.fetchMonthlyStats({
+          userId: user.id,
+          startDate: startOfMonth.toISOString().split("T")[0],
+          endDate: endOfMonth.toISOString().split("T")[0],
+        });
 
       if (error) {
         this.logger.warn("Failed to load monthly stats:", toLogContext(error));

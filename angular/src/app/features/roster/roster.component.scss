@@ -601,7 +601,7 @@
 }
 
 /* Responsive */
-@media (min-width: 87.5rem) {
+@include respond-min(xxl-wide) {
   .roster-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -681,7 +681,7 @@
   }
 
   .invitations-list {
-    max-height: 18.75rem;
+    max-height: var(--panel-max-height-md);
   }
 
   .status-options {

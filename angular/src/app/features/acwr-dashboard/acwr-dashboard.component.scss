@@ -813,8 +813,8 @@
 
   // Smaller ratio circle on mobile
   .ratio-circle {
-    width: 8.75rem; /* 8.75rem - component-specific size */
-    height: 8.75rem; /* 8.75rem - component-specific size */
+    width: var(--grid-card-min-xs); /* 8.75rem - component-specific size */
+    height: var(--grid-card-min-xs); /* 8.75rem - component-specific size */
     border-width: var(--space-1); /* 0.25rem - closest token */
   }
 
@@ -1176,7 +1176,7 @@
   }
 
   .risk-zone-indicator {
-    max-width: 18.75rem; /* 18.75rem - component-specific size */
+    max-width: var(--chart-min-height-md); /* 18.75rem - component-specific size */
   }
 
   .load-breakdown {
@@ -1189,6 +1189,6 @@
   }
 
   .chart-container {
-    height: 12.5rem; /* 12.5rem - component-specific size */
+    height: var(--size-200); /* 12.5rem - component-specific size */
   }
 }

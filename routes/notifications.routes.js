@@ -10,9 +10,11 @@ import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
+import { NOTIFICATION_PREFERENCES_DEFAULTS } from "./utils/notification-defaults.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
+  createErrorResponse,
   getErrorMessage,
   sendError,
   sendErrorResponse,
@@ -226,14 +228,7 @@ router.get(
   authenticateToken,
   async (req, res) => {
     if (!supabase) {
-      return sendSuccess(res, {
-        email: true,
-        push: true,
-        training_reminders: true,
-        wellness_reminders: true,
-        team_updates: true,
-        achievements: true,
-      });
+      return sendSuccess(res, NOTIFICATION_PREFERENCES_DEFAULTS);
     }
 
     try {
@@ -251,14 +246,7 @@ router.get(
 
       return sendSuccess(
         res,
-        preferences || {
-          email: true,
-          push: true,
-          training_reminders: true,
-          wellness_reminders: true,
-          team_updates: true,
-          achievements: true,
-        },
+        preferences || NOTIFICATION_PREFERENCES_DEFAULTS,
       );
     } catch (error) {
       serverLogger.error(`[${ROUTE_NAME}] Get preferences error:`, error);
@@ -318,12 +306,12 @@ router.put(
 // =============================================================================
 
 router.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: "Notifications endpoint not found",
-    code: "NOT_FOUND",
-    path: req.originalUrl,
-  });
+  const { response } = createErrorResponse(
+    "Notifications endpoint not found",
+    "NOT_FOUND",
+    404,
+  );
+  res.status(404).json({ ...response, path: req.originalUrl });
 });
 
 export default router;

@@ -7,6 +7,7 @@
  */
 
 import express from "express";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -30,11 +31,7 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * POST /login
  * Authenticate user with email and password
  */
-router.post("/login", rateLimit("AUTH"), async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
+router.post("/login", rateLimit("AUTH"), requireSupabase, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -71,11 +68,11 @@ router.post("/login", rateLimit("AUTH"), async (req, res) => {
  * POST /register
  * Register a new user
  */
-router.post("/register", rateLimit("AUTH"), async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
+router.post(
+  "/register",
+  rateLimit("AUTH"),
+  requireSupabase,
+  async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
@@ -114,17 +111,14 @@ router.post("/register", rateLimit("AUTH"), async (req, res) => {
       500,
     );
   }
-});
+  },
+);
 
 /**
  * GET /me
  * Get current authenticated user
  */
-router.get("/me", rateLimit("READ"), async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
+router.get("/me", rateLimit("READ"), requireSupabase, async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {

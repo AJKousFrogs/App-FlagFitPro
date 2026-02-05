@@ -9,9 +9,9 @@ import {
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Message } from "primeng/message";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
  * Verify Email Component
@@ -119,7 +119,7 @@ export class VerifyEmailComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
+  private authFlowDataService = inject(AuthFlowDataService);
 
   isVerifying = signal(false);
   isVerified = signal(false);
@@ -143,7 +143,7 @@ export class VerifyEmailComponent implements OnInit {
     if (!hash || hash.length < 2) {
       // No hash fragment - user landed here directly
       // Check if they're already authenticated
-      const session = this.supabaseService.getSession();
+      const session = this.authFlowDataService.getCurrentSession();
       if (session?.user?.email_confirmed_at) {
         this.isVerified.set(true);
       }
@@ -187,18 +187,16 @@ export class VerifyEmailComponent implements OnInit {
 
     try {
       // Set the session using the tokens from the URL
-      const { data, error } = await this.supabaseService.client.auth.setSession(
-        {
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        },
-      );
+      const { data, error } = await this.authFlowDataService.setSession({
+        accessToken,
+        refreshToken,
+      });
 
       if (error) {
         throw error;
       }
 
-      if (data.session?.user) {
+      if (data?.session?.user) {
         // Store the email for potential resend
         this.userEmail.set(data.session.user.email ?? null);
 
@@ -249,7 +247,7 @@ export class VerifyEmailComponent implements OnInit {
       // Get email from current user or stored email
       const email =
         this.userEmail() ||
-        this.supabaseService.getCurrentUser()?.email ||
+        this.authFlowDataService.getCurrentUser()?.email ||
         null;
 
       if (!email) {
@@ -261,12 +259,9 @@ export class VerifyEmailComponent implements OnInit {
       }
 
       // Resend verification email using Supabase
-      const { error } = await this.supabaseService.client.auth.resend({
-        type: "signup",
-        email: email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/verify-email`,
-        },
+      const { error } = await this.authFlowDataService.resendVerificationEmail({
+        email,
+        redirectTo: `${window.location.origin}/verify-email`,
       });
 
       if (error) {

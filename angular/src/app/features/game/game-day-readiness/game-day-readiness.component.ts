@@ -39,10 +39,10 @@ import {
   LoggerService,
   toLogContext,
 } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
+import { GameDayReadinessDataService } from "../services/game-day-readiness-data.service";
 
 interface ReadinessMetric {
   key: string;
@@ -253,7 +253,9 @@ export class GameDayReadinessComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly logger = inject(LoggerService);
-  private readonly supabaseService = inject(SupabaseService);
+  private readonly gameDayReadinessDataService = inject(
+    GameDayReadinessDataService,
+  );
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -540,9 +542,10 @@ export class GameDayReadinessComponent implements OnInit {
       };
 
       // Save to game_day_readiness table
-      const { error } = await this.supabaseService.client
-        .from("game_day_readiness")
-        .insert(readinessData);
+      const { error } =
+        await this.gameDayReadinessDataService.submitReadinessEntry(
+          readinessData,
+        );
 
       if (error) {
         // Fallback: save as wellness entry
@@ -594,13 +597,13 @@ export class GameDayReadinessComponent implements OnInit {
 
       // Create notifications for coaches
       for (const coach of coaches) {
-        await this.supabaseService.client.from("notifications").insert({
-          user_id: coach.userId,
-          type: "readiness_alert",
-          title: "⚠️ Low Game Day Readiness",
+        await this.gameDayReadinessDataService.notifyCoach({
+          userId: coach.userId,
           message: `${athleteName} reported a readiness score of ${readinessData["readiness_score"]}/100 before competition. Review recommended.`,
-          data: { athleteId, readinessScore: readinessData["readiness_score"] },
-          read: false,
+          data: {
+            athleteId,
+            readinessScore: readinessData["readiness_score"],
+          },
         });
       }
 

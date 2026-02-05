@@ -30,7 +30,6 @@ import {
   LoggerService,
   toLogContext,
 } from "../../core/services/logger.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 import {
@@ -42,6 +41,7 @@ import {
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { formatDateISO } from "../../shared/utils/date.utils";
+import { TournamentsDataService } from "./services/tournaments-data.service";
 
 interface PlayerAvailability {
   playerId: string;
@@ -53,12 +53,95 @@ interface PlayerAvailability {
   amountPaid: number;
 }
 
+type AvailabilityStatus = PlayerAvailability["status"];
+type PaymentStatus = PlayerAvailability["paymentStatus"];
+
+interface AvailabilityRecord {
+  player_id?: string;
+  status?: string;
+  reason?: string | null;
+  payment_status?: string;
+  amount_paid?: number;
+}
+
+interface TournamentBudgetRecord {
+  total_estimated_cost?: number;
+  team_contribution?: number;
+  sponsor_contribution?: number;
+  player_share_per_person?: number;
+  registration_fee?: number;
+  entry_fee_per_player?: number;
+  estimated_travel_cost?: number;
+  accommodation_cost_per_night?: number;
+  total_nights?: number;
+  per_diem_per_player?: number;
+  other_costs?: number;
+  other_costs_description?: string;
+}
+
+interface TeamMemberRecord {
+  id: string;
+  users?: {
+    raw_user_meta_data?: {
+      full_name?: string;
+      position?: string;
+    };
+  };
+}
+
 interface TournamentBudget {
   totalEstimated: number;
   teamContribution: number;
   sponsorContribution: number;
   perPlayer: number;
 }
+
+const availabilityStatuses: AvailabilityStatus[] = [
+  "pending",
+  "declined",
+  "confirmed",
+  "tentative",
+];
+
+const paymentStatuses: PaymentStatus[] = [
+  "pending",
+  "paid",
+  "partial",
+  "not_required",
+];
+
+const isString = (value: unknown): value is string => typeof value === "string";
+
+const isNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
+
+const isBoolean = (value: unknown): value is boolean =>
+  typeof value === "boolean";
+
+const isAvailabilityStatus = (value: unknown): value is AvailabilityStatus =>
+  availabilityStatuses.includes(value as AvailabilityStatus);
+
+const isPaymentStatus = (value: unknown): value is PaymentStatus =>
+  paymentStatuses.includes(value as PaymentStatus);
+
+const toStringValue = (value: unknown, fallback: string): string =>
+  isString(value) ? value : fallback;
+
+const toNumberValue = (value: unknown, fallback: number): number =>
+  isNumber(value) ? value : fallback;
+
+const toBooleanValue = (value: unknown, fallback: boolean): boolean =>
+  isBoolean(value) ? value : fallback;
+
+const toDateOrNull = (value: unknown): Date | null => {
+  if (value instanceof Date) {
+    return value;
+  }
+  if (isString(value) || isNumber(value)) {
+    return new Date(value);
+  }
+  return null;
+};
 
 @Component({
   selector: "app-tournaments",
@@ -1470,7 +1553,7 @@ export class TournamentsComponent implements OnInit {
   tournamentService = inject(TournamentService);
   private authService = inject(AuthService);
   private teamMembershipService = inject(TeamMembershipService);
-  private supabaseService = inject(SupabaseService);
+  private tournamentsDataService = inject(TournamentsDataService);
   private messageService = inject(MessageService);
   private confirmDialog = inject(ConfirmDialogService);
   private logger = inject(LoggerService);
@@ -1917,25 +2000,34 @@ export class TournamentsComponent implements OnInit {
       const user = this.authService.currentUser();
       if (!user) return;
 
-      const { data } = await this.supabaseService.client
-        .from("player_tournament_availability")
-        .select("*")
-        .eq("tournament_id", tournamentId)
-        .eq("player_id", user.id)
-        .single();
+      const { data } =
+        await this.tournamentsDataService.fetchPlayerAvailability({
+          tournamentId,
+          playerId: user.id,
+        });
 
       if (data) {
+        const availability = data as Record<string, unknown>;
         this.availabilityForm = {
-          status: data.status || "pending",
-          reason: data.reason || "",
-          arrivalDate: data.arrival_date ? new Date(data.arrival_date) : null,
-          departureDate: data.departure_date
-            ? new Date(data.departure_date)
-            : null,
-          accommodationNeeded: data.accommodation_needed ?? true,
-          transportationNeeded: data.transportation_needed ?? false,
-          dietaryRestrictions: data.dietary_restrictions || "",
-          amountPaid: data.amount_paid || 0,
+          status: isAvailabilityStatus(availability["status"])
+            ? availability["status"]
+            : "pending",
+          reason: toStringValue(availability["reason"], ""),
+          arrivalDate: toDateOrNull(availability["arrival_date"]),
+          departureDate: toDateOrNull(availability["departure_date"]),
+          accommodationNeeded: toBooleanValue(
+            availability["accommodation_needed"],
+            true,
+          ),
+          transportationNeeded: toBooleanValue(
+            availability["transportation_needed"],
+            false,
+          ),
+          dietaryRestrictions: toStringValue(
+            availability["dietary_restrictions"],
+            "",
+          ),
+          amountPaid: toNumberValue(availability["amount_paid"], 0),
         };
       } else {
         // Reset form
@@ -1957,13 +2049,17 @@ export class TournamentsComponent implements OnInit {
 
   async loadTournamentCost(tournamentId: string): Promise<void> {
     try {
-      const { data } = await this.supabaseService.client.rpc(
-        "calculate_player_tournament_cost",
-        {
-          p_tournament_id: tournamentId,
-          p_team_id: await this.getCurrentTeamId(),
-        },
-      );
+      const teamId = await this.getCurrentTeamId();
+      if (!teamId) {
+        this.tournamentCost.set(0);
+        return;
+      }
+
+      const { data } =
+        await this.tournamentsDataService.calculatePlayerTournamentCost({
+          tournamentId,
+          teamId,
+        });
 
       this.tournamentCost.set(data || 0);
     } catch (error) {
@@ -1985,17 +2081,16 @@ export class TournamentsComponent implements OnInit {
       if (!teamId) throw new Error("No team found");
 
       // Get player's team_member id
-      const { data: memberData } = await this.supabaseService.client
-        .from("team_members")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("team_id", teamId)
-        .single();
+      const { memberId } =
+        await this.tournamentsDataService.getTeamMemberId({
+          userId: user.id,
+          teamId,
+        });
 
-      if (!memberData) throw new Error("Not a team member");
+      if (!memberId) throw new Error("Not a team member");
 
       const availabilityData = {
-        player_id: memberData.id,
+        player_id: memberId,
         tournament_id: this.selectedTournament.id,
         team_id: teamId,
         status: this.availabilityForm.status,
@@ -2012,10 +2107,9 @@ export class TournamentsComponent implements OnInit {
         responded_at: new Date().toISOString(),
       };
 
-      const { error } = await this.supabaseService.client
-        .from("player_tournament_availability")
-        .upsert(availabilityData, {
-          onConflict: "player_id,tournament_id",
+      const { error } =
+        await this.tournamentsDataService.upsertAvailability({
+          availabilityData,
         });
 
       if (error) throw error;
@@ -2059,40 +2153,46 @@ export class TournamentsComponent implements OnInit {
       if (!teamId) return;
 
       // Get all team players with their availability
-      const { data: members } = await this.supabaseService.client
-        .from("team_members")
-        .select(
-          `
-          id,
-          role,
-          users:user_id(raw_user_meta_data)
-        `,
-        )
-        .eq("team_id", teamId)
-        .eq("role", "player");
+      const { members } =
+        await this.tournamentsDataService.fetchTeamMembers(teamId);
 
-      const { data: availability } = await this.supabaseService.client
-        .from("player_tournament_availability")
-        .select("*")
-        .eq("tournament_id", tournamentId)
-        .eq("team_id", teamId);
+      const { availability } =
+        await this.tournamentsDataService.fetchTeamAvailability({
+          tournamentId,
+          teamId,
+        });
 
       // Map availability to players
+      const availabilityList = Array.isArray(availability)
+        ? (availability as AvailabilityRecord[])
+        : [];
+
       const availabilityMap = new Map(
-        (availability || []).map((a) => [a.player_id, a]),
+        availabilityList.map((a) => [a.player_id, a]),
       );
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const playerList: PlayerAvailability[] = (members || []).map((m: any) => {
-        const avail = availabilityMap.get(m.id);
-        return {
-          playerId: m.id,
-          playerName: m.users?.raw_user_meta_data?.full_name || "Unknown",
-          position: m.users?.raw_user_meta_data?.position || "Player",
-          status: avail?.status || "pending",
-          reason: avail?.reason,
-          paymentStatus: avail?.payment_status || "pending",
-          amountPaid: avail?.amount_paid || 0,
+      const memberList = Array.isArray(members)
+        ? (members as unknown as TeamMemberRecord[])
+        : [];
+
+      const playerList: PlayerAvailability[] = memberList.map((member) => {
+          const avail = availabilityMap.get(member.id);
+          const status = isAvailabilityStatus(avail?.status)
+            ? avail?.status
+            : "pending";
+          const paymentStatus = isPaymentStatus(avail?.payment_status)
+            ? avail?.payment_status
+            : "pending";
+
+          return {
+          playerId: member.id,
+          playerName:
+            member.users?.raw_user_meta_data?.full_name || "Unknown",
+          position: member.users?.raw_user_meta_data?.position || "Player",
+          status,
+          reason: isString(avail?.reason) ? avail?.reason : undefined,
+          paymentStatus,
+          amountPaid: toNumberValue(avail?.amount_paid, 0),
         };
       });
 
@@ -2114,33 +2214,39 @@ export class TournamentsComponent implements OnInit {
       const teamId = await this.getCurrentTeamId();
       if (!teamId) return;
 
-      const { data } = await this.supabaseService.client
-        .from("tournament_budgets")
-        .select("*")
-        .eq("tournament_id", tournamentId)
-        .eq("team_id", teamId)
-        .single();
+      const { budget: data } =
+        await this.tournamentsDataService.fetchTournamentBudget({
+          tournamentId,
+          teamId,
+        });
 
       if (data) {
+        const budget = data as TournamentBudgetRecord;
         this.tournamentBudget.set({
-          totalEstimated: data.total_estimated_cost || 0,
-          teamContribution: data.team_contribution || 0,
-          sponsorContribution: data.sponsor_contribution || 0,
-          perPlayer: data.player_share_per_person || 0,
+          totalEstimated: toNumberValue(budget.total_estimated_cost, 0),
+          teamContribution: toNumberValue(budget.team_contribution, 0),
+          sponsorContribution: toNumberValue(budget.sponsor_contribution, 0),
+          perPlayer: toNumberValue(budget.player_share_per_person, 0),
         });
 
         // Populate budget form
         this.budgetForm = {
-          registrationFee: data.registration_fee || 0,
-          entryFeePerPlayer: data.entry_fee_per_player || 0,
-          travelCost: data.estimated_travel_cost || 0,
-          accommodationPerNight: data.accommodation_cost_per_night || 0,
-          totalNights: data.total_nights || 0,
-          perDiem: data.per_diem_per_player || 0,
-          otherCosts: data.other_costs || 0,
-          otherCostsDescription: data.other_costs_description || "",
-          teamContribution: data.team_contribution || 0,
-          sponsorContribution: data.sponsor_contribution || 0,
+          registrationFee: toNumberValue(budget.registration_fee, 0),
+          entryFeePerPlayer: toNumberValue(budget.entry_fee_per_player, 0),
+          travelCost: toNumberValue(budget.estimated_travel_cost, 0),
+          accommodationPerNight: toNumberValue(
+            budget.accommodation_cost_per_night,
+            0,
+          ),
+          totalNights: toNumberValue(budget.total_nights, 0),
+          perDiem: toNumberValue(budget.per_diem_per_player, 0),
+          otherCosts: toNumberValue(budget.other_costs, 0),
+          otherCostsDescription: toStringValue(
+            budget.other_costs_description,
+            "",
+          ),
+          teamContribution: toNumberValue(budget.team_contribution, 0),
+          sponsorContribution: toNumberValue(budget.sponsor_contribution, 0),
         };
       } else {
         this.tournamentBudget.set(null);
@@ -2281,11 +2387,9 @@ export class TournamentsComponent implements OnInit {
         created_by: this.authService.currentUser()?.id,
       };
 
-      const { error } = await this.supabaseService.client
-        .from("tournament_budgets")
-        .upsert(budgetData, {
-          onConflict: "tournament_id,team_id",
-        });
+      const { error } = await this.tournamentsDataService.upsertTournamentBudget({
+        budgetData,
+      });
 
       if (error) throw error;
 
@@ -2321,14 +2425,11 @@ export class TournamentsComponent implements OnInit {
     if (!user) return null;
 
     try {
-      const { data } = await this.supabaseService.client
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", user.id)
-        .limit(1)
-        .single();
+      const { teamId: data } = await this.tournamentsDataService.getCurrentTeamId(
+        user.id,
+      );
 
-      return data?.team_id || null;
+      return data || null;
     } catch {
       return null;
     }

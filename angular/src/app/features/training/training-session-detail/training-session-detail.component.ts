@@ -14,7 +14,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Skeleton } from "primeng/skeleton";
 import { AuthService } from "../../../core/services/auth.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
+import { TrainingSessionDetailDataService } from "../services/training-session-detail-data.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -34,6 +34,14 @@ interface SessionDetails {
   intensity?: string;
   notes?: string;
 }
+
+const isString = (value: unknown): value is string => typeof value === "string";
+
+const isNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
+
+const isBoolean = (value: unknown): value is boolean =>
+  typeof value === "boolean";
 
 @Component({
   selector: "app-training-session-detail",
@@ -216,7 +224,7 @@ interface SessionDetails {
 export class TrainingSessionDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private supabaseService = inject(SupabaseService);
+  private sessionDataService = inject(TrainingSessionDetailDataService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
@@ -260,47 +268,44 @@ export class TrainingSessionDetailComponent implements OnInit {
       }
 
       // First, try to load as an actual session
-      const { data: actualSession, error: sessionError } =
-        await this.supabaseService.client
-          .from("training_sessions")
-          .select("*")
-          .eq("id", sessionId)
-          .eq("user_id", user.id)
-          .single();
+      const { session: actualSession, error: sessionError } =
+        await this.sessionDataService.getActualSession(sessionId, user.id);
 
       if (!sessionError && actualSession) {
+        const actual = actualSession as Record<string, unknown>;
+        const actualId = isString(actual.id) ? actual.id : sessionId;
+        const sessionType = isString(actual.session_type)
+          ? actual.session_type
+          : "Training";
+        const sessionDate = new Date(
+          actual.session_date as string | number | Date,
+        );
+        const duration = isNumber(actual.duration_minutes)
+          ? actual.duration_minutes
+          : 60;
+        const status = this.mapDbStatusToUiStatus(
+          isString(actual.status) ? actual.status : null,
+        );
+        const notes = isString(actual.notes) ? actual.notes : undefined;
+
         // It's an actual session
         this.sessionDetails.set({
-          id: actualSession.id,
-          sessionType: actualSession.session_type || "Training",
-          title: actualSession.session_type || "Training Session",
-          date: new Date(actualSession.session_date),
-          duration: actualSession.duration_minutes || 60,
-          status: this.mapDbStatusToUiStatus(actualSession.status),
+          id: actualId,
+          sessionType,
+          title: sessionType || "Training Session",
+          date: sessionDate,
+          duration,
+          status,
           isTemplate: false,
-          notes: actualSession.notes || undefined,
+          notes,
         });
         this.isLoading.set(false);
         return;
       }
 
       // If not found as actual session, try as template
-      const { data: template, error: templateError } =
-        await this.supabaseService.client
-          .from("training_session_templates")
-          .select(
-            `
-            *,
-            training_weeks!inner (
-              id,
-              week_number,
-              start_date,
-              end_date
-            )
-          `,
-          )
-          .eq("id", sessionId)
-          .single();
+      const { template, error: templateError } =
+        await this.sessionDataService.getTemplateSession(sessionId);
 
       if (templateError || !template) {
         throw new Error(templateError?.message || "Session not found");
@@ -312,8 +317,11 @@ export class TrainingSessionDetailComponent implements OnInit {
       const dateStr = weekData.start_date.split("T")[0];
       const [year, month, day] = dateStr.split("-").map(Number);
       const weekStart = new Date(year, month - 1, day, 0, 0, 0, 0);
+      const dayOfWeek = isNumber(template.day_of_week)
+        ? template.day_of_week
+        : 0;
       const sessionDate = new Date(weekStart);
-      sessionDate.setDate(weekStart.getDate() + (template.day_of_week || 0));
+      sessionDate.setDate(weekStart.getDate() + dayOfWeek);
 
       // Parse equipment if it's stored as JSON or array
       let equipment: string[] = [];
@@ -330,23 +338,41 @@ export class TrainingSessionDetailComponent implements OnInit {
       }
 
       this.sessionDetails.set({
-        id: template.id,
-        sessionType: template.session_type || "Training",
+        id: isString(template.id) ? template.id : sessionId,
+        sessionType: isString(template.session_type)
+          ? template.session_type
+          : "Training",
         title:
-          template.session_name || template.session_type || "Training Session",
+          (isString(template.session_name) && template.session_name) ||
+          (isString(template.session_type) && template.session_type) ||
+          "Training Session",
         date: sessionDate,
-        duration: template.duration_minutes || 60,
+        duration: isNumber(template.duration_minutes)
+          ? template.duration_minutes
+          : 60,
         status: "scheduled" as const,
         isTemplate: true,
         isTeamPractice:
-          ((template as Record<string, unknown>).is_team_practice as boolean) ||
-          false,
+          isBoolean(
+            (template as unknown as Record<string, unknown>).is_team_practice,
+          )
+            ? ((template as unknown as Record<string, unknown>)
+                .is_team_practice as boolean)
+            : false,
         isOutdoor:
-          ((template as Record<string, unknown>).is_outdoor as boolean) ||
-          false,
-        description: template.description || undefined,
+          isBoolean(
+            (template as unknown as Record<string, unknown>).is_outdoor,
+          )
+            ? ((template as unknown as Record<string, unknown>)
+                .is_outdoor as boolean)
+            : false,
+        description: isString(template.description)
+          ? template.description
+          : undefined,
         equipment: equipment.length > 0 ? equipment : undefined,
-        intensity: template.intensity_level || undefined,
+        intensity: isString(template.intensity_level)
+          ? template.intensity_level
+          : undefined,
       });
 
       this.isLoading.set(false);
@@ -374,18 +400,13 @@ export class TrainingSessionDetailComponent implements OnInit {
     try {
       // Create a new training session from the template
       // Note: athlete_id is required by RLS policy, user_id is for backward compatibility
-      const { data, error } = await this.supabaseService.client
-        .from("training_sessions")
-        .insert({
-          athlete_id: user.id,
-          user_id: user.id,
-          session_date: session.date.toISOString().split("T")[0],
-          session_type: session.sessionType,
-          duration_minutes: session.duration,
-          status: "in_progress",
-        })
-        .select("id")
-        .single();
+      const { id, error } =
+        await this.sessionDataService.createSessionFromTemplate({
+          userId: user.id,
+          sessionDate: session.date.toISOString().split("T")[0],
+          sessionType: session.sessionType,
+          durationMinutes: session.duration,
+        });
 
       if (error) {
         throw new Error(error.message);
@@ -396,7 +417,7 @@ export class TrainingSessionDetailComponent implements OnInit {
       // Navigate to the training log to complete the session
       this.router.navigate(["/training/log"], {
         queryParams: {
-          sessionId: data.id,
+          sessionId: id,
           type: session.sessionType,
           duration: session.duration,
         },

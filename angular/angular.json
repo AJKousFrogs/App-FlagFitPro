@@ -28,7 +28,7 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
-              "src/manifest.json",
+              "src/manifest.webmanifest",
               {
                 "glob": "robots.txt",
                 "input": "src/assets",

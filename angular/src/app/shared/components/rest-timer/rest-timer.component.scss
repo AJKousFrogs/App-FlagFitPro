@@ -255,6 +255,6 @@
 
 @include respond-to(md) {
   .floating-timer {
-    bottom: 8.75rem;
+    bottom: var(--grid-card-min-xs);
   }
 }

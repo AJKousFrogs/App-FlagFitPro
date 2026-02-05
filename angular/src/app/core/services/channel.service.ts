@@ -204,6 +204,20 @@ export class ChannelService {
   readonly loading = computed(() => this._loading());
   readonly error = computed(() => this._error());
 
+  async fetchCurrentTeamId(): Promise<string | null> {
+    const userId = this.authService.getUser()?.id;
+    if (!userId) return null;
+
+    const { data } = await this.supabase.client
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", userId)
+      .limit(1)
+      .single();
+
+    return data?.team_id || null;
+  }
+
   // Filtered channel lists
   readonly announcementChannels = computed(() =>
     this._channels().filter((c) => c.channel_type === "announcements"),

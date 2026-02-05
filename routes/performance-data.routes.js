@@ -8,12 +8,12 @@
 
 import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-  createSuccessResponse,
   getErrorMessage,
   sendError,
   sendErrorResponse,
@@ -317,11 +317,8 @@ router.get(
   "/measurements",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const exists = await tableExists("physical_measurements");
       if (!exists) {
@@ -397,11 +394,8 @@ router.post(
   "/measurements",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const measurement = req.body || {};
 
@@ -478,11 +472,8 @@ router.get(
   "/performance-tests",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const exists = await tableExists("performance_tests");
       if (!exists) {
@@ -561,11 +552,8 @@ router.post(
   "/performance-tests",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const test = req.body || {};
       if (!test.testType || test.result === undefined || test.result === null) {
@@ -625,11 +613,8 @@ router.get(
   "/wellness",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const exists = await tableExists("wellness_entries");
       if (!exists) {
@@ -682,11 +667,8 @@ router.post(
   "/wellness",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const wellness = req.body || {};
       const userColumn = await getWellnessUserColumn();
@@ -742,11 +724,8 @@ router.get(
   "/supplements",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const exists = await tableExists("supplement_logs");
       if (!exists) {
@@ -794,11 +773,8 @@ router.post(
   "/supplements",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const supplement = req.body || {};
       if (!supplement.name || !supplement.date) {
@@ -858,11 +834,8 @@ router.get(
   "/injuries",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const exists = await tableExists("injuries");
       if (!exists) {
@@ -909,11 +882,8 @@ router.post(
   "/injuries",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const injury = req.body || {};
       if (!injury.type || !injury.severity || !injury.startDate) {
@@ -973,11 +943,8 @@ router.get(
   "/trends",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const timeframe = req.query.timeframe || "90d";
       const days = parseTimeframeToDays(timeframe);
@@ -1072,11 +1039,8 @@ router.get(
   "/export",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const hasMeasurements = await tableExists("physical_measurements");
       const hasTests = await tableExists("performance_tests");
@@ -1133,7 +1097,7 @@ router.get(
         injuries: (injuriesResult.data || []).map(mapInjury),
       };
 
-      return res.json(createSuccessResponse(exportData));
+      return sendSuccess(res, exportData);
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to export data");
       serverLogger.error(

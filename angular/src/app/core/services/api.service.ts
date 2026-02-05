@@ -1,9 +1,10 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+import { extractApiErrorDetails } from "../../shared/utils/error.utils";
 import {
   type MinimalSchema,
   validateApiResponse,
@@ -210,45 +211,36 @@ export class ApiService {
     );
   }
 
+  head(
+    endpoint: string,
+    requestOptions?: {
+      headers?: HttpHeaders | Record<string, string | string[]>;
+      params?: HttpParams | Record<string, string | number | boolean>;
+    },
+  ): Observable<unknown> {
+    const normalizedEndpoint = this.normalizeEndpoint(endpoint);
+    const url = `${this.baseUrl}${normalizedEndpoint}`;
+
+    return this.http
+      .head(url, {
+        headers: requestOptions?.headers,
+        params: requestOptions?.params,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError = (error: unknown): Observable<never> => {
-    let errorMessage = "An unknown error occurred";
-    let errorType: string | undefined;
-    let requestId: string | undefined;
-
-    if (error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.message}`;
-    } else if (error && typeof error === "object" && "error" in error) {
-      const httpError = error as {
-        error?: {
-          error?: string;
-          errorType?: string;
-          message?: string;
-          requestId?: string;
-        };
-        status?: number;
-        message?: string;
-      };
-
-      // Extract error details from API response
-      errorMessage =
-        httpError.error?.error ||
-        httpError.error?.message ||
-        `Error Code: ${httpError.status}\nMessage: ${httpError.message}`;
-
-      // Extract errorType and requestId for better error handling
-      errorType = httpError.error?.errorType;
-      requestId = httpError.error?.requestId;
-    }
+    const { message, errorType, requestId } = extractApiErrorDetails(error);
 
     // Log with requestId if available
     const logContext = requestId ? `[${requestId}]` : "";
     this.logger.error(
-      `[ApiService]${logContext} API request failed: ${errorMessage}`,
+      `[ApiService]${logContext} API request failed: ${message}`,
       { errorType, requestId },
     );
 
     // Create error with additional context
-    const apiError = new Error(errorMessage) as Error & {
+    const apiError = new Error(message) as Error & {
       errorType?: string;
       requestId?: string;
     };

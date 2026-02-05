@@ -19,7 +19,7 @@
 import { Injectable, inject } from "@angular/core";
 import { PreloadingStrategy, Route } from "@angular/router";
 import { Observable, of, timer } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { mergeMap } from "rxjs";
 import { AuthService } from "../services/auth.service";
 
 @Injectable({

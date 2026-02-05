@@ -52,9 +52,9 @@ import {
   InstagramVideoService,
 } from "../../../core/services/instagram-video.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { VideoBookmarkDataService } from "../services/video-bookmark-data.service";
 import {
   FlagPosition,
   TrainingFocus,
@@ -521,7 +521,7 @@ export class VideoFeedComponent {
   private toastService = inject(ToastService);
   private hapticService = inject(HapticFeedbackService);
   private authService = inject(AuthService);
-  private supabaseService = inject(SupabaseService);
+  private videoBookmarkDataService = inject(VideoBookmarkDataService);
   private router = inject(Router);
   private logger = inject(LoggerService);
 
@@ -868,13 +868,11 @@ export class VideoFeedComponent {
       const user = this.authService.getUser();
       if (!user?.id) return;
 
-      const { data } = await this.supabaseService.client
-        .from("video_bookmarks")
-        .select("video_id")
-        .eq("user_id", user.id);
+      const { bookmarks } =
+        await this.videoBookmarkDataService.fetchBookmarks(user.id);
 
-      if (data) {
-        this.bookmarkedIds.set(new Set(data.map((b) => b.video_id)));
+      if (bookmarks) {
+        this.bookmarkedIds.set(new Set(bookmarks.map((b) => b.video_id)));
       }
     } catch (error) {
       this.logger.error("Failed to load bookmarks", error);
@@ -886,13 +884,12 @@ export class VideoFeedComponent {
       const user = this.authService.getUser();
       if (!user?.id) return;
 
-      await this.supabaseService.client.from("video_bookmarks").upsert({
-        user_id: user.id,
-        video_id: video.id,
-        video_title: video.title,
-        video_url: video.url,
-        creator_username: video.creator.username,
-        saved_at: new Date().toISOString(),
+      await this.videoBookmarkDataService.saveBookmark({
+        userId: user.id,
+        videoId: video.id,
+        videoTitle: video.title,
+        videoUrl: video.url,
+        creatorUsername: video.creator.username,
       });
     } catch (error) {
       this.logger.error("Failed to save bookmark", error);
@@ -904,11 +901,10 @@ export class VideoFeedComponent {
       const user = this.authService.getUser();
       if (!user?.id) return;
 
-      await this.supabaseService.client
-        .from("video_bookmarks")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("video_id", videoId);
+      await this.videoBookmarkDataService.removeBookmark({
+        userId: user.id,
+        videoId,
+      });
     } catch (error) {
       this.logger.error("Failed to remove bookmark", error);
     }

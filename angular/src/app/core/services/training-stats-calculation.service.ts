@@ -9,7 +9,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError } from "rxjs";
 import { AcwrService } from "./acwr.service";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";

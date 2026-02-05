@@ -39,6 +39,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ApiResponse } from "../../../core/models/common.models";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -976,8 +977,12 @@ export class TeamManagementComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{
+        members?: TeamMember[];
+        depthChart?: DepthChartEntry[];
+        invitations?: Invitation[];
+        settings?: TeamSettings;
+      }> = await firstValueFrom(
         this.api.get("/api/team-management"),
       );
       if (response?.success && response.data) {

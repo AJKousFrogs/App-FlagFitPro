@@ -34,13 +34,13 @@ import {
   LoggerService,
   toLogContext,
 } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
   WeatherData,
   WeatherService,
 } from "../../../core/services/weather.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { SmartTrainingDataService } from "../services/smart-training-data.service";
 
 interface SessionTypeOption {
   label: string;
@@ -205,7 +205,7 @@ export class SmartTrainingFormComponent implements OnInit {
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);
-  private supabaseService = inject(SupabaseService);
+  private smartTrainingDataService = inject(SmartTrainingDataService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private router = inject(Router);
@@ -306,14 +306,10 @@ export class SmartTrainingFormComponent implements OnInit {
     let recentPerformance: Array<{ date: string; rpe: number; type: string }> =
       [];
     try {
-      const { data: sessions } = await this.supabaseService.client
-        .from("training_sessions")
-        .select("created_at, rpe, session_type")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(10);
+      const { sessions } =
+        await this.smartTrainingDataService.fetchRecentSessions(user.id);
 
-      if (sessions) {
+      if (sessions.length > 0) {
         recentPerformance = sessions.map((s) => ({
           date: s.created_at,
           rpe: s.rpe || 5,
@@ -336,18 +332,15 @@ export class SmartTrainingFormComponent implements OnInit {
     try {
       // Note: team_events requires team_id filter via RLS, this query may return empty
       // if the user is not part of a team. We gracefully handle this case.
-      const { data: events, error: eventsError } =
-        await this.supabaseService.client
-          .from("team_events")
-          .select("event_date, title, event_type")
-          .gte("event_date", new Date().toISOString().split("T")[0])
-          .order("event_date", { ascending: true })
-          .limit(5);
+      const { events, error: eventsError } =
+        await this.smartTrainingDataService.fetchUpcomingTeamEvents(
+          new Date().toISOString().split("T")[0],
+        );
 
       if (!eventsError && events) {
         upcomingGames = events.map((e) => ({
           date: e.event_date,
-          opponent: e.title,
+          opponent: e.title ?? undefined,
           importance: e.event_type === "game" ? "high" : "medium",
         }));
       }
@@ -503,21 +496,18 @@ export class SmartTrainingFormComponent implements OnInit {
           ? `Equipment: ${formValue.equipment.join(", ")}`
           : "";
 
-      const { error } = await this.supabaseService.client
-        .from("training_sessions")
-        .insert({
-          athlete_id: user.id,
-          user_id: user.id,
-          session_type: formValue.sessionType,
-          duration_minutes: formValue.duration,
+      const { error } = await this.smartTrainingDataService.createTrainingSession(
+        {
+          athleteId: user.id,
+          userId: user.id,
+          sessionType: formValue.sessionType,
+          durationMinutes: formValue.duration,
           intensity: this.getIntensityFromDuration(formValue.duration),
-          is_outdoor: formValue.outdoorSession,
-          scheduled_date: new Date().toISOString(),
-          status: "scheduled",
+          isOutdoor: formValue.outdoorSession,
+          scheduledDate: new Date().toISOString(),
           notes: `Created via Smart Training Form${equipmentList ? ". " + equipmentList : ""}`,
-        })
-        .select()
-        .single();
+        },
+      );
 
       if (error) {
         throw new Error(error.message);

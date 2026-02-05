@@ -36,6 +36,7 @@ import {
   LoggerService,
   toLogContext,
 } from "../../../../core/services/logger.service";
+import { ApiResponse } from "../../../../core/models/common.models";
 
 export interface FlagPracticeSlot {
   day: number; // 0-6 (Sunday-Saturday)
@@ -472,8 +473,12 @@ export class PlayerSettingsDialogComponent {
 
   async loadSettings(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<
+        Partial<PlayerSettings> & {
+          availabilitySchedule?: FlagPracticeSlot[];
+          birthDate?: string;
+        }
+      > = await firstValueFrom(
         this.api.get("/api/player-settings"),
       );
       if (response?.success && response.data) {

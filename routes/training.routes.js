@@ -12,6 +12,7 @@ import {
   optionalAuth,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { invalidateCacheOn, withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
@@ -19,6 +20,7 @@ import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import { getSupabaseAdmin } from "./utils/supabase-clients.js";
 import {
+  createErrorResponse,
   isValidUUID,
   sanitizeText,
   getErrorMessage,
@@ -58,11 +60,8 @@ router.get(
   optionalAuth,
   authorizeUserAccess,
   withCache("STATS"),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userIdValidation = resolveUserId(req);
       if (!userIdValidation.isValid) {
@@ -148,11 +147,8 @@ router.get(
   optionalAuth,
   authorizeUserAccess,
   withCache("STATS"),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userIdValidation = resolveUserId(req);
       if (!userIdValidation.isValid) {
@@ -263,11 +259,8 @@ router.get(
   rateLimit("READ"),
   optionalAuth,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userIdValidation = resolveUserId(req);
       if (!userIdValidation.isValid) {
@@ -327,11 +320,8 @@ router.post(
   "/session",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       // VALIDATE RPE if provided
       if (req.body.rpe !== undefined) {
@@ -484,11 +474,11 @@ router.post(
  * GET /workouts/:id
  * Get a specific workout by ID
  */
-router.get("/workouts/:id", rateLimit("READ"), async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
+router.get(
+  "/workouts/:id",
+  rateLimit("READ"),
+  requireSupabase,
+  async (req, res) => {
   try {
     const { data: session, error } = await supabase
       .from("training_sessions")
@@ -505,7 +495,8 @@ router.get("/workouts/:id", rateLimit("READ"), async (req, res) => {
     serverLogger.error(`[${ROUTE_NAME}] Get workout error:`, error);
     return sendError(res, "Failed to load workout", "FETCH_ERROR", 500);
   }
-});
+  },
+);
 
 /**
  * PUT /workouts/:id
@@ -515,11 +506,8 @@ router.put(
   "/workouts/:id",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       // VALIDATE RPE if provided
       if (req.body.rpe !== undefined) {
@@ -585,11 +573,8 @@ router.delete(
   "/session/:id",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { data, error } = await supabase
         .from("training_sessions")
@@ -637,7 +622,7 @@ if (isV1) {
     rateLimit("READ"),
     authenticateToken,
     async (_req, res) => {
-      return res.json({ success: true, data: [] });
+      return sendSuccess(res, []);
     },
   );
 
@@ -652,9 +637,7 @@ if (isV1) {
     async (req, res) => {
       const supabaseAdmin = getSupabaseAdmin();
       if (!supabaseAdmin) {
-        return res
-          .status(503)
-          .json({ success: false, error: "Database not configured" });
+        return sendError(res, "Database not configured", "DB_ERROR", 503);
       }
 
       try {
@@ -672,42 +655,37 @@ if (isV1) {
         }
 
         if (!suggestions || suggestions.length === 0) {
-          return res.json({
-            success: true,
-            data: {
-              athleteId,
-              suggestions: [],
-              message:
-                "No specific training suggestions found for current metrics",
-            },
+          return sendSuccess(res, {
+            athleteId,
+            suggestions: [],
+            message: "No specific training suggestions found for current metrics",
           });
         }
 
-        return res.json({
-          success: true,
-          data: {
-            athleteId,
-            suggestions: suggestions.map((s) => ({
-              id: s.id,
-              type: s.type,
-              name: s.title,
-              duration: s.duration_minutes,
-              reason: s.reason,
-              priority: s.priority,
-            })),
-            currentMetrics: {
-              acwr: currentAcwr || null,
-              readiness: readinessScore || null,
-            },
-            generatedAt: new Date().toISOString(),
+        return sendSuccess(res, {
+          athleteId,
+          suggestions: suggestions.map((s) => ({
+            id: s.id,
+            type: s.type,
+            name: s.title,
+            duration: s.duration_minutes,
+            reason: s.reason,
+            priority: s.priority,
+          })),
+          currentMetrics: {
+            acwr: currentAcwr || null,
+            readiness: readinessScore || null,
           },
+          generatedAt: new Date().toISOString(),
         });
       } catch (error) {
         serverLogger.error(`[${ROUTE_NAME}] Suggestions error:`, error);
-        return res.status(500).json({
-          success: false,
-          error: "Failed to load training suggestions",
-        });
+        return sendError(
+          res,
+          "Failed to load training suggestions",
+          "FETCH_ERROR",
+          500,
+        );
       }
     },
   );
@@ -846,11 +824,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { position_id, active_only } = req.query;
 
@@ -901,11 +876,8 @@ router.get(
   "/programs/:id",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { id } = req.params;
 
@@ -951,11 +923,8 @@ router.get(
   "/programs/:id/phases",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { id } = req.params;
 
@@ -989,11 +958,8 @@ router.get(
   "/programs/:id/weeks",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { id } = req.params;
       const { phase_id } = req.query;
@@ -1051,11 +1017,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = req.userId || req.query.userId;
       const today = new Date().toISOString().split("T")[0];
@@ -1144,11 +1107,8 @@ router.get(
   "/programs/:programId/sessions",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { programId } = req.params;
       const { week_id } = req.query;
@@ -1218,11 +1178,8 @@ router.get(
   "/programs/:programId/exercises",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { programId } = req.params;
       const { session_id } = req.query;
@@ -1282,11 +1239,8 @@ router.get(
   "/exercises",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { category, position, search } = req.query;
 
@@ -1321,12 +1275,12 @@ router.get(
 
 // Catch-all 404 handler (must be last route)
 router.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: "Training endpoint not found",
-    code: "NOT_FOUND",
-    path: req.originalUrl,
-  });
+  const { response } = createErrorResponse(
+    "Training endpoint not found",
+    "NOT_FOUND",
+    404,
+  );
+  res.status(404).json({ ...response, path: req.originalUrl });
 });
 
   return router;

@@ -201,6 +201,48 @@ export function getMessageForErrorType(errorType: ErrorType): string {
 }
 
 /**
+ * Extract API error details without altering existing message semantics.
+ * Mirrors ApiService.handleError logic for safe reuse.
+ */
+export function extractApiErrorDetails(
+  error: unknown,
+  fallbackMessage: string = "An unknown error occurred",
+): {
+  message: string;
+  errorType?: string;
+  requestId?: string;
+} {
+  let errorMessage = fallbackMessage;
+  let errorType: string | undefined;
+  let requestId: string | undefined;
+
+  if (error instanceof ErrorEvent) {
+    errorMessage = `Error: ${error.message}`;
+  } else if (error && typeof error === "object" && "error" in error) {
+    const httpError = error as {
+      error?: {
+        error?: string;
+        errorType?: string;
+        message?: string;
+        requestId?: string;
+      };
+      status?: number;
+      message?: string;
+    };
+
+    errorMessage =
+      httpError.error?.error ||
+      httpError.error?.message ||
+      `Error Code: ${httpError.status}\nMessage: ${httpError.message}`;
+
+    errorType = httpError.error?.errorType;
+    requestId = httpError.error?.requestId;
+  }
+
+  return { message: errorMessage, errorType, requestId };
+}
+
+/**
  * Get user-friendly message for HTTP status codes
  * Uses centralized error constants
  */

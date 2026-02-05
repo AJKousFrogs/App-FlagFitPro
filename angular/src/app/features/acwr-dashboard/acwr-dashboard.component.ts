@@ -44,7 +44,6 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -68,6 +67,7 @@ import {
   getRiskSeverityFromZone,
 } from "../../shared/utils/risk.utils";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -816,9 +816,9 @@ export class AcwrDashboardComponent implements OnInit {
   }
 
   private router = inject(Router);
-  private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private acwrDashboardDataService = inject(AcwrDashboardDataService);
 
   public dismissTopAlert(): void {
     const alert = this.topAlert();
@@ -879,14 +879,12 @@ export class AcwrDashboardComponent implements OnInit {
       };
 
       // Save report to Supabase
-      const { error } = await this.supabaseService.client
-        .from("acwr_reports")
-        .insert({
-          user_id: user.id,
-          report_data: reportData,
-          acwr_value: acwrData.ratio,
-          risk_zone: acwrData.riskZone,
-        });
+      const { error } = await this.acwrDashboardDataService.saveReport({
+        userId: user.id,
+        reportData,
+        acwrValue: acwrData.ratio,
+        riskZone: acwrData.riskZone,
+      });
 
       if (error) {
         // If table doesn't exist, just download locally
@@ -973,14 +971,12 @@ export class AcwrDashboardComponent implements OnInit {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - 28);
 
-      const { data: sessions, error } = await this.supabaseService.client
-        .from("training_sessions")
-        .select("session_date, duration_minutes, rpe, status")
-        .eq("user_id", user.id)
-        .gte("session_date", startDate.toISOString().split("T")[0])
-        .lte("session_date", endDate.toISOString().split("T")[0])
-        .eq("status", "completed")
-        .order("session_date", { ascending: true });
+      const { sessions, error } =
+        await this.acwrDashboardDataService.getTrendSessions({
+          userId: user.id,
+          startDate: startDate.toISOString().split("T")[0],
+          endDate: endDate.toISOString().split("T")[0],
+        });
 
       if (error) {
         this.logger.warn("Could not load trend data:", toLogContext(error));
@@ -1138,23 +1134,23 @@ export class AcwrDashboardComponent implements OnInit {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - 7);
 
-      const { data: sessions } = await this.supabaseService.client
-        .from("training_sessions")
-        .select("id, session_date, duration_minutes, rpe, session_type")
-        .eq("user_id", user.id)
-        .gte("session_date", startDate.toISOString().split("T")[0])
-        .lte("session_date", endDate.toISOString().split("T")[0])
-        .eq("status", "completed")
-        .order("session_date", { ascending: false })
-        .limit(10);
+      const { sessions } = await this.acwrDashboardDataService.getRecentSessions(
+        {
+          userId: user.id,
+          startDate: startDate.toISOString().split("T")[0],
+          endDate: endDate.toISOString().split("T")[0],
+          limit: 10,
+        },
+      );
 
-      if (!sessions || sessions.length === 0) {
+      if (sessions.length === 0) {
         this.acwrCauseAttribution.set([]);
         return;
       }
 
       // Calculate load for each session and identify high-load contributors
       const highLoadSessions = sessions
+        .filter((s): s is typeof s & { id: string } => typeof s.id === "string")
         .map((s) => ({
           sessionId: s.id,
           date: new Date(s.session_date),

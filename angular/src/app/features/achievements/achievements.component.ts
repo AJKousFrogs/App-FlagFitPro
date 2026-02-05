@@ -28,6 +28,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ApiResponse } from "../../core/models/common.models";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -55,6 +56,11 @@ interface LeaderboardEntry {
   points: number;
   recentAchievement?: string;
   isCurrentUser: boolean;
+}
+
+interface AchievementApiRecord extends Achievement {
+  earned?: boolean;
+  earnedAt?: string;
 }
 
 type AchievementCategory =
@@ -620,8 +626,10 @@ export class AchievementsComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{
+        achievements?: AchievementApiRecord[];
+        leaderboard?: LeaderboardEntry[];
+      }> = await firstValueFrom(
         this.api.get("/api/achievements"),
       );
       if (response?.success && response.data) {

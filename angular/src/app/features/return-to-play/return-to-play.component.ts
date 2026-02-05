@@ -42,6 +42,7 @@ import {
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ApiResponse } from "../../core/models/common.models";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
   LazyChartComponent,
@@ -878,8 +879,10 @@ export class ReturnToPlayComponent implements OnInit {
 
   async loadData(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{
+        activeProtocol?: ActiveProtocol;
+        checkins?: DailyCheckin[];
+      }> = await firstValueFrom(
         this.api.get("/api/return-to-play"),
       );
       if (response?.success && response.data) {

@@ -36,6 +36,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ApiResponse } from "../../core/models/common.models";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -424,8 +425,12 @@ export class PaymentsComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/payments"));
+      const response: ApiResponse<{
+        summary?: AccountSummary;
+        fees?: Fee[];
+        history?: PaymentRecord[];
+        instructions?: PaymentInstructions;
+      }> = await firstValueFrom(this.api.get("/api/payments"));
       if (response?.success && response.data) {
         if (response.data.summary) {
           this.accountSummary.set(response.data.summary);

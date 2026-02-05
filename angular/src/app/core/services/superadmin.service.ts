@@ -2,7 +2,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { from, Observable, of } from "rxjs";
-import { map, catchError, tap } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs";
 import { LoggerService } from "./logger.service";
 
 export interface ApprovalRequest {

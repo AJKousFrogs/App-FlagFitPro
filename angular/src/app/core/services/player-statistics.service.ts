@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, map, of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { StatisticsCalculationService } from "./statistics-calculation.service";
 import { LoggerService } from "./logger.service";

@@ -45,7 +45,6 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { NutritionService } from "../../../core/services/nutrition.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -594,7 +593,6 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
-  private supabaseService = inject(SupabaseService);
   private destroyRef = inject(DestroyRef);
   private nutritionService = inject(NutritionService);
   private dialogService = inject(DialogService);

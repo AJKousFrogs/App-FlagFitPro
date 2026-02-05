@@ -13,6 +13,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { HttpBackend, HttpClient, HttpHeaders } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -20,9 +22,9 @@ import { InputText } from "primeng/inputtext";
 
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import {
   getFormControlError,
@@ -237,9 +239,10 @@ import {
   styleUrl: "./register.component.scss",
 })
 export class RegisterComponent {
+  private readonly http = new HttpClient(inject(HttpBackend));
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private supabaseService = inject(SupabaseService);
+  private authFlowDataService = inject(AuthFlowDataService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
@@ -322,7 +325,7 @@ export class RegisterComponent {
         // Get auth token if available
         let supabaseToken = null;
         try {
-          const session = this.supabaseService.getSession();
+          const session = this.authFlowDataService.getCurrentSession();
           supabaseToken = session?.access_token || null;
         } catch (_e) {
           // Token not available, continue without it
@@ -337,25 +340,24 @@ export class RegisterComponent {
           headers["Authorization"] = `Bearer ${supabaseToken}`;
         }
 
-        const response = await fetch(functionUrl, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
-            action: "check",
-            password: password,
-          }),
-        });
+        const result = await firstValueFrom(
+          this.http.post<{ leaked?: boolean; message?: string }>(
+            functionUrl,
+            {
+              action: "check",
+              password: password,
+            },
+            { headers: new HttpHeaders(headers) },
+          ),
+        );
 
-        if (response.ok) {
-          const result = await response.json();
-          if (result.leaked) {
-            this.toastService.error(
-              result.message ||
-                "This password has been found in data breaches. Please choose a different password.",
-              "Password Security",
-            );
-            return;
-          }
+        if (result?.leaked) {
+          this.toastService.error(
+            result.message ||
+              "This password has been found in data breaches. Please choose a different password.",
+            "Password Security",
+          );
+          return;
         }
       }
     } catch (leakCheckError) {

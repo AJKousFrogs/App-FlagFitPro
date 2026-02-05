@@ -14,7 +14,6 @@ import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -22,6 +21,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
+import { EnhancedAnalyticsDataService } from "../services/enhanced-analytics-data.service";
 import {
   DATA_STATE_MESSAGES,
   METRIC_INSUFFICIENT_DATA,
@@ -146,7 +146,7 @@ import {
   styleUrl: "./enhanced-analytics.component.scss",
 })
 export class EnhancedAnalyticsComponent implements OnInit {
-  private supabaseService = inject(SupabaseService);
+  private analyticsDataService = inject(EnhancedAnalyticsDataService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
@@ -203,16 +203,8 @@ export class EnhancedAnalyticsComponent implements OnInit {
         return;
       }
 
-      // Load training sessions for the last 7 weeks
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 49); // 7 weeks
-
-      const { data: sessions, error } = await this.supabaseService.client
-        .from("training_sessions")
-        .select("session_date, status, duration_minutes, intensity_level")
-        .eq("user_id", user.id)
-        .gte("session_date", startDate.toISOString().split("T")[0])
-        .order("session_date", { ascending: true });
+      const { sessions, error } =
+        await this.analyticsDataService.getRecentTrainingSessions(user.id, 7);
 
       if (error) {
         this.logger.warn("Error loading sessions:", toLogContext(error));
@@ -247,7 +239,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     sessions: {
       session_date: string;
       status: string;
-      duration_minutes?: number;
+      duration_minutes?: number | null;
     }[],
   ): {
     labels: string[];
@@ -332,7 +324,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     sessions: {
       session_date: string;
       status: string;
-      intensity_level?: string;
+      intensity_level?: string | number | null;
     }[],
   ): void {
     // Simple injury risk calculation based on training intensity and frequency
@@ -343,9 +335,10 @@ export class EnhancedAnalyticsComponent implements OnInit {
       return date >= weekAgo;
     });
 
-    const highIntensityCount = recentSessions.filter(
-      (s) => s.intensity_level === "high" || s.intensity_level === "very_high",
-    ).length;
+    const highIntensityCount = recentSessions.filter((s) => {
+      const intensity = String(s.intensity_level ?? "").toLowerCase();
+      return intensity === "high" || intensity === "very_high";
+    }).length;
 
     // Risk increases with high intensity sessions
     let risk = 10 + highIntensityCount * 5;

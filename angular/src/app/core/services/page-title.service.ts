@@ -16,10 +16,11 @@
  * ```
  */
 
-import { Injectable, inject } from "@angular/core";
+import { DestroyRef, Injectable, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Title } from "@angular/platform-browser";
 import { Router, NavigationEnd } from "@angular/router";
-import { filter, map } from "rxjs/operators";
+import { filter, map } from "rxjs";
 
 export interface PageTitleConfig {
   title: string;
@@ -33,6 +34,7 @@ export interface PageTitleConfig {
 export class PageTitleService {
   private title = inject(Title);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   private defaultSuffix = "FlagFit Pro";
   private separator = " | ";
 
@@ -42,6 +44,7 @@ export class PageTitleService {
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         map(() => this.router.routerState.root),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         // Optionally auto-update from route data

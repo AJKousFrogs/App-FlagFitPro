@@ -22,6 +22,7 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { Tooltip } from "primeng/tooltip";
+import type { Chart } from "chart.js";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   COLORS,
@@ -42,9 +43,12 @@ import { ToastService } from "../../core/services/toast.service";
 import { NotificationService } from "../../core/services/notification.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingDataService } from "../../core/services/training-data.service";
-import { SupabaseService } from "../../core/services/supabase.service";
+import { AnalyticsDataService } from "./services/analytics-data.service";
 import { TeamPerformanceRankingService } from "../../core/services/team-performance-ranking.service";
-import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
+import {
+  TrainingStatsCalculationService,
+  type TrainingStatsData,
+} from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -83,6 +87,16 @@ interface DevelopmentGoal {
   deadline: Date;
   coachNote: string;
   status: "active" | "achieved" | "missed";
+}
+
+interface AnalyticsAcwrData {
+  acwr: number | null;
+  acuteLoad: number;
+  chronicLoad: number;
+  acuteDays: number;
+  chronicDays: number;
+  riskZone: string;
+  message: string;
 }
 
 @Component({
@@ -1206,7 +1220,7 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly acwrService = inject(AcwrService);
   private readonly toastService = inject(ToastService);
   private readonly notificationService = inject(NotificationService);
-  private readonly supabaseService = inject(SupabaseService);
+  private readonly analyticsDataService = inject(AnalyticsDataService);
   private readonly teamRankingService = inject(TeamPerformanceRankingService);
 
   // Runtime guard signals - prevent white screen crashes
@@ -1246,10 +1260,8 @@ export class AnalyticsComponent implements AfterViewInit {
   playerMultiSeasonStats = signal<PlayerMultiSeasonStats | null>(null);
 
   // Training statistics
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  trainingStats = signal<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  acwrData = signal<any>(null);
+  trainingStats = signal<TrainingStatsData | null>(null);
+  acwrData = signal<AnalyticsAcwrData | null>(null);
 
   // Gap Analysis data
   gapAnalysisData = signal<
@@ -1821,15 +1833,13 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   // Chart action methods
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private getChartInstance(chartType: string): any {
+  private getChartInstance(chartType: string): Chart | null {
     const chart = this.chartInstances.get(chartType);
     if (!chart) {
       this.logger.error(`Chart instance not found: ${chartType}`);
       return null;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (chart as any).chart || null;
+    return chart.chart ?? null;
   }
 
   exportChart(chartType: string): void {
@@ -2201,7 +2211,7 @@ export class AnalyticsComponent implements AfterViewInit {
    * NO MOCK DATA - shows null when no data exists
    */
   private async loadSpeedInsightsFromRealData(): Promise<void> {
-    const user = this.supabaseService.getCurrentUser();
+    const user = this.analyticsDataService.getCurrentUser();
     if (!user) {
       this.speedInsights.set(null);
       this.speedChartData.set(null);
@@ -2209,13 +2219,8 @@ export class AnalyticsComponent implements AfterViewInit {
     }
 
     try {
-      // Fetch performance records from Supabase
-      const { data: records, error } = await this.supabaseService.client
-        .from("performance_records")
-        .select("dash_40, sprint_10m, recorded_at")
-        .eq("user_id", user.id)
-        .order("recorded_at", { ascending: false })
-        .limit(20);
+      const { records, error } =
+        await this.analyticsDataService.getPerformanceRecords(user.id);
 
       if (error || !records || records.length === 0) {
         this.logger.info(
@@ -2263,12 +2268,13 @@ export class AnalyticsComponent implements AfterViewInit {
       // Build speed chart from real data
       if (records.length >= 2) {
         const chartRecords = records.slice(0, 7).reverse();
-        const labels = chartRecords.map((r) =>
-          new Date(r.recorded_at).toLocaleDateString("en-US", {
+        const labels = chartRecords.map((r) => {
+          if (!r.recorded_at) return "Unknown";
+          return new Date(r.recorded_at).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
-          }),
-        );
+          });
+        });
 
         const datasets = [];
 

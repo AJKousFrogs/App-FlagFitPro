@@ -44,7 +44,7 @@ import { ProgressBar } from "primeng/progressbar";
 import { Skeleton } from "primeng/skeleton";
 
 
-import { from } from "rxjs";
+import { from, type Observable } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
 
@@ -100,6 +100,17 @@ type TagSeverity =
   | "info"
   | "secondary"
   | "contrast";
+
+type ProtocolApiResponse = {
+  id?: string;
+  date?: string;
+  readinessScore?: number | null;
+  acwrValue?: number | null;
+  trainingFocus?: string;
+  confidenceMetadata?: ProtocolJson["confidence_metadata"];
+  blocks?: Array<{ type?: string; title?: string }>;
+  [key: string]: unknown;
+};
 
 // Quick Check-in Types
 interface QuickMood {
@@ -1320,8 +1331,7 @@ export class TodayComponent {
   readonly protocol = signal<Partial<DailyProtocol> | null>(null);
   readonly protocolJson = signal<ProtocolJson | null>(null); // Raw JSON from API
   readonly todayViewModel = signal<TodayViewModel | null>(null); // Resolved state
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private fullProtocolData: any = null; // Store full API response with blocks for UI rendering
+  private fullProtocolData: ProtocolApiResponse | null = null; // Store full API response with blocks for UI rendering
   readonly showRecoveryDialog = signal(false);
   readonly error = signal<string | null>(null);
   readonly currentTime = signal(new Date());
@@ -1660,7 +1670,7 @@ export class TodayComponent {
         next: (response) => {
           if (response?.success && response.data) {
             // Store full protocol data for UI rendering (includes blocks with exercises)
-            this.fullProtocolData = response.data;
+            this.fullProtocolData = response.data as unknown as ProtocolApiResponse;
 
             // Protocol found, resolve state
             // Map API response (camelCase) to resolver format (snake_case)
@@ -1716,12 +1726,12 @@ export class TodayComponent {
         next: (response) => {
           if (response?.success && response.data) {
             // Store full protocol data for UI rendering (includes blocks with exercises)
-            this.fullProtocolData = response.data;
+            this.fullProtocolData = response.data as unknown as ProtocolApiResponse;
 
             // Protocol found, resolve state
             // Map direct API response to ProtocolJson format
             const protocolData = this.mapDirectResponseToProtocolJson(
-              response.data,
+              response.data as unknown as ProtocolApiResponse,
             );
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
@@ -1776,11 +1786,11 @@ export class TodayComponent {
           this.isGeneratingProtocol.set(false);
           if (response?.success && response.data) {
             // Store full protocol data for UI rendering
-            this.fullProtocolData = response.data;
+            this.fullProtocolData = response.data as unknown as ProtocolApiResponse;
 
             // Generation succeeded
             const protocolData = this.mapDirectResponseToProtocolJson(
-              response.data,
+              response.data as unknown as ProtocolApiResponse,
             );
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
@@ -1813,19 +1823,23 @@ export class TodayComponent {
    * Map DirectSupabaseApiService response to ProtocolJson format
    * Includes confidence_metadata for proper resolver state detection
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapDirectResponseToProtocolJson(data: any): ProtocolJson {
+  private mapDirectResponseToProtocolJson(
+    data: ProtocolApiResponse,
+  ): ProtocolJson {
+    const blocks = Array.isArray(data.blocks) ? data.blocks : [];
     return {
       id: data.id,
       protocol_date: data.date,
       readiness_score: data.readinessScore,
       acwr_value: data.acwrValue ?? null,
-      confidence_metadata: data.confidenceMetadata,
+      confidence_metadata:
+        data.confidenceMetadata as ProtocolJson["confidence_metadata"],
       blocks:
-        data.blocks?.map((block: { type: string; title?: string }) => ({
-          type: block.type,
-          title: block.title || block.type,
-        })) || [],
+        blocks.map((block) => {
+          const type = typeof block.type === "string" ? block.type : "unknown";
+          const title = typeof block.title === "string" ? block.title : type;
+          return { type, title };
+        }),
     };
   }
 
@@ -1833,8 +1847,7 @@ export class TodayComponent {
    * Map API response (camelCase) to ProtocolJson format (snake_case)
    * Handles field name mismatches between backend and frontend
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapApiProtocolResponse(data: any): ProtocolJson {
+  private mapApiProtocolResponse(data: unknown): ProtocolJson {
     return mapDailyProtocolResponse(data) as ProtocolJson;
   }
 
@@ -1906,8 +1919,9 @@ export class TodayComponent {
   /**
    * Map API response to DailyProtocol structure with full block data
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapToDailyProtocol(data: any): Partial<DailyProtocol> {
+  private mapToDailyProtocol(
+    data: ProtocolApiResponse,
+  ): Partial<DailyProtocol> {
     // Create empty block helper
     const createEmptyBlock = (
       type: string,
@@ -1934,11 +1948,17 @@ export class TodayComponent {
       icon: string,
     ): ProtocolBlock => {
       // Get the block directly from the API response by its property name
-      const apiBlock = data[blockKey];
+      const apiBlock = data[blockKey] as
+        | { exercises?: unknown[]; [key: string]: unknown }
+        | undefined;
 
       if (!apiBlock || !apiBlock.exercises || apiBlock.exercises.length === 0) {
         return createEmptyBlock(blockType, title, icon);
       }
+
+      const rawExercises = Array.isArray(apiBlock.exercises)
+        ? (apiBlock.exercises as ApiExercise[])
+        : [];
 
       // Map exercises to PrescribedExercise format
       // API returns exercises in the format from transformExercise()
@@ -1974,40 +1994,61 @@ export class TodayComponent {
         loadContributionAu?: number;
         isHighIntensity?: boolean;
       };
-      const exercises: PrescribedExercise[] = apiBlock.exercises.map(
-        (ex: ApiExercise, index: number) => ({
-          id: ex.id || `${blockType}-${index}`,
-          exerciseId: ex.exerciseId || ex.id || `${blockType}-${index}`,
-          // Nested exercise object with video data for UI rendering
-          exercise: ex.exercise || {
-            id: ex.id || `${blockType}-${index}`,
-            name: ex.name || "Exercise",
-            slug:
-              ex.slug ||
-              ex.name?.toLowerCase().replace(/\s+/g, "-") ||
-              "exercise",
-            category: (ex.category || blockType) as ExerciseCategory,
-            videoUrl: ex.videoUrl,
-            videoId: ex.videoId,
-            howText: ex.howText || ex.aiNote || "",
-            defaultSets: ex.prescribedSets || 1,
-            difficultyLevel: "intermediate" as const,
+      const exercises: PrescribedExercise[] = rawExercises.map(
+        (ex: ApiExercise, index: number) => {
+          const fallbackId = `${blockType}-${index}`;
+          const baseId = ex.id || fallbackId;
+          const baseName = ex.name || "Exercise";
+          const baseSlug =
+            ex.slug || baseName.toLowerCase().replace(/\s+/g, "-");
+          const nestedExercise = ex.exercise;
+          const exercise = nestedExercise
+            ? {
+                ...nestedExercise,
+                id: nestedExercise.id || baseId,
+                name: nestedExercise.name || baseName,
+                slug: nestedExercise.slug || baseSlug,
+                category: (nestedExercise.category || blockType) as ExerciseCategory,
+                howText: nestedExercise.howText || ex.howText || ex.aiNote || "",
+                defaultSets: nestedExercise.defaultSets || ex.prescribedSets || 1,
+                difficultyLevel: nestedExercise.difficultyLevel || "intermediate",
+                loadContributionAu:
+                  nestedExercise.loadContributionAu || ex.loadContributionAu || 0,
+                isHighIntensity:
+                  nestedExercise.isHighIntensity || ex.isHighIntensity || false,
+              }
+            : {
+                id: baseId,
+                name: baseName,
+                slug: baseSlug,
+                category: (ex.category || blockType) as ExerciseCategory,
+                videoUrl: ex.videoUrl,
+                videoId: ex.videoId,
+                howText: ex.howText || ex.aiNote || "",
+                defaultSets: ex.prescribedSets || 1,
+                difficultyLevel: "intermediate" as const,
+                loadContributionAu: ex.loadContributionAu || 0,
+                isHighIntensity: ex.isHighIntensity || false,
+              };
+
+          return {
+            id: baseId,
+            exerciseId: ex.exerciseId || baseId,
+            exercise,
+            blockType: blockType as BlockType,
+            sequenceOrder: ex.sequenceOrder || index + 1,
+            prescribedSets: ex.prescribedSets || 1,
+            prescribedReps: ex.prescribedReps,
+            prescribedHoldSeconds: ex.prescribedHoldSeconds,
+            prescribedDurationSeconds: ex.prescribedDurationSeconds,
+            aiNote: ex.aiNote,
+            status:
+              ex.status === "complete"
+                ? ("complete" as const)
+                : ("pending" as const),
             loadContributionAu: ex.loadContributionAu || 0,
-            isHighIntensity: ex.isHighIntensity || false,
-          },
-          blockType: blockType as BlockType,
-          sequenceOrder: ex.sequenceOrder || index + 1,
-          prescribedSets: ex.prescribedSets || 1,
-          prescribedReps: ex.prescribedReps,
-          prescribedHoldSeconds: ex.prescribedHoldSeconds,
-          prescribedDurationSeconds: ex.prescribedDurationSeconds,
-          aiNote: ex.aiNote,
-          status:
-            ex.status === "complete"
-              ? ("complete" as const)
-              : ("pending" as const),
-          loadContributionAu: ex.loadContributionAu || 0,
-        }),
+          };
+        },
       );
 
       const completedCount = exercises.filter(
@@ -2017,8 +2058,8 @@ export class TodayComponent {
 
       return {
         type: blockType as BlockType,
-        title: apiBlock.title || title,
-        icon: apiBlock.icon || icon,
+        title: typeof apiBlock.title === "string" ? apiBlock.title : title,
+        icon: typeof apiBlock.icon === "string" ? apiBlock.icon : icon,
         status:
           completedCount === totalCount && totalCount > 0
             ? ("complete" as const)
@@ -2030,7 +2071,10 @@ export class TodayComponent {
         totalCount,
         progressPercent:
           totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0,
-        estimatedDurationMinutes: apiBlock.estimatedDurationMinutes,
+        estimatedDurationMinutes:
+          typeof apiBlock.estimatedDurationMinutes === "number"
+            ? apiBlock.estimatedDurationMinutes
+            : undefined,
       };
     };
 
@@ -2124,7 +2168,8 @@ export class TodayComponent {
       protocolDate: data.date,
       readinessScore: data.readinessScore ?? undefined,
       acwrValue: data.acwrValue ?? undefined,
-      trainingFocus: data.trainingFocus,
+      trainingFocus:
+        typeof data.trainingFocus === "string" ? data.trainingFocus : undefined,
       morningMobility,
       foamRoll,
       warmUp,
@@ -2353,9 +2398,13 @@ export class TodayComponent {
     loadingSignal: typeof this.isGeneratingProtocol,
     toast?: { success: string; detail: string },
   ): void {
-    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      next: (response: any) => {
+    const typedRequest = request as Observable<{
+      success?: boolean;
+      data?: Partial<DailyProtocol>;
+    }>;
+
+    typedRequest.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (response) => {
         if (response?.success && response.data) {
           targetSignal.set(response.data as Partial<DailyProtocol>);
           if (toast) {

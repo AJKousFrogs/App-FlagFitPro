@@ -14,7 +14,7 @@
 }
 
 .rich-text-editor {
-  border: 0.0625rem solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
   background: var(--surface-primary);
   overflow: hidden;
@@ -25,7 +25,7 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-2);
-  border-bottom: 0.0625rem solid var(--color-border-primary);
+  border-bottom: var(--border-1) solid var(--color-border-primary);
   background: var(--surface-secondary);
   flex-wrap: wrap;
 }
@@ -56,14 +56,14 @@
 }
 
 .toolbar-separator {
-  width: 0.0625rem;
+  width: var(--border-1);
   height: var(--space-6);
   background: var(--color-border-primary);
   margin: 0 var(--space-1);
 }
 
 .rich-text-content {
-  min-height: 12.5rem;
+  min-height: var(--chart-min-height-sm);
   max-height: 25rem;
   overflow-y: auto;
   padding: var(--space-4);

@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, computed, inject } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map } from "rxjs";
 import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 

@@ -26,7 +26,7 @@ import { InputText } from "primeng/inputtext";
 import { Menu } from "primeng/menu";
 import { Toolbar } from "primeng/toolbar";
 import { Tooltip } from "primeng/tooltip";
-import { filter } from "rxjs/operators";
+import { filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { HeaderService } from "../../../core/services/header.service";
 import { LoggerService } from "../../../core/services/logger.service";

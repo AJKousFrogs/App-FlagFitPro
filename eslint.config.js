@@ -18,7 +18,6 @@ export default [
       "**/*.ts",
       "**/*.tsx",
       "**/*.jsx",
-      "supabase-types.ts",
       "Wireframes clean/**",
       "consent-violations.json",
     ],
@@ -216,8 +215,6 @@ export default [
   {
     files: [
       "server.js",
-      "server-supabase.js",
-      "simple-server.js",
       "routes/**/*.js",
     ],
     rules: {

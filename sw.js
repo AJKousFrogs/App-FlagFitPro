@@ -11,7 +11,7 @@ const RUNTIME_CACHE = 'flagfit-runtime-v1.0.2';
 // ⚠️ UPDATED: Removed legacy src/css references (January 2026)
 // Angular app uses its own assets from angular/dist/
 const STATIC_ASSETS = [
-  '/manifest.json',
+  '/manifest.webmanifest',
   // Angular assets are handled by Angular Service Worker (ngsw-worker.js)
 ];
 

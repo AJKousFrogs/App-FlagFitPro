@@ -30,7 +30,7 @@
 
 .date-range-field {
   flex: 1;
-  min-width: 12.5rem;
+  min-width: var(--grid-card-min-sm);
 }
 
 .date-range-label {

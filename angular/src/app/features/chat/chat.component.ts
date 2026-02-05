@@ -1406,14 +1406,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     const userId = this.authService.getUser()?.id;
     if (!userId) return null;
 
-    const { data } = await this.channelService["supabase"].client
-      .from("team_members")
-      .select("team_id")
-      .eq("user_id", userId)
-      .limit(1)
-      .single();
-
-    return data?.team_id || null;
+    return await this.channelService.fetchCurrentTeamId();
   }
 
   sendQuickReply(reply: string): void {

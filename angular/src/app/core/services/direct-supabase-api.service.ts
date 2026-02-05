@@ -13,7 +13,7 @@
 
 import { Injectable, inject } from "@angular/core";
 import { Observable, firstValueFrom, from, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map } from "rxjs";
 import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";

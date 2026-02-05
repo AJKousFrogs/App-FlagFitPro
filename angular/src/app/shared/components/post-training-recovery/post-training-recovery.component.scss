@@ -214,7 +214,7 @@
 }
 
 .duration-number {
-  width: 8.75rem;
+  width: var(--grid-card-min-xs);
 }
 
 .load-preview {
@@ -249,7 +249,7 @@
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
-  min-height: 4.375rem;
+  min-height: var(--badge-min-width-md);
 }
 
 .soreness-button:hover {

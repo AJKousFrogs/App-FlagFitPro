@@ -1,0 +1,302 @@
+import { Injectable, inject } from "@angular/core";
+import { SupabaseService } from "../../../core/services/supabase.service";
+
+@Injectable({
+  providedIn: "root",
+})
+export class SettingsDataService {
+  private readonly supabaseService = inject(SupabaseService);
+
+  getCurrentUser() {
+    return this.supabaseService.getCurrentUser();
+  }
+
+  async updateAuthUser(payload: Record<string, unknown>) {
+    return await this.supabaseService.updateUser(payload);
+  }
+
+  async signOut() {
+    return await this.supabaseService.signOut();
+  }
+
+  async fetchUserProfile(userId: string): Promise<{
+    profile: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: profile, error } = await this.supabaseService.client
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
+    return { profile: (profile as Record<string, unknown>) ?? null, error };
+  }
+
+  async findUserRecord(userId: string): Promise<{
+    user: { id?: string } | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("users")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+    return { user: (data as { id?: string }) ?? null, error };
+  }
+
+  async updateUser(userId: string, updateData: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("users")
+      .update(updateData)
+      .eq("id", userId)
+      .select()
+      .maybeSingle();
+    return { data: (data as Record<string, unknown>) ?? null, error };
+  }
+
+  async insertUser(insertData: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("users")
+      .insert(insertData)
+      .select()
+      .maybeSingle();
+    return { data: (data as Record<string, unknown>) ?? null, error };
+  }
+
+  async fetchTeamMember(userId: string): Promise<{
+    member: { id?: string; team_id?: string } | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("team_members")
+      .select("id, team_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    return {
+      member: (data as { id?: string; team_id?: string }) ?? null,
+      error,
+    };
+  }
+
+  async deleteTeamMember(memberId: string): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client
+      .from("team_members")
+      .delete()
+      .eq("id", memberId);
+    return { error };
+  }
+
+  async insertTeamMember(data: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: result, error } = await this.supabaseService.client
+      .from("team_members")
+      .insert(data)
+      .select()
+      .maybeSingle();
+    return { data: (result as Record<string, unknown>) ?? null, error };
+  }
+
+  async updateTeamMember(memberId: string, data: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: result, error } = await this.supabaseService.client
+      .from("team_members")
+      .update(data)
+      .eq("id", memberId)
+      .select()
+      .maybeSingle();
+    return { data: (result as Record<string, unknown>) ?? null, error };
+  }
+
+  async fetchUserSettings(userId: string): Promise<{
+    settings: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("user_settings")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    return { settings: (data as Record<string, unknown>) ?? null, error };
+  }
+
+  async updateUserSettings(userId: string, data: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: result, error } = await this.supabaseService.client
+      .from("user_settings")
+      .update(data)
+      .eq("user_id", userId)
+      .select()
+      .maybeSingle();
+    return { data: (result as Record<string, unknown>) ?? null, error };
+  }
+
+  async insertUserSettings(data: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: result, error } = await this.supabaseService.client
+      .from("user_settings")
+      .insert(data)
+      .select()
+      .maybeSingle();
+    return { data: (result as Record<string, unknown>) ?? null, error };
+  }
+
+  async insertDeletionRequest(data: Record<string, unknown>): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client
+      .from("account_deletion_requests")
+      .insert(data);
+    return { error };
+  }
+
+  async upsertUserSecurity(data: Record<string, unknown>): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client
+      .from("user_security")
+      .upsert(data);
+    return { error };
+  }
+
+  async updateUserSecurity(userId: string, data: Record<string, unknown>): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client
+      .from("user_security")
+      .update(data)
+      .eq("user_id", userId);
+    return { error };
+  }
+
+  async fetchExportProfile(userId: string): Promise<{
+    profile: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
+    return { profile: (data as Record<string, unknown>) ?? null, error };
+  }
+
+  async fetchExportTraining(userId: string, limit: number): Promise<{
+    sessions: Record<string, unknown>[];
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("training_sessions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("session_date", { ascending: false })
+      .limit(limit);
+    return { sessions: (data as Record<string, unknown>[]) ?? [], error };
+  }
+
+  async fetchExportWellness(userId: string, limit: number): Promise<{
+    checkins: Record<string, unknown>[];
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("daily_wellness_checkin")
+      .select("*")
+      .eq("user_id", userId)
+      .order("checkin_date", { ascending: false })
+      .limit(limit);
+    return { checkins: (data as Record<string, unknown>[]) ?? [], error };
+  }
+
+  async fetchExportAchievements(userId: string): Promise<{
+    achievements: Record<string, unknown>[];
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("user_achievements")
+      .select("*")
+      .eq("user_id", userId);
+    return { achievements: (data as Record<string, unknown>[]) ?? [], error };
+  }
+
+  async fetchApprovedTeams(): Promise<{
+    teams: Array<{ id: string; name: string }>;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("teams")
+      .select("id, name")
+      .eq("approval_status", "approved")
+      .order("name");
+    return { teams: (data as Array<{ id: string; name: string }>) ?? [], error };
+  }
+
+  async createTeam(data: Record<string, unknown>): Promise<{
+    team: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: team, error } = await this.supabaseService.client
+      .from("teams")
+      .insert(data)
+      .select("id, name")
+      .maybeSingle();
+    return { team: (team as Record<string, unknown>) ?? null, error };
+  }
+
+  async insertApprovalRequest(data: Record<string, unknown>): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client
+      .from("approval_requests")
+      .insert(data);
+    return { error };
+  }
+
+  async invokeFunction(name: string, body: Record<string, unknown>): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client.functions.invoke(name, {
+      body,
+    });
+    return { error };
+  }
+
+  async fetchExistingMembership(input: {
+    userId: string;
+    teamId: string;
+  }): Promise<{ membership: { id?: string } | null; error: { message?: string } | null }> {
+    const { data, error } = await this.supabaseService.client
+      .from("team_members")
+      .select("id")
+      .eq("user_id", input.userId)
+      .eq("team_id", input.teamId)
+      .maybeSingle();
+    return { membership: (data as { id?: string }) ?? null, error };
+  }
+
+  async fetchOtherMembership(input: {
+    userId: string;
+    teamId: string;
+  }): Promise<{ membership: { id?: string } | null; error: { message?: string } | null }> {
+    const { data, error } = await this.supabaseService.client
+      .from("team_members")
+      .select("id, team_id")
+      .eq("user_id", input.userId)
+      .neq("team_id", input.teamId)
+      .maybeSingle();
+    return { membership: (data as { id?: string }) ?? null, error };
+  }
+}

@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { catchError, map, tap } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
@@ -20,6 +20,8 @@ export interface WellnessData {
   motivation?: number;
   mood?: number;
   hydration?: number;
+  weight?: number;
+  resting_hr?: number;
   notes?: string;
   timestamp?: string;
 }

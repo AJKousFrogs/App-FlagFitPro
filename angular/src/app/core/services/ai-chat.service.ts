@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { map, catchError, tap } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 
 /**

@@ -11,6 +11,8 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { TIMEOUTS } from "../constants/app.constants";
@@ -51,6 +53,7 @@ export interface QueuedAction {
   providedIn: "root",
 })
 export class OfflineQueueService {
+  private readonly http = inject(HttpClient);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
 
@@ -340,20 +343,17 @@ export class OfflineQueueService {
         }
       }
 
-      // Make API call
-      const response = await fetch(endpoint, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          // Add auth headers if available
-          ...this.getAuthHeaders(),
-        },
-        body: JSON.stringify(action.payload),
+      const headers = new HttpHeaders({
+        "Content-Type": "application/json",
+        ...this.getAuthHeaders(),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
+      await firstValueFrom(
+        this.http.request(method, endpoint, {
+          body: action.payload,
+          headers,
+        }),
+      );
 
       return true;
     } catch (error) {

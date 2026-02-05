@@ -40,13 +40,13 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-4) 0;
-  max-width: 12.5rem;
+  max-width: var(--grid-card-min-sm);
 }
 
 .primary-metric {
   text-align: center;
   padding: var(--space-4) 0;
-  border-bottom: 0.0625rem solid var(--color-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
   margin-bottom: var(--space-4);
 }
 

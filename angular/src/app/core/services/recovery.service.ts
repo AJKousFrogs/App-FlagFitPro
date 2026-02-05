@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { firstValueFrom, Observable, from, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";

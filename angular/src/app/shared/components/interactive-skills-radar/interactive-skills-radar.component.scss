@@ -63,12 +63,12 @@
   }
 
   .skills-breakdown {
-    flex: 0 0 21.875rem;
+    flex: 0 0 var(--grid-card-min-md-wide);
   }
 }
 
 @include respond-to(md) {
   .radar-container {
-    min-height: 18.75rem;
+    min-height: var(--chart-min-height-md);
   }
 }

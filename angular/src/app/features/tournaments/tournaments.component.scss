@@ -714,7 +714,7 @@
    ================================================================ */
 
 /* Extra Large Screens (> 87.5rem) */
-@media (min-width: 87.5rem) {
+@include respond-min(xxl-wide) {
   .tournaments-grid {
     grid-template-columns: repeat(3, 1fr);
   }

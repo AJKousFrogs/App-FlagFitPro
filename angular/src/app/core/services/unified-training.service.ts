@@ -6,7 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { Observable, combineLatest, firstValueFrom, from, of } from "rxjs";
-import { catchError, map, shareReplay, tap } from "rxjs/operators";
+import { catchError, map, shareReplay, tap } from "rxjs";
 
 import { COLORS } from "../constants/app.constants";
 import { WELLNESS } from "../constants/wellness.constants";

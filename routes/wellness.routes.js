@@ -11,11 +11,13 @@ import {
   authenticateToken,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
+  createErrorResponse,
   isValidUUID,
   sanitizeText,
   getErrorMessage,
@@ -47,11 +49,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = req.userId || req.query.userId;
 
@@ -101,11 +100,8 @@ router.post(
   "/checkin",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const targetUserId = req.userId;
       const checkinDate =
@@ -177,11 +173,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = req.userId || req.query.userId;
       if (!userId || !isValidUUID(userId)) {
@@ -291,11 +284,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = req.userId || req.query.userId;
       if (!userId || !isValidUUID(userId)) {
@@ -354,11 +344,8 @@ router.post(
   "/supplements/log",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { userId } = req;
       const { supplement, dosage, taken = true, notes } = req.body;
@@ -412,11 +399,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = req.userId || req.query.userId;
       if (!userId || !isValidUUID(userId)) {
@@ -472,11 +456,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = req.userId || req.query.userId;
       if (!userId || !isValidUUID(userId)) {
@@ -527,11 +508,8 @@ router.post(
   "/hydration/log",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { userId } = req;
       const { amount, type = "water" } = req.body;
@@ -592,12 +570,12 @@ router.post(
 // =============================================================================
 
 router.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: "Wellness endpoint not found",
-    code: "NOT_FOUND",
-    path: req.originalUrl,
-  });
+  const { response } = createErrorResponse(
+    "Wellness endpoint not found",
+    "NOT_FOUND",
+    404,
+  );
+  res.status(404).json({ ...response, path: req.originalUrl });
 });
 
 export default router;

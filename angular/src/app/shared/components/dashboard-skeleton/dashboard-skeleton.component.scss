@@ -43,7 +43,7 @@
 
 .stat-card-skeleton {
   background: var(--surface-card);
-  border: 0.0625rem solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   display: flex;
@@ -66,13 +66,16 @@
 // Content Grid
 .content-grid-skeleton {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18.75rem, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--grid-card-min-md-plus), 1fr)
+  );
   gap: var(--space-4);
 }
 
 .card-skeleton {
   background: var(--surface-card);
-  border: 0.0625rem solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   display: flex;
@@ -82,7 +85,7 @@
 
 .card-header-skeleton {
   padding-bottom: var(--space-2);
-  border-bottom: 0.0625rem solid var(--surface-border);
+  border-bottom: var(--border-1) solid var(--surface-border);
 }
 
 // Weekly Progress

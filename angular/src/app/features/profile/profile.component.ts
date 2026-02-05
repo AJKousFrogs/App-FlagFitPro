@@ -29,7 +29,6 @@ import {
   toLogContext,
 } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -43,6 +42,7 @@ import {
   DELETION_MESSAGES,
   getDeletionMessage,
 } from "../../shared/utils/privacy-ux-copy";
+import { ProfileDataService } from "./services/profile-data.service";
 
 interface PendingInvitation {
   id: string;
@@ -534,8 +534,8 @@ interface PendingInvitation {
 export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private apiService = inject(ApiService);
-  private supabaseService = inject(SupabaseService);
   private toastService = inject(ToastService);
+  private profileDataService = inject(ProfileDataService);
   private logger = inject(LoggerService);
   private accountDeletionService = inject(AccountDeletionService);
   private profileCompletionService = inject(ProfileCompletionService);
@@ -679,31 +679,21 @@ export class ProfileComponent implements OnInit {
     try {
       // Load real training sessions count
       // Using session_date (not scheduled_date) and correct column names
-      const { data: sessions, error: sessionsError } =
-        await this.supabaseService.client
-          .from("training_sessions")
-          .select("id, status, completed_at, session_date, duration_minutes")
-          .eq("user_id", user.id);
+      const { sessions, error: sessionsError } =
+        await this.profileDataService.fetchTrainingSessions(user.id);
 
       // Load games played count from game_participations table
       let gamesPlayed = 0;
       try {
-        const { data: gameParticipations, error: gamesError } =
-          await this.supabaseService.client
-            .from("game_participations")
-            .select("id, game_id, status")
-            .eq("player_id", user.id)
-            .eq("status", "played");
+        const { participations: gameParticipations, error: gamesError } =
+          await this.profileDataService.fetchGameParticipations(user.id);
 
         if (!gamesError && gameParticipations) {
           gamesPlayed = gameParticipations.length;
         } else {
           // Try alternate table name
-          const { data: games, error: altError } =
-            await this.supabaseService.client
-              .from("games")
-              .select("id")
-              .contains("participants", [user.id]);
+          const { games, error: altError } =
+            await this.profileDataService.fetchGamesByParticipant(user.id);
 
           if (!altError && games) {
             gamesPlayed = games.length;
@@ -728,26 +718,30 @@ export class ProfileComponent implements OnInit {
       }
 
       const completedSessions = (sessions || []).filter(
-        (s) => s.status === "completed",
+        (s) => s.status === "completed" && (s.completed_at || s.session_date),
       );
       const totalSessions = completedSessions.length;
 
       // Calculate streak
       let streak = 0;
-      const sortedSessions = [...completedSessions].sort(
-        (a, b) =>
-          new Date(b.completed_at || b.session_date).getTime() -
-          new Date(a.completed_at || a.session_date).getTime(),
-      );
+      const sortedSessions = [...completedSessions].sort((a, b) => {
+        const aDate = a.completed_at || a.session_date;
+        const bDate = b.completed_at || b.session_date;
+        if (!aDate && !bDate) return 0;
+        if (!aDate) return 1;
+        if (!bDate) return -1;
+        return new Date(bDate).getTime() - new Date(aDate).getTime();
+      });
 
       if (sortedSessions.length > 0) {
         let checkDate = new Date();
         checkDate.setHours(0, 0, 0, 0);
 
         for (const session of sortedSessions) {
-          const sessionDate = new Date(
-            session.completed_at || session.session_date,
-          );
+          const sessionDateValue =
+            session.completed_at || session.session_date;
+          if (!sessionDateValue) continue;
+          const sessionDate = new Date(sessionDateValue);
           sessionDate.setHours(0, 0, 0, 0);
 
           const daysDiff = Math.floor(
@@ -765,12 +759,8 @@ export class ProfileComponent implements OnInit {
       }
 
       // Load wellness data for performance score
-      const { data: wellness } = await this.supabaseService.client
-        .from("daily_wellness_checkin")
-        .select("energy_level, sleep_quality, checkin_date")
-        .eq("user_id", user.id)
-        .order("checkin_date", { ascending: false })
-        .limit(7);
+      const { entries: wellness } =
+        await this.profileDataService.fetchWellnessEntries(user.id);
 
       // Calculate performance score based on wellness and training
       // Only calculate if we have actual wellness data with real values
@@ -778,11 +768,14 @@ export class ProfileComponent implements OnInit {
       if (wellness && wellness.length > 0) {
         // Filter to only records that have at least one actual value (not null/undefined)
         const validRecords = wellness.filter(
-          (w: { energy_level?: number; sleep_quality?: number }) =>
-            w.energy_level !== null &&
-            w.energy_level !== undefined &&
-            w.sleep_quality !== null &&
-            w.sleep_quality !== undefined,
+          (
+            w,
+          ): w is {
+            energy_level: number;
+            sleep_quality: number;
+          } =>
+            typeof w.energy_level === "number" &&
+            typeof w.sleep_quality === "number",
         );
 
         if (validRecords.length > 0) {
@@ -875,14 +868,19 @@ export class ProfileComponent implements OnInit {
       const recentActivities = sortedSessions
         .slice(0, UI_LIMITS.RECENT_ACTIVITIES_COUNT)
         .map((session) => {
-          const date = new Date(session.completed_at || session.session_date);
+          const dateValue = session.completed_at || session.session_date;
+          if (!dateValue) return null;
+          const date = new Date(dateValue);
           const timeAgoStr = getTimeAgo(date);
           return {
             icon: "pi-play",
             title: `Completed ${session.duration_minutes || 0} min training`,
             time: timeAgoStr,
           };
-        });
+        })
+        .filter((activity): activity is NonNullable<typeof activity> =>
+          Boolean(activity),
+        );
 
       this.activities.set(recentActivities.length > 0 ? recentActivities : []);
 
@@ -1139,18 +1137,16 @@ export class ProfileComponent implements OnInit {
       const fileName = `${user.id}/avatar-${Date.now()}.${fileExt}`;
 
       // Upload to Supabase Storage
-      const { error: uploadError } = await this.supabaseService.client.storage
-        .from("avatars")
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
+      const { error: uploadError } = await this.profileDataService.uploadAvatar({
+        path: fileName,
+        file,
+      });
 
       if (uploadError) {
         // If bucket doesn't exist, show helpful message
         if (
-          uploadError.message.includes("bucket") ||
-          uploadError.message.includes("not found")
+          uploadError.message?.includes("bucket") ||
+          uploadError.message?.includes("not found")
         ) {
           this.toastService.error(
             "Avatar storage is not configured. Please contact support.",
@@ -1162,20 +1158,15 @@ export class ProfileComponent implements OnInit {
       }
 
       // Get public URL
-      const { data: urlData } = this.supabaseService.client.storage
-        .from("avatars")
-        .getPublicUrl(fileName);
-
-      const avatarUrl = urlData.publicUrl;
+      const { publicUrl: avatarUrl } =
+        this.profileDataService.getAvatarPublicUrl(fileName);
 
       // Update profile in database (use 'users' table - profiles doesn't exist)
-      const { error: updateError } = await this.supabaseService.client
-        .from("users")
-        .update({
-          profile_photo_url: avatarUrl,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
+      const { error: updateError } =
+        await this.profileDataService.updateProfilePhoto({
+          userId: user.id,
+          avatarUrl,
+        });
 
       if (updateError) {
         this.logger.warn(
@@ -1233,14 +1224,11 @@ export class ProfileComponent implements OnInit {
     try {
       // Load profile photo from database (profile_photo_url)
       // This ensures the avatar persists after refresh
-      const { data: userData } = await this.supabaseService.client
-        .from("users")
-        .select("profile_photo_url")
-        .eq("id", userId)
-        .maybeSingle();
+      const { profilePhotoUrl } =
+        await this.profileDataService.fetchProfilePhoto(userId);
 
-      if (userData?.profile_photo_url) {
-        this.avatarUrl.set(userData.profile_photo_url);
+      if (profilePhotoUrl) {
+        this.avatarUrl.set(profilePhotoUrl);
       }
 
       // Load team membership using centralized service
@@ -1277,9 +1265,7 @@ export class ProfileComponent implements OnInit {
 
       // Set member since from Supabase auth user if not set from team membership
       if (this.memberSince() === "Recently") {
-        const {
-          data: { user: authUser },
-        } = await this.supabaseService.client.auth.getUser();
+        const { user: authUser } = await this.profileDataService.getAuthUser();
         if (authUser?.created_at) {
           const date = new Date(authUser.created_at);
           this.memberSince.set(
@@ -1314,23 +1300,8 @@ export class ProfileComponent implements OnInit {
       }
 
       // Query invitations without the problematic join - invited_by doesn't have a FK relationship
-      const { data, error } = await this.supabaseService.client
-        .from("team_invitations")
-        .select(
-          `
-          id,
-          team_id,
-          role,
-          status,
-          expires_at,
-          created_at,
-          invited_by,
-          teams:team_id(name)
-        `,
-        )
-        .eq("email", user.email)
-        .in("status", ["pending", "expired"])
-        .order("created_at", { ascending: false });
+      const { invitations: data, error } =
+        await this.profileDataService.fetchPendingInvitations(user.email);
 
       if (error) {
         // Table doesn't exist or other non-critical error
@@ -1380,10 +1351,8 @@ export class ProfileComponent implements OnInit {
 
     try {
       // Call the accept_team_invitation function
-      const { error } = await this.supabaseService.client.rpc(
-        "accept_team_invitation",
-        { p_invitation_id: invitation.id },
-      );
+      const { error } =
+        await this.profileDataService.acceptInvitation(invitation.id);
 
       if (error) throw error;
 
@@ -1413,10 +1382,8 @@ export class ProfileComponent implements OnInit {
 
     try {
       // Call the decline_team_invitation function
-      const { error } = await this.supabaseService.client.rpc(
-        "decline_team_invitation",
-        { p_invitation_id: invitation.id },
-      );
+      const { error } =
+        await this.profileDataService.declineInvitation(invitation.id);
 
       if (error) throw error;
 

@@ -20,6 +20,7 @@ import { Timeline } from "primeng/timeline";
 import { Card } from "primeng/card";
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
+import { ApiResponse } from "../../../../core/models/common.models";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
 
 interface ProgramCycle {
@@ -392,8 +393,8 @@ export class La28RoadmapComponent {
 
   async loadCycles(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<PlayerCycle[] | null> =
+        await firstValueFrom(
         this.api.get("/api/program-cycles"),
       );
       if (response?.success && response.data) {

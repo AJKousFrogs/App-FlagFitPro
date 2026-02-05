@@ -24,9 +24,9 @@ import { InputText } from "primeng/inputtext";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../core/services/auth.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import {
   getFormControlError,
   isFormControlInvalid,
@@ -168,7 +168,7 @@ import {
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private supabaseService = inject(SupabaseService);
+  private authFlowDataService = inject(AuthFlowDataService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
@@ -277,11 +277,8 @@ export class LoginComponent {
             // Check onboarding status before redirecting
             const user = this.authService.currentUser();
             if (user) {
-              const { data: userData } = await this.supabaseService.client
-                .from("users")
-                .select("onboarding_completed")
-                .eq("id", user.id)
-                .single();
+              const { data: userData } =
+                await this.authFlowDataService.getUserOnboardingStatus(user.id);
 
               const returnUrl = this.route.snapshot.queryParams["returnUrl"];
 

@@ -8,8 +8,8 @@ import {
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { DashboardRoleService } from "./services/dashboard-role.service";
 
 /**
  * Dashboard Switcher
@@ -33,7 +33,7 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 })
 export class DashboardComponent implements OnInit {
   private authService = inject(AuthService);
-  private supabaseService = inject(SupabaseService);
+  private dashboardRoleService = inject(DashboardRoleService);
   private router = inject(Router);
 
   loadingMessage = signal("Redirecting...");
@@ -65,13 +65,11 @@ export class DashboardComponent implements OnInit {
     // Fallback: Check team_members for staff role (user_type is in auth metadata, not users table)
     // This handles cases where auth metadata wasn't updated properly
     try {
-      const { data: teamMembership } = await this.supabaseService.client
-        .from("team_members")
-        .select("role")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const { role } = await this.dashboardRoleService.getTeamMembershipRole(
+        user.id,
+      );
 
-      if (teamMembership && this.isCoachRole(teamMembership.role)) {
+      if (role && this.isCoachRole(role)) {
         this.loadingMessage.set("Loading your Coach Dashboard...");
         this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
         return;

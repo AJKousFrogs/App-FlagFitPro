@@ -8,6 +8,7 @@
 
 import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -36,11 +37,8 @@ router.get(
   "/performance-insights",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const exists = await supabase
         .from("nutrition_logs")

@@ -90,7 +90,7 @@
 }
 
 .calendar-grid.week-view .calendar-day {
-  min-height: 9.375rem;
+  min-height: var(--size-150);
 }
 
 .calendar-day {

@@ -25,6 +25,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { ChartSkeletonComponent } from "../chart-skeleton/chart-skeleton.component";
 import { LoggerService } from "../../../core/services/logger.service";
+import type { SimpleChartData } from "../../../core/models/chart.models";
 
 export interface ChartDatasetConfig {
   label?: string;
@@ -32,7 +33,7 @@ export interface ChartDatasetConfig {
   backgroundColor?: string | string[];
   borderColor?: string | string[];
   borderWidth?: number;
-  fill?: boolean;
+  fill?: boolean | string;
   tension?: number;
   [key: string]: unknown;
 }
@@ -137,7 +138,9 @@ export class LazyChartComponent implements OnInit, OnDestroy {
   type = input<"line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea">(
     "line",
   );
-  data = input<LazyChartData | Record<string, unknown> | null>(null);
+  data = input<LazyChartData | SimpleChartData | Record<string, unknown> | null>(
+    null,
+  );
   options = input<LazyChartOptionsInput>({});
   width = input<string>("100%");
   height = input<string>("300px");

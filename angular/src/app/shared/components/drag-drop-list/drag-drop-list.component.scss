@@ -13,7 +13,7 @@
 
 .list-section {
   flex: 1;
-  min-width: 18.75rem;
+  min-width: var(--grid-card-min-md-plus);
 }
 
 .list-title {
@@ -24,7 +24,7 @@
 }
 
 .drop-list {
-  min-height: 12.5rem;
+  min-height: var(--chart-min-height-sm);
   border: var(--border-2) dashed var(--color-border-primary);
   border-radius: var(--radius-md);
   padding: var(--space-3);

@@ -11,6 +11,7 @@ import {
   authenticateToken,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
@@ -18,6 +19,7 @@ import { safeParseInt } from "./utils/query-helper.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
+  createErrorResponse,
   safeAverage,
   safeParseFloat,
   getErrorMessage,
@@ -479,12 +481,9 @@ router.get(
   "/position-performance",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
     try {
-      if (!supabase) {
-        return sendError(res, "Database not configured", "DB_ERROR", 503);
-      }
-
       const hasTeamMembers = await tableExists("team_members");
       if (!hasTeamMembers) {
         return sendSuccess(res, { labels: [], values: [] });
@@ -596,12 +595,9 @@ router.get(
   "/speed-development",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
     try {
-      if (!supabase) {
-        return sendError(res, "Database not configured", "DB_ERROR", 503);
-      }
-
       const hasTests = await tableExists("performance_tests");
       if (!hasTests) {
         return sendSuccess(res, { labels: [], datasets: [] });
@@ -802,12 +798,12 @@ router.get(
 // =============================================================================
 
 router.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: "Analytics endpoint not found",
-    code: "NOT_FOUND",
-    path: req.originalUrl,
-  });
+  const { response } = createErrorResponse(
+    "Analytics endpoint not found",
+    "NOT_FOUND",
+    404,
+  );
+  res.status(404).json({ ...response, path: req.originalUrl });
 });
 
 export default router;

@@ -55,7 +55,7 @@
 }
 
 /* Responsive */
-@media (min-width: 87.5rem) {
+@include respond-min(xxl-wide) {
   .team-overview-grid {
     grid-template-columns: repeat(6, 1fr);
   }

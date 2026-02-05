@@ -12,6 +12,7 @@ import { TrainingStatsCalculationService } from "../../core/services/training-st
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { NotificationService } from "../../core/services/notification.service";
 import { ConfirmationService, MessageService } from "primeng/api";
 // Chart utility imports for mocking (prefixed to indicate mock usage)
 import type {
@@ -40,6 +41,7 @@ describe("AnalyticsComponent", () => {
   let mockTrainingStatsService: any;
   let mockTrainingDataService: any;
   let mockLoggerService: any;
+  let mockNotificationService: any;
 
   beforeEach(async () => {
     // Create mock services
@@ -84,6 +86,13 @@ describe("AnalyticsComponent", () => {
       warn: vi.fn(),
       debug: vi.fn(),
       success: vi.fn(),
+    };
+    mockNotificationService = {
+      info: vi.fn(),
+      success: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      notify: vi.fn(),
     };
 
     // Mock SupabaseService to prevent real initialization
@@ -131,6 +140,7 @@ describe("AnalyticsComponent", () => {
         },
         { provide: TrainingDataService, useValue: mockTrainingDataService },
         { provide: LoggerService, useValue: mockLoggerService },
+        { provide: NotificationService, useValue: mockNotificationService },
         { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: MessageService, useValue: mockMessageService },
         { provide: ConfirmationService, useValue: { confirm: vi.fn() } },
@@ -316,31 +326,25 @@ describe("AnalyticsComponent", () => {
 
   describe("Chart Customization Help", () => {
     it("should display chart interaction instructions", () => {
-      const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
-
       component.customizeChart("performance");
 
       expect(mockLoggerService.info).toHaveBeenCalledWith(
         "Customizing performance chart",
       );
-      expect(alertSpy).toHaveBeenCalled();
+      expect(mockNotificationService.info).toHaveBeenCalled();
 
-      const alertMessage = alertSpy.mock.calls[0][0] as string;
+      const alertMessage = mockNotificationService.info.mock.calls[0][0] as string;
       expect(alertMessage).toContain("Zoom:");
       expect(alertMessage).toContain("Pan:");
       expect(alertMessage).toContain("Legend:");
       expect(alertMessage).toContain("Export:");
       expect(alertMessage).toContain("Reset:");
-
-      alertSpy.mockRestore();
     });
 
     it("should include instructions for all interaction types", () => {
-      const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
-
       component.customizeChart("chemistry");
 
-      const alertMessage = alertSpy.mock.calls[0][0] as string;
+      const alertMessage = mockNotificationService.info.mock.calls[0][0] as string;
       expect(alertMessage).toContain("Scroll with mouse wheel to zoom");
       expect(alertMessage).toContain("Hold Shift + drag to pan");
       expect(alertMessage).toContain("Click legend items to show/hide");
@@ -350,8 +354,6 @@ describe("AnalyticsComponent", () => {
       expect(alertMessage).toContain(
         "Hover over data points to see trend information",
       );
-
-      alertSpy.mockRestore();
     });
   });
 

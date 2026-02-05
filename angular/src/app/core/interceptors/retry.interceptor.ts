@@ -27,7 +27,7 @@ import {
 } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError } from "rxjs";
 import { LoggerService } from "../services/logger.service";
 import { API, TIMEOUTS } from "../constants/app.constants";
 

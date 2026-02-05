@@ -31,8 +31,8 @@
 }
 
 .size-xl {
-  width: 12.5rem;
-  height: 12.5rem;
+  width: var(--chart-min-height-sm);
+  height: var(--chart-min-height-sm);
 }
 
 /* SVG */

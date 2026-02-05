@@ -9,12 +9,26 @@
 import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
+import {
+  COMMUNITY_DB_NOT_CONFIGURED_MESSAGE,
+  COMMUNITY_DB_OR_MISSING_COMMENT_ID_MESSAGE,
+  COMMUNITY_DB_OR_MISSING_DATA_MESSAGE,
+  COMMUNITY_DB_OR_MISSING_OPTION_ID_MESSAGE,
+  COMMUNITY_DB_OR_MISSING_POST_ID_MESSAGE,
+  COMMUNITY_DEFAULT_TOPICS,
+  COMMUNITY_EMPTY_COMMENTS_RESPONSE,
+  COMMUNITY_EMPTY_FEED_RESPONSE,
+  COMMUNITY_EMPTY_LIST_RESPONSE,
+  COMMUNITY_EMPTY_POLL_RESPONSE,
+} from "./utils/community-defaults.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
+  createSuccessResponse,
   getErrorMessage,
   sendError,
   sendErrorResponse,
+  sendSuccess,
   validatePagination,
 } from "./utils/validation.js";
 
@@ -68,11 +82,11 @@ async function getCommunityFeed(req, res) {
     const offset = Math.max(0, parseInt(req.query.offset, 10) || 0);
 
     if (!supabase) {
-      return res.json({
-        success: true,
-        data: { posts: [] },
-        message: "Database not configured",
-      });
+      return sendSuccess(
+        res,
+        COMMUNITY_EMPTY_FEED_RESPONSE,
+        COMMUNITY_DB_NOT_CONFIGURED_MESSAGE,
+      );
     }
 
     // Get user's team(s) to filter posts
@@ -157,10 +171,7 @@ async function getCommunityFeed(req, res) {
       isBookmarked: bookmarkedPostIds.has(post.id),
     }));
 
-    res.json({
-      success: true,
-      data: { posts: postsWithLikes },
-    });
+    return sendSuccess(res, { posts: postsWithLikes });
   } catch (error) {
     const errorMessage = getErrorMessage(
       error,
@@ -188,16 +199,16 @@ async function createCommunityPost(req, res) {
     const { content, location, media_url, media_type, post_type } = req.body;
 
     if (!supabase) {
-      return res.json({
-        success: true,
-        data: {
+      return sendSuccess(
+        res,
+        {
           id: Date.now().toString(),
           content,
           location,
           authorName: "You",
         },
-        message: "Database not configured",
-      });
+        COMMUNITY_DB_NOT_CONFIGURED_MESSAGE,
+      );
     }
 
     // Get user's primary team
@@ -234,21 +245,15 @@ async function createCommunityPost(req, res) {
       throw error;
     }
 
-    res.json({
-      success: true,
-      data: {
-        id: post.id,
-        content: post.content,
-        location: post.location,
-        authorName: post.users?.full_name || post.users?.email || "You",
-      },
+    return sendSuccess(res, {
+      id: post.id,
+      content: post.content,
+      location: post.location,
+      authorName: post.users?.full_name || post.users?.email || "You",
     });
   } catch (error) {
     logError("Error creating community post", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to create post",
-    });
+    return sendError(res, "Failed to create post", "CREATE_ERROR", 500);
   }
 }
 
@@ -263,10 +268,7 @@ async function togglePostLike(req, res) {
     const { postId } = req.query;
 
     if (!supabase || !postId) {
-      return res.json({
-        success: true,
-        message: "Database not configured or missing postId",
-      });
+      return sendSuccess(res, null, COMMUNITY_DB_OR_MISSING_POST_ID_MESSAGE);
     }
 
     // Check if like exists
@@ -288,10 +290,10 @@ async function togglePostLike(req, res) {
       });
     }
 
-    res.json({ success: true });
+    return sendSuccess(res, null);
   } catch (error) {
     logError("Error toggling post like", error);
-    res.json({ success: true, message: "Could not update like" });
+    return sendSuccess(res, null, "Could not update like");
   }
 }
 
@@ -306,10 +308,7 @@ async function togglePostBookmark(req, res) {
     const { postId } = req.query;
 
     if (!supabase || !postId) {
-      return res.json({
-        success: true,
-        message: "Database not configured or missing postId",
-      });
+      return sendSuccess(res, null, COMMUNITY_DB_OR_MISSING_POST_ID_MESSAGE);
     }
 
     // Check if bookmark exists
@@ -334,13 +333,10 @@ async function togglePostBookmark(req, res) {
       });
     }
 
-    res.json({ success: true });
+    return sendSuccess(res, null);
   } catch (error) {
     logError("Error toggling bookmark", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to update bookmark",
-    });
+    return sendError(res, "Failed to update bookmark", "UPDATE_ERROR", 500);
   }
 }
 
@@ -354,11 +350,11 @@ async function getPostComments(req, res) {
     const { postId } = req.query;
 
     if (!supabase || !postId) {
-      return res.json({
-        success: true,
-        data: { comments: [] },
-        message: "Database not configured or missing postId",
-      });
+      return sendSuccess(
+        res,
+        COMMUNITY_EMPTY_COMMENTS_RESPONSE,
+        COMMUNITY_DB_OR_MISSING_POST_ID_MESSAGE,
+      );
     }
 
     const { data: comments, error } = await supabase
@@ -387,17 +383,14 @@ async function getPostComments(req, res) {
       timeAgo: getRelativeTime(new Date(c.created_at)),
     }));
 
-    res.json({
-      success: true,
-      data: { comments: formattedComments },
-    });
+    return sendSuccess(res, { comments: formattedComments });
   } catch (error) {
     logError("Error fetching comments", error);
-    res.json({
-      success: true,
-      data: { comments: [] },
-      message: "Could not load comments",
-    });
+    return sendSuccess(
+      res,
+      COMMUNITY_EMPTY_COMMENTS_RESPONSE,
+      "Could not load comments",
+    );
   }
 }
 
@@ -413,11 +406,11 @@ async function addPostComment(req, res) {
     const { content } = req.body;
 
     if (!supabase || !postId || !content) {
-      return res.json({
-        success: true,
-        data: { id: Date.now().toString() },
-        message: "Database not configured or missing data",
-      });
+      return sendSuccess(
+        res,
+        { id: Date.now().toString() },
+        COMMUNITY_DB_OR_MISSING_DATA_MESSAGE,
+      );
     }
 
     const { data: comment, error } = await supabase
@@ -440,19 +433,13 @@ async function addPostComment(req, res) {
       throw error;
     }
 
-    res.json({
-      success: true,
-      data: {
-        id: comment.id,
-        author: comment.users?.full_name || comment.users?.email || "You",
-      },
+    return sendSuccess(res, {
+      id: comment.id,
+      author: comment.users?.full_name || comment.users?.email || "You",
     });
   } catch (error) {
     logError("Error adding comment", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to add comment",
-    });
+    return sendError(res, "Failed to add comment", "CREATE_ERROR", 500);
   }
 }
 
@@ -467,10 +454,7 @@ async function toggleCommentLike(req, res) {
     const { commentId } = req.query;
 
     if (!supabase || !commentId) {
-      return res.json({
-        success: true,
-        message: "Database not configured or missing commentId",
-      });
+      return sendSuccess(res, null, COMMUNITY_DB_OR_MISSING_COMMENT_ID_MESSAGE);
     }
 
     // Check if like exists
@@ -502,10 +486,10 @@ async function toggleCommentLike(req, res) {
       });
     }
 
-    res.json({ success: true });
+    return sendSuccess(res, null);
   } catch (error) {
     logError("Error toggling comment like", error);
-    res.json({ success: true, message: "Could not update comment like" });
+    return sendSuccess(res, null, "Could not update comment like");
   }
 }
 
@@ -518,11 +502,11 @@ async function getLeaderboard(req, res) {
     logRequest(req, "GET /api/community?leaderboard=true");
 
     if (!supabase) {
-      return res.json({
-        success: true,
-        data: [],
-        message: "Database not configured",
-      });
+      return sendSuccess(
+        res,
+        COMMUNITY_EMPTY_LIST_RESPONSE,
+        COMMUNITY_DB_NOT_CONFIGURED_MESSAGE,
+      );
     }
 
     const thirtyDaysAgo = new Date();
@@ -564,17 +548,10 @@ async function getLeaderboard(req, res) {
         points: u.points,
       }));
 
-    res.json({
-      success: true,
-      data: ranked,
-    });
+    return sendSuccess(res, ranked);
   } catch (error) {
     logError("Error fetching leaderboard", error);
-    res.json({
-      success: true,
-      data: [],
-      message: "No data available",
-    });
+    return sendSuccess(res, COMMUNITY_EMPTY_LIST_RESPONSE, "No data available");
   }
 }
 
@@ -587,9 +564,9 @@ async function getTrendingTopics(req, res) {
     logRequest(req, "GET /api/community?trending=true");
 
     if (!supabase) {
-      return res.json({
-        success: true,
-        data: {
+      return sendSuccess(
+        res,
+        {
           topics: [
             { name: "Training", count: 45 },
             { name: "GameDay", count: 38 },
@@ -598,8 +575,8 @@ async function getTrendingTopics(req, res) {
             { name: "Fitness", count: 15 },
           ],
         },
-        message: "Database not configured",
-      });
+        COMMUNITY_DB_NOT_CONFIGURED_MESSAGE,
+      );
     }
 
     const { data: topics, error } = await supabase
@@ -613,33 +590,18 @@ async function getTrendingTopics(req, res) {
       throw error;
     }
 
-    res.json({
-      success: true,
-      data: {
-        topics: topics || [
-          { name: "Training", count: 45 },
-          { name: "GameDay", count: 38 },
-          { name: "Quarterback", count: 27 },
-          { name: "Defense", count: 19 },
-          { name: "Fitness", count: 15 },
-        ],
-      },
+    return sendSuccess(res, {
+      topics: topics || COMMUNITY_DEFAULT_TOPICS,
     });
   } catch (error) {
     logError("Error fetching trending topics", error);
-    res.json({
-      success: true,
-      data: {
-        topics: [
-          { name: "Training", count: 45 },
-          { name: "GameDay", count: 38 },
-          { name: "Quarterback", count: 27 },
-          { name: "Defense", count: 19 },
-          { name: "Fitness", count: 15 },
-        ],
+    return sendSuccess(
+      res,
+      {
+        topics: COMMUNITY_DEFAULT_TOPICS,
       },
-      message: "Using default topics",
-    });
+      "Using default topics",
+    );
   }
 }
 
@@ -654,11 +616,11 @@ async function votePoll(req, res) {
     const { optionId } = req.query;
 
     if (!supabase || !optionId) {
-      return res.json({
-        success: true,
-        data: { options: [], totalVotes: 0 },
-        message: "Database not configured or missing optionId",
-      });
+      return sendSuccess(
+        res,
+        COMMUNITY_EMPTY_POLL_RESPONSE,
+        COMMUNITY_DB_OR_MISSING_OPTION_ID_MESSAGE,
+      );
     }
 
     // Check if user already voted
@@ -670,10 +632,7 @@ async function votePoll(req, res) {
       .single();
 
     if (existingVote) {
-      return res.json({
-        success: false,
-        error: "Already voted",
-      });
+      return sendError(res, "Already voted", "ALREADY_VOTED", 200);
     }
 
     // Add vote
@@ -707,26 +666,20 @@ async function votePoll(req, res) {
       0,
     );
 
-    res.json({
-      success: true,
-      data: {
-        options: allOptions?.map((opt) => ({
-          id: opt.id,
-          text: opt.option_text,
-          votes: opt.votes_count || 0,
-          percentage: totalVotes
-            ? Math.round((opt.votes_count / totalVotes) * 100)
-            : 0,
-        })),
-        totalVotes,
-      },
+    return sendSuccess(res, {
+      options: allOptions?.map((opt) => ({
+        id: opt.id,
+        text: opt.option_text,
+        votes: opt.votes_count || 0,
+        percentage: totalVotes
+          ? Math.round((opt.votes_count / totalVotes) * 100)
+          : 0,
+      })),
+      totalVotes,
     });
   } catch (error) {
     logError("Error voting on poll", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to record vote",
-    });
+    return sendError(res, "Failed to record vote", "CREATE_ERROR", 500);
   }
 }
 
@@ -837,8 +790,9 @@ router.get("/", authenticateToken, async (req, res) => {
   }
 
   // Default: return API status with migration notice
+  const response = createSuccessResponse(null);
   res.json({
-    success: true,
+    ...response,
     status: "Community API is running",
     version: "2.0.0",
     migration_notice:

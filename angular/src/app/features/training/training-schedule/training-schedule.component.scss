@@ -34,7 +34,10 @@
 
 .training-hub-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--grid-card-min-sm), 1fr)
+  );
   gap: var(--space-3);
 }
 
@@ -44,7 +47,7 @@
   gap: var(--space-1);
   padding: var(--space-4);
   border-radius: var(--radius-md);
-  border: 0.0625rem solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   background: var(--surface-card);
   color: inherit;
   text-decoration: none;
@@ -54,7 +57,7 @@
 }
 
 .training-hub-link:hover {
-  transform: translateY(-0.125rem);
+  transform: var(--transform-hover-lift);
   box-shadow: var(--shadow-sm);
 }
 

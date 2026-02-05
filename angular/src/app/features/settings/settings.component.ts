@@ -37,13 +37,13 @@ import {
 } from "../../core/services/logger.service";
 import { PlatformService } from "../../core/services/platform.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { SettingsDataService } from "./services/settings-data.service";
 import {
   ButtonComponent,
   CardComponent,
@@ -90,7 +90,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
-  private supabaseService = inject(SupabaseService);
+  private settingsDataService = inject(SettingsDataService);
   private toastService = inject(ToastService);
   private themeService = inject(ThemeService);
   private logger = inject(LoggerService);
@@ -743,15 +743,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    */
   private async loadProfileData(): Promise<void> {
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) return;
 
       // Use 'users' table instead of 'profiles' (which doesn't exist)
-      const { data: profile, error } = await this.supabaseService.client
-        .from("users")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
+      const { profile, error } =
+        await this.settingsDataService.fetchUserProfile(user.id);
 
       if (!error && profile) {
         this.logger.debug("[Settings] Loaded user profile:", {
@@ -760,14 +757,17 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         });
 
         // Patch form with existing data (map users columns to form fields)
+        const dateOfBirthValue =
+          typeof profile.date_of_birth === "string"
+            ? new Date(profile.date_of_birth)
+            : null;
+
         this.profileForm.patchValue({
           displayName:
             profile.full_name ||
             `${profile.first_name || ""} ${profile.last_name || ""}`.trim() ||
             this.profileForm.get("displayName")?.value,
-          dateOfBirth: profile.date_of_birth
-            ? new Date(profile.date_of_birth)
-            : null,
+          dateOfBirth: dateOfBirthValue,
           position: profile.position || "",
           jerseyNumber: profile.jersey_number?.toString() || "",
           heightCm: profile.height_cm || null,
@@ -860,7 +860,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     };
 
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) {
         this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
@@ -926,13 +926,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         // CRITICAL: Check if user exists, then INSERT or UPDATE accordingly
         // This ensures user record is created if it doesn't exist
-        const { data } = await this.supabaseService.client
-          .from("users")
-          .select("id")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        existingUser = data as ExistingUser;
+        const { user: foundUser } =
+          await this.settingsDataService.findUserRecord(user.id);
+        existingUser = foundUser as ExistingUser;
 
         this.logger.info("User exists check:", { exists: !!existingUser });
 
@@ -942,13 +938,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         if (existingUser) {
           // User exists - UPDATE
           this.logger.info("User exists in users table, updating...");
-          const result = await this.supabaseService.client
-            .from("users")
-            .update(updateData)
-            .eq("id", user.id)
-            .select()
-            .maybeSingle();
-
+          const result = await this.settingsDataService.updateUser(
+            user.id,
+            updateData,
+          );
           upsertedUser = result.data;
           profileError = result.error;
         } else {
@@ -961,12 +954,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             // Don't include password_hash - it's nullable now and managed by Supabase Auth
           };
 
-          const result = await this.supabaseService.client
-            .from("users")
-            .insert(insertData)
-            .select()
-            .maybeSingle();
-
+          const result = await this.settingsDataService.insertUser(insertData);
           upsertedUser = result.data;
           profileError = result.error;
         }
@@ -991,11 +979,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         // ALWAYS update team_members if user has an existing membership
         // This ensures position/jersey/team stay in sync
-        const { data: existingTeamMember } = await this.supabaseService.client
-          .from("team_members")
-          .select("id, team_id")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        const { member: existingTeamMember } =
+          await this.settingsDataService.fetchTeamMember(user.id);
 
         if (existingTeamMember) {
           const parsedJersey = settings.profile.jerseyNumber
@@ -1025,10 +1010,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             }
 
             // Delete old membership
-            const { error: deleteError } = await this.supabaseService.client
-              .from("team_members")
-              .delete()
-              .eq("id", existingTeamMember.id);
+            if (!existingTeamMember.id) {
+              this.logger.warn("Existing team member missing ID");
+              return;
+            }
+
+            const { error: deleteError } =
+              await this.settingsDataService.deleteTeamMember(
+                existingTeamMember.id,
+              );
 
             if (deleteError) {
               this.logger.error(
@@ -1042,18 +1032,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
             // Create new membership in new team
             const { data: newMember, error: insertError } =
-              await this.supabaseService.client
-                .from("team_members")
-                .insert({
-                  user_id: user.id,
-                  team_id: newTeamId,
-                  role: "player",
-                  position: settings.profile.position || null,
-                  jersey_number: parsedJersey,
-                  status: "active",
-                })
-                .select()
-                .maybeSingle();
+              await this.settingsDataService.insertTeamMember({
+                user_id: user.id,
+                team_id: newTeamId,
+                role: "player",
+                position: settings.profile.position || null,
+                jersey_number: parsedJersey,
+                status: "active",
+              });
 
             if (insertError) {
               this.logger.error(
@@ -1071,17 +1057,20 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             );
           } else {
             // Same team, just update position/jersey
+            if (!existingTeamMember.id) {
+              this.logger.warn("Existing team member missing ID");
+              return;
+            }
+
             const { data: updatedMember, error: memberError } =
-              await this.supabaseService.client
-                .from("team_members")
-                .update({
+              await this.settingsDataService.updateTeamMember(
+                existingTeamMember.id,
+                {
                   position: settings.profile.position || null,
                   jersey_number: parsedJersey,
                   updated_at: new Date().toISOString(),
-                })
-                .eq("id", existingTeamMember.id)
-                .select()
-                .maybeSingle();
+                },
+              );
 
             if (memberError) {
               this.logger.error(
@@ -1120,7 +1109,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Also update auth user metadata with display name
       try {
         const { data: authData, error: authError } =
-          await this.supabaseService.updateUser({
+          await this.settingsDataService.updateAuthUser({
             data: {
               full_name: settings.profile.displayName,
               name: settings.profile.displayName,
@@ -1155,11 +1144,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         this.logger.info("Upserting user_settings:", settingsData);
 
         // Check if settings record exists first
-        const { data: existingSettings } = await this.supabaseService.client
-          .from("user_settings")
-          .select("user_id")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        const { settings: existingSettings } =
+          await this.settingsDataService.fetchUserSettings(user.id);
 
         let settingsResult;
         let settingsError;
@@ -1167,9 +1153,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         if (existingSettings) {
           // Settings exist - UPDATE
           this.logger.info("User settings exist, updating...");
-          const result = await this.supabaseService.client
-            .from("user_settings")
-            .update({
+          const result = await this.settingsDataService.updateUserSettings(
+            user.id,
+            {
               email_notifications: settings.notifications.emailNotifications,
               push_notifications: settings.notifications.pushNotifications,
               training_reminders: settings.notifications.trainingReminders,
@@ -1178,21 +1164,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
               theme: settings.preferences.theme,
               language: settings.preferences.language,
               updated_at: new Date().toISOString(),
-            })
-            .eq("user_id", user.id)
-            .select()
-            .maybeSingle();
+            },
+          );
 
           settingsResult = result.data;
           settingsError = result.error;
         } else {
           // Settings don't exist - INSERT
           this.logger.info("User settings don't exist, inserting...");
-          const result = await this.supabaseService.client
-            .from("user_settings")
-            .insert(settingsData)
-            .select()
-            .maybeSingle();
+          const result =
+            await this.settingsDataService.insertUserSettings(settingsData);
 
           settingsResult = result.data;
           settingsError = result.error;
@@ -1215,7 +1196,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       if (settings.profile.email !== this.authService.getUser()?.email) {
         try {
           this.logger.info("Updating email to:", settings.profile.email);
-          const { error: emailError } = await this.supabaseService.updateUser({
+          const { error: emailError } =
+            await this.settingsDataService.updateAuthUser({
             email: settings.profile.email,
           });
 
@@ -1278,7 +1260,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     try {
       const { newPassword } = this.passwordForm.value;
 
-      const { error } = await this.supabaseService.updateUser({
+      const { error } = await this.settingsDataService.updateAuthUser({
         password: newPassword,
       });
 
@@ -1315,16 +1297,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // In production, implement a proper account deletion flow
 
       // Call backend to delete user data
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) {
         throw new Error("No user logged in");
       }
 
       // Note: Full account deletion should use account_deletion_requests table
       // This just marks the user as inactive - actual deletion requires admin processing
-      const { error: deleteError } = await this.supabaseService.client
-        .from("account_deletion_requests")
-        .insert({
+      const { error: deleteError } =
+        await this.settingsDataService.insertDeletionRequest({
           user_id: user.id,
           reason: "User requested deletion",
           status: "pending",
@@ -1339,7 +1320,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       }
 
       // Sign out the user
-      await this.supabaseService.signOut();
+      await this.settingsDataService.signOut();
 
       this.toastService.success(
         "Your account deletion request has been submitted. You will receive a confirmation email.",
@@ -1371,7 +1352,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
   private async generate2FASecret(): Promise<void> {
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) return;
 
       // In a real implementation, this would call a backend endpoint
@@ -1421,7 +1402,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.twoFAError.set("");
 
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) throw new Error("Not logged in");
 
       // In production, verify the code server-side
@@ -1429,14 +1410,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // The server would use speakeasy.totp.verify()
 
       // Save 2FA settings to database
-      const { error } = await this.supabaseService.client
-        .from("user_security")
-        .upsert({
-          user_id: user.id,
-          two_factor_enabled: true,
-          two_factor_secret: this.twoFASecret(), // In production, encrypt this
-          updated_at: new Date().toISOString(),
-        });
+      const { error } = await this.settingsDataService.upsertUserSecurity({
+        user_id: user.id,
+        two_factor_enabled: true,
+        two_factor_secret: this.twoFASecret(), // In production, encrypt this
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         // Table might not exist, create it or handle gracefully
@@ -1511,18 +1490,18 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.isDisabling2FA.set(true);
 
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) throw new Error("Not logged in");
 
       // In production, verify the code first
-      const { error } = await this.supabaseService.client
-        .from("user_security")
-        .update({
+      const { error } = await this.settingsDataService.updateUserSecurity(
+        user.id,
+        {
           two_factor_enabled: false,
           two_factor_secret: null,
           updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
+        },
+      );
 
       if (error) {
         this.logger.warn("Could not disable 2FA:", toLogContext(error.message));
@@ -1645,7 +1624,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     }, TIMEOUTS.SLOW_OPERATION_THRESHOLD);
 
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) {
         this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
@@ -1665,11 +1644,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       if (this.exportOptions.profile) {
         this.exportProgress.set((progress += 100 / totalSteps));
-        const { data: profile } = await this.supabaseService.client
-          .from("users")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+        const { profile } =
+          await this.settingsDataService.fetchExportProfile(user.id);
         if (profile) {
           exportData.profile = {
             fullName: profile.full_name,
@@ -1687,32 +1663,26 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       if (this.exportOptions.training) {
         this.exportProgress.set((progress += 100 / totalSteps));
-        const { data: sessions } = await this.supabaseService.client
-          .from("training_sessions")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("session_date", { ascending: false })
-          .limit(UI_LIMITS.EXPORT_SESSIONS_MAX);
+        const { sessions } = await this.settingsDataService.fetchExportTraining(
+          user.id,
+          UI_LIMITS.EXPORT_SESSIONS_MAX,
+        );
         exportData.trainingSessions = sessions || [];
       }
 
       if (this.exportOptions.wellness) {
         this.exportProgress.set((progress += 100 / totalSteps));
-        const { data: wellness } = await this.supabaseService.client
-          .from("daily_wellness_checkin")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("checkin_date", { ascending: false })
-          .limit(UI_LIMITS.EXPORT_WELLNESS_MAX);
-        exportData.wellnessCheckins = wellness || [];
+        const { checkins } = await this.settingsDataService.fetchExportWellness(
+          user.id,
+          UI_LIMITS.EXPORT_WELLNESS_MAX,
+        );
+        exportData.wellnessCheckins = checkins || [];
       }
 
       if (this.exportOptions.achievements) {
         this.exportProgress.set((progress += 100 / totalSteps));
-        const { data: achievements } = await this.supabaseService.client
-          .from("user_achievements")
-          .select("*")
-          .eq("user_id", user.id);
+        const { achievements } =
+          await this.settingsDataService.fetchExportAchievements(user.id);
         exportData.achievements = achievements || [];
       }
 
@@ -1859,11 +1829,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    */
   private async loadAvailableTeams(): Promise<void> {
     try {
-      const { data: teams, error } = await this.supabaseService.client
-        .from("teams")
-        .select("id, name")
-        .eq("approval_status", "approved")
-        .order("name");
+      const { teams, error } =
+        await this.settingsDataService.fetchApprovedTeams();
 
       if (error) {
         this.logger.warn("Could not load teams:", toLogContext(error.message));
@@ -1916,24 +1883,20 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.isSubmittingTeamRequest.set(true);
 
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.settingsDataService.getCurrentUser();
       if (!user) {
         this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
 
       // Create the team with pending_approval status
-      const { data: newTeam, error: teamError } =
-        await this.supabaseService.client
-          .from("teams")
-          .insert({
-            name: this.newTeamName.trim(),
-            approval_status: "pending_approval",
-            application_notes: this.newTeamNotes.trim() || null,
-            coach_id: user.id,
-          })
-          .select("id, name")
-          .maybeSingle();
+      const { team: newTeam, error: teamError } =
+        await this.settingsDataService.createTeam({
+          name: this.newTeamName.trim(),
+          approval_status: "pending_approval",
+          application_notes: this.newTeamNotes.trim() || null,
+          coach_id: user.id,
+        });
 
       if (teamError) {
         throw new Error(teamError.message);
@@ -1944,7 +1907,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       }
 
       // Create an approval request record
-      await this.supabaseService.client.from("approval_requests").insert({
+      await this.settingsDataService.insertApprovalRequest({
         request_type: "new_team",
         team_id: newTeam.id,
         user_id: user.id,
@@ -1989,15 +1952,13 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   ): Promise<void> {
     try {
       // Call edge function to send email
-      const { error } = await this.supabaseService.client.functions.invoke(
+      const { error } = await this.settingsDataService.invokeFunction(
         "send-team-approval-notification",
         {
-          body: {
-            teamName,
-            requestedBy: user.email || "Unknown user",
-            requestedById: user.id,
-            adminEmail: "merlin@ljubljanafrogs.si",
-          },
+          teamName,
+          requestedBy: user.email || "Unknown user",
+          requestedById: user.id,
+          adminEmail: "merlin@ljubljanafrogs.si",
         },
       );
 
@@ -2042,46 +2003,44 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       }
 
       // Fallback: Check if user already has a membership in this team
-      const { data: existingMembership } = await this.supabaseService.client
-        .from("team_members")
-        .select("id")
-        .eq("user_id", userId)
-        .eq("team_id", teamId)
-        .maybeSingle();
+      const { membership: existingMembership } =
+        await this.settingsDataService.fetchExistingMembership({
+          userId,
+          teamId,
+        });
 
       if (existingMembership) {
         // Update existing membership
-        await this.supabaseService.client
-          .from("team_members")
-          .update({
+        await this.settingsDataService.updateTeamMember(
+          existingMembership.id as string,
+          {
             position: position || null,
             jersey_number: parsedJersey,
             updated_at: new Date().toISOString(),
-          })
-          .eq("id", existingMembership.id);
+          },
+        );
       } else {
         // Check if user has membership in another team
-        const { data: otherMembership } = await this.supabaseService.client
-          .from("team_members")
-          .select("id, team_id")
-          .eq("user_id", userId)
-          .neq("team_id", teamId)
-          .maybeSingle();
+        const { membership: otherMembership } =
+          await this.settingsDataService.fetchOtherMembership({
+            userId,
+            teamId,
+          });
 
         if (otherMembership) {
           // Update to new team (effectively transfer)
-          await this.supabaseService.client
-            .from("team_members")
-            .update({
+          await this.settingsDataService.updateTeamMember(
+            otherMembership.id as string,
+            {
               team_id: teamId,
               position: position || null,
               jersey_number: parsedJersey,
               updated_at: new Date().toISOString(),
-            })
-            .eq("id", otherMembership.id);
+            },
+          );
         } else {
           // Create new membership
-          await this.supabaseService.client.from("team_members").insert({
+          await this.settingsDataService.insertTeamMember({
             user_id: userId,
             team_id: teamId,
             role: "player",

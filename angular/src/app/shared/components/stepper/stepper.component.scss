@@ -222,7 +222,7 @@
 
   .step-label {
     font-size: var(--ds-font-size-compact-md); /* 0.6875rem */
-    max-width: 4.375rem;
+    max-width: var(--badge-min-width-md);
   }
 
   .step-connector {

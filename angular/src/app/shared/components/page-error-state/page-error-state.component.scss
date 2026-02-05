@@ -13,7 +13,7 @@
   justify-content: center;
   padding: var(--space-8);
   text-align: center;
-  min-height: 12.5rem;
+  min-height: var(--chart-min-height-sm);
 }
 
 .error-state__icon {
@@ -34,7 +34,7 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-4) 0;
-  max-width: 18.75rem;
+  max-width: var(--grid-card-min-md-plus);
   line-height: var(--ds-line-height-normal);
 }
 

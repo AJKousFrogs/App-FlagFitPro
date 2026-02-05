@@ -91,14 +91,19 @@ echo ""
 echo -e "${BLUE}2. Checking TypeScript Types${NC}"
 echo "-----------------------------------"
 
-check_ts_types "full_name"
-check_ts_types "jersey_number"
-check_ts_types "phone"
-check_ts_types "date_of_birth"
+if [ -f "supabase-types.ts" ]; then
+  check_ts_types "full_name"
+  check_ts_types "jersey_number"
+  check_ts_types "phone"
+  check_ts_types "date_of_birth"
 
-# Check if old name still exists (should not after types are regenerated)
-if grep -q "birth_date:" "supabase-types.ts" 2>/dev/null; then
-  echo -e "${YELLOW}⚠️  Old field name still in types: birth_date${NC}"
+  # Check if old name still exists (should not after types are regenerated)
+  if grep -q "birth_date:" "supabase-types.ts" 2>/dev/null; then
+    echo -e "${YELLOW}⚠️  Old field name still in types: birth_date${NC}"
+    echo -e "   ${YELLOW}Run: npx supabase gen types typescript --linked > supabase-types.ts${NC}"
+  fi
+else
+  echo -e "${YELLOW}⚠️  supabase-types.ts not found. Generate types before running this check.${NC}"
   echo -e "   ${YELLOW}Run: npx supabase gen types typescript --linked > supabase-types.ts${NC}"
 fi
 

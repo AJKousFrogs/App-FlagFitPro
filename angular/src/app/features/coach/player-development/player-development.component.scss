@@ -88,7 +88,7 @@
   display: flex;
   justify-content: center;
   padding: var(--space-4);
-  max-height: 21.875rem;
+  max-height: var(--grid-card-min-md-wide);
 }
 
 .chart-legend {
@@ -232,7 +232,7 @@
 }
 
 .history-chart {
-  max-height: 18.75rem;
+  max-height: var(--chart-min-height-md);
 }
 
 .history-stats {

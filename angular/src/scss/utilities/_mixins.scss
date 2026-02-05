@@ -22,6 +22,12 @@
   }
 }
 
+@mixin respond-min($breakpoint) {
+  @media (min-width: get-breakpoint($breakpoint)) {
+    @content;
+  }
+}
+
 @mixin respond-between($min, $max) {
   @media (min-width: get-breakpoint($min)) and (max-width: get-breakpoint($max)) {
     @content;
@@ -105,7 +111,7 @@
 }
 
 // Standard page container with tokenized padding and responsive scale.
-@mixin page-container($max-width: 87.5rem) {
+@mixin page-container($max-width: var(--page-container-max-width)) {
   padding: var(--space-6);
   max-width: $max-width;
   margin: 0 auto;

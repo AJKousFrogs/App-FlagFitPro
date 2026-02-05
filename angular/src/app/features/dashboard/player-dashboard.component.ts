@@ -40,14 +40,13 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { Timeline } from "primeng/timeline";
 import { Tooltip } from "primeng/tooltip";
 import { of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { ChannelService } from "../../core/services/channel.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -92,6 +91,8 @@ import { TeamMembershipService } from "../../core/services/team-membership.servi
 import { TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
 import { getReadinessLevel } from "../../core/constants/wellness.constants";
 import { getTimeAgo } from "../../shared/utils/date.utils";
+import { PlayerDashboardDataService } from "./services/player-dashboard-data.service";
+import type { SimpleChartData } from "../../core/models/chart.models";
 
 interface QuickAction {
   label: string;
@@ -1950,7 +1951,7 @@ export class PlayerDashboardComponent {
   private readonly missingDataDetectionService = inject(
     MissingDataDetectionService,
   );
-  private readonly supabaseService = inject(SupabaseService);
+  private readonly playerDashboardDataService = inject(PlayerDashboardDataService);
   private readonly channelService = inject(ChannelService);
   private readonly toastService = inject(ToastService);
   private readonly profileCompletionService = inject(ProfileCompletionService);
@@ -2063,8 +2064,7 @@ export class PlayerDashboardComponent {
   >([]);
 
   // Performance chart - uses Chart.js format
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  performanceChartData = signal<any>(null);
+  performanceChartData = signal<SimpleChartData | null>(null);
 
   // Quick actions (order preserved from wireframe)
   quickActions: QuickAction[] = [
@@ -2562,10 +2562,8 @@ export class PlayerDashboardComponent {
 
     try {
       // Use 'users' table instead of 'profiles' (profiles table doesn't exist)
-      const { data: profiles, error } = await this.supabaseService.client
-        .from("users")
-        .select("id, full_name")
-        .in("id", missingIds);
+      const { profiles, error } =
+        await this.playerDashboardDataService.fetchCoachProfiles(missingIds);
 
       if (error) {
         this.logger.error("[Dashboard] Error loading coach names:", error);

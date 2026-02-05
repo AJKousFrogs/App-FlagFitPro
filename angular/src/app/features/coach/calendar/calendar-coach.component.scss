@@ -459,7 +459,7 @@
   padding: var(--space-2);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  max-height: 12.5rem;
+  max-height: var(--size-200);
   overflow-y: auto;
 }
 

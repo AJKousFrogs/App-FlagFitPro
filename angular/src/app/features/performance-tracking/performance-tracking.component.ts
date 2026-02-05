@@ -20,9 +20,9 @@ import { TableModule } from "primeng/table";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { PerformanceTrackingDataService } from "./services/performance-tracking-data.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -37,6 +37,7 @@ import {
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { AchievementBadgeComponent } from "../../shared/components/achievement-badge/achievement-badge.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
+import { SimpleChartData } from "../../core/models/chart.models";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import {
   TeamPerformanceRankingService,
@@ -852,7 +853,9 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
 export class PerformanceTrackingComponent {
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
-  private readonly supabaseService = inject(SupabaseService);
+  private readonly performanceTrackingDataService = inject(
+    PerformanceTrackingDataService,
+  );
   private readonly logger = inject(LoggerService);
   private readonly teamRankingService = inject(TeamPerformanceRankingService);
   private readonly teamMembershipService = inject(TeamMembershipService);
@@ -870,10 +873,8 @@ export class PerformanceTrackingComponent {
   readonly metrics = signal<PerformanceMetric[]>([]);
   readonly performanceStats = signal<StatItem[]>([]);
   // Chart data - uses Chart.js format
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly performanceChartData = signal<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly speedChartData = signal<any>(null);
+  readonly performanceChartData = signal<SimpleChartData | null>(null);
+  readonly speedChartData = signal<SimpleChartData | null>(null);
   readonly performanceHistory = signal<Record<string, unknown>[]>([]);
   readonly positionBenchmarks = signal<PositionBenchmark[]>([]);
   readonly gapAnalysis = signal<GapAnalysis[]>([]);
@@ -961,7 +962,7 @@ export class PerformanceTrackingComponent {
    */
   async loadPerformanceData(): Promise<void> {
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.performanceTrackingDataService.getCurrentUser();
       if (!user) {
         // Not logged in - show empty state
         this.setEmptyState();
@@ -970,11 +971,10 @@ export class PerformanceTrackingComponent {
       }
 
       // Fetch performance records from Supabase
-      const { data: records, error } = await this.supabaseService.client
-        .from("performance_records")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("recorded_at", { ascending: false });
+      const { records, error } =
+        await this.performanceTrackingDataService.fetchPerformanceRecords(
+          user.id,
+        );
 
       if (error) {
         this.logger.error(
@@ -986,7 +986,7 @@ export class PerformanceTrackingComponent {
         return;
       }
 
-      if (!records || records.length === 0) {
+      if (records.length === 0) {
         // No data yet - show empty states (not mock data)
         this.logger.info(
           "[PerformanceTracking] No performance records found - showing empty state",
@@ -1396,7 +1396,7 @@ export class PerformanceTrackingComponent {
     this.isSaving.set(true);
 
     try {
-      const user = this.supabaseService.getCurrentUser();
+      const user = this.performanceTrackingDataService.getCurrentUser();
       if (!user) {
         this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_PERFORMANCE);
         return;
@@ -1406,26 +1406,26 @@ export class PerformanceTrackingComponent {
       const score = this.calculateScore();
 
       // Save to Supabase with extended fields
-      const { error } = await this.supabaseService.client
-        .from("performance_records")
-        .insert({
-          user_id: user.id,
-          sprint_10m: this.newPerformance.sprint10,
-          sprint_20m: this.newPerformance.sprint20,
-          dash_40: this.newPerformance.dash40,
-          pro_agility: this.newPerformance.proAgility,
-          l_drill: this.newPerformance.lDrill,
-          reactive_agility: this.newPerformance.reactiveAgility,
-          vertical_jump: this.newPerformance.vertical,
-          broad_jump: this.newPerformance.broad,
-          rsi: this.newPerformance.rsi,
-          bench_press: this.newPerformance.bench,
-          back_squat: this.newPerformance.squat,
-          deadlift: this.newPerformance.deadlift,
-          body_weight: this.newPerformance.bodyWeight,
-          notes: this.newPerformance.notes,
-          overall_score: score,
-          recorded_at: new Date().toISOString(),
+      const { error } =
+        await this.performanceTrackingDataService.createPerformanceRecord({
+          userId: user.id,
+          score,
+          payload: {
+            sprint_10m: this.newPerformance.sprint10,
+            sprint_20m: this.newPerformance.sprint20,
+            dash_40: this.newPerformance.dash40,
+            pro_agility: this.newPerformance.proAgility,
+            l_drill: this.newPerformance.lDrill,
+            reactive_agility: this.newPerformance.reactiveAgility,
+            vertical_jump: this.newPerformance.vertical,
+            broad_jump: this.newPerformance.broad,
+            rsi: this.newPerformance.rsi,
+            bench_press: this.newPerformance.bench,
+            back_squat: this.newPerformance.squat,
+            deadlift: this.newPerformance.deadlift,
+            body_weight: this.newPerformance.bodyWeight,
+            notes: this.newPerformance.notes,
+          },
         });
 
       if (error) {

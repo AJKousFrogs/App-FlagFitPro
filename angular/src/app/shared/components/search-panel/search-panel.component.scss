@@ -85,7 +85,7 @@
   overflow-y: auto;
   padding: var(--space-2) 0;
   min-height: var(--card-min-height-lg); /* 10rem */
-  max-height: calc(70vh - 8.75rem);
+  max-height: calc(70vh - var(--grid-card-min-xs));
 }
 
 .panel-content::-webkit-scrollbar {

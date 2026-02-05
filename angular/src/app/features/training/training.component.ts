@@ -44,12 +44,27 @@ import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ApiService } from "../../core/services/api.service";
+import { ApiResponse } from "../../core/models/common.models";
 import {
   Workout,
   Achievement,
   WeeklyScheduleDay,
 } from "../../core/models/training.models";
 import { UI_LIMITS } from "../../core/constants/app.constants";
+
+interface AchievementApiRecord {
+  id: string;
+  icon: string;
+  name: string;
+  description: string;
+  earned?: boolean;
+  earnedAt?: string;
+}
+
+interface AchievementStreak {
+  streak_type: string;
+  current_streak?: number;
+}
 
 @Component({
   selector: "app-training",
@@ -453,31 +468,26 @@ export class TrainingComponent {
    */
   private async loadAchievementsData(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{ achievements?: AchievementApiRecord[] }> =
+        await firstValueFrom(
         this.api.get("/api/achievements"),
       );
       if (response?.success && response.data) {
         const earned =
           response.data.achievements?.filter(
-            (a: { earned: boolean }) => a.earned,
+            (a) => a.earned,
           ) || [];
         this.totalAchievements.set(earned.length);
         this.recentAchievements.set(
           earned
             .sort(
-              (a: { earnedAt: string }, b: { earnedAt: string }) =>
+              (a, b) =>
                 new Date(b.earnedAt || 0).getTime() -
                 new Date(a.earnedAt || 0).getTime(),
             )
             .slice(0, 5)
             .map(
-              (a: {
-                id: string;
-                icon: string;
-                name: string;
-                description: string;
-              }) => ({
+              (a) => ({
                 id: a.id,
                 icon: a.icon,
                 title: a.name,
@@ -488,13 +498,13 @@ export class TrainingComponent {
       }
 
       // Load streaks
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const streaksResponse: any = await firstValueFrom(
+      const streaksResponse: ApiResponse<{ streaks?: AchievementStreak[] }> =
+        await firstValueFrom(
         this.api.get("/api/achievements/streaks"),
       );
       if (streaksResponse?.success && streaksResponse.data?.streaks) {
         const trainingStreak = streaksResponse.data.streaks.find(
-          (s: { streak_type: string }) => s.streak_type === "training",
+          (s) => s.streak_type === "training",
         );
         this.streakCount.set(trainingStreak?.current_streak || 0);
       }
@@ -533,8 +543,8 @@ export class TrainingComponent {
    */
   private async loadPlayerPosition(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{ position?: string }> =
+        await firstValueFrom(
         this.api.get("/api/player-settings"),
       );
       if (response?.success && response.data?.position) {

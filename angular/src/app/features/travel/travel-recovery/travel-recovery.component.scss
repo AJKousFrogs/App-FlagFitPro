@@ -1382,7 +1382,7 @@
 }
 
 // ===== RESPONSIVE BREAKPOINTS =====
-@media (min-width: 87.5rem) {
+@include respond-min(xxl-wide) {
   .protocol-grid {
     grid-template-columns: repeat(4, 1fr);
   }

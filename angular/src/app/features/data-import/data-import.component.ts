@@ -38,6 +38,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { ApiResponse } from "../../core/models/common.models";
 
 // ===== Interfaces =====
 interface ImportType {
@@ -78,6 +79,10 @@ interface ImportResult {
   itemsImported: number;
   warnings: string[];
   nextSteps: string[];
+}
+
+interface WearableStatusResponse {
+  devices: WearableDevice[];
 }
 
 // ===== Constants =====
@@ -672,10 +677,9 @@ export class DataImportComponent implements OnInit {
 
   async loadWearableStatus(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response = (await firstValueFrom(
         this.api.get("/api/wearables/status"),
-      );
+      )) as ApiResponse<WearableStatusResponse>;
       if (response?.success && response.data?.devices) {
         this.wearableDevices.set(response.data.devices);
       }
@@ -921,17 +925,16 @@ export class DataImportComponent implements OnInit {
     if (!preview || !type) return;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response = (await firstValueFrom(
         this.api.post("/api/import/process", {
           type: type.id,
           data: preview.previewData,
           mappings: preview.fieldMappings,
         }),
-      );
+      )) as ApiResponse<ImportResult>;
 
       if (response?.success) {
-        this.importResult.set(response.data);
+        this.importResult.set(response.data ?? null);
       } else {
         throw new Error(response?.message || "Import failed");
       }

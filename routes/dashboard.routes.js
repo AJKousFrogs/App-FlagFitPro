@@ -11,12 +11,18 @@ import {
   authenticateToken,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { resolveUserId, sendError, sendSuccess } from "./utils/validation.js";
+import {
+  createErrorResponse,
+  resolveUserId,
+  sendError,
+  sendSuccess,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "dashboard";
@@ -56,11 +62,8 @@ router.get(
   authenticateToken,
   authorizeUserAccess,
   withCache("DASHBOARD"),
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = getUserIdOrError(req, res);
       if (!userId) {
@@ -172,11 +175,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = getUserIdOrError(req, res);
       if (!userId) {
@@ -213,11 +213,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = getUserIdOrError(req, res);
       if (!userId) {
@@ -263,11 +260,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = getUserIdOrError(req, res);
       if (!userId) {
@@ -310,11 +304,8 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   authorizeUserAccess,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const userId = getUserIdOrError(req, res);
       if (!userId) {
@@ -350,11 +341,8 @@ router.get(
   "/daily-quote",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       // Get a random quote using the day of year as seed
       const dayOfYear = Math.floor(
@@ -424,12 +412,12 @@ router.get(
 // =============================================================================
 
 router.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: "Dashboard endpoint not found",
-    code: "NOT_FOUND",
-    path: req.originalUrl,
-  });
+  const { response } = createErrorResponse(
+    "Dashboard endpoint not found",
+    "NOT_FOUND",
+    404,
+  );
+  res.status(404).json({ ...response, path: req.originalUrl });
 });
 
 export default router;

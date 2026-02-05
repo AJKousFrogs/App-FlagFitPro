@@ -20,7 +20,6 @@ import { ProgressBar } from "primeng/progressbar";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -28,6 +27,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
+import { AiTrainingSchedulerDataService } from "../services/ai-training-scheduler-data.service";
 
 interface AISuggestion {
   id: string;
@@ -51,6 +51,34 @@ interface ScheduledSession {
   status: string;
   ai_optimized: boolean;
 }
+
+const suggestionTypes: AISuggestion["type"][] = [
+  "swap",
+  "reduce",
+  "increase",
+  "rest",
+  "recovery",
+  "intensity",
+];
+
+const suggestionPriorities: AISuggestion["priority"][] = [
+  "low",
+  "medium",
+  "high",
+];
+
+const isSuggestionType = (value: unknown): value is AISuggestion["type"] =>
+  suggestionTypes.includes(value as AISuggestion["type"]);
+
+const isSuggestionPriority = (
+  value: unknown,
+): value is AISuggestion["priority"] =>
+  suggestionPriorities.includes(value as AISuggestion["priority"]);
+
+const isString = (value: unknown): value is string => typeof value === "string";
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 interface AthleteMetrics {
   readiness_score: number | null;
@@ -344,7 +372,7 @@ interface AthleteMetrics {
   styleUrl: "./ai-training-scheduler.component.scss",
 })
 export class AiTrainingSchedulerComponent implements OnInit {
-  private supabaseService = inject(SupabaseService);
+  private aiTrainingSchedulerDataService = inject(AiTrainingSchedulerDataService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
@@ -406,22 +434,12 @@ export class AiTrainingSchedulerComponent implements OnInit {
   private async loadAthleteMetrics(userId: string): Promise<void> {
     try {
       // Load readiness data
-      const { data: readiness } = await this.supabaseService.client
-        .from("readiness_scores")
-        .select("*")
-        .eq("user_id", userId)
-        .order("date", { ascending: false })
-        .limit(1)
-        .single();
+      const { readiness } =
+        await this.aiTrainingSchedulerDataService.getLatestReadiness(userId);
 
       // Load ACWR data
-      const { data: acwr } = await this.supabaseService.client
-        .from("acwr_calculations")
-        .select("acwr_ratio")
-        .eq("user_id", userId)
-        .order("calculated_at", { ascending: false })
-        .limit(1)
-        .single();
+      const { acwr } =
+        await this.aiTrainingSchedulerDataService.getLatestAcwr(userId);
 
       // Load wellness data via API
       const today = new Date().toISOString().split("T")[0];
@@ -468,13 +486,8 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
   private async loadSuggestions(userId: string): Promise<void> {
     try {
-      const { data, error } = await this.supabaseService.client
-        .from("ai_training_suggestions")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("dismissed", false)
-        .order("created_at", { ascending: false })
-        .limit(10);
+      const { suggestions: data, error } =
+        await this.aiTrainingSchedulerDataService.getSuggestions(userId);
 
       if (error) {
         this.logger.warn("Error loading suggestions:", toLogContext(error));
@@ -487,15 +500,21 @@ export class AiTrainingSchedulerComponent implements OnInit {
         this.suggestions.set(
           data.map((s) => ({
             id: s.id,
-            type: s.suggestion_type,
-            priority: s.priority || "medium",
+            type: isSuggestionType(s.suggestion_type)
+              ? s.suggestion_type
+              : "recovery",
+            priority: isSuggestionPriority(s.priority) ? s.priority : "medium",
             message: s.message,
             reason: s.reason || "",
             date: new Date(s.created_at),
             accepted: s.accepted || false,
             dismissed: s.dismissed || false,
-            affected_session_id: s.affected_session_id,
-            suggested_changes: s.suggested_changes,
+            affected_session_id: isString(s.affected_session_id)
+              ? s.affected_session_id
+              : undefined,
+            suggested_changes: isRecord(s.suggested_changes)
+              ? s.suggested_changes
+              : undefined,
           })),
         );
       } else {
@@ -602,13 +621,12 @@ export class AiTrainingSchedulerComponent implements OnInit {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 14);
 
-      const { data, error } = await this.supabaseService.client
-        .from("training_sessions")
-        .select("*")
-        .eq("user_id", userId)
-        .gte("scheduled_date", startDate.toISOString())
-        .lte("scheduled_date", endDate.toISOString())
-        .order("scheduled_date", { ascending: true });
+      const { sessions: data, error } =
+        await this.aiTrainingSchedulerDataService.getScheduledSessions({
+          userId,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        });
 
       if (error) {
         this.logger.warn("Error loading sessions:", toLogContext(error));
@@ -618,11 +636,11 @@ export class AiTrainingSchedulerComponent implements OnInit {
       this.scheduledSessions.set(
         (data || []).map((s) => ({
           id: s.id,
-          date: s.scheduled_date,
+          date: isString(s.scheduled_date) ? s.scheduled_date : "",
           session_type: s.session_type || "Training",
           duration_minutes: s.duration_minutes || 60,
           intensity: s.intensity || "moderate",
-          status: s.status,
+          status: isString(s.status) ? s.status : "scheduled",
           ai_optimized: s.ai_optimized || false,
         })),
       );
@@ -659,18 +677,16 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
       // Save to database if table exists
       try {
-        await this.supabaseService.client
-          .from("ai_training_suggestions")
-          .upsert({
-            id: suggestion.id,
-            user_id: user.id,
-            suggestion_type: suggestion.type,
-            priority: suggestion.priority,
-            message: suggestion.message,
-            reason: suggestion.reason,
-            accepted: true,
-            applied_at: new Date().toISOString(),
-          });
+        await this.aiTrainingSchedulerDataService.upsertSuggestion({
+          id: suggestion.id,
+          userId: user.id,
+          suggestionType: suggestion.type,
+          priority: suggestion.priority,
+          message: suggestion.message,
+          reason: suggestion.reason,
+          accepted: true,
+          appliedAt: new Date().toISOString(),
+        });
       } catch {
         // Table might not exist, continue with local update
       }
@@ -698,16 +714,14 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
       // Save dismissal to database if table exists
       try {
-        await this.supabaseService.client
-          .from("ai_training_suggestions")
-          .upsert({
-            id: suggestion.id,
-            user_id: user.id,
-            suggestion_type: suggestion.type,
-            message: suggestion.message,
-            dismissed: true,
-            dismissed_at: new Date().toISOString(),
-          });
+        await this.aiTrainingSchedulerDataService.upsertSuggestion({
+          id: suggestion.id,
+          userId: user.id,
+          suggestionType: suggestion.type,
+          message: suggestion.message,
+          dismissed: true,
+          dismissedAt: new Date().toISOString(),
+        });
       } catch {
         // Table might not exist, continue with local update
       }

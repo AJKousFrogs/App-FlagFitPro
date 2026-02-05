@@ -227,7 +227,7 @@
 }
 
 .reason-cell {
-  max-width: 12.5rem;
+  max-width: var(--grid-card-min-sm);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

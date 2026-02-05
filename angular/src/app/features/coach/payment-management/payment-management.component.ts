@@ -41,6 +41,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ContextService } from "../../../core/services/context.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ApiResponse } from "../../../core/models/common.models";
 import { RosterService } from "../../roster/roster.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -856,8 +857,11 @@ export class PaymentManagementComponent implements OnInit {
         return;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{
+        fees?: TeamFee[];
+        balances?: PlayerBalance[];
+        payments?: Payment[];
+      }> = await firstValueFrom(
         this.api.get("/api/coach/payments", { team_id: teamId }),
       );
       if (response?.success && response.data) {

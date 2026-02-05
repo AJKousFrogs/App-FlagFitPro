@@ -26,6 +26,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ApiResponse } from "../../core/models/common.models";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -579,8 +580,10 @@ export class SleepDebtComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{
+        sleepHistory?: SleepEntry[];
+        userAge?: number;
+      }> = await firstValueFrom(
         this.api.get("/api/sleep-data"),
       );
       if (response?.success && response.data) {

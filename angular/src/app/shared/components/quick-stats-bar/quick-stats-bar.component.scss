@@ -216,7 +216,7 @@
 
 .variant-glass .stat-item {
   background: var(--surface-secondary);
-  border: 0.0625rem solid var(--color-border-muted);
+  border: var(--border-1) solid var(--color-border-muted);
 }
 
 /* Responsive */
@@ -228,8 +228,8 @@
 
   .stat-item {
     flex: 1;
-    min-width: 8.75rem;
-    max-width: 12.5rem;
+    min-width: var(--grid-card-min-xs);
+    max-width: var(--grid-card-min-sm);
   }
 }
 

@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError } from "rxjs";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { SupabaseService } from "./supabase.service";
 import { getTimeAgo } from "../../shared/utils/date.utils";

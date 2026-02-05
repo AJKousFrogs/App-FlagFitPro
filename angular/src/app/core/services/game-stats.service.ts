@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Observable, of } from "rxjs";
-import { catchError, delay, retryWhen, take } from "rxjs/operators";
+import { catchError, delay, retryWhen, take } from "rxjs";
 import { getErrorMessage } from "../../shared/utils/error.utils";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";

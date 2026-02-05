@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Router, NavigationEnd } from "@angular/router";
-import { filter, map } from "rxjs/operators";
+import { filter, map } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { LoggerService } from "./logger.service";
 

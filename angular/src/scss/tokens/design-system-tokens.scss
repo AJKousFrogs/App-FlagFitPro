@@ -1004,6 +1004,8 @@
   --grid-card-min-xs: 8.75rem; /* 140px - compact stats */
   --grid-card-min-sm: 12.5rem; /* 200px - small cards */
   --grid-card-min-md: 17.5rem; /* 280px - standard cards */
+  --grid-card-min-md-plus: 18.75rem; /* 300px - spacious cards */
+  --grid-card-min-md-wide: 21.875rem; /* 350px - wide cards */
   --grid-card-min-lg: 22.5rem; /* 360px - large cards */
   --grid-card-min-xl: 25rem; /* 400px - extra large/charts */
 
@@ -1061,6 +1063,7 @@
   --content-max-width-lg: 56.25rem; /* 900px */
   --content-max-width-xl: 80rem; /* 1280px */
   --content-max-width-2xl: 90rem; /* 1440px */
+  --page-container-max-width: 87.5rem; /* 1400px */
 
   /* Font Aliases */
   --font-family: var(--font-family-sans);

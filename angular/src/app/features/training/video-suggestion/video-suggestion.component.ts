@@ -62,9 +62,9 @@ import { AuthService } from "../../../core/services/auth.service";
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import { InstagramVideoService } from "../../../core/services/instagram-video.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { VideoSuggestionDataService } from "../services/video-suggestion-data.service";
 import {
   FlagPosition,
   TrainingFocus,
@@ -616,7 +616,7 @@ export class VideoSuggestionComponent implements OnInit {
   private toastService = inject(ToastService);
   private hapticService = inject(HapticFeedbackService);
   private authService = inject(AuthService);
-  private supabaseService = inject(SupabaseService);
+  private videoSuggestionDataService = inject(VideoSuggestionDataService);
   private logger = inject(LoggerService);
 
   // Expose constants to template
@@ -783,11 +783,8 @@ export class VideoSuggestionComponent implements OnInit {
         status: "pending",
       };
 
-      const { data, error } = await this.supabaseService.client
-        .from("video_suggestions")
-        .insert(suggestion)
-        .select()
-        .single();
+      const { suggestion: data, error } =
+        await this.videoSuggestionDataService.createSuggestion(suggestion);
 
       if (error) throw error;
 
@@ -819,11 +816,8 @@ export class VideoSuggestionComponent implements OnInit {
         return;
       }
 
-      const { data, error } = await this.supabaseService.client
-        .from("video_suggestions")
-        .select("*")
-        .eq("submitted_by", user.id)
-        .order("submitted_at", { ascending: false });
+      const { suggestions: data, error } =
+        await this.videoSuggestionDataService.fetchMySuggestions(user.id);
 
       if (error) throw error;
       this.mySuggestions.set((data as VideoSuggestion[]) || []);
@@ -836,12 +830,8 @@ export class VideoSuggestionComponent implements OnInit {
 
   private async loadTeamApprovedVideos(): Promise<void> {
     try {
-      const { data, error } = await this.supabaseService.client
-        .from("video_suggestions")
-        .select("*")
-        .eq("status", "approved")
-        .order("submitted_at", { ascending: false })
-        .limit(10);
+      const { suggestions: data, error } =
+        await this.videoSuggestionDataService.fetchApprovedSuggestions(10);
 
       if (error) throw error;
       this.teamApprovedVideos.set((data as VideoSuggestion[]) || []);
@@ -865,10 +855,9 @@ export class VideoSuggestionComponent implements OnInit {
     this.hapticService.medium();
 
     try {
-      const { error } = await this.supabaseService.client
-        .from("video_suggestions")
-        .delete()
-        .eq("id", suggestion.id);
+      const { error } = await this.videoSuggestionDataService.deleteSuggestion(
+        suggestion.id,
+      );
 
       if (error) throw error;
 

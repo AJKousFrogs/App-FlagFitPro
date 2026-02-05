@@ -1,7 +1,7 @@
 import { Injectable, effect, inject, signal, untracked } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable, from, of, throwError } from "rxjs";
-import { catchError, map, tap } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { PlatformService } from "./platform.service";
 import { SupabaseService } from "./supabase.service";

@@ -139,7 +139,10 @@
 /* Stats Comparison */
 .stats-comparison {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(21.875rem, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--grid-card-min-md-wide), 1fr)
+  );
   gap: var(--space-4);
 }
 

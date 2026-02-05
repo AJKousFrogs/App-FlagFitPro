@@ -8,14 +8,19 @@
 
 import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
+import {
+  ATTENDANCE_EVENT_TYPES,
+  ATTENDANCE_STATUSES,
+  STAFF_ROLES,
+} from "./utils/roles.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
   getErrorMessage,
   isValidUUID,
-  createSuccessResponse,
   sanitizeText,
   sendError,
   sendErrorResponse,
@@ -25,31 +30,9 @@ import {
 const router = express.Router();
 const ROUTE_NAME = "attendance";
 
-const STAFF_ROLES = new Set([
-  "coach",
-  "head_coach",
-  "assistant_coach",
-  "offense_coordinator",
-  "defense_coordinator",
-  "admin",
-  "owner",
-]);
+const ALLOWED_EVENT_TYPES = ATTENDANCE_EVENT_TYPES;
 
-const ALLOWED_EVENT_TYPES = new Set([
-  "practice",
-  "game",
-  "meeting",
-  "film_session",
-  "conditioning",
-  "other",
-]);
-
-const ALLOWED_ATTENDANCE_STATUS = new Set([
-  "present",
-  "absent",
-  "late",
-  "excused",
-]);
+const ALLOWED_ATTENDANCE_STATUS = ATTENDANCE_STATUSES;
 
 const columnCache = new Map();
 
@@ -244,11 +227,8 @@ router.get(
   "/events",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamIdParam = req.query.team_id;
       const { isValid, error, teamId } = await resolveTeamId(
@@ -332,11 +312,8 @@ router.post(
   "/events",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const payload = normalizeEventPayload(req.body || {});
 
@@ -410,7 +387,8 @@ router.post(
         throw error;
       }
 
-      return res.status(201).json(createSuccessResponse(data, "Event created"));
+      res.status(201);
+      return sendSuccess(res, data, "Event created");
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to create event");
       serverLogger.error(
@@ -432,11 +410,8 @@ router.put(
   "/events/:eventId",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { eventId } = req.params;
       if (!isValidUUID(eventId)) {
@@ -562,11 +537,8 @@ router.delete(
   "/events/:eventId",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { eventId } = req.params;
       if (!isValidUUID(eventId)) {
@@ -636,11 +608,8 @@ router.get(
   "/events/:eventId/attendance",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { eventId } = req.params;
       if (!isValidUUID(eventId)) {
@@ -724,11 +693,8 @@ router.post(
   "/record",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const {
         event_id: eventId,
@@ -846,11 +812,8 @@ router.post(
   "/record/bulk",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { event_id: eventId, records } = req.body || {};
 
@@ -1072,11 +1035,8 @@ router.get(
   "/stats/player/:playerId",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { playerId } = req.params;
       const teamId = req.query.team_id;
@@ -1148,11 +1108,8 @@ router.get(
   "/stats/team/:teamId",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { teamId } = req.params;
 
@@ -1226,11 +1183,8 @@ router.post(
   "/absence-request",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { event_id: eventId, reason } = req.body || {};
 
@@ -1286,9 +1240,8 @@ router.post(
         throw error;
       }
 
-      return res
-        .status(201)
-        .json(createSuccessResponse(data, "Absence request submitted"));
+      res.status(201);
+      return sendSuccess(res, data, "Absence request submitted");
     } catch (error) {
       const errorMessage = getErrorMessage(
         error,
@@ -1313,11 +1266,8 @@ router.get(
   "/absence-requests",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const teamId = req.query.team_id;
       const { status } = req.query;
@@ -1391,11 +1341,8 @@ router.put(
   "/absence-request/:requestId",
   rateLimit("CREATE"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
       const { requestId } = req.params;
       const { status } = req.body || {};

@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map } from "rxjs";
 import { API_ENDPOINTS, ApiService } from "./api.service";
 
 export interface WeatherData {

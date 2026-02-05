@@ -36,6 +36,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ApiResponse } from "../../core/models/common.models";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -957,8 +958,11 @@ export class CycleTrackingComponent implements OnInit {
 
   async loadData(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
+      const response: ApiResponse<{
+        status?: CycleStatus;
+        history?: CycleEntry[];
+        acwr?: number;
+      }> = await firstValueFrom(
         this.api.get("/api/cycle-tracking"),
       );
       if (response?.success && response.data) {

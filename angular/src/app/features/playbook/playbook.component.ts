@@ -32,6 +32,7 @@ import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
 import { ApiService } from "../../core/services/api.service";
+import { ApiResponse } from "../../core/models/common.models";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -596,8 +597,9 @@ export class PlaybookComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(this.api.get("/api/playbook"));
+      const response = (await firstValueFrom(
+        this.api.get("/api/playbook"),
+      )) as ApiResponse<{ plays: Play[] }>;
       if (response?.success && response.data?.plays) {
         this.plays.set(response.data.plays);
       }

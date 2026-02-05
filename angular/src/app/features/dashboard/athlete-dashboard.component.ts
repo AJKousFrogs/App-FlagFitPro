@@ -52,7 +52,7 @@ import { RealtimeBaseComponent } from "../../shared/components/realtime-base.com
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
 import { TIMEOUTS } from "../../core/constants/app.constants";
-import { SupabaseService } from "../../core/services/supabase.service";
+import { AthleteDashboardDataService } from "./services/athlete-dashboard-data.service";
 
 // Type for training session data
 interface TrainingSession {
@@ -411,7 +411,7 @@ export class AthleteDashboardComponent
   private tournamentService = inject(TournamentModeService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
-  private supabaseService = inject(SupabaseService);
+  private athleteDashboardDataService = inject(AthleteDashboardDataService);
 
   // Runtime guard signals - prevent white screen crashes
   isLoading = signal<boolean>(true);
@@ -554,13 +554,12 @@ export class AthleteDashboardComponent
       const twoDaysFromNow = new Date();
       twoDaysFromNow.setDate(today.getDate() + 2);
 
-      const { data: games } = await this.supabaseService.client
-        .from("games")
-        .select("id, game_date, opponent, location, game_time, is_home")
-        .gte("game_date", today.toISOString().split("T")[0])
-        .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
-        .order("game_date", { ascending: true })
-        .limit(1);
+      const { games } = await this.athleteDashboardDataService.getUpcomingGames(
+        {
+          startDate: today.toISOString().split("T")[0],
+          endDate: twoDaysFromNow.toISOString().split("T")[0],
+        },
+      );
 
       if (games && games.length > 0) {
         this.hasUpcomingGame.set(true);
@@ -578,21 +577,16 @@ export class AthleteDashboardComponent
         );
       } else {
         // Also check team_members for tournament availability
-        const { data: teamMember } = await this.supabaseService.client
-          .from("team_members")
-          .select("team_id")
-          .eq("user_id", userId)
-          .maybeSingle();
+        const { teamId } =
+          await this.athleteDashboardDataService.getTeamMembership(userId);
 
-        if (teamMember?.team_id) {
-          const { data: teamGames } = await this.supabaseService.client
-            .from("team_games")
-            .select("id, game_date, opponent, location, game_time, is_home")
-            .eq("team_id", teamMember.team_id)
-            .gte("game_date", today.toISOString().split("T")[0])
-            .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
-            .order("game_date", { ascending: true })
-            .limit(1);
+        if (teamId) {
+          const { games: teamGames } =
+            await this.athleteDashboardDataService.getUpcomingTeamGames({
+              teamId,
+              startDate: today.toISOString().split("T")[0],
+              endDate: twoDaysFromNow.toISOString().split("T")[0],
+            });
 
           if (teamGames && teamGames.length > 0) {
             this.hasUpcomingGame.set(true);

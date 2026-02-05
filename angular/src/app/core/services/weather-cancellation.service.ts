@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { map, catchError, switchMap, tap } from "rxjs/operators";
+import { catchError, map, switchMap, tap } from "rxjs";
 import { WeatherData, WeatherService } from "./weather.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";

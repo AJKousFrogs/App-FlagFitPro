@@ -30,8 +30,7 @@ import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { TIMEOUTS } from "../../../core/constants/app.constants";
 
-import { Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
+import { Subject, debounceTime, distinctUntilChanged, tap } from "rxjs";
 import {
   SearchResult,
   SearchService,

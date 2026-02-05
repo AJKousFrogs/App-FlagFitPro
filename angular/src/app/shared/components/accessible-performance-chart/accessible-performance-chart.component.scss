@@ -51,7 +51,7 @@
     opacity var(--motion-slow) var(--ease-standard),
     visibility var(--motion-slow) var(--ease-standard);
   z-index: var(--z-modal);
-  max-width: 18.75rem;
+  max-width: var(--element-max-width-sm);
 }
 
 .keyboard-help.visible {

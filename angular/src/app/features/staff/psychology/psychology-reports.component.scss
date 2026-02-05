@@ -170,7 +170,7 @@
   }
 
   p-chart {
-    height: 18.75rem;
+    height: var(--chart-min-height-md);
   }
 
   .dual-cards {

@@ -203,6 +203,9 @@ supabase db push
 
 # Generate TypeScript types from schema
 supabase gen types typescript --local > supabase-types.ts
+
+Note: `supabase-types.ts` is not tracked in git. Generate it locally when
+you need up-to-date types.
 ```
 
 ---

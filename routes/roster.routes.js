@@ -8,11 +8,13 @@
 
 import express from "express";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { requireSupabase } from "./middleware/supabase-availability.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
+import { STAFF_ROLES } from "./utils/roles.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { isValidUUID, sendError, sendSuccess } from "./utils/validation.js";
+import { sendError, sendSuccess } from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "roster";
@@ -31,23 +33,14 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get team roster
  */
-router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
+router.get(
+  "/",
+  rateLimit("READ"),
+  authenticateToken,
+  requireSupabase,
+  async (req, res) => {
   try {
-    const staffRoles = new Set([
-      "coach",
-      "head_coach",
-      "assistant_coach",
-      "offense_coordinator",
-      "defense_coordinator",
-      "admin",
-      "owner",
-    ]);
-
-    const isStaff = staffRoles.has(req.user?.role || "");
+    const isStaff = STAFF_ROLES.has(req.user?.role || "");
 
     let query = supabase
       .from("team_members")
@@ -74,7 +67,8 @@ router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
     serverLogger.error(`[${ROUTE_NAME}] Roster error:`, error);
     return sendError(res, "Failed to load roster", "FETCH_ERROR", 500);
   }
-});
+  },
+);
 
 /**
  * GET /players
@@ -84,22 +78,10 @@ router.get(
   "/players",
   rateLimit("READ"),
   authenticateToken,
+  requireSupabase,
   async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
-
     try {
-      const staffRoles = new Set([
-        "coach",
-        "head_coach",
-        "assistant_coach",
-        "offense_coordinator",
-        "defense_coordinator",
-        "admin",
-        "owner",
-      ]);
-      const isStaff = staffRoles.has(req.user?.role || "");
+      const isStaff = STAFF_ROLES.has(req.user?.role || "");
 
       let query = supabase
         .from("team_members")
