@@ -146,7 +146,7 @@
     "globals": "^16.5.0",
     "jws": "^4.0.1",
     "madge": "^8.0.0",
-    "netlify-cli": "^23.13.0",
+    "netlify-cli": "^23.15.1",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",
     "sass": "^1.97.3",
