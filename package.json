@@ -154,7 +154,7 @@
     "stylelint-config-standard-scss": "^16.0.0",
     "stylelint-order": "^7.0.1",
     "stylelint-scss": "^6.14.0",
-    "supabase": "^2.70.5",
+    "supabase": "^2.76.3",
     "supertest": "^7.1.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
