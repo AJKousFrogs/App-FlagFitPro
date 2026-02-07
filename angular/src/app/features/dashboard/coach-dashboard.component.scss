@@ -107,6 +107,10 @@
         letter-spacing: var(--ds-letter-spacing-wide);
       }
 
+      .strip-preview-badge {
+        @include preview-badge;
+      }
+
       .strip-title-icon {
         color: var(--color-status-error);
       }
@@ -215,6 +219,104 @@
 
   .header-info {
     flex: 1;
+  }
+
+  .next-gen-preview-tag {
+    margin-top: var(--space-2);
+    @include preview-badge($color: var(--color-text-secondary));
+  }
+
+  .next-gen-preview-card {
+    margin-top: var(--space-4);
+  }
+
+  .next-gen-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .preview-metric {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .preview-label {
+    font-size: var(--ds-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-letter-spacing-caption);
+    color: var(--color-text-muted);
+  }
+
+  .preview-value {
+    font-size: var(--ds-font-size-lg);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .preview-note {
+    margin: 0;
+    @include preview-callout($font-size: var(--ds-font-size-xs));
+  }
+
+  .preview-insights {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-3) 0;
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .preview-signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .preview-bars {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .preview-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+  }
+
+  .signal-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+    font-size: var(--ds-font-size-xs);
+    background: var(--surface-secondary);
+    color: var(--color-text-secondary);
+    border: var(--border-1) solid var(--surface-border);
+
+    &.good {
+      color: var(--color-status-success);
+      border-color: var(--color-status-success);
+    }
+
+    &.warning {
+      color: var(--color-status-warning);
+      border-color: var(--color-status-warning);
+    }
+
+    &.danger {
+      color: var(--color-status-error);
+      border-color: var(--color-status-error);
+    }
   }
 
   // Decision 8: Use semantic token names
@@ -385,6 +487,22 @@
         font-weight: var(--ds-font-weight-medium);
         text-transform: var(--ds-text-transform-uppercase);
         letter-spacing: var(--ds-letter-spacing-wide);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+      }
+
+      .sc-preview-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 var(--space-2);
+        border-radius: var(--radius-pill);
+        background: var(--surface-secondary);
+        color: var(--color-text-muted);
+        font-size: var(--ds-font-size-xs);
+        text-transform: none;
+        letter-spacing: normal;
       }
 
       .sc-value {
@@ -496,6 +614,10 @@
         color: var(--ds-primary-green);
         border-bottom-color: var(--ds-primary-green);
       }
+
+      .tab-preview-badge {
+        @include preview-badge;
+      }
     }
 
     .tab-actions {
@@ -507,6 +629,11 @@
 
   .tab-content {
     padding: var(--space-4);
+  }
+
+  .analytics-preview-note {
+    margin-top: var(--space-3);
+    @include preview-callout;
   }
 
   .roster-workspace {

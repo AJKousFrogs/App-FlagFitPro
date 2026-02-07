@@ -560,21 +560,6 @@ export class SuperadminDashboardComponent implements OnInit {
     }
   }
 
-  /**
-   * @deprecated REMOVED: Mock demo data method
-   * This method previously loaded hardcoded demo data which could mislead administrators.
-   * All data should come from the actual database via the API.
-   * Empty states are now shown when no data is available.
-   */
-  private loadDemoData(): void {
-    // NO-OP: Mock data removed to ensure data integrity
-    // Admin dashboard now shows empty states when API returns no data
-    // This prevents administrators from seeing fake statistics
-    this.logger.info(
-      "[SuperadminDashboard] Demo data loading disabled - showing real data only",
-    );
-  }
-
   // Quick Actions
   openUserManagement(): void {
     this.showUserDialog = true;

@@ -14,6 +14,18 @@
   margin-bottom: var(--space-6);
 }
 
+.analytics-preview-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 var(--space-4);
+  @include preview-callout;
+
+  i {
+    color: var(--ds-primary-green);
+  }
+}
+
 .analytics-hub-grid {
   display: grid;
   grid-template-columns: repeat(
@@ -55,6 +67,11 @@
 .analytics-hub-subtitle {
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
+}
+
+.analytics-hub-preview {
+  @include preview-badge;
+  align-self: flex-start;
 }
 
 .modern-step-nav {

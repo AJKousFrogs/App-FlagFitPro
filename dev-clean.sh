@@ -103,10 +103,10 @@ show_browser_instructions() {
     echo ""
     echo "3. 🛠️  Service Worker Check:"
     echo "   • DevTools → Application → Service Workers"
-    echo "   • Click 'Unregister' for any localhost:4000 workers"
+    echo "   • Click 'Unregister' for any localhost:8888 workers"
     echo ""
     echo "4. 🎯 Automated Cleanup:"
-    echo "   • Visit: http://localhost:4000/cleanup.html"
+    echo "   • Visit: http://localhost:8888/cleanup.html"
     echo "   • Click 'Full Cleanup' button"
     echo ""
     echo "5. 🚫 Prevention:"
@@ -140,7 +140,7 @@ main() {
     
     # Step 1: Kill processes on development ports
     echo "1. 🔌 Cleaning up ports..."
-    kill_port 4000
+    kill_port 8888
     kill_port 4001
     kill_port 3000
     
@@ -161,8 +161,8 @@ main() {
     echo ""
     echo "4. 🚀 Starting development server..."
     echo ""
-    echo "   Server will start on: http://localhost:4000"
-    echo "   Cleanup tool available at: http://localhost:4000/cleanup.html"
+    echo "   Server will start on: http://localhost:8888"
+    echo "   Cleanup tool available at: http://localhost:8888/cleanup.html"
     echo ""
     echo "   🚫 Service Workers are DISABLED in development"
     echo "   ✅ Radix UI cache conflicts should be resolved"

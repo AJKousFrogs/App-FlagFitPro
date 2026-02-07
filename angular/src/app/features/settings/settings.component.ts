@@ -40,6 +40,7 @@ import { ProfileCompletionService } from "../../core/services/profile-completion
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
+import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -97,6 +98,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   private profileCompletionService = inject(ProfileCompletionService);
   private teamMembershipService = inject(TeamMembershipService);
   private platform = inject(PlatformService);
+  private featureFlags = inject(FeatureFlagsService);
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   dobDatePickerRef = viewChild<ElementRef<HTMLElement>>("dobDatePicker");
@@ -160,6 +162,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     achievements: true,
     settings: true,
   };
+
+  nextGenMetricsPreview = false;
 
   // Team selection
   availableTeams = signal<Array<{ label: string; value: string }>>([]);
@@ -439,6 +443,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
+
+    this.nextGenMetricsPreview = this.featureFlags.nextGenMetricsPreview();
 
     this.profileForm = this.fb.group({
       displayName: [user?.name || "", Validators.required],
@@ -736,6 +742,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
   selectTheme(theme: string): void {
     this.preferencesForm.get("theme")?.setValue(theme);
+  }
+
+  setNextGenMetricsPreview(enabled: boolean): void {
+    this.nextGenMetricsPreview = enabled;
+    this.featureFlags.setNextGenMetricsPreview(enabled);
   }
 
   /**

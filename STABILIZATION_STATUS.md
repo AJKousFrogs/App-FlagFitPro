@@ -605,3 +605,834 @@ Risky areas touched:
 
 Manual test checklist:
 - No manual checks required (no runtime changes).
+
+## 2026-02-06 13:30 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added training stats service verification tests (weekly/monthly aggregation, streak info).
+- Documented training stats week boundary and streak logic in calculation spec.
+
+What’s next:
+- Add backend analytics verification once server-side test harness exists.
+- Add calculation coverage for performance analytics routes if feasible.
+
+Risky areas touched:
+- Training stats aggregation (tests only).
+
+Manual test checklist:
+- Training stats dashboard values unchanged (weekly/monthly counts, streak).
+
+## 2026-02-06 13:32 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added performance data utility tests (BMI, BMI category, lean body mass).
+- Documented BMI category thresholds in calculation spec.
+
+What’s next:
+- Add backend analytics verification once server-side test harness exists.
+- Consider tests for performance trends calculations when inputs are stable.
+
+Risky areas touched:
+- Performance data utilities (tests only).
+
+Manual test checklist:
+- Body composition/BMI displays unchanged.
+
+## 2026-02-06 13:35 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added body composition service tests (BMI, BMI category, lean body mass).
+- Documented body fat guard behavior for lean body mass.
+
+What’s next:
+- Add backend analytics verification once server-side test harness exists.
+- Add calculation coverage for performance analytics routes if feasible.
+
+Risky areas touched:
+- Body composition utilities (tests only).
+
+Manual test checklist:
+- Body composition panel values unchanged.
+
+## 2026-02-06 13:39 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added training safety service tests (age group, adjusted limits, sleep debt).
+- Documented sleep debt formula and age limit scaling.
+
+What’s next:
+- Add backend analytics verification once server-side test harness exists.
+- Add calculation coverage for performance analytics routes if feasible.
+
+Risky areas touched:
+- Training safety calculations (tests only).
+
+Manual test checklist:
+- Training safety warnings unchanged (if shown).
+
+## 2026-02-06 13:57 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (fail in next-gen metrics tests, fixed expectations, re-run pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen calculation utilities and tests (load spike, readiness baseline, LBM trend).
+- Documented next-gen utility formulas in calculation spec.
+
+What’s next:
+- Phase 2 wiring behind `useNextGenMetrics` flag.
+- Add delta logging and QA comparison fixtures.
+
+Risky areas touched:
+- Calculation utilities (new code only).
+
+Manual test checklist:
+- No manual checks required (utilities only; not wired).
+
+## 2026-02-06 14:02 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added backend next-gen metrics utilities and regression test harness.
+- Wired `/load-management/acwr` to compute next-gen metrics behind `useNextGenMetrics` flag.
+- Logged legacy vs next-gen deltas for QA comparison.
+
+What’s next:
+- Add feature-flagged wiring for readiness history endpoints.
+- Run `npm run test:backend` for backend Netlify Functions regression checks.
+
+Risky areas touched:
+- Load management route response (additive `next_gen` payload when flag enabled).
+
+Manual test checklist:
+- Call `GET /api/load-management/acwr?useNextGenMetrics=true` and verify `next_gen` is present.
+
+## 2026-02-06 14:12 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added feature flag service for next-gen metrics preview.
+- Added frontend next-gen metrics service and readiness widget preview panel.
+- Added Settings toggle to enable next-gen preview.
+
+What’s next:
+- Add preview spike alerts and hydration/LBM drift warnings.
+- Wire preview into additional dashboards (coach/player cards).
+
+Risky areas touched:
+- Readiness widget UI (additive preview section behind flag).
+- Settings preferences UI (new experimental toggle).
+
+Manual test checklist:
+- Enable “Next-Gen Metrics Preview” in Settings and confirm readiness widget shows preview data.
+
+## 2026-02-06 14:17 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen preview alerts (load spike, hydration, LBM drift) in readiness widget.
+- Added throwing spike preview alert in QB throwing tracker (flag-gated).
+
+What’s next:
+- Add preview alerts for hydration trend in wellness dashboard if needed.
+- Extend preview to coach dashboard cards.
+
+Risky areas touched:
+- Readiness widget and QB throwing tracker UI (additive, flag-gated).
+
+Manual test checklist:
+- With preview enabled, verify readiness widget shows alerts when data triggers.
+- With preview enabled, verify QB throwing tracker shows spike alert after a high-throw session.
+
+## 2026-02-06 14:21 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen readiness preview tag to player dashboard readiness card.
+
+What’s next:
+- Extend preview alerts to coach dashboard summary cards if needed.
+
+Risky areas touched:
+- Player dashboard UI (additive, flag-gated preview tag).
+
+Manual test checklist:
+- Enable next-gen preview and confirm readiness card shows preview score tag.
+
+## 2026-02-06 14:26 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen preview badge in coach dashboard header (flag-gated).
+
+What’s next:
+- Decide if coach dashboard should surface preview metrics beyond badge once team-level next-gen data exists.
+
+Risky areas touched:
+- Coach dashboard header UI (additive, flag-gated badge).
+
+Manual test checklist:
+- Enable next-gen preview and confirm coach dashboard shows “Next-Gen Preview” badge.
+
+## 2026-02-06 14:30 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen preview summary card to coach dashboard header area (flag-gated).
+
+What’s next:
+- Define team-level next-gen aggregates once backend provides a team preview endpoint.
+
+Risky areas touched:
+- Coach dashboard UI (additive preview card).
+
+Manual test checklist:
+- Enable next-gen preview and confirm coach dashboard shows the preview card with legacy baseline metrics.
+
+## 2026-02-06 14:38 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added preview badge in coach compact stats row for Team Readiness.
+
+What’s next:
+- Consider adding preview trend sparkline once team-level preview data is available.
+
+Risky areas touched:
+- Coach dashboard stats row UI (additive preview badge).
+
+Manual test checklist:
+- Enable next-gen preview and confirm the Team Readiness label shows a Preview badge.
+
+## 2026-02-06 14:50 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added preview badge to the “Needs Attention Now” strip header in coach dashboard.
+
+What’s next:
+- Add preview team trend tile once next-gen team aggregation endpoint exists.
+
+Risky areas touched:
+- Coach dashboard priority strip UI (additive preview badge).
+
+Manual test checklist:
+- Enable next-gen preview and confirm the “Needs Attention Now” header shows Preview badge.
+
+## 2026-02-06 15:02 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added preview badge in coach priority strip header.
+- Added preview insights list in coach preview card.
+
+What’s next:
+- Consider adding a preview trend tile once team-level next-gen data exists.
+
+Risky areas touched:
+- Coach dashboard preview UI (additive content).
+
+Manual test checklist:
+- Enable next-gen preview and confirm preview badges and insights render correctly.
+
+## 2026-02-06 15:10 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added preview signal pills (attendance, consistency, workload) to coach preview card.
+
+What’s next:
+- Add optional preview trend tile once next-gen team aggregation endpoint exists.
+
+Risky areas touched:
+- Coach preview card UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm signal pills render with correct colors.
+
+## 2026-02-06 15:23 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added a next-gen preview badge on the coach dashboard Performance tab.
+- Styled the preview badge to match existing preview indicators.
+
+What’s next:
+- Add a preview guidance line in the analytics panel once next-gen trends are available.
+
+Risky areas touched:
+- Coach dashboard tab header UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm the Performance tab shows the Preview badge without layout issues.
+
+## 2026-02-06 15:27 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen preview guidance note in coach analytics tab.
+
+What’s next:
+- Consider adding a compact preview insight line to the analytics route once next-gen data is wired.
+
+Risky areas touched:
+- Coach analytics tab UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm the analytics tab shows the preview guidance note.
+
+## 2026-02-06 15:29 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen preview guidance note in coach analytics tab.
+
+What’s next:
+- Add a preview hint on the analytics route once next-gen data is wired.
+
+Risky areas touched:
+- Coach analytics tab UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm the analytics tab shows the preview guidance note.
+
+## 2026-02-06 15:39 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added a next-gen preview banner in the analytics page header.
+
+What’s next:
+- Add a preview badge on the analytics hub cards once next-gen routes are wired.
+
+Risky areas touched:
+- Analytics page header UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm the analytics page shows the preview banner.
+
+## 2026-02-06 15:43 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added preview badges to analytics hub cards when next-gen preview is enabled.
+
+What’s next:
+- Continue Phase 3 by adding preview tag in performance tracking header once wired.
+
+Risky areas touched:
+- Analytics hub card UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm the analytics hub cards show Preview badges.
+
+## 2026-02-06 15:46 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added next-gen preview banner to performance tracking page.
+
+What’s next:
+- Add preview hint inside performance chart cards once next-gen chart data exists.
+
+Risky areas touched:
+- Performance tracking header UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm performance tracking shows the preview banner.
+
+## 2026-02-06 15:56 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added preview badges in performance chart headers when next-gen preview is enabled.
+
+What’s next:
+- Finish Phase 3 by adding preview hint to benchmark section once next-gen benchmarks are wired.
+
+Risky areas touched:
+- Performance chart header UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm both performance charts show Preview badges.
+
+## 2026-02-06 15:59 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added preview note to the performance benchmark section when next-gen preview is enabled.
+
+What’s next:
+- Phase 3 complete. Prepare Phase 4 UI polish items if approved.
+
+Risky areas touched:
+- Performance benchmark section UI (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm benchmark section shows the preview note.
+
+## 2026-02-06 16:10 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added a left accent to analytics and performance preview banners for clearer visual hierarchy.
+
+What’s next:
+- Continue Phase 4 with minor layout polish only if needed.
+
+Risky areas touched:
+- Analytics and performance preview banner styling (additive).
+
+Manual test checklist:
+- Verify preview banners show the new left accent and remain aligned on desktop and mobile.
+
+## 2026-02-06 16:15 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added a left accent to coach analytics preview note for consistency with other preview banners.
+
+What’s next:
+- Continue Phase 4 only if additional minor visual polish is needed.
+
+Risky areas touched:
+- Coach analytics note styling (additive).
+
+Manual test checklist:
+- Confirm coach analytics preview note shows the left accent and aligns properly.
+
+## 2026-02-06 16:19 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added a styled preview callout for the coach preview note for better visual consistency.
+
+What’s next:
+- Continue Phase 4 only if additional minor visual polish is needed.
+
+Risky areas touched:
+- Coach preview note styling (additive).
+
+Manual test checklist:
+- Confirm the coach preview note renders with the accent and spacing intact.
+
+## 2026-02-06 16:23 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Polished player dashboard preview tag styling for consistency with other preview badges.
+
+What’s next:
+- Continue Phase 4 only if additional minor visual polish is required.
+
+Risky areas touched:
+- Player dashboard preview tag styling (additive).
+
+Manual test checklist:
+- Enable next-gen preview and confirm readiness card preview tag uses the updated badge styling.
+
+## 2026-02-06 16:28 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Introduced a shared SCSS mixin for preview badges to reduce duplication.
+- Applied the mixin to analytics hub, performance chart badges, and coach tab preview badge.
+
+What’s next:
+- Identify any additional safe, behavior-neutral duplicates for Phase 5 cleanup.
+
+Risky areas touched:
+- SCSS mixins and preview badge styling (refactor only).
+
+Manual test checklist:
+- Verify preview badges still render with the same size, weight, and spacing.
+
+## 2026-02-06 16:34 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Reused preview badge mixin for coach strip and summary preview badges.
+- Reduced duplicated preview badge styles in coach dashboard.
+
+What’s next:
+- Continue Phase 5 only if more duplication targets are clearly identical.
+
+Risky areas touched:
+- Coach preview badge styling (refactor only).
+
+Manual test checklist:
+- Verify coach preview badges render unchanged in header and summary.
+
+## 2026-02-06 16:38 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added a shared preview callout mixin for banners/notes.
+- Applied it to analytics and performance preview banners and coach preview notes.
+
+What’s next:
+- Continue Phase 5 only if more duplication targets are clearly identical.
+
+Risky areas touched:
+- SCSS mixins and preview callout styling (refactor only).
+
+Manual test checklist:
+- Confirm preview banners and notes retain spacing, accent, and font sizes.
+
+## 2026-02-06 16:42 CET
+
+Commands run (latest):
+- `npm run lint` (pass)
+- `npm run build` (pass)
+- `npm test` (pass)
+
+Counts (latest):
+- Build errors: 0
+- TypeScript errors: 0
+- Lint errors: 0
+- Lint warnings: 0
+- Test failures: 0
+
+What changed:
+- Added ROUTE_MAP.md documenting FE routes and primary data sources/endpoints.
+
+What’s next:
+- Continue the end-to-end audit starting with FE↔BE connectivity and backend route registration.
+
+Risky areas touched:
+- Documentation only.
+
+Manual test checklist:
+- None (documentation change only).

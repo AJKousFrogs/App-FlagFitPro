@@ -13,7 +13,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 vi.mock("../../../environments/environment", () => ({
   environment: {
     production: false,
-    apiUrl: "http://localhost:4000",
+    apiUrl: "http://localhost:8888",
     supabase: {
       url: "https://test.supabase.co",
       anonKey: "test-anon-key-for-testing",

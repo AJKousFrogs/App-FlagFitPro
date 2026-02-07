@@ -22,6 +22,7 @@ import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { PerformanceTrackingDataService } from "./services/performance-tracking-data.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -208,6 +209,15 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               >Log Performance</app-button
             >
           </app-page-header>
+          @if (nextGenEnabled()) {
+            <div class="performance-preview-banner">
+              <i class="pi pi-sparkles"></i>
+              <span>
+                Next-gen performance signals are in preview. Keep using legacy
+                metrics until validation completes.
+              </span>
+            </div>
+          }
 
           <!-- Performance Metrics -->
           @if (hasData()) {
@@ -387,7 +397,12 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             @defer (on viewport) {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
-                  <h3>Performance Over Time</h3>
+                  <div class="chart-header-row">
+                    <h3>Performance Over Time</h3>
+                    @if (nextGenEnabled()) {
+                      <span class="chart-preview-badge">Preview</span>
+                    }
+                  </div>
                 </ng-template>
                 @if (performanceChartData()) {
                   <app-lazy-chart
@@ -417,7 +432,12 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             @defer (on viewport) {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
-                  <h3>Speed Metrics (10yd, 20yd, 40yd)</h3>
+                  <div class="chart-header-row">
+                    <h3>Speed Metrics (10yd, 20yd, 40yd)</h3>
+                    @if (nextGenEnabled()) {
+                      <span class="chart-preview-badge">Preview</span>
+                    }
+                  </div>
                 </ng-template>
                 @if (speedChartData()) {
                   <app-lazy-chart
@@ -460,6 +480,12 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 ></p-select>
               </div>
             </ng-template>
+            @if (nextGenEnabled()) {
+              <p class="benchmark-preview-note">
+                Next-gen benchmarks are in preview. Use current benchmarks for
+                decisions until validation completes.
+              </p>
+            }
             @if (positionBenchmarks().length > 0) {
               <div class="benchmarks-list">
                 @for (
@@ -859,6 +885,10 @@ export class PerformanceTrackingComponent {
   private readonly logger = inject(LoggerService);
   private readonly teamRankingService = inject(TeamPerformanceRankingService);
   private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly featureFlags = inject(FeatureFlagsService);
+
+  // Next-gen preview
+  readonly nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
 
   // Runtime guard signals - prevent white screen crashes
   readonly isPageLoading = signal<boolean>(true);

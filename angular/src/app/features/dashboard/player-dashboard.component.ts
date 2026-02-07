@@ -88,6 +88,8 @@ import {
 } from "../../core/semantics/semantic-meaning.types";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { FeatureFlagsService } from "../../core/services/feature-flags.service";
+import { NextGenMetricsService } from "../../core/services/next-gen-metrics.service";
 import { TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
 import { getReadinessLevel } from "../../core/constants/wellness.constants";
 import { getTimeAgo } from "../../shared/utils/date.utils";
@@ -475,6 +477,16 @@ interface AnnouncementBanner {
                     [severity]="getReadinessSeverity()"
                     size="sm"
                   ></app-status-tag>
+                  @if (nextGenEnabled()) {
+                    <span class="next-gen-preview-tag">
+                      Preview:
+                      {{
+                        nextGenReadinessScore() !== null
+                          ? (nextGenReadinessScore() | number: "1.0-0")
+                          : "N/A"
+                      }}
+                    </span>
+                  }
                 </div>
               } @else {
                 <div class="stat-card-content">
@@ -490,6 +502,9 @@ interface AnnouncementBanner {
                     severity="info"
                     size="sm"
                   ></app-status-tag>
+                  @if (nextGenEnabled()) {
+                    <span class="next-gen-preview-tag">Preview: N/A</span>
+                  }
                 </div>
               }
 
@@ -1474,6 +1489,21 @@ Keep logging sessions to unlock this injury prevention metric!'
         text-transform: var(--ds-text-transform-uppercase);
       }
 
+      .next-gen-preview-tag {
+        margin-top: var(--space-1);
+        display: inline-flex;
+        align-items: center;
+        padding: 0 var(--space-2);
+        border-radius: var(--radius-pill);
+        background: var(--surface-secondary);
+        border: var(--border-1) solid var(--surface-border);
+        color: var(--color-text-secondary);
+        font-size: var(--ds-font-size-xs);
+        font-weight: var(--ds-font-weight-medium);
+        text-transform: uppercase;
+        letter-spacing: var(--ds-letter-spacing-caption);
+      }
+
       /* Wellness Check-in Status Styles (UX Audit Fix #4) */
       .wellness-checkin-status {
         margin-top: var(--space-3);
@@ -1956,6 +1986,8 @@ export class PlayerDashboardComponent {
   private readonly toastService = inject(ToastService);
   private readonly profileCompletionService = inject(ProfileCompletionService);
   private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly featureFlags = inject(FeatureFlagsService);
+  private readonly nextGenMetricsService = inject(NextGenMetricsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
 
@@ -2002,6 +2034,14 @@ export class PlayerDashboardComponent {
   wellnessCheckedInToday = signal(false);
   lastWellnessCheckin = signal<Date | null>(null);
   checkinStreak = signal(0);
+
+  // Next-gen preview
+  nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
+  nextGenPreview = this.nextGenMetricsService.loadPreview;
+  nextGenReadinessScore = computed(() => {
+    const preview = this.nextGenPreview();
+    return preview?.readiness?.score ?? null;
+  });
 
   // ACWR progress tracking (UX Audit Fix #5)
   trainingDaysLogged = signal<number | null>(null); // Calculate from real training sessions
@@ -2245,6 +2285,14 @@ export class PlayerDashboardComponent {
     this.teamMembershipService.loadMembership();
 
     this.loadData();
+
+    effect(() => {
+      if (this.nextGenEnabled()) {
+        this.nextGenMetricsService.refreshLoadPreview();
+      } else {
+        this.nextGenMetricsService.clearPreview();
+      }
+    });
 
     effect(() => {
       const schedule = this.unifiedTrainingService.weeklySchedule();

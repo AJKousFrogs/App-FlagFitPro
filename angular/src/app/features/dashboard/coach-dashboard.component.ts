@@ -16,6 +16,7 @@ import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
@@ -24,6 +25,7 @@ import { forkJoin } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import {
   MissingDataDetectionService,
   PlayerMissingData,
@@ -118,6 +120,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     InputText,
     Textarea,
     DatePicker,
+    ProgressBar,
     Select,
     AppLoadingComponent,
     ButtonComponent,
@@ -177,7 +180,10 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                     ><i
                       class="pi pi-exclamation-triangle strip-title-icon"
                     ></i>
-                    Needs Attention Now</span
+                    Needs Attention Now
+                    @if (nextGenEnabled()) {
+                      <span class="strip-preview-badge">Preview</span>
+                    }</span
                   >
                   <p-badge
                     [value]="riskAlerts().length.toString()"
@@ -430,6 +436,9 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                   {{ teamOverview().streak }}
                 </span>
               </p>
+              @if (nextGenEnabled()) {
+                <span class="next-gen-preview-tag">Next-Gen Preview</span>
+              }
             </div>
             <div class="header-actions toolbar-row__end">
               <app-button
@@ -451,7 +460,12 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           <!-- Key Stats Row - Refactored for Compactness -->
           <div class="stats-compact-row">
             <div class="sc-item" pTooltip="Average Team Readiness">
-              <span class="sc-label">Team Readiness</span>
+              <span class="sc-label">
+                Team Readiness
+                @if (nextGenEnabled()) {
+                  <span class="sc-preview-badge">Preview</span>
+                }
+              </span>
               <span class="sc-value"
                 >{{ teamOverview().practiceAttendanceRate }}%</span
               >
@@ -482,6 +496,111 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               }}</span>
             </div>
           </div>
+
+          @if (nextGenEnabled()) {
+            <app-card
+              styleClass="next-gen-preview-card"
+              headerIcon="pi-sparkles"
+              title="Next-Gen Preview (Coach)"
+              [compact]="true"
+            >
+              <div class="next-gen-preview-grid">
+                <div class="preview-metric">
+                  <span class="preview-label">Preview Status</span>
+                  <span class="preview-value">Enabled</span>
+                </div>
+                <div class="preview-metric">
+                  <span class="preview-label">Legacy Avg ACWR</span>
+                  <span class="preview-value">{{
+                    teamOverview().avgTeamWorkload | number: "1.2-2"
+                  }}</span>
+                </div>
+                <div class="preview-metric">
+                  <span class="preview-label">At-Risk Players</span>
+                  <span class="preview-value">{{
+                    teamOverview().playersAtRisk
+                  }}</span>
+                </div>
+              </div>
+              <div class="preview-signals">
+                <span
+                  class="signal-pill"
+                  [class.good]="teamOverview().practiceAttendanceRate >= 80"
+                  [class.warning]="
+                    teamOverview().practiceAttendanceRate >= 60 &&
+                    teamOverview().practiceAttendanceRate < 80
+                  "
+                  [class.danger]="teamOverview().practiceAttendanceRate < 60"
+                >
+                  Attendance {{ teamOverview().practiceAttendanceRate }}%
+                </span>
+                <span
+                  class="signal-pill"
+                  [class.good]="teamOverview().trainingConsistency >= 70"
+                  [class.warning]="
+                    teamOverview().trainingConsistency >= 50 &&
+                    teamOverview().trainingConsistency < 70
+                  "
+                  [class.danger]="teamOverview().trainingConsistency < 50"
+                >
+                  Consistency {{ teamOverview().trainingConsistency }}
+                </span>
+                <span
+                  class="signal-pill"
+                  [class.good]="teamOverview().avgTeamWorkload <= 1.3"
+                  [class.warning]="
+                    teamOverview().avgTeamWorkload > 1.3 &&
+                    teamOverview().avgTeamWorkload <= 1.5
+                  "
+                  [class.danger]="teamOverview().avgTeamWorkload > 1.5"
+                >
+                  Workload {{ teamOverview().avgTeamWorkload | number: "1.2-2" }}
+                </span>
+              </div>
+              <div class="preview-bars">
+                <div class="preview-bar">
+                  <div class="preview-bar-label">
+                    Attendance
+                    <span>{{ teamOverview().practiceAttendanceRate }}%</span>
+                  </div>
+                  <p-progressBar
+                    [value]="teamOverview().practiceAttendanceRate"
+                    [showValue]="false"
+                  ></p-progressBar>
+                </div>
+                <div class="preview-bar">
+                  <div class="preview-bar-label">
+                    Consistency
+                    <span>{{ teamOverview().trainingConsistency }}</span>
+                  </div>
+                  <p-progressBar
+                    [value]="teamOverview().trainingConsistency"
+                    [showValue]="false"
+                  ></p-progressBar>
+                </div>
+              </div>
+              <ul class="preview-insights">
+                <li>
+                  @if (teamOverview().avgTeamWorkload > 1.3) {
+                    ⚠️ Elevated team workload (legacy ACWR). Consider deload.
+                  } @else {
+                    ✅ Team workload appears stable (legacy ACWR baseline).
+                  }
+                </li>
+                <li>
+                  @if (teamOverview().playersAtRisk > 0) {
+                    🚑 {{ teamOverview().playersAtRisk }} players flagged at risk.
+                  } @else {
+                    ✅ No players flagged at risk in legacy baseline.
+                  }
+                </li>
+              </ul>
+              <p class="preview-note">
+                Next-gen team aggregation is in preview. Use legacy ACWR and
+                roster alerts for decisions until full validation completes.
+              </p>
+            </app-card>
+          }
 
           <!-- Main Content Grid - Streamlined for Phase 2 -->
           @if (hasBlockedPlayers()) {
@@ -527,6 +646,9 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                       (click)="activeTab = 'analytics'"
                     >
                       <i class="pi pi-chart-line"></i> Performance
+                      @if (nextGenEnabled()) {
+                        <span class="tab-preview-badge">Preview</span>
+                      }
                     </button>
                   </div>
                   <div class="tab-actions">
@@ -786,6 +908,13 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                           </div>
                         </div>
                       </div>
+                      @if (nextGenEnabled()) {
+                        <p class="analytics-preview-note">
+                          Next-gen performance trends are in preview. Keep
+                          using legacy charts for decisions until validation
+                          completes.
+                        </p>
+                      }
                     </div>
                   }
                 </div>
@@ -1059,8 +1188,12 @@ export class CoachDashboardComponent {
   private readonly accountabilityService = inject(
     AccountabilityTrackingService,
   );
+  private readonly featureFlags = inject(FeatureFlagsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
+
+  // Next-gen preview
+  nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
 
   // Workspace state
   activeTab: "roster" | "analytics" = "roster";

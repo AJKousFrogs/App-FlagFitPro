@@ -46,6 +46,22 @@
   color: var(--color-status-warning);
 }
 
+.text-orange-500 {
+  color: var(--color-status-warning);
+}
+
 .text-red-600 {
   color: var(--color-status-error);
+}
+
+.next-gen-alerts .alert-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.next-gen-alerts .alert-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-sm);
 }

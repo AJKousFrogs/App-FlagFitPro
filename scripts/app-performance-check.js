@@ -257,7 +257,7 @@ class AppPerformanceChecker {
 
   async checkDevServer() {
     try {
-      const response = await fetch("http://localhost:4000");
+      const response = await fetch("http://localhost:8888");
       return response.ok;
     } catch (_error) {
       return false;
@@ -266,7 +266,7 @@ class AppPerformanceChecker {
 
   async checkHMR() {
     try {
-      const response = await fetch("http://localhost:4000/@vite/client");
+      const response = await fetch("http://localhost:8888/@vite/client");
       return response.ok;
     } catch (_error) {
       return false;

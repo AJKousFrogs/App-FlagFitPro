@@ -3,6 +3,10 @@ node_modules.old/
 
 # Local Netlify folder
 .netlify
+.netlify/functions
+netlify/functions/*.zip
+netlify/functions/manifest.json
+database/migration_results/mcp_migrations
 
 # Environment files
 .env

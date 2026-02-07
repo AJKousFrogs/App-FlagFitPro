@@ -205,6 +205,13 @@
   white-space: nowrap;
 }
 
+/* Dev-only API health badge */
+.api-health-indicator {
+  display: flex;
+  align-items: center;
+  height: var(--touch-target-sm);
+}
+
 // Weather severity states
 .weather-excellent {
   border-color: var(--primitive-success-300);

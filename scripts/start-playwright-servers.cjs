@@ -4,7 +4,19 @@ const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const processes = [
   spawn(npmCommand, ["run", "start:api"], { stdio: "inherit" }),
-  spawn(npmCommand, ["run", "dev:angular"], { stdio: "inherit" }),
+  spawn(
+    npmCommand,
+    [
+      "run",
+      "dev:angular",
+      "--",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "4200",
+    ],
+    { stdio: "inherit" },
+  ),
 ];
 
 let shuttingDown = false;

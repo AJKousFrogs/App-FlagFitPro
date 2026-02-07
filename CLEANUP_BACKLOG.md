@@ -6,26 +6,23 @@ Notes:
 
 ## Top 20 (Prioritized)
 
-1. Consolidate remaining inline endpoints in `server.js` into modular route files.
-Description: Move any remaining inline route handlers (ex: Player Stats TODO block) into dedicated `routes/*.routes.js` files and keep `server.js` as composition-only.
-Rationale: `server.js` is still a monolith and already documents a move to modular routes; keeping mixed patterns increases maintenance risk.
-Files: `server.js`, `routes/*.routes.js`.
-Risk: Medium.
-Verification: `npm test`, run API smoke checks for migrated endpoints, validate `/api/*` routes respond with expected status codes.
+1. ✅ Removed Express server duplication in favor of Netlify Functions (2026-02-06).
+Description: Removed `server.js` and `routes/**` and standardized backend entry on `netlify/functions/*`.
+Rationale: Eliminates legacy duplication and aligns dev/prod routing with Netlify redirects.
+Files: `server.js`, `routes/**` (removed), `netlify.toml`, `package.json`.
+Verification: `npm run dev`, `npm run test:backend`, `npm run smoke:check`.
 
-2. Standardize backend error responses on `sendError/sendSuccess` utilities.
-Description: Replace ad-hoc `res.status(...).json(...)` patterns in routes with `sendError`, `sendSuccess`, and `sendValidationError` from `routes/utils/validation.js`.
-Rationale: Inconsistent error shapes complicate clients and make logging/observability uneven.
-Files: `routes/**/*.routes.js`, `server.js`, `routes/utils/validation.js`.
-Risk: Medium.
-Verification: `npm test`, verify error response schema for common failures (bad inputs, auth failure, DB errors).
+2. ✅ Backend error responses standardized via Netlify Functions `baseHandler` (2026-02-06).
+Description: Canonical error/response shapes now come from `netlify/functions/utils/error-handler.cjs`.
+Rationale: Single response contract across all backend endpoints.
+Files: `netlify/functions/utils/error-handler.cjs`, `netlify/functions/utils/base-handler.cjs`.
+Verification: `npm run test:backend`, `npm run test:contracts`.
 
-3. Centralize Supabase-availability checks into middleware.
-Description: Replace repeated `if (!supabase)` guards with a shared middleware that returns a consistent error early.
-Rationale: Reduces duplicated logic and ensures consistent error handling across all routes.
-Files: `routes/**/*.routes.js`, `routes/utils/database.js`, `routes/middleware/*.js`.
-Risk: Medium.
-Verification: `npm test`, verify routes fail with consistent error when Supabase is unavailable.
+3. ✅ Supabase availability checks centralized in Netlify `checkEnvVars` (2026-02-06).
+Description: Netlify base handler enforces env validation before handlers run.
+Rationale: Consistent early failure across all endpoints.
+Files: `netlify/functions/supabase-client.cjs`, `netlify/functions/utils/base-handler.cjs`.
+Verification: `npm run test:backend`, `npm run smoke:check`.
 
 4. Align frontend HTTP usage to Angular HttpClient + interceptors.
 Description: Replace ad-hoc `fetch` calls with HttpClient or a shared API service so interceptors (auth, error, retry) apply consistently.
@@ -57,20 +54,17 @@ Files: `angular/src/app/features/roster/roster.service.ts`, `angular/src/app/cor
 Risk: Low.
 Verification: `npm test`, verify error banners/toasts still display expected messages.
 
-8. Consolidate duplicate request logging middleware.
-Description: Merge `request-logger.middleware.js` and `enhanced-request-logger.middleware.js` into a single implementation or clearly separate responsibilities.
-Rationale: Two similar loggers increase confusion and risk of inconsistent logging across routes.
-Files: `routes/middleware/request-logger.middleware.js`, `routes/middleware/enhanced-request-logger.middleware.js`.
-Risk: Medium.
-Verification: `npm test`, confirm logs still include request ids and timings.
+8. ✅ Express request logging middleware removed with Express cleanup (2026-02-06).
+Description: Backend logging now uses Netlify Functions `baseHandler` logging.
+Rationale: Single logging path across all backend endpoints.
+Files: `netlify/functions/utils/error-handler.cjs`.
+Verification: `npm run test:backend`, review function logs in dev.
 
-9. Remove or archive unused server entrypoints.
-Description: Validate whether `server-supabase.js` and `simple-server.js` are used; remove or move to an `archive/` folder if not.
-Rationale: Multiple server entrypoints increase confusion and accidental drift.
-Files: `server-supabase.js`, `simple-server.js`, `package.json` scripts.
-Risk: Low.
-Verification: `npm test`, confirm `npm run dev:api` and `npm run start:api` still work.
-Status: Completed on 2026-02-04 (moved to `docs/legacy/`).
+9. ✅ Legacy server entrypoints removed (2026-02-06).
+Description: Removed legacy server entrypoints and the `docs/legacy` archive.
+Rationale: Avoid accidental drift and duplicate backends.
+Files: `docs/legacy/**` (removed), `package.json` scripts updated.
+Verification: `npm run dev`, `npm run smoke:check`.
 
 10. Untrack generated build artifacts committed to the repo.
 Description: Remove tracked files in `src/css`, `dist`, `playwright-report`, and `test-results`, and keep them ignored.
@@ -102,19 +96,17 @@ Files: `angular/src/scss/tokens/design-system-tokens.scss`, `angular/src/**/*.sc
 Risk: Medium.
 Verification: `npm test`, run visual checks on high-traffic screens.
 
-14. Consolidate route-level data helpers into shared utilities.
-Description: Identify duplicated logic for pagination, validation, and query parsing in routes and move to shared helpers.
-Rationale: Reduces inconsistencies and makes API behavior predictable.
-Files: `routes/**/*.routes.js`, `routes/utils/query-helper.js`, `routes/utils/validation.js`.
-Risk: Medium.
-Verification: `npm test`, validate pagination and filters for key endpoints (attendance, roster, training).
+14. ✅ Route helper duplication removed with Express cleanup (2026-02-06).
+Description: Express routes/utilities were removed; Netlify Functions and shared utils are canonical.
+Rationale: Eliminates legacy route helper drift.
+Files: `routes/**` (removed), `netlify/functions/utils/*`.
+Verification: `npm run test:backend`, `npm run test:contracts`.
 
-15. Normalize caching strategy between backend and frontend.
-Description: Audit backend caching (`routes/utils/cache.js`, HTTP headers) and frontend caching interceptor to avoid double-caching or stale data.
-Rationale: Inconsistent caching can create stale UI or unexpected refresh behavior.
-Files: `routes/utils/cache.js`, `angular/src/app/core/interceptors/cache.interceptor.ts`.
-Risk: Medium.
-Verification: `npm test`, validate data refresh behavior with cache enabled/disabled.
+15. ✅ Backend caching normalized via Netlify Functions headers (2026-02-06).
+Description: Backend caching now relies on Netlify function response headers; Express cache utilities removed.
+Rationale: Single caching strategy across environments.
+Files: `netlify/functions/utils/error-handler.cjs`, `angular/src/app/core/interceptors/cache.interceptor.ts`.
+Verification: `npm run test:backend`, spot-check cache behavior.
 
 16. Remove or consolidate unused “today” folder under `angular/src/app`.
 Description: Confirm whether `angular/src/app/today/**` is referenced; remove or move to `features/today` if legacy.
@@ -130,12 +122,11 @@ Files: `angular/src/app/features/settings/settings.component.ts`, `angular/src/a
 Risk: Low.
 Verification: `npm test`, verify country dropdowns render correctly.
 
-18. Ensure consistent response schema in `server.js` legacy endpoints.
-Description: Align legacy endpoints still in `server.js` to the same success/error shapes used in modular routes.
-Rationale: Mixed response schemas make client handling brittle.
-Files: `server.js`, `routes/utils/validation.js`.
-Risk: Medium.
-Verification: `npm test`, validate response shapes via API calls.
+18. ✅ Legacy response schemas removed with Express cleanup (2026-02-06).
+Description: Netlify Functions enforce a single response contract via base handler.
+Rationale: Eliminate mixed schema handling in clients.
+Files: `netlify/functions/utils/base-handler.cjs`, `netlify/functions/utils/error-handler.cjs`.
+Verification: `npm run test:backend`, `npm run smoke:check`.
 
 19. Review and remove unused exports in shared Angular utilities.
 Description: Use tooling (tsc, lint, or `madge`) to identify unused exports in `angular/src/app/shared` and prune.
@@ -153,7 +144,7 @@ Verification: `npm test`, ensure build passes and Supabase types are available i
 
 ## Quick Wins (<= 2 hours)
 
-1. Remove or archive unused server entrypoints: `server-supabase.js`, `simple-server.js`.
+1. ✅ Removed legacy server entrypoints (2026-02-06).
 2. Untrack generated build artifacts committed to the repo: `src/css/**`, `dist/**`, `playwright-report/**`, `test-results/**`.
 3. De-duplicate PWA manifests: keep only `angular/src/manifest.webmanifest` or `angular/src/manifest.json`.
 4. Remove empty `supabase-types.ts` or generate proper types.
@@ -163,5 +154,5 @@ Verification: `npm test`, ensure build passes and Supabase types are available i
 
 1. Moving direct Supabase client usage out of components into services.
 2. Reducing or refactoring CSS overrides in `angular/src/assets/styles/overrides/_exceptions.scss`.
-3. Standardizing backend error responses across all routes and legacy endpoints.
-4. Consolidating remaining inline endpoints from `server.js` into modular routes.
+3. ✅ Standardized backend error responses via Netlify base handler (2026-02-06).
+4. ✅ Removed legacy Express endpoints in favor of Netlify Functions (2026-02-06).

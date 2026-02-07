@@ -15,7 +15,7 @@
     "baseUrl": ".",
     "lib": ["ES2024"]
   },
-  "include": ["routes/**/*", "scripts/**/*.js", "netlify/functions/**/*"],
+  "include": ["scripts/**/*.js", "netlify/functions/**/*"],
   "exclude": [
     "node_modules",
     "dist",

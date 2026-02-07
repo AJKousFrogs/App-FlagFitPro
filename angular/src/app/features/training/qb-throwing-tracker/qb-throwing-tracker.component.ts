@@ -10,6 +10,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from "@angular/core";
@@ -32,6 +33,7 @@ import { MessageService, PrimeTemplate } from "primeng/api";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { FeatureFlagsService } from "../../../core/services/feature-flags.service";
 import { ApiResponse } from "../../../core/models/common.models";
 
 interface ThrowingSession {
@@ -162,6 +164,13 @@ interface SessionTypeOption {
             <i class="pi pi-lightbulb"></i>
             <span>{{ progressionStatus()!.recommendation }}</span>
           </div>
+
+          @if (nextGenEnabled() && throwingSpikeAlert()) {
+            <div class="preview-alert">
+              <i class="pi pi-exclamation-triangle"></i>
+              <span>{{ throwingSpikeAlert() }}</span>
+            </div>
+          }
         </div>
       }
 
@@ -480,6 +489,7 @@ export class QbThrowingTrackerComponent {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
+  private readonly featureFlags = inject(FeatureFlagsService);
 
   // State
   readonly progressionStatus = signal<ProgressionStatus | null>(null);
@@ -487,6 +497,24 @@ export class QbThrowingTrackerComponent {
   readonly recentSessions = signal<ThrowingSession[]>([]);
   readonly showLogDialog = signal(false);
   readonly isSaving = signal(false);
+  readonly nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
+
+  readonly throwingSpikeAlert = computed(() => {
+    if (!this.nextGenEnabled()) return null;
+    const sessions = this.recentSessions();
+    if (sessions.length < 2) return null;
+    const latest = sessions[0];
+    const baselineSessions = sessions.slice(1, 4);
+    if (baselineSessions.length === 0) return null;
+    const baselineAvg =
+      baselineSessions.reduce((sum, s) => sum + s.totalThrows, 0) /
+      baselineSessions.length;
+    if (baselineAvg <= 0) return null;
+    const spikeRatio = latest.totalThrows / baselineAvg;
+    if (spikeRatio < 1.25) return null;
+    const pct = Math.round((spikeRatio - 1) * 100);
+    return `Throwing load spike detected (+${pct}%). Consider extra recovery.`;
+  });
 
   // Form
   formData: Partial<ThrowingSession> = this.getEmptyForm();

@@ -13,9 +13,7 @@ This directory contains comprehensive testing for the FlagFit Pro application, i
 
 **Test Files:**
 
-- `cache-utils.test.js` - Cache utility behavior
 - `error-handler.test.js` - Error handling and user notifications
-- `validation-utils.test.js` - Input validation helpers
 
 ### 🔗 Integration Tests (`tests/integration/`)
 
@@ -28,7 +26,7 @@ This directory contains comprehensive testing for the FlagFit Pro application, i
 
 - `api-integration.test.js` - Full API workflow tests with Netlify Functions
 - `database-integration.test.js` - Database operation tests (Supabase)
-- `api-endpoints.test.js` - API endpoint validation
+- `netlify-api.test.js` - Netlify Functions endpoint smoke tests
 - `notification-flow.test.js` - Notification system tests
 
 ### 🌐 End-to-End Tests (`tests/e2e/`)
@@ -76,6 +74,7 @@ npm run test:all
 
 # Run specific test types
 npm run test:unit          # Unit tests (Angular)
+npm run test:backend       # Backend Netlify Functions smoke tests
 npm run test:e2e           # End-to-end tests (Playwright)
 npm run test:privacy       # Privacy/safety tests
 
@@ -101,13 +100,11 @@ tests/
 ├── test-helpers.js                   # Mock factories and utilities
 ├── README.md                         # This file
 ├── unit/                             # Unit tests
-│   ├── error-handler.test.js         # Error handling
-│   ├── cache-utils.test.js           # Cache utilities
-│   └── validation-utils.test.js      # Validation utilities
+│   └── error-handler.test.js         # Error handling
 ├── integration/                      # Integration tests
 │   ├── api-integration.test.js       # API workflow tests
 │   ├── database-integration.test.js  # Database operations
-│   ├── api-endpoints.test.js         # Endpoint validation
+│   ├── netlify-api.test.js           # Netlify Functions smoke tests
 │   └── notification-flow.test.js     # Notifications
 ├── e2e/                              # End-to-end tests
 │   ├── user-authentication.spec.js   # Auth flows

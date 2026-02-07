@@ -55,9 +55,9 @@ export class ApiService {
       }
 
       // Local development: auto-detect API port
-      // Default is 4000, but can be overridden via URL query param ?API_PORT=3000
+      // Default is 8888 (Netlify Dev), but can be overridden via URL query param ?API_PORT=3000
       const urlParams = new URLSearchParams(window.location.search);
-      const apiPort = urlParams.get("API_PORT") || "4000";
+      const apiPort = urlParams.get("API_PORT") || "8888";
 
       // localhost or 127.0.0.1
       if (hostname === "localhost" || hostname === "127.0.0.1") {

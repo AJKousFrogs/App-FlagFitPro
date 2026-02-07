@@ -130,6 +130,21 @@
           </div>
         }
 
+        @if (showApiStatus) {
+          <div
+            class="api-health-indicator"
+            [pTooltip]="apiHealthTooltip()"
+            tooltipPosition="bottom"
+          >
+            <app-status-tag
+              [value]="apiHealthLabel()"
+              [severity]="apiHealthSeverity()"
+              icon="pi-database"
+              size="sm"
+            />
+          </div>
+        }
+
         <!-- Notifications -->
         <div class="header-icon-btn-wrapper">
           <app-icon-button

@@ -28,29 +28,35 @@ const getEnvValue = (key: string, fallback: string): string => {
 };
 
 // Auto-detect API URL for local development
-// This allows the Angular app to connect to the API server regardless of which port it's running on
+// Prefer Netlify Dev (port 8888) to ensure parity with production functions
 const getDefaultApiUrl = (): string => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
+    const currentPort = window.location.port;
     // Check for API_PORT in URL query params (e.g., ?API_PORT=3000)
     const urlParams = new URLSearchParams(window.location.search);
-    const apiPort = urlParams.get("API_PORT") || "4000";
+    const apiPort = urlParams.get("API_PORT") || "8888";
 
     // For localhost or 127.0.0.1
     if (hostname === "localhost" || hostname === "127.0.0.1") {
+      // If running via Netlify Dev proxy, use same-origin
+      if (currentPort === "8888") {
+        return window.location.origin;
+      }
       return `http://${hostname}:${apiPort}`;
     }
 
     // For local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
-    // Connect to the API on the same host but port 4000
+    // Connect to the API on the same host but Netlify Dev port (8888)
     const localNetworkPattern =
       /^(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})$/;
     if (localNetworkPattern.test(hostname)) {
+      // Respect API_PORT override; otherwise prefer Netlify Dev port
       return `http://${hostname}:${apiPort}`;
     }
   }
   // Default for SSR or unknown environments
-  return "http://localhost:4000";
+  return "http://localhost:8888";
 };
 
 // Default development values (safe to commit - public anon key only)
@@ -79,20 +85,4 @@ export const environment = {
     changeDetection: true,
     hydration: true,
   },
-  /**
-   * Use direct Supabase calls instead of Netlify Functions API
-   *
-   * When TRUE (default for ng serve on port 4200):
-   *   - API calls go directly to Supabase
-   *   - No need for Netlify Dev server
-   *   - Faster local development
-   *
-   * When FALSE (Netlify Dev on port 8888 or production):
-   *   - API calls go through /api/* endpoints
-   *   - Tests full production flow with Netlify Functions
-   *
-   * Auto-detects based on port: 4200 = direct, 8888 = via API
-   */
-  // Enforce backend API usage even in development for consistent auth behavior
-  useDirectSupabase: false,
 };

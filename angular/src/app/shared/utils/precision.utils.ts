@@ -244,9 +244,3 @@ export function formatNumberSafe(
   }
   return value.toFixed(decimals);
 }
-
-/**
- * @deprecated Use formatNumberSafe() instead for clarity
- * Kept for backward compatibility
- */
-export const formatNumber = formatNumberSafe;

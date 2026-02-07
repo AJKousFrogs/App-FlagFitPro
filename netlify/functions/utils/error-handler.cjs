@@ -32,7 +32,7 @@ const ALLOWED_ORIGINS = [
   "https://flagfit-pro.netlify.app",
   "https://flagfitpro.com",
   "http://localhost:4200", // Angular dev server
-  "http://localhost:4000", // Local API server
+  "http://localhost:8888", // Netlify Dev proxy
 ];
 
 const getCorsOrigin = (requestOrigin) => {

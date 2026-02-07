@@ -3,6 +3,13 @@
   command = "cd angular && npm ci --legacy-peer-deps && npm run build && cd .. && node scripts/inject-env-into-html-angular.js"
   publish = "angular/dist/flagfit-pro/browser"
 
+[dev]
+  framework = "#custom"
+  command = "cd angular && npx ng serve --port 4200 --host 0.0.0.0 --live-reload --poll 2000"
+  targetPort = 4200
+  port = 8888
+  publish = "angular/dist/flagfit-pro/browser"
+
 # Cache purge plugin - ensures fresh content on every deploy
 [[plugins]]
   package = "./netlify/plugins/cache-purge"

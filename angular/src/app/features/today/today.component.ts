@@ -56,7 +56,7 @@ import {
   ProtocolJson,
   TodayViewModel,
   resolveTodayState,
-} from "../../today/resolution/today-state.resolver";
+} from "./resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
 import {
@@ -71,14 +71,12 @@ import {
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { DataSourceService } from "../../core/services/data-source.service";
-import { DirectSupabaseApiService } from "../../core/services/direct-supabase-api.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ScreenReaderAnnouncerService } from "../../core/services/screen-reader-announcer.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 
 // Environment
-import { environment } from "../../../environments/environment";
 
 // Utils
 import { mapDailyProtocolResponse } from "../../core/utils/api-response-mapper";
@@ -1305,15 +1303,11 @@ export class TodayComponent {
   private readonly dataSourceService = inject(DataSourceService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(ApiService);
-  private readonly directApi = inject(DirectSupabaseApiService);
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
 
   // Angular 21: viewChild signals for DOM element references
   private readonly wellnessSection = viewChild<ElementRef>("wellnessSection");
   private readonly protocolBlocks = viewChild<ElementRef>("protocolBlocks");
-
-  // Environment flag for API routing
-  private readonly useDirectSupabase = environment.useDirectSupabase;
 
   // Guard to prevent duplicate initial loads
   private _initialLoadDone = false;
@@ -1643,22 +1637,9 @@ export class TodayComponent {
    * 3. Resolve state using deterministic resolver
    * 4. Do NOT generate multiple times
    * 5. Do NOT fabricate fallback UI if generation fails
-   *
-   * When useDirectSupabase is true (local dev without Netlify):
-   * - Uses DirectSupabaseApiService to call database directly
-   * - No need for Netlify Dev server running
    */
   private loadTodayData(): void {
     const today = new Date().toISOString().split("T")[0];
-
-    // Use direct Supabase API in local development mode
-    if (this.useDirectSupabase) {
-      this.logger.info(
-        "[TodayComponent] Using direct Supabase API for protocol data",
-      );
-      this.loadTodayDataDirect(today);
-      return;
-    }
 
     // Step 1: Try GET first (via Netlify Functions)
     this.api
@@ -1713,134 +1694,6 @@ export class TodayComponent {
           }
         },
       });
-  }
-
-  /**
-   * Load today data using direct Supabase API (for local development)
-   */
-  private loadTodayDataDirect(date: string): void {
-    this.directApi
-      .getDailyProtocol(date)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          if (response?.success && response.data) {
-            // Store full protocol data for UI rendering (includes blocks with exercises)
-            this.fullProtocolData = response.data as unknown as ProtocolApiResponse;
-
-            // Protocol found, resolve state
-            // Map direct API response to ProtocolJson format
-            const protocolData = this.mapDirectResponseToProtocolJson(
-              response.data as unknown as ProtocolApiResponse,
-            );
-            this.protocolJson.set(protocolData);
-            this.resolveAndUpdateViewModel(protocolData);
-            this.error.set(null);
-            // Reset generation flag on successful load
-            this._generationAttempted.set(false);
-          } else if (!this._generationAttempted()) {
-            // Protocol not found, generate once (using component-level signal)
-            this._generationAttempted.set(true);
-            this.generateAndLoadProtocolDirect(date);
-          } else {
-            this.error.set(
-              "Unable to generate your training plan. Please contact support.",
-            );
-            this.protocolJson.set(null);
-            this.fullProtocolData = null;
-            this.todayViewModel.set(
-              resolveTodayState(null, this.currentTime()),
-            );
-          }
-        },
-        error: (err) => {
-          this.logger.error("Failed to load today data (direct)", err);
-          if (!this._generationAttempted()) {
-            this._generationAttempted.set(true);
-            this.generateAndLoadProtocolDirect(date);
-          } else {
-            this.error.set(
-              "Failed to load your training data. Please try again.",
-            );
-            this.protocolJson.set(null);
-            this.fullProtocolData = null;
-            this.todayViewModel.set(
-              resolveTodayState(null, this.currentTime()),
-            );
-          }
-        },
-      });
-  }
-
-  /**
-   * Generate protocol using direct Supabase API
-   */
-  private generateAndLoadProtocolDirect(date: string): void {
-    this.isGeneratingProtocol.set(true);
-
-    this.directApi
-      .generateDailyProtocol(date)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          this.isGeneratingProtocol.set(false);
-          if (response?.success && response.data) {
-            // Store full protocol data for UI rendering
-            this.fullProtocolData = response.data as unknown as ProtocolApiResponse;
-
-            // Generation succeeded
-            const protocolData = this.mapDirectResponseToProtocolJson(
-              response.data as unknown as ProtocolApiResponse,
-            );
-            this.protocolJson.set(protocolData);
-            this.resolveAndUpdateViewModel(protocolData);
-            this.error.set(null);
-          } else {
-            this.error.set(
-              "Unable to generate your training plan. Please contact support.",
-            );
-            this.protocolJson.set(null);
-            this.fullProtocolData = null;
-            this.todayViewModel.set(
-              resolveTodayState(null, this.currentTime()),
-            );
-          }
-        },
-        error: (err) => {
-          this.logger.error("Failed to generate protocol (direct)", err);
-          this.isGeneratingProtocol.set(false);
-          this.error.set(
-            "Failed to generate your training plan. Please contact support.",
-          );
-          this.protocolJson.set(null);
-          this.fullProtocolData = null;
-          this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
-        },
-      });
-  }
-
-  /**
-   * Map DirectSupabaseApiService response to ProtocolJson format
-   * Includes confidence_metadata for proper resolver state detection
-   */
-  private mapDirectResponseToProtocolJson(
-    data: ProtocolApiResponse,
-  ): ProtocolJson {
-    const blocks = Array.isArray(data.blocks) ? data.blocks : [];
-    return {
-      id: data.id,
-      protocol_date: data.date,
-      readiness_score: data.readinessScore,
-      acwr_value: data.acwrValue ?? null,
-      confidence_metadata:
-        data.confidenceMetadata as ProtocolJson["confidence_metadata"],
-      blocks:
-        blocks.map((block) => {
-          const type = typeof block.type === "string" ? block.type : "unknown";
-          const title = typeof block.title === "string" ? block.title : type;
-          return { type, title };
-        }),
-    };
   }
 
   /**
@@ -2297,13 +2150,9 @@ export class TodayComponent {
       readinessScore: readiness, // Calculated from actual inputs, not defaults
     };
 
-    // Use direct Supabase submission when in direct mode to ensure data is saved
-    // to the same database that protocol loading uses
-    const submission$ = this.useDirectSupabase
-      ? this.directApi.submitWellnessCheckin(wellnessData)
-      : from(this.trainingService.submitWellness(wellnessData));
-
-    submission$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    from(this.trainingService.submitWellness(wellnessData))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response: unknown) => {
         this.logger.info("Quick checkin response:", response);
         const typedResponse = response as { success?: boolean };

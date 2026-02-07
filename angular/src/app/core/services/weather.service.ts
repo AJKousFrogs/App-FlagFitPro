@@ -63,7 +63,7 @@ export class WeatherService {
    * Normalize weather data from different API formats
    */
   private normalizeWeatherData(data: Record<string, unknown>): WeatherData {
-    // Handle both Netlify function format and server.js format
+    // Handle Netlify function format and legacy field names
     return {
       temp: (data["temp"] as number) ?? (data["temperature"] as number) ?? 0,
       condition:

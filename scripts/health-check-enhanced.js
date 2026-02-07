@@ -14,7 +14,8 @@ class HealthChecker {
   constructor() {
     this.portManager = new PortManager();
     this.services = {
-      "Vite Dev Server": { ports: [4000, 4001, 4002], type: "http" },
+      "Netlify Dev": { ports: [8888], type: "http" },
+      "Angular Dev Server": { ports: [4200], type: "http" },
       "Vite Preview": { ports: [4173, 4174, 4175], type: "http" },
       Database: { ports: [5432, 5433, 5434], type: "tcp" },
       "MCP Context7": { ports: [3000, 3001, 3002], type: "http" },

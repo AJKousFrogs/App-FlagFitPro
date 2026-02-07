@@ -44,6 +44,7 @@ import { NotificationService } from "../../core/services/notification.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { AnalyticsDataService } from "./services/analytics-data.service";
+import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { TeamPerformanceRankingService } from "../../core/services/team-performance-ranking.service";
 import {
   TrainingStatsCalculationService,
@@ -167,6 +168,15 @@ interface AnalyticsAcwrData {
               >
             </div>
           </app-page-header>
+          @if (nextGenEnabled()) {
+            <div class="analytics-preview-banner">
+              <i class="pi pi-sparkles"></i>
+              <span>
+                Next-gen analytics are in preview. Legacy charts remain the
+                source of truth until validation completes.
+              </span>
+            </div>
+          }
 
           <p-card class="analytics-hub-card">
             <ng-template pTemplate="header">
@@ -177,16 +187,25 @@ interface AnalyticsAcwrData {
                 <span class="analytics-hub-icon">📈</span>
                 <span class="analytics-hub-title">Overview</span>
                 <span class="analytics-hub-subtitle">Team performance</span>
+                @if (nextGenEnabled()) {
+                  <span class="analytics-hub-preview">Preview</span>
+                }
               </a>
               <a routerLink="/analytics/enhanced" class="analytics-hub-link">
                 <span class="analytics-hub-icon">🧪</span>
                 <span class="analytics-hub-title">Enhanced</span>
                 <span class="analytics-hub-subtitle">Deep analytics</span>
+                @if (nextGenEnabled()) {
+                  <span class="analytics-hub-preview">Preview</span>
+                }
               </a>
               <a routerLink="/performance-tracking" class="analytics-hub-link">
                 <span class="analytics-hub-icon">🎯</span>
                 <span class="analytics-hub-title">Performance</span>
                 <span class="analytics-hub-subtitle">Player trends</span>
+                @if (nextGenEnabled()) {
+                  <span class="analytics-hub-preview">Preview</span>
+                }
               </a>
             </div>
           </p-card>
@@ -1222,6 +1241,10 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly notificationService = inject(NotificationService);
   private readonly analyticsDataService = inject(AnalyticsDataService);
   private readonly teamRankingService = inject(TeamPerformanceRankingService);
+  private readonly featureFlags = inject(FeatureFlagsService);
+
+  // Next-gen preview
+  nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);

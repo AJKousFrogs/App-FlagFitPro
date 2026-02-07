@@ -19,6 +19,45 @@ This document describes calculation formulas, window assumptions, missing-data h
   - `avgIntensity`: average rpe (1 decimal)
 - Example (Fixture A, week of 2026-01-26): 4 sessions → totalLoad `1295`, totalDuration `235`, avgIntensity `5.5`, weekEnd `2026-02-01` (UTC).
 
+## Training Stats Aggregation (Client-Side)
+- Source: `angular/src/app/core/services/training-stats.service.ts`
+- Week boundary: Sunday start (uses `getDay()`), week = Sunday → Saturday.
+- Month boundary: first day of current month (local time).
+- Weekly metrics:
+  - `weeklyVolume`: sum of `workload`
+  - `weeklyDuration`: sum of `duration_minutes`
+  - `weeklyAvgIntensity`: average `intensity_level`, 1 decimal
+- Streak:
+  - Active if trained today or yesterday
+  - Requires consecutive daily training (no gaps) for streak to grow
+
+## Sleep Debt & Safety Limits
+- Source: `angular/src/app/core/services/training-safety.service.ts`
+- Sleep debt:
+  - `average = mean(last 7 days)`
+  - `debt = max(0, (optimalSleep − average) × days)`
+  - Debt levels: mild `>= 3`, moderate `>= 7`, severe `>= 14`
+  - Training impact: `max(0.5, 1 − debt × 0.03)` rounded to 2 decimals
+  - Days to recover: `ceil(debt)`
+- Age-based limits:
+  - Age groups: youth `<18`, adult `<35`, masters `<45`, senior `>=45`
+  - Movement limits scaled by `recoveryTimeMultiplier` for masters/senior
+
+## Next-Gen Metrics (Phase 1 Utilities)
+- Source: `angular/src/app/core/utils/next-gen-metrics.ts`
+- Load spike:
+  - Acute load = sum of last 7 days
+  - Prior load = sum of days 7–13 ago
+  - Spike if > 15% week-over-week
+  - Wellness integration via subjective score (0–100)
+- Baseline readiness:
+  - Uses z-score deviation against athlete baseline
+  - Score = `70 + weightedZ × 10`, clamped 0–100
+  - Reduced mode uses sleep + energy only
+- LBM trend:
+  - Compare current vs ~30 days prior (±7-day window)
+  - Loss alert if change ≤ −1% or ≤ −0.5 kg
+
 ## ACWR (Acute:Chronic Workload Ratio)
 - Source: `angular/src/app/core/services/acwr.service.ts`
 - Acute window: 7 days (EWMA).
@@ -44,8 +83,8 @@ This document describes calculation formulas, window assumptions, missing-data h
 - Lambda defaults: acute `0.2`, chronic `0.05`
 - Minimum chronic load floor: preset-dependent (default 50 AU)
 
-## Readiness Scoring (Legacy Endpoint)
-- Source: `server.js` `/api/calc-readiness`
+## Readiness Scoring (Netlify Function)
+- Source: `netlify/functions/calc-readiness.cjs` `/api/calc-readiness`
 - Base score: 70
 - Wellness adjustments:
   - `sleep`: `(sleep − 5) × 3`
@@ -133,10 +172,16 @@ This document describes calculation formulas, window assumptions, missing-data h
   - `angular/src/app/core/services/body-composition.service.ts`
   - `angular/src/app/core/services/performance-data.service.ts`
 - Formula: `BMI = weight_kg / (height_m^2)` rounded to 1 decimal.
+- Categories:
+  - `< 18.5`: Underweight
+  - `18.5 – < 25`: Normal
+  - `25 – < 30`: Overweight
+  - `>= 30`: Obese
 
 ## Lean Body Mass
 - Source: `angular/src/app/core/services/performance-data.service.ts`
 - Formula: `LBM = weight × (1 − bodyFat%)`, rounded to 1 decimal.
+- Body composition service guard: if `bodyFat` is < 0 or > 100, return `weight` unchanged.
 
 ## QB Throwing Metrics
 - Source: `angular/src/app/features/training/qb-throwing-tracker/qb-throwing-tracker.component.ts`
@@ -144,13 +189,13 @@ This document describes calculation formulas, window assumptions, missing-data h
 - Bar height: `min(100, max(15, throws / 800 × 100))`
 
 ## Performance Score (Dashboard)
-- Source: `routes/dashboard.routes.js`
+- Source: `netlify/functions/dashboard.cjs`
 - Formula: `performanceScore = 100 − (avgRpe − 5) × 10` (clamped 0–100).
 
 ## Trend Aggregations (Performance / Analytics)
 - Sources:
-  - `routes/analytics.routes.js`
-  - `routes/performance-data.routes.js`
+  - `netlify/functions/analytics.cjs`
+  - `netlify/functions/performance-data.cjs`
 - Formula: averages of `performance_score` values with rounding to 1 decimal.
 
 ## Regression Protection

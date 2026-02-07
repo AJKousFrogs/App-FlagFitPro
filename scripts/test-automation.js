@@ -308,7 +308,7 @@ class TestAutomation {
       });
 
       // Wait for server to be ready
-      await this.waitForServer("http://localhost:4000", 60000);
+      await this.waitForServer("http://localhost:8888", 60000);
 
       console.log("✅ Application ready for E2E tests");
     } catch (error) {

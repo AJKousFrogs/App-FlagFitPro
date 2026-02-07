@@ -91,8 +91,8 @@
 
 | Document                                 | Description      |
 | ---------------------------------------- | ---------------- |
-| [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) | Privacy policy   |
-| [TERMS_OF_USE.md](./TERMS_OF_USE.md)     | Terms of use     |
+| [Privacy Policy](../angular/src/assets/legal/privacy-policy.md) | Privacy policy   |
+| [Terms of Use](../angular/src/assets/legal/terms-of-use.md)     | Terms of use     |
 | [LICENSE.md](./LICENSE.md)               | Software license |
 
 ---

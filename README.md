@@ -136,7 +136,7 @@ cd angular
 npx pnpm install
 cd ..
 
-# Start development (BOTH servers)
+# Start development (Netlify Dev + Angular)
 npm run dev
 ```
 
@@ -144,18 +144,18 @@ npm run dev
 
 ### ⚠️ IMPORTANT: Local Development
 
-**Always run both servers together!** The app requires:
+**Always run via Netlify Dev** to mirror production routing and functions:
 
-| Server     | Port             | Purpose                        |
-| ---------- | ---------------- | ------------------------------ |
-| API Server | `localhost:4000` | Backend APIs, Supabase queries |
-| Angular    | `localhost:4200` | Frontend UI                    |
+| Server                   | Port             | Purpose                                      |
+| ------------------------ | ---------------- | -------------------------------------------- |
+| Netlify Dev (proxy)      | `localhost:8888` | Frontend + `/api` → Netlify Functions        |
+| Angular dev server       | `localhost:4200` | Dev build target for Netlify Dev (internal)  |
 
 ```bash
-# ✅ CORRECT - runs both servers
+# ✅ CORRECT - Netlify Dev proxy + Functions
 npm run dev
 
-# ❌ WRONG - Angular only (no data!)
+# ❌ WRONG - Angular only (no Functions/API)
 npm run dev:angular-only
 
 ## 🧱 CSS Build Pipeline
@@ -173,7 +173,7 @@ npm run dev:angular-only
   - For local iteration, run `npm run sass:watch`: the wrapper automatically enables polling on macOS while compiling the same five entrypoints before bundling.
 ```
 
-The app will be available at `http://localhost:4200`
+The app will be available at `http://localhost:8888`
 
 ### Environment Variables
 

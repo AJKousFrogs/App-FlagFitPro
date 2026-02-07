@@ -138,7 +138,7 @@ exports.handler = async (event, _context) => {
             </div>
             
             <p style="text-align: center; margin-top: 30px;">
-              <a href="${process.env.APP_URL || "http://localhost:4000"}" 
+              <a href="${process.env.APP_URL || "http://localhost:8888"}" 
                  style="background: #10c96b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                 Back to FlagFit Pro
               </a>
@@ -164,7 +164,7 @@ If you're seeing this email, your email service is working correctly!
 - Welcome emails will be sent to new users
 - All email templates are professionally designed
 
-Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:4000"}
+Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
 
 © 2024 FlagFit Pro. Email service powered by ${providerName}.
         `.trim(),

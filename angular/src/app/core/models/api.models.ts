@@ -505,21 +505,6 @@ export interface ApiErrorResponse {
 // ============================================================================
 
 /**
- * Standard API response wrapper
- * @deprecated Use ApiResponse from core/models/common.models instead
- * Re-exported for backward compatibility
- */
-export type ApiResponseWrapper<T> = import("./common.models").ApiResponse<T>;
-
-/**
- * Paginated API response
- * @deprecated Use PaginatedResponse from core/models/common.models instead
- * Re-exported for backward compatibility
- */
-export type PaginatedApiResponse<T> =
-  import("./common.models").PaginatedResponse<T>;
-
-/**
  * Batch operation result
  */
 export interface BatchOperationResult {

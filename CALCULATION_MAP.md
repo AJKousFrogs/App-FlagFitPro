@@ -17,19 +17,19 @@ This document lists calculation hotspots responsible for athlete performance met
   - Formula: threshold gate (> 1.5) triggers caps
   - Risk level: Medium
 
-- `routes/load-management.routes.js`
+- `netlify/functions/load-management.cjs`
   - Function: GET `/acwr`
   - Inputs: authenticated user
   - Outputs: stored `acwr`, `acute_load`, `chronic_load`
   - Formula: none (reads from persisted load monitoring)
   - Risk level: Medium
 
-- `server.js` (legacy endpoint)
+- `netlify/functions/load-management.cjs`
   - Function: GET `/api/load-management/acwr`
   - Inputs: training sessions (rpe, duration)
   - Outputs: acute, chronic, ACWR ratio, status label
   - Formula: rolling averages, ACWR = acute ÷ chronic with thresholds
-  - Risk level: High (legacy path)
+  - Risk level: High
 
 ## Acute / Chronic Window Definitions
 - `angular/src/app/core/config/evidence-config.ts`
@@ -63,12 +63,12 @@ This document lists calculation hotspots responsible for athlete performance met
   - Formula: server-side weighted scoring
   - Risk level: High (core readiness logic is server-side)
 
-- `server.js` (legacy endpoint)
+- `netlify/functions/calc-readiness.cjs`
   - Function: `/api/calc-readiness`
   - Inputs: wellness check-in metrics, weekly training load
   - Outputs: readiness score and recommendations
   - Formula: base score 70 + metric deltas, load-based adjustments, clamp 0–100
-  - Risk level: High (legacy path)
+  - Risk level: High
 
 ## Wellness Metrics Aggregation
 - `angular/src/app/core/services/wellness.service.ts`
@@ -101,19 +101,19 @@ This document lists calculation hotspots responsible for athlete performance met
   - Risk level: Low
 
 ## Performance Scores / Analytics
-- `routes/dashboard.routes.js`
+- `netlify/functions/dashboard.cjs`
   - Formula: performance score = `100 − (avgRpe − 5) × 10`, clamped
   - Inputs: last 30 days training sessions
   - Risk level: Medium
 
-- `routes/analytics.routes.js`
+- `netlify/functions/analytics.cjs`
   - Functions: performance trends, averages, grouped performance by type
   - Inputs: performance metrics tables
   - Outputs: per-week averages, top averages, summaries
   - Formula: average of performance_score with rounding to 1 decimal
   - Risk level: Medium
 
-- `routes/performance-data.routes.js`
+- `netlify/functions/performance-data.cjs`
   - Function: `calculatePerformanceTrends`
   - Inputs: performance tests data
   - Outputs: trends, deltas, averages

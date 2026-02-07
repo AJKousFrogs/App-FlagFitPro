@@ -2,9 +2,9 @@
 
 ## Document Purpose
 
-This specification defines the governance framework for AI/ML features in FlagFit Pro, ensuring compliance with GDPR Article 22 (automated decision-making) and the privacy promises made in `PRIVACY_POLICY.md`.
+This specification defines the governance framework for AI/ML features in FlagFit Pro, ensuring compliance with GDPR Article 22 (automated decision-making) and the privacy promises made in `angular/src/assets/legal/privacy-policy.md`.
 
-**Source Document:** `docs/PRIVACY_POLICY.md` v1.0 (29. December 2025)
+**Source Document:** `angular/src/assets/legal/privacy-policy.md` v1.0 (29. December 2025)
 **Spec Version:** 1.0
 **Last Updated:** 29. December 2025
 
@@ -12,7 +12,7 @@ This specification defines the governance framework for AI/ML features in FlagFi
 
 ## 1. AI Features Overview
 
-_Source: PRIVACY_POLICY.md Section 3.3 "AI Processing"_
+_Source: privacy-policy.md Section 3.3 "AI Processing"_
 
 ### 1.1 Current AI Capabilities
 
@@ -40,7 +40,7 @@ _Source: PRIVACY_POLICY.md Section 3.3 "AI Processing"_
 
 ## 2. Automated vs Assisted Decisions
 
-_Source: PRIVACY_POLICY.md Section 7.7 "Rights Related to Automated Decision-Making"_
+_Source: privacy-policy.md Section 7.7 "Rights Related to Automated Decision-Making"_
 
 ### 2.1 Decision Matrix
 
@@ -81,7 +81,7 @@ interface AIRecommendation<T> {
 
 ## 3. Human Oversight Framework
 
-_Source: PRIVACY_POLICY.md Section 3.3 "Request human review of any AI-generated recommendation"_
+_Source: privacy-policy.md Section 3.3 "Request human review of any AI-generated recommendation"_
 
 ### 3.1 Oversight Levels
 
@@ -147,7 +147,7 @@ User clicks "Request Human Review"
 
 ## 4. Audit Trail Requirements
 
-_Source: PRIVACY_POLICY.md Section 3.3, GDPR Article 22_
+_Source: privacy-policy.md Section 3.3, GDPR Article 22_
 
 ### 4.1 What We Log
 
@@ -299,7 +299,7 @@ export class AIAuditService {
 
 ## 5. Opt-Out Mechanisms
 
-_Source: PRIVACY_POLICY.md Section 3.3 "Turn off AI processing entirely"_
+_Source: privacy-policy.md Section 3.3 "Turn off AI processing entirely"_
 
 ### 5.1 Opt-Out Levels
 
@@ -387,7 +387,7 @@ When AI is disabled, features degrade gracefully:
 
 ## 6. Model Training Data Boundaries
 
-_Source: PRIVACY_POLICY.md Section 3.2 "We Do NOT Use Your Data To... Make money in any way"_
+_Source: privacy-policy.md Section 3.2 "We Do NOT Use Your Data To... Make money in any way"_
 
 ### 6.1 Data Usage Rules
 
@@ -537,7 +537,7 @@ Before deploying new AI features:
 
 1. ✅ Privacy impact assessment
 2. ✅ Update this governance document
-3. ✅ Update PRIVACY_POLICY.md if needed
+3. ✅ Update privacy-policy.md if needed
 4. ✅ Implement audit logging
 5. ✅ Implement opt-out mechanism
 6. ✅ Add appropriate disclaimers

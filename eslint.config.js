@@ -210,13 +210,10 @@ export default [
   },
 
   // ============================================
-  // RELAXED RULES FOR SERVER/ROUTES
+  // RELAXED RULES FOR NETLIFY FUNCTIONS
   // ============================================
   {
-    files: [
-      "server.js",
-      "routes/**/*.js",
-    ],
+    files: ["netlify/functions/**/*.js", "netlify/functions/**/*.cjs"],
     rules: {
       "no-console": "off",
       "no-unused-vars": "off",

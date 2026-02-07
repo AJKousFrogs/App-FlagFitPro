@@ -2,9 +2,9 @@
 
 ## Document Purpose
 
-This specification maps every privacy promise in `PRIVACY_POLICY.md` to concrete technical implementations. It serves as a contract between the legal document and the codebase.
+This specification maps every privacy promise in `angular/src/assets/legal/privacy-policy.md` to concrete technical implementations. It serves as a contract between the legal document and the codebase.
 
-**Source Document:** `docs/PRIVACY_POLICY.md` v1.0 (29. December 2025)
+**Source Document:** `angular/src/assets/legal/privacy-policy.md` v1.0 (29. December 2025)
 **Spec Version:** 1.0
 **Last Updated:** 29. December 2025
 
@@ -12,7 +12,7 @@ This specification maps every privacy promise in `PRIVACY_POLICY.md` to concrete
 
 ## 1. Data Categories Matrix
 
-_Source: PRIVACY_POLICY.md Section 2.1 "The Honest Breakdown"_
+_Source: privacy-policy.md Section 2.1 "The Honest Breakdown"_
 
 | Category           | Data Fields                                                  | Storage Location                               | Legal Basis                      | Access Roles                    | Encryption                      |
 | ------------------ | ------------------------------------------------------------ | ---------------------------------------------- | -------------------------------- | ------------------------------- | ------------------------------- |
@@ -64,7 +64,7 @@ _Source: PRIVACY_POLICY.md Section 2.1 "The Honest Breakdown"_
 
 ## 2. Consent Management
 
-_Source: PRIVACY_POLICY.md Sections 2.1, 2.2, 7.8_
+_Source: privacy-policy.md Sections 2.1, 2.2, 7.8_
 
 ### 2.1 Consent Categories
 
@@ -147,7 +147,7 @@ User clicks "Withdraw Consent"
 
 ## 3. Retention Enforcement
 
-_Source: PRIVACY_POLICY.md Section 6 "How Long We Keep Your Data"_
+_Source: privacy-policy.md Section 6 "How Long We Keep Your Data"_
 
 ### 3.1 Retention Periods
 
@@ -206,7 +206,7 @@ Deno.serve(async () => {
 
 ## 4. Account Deletion Pipeline
 
-_Source: PRIVACY_POLICY.md Sections 6, 7.3_
+_Source: privacy-policy.md Sections 6, 7.3_
 
 ### 4.1 Deletion Types
 
@@ -309,7 +309,7 @@ async cancelDeletion(userId: string): Promise<boolean> {
 
 ## 5. Age Verification (16+ Only)
 
-_Source: PRIVACY_POLICY.md Section 9 "Age Requirements"_
+_Source: privacy-policy.md Section 9 "Age Requirements"_
 
 ### 5.1 Age Requirements
 
@@ -374,7 +374,7 @@ The `parental_consent` table exists in the database but is **not used** since th
 
 ## 6. Data Export (Portability)
 
-_Source: PRIVACY_POLICY.md Section 7.5_
+_Source: privacy-policy.md Section 7.5_
 
 ### 6.1 Export Format
 

@@ -293,21 +293,6 @@ export default tseslint.config(
     },
   },
   {
-    files: ["routes/**/*.{js,ts}"],
-    languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      globals: {
-        ...globals.node,
-        ...globals.es2025,
-      },
-    },
-    rules: {
-      "no-console": "off",
-      "no-alert": "off",
-    },
-  },
-  {
     files: ["tests/**/*.cjs"],
     languageOptions: {
       ecmaVersion: "latest",
@@ -322,12 +307,6 @@ export default tseslint.config(
       "no-unused-vars": "off",
       "prefer-const": "off",
       "no-await-in-loop": "off",
-    },
-  },
-  {
-    files: ["server.js"],
-    rules: {
-      "no-unused-vars": "off",
     },
   },
   storybook.configs["flat/recommended"],

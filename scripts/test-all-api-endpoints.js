@@ -106,7 +106,7 @@ function makeRequest(url, options = {}) {
 async function detectServer() {
   const servers = [
     { url: "http://localhost:8888", name: "Netlify Dev" },
-    { url: "http://localhost:4000", name: "Simple Server" },
+    { url: "http://localhost:8888", name: "Netlify Dev" },
     { url: "http://localhost:3001", name: "API Server" },
   ];
 

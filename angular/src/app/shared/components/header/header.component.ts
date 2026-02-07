@@ -6,6 +6,7 @@ import {
   effect,
   HostListener,
   inject,
+  isDevMode,
   model,
   OnDestroy,
   OnInit,
@@ -28,6 +29,7 @@ import { Toolbar } from "primeng/toolbar";
 import { Tooltip } from "primeng/tooltip";
 import { filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
+import { ApiService } from "../../../core/services/api.service";
 import { HeaderService } from "../../../core/services/header.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
@@ -81,6 +83,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private weatherService = inject(WeatherService);
   private confirmDialog = inject(ConfirmDialogService);
   private destroyRef = inject(DestroyRef);
+  private api = inject(ApiService);
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   notificationsPanel =
@@ -208,6 +211,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   weatherData = signal<WeatherData | null>(null);
   weatherLoading = signal(false);
 
+  // Dev-only API health indicator
+  readonly showApiStatus = isDevMode();
+  apiHealthStatus = signal<"checking" | "healthy" | "degraded" | "down">(
+    "checking",
+  );
+  apiHealthLatencyMs = signal<number | null>(null);
+  private apiHealthInterval: ReturnType<typeof setInterval> | null = null;
+
   // Computed weather location from API response, with fallback
   weatherLocation = computed(() => {
     const data = this.weatherData();
@@ -239,6 +250,48 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (data.humidity) tooltip += ` | Humidity: ${data.humidity}%`;
     if (data.description) tooltip += `\n${data.description}`;
     return tooltip;
+  });
+
+  apiHealthLabel = computed(() => {
+    switch (this.apiHealthStatus()) {
+      case "healthy":
+        return "API OK";
+      case "degraded":
+        return "API Slow";
+      case "down":
+        return "API Down";
+      default:
+        return "API Check";
+    }
+  });
+
+  apiHealthSeverity = computed(() => {
+    switch (this.apiHealthStatus()) {
+      case "healthy":
+        return "success";
+      case "degraded":
+        return "warning";
+      case "down":
+        return "danger";
+      default:
+        return "info";
+    }
+  });
+
+  apiHealthTooltip = computed(() => {
+    const latency = this.apiHealthLatencyMs();
+    if (this.apiHealthStatus() === "healthy") {
+      return latency ? `API healthy · ${Math.round(latency)}ms` : "API healthy";
+    }
+    if (this.apiHealthStatus() === "degraded") {
+      return latency
+        ? `API slow · ${Math.round(latency)}ms`
+        : "API responding slowly";
+    }
+    if (this.apiHealthStatus() === "down") {
+      return "API unreachable · run netlify dev";
+    }
+    return "Checking API health...";
   });
 
   currentSection = signal("");
@@ -275,6 +328,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadWeatherData();
+    if (this.showApiStatus) {
+      this.checkApiHealth();
+      this.apiHealthInterval = setInterval(
+        () => this.checkApiHealth(),
+        60000,
+      );
+    }
   }
 
   onToggleSidebar(): void {
@@ -585,5 +645,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
     }
+    if (this.apiHealthInterval) {
+      clearInterval(this.apiHealthInterval);
+    }
+  }
+
+  private checkApiHealth(): void {
+    const start = performance.now();
+    this.api
+      .head("/api/health", {
+        headers: { "Cache-Control": "no-store" },
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          const latency = performance.now() - start;
+          this.apiHealthLatencyMs.set(latency);
+          this.apiHealthStatus.set(latency > 1500 ? "degraded" : "healthy");
+        },
+        error: () => {
+          this.apiHealthLatencyMs.set(null);
+          this.apiHealthStatus.set("down");
+        },
+      });
   }
 }
