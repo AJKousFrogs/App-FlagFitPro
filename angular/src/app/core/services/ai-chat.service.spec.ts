@@ -1,7 +1,7 @@
 /**
  * AI Chat Service Unit Tests
  *
- * Tests for the AI coaching chat functionality with safety tiers.
+ * Tests for the Merlin AI coaching chat functionality with safety tiers.
  * Uses async/await pattern compatible with zoneless Angular.
  *
  * Note: Test files use non-null assertions for test data setup where values are guaranteed.

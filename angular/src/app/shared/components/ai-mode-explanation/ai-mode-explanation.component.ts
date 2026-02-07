@@ -40,7 +40,7 @@ export interface AIModeStatus {
             <i class="pi pi-shield mode-icon"></i>
           </div>
           <div class="mode-content">
-            <h3 class="mode-title">AI Coach is in Conservative Mode</h3>
+            <h3 class="mode-title">Merlin AI is in Conservative Mode</h3>
             <p class="mode-subtitle">
               Providing cautious recommendations due to incomplete data
             </p>

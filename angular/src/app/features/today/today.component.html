@@ -95,6 +95,16 @@
                     </span>
                   </span>
                 </div>
+                <div class="welcome-actions">
+                  <app-button
+                    variant="primary"
+                    iconLeft="pi-pencil"
+                    (clicked)="handleCta('log_session')"
+                    ariaLabel="Log today's training session"
+                  >
+                    Log Today's Session
+                  </app-button>
+                </div>
               </div>
             </div>
           </p-card>

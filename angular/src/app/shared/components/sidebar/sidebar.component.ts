@@ -245,7 +245,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private athleteNavItems: NavItem[] = [
     {
       label: "Dashboard",
-      route: "/dashboard",
+      route: "/player-dashboard",
       icon: "pi-home",
       ariaLabel: "Dashboard - Overview of your training and progress",
       group: "primary",
@@ -287,10 +287,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
       group: "primary",
     },
     {
-      label: "Team",
+      label: "Roster",
       route: "/roster",
       icon: "pi-users",
-      ariaLabel: "Team - Roster, games, and team calendar",
+      ariaLabel: "Roster - Teammates, roles, and availability",
       group: "primary",
     },
     {
@@ -308,11 +308,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
       group: "primary",
     },
     {
-      label: "Tournament Fuel",
+      label: "Game Nutrition",
       route: "/game/nutrition",
       icon: "pi-apple",
       ariaLabel:
-        "Tournament Fuel - Nutrition and hydration for tournament days",
+        "Game Nutrition - Nutrition and hydration for tournament days",
       group: "primary",
     },
     {
@@ -333,7 +333,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: "Merlin AI",
       route: "/chat",
       icon: "pi-sparkles",
-      ariaLabel: "Merlin AI Coach - Chat with your AI coach",
+      ariaLabel: "Merlin AI - Chat with your Merlin AI",
       group: "primary",
     },
     {
@@ -375,10 +375,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
       group: "primary",
     },
     {
-      label: "Players",
-      route: "/coach/team",
+      label: "Roster",
+      route: "/roster",
       icon: "pi-users",
-      ariaLabel: "Players - Roster management and player monitoring",
+      ariaLabel: "Roster - Player management and monitoring",
       group: "primary",
     },
     {
@@ -435,7 +435,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: "Merlin AI",
       route: "/chat",
       icon: "pi-sparkles",
-      ariaLabel: "Merlin AI Coach - Chat with your AI coach",
+      ariaLabel: "Merlin AI - Chat with your Merlin AI",
       group: "primary",
     },
     {
@@ -499,7 +499,24 @@ export class SidebarComponent implements OnInit, OnDestroy {
    * Additional navigation items (shown after primary nav)
    * Currently empty - can be used for less frequently accessed items
    */
-  private additionalNavItems: NavItem[] = [];
+  private additionalNavItems: NavItem[] = [
+    {
+      label: "Team Hub",
+      route: "/team/workspace",
+      icon: "pi-briefcase",
+      ariaLabel: "Team Hub - Collaborative team workspace",
+      roles: ["coach", "assistant_coach", "admin"],
+      group: "secondary",
+    },
+    {
+      label: "Team Management",
+      route: "/coach/team",
+      icon: "pi-sitemap",
+      ariaLabel: "Team Management - Manage team settings and roster",
+      roles: ["coach", "assistant_coach", "admin"],
+      group: "secondary",
+    },
+  ];
 
   /**
    * Primary navigation items based on user role

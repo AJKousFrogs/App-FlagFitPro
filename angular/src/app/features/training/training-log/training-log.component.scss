@@ -18,9 +18,40 @@
   }
 }
 
+.form-requirements {
+  margin: 0 0 var(--space-4);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
 .override-message {
   margin: 0;
   font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.override-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.override-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--ds-font-size-xs);
+  font-weight: 600;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text-accessible);
+  border: var(--border-1) solid var(--color-warning);
+}
+
+.override-audit {
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 

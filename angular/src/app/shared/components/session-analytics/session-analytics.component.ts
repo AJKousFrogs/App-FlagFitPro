@@ -200,7 +200,7 @@ interface AnalyticsData {
           <i class="pi pi-chart-bar"></i>
           <h3>No Sessions Yet</h3>
           <p>
-            Start micro-sessions from AI Coach suggestions to track your
+            Start micro-sessions from Merlin AI suggestions to track your
             progress here.
           </p>
         </div>

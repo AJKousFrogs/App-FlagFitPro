@@ -16,6 +16,15 @@
    source for design tokens across the entire application.
    ================================================================ */
 
+/* ================================
+   SCSS-LEVEL TOKENS (for compile-time usage)
+   ================================ */
+$ds-font-weight-light: 300;
+$ds-font-weight-regular: 400;
+$ds-font-weight-medium: 500;
+$ds-font-weight-semibold: 600;
+$ds-font-weight-bold: 700;
+
 :root {
   /* ================================
      PRIMARY BRAND COLOR
@@ -495,7 +504,13 @@
   /* ================================
      FONT WEIGHTS - STRICT CONTRACT
      ================================ */
-  --font-weight-light: 300;
+  --ds-font-weight-light: #{$ds-font-weight-light};
+  --ds-font-weight-regular: #{$ds-font-weight-regular};
+  --ds-font-weight-medium: #{$ds-font-weight-medium};
+  --ds-font-weight-semibold: #{$ds-font-weight-semibold};
+  --ds-font-weight-bold: #{$ds-font-weight-bold};
+
+  --font-weight-light: var(--ds-font-weight-light);
   --font-weight-regular: var(--ds-font-weight-regular);
   --font-weight-normal: var(--ds-font-weight-regular); /* Alias for regular */
   --font-weight-medium: var(--ds-font-weight-medium);

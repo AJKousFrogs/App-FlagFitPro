@@ -96,6 +96,11 @@ interface SessionType {
           (ngSubmit)="submitSession()"
           [class.read-only]="isReadOnly()"
         >
+          <p class="form-requirements">
+            Required: Session type, date, duration (minutes), and RPE (1–10).
+            These drive ACWR, readiness, and workload metrics. Optional fields
+            add detail but won’t block saving.
+          </p>
           <!-- Session Type Selection -->
           <app-card-shell title="Session Type" headerIcon="pi-tag">
             <div class="session-types-grid">
@@ -127,6 +132,10 @@ interface SessionType {
           </app-card-shell>
           @if (overrideMessage()) {
             <app-card-shell title="Plan Update" headerIcon="pi-info-circle">
+              <div class="override-header">
+                <span class="override-pill">Coach Override</span>
+                <span class="override-audit">Edits are audited.</span>
+              </div>
               <p class="override-message">{{ overrideMessage() }}</p>
             </app-card-shell>
           }

@@ -68,6 +68,8 @@ import {
 } from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { formatDate } from "../../shared/utils/date.utils";
+import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
+import { DataState } from "../../core/services/data-source.service";
 
 interface Metric {
   icon: string;
@@ -127,6 +129,7 @@ interface AnalyticsAcwrData {
     AppLoadingComponent,
     ButtonComponent,
     IconButtonComponent,
+    DataSourceBannerComponent,
   ],
   template: `
     <app-main-layout>
@@ -168,6 +171,24 @@ interface AnalyticsAcwrData {
               >
             </div>
           </app-page-header>
+          <app-data-source-banner
+            [dataState]="analyticsDataState()"
+            [currentDataPoints]="analyticsDataPoints()"
+            [minimumRequired]="analyticsMinimumRequired"
+            metricName="analytics"
+            [showWhenReal]="true"
+          />
+          <div class="data-freshness">
+            <span class="data-source">
+              Data source: Training logs, wellness check-ins, and performance
+              tests.
+            </span>
+            @if (lastRefreshed()) {
+              <span class="data-updated">
+                Last updated: {{ lastRefreshed() | date: "short" }}
+              </span>
+            }
+          </div>
           @if (nextGenEnabled()) {
             <div class="analytics-preview-banner">
               <i class="pi pi-sparkles"></i>
@@ -1252,6 +1273,7 @@ export class AnalyticsComponent implements AfterViewInit {
   pageErrorMessage = signal<string>(
     "Something went wrong while loading analytics. Please try again.",
   );
+  lastRefreshed = signal<Date | null>(null);
 
   // Centralized UX copy for data states
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
@@ -1285,6 +1307,21 @@ export class AnalyticsComponent implements AfterViewInit {
   // Training statistics
   trainingStats = signal<TrainingStatsData | null>(null);
   acwrData = signal<AnalyticsAcwrData | null>(null);
+
+  readonly analyticsMinimumRequired = 7;
+  readonly analyticsDataPoints = computed(() => {
+    const sessions = this.trainingStats()?.totalSessions ?? 0;
+    const metricsCount = this.metrics().length;
+    return Math.max(sessions, metricsCount);
+  });
+  readonly analyticsDataState = computed(() => {
+    const points = this.analyticsDataPoints();
+    if (points === 0) return DataState.NO_DATA;
+    if (points < this.analyticsMinimumRequired) {
+      return DataState.INSUFFICIENT_DATA;
+    }
+    return DataState.REAL_DATA;
+  });
 
   // Gap Analysis data
   gapAnalysisData = signal<
@@ -1424,6 +1461,7 @@ export class AnalyticsComponent implements AfterViewInit {
   private initializePage(): void {
     this.isPageLoading.set(true);
     this.hasPageError.set(false);
+    this.lastRefreshed.set(new Date());
 
     try {
       this.loadAnalyticsData();
@@ -1464,6 +1502,7 @@ export class AnalyticsComponent implements AfterViewInit {
     this.trainingStatsService.getTrainingStats().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (stats) => {
         this.trainingStats.set(stats);
+        this.lastRefreshed.set(new Date());
 
         // Update metrics with training data
         const currentMetrics = this.metrics();

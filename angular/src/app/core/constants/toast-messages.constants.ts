@@ -335,7 +335,7 @@ export const TOAST_ERROR = {
   NOTIFICATION_DISMISS_FAILED: "Failed to dismiss notification",
   ACTIVITY_MARKED_READ: "All activity marked as read",
 
-  // AI Coach & Notes
+  // Merlin AI & Notes
   NOTE_SAVED: "Note saved successfully",
   NOTE_SAVE_FAILED: "Failed to save note",
   RECOMMENDATION_OVERRIDDEN: "Recommendation overridden",

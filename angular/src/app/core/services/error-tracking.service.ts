@@ -87,33 +87,19 @@ export class ErrorTrackingService {
 
     if (sentryEnabled) {
       try {
-        // Dynamic import to avoid bundling Sentry in dev builds
-        // Only attempt import if we're in a browser environment
-        if (typeof window !== "undefined") {
-          // Use a completely dynamic import that Vite won't statically analyze
-          // This prevents build-time errors when Sentry is not installed
-          const sentryPackage = "@sentry" + "/angular"; // Split to avoid static analysis
-          try {
-            // @ts-ignore - Sentry is an optional dependency
-            const sentryModule = await import(
-              /* @vite-ignore */ sentryPackage
-            ).catch(() => null);
-            if (sentryModule) {
-              this.Sentry = sentryModule;
-            }
-          } catch {
-            // Module not found - this is expected in dev/test environments
-            this.logger.debug(
-              "[ErrorTracking] Sentry package not installed, skipping",
-            );
-            return;
-          }
-        }
-
-        if (!this.Sentry) {
-          this.logger.debug("[ErrorTracking] Sentry not available");
+        if (typeof window === "undefined") {
           return;
         }
+
+        const sentryGlobal = (window as unknown as { Sentry?: unknown }).Sentry;
+        if (!sentryGlobal) {
+          this.logger.debug(
+            "[ErrorTracking] Sentry global not available, skipping",
+          );
+          return;
+        }
+
+        this.Sentry = sentryGlobal;
 
         const dsn =
           (window as unknown as { _env?: { VITE_SENTRY_DSN?: string } })._env

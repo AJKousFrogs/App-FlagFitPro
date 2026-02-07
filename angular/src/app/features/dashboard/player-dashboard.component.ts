@@ -18,7 +18,7 @@
  * - Weekly training progress
  * - Upcoming schedule highlights
  * - Quick access to key features
- * - AI Coach Merlin insights
+ * - Merlin AI Merlin insights
  */
 
 import { CommonModule, DecimalPipe } from "@angular/common";
@@ -2109,10 +2109,10 @@ export class PlayerDashboardComponent {
   // Quick actions (order preserved from wireframe)
   quickActions: QuickAction[] = [
     {
-      label: "Log Training",
+      label: "Log Today’s Session",
       icon: "pi pi-plus",
-      route: "/training/log",
-      description: "Log a new training session",
+      route: "/todays-practice",
+      description: "Go to today’s practice and log your session",
     },
     {
       label: "Videos",
@@ -2139,7 +2139,7 @@ export class PlayerDashboardComponent {
       description: "Performance analytics",
     },
     {
-      label: "AI Coach",
+      label: "Merlin AI",
       icon: "pi pi-sparkles",
       route: "/chat",
       description: "Talk to Merlin",

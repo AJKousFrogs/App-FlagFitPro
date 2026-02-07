@@ -64,6 +64,12 @@
 }
 
 .checkin-form {
+  .checkin-impact-note {
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
   display: flex;
   flex-direction: column;
   gap: var(--space-6);

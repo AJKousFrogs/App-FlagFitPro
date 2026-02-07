@@ -69,11 +69,11 @@ import { ButtonComponent } from "../button/button.component";
             </div>
           </p-tabpanel>
 
-          <p-tabpanel header="AI Coaches" leftIcon="pi pi-users">
+          <p-tabpanel header="Merlin AIes" leftIcon="pi pi-users">
             <div class="data-manager">
-              <p>AI Coaches Data Manager - Coming Soon</p>
+              <p>Merlin AIes Data Manager - Coming Soon</p>
               <p>
-                This component will allow you to manage AI coach personalities
+                This component will allow you to manage Merlin AI personalities
                 and configurations.
               </p>
             </div>
@@ -284,9 +284,9 @@ export class RecoveryDataManagerComponent {}
   imports: [CommonModule],
   template: `
     <div class="data-manager">
-      <p>AI Coaches Data Manager - Coming Soon</p>
+      <p>Merlin AIes Data Manager - Coming Soon</p>
       <p>
-        This component will allow you to manage AI coach personalities and
+        This component will allow you to manage Merlin AI personalities and
         configurations.
       </p>
     </div>

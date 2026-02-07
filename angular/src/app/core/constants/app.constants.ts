@@ -87,7 +87,6 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   PLAYER_DASHBOARD: "/player-dashboard",
   COACH_DASHBOARD: "/coach-dashboard",
-  ATHLETE_DASHBOARD: "/athlete-dashboard",
 
   // Training
   TRAINING: "/training",
@@ -95,7 +94,7 @@ export const ROUTES = {
   TRAINING_LOG: "/training/log",
   TRAINING_PROTOCOL: "/training/protocol",
   TRAINING_SMART_FORM: "/training/smart-form",
-  TODAY: "/today",
+  TODAY: "/todays-practice",
 
   // Analytics & Performance
   ANALYTICS: "/analytics",

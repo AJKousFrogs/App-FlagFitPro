@@ -119,7 +119,7 @@ export class BreadcrumbComponent implements OnInit {
     tournaments: "Tournaments",
     travel: "Travel",
     recovery: "Recovery",
-    chat: "AI Coach",
+    chat: "Merlin AI",
     "team-chat": "Team Chat",
     community: "Community",
     "exercise-library": "Exercise Library",

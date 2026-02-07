@@ -315,6 +315,10 @@ interface WellnessMetric {
               [flush]="true"
             >
             <div class="checkin-form">
+              <p class="checkin-impact-note">
+                These inputs drive readiness, recovery, and wellness analytics.
+                All 1–10 fields use the same scale unless noted.
+              </p>
               <!-- Sleep Section -->
               <div class="checkin-section">
                 <h4 class="section-label">
@@ -951,7 +955,7 @@ export class WellnessComponent {
             title: "RAPID WEIGHT LOSS DETECTED",
             message: `You've lost ${weightDiff.toFixed(1)}kg recently. This may indicate dehydration or undereating.`,
             recommendations: ["Dehydration", "Undereating", "Illness"],
-            actionLabel: "Talk to AI Coach",
+            actionLabel: "Talk to Merlin AI",
             actionRoute: "/ai-coach",
           });
         }

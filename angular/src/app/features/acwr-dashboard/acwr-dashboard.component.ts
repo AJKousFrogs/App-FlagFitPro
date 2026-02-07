@@ -68,6 +68,8 @@ import {
 } from "../../shared/utils/risk.utils";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service";
+import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
+import { DataState } from "../../core/services/data-source.service";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -84,6 +86,7 @@ import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service
     OwnershipTransitionBadgeComponent,
     SemanticMeaningRendererComponent,
     MainLayoutComponent,
+    DataSourceBannerComponent,
   ],
   template: `
     <app-main-layout>
@@ -113,6 +116,23 @@ import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service
               Load Monitoring & Injury Prevention
             </h1>
             <p class="subtitle">Acute:Chronic Workload Ratio (ACWR) Analysis</p>
+          </div>
+          <app-data-source-banner
+            [dataState]="acwrDataState()"
+            [currentDataPoints]="acwrDataPoints()"
+            [minimumRequired]="acwrMinimumRequired"
+            metricName="ACWR"
+            [showWhenReal]="true"
+          />
+          <div class="data-freshness">
+            <span class="data-source">
+              Data source: Training logs and session duration × RPE.
+            </span>
+            @if (lastUpdated()) {
+              <span class="data-updated">
+                Last updated: {{ lastUpdated() | date: "short" }}
+              </span>
+            }
           </div>
 
           <!-- Alert Banner - Phase 3: Semantic Meaning Renderer -->
@@ -218,7 +238,7 @@ import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service
                       <span>{{ riskZone().recommendation }}</span>
                       <div class="action-buttons">
                         <button class="action-btn" (click)="logSession()">
-                          Modify Today's Session
+                          Go to Today's Practice
                         </button>
                       </div>
                     }
@@ -535,7 +555,7 @@ import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service
           <div class="quick-actions">
             <button class="action-btn primary" (click)="logSession()">
               <i class="icon-plus"></i>
-              Log Training Session
+              Go to Today's Practice
             </button>
             <button class="action-btn" (click)="viewHistory()">
               <i class="icon-chart"></i>
@@ -612,6 +632,17 @@ export class AcwrDashboardComponent implements OnInit {
   public readonly hasInsufficientData = computed(() => {
     const quality = this.dataQuality();
     return quality?.level === "insufficient" || quality?.level === "low";
+  });
+
+  readonly acwrMinimumRequired = 21;
+  readonly acwrDataPoints = computed(
+    () => this.dataQuality()?.daysWithData || 0,
+  );
+  readonly acwrDataState = computed(() => {
+    const points = this.acwrDataPoints();
+    if (points === 0) return DataState.NO_DATA;
+    if (this.hasInsufficientData()) return DataState.INSUFFICIENT_DATA;
+    return DataState.REAL_DATA;
   });
 
   // ACWR confidence calculation
@@ -828,8 +859,8 @@ export class AcwrDashboardComponent implements OnInit {
   }
 
   public logSession(): void {
-    // Navigate to smart training form for logging a new session
-    this.router.navigate(["/training/smart-form"]);
+    // Route players to the single daily flow
+    this.router.navigate(["/todays-practice"]);
   }
 
   public viewHistory(): void {

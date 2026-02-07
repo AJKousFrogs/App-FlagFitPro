@@ -143,12 +143,9 @@ export const dashboardRoutes: Routes = [
   },
   {
     path: "dashboard",
-    loadComponent: () =>
-      import("../../features/dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "internal" }, // Core dashboard
+    redirectTo: "player-dashboard",
+    pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "player-dashboard",
@@ -885,7 +882,7 @@ export const socialRoutes: Routes = [
     canActivate: [authGuard],
     data: { preload: true, priority: "low", entry: "internal" }, // Social feature
   },
-  // AI Coach Merlin - Main chat interface
+  // Merlin AI - Main chat interface
   {
     path: "chat",
     loadComponent: () =>
@@ -893,7 +890,7 @@ export const socialRoutes: Routes = [
         (m) => m.AiCoachChatComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "internal" }, // AI Coach is frequently used
+    data: { preload: true, priority: "high", entry: "internal" }, // Merlin AI is frequently used
   },
   // Redirect old ai-coach path to new /chat
   {

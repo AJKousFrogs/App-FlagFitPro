@@ -6,6 +6,7 @@ import {
   computed,
 } from "@angular/core";
 
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Accordion, AccordionPanel } from "primeng/accordion";
@@ -24,6 +25,7 @@ import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { PerformanceTrackingDataService } from "./services/performance-tracking-data.service";
+import { DataState } from "../../core/services/data-source.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -37,6 +39,7 @@ import {
   StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { AchievementBadgeComponent } from "../../shared/components/achievement-badge/achievement-badge.component";
+import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { SimpleChartData } from "../../core/models/chart.models";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -177,6 +180,8 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     IconButtonComponent,
     StatusTagComponent,
     AchievementBadgeComponent,
+    DataSourceBannerComponent,
+    DatePipe,
     Tooltip,
   ],
   template: `
@@ -209,6 +214,23 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               >Log Performance</app-button
             >
           </app-page-header>
+          <app-data-source-banner
+            [dataState]="performanceDataState()"
+            [currentDataPoints]="performanceDataPoints()"
+            [minimumRequired]="performanceMinimumRequired"
+            metricName="performance metrics"
+            [showWhenReal]="true"
+          />
+          <div class="data-freshness">
+            <span class="data-source">
+              Data source: Performance test logs and team benchmarks.
+            </span>
+            @if (lastRefreshed()) {
+              <span class="data-updated">
+                Last updated: {{ lastRefreshed() | date: "short" }}
+              </span>
+            }
+          </div>
           @if (nextGenEnabled()) {
             <div class="performance-preview-banner">
               <i class="pi pi-sparkles"></i>
@@ -896,6 +918,20 @@ export class PerformanceTrackingComponent {
   readonly pageErrorMessage = signal<string>(
     "Something went wrong while loading performance data. Please try again.",
   );
+  readonly lastRefreshed = signal<Date | null>(null);
+
+  readonly performanceMinimumRequired = 1;
+  readonly performanceDataPoints = computed(
+    () => this.performanceHistory().length,
+  );
+  readonly performanceDataState = computed(() => {
+    const points = this.performanceDataPoints();
+    if (points === 0) return DataState.NO_DATA;
+    if (points < this.performanceMinimumRequired) {
+      return DataState.INSUFFICIENT_DATA;
+    }
+    return DataState.REAL_DATA;
+  });
 
   // Centralized UX copy for data states
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
@@ -996,6 +1032,7 @@ export class PerformanceTrackingComponent {
       if (!user) {
         // Not logged in - show empty state
         this.setEmptyState();
+        this.lastRefreshed.set(new Date());
         this.isPageLoading.set(false);
         return;
       }
@@ -1012,6 +1049,7 @@ export class PerformanceTrackingComponent {
           error,
         );
         this.setEmptyState();
+        this.lastRefreshed.set(new Date());
         this.isPageLoading.set(false);
         return;
       }
@@ -1022,6 +1060,7 @@ export class PerformanceTrackingComponent {
           "[PerformanceTracking] No performance records found - showing empty state",
         );
         this.setEmptyState();
+        this.lastRefreshed.set(new Date());
         this.isPageLoading.set(false);
         return;
       }
@@ -1032,11 +1071,13 @@ export class PerformanceTrackingComponent {
       // Load team rankings (compare against teammates)
       await this.teamRankingService.loadTeamRankings();
 
+      this.lastRefreshed.set(new Date());
       this.isPageLoading.set(false);
       this.hasPageError.set(false);
     } catch (error) {
       this.logger.error("[PerformanceTracking] Unexpected error:", error);
       this.setEmptyState();
+      this.lastRefreshed.set(new Date());
       this.isPageLoading.set(false);
     }
   }

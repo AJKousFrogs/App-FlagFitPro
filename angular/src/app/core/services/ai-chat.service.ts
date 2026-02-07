@@ -96,7 +96,7 @@ interface ChatApiResponse {
 /**
  * AI Chat Service
  *
- * Provides AI coaching chat functionality with safety tiers.
+ * Provides Merlin AI coaching chat functionality with safety tiers.
  * Uses Groq LLM (FREE tier: 14,400 requests/day) on the backend.
  */
 @Injectable({
@@ -119,7 +119,7 @@ export class AiChatService {
   readonly currentSession$ = computed(() => this.currentSession());
 
   /**
-   * Send a message to the AI coach
+   * Send a message to Merlin AI
    */
   sendMessage(request: ChatRequest): Observable<ChatMessage> {
     this.loading.set(true);

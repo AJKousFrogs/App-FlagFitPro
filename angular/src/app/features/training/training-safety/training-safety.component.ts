@@ -112,9 +112,9 @@ import { calculateAge } from "../../../shared/utils/date.utils";
                   <app-icon-button
                     icon="pi-plus"
                     variant="outlined"
-                    routerLink="/training/log"
-                    ariaLabel="Log a workout"
-                    tooltip="Log workout"
+                    routerLink="/todays-practice"
+                    ariaLabel="Go to today's practice"
+                    tooltip="Go to today's practice"
                   />
                 </div>
               } @else {

@@ -120,7 +120,7 @@ interface FeedbackData {
       >
         <div class="dialog-content">
           <p class="dialog-intro">
-            Help us improve the AI coaching experience by sharing your feedback.
+            Help us improve the Merlin AIing experience by sharing your feedback.
           </p>
 
           <!-- Feedback Type Selection -->

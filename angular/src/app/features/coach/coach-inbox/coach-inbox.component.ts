@@ -1,7 +1,7 @@
 /**
  * Coach Inbox Component
  *
- * Real-time inbox workflow for coaches to monitor AI coaching interactions
+ * Real-time inbox workflow for coaches to monitor Merlin AI coaching interactions
  *
  * Features:
  * - 3 tabs: Safety Alerts, Review Needed, Wins

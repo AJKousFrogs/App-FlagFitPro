@@ -1,7 +1,7 @@
 /**
- * AI Coach Chat Component - Premium UX Edition
+ * Merlin AI Chat Component - Premium UX Edition
  *
- * Best-in-class chat interface for Merlin AI Coach:
+ * Best-in-class chat interface for Merlin Merlin AI:
  * - Modern, fluid animations and micro-interactions
  * - Accessibility-first with ARIA labels and keyboard navigation
  * - Smart suggestions and context-aware features
@@ -182,7 +182,7 @@ interface AutocompleteSuggestion {
               <h1>Merlin</h1>
               <div class="status-line">
                 <span class="status-dot"></span>
-                <span>AI Coach • Always here to help</span>
+                <span>Merlin AI • Always here to help</span>
               </div>
             </div>
           </div>
@@ -1435,14 +1435,14 @@ export class AiCoachChatComponent implements AfterViewChecked {
               return [...filtered, assistantMessage];
             });
           } else {
-            this.handleError("Failed to get response from AI Coach");
+            this.handleError("Failed to get response from Merlin AI");
           }
           this.isLoading.set(false);
           this.shouldScrollToBottom = true;
         },
         error: (error) => {
           this.logger.error("AI Chat error:", error);
-          this.handleError(error.message || "Failed to connect to AI Coach");
+          this.handleError(error.message || "Failed to connect to Merlin AI");
           this.isLoading.set(false);
         },
       });
@@ -1800,13 +1800,13 @@ export class AiCoachChatComponent implements AfterViewChecked {
   // ========================================
 
   async shareMessage(message: ChatMessage): Promise<void> {
-    const shareText = `💬 From Merlin AI Coach:\n\n${message.content}`;
+    const shareText = `💬 From Merlin Merlin AI:\n\n${message.content}`;
 
     // Try native share API first (mobile)
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Merlin AI Coach",
+          title: "Merlin Merlin AI",
           text: shareText,
         });
         this.triggerHaptic("success");

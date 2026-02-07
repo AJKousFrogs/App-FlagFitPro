@@ -83,10 +83,10 @@ interface CoachVisibilityRecord {
 }
 
 /**
- * AI Coach Visibility Component
+ * Merlin AI Visibility Component
  *
  * Displays AI recommendations and high-risk interactions for coaches
- * to monitor their players' AI coaching sessions.
+ * to monitor their players' Merlin AI coaching sessions.
  */
 @Component({
   selector: "app-ai-coach-visibility",
@@ -445,7 +445,7 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.loadHighRiskAlerts(),
       ]);
     } catch (error) {
-      this.logger.error("Error loading AI coach visibility data:", error);
+      this.logger.error("Error loading Merlin AI visibility data:", error);
     } finally {
       this.loading.set(false);
     }
@@ -530,7 +530,7 @@ export class AiCoachVisibilityComponent implements OnInit {
       const user = this.authService.getUser();
       if (!user?.id) return;
 
-      // Load high-risk AI coach visibility records
+      // Load high-risk Merlin AI visibility records
       let query = this.supabaseService.client
         .from("ai_coach_visibility")
         .select(

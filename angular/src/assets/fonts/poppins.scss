@@ -1,11 +1,12 @@
 /* Poppins Font - Locally Hosted */
+@use "../../scss/tokens/design-system-tokens" as tokens;
 /* Downloaded from Google Fonts GitHub repository */
 /* This ensures the font works offline and on all deployments (Netlify, Vercel, etc.) */
 
 @font-face {
   font-family: Poppins;
   src: url("./Poppins-Light.ttf") format("truetype");
-  font-weight: var(--ds-font-weight-light);
+  font-weight: tokens.$ds-font-weight-light;
   font-style: normal;
   font-display: swap;
 }
@@ -13,7 +14,7 @@
 @font-face {
   font-family: Poppins;
   src: url("./Poppins-Regular.ttf") format("truetype");
-  font-weight: var(--ds-font-weight-regular);
+  font-weight: tokens.$ds-font-weight-regular;
   font-style: normal;
   font-display: swap;
 }
@@ -21,7 +22,7 @@
 @font-face {
   font-family: Poppins;
   src: url("./Poppins-Medium.ttf") format("truetype");
-  font-weight: var(--ds-font-weight-medium);
+  font-weight: tokens.$ds-font-weight-medium;
   font-style: normal;
   font-display: swap;
 }
@@ -29,7 +30,7 @@
 @font-face {
   font-family: Poppins;
   src: url("./Poppins-SemiBold.ttf") format("truetype");
-  font-weight: var(--ds-font-weight-semibold);
+  font-weight: tokens.$ds-font-weight-semibold;
   font-style: normal;
   font-display: swap;
 }
@@ -37,7 +38,7 @@
 @font-face {
   font-family: Poppins;
   src: url("./Poppins-Bold.ttf") format("truetype");
-  font-weight: var(--ds-font-weight-bold);
+  font-weight: tokens.$ds-font-weight-bold;
   font-style: normal;
   font-display: swap;
 }

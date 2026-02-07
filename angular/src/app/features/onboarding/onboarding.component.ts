@@ -1541,12 +1541,12 @@ interface InjuryEntry {
                           inputId="consent-ai"
                           name="consentAICoach"
                           (ngModelChange)="
-                            onConsentChange('AI Coach', { checked: $event })
+                            onConsentChange('Merlin AI', { checked: $event })
                           "
                         />
                         <label for="consent-ai" class="consent-label">
-                          I consent to AI Coach (Merlin) providing personalized
-                          advice based on my training and wellness data
+                          I consent to Merlin AI providing personalized advice
+                          based on my training and wellness data
                           <span class="consent-hint">(optional)</span>
                         </label>
                       </div>
@@ -2940,7 +2940,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       case "Data Usage":
         this.onboardingData.consentDataUsage = isChecked;
         break;
-      case "AI Coach":
+      case "Merlin AI":
         this.onboardingData.consentAICoach = isChecked;
         break;
       case "Email Updates":

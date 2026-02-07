@@ -63,7 +63,7 @@ interface QuickActionItem {
           class="main-fab"
           [class.active]="isExpanded()"
           (click)="toggleMenu()"
-          aria-label="Merlin AI Coach quick actions"
+          aria-label="Merlin Merlin AI quick actions"
         >
           <div class="fab-icon">
             <i class="pi pi-sparkles merlin-icon"></i>
@@ -110,7 +110,7 @@ export class QuickActionsFABComponent implements OnInit, OnDestroy {
     return [
       {
         icon: "pi-comments",
-        label: "AI Coach Chat",
+        label: "Merlin AI Chat",
         route: "/ai-coach",
       },
       {

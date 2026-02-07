@@ -94,10 +94,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <!-- Tab 2: Logs & History -->
             <p-tabpanel value="2">
               <div class="tab-content-grid">
-                <div class="tool-card" routerLink="/training/log">
+                <div class="tool-card" routerLink="/todays-practice">
                   <i class="pi pi-book"></i>
-                  <h3>Training Log</h3>
-                  <p>Raw history of all completed sessions.</p>
+                  <h3>Today's Practice</h3>
+                  <p>Log today’s session before you leave.</p>
                 </div>
                 <div class="tool-card" routerLink="/training/schedule">
                   <i class="pi pi-calendar"></i>
@@ -127,7 +127,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                 </div>
                 <div class="tool-card" routerLink="/game/nutrition">
                   <i class="pi pi-heart"></i>
-                  <h3>Tournament Fueling</h3>
+                  <h3>Game Nutrition</h3>
                   <p>Meal timing for multi-game match days.</p>
                 </div>
                 <div class="tool-card" routerLink="/travel/recovery">

@@ -1,7 +1,7 @@
 /**
  * Daily Readiness Component
  *
- * Phase 1: Quick daily check-in for athletes before AI coaching
+ * Phase 1: Quick daily check-in for athletes before Merlin AI coaching
  *
  * Features:
  * - 4 sliders: Pain, Fatigue, Sleep Quality, Motivation (0-10)
@@ -449,7 +449,7 @@ export class DailyReadinessComponent implements OnInit {
       muscleSoreness: state.pain_level,
       stressLevel: 5, // Default neutral if not captured
       sorenessAreas: state.pain_level > 3 ? ["general"] : [],
-      notes: `Quick check-in via AI Coach prompt`,
+      notes: `Quick check-in via Merlin AI prompt`,
       // readinessScore will be calculated server-side
     };
 

@@ -90,17 +90,17 @@ interface MonthlyStats {
           subtitle="View and manage your training sessions"
           icon="pi-calendar"
         >
-          <app-button iconLeft="pi-plus" (clicked)="createNewSession()"
-            >New Session</app-button
+          <app-button iconLeft="pi-plus" (clicked)="primaryAction()"
+            >{{ primaryActionLabel() }}</app-button
           >
         </app-page-header>
 
         <app-card-shell title="Training Hub" headerIcon="pi-compass">
           <div class="training-hub-grid">
-            <a routerLink="/training/log" class="training-hub-link">
-              <span class="training-hub-icon">📓</span>
-              <span class="training-hub-title">Training Log</span>
-              <span class="training-hub-subtitle">History and notes</span>
+            <a routerLink="/todays-practice" class="training-hub-link">
+              <span class="training-hub-icon">🗓️</span>
+              <span class="training-hub-title">Today's Practice</span>
+              <span class="training-hub-subtitle">Log today’s session</span>
             </a>
             <a routerLink="/training/builder" class="training-hub-link">
               <span class="training-hub-icon">🛠️</span>
@@ -112,11 +112,13 @@ interface MonthlyStats {
               <span class="training-hub-title">Advanced Tools</span>
               <span class="training-hub-subtitle">Periodization & AI</span>
             </a>
-            <a routerLink="/training/smart-form" class="training-hub-link">
-              <span class="training-hub-icon">⚡</span>
-              <span class="training-hub-title">Smart Form</span>
-              <span class="training-hub-subtitle">Quick logging</span>
-            </a>
+            @if (isCoach()) {
+              <a routerLink="/training/smart-form" class="training-hub-link">
+                <span class="training-hub-icon">⚡</span>
+                <span class="training-hub-title">Smart Form</span>
+                <span class="training-hub-subtitle">Coach quick logging</span>
+              </a>
+            }
             <a routerLink="/workout" class="training-hub-link">
               <span class="training-hub-icon">🏋️</span>
               <span class="training-hub-title">Workouts</span>
@@ -728,6 +730,15 @@ export class TrainingScheduleComponent implements OnInit {
     "Failed to load training sessions. Please try again.",
   );
 
+  readonly isCoach = computed(() => {
+    const role = this.authService.getUser()?.role || "player";
+    return ["coach", "assistant_coach", "admin"].includes(role);
+  });
+
+  readonly primaryActionLabel = computed(() =>
+    this.isCoach() ? "Create Session" : "Go to Today's Practice",
+  );
+
   // Sessions filtered based on selected date
   filteredSessions = computed(() => {
     const allSessions = this.sessions();
@@ -1086,7 +1097,11 @@ export class TrainingScheduleComponent implements OnInit {
     this.showWeekNumbers.set(checked);
   }
 
-  createNewSession(): void {
+  primaryAction(): void {
+    if (!this.isCoach()) {
+      this.router.navigate(["/todays-practice"]);
+      return;
+    }
     const selectedDateStr = this.selectedDate()?.toISOString().split("T")[0];
     this.router.navigate(["/training/smart-form"], {
       queryParams: selectedDateStr ? { date: selectedDateStr } : {},

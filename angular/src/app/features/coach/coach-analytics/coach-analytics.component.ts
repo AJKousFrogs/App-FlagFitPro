@@ -121,7 +121,7 @@ interface TeamOption {
               Team Analytics
             </h1>
             <p class="header-subtitle">
-              Monitor AI Coach performance and athlete engagement
+              Monitor Merlin AI performance and athlete engagement
             </p>
           </div>
           <div class="header-filters">

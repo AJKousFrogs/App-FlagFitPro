@@ -7,6 +7,22 @@
 @include stat-block;
 
 .acwr-dashboard {
+  .data-freshness {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 0.5rem 0 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+
+    .data-source,
+    .data-updated {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+  }
+
   @include page-container(var(--content-max-width-xl));
 }
 

@@ -291,9 +291,9 @@ export class LandingComponent implements OnInit {
     },
     {
       id: "ai-coach",
-      title: "AI Coach - Merlin",
+      title: "Merlin AI - Merlin",
       description:
-        "Get personalized training advice from Merlin, your AI coach. Ask questions, get drill recommendations, and improve faster.",
+        "Get personalized training advice from Merlin, your Merlin AI. Ask questions, get drill recommendations, and improve faster.",
       icon: "pi-sparkles",
     },
     {
