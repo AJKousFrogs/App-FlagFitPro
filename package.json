@@ -110,7 +110,7 @@
     "postinstall": "node scripts/fix-jws-vulnerability.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.89.0",
+    "@supabase/supabase-js": "^2.95.3",
     "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^4.1.0",
