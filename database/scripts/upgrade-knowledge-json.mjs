@@ -77,22 +77,21 @@ const DOC_RIGHTS = {
 // Quantitative claims by topic (extracted from prose)
 const QUANTITATIVE_CLAIMS = {
   calf_achilles_assessment_protocols: [
-    { metric: 'bilateral_asymmetry', operator: '>=', value_range: { min: 10, max: 15 }, unit: 'percent', population_context: 'athletes', interpretation: 'flag_for_investigation' },
+    { metric: 'bilateral_asymmetry', operator: '>=', value_range: { min: 10, max: 15 }, unit: 'percent', population_context: 'athletes', interpretation: 'commonly_used_often_arbitrary_prefer_MDC_and_context', source_ref: 'systematic_review_2022' },
   ],
   calf_achilles_rehabilitation: [
-    { metric: 'strength_restoration', operator: '>=', value_range: { value: 90 }, unit: 'percent', population_context: 'return_to_sport', interpretation: 'minimum_for_rts' },
+    { metric: 'rts_criteria', operator: '=', value_range: {}, unit: 'multidomain', population_context: 'return_to_sport', interpretation: 'strength_function_sport_specific_symptom_response_per_CPG' },
   ],
   calf_achilles_injury_prevention: [
-    { metric: 'weekly_load_increase', operator: '<=', value_range: { value: 10 }, unit: 'percent', population_context: 'load_management', interpretation: 'guideline' },
-    { metric: 'bilateral_asymmetry', operator: '>=', value_range: { min: 10, max: 15 }, unit: 'percent', population_context: 'athletes', interpretation: 'flag_for_investigation' },
+    { metric: 'bilateral_asymmetry', operator: '>=', value_range: { min: 10, max: 15 }, unit: 'percent', population_context: 'athletes', interpretation: 'commonly_used_often_arbitrary_prefer_MDC_and_context', source_ref: 'systematic_review_2022' },
   ],
   soleus_gastrocnemius_differentiation: [
-    { metric: 'soleus_recurrence_days', operator: '=', value_range: { value: 25.1 }, unit: 'days', population_context: 'soleus_strain', interpretation: 'typical_rehab_window' },
-    { metric: 'gastrocnemius_recurrence_days', operator: '=', value_range: { value: 7.7 }, unit: 'days', population_context: 'gastrocnemius_strain', interpretation: 'typical_rehab_window' },
+    { metric: 'soleus_RTP_days', operator: '=', value_range: { mean: 25.4, SD: 16.2 }, unit: 'days', population_context: 'AFL_registry', interpretation: 'mean_SD' },
+    { metric: 'gastrocnemius_RTP_days', operator: '=', value_range: { mean: 19.1, SD: 14.1 }, unit: 'days', population_context: 'AFL_registry', interpretation: 'mean_SD' },
   ],
   calf_achilles_injuries_pathologies: [
-    { metric: 'soleus_recurrence_days', operator: '=', value_range: { value: 25 }, unit: 'days', population_context: 'soleus_strain', interpretation: 'typical_rehab_window' },
-    { metric: 'gastrocnemius_recurrence_days', operator: '=', value_range: { value: 7.7 }, unit: 'days', population_context: 'gastrocnemius_strain', interpretation: 'typical_rehab_window' },
+    { metric: 'soleus_RTP_days', operator: '=', value_range: { mean: 25.4, SD: 16.2 }, unit: 'days', population_context: 'AFL_registry', interpretation: 'mean_SD' },
+    { metric: 'gastrocnemius_RTP_days', operator: '=', value_range: { mean: 19.1, SD: 14.1 }, unit: 'days', population_context: 'AFL_registry', interpretation: 'mean_SD' },
   ],
   hamstring_injuries_pathologies: [
     { metric: 'reinjury_rate', operator: '>=', value_range: { min: 12, max: 30 }, unit: 'percent', population_context: 'hamstring_strain', interpretation: 'reported_range' },

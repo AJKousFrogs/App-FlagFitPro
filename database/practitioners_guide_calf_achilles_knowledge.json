@@ -1,7 +1,7 @@
 {
   "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
   "schema_version": "1.0.0",
-  "content_version": "1.0.0",
+  "content_version": "1.0.1",
   "document_id": "urn:uuid:d1fcde8f-bb3a-463d-96d1-714d0be062ab",
   "generated_at": "2026-02-10T18:25:06.296Z",
   "reviewed_at": null,
@@ -155,7 +155,7 @@
       "entry_type": "training_method",
       "topic": "calf_achilles_assessment_protocols",
       "question": "What are the best practices for calf and Achilles assessment?",
-      "answer": "Modern calf and Achilles assessment utilizes isometric testing using force plates and specialized equipment like VALD ForceFrame. Testing includes knee-straight (gastrocnemius dominant) and knee-bent (soleus dominant) positions to assess each muscle group independently. Objective metrics include peak force, rate of force development, and bilateral asymmetries. Regular monitoring helps identify deficits before injury occurs and tracks rehabilitation progress. Asymmetries greater than 10-15% indicate increased injury risk.",
+      "answer": "Modern calf and Achilles assessment utilizes isometric testing using force plates and specialized equipment like VALD ForceFrame. Testing includes knee-straight (gastrocnemius dominant) and knee-bent (soleus dominant) positions to assess each muscle group independently. Objective metrics include peak force, rate of force development, and bilateral asymmetries. Regular monitoring helps identify deficits before injury occurs and tracks rehabilitation progress. Use MDC (minimal detectable change) to interpret change and asymmetry; reliability depends on joint position and setup standardization—instrumented plantarflexion testing shows excellent reliability at neutral ankle position. The 10–15% asymmetry threshold is commonly used but often not evidence-based; better to use MDC, individual baselines, and context (sport, task, season) because injury/performance links are inconsistent.",
       "summary": "Isometric testing using force plates (ForceFrame) in knee-straight and knee-bent positions objectively measures calf strength, asymmetries, and tracks rehabilitation progress.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -191,14 +191,16 @@
         "metrics": [
           "peak_force",
           "rate_of_force_development",
-          "bilateral_asymmetry"
+          "bilateral_asymmetry",
+          "MDC_for_interpretation"
         ],
-        "frequency": "weekly_during_rehab_monthly_for_monitoring"
+        "frequency": "weekly_during_rehab_monthly_for_monitoring",
+        "outcome_measures_note": "VISA-A historically common; Rasch/COSMIN raises validity concerns—consider newer instruments (JOSPT CPG)"
       },
       "best_practices": [
         "Test both knee-straight and knee-bent positions",
         "Use objective force measurement technology",
-        "Monitor bilateral asymmetries (<10% ideal)",
+        "Use MDC to interpret change and asymmetry; standardize joint position and setup for reliability",
         "Track rate of force development",
         "Regular monitoring for injury prevention",
         "Compare to normative data for sport"
@@ -214,7 +216,8 @@
           },
           "unit": "percent",
           "population_context": "athletes",
-          "interpretation": "flag_for_investigation"
+          "interpretation": "commonly_used_often_arbitrary_prefer_MDC_and_context",
+          "source_ref": "systematic_review_2022"
         }
       ],
       "evidence_framework": "GRADE"
@@ -223,7 +226,7 @@
       "entry_type": "injury",
       "topic": "calf_achilles_injuries_pathologies",
       "question": "What are common calf and Achilles injuries in athletes?",
-      "answer": "Common injuries include Achilles tendinopathy (overuse and tendon degeneration), calf strains (acute muscle tears, often in the medial gastrocnemius), Achilles ruptures (complete tendon failure), and plantaris injuries. Achilles tendinopathy is highly prevalent in running and jumping athletes due to repetitive loading. Calf strains typically occur during acceleration, sprinting, or push-off movements. Risk factors include rapid training load increases, previous injury history, reduced calf strength and endurance, biomechanical issues, and inadequate recovery. Soleus strains have longer recurrence window (25 days vs gastrocnemius 7.7 days); symptoms are not reliable guides for rehabilitation—use objective measures.",
+      "answer": "Common injuries include Achilles tendinopathy (overuse and tendon degeneration), calf strains (acute muscle tears, often in the medial gastrocnemius), Achilles ruptures (complete tendon failure), and plantaris injuries. Achilles tendinopathy is highly prevalent in running and jumping athletes due to repetitive loading. Calf strains typically occur during acceleration, sprinting, or push-off movements. Risk factors include rapid training load increases, previous injury history, reduced calf strength and endurance, biomechanical issues, and inadequate recovery. AFL registry data: soleus ~25.4 ± 16.2 days vs gastrocnemius ~19.1 ± 14.1 days RTP; MRI grade and connective tissue involvement affect time to return. Symptoms are not reliable guides for rehabilitation—use objective measures.",
       "summary": "Common injuries: Achilles tendinopathy (overuse), calf strains (acute tears), Achilles ruptures, and plantaris injuries. Prevalent in running and jumping sports.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -266,24 +269,26 @@
       "entry_id": "urn:uuid:26c1202e-677e-436c-9b0f-ca5d8c87ab99",
       "quantitative_claims": [
         {
-          "metric": "soleus_recurrence_days",
+          "metric": "soleus_RTP_days",
           "operator": "=",
           "value_range": {
-            "value": 25
+            "mean": 25.4,
+            "SD": 16.2
           },
           "unit": "days",
-          "population_context": "soleus_strain",
-          "interpretation": "typical_rehab_window"
+          "population_context": "AFL_registry",
+          "interpretation": "mean_SD"
         },
         {
-          "metric": "gastrocnemius_recurrence_days",
+          "metric": "gastrocnemius_RTP_days",
           "operator": "=",
           "value_range": {
-            "value": 7.7
+            "mean": 19.1,
+            "SD": 14.1
           },
           "unit": "days",
-          "population_context": "gastrocnemius_strain",
-          "interpretation": "typical_rehab_window"
+          "population_context": "AFL_registry",
+          "interpretation": "mean_SD"
         }
       ],
       "evidence_framework": "GRADE"
@@ -292,8 +297,8 @@
       "entry_type": "recovery_method",
       "topic": "calf_achilles_rehabilitation",
       "question": "What are evidence-based rehabilitation strategies for calf and Achilles injuries?",
-      "answer": "Effective rehabilitation follows progressive loading principles: isometric exercises initially for pain management, then heavy slow resistance training (HSR) to build tendon capacity, followed by eccentric exercises (especially critical for Achilles tendinopathy), and finally plyometric and explosive work for return to sport. Load management is critical—tendinopathy responds to progressive loading, not rest. Objective strength testing guides progression through phases. Return to sport requires achieving >90% strength restoration compared to uninjured side and passing sport-specific testing. Trainable changes in one domain (e.g. isometric) do not necessarily transfer to others—comprehensive assessment is critical.",
-      "summary": "Progressive loading from isometric to heavy slow resistance to eccentric to plyometric. Load management critical for tendinopathy. Requires >90% strength restoration for return to sport.",
+      "answer": "Effective rehabilitation follows progressive loading principles: isometrics early for tolerated loading and strength stimulus (immediate analgesia is not reliable in Achilles tendinopathy—evidence is mixed). Progressive tendon loading is critical: heavy slow resistance (HSR) and eccentrics both work; choose based on patient preference, equipment, irritability, and adherence. Then plyometric and explosive work for return to sport. Load management is critical—tendinopathy responds to progressive loading, not rest. Objective strength testing guides progression through phases. Return to sport requires multidomain criteria: strength (one component), function, sport-specific tasks (heel-rise endurance, hop capacity, plyometric tolerance), and symptom response. Per JOSPT CPG; strength alone is insufficient. Trainable changes in one domain (e.g. isometric) do not necessarily transfer to others—comprehensive assessment is critical.",
+      "summary": "Progressive loading: isometrics, HSR or eccentrics (both work), plyometrics. Load management critical. Multidomain RTS criteria (strength, function, sport-specific, symptoms).",
       "evidence_strength": "strong",
       "consensus_level": "high",
       "applicable_to": [
@@ -339,28 +344,26 @@
           "sport_specific_tasks"
         ],
         "progression_criteria": "objective_strength_measures_guide_advancement",
-        "return_to_sport_criteria": ">90%_strength_bilateral_symmetry"
+        "return_to_sport_criteria": "multidomain_strength_function_sport_specific_symptom_response"
       },
       "best_practices": [
         "Progressive loading is key for tendinopathy",
-        "Isometric exercises for pain management",
+        "Isometrics for early tolerated loading—immediate analgesia not reliable",
         "Heavy slow resistance builds tendon capacity",
-        "Eccentric training essential for Achilles tendinopathy",
+        "Progressive tendon loading critical; HSR and eccentrics both effective",
         "Use objective testing to guide progression",
-        "Achieve >90% strength before return to sport",
+        "Meet multidomain RTS criteria (strength + function + sport-specific + symptoms)",
         "Address biomechanical and load factors"
       ],
       "entry_id": "urn:uuid:4659f85a-1c49-41b8-86de-826c9aa15b60",
       "quantitative_claims": [
         {
-          "metric": "strength_restoration",
-          "operator": ">=",
-          "value_range": {
-            "value": 90
-          },
-          "unit": "percent",
+          "metric": "rts_criteria",
+          "operator": "=",
+          "value_range": {},
+          "unit": "multidomain",
           "population_context": "return_to_sport",
-          "interpretation": "minimum_for_rts"
+          "interpretation": "strength_function_sport_specific_symptom_response_per_CPG"
         }
       ],
       "evidence_framework": "GRADE"
@@ -369,7 +372,7 @@
       "entry_type": "training_method",
       "topic": "calf_achilles_injury_prevention",
       "question": "What are effective strategies for preventing calf and Achilles injuries?",
-      "answer": "Prevention focuses on building adequate calf strength (especially soleus), implementing proper load management, including eccentric training programs, addressing biomechanical issues, and monitoring training loads. Regular strength testing identifies deficits before injury occurs. Eccentric calf exercises have been shown to reduce Achilles tendinopathy risk. Avoiding rapid training load increases is critical—the 10% rule for weekly load increases is a good guideline. Bilateral asymmetries greater than 10-15% indicate increased injury risk and should be addressed. Most demanding tasks (jumps, accelerations) place over 12x bodyweight through the calf MTU—adequate strength and stiffness are essential.",
+      "answer": "Prevention focuses on building adequate calf strength (especially soleus), implementing proper load management, including eccentric training programs, addressing biomechanical issues, and monitoring training loads. Regular strength testing identifies deficits before injury occurs. Eccentric calf exercises have been shown to reduce Achilles tendinopathy risk. Avoiding rapid training load increases is critical—no well-defined weekly load threshold is proven; load changes should be individualized and monitored (pain response, function, recovery, objective capacity). Bilateral asymmetries: 10–15% is commonly used but often arbitrary; better to use MDC, individual baselines, and context (sport, task, season) because evidence is inconsistent. Most demanding tasks (jumps, accelerations) place over 12x bodyweight through the calf MTU—adequate strength and stiffness are essential.",
       "summary": "Prevention through adequate calf strength, load management, eccentric training, biomechanical correction, and monitoring. Regular testing identifies deficits early.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -403,23 +406,13 @@
         "Implement eccentric training programs",
         "Monitor training loads and avoid spikes",
         "Regular strength testing to identify deficits",
-        "Address bilateral asymmetries >10%",
+        "Monitor asymmetries with individual baselines and context",
         "Proper warm-up and cool-down protocols",
         "Progressive return from time off",
         "Monitor fatigue and recovery"
       ],
       "entry_id": "urn:uuid:f908fd77-e5b6-4cdd-bd5b-ef11f49048d0",
       "quantitative_claims": [
-        {
-          "metric": "weekly_load_increase",
-          "operator": "<=",
-          "value_range": {
-            "value": 10
-          },
-          "unit": "percent",
-          "population_context": "load_management",
-          "interpretation": "guideline"
-        },
         {
           "metric": "bilateral_asymmetry",
           "operator": ">=",
@@ -429,7 +422,8 @@
           },
           "unit": "percent",
           "population_context": "athletes",
-          "interpretation": "flag_for_investigation"
+          "interpretation": "commonly_used_often_arbitrary_prefer_MDC_and_context",
+          "source_ref": "systematic_review_2022"
         }
       ],
       "evidence_framework": "GRADE"
@@ -438,7 +432,7 @@
       "entry_type": "training_method",
       "topic": "soleus_gastrocnemius_differentiation",
       "question": "When should soleus vs gastrocnemius be emphasized in assessment and training?",
-      "answer": "The gastrocnemius (knee-straight) and soleus (knee-bent) have different functions and injury profiles. Soleus strains have longer recurrence window (25.1 days vs gastrocnemius 7.7 days) and often present with subtler symptoms. Test both positions independently: knee-straight for gastrocnemius dominance, knee-bent 90° for soleus. Emphasize soleus for running endurance and Achilles loading—it has greater oxidative capacity and is primary plantar flexor in many activities. Gastrocnemius contributes more to explosive movements. Both are needed for sprinting and jumping; address imbalances. Soleus-specific strengthening (seated calf raises, knee-bent holds) important for tendinopathy and running athletes.",
+      "answer": "The gastrocnemius (knee-straight) and soleus (knee-bent) have different functions and injury profiles. AFL registry: soleus ~25.4 ± 16.2 days vs gastrocnemius ~19.1 ± 14.1 days RTP; soleus often presents with subtler symptoms. MRI grade/connective tissue involvement affects RTP time. Test both positions independently: knee-straight for gastrocnemius dominance, knee-bent 90° for soleus. Emphasize soleus for running endurance and Achilles loading—it has greater oxidative capacity and is primary plantar flexor in many activities. Gastrocnemius contributes more to explosive movements. Both are needed for sprinting and jumping; address imbalances. Soleus-specific strengthening (seated calf raises, knee-bent holds) important for tendinopathy and running athletes.",
       "summary": "Test and train gastrocnemius (knee-straight) and soleus (knee-bent) independently. Soleus has longer rehab; both critical for running and jumping.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -478,24 +472,26 @@
       "entry_id": "urn:uuid:77e2aa61-1176-4440-a18f-474b9a8ac032",
       "quantitative_claims": [
         {
-          "metric": "soleus_recurrence_days",
+          "metric": "soleus_RTP_days",
           "operator": "=",
           "value_range": {
-            "value": 25.1
+            "mean": 25.4,
+            "SD": 16.2
           },
           "unit": "days",
-          "population_context": "soleus_strain",
-          "interpretation": "typical_rehab_window"
+          "population_context": "AFL_registry",
+          "interpretation": "mean_SD"
         },
         {
-          "metric": "gastrocnemius_recurrence_days",
+          "metric": "gastrocnemius_RTP_days",
           "operator": "=",
           "value_range": {
-            "value": 7.7
+            "mean": 19.1,
+            "SD": 14.1
           },
           "unit": "days",
-          "population_context": "gastrocnemius_strain",
-          "interpretation": "typical_rehab_window"
+          "population_context": "AFL_registry",
+          "interpretation": "mean_SD"
         }
       ],
       "evidence_framework": "GRADE"
