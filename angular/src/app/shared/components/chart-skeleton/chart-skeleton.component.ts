@@ -254,7 +254,8 @@ import { CommonModule } from "@angular/common";
       }
 
       /* Dark mode support */
-      :host-context(.dark) {
+      :host-context([data-theme="dark"]),
+      :host-context(.dark-theme) {
         .skeleton-title,
         .skeleton-legend-item,
         .skeleton-y-tick,

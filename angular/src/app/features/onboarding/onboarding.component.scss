@@ -94,7 +94,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.15);
+    box-shadow: 0 var(--border-2) var(--space-2) rgba(var(--ds-primary-green-rgb), 0.15);
     border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.1);
 
     &.success {
@@ -575,7 +575,7 @@
       border-color: var(--ds-primary-green);
       transform: translateY(calc(-1 * var(--space-0-75)));
       box-shadow:
-        0 calc(var(--space-1) + var(--space-0-5)) 1rem rgba(var(--ds-primary-green-rgb), 0.12),
+        0 calc(var(--space-1) + var(--space-0-5)) var(--space-4) rgba(var(--ds-primary-green-rgb), 0.12),
         var(--shadow-sm);
 
       &::before {
@@ -610,7 +610,7 @@
         rgba(var(--ds-primary-green-rgb), 0.05) 100%
       );
       box-shadow:
-        0 calc(var(--space-1) + var(--space-0-5)) 1.25rem rgba(var(--ds-primary-green-rgb), 0.15),
+        0 calc(var(--space-1) + var(--space-0-5)) var(--space-5) rgba(var(--ds-primary-green-rgb), 0.15),
         var(--shadow-sm);
 
       &::before {
@@ -702,7 +702,7 @@
       transform: scale(0);
 
       @include card-transition;
-      box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.3);
+      box-shadow: 0 var(--border-2) var(--space-2) rgba(var(--ds-primary-green-rgb), 0.3);
       z-index: 2;
 
       i {
@@ -732,7 +732,7 @@
       border-color: var(--ds-primary-green);
       transform: translateY(calc(-1 * var(--space-1)));
       box-shadow:
-        0 0.5rem 1.25rem rgba(var(--ds-primary-green-rgb), 0.12),
+        0 var(--space-2) var(--space-5) rgba(var(--ds-primary-green-rgb), 0.12),
         var(--shadow-sm);
 
       .goal-icon {
@@ -759,7 +759,7 @@
         rgba(var(--ds-primary-green-rgb), 0.05) 100%
       );
       box-shadow:
-        0 0.5rem 1.5rem rgba(var(--ds-primary-green-rgb), 0.15),
+        0 var(--space-2) var(--space-6) rgba(var(--ds-primary-green-rgb), 0.15),
         var(--shadow-sm);
 
       .goal-check {
@@ -947,7 +947,7 @@
       border-color: var(--ds-primary-green);
       transform: translateY(calc(-1 * var(--space-0-75)));
       box-shadow:
-        0 calc(var(--space-1) + var(--space-0-5)) 1rem rgba(var(--ds-primary-green-rgb), 0.12),
+        0 calc(var(--space-1) + var(--space-0-5)) var(--space-4) rgba(var(--ds-primary-green-rgb), 0.12),
         var(--shadow-sm);
 
       .equipment-icon {
@@ -974,7 +974,7 @@
         rgba(var(--ds-primary-green-rgb), 0.05) 100%
       );
       box-shadow:
-        0 calc(var(--space-1) + var(--space-0-5)) 1.25rem rgba(var(--ds-primary-green-rgb), 0.15),
+        0 calc(var(--space-1) + var(--space-0-5)) var(--space-5) rgba(var(--ds-primary-green-rgb), 0.15),
         var(--shadow-sm);
 
       .equipment-check {
@@ -1123,7 +1123,7 @@
 
       i {
         font-size: var(--ds-font-size-xs);
-        color: white;
+        color: var(--color-text-on-primary);
       }
     }
 
@@ -1214,7 +1214,7 @@
     font-weight: var(--ds-font-weight-medium);
     margin-top: var(--space-5);
     line-height: var(--ds-line-height-relaxed);
-    box-shadow: 0 var(--border-2) 0.5rem rgba(var(--primitive-info-500-rgb), 0.1);
+    box-shadow: 0 var(--border-2) var(--space-2) rgba(var(--primitive-info-500-rgb), 0.1);
 
     &.success {
       background: linear-gradient(
@@ -1224,7 +1224,7 @@
       );
       border-color: rgba(var(--ds-primary-green-rgb), 0.25);
       color: var(--ds-primary-green);
-      box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.1);
+      box-shadow: 0 var(--border-2) var(--space-2) rgba(var(--ds-primary-green-rgb), 0.1);
     }
 
     i {
@@ -1527,7 +1527,7 @@
   font-weight: var(--ds-font-weight-medium);
   margin-top: var(--space-6);
   line-height: var(--ds-line-height-relaxed);
-  box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.1);
+  box-shadow: 0 var(--border-2) var(--space-2) rgba(var(--ds-primary-green-rgb), 0.1);
 
   i {
     font-size: var(--ds-font-size-2xl);
@@ -1679,7 +1679,7 @@
 
 .onboarding-page .checkbox-card.none-selected:hover {
   border-color: var(--color-status-success);
-  box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--primitive-success-500-rgb), 0.1);
+  box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.1);
 }
 
 .onboarding-page .checkbox-card.none-selected:focus-visible {
@@ -1690,10 +1690,10 @@
   border-color: var(--color-status-success);
   background: linear-gradient(
     135deg,
-    rgba(var(--primitive-success-500-rgb), 0.12) 0%,
-    rgba(var(--primitive-success-500-rgb), 0.05) 100%
+    rgba(var(--ds-primary-green-rgb), 0.12) 0%,
+    rgba(var(--ds-primary-green-rgb), 0.05) 100%
   );
-  box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--primitive-success-500-rgb), 0.15);
+  box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.15);
 }
 
 .onboarding-page .checkbox-card.none-selected.selected .checkbox-indicator {

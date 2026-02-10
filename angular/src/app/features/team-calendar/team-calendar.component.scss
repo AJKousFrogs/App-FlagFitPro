@@ -208,8 +208,8 @@
     background: var(--ds-surface-base);
 
     &.status-going {
-      background: var(--primitive-success-50);
-      color: var(--primitive-success-600);
+      background: var(--color-status-success-subtle);
+      color: var(--color-status-success);
     }
 
     &.status-not-going {

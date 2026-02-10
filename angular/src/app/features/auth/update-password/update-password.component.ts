@@ -48,7 +48,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   template: `
 <div class="update-password-page">
       <p-card class="update-password-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="update-password-logo">
             <i class="pi pi-lock"></i>
           </div>
@@ -68,7 +68,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
                 placeholder="Enter new password"
                 [toggleMask]="true"
                 [feedback]="true"
-                styleClass="w-full"
+                class="w-full"
                 inputStyleClass="w-full"
                 [class.ng-invalid]="isFieldInvalid('password')"
                 ariaLabel="New password"
@@ -93,7 +93,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
                 placeholder="Confirm new password"
                 [toggleMask]="true"
                 [feedback]="false"
-                styleClass="w-full"
+                class="w-full"
                 inputStyleClass="w-full"
                 [class.ng-invalid]="isFieldInvalid('confirmPassword')"
                 ariaLabel="Confirm new password"
@@ -126,7 +126,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           </div>
         } @else {
           <div class="invalid-session">
-            <p-message severity="error" styleClass="status-message">
+            <p-message severity="error" class="status-message">
               This password reset link is invalid or has expired.
             </p-message>
             <p class="mb-4 mt-4">Please request a new password reset link.</p>

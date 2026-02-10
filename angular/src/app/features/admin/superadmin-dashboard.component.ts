@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -92,10 +92,9 @@ interface AdminTeam {
     FormsModule,
     Card,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     Select,
-    TableModule,
     TableModule,
     Tag,
 
@@ -201,7 +200,7 @@ interface AdminTeam {
 
         <!-- Quick Actions -->
         <p-card>
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h3>Quick Actions</h3>
             </div>
@@ -244,7 +243,7 @@ interface AdminTeam {
 
         <!-- Recent Activity -->
         <p-card>
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h3>Recent Activity</h3>
             </div>
@@ -280,7 +279,7 @@ interface AdminTeam {
 
         <!-- System Health -->
         <p-card>
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h3>System Health</h3>
             </div>
@@ -328,7 +327,7 @@ interface AdminTeam {
         [(visible)]="showUserDialog"
         header="User Management"
         [modal]="true"
-        styleClass="superadmin-user-dialog"
+        class="superadmin-user-dialog"
       >
         <div class="management-filters">
           <span class="p-input-icon-left">
@@ -368,7 +367,7 @@ interface AdminTeam {
           [virtualScroll]="filteredUsers().length > 50"
           [virtualScrollItemSize]="46"
         >
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>User</th>
               <th>Email</th>
@@ -377,7 +376,7 @@ interface AdminTeam {
               <th>Actions</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-user>
+          <ng-template #body let-user>
             <tr>
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>
@@ -407,7 +406,7 @@ interface AdminTeam {
         [(visible)]="showTeamDialog"
         header="Team Management"
         [modal]="true"
-        styleClass="superadmin-team-dialog"
+        class="superadmin-team-dialog"
       >
         <p-table
           [value]="teams()"
@@ -417,7 +416,7 @@ interface AdminTeam {
           [virtualScroll]="teams().length > 50"
           [virtualScrollItemSize]="46"
         >
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Team</th>
               <th>Coach</th>
@@ -427,7 +426,7 @@ interface AdminTeam {
               <th>Actions</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-team>
+          <ng-template #body let-team>
             <tr>
               <td>{{ team.name }}</td>
               <td>{{ team.coach }}</td>

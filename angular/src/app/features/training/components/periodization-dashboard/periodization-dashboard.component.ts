@@ -121,8 +121,8 @@ interface TimelineEvent {
           </div>
 
           <!-- Current Phase Card -->
-          <p-card styleClass="phase-card">
-            <ng-template pTemplate="header">
+          <p-card class="phase-card">
+            <ng-template #header>
               <div class="phase-header">
                 <div class="phase-info">
                   <app-status-tag
@@ -153,7 +153,7 @@ interface TimelineEvent {
                   ) {
                     <p-chip
                       [label]="formatFocus(focus)"
-                      styleClass="focus-chip primary"
+                      class="focus-chip primary"
                     ></p-chip>
                   }
                 </div>
@@ -166,7 +166,7 @@ interface TimelineEvent {
                   ) {
                     <p-chip
                       [label]="formatFocus(focus)"
-                      styleClass="focus-chip secondary"
+                      class="focus-chip secondary"
                     ></p-chip>
                   }
                 </div>
@@ -189,7 +189,7 @@ interface TimelineEvent {
                   <p-progressBar
                     [value]="getLoadProgress()"
                     [showValue]="false"
-                    styleClass="load-bar"
+                    class="load-bar"
                   ></p-progressBar>
                 </div>
               </div>
@@ -218,7 +218,7 @@ interface TimelineEvent {
           </p-card>
 
           <!-- Tabs for different views -->
-          <p-tabs styleClass="training-tabs" [(value)]="activeTab">
+          <p-tabs class="training-tabs" [(value)]="activeTab">
             <p-tablist>
               <p-tab value="schedule">Weekly Schedule</p-tab>
               <p-tab value="sprint">Sprint Training</p-tab>
@@ -382,7 +382,7 @@ interface TimelineEvent {
                       ) {
                         <p-chip
                           [label]="formatProtocol(protocol)"
-                          styleClass="protocol-chip"
+                          class="protocol-chip"
                         ></p-chip>
                       }
                     </div>
@@ -396,7 +396,7 @@ interface TimelineEvent {
                         ) {
                           <p-chip
                             [label]="formatProtocol(protocol)"
-                            styleClass="protocol-chip avoid"
+                            class="protocol-chip avoid"
                           ></p-chip>
                         }
                       </div>
@@ -423,9 +423,9 @@ interface TimelineEvent {
                   <p-timeline
                     [value]="annualTimeline()"
                     layout="horizontal"
-                    styleClass="phase-timeline"
+                    class="phase-timeline"
                   >
-                    <ng-template pTemplate="marker" let-event>
+                    <ng-template #marker let-event>
                       <span
                         class="timeline-marker"
                         [style.background-color]="event.color"
@@ -433,7 +433,7 @@ interface TimelineEvent {
                         <i [class]="event.icon"></i>
                       </span>
                     </ng-template>
-                    <ng-template pTemplate="content" let-event>
+                    <ng-template #content let-event>
                       <div class="timeline-content">
                         <span class="timeline-month">{{ event.month }}</span>
                         <span class="timeline-phase">{{ event.phase }}</span>
@@ -546,7 +546,7 @@ interface TimelineEvent {
           @if (seasonalRecommendation()?.personalizedAdjustments?.length) {
             <p-card
               header="Personalized Recommendations"
-              styleClass="adjustments-card"
+              class="adjustments-card"
             >
               <ul class="adjustments-list">
                 @for (

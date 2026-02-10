@@ -92,16 +92,16 @@
     var(--color-brand-primary) 0%,
     var(--color-brand-secondary) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .icon-success {
   background: linear-gradient(
     135deg,
     var(--color-status-success) 0%,
-    var(--primitive-success-400) 100%
+    var(--color-status-success) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .icon-warning {
@@ -110,7 +110,7 @@
     var(--color-status-warning) 0%,
     var(--primitive-warning-400) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .icon-danger {
@@ -119,7 +119,7 @@
     var(--color-status-error) 0%,
     var(--primitive-error-400) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .icon-info {
@@ -128,7 +128,7 @@
     var(--color-status-info) 0%,
     var(--primitive-blue-400) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .icon-purple {
@@ -137,7 +137,7 @@
     var(--primitive-purple-500) 0%,
     var(--primitive-purple-400) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .icon-orange {
@@ -146,7 +146,7 @@
     var(--primitive-orange-500) 0%,
     var(--primitive-orange-400) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 /* Badge */

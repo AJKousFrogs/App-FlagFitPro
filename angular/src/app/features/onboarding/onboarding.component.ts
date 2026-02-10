@@ -95,7 +95,7 @@ interface InjuryEntry {
             <p-progressBar
               [value]="progress()"
               [showValue]="false"
-              styleClass="onboarding-progress"
+              class="onboarding-progress"
             ></p-progressBar>
             <div class="progress-info">
               <span class="progress-text">{{ progress() }}% complete</span>
@@ -119,7 +119,7 @@ interface InjuryEntry {
             <p-step-list>
               @for (step of steps(); track $index) {
                 <p-step [value]="$index">
-                  <ng-template pTemplate="content">
+                  <ng-template #content>
                     <div class="step-with-icon">
                       <i [class]="'pi ' + step.icon"></i>
                       <span>{{ step.label }}</span>
@@ -171,7 +171,7 @@ interface InjuryEntry {
                       dateFormat="dd/mm/yy"
                       placeholder="Select date"
                       [showIcon]="true"
-                      styleClass="w-full"
+                      class="w-full"
                     ></p-datepicker>
                     @if (calculatedAge()) {
                       <small class="age-hint"
@@ -415,14 +415,13 @@ interface InjuryEntry {
                       (ngModelChange)="onTeamSelect({ value: $event })"
                       (onClear)="onboardingData.team = null"
                       placeholder="Search for your team or enter name..."
-                      [minLength]="0"
+                      [minQueryLength]="0"
                       [forceSelection]="false"
                       [dropdown]="true"
                       field="label"
                       class="w-full"
-                      [inputStyle]="{ width: '100%' }"
                     >
-                      <ng-template let-team pTemplate="item">
+                      <ng-template let-team #item>
                         <div class="team-suggestion">
                           <i class="pi pi-users"></i>
                           <span>{{ team.label }}</span>

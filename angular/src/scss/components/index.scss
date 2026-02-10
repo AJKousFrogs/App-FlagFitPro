@@ -1,7 +1,4 @@
 @forward "./standardized-components";
 @forward "./primitives/index";
-@forward "./primeng/token-mapping";
-@forward "./primeng/brand-overrides";
-@forward "./primeng-integration";
-@forward "./primeng-theme";
-@forward "./dialog-overrides";
+// PrimeNG cascade: token-mapping → brand-overrides → integration → theme → dialog-overrides
+@forward "./primeng";

@@ -27,7 +27,7 @@
   padding: var(--space-10) var(--space-6);
   margin: calc(-1 * var(--space-6));
   margin-bottom: var(--space-8);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .header-content {
@@ -272,7 +272,7 @@
     var(--primitive-error-500),
     var(--primitive-orange-400)
   );
-  color: white;
+  color: var(--color-text-on-primary);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);

@@ -29,7 +29,6 @@ import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 
 import { Select } from "primeng/select";
@@ -69,7 +68,7 @@ import { getInitials } from "../../shared/utils/format.utils";
     Badge,
     ScrollingModule,
     Dialog,
-    PrimeTemplate,
+    
     Select,
     Textarea,
     Tooltip,
@@ -339,7 +338,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                               'U'
                           )
                         "
-                        [styleClass]="
+                        [class]="
                           'mr-2 avatar-token ' +
                           getAvatarColorClass(message.author?.full_name || '')
                         "
@@ -506,7 +505,7 @@ import { getInitials } from "../../shared/utils/format.utils";
       header="Create New Channel"
       [(visible)]="showCreateChannelDialog"
       [modal]="true"
-      styleClass="chat-create-channel-dialog"
+      class="chat-create-channel-dialog"
     >
       <div class="create-channel-form">
         <div class="form-field">
@@ -543,7 +542,7 @@ import { getInitials } from "../../shared/utils/format.utils";
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
-            styleClass="w-full"
+            class="w-full"
           ></p-select>
         </div>
 
@@ -556,13 +555,13 @@ import { getInitials } from "../../shared/utils/format.utils";
               optionLabel="label"
               optionValue="value"
               placeholder="Select position"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
           </div>
         }
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button variant="text" (clicked)="showCreateChannelDialog = false"
           >Cancel</app-button
         >
@@ -580,7 +579,7 @@ import { getInitials } from "../../shared/utils/format.utils";
       header="Pinned Messages"
       [(visible)]="showPinnedMessages"
       [modal]="true"
-      styleClass="chat-pinned-dialog"
+      class="chat-pinned-dialog"
     >
       <div class="pinned-messages-list">
         @for (message of pinnedMessages(); track message.id) {
@@ -613,10 +612,10 @@ import { getInitials } from "../../shared/utils/format.utils";
       header="Channel Members"
       [(visible)]="showMembersDialog"
       [modal]="true"
-      styleClass="chat-members-dialog"
+      class="chat-members-dialog"
       (onShow)="loadChannelMembers()"
     >
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <div class="members-dialog-header">
           <span class="dialog-title">Channel Members</span>
           @if (channelMembersData()) {
@@ -681,7 +680,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                         "
                         shape="circle"
                         size="large"
-                        [styleClass]="
+                        [class]="
                           'avatar-token ' + getAvatarColorClass(member.full_name)
                         "
                       ></p-avatar>
@@ -738,7 +737,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                         "
                         shape="circle"
                         size="large"
-                        [styleClass]="
+                        [class]="
                           'avatar-token ' + getAvatarColorClass(member.full_name)
                         "
                       ></p-avatar>

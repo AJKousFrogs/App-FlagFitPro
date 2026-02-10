@@ -40,8 +40,17 @@
   // ============================================================================
   // FIXED CONTRAST VALUES - Light Mode
   // ============================================================================
+  //
+  // TOKEN RELATIONSHIP (for developers):
+  // - --color-text-secondary: Semantic token from design-system-tokens (e.g. #4a4a4a).
+  //   Use for general secondary text when contrast is sufficient.
+  // - --text-secondary: Accessible override pointing to --color-text-secondary-accessible (#475569).
+  //   Use for components that MUST meet WCAG AA (4.5:1) on small text.
+  // - Same pattern for --color-text-muted vs --text-muted (--color-text-muted-accessible).
+  // When in doubt, prefer --text-secondary and --text-muted for body/copy text.
+  // ============================================================================
 
-  // Fixed contrast defaults
+  // Fixed contrast defaults - accessible variants for WCAG compliance
   --text-secondary: var(--color-text-secondary-accessible);
   --text-muted: var(--color-text-muted-accessible);
 }
@@ -96,8 +105,8 @@ textarea::placeholder,
   }
 
   &.p-message-success {
-    background: var(--primitive-success-100);
-    border-color: var(--primitive-success-300);
+    background: var(--color-status-success-surface);
+    border-color: var(--color-status-success-light);
     color: var(--color-success-text-accessible);
 
     .p-message-icon {
@@ -129,7 +138,7 @@ textarea::placeholder,
   }
 
   &.p-tag-success {
-    background: var(--primitive-success-200);
+    background: var(--color-status-success-light);
     color: var(--color-success-text-accessible);
   }
 
@@ -335,7 +344,7 @@ small:not(.p-error) {
   // Remove subtle backgrounds that reduce contrast
   .p-card,
   .p-panel {
-    background: white;
+    background: var(--surface-primary);
   }
 
   // Ensure focus states are highly visible

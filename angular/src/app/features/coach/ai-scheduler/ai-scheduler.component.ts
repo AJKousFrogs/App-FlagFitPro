@@ -132,7 +132,7 @@ const PRACTICE_DURATIONS = [
 
         @if (!generatedSchedule()) {
           <!-- Generation Form -->
-          <p-card styleClass="generation-form-card">
+          <p-card class="generation-form-card">
             <div class="merlin-intro">
               <div class="merlin-avatar">🤖</div>
               <div class="merlin-message">
@@ -179,7 +179,7 @@ const PRACTICE_DURATIONS = [
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select upcoming event"
-                    styleClass="w-full"
+                    class="w-full"
                     [attr.aria-label]="'Select upcoming event'"
                   ></p-select>
                   @if (selectedEvent()) {
@@ -337,7 +337,7 @@ const PRACTICE_DURATIONS = [
           </div>
 
           <!-- Merlin Recommendation -->
-          <p-card styleClass="recommendation-card">
+          <p-card class="recommendation-card">
             <div class="merlin-recommendation">
               <span class="merlin-icon">🤖</span>
               <div class="recommendation-content">
@@ -349,7 +349,7 @@ const PRACTICE_DURATIONS = [
 
           <!-- Periodization Overview -->
           <p-card>
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Periodization Overview</h3>
               </div>
@@ -368,7 +368,7 @@ const PRACTICE_DURATIONS = [
                     <p-progressBar
                       [value]="phase.loadPercent"
                       [showValue]="false"
-                      styleClass="periodization-load-bar"
+                      class="periodization-load-bar"
                     ></p-progressBar>
                     <span class="load-label">{{ phase.description }}</span>
                   </div>
@@ -380,7 +380,7 @@ const PRACTICE_DURATIONS = [
           <!-- Weekly Schedule -->
           @for (week of scheduleWeeks(); track week.name) {
             <p-card>
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>{{ week.name }}</h3>
                 </div>
@@ -450,8 +450,8 @@ const PRACTICE_DURATIONS = [
 
           <!-- Player Modifications -->
           @if (playerModifications().length > 0) {
-            <p-card styleClass="modifications-card">
-              <ng-template pTemplate="header">
+            <p-card class="modifications-card">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>⚠️ Player-Specific Modifications</h3>
                 </div>

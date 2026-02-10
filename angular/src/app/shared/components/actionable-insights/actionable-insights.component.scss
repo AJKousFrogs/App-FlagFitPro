@@ -90,8 +90,8 @@
 }
 
 .insight-card.type-opportunity {
-  border-left-color: var(--primitive-success-400);
-  background: var(--primitive-success-50);
+  border-left-color: var(--color-status-success);
+  background: var(--color-status-success-subtle);
 }
 
 .insight-card.type-success {
@@ -124,7 +124,7 @@
 }
 
 .insight-icon.icon-opportunity {
-  background: var(--primitive-success-100);
+  background: var(--color-status-success-surface);
   color: var(--ds-primary-green-hover);
 }
 
@@ -178,7 +178,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  background: white;
+  background: var(--surface-primary);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
 }
@@ -261,7 +261,7 @@
 
 .no-insights i {
   font-size: var(--ds-font-size-3xl);
-  color: var(--primitive-success-400);
+  color: var(--color-status-success);
   margin-bottom: var(--space-3);
 }
 

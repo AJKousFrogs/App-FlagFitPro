@@ -26,7 +26,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
               strokeWidth="4"
               fill="transparent"
               animationDuration=".5s"
-              [styleClass]="spinnerSizeClass()"
+              [class]="spinnerSizeClass()"
             ></p-progressSpinner>
             @if (message()) {
               <p class="loading-message">{{ message() }}</p>
@@ -39,7 +39,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
           <div class="loading-spinner" [class.compact]="compact()">
             <p-progressSpinner
               strokeWidth="4"
-              [styleClass]="spinnerSizeClass()"
+              [class]="spinnerSizeClass()"
             ></p-progressSpinner>
             @if (message()) {
               <span class="loading-message-inline">{{ message() }}</span>

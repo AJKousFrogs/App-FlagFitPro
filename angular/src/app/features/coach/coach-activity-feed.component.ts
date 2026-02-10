@@ -120,7 +120,7 @@ import { getInitials } from "../../shared/utils/format.utils";
 
       <!-- Activity List -->
       @if (activities().length > 0) {
-        <p-scrollPanel styleClass="activity-scroll-panel">
+        <p-scrollPanel class="activity-scroll-panel">
           <div class="activity-list">
             @for (group of groupedActivities(); track group.date) {
               <div class="date-group">
@@ -141,7 +141,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                           getInitialsStr(activity.player?.full_name || 'P')
                         "
                         shape="circle"
-                        styleClass="activity-avatar-icon"
+                        class="activity-avatar-icon"
                       ></p-avatar>
                       <div class="activity-icon-badge">
                         <i

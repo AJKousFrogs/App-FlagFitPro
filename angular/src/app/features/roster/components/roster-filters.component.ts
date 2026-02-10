@@ -44,7 +44,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
           [(ngModel)]="positionFilter"
           placeholder="All Positions"
           [showClear]="true"
-          styleClass="filter-select"
+          class="filter-select"
           (ngModelChange)="positionFilterChange.emit($event)"
         ></p-select>
 
@@ -53,7 +53,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
           [(ngModel)]="statusFilter"
           placeholder="All Status"
           [showClear]="true"
-          styleClass="filter-select"
+          class="filter-select"
           (ngModelChange)="statusFilterChange.emit($event)"
         ></p-select>
       </div>

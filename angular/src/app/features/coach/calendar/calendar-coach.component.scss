@@ -54,7 +54,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: calc(
-    var(--ds-space-1) / 4
+    var(--space-1) / 4
   ); /* Intentionally var(--border-1) for calendar grid lines */
   margin-bottom: var(--space-2);
 
@@ -71,7 +71,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: calc(
-    var(--ds-space-1) / 4
+    var(--space-1) / 4
   ); /* Intentionally var(--border-1) for calendar grid lines */
   background: var(--ds-border-subtle);
   border: var(--border-1) solid var(--ds-border-default);
@@ -88,7 +88,7 @@
 
     .day-number {
       background: var(--ds-primary-green);
-      color: white;
+      color: var(--color-text-on-primary);
       border-radius: 50%;
       width: var(--avatar-size-sm);
       height: var(--avatar-size-sm);

@@ -47,12 +47,12 @@ import { ButtonComponent } from "../button/button.component";
           <p-progressBar
             [value]="progress()!"
             [showValue]="true"
-            styleClass="slow-operation-progress"
+            class="slow-operation-progress"
           ></p-progressBar>
         } @else {
           <p-progressBar
             mode="indeterminate"
-            styleClass="slow-operation-progress"
+            class="slow-operation-progress"
           ></p-progressBar>
         }
 
@@ -75,7 +75,7 @@ import { ButtonComponent } from "../button/button.component";
   styles: [
     `
       .slow-operation-container {
-        padding: var(--ds-space-4);
+        padding: var(--space-4);
         background: var(--surface-secondary);
         border-radius: var(--radius-lg);
         border: var(--border-1) solid var(--border-color);
@@ -85,7 +85,7 @@ import { ButtonComponent } from "../button/button.component";
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: var(--ds-space-3);
+        margin-bottom: var(--space-3);
       }
 
       .operation-name {
@@ -95,7 +95,7 @@ import { ButtonComponent } from "../button/button.component";
 
       .slow-badge {
         font-size: var(--ds-font-size-xs);
-        padding: var(--ds-space-1) var(--ds-space-2);
+        padding: var(--space-1) var(--space-2);
         background: var(--ds-color-warning-subtle);
         color: var(--ds-color-warning);
         border-radius: var(--radius-full);
@@ -105,7 +105,7 @@ import { ButtonComponent } from "../button/button.component";
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: var(--ds-space-3);
+        margin-top: var(--space-3);
       }
 
       .reassurance-message {

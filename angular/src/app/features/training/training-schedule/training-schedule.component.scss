@@ -507,7 +507,7 @@
     font-size: var(--ds-font-size-md);
 
     &.legend-completed {
-      color: var(--primitive-success-500);
+      color: var(--color-status-success);
     }
 
     &.legend-scheduled {
@@ -708,8 +708,8 @@
   }
 
   &--success {
-    background: var(--primitive-success-50);
-    color: var(--primitive-success-700);
+    background: var(--color-status-success-subtle);
+    color: var(--color-status-success);
   }
 }
 

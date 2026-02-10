@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 import { Checkbox } from "primeng/checkbox";
@@ -95,7 +95,7 @@ const TAG_TYPES = [
     FormsModule,
     Checkbox,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     ProgressBar,
     RadioButton,
@@ -246,7 +246,7 @@ const TAG_TYPES = [
                   <p-progressBar
                     [value]="getWatchPercent(session)"
                     [showValue]="false"
-                    styleClass="film-watch-progress"
+                    class="film-watch-progress"
                   ></p-progressBar>
                 </div>
                 @if (session.notWatched.length > 0) {
@@ -301,7 +301,7 @@ const TAG_TYPES = [
         [(visible)]="showUploadDialog"
         header="Upload Film"
         [modal]="true"
-        styleClass="film-upload-dialog"
+        class="film-upload-dialog"
       >
         <div class="upload-form">
           <div class="form-field">
@@ -380,7 +380,7 @@ const TAG_TYPES = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showUploadDialog = false"
             >Cancel</app-button
           >
@@ -395,7 +395,7 @@ const TAG_TYPES = [
         [(visible)]="showTagDialog"
         header="Add Tag"
         [modal]="true"
-        styleClass="film-tag-dialog"
+        class="film-tag-dialog"
       >
         <div class="tag-form">
           <p class="tag-timestamp">
@@ -471,7 +471,7 @@ const TAG_TYPES = [
               optionValue="id"
               placeholder="Select play"
               [showClear]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
           </div>
 
@@ -486,7 +486,7 @@ const TAG_TYPES = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showTagDialog = false"
             >Cancel</app-button
           >

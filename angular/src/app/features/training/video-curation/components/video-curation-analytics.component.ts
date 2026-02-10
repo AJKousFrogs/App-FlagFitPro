@@ -36,7 +36,7 @@ import { formatFocus } from "../video-curation-utils";
                 <p-progressBar
                   [value]="stat.percentage"
                   [showValue]="false"
-                  styleClass="analytics-bar"
+                  class="analytics-bar"
                   [attr.aria-label]="
                     stat.position +
                     ': ' +
@@ -68,7 +68,7 @@ import { formatFocus } from "../video-curation-utils";
                 <p-progressBar
                   [value]="stat.percentage"
                   [showValue]="false"
-                  styleClass="analytics-bar"
+                  class="analytics-bar"
                   [attr.aria-label]="
                     getFormatFocus(stat.focus) +
                     ': ' +
@@ -95,7 +95,7 @@ import { formatFocus } from "../video-curation-utils";
                 <p-avatar
                   [label]="creator.displayName.charAt(0)"
                   shape="circle"
-                  styleClass="creator-stat-avatar"
+                  class="creator-stat-avatar"
                   [ariaLabel]="creator.displayName + ' avatar'"
                 ></p-avatar>
                 <div class="creator-stat-info">

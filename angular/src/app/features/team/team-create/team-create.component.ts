@@ -100,7 +100,7 @@ import { TeamCreateDataService } from "../services/team-create-data.service";
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select sport"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
 
@@ -113,7 +113,7 @@ import { TeamCreateDataService } from "../services/team-create-data.service";
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select visibility"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
 

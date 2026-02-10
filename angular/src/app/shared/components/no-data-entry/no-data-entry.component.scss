@@ -60,7 +60,7 @@
 
 .no-data-icon i {
   font-size: var(--ds-font-size-var(--header-height));
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .compact .no-data-icon i {
@@ -79,7 +79,7 @@
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 1.25rem rgba(var(--primitive-primary-500-rgb), 0.4);
+    box-shadow: 0 0 var(--space-5) rgba(var(--primitive-primary-500-rgb), 0.4);
   }
 }
 

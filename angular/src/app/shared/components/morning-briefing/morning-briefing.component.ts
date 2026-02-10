@@ -243,7 +243,7 @@ interface TodaysPlan {
                       [min]="1"
                       [max]="10"
                       [step]="1"
-                      styleClass="feeling-slider-input"
+                      class="feeling-slider-input"
                       [ariaLabel]="
                         'Overall feeling rating: ' +
                         quickCheckIn.overallFeeling +
@@ -273,7 +273,7 @@ interface TodaysPlan {
                       [maxFractionDigits]="1"
                       [showButtons]="true"
                       suffix=" hrs"
-                      styleClass="sleep-number-input"
+                      class="sleep-number-input"
                       ariaLabelledBy="sleep-label"
                     ></p-inputNumber>
                     <span

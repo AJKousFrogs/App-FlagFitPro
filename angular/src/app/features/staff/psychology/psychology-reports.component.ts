@@ -212,8 +212,8 @@ interface ReportPrivacySettings {
                 @if (generatedReports().length > 0) {
                   <div class="reports-grid">
                     @for (report of generatedReports(); track $index) {
-                      <p-card styleClass="report-card">
-                        <ng-template pTemplate="header">
+                      <p-card class="report-card">
+                        <ng-template #header>
                           <div class="report-header">
                             <i
                               [class]="getReportIcon(report.type)"
@@ -249,7 +249,7 @@ interface ReportPrivacySettings {
                             </div>
                           </div>
                         </div>
-                        <ng-template pTemplate="footer">
+                        <ng-template #footer>
                           <app-button
                             variant="text"
                             iconLeft="pi-download"
@@ -368,7 +368,7 @@ interface ReportPrivacySettings {
                               .avgStressLevel * 10
                           "
                           [showValue]="false"
-                          styleClass="stress-bar"
+                          class="stress-bar"
                         ></p-progressBar>
                       </div>
 
@@ -660,8 +660,8 @@ interface ReportPrivacySettings {
                 @if (preCompReports().length > 0) {
                   <div class="precomp-grid">
                     @for (report of preCompReports(); track $index) {
-                      <p-card styleClass="precomp-card">
-                        <ng-template pTemplate="header">
+                      <p-card class="precomp-card">
+                        <ng-template #header>
                           <div class="precomp-header">
                             <div class="comp-info">
                               <span class="comp-name">{{
@@ -788,7 +788,7 @@ interface ReportPrivacySettings {
                           </div>
                         </div>
 
-                        <ng-template pTemplate="footer">
+                        <ng-template #footer>
                           <app-button
                             variant="text"
                             iconLeft="pi-eye"
@@ -860,10 +860,10 @@ interface ReportPrivacySettings {
                       track insight.id
                     ) {
                       <p-card
-                        styleClass="insight-card"
+                        class="insight-card"
                         [class]="'priority-' + insight.priority"
                       >
-                        <ng-template pTemplate="header">
+                        <ng-template #header>
                           <div class="insight-header">
                             <div class="insight-meta">
                               <app-status-tag
@@ -928,7 +928,7 @@ interface ReportPrivacySettings {
           [(visible)]="showGenerateDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="psychology-generate-dialog"
+          class="psychology-generate-dialog"
         >
           <div class="generate-form">
             <div class="form-group">
@@ -937,7 +937,7 @@ interface ReportPrivacySettings {
                 [options]="reportTypeOptions"
                 [(ngModel)]="newReport.type"
                 placeholder="Select report type"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
 
@@ -947,7 +947,7 @@ interface ReportPrivacySettings {
                 [options]="timePeriods"
                 [(ngModel)]="newReport.period"
                 placeholder="Select period"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
 
@@ -1067,7 +1067,7 @@ interface ReportPrivacySettings {
               ></textarea>
             </div>
           </div>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showGenerateDialog.set(false)"
               >Cancel</app-button
             >
@@ -1083,7 +1083,7 @@ interface ReportPrivacySettings {
           [(visible)]="showPreCompDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="psychology-precomp-dialog"
+          class="psychology-precomp-dialog"
         >
           <div class="precomp-form">
             <div class="form-group">
@@ -1102,7 +1102,7 @@ interface ReportPrivacySettings {
                 [options]="significanceOptions"
                 [(ngModel)]="newPreComp.significance"
                 placeholder="Select importance"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
             <div class="form-group">
@@ -1127,7 +1127,7 @@ interface ReportPrivacySettings {
               />
             </div>
           </div>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showPreCompDialog.set(false)"
               >Cancel</app-button
             >

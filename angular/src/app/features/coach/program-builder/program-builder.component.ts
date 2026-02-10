@@ -218,7 +218,7 @@ const PHASE_PRESETS = [
             <h3>Active Programs</h3>
             <div class="programs-list">
               @for (program of activePrograms(); track program.id) {
-                <p-card styleClass="program-card">
+                <p-card class="program-card">
                   <div class="program-header">
                     <div class="program-title">
                       <span class="program-icon">{{
@@ -335,7 +335,7 @@ const PHASE_PRESETS = [
             <h3>Draft Programs</h3>
             <div class="programs-list">
               @for (program of draftPrograms(); track program.id) {
-                <p-card styleClass="program-card draft">
+                <p-card class="program-card draft">
                   <div class="program-header">
                     <div class="program-title">
                       <span class="program-icon">📝</span>
@@ -388,7 +388,7 @@ const PHASE_PRESETS = [
 
         <!-- Empty State -->
         @if (programs().length === 0) {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-list-check"></i>
               <h3>No Programs Yet</h3>
@@ -404,7 +404,7 @@ const PHASE_PRESETS = [
       <!-- Create/Edit Program Dialog -->
       <app-dialog
         [(visible)]="showCreateDialog"
-        styleClass="program-dialog"
+        class="program-dialog"
         (hide)="showCreateDialog = false"
       >
         <app-dialog-header
@@ -531,21 +531,21 @@ const PHASE_PRESETS = [
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Session type"
-                    styleClass="week-session-select"
+                    class="week-session-select"
                   ></p-select>
                   <p-inputNumber
                     [(ngModel)]="formData.weekTemplate[day].duration"
                     suffix=" min"
                     [min]="0"
                     [max]="180"
-                    styleClass="week-duration-input"
+                    class="week-duration-input"
                   ></p-inputNumber>
                   <span class="rpe-label">RPE:</span>
                   <p-inputNumber
                     [(ngModel)]="formData.weekTemplate[day].targetRpe"
                     [min]="1"
                     [max]="10"
-                    styleClass="week-rpe-input"
+                    class="week-rpe-input"
                   ></p-inputNumber>
                 </div>
               }

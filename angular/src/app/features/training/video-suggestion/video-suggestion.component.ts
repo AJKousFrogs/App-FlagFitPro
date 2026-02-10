@@ -256,7 +256,7 @@ interface VideoSuggestion {
                         [options]="positionOptions"
                         placeholder="Select positions"
                         [maxSelectedLabels]="3"
-                        styleClass="category-select"
+                        class="category-select"
                         [attr.aria-label]="'Select target positions'"
                       ></p-multiselect>
                     </div>
@@ -269,7 +269,7 @@ interface VideoSuggestion {
                         [options]="focusOptions"
                         placeholder="Select focus areas"
                         [maxSelectedLabels]="3"
-                        styleClass="category-select"
+                        class="category-select"
                         [attr.aria-label]="'Select training focus areas'"
                       ></p-multiselect>
                     </div>
@@ -423,7 +423,7 @@ interface VideoSuggestion {
                           ) {
                             <p-chip
                               [label]="formatFocus(focus)"
-                              styleClass="focus-chip"
+                              class="focus-chip"
                             ></p-chip>
                           }
                         </div>
@@ -562,7 +562,7 @@ interface VideoSuggestion {
         <!-- Video Preview Dialog -->
         <app-dialog
           [(visible)]="showVideoDialog"
-          styleClass="video-preview-dialog"
+          class="video-preview-dialog"
           [draggable]="false"
           [dismissableMask]="true"
           (hide)="showVideoDialog.set(false)"

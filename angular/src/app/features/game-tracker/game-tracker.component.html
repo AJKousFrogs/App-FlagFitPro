@@ -1,5 +1,23 @@
 <app-main-layout>
-  <div class="game-tracker-page">
+  <!-- Loading State -->
+  <app-loading
+    [visible]="isPageLoading()"
+    variant="skeleton"
+    message="Loading games..."
+  ></app-loading>
+
+  <!-- Error State -->
+  @if (hasPageError()) {
+    <app-page-error-state
+      title="Unable to load games"
+      [message]="pageErrorMessage()"
+      (retry)="retryLoad()"
+    ></app-page-error-state>
+  }
+
+  <!-- Content -->
+  @if (!isPageLoading() && !hasPageError()) {
+  <div class="game-tracker-page section-stack">
     <app-page-header
       title="Game Tracker"
       [subtitle]="
@@ -112,7 +130,7 @@
                   [min]="temperatureUnit === 'F' ? 0 : -20"
                   [max]="temperatureUnit === 'F' ? 120 : 50"
                   [suffix]="temperatureUnit === 'F' ? '°F' : '°C'"
-                  styleClass="temperature-input"
+                  class="temperature-input"
                 >
                 </p-inputNumber>
                 <div class="unit-toggle-switch">
@@ -183,7 +201,7 @@
               (ngModelChange)="teamScore.set($event ?? 0); updateScore()"
               [min]="0"
               [showButtons]="true"
-              styleClass="score-input"
+              class="score-input"
             >
             </p-inputNumber>
           </div>
@@ -195,7 +213,7 @@
               (ngModelChange)="opponentScore.set($event ?? 0); updateScore()"
               [min]="0"
               [showButtons]="true"
-              styleClass="score-input"
+              class="score-input"
             >
             </p-inputNumber>
           </div>
@@ -675,9 +693,9 @@
           [value]="plays()"
           [paginator]="true"
           [rows]="10"
-          styleClass="table-standard"
+          class="table-standard"
         >
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Half</th>
               <th>Time</th>
@@ -686,7 +704,7 @@
               <th>Actions</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-play>
+          <ng-template #body let-play>
             <tr>
               <td>{{ play.half }}</td>
               <td>{{ formatTime(play.timeRemaining) }}</td>
@@ -759,9 +777,9 @@
           [value]="games()"
           [paginator]="true"
           [rows]="10"
-          styleClass="table-standard"
+          class="table-standard"
         >
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Date</th>
               <th>Opponent</th>
@@ -772,7 +790,7 @@
               <th>Actions</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-game>
+          <ng-template #body let-game>
             <tr
               [attr.data-game-id]="game.id"
               [class.personal-game-row]="game.isPersonal"
@@ -819,4 +837,5 @@
       }
     </app-card>
   </div>
+  }
 </app-main-layout>

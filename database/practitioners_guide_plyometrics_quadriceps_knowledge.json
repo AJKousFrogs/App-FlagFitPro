@@ -1,0 +1,275 @@
+{
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:58b2a594-9028-4238-9fd3-47c755b4b658",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": true,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "Plyometrics and Quadriceps: Evidence-Based Lower Limb Training",
+      "publisher": "Synthesis",
+      "source_url": "https://resources.valdperformance.com",
+      "authors": [
+        "VALD Performance Contributors",
+        "NSCA"
+      ]
+    }
+  },
+  "metadata": {
+    "title": "Plyometrics and Quadriceps: Evidence-Based Lower Limb Training",
+    "authors": [
+      "VALD Performance Contributors",
+      "NSCA",
+      "Sports Science Synthesis"
+    ],
+    "total_pages": 0,
+    "document_type": "practitioner_guide",
+    "primary_focus": "plyometrics_quadriceps_injury_prevention"
+  },
+  "research_article": {
+    "title": "Plyometrics and Quadriceps: Evidence-Based Lower Limb Training",
+    "authors": [
+      "VALD Performance Contributors",
+      "NSCA"
+    ],
+    "publication_year": 2024,
+    "publisher": "Synthesis",
+    "primary_category": "training",
+    "categories": [
+      "training",
+      "injury_prevention",
+      "assessment",
+      "power_development"
+    ],
+    "tags": [
+      "plyometrics",
+      "quadriceps",
+      "stretch_shortening_cycle",
+      "ankle_stiffness",
+      "landing_mechanics",
+      "hamstring_quadriceps_ratio"
+    ],
+    "study_type": "review",
+    "evidence_level": "B",
+    "sport_type": "general",
+    "key_findings": "Plyometrics develop reactive strength and power through the stretch-shortening cycle. Progress from low to high intensity; ankle stiffness (pogos) is foundational. Quadriceps assessment informs hamstring:quadriceps ratio (H:Q)—eccentric H:Q >0.8 ideal for injury prevention. Single-leg plyometrics address bilateral deficit and develop sport-specific power. Landing mechanics and ACL considerations essential for high-intensity plyometrics.",
+    "practical_applications": [
+      "Progress plyometrics from ankle stiffness to bilateral to single-leg",
+      "Assess H:Q ratio for hamstring injury risk",
+      "Use pogos and hurdle hops as foundation drills",
+      "Contraindicate high-intensity plyometrics for ACL <12mo, ankle instability",
+      "Integrate plyometrics with strength and speed development"
+    ],
+    "injury_types": [
+      "ACL_injury",
+      "ankle_sprain",
+      "patellofemoral_pain"
+    ],
+    "training_types": [
+      "plyometric",
+      "power",
+      "reactive_strength"
+    ],
+    "recovery_methods": [
+      "progressive_loading",
+      "criteria_based_progression"
+    ],
+    "is_open_access": true,
+    "verified": true,
+    "quality_score": 8,
+    "keywords": [
+      "plyometrics",
+      "quadriceps",
+      "stretch_shortening_cycle",
+      "H_Q_ratio",
+      "ankle_stiffness",
+      "landing_mechanics"
+    ]
+  },
+  "knowledge_base_entries": [
+    {
+      "entry_type": "training_method",
+      "topic": "plyometric_progression_protocol",
+      "question": "How should plyometric training be progressed for athletes?",
+      "answer": "Plyometric progression follows a continuum from low to high intensity. Foundation: ankle stiffness drills (pogos, pogo jumps) develop reactive ability with minimal joint stress. Bilateral: countermovement jumps, hurdle hops, box jumps. Single-leg: single-leg hops, bounds, lateral skaters. Progress based on landing quality, not just height or distance. Ground contact time should decrease as athletes improve. Rest 60-90 seconds between efforts for quality. Frequency: 2-3x per week; integrate with strength and speed. Contraindications: ACL reconstruction <12 months, ankle instability, acute knee pain. Build capacity before intensity.",
+      "summary": "Progress from ankle stiffness to bilateral to single-leg plyometrics. Quality over quantity. Rest 60-90s. Contraindications: ACL <12mo, ankle instability.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "field_sport_athletes",
+        "sprint_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "training",
+        "power_development"
+      ],
+      "tags": [
+        "plyometrics",
+        "progression",
+        "stretch_shortening_cycle",
+        "reactive_strength"
+      ],
+      "protocols": {
+        "progression": [
+          "ankle_stiffness_pogos",
+          "bilateral_jumps",
+          "single_leg_plyometrics"
+        ],
+        "rest_between_efforts": "60_to_90_seconds",
+        "frequency": "2_to_3_times_per_week"
+      },
+      "contraindications": [
+        "ACL_reconstruction_less_than_12_months",
+        "ankle_instability",
+        "acute_knee_pain"
+      ],
+      "best_practices": [
+        "Build foundation with ankle stiffness first",
+        "Assess landing mechanics before advancing",
+        "Quality over volume",
+        "Integrate with strength program",
+        "Progress single-leg after bilateral competency"
+      ],
+      "entry_id": "urn:uuid:aeef7793-c15f-445f-852f-dc11f79f7ed4",
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "ankle_stiffness_plyometric_foundation",
+      "question": "Why is ankle stiffness important for plyometric training?",
+      "answer": "Ankle stiffness enables efficient energy storage and return during the stretch-shortening cycle. Pogos (quick repetitive ankle rebounds) and pogo jumps establish the reactive foundation for all plyometrics. Research links ankle stiffness to sprint performance and injury resilience. Poor ankle stiffness increases knee and hip loading during landings—transferring stress proximally. Foundation drills: bilateral pogos, single-leg pogos, low hurdle hops. Develop before high-intensity depth jumps or complex single-leg work. Ankle stiffness correlates with reduced injury risk in cutting and landing sports.",
+      "summary": "Ankle stiffness is foundational for plyometrics. Pogos and low hurdles first. Enables efficient stretch-shortening cycle; protects knee and hip.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "all_athletes",
+        "sprint_athletes",
+        "jumping_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "training",
+        "injury_prevention"
+      ],
+      "tags": [
+        "ankle_stiffness",
+        "pogos",
+        "reactive_strength",
+        "plyometric_foundation"
+      ],
+      "protocols": {
+        "foundation_drills": [
+          "bilateral_pogos",
+          "single_leg_pogos",
+          "low_hurdle_hops"
+        ],
+        "intensity": "low_to_moderate_initially"
+      },
+      "best_practices": [
+        "Introduce pogos before complex plyometrics",
+        "Focus on quick ground contact",
+        "Progress to single-leg when bilateral mastered",
+        "Link to calf strength development"
+      ],
+      "entry_id": "urn:uuid:fe6f10e0-6b8c-42f0-9373-2f592a18dc87",
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "quadriceps_assessment_hamstring_ratio",
+      "question": "How should quadriceps strength be assessed and how does it relate to hamstring injury risk?",
+      "answer": "The hamstring:quadriceps ratio (H:Q) is a key metric for injury risk. Eccentric hamstring:concentric quadriceps ratio >0.8 is ideal; conventional H:Q >0.6 acceptable. Assess using isokinetic dynamometry at various speeds, or isometric testing (ForceFrame). Low H:Q indicates quadriceps-dominant athletes at higher hamstring strain risk—the hamstrings cannot decelerate the knee adequately during sprinting. Quadriceps assessment: knee extension peak force, RFD. Strengthen quadriceps but maintain balance—overly strong quads without proportional hamstring strength increases injury risk. Nordic curls improve eccentric hamstring capacity; monitor ratio throughout season.",
+      "summary": "H:Q ratio (eccentric >0.8, conventional >0.6) predicts hamstring risk. Assess both; balance development. Quad-dominant athletes at higher risk.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "running_athletes",
+        "field_sport_athletes",
+        "sprint_athletes"
+      ],
+      "sport_specificity": "running_sports",
+      "categories": [
+        "assessment",
+        "injury_prevention"
+      ],
+      "tags": [
+        "quadriceps",
+        "hamstring_quadriceps_ratio",
+        "H_Q_ratio",
+        "injury_risk",
+        "isokinetic"
+      ],
+      "protocols": {
+        "hq_ratio_targets": {
+          "eccentric": ">0.8",
+          "conventional": ">0.6"
+        },
+        "assessment": [
+          "isokinetic",
+          "isometric_knee_extension"
+        ]
+      },
+      "best_practices": [
+        "Monitor H:Q ratio preseason and in-season",
+        "Address low ratios with Nordic curls and eccentric hamstring work",
+        "Avoid quad-only emphasis without hamstring balance",
+        "Use objective testing—not just lifting numbers"
+      ],
+      "entry_id": "urn:uuid:c702f445-ab6e-4acb-854b-0958956db0d4",
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "single_leg_plyometrics_sport_specificity",
+      "question": "When should single-leg plyometrics be used and what are the benefits?",
+      "answer": "Single-leg plyometrics develop unilateral power and address the bilateral deficit—many athletes produce less force per leg when jumping on one leg vs two. Sport-specific: cutting, landing, and change of direction are unilateral. Progress from bilateral mastery. Drills: single-leg hops (forward, lateral, rotational), skater bounds, single-leg pogos. Develops ankle stiffness on single leg, reactive strength, and positions athlete for cutting demands. Essential for field sports. Ensure landing mechanics—knee over toe, controlled absorption. Combine with single-leg strength work. Higher injury risk than bilateral—build capacity first.",
+      "summary": "Single-leg plyometrics address bilateral deficit and sport-specific demands. Progress from bilateral. Develops cutting and landing capacity.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "field_sport_athletes",
+        "cutting_athletes",
+        "flag_football_athletes"
+      ],
+      "sport_specificity": "field_sports",
+      "categories": [
+        "training",
+        "power_development"
+      ],
+      "tags": [
+        "single_leg",
+        "plyometrics",
+        "bilateral_deficit",
+        "cutting",
+        "change_of_direction"
+      ],
+      "protocols": {
+        "drills": [
+          "single_leg_hops",
+          "skater_bounds",
+          "lateral_hops"
+        ],
+        "prerequisite": "bilateral_plyometric_competency"
+      },
+      "safety_warnings": [
+        "Higher load per leg than bilateral",
+        "Ensure landing mechanics before intensity",
+        "Build volume gradually"
+      ],
+      "best_practices": [
+        "Master bilateral first",
+        "Focus on landing mechanics",
+        "Progress from linear to multi-directional",
+        "Integrate with COD training"
+      ],
+      "entry_id": "urn:uuid:d47f04b4-2213-4c70-bb5e-3c37872470b4",
+      "evidence_framework": "GRADE"
+    }
+  ]
+}

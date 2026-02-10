@@ -10,6 +10,10 @@
    
    This file ensures all components (buttons, cards, tags, forms)
    behave identically across Angular + PrimeNG.
+   
+   CASCADE: Intentionally UNLAYERED so .btn, .card, etc. override PrimeNG
+   and layered content. Primitives use @layer primitives; this is higher
+   priority. See DESIGN_SYSTEM_RULES.md cascade rules.
    ================================================================ */
 
 @use "../tokens/design-system-tokens" as *;
@@ -334,16 +338,16 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled) {
-      background-color: var(--primitive-success-600);
-      border-color: var(--primitive-success-600);
+      background-color: var(--color-status-success);
+      border-color: var(--color-status-success);
       transform: var(--transform-hover-lift-subtle);
       box-shadow: var(--shadow-md);
     }
   }
 
   &:active:not(:disabled) {
-    background-color: var(--primitive-success-700);
-    border-color: var(--primitive-success-700);
+    background-color: var(--color-status-success);
+    border-color: var(--color-status-success);
     transform: var(--transform-active-press);
     box-shadow: var(--shadow-sm);
   }

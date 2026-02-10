@@ -1,16 +1,22 @@
 /**
- * Color Guards - White Text on Green Enforcement
- * ================================================
+ * Color Guards - Tokenized Color Policy Enforcement
+ * ==================================================
  *
- * override-reason: WCAG contrast + brand | component: global | issue: DS-COLOR-GUARDS
+ * PURPOSE: Enforce design tokens for color contrast (WCAG) and brand compliance.
+ * This file MUST contain ONLY guard rules—no styling, branding, spacing,
+ * typography, or component logic.
+ *
+ * POLICY: When green backgrounds are detected (inline, class, or var), force
+ * --color-text-on-primary. Block dark text on green. Tokens live in
+ * design-system-tokens.scss.
+ *
+ * IMPORT: Must be imported LAST (overrides/index → color-guards).
+ *
+ * ⚠️ THIS FILE MUST NOT GROW. Add new rules only when design-system tokens
+ *    change. Prefer fixing violations at source over expanding guards.
+ *
+ * Layer: overrides (7 of 7)
  * Ticket: DS-EXC-COLOR-GUARDS
- * Remove by: 2027-01-01
- *
- * These selectors enforce "white text on green" and "no black on green" rules.
- * Placed in overrides layer so they run after tokens and PrimeNG.
- * Tokens (--color-text-on-primary, --on-primary) are defined in design-system-tokens.scss.
- *
- * Layer order: tokens -> primeng base/brand -> primitives/features -> overrides
  */
 
 @layer overrides {
@@ -22,7 +28,6 @@
   *[style*="background-color: #089949"],
   *[style*="089949"] {
     color: var(--color-text-on-primary);
-
     --text-color: var(--color-text-on-primary);
   }
 
@@ -42,7 +47,6 @@
   .bg-primary-green,
   .primary-bg {
     color: var(--color-text-on-primary);
-
     --text-color: var(--color-text-on-primary);
   }
 
@@ -86,30 +90,13 @@
     }
   }
 
-  /* Semantic utility classes - document correct combinations */
-  .green-on-white {
-    color: var(--ds-primary-green);
-    background-color: var(--surface-primary);
-  }
-
-  .white-on-green {
+  /* Forbidden combo - black-on-green corrected to white text */
+  .black-on-green {
     color: var(--color-text-on-primary);
-    background-color: var(--ds-primary-green);
 
     * {
       color: var(--color-text-on-primary);
     }
-  }
-
-  .black-on-white {
-    color: var(--color-text-primary);
-    background-color: var(--surface-primary);
-  }
-
-  /* FORBIDDEN combo - corrected to white on green */
-  .black-on-green {
-    color: var(--color-text-on-primary);
-    background-color: var(--ds-primary-green);
   }
 
   /* Block dark text on green backgrounds */

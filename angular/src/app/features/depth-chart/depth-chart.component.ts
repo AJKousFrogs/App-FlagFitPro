@@ -18,7 +18,6 @@ import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 
 import { Select } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
@@ -62,7 +61,7 @@ interface PositionGroup {
     TabPanels,
     TabPanel,
     Dialog,
-    PrimeTemplate,
+    
     Select,
     Avatar,
     StatusTagComponent,
@@ -92,7 +91,7 @@ interface PositionGroup {
 
         <div class="depth-chart-content">
           @if (depthCharts().length === 0) {
-            <p-card styleClass="empty-card">
+            <p-card class="empty-card">
               <div class="empty-state">
                 <i class="pi pi-sitemap"></i>
                 <h3>No Depth Charts</h3>
@@ -227,8 +226,8 @@ interface PositionGroup {
 
             <!-- Unassigned Players -->
             @if (isCoach() && unassignedPlayers().length > 0) {
-              <p-card styleClass="unassigned-card">
-                <ng-template pTemplate="header">
+              <p-card class="unassigned-card">
+                <ng-template #header>
                   <div class="card-header">
                     <h3>Unassigned Players</h3>
                     <app-status-tag
@@ -259,7 +258,7 @@ interface PositionGroup {
           header="Assign Player"
           [(visible)]="showAssignDialog"
           [modal]="true"
-          styleClass="dialog-max-w-sm"
+          class="dialog-max-w-sm"
         >
           <div class="assign-dialog">
             <p class="assign-info">
@@ -275,10 +274,10 @@ interface PositionGroup {
               placeholder="Select a player"
               [filter]="true"
               filterBy="name"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
           </div>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showAssignDialog = false"
               >Cancel</app-button
             >

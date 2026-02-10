@@ -26,7 +26,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
-import { PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Slider } from "primeng/slider";
 import { Dialog } from "primeng/dialog";
@@ -65,8 +64,8 @@ interface DailyState {
     Card,
     Slider,
     Dialog,
-    PrimeTemplate,
-    PrimeTemplate,
+    
+    
     InputNumber,
     ButtonComponent,
   ],
@@ -78,12 +77,12 @@ interface DailyState {
         [modal]="true"
         [closable]="true"
         [dismissableMask]="true"
-        styleClass="dialog-w-xl dialog-max-w-md"
+        class="dialog-w-xl dialog-max-w-md"
         (onHide)="onSkip()"
       >
         <ng-container *ngTemplateOutlet="formContent"></ng-container>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <div class="dialog-footer">
             <app-button variant="text" (clicked)="onSkip()"
               >Skip for now</app-button
@@ -100,7 +99,7 @@ interface DailyState {
       </p-dialog>
     } @else {
       <p-card class="readiness-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="card-header">
             <h3>
               <i class="pi pi-heart-fill"></i>
@@ -114,7 +113,7 @@ interface DailyState {
 
         <ng-container *ngTemplateOutlet="formContent"></ng-container>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <div class="card-footer">
             <app-button
               iconLeft="pi-check"

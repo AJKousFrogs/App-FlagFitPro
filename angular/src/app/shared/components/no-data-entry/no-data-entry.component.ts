@@ -163,7 +163,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
       [class.inline]="inline()"
     >
       @if (!inline()) {
-        <p-card [styleClass]="'no-data-card'">
+        <p-card [class]="'no-data-card'">
           <ng-container *ngTemplateOutlet="content"></ng-container>
         </p-card>
       } @else {

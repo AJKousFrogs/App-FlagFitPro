@@ -35,7 +35,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   template: `
 <div class="verify-email-page">
       <p-card class="verify-email-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="verify-email-logo">
             <i class="pi pi-envelope"></i>
           </div>
@@ -47,7 +47,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             <p-message
               severity="info"
               [text]="'Verifying your email address...'"
-              styleClass="status-message"
+              class="status-message"
             ></p-message>
           </div>
         } @else if (isVerified()) {
@@ -55,7 +55,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             <p-message
               severity="success"
               [text]="'Email verified successfully!'"
-              styleClass="status-message status-message--success"
+              class="status-message status-message--success"
             ></p-message>
             <p class="verified-message">
               Your email has been verified. You can now access all features.
@@ -72,7 +72,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             <p-message
               severity="error"
               [text]="verificationError()"
-              styleClass="status-message"
+              class="status-message"
             ></p-message>
             <app-button
               iconLeft="pi-send"
@@ -91,7 +91,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             <p-message
               severity="warn"
               [text]="'Please check your email'"
-              styleClass="status-message"
+              class="status-message"
             ></p-message>
             <p class="pending-message">
               We've sent a verification link to your email address. Please click

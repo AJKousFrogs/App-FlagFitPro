@@ -1,7 +1,30 @@
 {
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:d1fcde8f-bb3a-463d-96d1-714d0be062ab",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": false,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "Practitioner's Guide to the Calf and Achilles Complex",
+      "publisher": "VALD Performance",
+      "source_url": "https://resources.valdperformance.com/practitioners-guide-to-the-calf-achilles-complex",
+      "authors": [
+        "Sue Mayes",
+        "VALD Performance Contributors"
+      ]
+    }
+  },
   "metadata": {
     "title": "Practitioner's Guide to the Calf and Achilles Complex",
-    "authors": ["Sue Mayes", "VALD Performance Contributors"],
+    "authors": [
+      "Sue Mayes",
+      "VALD Performance Contributors"
+    ],
     "organizations": [
       "Australian Ballet",
       "La Trobe University",
@@ -13,7 +36,10 @@
   },
   "research_article": {
     "title": "Practitioner's Guide to the Calf and Achilles Complex",
-    "authors": ["Sue Mayes", "VALD Performance Contributors"],
+    "authors": [
+      "Sue Mayes",
+      "VALD Performance Contributors"
+    ],
     "publication_year": 2024,
     "publisher": "VALD Performance",
     "primary_category": "injury",
@@ -58,7 +84,12 @@
       "achilles_rupture",
       "plantaris_injury"
     ],
-    "training_types": ["strength", "isometric", "eccentric", "plyometric"],
+    "training_types": [
+      "strength",
+      "isometric",
+      "eccentric",
+      "plyometric"
+    ],
     "recovery_methods": [
       "rehabilitation",
       "load_management",
@@ -87,7 +118,7 @@
       "entry_type": "training_method",
       "topic": "calf_achilles_anatomy_biomechanics",
       "question": "What is the anatomy and biomechanics of the calf and Achilles complex?",
-      "answer": "4\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nThe Rising Impact  \nof Calf and Achilles Injury\nThe lower-leg, including all structures below the knee, has become a focus of attention in recent years \ndue to a noticeable rise in the impact of calf muscle and Achilles tendon injuries.\nCalf muscle-tendon unit (MTU) injuries such as calf muscle strain injuries (CMSI) and \nAchilles tendinopathy (AT) are among the top three contributors to time-loss injuries in the English \nPremier League (EPL) and are a significant cause of missed time and recurrence in the Australian \nFootball League (AFL). These injuries have become persistent challenges for elite athletes in the \nNational Basketball Association (NBA) , National Football League (NFL)  and professional soccer.\nHigh incidence and recurrence of calf MTU injury may result from measurable qualities like strength, \nspeed, and endurance. Tools  such as force plates, dynamometers and timing gates can assess \ninjury risk based on these factors.\nDays lost to injury\nHamstring Strain\nMuscle Injury  \n(Unspecified)\nCalf Strain\nKnee Injury\nACL Rupture\nAdductor Strain\nAnkle Sprain\nMeniscus Tear\n2\u00a0000+\n859\n710\n704\n654\n350\n259\n194\nTotal days lost to injury over the 2023/24 EPL Season\nForceDecks  \nForce plates\nForceFrame  \nFixed-frame dynamometers \nSmartSpeed  \nTiming gates\nDynaMo \nHandheld dynamometers\nPractitioner\u2019s Guide to the Calf & Achilles Complex\u2003|\u20035\nCondition Incidence Recurrence Time-Loss \nReturn-to-Sport (RTS)\nAT \nGeneral Population: 24%\nAthletes: 24%\nRunners: 50%\n20-44% 10 Days\nAchilles Tendon \nRupture (ATR) \n7-40 per 100,000 \ntraining hours 2.3% 11 Months\nCMSI 3 per AFL team annually 16%\nSoleus: 25.1 Days\nGastrocnemius: 7.7 Days\nTracking metrics like peak force, RFD, impulse, and jump characteristics helps practitioners improve \ncalf and Achilles load capacity, reducing injury rates through targeted testing, training, and monitoring.\n\u2026practitioners improve calf and Achilles load capacity, \nreducing injury rates through targeted testing, training, \nand monitoring\nCondition Measurable Modifiable Risk Factors\nAT Plantar flexor strength, training schedule and gait abnormalities\nATR Insufficient strength, poor conditioning and athletic participation\nCMSI Training age, foot and calf strength\n6\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nCalf Muscle Strain Injury (CMSI)\nCalf injuries have often been viewed as relatively minor due to presentations of \ndull soreness and subtle mechanisms of injury . However, this lack of noticeable symptoms may \ncontribute to their longer recurrence window  compared to other strain injuries, such as hamstrings.\nBecause they often appear minor, these symptoms are not reliable guides for rehabilitation.\nPractitioners can confidently guide care and monitor CMSIs by regularly measuring lower limb outputs \nlike plantar flexion peak force, ROM, strength, RFD, and reactive strength.\nAchilles Tendon Injury\nAchilles Tendon Ruptures\nper Season\nNFL Season\nATR have increased recently in elite sport, \nespecially in leagues such as the NFL.\nOften, ATRs occur without prior pain  or \nsymptoms, further increasing the need for \nobjective monitoring strategies to detect non-\npainful changes in force or ROM that may identify \nindividuals at risk for ATR.\nConversely, AT is widely prevalent in elite sports. \nApproximately 50% of running athletes will \nexperience AT during their careers.\nMany athletes continue to compete despite \nAT, leading to prolonged symptoms and a \nrecurrence rate  of nearly 30%. Therefore, \nregular monitoring of objective markers like \nreactive strength and peak force is essential \nto assess readiness, manage symptoms and \nmitigate recurrence.\n\u2026symptoms are not reliable guides for rehabilitation. \nPractitioner\u2019s Guide to the Calf & Achilles Complex\u2003|\u20039Back to Contents\n  Background\nLower Leg Anatomy and Biomechanics\nTo effectively assess lower-leg performance, practitioners must understand the basic function of the \ncalf MTU and structural characteristics that enable this function.\nThe calf MTU plays an important role in athletic movements, contributing roughly 35-40% of total \nlower-body work across both horizontal and vertical dynamic tasks  such as running, sprinting, cutting \nand jumping.\nThis contribution to sport-specific tasks allows the calf MTU to support other muscle groups during \nvarious sporting demands.\nThe Calf Assists All Major Lower Body Muscle Groups\nGastrocnemius\nAchilles Tendon\nSoleus\nThe Calf Muscle-Tendon Unit (MTU)\nThe combination of structures in the lower leg (soleus, \ngastrocnemius and achilles tendon)  that contribute to and \nenhance ankle plantar flexion. Also referred to as the triceps \nsurae complex (TSC) or as the plantar flexor complex (PFC).\n14\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex Back to Contents\nLower Leg Injury Basics\nCalf MTU injuries often occur during a false step, where an athlete quickly extends their leg backward \nto generate momentum from a static start. This resul",
+      "answer": "The calf complex consists of the gastrocnemius (two heads) and soleus muscles, which combine to form the Achilles tendon. This is the strongest tendon in the body, transmitting forces during running, jumping, and change of direction. The gastrocnemius crosses both the knee and ankle joints, while the soleus only crosses the ankle. The calf MTU contributes roughly 35-40% of total lower-body work in running, sprinting, cutting and jumping. Understanding this anatomy is crucial for assessment and rehabilitation, as each muscle can be tested independently by varying knee position.",
       "summary": "The calf complex includes gastrocnemius and soleus muscles forming the Achilles tendon - the body's strongest tendon. Critical for running, jumping, and explosive movements in athletes.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -99,7 +130,11 @@
         "jumping_athletes"
       ],
       "sport_specificity": "general",
-      "categories": ["anatomy", "biomechanics", "lower_limb"],
+      "categories": [
+        "anatomy",
+        "biomechanics",
+        "lower_limb"
+      ],
       "tags": [
         "calf",
         "achilles",
@@ -112,13 +147,15 @@
         "Understand gastrocnemius and soleus function differences",
         "Recognize Achilles as primary force transmitter",
         "Assess both muscles independently for imbalances"
-      ]
+      ],
+      "entry_id": "urn:uuid:acb1a7d7-2f1c-4f2d-b812-e308bdaa7223",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
       "topic": "calf_achilles_assessment_protocols",
       "question": "What are the best practices for calf and Achilles assessment?",
-      "answer": "2 | Practitioner\u2019s Guide to the Calf & Achilles Complex\nSome Words from the  \nCalf and Achilles Experts \nSue Mayes \nDirector of Artistic Health:\nAustralian Ballet / \nLa Trobe University\nAccurate and reliable isometric testing of lower \nlimb muscles is vital in The Australian Ballet\u2019s \nscreening, monitoring and rehabilitation \nto identify areas for development that can \nenhance dancer performance, prevent injury \nand guide return-to-dance progressions.\nReal-time feedback and comparisons within \nand between people have been valuable to \nstaff and dancers and help maintain motivation \nand adherence to exercise programs.\nIsometric testing is well-tolerated in-season \nand as adverse outcomes such as DOMS are \nuncommon, dancers engage in testing and are \nmore likely to perform maximal contractions.\nThe VALD equipment is easy to assemble and \nportable, allowing us to continue accurately \ntesting even on tour.\n  @S_Maysey  \nCraig Purdam\nConsultant Sports Physiotherapist, \nAdjunct Professor\nUniversity of Canberra / La Trobe University\nThe Calf-Achilles MTU is a complex system that appears to respond quite specifically to training stimuli such \nas isometric, isotonic, eccentric, RFD, strength-endurance, stiffness enhancement or increases in fascicle \nor optimal/functional length . \nIt should be cautioned that trainable changes in one domain are not necessarily transferrable to other \ndomains. However, accurately quantifying baselines and the degree of change is important in informing \nspecific rehabilitation aims, making a comprehensive assessment critical for optimal outcomes.\n \nColin Griffin \nPhD Lower-limb Rehabilitation \nSpecialist, \nUPMC Sports Surgery \nClinic, Dublin\nI\u2019ve been using VALD\u2019s force plates for 7 years and \nthe ForceFrame more recently. This technology \nhas significantly enhanced my practice by \nproviding precise, time-efficient data on \nlower-limb strength, as well as explosive and \nreactive strength.  \nI also use the ForceFrame to assess foot strength \nwith 3 different protocols that I can easily adapt. \nThe real-time feedback and dashboard reports \nclearly highlight deficiencies and guide rehab, \ngiving athletes a clear focus. \nNumbers don\u2019t lie and the force traces often \nleave clues!\u00a0\n  @colingriffin\u00a0   colingriffin50k\n\nPractitioner\u2019s Guide to the Calf & Achilles Complex | 3\nEbonie Rio \nSenior Clinical Research Fellow & \nLecturer:\nThe Australian Ballet/ Notre Dame \n/ La Trobe University, \nIt is critical that we can accurately measure our \nclients' calf and Achilles progress accurately.  \nThis allows us to work together to reach targets, \nnot just based on their other leg but comparable \ndata for their desired level of performance. \n \nShane Kelly\nClinical Director: \nThe Royal Ballet\nThe use of force plates is relatively new in a \nclassical ballet setting. However, we have found \nthat the dancers have embraced the technology \nand the power of numbers is a language we all \nshare and buy into. ForceDecks have enabled us to \nspeak to the dancers in a way they have not heard \nbefore.  \n  @shanekellypt  \n\"\u2026the power of numbers \nis a language we all share \nand buy into.\"\n\n4\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nThe Rising Impact  \nof Calf and Achilles Injury\nThe lower-leg, including all structures below the knee, has become a focus of attention in recent years \ndue to a noticeable rise in the impact of calf muscle and Achilles tendon injuries.\nCalf muscle-tendon unit (MTU) injuries such as calf muscle strain injuries (CMSI) and \nAchilles tendinopathy (AT) are among the top three contributors to time-loss injuries in the English \nPremier League (EPL) and are a significant cause of missed time and recurrence in the Australian \nFootball League (AFL). These injuries have become persistent challenges for elite athletes in the \nNational Basketball Association (NBA) , National Football League (NFL)  and professional soccer.\nHigh incidence and recurrence of calf MTU injury may result from measurable qualities like strength, \nspeed, and endurance. Tools  such as force plates, dynamometers and timing gates can assess \ninjury risk based on these factors.\nDays lost to injury\nHamstring Strain\nMuscle Injury  \n(Unspecified)\nCalf Strain\nKnee Injury\nACL Rupture\nAdductor Strain\nAnkle Sprain\nMeniscus Tear\n2\u00a0000+\n859\n710\n704\n654\n350\n259\n194\nTotal days lost to injury over the 2023/24 EPL Season\nForceDecks  \nForce plates\nForceFrame  \nFixed-frame dynamometers \nSmartSpeed  \nTiming gates\nDynaMo \nHandheld dynamometers\nPractitioner\u2019s Guide to the Calf & Achilles Complex\u2003|\u20035\nCondition Incidence Recurrence Time-Loss \nReturn-to-Sport (RTS)\nAT \nGeneral Population: 24%\nAthletes: 24%\nRunners: 50%\n20-44% 10 Days\nAchilles Tendon \nRupture (ATR) \n7-40 per 100,000 \ntraining hours 2.3% 11 Months\nCMSI 3 per AFL team annually 16%\nSoleus: 25.1 Days\nGastrocnemius: 7.7 Days\nTracking metrics like peak force, RFD, impulse, and jump characteristics helps practitioners improve \ncalf and Achilles load capacity, reducing injury rates t",
+      "answer": "Modern calf and Achilles assessment utilizes isometric testing using force plates and specialized equipment like VALD ForceFrame. Testing includes knee-straight (gastrocnemius dominant) and knee-bent (soleus dominant) positions to assess each muscle group independently. Objective metrics include peak force, rate of force development, and bilateral asymmetries. Regular monitoring helps identify deficits before injury occurs and tracks rehabilitation progress. Asymmetries greater than 10-15% indicate increased injury risk.",
       "summary": "Isometric testing using force plates (ForceFrame) in knee-straight and knee-bent positions objectively measures calf strength, asymmetries, and tracks rehabilitation progress.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -129,7 +166,11 @@
         "injured_athletes"
       ],
       "sport_specificity": "general",
-      "categories": ["assessment", "testing", "monitoring"],
+      "categories": [
+        "assessment",
+        "testing",
+        "monitoring"
+      ],
       "tags": [
         "isometric_testing",
         "force_plate",
@@ -139,8 +180,14 @@
         "VALD"
       ],
       "protocols": {
-        "equipment": ["ForceFrame", "ForceDecks"],
-        "test_positions": ["knee_straight_gastrocnemius", "knee_bent_soleus"],
+        "equipment": [
+          "ForceFrame",
+          "ForceDecks"
+        ],
+        "test_positions": [
+          "knee_straight_gastrocnemius",
+          "knee_bent_soleus"
+        ],
         "metrics": [
           "peak_force",
           "rate_of_force_development",
@@ -155,13 +202,28 @@
         "Track rate of force development",
         "Regular monitoring for injury prevention",
         "Compare to normative data for sport"
-      ]
+      ],
+      "entry_id": "urn:uuid:e4300951-fd3d-46c2-946f-506ac6c2a1ea",
+      "quantitative_claims": [
+        {
+          "metric": "bilateral_asymmetry",
+          "operator": ">=",
+          "value_range": {
+            "min": 10,
+            "max": 15
+          },
+          "unit": "percent",
+          "population_context": "athletes",
+          "interpretation": "flag_for_investigation"
+        }
+      ],
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "injury",
       "topic": "calf_achilles_injuries_pathologies",
       "question": "What are common calf and Achilles injuries in athletes?",
-      "answer": "2 | Practitioner\u2019s Guide to the Calf & Achilles Complex\nSome Words from the  \nCalf and Achilles Experts \nSue Mayes \nDirector of Artistic Health:\nAustralian Ballet / \nLa Trobe University\nAccurate and reliable isometric testing of lower \nlimb muscles is vital in The Australian Ballet\u2019s \nscreening, monitoring and rehabilitation \nto identify areas for development that can \nenhance dancer performance, prevent injury \nand guide return-to-dance progressions.\nReal-time feedback and comparisons within \nand between people have been valuable to \nstaff and dancers and help maintain motivation \nand adherence to exercise programs.\nIsometric testing is well-tolerated in-season \nand as adverse outcomes such as DOMS are \nuncommon, dancers engage in testing and are \nmore likely to perform maximal contractions.\nThe VALD equipment is easy to assemble and \nportable, allowing us to continue accurately \ntesting even on tour.\n  @S_Maysey  \nCraig Purdam\nConsultant Sports Physiotherapist, \nAdjunct Professor\nUniversity of Canberra / La Trobe University\nThe Calf-Achilles MTU is a complex system that appears to respond quite specifically to training stimuli such \nas isometric, isotonic, eccentric, RFD, strength-endurance, stiffness enhancement or increases in fascicle \nor optimal/functional length . \nIt should be cautioned that trainable changes in one domain are not necessarily transferrable to other \ndomains. However, accurately quantifying baselines and the degree of change is important in informing \nspecific rehabilitation aims, making a comprehensive assessment critical for optimal outcomes.\n \nColin Griffin \nPhD Lower-limb Rehabilitation \nSpecialist, \nUPMC Sports Surgery \nClinic, Dublin\nI\u2019ve been using VALD\u2019s force plates for 7 years and \nthe ForceFrame more recently. This technology \nhas significantly enhanced my practice by \nproviding precise, time-efficient data on \nlower-limb strength, as well as explosive and \nreactive strength.  \nI also use the ForceFrame to assess foot strength \nwith 3 different protocols that I can easily adapt. \nThe real-time feedback and dashboard reports \nclearly highlight deficiencies and guide rehab, \ngiving athletes a clear focus. \nNumbers don\u2019t lie and the force traces often \nleave clues!\u00a0\n  @colingriffin\u00a0   colingriffin50k\n\n4\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nThe Rising Impact  \nof Calf and Achilles Injury\nThe lower-leg, including all structures below the knee, has become a focus of attention in recent years \ndue to a noticeable rise in the impact of calf muscle and Achilles tendon injuries.\nCalf muscle-tendon unit (MTU) injuries such as calf muscle strain injuries (CMSI) and \nAchilles tendinopathy (AT) are among the top three contributors to time-loss injuries in the English \nPremier League (EPL) and are a significant cause of missed time and recurrence in the Australian \nFootball League (AFL). These injuries have become persistent challenges for elite athletes in the \nNational Basketball Association (NBA) , National Football League (NFL)  and professional soccer.\nHigh incidence and recurrence of calf MTU injury may result from measurable qualities like strength, \nspeed, and endurance. Tools  such as force plates, dynamometers and timing gates can assess \ninjury risk based on these factors.\nDays lost to injury\nHamstring Strain\nMuscle Injury  \n(Unspecified)\nCalf Strain\nKnee Injury\nACL Rupture\nAdductor Strain\nAnkle Sprain\nMeniscus Tear\n2\u00a0000+\n859\n710\n704\n654\n350\n259\n194\nTotal days lost to injury over the 2023/24 EPL Season\nForceDecks  \nForce plates\nForceFrame  \nFixed-frame dynamometers \nSmartSpeed  \nTiming gates\nDynaMo \nHandheld dynamometers\nPractitioner\u2019s Guide to the Calf & Achilles Complex\u2003|\u20035\nCondition Incidence Recurrence Time-Loss \nReturn-to-Sport (RTS)\nAT \nGeneral Population: 24%\nAthletes: 24%\nRunners: 50%\n20-44% 10 Days\nAchilles Tendon \nRupture (ATR) \n7-40 per 100,000 \ntraining hours 2.3% 11 Months\nCMSI 3 per AFL team annually 16%\nSoleus: 25.1 Days\nGastrocnemius: 7.7 Days\nTracking metrics like peak force, RFD, impulse, and jump characteristics helps practitioners improve \ncalf and Achilles load capacity, reducing injury rates through targeted testing, training, and monitoring.\n\u2026practitioners improve calf and Achilles load capacity, \nreducing injury rates through targeted testing, training, \nand monitoring\nCondition Measurable Modifiable Risk Factors\nAT Plantar flexor strength, training schedule and gait abnormalities\nATR Insufficient strength, poor conditioning and athletic participation\nCMSI Training age, foot and calf strength\n6\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nCalf Muscle Strain Injury (CMSI)\nCalf injuries have often been viewed as relatively minor due to presentations of \ndull soreness and subtle mechanisms of injury . However, this lack of noticeable symptoms may \ncontribute to their longer recurrence window  compared to other strain injuries, such as hamstrings.\nBecause they often appear minor, these symptoms are not reliable guides for rehabili",
+      "answer": "Common injuries include Achilles tendinopathy (overuse and tendon degeneration), calf strains (acute muscle tears, often in the medial gastrocnemius), Achilles ruptures (complete tendon failure), and plantaris injuries. Achilles tendinopathy is highly prevalent in running and jumping athletes due to repetitive loading. Calf strains typically occur during acceleration, sprinting, or push-off movements. Risk factors include rapid training load increases, previous injury history, reduced calf strength and endurance, biomechanical issues, and inadequate recovery. Soleus strains have longer recurrence window (25 days vs gastrocnemius 7.7 days); symptoms are not reliable guides for rehabilitation—use objective measures.",
       "summary": "Common injuries: Achilles tendinopathy (overuse), calf strains (acute tears), Achilles ruptures, and plantaris injuries. Prevalent in running and jumping sports.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -172,7 +234,11 @@
         "field_sport_athletes"
       ],
       "sport_specificity": "running_jumping_sports",
-      "categories": ["injury", "pathology", "diagnosis"],
+      "categories": [
+        "injury",
+        "pathology",
+        "diagnosis"
+      ],
       "tags": [
         "achilles_tendinopathy",
         "calf_strain",
@@ -196,14 +262,38 @@
         "Calf strains often recur without proper rehabilitation",
         "Bilateral deficits indicate systemic risk",
         "Sudden increase in load is primary risk factor"
-      ]
+      ],
+      "entry_id": "urn:uuid:26c1202e-677e-436c-9b0f-ca5d8c87ab99",
+      "quantitative_claims": [
+        {
+          "metric": "soleus_recurrence_days",
+          "operator": "=",
+          "value_range": {
+            "value": 25
+          },
+          "unit": "days",
+          "population_context": "soleus_strain",
+          "interpretation": "typical_rehab_window"
+        },
+        {
+          "metric": "gastrocnemius_recurrence_days",
+          "operator": "=",
+          "value_range": {
+            "value": 7.7
+          },
+          "unit": "days",
+          "population_context": "gastrocnemius_strain",
+          "interpretation": "typical_rehab_window"
+        }
+      ],
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "recovery_method",
       "topic": "calf_achilles_rehabilitation",
       "question": "What are evidence-based rehabilitation strategies for calf and Achilles injuries?",
-      "answer": "2 | Practitioner\u2019s Guide to the Calf & Achilles Complex\nSome Words from the  \nCalf and Achilles Experts \nSue Mayes \nDirector of Artistic Health:\nAustralian Ballet / \nLa Trobe University\nAccurate and reliable isometric testing of lower \nlimb muscles is vital in The Australian Ballet\u2019s \nscreening, monitoring and rehabilitation \nto identify areas for development that can \nenhance dancer performance, prevent injury \nand guide return-to-dance progressions.\nReal-time feedback and comparisons within \nand between people have been valuable to \nstaff and dancers and help maintain motivation \nand adherence to exercise programs.\nIsometric testing is well-tolerated in-season \nand as adverse outcomes such as DOMS are \nuncommon, dancers engage in testing and are \nmore likely to perform maximal contractions.\nThe VALD equipment is easy to assemble and \nportable, allowing us to continue accurately \ntesting even on tour.\n  @S_Maysey  \nCraig Purdam\nConsultant Sports Physiotherapist, \nAdjunct Professor\nUniversity of Canberra / La Trobe University\nThe Calf-Achilles MTU is a complex system that appears to respond quite specifically to training stimuli such \nas isometric, isotonic, eccentric, RFD, strength-endurance, stiffness enhancement or increases in fascicle \nor optimal/functional length . \nIt should be cautioned that trainable changes in one domain are not necessarily transferrable to other \ndomains. However, accurately quantifying baselines and the degree of change is important in informing \nspecific rehabilitation aims, making a comprehensive assessment critical for optimal outcomes.\n \nColin Griffin \nPhD Lower-limb Rehabilitation \nSpecialist, \nUPMC Sports Surgery \nClinic, Dublin\nI\u2019ve been using VALD\u2019s force plates for 7 years and \nthe ForceFrame more recently. This technology \nhas significantly enhanced my practice by \nproviding precise, time-efficient data on \nlower-limb strength, as well as explosive and \nreactive strength.  \nI also use the ForceFrame to assess foot strength \nwith 3 different protocols that I can easily adapt. \nThe real-time feedback and dashboard reports \nclearly highlight deficiencies and guide rehab, \ngiving athletes a clear focus. \nNumbers don\u2019t lie and the force traces often \nleave clues!\u00a0\n  @colingriffin\u00a0   colingriffin50k\n\nPractitioner\u2019s Guide to the Calf & Achilles Complex\u2003|\u20035\nCondition Incidence Recurrence Time-Loss \nReturn-to-Sport (RTS)\nAT \nGeneral Population: 24%\nAthletes: 24%\nRunners: 50%\n20-44% 10 Days\nAchilles Tendon \nRupture (ATR) \n7-40 per 100,000 \ntraining hours 2.3% 11 Months\nCMSI 3 per AFL team annually 16%\nSoleus: 25.1 Days\nGastrocnemius: 7.7 Days\nTracking metrics like peak force, RFD, impulse, and jump characteristics helps practitioners improve \ncalf and Achilles load capacity, reducing injury rates through targeted testing, training, and monitoring.\n\u2026practitioners improve calf and Achilles load capacity, \nreducing injury rates through targeted testing, training, \nand monitoring\nCondition Measurable Modifiable Risk Factors\nAT Plantar flexor strength, training schedule and gait abnormalities\nATR Insufficient strength, poor conditioning and athletic participation\nCMSI Training age, foot and calf strength\n6\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nCalf Muscle Strain Injury (CMSI)\nCalf injuries have often been viewed as relatively minor due to presentations of \ndull soreness and subtle mechanisms of injury . However, this lack of noticeable symptoms may \ncontribute to their longer recurrence window  compared to other strain injuries, such as hamstrings.\nBecause they often appear minor, these symptoms are not reliable guides for rehabilitation.\nPractitioners can confidently guide care and monitor CMSIs by regularly measuring lower limb outputs \nlike plantar flexion peak force, ROM, strength, RFD, and reactive strength.\nAchilles Tendon Injury\nAchilles Tendon Ruptures\nper Season\nNFL Season\nATR have increased recently in elite sport, \nespecially in leagues such as the NFL.\nOften, ATRs occur without prior pain  or \nsymptoms, further increasing the need for \nobjective monitoring strategies to detect non-\npainful changes in force or ROM that may identify \nindividuals at risk for ATR.\nConversely, AT is widely prevalent in elite sports. \nApproximately 50% of running athletes will \nexperience AT during their careers.\nMany athletes continue to compete despite \nAT, leading to prolonged symptoms and a \nrecurrence rate  of nearly 30%. Therefore, \nregular monitoring of objective markers like \nreactive strength and peak force is essential \nto assess readiness, manage symptoms and \nmitigate recurrence.\n\u2026symptoms are not reliable guides for rehabilitation. \n8\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nContents\nBackground..................................................................................................... 9\nMethods of Calf MTU Assessment ............................................................... 16\nManagement ...................................................",
-      "summary": "Progressive loading from isometric \u2192 heavy slow resistance \u2192 eccentric \u2192 plyometric. Load management critical for tendinopathy. Requires >90% strength restoration for return to sport.",
+      "answer": "Effective rehabilitation follows progressive loading principles: isometric exercises initially for pain management, then heavy slow resistance training (HSR) to build tendon capacity, followed by eccentric exercises (especially critical for Achilles tendinopathy), and finally plyometric and explosive work for return to sport. Load management is critical—tendinopathy responds to progressive loading, not rest. Objective strength testing guides progression through phases. Return to sport requires achieving >90% strength restoration compared to uninjured side and passing sport-specific testing. Trainable changes in one domain (e.g. isometric) do not necessarily transfer to others—comprehensive assessment is critical.",
+      "summary": "Progressive loading from isometric to heavy slow resistance to eccentric to plyometric. Load management critical for tendinopathy. Requires >90% strength restoration for return to sport.",
       "evidence_strength": "strong",
       "consensus_level": "high",
       "applicable_to": [
@@ -213,7 +303,11 @@
         "running_athletes"
       ],
       "sport_specificity": "general",
-      "categories": ["rehabilitation", "recovery", "return_to_sport"],
+      "categories": [
+        "rehabilitation",
+        "recovery",
+        "return_to_sport"
+      ],
       "tags": [
         "rehab",
         "tendinopathy_treatment",
@@ -255,13 +349,27 @@
         "Use objective testing to guide progression",
         "Achieve >90% strength before return to sport",
         "Address biomechanical and load factors"
-      ]
+      ],
+      "entry_id": "urn:uuid:4659f85a-1c49-41b8-86de-826c9aa15b60",
+      "quantitative_claims": [
+        {
+          "metric": "strength_restoration",
+          "operator": ">=",
+          "value_range": {
+            "value": 90
+          },
+          "unit": "percent",
+          "population_context": "return_to_sport",
+          "interpretation": "minimum_for_rts"
+        }
+      ],
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
       "topic": "calf_achilles_injury_prevention",
       "question": "What are effective strategies for preventing calf and Achilles injuries?",
-      "answer": "2 | Practitioner\u2019s Guide to the Calf & Achilles Complex\nSome Words from the  \nCalf and Achilles Experts \nSue Mayes \nDirector of Artistic Health:\nAustralian Ballet / \nLa Trobe University\nAccurate and reliable isometric testing of lower \nlimb muscles is vital in The Australian Ballet\u2019s \nscreening, monitoring and rehabilitation \nto identify areas for development that can \nenhance dancer performance, prevent injury \nand guide return-to-dance progressions.\nReal-time feedback and comparisons within \nand between people have been valuable to \nstaff and dancers and help maintain motivation \nand adherence to exercise programs.\nIsometric testing is well-tolerated in-season \nand as adverse outcomes such as DOMS are \nuncommon, dancers engage in testing and are \nmore likely to perform maximal contractions.\nThe VALD equipment is easy to assemble and \nportable, allowing us to continue accurately \ntesting even on tour.\n  @S_Maysey  \nCraig Purdam\nConsultant Sports Physiotherapist, \nAdjunct Professor\nUniversity of Canberra / La Trobe University\nThe Calf-Achilles MTU is a complex system that appears to respond quite specifically to training stimuli such \nas isometric, isotonic, eccentric, RFD, strength-endurance, stiffness enhancement or increases in fascicle \nor optimal/functional length . \nIt should be cautioned that trainable changes in one domain are not necessarily transferrable to other \ndomains. However, accurately quantifying baselines and the degree of change is important in informing \nspecific rehabilitation aims, making a comprehensive assessment critical for optimal outcomes.\n \nColin Griffin \nPhD Lower-limb Rehabilitation \nSpecialist, \nUPMC Sports Surgery \nClinic, Dublin\nI\u2019ve been using VALD\u2019s force plates for 7 years and \nthe ForceFrame more recently. This technology \nhas significantly enhanced my practice by \nproviding precise, time-efficient data on \nlower-limb strength, as well as explosive and \nreactive strength.  \nI also use the ForceFrame to assess foot strength \nwith 3 different protocols that I can easily adapt. \nThe real-time feedback and dashboard reports \nclearly highlight deficiencies and guide rehab, \ngiving athletes a clear focus. \nNumbers don\u2019t lie and the force traces often \nleave clues!\u00a0\n  @colingriffin\u00a0   colingriffin50k\n\nPractitioner\u2019s Guide to the Calf & Achilles Complex\u2003|\u20035\nCondition Incidence Recurrence Time-Loss \nReturn-to-Sport (RTS)\nAT \nGeneral Population: 24%\nAthletes: 24%\nRunners: 50%\n20-44% 10 Days\nAchilles Tendon \nRupture (ATR) \n7-40 per 100,000 \ntraining hours 2.3% 11 Months\nCMSI 3 per AFL team annually 16%\nSoleus: 25.1 Days\nGastrocnemius: 7.7 Days\nTracking metrics like peak force, RFD, impulse, and jump characteristics helps practitioners improve \ncalf and Achilles load capacity, reducing injury rates through targeted testing, training, and monitoring.\n\u2026practitioners improve calf and Achilles load capacity, \nreducing injury rates through targeted testing, training, \nand monitoring\nCondition Measurable Modifiable Risk Factors\nAT Plantar flexor strength, training schedule and gait abnormalities\nATR Insufficient strength, poor conditioning and athletic participation\nCMSI Training age, foot and calf strength\n8\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex\nContents\nBackground..................................................................................................... 9\nMethods of Calf MTU Assessment ............................................................... 16\nManagement ................................................................................................. 25\nCase Study .................................................................................................... 33\nWhat\u2019s Next? ................................................................................................. 36\nIn this document, we will cover a wide range of topics \nand answer some common questions, including:\nTip: Click any heading to jump to section\nBest Methods  \nto Assess the Calf MTU\nRelevant  \nTechnologies\nCalf Endurance  \nand Strength Training\nHow to Select  \nAssessment Tools \nDeveloping Strength \nIngury Prevention   \nvs. \n Performance Enhancement\nTechnology Intergration in  \nEarly Rehabilitation\nHow to Manage  \nCalf MTU Injury \nStrength  \nDomains \nPractitioner\u2019s Guide to the Calf & Achilles Complex\u2003|\u200311Back to Contents\nAssessment Tools & Technology\nAdvancements in technology have significantly enhanced the precision and effectiveness of calf and \nAchilles rehabilitation. Technology adds value through six main pillars:\nQuantify MTU function \nwith objective data\nMonitoring progress through \ntesting and training\nAsymmetry \ndata comparing \nlimb outputs\nComparisons     \nand Norms\nBiofeedback to \nimprove loading\nFacilitate \nrecovery with \noptimized loading\n\u2026the most demanding tasks, like jumps and accelerations,  \ncan place over 12x bodyweight through the calf MTU.\n12\u2003|\u2003Practitioner\u2019s Guide to the Calf & Achilles Complex Back to Contents\nExpert Tip:\nHigh-load isometric and eccentric",
+      "answer": "Prevention focuses on building adequate calf strength (especially soleus), implementing proper load management, including eccentric training programs, addressing biomechanical issues, and monitoring training loads. Regular strength testing identifies deficits before injury occurs. Eccentric calf exercises have been shown to reduce Achilles tendinopathy risk. Avoiding rapid training load increases is critical—the 10% rule for weekly load increases is a good guideline. Bilateral asymmetries greater than 10-15% indicate increased injury risk and should be addressed. Most demanding tasks (jumps, accelerations) place over 12x bodyweight through the calf MTU—adequate strength and stiffness are essential.",
       "summary": "Prevention through adequate calf strength, load management, eccentric training, biomechanical correction, and monitoring. Regular testing identifies deficits early.",
       "evidence_strength": "strong",
       "consensus_level": "high",
@@ -272,7 +380,11 @@
         "court_sport_athletes"
       ],
       "sport_specificity": "running_jumping_sports",
-      "categories": ["injury_prevention", "training", "monitoring"],
+      "categories": [
+        "injury_prevention",
+        "training",
+        "monitoring"
+      ],
       "tags": [
         "injury_prevention",
         "calf_strength",
@@ -280,7 +392,12 @@
         "load_management",
         "screening"
       ],
-      "training_types": ["strength", "eccentric", "isometric", "plyometric"],
+      "training_types": [
+        "strength",
+        "eccentric",
+        "isometric",
+        "plyometric"
+      ],
       "best_practices": [
         "Include regular calf strengthening (gastrocnemius and soleus)",
         "Implement eccentric training programs",
@@ -290,7 +407,145 @@
         "Proper warm-up and cool-down protocols",
         "Progressive return from time off",
         "Monitor fatigue and recovery"
-      ]
+      ],
+      "entry_id": "urn:uuid:f908fd77-e5b6-4cdd-bd5b-ef11f49048d0",
+      "quantitative_claims": [
+        {
+          "metric": "weekly_load_increase",
+          "operator": "<=",
+          "value_range": {
+            "value": 10
+          },
+          "unit": "percent",
+          "population_context": "load_management",
+          "interpretation": "guideline"
+        },
+        {
+          "metric": "bilateral_asymmetry",
+          "operator": ">=",
+          "value_range": {
+            "min": 10,
+            "max": 15
+          },
+          "unit": "percent",
+          "population_context": "athletes",
+          "interpretation": "flag_for_investigation"
+        }
+      ],
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "soleus_gastrocnemius_differentiation",
+      "question": "When should soleus vs gastrocnemius be emphasized in assessment and training?",
+      "answer": "The gastrocnemius (knee-straight) and soleus (knee-bent) have different functions and injury profiles. Soleus strains have longer recurrence window (25.1 days vs gastrocnemius 7.7 days) and often present with subtler symptoms. Test both positions independently: knee-straight for gastrocnemius dominance, knee-bent 90° for soleus. Emphasize soleus for running endurance and Achilles loading—it has greater oxidative capacity and is primary plantar flexor in many activities. Gastrocnemius contributes more to explosive movements. Both are needed for sprinting and jumping; address imbalances. Soleus-specific strengthening (seated calf raises, knee-bent holds) important for tendinopathy and running athletes.",
+      "summary": "Test and train gastrocnemius (knee-straight) and soleus (knee-bent) independently. Soleus has longer rehab; both critical for running and jumping.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "running_athletes",
+        "jumping_athletes",
+        "injured_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "assessment",
+        "training",
+        "rehabilitation"
+      ],
+      "tags": [
+        "soleus",
+        "gastrocnemius",
+        "calf",
+        "plantar_flexion",
+        "knee_bent",
+        "knee_straight"
+      ],
+      "protocols": {
+        "gastrocnemius_test": "knee_straight_plantar_flexion",
+        "soleus_test": "knee_bent_90_plantar_flexion",
+        "soleus_exercises": [
+          "seated_calf_raise",
+          "knee_bent_isometric_hold"
+        ]
+      },
+      "best_practices": [
+        "Test both positions in every calf assessment",
+        "Address soleus specifically in running athletes",
+        "Soleus strains require longer rehab timeline",
+        "Use objective metrics—symptoms unreliable for soleus"
+      ],
+      "entry_id": "urn:uuid:77e2aa61-1176-4440-a18f-474b9a8ac032",
+      "quantitative_claims": [
+        {
+          "metric": "soleus_recurrence_days",
+          "operator": "=",
+          "value_range": {
+            "value": 25.1
+          },
+          "unit": "days",
+          "population_context": "soleus_strain",
+          "interpretation": "typical_rehab_window"
+        },
+        {
+          "metric": "gastrocnemius_recurrence_days",
+          "operator": "=",
+          "value_range": {
+            "value": 7.7
+          },
+          "unit": "days",
+          "population_context": "gastrocnemius_strain",
+          "interpretation": "typical_rehab_window"
+        }
+      ],
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "ankle_dorsiflexion_tibialis_assessment",
+      "question": "What role do ankle dorsiflexion and tibialis anterior play in lower leg health?",
+      "answer": "Tibialis anterior provides dorsiflexion and controls foot position during gait. Weakness or tightness contributes to shin splints (MTSS), ankle instability, and compensatory movement patterns. Ankle dorsiflexion mobility is critical for squat depth, sprint mechanics, and landing—limited dorsiflexion increases knee stress and injury risk. Assess: active/passive dorsiflexion ROM, tibialis anterior strength (dorsiflexion against resistance), toe raises. Strengthening tibialis (toe raises, resisted dorsiflexion) helps prevent shin splints. Ankle mobility drills (wall stretches, banded mobilizations) improve dorsiflexion. Balance tibialis with calf strength—antagonist balance matters for joint health.",
+      "summary": "Tibialis anterior and ankle dorsiflexion critical for sprint mechanics and shin splint prevention. Assess and train alongside calf complex.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "running_athletes",
+        "jumping_athletes",
+        "field_sport_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "assessment",
+        "training",
+        "injury_prevention"
+      ],
+      "tags": [
+        "tibialis",
+        "dorsiflexion",
+        "ankle_mobility",
+        "shin_splints",
+        "MTSS"
+      ],
+      "protocols": {
+        "assessment": [
+          "dorsiflexion_ROM",
+          "tibialis_strength",
+          "toe_raises"
+        ],
+        "exercises": [
+          "toe_raises",
+          "resisted_dorsiflexion",
+          "ankle_mobility_drills"
+        ]
+      },
+      "best_practices": [
+        "Include tibialis strengthening in lower leg programs",
+        "Assess ankle dorsiflexion in movement screening",
+        "Address limited dorsiflexion before heavy squatting",
+        "Balance plantar flexor and dorsiflexor strength"
+      ],
+      "entry_id": "urn:uuid:f4680c5f-8b1f-4031-b896-d46eb832b426",
+      "evidence_framework": "GRADE"
     }
   ]
 }

@@ -39,7 +39,7 @@ export interface RTPPhaseInfo {
   imports: [CommonModule, RouterModule, Card, ButtonComponent],
   template: `
     @if (showCelebration()) {
-      <p-card styleClass="celebration-card">
+      <p-card class="celebration-card">
         <div class="celebration-header">
           <div class="celebration-icon">🎉</div>
           <div class="celebration-content">

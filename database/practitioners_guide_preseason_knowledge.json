@@ -1,13 +1,36 @@
 {
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:967b17c1-1dc6-4cef-8c53-0c9f2eee906d",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": false,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "Practitioner's Guide to Preseason - 2025 Edition",
+      "publisher": "VALD Performance",
+      "source_url": "https://resources.valdperformance.com",
+      "authors": [
+        "VALD Performance Contributors"
+      ]
+    }
+  },
   "metadata": {
     "title": "Practitioner's Guide to Preseason - 2025 Edition",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "total_pages": 49,
     "document_type": "practitioner_guide"
   },
   "research_article": {
     "title": "Practitioner's Guide to Preseason - 2025 Edition",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "publication_year": 2025,
     "publisher": "VALD Performance",
     "primary_category": "training",
@@ -67,10 +90,21 @@
       "summary": "Preseason periodization progressively builds from general preparation through specific preparation to competition readiness.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["team_sport_athletes", "field_sport_athletes"],
+      "applicable_to": [
+        "team_sport_athletes",
+        "field_sport_athletes"
+      ],
       "sport_specificity": "team_sports",
-      "categories": ["training", "periodization"],
-      "tags": ["preseason", "periodization", "training_planning", "phases"],
+      "categories": [
+        "training",
+        "periodization"
+      ],
+      "tags": [
+        "preseason",
+        "periodization",
+        "training_planning",
+        "phases"
+      ],
       "protocols": {
         "phases": [
           "general_preparation",
@@ -88,7 +122,9 @@
         "Balance physical and skill development",
         "Individualize based on athlete readiness",
         "Plan recovery and regeneration weeks"
-      ]
+      ],
+      "entry_id": "urn:uuid:e82cd736-7717-4a2f-89ca-945febd9d38b",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -98,9 +134,15 @@
       "summary": "Comprehensive preseason testing establishes baselines and identifies individual training needs across multiple physical qualities.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["team_sport_athletes", "elite_athletes"],
+      "applicable_to": [
+        "team_sport_athletes",
+        "elite_athletes"
+      ],
       "sport_specificity": "team_sports",
-      "categories": ["assessment", "testing"],
+      "categories": [
+        "assessment",
+        "testing"
+      ],
       "tags": [
         "testing",
         "assessment",
@@ -126,7 +168,9 @@
         "Include injury risk screening",
         "Establish individual training priorities from results",
         "Track longitudinal changes"
-      ]
+      ],
+      "entry_id": "urn:uuid:ba47f85f-f61b-488c-95d9-238021c9b767",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -136,9 +180,15 @@
       "summary": "Preseason load management uses ACWR monitoring and progressive loading (10% rule) to build capacity while managing injury risk.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["team_sport_athletes", "elite_athletes"],
+      "applicable_to": [
+        "team_sport_athletes",
+        "elite_athletes"
+      ],
       "sport_specificity": "team_sports",
-      "categories": ["load_management", "monitoring"],
+      "categories": [
+        "load_management",
+        "monitoring"
+      ],
       "tags": [
         "load_management",
         "ACWR",
@@ -149,7 +199,11 @@
       "protocols": {
         "acwr_target_range": "0.8-1.3",
         "weekly_load_increase": "max_10_percent",
-        "monitoring_tools": ["session_RPE", "wellness", "readiness"]
+        "monitoring_tools": [
+          "session_RPE",
+          "wellness",
+          "readiness"
+        ]
       },
       "best_practices": [
         "Monitor acute:chronic workload ratios (0.8-1.3)",
@@ -159,7 +213,9 @@
         "Individualize based on athlete training history",
         "Avoid load spikes (ACWR >1.5)",
         "Balance team and individual training needs"
-      ]
+      ],
+      "entry_id": "urn:uuid:71a759a0-5157-44f5-9e4c-97260f93167e",
+      "evidence_framework": "GRADE"
     }
   ]
 }

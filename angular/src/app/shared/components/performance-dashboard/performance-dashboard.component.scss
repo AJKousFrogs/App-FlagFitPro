@@ -120,19 +120,19 @@
 }
 
 .metric-progress.tone-success {
-  --p-progressbar-value-bg: var(--color-status-success);
+  --p-progressbar-value-background: var(--color-status-success);
 }
 
 .metric-progress.tone-warning {
-  --p-progressbar-value-bg: var(--color-status-warning);
+  --p-progressbar-value-background: var(--color-status-warning);
 }
 
 .metric-progress.tone-error {
-  --p-progressbar-value-bg: var(--color-status-error);
+  --p-progressbar-value-background: var(--color-status-error);
 }
 
 .metric-progress.tone-info {
-  --p-progressbar-value-bg: var(--color-status-info);
+  --p-progressbar-value-background: var(--color-status-info);
 }
 
 .progress-text {

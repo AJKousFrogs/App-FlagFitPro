@@ -27,7 +27,6 @@ import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { ProgressBar } from "primeng/progressbar";
 import { Slider } from "primeng/slider";
 import { Textarea } from "primeng/textarea";
@@ -80,7 +79,7 @@ type SessionStatus =
     FormsModule,
     Card,
     Dialog,
-    PrimeTemplate,
+    
     ProgressBar,
     Checkbox,
     Slider,
@@ -97,14 +96,14 @@ type SessionStatus =
         [modal]="true"
         [closable]="currentStatus() !== 'in_progress'"
         [dismissableMask]="currentStatus() !== 'in_progress'"
-        styleClass="dialog-w-xl dialog-max-w-lg"
+        class="dialog-w-xl dialog-max-w-lg"
         (onHide)="onDialogHide()"
       >
         <ng-container *ngTemplateOutlet="sessionContent"></ng-container>
       </p-dialog>
     } @else {
       <p-card class="micro-session-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="card-header">
             <div class="header-info">
               <app-status-tag
@@ -232,7 +231,7 @@ type SessionStatus =
               <p-progressBar
                 [value]="overallProgress()"
                 [showValue]="false"
-                styleClass="overall-bar"
+                class="overall-bar"
               ></p-progressBar>
             </div>
 
@@ -261,7 +260,7 @@ type SessionStatus =
               <p-progressBar
                 [value]="stepProgress()"
                 [showValue]="false"
-                styleClass="step-bar"
+                class="step-bar"
               ></p-progressBar>
             </div>
 

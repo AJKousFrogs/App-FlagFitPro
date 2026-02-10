@@ -18,7 +18,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -286,12 +286,11 @@ const SEVERITY_LEVELS = [
     LazyChartComponent,
     DatePicker,
     Dialog,
-    PrimeTemplate,
+    
     ProgressBar,
     RadioButton,
     Select,
     Slider,
-    TableModule,
     TableModule,
     StatusTagComponent,
     Textarea,
@@ -313,7 +312,7 @@ const SEVERITY_LEVELS = [
 
         <!-- No Active Protocol State -->
         @if (!activeProtocol()) {
-          <p-card styleClass="no-protocol-card">
+          <p-card class="no-protocol-card">
             <div class="empty-state">
               <i class="pi pi-heart-pulse empty-icon"></i>
               <h3>No Active Recovery Protocol</h3>
@@ -339,7 +338,7 @@ const SEVERITY_LEVELS = [
           }
 
           <!-- Protocol Overview Card -->
-          <p-card styleClass="protocol-overview-card">
+          <p-card class="protocol-overview-card">
             <div class="protocol-header">
               <div class="injury-info">
                 <div class="injury-badge">
@@ -399,7 +398,7 @@ const SEVERITY_LEVELS = [
           </p-card>
 
           <!-- 7-Stage Protocol Progress -->
-          <p-card header="7-Stage Protocol Progress" styleClass="stages-card">
+          <p-card header="7-Stage Protocol Progress" class="stages-card">
             <div class="stages-visual">
               @for (stage of protocolStages; track stage.stage) {
                 <div
@@ -434,8 +433,8 @@ const SEVERITY_LEVELS = [
           </p-card>
 
           <!-- Current Stage Details -->
-          <p-card styleClass="current-stage-card">
-            <ng-template pTemplate="header">
+          <p-card class="current-stage-card">
+            <ng-template #header>
               <div class="stage-detail-header">
                 <div class="stage-title">
                   <span
@@ -530,7 +529,7 @@ const SEVERITY_LEVELS = [
           </p-card>
 
           <!-- Daily Tracking Section -->
-          <p-card header="Daily Tracking" styleClass="daily-tracking-card">
+          <p-card header="Daily Tracking" class="daily-tracking-card">
             <div class="checkin-form">
               <h4><i class="pi pi-pencil"></i> Today's Check-in</h4>
 
@@ -630,7 +629,7 @@ const SEVERITY_LEVELS = [
           </p-card>
 
           <!-- Recovery Progress Chart -->
-          <p-card header="Recovery Progress Chart" styleClass="chart-card">
+          <p-card header="Recovery Progress Chart" class="chart-card">
             @if (chartData()) {
               <app-lazy-chart
                 type="line"
@@ -647,13 +646,13 @@ const SEVERITY_LEVELS = [
 
           <!-- Recent Check-ins -->
           @if (recentCheckins().length > 0) {
-            <p-card header="Recent Check-ins" styleClass="checkins-card">
+            <p-card header="Recent Check-ins" class="checkins-card">
               <p-table
                 [value]="recentCheckins()"
                 [rows]="5"
-                styleClass="p-datatable-sm"
+                class="p-datatable-sm"
               >
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <tr>
                     <th>Date</th>
                     <th>Pain</th>
@@ -662,7 +661,7 @@ const SEVERITY_LEVELS = [
                     <th>Notes</th>
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-checkin>
+                <ng-template #body let-checkin>
                   <tr>
                     <td>{{ checkin.date | date: "EEE, MMM d" }}</td>
                     <td>
@@ -687,7 +686,7 @@ const SEVERITY_LEVELS = [
         [modal]="true"
         [visible]="showStartDialog()"
         (visibleChange)="showStartDialog.set($event)"
-        styleClass="rtp-start-dialog"
+        class="rtp-start-dialog"
         [draggable]="false"
       >
         <div class="start-form">
@@ -719,7 +718,7 @@ const SEVERITY_LEVELS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select location"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
             <div class="form-field">
@@ -731,7 +730,7 @@ const SEVERITY_LEVELS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select severity"
-                styleClass="w-full"
+                class="w-full"
                 (onValueChange)="onSeverityChange()"
               ></p-select>
             </div>
@@ -747,7 +746,7 @@ const SEVERITY_LEVELS = [
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -758,7 +757,7 @@ const SEVERITY_LEVELS = [
                 [minDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
                 placeholder="Auto-calculated"
               ></p-datepicker>
             </div>
@@ -806,7 +805,7 @@ const SEVERITY_LEVELS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="outlined" (clicked)="closeStartDialog()"
             >Cancel</app-button
           >

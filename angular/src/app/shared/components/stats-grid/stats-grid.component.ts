@@ -33,7 +33,7 @@ export interface StatItem {
   template: `
     <section class="stats-overview" aria-label="Statistics">
       @for (stat of stats(); track trackByLabel($index, stat)) {
-        <p-card styleClass="stat-card">
+        <p-card class="stat-card">
           <div class="stat-card-content">
             @if (stat.icon) {
               <div class="stat-icon" [ngClass]="getIconClass(stat.iconType)">

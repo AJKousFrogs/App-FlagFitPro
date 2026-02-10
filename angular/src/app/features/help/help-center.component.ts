@@ -72,7 +72,7 @@ interface HelpTopic {
 
         <!-- FAQ Sections -->
         <p-card>
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <h3>
               <i class="pi pi-question-circle"></i> Frequently Asked Questions
             </h3>
@@ -99,7 +99,7 @@ interface HelpTopic {
         </p-card>
 
         <!-- Contact Support -->
-        <p-card styleClass="support-card">
+        <p-card class="support-card">
           <div class="support-content">
             <i class="pi pi-envelope"></i>
             <h3>Still need help?</h3>

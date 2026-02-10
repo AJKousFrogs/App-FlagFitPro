@@ -75,7 +75,7 @@ export interface SessionLogData {
               [min]="1"
               [max]="10"
               [step]="1"
-              styleClass="rpe-slider"
+              class="rpe-slider"
               (onValueChange)="onRpeChange($event)"
             ></p-slider>
             <span class="rpe-emoji">🔥</span>
@@ -93,7 +93,7 @@ export interface SessionLogData {
               [max]="300"
               [showButtons]="true"
               suffix=" min"
-              styleClass="duration-input"
+              class="duration-input"
               (onInput)="onDurationChange($event)"
             ></p-inputNumber>
             @if (expectedDuration()) {

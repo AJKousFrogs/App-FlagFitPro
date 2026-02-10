@@ -30,15 +30,15 @@
       var(--ds-primary-green),
       var(--ds-primary-green-dark)
     );
-    color: white;
+    color: var(--color-text-on-primary);
 
     .stat-block__value,
     .stat-block__label {
-      color: white;
+      color: var(--color-text-on-primary);
     }
 
     .stat-icon {
-      color: white;
+      color: var(--color-text-on-primary);
       background: var(--overlay-white-20);
     }
   }
@@ -178,8 +178,8 @@
     width: var(--avatar-size-xs);
     height: var(--avatar-size-xs);
     border-radius: 50%;
-    background: var(--primitive-success-500);
-    color: white;
+    background: var(--color-status-success);
+    color: var(--color-text-on-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -289,7 +289,7 @@
     &.active {
       background: var(--ds-primary-green);
       border-color: var(--ds-primary-green);
-      color: white;
+      color: var(--color-text-on-primary);
     }
 
     .tab-icon {

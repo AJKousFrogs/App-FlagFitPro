@@ -66,7 +66,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 
   // Add padding to ensure hit area
   @include touch-device {
-    padding: max(calc(#{$size} / 4), space(3));
+    padding: max(calc(#{$size} / 4), var(--space-3));
   }
 }
 
@@ -76,8 +76,8 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
  */
 @mixin touch-link {
   display: inline-block;
-  padding: space(2) space(3);
-  margin: calc(-1 * space(2)) calc(-1 * space(3));
+  padding: var(--space-2) var(--space-3);
+  margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-3));
 
   @include touch-device {
     min-height: $touch-target-min;
@@ -91,10 +91,10 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
  */
 @mixin touch-list-item {
   min-height: $touch-target-comfortable;
-  padding: space(3) space(4);
+  padding: var(--space-3) var(--space-4);
 
   @include touch-device {
-    padding: space(4);
+    padding: var(--space-4);
   }
 }
 
@@ -126,19 +126,19 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 /**
  * Responsive grid that adapts to tablet
  */
-@mixin responsive-grid($min-width: 17.5rem, $gap: space(4)) {
+@mixin responsive-grid($min-width: 17.5rem, $gap: var(--space-4)) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
   gap: $gap;
 
   @include tablet-layout {
     grid-template-columns: repeat(2, 1fr);
-    gap: space(3);
+    gap: var(--space-3);
   }
 
   @include respond-to(sm) {
     grid-template-columns: 1fr;
-    gap: space(3);
+    gap: var(--space-3);
   }
 }
 
@@ -148,7 +148,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 @mixin dashboard-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: space(4);
+  gap: var(--space-4);
 
   @include tablet-layout {
     grid-template-columns: repeat(2, 1fr);
@@ -168,7 +168,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     auto-fit,
     minmax(calc(var(--grid-min-width-sm) + var(--space-2)), 1fr)
   );
-  gap: space(4);
+  gap: var(--space-4);
 
   @include tablet-layout {
     grid-template-columns: repeat(3, 1fr);
@@ -213,9 +213,9 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
  * Responsive padding that reduces on smaller screens
  */
 @mixin responsive-padding(
-  $desktop: space(6),
-  $tablet: space(4),
-  $mobile: space(3)
+  $desktop: var(--space-6),
+  $tablet: var(--space-4),
+  $mobile: var(--space-3)
 ) {
   padding: $desktop;
 
@@ -232,14 +232,14 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
  * Responsive section margin
  */
 @mixin responsive-section-margin {
-  margin-bottom: space(8);
+  margin-bottom: var(--space-8);
 
   @include tablet-layout {
-    margin-bottom: space(6);
+    margin-bottom: var(--space-6);
   }
 
   @include respond-to(sm) {
-    margin-bottom: space(4);
+    margin-bottom: var(--space-4);
   }
 }
 
@@ -254,11 +254,11 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
   @include card;
 
   @include tablet-layout {
-    padding: space(4);
+    padding: var(--space-4);
   }
 
   @include respond-to(sm) {
-    padding: space(3);
+    padding: var(--space-3);
     border-radius: get-radius(lg);
   }
 }
@@ -324,7 +324,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
   @include respond-above(md) {
     th,
     td {
-      padding: space(3) space(4);
+      padding: var(--space-3) var(--space-4);
       text-align: left;
       border-bottom: var(--border-1) solid var(--color-border-secondary);
     }
@@ -347,14 +347,14 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     tbody {
       display: flex;
       flex-direction: column;
-      gap: space(3);
+      gap: var(--space-3);
     }
 
     tr {
       display: block;
       background: var(--surface-card);
       border-radius: get-radius(lg);
-      padding: space(4);
+      padding: var(--space-4);
       box-shadow: get-shadow(sm);
     }
 
@@ -362,7 +362,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: space(2) 0;
+      padding: var(--space-2) 0;
       border-bottom: var(--border-1) solid var(--color-border-secondary);
 
       &:last-child {
@@ -373,7 +373,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
         content: attr(data-label);
         font-weight: get-font-weight(semibold);
         color: var(--color-text-secondary);
-        margin-right: space(3);
+        margin-right: var(--space-3);
       }
     }
   }
@@ -389,7 +389,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 @mixin responsive-form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: space(4);
+  gap: var(--space-4);
 
   @include respond-to(md) {
     grid-template-columns: 1fr;
@@ -428,7 +428,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     bottom: 0;
     left: 0;
     right: 0;
-    height: space(10);
+    height: var(--space-10);
     background: var(--surface-primary);
     border-top: var(--border-1) solid var(--color-border-secondary);
     z-index: get-z-index(fixed);
@@ -444,7 +444,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 
   @include flex-center;
   flex-direction: column;
-  gap: space(1);
+  gap: var(--space-1);
 
   @include touch-target;
   color: var(--color-text-secondary);

@@ -44,7 +44,6 @@ interface User {
     Card,
     StatusTagComponent,
     TableModule,
-    TableModule,
     InputText,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -69,7 +68,7 @@ interface User {
         </app-page-header>
 
         <!-- Filters -->
-        <p-card styleClass="filters-card">
+        <p-card class="filters-card">
           <div class="filters-row">
             <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
@@ -128,9 +127,9 @@ interface User {
               [value]="filteredUsers"
               [paginator]="true"
               [rows]="10"
-              styleClass="p-datatable-sm table-standard"
+              class="p-datatable-sm table-standard"
             >
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
@@ -141,7 +140,7 @@ interface User {
                   <th>Actions</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-user>
+              <ng-template #body let-user>
                 <tr>
                   <td>{{ user.full_name }}</td>
                   <td>{{ user.email }}</td>
@@ -201,25 +200,25 @@ interface User {
 
         <!-- Stats Summary -->
         <div class="stats-row">
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ totalUsers }}</span>
               <span class="stat-block__label">Total Users</span>
             </div>
           </p-card>
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ playerCount }}</span>
               <span class="stat-block__label">Players</span>
             </div>
           </p-card>
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ coachCount }}</span>
               <span class="stat-block__label">Coaches</span>
             </div>
           </p-card>
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ adminCount }}</span>
               <span class="stat-block__label">Admins</span>

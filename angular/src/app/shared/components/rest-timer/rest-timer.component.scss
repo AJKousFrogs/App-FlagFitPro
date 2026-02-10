@@ -16,7 +16,7 @@
   align-items: center;
   padding: var(--space-3);
   background: var(--color-brand-primary);
-  color: white;
+  color: var(--color-text-on-primary);
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -70,7 +70,7 @@
 
 .progress-fill {
   height: 100%;
-  background: white;
+  background: var(--color-text-on-primary);
   transition: width var(--transition-slower) linear;
 }
 
@@ -200,7 +200,7 @@
 .preset-btn.active {
   border-color: var(--color-brand-primary);
   background: var(--color-brand-primary);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 /* Custom Duration */

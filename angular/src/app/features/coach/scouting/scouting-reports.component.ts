@@ -118,7 +118,6 @@ interface ScoutingReport {
     InputText,
     Select,
     TableModule,
-    TableModule,
     Tabs,
     TabList,
     Tab,
@@ -188,7 +187,7 @@ interface ScoutingReport {
                   @if (filteredReports().length > 0) {
                     <div class="reports-grid">
                       @for (report of filteredReports(); track report.id) {
-                        <p-card styleClass="report-card">
+                        <p-card class="report-card">
                           <ng-template #header>
                             <div class="report-header">
                               <div class="opponent-info">
@@ -292,7 +291,7 @@ interface ScoutingReport {
 
                   <div class="opponents-grid">
                     @for (opponent of opponents(); track opponent.id) {
-                      <p-card styleClass="opponent-card">
+                      <p-card class="opponent-card">
                         <ng-template #header>
                           <div class="opponent-header">
                             <div class="team-info">
@@ -681,7 +680,7 @@ interface ScoutingReport {
           header="Create Scouting Report"
           [(visible)]="showNewReportDialog"
           [modal]="true"
-          styleClass="dialog-w-lg"
+          class="dialog-w-lg"
           [dismissableMask]="true"
         >
           <div class="report-form">
@@ -691,7 +690,7 @@ interface ScoutingReport {
                 [options]="opponentFilterOptions()"
                 [(ngModel)]="newReport.opponentId"
                 placeholder="Select opponent"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
 
@@ -770,7 +769,7 @@ interface ScoutingReport {
                 <p-select
                   [options]="shareOptions"
                   [(ngModel)]="newReport.sharedWith"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
               <div class="form-group checkbox-group">
@@ -801,7 +800,7 @@ interface ScoutingReport {
           header="Scouting Report"
           [(visible)]="showViewReportDialog"
           [modal]="true"
-          styleClass="dialog-w-lg"
+          class="dialog-w-lg"
           [dismissableMask]="true"
         >
           @if (viewingReport()) {
@@ -934,7 +933,7 @@ interface ScoutingReport {
           header="Add Opponent"
           [(visible)]="showAddOpponentDialog"
           [modal]="true"
-          styleClass="dialog-max-w-lg"
+          class="dialog-max-w-lg"
           [dismissableMask]="true"
         >
           <div class="opponent-form">
@@ -995,7 +994,7 @@ interface ScoutingReport {
                 [options]="offensiveStyles"
                 [(ngModel)]="newOpponent.offensiveStyle"
                 placeholder="Select style"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
             <div class="form-group">
@@ -1004,7 +1003,7 @@ interface ScoutingReport {
                 [options]="defensiveStyles"
                 [(ngModel)]="newOpponent.defensiveStyle"
                 placeholder="Select style"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
           </div>

@@ -778,7 +778,7 @@ export class TrainingScheduleComponent implements OnInit {
   getSessionTypeColor(type: string): string {
     const typeColors: Record<string, string> = {
       Strength: "var(--primitive-blue-500)",
-      Conditioning: "var(--primitive-success-500)",
+      Conditioning: "var(--color-status-success)",
       Skills: "var(--primitive-warning-500)",
       Recovery: "var(--primitive-purple-500)",
       Game: "var(--primitive-error-500)",
@@ -1387,7 +1387,7 @@ export class TrainingScheduleComponent implements OnInit {
   getStatusColor(status: string): string {
     switch (status) {
       case "completed":
-        return "var(--primitive-success-500)";
+        return "var(--color-status-success)";
       case "missed":
         return "var(--primitive-error-500)";
       case "in_progress":

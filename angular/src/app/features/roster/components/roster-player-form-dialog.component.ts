@@ -20,7 +20,6 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -53,8 +52,8 @@ export interface PlayerFormData {
   imports: [
     ReactiveFormsModule,
     Dialog,
-    PrimeTemplate,
-    PrimeTemplate,
+    
+    
     InputText,
     Select,
     InputNumber,
@@ -68,7 +67,7 @@ export interface PlayerFormData {
       (visibleChange)="visibleChange.emit($event)"
       [modal]="true"
       [header]="editingPlayer() ? 'Edit Player' : 'Add New Player'"
-      styleClass="roster-player-dialog"
+      class="roster-player-dialog"
       [closable]="true"
     >
       <!-- Form Error Summary (WCAG 2.1 AA) -->
@@ -102,7 +101,7 @@ export interface PlayerFormData {
               optionLabel="label"
               optionValue="value"
               placeholder="Select primary position"
-              styleClass="w-full"
+              class="w-full"
               [attr.aria-label]="'Select player position'"
             ></p-select>
           </div>
@@ -144,7 +143,7 @@ export interface PlayerFormData {
               [min]="16"
               [max]="60"
               placeholder="16-60"
-              styleClass="w-full"
+              class="w-full"
               [attr.aria-label]="'Player age'"
             ></p-inputNumber>
           </div>
@@ -219,14 +218,14 @@ export interface PlayerFormData {
               optionLabel="label"
               optionValue="value"
               placeholder="Select status"
-              styleClass="w-full"
+              class="w-full"
               [attr.aria-label]="'Select player status'"
             ></p-select>
           </div>
         }
       </form>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button
           variant="text"
           iconLeft="pi-times"

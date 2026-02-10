@@ -840,12 +840,46 @@ Supabase automatically handles token refresh:
 
 ---
 
+## Implementation Reference
+
+### API Endpoints
+
+| Method | Endpoint                   | Auth | Description               |
+| ------ | -------------------------- | ---- | ------------------------- |
+| POST   | `/api/auth/login`          | No   | Login (via Supabase)      |
+| POST   | `/api/auth/reset-password` | No   | Request password reset    |
+| GET    | `/auth-me`                 | Yes  | Verify token and get user |
+| POST   | `/api/accept-invitation`   | No   | Accept team invitation    |
+| GET    | `/api/validate-invitation` | No   | Validate invitation token |
+
+All other `/api/*` endpoints require valid JWT: `Authorization: Bearer <access_token>`
+
+### Rate Limiting
+
+| Tier   | Requests | Window   | Endpoints          |
+| ------ | -------- | -------- | ------------------ |
+| READ   | 100      | 1 minute | GET requests       |
+| CREATE | 20       | 1 minute | POST requests      |
+| UPDATE | 30       | 1 minute | PUT/PATCH requests |
+| DELETE | 10       | 1 minute | DELETE requests    |
+
+### User Roles
+
+| Role     | Permissions                    |
+| -------- | ------------------------------ |
+| `player` | Own data only, team membership |
+| `coach`  | Team data, player management   |
+| `admin`  | Full access, system management |
+
+Roles are stored in `user_metadata`.
+
+---
+
 ## Related Documentation
 
-- [AUTHENTICATION_PATTERN.md](./AUTHENTICATION_PATTERN.md) - Detailed authentication pattern documentation
-- [WORKFLOW_AND_BUSINESS_LOGIC.md](./WORKFLOW_AND_BUSINESS_LOGIC.md) - Complete workflow documentation
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture overview
 - [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Database schema and setup
+- [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) - Row-Level Security
 
 ---
 

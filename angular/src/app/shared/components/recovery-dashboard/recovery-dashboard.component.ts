@@ -142,7 +142,7 @@ interface ChartOptions {
                 <p-progressBar
                   [value]="metric.percentage"
                   [showValue]="false"
-                  [styleClass]="'metric-progress tone-' + metric.tone"
+                  [class]="'metric-progress tone-' + metric.tone"
                 >
                 </p-progressBar>
               </div>
@@ -308,7 +308,7 @@ interface ChartOptions {
         header="Protocol Details"
         [(visible)]="showProtocolDialog"
         [modal]="true"
-        styleClass="layout-w-xl dialog-w-xl dialog-max-w-xl"
+        class="layout-w-xl dialog-w-xl dialog-max-w-xl"
         [draggable]="false"
         [resizable]="false"
       >
@@ -498,7 +498,7 @@ interface ChartOptions {
                 layout="vertical"
                 class="session-timeline"
               >
-                <ng-template pTemplate="marker" let-step>
+                <ng-template #marker let-step>
                   <div
                     class="step-marker"
                     [class.completed]="step.completed"
@@ -508,7 +508,7 @@ interface ChartOptions {
                   </div>
                 </ng-template>
 
-                <ng-template pTemplate="content" let-step>
+                <ng-template #content let-step>
                   <div class="step-content">
                     <h5>{{ step.title }}</h5>
                     <p>{{ step.description }}</p>

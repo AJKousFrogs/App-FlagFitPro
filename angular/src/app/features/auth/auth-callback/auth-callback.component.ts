@@ -50,7 +50,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           <div class="processing-state">
             <p-progressSpinner
               strokeWidth="4"
-              styleClass="auth-callback-spinner"
+              class="auth-callback-spinner"
             ></p-progressSpinner>
             <h2>{{ processingMessage() }}</h2>
             <p class="processing-description">Please wait...</p>
@@ -61,7 +61,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
               <i class="pi pi-times-circle"></i>
             </div>
             <h2>Authentication Failed</h2>
-            <p-message severity="error" styleClass="status-message">
+            <p-message severity="error" class="status-message">
               {{ error() }}
             </p-message>
             <div class="error-actions">

@@ -40,8 +40,8 @@
 
 .success-circle {
   position: absolute;
-  width: calc(var(--checkmark-size) + 1.25rem);
-  height: calc(var(--checkmark-size) + 1.25rem);
+  width: calc(var(--checkmark-size) + var(--space-5));
+  height: calc(var(--checkmark-size) + var(--space-5));
   background: var(--ds-primary-green-subtle);
   border-radius: 50%;
   opacity: 0;
@@ -199,7 +199,7 @@
 }
 
 .color-white {
-  --checkmark-color: white;
+  --checkmark-color: var(--color-text-on-primary);
 }
 
 /* success-icon inherits --checkmark-color */

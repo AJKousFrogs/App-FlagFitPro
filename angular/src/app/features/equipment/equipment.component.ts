@@ -13,7 +13,6 @@ import { FormsModule } from "@angular/forms";
 import { Badge } from "primeng/badge";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -59,10 +58,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     FormsModule,
     Card,
     TableModule,
-    TableModule,
     StatusTagComponent,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     InputNumber,
     Select,
@@ -93,7 +91,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           <!-- Summary Cards -->
           @if (summary()) {
             <div class="summary-grid">
-              <p-card styleClass="summary-card">
+              <p-card class="summary-card">
                 <div class="summary-content">
                   <i class="pi pi-box summary-icon"></i>
                   <div class="summary-info">
@@ -105,7 +103,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 </div>
               </p-card>
 
-              <p-card styleClass="summary-card">
+              <p-card class="summary-card">
                 <div class="summary-content">
                   <i class="pi pi-check-circle summary-icon success"></i>
                   <div class="summary-info">
@@ -117,7 +115,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 </div>
               </p-card>
 
-              <p-card styleClass="summary-card">
+              <p-card class="summary-card">
                 <div class="summary-content">
                   <i class="pi pi-users summary-icon info"></i>
                   <div class="summary-info">
@@ -130,7 +128,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               </p-card>
 
               <p-card
-                styleClass="summary-card"
+                class="summary-card"
                 [class.alert]="summary()!.items_needing_replacement > 0"
               >
                 <div class="summary-content">
@@ -149,8 +147,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           }
 
           <!-- Equipment Inventory -->
-          <p-card styleClass="inventory-card">
-            <ng-template pTemplate="header">
+          <p-card class="inventory-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Equipment Inventory</h3>
                 <div class="filter-actions">
@@ -169,10 +167,10 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               [value]="filteredEquipment()"
               [paginator]="true"
               [rows]="10"
-              styleClass="p-datatable-sm"
+              class="p-datatable-sm"
               [rowHover]="true"
             >
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Item</th>
                   <th>Type</th>
@@ -182,7 +180,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   <th>Actions</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-item>
+              <ng-template #body let-item>
                 <tr>
                   <td>
                     <div class="item-cell">
@@ -257,7 +255,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   </td>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="emptymessage">
+              <ng-template #emptymessage>
                 <tr>
                   <td colspan="6">
                     <div class="empty-message">
@@ -272,8 +270,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
 
           <!-- Active Assignments -->
           @if (isCoach()) {
-            <p-card styleClass="assignments-card">
-              <ng-template pTemplate="header">
+            <p-card class="assignments-card">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>Active Assignments</h3>
                   <p-badge
@@ -292,9 +290,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   [value]="activeAssignments()"
                   [paginator]="true"
                   [rows]="5"
-                  styleClass="p-datatable-sm"
+                  class="p-datatable-sm"
                 >
-                  <ng-template pTemplate="header">
+                  <ng-template #header>
                     <tr>
                       <th>Player</th>
                       <th>Equipment</th>
@@ -303,7 +301,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                       <th>Actions</th>
                     </tr>
                   </ng-template>
-                  <ng-template pTemplate="body" let-assignment>
+                  <ng-template #body let-assignment>
                     <tr>
                       <td>{{ assignment.player_name }}</td>
                       <td>{{ assignment.equipment_name }}</td>
@@ -331,7 +329,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           [header]="editingItem ? 'Edit Equipment' : 'Add Equipment'"
           [(visible)]="showAddDialog"
           [modal]="true"
-          styleClass="equipment-add-dialog"
+          class="equipment-add-dialog"
         >
           <div class="dialog-form">
             <div class="form-field">
@@ -350,7 +348,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   [options]="typeOptions"
                   [(ngModel)]="newItem.item_type"
                   placeholder="Select type"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -359,7 +357,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <p-select
                   [options]="conditionOptions"
                   [(ngModel)]="newItem.condition"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
             </div>
@@ -402,7 +400,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
             </div>
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showAddDialog = false"
               >Cancel</app-button
             >
@@ -421,7 +419,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           header="Checkout Equipment"
           [(visible)]="showCheckoutDialog"
           [modal]="true"
-          styleClass="equipment-checkout-dialog"
+          class="equipment-checkout-dialog"
         >
           @if (checkoutItem()) {
             <div class="dialog-form">
@@ -440,7 +438,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   optionValue="id"
                   placeholder="Select player"
                   [filter]="true"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -464,7 +462,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
             </div>
           }
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showCheckoutDialog = false"
               >Cancel</app-button
             >
@@ -482,7 +480,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           header="Return Equipment"
           [(visible)]="showReturnDialog"
           [modal]="true"
-          styleClass="equipment-return-dialog"
+          class="equipment-return-dialog"
         >
           @if (returnAssignment()) {
             <div class="dialog-form">
@@ -497,7 +495,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <p-select
                   [options]="conditionOptions"
                   [(ngModel)]="returnData.condition"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -512,7 +510,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
             </div>
           }
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showReturnDialog = false"
               >Cancel</app-button
             >

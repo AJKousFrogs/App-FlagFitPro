@@ -43,14 +43,14 @@ export const DesignTokens = {
     primitive: {
       // Success - Yellow Scale (from SCSS)
       success: {
-        50: "var(--primitive-success-50)",
-        100: "var(--primitive-warning-100)",
-        200: "var(--primitive-warning-200)",
-        300: "var(--primitive-warning-300)",
-        400: "var(--color-icon-notifications)",
-        500: "var(--color-chart-3)", // PRIMARY SUCCESS COLOR
-        600: "var(--primitive-success-600)",
-        700: "var(--primitive-success-700)",
+        50: "var(--color-status-success-subtle)",
+        100: "var(--color-status-success-surface)",
+        200: "var(--color-status-success-light)",
+        300: "var(--color-status-success-light)",
+        400: "var(--color-status-success)",
+        500: "var(--color-status-success)", // PRIMARY SUCCESS COLOR (green)
+        600: "var(--color-status-success)",
+        700: "var(--color-status-success)",
         800: "var(--color-warning-text-accessible)",
         900: "var(--primitive-warning-900)",
       },
@@ -314,14 +314,14 @@ export const DesignTokens = {
     1: "0 1px 3px rgba(0, 0, 0, 0.08)",
     2: "0 4px 12px rgba(0, 0, 0, 0.12)",
     3: "0 8px 24px rgba(0, 0, 0, 0.16)",
-    // Focus shadow
-    focus: "0 0 0 0.2rem rgba(8, 153, 73, 0.2)",
-    // Hover shadows (green-tinted)
+    // Focus shadow - uses design token for theme consistency
+    focus: "0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2)",
+    // Hover shadows (green-tinted) - uses design token
     hover: {
-      sm: "0 2px 8px rgba(8, 153, 73, 0.12)",
-      md: "0 4px 16px rgba(8, 153, 73, 0.15)",
-      lg: "0 8px 24px rgba(8, 153, 73, 0.18)",
-      xl: "0 12px 32px rgba(8, 153, 73, 0.22)",
+      sm: "0 2px 8px rgba(var(--ds-primary-green-rgb), 0.12)",
+      md: "0 4px 16px rgba(var(--ds-primary-green-rgb), 0.15)",
+      lg: "0 8px 24px rgba(var(--ds-primary-green-rgb), 0.18)",
+      xl: "0 12px 32px rgba(var(--ds-primary-green-rgb), 0.22)",
     },
   },
   motion: {

@@ -282,8 +282,8 @@
   }
   50% {
     box-shadow:
-      0 0 1.25rem var(--color-rarity-legendary),
-      0 0 1.875rem var(--color-rarity-legendary);
+      0 0 var(--space-5) var(--color-rarity-legendary),
+      0 0 calc(var(--space-8) - var(--space-0-5)) var(--color-rarity-legendary);
   }
 }
 

@@ -504,7 +504,7 @@
     input:valid:not(:placeholder-shown),
     textarea:valid:not(:placeholder-shown),
     select:valid:not(:placeholder-shown) {
-      border-color: var(--primitive-success-500);
+      border-color: var(--color-status-success);
 
       &:focus-visible {
         box-shadow: 0 0 0 var(--space-0-75) rgba(99, 173, 14, 0.15);

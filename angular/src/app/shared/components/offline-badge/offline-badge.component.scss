@@ -23,8 +23,8 @@
 
 /* Capability states */
 .capability-full {
-  background: var(--primitive-success-50);
-  color: var(--primitive-success-700);
+  background: var(--color-status-success-subtle);
+  color: var(--color-status-success);
 }
 
 .capability-full i {
@@ -70,7 +70,7 @@
 }
 
 .is-offline.capability-full {
-  background: var(--primitive-success-100);
+  background: var(--color-status-success-surface);
 }
 
 .is-offline.capability-none {

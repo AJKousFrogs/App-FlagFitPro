@@ -105,7 +105,6 @@ interface TeamOption {
     Select,
     Skeleton,
     TableModule,
-    TableModule,
     StatusTagComponent,
     MainLayoutComponent,
     IconButtonComponent,
@@ -200,7 +199,7 @@ interface TeamOption {
                 <p-progressBar
                   [value]="overview()?.sessionCompletionRate || 0"
                   [showValue]="false"
-                  styleClass="session-completion-bar"
+                  class="session-completion-bar"
                 ></p-progressBar>
               </div>
             </div>
@@ -229,7 +228,7 @@ interface TeamOption {
           <!-- Left Column: Charts -->
           <div class="charts-column">
             <!-- AI Classification Breakdown -->
-            <p-card header="AI Classification" styleClass="analytics-card">
+            <p-card header="AI Classification" class="analytics-card">
               @if (loading()) {
                 <p-skeleton
                   width="100%"
@@ -321,7 +320,7 @@ interface TeamOption {
             </p-card>
 
             <!-- Activity Trends -->
-            <p-card header="Activity Trends" styleClass="analytics-card">
+            <p-card header="Activity Trends" class="analytics-card">
               @if (loading()) {
                 <p-skeleton
                   width="100%"
@@ -356,13 +355,13 @@ interface TeamOption {
           <!-- Right Column: Leaderboard & Feedback -->
           <div class="side-column">
             <!-- Team Leaderboard -->
-            <p-card header="Engagement Leaderboard" styleClass="analytics-card">
+            <p-card header="Engagement Leaderboard" class="analytics-card">
               <p-table
                 [value]="leaderboard()"
                 [rows]="5"
-                styleClass="p-datatable-sm"
+                class="p-datatable-sm"
               >
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <tr>
                     <th class="leaderboard-rank-col">#</th>
                     <th>Athlete</th>
@@ -370,7 +369,7 @@ interface TeamOption {
                     <th>%</th>
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-entry>
+                <ng-template #body let-entry>
                   <tr>
                     <td>{{ entry.rank }}</td>
                     <td>{{ entry.name }}</td>
@@ -388,7 +387,7 @@ interface TeamOption {
             </p-card>
 
             <!-- Feedback Stats -->
-            <p-card header="Feedback Overview" styleClass="analytics-card">
+            <p-card header="Feedback Overview" class="analytics-card">
               @if (feedbackStats(); as stats) {
                 <div class="feedback-stats">
                   <div class="feedback-section">
@@ -407,7 +406,7 @@ interface TeamOption {
                     </div>
                     <p-progressBar
                       [value]="stats.athleteFeedback?.helpfulRate || 0"
-                      styleClass="mb-4"
+                      class="mb-4"
                     ></p-progressBar>
                   </div>
 

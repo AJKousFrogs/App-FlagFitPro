@@ -19,7 +19,6 @@ import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { MenuItem } from "primeng/api";
 import { Avatar } from "primeng/avatar";
-import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
 import { InputGroup } from "primeng/inputgroup";
 import { InputGroupAddon } from "primeng/inputgroupaddon";
@@ -43,6 +42,7 @@ import {
   WeatherData,
   WeatherService,
 } from "../../../core/services/weather.service";
+import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { NotificationsPanelComponent } from "../notifications-panel/notifications-panel.component";
 import { SearchPanelComponent } from "../search-panel/search-panel.component";
@@ -57,7 +57,7 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
     InputGroup,
     InputGroupAddon,
     Avatar,
-    Button,
+    ButtonComponent,
     Tooltip,
     Toolbar,
     Menu,

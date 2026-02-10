@@ -115,7 +115,7 @@ export interface UploadedFile {
 
       <!-- Error Message -->
       @if (errorMessage()) {
-        <p-message severity="error" styleClass="status-message">
+        <p-message severity="error" class="status-message">
           {{ errorMessage() }}
         </p-message>
       }

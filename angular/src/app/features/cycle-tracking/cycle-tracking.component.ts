@@ -19,7 +19,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -296,11 +296,10 @@ const RETENTION_OPTIONS = [
     Checkbox,
     DatePicker,
     Dialog,
-    PrimeTemplate,
+    
     Message,
     RadioButton,
     Select,
-    TableModule,
     TableModule,
     Textarea,
 
@@ -320,7 +319,7 @@ const RETENTION_OPTIONS = [
         ></app-page-header>
 
         <!-- Privacy Notice -->
-        <p-message severity="info" styleClass="privacy-notice status-message">
+        <p-message severity="info" class="privacy-notice status-message">
           <div class="privacy-content">
             <i class="pi pi-lock"></i>
             <div>
@@ -334,7 +333,7 @@ const RETENTION_OPTIONS = [
         </p-message>
 
         <!-- Current Cycle Status -->
-        <p-card styleClass="cycle-status-card">
+        <p-card class="cycle-status-card">
           <div class="cycle-status-content">
             <div class="cycle-day-display">
               <div
@@ -405,8 +404,8 @@ const RETENTION_OPTIONS = [
         <!-- Today's Recommendations -->
         <div class="recommendations-grid">
           <!-- Training Recommendations -->
-          <p-card styleClass="recommendation-card training-card">
-            <ng-template pTemplate="header">
+          <p-card class="recommendation-card training-card">
+            <ng-template #header>
               <div class="rec-header">
                 <i class="pi pi-bolt"></i>
                 <span
@@ -489,8 +488,8 @@ const RETENTION_OPTIONS = [
           </p-card>
 
           <!-- Nutrition Recommendations -->
-          <p-card styleClass="recommendation-card nutrition-card">
-            <ng-template pTemplate="header">
+          <p-card class="recommendation-card nutrition-card">
+            <ng-template #header>
               <div class="rec-header">
                 <i class="pi pi-apple"></i>
                 <span
@@ -535,7 +534,7 @@ const RETENTION_OPTIONS = [
 
             <p-message
               severity="info"
-              styleClass="nutrition-tip status-message"
+              class="nutrition-tip status-message"
             >
               <span>💡 {{ getNutritionTip() }}</span>
             </p-message>
@@ -543,7 +542,7 @@ const RETENTION_OPTIONS = [
         </div>
 
         <!-- ACWR Adjustment -->
-        <p-card header="ACWR Adjustment" styleClass="acwr-card">
+        <p-card header="ACWR Adjustment" class="acwr-card">
           @if (baseAcwr() !== null && adjustedAcwr() !== null) {
             <div class="acwr-content">
               <div class="acwr-values">
@@ -568,7 +567,7 @@ const RETENTION_OPTIONS = [
 
               <p-message
                 [severity]="getAcwrStatus().severity"
-                styleClass="acwr-status status-message"
+                class="acwr-status status-message"
               >
                 <span>{{ getAcwrStatus().message }}</span>
               </p-message>
@@ -585,8 +584,8 @@ const RETENTION_OPTIONS = [
         </p-card>
 
         <!-- Symptom Tracking -->
-        <p-card styleClass="symptom-card">
-          <ng-template pTemplate="header">
+        <p-card class="symptom-card">
+          <ng-template #header>
             <div class="symptom-header">
               <div class="symptom-title">
                 <i class="pi pi-pencil"></i>
@@ -640,7 +639,7 @@ const RETENTION_OPTIONS = [
         </p-card>
 
         <!-- Cycle History -->
-        <p-card header="Recent Cycles" styleClass="history-card">
+        <p-card header="Recent Cycles" class="history-card">
           @if (cycleHistory().length === 0) {
             <div class="empty-state">
               <i class="pi pi-calendar"></i>
@@ -652,9 +651,9 @@ const RETENTION_OPTIONS = [
             <p-table
               [value]="cycleHistory()"
               [rows]="5"
-              styleClass="p-datatable-sm"
+              class="p-datatable-sm"
             >
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Cycle</th>
                   <th>Start Date</th>
@@ -663,7 +662,7 @@ const RETENTION_OPTIONS = [
                   <th>Symptoms</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-cycle let-i="rowIndex">
+              <ng-template #body let-cycle let-i="rowIndex">
                 <tr>
                   <td>
                     {{ i === 0 ? "Current" : getMonthName(cycle.startDate) }}
@@ -698,7 +697,7 @@ const RETENTION_OPTIONS = [
         </p-card>
 
         <!-- Privacy Settings -->
-        <p-card header="Privacy Controls" styleClass="privacy-card">
+        <p-card header="Privacy Controls" class="privacy-card">
           <div class="privacy-settings">
             <div class="privacy-option">
               <label>Who can see your cycle data?</label>
@@ -727,7 +726,7 @@ const RETENTION_OPTIONS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Auto-delete data older than..."
-                styleClass="retention-select"
+                class="retention-select"
               ></p-select>
             </div>
 
@@ -755,7 +754,7 @@ const RETENTION_OPTIONS = [
         [modal]="true"
         [visible]="showLogDialog()"
         (visibleChange)="showLogDialog.set($event)"
-        styleClass="dialog-max-w-lg"
+        class="dialog-max-w-lg"
         [breakpoints]="dialogBreakpoints"
         [draggable]="false"
       >
@@ -770,7 +769,7 @@ const RETENTION_OPTIONS = [
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -782,7 +781,7 @@ const RETENTION_OPTIONS = [
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
                 placeholder="Select date"
               ></p-datepicker>
             </div>
@@ -838,7 +837,7 @@ const RETENTION_OPTIONS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="outlined" (clicked)="closeLogDialog()"
             >Cancel</app-button
           >
@@ -858,7 +857,7 @@ const RETENTION_OPTIONS = [
         [modal]="true"
         [visible]="showDeleteDialog()"
         (visibleChange)="showDeleteDialog.set($event)"
-        styleClass="dialog-max-w-sm"
+        class="dialog-max-w-sm"
         [draggable]="false"
       >
         <div class="delete-warning">
@@ -869,7 +868,7 @@ const RETENTION_OPTIONS = [
           </p>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="outlined" (clicked)="showDeleteDialog.set(false)"
             >Cancel</app-button
           >

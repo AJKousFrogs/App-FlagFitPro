@@ -30,7 +30,7 @@ import { Toast } from "primeng/toast";
   template: `
     <p-toast
       [position]="position()"
-      [styleClass]="'app-toast ' + (styleClass() || '')"
+      [class]="'app-toast ' + (styleClass() || '')"
       [baseZIndex]="baseZIndex()"
       [autoZIndex]="autoZIndex()"
       [key]="key()"
@@ -38,7 +38,7 @@ import { Toast } from "primeng/toast";
       [showTransformOptions]="showTransformOptions()"
       [hideTransformOptions]="hideTransformOptions()"
     >
-      <ng-template let-message pTemplate="message">
+      <ng-template let-message #message>
         <div class="toast-content">
           <div
             class="toast-icon-wrapper"

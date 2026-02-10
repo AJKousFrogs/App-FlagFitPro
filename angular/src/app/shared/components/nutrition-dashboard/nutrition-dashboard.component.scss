@@ -94,7 +94,7 @@
 
 .goal-item.achieved {
   border-color: var(--ds-primary-green);
-  background: var(--primitive-success-50);
+  background: var(--color-status-success-subtle);
 }
 
 .goal-item.warning {
@@ -119,15 +119,15 @@
 }
 
 .progress-low {
-  --p-progressbar-value-bg: var(--color-status-error);
+  --p-progressbar-value-background: var(--color-status-error);
 }
 
 .progress-medium {
-  --p-progressbar-value-bg: var(--color-status-warning);
+  --p-progressbar-value-background: var(--color-status-warning);
 }
 
 .progress-high {
-  --p-progressbar-value-bg: var(--color-status-success);
+  --p-progressbar-value-background: var(--color-status-success);
 }
 
 .progress-text {
@@ -241,7 +241,7 @@
 }
 
 .insight-item.positive {
-  background: var(--primitive-success-50);
+  background: var(--color-status-success-subtle);
   border-left: var(--border-4) solid var(--ds-primary-green);
 }
 

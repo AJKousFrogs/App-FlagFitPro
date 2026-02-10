@@ -44,8 +44,8 @@ $ds-font-weight-bold: 700;
   --ds-primary-green-hover: #036d35;
   --ds-primary-green-dark: #036d35; /* Alias for hover state - darker green */
   --ds-primary-green-light: #0ab85a;
-  --ds-primary-green-subtle: rgba(8, 153, 73, 0.1);
-  --ds-primary-green-ultra-subtle: rgba(8, 153, 73, 0.05);
+  --ds-primary-green-subtle: rgba(var(--ds-primary-green-rgb), 0.1);
+  --ds-primary-green-ultra-subtle: rgba(var(--ds-primary-green-rgb), 0.05);
 
   /* Orange for High Risk (Phase 3 - Standardized) */
   --ds-primary-orange: #f97316; /* Standardized high risk color */
@@ -235,10 +235,15 @@ $ds-font-weight-bold: 700;
 
   /* Surface Colors - Neutrals: Whites, blacks, and grays for backgrounds, text, and fine details */
   --surface-primary: #fff; /* White - main backgrounds */
+  --surface-primary-rgb: 255, 255, 255; /* For rgba() compositions */
   --surface-secondary: #f8faf9; /* Off-white - card backgrounds */
+  --color-surface-secondary: var(--surface-secondary); /* Alias for PrimeNG/component compatibility */
   --surface-tertiary: #e9ecef; /* Light gray - subtle backgrounds */
   --surface-elevated: #fff; /* White - elevated cards/modals */
+  --surface-card: var(--surface-secondary); /* Card/panel backgrounds - alias */
+  --surface-ground: var(--surface-primary); /* Page/ground backgrounds - alias */
   --surface-overlay: rgba(0, 0, 0, 0.5);
+  --surface-overlay-subtle: rgba(0, 0, 0, 0.1); /* Hover states on light surfaces */
   --surface-overlay-light: rgba(0, 0, 0, 0.3);
   --surface-overlay-medium: rgba(0, 0, 0, 0.4);
   --surface-overlay-dark: rgba(0, 0, 0, 0.6);
@@ -257,7 +262,7 @@ $ds-font-weight-bold: 700;
   --overlay-black-60: rgba(0, 0, 0, 0.6);
   --overlay-black-80: rgba(0, 0, 0, 0.8);
 
-  /* Neutral Grays */
+  /* Neutral Grays - Legacy scale; prefer primitive-neutral-* for new usage */
   --neutral-50: #fafafa;
   --neutral-100: #f5f5f5;
   --neutral-200: #e5e5e5;
@@ -300,6 +305,14 @@ $ds-font-weight-bold: 700;
   --color-border-default: var(--color-border-primary);
   --color-border-muted: var(--primitive-neutral-300);
   --color-border-warning: var(--color-status-warning);
+  --color-border-danger: var(--color-status-error); /* Error/danger border - invalid states */
+
+  /* Surface aliases (for PrimeNG/token-mapping compatibility) */
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-hover: var(--surface-secondary); /* Neutral hover - table rows, dropdown options */
+  --color-surface-selected: rgba(var(--ds-primary-green-rgb), 0.1); /* Selected row/option highlight */
+  --color-surface-inverse: var(--primitive-neutral-900); /* Dark surface - tooltips, inverse UI */
+  --color-text-on-inverse: #fff; /* Light text on dark/inverse surfaces */
 
   /* Status Colors - Feedback Colors (Status & Alerts) */
   /* SUCCESS = GREEN (Decision: positive outcomes, confirmations, "go" state) */
@@ -665,6 +678,7 @@ $ds-font-weight-bold: 700;
   --letter-spacing-normal: var(--ds-letter-spacing-normal, 0);
   --letter-spacing-caption: var(--ds-letter-spacing-caption, 0.05em);
   --letter-spacing-wide: var(--ds-letter-spacing-wide, 0.025em);
+  --ds-letter-spacing-label: var(--letter-spacing-caption); /* Labels, datatable headers */
 
   /* ================================
      BORDER RADIUS (fallbacks for Aura)
@@ -698,6 +712,10 @@ $ds-font-weight-bold: 700;
   --shadow-lg: var(--ds-shadow-3, 0 8px 24px rgba(0, 0, 0, 0.12));
   --shadow-xl: var(--ds-shadow-4, 0 12px 48px rgba(0, 0, 0, 0.15));
   --shadow-2xl: 0 1.5625rem 3.125rem -0.75rem rgba(0, 0, 0, 0.25);
+  /* Shadow aliases (for token-mapping/component compatibility) */
+  --shadow-1: var(--shadow-sm);
+  --shadow-2: var(--shadow-md);
+  --shadow-3: var(--shadow-lg);
   --shadow-inner: inset 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.06);
   --text-shadow-subtle: 0 1px 1px rgba(0, 0, 0, 0.1);
 
@@ -711,7 +729,7 @@ $ds-font-weight-bold: 700;
   --shadow-error-focus: 0 0 0 var(--focus-ring-width)
     rgba(var(--primitive-error-500-rgb), 0.2);
   --shadow-success-focus: 0 0 0 var(--focus-ring-width)
-    rgba(var(--primitive-success-500-rgb), 0.2);
+    rgba(var(--ds-primary-green-rgb), 0.2);
   --shadow-warning-focus: 0 0 0 var(--focus-ring-width)
     rgba(var(--primitive-warning-500-rgb), 0.2);
   --shadow-focus-inset: inset 0 0 0 0.2rem
@@ -1244,9 +1262,13 @@ $ds-font-weight-bold: 700;
   :root {
     /* Surface Colors - Dark Mode */
     --surface-primary: var(--primitive-neutral-900); /* #171717 */
+    --surface-primary-rgb: 23, 23, 23; /* #171717 for rgba() compositions */
     --surface-secondary: var(--primitive-neutral-800); /* #262626 */
+    --color-surface-secondary: var(--surface-secondary);
     --surface-tertiary: var(--primitive-neutral-700); /* #404040 */
     --surface-elevated: var(--primitive-neutral-800); /* #262626 */
+    --surface-card: var(--primitive-neutral-800);
+    --surface-ground: var(--primitive-neutral-900);
     --surface-overlay: rgba(0, 0, 0, 0.7);
 
     /* Text Colors - Dark Mode */
@@ -1255,6 +1277,8 @@ $ds-font-weight-bold: 700;
     --color-text-muted: var(--primitive-neutral-500); /* #a3a3a3 */
     --color-text-disabled: var(--primitive-neutral-600); /* #737373 */
     --color-text-on-white: #fff; /* White text on dark */
+    --text-primary: #fff;
+    --text-secondary: var(--primitive-neutral-400);
 
     /* Warning text color - lighter for dark mode */
     --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
@@ -1272,18 +1296,31 @@ $ds-font-weight-bold: 700;
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
     --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
+
+    /* Hover Tokens - Dark Mode (align with manual toggle) */
+    --hover-bg-secondary: rgba(var(--primitive-primary-500-rgb), 0.15);
+    --hover-bg-tertiary: rgba(var(--primitive-primary-500-rgb), 0.1);
+    --hover-bg-ultra-light: rgba(var(--primitive-primary-500-rgb), 0.05);
+    --hover-border-subtle: rgba(var(--primitive-primary-500-rgb), 0.3);
+    --hover-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --hover-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --hover-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --hover-shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
   }
 }
 
 /* Manual Dark Mode Toggle - supports both data-theme attribute and .dark-theme class */
 [data-theme="dark"],
 .dark-theme,
-html.dark-theme,
 body.dark-theme {
   /* Surface Colors - Dark Mode */
   --surface-primary: var(--primitive-neutral-900);
+  --surface-primary-rgb: 23, 23, 23; /* #171717 for rgba() compositions */
   --surface-secondary: var(--primitive-neutral-800);
+  --color-surface-secondary: var(--surface-secondary);
   --surface-tertiary: var(--primitive-neutral-700);
+  --surface-card: var(--primitive-neutral-800);
+  --surface-ground: var(--primitive-neutral-900);
   --surface-elevated: var(--primitive-neutral-800);
   --surface-overlay: rgba(0, 0, 0, 0.7);
 
@@ -1351,33 +1388,37 @@ body.dark-theme {
 }
 
 /* Manual Light Mode Toggle - supports both data-theme attribute and .light-theme class */
+/* Aligned with :root for consistency when toggling dark → light */
 [data-theme="light"],
 .light-theme,
-html.light-theme,
 body.light-theme {
-  /* Surface Colors - Light Mode */
+  /* Surface Colors - Light Mode (matches :root) */
   --surface-primary: #fff;
+  --surface-primary-rgb: 255, 255, 255;
   --surface-secondary: #f8faf9;
+  --color-surface-secondary: var(--surface-secondary);
   --surface-tertiary: #e9ecef;
   --surface-elevated: #fff;
+  --surface-card: var(--surface-secondary);
+  --surface-ground: var(--surface-primary);
   --surface-overlay: rgba(0, 0, 0, 0.5);
 
-  /* Text Colors - Light Mode */
-  --color-text-primary: var(--primitive-neutral-900);
-  --color-text-secondary: var(--primitive-neutral-600);
-  --color-text-muted: var(--primitive-neutral-500);
-  --color-text-disabled: var(--primitive-neutral-400);
+  /* Text Colors - Light Mode (matches :root WCAG values) */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-muted: #525252;
+  --color-text-disabled: #9ca3af;
   --color-text-on-white: var(--color-brand-primary);
-  --text-primary: var(--primitive-neutral-900);
-  --text-secondary: var(--primitive-neutral-600);
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
 
-  /* Border Colors - Light Mode */
-  --color-border-primary: var(--primitive-neutral-300);
-  --color-border-secondary: var(--primitive-neutral-200);
+  /* Border Colors - Light Mode (matches :root) */
+  --color-border-primary: #e5e7eb;
+  --color-border-secondary: #e5e7eb;
   --color-border-subtle: rgba(0, 0, 0, 0.05);
-  --surface-border: var(--primitive-neutral-300);
-  --color-border-default: var(--primitive-neutral-300);
-  --color-border-muted: var(--primitive-neutral-400);
+  --surface-border: var(--color-border-primary);
+  --color-border-default: var(--color-border-primary);
+  --color-border-muted: var(--primitive-neutral-300);
 
   /* Shadows - Light Mode */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -1389,25 +1430,25 @@ body.light-theme {
   --p-dialog-background: var(--surface-elevated);
   --p-overlay-panel-background: var(--surface-elevated);
 
-  /* PrimeNG Surface Variables - Light Mode */
-  --p-surface-0: #fff;
-  --p-surface-50: #f8faf9;
-  --p-surface-100: #f1f5f4;
-  --p-surface-200: #e2e8f0;
-  --p-surface-300: #cbd5e1;
-  --p-surface-400: #94a3b8;
-  --p-surface-500: #64748b;
-  --p-surface-600: #475569;
-  --p-surface-700: #334155;
-  --p-surface-800: #1e293b;
-  --p-surface-900: #0f172a;
-  --p-text-color: #0f172a;
-  --p-text-color-secondary: #64748b;
-  --p-surface-border: #e2e8f0;
+  /* PrimeNG Surface Variables - Light Mode (primitive-neutral, not Slate) */
+  --p-surface-0: var(--surface-primary);
+  --p-surface-50: var(--surface-secondary);
+  --p-surface-100: var(--surface-tertiary);
+  --p-surface-200: var(--primitive-neutral-200);
+  --p-surface-300: var(--primitive-neutral-300);
+  --p-surface-400: var(--primitive-neutral-400);
+  --p-surface-500: var(--primitive-neutral-500);
+  --p-surface-600: var(--primitive-neutral-600);
+  --p-surface-700: var(--primitive-neutral-700);
+  --p-surface-800: var(--primitive-neutral-800);
+  --p-surface-900: var(--primitive-neutral-900);
+  --p-text-color: var(--color-text-primary);
+  --p-text-color-secondary: var(--color-text-secondary);
+  --p-surface-border: var(--color-border-primary);
 
   /* Card and Component Backgrounds */
-  --p-card-background: #fff;
-  --p-content-background: #fff;
+  --p-card-background: var(--surface-primary);
+  --p-content-background: var(--surface-primary);
   --p-highlight-background: rgba(16, 201, 107, 0.1);
   --p-highlight-text-color: #089949;
 }

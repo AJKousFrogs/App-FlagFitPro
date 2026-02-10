@@ -51,16 +51,16 @@
     var(--primitive-purple-500) 0%,
     var(--primitive-purple-700) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .team-icon {
   background: linear-gradient(
     135deg,
     var(--primitive-teal-500) 0%,
-    var(--primitive-success-400) 100%
+    var(--color-status-success) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .emergency-icon {
@@ -69,7 +69,7 @@
     var(--primitive-error-500) 0%,
     var(--primitive-error-400) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .research-icon {
@@ -78,7 +78,7 @@
     var(--primitive-blue-400) 0%,
     var(--primitive-cyan-400) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .rights-icon {

@@ -207,7 +207,7 @@
 
   .heatmap-grid {
     grid-template-columns: repeat(7, 1fr);
-    gap: calc(var(--ds-space-1) / 4); /* Intentionally var(--border-1) for grid lines */
+    gap: calc(var(--space-1) / 4); /* Intentionally var(--border-1) for grid lines */
   }
 
   .heatmap-cell {

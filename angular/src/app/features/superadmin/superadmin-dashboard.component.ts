@@ -34,7 +34,6 @@ import {
     Card,
     StatusTagComponent,
     TableModule,
-    TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -62,7 +61,7 @@ import {
 
         <!-- Stats Grid -->
         <div class="stats-grid">
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-icon pending">
                 <i class="pi pi-clock"></i>
@@ -76,7 +75,7 @@ import {
             </div>
           </p-card>
 
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-icon roles">
                 <i class="pi pi-users"></i>
@@ -90,7 +89,7 @@ import {
             </div>
           </p-card>
 
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-icon approved">
                 <i class="pi pi-check-circle"></i>
@@ -104,7 +103,7 @@ import {
             </div>
           </p-card>
 
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-icon users">
                 <i class="pi pi-user"></i>
@@ -119,7 +118,7 @@ import {
 
         <!-- Pending Approvals Section -->
         <p-card>
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h3>
                 <i class="pi pi-inbox"></i>

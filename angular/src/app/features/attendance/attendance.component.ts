@@ -15,7 +15,6 @@ import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -57,10 +56,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     FormsModule,
     Card,
     TableModule,
-    TableModule,
     StatusTagComponent,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     Textarea,
     Select,
@@ -93,7 +91,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         <div class="attendance-content">
           <!-- Stats Overview -->
           <div class="stats-grid">
-            <p-card styleClass="stat-card">
+            <p-card class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-calendar stat-icon"></i>
                 <div class="stat-info stat-block__content">
@@ -105,7 +103,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               </div>
             </p-card>
 
-            <p-card styleClass="stat-card">
+            <p-card class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-check-circle stat-icon success"></i>
                 <div class="stat-info stat-block__content">
@@ -117,7 +115,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               </div>
             </p-card>
 
-            <p-card styleClass="stat-card">
+            <p-card class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-users stat-icon"></i>
                 <div class="stat-info stat-block__content">
@@ -131,8 +129,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           </div>
 
           <!-- Upcoming Events -->
-          <p-card styleClass="events-card">
-            <ng-template pTemplate="header">
+          <p-card class="events-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Upcoming Events</h3>
                 <div class="filter-actions">
@@ -211,8 +209,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
 
           <!-- Player Attendance Stats (Coach View) -->
           @if (isCoach()) {
-            <p-card styleClass="stats-card">
-              <ng-template pTemplate="header">
+            <p-card class="stats-card">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>Player Attendance Statistics</h3>
                 </div>
@@ -224,9 +222,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 [rows]="10"
                 [showCurrentPageReport]="true"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} players"
-                styleClass="p-datatable-sm"
+                class="p-datatable-sm"
               >
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <tr>
                     <th>Player</th>
                     <th>Attended</th>
@@ -237,7 +235,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                     <th>Streak</th>
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-stat>
+                <ng-template #body let-stat>
                   <tr>
                     <td>
                       <div class="player-cell">
@@ -274,7 +272,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                         <p-progressBar
                           [value]="stat.attendance_rate"
                           [showValue]="false"
-                          styleClass="rate-bar"
+                          class="rate-bar"
                         ></p-progressBar>
                         <span>{{ stat.attendance_rate }}%</span>
                       </div>
@@ -300,7 +298,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           [(visible)]="showCreateEventDialog"
           [modal]="true"
           [closable]="true"
-          styleClass="attendance-create-dialog"
+          class="attendance-create-dialog"
         >
           <div class="dialog-form">
             <div class="form-field">
@@ -321,7 +319,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 [options]="eventTypeOptions"
                 [(ngModel)]="newEvent.event_type"
                 placeholder="Select type"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
 
@@ -333,7 +331,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   [(ngModel)]="newEvent.start_time"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-datepicker>
               </div>
 
@@ -344,7 +342,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   [(ngModel)]="newEvent.end_time"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-datepicker>
               </div>
             </div>
@@ -382,7 +380,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             </div>
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showCreateEventDialog = false"
               >Cancel</app-button
             >
@@ -401,7 +399,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           [(visible)]="showAttendanceDialog"
           [modal]="true"
           [closable]="true"
-          styleClass="attendance-take-dialog"
+          class="attendance-take-dialog"
         >
           @if (selectedEvent()) {
             <div class="attendance-dialog">
@@ -441,7 +439,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             </div>
           }
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showAttendanceDialog = false"
               >Close</app-button
             >

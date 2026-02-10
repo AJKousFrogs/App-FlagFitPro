@@ -78,7 +78,7 @@ interface TeamSettings {
           icon="pi-cog"
         ></app-page-header>
 
-        <p-card styleClass="tab-content-card">
+        <p-card class="tab-content-card">
           <div class="settings-form">
             <!-- Team Information -->
             <div class="settings-section">

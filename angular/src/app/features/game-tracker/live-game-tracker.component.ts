@@ -221,7 +221,7 @@ interface Play {
         header="Play Details"
         [modal]="true"
         [position]="'bottom'"
-        styleClass="game-tracker-play-dialog"
+        class="game-tracker-play-dialog"
       >
         <form [formGroup]="playForm" class="play-form">
           <div class="form-row">

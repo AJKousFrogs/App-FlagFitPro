@@ -19,7 +19,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -119,7 +119,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     Checkbox,
     DatePicker,
     Dialog,
-    PrimeTemplate,
+    
     InputNumber,
     InputText,
     Select,
@@ -173,7 +173,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         @if (filteredPractices().length > 0) {
           <div class="practices-list">
             @for (practice of filteredPractices(); track practice.id) {
-              <p-card styleClass="practice-card">
+              <p-card class="practice-card">
                 <div class="practice-header">
                   <div class="practice-title">
                     <span class="practice-icon">🏋️</span>
@@ -271,7 +271,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             }
           </div>
         } @else {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-calendar"></i>
               <h3>No Practices Found</h3>
@@ -289,7 +289,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         [(visible)]="showDialog"
         [header]="isEditing() ? 'Edit Practice Plan' : 'Create Practice Plan'"
         [modal]="true"
-        styleClass="practice-dialog"
+        class="practice-dialog"
       >
         <div class="practice-form">
           <!-- Details Section -->
@@ -401,7 +401,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                       suffix=" min"
                       [min]="5"
                       [max]="60"
-                      styleClass="activity-duration-input"
+                      class="activity-duration-input"
                       (ngModelChange)="updateActivityTimes()"
                     ></p-inputNumber>
                     <app-button
@@ -470,7 +470,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="saveDraft()"
             >Save as Draft</app-button
           >
@@ -494,7 +494,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         [(visible)]="showActivityDialog"
         [header]="'Edit Activity: ' + (editingActivity?.title || '')"
         [modal]="true"
-        styleClass="practice-activity-dialog"
+        class="practice-activity-dialog"
       >
         @if (editingActivity) {
           <div class="activity-form">
@@ -588,7 +588,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             }
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button
               variant="secondary"
               (clicked)="showActivityDialog = false"

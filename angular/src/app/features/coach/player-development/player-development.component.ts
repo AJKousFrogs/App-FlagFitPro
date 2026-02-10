@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -121,12 +121,11 @@ const COMPARE_OPTIONS = [
     LazyChartComponent,
     DatePicker,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     ProgressBar,
     RadioButton,
     Select,
-    TableModule,
     TableModule,
     StatusTagComponent,
     Textarea,
@@ -164,7 +163,7 @@ const COMPARE_OPTIONS = [
               optionValue="id"
               placeholder="Select Player"
               (onValueChange)="onPlayerChange()"
-              styleClass="w-full"
+              class="w-full"
               [attr.aria-label]="'Select player'"
             ></p-select>
           </div>
@@ -177,7 +176,7 @@ const COMPARE_OPTIONS = [
               optionLabel="label"
               optionValue="value"
               placeholder="Position Avg"
-              styleClass="w-full"
+              class="w-full"
               [attr.aria-label]="'Select comparison baseline'"
             ></p-select>
           </div>
@@ -240,8 +239,8 @@ const COMPARE_OPTIONS = [
           </div>
 
           <!-- Spider Chart Section -->
-          <p-card styleClass="chart-card">
-            <ng-template pTemplate="header">
+          <p-card class="chart-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Position Benchmark Spider Chart</h3>
               </div>
@@ -271,8 +270,8 @@ const COMPARE_OPTIONS = [
           </p-card>
 
           <!-- Development Goals -->
-          <p-card styleClass="goals-card">
-            <ng-template pTemplate="header">
+          <p-card class="goals-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Development Goals</h3>
                 <app-button
@@ -305,7 +304,7 @@ const COMPARE_OPTIONS = [
                       <p-progressBar
                         [value]="goal.progress"
                         [showValue]="false"
-                        styleClass="goal-progress-bar"
+                        class="goal-progress-bar"
                       ></p-progressBar>
                       <span class="progress-value">{{ goal.progress }}%</span>
                     </div>
@@ -347,8 +346,8 @@ const COMPARE_OPTIONS = [
           </p-card>
 
           <!-- Performance History -->
-          <p-card styleClass="history-card">
-            <ng-template pTemplate="header">
+          <p-card class="history-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Performance History</h3>
               </div>
@@ -390,8 +389,8 @@ const COMPARE_OPTIONS = [
           </p-card>
 
           <!-- Skill Assessments -->
-          <p-card styleClass="assessments-card">
-            <ng-template pTemplate="header">
+          <p-card class="assessments-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>{{ selectedPlayer()?.position }}-Specific Skills</h3>
                 <div class="assessment-actions">
@@ -433,8 +432,8 @@ const COMPARE_OPTIONS = [
           </p-card>
 
           <!-- Coach Notes -->
-          <p-card styleClass="notes-card">
-            <ng-template pTemplate="header">
+          <p-card class="notes-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Coach Development Notes</h3>
                 <app-button
@@ -458,7 +457,7 @@ const COMPARE_OPTIONS = [
             </div>
           </p-card>
         } @else {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-users"></i>
               <h3>Select a Player</h3>
@@ -473,7 +472,7 @@ const COMPARE_OPTIONS = [
         [(visible)]="showGoalDialog"
         header="Add Development Goal"
         [modal]="true"
-        styleClass="development-goal-dialog"
+        class="development-goal-dialog"
       >
         <div class="goal-form">
           <div class="form-field">
@@ -485,7 +484,7 @@ const COMPARE_OPTIONS = [
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
-              styleClass="w-full"
+              class="w-full"
               [attr.aria-label]="'Select player for goal'"
             ></p-select>
           </div>
@@ -517,7 +516,7 @@ const COMPARE_OPTIONS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
-                styleClass="w-full"
+                class="w-full"
                 [attr.aria-label]="'Select goal metric'"
               ></p-select>
             </div>
@@ -548,7 +547,7 @@ const COMPARE_OPTIONS = [
                 inputId="goal-due-date"
                 [(ngModel)]="goalForm.dueDate"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
                 [attr.aria-label]="'Select target date for goal'"
               ></p-datepicker>
             </div>
@@ -565,7 +564,7 @@ const COMPARE_OPTIONS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showGoalDialog = false"
             >Cancel</app-button
           >
@@ -580,7 +579,7 @@ const COMPARE_OPTIONS = [
         [(visible)]="showNoteDialog"
         header="Add Development Note"
         [modal]="true"
-        styleClass="development-note-dialog"
+        class="development-note-dialog"
       >
         <div class="note-form">
           <div class="form-field">
@@ -594,7 +593,7 @@ const COMPARE_OPTIONS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showNoteDialog = false"
             >Cancel</app-button
           >

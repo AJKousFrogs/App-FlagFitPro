@@ -1,13 +1,36 @@
 {
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:878279e0-b737-4644-a298-5a98e40ade10",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": false,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "Practitioner's Guide to Hamstrings",
+      "publisher": "VALD Performance",
+      "source_url": "https://resources.valdperformance.com/practitioners-guide-to-hamstrings",
+      "authors": [
+        "VALD Performance Contributors"
+      ]
+    }
+  },
   "metadata": {
     "title": "Practitioner's Guide to Hamstrings",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "total_pages": 100,
     "document_type": "practitioner_guide"
   },
   "research_article": {
     "title": "Practitioner's Guide to Hamstrings",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "publication_year": 2024,
     "publisher": "VALD Performance",
     "primary_category": "injury",
@@ -45,7 +68,12 @@
       "biceps_femoris_strain",
       "proximal_hamstring_injury"
     ],
-    "training_types": ["eccentric", "strength", "prevention", "nordic_curl"],
+    "training_types": [
+      "eccentric",
+      "strength",
+      "prevention",
+      "nordic_curl"
+    ],
     "recovery_methods": [
       "nordic_curls",
       "eccentric_training",
@@ -79,7 +107,10 @@
         "sprinters"
       ],
       "sport_specificity": "running_sports",
-      "categories": ["injury", "pathology"],
+      "categories": [
+        "injury",
+        "pathology"
+      ],
       "tags": [
         "hamstring_strain",
         "injury",
@@ -104,7 +135,32 @@
         "Inadequate rehabilitation significantly increases recurrence",
         "Bilateral deficits >15% indicate elevated risk",
         "Premature return to sport leads to reinjury"
-      ]
+      ],
+      "entry_id": "urn:uuid:6f33d2ba-e619-4be8-957c-33d9b07e51a7",
+      "quantitative_claims": [
+        {
+          "metric": "reinjury_rate",
+          "operator": ">=",
+          "value_range": {
+            "min": 12,
+            "max": 30
+          },
+          "unit": "percent",
+          "population_context": "hamstring_strain",
+          "interpretation": "reported_range"
+        },
+        {
+          "metric": "bilateral_asymmetry",
+          "operator": ">=",
+          "value_range": {
+            "value": 15
+          },
+          "unit": "percent",
+          "population_context": "risk_factor",
+          "interpretation": "flag_for_investigation"
+        }
+      ],
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -120,7 +176,10 @@
         "field_sport_athletes"
       ],
       "sport_specificity": "running_sports",
-      "categories": ["assessment", "testing"],
+      "categories": [
+        "assessment",
+        "testing"
+      ],
       "tags": [
         "nordic_curl",
         "strength_testing",
@@ -151,7 +210,9 @@
         "Isokinetic testing for comprehensive profiling",
         "Regular monitoring throughout season",
         "Test previously injured athletes more frequently"
-      ]
+      ],
+      "entry_id": "urn:uuid:8a71e220-f330-454b-b9c8-c172e696cd9f",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "recovery_method",
@@ -161,9 +222,15 @@
       "summary": "Hamstring rehab progresses through phases emphasizing eccentric strength (Nordic curls), with criteria-based return to sport.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["injured_athletes", "running_athletes"],
+      "applicable_to": [
+        "injured_athletes",
+        "running_athletes"
+      ],
       "sport_specificity": "running_sports",
-      "categories": ["rehabilitation", "recovery"],
+      "categories": [
+        "rehabilitation",
+        "recovery"
+      ],
       "tags": [
         "rehab",
         "nordic_curl",
@@ -202,7 +269,9 @@
         "Ensure pain-free high-speed running before return",
         "Continue Nordic curls post-return (prevention)",
         "Address biomechanical factors and load management"
-      ]
+      ],
+      "entry_id": "urn:uuid:2b49dca2-946a-44b8-99d4-fa28ba9d2f89",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -218,7 +287,10 @@
         "field_sport_athletes"
       ],
       "sport_specificity": "running_sports",
-      "categories": ["injury_prevention", "training"],
+      "categories": [
+        "injury_prevention",
+        "training"
+      ],
       "tags": [
         "injury_prevention",
         "nordic_curl",
@@ -252,7 +324,32 @@
         "Ongoing prevention for previously injured athletes",
         "Regular eccentric strength testing",
         "Combine multiple prevention strategies (not just one)"
-      ]
+      ],
+      "entry_id": "urn:uuid:b8bd1edd-d250-4110-9ad8-7c1f38f206ae",
+      "quantitative_claims": [
+        {
+          "metric": "nordic_curl_risk_reduction",
+          "operator": ">=",
+          "value_range": {
+            "min": 50,
+            "max": 70
+          },
+          "unit": "percent",
+          "population_context": "injury_prevention",
+          "interpretation": "reported_benefit"
+        },
+        {
+          "metric": "bilateral_asymmetry",
+          "operator": ">=",
+          "value_range": {
+            "value": 10
+          },
+          "unit": "percent",
+          "population_context": "screening",
+          "interpretation": "flag_threshold"
+        }
+      ],
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -262,16 +359,26 @@
       "summary": "Nordic curls progress from assisted to bodyweight to overload variations, performed 2-3x weekly year-round for prevention.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["all_athletes", "running_athletes"],
+      "applicable_to": [
+        "all_athletes",
+        "running_athletes"
+      ],
       "sport_specificity": "general",
-      "categories": ["training", "prevention", "exercise"],
+      "categories": [
+        "training",
+        "prevention",
+        "exercise"
+      ],
       "tags": [
         "nordic_curl",
         "eccentric_training",
         "programming",
         "progression"
       ],
-      "training_types": ["eccentric", "strength"],
+      "training_types": [
+        "eccentric",
+        "strength"
+      ],
       "protocols": {
         "frequency": "2-3_times_per_week",
         "progression": [
@@ -292,7 +399,9 @@
         "Continue year-round (not just preseason)",
         "Can integrate into team warm-ups",
         "Monitor for excessive soreness (reduce if needed)"
-      ]
+      ],
+      "entry_id": "urn:uuid:d6f3e8a5-6c58-4bc0-bbf0-d924db566101",
+      "evidence_framework": "GRADE"
     }
   ]
 }

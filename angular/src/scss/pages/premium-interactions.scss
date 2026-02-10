@@ -155,7 +155,7 @@
 .hover-glow-success::after {
   box-shadow: 0 0
     calc(var(--space-6) + var(--space-1) + var(--space-0-5))
-    rgba(var(--primitive-success-500-rgb), 0.4);
+    rgba(var(--ds-primary-green-rgb), 0.4);
 }
 
 /* Error glow variant */
@@ -809,7 +809,7 @@
   }
   30%,
   70% {
-    background-color: rgba(var(--primitive-success-500-rgb), 0.2);
+    background-color: rgba(var(--ds-primary-green-rgb), 0.2);
   }
 }
 
@@ -873,7 +873,7 @@
 
 /* Enhanced PrimeNG Toast - Global styles */
 .p-toast-message {
-  animation: toast-enter var(--anim-slow) var(--ease-micro-bounce);
+  animation: toast-enter var(--transition-slow) var(--ease-micro-bounce);
 }
 
 @keyframes toast-enter {

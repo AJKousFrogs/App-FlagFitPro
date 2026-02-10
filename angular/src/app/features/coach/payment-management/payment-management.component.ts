@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -127,13 +127,12 @@ const BALANCE_FILTERS = [
     Checkbox,
     DatePicker,
     Dialog,
-    PrimeTemplate,
+    
     InputNumber,
     InputText,
     ProgressBar,
     RadioButton,
     Select,
-    TableModule,
     TableModule,
     StatusTagComponent,
     Textarea,
@@ -232,7 +231,7 @@ const BALANCE_FILTERS = [
 
             <!-- Active Fees Preview -->
             <p-card>
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>Active Fees</h3>
                   <app-button variant="text" (clicked)="activeTab.set('fees')"
@@ -258,7 +257,7 @@ const BALANCE_FILTERS = [
                       <p-progressBar
                         [value]="getCollectionPercent(fee)"
                         [showValue]="false"
-                        styleClass="fees-preview-progress"
+                        class="fees-preview-progress"
                       ></p-progressBar>
                       <span class="progress-text"
                         >\${{ fee.collected }} / \${{ fee.total }} ({{
@@ -317,7 +316,7 @@ const BALANCE_FILTERS = [
                     <p-progressBar
                       [value]="getCollectionPercent(fee)"
                       [showValue]="false"
-                      styleClass="fees-list-progress"
+                      class="fees-list-progress"
                     ></p-progressBar>
                     <span class="progress-detail"
                       >\${{ fee.collected }} / \${{ fee.total }} ({{
@@ -372,7 +371,7 @@ const BALANCE_FILTERS = [
           @case ("balances") {
             <!-- Player Balances -->
             <p-card>
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>Player Balances</h3>
                   <div class="balance-filters">
@@ -395,8 +394,8 @@ const BALANCE_FILTERS = [
                 </div>
               </ng-template>
 
-              <p-table [value]="filteredBalances()" styleClass="p-datatable-sm">
-                <ng-template pTemplate="header">
+              <p-table [value]="filteredBalances()" class="p-datatable-sm">
+                <ng-template #header>
                   <tr>
                     <th>Player</th>
                     <th>Balance</th>
@@ -405,7 +404,7 @@ const BALANCE_FILTERS = [
                     <th>Actions</th>
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-balance>
+                <ng-template #body let-balance>
                   <tr>
                     <td>{{ balance.playerName }}</td>
                     <td [class.owes]="balance.balance > 0">
@@ -472,14 +471,14 @@ const BALANCE_FILTERS = [
           @case ("history") {
             <!-- Payment History -->
             <p-card>
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>Payment History</h3>
                 </div>
               </ng-template>
 
-              <p-table [value]="payments()" styleClass="p-datatable-sm">
-                <ng-template pTemplate="header">
+              <p-table [value]="payments()" class="p-datatable-sm">
+                <ng-template #header>
                   <tr>
                     <th>Date</th>
                     <th>Player</th>
@@ -489,7 +488,7 @@ const BALANCE_FILTERS = [
                     <th>Reference</th>
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-payment>
+                <ng-template #body let-payment>
                   <tr>
                     <td>{{ payment.date }}</td>
                     <td>{{ payment.playerName }}</td>
@@ -510,7 +509,7 @@ const BALANCE_FILTERS = [
         [(visible)]="showFeeDialog"
         header="Create Fee"
         [modal]="true"
-        styleClass="payment-fee-dialog"
+        class="payment-fee-dialog"
       >
         <div class="fee-form">
           <div class="form-field">
@@ -568,7 +567,7 @@ const BALANCE_FILTERS = [
             <p-datepicker
               [(ngModel)]="feeForm.dueDate"
               [showIcon]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-datepicker>
           </div>
 
@@ -642,7 +641,7 @@ const BALANCE_FILTERS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showFeeDialog = false"
             >Cancel</app-button
           >
@@ -657,7 +656,7 @@ const BALANCE_FILTERS = [
         [(visible)]="showPaymentDialog"
         header="Record Payment"
         [modal]="true"
-        styleClass="payment-record-dialog"
+        class="payment-record-dialog"
       >
         <div class="payment-form">
           <div class="form-field">
@@ -668,7 +667,7 @@ const BALANCE_FILTERS = [
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
           </div>
 
@@ -698,7 +697,7 @@ const BALANCE_FILTERS = [
                 [(ngModel)]="paymentForm.method"
                 optionLabel="label"
                 optionValue="value"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
           </div>
@@ -708,7 +707,7 @@ const BALANCE_FILTERS = [
             <p-datepicker
               [(ngModel)]="paymentForm.date"
               [showIcon]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-datepicker>
           </div>
 
@@ -733,7 +732,7 @@ const BALANCE_FILTERS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showPaymentDialog = false"
             >Cancel</app-button
           >

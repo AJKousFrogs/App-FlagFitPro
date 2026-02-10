@@ -35,7 +35,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   template: `
 <div class="reset-password-page">
       <p-card class="reset-password-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="reset-password-logo">
             <i class="pi pi-key"></i>
           </div>

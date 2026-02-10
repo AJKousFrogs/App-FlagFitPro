@@ -36,7 +36,6 @@ interface SuperadminUser {
     FormsModule,
     Card,
     TableModule,
-    TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -58,8 +57,8 @@ interface SuperadminUser {
         </app-page-header>
 
         <!-- Your Status Card -->
-        <p-card styleClass="status-card">
-          <ng-template pTemplate="header">
+        <p-card class="status-card">
+          <ng-template #header>
             <div class="card-header">
               <h3>
                 <i class="pi pi-shield"></i>
@@ -97,7 +96,7 @@ interface SuperadminUser {
 
         <!-- Manage Superadmins -->
         <p-card>
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h3>
                 <i class="pi pi-users"></i>
@@ -120,7 +119,7 @@ interface SuperadminUser {
             </div>
           } @else {
             <p-table [value]="superadmins()" tableStyleClass="superadmin-table">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Email</th>
                   <th>Granted</th>
@@ -128,7 +127,7 @@ interface SuperadminUser {
                   <th class="superadmin-actions-col">Actions</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-admin>
+              <ng-template #body let-admin>
                 <tr>
                   <td>
                     <span class="admin-email">{{ admin.email }}</span>
@@ -155,7 +154,7 @@ interface SuperadminUser {
 
         <!-- Platform Settings -->
         <p-card>
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h3>
                 <i class="pi pi-cog"></i>
@@ -228,8 +227,8 @@ interface SuperadminUser {
         </p-card>
 
         <!-- Olympic Program -->
-        <p-card styleClass="olympic-card">
-          <ng-template pTemplate="header">
+        <p-card class="olympic-card">
+          <ng-template #header>
             <div class="card-header">
               <h3>
                 <span class="olympic-icon">🏅</span>

@@ -73,13 +73,13 @@ interface Meal {
             [suggestions]="foodSuggestions()"
             (completeMethod)="searchFoods($event)"
             field="description"
-            [minLength]="2"
+            [minQueryLength]="2"
             placeholder="Search USDA food database..."
             [dropdown]="true"
             [forceSelection]="false"
-            styleClass="food-autocomplete"
+            class="food-autocomplete"
           >
-            <ng-template let-food pTemplate="item">
+            <ng-template let-food #item>
               <div class="food-suggestion">
                 <div class="food-info">
                   <span class="food-name">{{ food.description }}</span>
@@ -148,7 +148,7 @@ interface Meal {
                 <p-progressBar
                   [value]="(goal.current / goal.target) * 100"
                   [showValue]="false"
-                  [styleClass]="getProgressClass(goal)"
+                  [class]="getProgressClass(goal)"
                 >
                 </p-progressBar>
 
@@ -190,7 +190,7 @@ interface Meal {
       <!-- Meal Timeline -->
       <p-card header="Today's Meals" class="meals-timeline-card">
         <p-dataView [value]="todaysMeals()" layout="list" [paginator]="false">
-          <ng-template let-meal pTemplate="listItem">
+          <ng-template let-meal #listItem>
             <div class="meal-item">
               <div class="meal-header">
                 <h4>{{ meal.type }}</h4>

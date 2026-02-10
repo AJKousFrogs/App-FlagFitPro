@@ -103,7 +103,7 @@ interface DiscussionMessage {
         ></app-page-header>
 
         <!-- Progress Overview -->
-        <p-card styleClass="progress-card">
+        <p-card class="progress-card">
           <div class="progress-header">
             <div class="progress-stats">
               <div class="stat-item stat-block stat-block--compact">
@@ -133,7 +133,7 @@ interface DiscussionMessage {
           <p-progressBar
             [value]="progressPercent()"
             [showValue]="false"
-            styleClass="progress-overall"
+            class="progress-overall"
           ></p-progressBar>
           <p class="progress-text">{{ progressPercent() }}% complete</p>
         </p-card>
@@ -157,7 +157,7 @@ interface DiscussionMessage {
             optionValue="value"
             placeholder="Status"
             [showClear]="true"
-            styleClass="filter-select"
+            class="filter-select"
           ></p-select>
         </div>
 
@@ -165,7 +165,7 @@ interface DiscussionMessage {
         @if (filteredFilms().length > 0) {
           <div class="films-grid">
             @for (film of filteredFilms(); track film.id) {
-              <p-card styleClass="film-card" (click)="selectFilm(film)">
+              <p-card class="film-card" (click)="selectFilm(film)">
                 <div class="film-thumbnail">
                   @if (film.thumbnailUrl) {
                     <img
@@ -220,7 +220,7 @@ interface DiscussionMessage {
                     <p-progressBar
                       [value]="film.watchProgress"
                       [showValue]="false"
-                      styleClass="film-progress"
+                      class="film-progress"
                     ></p-progressBar>
                   }
                 </div>
@@ -228,7 +228,7 @@ interface DiscussionMessage {
             }
           </div>
         } @else {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-video"></i>
               <h3>No film assigned</h3>
@@ -250,7 +250,7 @@ interface DiscussionMessage {
         [header]="selectedFilm()?.title || 'Film Details'"
         [modal]="true"
         [closable]="true"
-        styleClass="film-detail-dialog"
+        class="film-detail-dialog"
       >
         @if (selectedFilm(); as film) {
           <div class="film-detail">

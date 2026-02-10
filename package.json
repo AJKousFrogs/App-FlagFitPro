@@ -48,6 +48,8 @@
     "verify:db": "node scripts/verify-db-objects.js",
     "check:consent": "node scripts/check-consent-violations.js",
     "check:consent:ci": "node scripts/check-consent-violations.js --ci --strict",
+    "validate:knowledge": "node database/scripts/validate-knowledge-json.mjs",
+    "scan:knowledge-secrets": "node database/scripts/scan-knowledge-secrets.mjs",
     "perf:validate": "node scripts/performance-validation.js",
     "perf:validate:ci": "node scripts/performance-validation.js --ci",
     "preflight:friday": "node scripts/preflight-friday.js",
@@ -112,6 +114,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",
+    "ajv": "^8.17.1",
     "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^4.1.0",

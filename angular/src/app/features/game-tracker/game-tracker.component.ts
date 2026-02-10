@@ -38,6 +38,8 @@ import { NetworkStatusService } from "../../core/services/network-status.service
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -129,7 +131,6 @@ interface Play {
     DatePicker,
     Select,
     TableModule,
-    TableModule,
     RadioButton,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -137,6 +138,8 @@ interface Play {
     IconButtonComponent,
     EmptyStateComponent,
     StatusTagComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
   ],
   templateUrl: "./game-tracker.component.html",
   styleUrl: "./game-tracker.component.scss",
@@ -161,6 +164,13 @@ export class GameTrackerComponent implements OnInit {
   showGameForm = signal(false);
   games = signal<Game[]>([]);
   activeGameId = signal<string | null>(null);
+
+  // Page-level loading/error state (UX audit fix - prevent empty state masking API failure)
+  readonly isPageLoading = signal<boolean>(true);
+  readonly hasPageError = signal<boolean>(false);
+  readonly pageErrorMessage = signal<string>(
+    "Unable to load games. Please check your connection and try again.",
+  );
   plays = signal<Play[]>([]);
   players = signal<Player[]>([]);
   teamScore = signal<number>(0);
@@ -552,57 +562,84 @@ export class GameTrackerComponent implements OnInit {
   }
 
   loadGames(): void {
+    this.isPageLoading.set(true);
+    this.hasPageError.set(false);
+
     this.apiService
       .get<
-        Array<{
-          game_id: string;
-          id: string;
-          game_date: string;
-          opponent_team_name: string;
-          opponent_name: string;
-          location: string;
-          team_score: number;
-          our_score: number;
-          opponent_score: number;
-          is_home_game: boolean;
-          visibility_scope: string;
-          owner_type: string;
-          player_owner_id: string;
-        }>
+        | Array<{
+            game_id: string;
+            id: string;
+            game_date: string;
+            opponent_team_name: string;
+            opponent_name: string;
+            location: string;
+            team_score: number;
+            our_score: number;
+            opponent_score: number;
+            is_home_game: boolean;
+            visibility_scope: string;
+            owner_type: string;
+            player_owner_id: string;
+          }>
+        | { data: unknown[] }
       >("/api/games")
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          const games: Game[] = (response.data || []).map((game) => {
-            const teamScore = game.team_score ?? game.our_score ?? 0;
-            const opponentScore = game.opponent_score ?? 0;
-            let result: "win" | "loss" | "tie" = "tie";
-            if (teamScore > opponentScore) {
-              result = "win";
-            } else if (teamScore < opponentScore) {
-              result = "loss";
-            }
+          const raw = Array.isArray(response)
+            ? response
+            : (response as { data?: unknown[] })?.data ?? [];
+          const games: Game[] = (raw as Array<Record<string, unknown>>).map(
+            (game) => {
+              const teamScore =
+                (game.team_score as number) ?? (game.our_score as number) ?? 0;
+              const opponentScore = (game.opponent_score as number) ?? 0;
+              let result: "win" | "loss" | "tie" = "tie";
+              if (teamScore > opponentScore) result = "win";
+              else if (teamScore < opponentScore) result = "loss";
 
-            return {
-              id: game.game_id || game.id,
-              date: formatDate(game.game_date, "P"),
-              opponent: game.opponent_team_name || game.opponent_name,
-              location: game.location || (game.is_home_game ? "Home" : "Away"),
-              score: `${teamScore}-${opponentScore}`,
-              result,
-              visibilityScope: game.visibility_scope as "team" | "personal",
-              ownerType: game.owner_type as "coach" | "player",
-              isPersonal: game.visibility_scope === "personal",
-            };
-          });
+              return {
+                id:
+                  (game.game_id as string) || (game.id as string) || "",
+                date: formatDate(
+                  (game.game_date as string) || "",
+                  "P",
+                ),
+                opponent:
+                  (game.opponent_team_name as string) ||
+                  (game.opponent_name as string) ||
+                  "",
+                location:
+                  (game.location as string) ||
+                  ((game.is_home_game as boolean) ? "Home" : "Away"),
+                score: `${teamScore}-${opponentScore}`,
+                result,
+                visibilityScope: (game.visibility_scope as "team" | "personal") ?? "team",
+                ownerType: (game.owner_type as "coach" | "player") ?? "player",
+                isPersonal: game.visibility_scope === "personal",
+              };
+            },
+          );
           this.games.set(games);
+          this.isPageLoading.set(false);
+          this.hasPageError.set(false);
         },
         error: (err) => {
           this.logger.error("Error loading games", err);
-          // Set empty array on error
-          this.games.set([]);
+          this.isPageLoading.set(false);
+          this.hasPageError.set(true);
+          this.pageErrorMessage.set(
+            err?.message ||
+              "Unable to load games. Please check your connection and try again.",
+          );
         },
       });
+  }
+
+  retryLoad(): void {
+    this.loadGames();
+    this.loadPlayers();
   }
 
   openNewGame(): void {

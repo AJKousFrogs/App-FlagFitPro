@@ -64,7 +64,7 @@ import {
         <p-tabs>
           <p-tabpanel header="Performance Trends">
             <p-card>
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <h3>7-Week Performance Trend</h3>
               </ng-template>
               @if (hasNoData()) {
@@ -92,7 +92,7 @@ import {
 
           <p-tabpanel header="Injury Risk">
             <p-card>
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <h3>Injury Risk Analysis</h3>
               </ng-template>
               @if (hasInsufficientDataForInjuryRisk()) {
@@ -126,7 +126,7 @@ import {
 
           <p-tabpanel header="Predictions">
             <p-card>
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <h3>Performance Predictions</h3>
               </ng-template>
               <!-- AI consent check for predictions -->

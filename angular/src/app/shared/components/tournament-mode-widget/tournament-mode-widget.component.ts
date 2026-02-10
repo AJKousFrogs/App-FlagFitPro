@@ -149,7 +149,7 @@ import { DialogService } from "../../../core/ui/dialog.service";
           <p-progressBar
             [value]="stats()?.hydrationProgress || 0"
             [showValue]="false"
-            [styleClass]="getHydrationClass() + ' progressbar-height-sm'"
+            [class]="getHydrationClass() + ' progressbar-height-sm'"
           ></p-progressBar>
           <div class="hydration-details">
             <span>{{ tournament()!.hydrationConsumed }}ml</span>

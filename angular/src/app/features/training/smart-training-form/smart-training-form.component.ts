@@ -110,7 +110,7 @@ interface EquipmentOption {
               placeholder="Select session type"
               (ngModelChange)="onSessionTypeChange({ value: $event })"
             >
-              <ng-template let-option pTemplate="item">
+              <ng-template let-option #item>
                 <div class="session-type-option">
                   <i [class]="option.icon"></i>
                   <div>

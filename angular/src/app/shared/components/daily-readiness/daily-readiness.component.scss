@@ -44,8 +44,8 @@
 }
 
 .readiness-badge.good {
-  background: var(--primitive-success-50);
-  color: var(--primitive-success-500);
+  background: var(--color-status-success-subtle);
+  color: var(--color-status-success);
 }
 
 .readiness-badge.moderate {
@@ -88,7 +88,7 @@
 
 .score-circle.good {
   border-color: var(--color-status-success);
-  background: var(--primitive-success-50);
+  background: var(--color-status-success-subtle);
 }
 
 .score-circle.moderate {

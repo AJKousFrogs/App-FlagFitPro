@@ -1,0 +1,435 @@
+{
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:718a6795-cb32-4757-b25e-aeb057da4244",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": true,
+    "licence_expression": "CC-BY-4.0",
+    "permitted_use": "attribution_required",
+    "attribution": {
+      "title": "Evaluation of Flag Football Athlete Monitoring Metrics",
+      "publisher": "FlagFit Pro",
+      "authors": [
+        "Sports Science Assessment Team"
+      ]
+    }
+  },
+  "metadata": {
+    "title": "Evaluation of Flag Football Athlete Monitoring Metrics",
+    "authors": [
+      "Sports Science Assessment Team"
+    ],
+    "total_pages": 26,
+    "document_type": "practitioner_guide",
+    "primary_focus": "flag_football_monitoring_metrics"
+  },
+  "research_article": {
+    "title": "Evaluation of Flag Football Athlete Monitoring Metrics",
+    "authors": [
+      "Sports Science Assessment Team"
+    ],
+    "publication_year": 2025,
+    "publisher": "FlagFit Pro",
+    "primary_category": "monitoring",
+    "categories": [
+      "monitoring",
+      "injury_prevention",
+      "load_management",
+      "assessment",
+      "performance"
+    ],
+    "tags": [
+      "flag_football",
+      "training_load",
+      "ACWR",
+      "wellness",
+      "readiness",
+      "QB_throwing",
+      "body_composition"
+    ],
+    "study_type": "review",
+    "evidence_level": "B",
+    "sport_type": "flag_football",
+    "key_findings": "Comprehensive evaluation of athlete monitoring metrics for flag football. Training load (90% validity) and wellness scores (80%) are most evidence-based. ACWR has mixed support—use with context. BMI is poorly valid for athletes; lean body mass preferred. QB throwing metrics highly valid for arm injury prevention. Multivariate approaches outperform single-metric monitoring.",
+    "practical_applications": [
+      "Maintain training load and wellness as foundational metrics",
+      "Use ACWR as one tool alongside absolute loads and wellness",
+      "Replace BMI with body fat % and lean mass tracking",
+      "Implement QB throw count and load monitoring",
+      "Use dashboards with multiple indicators rather than single composite scores",
+      "Combine load, wellness, and previous injury for injury risk prediction"
+    ],
+    "training_types": [
+      "monitoring",
+      "load_management",
+      "assessment"
+    ],
+    "recovery_methods": [
+      "wellness_tracking",
+      "readiness_assessment",
+      "hydration_monitoring"
+    ],
+    "is_open_access": true,
+    "verified": true,
+    "quality_score": 9,
+    "keywords": [
+      "flag_football",
+      "training_load",
+      "ACWR",
+      "wellness",
+      "readiness",
+      "load_management"
+    ]
+  },
+  "knowledge_base_entries": [
+    {
+      "entry_type": "training_method",
+      "topic": "flag_football_training_load_monitoring",
+      "question": "How should training load be monitored for flag football athletes?",
+      "answer": "Training load is the cornerstone of athlete monitoring (90% scientific validity). It captures volume and intensity via external load (distance, accelerations, sprint counts) or internal load (session-RPE, heart rate). For flag football, emphasize tracking high-intensity running—yards sprinted above threshold, number of all-out sprints—since sprint efforts impose greatest musculoskeletal strain. Sudden spikes >10-15% above typical load significantly increase soft-tissue injury risk. Maintain acute:chronic load in safe range; both excessive load and extreme undertraining predispose to injury. Implement automated alerts for week-to-week increases >10%. Integrate with recovery data: high load plus poor recovery = red flag.",
+      "summary": "Training load monitoring is foundational. Track high-speed running for flag football. Avoid load spikes >10-15%. Combine with recovery metrics.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "flag_football_athletes",
+        "field_sport_athletes",
+        "sprint_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "monitoring",
+        "load_management"
+      ],
+      "tags": [
+        "training_load",
+        "session_RPE",
+        "GPS",
+        "sprint_count",
+        "injury_prevention"
+      ],
+      "protocols": {
+        "external_metrics": [
+          "total_distance",
+          "high_speed_running",
+          "sprint_count",
+          "accelerations"
+        ],
+        "internal_metrics": [
+          "session_RPE",
+          "heart_rate_based_load"
+        ],
+        "spike_alert_threshold": "10_percent_week_to_week",
+        "optimal_range": "progressive_overload_with_adequate_recovery"
+      },
+      "best_practices": [
+        "Track both external and internal load",
+        "Emphasize high-intensity running for flag football",
+        "Automate load spike alerts (>10% increase)",
+        "Use rolling averages for chronic load",
+        "Individualize load targets by athlete baseline",
+        "Integrate with wellness/recovery data",
+        "Ensure data from all sessions (gym, conditioning)"
+      ],
+      "entry_id": "urn:uuid:3d36f366-e692-4f82-9408-78b263f5692d",
+      "quantitative_claims": [
+        {
+          "metric": "load_spike_threshold",
+          "operator": ">=",
+          "value_range": {
+            "min": 10,
+            "max": 15
+          },
+          "unit": "percent",
+          "population_context": "week_to_week",
+          "interpretation": "injury_risk_increase"
+        }
+      ],
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "flag_football_acwr_interpretation",
+      "question": "How should ACWR be used for flag football athlete monitoring?",
+      "answer": "ACWR (Acute:Chronic Workload Ratio) has theoretical merit but mixed scientific support. A 2024 systematic review found the ACWR-injury relationship inconclusive—only a minority of analyses confirmed it as a useful predictor. Use ACWR as one monitoring tool, not in isolation. Consider EWMA version for better correlation. Set individualized thresholds; analyze your own data. Always interpret alongside absolute acute and chronic loads—an ACWR of 1.4 could mean high chronic with slightly higher acute (likely fine) or very low chronic with moderate acute (undertraining risk). Integrate with wellness and readiness. Use judgment: high ACWR due to schedule gap (bye week) may warrant ramp-up care rather than rest. Focus on load trend patterns, not single data points.",
+      "summary": "ACWR has mixed evidence. Use alongside absolute loads and wellness. Individualize thresholds. Consider EWMA. Avoid isolation.",
+      "evidence_strength": "moderate",
+      "consensus_level": "moderate",
+      "applicable_to": [
+        "flag_football_athletes",
+        "team_sport_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "load_management",
+        "monitoring"
+      ],
+      "tags": [
+        "ACWR",
+        "EWMA",
+        "load_spike",
+        "injury_risk"
+      ],
+      "protocols": {
+        "sweet_spot_range": "0.8_to_1.3",
+        "high_risk_threshold": ">1.5",
+        "method_preference": "EWMA_over_rolling_average",
+        "interpretation": "combine_with_absolute_loads_and_wellness"
+      },
+      "best_practices": [
+        "Do not rely on ACWR alone",
+        "Use EWMA version when possible",
+        "Interpret with actual acute/chronic values",
+        "Catch both spikes and valleys (low chronic = undertraining risk)",
+        "Pair with wellness/readiness scores",
+        "Account for schedule variability (byes, breaks)"
+      ],
+      "entry_id": "urn:uuid:831f249a-3275-47ae-b22f-64f978925ede",
+      "quantitative_claims": [
+        {
+          "metric": "acwr_sweet_spot",
+          "operator": ">=",
+          "value_range": {
+            "min": 0.8,
+            "max": 1.3
+          },
+          "unit": "ratio",
+          "population_context": "load_management",
+          "interpretation": "optimal_range"
+        },
+        {
+          "metric": "acwr_high_risk",
+          "operator": ">",
+          "value_range": {
+            "value": 1.5
+          },
+          "unit": "ratio",
+          "population_context": "load_management",
+          "interpretation": "high_risk_threshold"
+        }
+      ],
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "flag_football_readiness_score",
+      "question": "How should readiness scoring be implemented for flag football?",
+      "answer": "Readiness scores combine objective and subjective measures. CMJ height correlates with sprint performance—athletes who jump higher tend to sprint faster. HRV has mixed results in team sports. Subjective self-ratings (fatigue, soreness) are often as sensitive or better than complex tests. Combine: 1) subjective wellness, 2) neuromuscular test (jump), 3) HRV or resting HR. Individualize baselines; meaningful deviations matter. For flag football, vertical jump or 10-yard sprint on practice days are feasible. Set guidelines: below threshold = modify training or further evaluation. Use 'monitoring trifecta'—wellness + jump + HRV—more transparent than single combined score.",
+      "summary": "Combine subjective wellness, jump test, and HRV. Individualize baselines. CMJ correlates with sprint performance. Act on low scores.",
+      "evidence_strength": "moderate",
+      "consensus_level": "high",
+      "applicable_to": [
+        "flag_football_athletes",
+        "team_sport_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "monitoring",
+        "readiness"
+      ],
+      "tags": [
+        "readiness",
+        "CMJ",
+        "HRV",
+        "wellness",
+        "fatigue"
+      ],
+      "protocols": {
+        "components": [
+          "subjective_wellness",
+          "CMJ_or_sprint",
+          "HRV_or_resting_HR"
+        ],
+        "frequency": "daily_or_pre_practice",
+        "action_threshold": "below_baseline_triggers_modification"
+      },
+      "best_practices": [
+        "Combine subjective and objective inputs",
+        "Individualize baselines per athlete",
+        "Ensure daily consistency (same time, conditions)",
+        "Integrate with coach decision-making",
+        "Use traffic light system (green/yellow/red)",
+        "Validate with own data over season"
+      ],
+      "entry_id": "urn:uuid:5ff03d8a-eb28-490d-8400-37f3e9d2362b",
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "flag_football_wellness_score",
+      "question": "How should wellness scoring be implemented for flag football?",
+      "answer": "Wellness scores have strong validity (80%)—subjective well-being reflects training stress accurately. Systematic review: subjective measures often more sensitive than objective biomarkers. Key areas: fatigue, muscle soreness, sleep quality, mood/stress. Poor sleep (<8h) is documented injury risk factor. Add flag-football specific: 'Any joint pain or niggles?' due to high cutting/sprinting joint stress. Use traffic lights per metric. Encourage honesty; avoid punitive use. Correlate with performance/injury over time. Integrate recovery strategies: poor sleep triggers education; high soreness triggers reduced load.",
+      "summary": "Wellness is highly valid. Cover fatigue, soreness, sleep, mood. Add joint pain for flag football. Traffic light system. Encourage honesty.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "flag_football_athletes",
+        "all_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "monitoring",
+        "wellness"
+      ],
+      "tags": [
+        "wellness",
+        "sleep",
+        "fatigue",
+        "soreness",
+        "injury_prevention"
+      ],
+      "protocols": {
+        "questionnaire_items": [
+          "fatigue",
+          "soreness",
+          "sleep_quality",
+          "mood",
+          "joint_pain_flag_football"
+        ],
+        "frequency": "daily",
+        "duration": "2_to_3_minutes_max"
+      },
+      "best_practices": [
+        "Keep questionnaire to 4-6 questions",
+        "Add flag-football specific joint pain item",
+        "Use traffic light visualization",
+        "Produce weekly wellness trend summaries",
+        "Correlate with performance and injury data",
+        "Ensure psychological safety for honest reporting"
+      ],
+      "entry_id": "urn:uuid:7e3c4f9d-41ee-4b76-8777-82e7760b24f8",
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "flag_football_body_composition_monitoring",
+      "question": "How should body composition be monitored for flag football athletes?",
+      "answer": "Bodyweight trend: valid for hydration (pre/post weigh-in) and general trends. 2% dehydration impairs performance and increases injury risk. Drop BMI—it fails to distinguish muscle from fat; muscular athletes often classified overweight. Use body fat % (calipers, BIA) and lean body mass instead. LBM is valid—muscle mass correlates with strength, power, speed. Muscle loss correlates with higher injury risk. Track LBM 3-4x/year minimum. Combine weight with body comp; distinguish fat vs muscle changes. For flag football, speed-to-weight matters: track relative speed or strength.",
+      "summary": "Use bodyweight for hydration. Replace BMI with body fat % and lean mass. LBM predicts injury resilience. Track 3-4x yearly.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "flag_football_athletes",
+        "all_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "monitoring",
+        "body_composition"
+      ],
+      "tags": [
+        "bodyweight",
+        "BMI",
+        "lean_mass",
+        "body_fat",
+        "hydration"
+      ],
+      "protocols": {
+        "bmi": "deprioritize_or_eliminate",
+        "preferred_metrics": [
+          "body_fat_percent",
+          "lean_body_mass"
+        ],
+        "bodyweight_use": "hydration_tracking_pre_post_session",
+        "lbm_frequency": "3_to_4_times_per_year"
+      },
+      "best_practices": [
+        "Standardize weigh-in protocol (same time, conditions)",
+        "Use weight for hydration management (pre/post practice)",
+        "Replace BMI with body fat % tracking",
+        "Track lean mass trends",
+        "Flag >3% weight drop in week",
+        "Correlate body comp with strength/performance"
+      ],
+      "entry_id": "urn:uuid:58ce2777-163d-45d8-8c70-a821f1672b25",
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "flag_football_qb_throwing_metrics",
+      "question": "How should QB throwing workload be monitored in flag football?",
+      "answer": "QB throwing metrics are highly valid (90%)—analogous to pitch counts in baseball. Track: throw count, throw load (cumulative stress), load per throw. Wearables measure acceleration/force per throw. Prevents overuse injuries (rotator cuff, elbow). Set guidelines: e.g., 200 throws/week preseason, 100-150 in-season. Flag acute spikes; reduce next-day volume. Periodize: hard throwing days vs recovery days. Use load per throw to identify inefficient mechanics. Gradual ramp for injury rehab (e.g., start 30 light throws, progress 10%/week). Communicate weekly reports to coaches.",
+      "summary": "QB throw metrics like pitch counts. Track count, load, load per throw. Prevent overuse. Periodize throwing. Use for rehab progression.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "quarterbacks",
+        "throwing_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "monitoring",
+        "injury_prevention"
+      ],
+      "tags": [
+        "QB",
+        "throwing",
+        "pitch_count",
+        "arm_care",
+        "overuse"
+      ],
+      "protocols": {
+        "metrics": [
+          "throw_count",
+          "throw_load",
+          "load_per_throw"
+        ],
+        "preseason_target": "~200_throws_per_week",
+        "inseason_target": "100_to_150_throws_per_week",
+        "spike_response": "reduce_next_day_volume"
+      },
+      "best_practices": [
+        "Set throw load guidelines per QB",
+        "Monitor acute spikes (unusual game/practice volume)",
+        "Periodize: hard vs light throwing days",
+        "Use load per throw for mechanics feedback",
+        "Integrate with arm care routines",
+        "Gradual progression for injury rehab"
+      ],
+      "entry_id": "urn:uuid:f5cc5293-58ef-49ce-945f-66eba2773317",
+      "evidence_framework": "GRADE"
+    },
+    {
+      "entry_type": "training_method",
+      "topic": "flag_football_composite_score_caveats",
+      "question": "What are the limitations of composite performance and trend scores?",
+      "answer": "Composite scores risk losing granularity—hiding strengths/weaknesses in one number. Performance scores: validate that higher score predicts actual success; use position-specific formulas; show sub-components alongside total. Trend aggregations: simplistic averaging can mask critical metrics—e.g., wellness down + performance up = aggregate neutral while athlete at risk. Prefer: 1) dashboards with multiple indicators, 2) threshold criteria (flag if ANY metric concerning), 3) multivariate models (load + wellness + injury history) for risk prediction. Roe et al.: combined wellness and load outperforms univariate. Avoid single summary that skips important chapters.",
+      "summary": "Composite scores hide specifics. Use dashboards with multiple metrics. Threshold criteria over averaging. Multivariate models for injury risk.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "applicable_to": [
+        "flag_football_athletes",
+        "coaches",
+        "performance_staff"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "monitoring",
+        "data_interpretation"
+      ],
+      "tags": [
+        "composite_score",
+        "trend_aggregation",
+        "multivariate",
+        "injury_prediction"
+      ],
+      "protocols": {
+        "composite_approach": "show_sub_components_alongside_total",
+        "aggregation_alternative": "threshold_criteria_any_metric_flags",
+        "injury_risk_model": "combine_load_wellness_previous_injury"
+      },
+      "best_practices": [
+        "Deconstruct composite into sub-scores",
+        "Use threshold criteria (any red flag = attention)",
+        "Implement multivariate injury risk models",
+        "Avoid simplistic trend averaging",
+        "Validate scores against outcomes",
+        "Position-specific performance formulas"
+      ],
+      "entry_id": "urn:uuid:54dcb7dd-1e05-43b7-99a7-6b57f99b6a26",
+      "evidence_framework": "GRADE"
+    }
+  ]
+}

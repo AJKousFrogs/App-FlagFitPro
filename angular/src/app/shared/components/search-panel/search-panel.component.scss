@@ -194,8 +194,8 @@
 }
 
 .quick-link-icon.exercises {
-  background: var(--primitive-success-50);
-  color: var(--primitive-success-500);
+  background: var(--color-status-success-subtle);
+  color: var(--color-status-success);
 }
 
 .quick-link-icon.analytics {
@@ -325,7 +325,7 @@
 .popular-tag:hover {
   background: var(--ds-primary-green);
   border-color: var(--ds-primary-green);
-  color: white;
+  color: var(--color-text-on-primary);
   transform: translateY(-var(--border-1));
   box-shadow: var(--shadow-md);
 }
@@ -337,7 +337,7 @@
 }
 
 .popular-tag:hover i {
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 /* ================================================================
@@ -400,8 +400,8 @@
 }
 
 .result-icon-box.type-program {
-  background: var(--primitive-success-50);
-  color: var(--primitive-success-500);
+  background: var(--color-status-success-subtle);
+  color: var(--color-status-success);
 }
 
 .result-icon-box.type-player {

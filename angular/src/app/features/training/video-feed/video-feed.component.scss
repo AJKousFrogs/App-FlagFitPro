@@ -71,7 +71,7 @@
   height: var(--avatar-size-md);
   border-radius: var(--radius-full);
   background: var(--surface-overlay-dark);
-  color: white;
+  color: var(--color-text-on-primary);
   border: none;
   cursor: pointer;
   transition:
@@ -525,7 +525,7 @@
 
 .play-icon {
   font-size: var(--ds-font-size-var(--header-height)); /* Larger, more visible */
-  color: white;
+  color: var(--color-text-on-primary);
   opacity: var(--opacity-strong);
   transition:
     transform var(--transition-fast),

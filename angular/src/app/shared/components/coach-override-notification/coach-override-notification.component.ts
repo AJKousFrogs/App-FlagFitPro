@@ -45,7 +45,7 @@ import { getTimeAgo } from "../../utils/date.utils";
   ],
   template: `
     @if (override()) {
-      <p-card styleClass="override-notification-card">
+      <p-card class="override-notification-card">
         <ng-template #header>
           <div class="override-header">
             <div class="header-content">
@@ -170,7 +170,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       header="Override History"
       [(visible)]="showHistory"
       [modal]="true"
-      styleClass="dialog-w-lg"
+      class="dialog-w-lg"
       [dismissableMask]="true"
       (onShow)="loadHistory()"
     >

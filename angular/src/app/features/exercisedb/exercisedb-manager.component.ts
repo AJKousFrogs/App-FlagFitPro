@@ -26,7 +26,7 @@ import { Chip } from "primeng/chip";
 import { Skeleton } from "primeng/skeleton";
 import { Badge } from "primeng/badge";
 
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
@@ -56,7 +56,7 @@ import { capitalize } from "../../shared/utils/format.utils";
     Select,
     MultiSelect,
     Dialog,
-    PrimeTemplate,
+    
 
     ProgressBar,
     Tabs,
@@ -86,7 +86,7 @@ import { capitalize } from "../../shared/utils/format.utils";
 
         <!-- Stats Overview -->
         <div class="stats-grid">
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <i class="pi pi-database stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -95,7 +95,7 @@ import { capitalize } from "../../shared/utils/format.utils";
               </div>
             </div>
           </p-card>
-          <p-card styleClass="stat-card approved">
+          <p-card class="stat-card approved">
             <div class="stat-content">
               <i class="pi pi-check-circle stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -104,7 +104,7 @@ import { capitalize } from "../../shared/utils/format.utils";
               </div>
             </div>
           </p-card>
-          <p-card styleClass="stat-card pending">
+          <p-card class="stat-card pending">
             <div class="stat-content">
               <i class="pi pi-clock stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -113,7 +113,7 @@ import { capitalize } from "../../shared/utils/format.utils";
               </div>
             </div>
           </p-card>
-          <p-card styleClass="stat-card curated">
+          <p-card class="stat-card curated">
             <div class="stat-content">
               <i class="pi pi-star stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -125,7 +125,7 @@ import { capitalize } from "../../shared/utils/format.utils";
         </div>
 
         <!-- Tab View -->
-        <p-tabs value="0" styleClass="exercise-tabs tabs-standard">
+        <p-tabs value="0" class="exercise-tabs tabs-standard">
           <p-tablist>
             <p-tab value="0">Browse Exercises</p-tab>
             <p-tab value="1">Import from ExerciseDB</p-tab>
@@ -137,7 +137,7 @@ import { capitalize } from "../../shared/utils/format.utils";
             <p-tabpanel value="0">
               <div class="tab-content">
                 <!-- Filters -->
-                <p-card styleClass="filters-card">
+                <p-card class="filters-card">
                   <div class="filters-row">
                     <div class="filter-group">
                       <label>Search</label>
@@ -214,17 +214,17 @@ import { capitalize } from "../../shared/utils/format.utils";
                 @if (loading()) {
                   <div class="exercises-grid">
                     @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                      <p-card styleClass="exercise-card skeleton-card">
+                      <p-card class="exercise-card skeleton-card">
                         <p-skeleton height="var(--size-200)"></p-skeleton>
                         <p-skeleton
                           width="70%"
                           height="var(--space-6)"
-                          styleClass="mt-3"
+                          class="mt-3"
                         ></p-skeleton>
                         <p-skeleton
                           width="40%"
                           height="var(--space-4)"
-                          styleClass="mt-2"
+                          class="mt-2"
                         ></p-skeleton>
                       </p-card>
                     }
@@ -233,7 +233,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                   <div class="exercises-grid">
                     @for (exercise of filteredExercises(); track exercise.id) {
                       <p-card
-                        styleClass="exercise-card"
+                        class="exercise-card"
                         (click)="openExerciseDetail(exercise)"
                       >
                         <div class="exercise-image-container">
@@ -256,7 +256,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                               <p-badge
                                 value="Approved"
                                 severity="success"
-                                styleClass="status-tag status-tag--success"
+                                class="status-tag status-tag--success"
                               ></p-badge>
                             }
                             @if (exercise.is_curated && !exercise.is_approved) {
@@ -309,7 +309,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                               ) {
                                 <p-chip
                                   [label]="pos"
-                                  styleClass="position-chip"
+                                  class="position-chip"
                                 ></p-chip>
                               }
                               @if (
@@ -346,7 +346,7 @@ import { capitalize } from "../../shared/utils/format.utils";
             <!-- Import Tab -->
             <p-tabpanel value="1">
               <div class="tab-content import-tab">
-                <p-card styleClass="import-card">
+                <p-card class="import-card">
                   <h3 class="import-title">
                     <i class="pi pi-cloud-download"></i>
                     Import Exercises from ExerciseDB API
@@ -366,7 +366,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                         [(ngModel)]="importBodyParts"
                         placeholder="Select body parts (leave empty for all)"
                         display="chip"
-                        styleClass="import-multiselect"
+                        class="import-multiselect"
                       ></p-multiSelect>
                     </div>
                     <div class="option-group">
@@ -394,7 +394,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                     <div class="import-progress">
                       <p-progressBar
                         mode="indeterminate"
-                        styleClass="import-bar"
+                        class="import-bar"
                       ></p-progressBar>
                       <p class="progress-text">
                         Importing exercises from ExerciseDB...
@@ -448,7 +448,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 </p-card>
 
                 <!-- Import History -->
-                <p-card styleClass="history-card">
+                <p-card class="history-card">
                   <h3 class="history-title">
                     <i class="pi pi-history"></i>
                     Import History
@@ -489,7 +489,7 @@ import { capitalize } from "../../shared/utils/format.utils";
             <!-- Approval Queue Tab -->
             <p-tabpanel value="2">
               <div class="tab-content approval-tab">
-                <p-card styleClass="queue-info">
+                <p-card class="queue-info">
                   <p>
                     <i class="pi pi-info-circle"></i>
                     Review and approve exercises for use in training programs.
@@ -499,7 +499,7 @@ import { capitalize } from "../../shared/utils/format.utils";
 
                 <div class="approval-grid">
                   @for (exercise of pendingExercises(); track exercise.id) {
-                    <p-card styleClass="approval-card">
+                    <p-card class="approval-card">
                       <div class="approval-header">
                         @if (exercise.gif_url) {
                           <img
@@ -581,7 +581,7 @@ import { capitalize } from "../../shared/utils/format.utils";
           [modal]="true"
           [draggable]="false"
           [resizable]="false"
-          styleClass="exercisedb-detail-dialog"
+          class="exercisedb-detail-dialog"
         >
           @if (selectedExercise()) {
             <div class="detail-content">
@@ -654,7 +654,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       ) {
                         <p-chip
                           [label]="focus"
-                          styleClass="focus-chip"
+                          class="focus-chip"
                         ></p-chip>
                       }
                     </div>
@@ -671,7 +671,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       ) {
                         <p-chip
                           [label]="pos"
-                          styleClass="position-chip"
+                          class="position-chip"
                         ></p-chip>
                       }
                     </div>
@@ -723,7 +723,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 }
               </div>
             </div>
-            <ng-template pTemplate="footer">
+            <ng-template #footer>
               @if (!selectedExercise()?.is_approved) {
                 <app-button
                   variant="success"
@@ -749,7 +749,7 @@ import { capitalize } from "../../shared/utils/format.utils";
           [modal]="true"
           [draggable]="false"
           [resizable]="false"
-          styleClass="exercisedb-approval-dialog"
+          class="exercisedb-approval-dialog"
         >
           @if (exerciseToApprove()) {
             <div class="approval-form">
@@ -835,7 +835,7 @@ import { capitalize } from "../../shared/utils/format.utils";
               </div>
             </div>
           }
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button
               variant="text"
               iconLeft="pi-times"

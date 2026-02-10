@@ -75,7 +75,7 @@ interface HydrationLog {
           <p-progressBar
             [value]="progressPercent()"
             [showValue]="false"
-            styleClass="hydration-progress"
+            class="hydration-progress"
           ></p-progressBar>
         </div>
       </div>

@@ -1,9 +1,33 @@
-# FlagFit Pro - Security Documentation
+# FlagFit Pro - Security & Privacy Documentation
 
 **Version:** 3.0.0  
 **Last Updated:** 29. December 2025  
 **Status:** Production  
 **Architecture:** Angular 21 Frontend + Netlify Functions API + Supabase Backend
+
+---
+
+## Executive Summary & Privacy Overview
+
+FlagFit Pro is a training platform for flag football athletes and coaches. The platform handles sensitive performance and health data, requiring robust privacy controls.
+
+### Key Privacy Principles
+
+| Principle                | Implementation                                            |
+| ------------------------ | --------------------------------------------------------- |
+| **Privacy by Default**   | Data sharing disabled until user opts in                  |
+| **Consent-First Access** | Coaches see only data players have shared                 |
+| **AI Opt-Out**           | AI features disabled by default, require explicit consent |
+| **Right to Erasure**     | 30-day grace period, then permanent deletion             |
+| **Audit Trail**          | All data access logged for compliance                     |
+
+### Compliance Framework
+
+- **GDPR** (EU General Data Protection Regulation)
+- **CCPA** (California Consumer Privacy Act)
+- **COPPA** (Children's Online Privacy Protection) — parental consent for minors
+
+See [Consent Enforcement Model](#consent-enforcement-model), [AI Opt-Out & Fail-Fast Design](#ai-opt-out--fail-fast-design), and [Deletion & Retention Lifecycle](#deletion--retention-lifecycle) below for implementation details.
 
 ---
 
@@ -597,6 +621,42 @@ captureError(error: Error, context?: ErrorContext): void {
 
 ---
 
+## Consent Enforcement Model
+
+### Four-Layer Enforcement
+
+| Layer        | Mechanism         | What It Enforces                                |
+| ------------ | ----------------- | ----------------------------------------------- |
+| **Database** | RLS Policies      | Base access control (own data, team membership) |
+| **Database** | Consent Views     | Field-level consent (NULL if not shared)        |
+| **API**      | ConsentDataReader | Consistent consent checking, audit logging      |
+| **UI**       | Privacy Messages  | User-visible consent status                     |
+
+### Consent Types
+
+| Type                | Scope    | Default | Controls                         |
+| ------------------- | -------- | ------- | -------------------------------- |
+| Performance Sharing | Per-team | OFF     | Load metrics, workout data, ACWR |
+| Health Sharing      | Per-team | OFF     | Injury risk, wellness data       |
+| AI Processing       | Global   | OFF     | AI recommendations, predictions  |
+| Research Opt-In     | Global   | OFF     | Anonymized research data         |
+
+---
+
+## AI Opt-Out & Fail-Fast Design
+
+AI features are disabled by default and require explicit consent. The API fails immediately with `AI_CONSENT_REQUIRED` if AI processing is requested without consent. AI consent is checked via `require_ai_consent` RPC before any AI processing.
+
+---
+
+## Deletion & Retention Lifecycle
+
+- **User-requested deletion:** 30-day grace period, then permanent deletion.
+- **Retention:** Audit logs 2 years; emergency medical 7 years; anonymized research indefinite.
+- **Runbook:** [RUNBOOKS/ACCOUNT_DELETION.md](./RUNBOOKS/ACCOUNT_DELETION.md)
+
+---
+
 ## Known Limitations & Non-Goals
 
 This section documents security features that are **intentionally not implemented** or **known limitations**. This is not a to-do list—these are conscious architectural decisions.
@@ -745,7 +805,7 @@ await supabase.auth.refreshSession();
 ### Internal Documentation
 
 - [Architecture Documentation](./ARCHITECTURE.md)
-- [Authentication Guide](./AUTHENTICATION_PATTERN.md)
+- [Authentication Guide](./AUTHENTICATION_LOGIN_ONBOARDING.md)
 - [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)
 - [Error Handling Guide](./ERROR_HANDLING_GUIDE.md)
 

@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "title": "Knowledge Base Document",
+  "description": "Evidence-based knowledge base for flag football training, injury prevention, and rehabilitation. Schema version 1.0.0.",
+  "type": "object",
+  "required": ["schema_version", "content_version", "document_id", "generated_at", "metadata", "research_article", "knowledge_base_entries"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "SemVer schema version for validation compatibility",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "content_version": {
+      "type": "string",
+      "description": "SemVer content version for change tracking",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "document_id": {
+      "type": "string",
+      "description": "Stable unique identifier (URN UUID)",
+      "pattern": "^urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "RFC 3339 timestamp of document generation"
+    },
+    "reviewed_at": {
+      "type": ["string", "null"],
+      "description": "RFC 3339 timestamp of last content review"
+    },
+    "rights": {
+      "type": "object",
+      "description": "Provenance, licensing, and permitted use",
+      "required": ["is_open_access", "licence_expression", "permitted_use", "attribution"],
+      "properties": {
+        "is_open_access": { "type": "boolean" },
+        "licence_expression": { "type": "string" },
+        "permitted_use": {
+          "type": "string",
+          "enum": ["internal_only", "redistribution_allowed", "attribution_required", "commercial_use"]
+        },
+        "attribution": {
+          "type": "object",
+          "required": ["title", "publisher"],
+          "properties": {
+            "title": { "type": "string" },
+            "publisher": { "type": "string" },
+            "source_url": { "type": "string" },
+            "authors": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["title", "authors", "document_type"],
+      "properties": {
+        "title": { "type": "string" },
+        "authors": { "type": "array", "items": { "type": "string" } },
+        "organizations": { "type": "array", "items": { "type": "string" } },
+        "total_pages": { "type": "integer", "minimum": 0 },
+        "document_type": { "type": "string" },
+        "primary_focus": { "type": "string" }
+      }
+    },
+    "research_article": {
+      "type": "object",
+      "required": ["title", "publisher", "primary_category", "evidence_level", "sport_type"],
+      "properties": {
+        "title": { "type": "string" },
+        "authors": { "type": "array", "items": { "type": "string" } },
+        "publication_year": { "type": "integer" },
+        "publisher": { "type": "string" },
+        "primary_category": { "type": "string" },
+        "categories": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "study_type": { "type": "string" },
+        "evidence_level": { "type": "string", "enum": ["A", "B", "C", "D"] },
+        "sport_type": { "type": "string" },
+        "key_findings": { "type": "string" },
+        "practical_applications": { "type": "array", "items": { "type": "string" } },
+        "injury_types": { "type": "array", "items": { "type": "string" } },
+        "training_types": { "type": "array", "items": { "type": "string" } },
+        "recovery_methods": { "type": "array", "items": { "type": "string" } },
+        "is_open_access": { "type": "boolean" },
+        "verified": { "type": "boolean" },
+        "quality_score": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "keywords": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "knowledge_base_entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entry_id", "entry_type", "topic", "question", "answer", "evidence_strength", "consensus_level"],
+        "properties": {
+          "entry_id": {
+            "type": "string",
+            "description": "Stable unique identifier per entry",
+            "pattern": "^urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "entry_type": {
+            "type": "string",
+            "enum": ["training_method", "injury", "recovery_method", "nutrition", "supplement", "psychology"]
+          },
+          "topic": { "type": "string" },
+          "question": { "type": "string" },
+          "answer": { "type": "string" },
+          "summary": { "type": "string" },
+          "evidence_strength": { "type": "string", "enum": ["strong", "moderate", "limited"] },
+          "consensus_level": { "type": "string", "enum": ["high", "moderate", "low"] },
+          "evidence_framework": { "type": "string", "description": "e.g. GRADE, OCEBM_2011" },
+          "applicable_to": { "type": "array", "items": { "type": "string" } },
+          "sport_specificity": { "type": "string" },
+          "categories": { "type": "array", "items": { "type": "string" } },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "protocols": { "type": "object" },
+          "contraindications": { "type": "array", "items": { "type": "string" } },
+          "safety_warnings": { "type": "array", "items": { "type": "string" } },
+          "best_practices": { "type": "array", "items": { "type": "string" } },
+          "injury_types": { "type": "array", "items": { "type": "string" } },
+          "recovery_methods": { "type": "array", "items": { "type": "string" } },
+          "training_types": { "type": "array", "items": { "type": "string" } },
+          "quantitative_claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["metric", "operator", "value_range"],
+              "properties": {
+                "metric": { "type": "string" },
+                "operator": { "type": "string", "enum": [">=", "<=", ">", "<", "="] },
+                "value_range": {
+                  "type": "object",
+                  "properties": {
+                    "min": { "type": "number" },
+                    "max": { "type": "number" },
+                    "value": { "type": "number" }
+                  }
+                },
+                "unit": { "type": "string" },
+                "population_context": { "type": "string" },
+                "interpretation": { "type": "string" },
+                "source_ref": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

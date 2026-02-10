@@ -117,10 +117,10 @@ export interface TablePreferences {
             optionLabel="label"
             optionValue="value"
             [showHeader]="false"
-            styleClass="column-selector"
+            class="column-selector"
             ariaLabel="Select columns to display"
           >
-            <ng-template let-column pTemplate="item">
+            <ng-template let-column #item>
               <div class="column-option">
                 <i class="pi pi-eye" aria-hidden="true"></i>
                 <span>{{ column.label }}</span>
@@ -183,9 +183,9 @@ export interface TablePreferences {
           [virtualScrollItemSize]="46"
           (onColReorder)="onColumnReorder($event)"
           (onColResize)="onColumnResize($event)"
-          styleClass="enhanced-table"
+          class="enhanced-table"
         >
-          <ng-template pTemplate="header" let-columns>
+          <ng-template #header let-columns>
             <tr>
               @if (selectable()) {
                 <th class="enhanced-table__select-col" scope="col">
@@ -223,7 +223,7 @@ export interface TablePreferences {
           </ng-template>
 
           <ng-template
-            pTemplate="body"
+            #body
             let-rowData
             let-rowIndex="rowIndex"
             let-columns="columns"
@@ -284,7 +284,7 @@ export interface TablePreferences {
             </tr>
           </ng-template>
 
-          <ng-template pTemplate="emptymessage" let-columns>
+          <ng-template #emptymessage let-columns>
             <tr>
               <td
                 [attr.colspan]="

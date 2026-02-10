@@ -45,7 +45,6 @@ interface Team {
     Card,
     StatusTagComponent,
     TableModule,
-    TableModule,
     InputText,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -70,7 +69,7 @@ interface Team {
         </app-page-header>
 
         <!-- Filters -->
-        <p-card styleClass="filters-card">
+        <p-card class="filters-card">
           <div class="filters-row">
             <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
@@ -131,9 +130,9 @@ interface Team {
               [value]="filteredTeams"
               [paginator]="true"
               [rows]="10"
-              styleClass="p-datatable-sm table-standard"
+              class="p-datatable-sm table-standard"
             >
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Team Name</th>
                   <th>Country</th>
@@ -144,7 +143,7 @@ interface Team {
                   <th>Actions</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-team>
+              <ng-template #body let-team>
                 <tr>
                   <td>{{ team.name }}</td>
                   <td>{{ team.country_code }}</td>

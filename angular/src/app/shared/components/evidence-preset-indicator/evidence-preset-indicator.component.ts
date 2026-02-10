@@ -18,7 +18,6 @@ import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { Tooltip } from "primeng/tooltip";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { EvidenceConfigService } from "../../../core/services/evidence-config.service";
 import { EvidencePreset } from "../../../core/config/evidence-config";
 
@@ -31,7 +30,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
     Card,
     Tooltip,
     Dialog,
-    PrimeTemplate,
+    
 
     ButtonComponent,
     IconButtonComponent,
@@ -76,7 +75,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
       <p-dialog
         [(visible)]="showDetails"
         [modal]="true"
-        styleClass="dialog-w-xl dialog-max-w-2xl"
+        class="dialog-w-xl dialog-max-w-2xl"
         [closable]="true"
         header="Evidence-Based Configuration Details"
       >
@@ -306,7 +305,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button
             variant="text"
             iconLeft="pi-times"

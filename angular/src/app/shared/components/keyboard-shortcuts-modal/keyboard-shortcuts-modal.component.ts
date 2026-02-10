@@ -33,7 +33,7 @@ import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortc
       [closable]="true"
       [draggable]="false"
       [resizable]="false"
-      styleClass="shortcuts-modal layout-w-xl dialog-w-xl dialog-max-h"
+      class="shortcuts-modal layout-w-xl dialog-w-xl dialog-max-h"
     >
       <div class="modal-header">
         <div class="header-icon">
@@ -202,7 +202,7 @@ import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortc
         </div>
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <div class="modal-footer">
           <app-button
             variant="text"

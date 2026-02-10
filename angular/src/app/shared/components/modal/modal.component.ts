@@ -8,7 +8,6 @@ import {
   model,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../button/button.component";
 
@@ -29,7 +28,7 @@ import { ButtonComponent } from "../button/button.component";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, Dialog, PrimeTemplate, ButtonComponent],
+  imports: [CommonModule, Dialog, ButtonComponent],
   template: `
     <p-dialog
       [visible]="visible()"
@@ -39,7 +38,7 @@ import { ButtonComponent } from "../button/button.component";
       [draggable]="draggable()"
       [resizable]="resizable()"
       [header]="header()"
-      [styleClass]="dialogStyleClass()"
+      [class]="dialogStyleClass()"
       [position]="position()"
       [blockScroll]="blockScroll()"
       [dismissableMask]="dismissableMask()"
@@ -53,7 +52,7 @@ import { ButtonComponent } from "../button/button.component";
     >
       <!-- Custom header template -->
       @if (showCustomHeader()) {
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="modal-header-custom">
             @if (headerIcon()) {
               <div
@@ -64,7 +63,7 @@ import { ButtonComponent } from "../button/button.component";
               </div>
             }
             <div class="modal-header-text">
-              <h2 class="modal-title">{{ header() }}</h2>
+              <h2 class="modal-title">{{ title() }}</h2>
               @if (headerSubtitle()) {
                 <p class="modal-subtitle">{{ headerSubtitle() }}</p>
               }
@@ -83,7 +82,7 @@ import { ButtonComponent } from "../button/button.component";
 
       <!-- Footer -->
       @if (showFooter()) {
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <div
             class="modal-footer"
             [class]="'modal-footer-' + footerAlignment()"
@@ -516,6 +515,8 @@ export class ModalComponent {
   draggable = input<boolean>(false);
   resizable = input<boolean>(false);
   header = input<string>();
+  /** Alias for header - used in #header template to avoid ref shadowing */
+  title = computed(() => this.header() ?? "");
   headerSubtitle = input<string>();
   headerIcon = input<string>();
   headerIconColor = input<"primary" | "success" | "warning" | "error" | "info">(

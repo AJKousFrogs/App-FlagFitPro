@@ -116,7 +116,7 @@ interface HeatmapApiResponse {
         [(visible)]="showDetailModal"
         header="Training Details"
         [modal]="true"
-        styleClass="dialog-max-w-sm"
+        class="dialog-max-w-sm"
         (onHide)="selectedCell = null"
       >
         @if (selectedCell) {

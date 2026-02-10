@@ -48,7 +48,7 @@
   min-width: var(--grid-card-min-md);
   height: var(--header-height, var(--ds-font-size-var(--header-height)));
   cursor: pointer;
-  padding: 0 var(--ds-space-2);
+  padding: 0 var(--space-2);
 }
 
 .header-center:focus-visible {
@@ -105,7 +105,7 @@
   display: flex;
   align-items: center;
   gap: calc(
-    var(--ds-space-1) / 4
+    var(--space-1) / 4
   ); /* Intentionally tight for countdown display */
 }
 
@@ -113,7 +113,7 @@
   display: flex;
   align-items: baseline;
   gap: calc(
-    var(--ds-space-1) / 4
+    var(--space-1) / 4
   ); /* Intentionally tight for countdown display */
 }
 
@@ -145,7 +145,7 @@
   font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   opacity: var(--opacity-muted);
-  padding: 0 calc(var(--ds-space-1) / 4);
+  padding: 0 calc(var(--space-1) / 4);
   line-height: var(--ds-line-height-1);
 }
 
@@ -214,10 +214,10 @@
 
 // Weather severity states
 .weather-excellent {
-  border-color: var(--primitive-success-300);
+  border-color: var(--color-status-success-light);
 
   i {
-    color: var(--primitive-success-500);
+    color: var(--color-status-success);
   }
 }
 
@@ -306,7 +306,7 @@
 .search-shortcut {
   display: flex;
   align-items: center;
-  gap: var(--ds-space-1);
+  gap: var(--space-1);
   opacity: var(--opacity-muted);
 }
 
@@ -316,7 +316,7 @@
   justify-content: center;
   min-width: var(--tag-height-xs);
   height: var(--tag-height-xs);
-  padding: 0 calc(var(--ds-space-3) / 2);
+  padding: 0 calc(var(--space-3) / 2);
   background: var(--surface-100);
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-sm);
@@ -373,7 +373,8 @@
   }
 
   // Light theme indicator
-  :host-context([data-theme="light"]) & {
+  :host-context([data-theme="light"]) &,
+  :host-context(.light-theme) & {
     padding-left: var(--space-3);
 
     &::before {
@@ -387,7 +388,8 @@
   }
 
   // Dark theme indicator
-  :host-context([data-theme="dark"]) & {
+  :host-context([data-theme="dark"]) &,
+  :host-context(.dark-theme) & {
     padding-left: var(--space-3);
 
     &::before {

@@ -113,8 +113,8 @@ export const PRIMENG_PT_CONFIG = {
     },
   },
 
-  // DataTable pass-through
-  datatable: {
+  // Table pass-through (PrimeNG 21 p-table)
+  table: {
     root: {
       class: "rounded-xl overflow-hidden shadow-sm",
     },
@@ -139,16 +139,6 @@ export const PRIMENG_PT_CONFIG = {
 };
 
 /**
- * PrimeNG 21 Theme Configuration
- * Used with providePrimeNG() in app.config.ts
+ * Theme config (ripple, zIndex) is defined inline in app.config.ts providePrimeNG().
+ * PRIMENG_PT_CONFIG is imported and passed via pt: PRIMENG_PT_CONFIG.
  */
-export const PRIMENG_THEME_CONFIG = {
-  ripple: false,
-  zIndex: {
-    modal: 1100,
-    overlay: 1000,
-    menu: 1000,
-    tooltip: 1100,
-    toast: 1200,
-  },
-};

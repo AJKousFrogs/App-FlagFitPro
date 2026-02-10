@@ -74,7 +74,7 @@ interface Workout {
         <!-- Active Workout -->
         @if (activeWorkout()) {
           <p-card class="active-workout-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="workout-header">
                 <h3>{{ activeWorkout()?.name }}</h3>
                 <app-status-tag
@@ -132,7 +132,7 @@ interface Workout {
 
         <!-- Workout History -->
         <p-card class="workout-history-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <h3>Workout History</h3>
           </ng-template>
           @if (isLoading()) {

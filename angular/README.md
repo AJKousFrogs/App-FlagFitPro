@@ -31,6 +31,8 @@ npm start
 
 The application will be available at `http://localhost:4200`
 
+**Debugging & testing:** See [ANGULAR_DEBUGGING_INDEX.md](./ANGULAR_DEBUGGING_INDEX.md) for debugging guides, testing checklist, and E2E setup.
+
 ---
 
 ## 📊 Project Statistics

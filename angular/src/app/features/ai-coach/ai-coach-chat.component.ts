@@ -780,7 +780,7 @@ interface AutocompleteSuggestion {
             [modal]="true"
             [closable]="!microSessionInProgress()"
             [dismissableMask]="!microSessionInProgress()"
-            styleClass="micro-session-dialog"
+            class="micro-session-dialog"
             (onHide)="onMicroSessionDialogHide()"
           >
             <app-micro-session

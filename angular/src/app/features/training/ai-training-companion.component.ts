@@ -248,7 +248,7 @@ declare global {
                 [autoplayInterval]="8000"
                 class="recommendation-carousel"
               >
-                <ng-template let-recommendation pTemplate="item">
+                <ng-template let-recommendation #item>
                   <div class="recommendation-card">
                     <div class="recommendation-content">
                       <h5>{{ recommendation.title }}</h5>

@@ -42,7 +42,7 @@
     --p-button-danger-active-background: var(--primitive-error-700);
     --p-button-danger-color: var(--color-text-on-primary);
     --p-button-success-background: var(--color-status-success);
-    --p-button-success-hover-background: var(--primitive-success-600);
+    --p-button-success-hover-background: var(--primitive-primary-800); /* Green hover - success = green */
     --p-button-success-color: var(--color-text-on-primary);
     --p-button-warn-background: var(--color-status-warning);
     --p-button-warn-hover-background: var(--primitive-warning-600);
@@ -90,7 +90,7 @@
     --p-card-footer-border-top: var(--border-1) solid var(--color-border-muted);
 
     // ============================================
-    // TAGS / BADGES
+    // TAGS
     // ============================================
 
     --p-tag-padding-x: var(--space-3);
@@ -111,6 +111,18 @@
     --p-tag-warn-color: var(--color-status-warning);
     --p-tag-danger-background: var(--color-status-error-surface);
     --p-tag-danger-color: var(--color-status-error);
+
+    // Badge (inline labels, overlays - inherits tag semantics)
+    --p-badge-background: var(--color-status-error);
+    --p-badge-color: var(--color-text-on-primary);
+    --p-badge-success-background: var(--color-status-success);
+    --p-badge-success-color: var(--color-text-on-primary);
+    --p-badge-info-background: var(--color-status-info);
+    --p-badge-info-color: var(--color-text-on-primary);
+    --p-badge-warn-background: var(--color-status-warning);
+    --p-badge-warn-color: var(--color-text-primary);
+    --p-badge-danger-background: var(--color-status-error);
+    --p-badge-danger-color: var(--color-text-on-primary);
 
     // ============================================
     // DIALOG / DRAWER (Decision 25)
@@ -181,6 +193,9 @@
     // Input placeholder
     --p-inputtext-placeholder-color: var(--color-text-muted);
 
+    // InputNumber (inherits input)
+    --p-inputnumber-border-radius: var(--radius-lg);
+
     // ============================================
     // SELECT / DROPDOWN (Decision 41)
     // ============================================
@@ -216,6 +231,11 @@
     --p-dropdown-option-min-height: var(--touch-target-sm);
     --p-dropdown-option-font-size: var(--font-body-size);
 
+    // AutoComplete (inherits dropdown panel)
+    --p-autocomplete-panel-background: var(--surface-elevated, var(--color-surface-primary));
+    --p-autocomplete-panel-border-radius: var(--radius-lg);
+    --p-autocomplete-panel-shadow: var(--shadow-lg);
+
     // ============================================
     // DATATABLE (Decision 24)
     // ============================================
@@ -240,25 +260,48 @@
 
     // ============================================
     // TOAST (Decision 26) - Overlay consistency
+    // Aligned with primeng-integration: radius-xl, shadow-toast, text-primary for contrast
     // ============================================
 
-    --p-toast-border-radius: var(--radius-lg);
-    --p-toast-shadow: var(--shadow-lg, var(--shadow-2));
-    --p-toast-padding: var(--space-3) var(--space-4);
+    --p-toast-border-radius: var(--radius-xl);
+    --p-toast-shadow: var(--shadow-toast);
+    --p-toast-blur: var(--blur-md);
+    --p-toast-padding: var(--space-4) var(--space-5);
+    --p-toast-content-padding: var(--space-4) var(--space-5);
+    --p-toast-content-gap: var(--space-3);
+    --p-toast-close-button-width: var(--touch-target-sm);
+    --p-toast-close-button-height: var(--touch-target-sm);
+    --p-toast-close-button-border-radius: var(--radius-md);
 
-    // Toast severities
-    --p-toast-success-background: var(--color-status-success-surface);
+    // Toast severities - use --color-text-primary for contrast on light surfaces
+    --p-toast-success-background: linear-gradient(
+      135deg,
+      var(--color-status-success-light) 0%,
+      var(--surface-primary) 100%
+    );
     --p-toast-success-border-color: var(--color-status-success);
-    --p-toast-success-color: var(--color-status-success);
-    --p-toast-info-background: var(--color-status-info-surface);
-    --p-toast-info-border-color: var(--color-status-info);
-    --p-toast-info-color: var(--color-status-info);
-    --p-toast-warn-background: var(--color-status-warning-surface);
+    --p-toast-success-color: var(--color-text-primary);
+    --p-toast-info-background: linear-gradient(
+      135deg,
+      rgba(var(--ds-primary-green-rgb), 0.1) 0%,
+      var(--surface-primary) 100%
+    );
+    --p-toast-info-border-color: var(--ds-primary-green);
+    --p-toast-info-color: var(--color-text-primary);
+    --p-toast-warn-background: linear-gradient(
+      135deg,
+      var(--color-status-warning-light) 0%,
+      var(--surface-primary) 100%
+    );
     --p-toast-warn-border-color: var(--color-status-warning);
-    --p-toast-warn-color: var(--color-status-warning);
-    --p-toast-error-background: var(--color-status-error-surface);
+    --p-toast-warn-color: var(--color-text-primary);
+    --p-toast-error-background: linear-gradient(
+      135deg,
+      var(--color-status-error-light) 0%,
+      var(--surface-primary) 100%
+    );
     --p-toast-error-border-color: var(--color-status-error);
-    --p-toast-error-color: var(--color-status-error);
+    --p-toast-error-color: var(--color-text-primary);
 
     // ============================================
     // TOOLTIP (Decision 31)
@@ -298,6 +341,14 @@
     --p-progressbar-value-background: var(--ds-primary-green);
     --p-progressbar-border-radius: var(--radius-full);
     --p-progressbar-height: var(--space-2);
+
+    // ============================================
+    // SLIDER
+    // ============================================
+
+    --p-slider-background: var(--color-surface-secondary);
+    --p-slider-range-background: var(--ds-primary-green);
+    --p-slider-handle-background: var(--ds-primary-green);
 
     // ============================================
     // CHECKBOX / RADIO (Decision 42)
@@ -389,11 +440,138 @@
     --p-avatar-background: var(--color-surface-secondary);
 
     // ============================================
+    // CHIP
+    // ============================================
+
+    --p-chip-background: var(--color-surface-secondary);
+    --p-chip-border-radius: var(--radius-md);
+    --p-chip-padding-x: var(--space-3);
+    --p-chip-padding-y: var(--space-2);
+    --p-chip-gap: var(--space-2);
+    --p-chip-color: var(--color-text-primary);
+    --p-chip-primary-background: var(--ds-primary-green);
+    --p-chip-primary-color: var(--color-text-on-primary);
+
+    // ============================================
+    // COLOR PICKER (overlay panel)
+    // ============================================
+
+    --p-colorpicker-panel-background: var(--surface-elevated, var(--color-surface-primary));
+    --p-colorpicker-panel-border-radius: var(--radius-lg);
+    --p-colorpicker-panel-shadow: var(--shadow-lg);
+
+    // ============================================
+    // TOOLBAR
+    // ============================================
+
+    --p-toolbar-background: var(--color-surface-primary);
+    --p-toolbar-border-color: var(--color-border-muted);
+    --p-toolbar-padding: var(--space-3) var(--space-4);
+
+    // ============================================
     // SKELETON
     // ============================================
 
     --p-skeleton-background: var(--color-surface-secondary);
     --p-skeleton-border-radius: var(--radius-md);
+
+    // ============================================
+    // PASSWORD (inherits from input)
+    // ============================================
+
+    --p-password-panel-background: var(--surface-elevated, var(--color-surface-primary));
+    --p-password-panel-border-radius: var(--radius-lg);
+    --p-password-panel-shadow: var(--shadow-lg);
+    --p-password-panel-padding: var(--space-4);
+    --p-password-overlay-panel-border-color: var(--surface-border, var(--color-border-default));
+
+    // ============================================
+    // CONFIRM DIALOG (inherits from dialog)
+    // ============================================
+
+    --p-confirmdialog-border-radius: var(--radius-lg);
+    --p-confirmdialog-background: var(--surface-elevated, var(--color-surface-primary));
+    --p-confirmdialog-border-color: var(--surface-border, var(--color-border-muted));
+    --p-confirmdialog-content-padding: var(--space-5);
+    --p-confirmdialog-icon-gap: var(--space-3);
+
+    // ============================================
+    // PAGINATOR
+    // ============================================
+
+    --p-paginator-background: var(--surface-card, var(--surface-primary));
+    --p-paginator-padding: var(--space-4) var(--space-5);
+    --p-paginator-element-gap: var(--space-2);
+
+    // ============================================
+    // MESSAGE
+    // ============================================
+
+    --p-message-border-radius: var(--radius-lg);
+    --p-message-content-padding: var(--space-4) var(--space-5);
+    --p-message-content-gap: var(--space-3);
+
+    // ============================================
+    // TIMELINE
+    // ============================================
+
+    --p-timeline-event-marker-background: var(--ds-primary-green);
+    --p-timeline-event-marker-border-color: var(--ds-primary-green);
+    --p-timeline-event-connector-background: var(--color-border-muted);
+    --p-timeline-event-content-padding: var(--space-4);
+    --p-timeline-event-gap: var(--space-3);
+    --p-timeline-event-opposite-padding: var(--space-4);
+
+    // ============================================
+    // STEPPER
+    // ============================================
+
+    --p-stepper-indicator-background: var(--color-surface-secondary);
+    --p-stepper-indicator-active-background: var(--ds-primary-green);
+    --p-stepper-indicator-active-color: var(--color-text-on-primary);
+    --p-stepper-step-padding: var(--space-4);
+    --p-stepper-content-padding: var(--space-4);
+    --p-stepper-gap: var(--space-3);
+
+    // ============================================
+    // FILE UPLOAD
+    // ============================================
+
+    --p-fileupload-content-padding: var(--space-4);
+    --p-fileupload-item-gap: var(--space-3);
+
+    // ============================================
+    // CHART (Chart.js / PrimeNG Chart)
+    // ============================================
+
+    --p-chart-primary-color: var(--ds-primary-green);
+    --p-chart-grid-color: var(--color-border-muted);
+    --p-chart-text-color: var(--color-text-primary);
+
+    // ============================================
+    // SCROLL PANEL
+    // ============================================
+
+    --p-scrollpanel-border-radius: var(--radius-md);
+    --p-scrollpanel-border-color: var(--color-border-muted);
+    --p-scrollpanel-content-padding: var(--space-4);
+
+    // ============================================
+    // INPUT GROUP
+    // ============================================
+
+    --p-inputgroup-addon-background: var(--color-surface-secondary);
+    --p-inputgroup-addon-border-color: var(--color-border-default);
+    --p-inputgroup-addon-color: var(--color-text-secondary);
+    --p-inputgroup-addon-padding: var(--space-3) var(--space-4);
+
+    // ============================================
+    // DIVIDER
+    // ============================================
+
+    --p-divider-border-color: var(--color-border-muted);
+    --p-divider-border-width: var(--border-1);
+    --p-divider-margin: var(--space-4);
 
     // ============================================
     // Z-INDEX (Decision 20)

@@ -86,7 +86,7 @@
   aspect-ratio: 1;
   border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
-  background: white;
+  background: var(--surface-primary);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
@@ -101,7 +101,7 @@
 }
 
 .scale-btn.selected {
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .scale-btn.selected.low {
@@ -142,8 +142,8 @@
 }
 
 .quality.good {
-  background: var(--primitive-success-50);
-  color: var(--primitive-success-700);
+  background: var(--color-status-success-subtle);
+  color: var(--color-status-success);
 }
 
 .quality.okay {

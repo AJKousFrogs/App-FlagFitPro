@@ -1278,8 +1278,8 @@
   }
 
   .p-toast-message {
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    border-radius: var(--p-toast-border-radius, var(--radius-xl));
+    box-shadow: var(--p-toast-shadow, var(--shadow-toast));
     animation: toast-slide-in var(--transition-base) var(--ease-decelerate);
     overflow: hidden;
   }
@@ -1296,52 +1296,39 @@
   }
 
   .p-toast-message-success {
-    background: linear-gradient(
-      135deg,
-      var(--color-status-success-light) 0%,
-      var(--surface-primary) 100%
-    );
-    border-left: calc(var(--border-2) * 2) solid var(--color-status-success);
+    background: var(--p-toast-success-background);
+    border-left: var(--space-1) solid var(--p-toast-success-border-color);
+    color: var(--p-toast-success-color);
   }
 
   .p-toast-message-info {
-    background: linear-gradient(
-      135deg,
-      var(--ds-primary-green-subtle) 0%,
-      var(--surface-primary) 100%
-    );
-    border-left: calc(var(--border-2) * 2) solid var(--ds-primary-green);
+    background: var(--p-toast-info-background);
+    border-left: var(--space-1) solid var(--p-toast-info-border-color);
+    color: var(--p-toast-info-color);
   }
 
   .p-toast-message-warn {
-    background: linear-gradient(
-      135deg,
-      var(--color-status-warning-light) 0%,
-      var(--surface-primary) 100%
-    );
-    border-left: calc(var(--border-2) * 2) solid var(--color-status-warning);
+    background: var(--p-toast-warn-background);
+    border-left: var(--space-1) solid var(--p-toast-warn-border-color);
+    color: var(--p-toast-warn-color);
   }
 
   .p-toast-message-error {
-    background: linear-gradient(
-      135deg,
-      var(--color-status-error-light) 0%,
-      var(--surface-primary) 100%
-    );
-    border-left: calc(var(--border-2) * 2) solid var(--color-status-error);
+    background: var(--p-toast-error-background);
+    border-left: var(--space-1) solid var(--p-toast-error-border-color);
+    color: var(--p-toast-error-color);
   }
 
   .p-toast-message-content {
-    padding: var(--space-4);
+    padding: var(--p-toast-content-padding, var(--space-4) var(--space-5));
   }
 
   .p-toast-close-button {
-    /* Smaller circular close button for toasts */
-    width: calc(var(--space-6) + var(--space-1));
-    height: calc(var(--space-6) + var(--space-1));
-    min-width: calc(var(--space-6) + var(--space-1));
-    min-height: calc(var(--space-6) + var(--space-1));
-    border-radius: 50%;
+    width: var(--p-toast-close-button-width, var(--touch-target-sm));
+    height: var(--p-toast-close-button-height, var(--touch-target-sm));
+    min-width: var(--p-toast-close-button-width, var(--touch-target-sm));
+    min-height: var(--p-toast-close-button-height, var(--touch-target-sm));
+    border-radius: var(--p-toast-close-button-border-radius, var(--radius-md));
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1349,7 +1336,7 @@
     border: none;
     color: inherit;
     cursor: pointer;
-    opacity: 0.7;
+    opacity: var(--opacity-strong);
     transition:
       background-color var(--motion-fast) var(--ease-standard),
       opacity var(--motion-fast) var(--ease-standard),
@@ -3348,11 +3335,12 @@
    CRITICAL: BUTTON TEXT COLOR ENFORCEMENT
    Design System Rule: WHITE ON GREEN, GREEN ON WHITE, BLACK ON WHITE
    NO BLACK ON GREEN - EVER!
-   
-   This section is OUTSIDE @layer to ensure highest specificity
+   Wrapped in @layer primeng-brand so color-guards (layer 7) can override
+   edge cases per 7-layer cascade. See DESIGN_SYSTEM_RULES.md.
    ================================================================ */
 
-/* Primary/default buttons - WHITE text on GREEN background */
+@layer primeng-brand {
+  /* Primary/default buttons - WHITE text on GREEN background */
 .p-button:not(.p-button-outlined):not(.p-button-text):not(
     .p-button-secondary
   ):not(.p-button-link),
@@ -4025,15 +4013,6 @@ p-button .p-button,
 }
 /* stylelint-enable selector-max-compound-selectors */
 
-/* stylelint-disable selector-max-compound-selectors */
-:is(.dark-theme, [data-theme="dark"])
-  .p-datepicker-calendar
-  .p-datepicker-other-month
-  span {
-  color: var(--primitive-neutral-600);
-}
-/* stylelint-enable selector-max-compound-selectors */
-
 /* Input wrapper positioning fix */
 .p-datepicker,
 .p-calendar,
@@ -4205,6 +4184,7 @@ p-button .p-button,
     transform: scale(0.9);
   }
 }
+} /* End @layer primeng-brand - button text color enforcement */
 
 /* ================================================================
    END OF PRIMENG THEME

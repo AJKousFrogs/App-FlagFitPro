@@ -89,6 +89,9 @@ jspm_packages/
 .out
 .storybook-out
 
+# Audit outputs (ephemeral)
+audit_dead_weight_*/
+
 # Temporary folders
 tmp/
 temp/

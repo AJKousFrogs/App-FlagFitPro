@@ -153,7 +153,7 @@ interface Goal {
                     optionValue="value"
                     placeholder="Select intensity"
                   >
-                    <ng-template let-option pTemplate="item">
+                    <ng-template let-option #item>
                       <div class="intensity-option">
                         <span
                           class="intensity-indicator"
@@ -239,12 +239,12 @@ interface Goal {
               layout="vertical"
               class="session-timeline"
             >
-              <ng-template pTemplate="marker" let-event>
+              <ng-template #marker let-event>
                 <div class="timeline-marker" [class]="'marker-' + event.type">
                   <i [class]="event.icon"></i>
                 </div>
               </ng-template>
-              <ng-template pTemplate="content" let-event>
+              <ng-template #content let-event>
                 <p-card class="timeline-card">
                   <div class="exercise-header">
                     <h4>{{ event.title }}</h4>

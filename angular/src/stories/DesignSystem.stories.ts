@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/angular";
 import { applicationConfig } from "@storybook/angular";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
-import { Button } from "primeng/button";
 import { Card } from "primeng/card";
-import { InputText } from "primeng/inputtext";
 import { CommonModule } from "@angular/common";
+import { ButtonComponent } from "../app/shared/components/button/button.component";
 // Note: play functions temporarily disabled due to Storybook 10 + @storybook/test incompatibility
 
 /**
@@ -103,7 +102,7 @@ export const Colors: Story = {
  */
 export const Buttons: Story = {
   render: () => ({
-    imports: [Button, CommonModule],
+    imports: [ButtonComponent, CommonModule],
     template: `
       <div style="display: grid; gap: var(--space-6); padding: var(--space-6); max-width: var(--content-max-width-md);">
         <h2 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0;">Buttons</h2>
@@ -112,9 +111,9 @@ export const Buttons: Story = {
         <div>
           <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Primary Buttons</h3>
           <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
-            <p-button label="Start Training" icon="pi pi-play"></p-button>
-            <p-button label="Save Changes" icon="pi pi-check"></p-button>
-            <p-button label="Primary" [iconOnly]="false"></p-button>
+            <app-button variant="primary" iconLeft="pi-play">Start Training</app-button>
+            <app-button variant="primary" iconLeft="pi-check">Save Changes</app-button>
+            <app-button variant="primary">Primary</app-button>
           </div>
         </div>
         
@@ -122,8 +121,8 @@ export const Buttons: Story = {
         <div>
           <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Outlined Buttons</h3>
           <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
-            <p-button label="Ask Merlin" styleClass="p-button-outlined" icon="pi pi-question"></p-button>
-            <p-button label="Cancel" styleClass="p-button-outlined"></p-button>
+            <app-button variant="outlined" iconLeft="pi-question">Ask Merlin</app-button>
+            <app-button variant="outlined">Cancel</app-button>
           </div>
         </div>
         
@@ -131,8 +130,8 @@ export const Buttons: Story = {
         <div>
           <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Text Buttons</h3>
           <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
-            <p-button label="Learn More" styleClass="p-button-text"></p-button>
-            <p-button label="Skip" styleClass="p-button-text"></p-button>
+            <app-button variant="text">Learn More</app-button>
+            <app-button variant="text">Skip</app-button>
           </div>
         </div>
         
@@ -140,9 +139,9 @@ export const Buttons: Story = {
         <div>
           <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Icon Only (var(--button-height-md))</h3>
           <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
-            <p-button icon="pi pi-plus" [iconOnly]="true"></p-button>
-            <p-button icon="pi pi-pencil" [iconOnly]="true"></p-button>
-            <p-button icon="pi pi-trash" [iconOnly]="true" styleClass="p-button-danger"></p-button>
+            <app-button iconOnly ariaLabel="Add" iconLeft="pi-plus"></app-button>
+            <app-button iconOnly ariaLabel="Edit" iconLeft="pi-pencil"></app-button>
+            <app-button iconOnly ariaLabel="Delete" variant="danger" iconLeft="pi-trash"></app-button>
           </div>
         </div>
       </div>
@@ -155,24 +154,24 @@ export const Buttons: Story = {
  */
 export const Cards: Story = {
   render: () => ({
-    imports: [Card, CommonModule],
+    imports: [Card, ButtonComponent, CommonModule],
     template: `
       <div style="display: grid; gap: var(--space-6); padding: var(--space-6); max-width: var(--content-max-width-md);">
         <h2 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0;">Cards</h2>
         
         <!-- Standard Card -->
-        <p-card header="Card Title" styleClass="w-full">
+        <p-card header="Card Title" class="w-full">
           <p>Card content with var(--space-4) padding and var(--space-3) gap between elements.</p>
           <p>Border radius: var(--radius-xl)</p>
         </p-card>
         
         <!-- Card with Footer -->
-        <p-card header="Card with Actions" styleClass="w-full">
+        <p-card header="Card with Actions" class="w-full">
           <p>This card has a footer with action buttons.</p>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end;">
-              <p-button label="Cancel" styleClass="p-button-outlined"></p-button>
-              <p-button label="Save" icon="pi pi-check"></p-button>
+              <app-button variant="outlined">Cancel</app-button>
+              <app-button variant="primary" iconLeft="pi-check">Save</app-button>
             </div>
           </ng-template>
         </p-card>

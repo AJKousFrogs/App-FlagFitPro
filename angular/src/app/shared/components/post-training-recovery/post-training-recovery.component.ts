@@ -79,7 +79,7 @@ interface RecoveryRecommendation {
       [draggable]="false"
       [resizable]="false"
       [showHeader]="false"
-      styleClass="post-training-dialog dialog-w-xl dialog-max-w-lg"
+      class="post-training-dialog dialog-w-xl dialog-max-w-lg"
       (onHide)="onClose()"
     >
       <div class="post-training-content">
@@ -147,7 +147,7 @@ interface RecoveryRecommendation {
                   [max]="300"
                   [showButtons]="true"
                   suffix=" min"
-                  styleClass="duration-number"
+                  class="duration-number"
                 ></p-inputNumber>
                 <span class="load-preview" [class.visible]="rpeRating() > 0">
                   Load: {{ calculateLoad() }} AU

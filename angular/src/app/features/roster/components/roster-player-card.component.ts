@@ -135,7 +135,7 @@ import { TRAINING } from "../../../core/constants/app.constants";
           <p-progressBar
             [value]="enrichedPlayer().readiness ?? 0"
             [showValue]="false"
-            [styleClass]="
+            [class]="
               'readiness-bar ' +
               getReadinessClass(enrichedPlayer().readiness ?? 0)
             "

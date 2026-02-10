@@ -101,15 +101,15 @@
 }
 
 .metric-progress.tone-success {
-  --p-progressbar-value-bg: var(--color-status-success);
+  --p-progressbar-value-background: var(--color-status-success);
 }
 
 .metric-progress.tone-warning {
-  --p-progressbar-value-bg: var(--color-status-warning);
+  --p-progressbar-value-background: var(--color-status-warning);
 }
 
 .metric-progress.tone-error {
-  --p-progressbar-value-bg: var(--color-status-error);
+  --p-progressbar-value-background: var(--color-status-error);
 }
 
 .protocols-grid {
@@ -174,8 +174,8 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2);
-  background: var(--primitive-success-50);
-  border: var(--border-1) solid var(--primitive-success-200);
+  background: var(--color-status-success-subtle);
+  border: var(--border-1) solid var(--color-status-success-light);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-4);
 }
@@ -460,8 +460,8 @@
 }
 
 .evidence-badge.evidence-strong {
-  background: var(--primitive-success-100);
-  border-color: var(--primitive-success-300);
+  background: var(--color-status-success-surface);
+  border-color: var(--color-status-success);
 }
 
 .more-benefits {

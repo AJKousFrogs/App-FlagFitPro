@@ -198,7 +198,6 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     StepList,
     Step,
     TableModule,
-    TableModule,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -220,7 +219,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
           <div class="import-types-grid">
             @for (type of importTypes; track type.id) {
               <p-card
-                styleClass="import-type-card"
+                class="import-type-card"
                 (click)="selectImportType(type)"
               >
                 <div class="type-content">
@@ -261,7 +260,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 
             <!-- Step 1: Upload -->
             @if (currentStep() === 0) {
-              <p-card styleClass="step-card">
+              <p-card class="step-card">
                 <h3>Step 1: Upload File</h3>
 
                 <div class="upload-area">
@@ -274,9 +273,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     [customUpload]="true"
                     (uploadHandler)="onFileUpload($event)"
                     chooseLabel="Choose File"
-                    styleClass="upload-component"
+                    class="upload-component"
                   >
-                    <ng-template pTemplate="content">
+                    <ng-template #content>
                       <div class="upload-placeholder">
                         <i class="pi pi-cloud-upload upload-placeholder__icon"></i>
                         <p>Drop file here or click to browse</p>
@@ -313,7 +312,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 
                 <p-message
                   severity="info"
-                  styleClass="tip-message status-message"
+                  class="tip-message status-message"
                 >
                   💡 Tip: Ask your coach for an export file in the supported
                   format
@@ -323,7 +322,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 
             <!-- Step 2: Preview & Map -->
             @if (currentStep() === 1 && importPreview()) {
-              <p-card styleClass="step-card">
+              <p-card class="step-card">
                 <h3>Step 2: Preview & Map Fields</h3>
 
                 <!-- File Summary -->
@@ -361,16 +360,16 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   <h4>Field Mapping</h4>
                   <p-table
                     [value]="importPreview()!.fieldMappings"
-                    styleClass="p-datatable-sm"
+                    class="p-datatable-sm"
                   >
-                    <ng-template pTemplate="header">
+                    <ng-template #header>
                       <tr>
                         <th>File Field</th>
                         <th>Maps To</th>
                         <th>Status</th>
                       </tr>
                     </ng-template>
-                    <ng-template pTemplate="body" let-mapping>
+                    <ng-template #body let-mapping>
                       <tr>
                         <td>
                           <code>{{ mapping.fileField }}</code>
@@ -383,7 +382,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                               optionLabel="label"
                               optionValue="value"
                               placeholder="Select mapping"
-                              styleClass="mapping-select"
+                              class="mapping-select"
                             ></p-select>
                           } @else {
                             {{ mapping.mapsTo }}
@@ -439,7 +438,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 
             <!-- Step 3: Complete -->
             @if (currentStep() === 2 && importResult()) {
-              <p-card styleClass="step-card result-card">
+              <p-card class="step-card result-card">
                 <div class="result-content">
                   <div
                     class="result-icon"
@@ -523,7 +522,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
               >Back to Import Options</app-button
             >
 
-            <p-card styleClass="wearables-card">
+            <p-card class="wearables-card">
               <h3>Connect Wearable Devices</h3>
 
               <!-- Connected Devices -->

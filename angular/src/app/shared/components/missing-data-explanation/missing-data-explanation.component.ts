@@ -33,7 +33,7 @@ import { LoggerService } from "../../../core/services/logger.service";
   template: `
     @if (missingStatus() && missingStatus()!.missing) {
       <p-card
-        styleClass="missing-data-card"
+        class="missing-data-card"
         [class]="'severity-' + missingStatus()!.severity"
       >
         <div class="missing-data-header">

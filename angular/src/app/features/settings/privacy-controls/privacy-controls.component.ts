@@ -11,7 +11,6 @@ import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -61,7 +60,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     InputText,
 
     Dialog,
-    PrimeTemplate,
+    
     Divider,
     Tooltip,
     Chip,
@@ -99,7 +98,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
           <div class="privacy-grid">
             <!-- AI Processing Section -->
             <p-card class="privacy-section ai-section">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="section-header">
                   <div class="section-icon ai-icon" aria-hidden="true">
                     <i class="pi pi-sparkles"></i>
@@ -192,7 +191,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
             <!-- Team Data Sharing Section -->
             <p-card class="privacy-section team-section">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="section-header">
                   <div class="section-icon team-icon" aria-hidden="true">
                     <i class="pi pi-users"></i>
@@ -214,7 +213,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                 <p-accordion [multiple]="true">
                   @for (team of teamSettings(); track team.teamId) {
                     <p-accordionpanel>
-                      <ng-template pTemplate="header">
+                      <ng-template #header>
                         <div class="team-header">
                           <span class="team-name">{{ team.teamName }}</span>
                           <div class="team-status">
@@ -237,7 +236,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                           </div>
                         </div>
                       </ng-template>
-                      <ng-template pTemplate="content">
+                      <ng-template #content>
                         <div class="team-settings">
                           <div class="team-toggle">
                             <div class="toggle-info">
@@ -312,7 +311,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
             <!-- Emergency Data Section -->
             <p-card class="privacy-section emergency-section">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="section-header">
                   <div class="section-icon emergency-icon" aria-hidden="true">
                     <i class="pi pi-exclamation-triangle"></i>
@@ -386,7 +385,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
             <!-- Research & Marketing Section -->
             <p-card class="privacy-section research-section">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="section-header">
                   <div class="section-icon research-icon" aria-hidden="true">
                     <i class="pi pi-chart-bar"></i>
@@ -437,7 +436,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
             <!-- Data Rights Section -->
             <p-card class="privacy-section rights-section">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="section-header">
                   <div class="section-icon rights-icon" aria-hidden="true">
                     <i class="pi pi-file-check"></i>
@@ -525,7 +524,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         header="Add Emergency Contact"
         [(visible)]="showAddContactDialog"
         [modal]="true"
-        styleClass="privacy-contact-dialog"
+        class="privacy-contact-dialog"
       >
         <div class="contact-form">
           <div class="form-field">
@@ -558,7 +557,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             ></p-select>
           </div>
         </div>
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="text" (clicked)="showAddContactDialog = false"
             >Cancel</app-button
           >
@@ -578,7 +577,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         header="Delete Account"
         [(visible)]="showDeleteAccountDialog"
         [modal]="true"
-        styleClass="privacy-delete-dialog"
+        class="privacy-delete-dialog"
       >
         <div class="delete-warning" role="alert">
           <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
@@ -621,7 +620,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             />
           </div>
         </div>
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="text" (clicked)="showDeleteAccountDialog = false"
             >Cancel</app-button
           >

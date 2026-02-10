@@ -22,7 +22,7 @@
 .header-icon {
   width: var(--header-height);
   height: var(--header-height);
-  background: var(--primitive-success-100);
+  background: var(--color-status-success-surface);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -81,12 +81,12 @@
 
 .step.active .step-number {
   background: var(--color-brand-primary);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .step.completed .step-number {
   background: var(--ds-primary-green);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .step-label {
@@ -244,7 +244,7 @@
   padding: var(--space-3);
   border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
-  background: white;
+  background: var(--surface-primary);
   cursor: pointer;
   transition:
     transform var(--transition-fast),
@@ -292,13 +292,13 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--primitive-success-50);
+  background: var(--color-status-success-subtle);
   border-radius: var(--radius-md);
 }
 
 .no-soreness-option label {
   font-size: var(--ds-font-size-md);
-  color: var(--primitive-success-700);
+  color: var(--color-status-success);
   cursor: pointer;
 }
 
@@ -331,15 +331,15 @@
 }
 
 .recommendation-card.priority-low {
-  border-left-color: var(--primitive-success-400);
-  background: var(--primitive-success-50);
+  border-left-color: var(--color-status-success);
+  background: var(--color-status-success-subtle);
 }
 
 .rec-icon {
   width: var(--avatar-size-md);
   height: var(--avatar-size-md);
   border-radius: var(--radius-lg);
-  background: white;
+  background: var(--surface-primary);
   display: flex;
   align-items: center;
   justify-content: center;

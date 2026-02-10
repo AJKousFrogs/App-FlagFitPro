@@ -75,7 +75,7 @@
 
 .nav-arrow:hover:not(:disabled) {
   background: var(--color-brand-primary);
-  color: white;
+  color: var(--color-text-on-primary);
   border-color: var(--color-brand-primary);
 }
 

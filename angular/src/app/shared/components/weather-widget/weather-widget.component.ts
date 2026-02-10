@@ -38,7 +38,7 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
       <app-card
         title="Weather Conditions"
         headerIcon="pi-cloud"
-        styleClass="weather-widget"
+        class="weather-widget"
       >
         <div class="weather-content">
           <!-- Current Conditions -->

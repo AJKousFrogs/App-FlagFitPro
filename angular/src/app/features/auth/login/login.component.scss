@@ -66,7 +66,7 @@
       background: linear-gradient(
         90deg,
         var(--ds-primary-green) 0%,
-        var(--ds-secondary-gold) 100%
+        var(--primitive-gold-500) 100%
       );
     }
   }
@@ -281,7 +281,7 @@
         display: none;
         width: var(--indicator-size-xs);
         height: var(--indicator-size-md);
-        border: solid white;
+        border: solid var(--color-text-on-primary);
   border-width: 0 var(--border-2) var(--border-2) 0;
         transform: rotate(45deg);
         margin-bottom: var(--space-1);
@@ -407,7 +407,8 @@
   // DARK MODE
   // ============================================================================
 
-  [data-theme="dark"] {
+  [data-theme="dark"],
+  .dark-theme {
     .login-page {
       background: linear-gradient(
         135deg,

@@ -92,7 +92,7 @@ interface AnalyticsData {
             <p-progressBar
               [value]="analytics()?.totals?.completion_rate || 0"
               [showValue]="false"
-              styleClass="completion-bar"
+              class="completion-bar"
             ></p-progressBar>
           }
         </div>
@@ -142,7 +142,7 @@ interface AnalyticsData {
       <!-- Weekly Chart -->
       @if (!loading() && chartData()) {
         <p-card class="chart-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="chart-header">
               <h3>Weekly Progress</h3>
               <app-status-tag
@@ -182,7 +182,7 @@ interface AnalyticsData {
                 <p-progressBar
                   [value]="type.rate"
                   [showValue]="false"
-                  styleClass="type-bar"
+                  class="type-bar"
                 ></p-progressBar>
               </div>
             }

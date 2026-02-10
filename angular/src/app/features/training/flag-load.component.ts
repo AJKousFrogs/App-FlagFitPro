@@ -27,7 +27,6 @@ import { formatDate } from "../../shared/utils/date.utils";
     CommonModule,
     RouterModule,
     TableModule,
-    TableModule,
     LazyChartComponent,
   ],
   template: `

@@ -48,7 +48,7 @@ import {
   template: `
 <div class="register-page">
       <p-card class="register-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="register-logo">
             <i class="pi pi-activity"></i>
           </div>

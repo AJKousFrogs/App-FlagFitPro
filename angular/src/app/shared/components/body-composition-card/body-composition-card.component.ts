@@ -22,7 +22,6 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 
@@ -59,8 +58,8 @@ interface BodyCompositionData {
     Tooltip,
     DecimalPipe,
     Dialog,
-    PrimeTemplate,
-    PrimeTemplate,
+    
+    
     InputNumber,
   ],
   template: `
@@ -219,7 +218,7 @@ interface BodyCompositionData {
       header="Log Body Composition"
       [(visible)]="showLogDialog"
       [modal]="true"
-      styleClass="body-comp-dialog"
+      class="body-comp-dialog"
       [closable]="true"
     >
       <div class="measurement-form">
@@ -238,7 +237,7 @@ interface BodyCompositionData {
             [maxFractionDigits]="1"
             mode="decimal"
             placeholder="e.g., 75.5"
-            styleClass="w-full"
+            class="w-full"
           ></p-inputNumber>
         </div>
 
@@ -254,7 +253,7 @@ interface BodyCompositionData {
             [min]="1"
             [max]="60"
             placeholder="e.g., 15.0"
-            styleClass="w-full"
+            class="w-full"
           ></p-inputNumber>
         </div>
 
@@ -268,7 +267,7 @@ interface BodyCompositionData {
             [maxFractionDigits]="1"
             mode="decimal"
             placeholder="e.g., 35.0"
-            styleClass="w-full"
+            class="w-full"
           ></p-inputNumber>
         </div>
 
@@ -284,7 +283,7 @@ interface BodyCompositionData {
             [min]="30"
             [max]="80"
             placeholder="e.g., 55.0"
-            styleClass="w-full"
+            class="w-full"
           ></p-inputNumber>
         </div>
 
@@ -298,12 +297,12 @@ interface BodyCompositionData {
             [min]="800"
             [max]="4000"
             placeholder="e.g., 1800"
-            styleClass="w-full"
+            class="w-full"
           ></p-inputNumber>
         </div>
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button variant="text" (clicked)="showLogDialog = false">
           Cancel
         </app-button>

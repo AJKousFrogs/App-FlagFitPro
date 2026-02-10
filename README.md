@@ -9,6 +9,12 @@
 
 ---
 
+## Documentation Rule
+
+Docs describe current behavior or enforced rules. One-time audits and trackers are archived or deleted. If a doc is not referenced by [docs/DOCS_INDEX.md](docs/DOCS_INDEX.md), it should not exist. Max 1 doc per topic.
+
+---
+
 ## 🎯 Project Status: ~85% Production Ready
 
 | Component            | Status  | Details                                             |
@@ -312,7 +318,7 @@ ng generate component features/my-feature
 
 ## 📄 License
 
-MIT License - See [LICENSE.md](docs/LICENSE.md) for details
+MIT License - See [LICENSE.md](LICENSE.md) for details
 
 ---
 

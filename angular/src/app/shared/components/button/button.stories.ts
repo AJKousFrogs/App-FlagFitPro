@@ -32,7 +32,7 @@ import { IconButtonComponent } from "./icon-button.component";
  * | `[text]="true"` | `variant="text"` |
  * | `icon="pi pi-check"` | `iconLeft="pi-check"` |
  * | `iconPos="right"` | `iconRight="pi-check"` |
- * | `styleClass="w-full"` | `[fullWidth]="true"` |
+ * | `class="w-full"` | `[fullWidth]="true"` |
  * | `(onClick)="fn()"` | `(clicked)="fn()"` |
  *
  * ## Usage

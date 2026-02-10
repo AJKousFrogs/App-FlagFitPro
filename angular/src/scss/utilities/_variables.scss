@@ -173,7 +173,7 @@ $easing: (
 // ================================
 
 $grid-columns: 12;
-$grid-gutter: space(4); // 1rem
+$grid-gutter: var(--space-4); // 1rem
 
 // ================================
 // CONTAINER WIDTHS
@@ -202,11 +202,11 @@ $input-height: var(--input-height-md);
 $input-border-width: var(--border-1);
 
 // Cards
-$card-padding: space(5);
+$card-padding: var(--space-5);
 $card-border-radius: map.get($radius, xl);
 
 // Modals
-$modal-padding: space(5);
+$modal-padding: var(--space-5);
 $modal-widths: (
   sm: var(--dialog-max-width-sm),
   md: var(--dialog-max-width-xl),

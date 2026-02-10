@@ -1,18 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  inject,
-} from "@angular/core";
-import {
-  NavigationEnd,
-  NavigationError,
-  Router,
-  RouterOutlet,
-} from "@angular/router";
-import { filter } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
@@ -45,22 +32,7 @@ import { PlatformDetectionService } from "./core/services/platform-detection.ser
   `,
   styleUrl: "./app.component.scss",
 })
-export class AppComponent implements OnInit {
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
-  // Ensure platform classes (iOS/Safari/Android) are applied globally.
-  private platformDetection = inject(PlatformDetectionService);
-
-  ngOnInit(): void {
-    // Track navigation events for analytics/debugging
-    this.router.events
-      .pipe(
-        filter(
-          (event) =>
-            event instanceof NavigationEnd || event instanceof NavigationError,
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
+export class AppComponent {
+  // Side-effect: triggers constructor to add platform classes (iOS, Android, Safari, Chrome) to document.body
+  private readonly _platformDetection = inject(PlatformDetectionService);
 }

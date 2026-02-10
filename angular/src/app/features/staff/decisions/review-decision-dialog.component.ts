@@ -96,7 +96,7 @@ import type {
             [options]="reviewOutcomeOptions"
             [(ngModel)]="formData.reviewOutcome"
             placeholder="Select review outcome"
-            styleClass="w-full"
+            class="w-full"
             (onValueChange)="onOutcomeChange()"
             [attr.aria-label]="'Select review outcome'"
           ></p-select>
@@ -110,7 +110,7 @@ import type {
                 [minDate]="minDate"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
-                styleClass="w-full"
+                class="w-full"
                 [attr.aria-label]="'Select new review date'"
               ></p-datepicker>
             </div>
@@ -125,7 +125,7 @@ import type {
             [(ngModel)]="formData.reviewNotes"
             placeholder="Add notes about this review..."
             rows="4"
-            styleClass="w-full"
+            class="w-full"
           ></textarea>
         </div>
 
@@ -156,7 +156,7 @@ import type {
                     formData.outcomeData.unintendedConsequences[$index]
                   "
                   placeholder="Describe any unintended consequences"
-                  styleClass="w-full"
+                  class="w-full"
                 />
                 <app-button
                   iconLeft="pi-times"
@@ -180,7 +180,7 @@ import type {
               [(ngModel)]="formData.outcomeData.lessonsLearned"
               placeholder="What did we learn from this decision?"
               rows="3"
-              styleClass="w-full"
+              class="w-full"
             ></textarea>
           </div>
         </div>

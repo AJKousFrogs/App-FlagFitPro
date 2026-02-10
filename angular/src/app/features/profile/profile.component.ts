@@ -116,7 +116,7 @@ interface PendingInvitation {
         @if (isLoading()) {
           <div class="loading-state">
             <p-progressSpinner
-              styleClass="profile-loading-spinner"
+              class="profile-loading-spinner"
               strokeWidth="4"
             ></p-progressSpinner>
             <p class="loading-message">Loading profile...</p>
@@ -225,7 +225,7 @@ interface PendingInvitation {
                 <p-progressBar
                   [value]="profileCompletion().percentage"
                   [showValue]="false"
-                  styleClass="completion-progress"
+                  class="completion-progress"
                 ></p-progressBar>
                 @if (profileCompletion().missingFields.length > 0) {
                   <div class="completion-hint">
@@ -420,7 +420,7 @@ interface PendingInvitation {
                     @if (loadingInvitations()) {
                       <div class="loading-invitations">
                         <p-progressSpinner
-                          styleClass="invitation-loading-spinner"
+                          class="invitation-loading-spinner"
                           strokeWidth="4"
                         ></p-progressSpinner>
                         <span>Loading invitations...</span>

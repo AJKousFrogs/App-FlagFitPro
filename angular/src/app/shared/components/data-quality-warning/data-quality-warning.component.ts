@@ -87,12 +87,12 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
   styles: [
     `
       .data-quality-warning {
-        padding: var(--ds-space-2) var(--ds-space-3);
+        padding: var(--space-2) var(--space-3);
         border-radius: var(--radius-md);
-        margin-bottom: var(--ds-space-2);
+        margin-bottom: var(--space-2);
         display: flex;
         flex-direction: column;
-        gap: var(--ds-space-1);
+        gap: var(--space-1);
       }
 
       .quality-insufficient {
@@ -117,7 +117,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
       .warning-header {
         display: flex;
         align-items: center;
-        gap: var(--ds-space-2);
+        gap: var(--space-2);
       }
 
       .warning-header i {
@@ -143,7 +143,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
 
       .confidence-badge {
         margin-left: auto;
-        padding: calc(var(--ds-space-1) / 2) var(--ds-space-2);
+        padding: calc(var(--space-1) / 2) var(--space-2);
         border-radius: var(--radius-full);
         font-size: var(--ds-font-size-xs);
         font-weight: var(--ds-font-weight-medium);
@@ -152,7 +152,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
 
       .warning-details {
         padding-left: calc(
-          var(--ds-font-size-1-1rem) + var(--ds-space-2)
+          var(--ds-font-size-1-1rem) + var(--space-2)
         );
       }
 
@@ -163,7 +163,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
       }
 
       .recommendations {
-        margin-top: var(--ds-space-1);
+        margin-top: var(--space-1);
         font-size: var(--ds-font-size-0-8rem);
       }
 
@@ -173,18 +173,18 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
       }
 
       .recommendations ul {
-        margin: var(--ds-space-1) 0 0;
-        padding-left: var(--ds-space-3);
+        margin: var(--space-1) 0 0;
+        padding-left: var(--space-3);
       }
 
       .recommendations li {
         color: var(--color-text-secondary);
-        margin-bottom: calc(var(--ds-space-1) / 2);
+        margin-bottom: calc(var(--space-1) / 2);
       }
 
       .warning-action {
         padding-left: calc(
-          var(--ds-font-size-1-1rem) + var(--ds-space-2)
+          var(--ds-font-size-1-1rem) + var(--space-2)
         );
       }
     `,

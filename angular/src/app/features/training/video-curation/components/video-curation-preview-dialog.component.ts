@@ -28,7 +28,7 @@ import { InstagramVideo } from "../video-curation.models";
       [modal]="true"
       [draggable]="false"
       [header]="video()?.title || 'Video Preview'"
-      styleClass="video-curation-preview-dialog"
+      class="video-curation-preview-dialog"
     >
       @if (video(); as v) {
         <div class="preview-content">

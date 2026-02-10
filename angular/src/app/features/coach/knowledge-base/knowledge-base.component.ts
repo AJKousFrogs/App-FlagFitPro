@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
@@ -93,7 +93,7 @@ const VISIBILITY_OPTIONS = [
     CommonModule,
     FormsModule,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     RadioButton,
     Select,
@@ -386,7 +386,7 @@ const VISIBILITY_OPTIONS = [
         [(visible)]="showAddDialog"
         header="Add Resource"
         [modal]="true"
-        styleClass="knowledge-base-add-dialog"
+        class="knowledge-base-add-dialog"
       >
         <div class="add-form">
           <div class="form-field">
@@ -424,7 +424,7 @@ const VISIBILITY_OPTIONS = [
               optionLabel="name"
               optionValue="id"
               placeholder="Select category"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
           </div>
 
@@ -478,7 +478,7 @@ const VISIBILITY_OPTIONS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showAddDialog = false"
             >Cancel</app-button
           >

@@ -13,7 +13,6 @@ import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -61,10 +60,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     FormsModule,
     Card,
     TableModule,
-    TableModule,
     StatusTagComponent,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     InputNumber,
     Select,
@@ -94,8 +92,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
         <div class="officials-content">
           <!-- Officials Directory -->
-          <p-card styleClass="directory-card">
-            <ng-template pTemplate="header">
+          <p-card class="directory-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Officials Directory</h3>
                 <div class="filter-actions">
@@ -114,10 +112,10 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               [value]="filteredOfficials()"
               [paginator]="true"
               [rows]="10"
-              styleClass="p-datatable-sm"
+              class="p-datatable-sm"
               [rowHover]="true"
             >
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Official</th>
                   <th>Contact</th>
@@ -127,7 +125,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   <th>Actions</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-official>
+              <ng-template #body let-official>
                 <tr>
                   <td>
                     <div class="official-cell">
@@ -202,7 +200,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   </td>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="emptymessage">
+              <ng-template #emptymessage>
                 <tr>
                   <td colspan="6">
                     <div class="empty-message">
@@ -216,8 +214,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           </p-card>
 
           <!-- Upcoming Game Assignments -->
-          <p-card styleClass="assignments-card">
-            <ng-template pTemplate="header">
+          <p-card class="assignments-card">
+            <ng-template #header>
               <div class="card-header">
                 <h3>Upcoming Game Assignments</h3>
               </div>
@@ -299,15 +297,15 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
           <!-- Payment Summary (Coach View) -->
           @if (isCoach() && paymentSummary().length > 0) {
-            <p-card styleClass="payment-card">
-              <ng-template pTemplate="header">
+            <p-card class="payment-card">
+              <ng-template #header>
                 <div class="card-header">
                   <h3>Payment Summary</h3>
                 </div>
               </ng-template>
 
-              <p-table [value]="paymentSummary()" styleClass="p-datatable-sm">
-                <ng-template pTemplate="header">
+              <p-table [value]="paymentSummary()" class="p-datatable-sm">
+                <ng-template #header>
                   <tr>
                     <th>Official</th>
                     <th>Games</th>
@@ -316,7 +314,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                     <th>Pending</th>
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-summary>
+                <ng-template #body let-summary>
                   <tr>
                     <td>{{ summary.official_name }}</td>
                     <td>{{ summary.total_games }}</td>
@@ -335,7 +333,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           [header]="editingOfficial ? 'Edit Official' : 'Add Official'"
           [(visible)]="showOfficialDialog"
           [modal]="true"
-          styleClass="officials-standard-dialog"
+          class="officials-standard-dialog"
         >
           <div class="dialog-form">
             <div class="form-field">
@@ -375,7 +373,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   [options]="certificationOptions"
                   [(ngModel)]="officialForm.certification_level"
                   placeholder="Select level"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -398,7 +396,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             </div>
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showOfficialDialog = false"
               >Cancel</app-button
             >
@@ -417,7 +415,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           header="Schedule Official for Game"
           [(visible)]="showScheduleDialog"
           [modal]="true"
-          styleClass="officials-schedule-dialog"
+          class="officials-schedule-dialog"
         >
           @if (selectedOfficial()) {
             <div class="dialog-form">
@@ -433,7 +431,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select game"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -443,7 +441,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   [options]="roleOptions"
                   [(ngModel)]="scheduleForm.role"
                   placeholder="Select role"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -459,7 +457,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             </div>
           }
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showScheduleDialog = false"
               >Cancel</app-button
             >

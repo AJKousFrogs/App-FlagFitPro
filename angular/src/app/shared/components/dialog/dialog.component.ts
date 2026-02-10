@@ -25,7 +25,7 @@ import { Dialog } from "primeng/dialog";
       [maximizable]="maximizable"
       [baseZIndex]="baseZIndex"
       [blockScroll]="blockScroll"
-      [styleClass]="styleClass"
+      [class]="styleClass"
       [contentStyle]="contentStyle"
       [closeOnEscape]="closeOnEscape"
       [dismissableMask]="dismissableMask"

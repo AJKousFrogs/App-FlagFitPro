@@ -100,7 +100,7 @@ const DEBT_THRESHOLDS = {
 
         <!-- Current Sleep Debt Status -->
         @if (sleepDebtAnalysis(); as analysis) {
-          <p-card styleClass="debt-status-card">
+          <p-card class="debt-status-card">
             <div class="debt-display">
               <div class="debt-circle" [class]="'debt-' + analysis.debtLevel">
                 <span class="debt-value">{{
@@ -115,7 +115,7 @@ const DEBT_THRESHOLDS = {
             </div>
           </p-card>
         } @else {
-          <p-card styleClass="debt-status-card">
+          <p-card class="debt-status-card">
             <div class="empty-state">
               <i class="pi pi-info-circle"></i>
               <h3>No Sleep Data Yet</h3>
@@ -135,7 +135,7 @@ const DEBT_THRESHOLDS = {
         <!-- Stats Cards -->
         @if (sleepDebtAnalysis(); as analysis) {
           <div class="stats-grid">
-            <p-card styleClass="stat-card">
+            <p-card class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-moon stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -160,7 +160,7 @@ const DEBT_THRESHOLDS = {
               </div>
             </p-card>
 
-            <p-card styleClass="stat-card">
+            <p-card class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-chart-bar stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -185,7 +185,7 @@ const DEBT_THRESHOLDS = {
               </div>
             </p-card>
 
-            <p-card styleClass="stat-card">
+            <p-card class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-bullseye stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -198,7 +198,7 @@ const DEBT_THRESHOLDS = {
               </div>
             </p-card>
 
-            <p-card styleClass="stat-card">
+            <p-card class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-clock stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -215,7 +215,7 @@ const DEBT_THRESHOLDS = {
 
         <!-- Impact on Performance -->
         @if (impactMultipliers(); as multipliers) {
-          <p-card header="Impact on Performance" styleClass="impact-card">
+          <p-card header="Impact on Performance" class="impact-card">
             <div class="impact-section">
               <div class="impact-item">
                 <div class="impact-header">
@@ -229,7 +229,7 @@ const DEBT_THRESHOLDS = {
                 <p-progressBar
                   [value]="multipliers.trainingCapacity * 100"
                   [showValue]="false"
-                  styleClass="impact-bar"
+                  class="impact-bar"
                 ></p-progressBar>
                 <p class="impact-description">
                   Your body can only absorb
@@ -250,7 +250,7 @@ const DEBT_THRESHOLDS = {
                 <p-progressBar
                   [value]="multipliers.recoveryRate * 100"
                   [showValue]="false"
-                  styleClass="impact-bar"
+                  class="impact-bar"
                 ></p-progressBar>
                 <p class="impact-description">
                   Recovery between sessions is
@@ -274,7 +274,7 @@ const DEBT_THRESHOLDS = {
                     Math.min((multipliers.injuryRiskMultiplier - 1) * 100, 100)
                   "
                   [showValue]="false"
-                  styleClass="impact-bar danger"
+                  class="impact-bar danger"
                 ></p-progressBar>
                 <p class="impact-description">
                   Injury risk increased by
@@ -303,7 +303,7 @@ const DEBT_THRESHOLDS = {
                     )
                   "
                   [showValue]="false"
-                  styleClass="impact-bar warn"
+                  class="impact-bar warn"
                 ></p-progressBar>
                 <p class="impact-description">
                   Reaction time is
@@ -324,8 +324,8 @@ const DEBT_THRESHOLDS = {
             impactMultipliers();
           as multipliers
         ) {
-          <p-card styleClass="recommendation-card">
-            <ng-template pTemplate="header">
+          <p-card class="recommendation-card">
+            <ng-template #header>
               <div class="rec-header">
                 <i class="pi pi-lightbulb rec-header__icon"></i>
                 <span>AI Recommendation</span>
@@ -367,7 +367,7 @@ const DEBT_THRESHOLDS = {
         }
 
         <!-- 7-Day Sleep History Chart -->
-        <p-card header="7-Day Sleep History" styleClass="chart-card">
+        <p-card header="7-Day Sleep History" class="chart-card">
           @if (sleepHistoryChartData()) {
             <app-lazy-chart
               type="bar"
@@ -383,7 +383,7 @@ const DEBT_THRESHOLDS = {
         </p-card>
 
         <!-- Cumulative Debt Trend Chart -->
-        <p-card header="Cumulative Debt Trend" styleClass="chart-card">
+        <p-card header="Cumulative Debt Trend" class="chart-card">
           @if (debtTrendChartData()) {
             <app-lazy-chart
               type="line"
@@ -399,8 +399,8 @@ const DEBT_THRESHOLDS = {
         </p-card>
 
         <!-- Research Basis -->
-        <p-card styleClass="research-card">
-          <ng-template pTemplate="header">
+        <p-card class="research-card">
+          <ng-template #header>
             <div class="research-header">
               <i class="pi pi-book"></i>
               <span>Research Basis</span>

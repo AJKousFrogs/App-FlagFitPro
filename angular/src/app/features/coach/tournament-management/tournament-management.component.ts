@@ -303,7 +303,7 @@ const POSITIONS = [
                       <p-progressBar
                         [value]="getPaymentPercent(tournament)"
                         [showValue]="false"
-                        styleClass="tournament-payment-bar"
+                        class="tournament-payment-bar"
                       ></p-progressBar>
                     </div>
                   }
@@ -333,7 +333,7 @@ const POSITIONS = [
             }
           </div>
         } @else {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-trophy"></i>
               <h3>No {{ activeTab() }} Tournaments</h3>
@@ -351,7 +351,7 @@ const POSITIONS = [
       <!-- Tournament Detail Dialog -->
       <app-dialog
         [(visible)]="showDetailDialog"
-        styleClass="tournament-detail-dialog"
+        class="tournament-detail-dialog"
         (hide)="showDetailDialog = false"
       >
         <app-dialog-header
@@ -508,7 +508,7 @@ const POSITIONS = [
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
-                        styleClass="w-full"
+                        class="w-full"
                       ></p-select>
                       @if (slot.note) {
                         <span class="slot-note">{{ slot.note }}</span>
@@ -528,7 +528,7 @@ const POSITIONS = [
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
-                        styleClass="w-full"
+                        class="w-full"
                       ></p-select>
                       @if (slot.note) {
                         <span

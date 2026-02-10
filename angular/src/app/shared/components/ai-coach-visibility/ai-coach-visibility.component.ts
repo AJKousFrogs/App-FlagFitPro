@@ -11,7 +11,6 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
@@ -99,7 +98,7 @@ interface CoachVisibilityRecord {
     Tag,
     StatusTagComponent,
     Dialog,
-    PrimeTemplate,
+    
     Textarea,
     FormsModule,
     Tooltip,
@@ -146,7 +145,7 @@ interface CoachVisibilityRecord {
       <!-- High Risk Alerts -->
       @if (highRiskAlerts().length > 0) {
         <p-card class="alerts-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h3>
                 <i class="pi pi-exclamation-triangle"></i>
@@ -216,7 +215,7 @@ interface CoachVisibilityRecord {
 
       <!-- Recommendations Table -->
       <p-card class="recommendations-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="card-header">
             <h3>
               <i class="pi pi-lightbulb"></i>
@@ -230,7 +229,7 @@ interface CoachVisibilityRecord {
             @for (i of [1, 2, 3]; track i) {
               <p-skeleton
                 height="calc(var(--size-120) * 0.5)"
-                styleClass="mb-2"
+                class="mb-2"
               ></p-skeleton>
             }
           </div>
@@ -251,9 +250,9 @@ interface CoachVisibilityRecord {
               'recommendation_type',
               'reason',
             ]"
-            styleClass="p-datatable-sm"
+            class="p-datatable-sm"
           >
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <tr>
                 <th>Player</th>
                 <th>Type</th>
@@ -263,7 +262,7 @@ interface CoachVisibilityRecord {
                 <th>Actions</th>
               </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-rec>
+            <ng-template #body let-rec>
               <tr>
                 <td>
                   <div class="player-cell">
@@ -326,7 +325,7 @@ interface CoachVisibilityRecord {
         header="Add Coach Note"
         [(visible)]="noteDialogVisible"
         [modal]="true"
-        styleClass="dialog-max-w-md"
+        class="dialog-max-w-md"
         [closable]="true"
       >
         <div class="dialog-content">
@@ -342,7 +341,7 @@ interface CoachVisibilityRecord {
             class="w-full"
           ></textarea>
         </div>
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="text" (clicked)="noteDialogVisible = false"
             >Cancel</app-button
           >
@@ -360,7 +359,7 @@ interface CoachVisibilityRecord {
         header="Override Recommendation"
         [(visible)]="overrideDialogVisible"
         [modal]="true"
-        styleClass="dialog-max-w-md"
+        class="dialog-max-w-md"
         [closable]="true"
       >
         <div class="dialog-content">
@@ -384,7 +383,7 @@ interface CoachVisibilityRecord {
             class="w-full"
           ></textarea>
         </div>
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="text" (clicked)="overrideDialogVisible = false"
             >Cancel</app-button
           >

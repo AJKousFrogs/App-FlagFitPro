@@ -789,14 +789,14 @@
     &::before {
       background: linear-gradient(
         180deg,
-        var(--primitive-success-500),
-        var(--primitive-success-600)
+        var(--color-status-success),
+        var(--ds-primary-green-hover)
       );
     }
     background: linear-gradient(
       135deg,
-      rgba(var(--primitive-success-500-rgb), 0.08) 0%,
-      rgba(var(--primitive-success-500-rgb), 0.02) 100%
+      rgba(var(--ds-primary-green-rgb), 0.08) 0%,
+      rgba(var(--ds-primary-green-rgb), 0.02) 100%
     );
   }
 }

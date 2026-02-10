@@ -26,7 +26,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -121,8 +121,7 @@ const PAYMENT_METHOD_CONFIG: Record<
     DatePipe,
     Card,
     Dialog,
-    PrimeTemplate,
-    TableModule,
+    
     TableModule,
 
     MainLayoutComponent,
@@ -153,7 +152,7 @@ const PAYMENT_METHOD_CONFIG: Record<
 
         <!-- Account Summary -->
         <div class="summary-grid">
-          <p-card styleClass="summary-card balance">
+          <p-card class="summary-card balance">
             <div class="summary-content">
               <i class="pi pi-dollar summary-icon"></i>
               <div class="summary-details">
@@ -165,7 +164,7 @@ const PAYMENT_METHOD_CONFIG: Record<
             </div>
           </p-card>
 
-          <p-card styleClass="summary-card paid">
+          <p-card class="summary-card paid">
             <div class="summary-content">
               <i class="pi pi-check-circle summary-icon"></i>
               <div class="summary-details">
@@ -178,7 +177,7 @@ const PAYMENT_METHOD_CONFIG: Record<
           </p-card>
 
           @if (accountSummary().nextPaymentDue) {
-            <p-card styleClass="summary-card next">
+            <p-card class="summary-card next">
               <div class="summary-content">
                 <i class="pi pi-calendar summary-icon"></i>
                 <div class="summary-details">
@@ -196,8 +195,8 @@ const PAYMENT_METHOD_CONFIG: Record<
         </div>
 
         <!-- Outstanding Fees -->
-        <p-card styleClass="fees-card">
-          <ng-template pTemplate="header">
+        <p-card class="fees-card">
+          <ng-template #header>
             <div class="card-header">
               <h3><i class="pi pi-list"></i> Outstanding Fees</h3>
               <app-button
@@ -279,8 +278,8 @@ const PAYMENT_METHOD_CONFIG: Record<
         </p-card>
 
         <!-- Payment History -->
-        <p-card styleClass="history-card">
-          <ng-template pTemplate="header">
+        <p-card class="history-card">
+          <ng-template #header>
             <div class="card-header">
               <h3><i class="pi pi-history"></i> Payment History</h3>
             </div>
@@ -291,9 +290,9 @@ const PAYMENT_METHOD_CONFIG: Record<
               [value]="paymentHistory()"
               [paginator]="paymentHistory().length > 10"
               [rows]="10"
-              styleClass="p-datatable-sm"
+              class="p-datatable-sm"
             >
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Date</th>
                   <th>Description</th>
@@ -302,7 +301,7 @@ const PAYMENT_METHOD_CONFIG: Record<
                   <th class="history-actions-col"></th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-payment>
+              <ng-template #body let-payment>
                 <tr>
                   <td>{{ payment.date | date: "MMM d, y" }}</td>
                   <td>{{ payment.feeName }}</td>
@@ -332,7 +331,7 @@ const PAYMENT_METHOD_CONFIG: Record<
                   </td>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="emptymessage">
+              <ng-template #emptymessage>
                 <tr>
                   <td colspan="5" class="empty-table">
                     No payment history found
@@ -355,7 +354,7 @@ const PAYMENT_METHOD_CONFIG: Record<
         header="Payment Instructions"
         [modal]="true"
         [closable]="true"
-        styleClass="payments-instructions-dialog"
+        class="payments-instructions-dialog"
       >
         <div class="instructions-content">
           @for (method of paymentInstructions().methods; track method.method) {

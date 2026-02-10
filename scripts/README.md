@@ -122,11 +122,10 @@ Run these via npm commands from the project root:
 
 ## Archive Directory
 
-The `archive/` directory contains deprecated or superseded scripts that are kept for reference:
+The `archive/` directory contains deprecated, demo, or one-off scripts kept for reference:
 
-- Legacy script backups
-- Older versions of seed scripts (e.g., non-corrected versions)
-- Theme/styling scripts that have been integrated elsewhere
+- `demo-hydration-system.js` - Legacy demo (uses pg Pool)
+- `diagnose-real-issue.js` - One-off settings/database diagnostic
 
 ## Environment Requirements
 

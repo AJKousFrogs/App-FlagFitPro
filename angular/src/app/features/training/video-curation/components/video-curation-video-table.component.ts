@@ -43,7 +43,6 @@ import {
     CommonModule,
     FormsModule,
     TableModule,
-    TableModule,
     StatusTagComponent,
     InputText,
     Select,
@@ -73,7 +72,7 @@ import {
           [options]="positionOptions"
           placeholder="All Positions"
           [showClear]="true"
-          styleClass="filter-select"
+          class="filter-select"
           [attr.aria-label]="'Filter videos by position'"
         ></p-select>
         <p-select
@@ -83,7 +82,7 @@ import {
           [options]="statusOptions"
           placeholder="All Statuses"
           [showClear]="true"
-          styleClass="filter-select"
+          class="filter-select"
           [attr.aria-label]="'Filter videos by status'"
         ></p-select>
       </div>
@@ -96,9 +95,9 @@ import {
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} videos"
         [rowsPerPageOptions]="[10, 25, 50]"
-        styleClass="p-datatable-sm"
+        class="p-datatable-sm"
       >
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <tr>
             <th class="video-table__icon-col"></th>
             <th pSortableColumn="title">
@@ -114,13 +113,13 @@ import {
             <th class="video-table__actions-col">Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-video>
+        <ng-template #body let-video>
           <tr>
             <td>
               <p-avatar
                 icon="pi pi-play"
                 shape="circle"
-                styleClass="video-avatar"
+                class="video-avatar"
                 ariaLabel="Video thumbnail"
               ></p-avatar>
             </td>
@@ -220,7 +219,7 @@ import {
             </td>
           </tr>
         </ng-template>
-        <ng-template pTemplate="emptymessage">
+        <ng-template #emptymessage>
           <tr>
             <td colspan="8" class="empty-message" role="status">
               <i class="pi pi-inbox" aria-hidden="true"></i>

@@ -29,7 +29,7 @@
   border: var(--border-2) solid var(--ds-primary-green);
   border-top: none;
   box-shadow:
-    0 var(--space-1) 1.25rem rgba(var(--primitive-primary-700-rgb), 0.35),
+    0 var(--space-1) var(--space-5) rgba(var(--primitive-primary-700-rgb), 0.35),
     var(--shadow-lg);
 
   /* Typography */
@@ -55,9 +55,9 @@
 .skip-link:focus-visible {
   transform: translateX(-50%) translateY(0);
   box-shadow:
-    0 0.5rem 2rem rgba(var(--ds-primary-green-rgb), 0.4),
+    0 var(--space-2) var(--space-8) rgba(var(--ds-primary-green-rgb), 0.4),
     var(--shadow-xl),
-    0 0 0 var(--space-0-75) rgba(var(--primitive-success-500-rgb), 0.5); /* Yellow focus ring */
+    0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.5); /* Yellow focus ring */
 }
 
 /* Hover state (while focused) */
@@ -68,9 +68,9 @@
     var(--ds-primary-green-hover) 100%
   );
   box-shadow:
-    0 calc(var(--space-2) + var(--space-0-5)) 2.5rem rgba(var(--primitive-primary-700-rgb), 0.5),
+    0 calc(var(--space-2) + var(--space-0-5)) var(--space-10) rgba(var(--primitive-primary-700-rgb), 0.5),
     var(--shadow-xl),
-    0 0 0 var(--space-0-75) rgba(var(--primitive-success-500-rgb), 0.6);
+    0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.6);
 }
 
 /* Active/pressed state */
@@ -107,17 +107,17 @@
 
 /* Dark mode adjustments */
 :host-context([data-theme="dark"]) .skip-link,
-:host-context(.dark) .skip-link {
+:host-context(.dark-theme) .skip-link {
   box-shadow:
-    0 var(--space-1) 1.25rem rgba(var(--primitive-primary-600-rgb), 0.3),
+    0 var(--space-1) var(--space-5) rgba(var(--primitive-primary-600-rgb), 0.3),
     var(--shadow-lg);
 }
 
 :host-context([data-theme="dark"]) .skip-link:focus-visible,
-:host-context(.dark) .skip-link:focus-visible {
+:host-context(.dark-theme) .skip-link:focus-visible {
   box-shadow:
     var(--shadow-3),
-    0 0 0 var(--space-0-75) rgba(var(--primitive-success-500-rgb), 0.6);
+    0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.6);
 }
 
 /* Reduced motion support */

@@ -13,7 +13,7 @@ import { TeamStat } from "../roster.models";
   imports: [Card],
   template: `
     <p-card class="overview-card">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <h2 class="card-title">
           <i class="pi pi-trophy"></i>
           Team Overview

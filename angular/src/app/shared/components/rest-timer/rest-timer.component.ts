@@ -51,7 +51,7 @@ import { AppDialogComponent } from "../dialog/dialog.component";
       [draggable]="true"
       [resizable]="false"
       [closable]="false"
-      styleClass="rest-timer-dialog dialog-max-w-xs"
+      class="rest-timer-dialog dialog-max-w-xs"
       (hide)="close()"
     >
       <div class="timer-header">

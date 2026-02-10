@@ -113,7 +113,7 @@ interface InboxStats {
 
         <p-tabs [value]="activeTabIndex" (valueChange)="onTabChange($event)">
           <p-tabpanel value="0">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <span>Safety Alerts</span>
               @if (stats().safety_alerts > 0) {
                 <p-badge
@@ -126,7 +126,7 @@ interface InboxStats {
             <div class="items-list">
               @if (loading()) {
                 @for (i of [1, 2, 3]; track i) {
-                  <p-skeleton height="var(--size-150)" styleClass="mb-4"></p-skeleton>
+                  <p-skeleton height="var(--size-150)" class="mb-4"></p-skeleton>
                 }
               } @else {
                 @for (item of safetyAlerts(); track item.id) {
@@ -164,7 +164,7 @@ interface InboxStats {
           </p-tabpanel>
 
           <p-tabpanel value="1">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <span>Review Needed</span>
               @if (stats().review_needed > 0) {
                 <p-badge
@@ -180,14 +180,14 @@ interface InboxStats {
           </p-tabpanel>
 
           <p-tabpanel value="2">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <span>Wins</span>
               @if (stats().wins > 0) {
                 <p-badge
                   [value]="stats().wins.toString()"
                   severity="success"
                   class="ml-2"
-                  styleClass="status-tag status-tag--success"
+                  class="status-tag status-tag--success"
                 ></p-badge>
               }
             </ng-template>

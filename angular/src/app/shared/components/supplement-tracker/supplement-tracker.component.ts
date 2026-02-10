@@ -28,7 +28,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { PrimeTemplate } from "primeng/api";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
@@ -180,7 +179,7 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   imports: [
     CommonModule,
     FormsModule,
-    PrimeTemplate,
+    
     Checkbox,
     Tag,
     Skeleton,

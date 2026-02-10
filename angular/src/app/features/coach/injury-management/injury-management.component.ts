@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
@@ -212,11 +212,10 @@ const RTP_STAGES: RtpStage[] = [
     Checkbox,
     DatePicker,
     Dialog,
-    PrimeTemplate,
+    
     InputNumber,
     RadioButton,
     Select,
-    TableModule,
     TableModule,
     Textarea,
 
@@ -312,7 +311,7 @@ const RTP_STAGES: RtpStage[] = [
           <div class="injuries-section">
             <h3>Active Injuries</h3>
             @for (injury of activeInjuries(); track injury.id) {
-              <p-card styleClass="injury-card new">
+              <p-card class="injury-card new">
                 <div class="injury-header">
                   <app-status-tag
                     value="New Injury - Needs Evaluation"
@@ -373,7 +372,7 @@ const RTP_STAGES: RtpStage[] = [
           <div class="injuries-section">
             <h3>In Return-to-Play Protocol</h3>
             @for (injury of rtpInjuries(); track injury.id) {
-              <p-card styleClass="injury-card rtp">
+              <p-card class="injury-card rtp">
                 <div class="injury-header">
                   <app-status-tag
                     [value]="
@@ -487,7 +486,7 @@ const RTP_STAGES: RtpStage[] = [
           <div class="injuries-section">
             <h3>Recently Cleared</h3>
             @for (injury of clearedInjuries(); track injury.id) {
-              <p-card styleClass="injury-card cleared">
+              <p-card class="injury-card cleared">
                 <div class="injury-content">
                   <p-avatar
                     [label]="getInitialsStr(injury.playerName)"
@@ -516,7 +515,7 @@ const RTP_STAGES: RtpStage[] = [
 
         <!-- History Table -->
         @if (activeTab() === "history") {
-          <p-card styleClass="history-card">
+          <p-card class="history-card">
             <p-table
               [value]="injuries()"
               [paginator]="true"
@@ -525,7 +524,7 @@ const RTP_STAGES: RtpStage[] = [
               [virtualScroll]="injuries().length > 50"
               [virtualScrollItemSize]="46"
             >
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Player</th>
                   <th>Injury</th>
@@ -534,7 +533,7 @@ const RTP_STAGES: RtpStage[] = [
                   <th>Recovery Days</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-injury>
+              <ng-template #body let-injury>
                 <tr>
                   <td>{{ injury.playerName }}</td>
                   <td>{{ injury.bodyPart }} {{ injury.injuryType }}</td>
@@ -555,7 +554,7 @@ const RTP_STAGES: RtpStage[] = [
 
         <!-- Empty State -->
         @if (filteredInjuries().length === 0) {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-heart"></i>
               <h3>No Injuries</h3>
@@ -623,7 +622,7 @@ const RTP_STAGES: RtpStage[] = [
         [(visible)]="showReportDialog"
         header="Report Injury"
         [modal]="true"
-        styleClass="injury-report-dialog"
+        class="injury-report-dialog"
       >
         <div class="report-form">
           <div class="form-field">
@@ -636,7 +635,7 @@ const RTP_STAGES: RtpStage[] = [
               optionValue="value"
               placeholder="Select player"
               [filter]="true"
-              styleClass="w-full"
+              class="w-full"
               [attr.aria-label]="'Select player'"
             ></p-select>
           </div>
@@ -814,7 +813,7 @@ const RTP_STAGES: RtpStage[] = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showReportDialog = false"
             >Cancel</app-button
           >
@@ -832,7 +831,7 @@ const RTP_STAGES: RtpStage[] = [
         [(visible)]="showCheckinDialog"
         header="Update Progress"
         [modal]="true"
-        styleClass="injury-checkin-dialog"
+        class="injury-checkin-dialog"
       >
         <div class="checkin-form">
           <div class="form-field">
@@ -874,7 +873,7 @@ const RTP_STAGES: RtpStage[] = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showCheckinDialog = false"
             >Cancel</app-button
           >

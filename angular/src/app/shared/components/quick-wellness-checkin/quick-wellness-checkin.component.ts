@@ -60,7 +60,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
       [modal]="true"
       [closable]="true"
       [draggable]="false"
-      styleClass="quick-checkin-dialog dialog-w-xl dialog-max-w-md"
+      class="quick-checkin-dialog dialog-w-xl dialog-max-w-md"
       (hide)="onClose()"
     >
       <div class="quick-checkin">
@@ -111,7 +111,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
               [maxFractionDigits]="1"
               [showButtons]="true"
               suffix=" hrs"
-              styleClass="sleep-number"
+              class="sleep-number"
             ></p-inputNumber>
             <div class="sleep-quality-indicator">
               @if (sleepHours >= 8) {

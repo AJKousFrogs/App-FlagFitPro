@@ -73,7 +73,7 @@
              HEADER: 5-Second Comprehension
              ==================================================================== -->
         <section aria-labelledby="today-heading">
-          <p-card styleClass="welcome-card">
+          <p-card class="welcome-card">
             <div class="welcome-row">
               <div class="user-avatar" aria-hidden="true">
                 <i class="pi pi-user"></i>
@@ -136,7 +136,7 @@
              ==================================================================== -->
         @if (hasAlertBanner()) {
           <section class="coach-alert-gate">
-            <p-card styleClass="alert-gate-card">
+            <p-card class="alert-gate-card">
               <div class="alert-gate-content">
                 <i class="pi pi-bell alert-gate-icon"></i>
                 <div class="alert-gate-text">
@@ -161,7 +161,7 @@
              ==================================================================== -->
         @if (vm.headerContext?.coachAttribution) {
           <section class="coach-attribution">
-            <p-card styleClass="attribution-card">
+            <p-card class="attribution-card">
               <div class="attribution-content">
                 <i class="pi pi-user-edit"></i>
                 <span>{{ vm.headerContext?.coachAttribution }}</span>
@@ -211,7 +211,7 @@
         @if (vm.trainingAllowed && vm.blocksDisplayed.length > 0) {
           <main class="content-section">
             <section aria-labelledby="protocol-heading">
-              <p-card styleClass="content-card">
+              <p-card class="content-card">
                 <div class="card-header">
                   <i class="pi pi-list card-header-icon" aria-hidden="true"></i>
                   <span id="protocol-heading" class="card-header-title">
@@ -223,10 +223,10 @@
                   <!-- Progress Bar -->
                   @if (p.overallProgress !== undefined) {
                     <div class="protocol-progress-wrapper">
-                      <p-progressbar
+                      <p-progressBar
                         [value]="p.overallProgress"
                         [showValue]="false"
-                        styleClass="protocol-bar"
+                        class="protocol-bar"
                       />
                       <div class="protocol-meta">
                         <span
@@ -314,7 +314,7 @@
     } @else {
       <!-- No ViewModel - show error -->
       <div class="today-page">
-        <p-card styleClass="error-card">
+        <p-card class="error-card">
           <app-empty-state
             icon="exclamation-triangle"
             heading="Unable to Load Plan"
@@ -337,7 +337,7 @@
     (visibleChange)="showQuickCheckin.set($event)"
     header="Quick Check-in"
     [modal]="true"
-    styleClass="quick-checkin-modal"
+    class="quick-checkin-modal"
     [focusOnShow]="true"
     [closeOnEscape]="true"
     ariaLabel="Quick wellness check-in dialog"
@@ -456,7 +456,7 @@
       </div>
     </div>
 
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
       <app-button variant="text" (clicked)="showQuickCheckin.set(false)"
         >Cancel</app-button
       >

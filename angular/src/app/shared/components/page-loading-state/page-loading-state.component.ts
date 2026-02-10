@@ -16,7 +16,7 @@ import { ProgressSpinner } from "primeng/progressspinner";
     <div class="page-loading-state">
       <div class="loading-content">
         <p-progressSpinner
-          styleClass="page-loading-spinner"
+          class="page-loading-spinner"
           strokeWidth="4"
           animationDuration="1s"
         ></p-progressSpinner>

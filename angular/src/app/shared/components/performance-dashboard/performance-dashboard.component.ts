@@ -93,7 +93,7 @@ interface PerformanceMetric {
                 <p-progressBar
                   [value]="(metric.value / metric.target) * 100"
                   [showValue]="false"
-                  [styleClass]="'metric-progress tone-' + metric.tone"
+                  [class]="'metric-progress tone-' + metric.tone"
                 >
                 </p-progressBar>
                 <span class="progress-text">

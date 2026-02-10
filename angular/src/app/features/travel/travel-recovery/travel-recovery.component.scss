@@ -486,7 +486,7 @@
   border-radius: var(--radius-md);
 
   &.recommended {
-    background: rgba(var(--primitive-success-500-rgb), 0.1);
+    background: var(--color-status-success-surface);
   }
 
   &.avoid {
@@ -896,7 +896,7 @@
   background: var(--surface-tertiary);
 
   &.risk-low {
-    background: rgba(var(--primitive-success-500-rgb), 0.2);
+    background: rgba(var(--ds-primary-green-rgb), 0.2);
   }
 
   &.risk-moderate {
@@ -1010,7 +1010,7 @@
   background: linear-gradient(
     135deg,
     var(--primitive-blue-400) 0%,
-    var(--primitive-success-400) 100%
+    var(--color-status-success) 100%
   );
   color: var(--color-text-on-primary);
 
@@ -1200,7 +1200,7 @@
   background: linear-gradient(
     135deg,
     var(--primitive-teal-500) 0%,
-    var(--primitive-success-400) 100%
+    var(--color-status-success) 100%
   );
   color: var(--color-text-on-primary);
 

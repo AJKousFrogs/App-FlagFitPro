@@ -19,7 +19,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
       <div class="tools-grid">
         <p-card class="tool-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <h3>Throwing Accuracy Test</h3>
           </ng-template>
           <p>
@@ -30,7 +30,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         </p-card>
 
         <p-card class="tool-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <h3>Footwork Evaluation</h3>
           </ng-template>
           <p>Evaluate your footwork mechanics and pocket presence.</p>
@@ -38,7 +38,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         </p-card>
 
         <p-card class="tool-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <h3>Decision Making</h3>
           </ng-template>
           <p>Test your ability to read defenses and make quick decisions.</p>

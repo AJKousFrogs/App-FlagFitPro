@@ -39,7 +39,7 @@
 
 .content-wrapper {
   flex: 1;
-  padding: space(6);
+  padding: var(--space-6);
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
@@ -47,22 +47,22 @@
 
   // Tablet
   @include respond-to(lg) {
-    padding: space(5);
+    padding: var(--space-5);
   }
 
   // Mobile - add bottom padding for bottom nav
   @include respond-to(md) {
-    padding: space(4);
+    padding: var(--space-4);
     padding-bottom: calc(
-      #{space(4)} + var(--bottom-nav-height) + var(--safe-area-bottom)
+      var(--space-4) + var(--bottom-nav-height) + var(--safe-area-bottom)
     );
   }
 
   // Small mobile
   @include respond-to(xs) {
-    padding: space(3);
+    padding: var(--space-3);
     padding-bottom: calc(
-      #{space(3)} + var(--bottom-nav-height) + var(--safe-area-bottom)
+      var(--space-3) + var(--bottom-nav-height) + var(--safe-area-bottom)
     );
   }
 }

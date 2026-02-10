@@ -16,7 +16,6 @@ import { FormsModule } from "@angular/forms";
 
 // PrimeNG
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
 import { Select } from "primeng/select";
@@ -34,7 +33,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
     CommonModule,
     FormsModule,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     Textarea,
     Select,
@@ -47,7 +46,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
       [modal]="true"
       [draggable]="false"
       header="Create Playlist"
-      styleClass="video-curation-playlist-dialog"
+      class="video-curation-playlist-dialog"
     >
       <div class="playlist-form">
         <div class="form-field">
@@ -113,7 +112,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
         </div>
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button variant="text" (clicked)="onCancel()">Cancel</app-button>
         <app-button
           iconLeft="pi-check"

@@ -130,7 +130,6 @@ interface TournamentNutritionBrief {
     ProgressBar,
     Select,
     TableModule,
-    TableModule,
     Tabs,
     TabList,
     Tab,
@@ -248,7 +247,7 @@ interface TournamentNutritionBrief {
                     [value]="filteredAthletes()"
                     [paginator]="true"
                     [rows]="10"
-                    styleClass="p-datatable-sm"
+                    class="p-datatable-sm"
                   >
                     <ng-template #header>
                       <tr>
@@ -293,7 +292,7 @@ interface TournamentNutritionBrief {
                             <p-progressBar
                               [value]="getAthleteCompliance(athlete.id)"
                               [showValue]="false"
-                              styleClass="compliance-bar"
+                              class="compliance-bar"
                             ></p-progressBar>
                             <span>{{ getAthleteCompliance(athlete.id) }}%</span>
                           </div>
@@ -411,7 +410,7 @@ interface TournamentNutritionBrief {
                       compliance of supplementCompliance();
                       track compliance.athleteId
                     ) {
-                      <p-card styleClass="compliance-card">
+                      <p-card class="compliance-card">
                         <ng-template #header>
                           <div class="compliance-header">
                             <span class="athlete-name">{{
@@ -441,7 +440,7 @@ interface TournamentNutritionBrief {
                                 <p-progressBar
                                   [value]="supplement.complianceRate"
                                   [showValue]="false"
-                                  styleClass="supplement-bar"
+                                  class="supplement-bar"
                                 ></p-progressBar>
                                 <span>{{ supplement.complianceRate }}%</span>
                               </div>
@@ -490,7 +489,7 @@ interface TournamentNutritionBrief {
                         tournament of upcomingTournaments();
                         track tournament.tournament.name
                       ) {
-                        <p-card styleClass="tournament-card">
+                        <p-card class="tournament-card">
                           <ng-template #header>
                             <div class="tournament-header">
                               <h4>{{ tournament.tournament.name }}</h4>
@@ -611,7 +610,7 @@ interface TournamentNutritionBrief {
           [(visible)]="showAthleteDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="nutritionist-athlete-dialog"
+          class="nutritionist-athlete-dialog"
         >
           @if (selectedAthlete()) {
             <div class="athlete-details">
@@ -683,7 +682,7 @@ interface TournamentNutritionBrief {
           [(visible)]="showReportDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="nutritionist-report-dialog"
+          class="nutritionist-report-dialog"
         >
           <div class="report-form">
             <div class="form-group">
@@ -692,7 +691,7 @@ interface TournamentNutritionBrief {
                 [options]="reportTypes"
                 [(ngModel)]="selectedReportType"
                 placeholder="Select report type"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
             <div class="form-group">
@@ -701,7 +700,7 @@ interface TournamentNutritionBrief {
                 [options]="athleteSelectOptions()"
                 [(ngModel)]="reportAthleteId"
                 placeholder="Select athlete"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
             <div class="form-group">
@@ -710,7 +709,7 @@ interface TournamentNutritionBrief {
                 [options]="timePeriods"
                 [(ngModel)]="selectedTimePeriod"
                 placeholder="Select period"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
           </div>
@@ -730,7 +729,7 @@ interface TournamentNutritionBrief {
           [(visible)]="showTournamentDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="nutritionist-tournament-dialog"
+          class="nutritionist-tournament-dialog"
         >
           <div class="tournament-form">
             <div class="form-group">

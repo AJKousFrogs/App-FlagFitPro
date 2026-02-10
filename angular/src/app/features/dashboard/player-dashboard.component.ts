@@ -168,7 +168,7 @@ interface AnnouncementBanner {
           <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
           @if (needsProgramAssignment()) {
             <section class="no-program-section">
-              <p-card styleClass="no-program-card">
+              <p-card class="no-program-card">
                 <div class="no-program-content">
                   <div class="no-program-icon">
                     <i class="pi pi-calendar-times"></i>
@@ -403,7 +403,7 @@ interface AnnouncementBanner {
 
           <!-- SECTION 2: Welcome Header with Merlin AI Insight -->
           <section class="welcome-section">
-            <p-card styleClass="welcome-card">
+            <p-card class="welcome-card">
               <div class="welcome-wrapper">
                 <div class="merlin-avatar" aria-hidden="true">
                   <i class="pi pi-sparkles"></i>
@@ -455,7 +455,7 @@ interface AnnouncementBanner {
           <section class="stats-overview" aria-label="Key statistics">
             <!-- Readiness Card - Enhanced with Check-in Status (UX Audit Fix #4) -->
             <p-card
-              styleClass="stat-card stat-readiness stat-card--clickable"
+              class="stat-card stat-readiness stat-card--clickable"
               (click)="navigateToWellness()"
               pTooltip="Your overall readiness to train today based on sleep, soreness, stress, and energy levels. Checked daily via wellness survey."
               tooltipPosition="bottom"
@@ -536,7 +536,7 @@ interface AnnouncementBanner {
 
             <!-- ACWR Card - Enhanced with Progress Tracking (UX Audit Fix #5) -->
             <p-card
-              styleClass="stat-card stat-acwr cursor-pointer"
+              class="stat-card stat-acwr cursor-pointer"
               (click)="navigateToACWR()"
               [pTooltip]="
                 acwrDataSufficient()
@@ -680,7 +680,7 @@ Keep logging sessions to unlock this injury prevention metric!'
 
             <!-- Streak Card -->
             <p-card
-              styleClass="stat-card stat-streak cursor-pointer"
+              class="stat-card stat-streak cursor-pointer"
               pTooltip="Consecutive days with training logged. Building a streak helps maintain consistency and prevents gaps in your progress tracking."
               tooltipPosition="bottom"
               [showDelay]="500"
@@ -697,7 +697,7 @@ Keep logging sessions to unlock this injury prevention metric!'
             </p-card>
 
             <!-- Weekly Sessions Card -->
-            <p-card styleClass="stat-card stat-sessions cursor-pointer">
+            <p-card class="stat-card stat-sessions cursor-pointer">
               <div class="stat-card-content">
                 <div class="stat-icon sessions-icon">
                   <i class="pi pi-calendar-plus"></i>
@@ -717,8 +717,8 @@ Keep logging sessions to unlock this injury prevention metric!'
           <!-- Main Content Grid -->
           <div class="dashboard-grid">
             <!-- SECTION 4: Weekly Progress -->
-            <p-card styleClass="progress-card">
-              <ng-template pTemplate="header">
+            <p-card class="progress-card">
+              <ng-template #header>
                 <div class="card-header-custom">
                   <i class="pi pi-chart-bar card-header-icon"></i>
                   <span class="card-header-title">Weekly Progress</span>
@@ -755,7 +755,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 <p-progressBar
                   [value]="weeklyProgress()"
                   [showValue]="false"
-                  styleClass="custom-progress"
+                  class="custom-progress"
                 ></p-progressBar>
                 <span class="progress-text"
                   >{{ weeklyProgress() }}% completed</span
@@ -764,8 +764,8 @@ Keep logging sessions to unlock this injury prevention metric!'
             </p-card>
 
             <!-- SECTION 5: Today's Schedule Preview (using p-timeline) -->
-            <p-card styleClass="schedule-card">
-              <ng-template pTemplate="header">
+            <p-card class="schedule-card">
+              <ng-template #header>
                 <div class="card-header-custom">
                   <i class="pi pi-clock card-header-icon"></i>
                   <span class="card-header-title">Today's Schedule</span>
@@ -776,9 +776,9 @@ Keep logging sessions to unlock this injury prevention metric!'
                   [value]="
                     todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)
                   "
-                  styleClass="schedule-timeline"
+                  class="schedule-timeline"
                 >
-                  <ng-template pTemplate="marker" let-item>
+                  <ng-template #marker let-item>
                     <span
                       class="timeline-marker"
                       [class.completed]="item.completed"
@@ -791,7 +791,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                       }
                     </span>
                   </ng-template>
-                  <ng-template pTemplate="content" let-item>
+                  <ng-template #content let-item>
                     <div
                       class="schedule-item"
                       [class.completed]="item.completed"
@@ -821,7 +821,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-schedule">
-                  <p-message severity="info" styleClass="status-message">
+                  <p-message severity="info" class="status-message">
                     <div class="empty-content">
                       <i class="pi pi-calendar empty-icon"></i>
                       <span>No training scheduled for today</span>
@@ -835,8 +835,8 @@ Keep logging sessions to unlock this injury prevention metric!'
             </p-card>
 
             <!-- SECTION 6: Quick Actions Grid -->
-            <p-card styleClass="actions-card">
-              <ng-template pTemplate="header">
+            <p-card class="actions-card">
+              <ng-template #header>
                 <div class="card-header-custom">
                   <i class="pi pi-bolt card-header-icon"></i>
                   <span class="card-header-title">Quick Actions</span>
@@ -857,8 +857,8 @@ Keep logging sessions to unlock this injury prevention metric!'
             </p-card>
 
             <!-- SECTION 7: Performance Trend -->
-            <p-card styleClass="trend-card">
-              <ng-template pTemplate="header">
+            <p-card class="trend-card">
+              <ng-template #header>
                 <div class="card-header-custom">
                   <i class="pi pi-trending-up card-header-icon"></i>
                   <span class="card-header-title">Performance Trend</span>
@@ -895,7 +895,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-chart">
-                  <p-message severity="info" styleClass="status-message">
+                  <p-message severity="info" class="status-message">
                     <div class="empty-content">
                       <i class="pi pi-chart-line empty-icon"></i>
                       <span>Complete more sessions to see your trend</span>
@@ -915,7 +915,7 @@ Keep logging sessions to unlock this injury prevention metric!'
               </h3>
               <div class="continuity-events">
                 @for (event of continuityEvents(); track event.type) {
-                  <p-card styleClass="continuity-event-card">
+                  <p-card class="continuity-event-card">
                     <div class="continuity-event">
                       <span class="event-icon">{{
                         getEventIcon(event.type)
@@ -959,7 +959,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 <i class="pi pi-calendar-plus" aria-hidden="true"></i>
                 Tomorrow's Preview
               </h3>
-              <p-card styleClass="schedule-card">
+              <p-card class="schedule-card">
                 <p-timeline
                   [value]="
                     tomorrowSchedule().slice(
@@ -967,9 +967,9 @@ Keep logging sessions to unlock this injury prevention metric!'
                       UI_LIMITS.SCHEDULE_PREVIEW_COUNT
                     )
                   "
-                  styleClass="schedule-timeline"
+                  class="schedule-timeline"
                 >
-                  <ng-template pTemplate="marker" let-item>
+                  <ng-template #marker let-item>
                     <span
                       class="timeline-marker upcoming"
                       [attr.aria-hidden]="true"
@@ -977,7 +977,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                       <i class="pi pi-circle"></i>
                     </span>
                   </ng-template>
-                  <ng-template pTemplate="content" let-item>
+                  <ng-template #content let-item>
                     <div class="schedule-item upcoming">
                       <div class="item-time">{{ item.time }}</div>
                       <div class="item-info">
@@ -1022,7 +1022,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                   track event.id
                 ) {
                   <p-card
-                    styleClass="event-card"
+                    class="event-card"
                     [ngClass]="'event-' + event.type"
                   >
                     <div class="event-card-content">
@@ -1457,7 +1457,7 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .streak-icon {
         background: var(--color-status-warning-subtle);
-        color: var(--primitive-success-500);
+        color: var(--color-status-success);
       }
 
       .sessions-icon {

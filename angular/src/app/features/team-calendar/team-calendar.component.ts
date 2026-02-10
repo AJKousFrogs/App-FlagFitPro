@@ -129,7 +129,7 @@ const EVENT_TYPE_CONFIG: Record<
             optionValue="value"
             placeholder="All Events"
             [showClear]="true"
-            styleClass="calendar-filter-select"
+            class="calendar-filter-select"
           ></p-select>
 
           <app-button
@@ -142,7 +142,7 @@ const EVENT_TYPE_CONFIG: Record<
 
         <!-- Pending RSVPs Alert -->
         @if (pendingCount() > 0) {
-          <p-card styleClass="pending-alert">
+          <p-card class="pending-alert">
             <div class="alert-content">
               <i class="pi pi-exclamation-circle"></i>
               <span>
@@ -163,7 +163,7 @@ const EVENT_TYPE_CONFIG: Record<
 
             <div class="events-list">
               @for (event of dateGroup.events; track event.id) {
-                <p-card styleClass="event-card" [class]="'type-' + event.type">
+                <p-card class="event-card" [class]="'type-' + event.type">
                   <div class="event-content">
                     <div class="event-time">
                       <span class="item-time">{{ event.startTime }}</span>
@@ -247,7 +247,7 @@ const EVENT_TYPE_CONFIG: Record<
         }
 
         @if (groupedEvents().length === 0) {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-calendar"></i>
               <h3>No upcoming events</h3>
@@ -271,7 +271,7 @@ const EVENT_TYPE_CONFIG: Record<
         [header]="'RSVP: ' + (selectedEvent()?.title || '')"
         [modal]="true"
         [closable]="true"
-        styleClass="rsvp-dialog"
+        class="rsvp-dialog"
       >
         @if (selectedEvent(); as event) {
           <div class="rsvp-form">
@@ -395,7 +395,7 @@ const EVENT_TYPE_CONFIG: Record<
                       [min]="1"
                       [max]="6"
                       [showButtons]="true"
-                      styleClass="ride-seats"
+                      class="ride-seats"
                     ></p-inputNumber>
                   }
                 </div>

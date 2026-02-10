@@ -2,10 +2,41 @@
 
 This directory contains end-to-end tests for the FlagFit Pro application using Playwright.
 
+## Quick Start
+
+**Run design system tests (headed mode):**
+```bash
+cd angular
+npm run e2e:design-system:watch
+```
+
+**Run design system tests (UI mode):**
+```bash
+cd angular
+npx playwright test e2e/design-system-compliance.spec.ts --ui --project=chromium
+```
+
+**Run navigation tests (click through everything):**
+```bash
+cd angular
+npm run e2e:navigation:watch
+```
+
+**Run all tests:**
+```bash
+cd angular
+npm run e2e -- --project=chromium
+```
+
+**If UI mode shows "No Tests":** Ensure dev server is running (`npm run dev:angular-only`), then refresh the Playwright UI or run `npm run e2e:design-system` directly.
+
 ## Test Files
 
 - **`smoke.spec.ts`** - Basic smoke tests that verify the app shell loads correctly
 - **`critical-flow-morning-training.spec.ts`** - Complete user journey test (login → onboarding → today's practice → morning training block)
+- **`navigation-routing.spec.ts`** - Click through all pages/buttons
+- **`design-system-compliance.spec.ts`** - Design token violations
+- **`color-contrast.spec.ts`** - Color contrast checks
 
 ## Prerequisites
 

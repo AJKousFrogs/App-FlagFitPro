@@ -417,7 +417,7 @@
       justify-content: center;
       background: var(--color-status-info);
       border-radius: var(--radius-full);
-      color: white;
+      color: var(--color-text-on-primary);
       font-size: var(--ds-font-size-xl);
     }
 
@@ -745,7 +745,7 @@
   .player-cell {
     display: flex;
     align-items: center;
-    gap: space(3);
+    gap: var(--space-3);
   }
 
   .player-info {

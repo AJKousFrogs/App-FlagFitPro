@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -111,7 +111,7 @@ const RECURRING_OPTIONS = [
     Checkbox,
     DatePicker,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     RadioButton,
     Select,
@@ -138,7 +138,7 @@ const RECURRING_OPTIONS = [
         </app-page-header>
 
         <!-- Calendar View -->
-        <p-card styleClass="calendar-card">
+        <p-card class="calendar-card">
           <div class="calendar-header">
             <div class="calendar-nav">
               <app-button
@@ -365,7 +365,7 @@ const RECURRING_OPTIONS = [
         [(visible)]="showCreateDialog"
         [header]="isEditing() ? 'Edit Event' : 'Create Event'"
         [modal]="true"
-        styleClass="coach-calendar-event-dialog"
+        class="coach-calendar-event-dialog"
       >
         <div class="event-form">
           <div class="form-field">
@@ -401,7 +401,7 @@ const RECURRING_OPTIONS = [
               <p-datepicker
                 [(ngModel)]="eventForm.date"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -412,7 +412,7 @@ const RECURRING_OPTIONS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
             <div class="form-field">
@@ -423,7 +423,7 @@ const RECURRING_OPTIONS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
           </div>
@@ -446,7 +446,7 @@ const RECURRING_OPTIONS = [
               optionLabel="name"
               optionValue="id"
               placeholder="Select location"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
           </div>
 
@@ -526,7 +526,7 @@ const RECURRING_OPTIONS = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showCreateDialog = false"
             >Cancel</app-button
           >
@@ -544,7 +544,7 @@ const RECURRING_OPTIONS = [
         [(visible)]="showRsvpDialog"
         [header]="'RSVP Management: ' + (selectedEvent()?.title || '')"
         [modal]="true"
-        styleClass="coach-calendar-rsvp-dialog"
+        class="coach-calendar-rsvp-dialog"
       >
         @if (selectedEvent()) {
           <div class="rsvp-content">

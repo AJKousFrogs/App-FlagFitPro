@@ -20,9 +20,13 @@
 
 /* ================================================================
    DARK MODE THEME OVERRIDES
+   Wrapped in @layer primeng-brand for cascade consistency.
    ================================================================ */
 
-[data-theme="dark"] {
+@layer primeng-brand {
+  [data-theme="dark"],
+  .dark-theme,
+  body.dark-theme {
   /* Primary colors - fallback chain for Aura resilience */
   --p-primary-color: var(--ds-color-brand, var(--ds-primary-green, var(--color-brand-primary)));
   --p-primary-contrast-color: var(--color-text-on-primary);
@@ -44,7 +48,7 @@
   --p-surface-700: var(--primitive-neutral-200);
   --p-surface-800: var(--primitive-neutral-100);
   --p-surface-900: var(--primitive-neutral-50);
-  --p-surface-950: var(--color-text-on-primary);
+  --p-surface-950: var(--primitive-neutral-50); /* Lightest - align with inverted scale */
   --p-content-background: var(
     --primitive-neutral-800,
     var(--primitive-neutral-800)
@@ -89,7 +93,8 @@
   --p-select-background: var(--primitive-neutral-800);
   --p-multiselect-background: var(--primitive-neutral-800);
   --p-disabled-background: var(--primitive-neutral-900);
-}
+  }
+} /* End @layer primeng-brand - dark mode theme */
 
 /* ================================================================
    CRITICAL FIX: White text on green backgrounds
@@ -293,7 +298,7 @@
   padding: var(--p-form-control-padding-y, calc(var(--space-2) + var(--space-0-5)))
     var(--p-form-control-padding-x, var(--space-4)); /* 0.625rem/1rem */
   font-size: var(--p-form-control-font-size, var(--font-body-size));
-  font-weight: var(--p-form-control-font-weight, 400);
+  font-weight: var(--p-form-control-font-weight, var(--font-weight-regular));
   line-height: var(--p-form-control-line-height, 1.5);
   background: var(--p-input-background, var(--surface-primary));
   border: var(--p-input-border-width, var(--border-1)) solid
@@ -348,8 +353,8 @@
 .p-datepicker .p-inputtext:focus-visible,
 .p-inputnumber .p-inputtext:focus-visible {
   border-color: var(--p-input-focus-border-color);
-  box-shadow: 0 0 0
-      var(--p-input-focus-ring-width, var(--space-0-75))
+    box-shadow: 0 0 0
+      var(--p-input-focus-ring-width, var(--focus-ring-width))
     var(--p-input-focus-ring-color);
   outline: none;
 }
@@ -371,7 +376,7 @@
 .p-multiselect.p-invalid.p-focus {
   border-color: var(--p-input-invalid-border-color);
   box-shadow: 0 0 0
-      var(--p-input-focus-ring-width, var(--space-0-75))
+      var(--p-input-focus-ring-width, var(--focus-ring-width))
     var(--p-input-invalid-focus-ring-color);
 }
 
@@ -383,7 +388,7 @@
 .p-calendar.p-disabled .p-inputtext {
   background: var(--p-input-disabled-background);
   border-color: var(--p-input-disabled-border-color);
-  opacity: var(--p-input-disabled-opacity, 0.6);
+  opacity: var(--p-input-disabled-opacity, var(--opacity-muted));
   cursor: not-allowed;
 }
 
@@ -407,7 +412,7 @@
   align-items: center;
   height: 100%;
   font-size: var(--p-form-control-font-size, var(--font-body-size));
-  font-weight: var(--p-form-control-font-weight, 400);
+  font-weight: var(--p-form-control-font-weight, var(--font-weight-regular));
   color: var(--p-input-text-color, var(--color-text-primary));
 }
 
@@ -676,7 +681,7 @@
 
 /* Disabled state */
 .p-inputswitch.p-disabled {
-  opacity: var(--p-disabled-opacity, 0.6);
+  opacity: var(--p-disabled-opacity, var(--opacity-muted));
   cursor: not-allowed;
 }
 
@@ -702,26 +707,21 @@
 
 :root {
   /* ================================================================
-     PRIMARY COLORS - Map to PrimeNG's primary color system
+     PRIMARY COLORS - Map to design system primitive-primary palette
+     Aligned with design-system-tokens (single source of truth)
      ================================================================ */
 
-  --p-primary-50: rgba(var(--ds-primary-green-rgb), 0.05);
-  --p-primary-100: rgba(var(--ds-primary-green-rgb), 0.1);
-  --p-primary-200: rgba(var(--ds-primary-green-rgb), 0.2);
-  --p-primary-300: rgba(var(--ds-primary-green-rgb), 0.3);
-  --p-primary-400: rgba(var(--ds-primary-green-rgb), 0.4);
-  --p-primary-500: var(
-    --ds-primary-green
-  ); /* var(--ds-primary-green) - Main brand color */
-
-  --p-primary-600: var(
-    --color-brand-primary-dark,
-    var(--primitive-primary-800)
-  );
-  --p-primary-700: var(--primitive-primary-900);
-  --p-primary-800: var(--primitive-primary-900);
+  --p-primary-50: var(--primitive-primary-50);
+  --p-primary-100: var(--primitive-primary-100);
+  --p-primary-200: var(--primitive-primary-200);
+  --p-primary-300: var(--primitive-primary-300);
+  --p-primary-400: var(--primitive-primary-400);
+  --p-primary-500: var(--primitive-primary-500);
+  --p-primary-600: var(--primitive-primary-600);
+  --p-primary-700: var(--primitive-primary-700);
+  --p-primary-800: var(--primitive-primary-800);
   --p-primary-900: var(--primitive-primary-900);
-  --p-primary-950: var(--primitive-primary-900);
+  --p-primary-950: var(--primitive-primary-900); /* No 950 in palette - use 900 */
 
   /* PrimeNG Primary Color - Main - fallback chain for Aura resilience */
   --p-primary-color: var(--ds-color-brand, var(--ds-primary-green, var(--color-brand-primary)));
@@ -756,9 +756,10 @@
 
   /* ================================================================
      SURFACE COLORS - Backgrounds, cards, panels
+     Use surface tokens (NOT text color) for backgrounds
      ================================================================ */
 
-  --p-surface-0: var(--color-text-on-primary);
+  --p-surface-0: var(--surface-primary);
   --p-surface-50: var(--surface-secondary, var(--primitive-neutral-50));
   --p-surface-100: var(--surface-tertiary, var(--primitive-neutral-100));
   --p-surface-200: var(--primitive-neutral-200);
@@ -770,12 +771,12 @@
   --p-surface-800: var(--primitive-neutral-800);
   --p-surface-900: var(--primitive-neutral-900);
   --p-surface-950: var(--primitive-neutral-950);
-  --p-content-background: var(--surface-card, var(--color-text-on-primary));
-  --p-card-background: var(--surface-card, var(--color-text-on-primary));
+  --p-content-background: var(--surface-card, var(--surface-primary));
+  --p-card-background: var(--surface-card, var(--surface-primary));
   --p-surface-ground: var(--surface-ground, var(--primitive-neutral-50));
-  --p-surface-section: var(--surface-card, var(--color-text-on-primary));
-  --p-surface-card: var(--surface-card, var(--color-text-on-primary));
-  --p-surface-overlay: var(--surface-card, var(--color-text-on-primary));
+  --p-surface-section: var(--surface-card, var(--surface-primary));
+  --p-surface-card: var(--surface-card, var(--surface-primary));
+  --p-surface-overlay: var(--surface-elevated, var(--surface-primary));
   --p-surface-border: var(--surface-border, var(--color-border-secondary, var(--primitive-neutral-200)));
   --p-surface-hover: var(--surface-secondary, var(--primitive-neutral-50));
 
@@ -845,53 +846,43 @@
     var(--ds-primary-green-rgb),
     0.04
   );
-  --p-button-padding-y: var(--space-3, 0.75rem);
-  --p-button-padding-x: var(--space-6, 1.5rem);
-  --p-button-border-radius: var(--radius-button, var(--radius-lg, 0.5rem));
+  --p-button-padding-y: var(--space-3);
+  --p-button-padding-x: var(--space-6);
+  --p-button-border-radius: var(--radius-button, var(--radius-lg));
   --p-button-icon-only-width: var(--touch-target-md);
   --p-button-icon-only-height: var(--touch-target-md);
   --p-button-raised-shadow:
     0 0.0625rem 0.125rem var(--color-border-subtle), 0 0.125rem 0.25rem var(--color-border-subtle);
   --p-button-gap: var(--space-2);
-  --p-button-font-weight: var(--font-weight-medium, 500);
-  --p-button-sm-font-size: var(--font-body-sm-size, 0.875rem);
-  --p-button-sm-padding-y: var(--space-2, 0.5rem);
-  --p-button-sm-padding-x: var(--space-4, 1rem);
-  --p-button-lg-font-size: var(--font-body-size, 1.125rem);
-  --p-button-lg-padding-y: var(--space-4, 1rem);
-  --p-button-lg-padding-x: var(--space-8, 2rem);
+  --p-button-font-weight: var(--font-weight-medium);
+  --p-button-sm-font-size: var(--font-body-sm-size);
+  --p-button-sm-padding-y: var(--space-2);
+  --p-button-sm-padding-x: var(--space-4);
+  --p-button-lg-font-size: var(--font-body-size);
+  --p-button-lg-padding-y: var(--space-4);
+  --p-button-lg-padding-x: var(--space-8);
 
   /* Card - Typography aligned to unified system */
   --p-card-border-color: var(
     --color-border-secondary,
     var(--primitive-neutral-200)
   );
-  --p-card-border-radius: var(
-    --radius-lg,
-    0.5rem
-  ); /* 0.5rem - Design System standard */
+  --p-card-border-radius: var(--radius-lg);
 
-  --p-card-body-padding: var(--space-4, 1rem);
-  --p-card-body-gap: var(--space-3, 0.75rem);
-  --p-card-header-padding: var(--space-4, 1rem);
-  --p-card-footer-padding: var(--space-4, 1rem);
+  --p-card-body-padding: var(--space-4);
+  --p-card-body-gap: var(--space-3);
+  --p-card-header-padding: var(--space-4);
+  --p-card-footer-padding: var(--space-4);
   --p-card-content-padding: 0;
-  --p-card-title-font-size: var(
-    --font-h3-size,
-    1.25rem
-  ); /* 1.25rem - H3 for card titles */
-
-  --p-card-title-font-weight: var(
-    --font-weight-semibold
-  ); /* semibold for card headers */
-
-  --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 0.875rem */
-  --p-card-subtitle-font-weight: var(--font-body-sm-weight, 400);
+  --p-card-title-font-size: var(--font-h3-size);
+  --p-card-title-font-weight: var(--font-weight-semibold);
+  --p-card-subtitle-font-size: var(--font-body-sm-size);
+  --p-card-subtitle-font-weight: var(--font-weight-regular);
   --p-card-subtitle-color: var(
     --color-text-secondary,
     var(--primitive-neutral-500)
   );
-  --p-card-shadow: var(--shadow-sm, 0 0.0625rem 0.1875rem 0 rgb(0 0 0 / 0.1));
+  --p-card-shadow: var(--shadow-sm);
 
   /* ================================================================
      FORM CONTROL TOKENS - NORMALIZED DESIGN CONTRACT
@@ -911,7 +902,7 @@
   --p-form-control-padding-x: var(--space-4);
   --p-form-control-padding-y: calc(var(--space-2) + var(--space-0-5)); /* 0.625rem */
   --p-form-control-font-size: var(--font-body-size);
-  --p-form-control-font-weight: var(--ds-font-weight-regular);
+  --p-form-control-font-weight: var(--font-weight-regular);
   --p-form-control-line-height: var(--ds-line-height-body);
 
   /* Input */
@@ -924,7 +915,7 @@
   --p-input-hover-border-color: var(--primitive-neutral-400);
   --p-input-focus-border-color: var(--ds-primary-green);
   --p-input-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.15);
-  --p-input-focus-ring-width: var(--space-0-75);
+  --p-input-focus-ring-width: var(--focus-ring-width, 3px);
   --p-input-padding-y: var(--p-form-control-padding-y);
   --p-input-padding-x: var(--p-form-control-padding-x);
   --p-input-border-radius: var(--p-form-control-border-radius);
@@ -941,7 +932,7 @@
 
   /* Input States */
   --p-input-invalid-border-color: var(--color-status-error);
-  --p-input-invalid-focus-ring-color: var(--color-staff-medical-light);
+  --p-input-invalid-focus-ring-color: rgba(var(--primitive-error-500-rgb), 0.2);
   --p-input-disabled-background: var(
     --surface-secondary,
     var(--primitive-neutral-100)
@@ -950,7 +941,7 @@
     --color-border-primary,
     var(--primitive-neutral-200)
   );
-  --p-input-disabled-opacity: 0.6;
+  --p-input-disabled-opacity: var(--opacity-muted);
 
   /* Dropdown/Select - Inherits form control tokens */
   --p-dropdown-background: var(--p-input-background);
@@ -988,8 +979,7 @@
 
   /* Dropdown Panel Tokens */
   --p-dropdown-panel-border-radius: var(--radius-lg);
-  --p-dropdown-panel-shadow:
-    0 0.625rem 2.5rem rgba(0, 0, 0, 0.12), 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+  --p-dropdown-panel-shadow: var(--shadow-lg, var(--shadow-3));
   --p-dropdown-option-padding: var(--space-3) var(--space-4);
   --p-dropdown-option-border-radius: var(--radius-md);
   --p-dropdown-option-min-height: var(--space-10);
@@ -999,10 +989,10 @@
   --p-checkbox-width: var(--space-5);
   --p-checkbox-height: var(--space-5);
   --p-checkbox-border-radius: var(--radius-md);
-  --p-checkbox-focus-ring: 0 0 0 var(--space-0-75)
-    rgba(8, 153, 73, 0.15);
+  --p-checkbox-focus-ring: 0 0 0 var(--focus-ring-width, 3px)
+    rgba(var(--ds-primary-green-rgb), 0.15);
   --p-control-row-min-height: var(--touch-target-md);
-  --p-control-disabled-opacity: 0.6;
+  --p-control-disabled-opacity: var(--opacity-muted);
   --p-checkbox-border-color: var(
     --color-border-primary,
     var(--primitive-neutral-300)
@@ -1012,19 +1002,19 @@
   --p-checkbox-icon-checked-color: var(--color-text-on-primary);
   --p-toggleswitch-width: var(--touch-target-md);
   --p-toggleswitch-height: var(--space-6);
-  --p-toggleswitch-focus-ring: 0 0 0 var(--space-0-75)
-    rgba(8, 153, 73, 0.15);
+  --p-toggleswitch-focus-ring: 0 0 0 var(--focus-ring-width, 3px)
+    rgba(var(--ds-primary-green-rgb), 0.15);
 
   /* Tag/Badge */
-  --p-tag-font-size: var(--font-size-badge, 0.75rem);
-  --p-tag-font-weight: var(--font-weight-semibold, 600);
-  --p-tag-border-radius: var(--radius-md, 0.5rem);
+  --p-tag-font-size: var(--font-body-sm-size);
+  --p-tag-font-weight: var(--font-weight-semibold);
+  --p-tag-border-radius: var(--radius-md);
   --p-tag-primary-background: var(--ds-primary-green);
   --p-tag-primary-color: var(--color-text-on-primary);
   --p-tag-success-background: var(--ds-primary-green);
   --p-tag-success-color: var(--color-text-on-primary);
   --p-tag-warning-background: var(--color-status-warning);
-  --p-tag-warning-color: var(--primitive-warning-900);
+  --p-tag-warning-color: var(--color-status-warning-text);
   --p-tag-danger-background: var(--color-status-error);
   --p-tag-danger-color: var(--color-text-on-primary);
   --p-tag-info-background: var(--color-status-info);
@@ -1033,37 +1023,31 @@
   /* Avatar */
   --p-avatar-background: var(--ds-primary-green);
   --p-avatar-color: var(--color-text-on-primary);
-  --p-avatar-font-weight: var(--font-weight-semibold, 600);
+  --p-avatar-font-weight: var(--font-weight-semibold);
 
   /* Dialog/Modal - Typography aligned to unified system */
-  --p-dialog-border-radius: var(
-    --radius-lg,
-    0.5rem
-  ); /* 0.5rem - Design System standard */
+  --p-dialog-border-radius: var(--radius-lg);
 
-  --p-dialog-header-padding: var(--space-4, 1rem);
-  --p-dialog-header-font-size: var(
-    --font-h2-size,
-    1.5rem
-  ); /* 1.5rem - H2 for dialog titles */
-
-  --p-dialog-header-font-weight: var(--font-h2-weight, 600); /* semibold */
-  --p-dialog-header-line-height: var(--font-h2-line-height, 1.25);
-  --p-dialog-content-padding: var(--space-4, 1rem);
-  --p-dialog-footer-padding: var(--space-4, 1rem);
-  --p-dialog-footer-gap: var(--space-3, 0.75rem);
+  --p-dialog-header-padding: var(--space-4);
+  --p-dialog-header-font-size: var(--font-h2-size);
+  --p-dialog-header-font-weight: var(--font-weight-semibold);
+  --p-dialog-header-line-height: var(--font-h2-line-height);
+  --p-dialog-content-padding: var(--space-4);
+  --p-dialog-footer-padding: var(--space-4);
+  --p-dialog-footer-gap: var(--space-3);
 
   /* Toast */
   --p-toast-blur: var(--blur-md);
   --p-toast-border-radius: var(--radius-xl);
   --p-toast-shadow: var(--shadow-toast);
-  --p-toast-content-padding: var(--space-3) var(--space-4);
-  --p-toast-content-gap: var(--space-2);
+  --p-toast-content-padding: var(--space-4) var(--space-5);
+  --p-toast-content-gap: var(--space-3);
   --p-toast-close-button-width: var(--touch-target-sm);
   --p-toast-close-button-height: var(--touch-target-sm);
   --p-toast-close-button-border-radius: var(--radius-md);
-  --p-message-border-radius: var(--radius-lg, 0.5rem);
-  --p-message-content-padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  --p-message-border-radius: var(--radius-lg);
+  --p-message-content-padding: var(--space-4) var(--space-5);
+  --p-message-content-gap: var(--space-3);
   --p-toast-success-background: linear-gradient(
     135deg,
     var(--color-status-success-light) 0%,
@@ -1094,13 +1078,13 @@
   --p-toast-info-color: var(--color-text-primary);
 
   /* Menu */
-  --p-menu-background: var(--surface-card, var(--color-text-on-primary));
+  --p-menu-background: var(--surface-card, var(--surface-primary));
   --p-menu-border-color: var(
     --color-border-secondary,
     var(--primitive-neutral-200)
   );
-  --p-menu-border-radius: var(--radius-lg, 0.5rem);
-  --p-menu-item-padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  --p-menu-border-radius: var(--radius-lg);
+  --p-menu-item-padding: var(--space-3) var(--space-4);
   --p-menu-item-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
   --p-menu-item-active-background: rgba(var(--ds-primary-green-rgb), 0.1);
   --p-menu-item-active-color: var(--ds-primary-green);
@@ -1114,19 +1098,11 @@
     --color-border-secondary,
     var(--primitive-neutral-200)
   );
-  --p-datatable-header-font-size: var(
-    --font-label-size,
-    0.875rem
-  ); /* 0.875rem - label */
-
-  --p-datatable-header-font-weight: var(
-    --font-label-weight,
-    600
-  ); /* semibold */
-
-  --p-datatable-header-line-height: var(--font-label-line-height, 1.2);
-  --p-datatable-body-font-size: var(--font-body-size, 1rem); /* 1rem - body */
-  --p-datatable-body-font-weight: var(--font-body-weight, 400);
+  --p-datatable-header-font-size: var(--font-label-size);
+  --p-datatable-header-font-weight: var(--font-weight-semibold);
+  --p-datatable-header-line-height: var(--font-label-line-height);
+  --p-datatable-body-font-size: var(--font-body-size);
+  --p-datatable-body-font-weight: var(--font-weight-regular);
   --p-datatable-row-hover-background: var(
     --surface-secondary,
     var(--primitive-neutral-50)
@@ -1138,7 +1114,7 @@
   );
 
   /* Paginator */
-  --p-paginator-background: var(--surface-card, var(--color-text-on-primary));
+  --p-paginator-background: var(--surface-card, var(--surface-primary));
   --p-paginator-border-color: var(
     --color-border-secondary,
     var(--primitive-neutral-200)
@@ -1150,26 +1126,28 @@
   --p-paginator-element-active-background: var(--ds-primary-green);
   --p-paginator-element-active-color: var(--color-text-on-primary);
 
-  /* Tabs - Typography aligned to unified system */
+  /* Tabs / TabView - Typography aligned to unified system (p-tabs + legacy p-tabview) */
   --p-tabview-nav-background: transparent;
   --p-tabview-nav-border-color: var(
     --color-border-secondary,
     var(--primitive-neutral-200)
   );
-  --p-tabview-tab-font-size: var(
-    --font-body-sm-size,
-    0.875rem
-  ); /* 0.875rem - body-sm */
-
-  --p-tabview-tab-font-weight: var(
-    --font-weight-semibold
-  ); /* semibold for tab labels */
-
-  --p-tabview-tab-line-height: var(--font-body-sm-line-height, 1.45);
+  --p-tabview-tab-font-size: var(--font-body-sm-size);
+  --p-tabview-tab-font-weight: var(--font-weight-semibold);
+  --p-tabview-tab-line-height: var(--font-body-sm-line-height);
   --p-tabview-tab-active-border-color: var(--ds-primary-green);
   --p-tabview-tab-active-color: var(--ds-primary-green);
   --p-tabview-tab-hover-background: rgba(var(--ds-primary-green-rgb), 0.04);
   --p-tabview-tab-hover-border-color: var(--ds-primary-green);
+
+  /* p-tabs (PrimeNG 21) - mirror tabview for consistency */
+  --p-tabs-nav-padding: 0;
+  --p-tabs-nav-gap: var(--space-1);
+  --p-tabs-tab-padding: var(--space-3) var(--space-4);
+  --p-tabs-tab-border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  --p-tabs-tab-active-border-color: var(--ds-primary-green);
+  --p-tabs-tab-active-color: var(--ds-primary-green);
+  --p-tabs-content-padding: var(--space-4);
 
   /* Panel - Typography aligned to unified system */
   --p-panel-header-background: var(
@@ -1180,7 +1158,7 @@
     --color-border-secondary,
     var(--primitive-neutral-200)
   );
-  --p-panel-header-font-size: var(--font-h3-size, 1.25rem); /* 1.25rem - H3 */
+  --p-panel-header-font-size: var(--font-h3-size);
   --p-panel-header-font-weight: var(--ds-font-weight-semibold); /* semibold */
   --p-panel-header-line-height: var(--font-h3-line-height, 1.3);
   --p-panel-content-border-color: var(
@@ -1188,18 +1166,8 @@
     var(--primitive-neutral-200)
   );
 
-  /* Progress Bar */
-  --p-progressbar-background: var(
-    --surface-tertiary,
-    var(--primitive-neutral-100)
-  );
-  --p-progressbar-value-background: var(--ds-primary-green);
-  --p-progressbar-border-radius: var(--radius-full, 624.9375rem);
-
-  /* Slider */
-  --p-slider-background: var(--surface-tertiary, var(--primitive-neutral-100));
-  --p-slider-range-background: var(--ds-primary-green);
-  --p-slider-handle-background: var(--ds-primary-green);
+  /* Progress Bar - defined in primeng/_token-mapping.scss */
+  /* Slider - defined in primeng/_token-mapping.scss */
 
   /* InputSwitch (Toggle) */
   --p-inputswitch-width: var(--space-12);
@@ -1224,22 +1192,23 @@
 
   /* ================================================================
      FOCUS STATES - Accessibility
+     Use design-system focus ring tokens (3px, not 2px)
      ================================================================ */
 
-  --p-focus-ring-width: var(--space-0-5);
-  --p-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
-  --p-focus-ring-offset: var(--space-0-5);
+  --p-focus-ring-width: var(--focus-ring-width, 3px);
+  --p-focus-ring-color: var(--focus-ring-color, var(--ds-primary-green));
+  --p-focus-ring-offset: var(--focus-ring-offset, 2px);
   --p-focus-ring-style: solid;
-  --p-inputtext-focus-ring-width: var(--space-0-5);
+  --p-inputtext-focus-ring-width: var(--focus-ring-width, 3px);
   --p-inputtext-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
-  --p-inputtext-focus-ring-offset: var(--space-0-5);
+  --p-inputtext-focus-ring-offset: var(--focus-ring-offset, 2px);
   --p-inputtext-focus-border-color: var(--ds-primary-green);
 
   /* ================================================================
      DISABLED STATES
      ================================================================ */
 
-  --p-disabled-opacity: 0.6;
+  --p-disabled-opacity: var(--opacity-muted);
   --p-disabled-background: var(
     --surface-tertiary,
     var(--primitive-neutral-100)

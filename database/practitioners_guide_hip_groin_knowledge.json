@@ -1,7 +1,30 @@
 {
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:aa2813cc-bca0-4132-9f06-587961a03ce9",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": false,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "Practitioner's Guide to Hip and Groin",
+      "publisher": "VALD Performance",
+      "source_url": "https://resources.valdperformance.com/practitioners-guide-to-hip-groin",
+      "authors": [
+        "Dr. Nicol van Dyk",
+        "Dr. Eamonn Delahunt"
+      ]
+    }
+  },
   "metadata": {
     "title": "Practitioner's Guide to Hip and Groin",
-    "authors": ["Dr. Nicol van Dyk", "Dr. Eamonn Delahunt"],
+    "authors": [
+      "Dr. Nicol van Dyk",
+      "Dr. Eamonn Delahunt"
+    ],
     "total_pages": 69,
     "document_type": "practitioner_guide",
     "publication_year": 2024,
@@ -9,7 +32,10 @@
   },
   "research_article": {
     "title": "Practitioner's Guide to Hip and Groin",
-    "authors": ["Dr. Nicol van Dyk", "Dr. Eamonn Delahunt"],
+    "authors": [
+      "Dr. Nicol van Dyk",
+      "Dr. Eamonn Delahunt"
+    ],
     "publication_year": 2024,
     "publisher": "VALD Performance",
     "primary_category": "injury",
@@ -57,7 +83,12 @@
       "sports_hernia",
       "osteitis_pubis"
     ],
-    "training_types": ["strength", "isometric", "rehabilitation", "prevention"],
+    "training_types": [
+      "strength",
+      "isometric",
+      "rehabilitation",
+      "prevention"
+    ],
     "recovery_methods": [
       "isometric_testing",
       "criteria_based_progression",
@@ -88,9 +119,17 @@
       "summary": "Hip and groin anatomy involves complex musculature (adductors, abductors, flexors) functioning as a force transition zone in multi-planar movement.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["all_athletes", "field_sport_athletes", "aging_adults"],
+      "applicable_to": [
+        "all_athletes",
+        "field_sport_athletes",
+        "aging_adults"
+      ],
       "sport_specificity": "general",
-      "categories": ["anatomy", "biomechanics", "injury_prevention"],
+      "categories": [
+        "anatomy",
+        "biomechanics",
+        "injury_prevention"
+      ],
       "tags": [
         "hip_anatomy",
         "groin_anatomy",
@@ -127,7 +166,9 @@
         "Consider multi-planar movement requirements",
         "Address mobility and strength together",
         "Recognize hip as force transition zone"
-      ]
+      ],
+      "entry_id": "urn:uuid:34a8f132-2de1-46f0-8fc1-d5d40fc34dd6",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "injury",
@@ -145,7 +186,11 @@
         "hockey_players"
       ],
       "sport_specificity": "field_sports",
-      "categories": ["injury", "pathology", "diagnosis"],
+      "categories": [
+        "injury",
+        "pathology",
+        "diagnosis"
+      ],
       "tags": [
         "groin_pain",
         "adductor_strain",
@@ -171,7 +216,10 @@
             "inguinal_related_groin_pain",
             "pubic_related_groin_pain"
           ],
-          "hip_related_groin_pain": ["FAI", "labral_tears"],
+          "hip_related_groin_pain": [
+            "FAI",
+            "labral_tears"
+          ],
           "other_causes": "exclusion_diagnosis"
         },
         "FAI_diagnosis_criteria": {
@@ -189,7 +237,9 @@
         "Assess for contributing kinetic chain dysfunction",
         "Monitor athletes in cutting/change of direction sports",
         "Early detection prevents progression"
-      ]
+      ],
+      "entry_id": "urn:uuid:5070cb70-f26f-41e9-b97f-874d370cc292",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -205,7 +255,11 @@
         "rehabilitation_patients"
       ],
       "sport_specificity": "general",
-      "categories": ["assessment", "testing", "strength"],
+      "categories": [
+        "assessment",
+        "testing",
+        "strength"
+      ],
       "tags": [
         "isometric_testing",
         "ForceFrame",
@@ -217,7 +271,11 @@
         "normative_data"
       ],
       "protocols": {
-        "equipment": ["ForceFrame", "DynaMo_HHD", "force_plates"],
+        "equipment": [
+          "ForceFrame",
+          "DynaMo_HHD",
+          "force_plates"
+        ],
         "key_tests": {
           "hip_adduction": "supine_45deg_hip_flexion_feet_flat",
           "hip_abduction": "supine_45deg_or_sidelying",
@@ -247,7 +305,9 @@
         "Use for baseline screening and ongoing monitoring",
         "Combine with functional assessments (CMJ, COD)",
         "Document test setup clearly for reproducibility"
-      ]
+      ],
+      "entry_id": "urn:uuid:12976d09-a565-41fd-92c8-766caf42024f",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "recovery_method",
@@ -264,7 +324,11 @@
         "field_sport_athletes"
       ],
       "sport_specificity": "general",
-      "categories": ["rehabilitation", "recovery", "return_to_sport"],
+      "categories": [
+        "rehabilitation",
+        "recovery",
+        "return_to_sport"
+      ],
       "tags": [
         "rehabilitation",
         "return_to_sport",
@@ -333,7 +397,9 @@
         "Returning to sport without meeting criteria",
         "Excessive soreness beyond 48 hours",
         "Skipping objective strength testing"
-      ]
+      ],
+      "entry_id": "urn:uuid:4e69fa9f-c6a3-429f-a73a-26bba4d0853b",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -352,7 +418,11 @@
         "hockey_players"
       ],
       "sport_specificity": "field_sports",
-      "categories": ["injury_prevention", "screening", "monitoring"],
+      "categories": [
+        "injury_prevention",
+        "screening",
+        "monitoring"
+      ],
       "tags": [
         "injury_prevention",
         "screening",
@@ -380,7 +450,11 @@
           "declining_strength_trends",
           "previous_groin_injury_history"
         ],
-        "equipment": ["ForceFrame", "DynaMo", "force_plates"]
+        "equipment": [
+          "ForceFrame",
+          "DynaMo",
+          "force_plates"
+        ]
       },
       "best_practices": [
         "Conduct comprehensive preseason screening",
@@ -396,7 +470,9 @@
         "Regular ongoing monitoring, not just preseason",
         "Use z-scores for standardized comparisons",
         "Address strength imbalances proactively"
-      ]
+      ],
+      "entry_id": "urn:uuid:0b206f64-1539-46b5-bb3b-564b1ab4e04b",
+      "evidence_framework": "GRADE"
     }
   ]
 }

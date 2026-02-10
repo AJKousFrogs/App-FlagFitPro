@@ -1,7 +1,6 @@
 <header class="app-header-shell" role="banner">
   <p-toolbar
-    styleClass="app-header"
-    [class]="headerClass()"
+    [class]="'app-header ' + headerClass()"
     aria-label="Global header"
   >
     <!-- Left Section: Olympics Countdown -->
@@ -84,7 +83,7 @@
         aria-haspopup="dialog"
         aria-label="Open search"
       >
-        <p-inputgroup styleClass="search-input-group">
+        <p-inputgroup class="search-input-group">
           <p-inputgroup-addon>
             <i class="pi pi-search" aria-hidden="true"></i>
           </p-inputgroup-addon>
@@ -99,7 +98,7 @@
             readonly
             class="search-input"
           />
-          <p-inputgroup-addon styleClass="search-shortcut-addon">
+          <p-inputgroup-addon class="search-shortcut-addon">
             <span class="search-shortcut"> <kbd>⌘</kbd><kbd>K</kbd> </span>
           </p-inputgroup-addon>
         </p-inputgroup>
@@ -192,27 +191,27 @@
 
         <!-- User Avatar with Menu -->
         <div class="user-menu-container">
-          <p-button
-            [text]="true"
-            (onClick)="toggleUserMenu($event)"
+          <app-button
+            variant="text"
             [attr.aria-expanded]="isUserMenuOpen()"
-            aria-haspopup="true"
-            aria-label="User menu"
-            styleClass="user-avatar-btn"
+            [ariaHasPopup]="'menu'"
+            ariaLabel="User menu"
+            [class.user-avatar-btn]="true"
+            (clicked)="toggleUserMenu($event)"
           >
             <p-avatar
               [label]="userInitials()"
               shape="circle"
-              styleClass="user-avatar"
+              class="user-avatar"
             />
-          </p-button>
+          </app-button>
 
           <p-menu
             #userMenu
             [model]="userMenuItems()"
             [popup]="true"
             appendTo="body"
-            styleClass="user-dropdown-menu"
+            class="user-dropdown-menu"
           />
         </div>
       </div>
@@ -232,7 +231,7 @@
   header="Keyboard Shortcuts"
   [modal]="true"
   [closable]="true"
-  styleClass="shortcuts-dialog"
+  class="shortcuts-dialog"
 >
   <div class="shortcuts-content">
     <p class="shortcuts-intro">

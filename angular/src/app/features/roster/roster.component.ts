@@ -38,7 +38,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { PrimeTemplate } from "primeng/api";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Dialog } from "primeng/dialog";
@@ -105,7 +104,7 @@ import {
   imports: [
     StatusTagComponent,
     Dialog,
-    PrimeTemplate,
+    
     Tooltip,
     ConfirmDialog,
     Select,
@@ -388,7 +387,7 @@ import {
           [modal]="true"
           header="Player Details"
           [closable]="true"
-          styleClass="roster-player-details-dialog"
+          class="roster-player-details-dialog"
         >
           @if (selectedPlayer()) {
             <div class="player-details-modal">
@@ -652,7 +651,7 @@ import {
             </div>
           }
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showDetailsDialog.set(false)"
               >Close</app-button
             >
@@ -673,7 +672,7 @@ import {
           [modal]="true"
           header="Change Player Status"
           [closable]="true"
-          styleClass="roster-status-dialog"
+          class="roster-status-dialog"
         >
           <div class="status-dialog-content">
             <p>
@@ -698,7 +697,7 @@ import {
             </div>
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showStatusDialog.set(false)"
               >Cancel</app-button
             >
@@ -718,7 +717,7 @@ import {
           [modal]="true"
           header="Change Status for Selected Players"
           [closable]="true"
-          styleClass="roster-bulk-status-dialog"
+          class="roster-bulk-status-dialog"
         >
           <div class="status-dialog-content">
             <p>
@@ -742,7 +741,7 @@ import {
             </div>
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button
               variant="text"
               (clicked)="showBulkStatusDialog.set(false)"
@@ -764,7 +763,7 @@ import {
           [modal]="true"
           header="Invite to Team"
           [closable]="true"
-          styleClass="roster-invite-dialog"
+          class="roster-invite-dialog"
         >
           <div class="invite-form">
             <div class="form-field">
@@ -787,7 +786,7 @@ import {
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select role"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
 
@@ -804,7 +803,7 @@ import {
             </div>
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showInviteDialog.set(false)"
               >Cancel</app-button
             >
@@ -825,7 +824,7 @@ import {
           [modal]="true"
           header="Pending Invitations"
           [closable]="true"
-          styleClass="roster-invitations-dialog"
+          class="roster-invitations-dialog"
         >
           <div class="invitations-list">
             @if (rosterService.pendingInvitations().length === 0) {
@@ -900,7 +899,7 @@ import {
             }
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button
               variant="text"
               (clicked)="showInvitationsDialog.set(false)"

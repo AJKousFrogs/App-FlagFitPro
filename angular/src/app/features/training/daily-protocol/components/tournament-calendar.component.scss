@@ -27,7 +27,7 @@
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
-  gap: var(--ds-space-2);
+  gap: var(--space-2);
 }
 
 .calendar-header h3 i {
@@ -79,7 +79,7 @@
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
-  gap: var(--ds-space-2);
+  gap: var(--space-2);
   flex-wrap: wrap;
   margin-bottom: var(--space-2);
 }
@@ -93,7 +93,7 @@
 .tournament-details .detail {
   display: flex;
   align-items: center;
-  gap: var(--ds-space-1);
+  gap: var(--space-1);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
@@ -105,7 +105,7 @@
 /* Countdown */
 .tournament-countdown {
   text-align: center;
-  padding: var(--ds-space-2) var(--ds-space-3);
+  padding: var(--space-2) var(--space-3);
   background: var(--primitive-neutral-100);
   border-radius: var(--radius-md);
   min-width: var(--badge-min-width-md);
@@ -135,9 +135,9 @@
 .taper-banner {
   display: flex;
   align-items: flex-start;
-  gap: var(--ds-space-2);
+  gap: var(--space-2);
   margin-top: var(--space-3);
-  padding: var(--ds-space-2) var(--ds-space-3);
+  padding: var(--space-2) var(--space-3);
   background: var(--primitive-warning-100);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
@@ -151,7 +151,7 @@
 .taper-info {
   display: flex;
   align-items: center;
-  gap: var(--ds-space-2);
+  gap: var(--space-2);
   margin-top: var(--space-2);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
@@ -161,7 +161,7 @@
 .tournament-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--ds-space-1);
+  gap: var(--space-1);
   margin-top: var(--space-2);
   border-top: var(--border-1) solid var(--primitive-neutral-100);
   padding-top: var(--space-2);
@@ -195,7 +195,7 @@
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--ds-space-1);
+  gap: var(--space-1);
 }
 
 .form-field label {
@@ -213,7 +213,7 @@
 .checkbox-group {
   flex-direction: row;
   align-items: flex-start;
-  gap: var(--ds-space-2);
+  gap: var(--space-2);
 }
 
 .checkbox-group label {

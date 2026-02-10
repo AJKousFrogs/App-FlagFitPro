@@ -29,7 +29,7 @@ import { Slider } from "primeng/slider";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -93,7 +93,7 @@ interface SessionTypeOption {
     FormsModule,
     Checkbox,
     Dialog,
-    PrimeTemplate,
+    
     InputNumber,
     InputText,
     ProgressBar,
@@ -158,7 +158,7 @@ interface SessionTypeOption {
             <p-progressBar
               [value]="getProgressPercent()"
               [showValue]="false"
-              styleClass="progress-bar"
+              class="progress-bar"
             ></p-progressBar>
           </div>
 
@@ -340,7 +340,7 @@ interface SessionTypeOption {
       (visibleChange)="showLogDialog.set($event)"
       [breakpoints]="dialogBreakpoints"
       [draggable]="false"
-      styleClass="qb-throwing-log-dialog"
+      class="qb-throwing-log-dialog"
     >
       <div class="log-form">
         <!-- Session Type -->
@@ -352,7 +352,7 @@ interface SessionTypeOption {
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
-            styleClass="w-full"
+            class="w-full"
           ></p-select>
         </div>
 
@@ -365,7 +365,7 @@ interface SessionTypeOption {
             [max]="500"
             [showButtons]="true"
             [step]="10"
-            styleClass="w-full"
+            class="w-full"
             placeholder="0"
           ></p-inputNumber>
           <small class="field-hint">
@@ -382,7 +382,7 @@ interface SessionTypeOption {
               [(ngModel)]="formData.shortThrows"
               [min]="0"
               [max]="300"
-              styleClass="w-full"
+              class="w-full"
             ></p-inputNumber>
           </div>
           <div class="form-field">
@@ -391,7 +391,7 @@ interface SessionTypeOption {
               [(ngModel)]="formData.mediumThrows"
               [min]="0"
               [max]="300"
-              styleClass="w-full"
+              class="w-full"
             ></p-inputNumber>
           </div>
           <div class="form-field">
@@ -400,7 +400,7 @@ interface SessionTypeOption {
               [(ngModel)]="formData.longThrows"
               [min]="0"
               [max]="200"
-              styleClass="w-full"
+              class="w-full"
             ></p-inputNumber>
           </div>
         </div>
@@ -471,7 +471,7 @@ interface SessionTypeOption {
         </div>
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button variant="outlined" (clicked)="closeLogDialog()"
           >Cancel</app-button
         >

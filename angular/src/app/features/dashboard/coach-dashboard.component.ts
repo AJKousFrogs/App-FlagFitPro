@@ -14,7 +14,6 @@ import { Badge } from "primeng/badge";
 
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -108,12 +107,11 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     FormsModule,
     RouterModule,
     TableModule,
-    TableModule,
     StatusTagComponent,
     LazyChartComponent,
     ChartSkeletonComponent,
     Dialog,
-    PrimeTemplate,
+    
     Tooltip,
     Avatar,
     Badge,
@@ -199,7 +197,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                       <p-avatar
                         [label]="getPlayerInitials(alert.playerName)"
                         shape="circle"
-                        [styleClass]="
+                        [class]="
                           alert.severity === 'critical'
                             ? 'priority-avatar priority-avatar--critical'
                             : 'priority-avatar priority-avatar--warning'
@@ -275,7 +273,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                       <p-avatar
                         [label]="getPlayerInitials(player.playerName)"
                         shape="circle"
-                        [styleClass]="
+                        [class]="
                           player.severity === 'critical'
                             ? 'priority-avatar priority-avatar--critical'
                             : 'priority-avatar priority-avatar--warning'
@@ -316,7 +314,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               </h3>
 
               @if (teamContinuity().gameDayRecovery.length > 0) {
-                <app-card [compact]="true" styleClass="protocol-group">
+                <app-card [compact]="true" class="protocol-group">
                   <div class="protocol-header">
                     <span class="protocol-icon">🏈</span>
                     <span class="protocol-title"
@@ -349,7 +347,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               }
 
               @if (teamContinuity().loadCaps.length > 0) {
-                <app-card [compact]="true" styleClass="protocol-group">
+                <app-card [compact]="true" class="protocol-group">
                   <div class="protocol-header">
                     <span class="protocol-icon">⚠️</span>
                     <span class="protocol-title"
@@ -384,7 +382,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               }
 
               @if (teamContinuity().travelRecovery.length > 0) {
-                <app-card [compact]="true" styleClass="protocol-group">
+                <app-card [compact]="true" class="protocol-group">
                   <div class="protocol-header">
                     <span class="protocol-icon">🛫</span>
                     <span class="protocol-title"
@@ -499,7 +497,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
 
           @if (nextGenEnabled()) {
             <app-card
-              styleClass="next-gen-preview-card"
+              class="next-gen-preview-card"
               headerIcon="pi-sparkles"
               title="Next-Gen Preview (Coach)"
               [compact]="true"
@@ -696,10 +694,10 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                         [value]="filteredPlayers()"
                         [paginator]="filteredPlayers().length > 10"
                         [rows]="10"
-                        styleClass="p-datatable-sm"
+                        class="p-datatable-sm"
                         [rowHover]="true"
                       >
-                        <ng-template pTemplate="header">
+                        <ng-template #header>
                           <tr>
                             <th pSortableColumn="playerName">Player</th>
                             <th pSortableColumn="position">Pos</th>
@@ -711,7 +709,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                             <th>Overrides</th>
                           </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-player>
+                        <ng-template #body let-player>
                           <tr
                             (click)="viewPlayer(player.playerId)"
                             class="clickable-row"
@@ -721,7 +719,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                 <p-avatar
                                   [label]="player.avatarInitials"
                                   shape="circle"
-                                  [styleClass]="getAvatarClass(player)"
+                                  [class]="getAvatarClass(player)"
                                 ></p-avatar>
                                 <div class="player-info">
                                   <span class="player-name">{{
@@ -793,7 +791,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                     (clicked)="
                                       requestDataAccess(player.playerId, $event)
                                     "
-                                    styleClass="request-access-btn"
+                                    class="request-access-btn"
                                     [pTooltip]="'Request access to player data'"
                                   ></app-button>
                                 </div>
@@ -817,7 +815,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                     (clicked)="
                                       requestDataAccess(player.playerId, $event)
                                     "
-                                    styleClass="request-access-btn"
+                                    class="request-access-btn"
                                     [pTooltip]="
                                       'Request additional data access'
                                     "
@@ -854,7 +852,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                   (click)="
                                     viewOverrideHistory(player.playerId, $event)
                                   "
-                                  styleClass="override-badge"
+                                  class="override-badge"
                                 ></p-badge>
                               } @else {
                                 <span class="no-overrides">—</span>
@@ -980,7 +978,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                     [fullWidth]="true"
                     iconLeft="pi-calendar-plus"
                     (clicked)="planTomorrow()"
-                    styleClass="mt-2"
+                    class="mt-2"
                     >Plan Tomorrow</app-button
                   >
                 </div>
@@ -1021,7 +1019,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           header="Create Training Session"
           [(visible)]="showCreateSessionDialog"
           [modal]="true"
-          styleClass="dashboard-dialog"
+          class="dashboard-dialog"
           [closable]="true"
         >
           <div class="session-form">
@@ -1047,7 +1045,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select type"
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
             </div>
             <div class="form-field">
@@ -1058,7 +1056,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                 [showTime]="true"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
-                styleClass="w-full"
+                class="w-full"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -1088,7 +1086,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               ></textarea>
             </div>
           </div>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button
               variant="text"
               (clicked)="showCreateSessionDialog = false"
@@ -1105,7 +1103,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           header="Send Team Message"
           [(visible)]="showTeamMessageDialog"
           [modal]="true"
-          styleClass="dashboard-dialog"
+          class="dashboard-dialog"
           [closable]="true"
         >
           <div class="message-form">
@@ -1121,7 +1119,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               ></textarea>
             </div>
           </div>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showTeamMessageDialog = false"
               >Cancel</app-button
             >
@@ -1136,7 +1134,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           header="Request Data Access"
           [(visible)]="showRequestAccessDialog"
           [modal]="true"
-          styleClass="dashboard-dialog"
+          class="dashboard-dialog"
           [closable]="true"
         >
           <div class="request-access-form">
@@ -1156,7 +1154,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               ></textarea>
             </div>
           </div>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="cancelAccessRequest()"
               >Cancel</app-button
             >

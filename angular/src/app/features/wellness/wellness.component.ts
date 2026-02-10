@@ -119,7 +119,7 @@ interface WellnessMetric {
 
           <!-- Partial Wellness Score Confidence Indicator -->
           @if (wellnessConfidence().score < 1.0) {
-            <p-card styleClass="confidence-card">
+            <p-card class="confidence-card">
               <div class="confidence-warning">
                 <app-confidence-indicator
                   [score]="wellnessConfidence().score"
@@ -263,7 +263,7 @@ interface WellnessMetric {
               <app-card
                 title="Cycle Tracking"
                 headerIcon="pi-heart"
-                styleClass="cycle-tracking-card"
+                class="cycle-tracking-card"
               >
                 <div class="cycle-tracking-content">
                   <p class="cycle-description">
@@ -295,7 +295,7 @@ interface WellnessMetric {
                   <app-button
                     iconLeft="pi-calendar"
                     [routerLink]="['/cycle-tracking']"
-                    styleClass="w-full mt-3"
+                    class="w-full mt-3"
                     >Open Cycle Tracker</app-button
                   >
                 </div>

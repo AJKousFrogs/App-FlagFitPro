@@ -88,7 +88,7 @@ import { Textarea } from "primeng/textarea";
                 placeholder="Select an athlete"
                 [filter]="true"
                 [showClear]="true"
-                styleClass="w-full"
+                class="w-full"
                 [attr.aria-label]="'Select athlete'"
               ></p-select>
             </div>
@@ -113,7 +113,7 @@ import { Textarea } from "primeng/textarea";
                 [options]="decisionTypeOptions"
                 [(ngModel)]="formData.decisionType"
                 placeholder="Select decision type"
-                styleClass="w-full"
+                class="w-full"
                 (onValueChange)="onDecisionTypeChange()"
                 [attr.aria-label]="'Select decision type'"
               ></p-select>
@@ -144,7 +144,7 @@ import { Textarea } from "primeng/textarea";
                 placeholder="e.g., Reduced sprint volume by 50% due to elevated ACWR"
                 rows="3"
                 [maxlength]="500"
-                styleClass="w-full"
+                class="w-full"
                 [attr.aria-label]="'Decision summary'"
                 [attr.aria-describedby]="'decision-summary-hint'"
               ></textarea>
@@ -204,7 +204,7 @@ import { Textarea } from "primeng/textarea";
                     pInputText
                     [(ngModel)]="formData.decisionBasis.constraints[$index]"
                     placeholder="e.g., RTP Phase 2, No sprinting >80%"
-                    styleClass="w-full"
+                    class="w-full"
                   />
                   <app-button
                     iconLeft="pi-times"
@@ -239,7 +239,7 @@ import { Textarea } from "primeng/textarea";
                 [options]="reviewTriggerOptions"
                 [(ngModel)]="formData.reviewTrigger"
                 placeholder="Select review trigger"
-                styleClass="w-full"
+                class="w-full"
                 (onValueChange)="onReviewTriggerChange()"
                 [attr.aria-label]="'Select review trigger'"
               ></p-select>

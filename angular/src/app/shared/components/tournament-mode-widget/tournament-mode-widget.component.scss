@@ -60,7 +60,7 @@
 
 /* Game Progress */
 .game-progress {
-  background: white;
+  background: var(--surface-primary);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   margin-bottom: var(--space-4);
@@ -117,18 +117,18 @@
 
 .game-dot.current {
   background: var(--color-status-info);
-  color: white;
+  color: var(--color-text-on-primary);
   animation: pulse 1.5s infinite;
 }
 
 .game-dot.won {
   background: var(--ds-primary-green);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .game-dot.lost {
   background: var(--primitive-error-400);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .game-dot i {
@@ -252,13 +252,13 @@
 .hydration-status {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--ds-space-1) var(--ds-space-2);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
 }
 
 .hydration-status.on-track {
-  background: var(--primitive-success-100);
-  color: var(--primitive-success-700);
+  background: var(--color-status-success-surface);
+  color: var(--color-status-success);
 }
 
 .hydration-status.behind {
@@ -330,7 +330,7 @@
 
 /* Nutrition Suggestion */
 .nutrition-suggestion {
-  background: var(--primitive-success-50);
+  background: var(--color-status-success-subtle);
   border-radius: var(--radius-md);
   padding: var(--space-3);
   margin-bottom: var(--space-4);
@@ -350,7 +350,7 @@
 .phase-badge {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--ds-space-1) var(--ds-space-2);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
   text-transform: var(--ds-text-transform-uppercase);
   letter-spacing: var(--ds-letter-spacing-0-03em);
@@ -372,8 +372,8 @@
 }
 
 .phase-badge.phase-recovery {
-  background: var(--primitive-success-100);
-  color: var(--primitive-success-700);
+  background: var(--color-status-success-surface);
+  color: var(--color-status-success);
 }
 
 .suggestion-text {
@@ -390,10 +390,10 @@
 
 .food-chip {
   font-size: var(--ds-font-size-xs);
-  padding: var(--ds-space-1) var(--ds-space-2);
-  background: white;
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-primary);
   border-radius: var(--radius-lg);
-  color: var(--primitive-success-700);
+  color: var(--color-status-success);
 }
 
 /* Actions */

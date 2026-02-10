@@ -1,7 +1,9 @@
 # FlagFit Pro — Tech Stack (Single Source of Truth)
 
 **Last Updated:** February 2026  
-**Status:** Enforced — All new code must align with this stack
+**Status:** Enforced — All new code must align with this stack  
+
+Machine-readable summary: [tech-stack.json](./tech-stack.json)
 
 ---
 

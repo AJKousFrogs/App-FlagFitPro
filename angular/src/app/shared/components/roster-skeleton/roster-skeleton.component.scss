@@ -134,7 +134,8 @@
 }
 
 // Dark theme
-:host-context([data-theme="dark"]) {
+:host-context([data-theme="dark"]),
+:host-context(.dark-theme) {
   .table-skeleton {
     background: var(--surface-card);
     border-color: var(--surface-border);

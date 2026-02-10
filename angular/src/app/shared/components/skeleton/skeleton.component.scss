@@ -48,7 +48,8 @@
 }
 
 // Dark theme support
-:host-context([data-theme="dark"]) .skeleton {
+:host-context([data-theme="dark"]) .skeleton,
+:host-context(.dark-theme) .skeleton {
   background: linear-gradient(
     90deg,
     var(--primitive-neutral-800) 25%,
@@ -65,7 +66,8 @@
     background: var(--primitive-neutral-200);
   }
 
-  :host-context([data-theme="dark"]) .skeleton {
+  :host-context([data-theme="dark"]) .skeleton,
+  :host-context(.dark-theme) .skeleton {
     background: var(--primitive-neutral-800);
   }
 }

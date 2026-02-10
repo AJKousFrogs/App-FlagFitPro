@@ -5,6 +5,15 @@
 
 ---
 
+## Documentation Rule
+
+- **Docs describe current behavior or enforced rules.**  
+- One-time audits, trackers, and investigations are archived or deleted.  
+- If a doc is not referenced by this index, it should not exist.  
+- Max 1 doc per topic (security, auth, theming, PrimeNG, UX target).
+
+---
+
 ## Quick Navigation
 
 | I Need To...                             | Go To                                                      |
@@ -28,7 +37,7 @@
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)                   | **THE source of truth** - All 49 features with business logic, calculations, female athlete support (Appendix E) |
 | [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md) | Sports science research behind the app                                                                           |
-| [AI_GOVERNANCE.md](./AI_GOVERNANCE.md)                                   | AI Coach safety tiers and governance                                                                             |
+| [UX_READY_CRITERIA.md](./UX_READY_CRITERIA.md)                           | UI polish gate — when screens are ready for visual refinement                                                    |
 
 ---
 
@@ -42,7 +51,6 @@
 | [API.md](./API.md)                                     | API reference                            |
 | [BACKEND_SETUP.md](./BACKEND_SETUP.md)                 | Backend/Netlify Functions setup          |
 | [TECH_STACK.md](./TECH_STACK.md)                       | **Tech stack** — ESM, Angular 21, tokens |
-| [LEGACY_CODE_GUIDE.md](./LEGACY_CODE_GUIDE.md)         | Finding legacy code to remove            |
 
 ---
 
@@ -59,10 +67,8 @@
 
 | Document                                                                   | Description                    |
 | -------------------------------------------------------------------------- | ------------------------------ |
-| [SECURITY.md](./SECURITY.md)                                               | Security architecture          |
-| [SECURITY_PRIVACY_OVERVIEW.md](./SECURITY_PRIVACY_OVERVIEW.md)             | Privacy and security overview  |
-| [AUTHENTICATION_PATTERN.md](./AUTHENTICATION_PATTERN.md)                   | Auth implementation patterns   |
-| [AUTHENTICATION_LOGIN_ONBOARDING.md](./AUTHENTICATION_LOGIN_ONBOARDING.md) | Login and onboarding flow      |
+| [SECURITY.md](./SECURITY.md)                                               | Security & privacy (consent, AI opt-out, deletion) |
+| [AUTHENTICATION_LOGIN_ONBOARDING.md](./AUTHENTICATION_LOGIN_ONBOARDING.md) | Login, onboarding, and auth implementation         |
 | [PRIVACY_CONTROLS_SPEC.md](./PRIVACY_CONTROLS_SPEC.md)                     | Privacy control specifications |
 | [THREAT_MODEL.md](./THREAT_MODEL.md)                                       | Security threat model          |
 
@@ -95,7 +101,7 @@
 | ---------------------------------------- | ---------------- |
 | [Privacy Policy](../angular/src/assets/legal/privacy-policy.md) | Privacy policy   |
 | [Terms of Use](../angular/src/assets/legal/terms-of-use.md)     | Terms of use     |
-| [LICENSE.md](./LICENSE.md)               | Software license |
+| [LICENSE.md](../LICENSE.md)              | Software license |
 
 ---
 
@@ -111,11 +117,10 @@
 ├── SECURITY.md
 ├── ANGULAR_PRIMENG_GUIDE.md
 ├── DESIGN_SYSTEM_RULES.md
+├── UX_READY_CRITERIA.md         ← UI polish gate
 ├── FLAG_FOOTBALL_TRAINING_SCIENCE.md
-├── AI_GOVERNANCE.md
-├── RUNBOOKS/                     ← 8 operational docs
-├── archive/                      ← Historical/migration docs
-└── [Legal docs]
+├── RUNBOOKS/                     ← 6 operational docs
+└── [Legal: ../LICENSE.md, angular/src/assets/legal/]
 ```
 
 ---

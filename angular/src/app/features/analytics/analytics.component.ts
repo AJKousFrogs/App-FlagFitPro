@@ -15,7 +15,6 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -115,7 +114,7 @@ interface AnalyticsAcwrData {
 
     LazyChartComponent,
     Dialog,
-    PrimeTemplate,
+    
     ProgressBar,
     TableModule,
     StatusTagComponent,
@@ -200,7 +199,7 @@ interface AnalyticsAcwrData {
           }
 
           <p-card class="analytics-hub-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <h3>Analytics Hub</h3>
             </ng-template>
             <div class="analytics-hub-grid">
@@ -233,7 +232,7 @@ interface AnalyticsAcwrData {
 
           <!-- My Development Goals (Coach Assigned) -->
           <p-card class="development-goals-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="goals-header">
                 <div class="goals-title">
                   <i class="pi pi-bullseye"></i>
@@ -298,7 +297,7 @@ interface AnalyticsAcwrData {
                       <p-progressBar
                         [value]="calculateGoalProgress(goal)"
                         [showValue]="false"
-                        styleClass="goal-progress-bar"
+                        class="goal-progress-bar"
                       ></p-progressBar>
                       <span class="progress-percent"
                         >{{ calculateGoalProgress(goal) }}%</span
@@ -351,7 +350,7 @@ interface AnalyticsAcwrData {
           <!-- Team Performance Badges -->
           @if (teamPerformanceAchievements().length > 0) {
             <p-card class="team-badges-card">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="badges-header">
                   <div class="badges-title">
                     <i class="pi pi-trophy"></i>
@@ -422,7 +421,7 @@ interface AnalyticsAcwrData {
             <!-- Performance Trends Chart -->
             @defer (on idle) {
               <p-card class="chart-card">
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Load vs Performance</h3>
@@ -498,7 +497,7 @@ interface AnalyticsAcwrData {
             <!-- Team Chemistry Chart -->
             @defer (on idle) {
               <p-card class="chart-card">
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Skill Proficiency Radar</h3>
@@ -538,7 +537,7 @@ interface AnalyticsAcwrData {
             <!-- Training Distribution Chart -->
             @defer (on idle) {
               <p-card class="chart-card">
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Training Mix</h3>
@@ -576,7 +575,7 @@ interface AnalyticsAcwrData {
             <!-- Position Performance Chart -->
             @defer (on idle) {
               <p-card class="chart-card">
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <div class="chart-header">
                     <div class="title-group">
                       <h3 class="chart-title">Benchmark Comparison</h3>
@@ -615,7 +614,7 @@ interface AnalyticsAcwrData {
           <!-- Gap Analysis Visualization -->
           @defer (on idle) {
             <p-card class="chart-card full-width gap-analysis-card">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="chart-header">
                   <div class="title-group">
                     <h3 class="chart-title">Gap Analysis</h3>
@@ -734,7 +733,7 @@ interface AnalyticsAcwrData {
 
           <!-- Full Width Charts -->
           <p-card class="chart-card full-width">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="chart-header">
                 <h3 class="chart-title">Speed Development Progress</h3>
                 <div class="chart-controls">
@@ -742,13 +741,13 @@ interface AnalyticsAcwrData {
                     [options]="timePeriods"
                     [(ngModel)]="selectedTimePeriod"
                     placeholder="Time Period"
-                    styleClass="w-full md:w-14rem"
+                    class="w-full md:w-14rem"
                   ></p-select>
                   <p-select
                     [options]="metricOptions"
                     [(ngModel)]="selectedMetric"
                     placeholder="Metrics"
-                    styleClass="w-full md:w-14rem"
+                    class="w-full md:w-14rem"
                   ></p-select>
                 </div>
               </div>
@@ -807,7 +806,7 @@ interface AnalyticsAcwrData {
 
           <!-- Player Statistics Section -->
           <p-card class="player-stats-card full-width">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <h3 class="chart-title">Player Statistics & Attendance</h3>
             </ng-template>
             <p-tabs>
@@ -834,9 +833,9 @@ interface AnalyticsAcwrData {
                   [value]="playerGameStats()"
                   [paginator]="true"
                   [rows]="10"
-                  styleClass="p-datatable-sm"
+                  class="p-datatable-sm"
                 >
-                  <ng-template pTemplate="header">
+                  <ng-template #header>
                     <tr>
                       <th>Date</th>
                       <th>Opponent</th>
@@ -850,7 +849,7 @@ interface AnalyticsAcwrData {
                       <th>Interceptions</th>
                     </tr>
                   </ng-template>
-                  <ng-template pTemplate="body" let-game>
+                  <ng-template #body let-game>
                     <tr>
                       <td>{{ game.gameDate }}</td>
                       <td>{{ game.opponent }}</td>
@@ -1125,7 +1124,7 @@ interface AnalyticsAcwrData {
                       [paginator]="true"
                       [rows]="5"
                     >
-                      <ng-template pTemplate="header">
+                      <ng-template #header>
                         <tr>
                           <th>Season</th>
                           <th>Games Played</th>
@@ -1135,7 +1134,7 @@ interface AnalyticsAcwrData {
                           <th>Total TDs</th>
                         </tr>
                       </ng-template>
-                      <ng-template pTemplate="body" let-season>
+                      <ng-template #body let-season>
                         <tr>
                           <td>{{ season.season }}</td>
                           <td>{{ season.gamesPlayed }}</td>
@@ -1167,7 +1166,7 @@ interface AnalyticsAcwrData {
           [modal]="true"
           [closable]="true"
           header="Share Analytics with Coach"
-          styleClass="share-dialog"
+          class="share-dialog"
         >
           <div class="share-content">
             <p class="share-intro">
@@ -1227,7 +1226,7 @@ interface AnalyticsAcwrData {
             }
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showShareDialog.set(false)"
               >Cancel</app-button
             >
@@ -2454,15 +2453,15 @@ export class AnalyticsComponent implements AfterViewInit {
         <style>
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* ds-exception: PDF export font stack */
-            padding: var(--ds-space-10);
+            padding: var(--space-10);
             max-width: var(--dialog-max-width-2xl);
             margin: 0 auto;
             color: var(--color-text-primary);
           }
           .header {
             text-align: center;
-            margin-bottom: var(--ds-space-10);
-            padding-bottom: var(--ds-space-5);
+            margin-bottom: var(--space-10);
+            padding-bottom: var(--space-5);
             border-bottom: var(--border-2) solid var(--color-brand-primary);
           }
           .header h1 {
@@ -2472,26 +2471,26 @@ export class AnalyticsComponent implements AfterViewInit {
           }
           .header p {
             color: var(--color-text-secondary);
-            margin: calc(var(--ds-space-5) / 2) 0 0;
+            margin: calc(var(--space-5) / 2) 0 0;
           }
           .section {
-            margin-bottom: var(--ds-space-8);
+            margin-bottom: var(--space-8);
           }
           .section h2 {
             color: var(--color-text-primary);
             font-size: var(--ds-font-size-lg);
             border-bottom: var(--border-1) solid var(--color-border-secondary);
-            padding-bottom: var(--ds-space-2);
-            margin-bottom: var(--ds-space-4);
+            padding-bottom: var(--space-2);
+            margin-bottom: var(--space-4);
           }
           .metrics-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: var(--ds-space-4);
+            gap: var(--space-4);
           }
           .metric-card {
             background: var(--surface-secondary);
-            padding: var(--ds-space-4);
+            padding: var(--space-4);
             border-radius: var(--radius-lg);
             text-align: center;
           }
@@ -2506,9 +2505,9 @@ export class AnalyticsComponent implements AfterViewInit {
           }
           .goal-item {
             background: var(--surface-secondary);
-            padding: var(--ds-space-3);
+            padding: var(--space-3);
             border-radius: var(--radius-lg);
-            margin-bottom: var(--ds-space-2);
+            margin-bottom: var(--space-2);
           }
           .goal-name {
             font-weight: var(--ds-font-weight-bold);
@@ -2523,7 +2522,7 @@ export class AnalyticsComponent implements AfterViewInit {
             border-collapse: collapse;
           }
           .stats-table th, .stats-table td {
-            padding: var(--ds-space-2) var(--ds-space-3);
+            padding: var(--space-2) var(--space-3);
             text-align: left;
             border-bottom: var(--border-1) solid var(--color-border-secondary);
           }
@@ -2532,15 +2531,15 @@ export class AnalyticsComponent implements AfterViewInit {
             font-weight: var(--ds-font-weight-semibold);
           }
           .footer {
-            margin-top: var(--ds-space-10);
-            padding-top: var(--ds-space-5);
+            margin-top: var(--space-10);
+            padding-top: var(--space-5);
             border-top: var(--border-1) solid var(--color-border-secondary);
             text-align: center;
             color: var(--color-text-muted);
             font-size: var(--ds-font-size-xs);
           }
           @media print {
-            body { padding: var(--ds-space-5); }
+            body { padding: var(--space-5); }
             .no-print { display: none; }
           }
         </style>

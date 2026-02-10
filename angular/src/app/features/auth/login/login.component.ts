@@ -10,7 +10,6 @@ import {
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -29,7 +28,6 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import {
   getFormControlError,
-  isFormControlInvalid,
   markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
@@ -49,7 +47,7 @@ import {
   template: `
 <div class="login-page">
       <p-card class="login-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="login-logo">
             <i class="pi pi-activity"></i>
           </div>
@@ -240,16 +238,6 @@ export class LoginComponent {
     if (this.authService.checkAuth()) {
       this.router.navigate(["/dashboard"]);
     }
-  }
-
-  isFieldInvalid(fieldName: string): boolean {
-    const control = this.loginForm.get(fieldName);
-    return isFormControlInvalid(control as AbstractControl);
-  }
-
-  getFieldError(fieldName: string): string {
-    const control = this.loginForm.get(fieldName);
-    return getFormControlError(control as AbstractControl) || "";
   }
 
   togglePasswordVisibility(): void {

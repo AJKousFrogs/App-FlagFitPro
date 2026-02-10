@@ -48,7 +48,10 @@
    Prevents transition blur/flicker on first paint
    ========================================================================== */
 
-/* Applied via JS on document ready, removed after first paint */
+/* Applied via JS on document ready, removed after first paint.
+ * NOTE: Any file may contribute to any CSS layer; load order only affects
+ * unlayered content. This overrides-layer block is in Tier 1 (design-system)
+ * but is collected into @layer overrides regardless. See DESIGN_SYSTEM_RULES.md cascade. */
 @layer overrides {
   /* Ticket: DS-EXC-021 | Remove by: 2026-06-01 */
   html.ds-initial-render,

@@ -12,7 +12,6 @@ import { RouterModule } from "@angular/router";
 import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -161,9 +160,8 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     Card,
     LazyChartComponent,
     TableModule,
-    TableModule,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     InputNumber,
     ProgressBar,
@@ -257,7 +255,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
           <!-- Team Rankings & Achievement Badges -->
           @if (teamRankings() && teamRankings()!.rankings.length > 0) {
             <p-card class="team-rankings-card">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="rankings-header">
                   <div class="rankings-title">
                     <i class="pi pi-users"></i>
@@ -418,7 +416,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
           <div class="charts-grid">
             @defer (on viewport) {
               <p-card class="chart-card">
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <div class="chart-header-row">
                     <h3>Performance Over Time</h3>
                     @if (nextGenEnabled()) {
@@ -453,7 +451,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
 
             @defer (on viewport) {
               <p-card class="chart-card">
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <div class="chart-header-row">
                     <h3>Speed Metrics (10yd, 20yd, 40yd)</h3>
                     @if (nextGenEnabled()) {
@@ -487,7 +485,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
 
           <!-- Position Benchmark Comparison -->
           <p-card class="benchmark-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="benchmark-header">
                 <div class="benchmark-title">
                   <i class="pi pi-bullseye"></i>
@@ -498,7 +496,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [(ngModel)]="selectedPositionValue"
                   (ngModelChange)="onPositionChange({ value: $event })"
                   placeholder="Change Position"
-                  styleClass="position-selector"
+                  class="position-selector"
                 ></p-select>
               </div>
             </ng-template>
@@ -527,7 +525,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                       <p-progressBar
                         [value]="benchmark.percentOfElite"
                         [showValue]="false"
-                        styleClass="benchmark-bar"
+                        class="benchmark-bar"
                       ></p-progressBar>
                       <span class="gap-text"
                         >({{ benchmark.gapFromElite }} away)</span
@@ -550,7 +548,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
 
           <!-- Gap Analysis & Training Priorities -->
           <p-card class="gap-analysis-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="gap-header">
                 <i class="pi pi-search"></i>
                 <h3>Your Training Priorities (Based on Gap Analysis)</h3>
@@ -569,7 +567,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               <p-accordion>
                 @for (gap of gapAnalysis(); track gap.metric; let i = $index) {
                   <p-accordionpanel [value]="'gap-' + i">
-                    <ng-template pTemplate="header">
+                    <ng-template #header>
                       <div class="priority-header">
                         <span class="priority-number"
                           >Priority #{{ i + 1 }}:</span
@@ -588,7 +586,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                         />
                       </div>
                     </ng-template>
-                    <ng-template pTemplate="content">
+                    <ng-template #content>
                       <div class="priority-content">
                         <div class="gap-stats">
                           <span class="gap-stat"
@@ -625,7 +623,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
 
           <!-- Performance History Table -->
           <p-card class="table-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <h3>Performance History</h3>
             </ng-template>
             @if (performanceHistory().length === 0) {
@@ -647,7 +645,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 [rows]="10"
                 [scrollable]="true"
               >
-                <ng-template pTemplate="header">
+                <ng-template #header>
                   <tr>
                     <th>Date</th>
                     <th>10m</th>
@@ -661,7 +659,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                     <th>Score</th>
                   </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-record>
+                <ng-template #body let-record>
                   <tr>
                     <td>{{ record.date }}</td>
                     <td>{{ record.sprint10 || "-" }}</td>
@@ -691,7 +689,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
           header="Log Performance"
           [(visible)]="showLogDialog"
           [modal]="true"
-          styleClass="performance-dialog"
+          class="performance-dialog"
           [closable]="true"
         >
           <div class="log-form">
@@ -707,7 +705,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [maxFractionDigits]="2"
                   mode="decimal"
                   placeholder="e.g., 1.54"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -719,7 +717,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [maxFractionDigits]="2"
                   mode="decimal"
                   placeholder="e.g., 2.89"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -731,7 +729,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [maxFractionDigits]="2"
                   mode="decimal"
                   placeholder="e.g., 4.45"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
             </div>
@@ -748,7 +746,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [maxFractionDigits]="2"
                   mode="decimal"
                   placeholder="e.g., 4.12"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -760,7 +758,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [maxFractionDigits]="2"
                   mode="decimal"
                   placeholder="e.g., 6.85"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -772,7 +770,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [maxFractionDigits]="2"
                   mode="decimal"
                   placeholder="e.g., 1.24"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
             </div>
@@ -787,7 +785,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [(ngModel)]="newPerformance.vertical"
                   mode="decimal"
                   placeholder="e.g., 38"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -797,7 +795,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [(ngModel)]="newPerformance.broad"
                   mode="decimal"
                   placeholder="e.g., 122"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -809,7 +807,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [maxFractionDigits]="2"
                   mode="decimal"
                   placeholder="e.g., 2.45"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
             </div>
@@ -824,7 +822,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [(ngModel)]="newPerformance.bench"
                   mode="decimal"
                   placeholder="e.g., 225"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -834,7 +832,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [(ngModel)]="newPerformance.squat"
                   mode="decimal"
                   placeholder="e.g., 315"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -844,7 +842,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [(ngModel)]="newPerformance.deadlift"
                   mode="decimal"
                   placeholder="e.g., 365"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
             </div>
@@ -859,7 +857,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   [(ngModel)]="newPerformance.bodyWeight"
                   mode="decimal"
                   placeholder="For relative strength"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
                 <small class="help-text"
                   >Used for relative strength calculations</small
@@ -880,7 +878,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               />
             </div>
           </div>
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button variant="text" (clicked)="showLogDialog = false"
               >Cancel</app-button
             >

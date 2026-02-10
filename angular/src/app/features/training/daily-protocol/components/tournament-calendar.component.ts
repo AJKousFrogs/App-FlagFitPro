@@ -23,7 +23,6 @@ import { IconButtonComponent } from "../../../../shared/components/button/icon-b
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -71,7 +70,7 @@ interface EventTypeOption {
   imports: [
     FormsModule,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     InputNumber,
     DatePicker,
@@ -251,7 +250,7 @@ interface EventTypeOption {
       (visibleChange)="showDialog.set($event)"
       [breakpoints]="dialogBreakpoints"
       [draggable]="false"
-      styleClass="training-tournament-dialog"
+      class="training-tournament-dialog"
     >
       <div class="tournament-form">
         <div class="form-field">
@@ -273,7 +272,7 @@ interface EventTypeOption {
               [(ngModel)]="formData.startDate"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-datepicker>
           </div>
           <div class="form-field">
@@ -283,7 +282,7 @@ interface EventTypeOption {
               [(ngModel)]="formData.endDate"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-datepicker>
           </div>
         </div>
@@ -319,7 +318,7 @@ interface EventTypeOption {
             [(ngModel)]="formData.eventType"
             optionLabel="label"
             optionValue="value"
-            styleClass="w-full"
+            class="w-full"
           ></p-select>
         </div>
 
@@ -332,7 +331,7 @@ interface EventTypeOption {
               [min]="1"
               [max]="20"
               [showButtons]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-inputNumber>
           </div>
           <div class="form-field">
@@ -343,7 +342,7 @@ interface EventTypeOption {
               [min]="0"
               [max]="4"
               [showButtons]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-inputNumber>
           </div>
         </div>
@@ -398,7 +397,7 @@ interface EventTypeOption {
         </div>
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button variant="outlined" (clicked)="closeDialog()"
           >Cancel</app-button
         >

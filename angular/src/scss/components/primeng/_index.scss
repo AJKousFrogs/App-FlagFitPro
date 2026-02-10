@@ -1,19 +1,31 @@
 /**
  * PrimeNG Design System Integration
  * ==================================
- * 
- * Import order matters for CSS layers.
+ *
+ * CASCADE ORDER (Design System 7-Layer Model):
+ *   1. Design tokens (design-system/index → tokens/design-system-tokens)
+ *   2. Token mapping (design → PrimeNG --p-* variables)
+ *   3. Brand constraints (token-based component rules)
+ *   4. Theme glue + dark mode
+ *   5. Component-level PrimeNG overrides
+ *   6. Exceptions (overrides layer)
+ *   7. Color guards (overrides layer, must be last)
+ *
  * See Decision 7 and Decision 16 in DESIGN_SYSTEM_RULES.md.
- * 
- * FILES:
- *   _token-mapping.scss  - CSS variables mapping PrimeNG → design tokens
- *   _brand-overrides.scss - CSS rules applying tokens to components
- * 
  * LAYER: primeng-brand
  */
 
-// Token mapping (CSS custom properties)
-@use "token-mapping";
+// 2. Token mapping (design → PrimeNG)
+@forward "token-mapping";
 
-// Brand overrides (component styling rules)
-@use "brand-overrides";
+// 3. Brand constraints (still token-based)
+@forward "brand-overrides";
+
+// 4. Theme glue + dark mode
+@forward "../primeng-integration";
+
+// 5. Component-level PrimeNG overrides
+@forward "../primeng-theme";
+
+// Dialog-specific overrides (component-level)
+@forward "../dialog-overrides";

@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
@@ -155,7 +155,7 @@ const toDateOrNull = (value: unknown): Date | null => {
     Tabs,
     TabPanel,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     Textarea,
     DatePicker,
@@ -163,7 +163,7 @@ const toDateOrNull = (value: unknown): Date | null => {
     InputNumber,
     Checkbox,
     ConfirmDialog,
-    PrimeTemplate,
+    
     MainLayoutComponent,
     PageHeaderComponent,
     DecimalPipe,
@@ -551,7 +551,7 @@ const toDateOrNull = (value: unknown): Date | null => {
         [modal]="true"
         [draggable]="false"
         [resizable]="false"
-        styleClass="tournament-dialog"
+        class="tournament-dialog"
       >
         <div class="tournament-form form-controls-full">
           <!-- Visibility Info Banner -->
@@ -645,7 +645,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   [min]="2"
                   [max]="100"
                   placeholder="Number of teams"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
             </div>
@@ -724,7 +724,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
                   placeholder="Select start date"
-                  styleClass="w-full"
+                  class="w-full"
                   appendTo="body"
                 ></p-datepicker>
               </div>
@@ -740,7 +740,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
                   placeholder="Select end date"
-                  styleClass="w-full"
+                  class="w-full"
                   appendTo="body"
                 ></p-datepicker>
               </div>
@@ -758,7 +758,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
                   placeholder="Select registration deadline"
-                  styleClass="w-full"
+                  class="w-full"
                   appendTo="body"
                 ></p-datepicker>
               </div>
@@ -784,7 +784,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select type"
-                  styleClass="w-full"
+                  class="w-full"
                   appendTo="body"
                 ></p-select>
               </div>
@@ -800,7 +800,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select level"
-                  styleClass="w-full"
+                  class="w-full"
                   appendTo="body"
                 ></p-select>
               </div>
@@ -1014,7 +1014,7 @@ const toDateOrNull = (value: unknown): Date | null => {
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <div class="dialog-footer">
             <app-button
               variant="outlined"
@@ -1037,7 +1037,7 @@ const toDateOrNull = (value: unknown): Date | null => {
         header="My Tournament Availability"
         [modal]="true"
         [draggable]="false"
-        styleClass="tournament-availability-dialog"
+        class="tournament-availability-dialog"
       >
         @if (selectedTournament) {
           <div class="availability-dialog">
@@ -1106,7 +1106,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       placeholder="When do you arrive?"
-                      styleClass="w-full"
+                      class="w-full"
                     ></p-datepicker>
                   </div>
                   <div class="form-field">
@@ -1116,7 +1116,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       placeholder="When do you leave?"
-                      styleClass="w-full"
+                      class="w-full"
                     ></p-datepicker>
                   </div>
                 </div>
@@ -1191,7 +1191,7 @@ const toDateOrNull = (value: unknown): Date | null => {
           </div>
         }
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button
             variant="outlined"
             (clicked)="showAvailabilityDialog = false"
@@ -1212,7 +1212,7 @@ const toDateOrNull = (value: unknown): Date | null => {
         header="Team Availability"
         [modal]="true"
         [draggable]="false"
-        styleClass="tournament-team-availability-dialog"
+        class="tournament-team-availability-dialog"
       >
         @if (selectedTournament) {
           <div class="team-availability-dialog">
@@ -1379,7 +1379,7 @@ const toDateOrNull = (value: unknown): Date | null => {
           </div>
         }
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button (clicked)="showTeamAvailabilityDialog = false"
             >Close</app-button
           >
@@ -1392,7 +1392,7 @@ const toDateOrNull = (value: unknown): Date | null => {
         header="Tournament Budget"
         [modal]="true"
         [draggable]="false"
-        styleClass="tournament-budget-dialog"
+        class="tournament-budget-dialog"
       >
         @if (selectedTournament) {
           <div class="budget-dialog">
@@ -1404,7 +1404,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1414,7 +1414,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1424,7 +1424,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1434,7 +1434,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1442,7 +1442,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                 <p-inputNumber
                   [(ngModel)]="budgetForm.totalNights"
                   [min]="0"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1452,7 +1452,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field full-width">
@@ -1462,7 +1462,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field full-width">
@@ -1486,7 +1486,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                     mode="currency"
                     currency="EUR"
                     locale="en-US"
-                    styleClass="w-full"
+                    class="w-full"
                   ></p-inputNumber>
                 </div>
                 <div class="form-field">
@@ -1496,7 +1496,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                     mode="currency"
                     currency="EUR"
                     locale="en-US"
-                    styleClass="w-full"
+                    class="w-full"
                   ></p-inputNumber>
                 </div>
               </div>
@@ -1534,7 +1534,7 @@ const toDateOrNull = (value: unknown): Date | null => {
           </div>
         }
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="outlined" (clicked)="showBudgetDialog = false"
             >Cancel</app-button
           >

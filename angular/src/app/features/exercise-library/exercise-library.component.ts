@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 
 import { Dialog } from "primeng/dialog";
 import { Paginator } from "primeng/paginator";
@@ -66,7 +66,7 @@ interface Category {
     Paginator,
     Tooltip,
     Dialog,
-    PrimeTemplate,
+    
 
     MainLayoutComponent,
     ButtonComponent,
@@ -278,7 +278,7 @@ interface Category {
         [closeOnEscape]="true"
         [dismissableMask]="true"
         header="Exercise Details"
-        styleClass="exercise-details-dialog"
+        class="exercise-details-dialog"
       >
         @if (selectedExercise()) {
           <div class="dialog-content">
@@ -449,7 +449,7 @@ interface Category {
             }
           </div>
 
-          <ng-template pTemplate="footer">
+          <ng-template #footer>
             <app-button
               iconLeft="pi-plus"
               (clicked)="

@@ -1,1 +1,0 @@
-angular/src/scss/README.design-system.md:23:4. **No `::ng-deep` or `:global()`** – refactor to proper selectors in _exceptions

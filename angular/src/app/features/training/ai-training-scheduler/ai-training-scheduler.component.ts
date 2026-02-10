@@ -170,7 +170,7 @@ interface AthleteMetrics {
                     <p-progressBar
                       [value]="athleteMetrics()!.fatigue_level!"
                       [showValue]="false"
-                      styleClass="fatigue-bar"
+                      class="fatigue-bar"
                     ></p-progressBar>
                   } @else {
                     <span class="metric-value">—</span>
@@ -215,7 +215,7 @@ interface AthleteMetrics {
         <div class="scheduler-content">
           <!-- AI Suggestions -->
           <p-card class="suggestions-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="card-header">
                 <h3><i class="pi pi-sparkles"></i> AI Suggestions</h3>
                 @if (pendingSuggestions().length > 0) {
@@ -318,7 +318,7 @@ interface AthleteMetrics {
           <!-- Optimized Schedule -->
           <div class="schedule-section">
             <p-card class="calendar-card">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <h3><i class="pi pi-calendar"></i> Optimized Schedule</h3>
               </ng-template>
               <p-datepicker
@@ -330,7 +330,7 @@ interface AthleteMetrics {
             </p-card>
 
             <p-card class="sessions-card">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <h3>Sessions for {{ selectedDate() | date: "MMM d" }}</h3>
               </ng-template>
               @if (selectedDateSessions().length === 0) {

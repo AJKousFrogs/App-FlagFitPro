@@ -1,17 +1,45 @@
 {
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:98985c90-a4aa-4798-91a9-0795fbb9d093",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": false,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "Practitioner's Guide to Speed Testing",
+      "publisher": "VALD Performance",
+      "source_url": "https://resources.valdperformance.com",
+      "authors": [
+        "VALD Performance Contributors"
+      ]
+    }
+  },
   "metadata": {
     "title": "Practitioner's Guide to Speed Testing",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "total_pages": 38,
     "document_type": "practitioner_guide"
   },
   "research_article": {
     "title": "Practitioner's Guide to Speed Testing",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "publication_year": 2024,
     "publisher": "VALD Performance",
     "primary_category": "training",
-    "categories": ["assessment", "training", "performance", "monitoring"],
+    "categories": [
+      "assessment",
+      "training",
+      "performance",
+      "monitoring"
+    ],
     "tags": [
       "speed",
       "testing",
@@ -35,7 +63,12 @@
       "Monitor speed development longitudinally",
       "Assess both acceleration and max velocity capabilities"
     ],
-    "training_types": ["speed", "acceleration", "sprinting", "assessment"],
+    "training_types": [
+      "speed",
+      "acceleration",
+      "sprinting",
+      "assessment"
+    ],
     "is_open_access": false,
     "verified": true,
     "quality_score": 9,
@@ -63,7 +96,11 @@
         "running_athletes"
       ],
       "sport_specificity": "field_sports",
-      "categories": ["assessment", "testing", "speed"],
+      "categories": [
+        "assessment",
+        "testing",
+        "speed"
+      ],
       "tags": [
         "speed",
         "testing",
@@ -73,8 +110,16 @@
         "40yd_dash"
       ],
       "protocols": {
-        "standard_distances": ["10m", "20m", "30m", "40yd"],
-        "equipment": ["timing_gates", "force_plates"],
+        "standard_distances": [
+          "10m",
+          "20m",
+          "30m",
+          "40yd"
+        ],
+        "equipment": [
+          "timing_gates",
+          "force_plates"
+        ],
         "trials": "minimum_2_maximum_3",
         "rest_between_trials": "3-5_minutes"
       },
@@ -86,7 +131,9 @@
         "Use multiple trials (2-3) for reliability",
         "Track split times for acceleration analysis",
         "Allow adequate rest between trials (3-5 min)"
-      ]
+      ],
+      "entry_id": "urn:uuid:8337fcf2-eceb-46a3-8094-ade3aae3e09a",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -96,9 +143,15 @@
       "summary": "Speed development combines technical mechanics, power training, and specific sprint work periodized throughout the training year.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["all_athletes", "field_sport_athletes"],
+      "applicable_to": [
+        "all_athletes",
+        "field_sport_athletes"
+      ],
       "sport_specificity": "general",
-      "categories": ["training", "speed_development"],
+      "categories": [
+        "training",
+        "speed_development"
+      ],
       "tags": [
         "speed_development",
         "training",
@@ -106,7 +159,11 @@
         "max_velocity",
         "sprint_mechanics"
       ],
-      "training_types": ["speed", "power", "technical"],
+      "training_types": [
+        "speed",
+        "power",
+        "technical"
+      ],
       "best_practices": [
         "Include technical sprint mechanics coaching",
         "Develop both acceleration and max velocity separately",
@@ -114,7 +171,9 @@
         "Monitor training load and ensure adequate recovery",
         "Individualize based on athlete testing results",
         "Progress from technical work to speed endurance"
-      ]
+      ],
+      "entry_id": "urn:uuid:9bffb8d5-ca67-4d00-8cd3-b0459e8d00c4",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -124,9 +183,15 @@
       "summary": "Speed data interpretation uses split time analysis, normative comparisons, and longitudinal tracking to inform individualized training.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["elite_athletes", "amateur_athletes"],
+      "applicable_to": [
+        "elite_athletes",
+        "amateur_athletes"
+      ],
       "sport_specificity": "field_sports",
-      "categories": ["assessment", "data_analysis"],
+      "categories": [
+        "assessment",
+        "data_analysis"
+      ],
       "tags": [
         "assessment",
         "interpretation",
@@ -141,7 +206,9 @@
         "Identify individual acceleration vs max velocity strengths",
         "Use results to guide training emphasis",
         "Consider contextual factors (fatigue, conditions)"
-      ]
+      ],
+      "entry_id": "urn:uuid:77629bcc-7680-4422-aaeb-2182180e1040",
+      "evidence_framework": "GRADE"
     }
   ]
 }

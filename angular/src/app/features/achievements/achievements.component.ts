@@ -286,7 +286,7 @@ const CATEGORY_LABELS: Record<
 
         <!-- Stats Overview -->
         <div class="stats-grid">
-          <p-card styleClass="stat-card highlight">
+          <p-card class="stat-card highlight">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <i class="pi pi-trophy stat-icon"></i>
@@ -305,7 +305,7 @@ const CATEGORY_LABELS: Record<
             </div>
           </p-card>
 
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <span class="stat-emoji">🎖️</span>
@@ -319,7 +319,7 @@ const CATEGORY_LABELS: Record<
             </div>
           </p-card>
 
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <i class="pi pi-chart-line stat-icon"></i>
@@ -330,13 +330,13 @@ const CATEGORY_LABELS: Record<
                 <p-progressBar
                   [value]="progressPercent()"
                   [showValue]="false"
-                  styleClass="progress-mini"
+                  class="progress-mini"
                 ></p-progressBar>
               </div>
             </div>
           </p-card>
 
-          <p-card styleClass="stat-card">
+          <p-card class="stat-card">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <i class="pi pi-bolt stat-icon"></i>
@@ -358,7 +358,7 @@ const CATEGORY_LABELS: Record<
 
         <!-- Recent Unlocks -->
         @if (recentUnlocks().length > 0) {
-          <p-card header="Recently Unlocked" styleClass="recent-card">
+          <p-card header="Recently Unlocked" class="recent-card">
             <div class="recent-grid">
               @for (
                 achievement of recentUnlocks().slice(
@@ -389,7 +389,7 @@ const CATEGORY_LABELS: Record<
         }
 
         <!-- Achievement Categories -->
-        <p-card styleClass="categories-card">
+        <p-card class="categories-card">
           <div class="category-tabs">
             @for (cat of categories; track cat.value) {
               <button
@@ -441,7 +441,7 @@ const CATEGORY_LABELS: Record<
                           (achievement.progress / achievement.target) * 100
                         "
                         [showValue]="false"
-                        styleClass="progress-achievement"
+                        class="progress-achievement"
                       ></p-progressBar>
                       <span class="progress-text"
                         >{{ achievement.progress }}/{{
@@ -464,8 +464,8 @@ const CATEGORY_LABELS: Record<
         </p-card>
 
         <!-- Team Leaderboard -->
-        <p-card styleClass="leaderboard-card">
-          <ng-template pTemplate="header">
+        <p-card class="leaderboard-card">
+          <ng-template #header>
             <div class="leaderboard-header">
               <div class="header-left">
                 <i class="pi pi-trophy"></i>
@@ -478,14 +478,14 @@ const CATEGORY_LABELS: Record<
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Time Range"
-                  styleClass="leaderboard-range-select"
+                  class="leaderboard-range-select"
                 ></p-select>
               </div>
             </div>
           </ng-template>
 
-          <p-table [value]="leaderboard()" styleClass="p-datatable-sm">
-            <ng-template pTemplate="header">
+          <p-table [value]="leaderboard()" class="p-datatable-sm">
+            <ng-template #header>
               <tr>
                 <th [style.width]="tableColumnWidths.rank">Rank</th>
                 <th>Player</th>
@@ -493,7 +493,7 @@ const CATEGORY_LABELS: Record<
                 <th>Recent Achievement</th>
               </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-entry>
+            <ng-template #body let-entry>
               <tr [class.current-user]="entry.isCurrentUser">
                 <td>
                   @if (entry.rank === 1) {

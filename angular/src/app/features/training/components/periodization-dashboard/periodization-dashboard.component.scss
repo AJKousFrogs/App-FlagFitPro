@@ -47,7 +47,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
+  color: var(--color-text-on-primary);
 
   .phase-info {
     display: flex;
@@ -380,7 +380,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--color-text-on-primary);
 
   i {
     font-size: var(--ds-font-size-md);

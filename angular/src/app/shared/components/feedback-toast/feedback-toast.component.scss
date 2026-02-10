@@ -12,7 +12,7 @@
   flex-direction: column;
   gap: var(--space-3);
   z-index: var(--z-index-notification);
-  width: min(100%, var(--chart-min-height-lg)); /* var(--chart-min-height-lg) */
+  width: min(100%, var(--layout-width-lg));
 }
 
 @media (max-width: 30rem) {
@@ -29,16 +29,17 @@
 
 .toast-item {
   padding: var(--space-4) var(--space-5);
+  gap: var(--space-3);
   border-radius: var(--radius-lg);
   color: var(--color-text-on-primary);
-  font-weight: var(--ds-font-weight-medium);
-  font-size: var(--ds-font-size-md);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-body-size);
   box-shadow: var(--shadow-md);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  animation: slideIn var(--transition-slow) ease-out;
-  line-height: var(--ds-line-height-normal);
+  animation: slideIn var(--transition-slow) var(--ease-decelerate);
+  line-height: var(--line-height-normal);
 }
 
 @keyframes slideIn {
@@ -57,8 +58,8 @@
 }
 
 .success {
-  background: var(--ds-primary-green);
-  border-left: var(--space-1) solid var(--ds-primary-green-hover);
+  background: var(--color-status-success);
+  border-left: var(--space-1) solid var(--color-brand-primary-hover);
 }
 .error {
   background: var(--color-status-error);
@@ -71,7 +72,7 @@
 }
 .info {
   background: var(--color-status-info);
-  border-left: var(--space-1) solid var(--primitive-primary-600);
+  border-left: var(--space-1) solid var(--color-status-info);
 }
 
 .toast-content {
@@ -82,7 +83,7 @@
 }
 
 .toast-icon {
-  font-size: var(--ds-font-size-md);
+  font-size: var(--font-body-size);
   flex-shrink: 0;
 }
 
@@ -97,8 +98,8 @@
   padding: var(--space-2) var(--space-3); /* 0.5rem 0.calc(var(--size-200) * 6) for breathing room */
   border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--font-body-sm-size);
+  font-weight: var(--font-weight-medium);
   margin-left: var(--space-2); // 0.5rem
 }
 
@@ -110,12 +111,12 @@
   background: none;
   border: none;
   color: var(--color-text-on-primary);
-  font-size: var(--ds-font-size-2xl);
+  font-size: var(--font-h2-size);
   cursor: pointer;
   opacity: var(--opacity-strong);
   padding: 0;
-  margin-left: var(--space-2); // 0.5rem
-  line-height: var(--ds-line-height-1);
+  margin-left: var(--space-2);
+  line-height: 1;
 }
 
 .toast-close-btn:hover {

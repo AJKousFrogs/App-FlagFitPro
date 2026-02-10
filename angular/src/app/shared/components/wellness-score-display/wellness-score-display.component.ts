@@ -139,7 +139,7 @@ export interface WellnessMetric {
           <p-progressBar
             [value]="overallScore()"
             [showValue]="false"
-            [styleClass]="'wellness-progress ' + statusClass() + ' progressbar-height-sm'"
+            [class]="'wellness-progress ' + statusClass() + ' progressbar-height-sm'"
           ></p-progressBar>
           <div class="bar-footer">
             <span class="score-text">{{ overallScore() }}/100</span>
@@ -194,7 +194,7 @@ export interface WellnessMetric {
       <!-- Full Variant -->
       @if (variant() === "full") {
         <p-card class="wellness-full" [class.clickable]="clickable()">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="full-header">
               <div class="header-content">
                 <i class="pi pi-heart icon"></i>
@@ -227,7 +227,7 @@ export interface WellnessMetric {
               <p-progressBar
                 [value]="overallScore()"
                 [showValue]="false"
-                [styleClass]="'wellness-progress ' + statusClass() + ' progressbar-height-sm'"
+                [class]="'wellness-progress ' + statusClass() + ' progressbar-height-sm'"
               ></p-progressBar>
             </div>
 

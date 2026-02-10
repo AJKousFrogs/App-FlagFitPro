@@ -38,7 +38,7 @@ import { ProgressBar } from "primeng/progressbar";
           <p-progressBar
             [value]="value()"
             [showValue]="false"
-            [styleClass]="progressBarClass()"
+            [class]="progressBarClass()"
           >
           </p-progressBar>
         } @else if (variant() === "circular") {

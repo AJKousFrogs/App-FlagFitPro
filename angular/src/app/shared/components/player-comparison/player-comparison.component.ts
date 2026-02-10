@@ -13,7 +13,6 @@ import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { UIChart } from "primeng/chart";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { Select } from "primeng/select";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
@@ -46,7 +45,7 @@ interface StatComparison {
     StatusTagComponent,
     Tooltip,
     Dialog,
-    PrimeTemplate,
+    
   ],
   template: `
     <div class="player-comparison">
@@ -63,9 +62,9 @@ interface StatComparison {
             [filter]="true"
             filterPlaceholder="Search players..."
             (onValueChange)="onPlayerChange()"
-            styleClass="w-full"
+            class="w-full"
           >
-            <ng-template pTemplate="selectedItem" let-selected>
+            <ng-template #selectedItem let-selected>
               @if (selected) {
                 <div class="player-option">
                   <p-avatar
@@ -83,7 +82,7 @@ interface StatComparison {
                 </div>
               }
             </ng-template>
-            <ng-template pTemplate="item" let-player>
+            <ng-template #item let-player>
               <div class="player-option">
                 <p-avatar
                   [label]="getInitialsStr(player.name)"
@@ -115,9 +114,9 @@ interface StatComparison {
             [filter]="true"
             filterPlaceholder="Search players..."
             (onValueChange)="onPlayerChange()"
-            styleClass="w-full"
+            class="w-full"
           >
-            <ng-template pTemplate="selectedItem" let-selected>
+            <ng-template #selectedItem let-selected>
               @if (selected) {
                 <div class="player-option">
                   <p-avatar
@@ -135,7 +134,7 @@ interface StatComparison {
                 </div>
               }
             </ng-template>
-            <ng-template pTemplate="item" let-player>
+            <ng-template #item let-player>
               <div class="player-option">
                 <p-avatar
                   [label]="getInitialsStr(player.name)"
@@ -213,7 +212,7 @@ interface StatComparison {
 
         <!-- Radar Chart -->
         <p-card class="chart-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="card-header">
               <h4>Performance Overview</h4>
             </div>
@@ -233,7 +232,7 @@ interface StatComparison {
         <div class="stats-comparison">
           @for (category of statCategories; track category.key) {
             <p-card class="category-card">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <div class="card-header">
                   <i [class]="'pi ' + category.icon"></i>
                   <h4>{{ category.label }}</h4>

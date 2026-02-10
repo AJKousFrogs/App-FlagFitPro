@@ -130,7 +130,7 @@ a.btn {
     border-color: var(--ds-primary-green);
     transform: translateY(-var(--border-2));
     box-shadow:
-      0 0.5rem 1.25rem rgba(var(--ds-primary-green-rgb), 0.3),
+      0 var(--space-2) var(--space-5) rgba(var(--ds-primary-green-rgb), 0.3),
       var(--shadow-sm);
   }
 }
@@ -409,7 +409,7 @@ a.btn {
   width: var(--border-1);
   height: var(--border-1);
   padding: 0;
-  margin: calc(-1 * (var(--ds-space-1) / 4));
+  margin: calc(-1 * (var(--space-1) / 4));
   overflow: hidden;
   clip-path: inset(0);
   white-space: nowrap;
@@ -492,7 +492,7 @@ a.btn {
 // Only color changes, no geometry changes
 // ============================================
 
-:host-context(.dark-mode),
+:host-context(.dark-theme),
 :host-context([data-theme="dark"]) {
   .btn-secondary {
     background-color: var(--surface-secondary);

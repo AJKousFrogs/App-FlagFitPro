@@ -346,7 +346,7 @@ interface FilterChip {
                         [label]="video.creator.displayName.charAt(0)"
                         shape="circle"
                         size="normal"
-                        styleClass="creator-avatar"
+                        class="creator-avatar"
                       ></p-avatar>
                       <div class="creator-info">
                         <span class="creator-name">
@@ -406,7 +406,7 @@ interface FilterChip {
                   [label]="creator.displayName.charAt(0)"
                   shape="circle"
                   size="xlarge"
-                  styleClass="creator-avatar-large"
+                  class="creator-avatar-large"
                 ></p-avatar>
                 <div class="creator-details">
                   <span class="creator-display-name">
@@ -438,7 +438,7 @@ interface FilterChip {
         <!-- Video Player Dialog -->
         <app-dialog
           [(visible)]="showVideoDialog"
-          styleClass="video-dialog"
+          class="video-dialog"
           [draggable]="false"
           [resizable]="false"
           [dismissableMask]="true"

@@ -21,7 +21,6 @@ import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 
 import { Textarea } from "primeng/textarea";
@@ -35,6 +34,8 @@ import { TeamNotificationService } from "../../core/services/team-notification.s
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AnnouncementsBannerComponent } from "../../shared/components/announcements-banner/announcements-banner.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { fadeInOut } from "../../shared/animations/app.animations";
@@ -149,7 +150,7 @@ interface ApiPollVoteResponse {
     RouterModule,
     ScrollingModule,
     Dialog,
-    PrimeTemplate,
+    
     Textarea,
     Avatar,
     InputText,
@@ -158,6 +159,8 @@ interface ApiPollVoteResponse {
     AnnouncementsBannerComponent,
     ButtonComponent,
     CardShellComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
   ],
   animations: [fadeInOut],
   template: `
@@ -169,7 +172,7 @@ interface ApiPollVoteResponse {
         [modal]="true"
         [draggable]="false"
         [resizable]="false"
-        styleClass="poll-dialog"
+        class="poll-dialog"
       >
         <div class="poll-form">
           <div class="form-field">
@@ -216,7 +219,7 @@ interface ApiPollVoteResponse {
             }
           </div>
         </div>
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="text" (clicked)="cancelPoll()"
             >Cancel</app-button
           >
@@ -236,7 +239,7 @@ interface ApiPollVoteResponse {
         [modal]="true"
         [draggable]="false"
         [resizable]="false"
-        styleClass="location-dialog"
+        class="location-dialog"
       >
         <div class="location-form">
           <div class="form-field">
@@ -250,7 +253,7 @@ interface ApiPollVoteResponse {
             />
           </div>
         </div>
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="text" (clicked)="cancelLocation()"
             >Cancel</app-button
           >
@@ -263,6 +266,24 @@ interface ApiPollVoteResponse {
         </ng-template>
       </p-dialog>
 
+      <!-- Loading State -->
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading community feed..."
+      ></app-loading>
+
+      <!-- Error State -->
+      @if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load community"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @if (!isPageLoading() && !hasPageError()) {
       <div class="community-page">
         <!-- Modern Header -->
         <div class="community-header">
@@ -303,7 +324,7 @@ interface ApiPollVoteResponse {
                 <p-avatar
                   [label]="currentUserInitials()"
                   shape="circle"
-                  styleClass="user-avatar"
+                  class="user-avatar"
                 ></p-avatar>
                 <div class="post-prompt">What's on your mind?</div>
               </div>
@@ -397,7 +418,7 @@ interface ApiPollVoteResponse {
                       <p-avatar
                         [label]="post.authorInitials"
                         shape="circle"
-                        [styleClass]="
+                        [class]="
                           'author-avatar ' +
                           getAvatarColorClass(post.authorInitials)
                         "
@@ -584,7 +605,7 @@ interface ApiPollVoteResponse {
                               <p-avatar
                                 [label]="comment.authorInitials"
                                 shape="circle"
-                                [styleClass]="
+                                [class]="
                                   'comment-avatar ' +
                                   getAvatarColorClass(comment.authorInitials)
                                 "
@@ -625,7 +646,7 @@ interface ApiPollVoteResponse {
                         <p-avatar
                           [label]="currentUserInitials()"
                           shape="circle"
-                          [styleClass]="
+                          [class]="
                             'comment-avatar ' +
                             getAvatarColorClass(currentUserInitials())
                           "
@@ -717,7 +738,7 @@ interface ApiPollVoteResponse {
                     <p-avatar
                       [label]="entry.initials"
                       shape="circle"
-                      [styleClass]="
+                      [class]="
                         'leaderboard-avatar ' +
                         getAvatarColorClass(entry.initials)
                       "
@@ -810,6 +831,7 @@ interface ApiPollVoteResponse {
           </div>
         </div>
       </div>
+      }
     </app-main-layout>
   `,
   styleUrl: "./community.component.scss",
@@ -850,6 +872,13 @@ export class CommunityComponent implements OnInit {
     likes: 0,
     comments: 0,
   });
+
+  // Page-level loading/error state (UX audit fix)
+  readonly isPageLoading = signal<boolean>(true);
+  readonly hasPageError = signal<boolean>(false);
+  readonly pageErrorMessage = signal<string>(
+    "Unable to load community feed. Please check your connection and try again.",
+  );
 
   // Infinite scroll state
   isLoadingMore = signal(false);
@@ -916,6 +945,10 @@ export class CommunityComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadCommunityData();
+  }
+
+  retryLoad(): void {
     this.loadCommunityData();
   }
 
@@ -1005,12 +1038,17 @@ export class CommunityComponent implements OnInit {
   }
 
   loadCommunityData(): void {
-    // Load posts from real API
+    this.isPageLoading.set(true);
+    this.hasPageError.set(false);
+
+    // Load posts from real API (primary content - drives page load state)
     this.apiService
       .get<CommunityFeedResponse>("/api/community?feed=true")
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+          this.isPageLoading.set(false);
+          this.hasPageError.set(false);
           if (response?.data?.posts) {
             const mappedPosts = response.data.posts.map((p: ApiPostData) => ({
               id: p.id,
@@ -1035,9 +1073,19 @@ export class CommunityComponent implements OnInit {
                 : undefined,
             }));
             this.posts.set(mappedPosts);
+          } else {
+            this.posts.set([]);
           }
         },
-        error: (err) => this.logger.error("Error loading community feed:", err),
+        error: (err) => {
+          this.logger.error("Error loading community feed:", err);
+          this.isPageLoading.set(false);
+          this.hasPageError.set(true);
+          this.pageErrorMessage.set(
+            err?.message ||
+              "Unable to load community feed. Please check your connection and try again.",
+          );
+        },
       });
 
     // Load leaderboard from real API

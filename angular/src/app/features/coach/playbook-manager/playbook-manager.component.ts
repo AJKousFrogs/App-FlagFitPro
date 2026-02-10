@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService, PrimeTemplate } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -107,12 +107,11 @@ const ROUTES = [
     FormsModule,
     Card,
     Dialog,
-    PrimeTemplate,
+    
     InputText,
     ProgressBar,
     RadioButton,
     Select,
-    TableModule,
     TableModule,
     Textarea,
 
@@ -191,14 +190,14 @@ const ROUTES = [
             [(ngModel)]="formationFilter"
             placeholder="Formation"
             [showClear]="true"
-            styleClass="playbook-filter-select"
+            class="playbook-filter-select"
           ></p-select>
           <p-select
             [options]="situationOptions"
             [(ngModel)]="situationFilter"
             placeholder="Situation"
             [showClear]="true"
-            styleClass="playbook-filter-select"
+            class="playbook-filter-select"
           ></p-select>
         </div>
 
@@ -273,7 +272,7 @@ const ROUTES = [
                   <p-progressBar
                     [value]="play.teamMemorized"
                     [showValue]="false"
-                    styleClass="memorization-progress"
+                    class="memorization-progress"
                   ></p-progressBar>
                   @if (play.teamMemorized < 70) {
                     <span class="mem-warning">⚠️ Low memorization</span>
@@ -314,7 +313,7 @@ const ROUTES = [
             }
           </div>
         } @else {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-book"></i>
               <h3>No Plays Found</h3>
@@ -332,7 +331,7 @@ const ROUTES = [
         [(visible)]="showPlayDialog"
         [header]="isEditing() ? 'Edit Play' : 'Create New Play'"
         [modal]="true"
-        styleClass="play-dialog"
+        class="play-dialog"
       >
         <div class="play-form">
           <div class="form-columns">
@@ -408,7 +407,7 @@ const ROUTES = [
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select formation"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -421,7 +420,7 @@ const ROUTES = [
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select situation"
-                  styleClass="w-full"
+                  class="w-full"
                 ></p-select>
               </div>
 
@@ -490,7 +489,7 @@ const ROUTES = [
           </div>
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="secondary" (clicked)="showPlayDialog = false"
             >Cancel</app-button
           >
@@ -508,7 +507,7 @@ const ROUTES = [
         [(visible)]="showStatsDialog"
         header="Memorization Stats"
         [modal]="true"
-        styleClass="play-stats-dialog"
+        class="play-stats-dialog"
       >
         @if (selectedPlay()) {
           <div class="stats-content">

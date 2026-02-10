@@ -245,13 +245,13 @@
 .benchmark-rating {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--ds-space-1) var(--ds-space-2);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   text-transform: var(--ds-text-transform-uppercase);
 
   &.rating-elite {
     background: var(--ds-primary-green);
-    color: white;
+    color: var(--color-text-on-primary);
   }
 
   &.rating-good {

@@ -9,7 +9,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { PrimeTemplate } from "primeng/api";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { Slider } from "primeng/slider";
@@ -49,8 +48,8 @@ export interface ReadinessResult {
     Slider,
     Checkbox,
     Dialog,
-    PrimeTemplate,
-    PrimeTemplate,
+    
+    
     Tag,
     Tooltip,
     ButtonComponent,
@@ -115,7 +114,7 @@ export interface ReadinessResult {
       (visibleChange)="showDialog.set($event)"
       header="Daily Wellness Check-in"
       [modal]="true"
-      styleClass="wellness-dialog"
+      class="wellness-dialog"
     >
       <div class="checkin-form">
         <!-- Sleep Quality -->
@@ -135,7 +134,7 @@ export interface ReadinessResult {
               [min]="1"
               [max]="5"
               [step]="1"
-              styleClass="flex-1"
+              class="flex-1"
             />
             <span class="slider-label">Excellent</span>
           </div>
@@ -165,7 +164,7 @@ export interface ReadinessResult {
               [min]="4"
               [max]="12"
               [step]="0.5"
-              styleClass="flex-1"
+              class="flex-1"
             />
             <span class="slider-label">12h</span>
           </div>
@@ -204,7 +203,7 @@ export interface ReadinessResult {
               [min]="1"
               [max]="5"
               [step]="1"
-              styleClass="flex-1"
+              class="flex-1"
             />
             <span class="slider-label">Energized</span>
           </div>
@@ -236,7 +235,7 @@ export interface ReadinessResult {
               [min]="1"
               [max]="5"
               [step]="1"
-              styleClass="flex-1"
+              class="flex-1"
             />
             <span class="slider-label">No Soreness</span>
           </div>
@@ -323,7 +322,7 @@ export interface ReadinessResult {
               [min]="1"
               [max]="5"
               [step]="1"
-              styleClass="flex-1"
+              class="flex-1"
             />
             <span class="slider-label">Very Low</span>
           </div>
@@ -392,7 +391,7 @@ export interface ReadinessResult {
         </div>
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button variant="text" (clicked)="showDialog.set(false)"
           >Cancel</app-button
         >

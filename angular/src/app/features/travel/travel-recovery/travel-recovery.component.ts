@@ -147,8 +147,8 @@ interface TimezoneOption {
           <!-- Flight Trip Planning Form -->
           <div class="planning-section">
             <!-- Olympic Quick Select -->
-            <p-card styleClass="olympic-card">
-              <ng-template pTemplate="header">
+            <p-card class="olympic-card">
+              <ng-template #header>
                 <div class="card-header olympic-header">
                   <span class="olympic-rings">🏅</span>
                   <div>
@@ -214,8 +214,8 @@ interface TimezoneOption {
             </p-card>
 
             <!-- Manual Trip Setup -->
-            <p-card styleClass="setup-card">
-              <ng-template pTemplate="header">
+            <p-card class="setup-card">
+              <ng-template #header>
                 <div class="card-header">
                   <i class="pi pi-map"></i>
                   <h3>Trip Details</h3>
@@ -243,7 +243,7 @@ interface TimezoneOption {
                     placeholder="Select your home timezone"
                     [filter]="true"
                     filterBy="label"
-                    styleClass="w-full"
+                    class="w-full"
                     [attr.aria-label]="'Select your home timezone'"
                   ></p-select>
                 </div>
@@ -259,7 +259,7 @@ interface TimezoneOption {
                     placeholder="Select destination timezone"
                     [filter]="true"
                     filterBy="label"
-                    styleClass="w-full"
+                    class="w-full"
                     [attr.aria-label]="'Select destination timezone'"
                   ></p-select>
                 </div>
@@ -272,7 +272,7 @@ interface TimezoneOption {
                     [showIcon]="true"
                     [minDate]="minDate"
                     dateFormat="dd/mm/yy"
-                    styleClass="w-full"
+                    class="w-full"
                     [attr.aria-label]="'Select departure date'"
                   ></p-datepicker>
                 </div>
@@ -285,7 +285,7 @@ interface TimezoneOption {
                     [showIcon]="true"
                     [minDate]="tripForm.departureDate || minDate"
                     dateFormat="dd/mm/yy"
-                    styleClass="w-full"
+                    class="w-full"
                     [attr.aria-label]="'Select arrival date'"
                   ></p-datepicker>
                 </div>
@@ -300,7 +300,7 @@ interface TimezoneOption {
                     [showIcon]="true"
                     [minDate]="tripForm.arrivalDate || minDate"
                     dateFormat="dd/mm/yy"
-                    styleClass="w-full"
+                    class="w-full"
                     [attr.aria-label]="'Select competition date (optional)'"
                   ></p-datepicker>
                 </div>
@@ -347,7 +347,7 @@ interface TimezoneOption {
             <!-- Severity Overview -->
             <div class="severity-section">
               <p-card
-                styleClass="severity-card"
+                class="severity-card"
                 [ngClass]="'severity-' + jetLagSeverity().level"
               >
                 <div class="severity-content">
@@ -433,8 +433,8 @@ interface TimezoneOption {
 
             <!-- Today's Protocol -->
             @if (todayProtocol()) {
-              <p-card styleClass="today-card">
-                <ng-template pTemplate="header">
+              <p-card class="today-card">
+                <ng-template #header>
                   <div class="card-header today-header">
                     <div class="header-left">
                       <i class="pi pi-sun"></i>
@@ -640,8 +640,8 @@ interface TimezoneOption {
             }
 
             <!-- Full Protocol Timeline -->
-            <p-card styleClass="timeline-card">
-              <ng-template pTemplate="header">
+            <p-card class="timeline-card">
+              <ng-template #header>
                 <div class="card-header">
                   <i class="pi pi-calendar"></i>
                   <h3>Full Recovery Timeline</h3>
@@ -735,8 +735,8 @@ interface TimezoneOption {
             </p-card>
 
             <!-- Travel Checklist -->
-            <p-card styleClass="checklist-card">
-              <ng-template pTemplate="header">
+            <p-card class="checklist-card">
+              <ng-template #header>
                 <div class="card-header">
                   <i class="pi pi-check-square"></i>
                   <h3>Travel Checklist</h3>
@@ -785,8 +785,8 @@ interface TimezoneOption {
           <div class="car-travel-section">
             <!-- Car Trip Setup -->
             @if (!hasActiveCarPlan()) {
-              <p-card styleClass="car-setup-card">
-                <ng-template pTemplate="header">
+              <p-card class="car-setup-card">
+                <ng-template #header>
                   <div class="card-header car-header">
                     <i class="pi pi-car"></i>
                     <div>
@@ -850,7 +850,7 @@ interface TimezoneOption {
                       [showIcon]="true"
                       [minDate]="minDate"
                       dateFormat="dd/mm/yy"
-                      styleClass="w-full"
+                      class="w-full"
                       [attr.aria-label]="
                         'Select competition date for car trip (optional)'
                       "
@@ -870,8 +870,8 @@ interface TimezoneOption {
 
               <!-- Risk Assessment Preview -->
               @if (carTripForm.duration >= 4) {
-                <p-card styleClass="risk-preview-card">
-                  <ng-template pTemplate="header">
+                <p-card class="risk-preview-card">
+                  <ng-template #header>
                     <div
                       class="card-header"
                       [class]="'risk-' + carTravelRisk().riskLevel"
@@ -930,7 +930,7 @@ interface TimezoneOption {
               <div class="car-protocol-dashboard">
                 <!-- Risk Overview -->
                 <p-card
-                  styleClass="car-risk-card"
+                  class="car-risk-card"
                   [ngClass]="'risk-' + carTravelRisk().riskLevel"
                 >
                   <div class="car-risk-content">
@@ -987,8 +987,8 @@ interface TimezoneOption {
                 </p-card>
 
                 <!-- Compression Guidelines -->
-                <p-card styleClass="compression-card">
-                  <ng-template pTemplate="header">
+                <p-card class="compression-card">
+                  <ng-template #header>
                     <div class="card-header compression-header">
                       <span class="compression-icon">🦵</span>
                       <div>
@@ -1050,8 +1050,8 @@ interface TimezoneOption {
                 </p-card>
 
                 <!-- Massage Gun Protocol -->
-                <p-card styleClass="massage-gun-card">
-                  <ng-template pTemplate="header">
+                <p-card class="massage-gun-card">
+                  <ng-template #header>
                     <div class="card-header massage-header">
                       <span class="massage-icon">💆</span>
                       <div>
@@ -1129,8 +1129,8 @@ interface TimezoneOption {
                 </p-card>
 
                 <!-- Seated Exercises -->
-                <p-card styleClass="exercises-card">
-                  <ng-template pTemplate="header">
+                <p-card class="exercises-card">
+                  <ng-template #header>
                     <div class="card-header exercises-header">
                       <span class="exercises-icon">🏃</span>
                       <div>
@@ -1174,8 +1174,8 @@ interface TimezoneOption {
                 </p-card>
 
                 <!-- Rest Stop Protocol -->
-                <p-card styleClass="rest-stop-card">
-                  <ng-template pTemplate="header">
+                <p-card class="rest-stop-card">
+                  <ng-template #header>
                     <div class="card-header rest-header">
                       <i class="pi pi-map-marker"></i>
                       <div>
@@ -1233,8 +1233,8 @@ interface TimezoneOption {
                 </p-card>
 
                 <!-- Research Evidence -->
-                <p-card styleClass="research-card">
-                  <ng-template pTemplate="header">
+                <p-card class="research-card">
+                  <ng-template #header>
                     <div class="card-header research-header">
                       <i class="pi pi-book"></i>
                       <div>
@@ -1280,8 +1280,8 @@ interface TimezoneOption {
                 </p-card>
 
                 <!-- Car Travel Checklist -->
-                <p-card styleClass="checklist-card">
-                  <ng-template pTemplate="header">
+                <p-card class="checklist-card">
+                  <ng-template #header>
                     <div class="card-header">
                       <i class="pi pi-check-square"></i>
                       <h3>Car Travel Checklist</h3>

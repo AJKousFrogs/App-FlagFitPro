@@ -111,7 +111,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
         ></app-page-header>
 
         <!-- Progress Overview -->
-        <p-card styleClass="progress-card">
+        <p-card class="progress-card">
           <div class="progress-header">
             <div class="progress-stats">
               <div class="stat-item stat-block stat-block--compact">
@@ -147,7 +147,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
           <p-progressBar
             [value]="progressPercent()"
             [showValue]="false"
-            styleClass="progress-overall"
+            class="progress-overall"
           ></p-progressBar>
         </p-card>
 
@@ -170,7 +170,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             optionValue="value"
             placeholder="Category"
             [showClear]="true"
-            styleClass="playbook-filter-select"
+            class="playbook-filter-select"
           ></p-select>
 
           <p-select
@@ -180,7 +180,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             optionValue="value"
             placeholder="Status"
             [showClear]="true"
-            styleClass="playbook-filter-select"
+            class="playbook-filter-select"
           ></p-select>
         </div>
 
@@ -188,7 +188,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
         @if (filteredPlays().length > 0) {
           <div class="plays-grid">
             @for (play of filteredPlays(); track play.id) {
-              <p-card styleClass="play-card" (click)="selectPlay(play)">
+              <p-card class="play-card" (click)="selectPlay(play)">
                 <div class="play-header">
                   <div class="play-title">
                     <h3>{{ play.name }}</h3>
@@ -221,7 +221,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             }
           </div>
         } @else {
-          <p-card styleClass="empty-state-card">
+          <p-card class="empty-state-card">
             <div class="empty-state">
               <i class="pi pi-book"></i>
               <h3>No plays found</h3>
@@ -243,7 +243,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
         [header]="selectedPlay()?.name || 'Play Details'"
         [modal]="true"
         [closable]="true"
-        styleClass="play-detail-dialog"
+        class="play-detail-dialog"
       >
         @if (selectedPlay(); as play) {
           <div class="play-detail">
@@ -352,7 +352,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
         header="Playbook Quiz"
         [modal]="true"
         [closable]="true"
-        styleClass="quiz-dialog"
+        class="quiz-dialog"
       >
         @if (quizActive()) {
           <div class="quiz-content">
@@ -405,7 +405,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
                     [severity]="
                       selectedAnswer() === q.correctIndex ? 'success' : 'error'
                     "
-                    styleClass="status-message"
+                    class="status-message"
                   >
                     {{
                       selectedAnswer() === q.correctIndex
@@ -462,16 +462,16 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             @if (quizScore() >= 80) {
               <p-message
                 severity="success"
-                styleClass="status-message status-message--success"
+                class="status-message status-message--success"
               >
                 Great job! You know your plays well.
               </p-message>
             } @else if (quizScore() >= 60) {
-              <p-message severity="warn" styleClass="status-message">
+              <p-message severity="warn" class="status-message">
                 Good effort! Keep studying to improve.
               </p-message>
             } @else {
-              <p-message severity="info" styleClass="status-message">
+              <p-message severity="info" class="status-message">
                 Keep studying! Review the plays you missed.
               </p-message>
             }

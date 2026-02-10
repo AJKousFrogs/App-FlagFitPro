@@ -32,7 +32,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
       ></app-page-header>
 
       <p-card class="schedule-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <h3>Throwing Volume Program</h3>
         </ng-template>
         <div class="program-info">
@@ -47,7 +47,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
       </p-card>
 
       <p-card class="calendar-card mt-4">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <h3>Weekly Schedule</h3>
         </ng-template>
         <p-datepicker

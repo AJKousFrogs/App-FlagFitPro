@@ -22,9 +22,9 @@ import { ContextService } from "../../../core/services/context.service";
         <div class="breadcrumbs-container">
           <p-breadcrumb
             [model]="breadcrumbItems()"
-            styleClass="custom-breadcrumb"
+            class="custom-breadcrumb"
           >
-            <ng-template pTemplate="item" let-item>
+            <ng-template #item let-item>
               <div class="breadcrumb-item" [class.current]="item.data?.current">
                 @if (item.icon) {
                   <i [class]="item.icon"></i>

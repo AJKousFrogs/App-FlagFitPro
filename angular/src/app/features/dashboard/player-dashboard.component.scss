@@ -173,7 +173,7 @@
   justify-content: center;
   flex-shrink: 0;
   font-size: var(--ds-font-size-3xl);
-  color: white;
+  color: var(--color-text-on-primary);
   box-shadow: var(--shadow-2);
 
   // Mobile: Smaller avatar
@@ -369,7 +369,7 @@
   height: var(--space-12); /* 3rem */
   border-radius: var(--radius-md);
   background: var(--ds-primary-green);
-  color: white;
+  color: var(--color-text-on-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -520,7 +520,7 @@
     var(--color-status-info) 0%,
     var(--color-status-success) 100%
   );
-  color: white;
+  color: var(--color-text-on-primary);
   display: flex;
   align-items: center;
   justify-content: center;

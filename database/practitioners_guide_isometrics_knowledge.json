@@ -1,13 +1,36 @@
 {
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:1491ea82-b1b9-4c14-92d7-514aedb91d7b",
+  "generated_at": "2026-02-10T18:25:06.296Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": false,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "VALD Practitioner's Guide to Isometrics",
+      "publisher": "VALD Performance",
+      "source_url": "https://resources.valdperformance.com",
+      "authors": [
+        "VALD Performance Contributors"
+      ]
+    }
+  },
   "metadata": {
     "title": "VALD Practitioner's Guide to Isometrics",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "total_pages": 71,
     "document_type": "practitioner_guide"
   },
   "research_article": {
     "title": "VALD Practitioner's Guide to Isometrics",
-    "authors": ["VALD Performance Contributors"],
+    "authors": [
+      "VALD Performance Contributors"
+    ],
     "publication_year": 2024,
     "publisher": "VALD Performance",
     "primary_category": "training",
@@ -41,7 +64,12 @@
       "Track strength development over time",
       "Safe testing method for injured athletes"
     ],
-    "training_types": ["isometric", "strength", "assessment", "rehabilitation"],
+    "training_types": [
+      "isometric",
+      "strength",
+      "assessment",
+      "rehabilitation"
+    ],
     "recovery_methods": [
       "isometric_testing",
       "criteria_based_progression",
@@ -69,9 +97,17 @@
       "summary": "Isometric testing uses force plates to measure maximal strength objectively, safely, and reliably without joint movement.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["all_athletes", "injured_athletes", "elite_athletes"],
+      "applicable_to": [
+        "all_athletes",
+        "injured_athletes",
+        "elite_athletes"
+      ],
       "sport_specificity": "general",
-      "categories": ["assessment", "testing", "strength"],
+      "categories": [
+        "assessment",
+        "testing",
+        "strength"
+      ],
       "tags": [
         "isometric",
         "strength_testing",
@@ -81,10 +117,17 @@
         "monitoring"
       ],
       "protocols": {
-        "equipment": ["ForceFrame", "force_plates"],
+        "equipment": [
+          "ForceFrame",
+          "force_plates"
+        ],
         "trials": "2-3_maximal_efforts",
         "rest_between_trials": "30-60_seconds",
-        "key_metrics": ["peak_force", "RFD", "bilateral_asymmetry"],
+        "key_metrics": [
+          "peak_force",
+          "RFD",
+          "bilateral_asymmetry"
+        ],
         "duration": "3-5_seconds_maximal_contraction"
       },
       "best_practices": [
@@ -96,7 +139,9 @@
         "Track rate of force development (RFD)",
         "Safe for use with injured athletes",
         "Document test position and setup clearly"
-      ]
+      ],
+      "entry_id": "urn:uuid:6056ea5c-dcc6-4609-aede-cd5fce0ab07f",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -106,16 +151,25 @@
       "summary": "Isometric training develops maximal strength at specific joint angles, useful for rehab, injury prevention, and sport-specific development.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["all_athletes", "injured_athletes"],
+      "applicable_to": [
+        "all_athletes",
+        "injured_athletes"
+      ],
       "sport_specificity": "general",
-      "categories": ["training", "strength"],
+      "categories": [
+        "training",
+        "strength"
+      ],
       "tags": [
         "isometric_training",
         "strength_development",
         "rehabilitation",
         "injury_prevention"
       ],
-      "training_types": ["isometric", "strength"],
+      "training_types": [
+        "isometric",
+        "strength"
+      ],
       "protocols": {
         "sets_reps": "3-5_sets_x_3-6_seconds",
         "rest": "30-60_seconds",
@@ -130,7 +184,9 @@
         "Address weak points in strength curve",
         "Monitor for excessive fatigue",
         "Maintain proper technique and positioning"
-      ]
+      ],
+      "entry_id": "urn:uuid:46e683bc-44d8-40df-abee-cab02dd7da06",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -140,9 +196,17 @@
       "summary": "Interpret isometric results through peak force, asymmetries, and RFD; use to guide training and monitor rehabilitation.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["all_athletes", "coaches", "therapists"],
+      "applicable_to": [
+        "all_athletes",
+        "coaches",
+        "therapists"
+      ],
       "sport_specificity": "general",
-      "categories": ["assessment", "interpretation", "monitoring"],
+      "categories": [
+        "assessment",
+        "interpretation",
+        "monitoring"
+      ],
       "tags": [
         "data_interpretation",
         "normative_data",
@@ -163,7 +227,9 @@
         "Use results to guide training priorities",
         "Establish return-to-sport criteria",
         "Identify individual strengths and weaknesses"
-      ]
+      ],
+      "entry_id": "urn:uuid:c641a8da-0e2a-4712-aa5c-cfbf8e64f22c",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "recovery_method",
@@ -173,9 +239,17 @@
       "summary": "Isometric testing in rehab is safe, objective, and guides progression through phases based on strength criteria.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["injured_athletes", "post_surgery", "rehabilitation"],
+      "applicable_to": [
+        "injured_athletes",
+        "post_surgery",
+        "rehabilitation"
+      ],
       "sport_specificity": "general",
-      "categories": ["rehabilitation", "monitoring", "return_to_sport"],
+      "categories": [
+        "rehabilitation",
+        "monitoring",
+        "return_to_sport"
+      ],
       "tags": [
         "rehabilitation",
         "monitoring",
@@ -202,7 +276,9 @@
         "Reduce asymmetries to <10% before return",
         "Track both peak force and RFD",
         "Use results to guide activity progression"
-      ]
+      ],
+      "entry_id": "urn:uuid:a2b90e9b-5842-47f2-9596-5465039d4236",
+      "evidence_framework": "GRADE"
     },
     {
       "entry_type": "training_method",
@@ -212,9 +288,17 @@
       "summary": "Isometric testing enables efficient pre-season screening and in-season monitoring without causing fatigue.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": ["all_athletes", "team_sports", "elite_athletes"],
+      "applicable_to": [
+        "all_athletes",
+        "team_sports",
+        "elite_athletes"
+      ],
       "sport_specificity": "general",
-      "categories": ["screening", "monitoring", "injury_prevention"],
+      "categories": [
+        "screening",
+        "monitoring",
+        "injury_prevention"
+      ],
       "tags": [
         "screening",
         "monitoring",
@@ -225,7 +309,11 @@
         "preseason_screening": "comprehensive_baseline_all_athletes",
         "inseason_frequency": "monthly_or_after_high_load_periods",
         "time_per_athlete": "5-10_minutes",
-        "monitoring_metrics": ["peak_force", "asymmetry", "RFD"]
+        "monitoring_metrics": [
+          "peak_force",
+          "asymmetry",
+          "RFD"
+        ]
       },
       "best_practices": [
         "Conduct comprehensive pre-season screening",
@@ -236,7 +324,9 @@
         "Quick testing doesn't create fatigue",
         "Use for return-to-play monitoring",
         "Combine with other monitoring tools (wellness, ACWR)"
-      ]
+      ],
+      "entry_id": "urn:uuid:942750d0-522d-4f37-b9b3-72dc2511276d",
+      "evidence_framework": "GRADE"
     }
   ]
 }

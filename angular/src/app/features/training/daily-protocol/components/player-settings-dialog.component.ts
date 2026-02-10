@@ -23,7 +23,6 @@ import { FormsModule } from "@angular/forms";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
-import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { Select } from "primeng/select";
@@ -88,7 +87,7 @@ interface DayOption {
   imports: [
     FormsModule,
     Dialog,
-    PrimeTemplate,
+    
     Select,
     DatePicker,
     Checkbox,
@@ -107,7 +106,7 @@ interface DayOption {
       [breakpoints]="dialogBreakpoints"
       [draggable]="false"
       [resizable]="false"
-      styleClass="player-settings-dialog"
+      class="player-settings-dialog"
     >
       <div class="settings-form">
         <!-- Position Selection -->
@@ -122,7 +121,7 @@ interface DayOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Select position"
-              styleClass="w-full"
+              class="w-full"
               (onValueChange)="updatePositionDescription()"
             ></p-select>
             @if (selectedPositionDescription()) {
@@ -142,7 +141,7 @@ interface DayOption {
               optionValue="value"
               placeholder="Optional"
               [showClear]="true"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
           </div>
         </div>
@@ -158,7 +157,7 @@ interface DayOption {
               dateFormat="yy-mm-dd"
               [showIcon]="true"
               [maxDate]="maxBirthDate"
-              styleClass="full-width"
+              class="full-width"
               placeholder="Select birth date"
               (onSelect)="updateAge()"
             ></p-datepicker>
@@ -245,7 +244,7 @@ interface DayOption {
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Add practice day..."
-                styleClass="w-full"
+                class="w-full"
               ></p-select>
               <app-button
                 iconLeft="pi-plus"
@@ -294,7 +293,7 @@ interface DayOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Select days"
-              styleClass="w-full"
+              class="w-full"
             ></p-multiselect>
           </div>
 
@@ -327,7 +326,7 @@ interface DayOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Auto (use position)"
-              styleClass="w-full"
+              class="w-full"
             ></p-select>
             <small class="field-hint">
               Overrides the warm-up flow without changing your primary position.
@@ -336,7 +335,7 @@ interface DayOption {
         </div>
       </div>
 
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <app-button variant="outlined" (clicked)="onCancel()"
           >Cancel</app-button
         >

@@ -1,3 +1,13 @@
+/**
+ * Pages Layer (Tier 4 of 7-layer cascade)
+ *
+ * NOTE: These files may inject into multiple CSS layers:
+ * - hover-system → @layer primeng-brand (PrimeNG hover enhancements)
+ * - ui-standardization → @layer overrides (page-level fixes)
+ * This is intentional. Load order: pages run before overrides folder,
+ * so overrides/exceptions + color-guards still win within their layers.
+ * See DESIGN_SYSTEM_RULES.md cascade.
+ */
 @forward "./premium-interactions";
 @forward "./hover-system";
 @forward "./ui-standardization";

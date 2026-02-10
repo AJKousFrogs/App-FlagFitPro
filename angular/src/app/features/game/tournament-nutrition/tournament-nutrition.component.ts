@@ -184,7 +184,7 @@ interface HydrationLog {
                 <p-progressBar
                   [value]="hydrationProgress()"
                   [showValue]="false"
-                  styleClass="hydration-progress-bar"
+                  class="hydration-progress-bar"
                 ></p-progressBar>
                 <span class="target">/ {{ dailyHydrationTarget() }}ml</span>
               </div>
@@ -209,7 +209,7 @@ interface HydrationLog {
         <!-- Schedule Editor (Collapsible) -->
         @if (showScheduleEditor) {
           <p-card class="schedule-editor-card">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <div class="card-header">
                 <h3><i class="pi pi-calendar"></i> Game Schedule</h3>
                 <app-icon-button
@@ -542,7 +542,7 @@ interface HydrationLog {
 
         <!-- Quick Reference Card -->
         <p-card class="quick-ref-card">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <h3><i class="pi pi-list"></i> Quick Reference - What to Pack</h3>
           </ng-template>
           <div class="packing-list">

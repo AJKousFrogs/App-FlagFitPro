@@ -303,7 +303,7 @@
     margin: 0 auto var(--space-4);
 
     &.success {
-      background: var(--primitive-success-50);
+      background: var(--color-status-success-subtle);
     }
   }
 
@@ -503,7 +503,7 @@
 }
 
 .result-icon.success .result-icon__glyph {
-  color: var(--primitive-success-500);
+  color: var(--color-status-success);
 }
 
 .result-list-icon {

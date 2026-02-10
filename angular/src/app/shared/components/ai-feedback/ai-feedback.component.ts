@@ -9,7 +9,6 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
-import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { Textarea } from "primeng/textarea";
 import { RadioButton } from "primeng/radiobutton";
@@ -55,8 +54,8 @@ interface FeedbackData {
     CommonModule,
     FormsModule,
     Dialog,
-    PrimeTemplate,
-    PrimeTemplate,
+    
+    
     Textarea,
     RadioButton,
     Tooltip,
@@ -114,7 +113,7 @@ interface FeedbackData {
         header="Provide Feedback"
         [(visible)]="dialogVisible"
         [modal]="true"
-        styleClass="dialog-max-w-sm"
+        class="dialog-max-w-sm"
         [closable]="true"
         [draggable]="false"
       >
@@ -191,7 +190,7 @@ interface FeedbackData {
           }
         </div>
 
-        <ng-template pTemplate="footer">
+        <ng-template #footer>
           <app-button variant="text" (clicked)="dialogVisible = false"
             >Cancel</app-button
           >

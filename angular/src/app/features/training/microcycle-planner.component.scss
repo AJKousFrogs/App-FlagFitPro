@@ -77,11 +77,11 @@
 
 .intensity-badge {
   display: inline-block;
-  padding: var(--ds-space-1) var(--ds-space-2);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .intensity-low {

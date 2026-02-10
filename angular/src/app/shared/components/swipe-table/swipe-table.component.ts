@@ -35,7 +35,7 @@ import { Table, TableModule } from "primeng/table";
         class="swipe-enabled-table"
         [columns]="columns()"
       >
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <tr>
             @for (col of columns(); track col.field) {
               <th scope="col" [attr.aria-sort]="null">{{ col.header }}</th>
@@ -44,7 +44,7 @@ import { Table, TableModule } from "primeng/table";
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+        <ng-template #body let-row let-rowIndex="rowIndex">
           <tr
             class="swipe-row"
             [class.swiping]="swipingIndex === rowIndex"
@@ -94,7 +94,7 @@ import { Table, TableModule } from "primeng/table";
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="emptymessage">
+        <ng-template #emptymessage>
           <tr>
             <td
               [attr.colspan]="columns().length + 1"

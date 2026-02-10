@@ -150,12 +150,12 @@ export class InteractiveSkillsRadarComponent {
       {
         label: "Target Skills",
         data: [90, 95, 85, 90, 95, 85],
-        backgroundColor: "rgba(var(--primitive-success-500-rgb), 0.2)",
-        borderColor: "rgb(var(--primitive-success-500-rgb))",
-        pointBackgroundColor: "rgb(var(--primitive-success-500-rgb))",
+        backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.2)",
+        borderColor: "rgb(var(--ds-primary-green-rgb))",
+        pointBackgroundColor: "rgb(var(--ds-primary-green-rgb))",
         pointBorderColor: "var(--p-content-background)",
         pointHoverBackgroundColor: "var(--p-content-background)",
-        pointHoverBorderColor: "rgb(var(--primitive-success-500-rgb))",
+        pointHoverBorderColor: "rgb(var(--ds-primary-green-rgb))",
       },
     ],
   });

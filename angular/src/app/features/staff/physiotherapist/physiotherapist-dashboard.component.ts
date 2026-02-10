@@ -202,7 +202,6 @@ const RTP_PHASES = [
     ProgressBar,
     Select,
     TableModule,
-    TableModule,
     Tabs,
     TabList,
     Tab,
@@ -330,7 +329,7 @@ const RTP_PHASES = [
                     [rowsPerPageOptions]="[10, 25, 50]"
                     [virtualScroll]="filteredAthletes().length > 50"
                     [virtualScrollItemSize]="46"
-                    styleClass="p-datatable-sm"
+                    class="p-datatable-sm"
                   >
                     <ng-template #header>
                       <tr>
@@ -447,7 +446,7 @@ const RTP_PHASES = [
                   @if (rtpData().length > 0) {
                     <div class="rtp-grid">
                       @for (rtp of rtpData(); track rtp.athleteId) {
-                        <p-card styleClass="rtp-card">
+                        <p-card class="rtp-card">
                           <ng-template #header>
                             <div class="rtp-header">
                               <div class="athlete-info">
@@ -631,7 +630,7 @@ const RTP_PHASES = [
                   <div class="risk-grid">
                     @for (risk of riskIndicators(); track risk.athleteId) {
                       <p-card
-                        styleClass="risk-card"
+                        class="risk-card"
                         [class.high-risk]="risk.acwrRisk === 'high'"
                         [class.moderate-risk]="risk.acwrRisk === 'moderate'"
                       >
@@ -817,7 +816,7 @@ const RTP_PHASES = [
                       ) {
                         <p-card
                           header="Recurrent Injuries"
-                          styleClass="recurrent-card"
+                          class="recurrent-card"
                         >
                           <ul class="recurrent-list">
                             @for (
@@ -877,7 +876,7 @@ const RTP_PHASES = [
                         track insight.id
                       ) {
                         <p-card
-                          styleClass="insight-card"
+                          class="insight-card"
                           [class]="'priority-' + insight.priority"
                         >
                           <ng-template #header>
@@ -946,7 +945,7 @@ const RTP_PHASES = [
           [(visible)]="showAthleteDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="physio-athlete-dialog"
+          class="physio-athlete-dialog"
         >
           @if (selectedAthlete()) {
             <div class="athlete-profile">
@@ -1078,7 +1077,7 @@ const RTP_PHASES = [
           [(visible)]="showReportDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="physio-report-dialog"
+          class="physio-report-dialog"
         >
           <div class="report-form">
             <div class="form-group">
@@ -1088,7 +1087,7 @@ const RTP_PHASES = [
                 [options]="reportTypes"
                 [(ngModel)]="selectedReportType"
                 placeholder="Select report type"
-                styleClass="w-full"
+                class="w-full"
                 [attr.aria-label]="'Select report type'"
               ></p-select>
             </div>
@@ -1099,7 +1098,7 @@ const RTP_PHASES = [
                 [options]="athleteSelectOptions()"
                 [(ngModel)]="reportAthleteId"
                 placeholder="Select athlete"
-                styleClass="w-full"
+                class="w-full"
                 [attr.aria-label]="'Select athlete for report'"
               ></p-select>
             </div>
@@ -1120,7 +1119,7 @@ const RTP_PHASES = [
           [(visible)]="showPositionRiskDialog"
           [modal]="true"
           [dismissableMask]="true"
-          styleClass="physio-risk-dialog"
+          class="physio-risk-dialog"
         >
           @if (viewingPositionRisk()) {
             <div class="position-risk-content">

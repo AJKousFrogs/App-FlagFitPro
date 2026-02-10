@@ -26,6 +26,7 @@ import {
 } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import Aura from "@primeuix/themes/aura";
+import { PRIMENG_PT_CONFIG } from "./primeng.config";
 import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
 import { cacheInterceptor } from "./core/interceptors/cache.interceptor";
@@ -40,7 +41,6 @@ import {
 } from "./core/services/error-tracking.service";
 import { LoadMonitoringService } from "./core/services/load-monitoring.service";
 import { ResourceService } from "./core/services/resource.service";
-import { PlatformDetectionService } from "./core/services/platform-detection.service";
 import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
 import { LOGGER } from "./core/logging/logger.token";
 import { ConsoleLoggerAdapter } from "./core/logging/console-logger.adapter";
@@ -83,6 +83,9 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     ConfirmationService,
     providePrimeNG({
+      // Pass-Through: Global PT config for button, card, inputtext, dialog, datatable
+      pt: PRIMENG_PT_CONFIG,
+
       // Ripple: Disable ripple effect (we use CSS transitions) - reduces JS execution
       ripple: false,
 
@@ -182,11 +185,11 @@ export const appConfig: ApplicationConfig = {
           //
           // Layer order (lowest to highest specificity):
           // 1. reset = Browser normalization
-          // 2. tokens = Design tokens (CSS custom properties)
+          // 2. tokens = Reserved for PrimeNG/future (design-system uses unlayered :root)
           // 3. primeng-base = PrimeNG default styles
           // 4. primeng-brand = PrimeNG customization to match brand
           // 5. primitives = Shared components (cards, typography, spacing)
-          // 6. features = Feature-specific styles
+          // 6. features = Reserved for PrimeNG/future (pages use primeng-brand, overrides)
           // 7. overrides = Temporary fixes only (with ticket + expiry)
           cssLayer: {
             name: "primeng-base",
@@ -214,7 +217,6 @@ export const appConfig: ApplicationConfig = {
     LoadMonitoringService,
     AcwrAlertsService,
     ResourceService,
-    PlatformDetectionService, // Auto-detects iOS, Android, Safari, Chrome
 
     // Error tracking and monitoring (Sentry integration)
     ErrorTrackingService,

@@ -107,7 +107,7 @@ label {
 .form-control.is-valid:focus-visible {
   border-color: var(--color-status-success);
   box-shadow: 0 0 0 var(--focus-ring-width)
-    rgba(var(--primitive-success-500-rgb), 0.2);
+    rgba(var(--ds-primary-green-rgb), 0.2);
 }
 
 .form-help {

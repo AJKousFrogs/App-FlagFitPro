@@ -48,7 +48,7 @@ interface InvitationData {
   template: `
 <div class="accept-invitation-page">
       <p-card class="accept-invitation-card">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <div class="accept-invitation-logo">
             <i class="pi pi-users"></i>
           </div>
@@ -57,13 +57,13 @@ interface InvitationData {
 
         @if (isLoading()) {
           <div class="loading-state">
-            <p-message severity="info" styleClass="status-message">
+            <p-message severity="info" class="status-message">
               Loading invitation...
             </p-message>
           </div>
         } @else if (needsLogin()) {
           <div class="login-required-state">
-            <p-message severity="warn" styleClass="status-message">
+            <p-message severity="warn" class="status-message">
               Please sign in to accept this invitation
             </p-message>
             <p class="login-message">
@@ -86,7 +86,7 @@ interface InvitationData {
           </div>
         } @else if (invitationError()) {
           <div class="error-state">
-            <p-message severity="error" styleClass="status-message">
+            <p-message severity="error" class="status-message">
               {{ invitationError() }}
             </p-message>
             <a [routerLink]="['/dashboard']" class="back-link mt-4"
@@ -97,7 +97,7 @@ interface InvitationData {
           <div class="accepted-state">
             <p-message
               severity="success"
-              styleClass="status-message status-message--success"
+              class="status-message status-message--success"
               >Invitation accepted!</p-message
             >
             <p class="accepted-message">
@@ -109,7 +109,7 @@ interface InvitationData {
           </div>
         } @else if (isDeclined()) {
           <div class="declined-state">
-            <p-message severity="info" styleClass="status-message">
+            <p-message severity="info" class="status-message">
               Invitation declined
             </p-message>
             <p class="declined-message">

@@ -143,7 +143,7 @@ interface Milestone {
         [(visible)]="showFullDialog"
         header="🏅 Road to LA28 Olympics"
         [modal]="true"
-        styleClass="la28-roadmap-dialog"
+        class="la28-roadmap-dialog"
       >
         <div class="roadmap-full">
           <!-- Stats Header -->
@@ -205,7 +205,7 @@ interface Milestone {
                       <p-progressBar
                         [value]="cycle.completion_percentage"
                         [showValue]="false"
-                        styleClass="h-2"
+                        class="h-2"
                       />
                       <span class="progress-text"
                         >{{ cycle.completion_percentage }}%</span
@@ -230,7 +230,7 @@ interface Milestone {
             <p-timeline
               [value]="milestones()"
               align="alternate"
-              styleClass="roadmap-timeline"
+              class="roadmap-timeline"
             >
               <ng-template #content let-event>
                 <p-card

@@ -1,5 +1,17 @@
 # FlagFit Pro - Complete Knowledge Base Summary
 
+## Schema & Validation (v1.0.0)
+
+All knowledge JSON files conform to `database/schemas/knowledge_base.schema.json`:
+- **Versioning**: `schema_version`, `content_version` (SemVer)
+- **IDs**: `document_id`, `entry_id` (URN UUIDs, stable)
+- **Provenance**: `rights` block (licence, attribution, source_url)
+- **Quality**: `quantitative_claims`, `evidence_framework` (GRADE)
+
+**Validation**: `npm run validate:knowledge` | **Secret scan**: `npm run scan:knowledge-secrets`
+
+---
+
 ## 🎉 ALL 5 VALD PERFORMANCE GUIDES CONVERTED
 
 ### Complete Coverage of Sports Performance & Injury Prevention
@@ -142,24 +154,31 @@ Avoid: Load spikes (ACWR >1.5)
 
 ## 📁 All Files Created
 
-### JSON Data Files (5)
+### JSON Data Files (10)
 
 ```
 database/
-├── practitioners_guide_shoulders_knowledge.json (33 KB)
-├── practitioners_guide_calf_achilles_knowledge.json (36 KB)
-├── practitioners_guide_speed_testing_knowledge.json (7 KB)
-├── practitioners_guide_preseason_knowledge.json (7 KB)
-└── practitioners_guide_hamstrings_knowledge.json (13 KB)
+├── practitioners_guide_shoulders_knowledge.json
+├── practitioners_guide_calf_achilles_knowledge.json (incl. soleus, ankle/tibialis)
+├── practitioners_guide_speed_testing_knowledge.json
+├── practitioners_guide_preseason_knowledge.json
+├── practitioners_guide_hamstrings_knowledge.json
+├── practitioners_guide_hip_groin_knowledge.json
+├── practitioners_guide_isometrics_knowledge.json
+├── practitioners_guide_plyometrics_quadriceps_knowledge.json (plyometrics, H:Q ratio)
+├── flag_football_athlete_monitoring_knowledge.json (from Evaluation of Flag Football Athlete Monitoring Metrics PDF)
+└── KNOWLEDGE_JSON_AUDIT.md
 ```
 
-### SQL Import Files (3)
+### SQL Import Files (5)
 
 ```
 database/
 ├── seed-shoulder-knowledge.sql (12 KB)
 ├── seed-calf-achilles-knowledge.sql (13 KB)
-└── seed-three-guides-knowledge.sql (25 KB) ← Speed+Preseason+Hamstrings combined
+├── seed-three-guides-knowledge.sql (25 KB) ← Speed+Preseason+Hamstrings combined
+├── seed-hip-groin-knowledge.sql
+└── seed-isometrics-knowledge.sql
 ```
 
 ### Documentation (5 files)
@@ -196,6 +215,13 @@ supabase db execute -f database/seed-calf-achilles-knowledge.sql
 
 # Import last 3 guides (combined)
 supabase db execute -f database/seed-three-guides-knowledge.sql
+
+# Import additional guides (hip/groin, isometrics)
+supabase db execute -f database/seed-hip-groin-knowledge.sql
+supabase db execute -f database/seed-isometrics-knowledge.sql
+
+# Calf expansion (soleus, ankle/tibialis) - run after seed-calf-achilles-knowledge.sql
+supabase db execute -f database/seed-calf-achilles-expansion.sql
 ```
 
 ### Option 2: Using Import Scripts
@@ -371,8 +397,8 @@ async function getPreseasonWeekPlan(weekNumber: number) {
 | Knowledge Base Entries | 21    |
 | Best Practices         | 90+   |
 | Searchable Tags        | 100+  |
-| JSON Files             | 5     |
-| SQL Files              | 3     |
+| JSON Files             | 7     |
+| SQL Files              | 5     |
 | Documentation Files    | 8     |
 | Import Scripts         | 2     |
 

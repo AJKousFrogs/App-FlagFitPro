@@ -90,7 +90,7 @@ interface Stats {
           <div class="loading-state">
             <p-skeleton
               height="calc(var(--size-120) * 0.5)"
-              styleClass="mb-2"
+              class="mb-2"
             />
             <p-skeleton height="var(--icon-container-md)" />
           </div>
@@ -158,7 +158,7 @@ interface Stats {
               <p-progressBar
                 [value]="summary()?.nextAchievement?.progressPercent || 0"
                 [showValue]="false"
-                styleClass="h-2"
+                class="h-2"
               />
             </div>
           }
@@ -182,7 +182,7 @@ interface Stats {
         [(visible)]="showFullDialog"
         header="🏆 Achievements & Progress"
         [modal]="true"
-        styleClass="achievements-panel-dialog"
+        class="achievements-panel-dialog"
       >
         <p-tabs>
           <p-tabpanel value="all">
@@ -226,7 +226,7 @@ interface Stats {
                               <p-progressBar
                                 [value]="ach.progressPercent"
                                 [showValue]="false"
-                                styleClass="h-1"
+                                class="h-1"
                               />
                               <span class="progress-text"
                                 >{{ ach.progress }}/{{ ach.progressMax }}</span
