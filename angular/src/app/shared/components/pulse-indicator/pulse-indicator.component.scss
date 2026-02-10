@@ -23,23 +23,23 @@
 
 /* Sizes */
 .size-xs .pulse-container {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: var(--space-2);
+  height: var(--space-2);
 }
 
 .size-sm .pulse-container {
-  width: 0.75rem;
-  height: 0.75rem;
+  width: var(--space-3);
+  height: var(--space-3);
 }
 
 .size-md .pulse-container {
-  width: 1rem;
-  height: 1rem;
+  width: var(--space-4);
+  height: var(--space-4);
 }
 
 .size-lg .pulse-container {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--space-5);
+  height: var(--space-5);
 }
 
 /* Core dot */
@@ -50,23 +50,23 @@
 }
 
 .size-xs .pulse-dot {
-  width: 0.375rem;
-  height: 0.375rem;
+  width: calc(var(--space-1) + var(--space-0-5));
+  height: calc(var(--space-1) + var(--space-0-5));
 }
 
 .size-sm .pulse-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: var(--space-2);
+  height: var(--space-2);
 }
 
 .size-md .pulse-dot {
-  width: 0.625rem;
-  height: 0.625rem;
+  width: calc(var(--space-2) + var(--space-0-5));
+  height: calc(var(--space-2) + var(--space-0-5));
 }
 
 .size-lg .pulse-dot {
-  width: 0.75rem;
-  height: 0.75rem;
+  width: var(--space-3);
+  height: var(--space-3);
 }
 
 /* Pulse rings */

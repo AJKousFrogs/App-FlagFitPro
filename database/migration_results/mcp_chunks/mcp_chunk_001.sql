@@ -6348,7 +6348,7 @@ COMMENT ON FUNCTION log_rls_policy_block IS 'Logs RLS policy blocks to authoriza
 -- 3. Check affected rows
 -- 4. If affected_rows < expected_rows, log to authorization_violations
 --
--- This is implemented in netlify/functions/utils/authorization-guard.cjs
+-- This is implemented in netlify/functions/utils/authorization-guard.js
 
 COMMENT ON TABLE authorization_violations IS 'Logs authorization failures including RLS blocks. Application-level logging recommended over database triggers.';
 

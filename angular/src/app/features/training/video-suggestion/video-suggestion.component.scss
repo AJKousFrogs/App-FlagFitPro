@@ -229,8 +229,8 @@
 
 .url-input {
   width: 100%;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: var(--space-12);
+  padding-right: var(--space-12);
   height: var(--touch-target-lg);
   font-size: var(--ds-font-size-md);
   border-radius: var(--radius-lg);
@@ -331,14 +331,6 @@
 .form-actions {
   margin-top: var(--space-8);
   padding-top: var(--space-4);
-}
-
-.submit-btn {
-  width: 100%;
-  height: var(--avatar-size-lg);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  border-radius: var(--radius-lg);
 }
 
 /* Submissions Section */

@@ -15,7 +15,6 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Ripple } from "primeng/ripple";
 import { Tooltip } from "primeng/tooltip";
 
 export interface AIModeStatus {
@@ -30,7 +29,7 @@ export interface AIModeStatus {
   selector: "app-ai-mode-explanation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Ripple, Tooltip],
+  imports: [CommonModule, RouterModule, Tooltip],
   template: `
     @if (modeStatus() && modeStatus()!.isConservative) {
       <div class="ai-mode-card">
@@ -58,7 +57,6 @@ export interface AIModeStatus {
                 (click)="toggleCollapsed()"
                 [pTooltip]="isCollapsed() ? 'Expand details' : 'Collapse'"
                 aria-label="Toggle details"
-                pRipple
               >
                 <i
                   class="pi"
@@ -139,7 +137,6 @@ export interface AIModeStatus {
                   <button
                     class="action-btn"
                     [routerLink]="['/wellness']"
-                    pRipple
                   >
                     <i class="pi pi-heart"></i>
                     <span>Complete Wellness Check-in</span>
@@ -149,7 +146,6 @@ export interface AIModeStatus {
                   <button
                     class="action-btn"
                     [routerLink]="['/training/log']"
-                    pRipple
                   >
                     <i class="pi pi-plus"></i>
                     <span>Log Training Session</span>
@@ -171,7 +167,7 @@ export interface AIModeStatus {
       .ai-mode-card {
         background: var(--surface-primary);
         border: var(--border-1) solid var(--color-border-secondary);
-        border-left: 4px solid var(--color-status-warning);
+        border-left: var(--space-1) solid var(--color-status-warning);
         border-radius: var(--radius-lg);
         padding: var(--space-5);
         margin: var(--space-4) var(--space-5);
@@ -207,8 +203,8 @@ export interface AIModeStatus {
       }
 
       .mode-control-btn {
-        width: 32px;
-        height: 32px;
+        width: var(--space-8);
+        height: var(--space-8);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -234,8 +230,8 @@ export interface AIModeStatus {
       }
 
       .mode-icon-wrapper {
-        width: 48px;
-        height: 48px;
+        width: var(--icon-container-lg);
+        height: var(--icon-container-lg);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -340,11 +336,12 @@ export interface AIModeStatus {
 
       .confidence-bar {
         width: 100%;
-        height: 8px;
+        height: var(--space-2);
         background: var(--surface-secondary);
         border-radius: var(--radius-full);
         overflow: hidden;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 var(--border-1) var(--border-2)
+          var(--color-border-subtle);
       }
 
       .confidence-fill {
@@ -368,7 +365,7 @@ export interface AIModeStatus {
         font-size: var(--ds-font-size-2xl);
         font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
-        min-width: 60px;
+        min-width: calc(var(--size-120) * 0.5);
         text-align: right;
         font-variant-numeric: tabular-nums;
       }
@@ -430,7 +427,7 @@ export interface AIModeStatus {
       }
 
       .action-btn:hover {
-        transform: translateY(-1px);
+        transform: translateY(calc(var(--border-1) * -1));
         box-shadow: var(--hover-shadow-md);
         background: var(--ds-primary-green-hover);
       }
@@ -465,8 +462,8 @@ export interface AIModeStatus {
         }
 
         .mode-icon-wrapper {
-          width: 40px;
-          height: 40px;
+          width: var(--icon-container-md);
+          height: var(--icon-container-md);
         }
 
         .mode-icon {

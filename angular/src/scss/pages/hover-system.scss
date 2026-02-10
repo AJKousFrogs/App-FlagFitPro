@@ -47,7 +47,7 @@
     --primitive-primary-50
   ); /* Light green tint for cards/lists */
 
-  --hover-bg-tertiary: rgba(8, 153, 73, 0.08); /* Very subtle green tint */
+  --hover-bg-tertiary: var(--hover-bg-tertiary); /* Very subtle green tint */
   --hover-bg-ultra-light: rgba(
     8,
     153,
@@ -57,7 +57,7 @@
 
   /* Border colors on hover */
   --hover-border-primary: var(--ds-primary-green); /* Brand green border */
-  --hover-border-subtle: rgba(8, 153, 73, 0.3); /* Subtle green border */
+  --hover-border-subtle: var(--hover-border-subtle); /* Subtle green border */
 
   /* Text colors on hover */
   --hover-text-primary: var(
@@ -708,7 +708,7 @@
       background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.3) 50%,
+        var(--overlay-white-30) 50%,
         transparent 100%
       );
       animation: progress-shine 2s infinite;
@@ -839,14 +839,14 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
 
 [data-theme="dark"],
 .dark-theme {
-  --hover-bg-secondary: rgba(16, 201, 107, 0.15);
-  --hover-bg-tertiary: rgba(16, 201, 107, 0.1);
-  --hover-bg-ultra-light: rgba(16, 201, 107, 0.05);
-  --hover-border-subtle: rgba(16, 201, 107, 0.3);
-  --hover-shadow-sm: 0 var(--space-0-5) var(--space-2) rgba(0, 0, 0, 0.3);
-  --hover-shadow-md: 0 var(--space-1) var(--space-4) rgba(0, 0, 0, 0.4);
-  --hover-shadow-lg: 0 var(--space-2) var(--space-6) rgba(0, 0, 0, 0.5);
-  --hover-shadow-xl: 0 var(--space-3) var(--space-8) rgba(0, 0, 0, 0.6);
+  --hover-bg-secondary: var(--hover-bg-secondary);
+  --hover-bg-tertiary: var(--p-highlight-background);
+  --hover-bg-ultra-light: var(--hover-bg-ultra-light);
+  --hover-border-subtle: var(--hover-border-subtle);
+  --hover-shadow-sm: 0 var(--space-0-5) var(--space-2) var(--surface-overlay-light);
+  --hover-shadow-md: 0 var(--space-1) var(--space-4) var(--surface-overlay-medium);
+  --hover-shadow-lg: 0 var(--space-2) var(--space-6) var(--surface-overlay);
+  --hover-shadow-xl: 0 var(--space-3) var(--space-8) var(--overlay-black-60);
 }
 
 /* ================================================================

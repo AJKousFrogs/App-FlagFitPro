@@ -27,13 +27,13 @@
  * ```
  */
 
+import { DestroyRef, signal, Signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
-import { signal, Signal } from "@angular/core";
 import { ToastService } from "@core/services/toast.service";
-import { Observable, firstValueFrom } from "rxjs";
-import { DestroyRef } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { firstValueFrom, Observable } from "rxjs";
+import { getErrorMessage } from "./error.utils";
 
 export interface FormSubmitOptions<T = unknown> {
   /** The form to validate and submit */
@@ -142,7 +142,10 @@ export class FormSubmitHandler {
       return result;
     } catch (error) {
       // Show error message
-      const message = errorMessage || this.extractErrorMessage(error);
+      const message = getErrorMessage(
+        error,
+        errorMessage || "An error occurred. Please try again.",
+      );
       this.toastService.error(message);
 
       // Execute error callback
@@ -169,42 +172,6 @@ export class FormSubmitHandler {
         this.markFormGroupTouched(control);
       }
     });
-  }
-
-  /**
-   * Extract error message from various error types
-   * @param error - The error object
-   * @returns A user-friendly error message
-   */
-  private extractErrorMessage(error: unknown): string {
-    if (error instanceof Error) {
-      return error.message;
-    }
-
-    if (typeof error === "object" && error !== null) {
-      const errorObj = error as Record<string, unknown>;
-
-      if (typeof errorObj["message"] === "string") {
-        return errorObj["message"];
-      }
-
-      if (typeof errorObj["error"] === "string") {
-        return errorObj["error"];
-      }
-
-      if (
-        typeof errorObj["error"] === "object" &&
-        errorObj["error"] !== null &&
-        typeof (errorObj["error"] as Record<string, unknown>)["message"] ===
-          "string"
-      ) {
-        return (errorObj["error"] as Record<string, unknown>)[
-          "message"
-        ] as string;
-      }
-    }
-
-    return "An error occurred. Please try again.";
   }
 
   /**

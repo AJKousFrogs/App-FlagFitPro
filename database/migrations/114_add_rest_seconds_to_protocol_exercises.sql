@@ -4,7 +4,7 @@
 -- Fixes: PGRST204 error "Could not find the 'rest_seconds' column of 
 --        'protocol_exercises' in the schema cache"
 --
--- The daily-protocol.cjs function generates exercises with rest periods,
+-- The daily-protocol.js function generates exercises with rest periods,
 -- but the column was missing from the original table definition.
 -- ============================================================================
 

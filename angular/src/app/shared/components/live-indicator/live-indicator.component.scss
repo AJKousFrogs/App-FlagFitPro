@@ -19,8 +19,8 @@
 }
 
 .live-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: var(--space-2);
+  height: var(--space-2);
   border-radius: var(--radius-full);
   background: var(--color-status-error);
   position: relative;
@@ -45,10 +45,10 @@
 .live-indicator.live-active .live-dot::after {
   content: "";
   position: absolute;
-  top: -0.25rem;
-  left: -0.25rem;
-  right: -0.25rem;
-  bottom: -0.25rem;
+  top: -var(--space-1);
+  left: -var(--space-1);
+  right: -var(--space-1);
+  bottom: -var(--space-1);
   border-radius: var(--radius-full);
   background: var(--color-status-error);
   opacity: var(--opacity-quarter);

@@ -496,7 +496,7 @@ interface TodaysPlan {
       }
     </div>
   `,
-  styleUrls: ["./morning-briefing.component.scss"],
+  styleUrl: "./morning-briefing.component.scss",
 })
 export class MorningBriefingComponent implements OnInit {
   private router = inject(Router);

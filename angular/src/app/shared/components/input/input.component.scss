@@ -10,17 +10,17 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2, var(--ds-font-size-0-5rem));
+  gap: var(--space-2);
 }
 
 label {
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary, var(--color-text-primary));
+  color: var(--color-text-primary);
   font-size: var(--ds-font-size-sm);
   transition: color var(--transition-fast) var(--ease-standard);
   display: flex;
   align-items: center;
-  gap: var(--space-1, 0.25rem);
+  gap: var(--space-1);
 }
 
 .required-indicator {
@@ -30,13 +30,12 @@ label {
 
 .form-control {
   width: 100%;
-  padding: var(--space-3, var(--ds-font-size-xs))
-    var(--space-4, var(--ds-font-size-md));
-  border: 0.0625rem solid var(--color-border-primary, var(--color-border-primary));
-  border-radius: var(--radius-lg, var(--radius-md));
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
   font-size: var(--ds-font-size-md);
-  background: var(--surface-primary, white);
-  color: var(--color-text-primary, var(--color-text-primary));
+  background: var(--surface-primary);
+  color: var(--color-text-primary);
   transition:
     border-color var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard),
@@ -44,19 +43,20 @@ label {
 }
 
 .form-control::placeholder {
-  color: var(--color-text-muted, var(--color-text-secondary));
+  color: var(--color-text-muted);
 }
 
 .form-control:hover:not(:disabled):not(:focus-visible) {
-  border-color: var(--color-text-secondary, var(--color-border-primary));
+  border-color: var(--color-border-primary);
 }
 
 .form-control:focus-visible {
   outline: var(--focus-outline-width) solid
-    var(--ds-primary-green, var(--ds-primary-green));
+    var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);
-  border-color: var(--ds-primary-green, var(--ds-primary-green));
-  box-shadow: 0 0 0 0.1875rem rgba(var(--ds-primary-green-rgb), 0.2);
+  border-color: var(--ds-primary-green);
+  box-shadow: 0 0 0 var(--focus-ring-width)
+    rgba(var(--ds-primary-green-rgb), 0.2);
 }
 
 .form-control:focus:not(:focus-visible) {
@@ -64,13 +64,13 @@ label {
 }
 
 .form-control:disabled {
-  background-color: var(--surface-secondary, var(--surface-tertiary));
+  background-color: var(--surface-secondary);
   cursor: not-allowed;
   opacity: var(--opacity-muted);
 }
 
 .form-control.is-invalid {
-  border-color: var(--color-status-error, var(--color-status-error));
+  border-color: var(--color-status-error);
   animation: input-shake 0.4s ease-in-out;
 }
 
@@ -84,49 +84,51 @@ label {
   50%,
   70%,
   90% {
-    transform: translateX(-0.25rem);
+    transform: translateX(calc(var(--space-1) * -1));
   }
   20%,
   40%,
   60%,
   80% {
-    transform: translateX(0.25rem);
+    transform: translateX(var(--space-1));
   }
 }
 
 .form-control.is-invalid:focus-visible {
-  border-color: var(--color-status-error, var(--color-status-error));
-  box-shadow: 0 0 0 0.1875rem rgba(var(--primitive-error-500-rgb), 0.2);
+  border-color: var(--color-status-error);
+  box-shadow: 0 0 0 var(--focus-ring-width)
+    rgba(var(--primitive-error-500-rgb), 0.2);
 }
 
 .form-control.is-valid {
-  border-color: var(--color-status-success, var(--color-status-success));
+  border-color: var(--color-status-success);
 }
 
 .form-control.is-valid:focus-visible {
-  border-color: var(--color-status-success, var(--color-status-success));
-  box-shadow: 0 0 0 0.1875rem rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
+  border-color: var(--color-status-success);
+  box-shadow: 0 0 0 var(--focus-ring-width)
+    rgba(var(--primitive-success-500-rgb), 0.2);
 }
 
 .form-help {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary, var(--color-text-secondary));
+  color: var(--color-text-secondary);
   line-height: var(--ds-line-height-normal);
 }
 
 .form-error {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-status-error, var(--color-status-error));
+  color: var(--color-status-error);
   display: flex;
   align-items: center;
-  gap: var(--space-1, 0.25rem);
+  gap: var(--space-1);
   animation: error-fade-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes error-fade-in {
   from {
     opacity: 0;
-    transform: translateY(-0.25rem);
+    transform: translateY(calc(var(--space-1) * -1));
   }
   to {
     opacity: 1;

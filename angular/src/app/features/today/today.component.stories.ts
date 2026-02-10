@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/angular";
 import { applicationConfig } from "@storybook/angular";
-import { provideAnimations } from "@angular/platform-browser/animations";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { provideRouter } from "@angular/router";
 import { TodayComponent } from "./today.component";
 import { MessageService } from "primeng/api";
@@ -18,7 +18,7 @@ const meta: Meta<TodayComponent> = {
   component: TodayComponent,
   decorators: [
     applicationConfig({
-      providers: [provideAnimations(), provideRouter([]), MessageService],
+      providers: [provideAnimationsAsync(), provideRouter([]), MessageService],
     }),
   ],
   parameters: {

@@ -22,12 +22,12 @@ label {
 .form-control {
   width: 100%;
   padding: var(--space-3);
-  border: 0.0625rem solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
   line-height: var(--ds-line-height-normal);
   resize: vertical;
-  min-height: 6rem;
+  min-height: calc(var(--size-100) - var(--space-1));
   transition:
     border-color var(--transition-base) var(--ease-standard),
     box-shadow var(--transition-base) var(--ease-standard);
@@ -37,7 +37,7 @@ label {
   outline: var(--focus-outline-width) solid var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);
   border-color: var(--ds-primary-green);
-  box-shadow: 0 0 0 0.125rem rgba(var(--primitive-primary-500-rgb), 0.1);
+  box-shadow: 0 0 0 var(--border-2) rgba(var(--primitive-primary-500-rgb), 0.1);
 }
 
 .form-control:focus:not(:focus-visible) {
@@ -61,7 +61,7 @@ label {
 
 .form-control.is-invalid:focus-visible {
   border-color: var(--color-status-error);
-  box-shadow: 0 0 0 0.125rem rgba(var(--primitive-error-500-rgb), 0.1);
+  box-shadow: 0 0 0 var(--border-2) rgba(var(--primitive-error-500-rgb), 0.1);
 }
 
 .form-control.is-valid {
@@ -70,7 +70,7 @@ label {
 
 .form-control.is-valid:focus-visible {
   border-color: var(--color-status-success);
-  box-shadow: 0 0 0 0.125rem rgba(var(--primitive-primary-500-rgb), 0.1);
+  box-shadow: 0 0 0 var(--border-2) rgba(var(--primitive-primary-500-rgb), 0.1);
 }
 
 .char-count {

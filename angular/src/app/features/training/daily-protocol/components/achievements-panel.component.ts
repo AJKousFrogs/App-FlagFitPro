@@ -88,8 +88,11 @@ interface Stats {
 
         @if (loading()) {
           <div class="loading-state">
-            <p-skeleton height="60px" styleClass="mb-2" />
-            <p-skeleton height="40px" />
+            <p-skeleton
+              height="calc(var(--size-120) * 0.5)"
+              styleClass="mb-2"
+            />
+            <p-skeleton height="var(--icon-container-md)" />
           </div>
         } @else {
           <div class="summary-stats">

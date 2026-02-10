@@ -4,7 +4,7 @@
 // ============================================================================
 
 .micro-session-card {
-  max-width: 31.25rem;
+  max-width: var(--dialog-max-width-lg);
 }
 
 .card-header {
@@ -128,15 +128,6 @@
   margin-top: var(--space-2);
 }
 
-.start-button {
-  background: linear-gradient(
-    135deg,
-    var(--ds-primary-green) 0%,
-    var(--ds-primary-green-light) 100%
-  );
-  border: none;
-}
-
 /* Equipment Check State */
 .equipment-check-state h4 {
   margin: 0 0 var(--space-4) 0;
@@ -211,8 +202,8 @@
 }
 
 .timer-circle {
-  width: var(--avatar-size-3xl); // 6.25rem / 6.25rem - closest token
-  height: var(--avatar-size-3xl); // 6.25rem / 6.25rem - closest token
+  width: var(--avatar-size-3xl); // var(--size-100) / var(--size-100) - closest token
+  height: var(--avatar-size-3xl); // var(--size-100) / var(--size-100) - closest token
   border-radius: var(--radius-full);
   display: flex;
   flex-direction: column;
@@ -347,7 +338,7 @@
 .slider-value {
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
-  min-width: 3.125rem;
+  min-width: calc(var(--avatar-size-lg) + var(--space-0-5));
   text-align: right;
 }
 

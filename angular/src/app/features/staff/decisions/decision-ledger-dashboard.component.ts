@@ -267,7 +267,10 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 
       .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(
+          auto-fit,
+          minmax(calc(var(--size-100) + var(--size-150)), 1fr)
+        );
         gap: var(--space-4);
         margin-bottom: var(--space-6);
       }
@@ -298,7 +301,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 
       .filters-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(var(--size-200), 1fr));
         gap: var(--space-4);
         align-items: end;
       }
@@ -317,7 +320,10 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 
       .decisions-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        grid-template-columns: repeat(
+          auto-fill,
+          minmax(calc(var(--size-200) + var(--size-150)), 1fr)
+        );
         gap: var(--space-4);
       }
 

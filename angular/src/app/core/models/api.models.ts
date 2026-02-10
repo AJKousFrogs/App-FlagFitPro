@@ -375,13 +375,6 @@ export interface TodayScheduleItem {
   supplements?: SupplementEntry[];
 }
 
-/**
- * Supplement entry
- * @deprecated Use SupplementEntry from core/models/supplement.models instead
- * Re-exported for backward compatibility
- */
-export type { SupplementEntry } from "./supplement.models";
-
 // ============================================================================
 // TEAM MEMBER TYPES
 // ============================================================================

@@ -1111,26 +1111,26 @@ export class PerformanceDataService {
     if (bmi < 18.5) {
       return {
         category: "Underweight",
-        color: "#ff9800",
+        color: "var(--color-status-warning)",
         message:
           "Consider consulting a nutritionist for healthy weight gain strategies",
       };
     } else if (bmi < 25) {
       return {
         category: "Normal",
-        color: "#10c96b",
+        color: "var(--p-highlight-text-color)",
         message: "Your BMI is in the healthy range",
       };
     } else if (bmi < 30) {
       return {
         category: "Overweight",
-        color: "#ff9800",
+        color: "var(--color-status-warning)",
         message: "Focus on balanced nutrition and consistent training",
       };
     } else {
       return {
         category: "Obese",
-        color: "#f44336",
+        color: "var(--color-status-error)",
         message: "Consider consulting a healthcare professional for guidance",
       };
     }
@@ -1154,25 +1154,25 @@ export class PerformanceDataService {
     if (complianceRate >= 90) {
       return {
         status: "excellent",
-        color: "#10c96b",
+        color: "var(--p-highlight-text-color)",
         message: "Excellent supplement compliance!",
       };
     } else if (complianceRate >= 75) {
       return {
         status: "good",
-        color: "#2196f3",
+        color: "var(--color-status-info)",
         message: "Good compliance. Try to be more consistent.",
       };
     } else if (complianceRate >= 50) {
       return {
         status: "fair",
-        color: "#ff9800",
+        color: "var(--color-status-warning)",
         message: "Compliance needs improvement. Set reminders to help.",
       };
     } else {
       return {
         status: "poor",
-        color: "#f44336",
+        color: "var(--color-status-error)",
         message: "Low compliance. Consider reviewing your supplement regimen.",
       };
     }

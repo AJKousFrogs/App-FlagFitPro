@@ -195,6 +195,31 @@ test.describe("Design System Compliance", () => {
     }
   });
 
+  test("should have design tokens available on document root (light mode)", async ({
+    page,
+  }) => {
+    await page.goto(`${BASE_URL}/`);
+    await page.waitForLoadState("domcontentloaded");
+
+    const tokens = await page.evaluate(() => {
+      const root = document.documentElement;
+      const style = window.getComputedStyle(root);
+      return {
+        "ds-primary-green": style.getPropertyValue("--ds-primary-green").trim(),
+        "color-text-primary": style
+          .getPropertyValue("--color-text-primary")
+          .trim(),
+        "space-4": style.getPropertyValue("--space-4").trim(),
+        "border-1": style.getPropertyValue("--border-1").trim(),
+      };
+    });
+
+    expect(tokens["ds-primary-green"]).toBeTruthy();
+    expect(tokens["color-text-primary"]).toBeTruthy();
+    expect(tokens["space-4"]).toBeTruthy();
+    expect(tokens["border-1"]).toBe("1px");
+  });
+
   test("should use design tokens for colors instead of hardcoded values", async ({
     page,
   }) => {

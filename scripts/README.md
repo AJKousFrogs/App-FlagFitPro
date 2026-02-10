@@ -34,6 +34,18 @@ Run these via npm commands from the project root:
 | `npm run db:tables` | List all Supabase tables      |
 | `npm run verify:db` | Verify database objects exist |
 
+## Migration Scripts
+
+**Canonical approach:** `npm run migrate:quickstart`
+
+| Script | Purpose |
+|--------|---------|
+| `migration-quickstart.sh` | Interactive setup: .env, verify connection, run migrations, data migration |
+| `run-all-migrations-supabase.sh` | Run all SQL from `database/migrations/` via psql (called by quickstart) |
+| `apply-migration.js` | Apply a single migration file: `node scripts/apply-migration.js database/migrations/XXX.sql` |
+| `migrate-supabase-data.js` | Migrate data from old Supabase project (`npm run migrate:data`) |
+| `open-supabase-sql-editor.sh` | Open Supabase Dashboard SQL Editor with consolidated SQL path |
+
 ## Diagnostics & Health Checks
 
 | Command                        | Description                |
@@ -67,11 +79,11 @@ Run these via npm commands from the project root:
 
 ### Validation & Auditing
 
-- `verify-db-objects.cjs` - Verify database objects
-- `check-consent-violations.cjs` - Check GDPR consent violations
-- `performance-validation.cjs` - Performance benchmarks
+- `verify-db-objects.js` - Verify database objects
+- `check-consent-violations.js` - Check GDPR consent violations
+- `performance-validation.js` - Performance benchmarks
 - `database-audit.js` - Database audit utility
-- `comprehensiveDatabaseAudit.cjs` - Comprehensive DB audit
+- `comprehensiveDatabaseAudit.js` - Comprehensive DB audit
 - `check-acwr-consistency.js` - ACWR (Acute:Chronic Workload Ratio) consistency
 - `audit-routes.js` - Route entry classification audit
 
@@ -86,7 +98,7 @@ Run these via npm commands from the project root:
 
 - `build-css.js` - CSS processing
 - `build-angular.sh` - Angular build script
-- `inject-env-into-html.js` - Environment injection
+- `inject-env-into-html-angular.js` - Environment injection for Angular build output (used in Netlify deploy)
 
 ### Utilities
 
@@ -110,7 +122,7 @@ Run these via npm commands from the project root:
 
 The `archive/` directory contains deprecated or superseded scripts that are kept for reference:
 
-- Duplicate `.js` versions of `.cjs` scripts
+- Legacy script backups
 - Older versions of seed scripts (e.g., non-corrected versions)
 - Theme/styling scripts that have been integrated elsewhere
 

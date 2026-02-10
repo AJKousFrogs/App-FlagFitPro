@@ -273,8 +273,8 @@ export class SkeletonLoaderComponent {
   // Angular 21: Use input() signals
   variant = input<SkeletonVariant>("text");
   width = input<string>("100%");
-  height = input<string>("20px");
-  size = input<string>("40px");
+  height = input<string>("var(--space-5)");
+  size = input<string>("var(--icon-container-md)");
   columns = input<number[]>([1, 2, 1, 1]);
   delay = input<number>(0);
 
@@ -317,8 +317,8 @@ export class SkeletonRepeatComponent {
   variant = input<SkeletonVariant>("text");
   count = input<number>(3);
   width = input<string>("100%");
-  height = input<string>("20px");
-  size = input<string>("40px");
+  height = input<string>("var(--space-5)");
+  size = input<string>("var(--icon-container-md)");
   columns = input<number[]>([1, 2, 1, 1]);
   staggerDelay = input<number>(75);
   layout = input<"vertical" | "horizontal" | "grid">("vertical");

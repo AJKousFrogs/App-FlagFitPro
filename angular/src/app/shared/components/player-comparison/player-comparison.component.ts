@@ -477,7 +477,7 @@ export class PlayerComparisonComponent {
       r: {
         beginAtZero: true,
         grid: {
-          color: "rgba(0, 0, 0, 0.1)",
+          color: "var(--color-border-subtle)",
         },
       },
     },
@@ -513,9 +513,9 @@ export class PlayerComparisonComponent {
             this.normalizeValue(p1.speed40yd || 5, 4, 6, true),
             this.normalizeValue(p1.agility || 0, 0, 100),
           ],
-          backgroundColor: "rgba(59, 130, 246, 0.2)",
-          borderColor: "rgb(59, 130, 246)",
-          pointBackgroundColor: "rgb(59, 130, 246)",
+          backgroundColor: "rgba(var(--primitive-info-500-rgb), 0.2)",
+          borderColor: "rgb(var(--primitive-info-500-rgb))",
+          pointBackgroundColor: "rgb(var(--primitive-info-500-rgb))",
         },
         {
           label: p2.name,
@@ -527,9 +527,9 @@ export class PlayerComparisonComponent {
             this.normalizeValue(p2.speed40yd || 5, 4, 6, true),
             this.normalizeValue(p2.agility || 0, 0, 100),
           ],
-          backgroundColor: "rgba(139, 92, 246, 0.2)",
-          borderColor: "rgb(139, 92, 246)",
-          pointBackgroundColor: "rgb(139, 92, 246)",
+          backgroundColor: "rgba(var(--primitive-purple-500-rgb), 0.2)",
+          borderColor: "rgb(var(--primitive-purple-500-rgb))",
+          pointBackgroundColor: "rgb(var(--primitive-purple-500-rgb))",
         },
       ],
     };

@@ -20,7 +20,7 @@ import { ProgressBar } from "primeng/progressbar";
   imports: [CommonModule, ProgressBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./acwr-baseline.component.html",
-  styleUrls: ["./acwr-baseline.component.scss"],
+  styleUrl: "./acwr-baseline.component.scss",
 })
 export class AcwrBaselineComponent {
   daysLogged = input.required<number>();

@@ -39,7 +39,7 @@ import { Dialog } from "primeng/dialog";
     </p-dialog>
   `,
   styles: [
-    ".dialog-body { margin-top: 1rem; }",
+    ".dialog-body { margin-top: var(--space-4); }",
   ],
 })
 export class AppDialogComponent {

@@ -44,7 +44,7 @@
     position: absolute;
     top: 50%;
     width: 45%;
-    height: 0.0625rem;
+    height: var(--border-1);
     background: var(--color-border-secondary);
   }
 

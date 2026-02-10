@@ -9,16 +9,17 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 import { normalizePlayerName } from "../../shared/utils/format.utils";
 import {
-  Player,
-  PlayerStatus,
-  StaffByCategory,
-  StaffCategory,
-  StaffMember,
-  TeamInvitation,
-  TeamRole,
-  TeamStat,
+    Player,
+    PlayerStatus,
+    StaffByCategory,
+    StaffCategory,
+    StaffMember,
+    TeamInvitation,
+    TeamRole,
+    TeamStat,
 } from "./roster.models";
 
 /**
@@ -405,7 +406,7 @@ export class RosterService {
       );
     } catch (error: unknown) {
       this.logger.error("[RosterService] Error loading roster:", error);
-      this.error.set(this.getErrorMessage(error));
+      this.error.set(getErrorMessage(error, "Failed to load roster data"));
     } finally {
       this.isLoading.set(false);
     }
@@ -454,7 +455,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error adding player:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to add player",
+        error: getErrorMessage(error, "Failed to add player"),
       };
     }
   }
@@ -491,7 +492,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error updating player:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to update player",
+        error: getErrorMessage(error, "Failed to update player"),
       };
     }
   }
@@ -516,7 +517,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error removing player:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to remove player",
+        error: getErrorMessage(error, "Failed to remove player"),
       };
     }
   }
@@ -542,7 +543,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error updating status:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to update status",
+        error: getErrorMessage(error, "Failed to update status"),
       };
     }
   }
@@ -568,7 +569,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error bulk updating status:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to update status",
+        error: getErrorMessage(error, "Failed to update status"),
       };
     }
   }
@@ -593,7 +594,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error bulk removing players:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to remove players",
+        error: getErrorMessage(error, "Failed to remove players"),
       };
     }
   }
@@ -655,7 +656,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error sending invitation:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to send invitation",
+        error: getErrorMessage(error, "Failed to send invitation"),
       };
     }
   }
@@ -764,7 +765,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error resending invitation:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to resend invitation",
+        error: getErrorMessage(error, "Failed to resend invitation"),
       };
     }
   }
@@ -789,7 +790,7 @@ export class RosterService {
       this.logger.error("[RosterService] Error cancelling invitation:", error);
       return {
         success: false,
-        error: this.extractErrorMessage(error) || "Failed to cancel invitation",
+        error: getErrorMessage(error, "Failed to cancel invitation"),
       };
     }
   }
@@ -1095,23 +1096,4 @@ export class RosterService {
     return "coaching";
   }
 
-  private getErrorMessage(error: unknown): string {
-    const err = error as { status?: number };
-    if (err?.status === 401 || err?.status === 403) {
-      return "Your session has expired. Please log in again.";
-    } else if (err?.status && err.status >= 500) {
-      return "The server is temporarily unavailable. Please try again later.";
-    }
-    return "Failed to load roster data. Please try again.";
-  }
-
-  private extractErrorMessage(error: unknown): string {
-    if (error instanceof Error) {
-      return error.message;
-    }
-    if (typeof error === "object" && error !== null && "message" in error) {
-      return String((error as { message: unknown }).message);
-    }
-    return String(error);
-  }
 }

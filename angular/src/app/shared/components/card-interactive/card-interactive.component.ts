@@ -42,29 +42,29 @@ import { CommonModule } from "@angular/common";
       .card {
         background: var(--surface-primary);
         border-radius: var(--p-border-radius);
-        border: 1px solid var(--p-surface-border);
+        border: var(--border-1) solid var(--p-surface-border);
         cursor: pointer;
         transition: all 0.2s ease;
         overflow: hidden;
       }
 
       .card:focus {
-        outline: 2px solid var(--p-primary-color);
-        outline-offset: 2px;
+        outline: var(--border-2) solid var(--p-primary-color);
+        outline-offset: var(--space-1);
       }
 
       .card:hover {
-        box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
-        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        transform: translateY(calc(var(--border-2) * -1));
       }
 
       .card.selected {
         border-color: var(--color-brand-primary);
-        box-shadow: var(--shadow-focus, 0 0 0 3px rgba(76, 175, 80, 0.1));
+        box-shadow: var(--shadow-focus);
       }
 
       .card-body {
-        padding: 1.5rem;
+        padding: var(--space-6);
       }
     `,
   ],

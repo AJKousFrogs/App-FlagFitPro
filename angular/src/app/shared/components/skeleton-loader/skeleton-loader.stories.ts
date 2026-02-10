@@ -67,7 +67,7 @@ const meta: Meta<SkeletonLoaderComponent> = {
       control: "text",
       description: "Height of the skeleton",
       table: {
-        defaultValue: { summary: "20px" },
+        defaultValue: { summary: "var(--space-5)" },
       },
     },
     delay: {
@@ -116,22 +116,22 @@ export const Title: Story = {
 export const Avatar: Story = {
   args: {
     variant: "avatar",
-    size: "48px",
+    size: "var(--icon-container-lg)",
   },
 };
 
 export const Thumbnail: Story = {
   args: {
     variant: "thumbnail",
-    width: "200px",
-    height: "150px",
+    width: "var(--size-200)",
+    height: "var(--size-150)",
   },
 };
 
 export const Button: Story = {
   args: {
     variant: "button",
-    width: "120px",
+    width: "var(--size-120)",
   },
 };
 

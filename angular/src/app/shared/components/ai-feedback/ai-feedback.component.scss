@@ -146,8 +146,8 @@
 
 @include respond-to(sm) {
   .feedback-btn {
-    width: calc(var(--space-6) + var(--space-1)); // 1.75rem
-    height: calc(var(--space-6) + var(--space-1)); // 1.75rem
+    width: calc(var(--space-6) + var(--space-1)); // var(--badge-lg)
+    height: calc(var(--space-6) + var(--space-1)); // var(--badge-lg)
   }
 
   .feedback-btn i {

@@ -335,8 +335,8 @@ interface VideoSuggestion {
                   <div class="suggestion-card skeleton">
                     <p-skeleton
                       width="100%"
-                      height="80px"
-                      borderRadius="12px"
+                      height="var(--size-80)"
+                      borderRadius="var(--radius-xl)"
                     ></p-skeleton>
                   </div>
                 }

@@ -44,7 +44,7 @@
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   font-size: var(--ds-font-size-xs);
-  font-weight: 600;
+  font-weight: var(--ds-font-weight-semibold);
   background: var(--color-warning-bg);
   color: var(--color-warning-text-accessible);
   border: var(--border-1) solid var(--color-warning);

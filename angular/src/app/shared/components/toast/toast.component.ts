@@ -37,8 +37,6 @@ import { Toast } from "primeng/toast";
       [preventOpenDuplicates]="preventDuplicates()"
       [showTransformOptions]="showTransformOptions()"
       [hideTransformOptions]="hideTransformOptions()"
-      [showTransitionOptions]="showTransitionOptions()"
-      [hideTransitionOptions]="hideTransitionOptions()"
     >
       <ng-template let-message pTemplate="message">
         <div class="toast-content">
@@ -79,10 +77,6 @@ export class ToastComponent implements OnInit, OnDestroy {
   preventDuplicates = input<boolean>(true);
   showTransformOptions = input<string>("translateX(100%)");
   hideTransformOptions = input<string>("translateX(100%)");
-  showTransitionOptions = input<string>(
-    "300ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-  );
-  hideTransitionOptions = input<string>("200ms cubic-bezier(0.4, 0, 1, 1)");
 
   ngOnInit(): void {
     // Component initialized

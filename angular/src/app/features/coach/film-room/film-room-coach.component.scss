@@ -18,7 +18,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
   padding-bottom: var(--space-2);
   overflow-x: auto;
 
@@ -101,7 +101,7 @@
 .film-card {
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 0.0625rem solid var(--ds-border-default);
+  border: var(--border-1) solid var(--ds-border-default);
   overflow: hidden;
 }
 
@@ -111,7 +111,7 @@
   align-items: center;
   padding: var(--space-3) var(--space-4);
   background: var(--ds-surface-base);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   .film-title {
     display: flex;
@@ -140,15 +140,15 @@
   display: flex;
   gap: var(--space-4);
   padding: var(--space-4);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 }
 
 .film-thumbnail {
   flex-shrink: 0;
 
   .thumbnail-placeholder {
-    width: 7.5rem;
-    height: 5rem;
+    width: var(--size-120);
+    height: var(--size-80);
     background: var(--primitive-neutral-800);
     border-radius: var(--radius-md);
     display: flex;
@@ -182,7 +182,7 @@
 
 .film-assignment {
   padding: var(--space-3) var(--space-4);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   p {
     margin: 0 0 var(--space-2) 0;

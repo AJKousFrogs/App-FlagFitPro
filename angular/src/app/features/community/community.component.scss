@@ -175,7 +175,7 @@
 
 .community-grid {
   display: grid;
-  grid-template-columns: 1fr 20rem;
+  grid-template-columns: 1fr var(--element-max-width-md);
   gap: var(--space-5);
   align-items: start;
 }
@@ -306,8 +306,8 @@
 
 /* Focus state for accessibility */
 .media-btn:focus-visible {
-  outline: var(--focus-outline-width, 0.125rem) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset, 0.125rem);
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }
 
 /* Touch device styles */
@@ -1435,7 +1435,7 @@
 
   &:focus-visible {
     background: var(--surface-primary);
-    box-shadow: inset 0 0 0 0.125rem var(--ds-primary-green);
+    box-shadow: inset 0 0 0 var(--border-2) var(--ds-primary-green);
     outline: none;
   }
 }
@@ -1443,22 +1443,6 @@
 /* ============================================
    BUTTON STYLING - Using CSS classes
    ============================================ */
-
-.post-btn {
-  padding: var(--space-2) var(--space-5);
-  transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-
-  &:hover:not(:disabled) {
-    transform: translateY(calc(-1 * var(--space-1) / 2));
-    box-shadow: var(--hover-shadow-md);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
-  }
-}
 
 /* ============================================
    INPUT STYLING - Using CSS classes
@@ -1498,19 +1482,7 @@
 
 .poll-dialog,
 .location-dialog {
-  .dialog-header {
-    padding: var(--space-5);
-    border-bottom: var(--border-1) solid var(--color-border-primary);
-  }
-
-  .dialog-content {
-    padding: var(--space-5);
-  }
-
-  .dialog-footer {
-    padding: var(--space-4) var(--space-5);
-    border-top: var(--border-1) solid var(--color-border-primary);
-  }
+  display: block;
 }
 
 /* ============================================

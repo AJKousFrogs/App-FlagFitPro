@@ -7,14 +7,14 @@
 
 .performance-metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15.625rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min-height-xl), 1fr));
   gap: var(--space-4);
-  margin-top: 1rem;
+  margin-top: var(--space-4);
 }
 
 .metric-card {
   padding: var(--space-4);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   background: var(--surface-card);
   transition:
@@ -23,13 +23,13 @@
 }
 
 .metric-card:hover {
-  transform: translateY(-0.125rem);
+  transform: translateY(calc(-1 * var(--border-2)));
   box-shadow: var(--shadow-2);
 }
 
 .metric-icon {
-  width: 3rem;
-  height: 3rem;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +64,7 @@
 }
 
 .metric-progress {
-  height: 0.5rem;
+  height: var(--space-2);
 }
 
 @include respond-to(md) {

@@ -1306,7 +1306,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .announcement-close-btn:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--overlay-white-15);
         opacity: 1;
       }
 
@@ -1335,7 +1335,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--overlay-white-15);
         border-radius: var(--radius-md);
       }
 

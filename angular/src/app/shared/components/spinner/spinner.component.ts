@@ -36,28 +36,28 @@ import { CommonModule } from "@angular/common";
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       .spinner-circle {
-        width: 2rem;
-        height: 2rem;
-        border: 3px solid var(--p-surface-border);
+        width: var(--space-8);
+        height: var(--space-8);
+        border: var(--border-3) solid var(--p-surface-border);
         border-top-color: var(--p-primary-color);
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
       }
 
       .spinner-sm .spinner-circle {
-        width: 1rem;
-        height: 1rem;
-        border-width: 2px;
+        width: var(--space-4);
+        height: var(--space-4);
+        border-width: var(--border-2);
       }
 
       .spinner-lg .spinner-circle {
-        width: 3rem;
-        height: 3rem;
-        border-width: 4px;
+        width: var(--space-12);
+        height: var(--space-12);
+        border-width: var(--border-4);
       }
 
       .spinner-text {
@@ -72,7 +72,7 @@ import { CommonModule } from "@angular/common";
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: var(--surface-overlay);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -81,7 +81,7 @@ import { CommonModule } from "@angular/common";
 
       .spinner-overlay .spinner-container {
         background-color: var(--p-surface-0);
-        padding: 2rem;
+        padding: var(--space-8);
         border-radius: var(--p-border-radius);
         box-shadow: var(--p-shadow-lg);
       }

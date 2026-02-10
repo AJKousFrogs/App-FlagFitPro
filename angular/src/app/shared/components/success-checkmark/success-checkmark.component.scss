@@ -112,7 +112,7 @@
 }
 
 .success-icon.variant-outlined {
-  border: 0.125rem solid var(--checkmark-color);
+  border: var(--border-2) solid var(--checkmark-color);
   border-radius: var(--radius-full);
 }
 
@@ -172,7 +172,7 @@
   color: var(--ds-primary-green);
   text-align: center;
   opacity: 0;
-  transform: translateY(0.3125rem);
+  transform: translateY(calc(var(--space-1) + var(--border-1)));
 }
 
 .animated .success-label {

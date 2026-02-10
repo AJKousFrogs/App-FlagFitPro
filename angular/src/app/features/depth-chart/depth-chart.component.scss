@@ -36,7 +36,7 @@
 
 .position-card {
   background: var(--surface-card);
-  border: 0.0625rem solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
@@ -47,7 +47,7 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background: var(--surface-100);
-  border-bottom: 0.0625rem solid var(--surface-border);
+  border-bottom: var(--border-1) solid var(--surface-border);
 }
 
 .position-abbr {
@@ -82,7 +82,7 @@
   padding: var(--space-3);
   background: var(--surface-50);
   border-radius: var(--radius-lg);
-  border: 0.0625rem solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   cursor: grab;
   transition:
     transform var(--transition-fast),
@@ -159,11 +159,6 @@
   &:hover {
     color: var(--color-text-primary);
   }
-}
-
-.add-backup-btn {
-  width: 100%;
-  justify-content: center;
 }
 
 // .card-header - REMOVED (use app-card-shell component)

@@ -88,6 +88,11 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <!-- Tab 2: Settings -->
             <p-tabpanel value="2">
               <div class="tab-content-grid">
+                <div class="tool-card" routerLink="/coach/team">
+                  <i class="pi pi-cog"></i>
+                  <h3>Team Settings</h3>
+                  <p>Update team profile and preferences.</p>
+                </div>
                 <div class="tool-card" routerLink="/team/create">
                   <i class="pi pi-plus"></i>
                   <h3>Create New Team</h3>

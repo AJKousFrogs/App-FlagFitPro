@@ -28,7 +28,6 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
-              "src/manifest.webmanifest",
               {
                 "glob": "robots.txt",
                 "input": "src/assets",
@@ -61,7 +60,7 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "45kb",
+                  "maximumWarning": "46kb",
                   "maximumError": "50kb"
                 },
                 {

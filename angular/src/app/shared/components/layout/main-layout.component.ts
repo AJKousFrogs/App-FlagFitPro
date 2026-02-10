@@ -60,7 +60,7 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
     <!-- Keyboard Shortcuts Modal (Global) -->
     <app-keyboard-shortcuts-modal></app-keyboard-shortcuts-modal>
   `,
-  styleUrls: ["./main-layout.component.scss"],
+  styleUrl: "./main-layout.component.scss",
 })
 export class MainLayoutComponent implements OnInit {
   private themeService = inject(ThemeService);

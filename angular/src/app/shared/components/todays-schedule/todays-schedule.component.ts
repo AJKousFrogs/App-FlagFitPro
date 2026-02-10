@@ -59,7 +59,7 @@ export interface ScheduleItem {
     Skeleton,
   ],
   templateUrl: "./todays-schedule.component.html",
-  styleUrls: ["./todays-schedule.component.scss"],
+  styleUrl: "./todays-schedule.component.scss",
 })
 export class TodaysScheduleComponent {
   private readonly trainingService = inject(UnifiedTrainingService);

@@ -133,7 +133,7 @@ export const ROUTES = {
   // Coach Features
   COACH: "/coach",
   COACH_ANALYTICS: "/coach/analytics",
-  COACH_TEAM_MANAGEMENT: "/coach/team-management",
+  COACH_TEAM_MANAGEMENT: "/coach/team",
   COACH_PRACTICE_PLANNER: "/coach/practice-planner",
   COACH_INJURY_MANAGEMENT: "/coach/injury-management",
   COACH_KNOWLEDGE_BASE: "/coach/knowledge-base",
@@ -384,30 +384,30 @@ export const UI_LIMITS = {
  */
 export const COLORS = {
   // Brand colors (use BRAND_COLORS from design-tokens.util for DOM)
-  PRIMARY: "#089949", // --ds-primary-green
-  PRIMARY_LIGHT: "#10c96b", // --color-brand-primary-light
-  PRIMARY_DARK: "#036d35", // --ds-primary-green-hover
+  PRIMARY: "var(--p-highlight-text-color)", // --ds-primary-green
+  PRIMARY_LIGHT: "var(--p-highlight-text-color)", // --color-brand-primary-light
+  PRIMARY_DARK: "var(--hover-text-primary)", // --ds-primary-green-hover
 
   // Semantic status colors (use STATUS_COLORS from design-tokens.util for DOM)
-  SUCCESS: "#089949", // --color-status-success (brand green)
-  SUCCESS_LIGHT: "#10c96b", // --color-brand-secondary
-  WARNING: "#f59e0b", // --primitive-warning-500
-  WARNING_LIGHT: "#fbbf24", // --primitive-warning-400
-  ERROR: "#ef4444", // --primitive-error-500
-  ERROR_LIGHT: "#f87171", // --primitive-error-400
-  INFO: "#3b82f6", // --color-chart-tertiary
+  SUCCESS: "var(--p-highlight-text-color)", // --color-status-success (brand green)
+  SUCCESS_LIGHT: "var(--p-highlight-text-color)", // --color-brand-secondary
+  WARNING: "var(--color-chart-quaternary)", // --primitive-warning-500
+  WARNING_LIGHT: "var(--color-icon-notifications)", // --primitive-warning-400
+  ERROR: "var(--color-chart-quinary)", // --primitive-error-500
+  ERROR_LIGHT: "var(--color-error-text-accessible-dark)", // --primitive-error-400
+  INFO: "var(--color-chart-tertiary)", // --color-chart-tertiary
   INFO_LIGHT: "#38bdf8", // --primitive-info-400
 
   // UI accent colors (map to design-system-tokens.scss)
-  BLUE: "#3b82f6", // --color-chart-tertiary
+  BLUE: "var(--color-chart-tertiary)", // --color-chart-tertiary
   CYAN: "#0284c7",
-  PURPLE: "#8b5cf6", // --color-status-help
+  PURPLE: "var(--color-chart-senary)", // --color-status-help
   PURPLE_LIGHT: "#a855f7",
-  TEAL: "#14b8a6",
-  GRAY: "#6b7280", // --color-workout-rest
-  SLATE: "#94a3b8",
-  AMBER: "#f59e0b", // --primitive-warning-500
-  ORANGE: "#f97316",
+  TEAL: "var(--color-phase-late-season)",
+  GRAY: "var(--color-workout-rest)", // --color-workout-rest
+  SLATE: "var(--p-surface-400)",
+  AMBER: "var(--color-chart-quaternary)", // --primitive-warning-500
+  ORANGE: "var(--ds-primary-orange)",
   LIME: "#84cc16",
   GREEN: "#22c55e",
   YELLOW: "#eab308",
@@ -415,12 +415,12 @@ export const COLORS = {
   // Chart-specific colors (for canvas rendering only)
   // Maps to: --color-chart-1 through --color-chart-6
   CHART: [
-    "#089949", // --color-chart-1 (ds-primary-green)
-    "#10c96b", // --color-chart-2 (brand secondary)
-    "#f1c40f", // --color-chart-3 (gold)
-    "#e74c3c", // --color-chart-4 (red)
-    "#3498db", // --color-chart-5 (blue)
-    "#9b59b6", // --color-chart-6 (purple)
+    "var(--p-highlight-text-color)", // --color-chart-1 (ds-primary-green)
+    "var(--p-highlight-text-color)", // --color-chart-2 (brand secondary)
+    "var(--color-chart-3)", // --color-chart-3 (gold)
+    "var(--color-chart-4)", // --color-chart-4 (red)
+    "var(--color-chart-5)", // --color-chart-5 (blue)
+    "var(--color-chart-6)", // --color-chart-6 (purple)
   ],
 } as const;
 

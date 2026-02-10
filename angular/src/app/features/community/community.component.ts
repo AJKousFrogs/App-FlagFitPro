@@ -13,6 +13,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Avatar } from "primeng/avatar";
@@ -943,6 +944,7 @@ export class CommunityComponent implements OnInit {
       .get<CommunityFeedResponse>(
         `/api/community?feed=true&limit=${this.POSTS_PER_PAGE}&offset=${offset}`,
       )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response?.data?.posts) {
@@ -1006,6 +1008,7 @@ export class CommunityComponent implements OnInit {
     // Load posts from real API
     this.apiService
       .get<CommunityFeedResponse>("/api/community?feed=true")
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response?.data?.posts) {
@@ -1040,6 +1043,7 @@ export class CommunityComponent implements OnInit {
     // Load leaderboard from real API
     this.apiService
       .get<ApiLeaderboardEntry[]>("/api/community?leaderboard=true")
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response?.data) {
@@ -1063,6 +1067,7 @@ export class CommunityComponent implements OnInit {
     // Load trending topics from real API
     this.apiService
       .get<TrendingTopicsResponse>("/api/community?trending=true")
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response?.data?.topics) {
@@ -1169,6 +1174,7 @@ export class CommunityComponent implements OnInit {
         location?: string;
         content?: string;
       }>("/api/community", postData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           const data = response?.data;
@@ -1260,6 +1266,7 @@ export class CommunityComponent implements OnInit {
       .post<{
         success: boolean;
       }>(`/api/community?postId=${post.id}&like=true`, {})
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (_response) => {
           // Update user stats if we liked
@@ -1309,6 +1316,7 @@ export class CommunityComponent implements OnInit {
         .get<{
           comments?: Comment[];
         }>(`/api/community?postId=${post.id}&comment=true`)
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (response) => {
             const comments = response?.data?.comments;
@@ -1356,6 +1364,7 @@ export class CommunityComponent implements OnInit {
     // Call API to persist bookmark
     this.apiService
       .post<void>(`/api/community?postId=${post.id}&bookmark=true`, {})
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           if (!wasBookmarked) {
@@ -1418,6 +1427,7 @@ export class CommunityComponent implements OnInit {
           content: commentContent,
         },
       )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           // Replace temp comment with real one from server
@@ -1560,6 +1570,7 @@ export class CommunityComponent implements OnInit {
             fileType: file.type,
             fileName: file.name,
           })
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: (response) => {
               if (response?.data?.url) {
@@ -1670,6 +1681,7 @@ export class CommunityComponent implements OnInit {
         `/api/community?optionId=${optionId}&pollVote=true`,
         {},
       )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response?.data?.options) {
@@ -1852,6 +1864,7 @@ export class CommunityComponent implements OnInit {
     // Call API to persist comment like
     this.apiService
       .post<void>(`/api/community?commentId=${comment.id}&commentLike=true`, {})
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (err) => {
           this.logger.error("Error toggling comment like:", err);

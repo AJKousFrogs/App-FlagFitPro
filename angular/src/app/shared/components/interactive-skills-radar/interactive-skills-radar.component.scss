@@ -12,7 +12,7 @@
 }
 
 .radar-container {
-  min-height: 25rem;
+  min-height: var(--chart-min-height-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,7 +44,7 @@
   padding: var(--space-4);
   background: var(--surface-card);
   border-radius: var(--radius-md);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
 }
 
 .sub-skill-name {

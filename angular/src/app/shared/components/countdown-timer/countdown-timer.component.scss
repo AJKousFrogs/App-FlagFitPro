@@ -17,8 +17,8 @@
 /* Ring */
 .timer-ring {
   position: relative;
-  width: 11.25rem;
-  height: 11.25rem;
+  width: var(--input-min-width-md);
+  height: var(--input-min-width-md);
 }
 
 .ring-svg {
@@ -99,8 +99,8 @@
 /* Pulse animation */
 .pulse-ring {
   position: absolute;
-  inset: -0.625rem;
-  border: 0.1875rem solid var(--color-status-error);
+  inset: -calc(var(--space-2) + var(--space-0-5));
+  border: var(--space-0-75) solid var(--color-status-error);
   border-radius: 50%;
   animation: pulse-ring 1s ease-out infinite;
 }
@@ -133,7 +133,7 @@
 .preset-btn {
   padding: var(--space-2) var(--space-3);
   background: var(--surface-secondary);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
@@ -161,7 +161,7 @@
 .progress-bar-container {
   width: 100%;
   max-width: var(--element-max-width-sm);
-  height: 0.5rem;
+  height: var(--space-2);
   background: var(--color-border-secondary);
   border-radius: var(--radius-full);
   overflow: hidden;

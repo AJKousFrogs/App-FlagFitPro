@@ -38,7 +38,7 @@
 }
 
 .overview-stat:hover {
-  transform: translateY(-0.125rem);
+  transform: translateY(-var(--border-2));
 }
 
 .overview-value {

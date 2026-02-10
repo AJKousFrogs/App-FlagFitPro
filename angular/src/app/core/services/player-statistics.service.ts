@@ -5,7 +5,7 @@ import { ApiService, API_ENDPOINTS } from "./api.service";
 import { StatisticsCalculationService } from "./statistics-calculation.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
-import type { ApiResponse } from "@shared/types";
+import type { ApiResponse } from "../models/common.models";
 
 export interface PlayerGameStats {
   gameId: string;

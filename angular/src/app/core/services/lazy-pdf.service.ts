@@ -111,11 +111,16 @@ export class LazyPdfService {
       if (!this.html2canvas) {
         throw new Error("html2canvas not loaded");
       }
+      const computedBackground =
+        getComputedStyle(element).backgroundColor ||
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--surface-primary")
+          .trim();
       const canvas = await this.html2canvas(element, {
         scale,
         useCORS: true,
         logging: false,
-        backgroundColor: "#ffffff",
+        backgroundColor: computedBackground || undefined,
       });
 
       // Get canvas dimensions
@@ -179,13 +184,18 @@ export class LazyPdfService {
 
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
+        const computedBackground =
+          getComputedStyle(element).backgroundColor ||
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--surface-primary")
+            .trim();
 
         // Convert to canvas
         const canvas = await this.html2canvas(element, {
           scale,
           useCORS: true,
           logging: false,
-          backgroundColor: "#ffffff",
+          backgroundColor: computedBackground || undefined,
         });
 
         const imgHeight = (canvas.height * imgWidth) / canvas.width;

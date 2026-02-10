@@ -8,7 +8,7 @@
 .smart-breadcrumbs {
   padding: var(--space-4) var(--space-6);
   background: var(--surface-primary);
-  border-bottom: 0.0625rem solid var(--color-border-secondary);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 }
 
 .breadcrumbs-container {

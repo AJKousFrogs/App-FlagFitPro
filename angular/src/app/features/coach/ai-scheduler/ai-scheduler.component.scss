@@ -35,7 +35,7 @@
     var(--ds-surface-elevated)
   );
   border-radius: var(--radius-lg);
-  border: 0.0625rem solid var(--ds-primary-green);
+  border: var(--border-1) solid var(--ds-primary-green);
   margin-bottom: var(--space-4);
 
   .merlin-avatar {
@@ -63,7 +63,7 @@
 .form-step {
   margin-bottom: var(--space-5);
   padding-bottom: var(--space-4);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   h4 {
     margin: 0 0 var(--space-1) 0;
@@ -230,7 +230,7 @@
       var(--ds-surface-elevated)
     );
     border-radius: var(--radius-md);
-    border-left: 0.25rem solid var(--ds-primary-green);
+    border-left: var(--space-1) solid var(--ds-primary-green);
 
     .merlin-icon {
       font-size: var(--ds-font-size-2xl);
@@ -322,7 +322,7 @@
   padding: var(--space-3);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border-left: 0.25rem solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green);
 
   &.rest-day {
     border-left-color: var(--ds-text-tertiary);
@@ -413,7 +413,7 @@
 
 // Modifications Card
 .modifications-card {
-  border-left: 0.25rem solid var(--primitive-warning-500);
+  border-left: var(--space-1) solid var(--primitive-warning-500);
 }
 
 .mod-section {

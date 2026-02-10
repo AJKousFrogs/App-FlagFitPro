@@ -19,8 +19,8 @@
   align-items: center;
   padding: var(--space-4);
   background: var(--surface-overlay-darkest);
-  -webkit-backdrop-filter: blur(0.625rem);
-  backdrop-filter: blur(0.625rem);
+  -webkit-backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
+  backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
 }
 
 .team {
@@ -67,8 +67,8 @@
 
 .ball-marker {
   cursor: pointer;
-  filter: drop-shadow(0 0.125rem 0.25rem var(--surface-overlay));
-  transition: r var(--transition-fast);
+  filter: drop-shadow(0 var(--border-2) var(--space-1) var(--surface-overlay));
+  transition: filter var(--transition-fast);
 }
 
 .ball-marker:hover {
@@ -102,8 +102,8 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-2xl);
   font-weight: var(--ds-font-weight-semibold);
-  -webkit-backdrop-filter: blur(0.625rem);
-  backdrop-filter: blur(0.625rem);
+  -webkit-backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
+  backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
   transition: transform var(--transition-base);
   cursor: pointer;
 }
@@ -123,8 +123,8 @@
   align-items: center;
   padding: var(--space-4);
   background: var(--surface-overlay-dark);
-  -webkit-backdrop-filter: blur(0.625rem);
-  backdrop-filter: blur(0.625rem);
+  -webkit-backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
+  backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
 }
 
 .action-history {
@@ -170,21 +170,4 @@
 .game-tracker.landscape .quick-actions {
   writing-mode: vertical-lr;
   width: var(--space-20);
-}
-
-/* Haptic feedback indicators */
-.haptic-feedback {
-  animation: pulse 0.3s ease-in-out;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
 }

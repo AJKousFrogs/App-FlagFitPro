@@ -107,7 +107,7 @@
   background-color: var(--surface-secondary);
   border-radius: var(--radius-lg);
   border: var(--border-1) solid var(--color-border-default);
-  min-width: 6.25rem;
+  min-width: var(--size-100);
 
   // Decision 14: subtle hover
   transition:
@@ -245,39 +245,6 @@
 }
 
 // =============================================
-// EXPAND BUTTON
-// =============================================
-
-.expand-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-3);
-  background: var(--ds-primary-green-subtle);
-  color: var(--ds-primary-green);
-  border: none;
-  border-radius: var(--radius-lg);
-  font-weight: var(--ds-font-weight-semibold);
-  font-size: var(--ds-font-size-md);
-  cursor: pointer;
-  transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    color var(--motion-fast) var(--ease-standard);
-
-  &:hover {
-    background: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
-  }
-
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--focus-ring-color);
-    outline-offset: var(--focus-outline-offset);
-  }
-}
-
-// =============================================
 // EXPANDED STATE
 // =============================================
 
@@ -317,32 +284,6 @@
     margin: 0;
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
-  }
-}
-
-.close-btn {
-  width: var(--touch-target-sm); /* 2.25rem */
-  height: var(--touch-target-sm);
-  border: none;
-  background: var(--surface-tertiary);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    color var(--motion-fast) var(--ease-standard);
-
-  &:hover {
-    background: var(--color-border-default);
-    color: var(--color-text-primary);
-  }
-
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--focus-ring-color);
-    outline-offset: var(--focus-outline-offset);
   }
 }
 
@@ -444,8 +385,8 @@
 // Accessibility: visually hidden but readable by screen readers
 .visually-hidden {
   position: absolute;
-  width: 0.0625rem;
-  height: 0.0625rem;
+  width: var(--border-1);
+  height: var(--border-1);
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
@@ -623,20 +564,6 @@
   }
 }
 
-.plan-card {
-  background: var(--color-surface-secondary);
-  border-radius: var(--radius-xl);
-  padding: var(--space-5);
-  border: var(--border-1) solid var(--color-border-muted);
-}
-
-.plan-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-4);
-}
-
 .plan-type {
   display: flex;
   align-items: center;
@@ -742,7 +669,7 @@
   height: var(--indicator-size-lg); /* 1rem */
   border-radius: var(--radius-full);
   background: var(--color-surface-primary);
-  border: 0.1875rem solid var(--color-status-success);
+  border: var(--space-0-75) solid var(--color-status-success);
   transform: translateX(-50%);
   transition: left var(--motion-base) var(--ease-standard);
 
@@ -765,7 +692,7 @@
 
 .acwr-value-display {
   text-align: center;
-  min-width: var(--card-min-height-sm); /* 5rem */
+  min-width: var(--card-min-height-sm); /* var(--size-80) */
 
   .value {
     display: block;
@@ -961,13 +888,6 @@
  * Scope: morning-briefing component only
  * Note: PrimeNG overrides moved to _exceptions.scss (uses CSS custom properties)
  */
-.submit-btn {
-  width: 100%;
-  margin-top: var(--space-2);
-
-  // PrimeNG button override moved to _exceptions.scss (DS-EXC-028)
-}
-
 // PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-028)
 .feeling-slider-input {
   flex: 1;
@@ -976,18 +896,12 @@
 }
 
 .sleep-number-input {
-  width: var(--input-min-width-md); /* 9.375rem */
+  width: var(--input-min-width-md); /* var(--size-150) */
 
   // PrimeNG inputnumber overrides moved to _exceptions.scss (DS-EXC-028)
 }
 
 // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-028)
-
-.submit-btn,
-.start-practice-btn {
-  width: 100%;
-  justify-content: center;
-}
 
 /*
  * EXCEPTION: Print styles
@@ -1003,8 +917,6 @@
     border: var(--border-1) solid var(--color-border-default);
   }
 
-  .expand-btn,
-  .close-btn,
   .game-actions {
     display: none;
   }

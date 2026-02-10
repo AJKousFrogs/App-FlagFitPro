@@ -8,13 +8,13 @@
 
 .scroll-to-top-btn {
   position: fixed;
-  bottom: var(--space-6, var(--ds-font-size-3xl));
-  right: var(--space-6, var(--ds-font-size-3xl));
+  bottom: var(--space-6);
+  right: var(--space-6);
   z-index: var(--z-modal);
 
   width: var(--space-12);
   height: var(--space-12);
-  border-radius: var(--radius-full, 624.9375rem);
+  border-radius: var(--radius-full);
 
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
@@ -33,17 +33,16 @@
     background-color var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard);
 
-  animation: slideInUp 0.3s
-    var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+  animation: slideInUp 0.3s var(--ease-spring);
 
   &:hover {
     background: var(--ds-primary-green-hover);
-    transform: translateY(-0.25rem);
+    transform: translateY(calc(var(--space-1) * -1));
     box-shadow: var(--shadow-lg);
   }
 
   &:active {
-    transform: translateY(-0.125rem);
+    transform: translateY(calc(var(--border-2) * -1));
   }
 
   &:focus-visible {
@@ -57,8 +56,8 @@
 
   // Mobile adjustments
   @include respond-to(md) {
-    bottom: var(--space-4, var(--ds-font-size-md));
-    right: var(--space-4, var(--ds-font-size-md));
+    bottom: var(--space-4);
+    right: var(--space-4);
     width: var(--touch-target-md); // WCAG touch target minimum
     height: var(--touch-target-md);
   }
@@ -67,7 +66,7 @@
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(1.25rem);
+    transform: translateY(var(--space-5));
   }
   to {
     opacity: 1;

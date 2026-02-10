@@ -26,7 +26,7 @@ export interface BannerCta {
   imports: [CommonModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./app-banner.component.html",
-  styleUrls: ["./app-banner.component.scss"],
+  styleUrl: "./app-banner.component.scss",
 })
 export class AppBannerComponent {
   type = input<"info" | "warning" | "alert" | "error">("info");

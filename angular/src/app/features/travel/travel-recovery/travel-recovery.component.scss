@@ -433,7 +433,7 @@
   }
 
   &.avoid {
-    background: rgba(var(--primitive-blue-500-rgb, 59, 130, 246), 0.1);
+    background: rgba(var(--primitive-blue-500-rgb), 0.1);
   }
 }
 
@@ -486,11 +486,11 @@
   border-radius: var(--radius-md);
 
   &.recommended {
-    background: rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.1);
+    background: rgba(var(--primitive-success-500-rgb), 0.1);
   }
 
   &.avoid {
-    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+    background: rgba(var(--primitive-error-500-rgb), 0.1);
   }
 
   ul {
@@ -798,7 +798,7 @@
   }
 
   i {
-    font-size: var(--ds-font-size-2xl); /* 1.125rem - consistent icon size */
+    font-size: var(--ds-font-size-2xl); /* var(--icon-base) - consistent icon size */
     color: var(--ds-primary-green);
     width: var(--space-10); /* 2.5rem icon container */
     height: var(--space-10);
@@ -896,7 +896,7 @@
   background: var(--surface-tertiary);
 
   &.risk-low {
-    background: rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.2);
+    background: rgba(var(--primitive-success-500-rgb), 0.2);
   }
 
   &.risk-moderate {
@@ -904,7 +904,7 @@
   }
 
   &.risk-high {
-    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2);
+    background: rgba(var(--primitive-error-500-rgb), 0.2);
   }
 
   &.risk-very-high {
@@ -977,7 +977,7 @@
 
 .warning-symptoms {
   padding: var(--space-4);
-  background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+  background: rgba(var(--primitive-error-500-rgb), 0.1);
   border-radius: var(--radius-lg);
   border: var(--border-1) solid var(--color-status-error);
 
@@ -1179,7 +1179,7 @@
 
 .massage-cautions {
   padding: var(--space-3);
-  background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+  background: rgba(var(--primitive-error-500-rgb), 0.1);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
 
@@ -1321,7 +1321,7 @@
   border-radius: var(--radius-sm);
 
   &.importance-critical {
-    background: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.1);
+    background: rgba(var(--primitive-error-500-rgb), 0.1);
   }
 
   &.importance-high {
@@ -1499,7 +1499,7 @@
   }
 }
 
-@media (min-width: 30.0625rem) and (max-width: 48rem) {
+@media (min-width: 30rem) and (max-width: 48rem) {
   .olympic-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1608,7 +1608,7 @@
   .checklist-item,
   .exercise-card,
   .protocol-section {
-    min-height: var(--touch-target-md); /* 2.75rem */
+    min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
   }
 }
 

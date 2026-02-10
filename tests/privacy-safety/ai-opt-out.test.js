@@ -6,7 +6,7 @@
  * 2. AI endpoints work normally when ai_processing_enabled=true
  * 3. Database function require_ai_consent() raises exception correctly
  *
- * Based on: ai-chat.cjs and migration 071_consent_layer_views_and_functions.sql
+ * Based on: ai-chat.js and migration 071_consent_layer_views_and_functions.sql
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
@@ -106,7 +106,7 @@ describe.skipIf(!canRunTests)("AI Opt-Out", () => {
       // This test requires the API to be running
       // In CI, we test the logic directly instead
 
-      // Simulate the consent check that ai-chat.cjs performs
+      // Simulate the consent check that ai-chat.js performs
       const { data: settings } = await supabaseAdmin
         .from("privacy_settings")
         .select("ai_processing_enabled")
@@ -124,7 +124,7 @@ describe.skipIf(!canRunTests)("AI Opt-Out", () => {
         messageContains: "Privacy Controls",
       };
 
-      // Verify the error structure matches what ai-chat.cjs returns
+      // Verify the error structure matches what ai-chat.js returns
       expect(expectedErrorResponse.statusCode).toBe(403);
       expect(expectedErrorResponse.errorCode).toBe("ai_processing_disabled");
     });

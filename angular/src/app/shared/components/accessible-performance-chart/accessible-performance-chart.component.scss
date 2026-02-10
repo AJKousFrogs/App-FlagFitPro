@@ -20,8 +20,8 @@
 
 .sr-only {
   position: absolute;
-  width: 0.0625rem;
-  height: 0.0625rem;
+  width: var(--border-1);
+  height: var(--border-1);
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
@@ -87,11 +87,6 @@ kbd {
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   box-shadow: var(--shadow-1);
-}
-
-.close-help-btn {
-  width: 100%;
-  margin-top: var(--space-2);
 }
 
 @include respond-to(md) {

@@ -170,10 +170,10 @@ export class ScreenReaderAnnouncerService {
    */
   private applyHiddenStyles(element: HTMLElement): void {
     element.style.position = "absolute";
-    element.style.width = "1px";
-    element.style.height = "1px";
+    element.style.width = "var(--border-1)";
+    element.style.height = "var(--border-1)";
     element.style.padding = "0";
-    element.style.margin = "-1px";
+    element.style.margin = "calc(var(--border-1) * -1)";
     element.style.overflow = "hidden";
     element.style.clip = "rect(0, 0, 0, 0)";
     element.style.whiteSpace = "nowrap";

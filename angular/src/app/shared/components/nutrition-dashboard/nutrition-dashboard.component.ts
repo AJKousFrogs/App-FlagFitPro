@@ -218,8 +218,8 @@ interface Meal {
                     type="doughnut"
                     [data]="getMealNutritionChart(meal)"
                     [options]="doughnutOptions"
-                    [width]="'150px'"
-                    [height]="'150px'"
+                    [width]="'var(--size-150)'"
+                    [height]="'var(--size-150)'"
                   >
                   </p-chart>
                 }

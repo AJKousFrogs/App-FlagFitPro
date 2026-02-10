@@ -4,7 +4,7 @@
 //
 // Design Rules:
 // - Height: ~2.5rem
-// - Border-radius: 8-0.75rem (rounded, NOT pill)
+// - Border-radius: 8-0.calc(var(--size-200) * 6) (rounded, NOT pill)
 // - Active: Green border, green text, subtle background
 // - Inactive: Neutral text, no heavy border
 // ============================================================================

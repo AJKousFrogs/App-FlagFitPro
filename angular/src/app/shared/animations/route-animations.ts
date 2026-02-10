@@ -263,7 +263,10 @@ export const slideUpRouteAnimation: AnimationTriggerMetadata = trigger(
   "slideUpRoute",
   [
     transition(":enter", [
-      style({ transform: "translateY(20px)", opacity: 0 }),
+      style({
+        transform: "translateY(var(--space-5))",
+        opacity: 0,
+      }),
       animate(
         `${DURATION_SLOW} ${EASING_BOUNCE}`,
         style({ transform: "translateY(0)", opacity: 1 }),
@@ -272,7 +275,11 @@ export const slideUpRouteAnimation: AnimationTriggerMetadata = trigger(
     transition(":leave", [
       animate(
         `${DURATION_FAST} ${EASING_ACCELERATE}`,
-        style({ transform: "translateY(-10px)", opacity: 0 }),
+        style({
+          transform:
+            "translateY(calc((var(--space-2) + var(--space-0-5)) * -1))",
+          opacity: 0,
+        }),
       ),
     ]),
   ],
@@ -290,7 +297,7 @@ export const flipRouteAnimation: AnimationTriggerMetadata = trigger(
   "flipRoute",
   [
     transition("* <=> *", [
-      style({ perspective: "1200px" }),
+      style({ perspective: "calc(var(--size-200) * 6)" }),
       query(
         ":enter, :leave",
         [
@@ -362,7 +369,15 @@ export const routeAnimations: AnimationTriggerMetadata = trigger(
         ],
         { optional: true },
       ),
-      query(":enter", [style({ opacity: 0, transform: "translateY(10px)" })], {
+      query(
+        ":enter",
+        [
+          style({
+            opacity: 0,
+            transform: "translateY(calc(var(--space-2) + var(--space-0-5)))",
+          }),
+        ],
+        {
         optional: true,
       }),
       group([
@@ -371,7 +386,11 @@ export const routeAnimations: AnimationTriggerMetadata = trigger(
           [
             animate(
               `${DURATION_FAST} ${EASING_ACCELERATE}`,
-              style({ opacity: 0, transform: "translateY(-10px)" }),
+              style({
+                opacity: 0,
+                transform:
+                  "translateY(calc((var(--space-2) + var(--space-0-5)) * -1))",
+              }),
             ),
           ],
           { optional: true },
@@ -404,7 +423,10 @@ export const pageEnterAnimation: AnimationTriggerMetadata = trigger(
   "pageEnter",
   [
     transition(":enter", [
-      style({ opacity: 0, transform: "translateY(20px)" }),
+      style({
+        opacity: 0,
+        transform: "translateY(var(--space-5))",
+      }),
       animate(
         `${DURATION_SLOW} ${EASING_BOUNCE}`,
         style({ opacity: 1, transform: "translateY(0)" }),
@@ -423,7 +445,11 @@ export const pageLeaveAnimation: AnimationTriggerMetadata = trigger(
     transition(":leave", [
       animate(
         `${DURATION_FAST} ${EASING_ACCELERATE}`,
-        style({ opacity: 0, transform: "translateY(-10px)" }),
+        style({
+          opacity: 0,
+          transform:
+            "translateY(calc((var(--space-2) + var(--space-0-5)) * -1))",
+        }),
       ),
     ]),
   ],
@@ -445,7 +471,11 @@ export const staggerContentAnimation: AnimationTriggerMetadata = trigger(
       query(
         ".stagger-item, [data-stagger]",
         [
-          style({ opacity: 0, transform: "translateY(15px)" }),
+          style({
+            opacity: 0,
+            transform:
+              "translateY(calc(var(--space-3) + var(--space-0-75)))",
+          }),
           animate(
             `${DURATION_NORMAL} ${EASING_BOUNCE}`,
             style({ opacity: 1, transform: "translateY(0)" }),

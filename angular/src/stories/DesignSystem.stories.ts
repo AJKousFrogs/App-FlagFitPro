@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/angular";
 import { applicationConfig } from "@storybook/angular";
-import { provideAnimations } from "@angular/platform-browser/animations";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
@@ -18,7 +18,7 @@ const meta: Meta = {
   title: "Design System/Showcase",
   decorators: [
     applicationConfig({
-      providers: [provideAnimations()],
+      providers: [provideAnimationsAsync()],
     }),
   ],
   parameters: {
@@ -41,20 +41,20 @@ type Story = StoryObj;
 export const Colors: Story = {
   render: () => ({
     template: `
-      <div style="display: grid; gap: 24px; padding: 24px; max-width: 800px;">
-        <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Colors</h2>
+      <div style="display: grid; gap: var(--space-6); padding: var(--space-6); max-width: var(--content-max-width-md);">
+        <h2 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0;">Colors</h2>
         
         <!-- Primary Green -->
         <div>
-          <h3 style="font-size: 1.125rem; margin-bottom: 12px;">Primary Green (#089949)</h3>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <div style="width: 120px; height: 80px; background: #089949; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+          <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Primary Green (var(--p-highlight-text-color))</h3>
+          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+            <div style="width: var(--size-120); height: var(--size-80); background: var(--p-highlight-text-color); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; color: var(--color-text-on-primary); font-weight: var(--ds-font-weight-semibold);">
               Primary
             </div>
-            <div style="width: 120px; height: 80px; background: #036d35; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+            <div style="width: var(--size-120); height: var(--size-80); background: var(--hover-text-primary); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; color: var(--color-text-on-primary); font-weight: var(--ds-font-weight-semibold);">
               Hover
             </div>
-            <div style="width: 120px; height: 80px; background: #0ab85a; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+            <div style="width: var(--size-120); height: var(--size-80); background: var(--color-brand-secondary-hover); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; color: var(--color-text-on-primary); font-weight: var(--ds-font-weight-semibold);">
               Light
             </div>
           </div>
@@ -62,33 +62,33 @@ export const Colors: Story = {
         
         <!-- Text Colors -->
         <div>
-          <h3 style="font-size: 1.125rem; margin-bottom: 12px;">Text Colors</h3>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
-              <div style="color: #1a1a1a; font-weight: 600;">Primary Text (#1a1a1a)</div>
-              <div style="color: #4a4a4a;">Secondary Text (#4a4a4a)</div>
-              <div style="color: #525252;">Muted Text (#525252)</div>
+          <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Text Colors</h3>
+          <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <div style="background: var(--surface-primary); padding: var(--space-3); border-radius: var(--radius-lg); border: var(--border-1) solid var(--color-border-secondary);">
+              <div style="color: var(--color-text-primary); font-weight: var(--ds-font-weight-semibold);">Primary Text (var(--color-text-primary))</div>
+              <div style="color: var(--color-medal-silver-text);">Secondary Text (var(--color-medal-silver-text))</div>
+              <div style="color: var(--p-surface-400);">Muted Text (var(--p-surface-400))</div>
             </div>
-            <div style="background: #089949; padding: 12px; border-radius: 8px;">
-              <div style="color: #ffffff; font-weight: 600;">Text on Primary (#ffffff)</div>
+            <div style="background: var(--p-highlight-text-color); padding: var(--space-3); border-radius: var(--radius-lg);">
+              <div style="color: var(--color-text-on-primary); font-weight: var(--ds-font-weight-semibold);">Text on Primary (var(--color-text-on-primary))</div>
             </div>
           </div>
         </div>
         
         <!-- Status Colors -->
         <div>
-          <h3 style="font-size: 1.125rem; margin-bottom: 12px;">Status Colors</h3>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <div style="width: 120px; height: 60px; background: #63ad0e; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+          <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Status Colors</h3>
+          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+            <div style="width: var(--size-120); height: calc(var(--size-120) * 0.5); background: var(--color-status-success); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--color-text-on-primary); font-weight: var(--ds-font-weight-semibold);">
               Success
             </div>
-            <div style="width: 120px; height: 60px; background: #ffc000; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #92400e; font-weight: 600;">
+            <div style="width: var(--size-120); height: calc(var(--size-120) * 0.5); background: var(--color-status-warning); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--color-warning-text-accessible); font-weight: var(--ds-font-weight-semibold);">
               Warning
             </div>
-            <div style="width: 120px; height: 60px; background: #ff003c; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+            <div style="width: var(--size-120); height: calc(var(--size-120) * 0.5); background: var(--color-status-error); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--color-text-on-primary); font-weight: var(--ds-font-weight-semibold);">
               Error
             </div>
-            <div style="width: 120px; height: 60px; background: #0ea5e9; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+            <div style="width: var(--size-120); height: calc(var(--size-120) * 0.5); background: var(--color-status-info); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--color-text-on-primary); font-weight: var(--ds-font-weight-semibold);">
               Info
             </div>
           </div>
@@ -105,13 +105,13 @@ export const Buttons: Story = {
   render: () => ({
     imports: [Button, CommonModule],
     template: `
-      <div style="display: grid; gap: 24px; padding: 24px; max-width: 800px;">
-        <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Buttons</h2>
+      <div style="display: grid; gap: var(--space-6); padding: var(--space-6); max-width: var(--content-max-width-md);">
+        <h2 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0;">Buttons</h2>
         
         <!-- Primary Buttons -->
         <div>
-          <h3 style="font-size: 1.125rem; margin-bottom: 12px;">Primary Buttons</h3>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Primary Buttons</h3>
+          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
             <p-button label="Start Training" icon="pi pi-play"></p-button>
             <p-button label="Save Changes" icon="pi pi-check"></p-button>
             <p-button label="Primary" [iconOnly]="false"></p-button>
@@ -120,8 +120,8 @@ export const Buttons: Story = {
         
         <!-- Outlined Buttons -->
         <div>
-          <h3 style="font-size: 1.125rem; margin-bottom: 12px;">Outlined Buttons</h3>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Outlined Buttons</h3>
+          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
             <p-button label="Ask Merlin" styleClass="p-button-outlined" icon="pi pi-question"></p-button>
             <p-button label="Cancel" styleClass="p-button-outlined"></p-button>
           </div>
@@ -129,8 +129,8 @@ export const Buttons: Story = {
         
         <!-- Text Buttons -->
         <div>
-          <h3 style="font-size: 1.125rem; margin-bottom: 12px;">Text Buttons</h3>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Text Buttons</h3>
+          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
             <p-button label="Learn More" styleClass="p-button-text"></p-button>
             <p-button label="Skip" styleClass="p-button-text"></p-button>
           </div>
@@ -138,8 +138,8 @@ export const Buttons: Story = {
         
         <!-- Icon Only -->
         <div>
-          <h3 style="font-size: 1.125rem; margin-bottom: 12px;">Icon Only (44x44px)</h3>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <h3 style="font-size: var(--ds-font-size-lg); margin-bottom: var(--space-3);">Icon Only (var(--button-height-md))</h3>
+          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
             <p-button icon="pi pi-plus" [iconOnly]="true"></p-button>
             <p-button icon="pi pi-pencil" [iconOnly]="true"></p-button>
             <p-button icon="pi pi-trash" [iconOnly]="true" styleClass="p-button-danger"></p-button>
@@ -157,20 +157,20 @@ export const Cards: Story = {
   render: () => ({
     imports: [Card, CommonModule],
     template: `
-      <div style="display: grid; gap: 24px; padding: 24px; max-width: 800px;">
-        <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Cards</h2>
+      <div style="display: grid; gap: var(--space-6); padding: var(--space-6); max-width: var(--content-max-width-md);">
+        <h2 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0;">Cards</h2>
         
         <!-- Standard Card -->
         <p-card header="Card Title" styleClass="w-full">
-          <p>Card content with 16px padding and 12px gap between elements.</p>
-          <p>Border radius: 12px</p>
+          <p>Card content with var(--space-4) padding and var(--space-3) gap between elements.</p>
+          <p>Border radius: var(--radius-xl)</p>
         </p-card>
         
         <!-- Card with Footer -->
         <p-card header="Card with Actions" styleClass="w-full">
           <p>This card has a footer with action buttons.</p>
           <ng-template pTemplate="footer">
-            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <div style="display: flex; gap: var(--space-3); justify-content: flex-end;">
               <p-button label="Cancel" styleClass="p-button-outlined"></p-button>
               <p-button label="Save" icon="pi pi-check"></p-button>
             </div>
@@ -187,33 +187,33 @@ export const Cards: Story = {
 export const Spacing: Story = {
   render: () => ({
     template: `
-      <div style="display: grid; gap: 24px; padding: 24px; max-width: 800px;">
-        <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Spacing (8px Grid)</h2>
+      <div style="display: grid; gap: var(--space-6); padding: var(--space-6); max-width: var(--content-max-width-md);">
+        <h2 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0;">Spacing (var(--space-2) Grid)</h2>
         
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 4px; height: 20px; background: #089949; border-radius: 2px;"></div>
-            <span>--space-1: 4px</span>
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <div style="display: flex; align-items: center; gap: var(--space-4);">
+            <div style="width: var(--space-1); height: var(--space-5); background: var(--p-highlight-text-color); border-radius: var(--radius-sm);"></div>
+            <span>--space-1: var(--space-1)</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 8px; height: 20px; background: #089949; border-radius: 2px;"></div>
-            <span>--space-2: 8px</span>
+          <div style="display: flex; align-items: center; gap: var(--space-4);">
+            <div style="width: var(--space-2); height: var(--space-5); background: var(--p-highlight-text-color); border-radius: var(--radius-sm);"></div>
+            <span>--space-2: var(--space-2)</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 12px; height: 20px; background: #089949; border-radius: 2px;"></div>
-            <span>--space-3: 12px</span>
+          <div style="display: flex; align-items: center; gap: var(--space-4);">
+            <div style="width: var(--space-3); height: var(--space-5); background: var(--p-highlight-text-color); border-radius: var(--radius-sm);"></div>
+            <span>--space-3: var(--space-3)</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 16px; height: 20px; background: #089949; border-radius: 2px;"></div>
-            <span>--space-4: 16px</span>
+          <div style="display: flex; align-items: center; gap: var(--space-4);">
+            <div style="width: var(--space-4); height: var(--space-5); background: var(--p-highlight-text-color); border-radius: var(--radius-sm);"></div>
+            <span>--space-4: var(--space-4)</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 24px; height: 20px; background: #089949; border-radius: 2px;"></div>
-            <span>--space-6: 24px</span>
+          <div style="display: flex; align-items: center; gap: var(--space-4);">
+            <div style="width: var(--space-6); height: var(--space-5); background: var(--p-highlight-text-color); border-radius: var(--radius-sm);"></div>
+            <span>--space-6: var(--space-6)</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 32px; height: 20px; background: #089949; border-radius: 2px;"></div>
-            <span>--space-8: 32px</span>
+          <div style="display: flex; align-items: center; gap: var(--space-4);">
+            <div style="width: var(--space-8); height: var(--space-5); background: var(--p-highlight-text-color); border-radius: var(--radius-sm);"></div>
+            <span>--space-8: var(--space-8)</span>
           </div>
         </div>
       </div>
@@ -227,33 +227,33 @@ export const Spacing: Story = {
 export const Typography: Story = {
   render: () => ({
     template: `
-      <div style="display: grid; gap: 24px; padding: 24px; max-width: 800px;">
-        <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Typography</h2>
+      <div style="display: grid; gap: var(--space-6); padding: var(--space-6); max-width: var(--content-max-width-md);">
+        <h2 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0;">Typography</h2>
         
-        <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
           <div>
-            <h1 style="font-size: 1.5rem; font-weight: 600; margin: 0 0 8px 0;">Heading Large (1.5rem / 24px)</h1>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-h2-size</p>
+            <h1 style="font-size: var(--ds-font-size-2xl); font-weight: var(--ds-font-weight-semibold); margin: 0 0 var(--space-2) 0;">Heading Large (var(--ds-font-size-2xl))</h1>
+            <p style="font-size: var(--ds-font-size-sm); color: var(--p-surface-400); margin: 0;">--font-h2-size</p>
           </div>
           
           <div>
-            <h2 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 8px 0;">Heading Small (1.125rem / 18px)</h2>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-h4-size</p>
+            <h2 style="font-size: var(--ds-font-size-lg); font-weight: var(--ds-font-weight-semibold); margin: 0 0 var(--space-2) 0;">Heading Small (var(--ds-font-size-lg))</h2>
+            <p style="font-size: var(--ds-font-size-sm); color: var(--p-surface-400); margin: 0;">--font-h4-size</p>
           </div>
           
           <div>
-            <p style="font-size: 1rem; margin: 0 0 8px 0;">Body Medium (1rem / 16px)</p>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-body-size</p>
+            <p style="font-size: var(--ds-font-size-md); margin: 0 0 var(--space-2) 0;">Body Medium (var(--ds-font-size-md))</p>
+            <p style="font-size: var(--ds-font-size-sm); color: var(--p-surface-400); margin: 0;">--font-body-size</p>
           </div>
           
           <div>
-            <p style="font-size: 0.875rem; margin: 0 0 8px 0;">Body Small (0.875rem / 14px)</p>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-body-sm-size</p>
+            <p style="font-size: var(--ds-font-size-sm); margin: 0 0 var(--space-2) 0;">Body Small (var(--ds-font-size-sm))</p>
+            <p style="font-size: var(--ds-font-size-sm); color: var(--p-surface-400); margin: 0;">--font-body-sm-size</p>
           </div>
           
           <div>
-            <p style="font-size: 0.75rem; margin: 0 0 8px 0;">Body Extra Small (0.75rem / 12px)</p>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-caption-size</p>
+            <p style="font-size: var(--ds-font-size-xs); margin: 0 0 var(--space-2) 0;">Body Extra Small (var(--ds-font-size-xs))</p>
+            <p style="font-size: var(--ds-font-size-sm); color: var(--p-surface-400); margin: 0;">--font-caption-size</p>
           </div>
         </div>
       </div>

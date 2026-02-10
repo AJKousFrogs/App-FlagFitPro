@@ -215,15 +215,15 @@ import { capitalize } from "../../shared/utils/format.utils";
                   <div class="exercises-grid">
                     @for (i of [1, 2, 3, 4, 5, 6]; track i) {
                       <p-card styleClass="exercise-card skeleton-card">
-                        <p-skeleton height="200px"></p-skeleton>
+                        <p-skeleton height="var(--size-200)"></p-skeleton>
                         <p-skeleton
                           width="70%"
-                          height="1.5rem"
+                          height="var(--space-6)"
                           styleClass="mt-3"
                         ></p-skeleton>
                         <p-skeleton
                           width="40%"
-                          height="1rem"
+                          height="var(--space-4)"
                           styleClass="mt-2"
                         ></p-skeleton>
                       </p-card>

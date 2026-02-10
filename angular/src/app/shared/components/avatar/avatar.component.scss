@@ -24,7 +24,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border: 0.125rem solid var(--overlay-white-15);
+  border: var(--border-2) solid var(--overlay-white-15);
   box-shadow: var(--shadow-1);
   transition:
     transform var(--transition-base) ease,
@@ -44,8 +44,8 @@
 }
 
 .avatar-md {
-  width: var(--avatar-size-md); // 2.75rem / 2.75rem
-  height: var(--avatar-size-md); // 2.75rem / 2.75rem
+  width: var(--avatar-size-md); // 2.calc(var(--size-200) * 6) / 2.calc(var(--size-200) * 6)
+  height: var(--avatar-size-md); // 2.calc(var(--size-200) * 6) / 2.calc(var(--size-200) * 6)
   font-size: var(--ds-font-size-md);
   letter-spacing: var(--ds-letter-spacing-wide);
 }
@@ -58,8 +58,8 @@
 }
 
 .avatar-xl {
-  width: var(--avatar-size-2xl); // 5rem / 5rem
-  height: var(--avatar-size-2xl); // 5rem / 5rem
+  width: var(--avatar-size-2xl); // var(--size-80) / var(--size-80)
+  height: var(--avatar-size-2xl); // var(--size-80) / var(--size-80)
   font-size: var(--ds-font-size-2xl);
   letter-spacing: var(--ds-letter-spacing-0-1em);
 }
@@ -78,10 +78,10 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  width: var(--space-3); // 0.75rem / 0.75rem
-  height: var(--space-3); // 0.75rem / 0.75rem
+  width: var(--space-3); // 0.calc(var(--size-200) * 6) / 0.calc(var(--size-200) * 6)
+  height: var(--space-3); // 0.calc(var(--size-200) * 6) / 0.calc(var(--size-200) * 6)
   border-radius: 50%;
-  border: 0.125rem solid var(--surface-primary);
+  border: var(--border-2) solid var(--surface-primary);
 }
 
 .badge-online {

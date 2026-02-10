@@ -1,10 +1,5 @@
 @use "styles/mixins" as *;
 
-/* ============================================
-   ONBOARDING - MODERN UI/UX STYLES
-   Design System Compliant
-   ============================================ */
-
 .onboarding-page {
   padding: var(--space-6);
   max-width: var(--content-max-width-lg);
@@ -15,10 +10,6 @@
     border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-md);
     overflow: hidden;
-
-    // p-card border/shadow/padding overrides REMOVED
-    // Use app-card-shell component instead
-    // @see docs/CARD_SHELL_CONTRACT.md
   }
 
   .progress-section {
@@ -72,13 +63,10 @@
     }
   }
 
-  /* Progress bar styling moved to @layer overrides */
-
-  /* Content Area - Enhanced Spacing */
   .onboarding-content {
     margin-top: var(--space-6);
     padding: 0 var(--space-6);
-    min-height: var(--chart-min-height-lg); // 25rem - closest standard size
+    min-height: var(--chart-min-height-lg);
   }
 
   .step-header {
@@ -106,7 +94,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 0.125rem 0.5rem rgba(var(--ds-primary-green-rgb), 0.15);
+    box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.15);
     border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.1);
 
     &.success {
@@ -116,7 +104,7 @@
         rgba(var(--ds-primary-green-rgb), 0.15) 0%,
         rgba(var(--ds-primary-green-rgb), 0.08) 100%
       );
-      box-shadow: 0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.2);
+      box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.2);
       animation: successPulse 0.6s ease-out;
     }
   }
@@ -157,7 +145,7 @@
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(calc(var(--space-2) + var(--space-0-5))); // 0.625rem
+      transform: translateY(calc(var(--space-2) + var(--space-0-5))); // calc(var(--space-2) + var(--space-0-5))
     }
     to {
       opacity: 1;
@@ -201,7 +189,6 @@
       }
     }
 
-    // PrimeNG autocomplete/select/input overrides moved to _exceptions.scss (DS-EXC-015)
   }
 
   .required {
@@ -255,10 +242,6 @@
     color: var(--ds-primary-green);
   }
 
-  /* ============================================
-   INTERACTIVE BUTTON CARDS - Accessibility Enhanced
-   ============================================ */
-
   .unit-toggle {
     display: flex;
     gap: var(--space-4);
@@ -272,12 +255,8 @@
     border-radius: var(--radius-xl);
     text-align: center;
     cursor: pointer;
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     display: flex;
     align-items: center;
     gap: var(--space-4);
@@ -294,12 +273,8 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+
+      @include card-transition;
       background: var(--surface-secondary);
 
       i {
@@ -307,12 +282,8 @@
         color: var(--color-text-on-primary);
         opacity: 0;
         transform: scale(0);
-        transition:
-          opacity var(--transition-base),
-          transform var(--transition-base),
-          background-color var(--transition-base),
-          border-color var(--transition-base),
-          box-shadow var(--transition-base);
+
+        @include card-transition;
       }
     }
 
@@ -348,7 +319,7 @@
       background: var(--surface-secondary);
       transform: translateY(calc(-1 * var(--space-0-5)));
       box-shadow:
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.1),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.1),
         var(--shadow-sm);
 
       .unit-radio {
@@ -378,13 +349,13 @@
         rgba(var(--ds-primary-green-rgb), 0.05) 100%
       );
       box-shadow:
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.15),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.15),
         var(--shadow-sm);
 
       .unit-radio {
         background: var(--ds-primary-green);
         border-color: var(--ds-primary-green);
-        box-shadow: 0 0.125rem 0.375rem rgba(var(--ds-primary-green-rgb), 0.3);
+        box-shadow: 0 var(--border-2) calc(var(--space-1) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.3);
 
         i {
           opacity: 1;
@@ -416,12 +387,8 @@
     border: var(--border-2) solid var(--color-border-muted);
     border-radius: var(--radius-xl);
     cursor: pointer;
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     font-weight: var(--ds-font-weight-medium);
     display: flex;
     align-items: center;
@@ -439,12 +406,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+
+      @include card-transition;
       background: var(--surface-secondary);
       flex-shrink: 0;
 
@@ -453,12 +416,8 @@
         color: var(--color-text-on-primary);
         opacity: 0;
         transform: scale(0);
-        transition:
-          opacity var(--transition-base),
-          transform var(--transition-base),
-          background-color var(--transition-base),
-          border-color var(--transition-base),
-          box-shadow var(--transition-base);
+
+        @include card-transition;
       }
     }
 
@@ -472,7 +431,7 @@
       border-color: var(--ds-primary-green);
       transform: translateY(calc(-1 * var(--space-0-5)));
       box-shadow:
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.1),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.1),
         var(--shadow-sm);
 
       .arm-radio {
@@ -498,7 +457,7 @@
         var(--ds-primary-green-light)
       );
       box-shadow:
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.25),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.25),
         var(--shadow-sm);
 
       .arm-radio {
@@ -531,12 +490,8 @@
     border: var(--border-2) solid var(--color-border-muted);
     border-radius: var(--radius-xl);
     cursor: pointer;
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     display: flex;
     align-items: flex-start;
     gap: var(--space-4);
@@ -571,12 +526,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+
+      @include card-transition;
       margin-top: var(--space-1);
       background: var(--surface-secondary);
       flex-shrink: 0;
@@ -586,12 +537,8 @@
         color: var(--color-text-on-primary);
         opacity: 0;
         transform: scale(0);
-        transition:
-          opacity var(--transition-base),
-          transform var(--transition-base),
-          background-color var(--transition-base),
-          border-color var(--transition-base),
-          box-shadow var(--transition-base);
+
+        @include card-transition;
       }
     }
 
@@ -628,7 +575,7 @@
       border-color: var(--ds-primary-green);
       transform: translateY(calc(-1 * var(--space-0-75)));
       box-shadow:
-        0 0.375rem 1rem rgba(var(--ds-primary-green-rgb), 0.12),
+        0 calc(var(--space-1) + var(--space-0-5)) 1rem rgba(var(--ds-primary-green-rgb), 0.12),
         var(--shadow-sm);
 
       &::before {
@@ -663,7 +610,7 @@
         rgba(var(--ds-primary-green-rgb), 0.05) 100%
       );
       box-shadow:
-        0 0.375rem 1.25rem rgba(var(--ds-primary-green-rgb), 0.15),
+        0 calc(var(--space-1) + var(--space-0-5)) 1.25rem rgba(var(--ds-primary-green-rgb), 0.15),
         var(--shadow-sm);
 
       &::before {
@@ -673,7 +620,7 @@
       .type-radio {
         background: var(--ds-primary-green);
         border-color: var(--ds-primary-green);
-        box-shadow: 0 0.125rem 0.375rem rgba(var(--ds-primary-green-rgb), 0.3);
+        box-shadow: 0 var(--border-2) calc(var(--space-1) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.3);
 
         i {
           opacity: 1;
@@ -729,12 +676,8 @@
     border: var(--border-2) solid var(--color-border-muted);
     border-radius: var(--radius-xl);
     cursor: pointer;
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -757,13 +700,9 @@
       justify-content: center;
       opacity: 0;
       transform: scale(0);
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
-      box-shadow: 0 0.125rem 0.5rem rgba(var(--ds-primary-green-rgb), 0.3);
+
+      @include card-transition;
+      box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.3);
       z-index: 2;
 
       i {
@@ -776,12 +715,8 @@
     .goal-icon {
       font-size: var(--ds-font-size-3xl);
       color: var(--ds-primary-green);
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+
+      @include card-transition;
       margin-bottom: var(--space-2);
     }
 
@@ -855,12 +790,8 @@
     border: var(--border-2) solid var(--color-border-muted);
     border-radius: var(--radius-full);
     cursor: pointer;
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     font-size: var(--ds-font-size-sm);
     font-weight: var(--ds-font-weight-semibold);
     background: var(--surface-primary);
@@ -885,24 +816,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+
+      @include card-transition;
 
       i {
         font-size: var(--ds-font-size-xs);
         color: var(--ds-primary-green);
         opacity: 0;
         transform: scale(0);
-        transition:
-          opacity var(--transition-base),
-          transform var(--transition-base),
-          background-color var(--transition-base),
-          border-color var(--transition-base),
-          box-shadow var(--transition-base);
+
+        @include card-transition;
       }
     }
 
@@ -910,7 +833,7 @@
       border-color: var(--ds-primary-green);
       transform: translateY(calc(-1 * var(--space-0-5)));
       box-shadow:
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.1),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.1),
         var(--shadow-sm);
 
       .day-check {
@@ -936,7 +859,7 @@
         var(--ds-primary-green-light)
       );
       box-shadow:
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.25),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.25),
         var(--shadow-sm);
 
       .day-label {
@@ -969,12 +892,8 @@
     border: var(--border-2) solid var(--color-border-muted);
     border-radius: var(--radius-xl);
     cursor: pointer;
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -997,13 +916,9 @@
       justify-content: center;
       opacity: 0;
       transform: scale(0);
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
-      box-shadow: 0 0.125rem 0.375rem rgba(var(--ds-primary-green-rgb), 0.3);
+
+      @include card-transition;
+      box-shadow: 0 var(--border-2) calc(var(--space-1) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.3);
       z-index: 2;
 
       i {
@@ -1015,12 +930,8 @@
     .equipment-icon {
       font-size: var(--ds-font-size-2xl);
       color: var(--ds-primary-green);
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+
+      @include card-transition;
       margin-bottom: var(--space-1);
     }
 
@@ -1036,7 +947,7 @@
       border-color: var(--ds-primary-green);
       transform: translateY(calc(-1 * var(--space-0-75)));
       box-shadow:
-        0 0.375rem 1rem rgba(var(--ds-primary-green-rgb), 0.12),
+        0 calc(var(--space-1) + var(--space-0-5)) 1rem rgba(var(--ds-primary-green-rgb), 0.12),
         var(--shadow-sm);
 
       .equipment-icon {
@@ -1063,7 +974,7 @@
         rgba(var(--ds-primary-green-rgb), 0.05) 100%
       );
       box-shadow:
-        0 0.375rem 1.25rem rgba(var(--ds-primary-green-rgb), 0.15),
+        0 calc(var(--space-1) + var(--space-0-5)) 1.25rem rgba(var(--ds-primary-green-rgb), 0.15),
         var(--shadow-sm);
 
       .equipment-check {
@@ -1090,13 +1001,6 @@
       }
     }
 
-    .check-icon {
-      position: absolute;
-      top: var(--space-2);
-      right: var(--space-2);
-      font-size: var(--ds-font-size-sm);
-      color: var(--color-status-success);
-    }
   }
 
 
@@ -1130,12 +1034,8 @@
     font-size: var(--ds-font-size-sm);
     font-weight: var(--ds-font-weight-semibold);
     box-shadow: var(--shadow-sm);
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
 
     &.severity-minor {
       background: linear-gradient(
@@ -1171,12 +1071,8 @@
       cursor: pointer;
       opacity: var(--opacity-subtle);
       font-size: var(--ds-font-size-xs);
-      transition:
-        opacity var(--transition-base),
-        transform var(--transition-base),
-        background-color var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+
+      @include card-transition;
 
       &:hover {
         opacity: 1;
@@ -1318,7 +1214,7 @@
     font-weight: var(--ds-font-weight-medium);
     margin-top: var(--space-5);
     line-height: var(--ds-line-height-relaxed);
-    box-shadow: 0 0.125rem 0.5rem rgba(var(--primitive-info-500-rgb), 0.1);
+    box-shadow: 0 var(--border-2) 0.5rem rgba(var(--primitive-info-500-rgb), 0.1);
 
     &.success {
       background: linear-gradient(
@@ -1328,7 +1224,7 @@
       );
       border-color: rgba(var(--ds-primary-green-rgb), 0.25);
       color: var(--ds-primary-green);
-      box-shadow: 0 0.125rem 0.5rem rgba(var(--ds-primary-green-rgb), 0.1);
+      box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.1);
     }
 
     i {
@@ -1351,16 +1247,11 @@
     padding: var(--space-6);
     border: var(--border-1) solid var(--color-border-muted);
     box-shadow: var(--shadow-sm);
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     position: relative;
     overflow: hidden;
 
-    // Subtle gradient overlay for depth
     &::before {
       content: "";
       position: absolute;
@@ -1380,7 +1271,7 @@
     &:hover {
       transform: translateY(calc(-1 * var(--space-0-5)));
       box-shadow:
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.1),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.1),
         var(--shadow-sm);
       border-color: rgba(var(--ds-primary-green-rgb), 0.2);
 
@@ -1457,7 +1348,6 @@
     }
   }
 
-  // Color !important moved to _exceptions.scss (DS-EXC-015)
   .jersey-badge {
     display: inline-block;
     background: linear-gradient(
@@ -1469,7 +1359,7 @@
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-bold);
-    box-shadow: 0 0.125rem 0.25rem rgba(var(--ds-primary-green-rgb), 0.2);
+    box-shadow: 0 var(--border-2) var(--space-1) rgba(var(--ds-primary-green-rgb), 0.2);
     letter-spacing: var(--ds-letter-spacing-wide);
   }
 
@@ -1513,21 +1403,17 @@
     background: var(--surface-primary);
     border-radius: var(--radius-lg);
     border: var(--border-1) solid var(--color-border-muted);
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-base),
-      background-color var(--transition-base),
-      border-color var(--transition-base),
-      box-shadow var(--transition-base);
+
+    @include card-transition;
     position: relative;
     z-index: 1;
 
     &.required {
-      border-left: var(--space-0-75) solid var(--ds-primary-green); // 0.1875rem
+      border-left: var(--space-0-75) solid var(--ds-primary-green);
     }
 
     &.optional {
-      border-left: var(--space-0-75) solid var(--color-border-secondary); // 0.1875rem
+      border-left: var(--space-0-75) solid var(--color-border-secondary);
       opacity: var(--opacity-strong);
     }
 
@@ -1543,7 +1429,7 @@
     gap: var(--space-3);
 
     p-checkbox {
-      margin-top: 0.25rem;
+      margin-top: var(--space-1);
       flex-shrink: 0;
     }
 
@@ -1566,59 +1452,6 @@
     }
   }
 
-  // PrimeNG checkbox overrides moved to _exceptions.scss (DS-EXC-015)
-
-  /* Remove old checkbox styles */
-  .consent-checkbox {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    position: relative;
-
-    input[type="checkbox"] {
-      margin-top: var(--space-1); // 0.25rem
-      width: var(--space-5); // 1.25rem
-      height: var(--space-5); // 1.25rem
-      min-width: var(--space-5); /* Prevent shrinking - 1.25rem */
-      cursor: pointer;
-      accent-color: var(--ds-primary-green);
-      flex-shrink: 0;
-      position: relative;
-      z-index: var(--z-dropdown);
-      pointer-events: auto;
-
-      /* Ensure checkbox is always clickable */
-      &:hover {
-        outline: var(--focus-outline-width) solid var(--ds-primary-green);
-        outline-offset: var(--border-1);
-      }
-    }
-
-    .checkmark {
-      display: none;
-    }
-
-    .consent-text {
-      flex: 1;
-      font-size: var(--ds-font-size-md);
-      color: var(--color-text-primary);
-      line-height: var(--ds-line-height-relaxed);
-      cursor: pointer; /* Make label clickable */
-
-      a {
-        pointer-events: auto;
-        position: relative;
-        z-index: var(--z-base);
-
-        &:active,
-        &:focus-visible {
-          outline: var(--focus-outline-width) solid var(--ds-primary-green);
-          outline-offset: var(--focus-outline-offset);
-        }
-      }
-    }
-  }
-
   .consent-link {
     color: var(--ds-primary-green);
     text-decoration: underline;
@@ -1634,11 +1467,6 @@
     color: var(--color-text-muted);
     font-style: italic;
   }
-}
-
-// PrimeNG autocomplete override moved to _exceptions.scss (DS-EXC-015)
-.team-autocomplete {
-  width: 100%;
 }
 
 .team-suggestion {
@@ -1657,8 +1485,6 @@
     color: var(--color-text-primary);
   }
 }
-
-// PrimeNG autocomplete panel override moved to _exceptions.scss (DS-EXC-015)
 
 .required-indicator {
   color: var(--color-status-error);
@@ -1701,7 +1527,7 @@
   font-weight: var(--ds-font-weight-medium);
   margin-top: var(--space-6);
   line-height: var(--ds-line-height-relaxed);
-  box-shadow: 0 0.125rem 0.5rem rgba(var(--ds-primary-green-rgb), 0.1);
+  box-shadow: 0 var(--border-2) 0.5rem rgba(var(--ds-primary-green-rgb), 0.1);
 
   i {
     font-size: var(--ds-font-size-2xl);
@@ -1721,7 +1547,7 @@
     );
     border-color: rgba(var(--ds-primary-green-rgb), 0.25);
     color: var(--ds-primary-green-hover);
-    box-shadow: 0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.15);
+    box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.15);
   }
 }
 
@@ -1753,12 +1579,8 @@
   border: var(--border-2) solid var(--color-border-muted);
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition:
-    opacity var(--transition-base),
-    transform var(--transition-base),
-    background-color var(--transition-base),
-    border-color var(--transition-base),
-    box-shadow var(--transition-base);
+
+  @include card-transition;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -1778,12 +1600,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition:
-    opacity var(--transition-base),
-    transform var(--transition-base),
-    background-color var(--transition-base),
-    border-color var(--transition-base),
-    box-shadow var(--transition-base);
+
+  @include card-transition;
   background: var(--surface-secondary);
 }
 
@@ -1800,12 +1618,8 @@
 .onboarding-page .checkbox-icon {
   font-size: var(--ds-font-size-2xl);
   color: var(--color-status-warning);
-  transition:
-    opacity var(--transition-base),
-    transform var(--transition-base),
-    background-color var(--transition-base),
-    border-color var(--transition-base),
-    box-shadow var(--transition-base);
+
+  @include card-transition;
   flex-shrink: 0;
 }
 
@@ -1821,7 +1635,7 @@
   border-color: var(--color-status-warning);
   transform: translateY(calc(-1 * var(--space-0-5)));
   box-shadow:
-    0 0.25rem 0.75rem rgba(var(--primitive-warning-500-rgb), 0.1),
+    0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--primitive-warning-500-rgb), 0.1),
     var(--shadow-sm);
 }
 
@@ -1846,13 +1660,13 @@
     rgba(var(--primitive-warning-500-rgb), 0.12) 0%,
     rgba(var(--primitive-warning-500-rgb), 0.05) 100%
   );
-  box-shadow: 0 0.25rem 0.75rem rgba(var(--primitive-warning-500-rgb), 0.15);
+  box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--primitive-warning-500-rgb), 0.15);
 }
 
 .onboarding-page .checkbox-card.selected .checkbox-indicator {
   background: var(--color-status-warning);
   border-color: var(--color-status-warning);
-  box-shadow: 0 0.125rem 0.375rem rgba(var(--primitive-warning-500-rgb), 0.3);
+  box-shadow: 0 var(--border-2) calc(var(--space-1) + var(--space-0-5)) rgba(var(--primitive-warning-500-rgb), 0.3);
 }
 
 .onboarding-page .checkbox-card.selected .checkbox-indicator i {
@@ -1865,7 +1679,7 @@
 
 .onboarding-page .checkbox-card.none-selected:hover {
   border-color: var(--color-status-success);
-  box-shadow: 0 0.25rem 0.75rem rgba(var(--primitive-success-500-rgb), 0.1);
+  box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--primitive-success-500-rgb), 0.1);
 }
 
 .onboarding-page .checkbox-card.none-selected:focus-visible {
@@ -1879,7 +1693,7 @@
     rgba(var(--primitive-success-500-rgb), 0.12) 0%,
     rgba(var(--primitive-success-500-rgb), 0.05) 100%
   );
-  box-shadow: 0 0.25rem 0.75rem rgba(var(--primitive-success-500-rgb), 0.15);
+  box-shadow: 0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--primitive-success-500-rgb), 0.15);
 }
 
 .onboarding-page .checkbox-card.none-selected.selected .checkbox-indicator {
@@ -1925,10 +1739,6 @@
   }
 
 }
-
-// PrimeNG steps navigation override moved to _exceptions.scss (DS-EXC-015)
-
-/* Email verification banner */
 
 .email-verification-banner {
   display: flex;
@@ -1996,18 +1806,11 @@
   }
 }
 
-/*
- * EXCEPTION: PrimeNG Progress Bar Styling
- * Reason: Custom height and border-radius for onboarding progress
- * Scope: onboarding only
- */
 .onboarding-progress {
   height: var(--indicator-size-sm);
   border-radius: var(--radius-full);
   flex: 1;
   background: var(--surface-secondary);
   overflow: hidden;
-  box-shadow: inset 0 0.0625rem 0.125rem var(--color-border-subtle);
-
-  // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-015)
+  box-shadow: inset 0 var(--border-1) var(--border-2) var(--color-border-subtle);
 }

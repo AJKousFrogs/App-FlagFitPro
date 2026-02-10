@@ -156,7 +156,10 @@ interface QuickFormData {
   animations: [
     trigger("fadeSlideIn", [
       transition(":enter", [
-        style({ opacity: 0, transform: "translateY(-12px)" }),
+        style({
+          opacity: 0,
+          transform: "translateY(calc(var(--space-3) * -1))",
+        }),
         animate(
           "300ms ease-out",
           style({ opacity: 1, transform: "translateY(0)" }),
@@ -177,12 +180,14 @@ interface QuickFormData {
           keyframes([
             style({
               opacity: 0,
-              transform: "scale(0.3) translateY(50px)",
+              transform:
+                "scale(0.3) translateY(calc(var(--size-200) * 0.25))",
               offset: 0,
             }),
             style({
               opacity: 1,
-              transform: "scale(1.1) translateY(-10px)",
+              transform:
+                "scale(1.1) translateY(calc((var(--space-2) + var(--space-0-5)) * -1))",
               offset: 0.6,
             }),
             style({
@@ -244,7 +249,7 @@ interface QuickFormData {
         width: var(--space-12);
         height: var(--space-12);
         min-width: var(--space-12);
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--overlay-white-20);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -459,10 +464,10 @@ interface QuickFormData {
       }
 
       .insight-avatar {
-        width: 2.75rem;
-        height: 2.75rem;
-        min-width: 2.75rem;
-        background: rgba(255, 255, 255, 0.2);
+        width: var(--touch-target-md);
+        height: var(--touch-target-md);
+        min-width: var(--touch-target-md);
+        background: var(--overlay-white-20);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -878,8 +883,8 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(4px);
+        background: var(--surface-overlay-darkest);
+        backdrop-filter: blur(var(--overlay-blur));
         padding: var(--space-4);
       }
 
@@ -889,7 +894,7 @@ interface QuickFormData {
         border-radius: var(--radius-xl);
         padding: var(--space-8) var(--space-6);
         text-align: center;
-        max-width: 400px;
+        max-width: var(--dialog-max-width-sm);
         width: 100%;
         box-shadow: var(--shadow-xl);
       }
@@ -916,62 +921,62 @@ interface QuickFormData {
 
       .confetti-piece--1 {
         --delay: 0.1s;
-        --x: -150px;
+        --x: calc(var(--size-150) * -1);
       }
 
       .confetti-piece--2 {
         --delay: 0.2s;
-        --x: -120px;
+        --x: calc(var(--size-120) * -1);
       }
 
       .confetti-piece--3 {
         --delay: 0.3s;
-        --x: -90px;
+        --x: calc(var(--size-120) * -0.75);
       }
 
       .confetti-piece--4 {
         --delay: 0.4s;
-        --x: -60px;
+        --x: calc(var(--size-120) * -0.5);
       }
 
       .confetti-piece--5 {
         --delay: 0.5s;
-        --x: -30px;
+        --x: calc(var(--size-120) * -0.25);
       }
 
       .confetti-piece--6 {
         --delay: 0.6s;
-        --x: 0px;
+        --x: 0;
       }
 
       .confetti-piece--7 {
         --delay: 0.7s;
-        --x: 30px;
+        --x: calc(var(--size-120) * 0.25);
       }
 
       .confetti-piece--8 {
         --delay: 0.8s;
-        --x: 60px;
+        --x: calc(var(--size-120) * 0.5);
       }
 
       .confetti-piece--9 {
         --delay: 0.9s;
-        --x: 90px;
+        --x: calc(var(--size-120) * 0.75);
       }
 
       .confetti-piece--10 {
         --delay: 1s;
-        --x: 120px;
+        --x: var(--size-120);
       }
 
       .confetti-piece--11 {
         --delay: 1.1s;
-        --x: 150px;
+        --x: var(--size-150);
       }
 
       .confetti-piece--12 {
         --delay: 1.2s;
-        --x: 180px;
+        --x: calc(var(--size-120) * 1.5);
       }
 
       .confetti-piece:nth-child(2n) {
@@ -1000,7 +1005,8 @@ interface QuickFormData {
         }
         100% {
           opacity: 0;
-          transform: translateX(calc(var(--x) * 1.5)) translateY(150px)
+          transform: translateX(calc(var(--x) * 1.5))
+            translateY(var(--size-150))
             rotate(720deg);
         }
       }

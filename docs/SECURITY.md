@@ -85,8 +85,8 @@ FlagFit Pro consists of three primary layers:
 | **Error Interceptor** | `angular/src/app/core/interceptors/error.interceptor.ts` | Handles 401/403, triggers logout on auth failure |
 | **Auth Guard**        | `angular/src/app/core/guards/auth.guard.ts`              | Protects routes requiring authentication         |
 | **Auth Service**      | `angular/src/app/core/services/auth.service.ts`          | Supabase auth wrapper with reactive signals      |
-| **Rate Limiter**      | `netlify/functions/utils/rate-limiter.cjs`               | IP-based API rate limiting                       |
-| **Base Handler**      | `netlify/functions/utils/base-handler.cjs`               | Centralized auth + rate limiting middleware      |
+| **Rate Limiter**      | `netlify/functions/utils/rate-limiter.js`               | IP-based API rate limiting                       |
+| **Base Handler**      | `netlify/functions/utils/base-handler.js`               | Centralized auth + rate limiting middleware      |
 | **Security Headers**  | `netlify.toml`                                           | CSP, HSTS, X-Frame-Options, etc.                 |
 
 ---
@@ -210,7 +210,7 @@ CSRF attacks require the browser to automatically attach credentials (cookies) t
 
 ### Rate Limiting
 
-Rate limiting is implemented in `netlify/functions/utils/rate-limiter.cjs` and applied via the base-handler middleware.
+Rate limiting is implemented in `netlify/functions/utils/rate-limiter.js` and applied via the base-handler middleware.
 
 #### Rate Limit Tiers
 
@@ -374,7 +374,7 @@ The `anonKey` is safe to expose—it only provides unauthenticated access limite
 All Netlify Functions use the base-handler middleware:
 
 ```javascript
-// netlify/functions/utils/base-handler.cjs
+// netlify/functions/utils/base-handler.js
 async function baseHandler(event, context, options = {}) {
   const {
     functionName,

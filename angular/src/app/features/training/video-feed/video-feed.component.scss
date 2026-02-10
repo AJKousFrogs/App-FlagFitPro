@@ -419,10 +419,6 @@
   color: var(--color-text-secondary);
 }
 
-.clear-filters-btn {
-  margin-left: auto;
-}
-
 /* Video Grid */
 .video-grid-section {
   padding: 0 var(--space-6);
@@ -461,7 +457,7 @@
 
 // .video-card:hover REMOVED - use app-card-shell with state="interactive"
 // @see docs/CARD_SHELL_CONTRACT.md §2.8
-// Note: translateY(-0.75rem) was non-standard; contract specifies -0.125rem
+// Note: translateY(-0.calc(var(--size-200) * 6)) was non-standard; contract specifies -var(--border-2)
 
 .video-card.bookmarked {
   border: var(--border-3) solid var(--ds-primary-green);
@@ -527,18 +523,8 @@
   opacity: var(--opacity-strong);
 }
 
-.thumbnail-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
-}
-
 .play-icon {
-  font-size: var(--ds-font-size-4rem); /* Larger, more visible */
+  font-size: var(--ds-font-size-var(--header-height)); /* Larger, more visible */
   color: white;
   opacity: var(--opacity-strong);
   transition:
@@ -702,7 +688,7 @@
 }
 
 .tag {
-  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.calc(var(--size-200) * 6) for breathing room */
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
@@ -1052,11 +1038,6 @@
 
   .chip-label {
     display: inline-block;
-  }
-
-  .search-input {
-    height: var(--button-height-lg); /* 3.25rem */
-    font-size: var(--ds-font-size-md);
   }
 
   .search-container {

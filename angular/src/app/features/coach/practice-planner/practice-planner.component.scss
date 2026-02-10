@@ -18,7 +18,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
   padding-bottom: var(--space-2);
 
   .tab-btn {
@@ -56,7 +56,7 @@
 
 // Practice Card
 .practice-card {
-  border-left: 0.25rem solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green);
 }
 
 .practice-header {
@@ -161,7 +161,7 @@
 .attendance-row {
   font-size: var(--ds-font-size-md);
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--ds-border-subtle);
 
   .attendance-stats {
     margin-left: var(--space-2);
@@ -222,7 +222,7 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
     padding-bottom: var(--space-2);
-    border-bottom: 0.0625rem solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--ds-border-subtle);
   }
 
   .section-header {
@@ -233,7 +233,7 @@
     gap: var(--space-2);
     margin-bottom: var(--space-3);
     padding-bottom: var(--space-2);
-    border-bottom: 0.0625rem solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
     h4 {
       margin: 0;
@@ -293,7 +293,7 @@
   padding: var(--space-3);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-md);
-  border-left: 0.1875rem solid var(--ds-primary-green);
+  border-left: var(--space-0-75) solid var(--ds-primary-green);
 
   .activity-header {
     display: flex;

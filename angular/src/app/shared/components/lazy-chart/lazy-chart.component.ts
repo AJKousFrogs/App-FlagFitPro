@@ -114,13 +114,13 @@ interface ChartInstance {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
-        padding: 2rem;
-        color: var(--text-color-secondary, #6c757d);
+        gap: var(--space-2);
+        padding: var(--space-8);
+        color: var(--color-text-secondary);
         font-size: var(--ds-font-size-sm);
       }
       .chart-error i {
-        color: var(--yellow-500, #f59e0b);
+        color: var(--color-status-warning);
       }
       canvas {
         display: block;
@@ -143,7 +143,7 @@ export class LazyChartComponent implements OnInit, OnDestroy {
   );
   options = input<LazyChartOptionsInput>({});
   width = input<string>("100%");
-  height = input<string>("300px");
+  height = input<string>("var(--chart-min-height-md)");
 
   // Angular 21: Use output() instead of @Output()
   chartClick = output<unknown>();

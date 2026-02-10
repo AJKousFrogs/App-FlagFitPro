@@ -62,37 +62,4 @@ npm run test:unit
 
 echo ""
 echo "▶ health check"
-node - <<'NODE'
-require("dotenv/config");
-const { handler: healthHandler } = require("./netlify/functions/health.cjs");
-
-async function runHealthCheck() {
-  const result = await healthHandler(
-    {
-      httpMethod: "GET",
-      headers: {},
-      path: "/api/health",
-      queryStringParameters: {},
-      body: null,
-      isBase64Encoded: false,
-    },
-    {},
-  );
-
-  if (!result?.body) {
-    throw new Error("Health check returned an empty response");
-  }
-
-  const payload = JSON.parse(result.body);
-  if (!payload?.success) {
-    throw new Error("Health check failed");
-  }
-
-  console.log("Health check passed.");
-}
-
-runHealthCheck().catch((error) => {
-  console.error("Health check failed:", error.message);
-  process.exit(1);
-});
-NODE
+node scripts/smoke-health-check.mjs

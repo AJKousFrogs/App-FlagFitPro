@@ -45,7 +45,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: var(--chart-min-height-lg); /* 25rem */
+  width: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
   max-width: 100vw;
   height: 100vh;
   height: 100dvh;
@@ -326,8 +326,8 @@
 }
 
 .empty-icon {
-  width: 5rem;
-  height: 5rem;
+  width: var(--size-80);
+  height: var(--size-80);
   border-radius: var(--radius-full);
   background: var(--surface-tertiary);
   display: flex;
@@ -644,7 +644,7 @@
 
 .view-all-btn:hover {
   background: var(--ds-primary-green-hover);
-  transform: translateY(-0.0625rem);
+  transform: translateY(-var(--border-1));
   box-shadow: var(--shadow-md);
 }
 
@@ -654,7 +654,7 @@
 }
 
 .view-all-btn:hover i {
-  transform: translateX(0.1875rem);
+  transform: translateX(var(--space-0-75));
 }
 
 /* Additional category-specific icon colors */

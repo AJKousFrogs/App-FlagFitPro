@@ -98,17 +98,17 @@ export const STATUS_COLORS = {
  * CSS variable references ensure theme consistency
  */
 export const BLOCK_COLORS = {
-  morning_mobility: "var(--primitive-warning-500)", // amber #f59e0b
-  foam_roll: "var(--primitive-error-500)", // red #ef4444
-  warm_up: "var(--color-workout-cardio)", // orange #f59e0b
+  morning_mobility: "var(--primitive-warning-500)", // amber var(--color-chart-quaternary)
+  foam_roll: "var(--primitive-error-500)", // red var(--color-chart-quinary)
+  warm_up: "var(--color-workout-cardio)", // orange var(--color-chart-quaternary)
   isometrics: "var(--ds-primary-green)", // green - strength work
   plyometrics: "var(--color-workout-cardio)", // orange - explosive work
   strength: "var(--ds-primary-green)", // green - strength work (incl. Nordic curls)
   conditioning: "var(--primitive-error-500)", // red - cardio/conditioning
   skill_drills: "var(--color-chart-tertiary)", // blue - skill/twitching
-  main_session: "var(--ds-primary-green)", // brand green #089949
-  cool_down: "var(--color-chart-tertiary)", // blue #3b82f6
-  evening_recovery: "var(--color-status-help)", // purple #8b5cf6
+  main_session: "var(--ds-primary-green)", // brand green var(--p-highlight-text-color)
+  cool_down: "var(--color-chart-tertiary)", // blue var(--color-chart-tertiary)
+  evening_recovery: "var(--color-status-help)", // purple var(--color-chart-senary)
 } as const;
 
 /**
@@ -116,11 +116,11 @@ export const BLOCK_COLORS = {
  * Maps menstrual cycle phases to appropriate colors
  */
 export const CYCLE_PHASE_COLORS = {
-  menstrual: "var(--primitive-error-500)", // red #ef4444
+  menstrual: "var(--primitive-error-500)", // red var(--color-chart-quinary)
   follicular: "var(--color-status-success)", // green (use success, not raw green for better a11y)
-  ovulation: "var(--primitive-warning-500)", // amber #f59e0b
-  luteal: "var(--color-status-help)", // purple #8b5cf6
-  late_luteal: "var(--color-staff-coaching)", // indigo #6366f1
+  ovulation: "var(--primitive-warning-500)", // amber var(--color-chart-quaternary)
+  luteal: "var(--color-status-help)", // purple var(--color-chart-senary)
+  late_luteal: "var(--color-staff-coaching)", // indigo var(--color-phase-reload)
 } as const;
 
 /**
@@ -162,21 +162,21 @@ export const PHASE_COLORS = {
  * These MUST be hex values because Chart.js canvas context cannot read CSS vars
  *
  * Maps to CSS variables:
- * - --color-chart-1: #089949 (primary green)
- * - --color-chart-2: #10c96b (secondary green)
- * - --color-chart-3: #f1c40f (gold/success)
- * - --color-chart-4: #e74c3c (red/error)
- * - --color-chart-5: #3498db (blue/info)
- * - --color-chart-6: #9b59b6 (purple)
+ * - --color-chart-1: var(--p-highlight-text-color) (primary green)
+ * - --color-chart-2: var(--p-highlight-text-color) (secondary green)
+ * - --color-chart-3: var(--color-chart-3) (gold/success)
+ * - --color-chart-4: var(--color-chart-4) (red/error)
+ * - --color-chart-5: var(--color-chart-5) (blue/info)
+ * - --color-chart-6: var(--color-chart-6) (purple)
  */
 export const CHART_COLORS = {
-  primary: "#089949",
-  secondary: "#10c96b",
-  tertiary: "#3b82f6",
-  quaternary: "#f59e0b",
-  quinary: "#ef4444",
-  senary: "#8b5cf6",
-  septenary: "#ec4899",
+  primary: "var(--p-highlight-text-color)",
+  secondary: "var(--p-highlight-text-color)",
+  tertiary: "var(--color-chart-tertiary)",
+  quaternary: "var(--color-chart-quaternary)",
+  quinary: "var(--color-chart-quinary)",
+  senary: "var(--color-chart-senary)",
+  septenary: "var(--color-chart-septenary)",
 } as const;
 
 /**
@@ -184,27 +184,27 @@ export const CHART_COLORS = {
  * Use this for multi-series charts
  */
 export const CHART_PALETTE: readonly string[] = [
-  "#089949", // primary green
-  "#10c96b", // secondary green
-  "#f1c40f", // gold
-  "#e74c3c", // red
-  "#3498db", // blue
-  "#9b59b6", // purple
-  "#ec4899", // pink
-  "#14b8a6", // teal
-  "#f97316", // orange
-  "#6366f1", // indigo
+  "var(--p-highlight-text-color)", // primary green
+  "var(--p-highlight-text-color)", // secondary green
+  "var(--color-chart-3)", // gold
+  "var(--color-chart-4)", // red
+  "var(--color-chart-5)", // blue
+  "var(--color-chart-6)", // purple
+  "var(--color-chart-septenary)", // pink
+  "var(--color-phase-late-season)", // teal
+  "var(--ds-primary-orange)", // orange
+  "var(--color-phase-reload)", // indigo
 ] as const;
 
 /**
  * Status colors for charts (hex values)
  */
 export const CHART_STATUS_COLORS = {
-  success: "#089949",
-  warning: "#f59e0b",
-  error: "#ef4444",
-  info: "#3b82f6",
-  neutral: "#6b7280",
+  success: "var(--p-highlight-text-color)",
+  warning: "var(--color-chart-quaternary)",
+  error: "var(--color-chart-quinary)",
+  info: "var(--color-chart-tertiary)",
+  neutral: "var(--color-workout-rest)",
 } as const;
 
 /**
@@ -287,15 +287,15 @@ export function getInvertedStatusColor(
  * Use these ONLY when CSS variables cannot be used
  */
 export const STATUS_HEX_COLORS = {
-  success: "#089949", // --ds-primary-green (brand success)
-  successLight: "#10c96b", // --color-brand-secondary
-  warning: "#f59e0b", // --primitive-warning-500
-  warningLight: "#fbbf24", // --primitive-warning-400
-  error: "#ef4444", // --primitive-error-500
-  errorLight: "#f87171", // --primitive-error-400
-  info: "#3b82f6", // --color-chart-tertiary
-  infoLight: "#60a5fa", // --primitive-info-400
-  neutral: "#6b7280", // --color-workout-rest
+  success: "var(--p-highlight-text-color)", // --ds-primary-green (brand success)
+  successLight: "var(--p-highlight-text-color)", // --color-brand-secondary
+  warning: "var(--color-chart-quaternary)", // --primitive-warning-500
+  warningLight: "var(--color-icon-notifications)", // --primitive-warning-400
+  error: "var(--color-chart-quinary)", // --primitive-error-500
+  errorLight: "var(--color-error-text-accessible-dark)", // --primitive-error-400
+  info: "var(--color-chart-tertiary)", // --color-chart-tertiary
+  infoLight: "var(--color-icon-profile)", // --primitive-info-400
+  neutral: "var(--color-workout-rest)", // --color-workout-rest
 } as const;
 
 /**

@@ -4,7 +4,7 @@
 // ============================================================================
 
 .preset-card {
-  min-height: 6.25rem;
+  min-height: var(--size-100);
 }
 .preset-header {
   margin-bottom: var(--space-2); // 0.5rem
@@ -22,7 +22,7 @@
 .citation-item {
   padding: var(--space-2);
   background: var(--surface-secondary);
-  border-radius: var(--radius-sm); /* 0.125rem - Design System compliant */
+  border-radius: var(--radius-sm); /* var(--border-2) - Design System compliant */
 }
 
 /* Science Info Box - Uses brand primary subtle background */
@@ -31,7 +31,7 @@
     --ds-primary-green-subtle,
     rgba(var(--ds-primary-green-rgb), 0.1)
   );
-  border: 0.0625rem solid
+  border: var(--border-1) solid
     var(--ds-primary-green-ultra-subtle, rgba(var(--ds-primary-green-rgb), 0.2));
 }
 .science-icon {
@@ -41,7 +41,7 @@
 /* Coach Override Box - Uses surface secondary with subtle border */
 .coach-override-box {
   background: var(--surface-secondary);
-  border: 0.0625rem solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
 }
 .coach-icon {
   color: var(--color-text-secondary);

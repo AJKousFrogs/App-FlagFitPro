@@ -115,7 +115,7 @@ interface Play {
           xmlns="http://www.w3.org/2000/svg"
         >
           <!-- Field background -->
-          <rect x="0" y="0" width="1200" height="533" fill="#2d5016" />
+          <rect x="0" y="0" width="1200" height="533" fill="var(--color-field-grass)" />
 
           <!-- Yard lines -->
           <g class="yard-lines">
@@ -125,15 +125,15 @@ interface Play {
                 [attr.y1]="0"
                 [attr.x2]="line.x"
                 [attr.y2]="533"
-                stroke="#ffffff"
+                stroke="var(--color-text-on-primary)"
                 stroke-width="2"
               />
               <text
                 [attr.x]="line.x"
                 [attr.y]="520"
-                fill="#ffffff"
+                fill="var(--color-text-on-primary)"
                 text-anchor="middle"
-                font-size="24"
+                font-size="var(--ds-font-size-2xl)"
               >
                 {{ line.label }}
               </text>
@@ -145,7 +145,7 @@ interface Play {
             [attr.cx]="ballPosition().x"
             [attr.cy]="ballPosition().y"
             r="8"
-            fill="#8B4513"
+            fill="var(--color-metallic-bronze-dark)"
             class="ball-marker"
             (click)="adjustBallPosition($event)"
           />
@@ -157,7 +157,7 @@ interface Play {
                 [attr.cx]="player.x"
                 [attr.cy]="player.y"
                 r="15"
-                [attr.fill]="player.team === 'home' ? '#0066cc' : '#cc0000'"
+                [attr.fill]="player.team === 'home' ? 'var(--color-status-info)' : 'var(--color-status-error)'"
                 [attr.data-player]="player.id"
                 (click)="selectPlayer(player)"
                 class="player-marker"

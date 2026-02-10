@@ -10,8 +10,8 @@
 
 .stats-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16.25rem, 1fr));
-  gap: var(--space-3); // Dashboard: var(--space-3) = 0.75rem
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
+  gap: var(--space-3); // Dashboard: var(--space-3) = 0.calc(var(--size-200) * 6)
   width: 100%;
   max-width: 100%;
 }
@@ -25,7 +25,7 @@
     box-shadow var(--transition-fast) var(--ease-standard);
 
   &:hover {
-    transform: translateY(-0.0625rem);
+    transform: translateY(-var(--border-1));
     box-shadow: var(--shadow-md);
   }
 
@@ -106,7 +106,7 @@
 // Tag styling - matches Dashboard .stat-tag
 .stat-tag {
   font-size: var(--ds-font-size-sm);
-  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.calc(var(--size-200) * 6) for breathing room */
   line-height: var(--ds-line-height-h1);
 }
 

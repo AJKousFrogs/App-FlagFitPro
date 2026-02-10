@@ -1,7 +1,7 @@
 /**
  * Coach API Consent Tests
  *
- * Tests that the coach.cjs function properly uses ConsentDataReader
+ * Tests that the coach.js function properly uses ConsentDataReader
  * and includes consent information in responses.
  *
  * Proves that:
@@ -9,8 +9,8 @@
  * 2. Coach without consent gets blocked indicators but endpoint still works
  * 3. Response includes consentInfo.blockedPlayerIds and dataState fields
  *
- * @see netlify/functions/coach.cjs
- * @see netlify/functions/utils/consent-data-reader.cjs
+ * @see netlify/functions/coach.js
+ * @see netlify/functions/utils/consent-data-reader.js
  */
 
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
@@ -72,7 +72,7 @@ describe.skipIf(!canRunTests)("Coach API Consent Integration", () => {
 
       // Import the actual ConsentDataReader
       const { ConsentDataReader, AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       const reader = new ConsentDataReader(supabaseAdmin, {
         enableAuditLogging: false,
@@ -103,7 +103,7 @@ describe.skipIf(!canRunTests)("Coach API Consent Integration", () => {
         .eq("team_id", TEST_TEAM_ID);
 
       const { ConsentDataReader, AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       const reader = new ConsentDataReader(supabaseAdmin, {
         enableAuditLogging: false,
@@ -138,7 +138,7 @@ describe.skipIf(!canRunTests)("Coach API Consent Integration", () => {
       );
 
       const { ConsentDataReader, AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       const reader = new ConsentDataReader(supabaseAdmin, {
         enableAuditLogging: false,
@@ -170,7 +170,7 @@ describe.skipIf(!canRunTests)("Coach API Consent Integration", () => {
       );
 
       const { ConsentDataReader, AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       const reader = new ConsentDataReader(supabaseAdmin, {
         enableAuditLogging: false,
@@ -212,7 +212,7 @@ describe.skipIf(!canRunTests)("Coach API Consent Integration", () => {
         .eq("team_id", TEST_TEAM_ID);
 
       const { ConsentDataReader, AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       const reader = new ConsentDataReader(supabaseAdmin, {
         enableAuditLogging: false,
@@ -236,7 +236,7 @@ describe.skipIf(!canRunTests)("Coach API Consent Integration", () => {
   describe("Response structure", () => {
     it("should include dataState in response", async () => {
       const { ConsentDataReader, AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       const reader = new ConsentDataReader(supabaseAdmin, {
         enableAuditLogging: false,
@@ -260,7 +260,7 @@ describe.skipIf(!canRunTests)("Coach API Consent Integration", () => {
 
     it("should include dataStateInfo with warnings", async () => {
       const { ConsentDataReader, AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       const reader = new ConsentDataReader(supabaseAdmin, {
         enableAuditLogging: false,
@@ -285,7 +285,7 @@ describe("Coach API Consent Unit Tests", () => {
   describe("AccessContext validation", () => {
     it("should export COACH_TEAM_DATA context", async () => {
       const { AccessContext } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       expect(AccessContext.COACH_TEAM_DATA).toBe("coach_team_data");
       expect(AccessContext.PLAYER_OWN_DATA).toBe("player_own_data");
@@ -295,7 +295,7 @@ describe("Coach API Consent Unit Tests", () => {
   describe("CONSENT_PROTECTED_TABLES", () => {
     it("should include training_sessions and wellness_entries", async () => {
       const { CONSENT_PROTECTED_TABLES } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       expect(CONSENT_PROTECTED_TABLES).toContain("training_sessions");
       expect(CONSENT_PROTECTED_TABLES).toContain("wellness_entries");
@@ -306,7 +306,7 @@ describe("Coach API Consent Unit Tests", () => {
   describe("isConsentProtectedTable helper", () => {
     it("should correctly identify protected tables", async () => {
       const { isConsentProtectedTable } =
-        await import("../../netlify/functions/utils/consent-data-reader.cjs");
+        await import("../../netlify/functions/utils/consent-data-reader.js");
 
       expect(isConsentProtectedTable("training_sessions")).toBe(true);
       expect(isConsentProtectedTable("wellness_entries")).toBe(true);

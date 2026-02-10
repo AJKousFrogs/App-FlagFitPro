@@ -132,7 +132,7 @@
 }
 
 .protocol-card:hover {
-  transform: translateY(-0.125rem);
+  transform: translateY(calc(-1 * var(--border-2)));
   box-shadow: var(--shadow-md);
 }
 
@@ -495,8 +495,8 @@
 }
 
 .detail-icon {
-  width: 4rem;
-  height: 4rem;
+  width: var(--header-height);
+  height: var(--header-height);
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;

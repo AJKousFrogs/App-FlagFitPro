@@ -108,7 +108,7 @@ interface PerformanceMetric {
                 [data]="getMetricChartData(metric.id)"
                 [options]="miniChartOptions"
                 [width]="'100%'"
-                [height]="'60px'"
+                [height]="'calc(var(--size-120) * 0.5)'"
               >
               </p-chart>
             </div>

@@ -13,7 +13,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
   padding-bottom: var(--space-2);
 
   .tab-btn {
@@ -60,7 +60,7 @@
 
 // Program Card
 .program-card {
-  border-left: 0.25rem solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green);
 
   &.draft {
     border-left-color: var(--ds-text-tertiary);
@@ -161,7 +161,7 @@
   }
 
   i {
-    font-size: var(--ds-font-size-xs); /* 0.625rem - micro icon */
+    font-size: var(--ds-font-size-xs); /* calc(var(--space-2) + var(--space-0-5)) - micro icon */
     color: var(--ds-text-tertiary);
   }
 }
@@ -171,7 +171,7 @@
   gap: var(--space-2);
   flex-wrap: wrap;
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--ds-border-subtle);
 }
 
 // Empty State - REMOVED (use .card-empty-state from card-shell)
@@ -197,7 +197,7 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
     padding-bottom: var(--space-2);
-    border-bottom: 0.0625rem solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--ds-border-subtle);
   }
 }
 
@@ -239,7 +239,7 @@
   padding: var(--space-2);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-md);
-  border: 0.0625rem solid var(--ds-border-default);
+  border: var(--border-1) solid var(--ds-border-default);
   text-align: center;
 
   .phase-header {

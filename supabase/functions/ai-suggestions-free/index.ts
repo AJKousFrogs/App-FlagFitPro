@@ -190,14 +190,3 @@ function parseTextSuggestions(_text: string): Suggestion[] {
     },
   ];
 }
-
-/**
- * @deprecated REMOVED: Mock suggestions function
- * Previously returned hardcoded suggestions that didn't reflect actual athlete data.
- * Now returns empty array to ensure athletes only see personalized AI recommendations.
- */
-function getMockSuggestions(): Suggestion[] {
-  // Return empty array - mock data removed to ensure data integrity
-  // Athletes should only see AI-generated suggestions based on their actual training data
-  return [];
-}

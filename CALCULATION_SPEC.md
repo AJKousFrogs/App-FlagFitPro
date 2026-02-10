@@ -84,7 +84,7 @@ This document describes calculation formulas, window assumptions, missing-data h
 - Minimum chronic load floor: preset-dependent (default 50 AU)
 
 ## Readiness Scoring (Netlify Function)
-- Source: `netlify/functions/calc-readiness.cjs` `/api/calc-readiness`
+- Source: `netlify/functions/calc-readiness.js` `/api/calc-readiness`
 - Base score: 70
 - Wellness adjustments:
   - `sleep`: `(sleep − 5) × 3`
@@ -189,13 +189,13 @@ This document describes calculation formulas, window assumptions, missing-data h
 - Bar height: `min(100, max(15, throws / 800 × 100))`
 
 ## Performance Score (Dashboard)
-- Source: `netlify/functions/dashboard.cjs`
+- Source: `netlify/functions/dashboard.js`
 - Formula: `performanceScore = 100 − (avgRpe − 5) × 10` (clamped 0–100).
 
 ## Trend Aggregations (Performance / Analytics)
 - Sources:
-  - `netlify/functions/analytics.cjs`
-  - `netlify/functions/performance-data.cjs`
+  - `netlify/functions/analytics.js`
+  - `netlify/functions/performance-data.js`
 - Formula: averages of `performance_score` values with rounding to 1 decimal.
 
 ## Regression Protection

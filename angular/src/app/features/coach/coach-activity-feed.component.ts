@@ -88,10 +88,19 @@ import { getInitials } from "../../shared/utils/format.utils";
         <div class="loading-state">
           @for (i of [1, 2, 3]; track i) {
             <div class="skeleton-item">
-              <p-skeleton shape="circle" size="40px"></p-skeleton>
+              <p-skeleton
+                shape="circle"
+                size="var(--icon-container-md)"
+              ></p-skeleton>
               <div class="skeleton-content">
-                <p-skeleton width="60%" height="14px"></p-skeleton>
-                <p-skeleton width="80%" height="12px"></p-skeleton>
+                <p-skeleton
+                  width="60%"
+                  height="var(--ds-font-size-sm)"
+                ></p-skeleton>
+                <p-skeleton
+                  width="80%"
+                  height="var(--ds-font-size-xs)"
+                ></p-skeleton>
               </div>
             </div>
           }
@@ -214,7 +223,7 @@ export class CoachActivityFeedComponent implements OnDestroy {
   // Inputs - Angular 21 signal inputs
   readonly compact = input(false);
   readonly showSummary = input(true);
-  readonly maxHeight = input("400px");
+  readonly maxHeight = input("calc(var(--size-200) * 2)");
   readonly limit = input(20);
 
   // State from service

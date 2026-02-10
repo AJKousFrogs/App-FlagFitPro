@@ -22,7 +22,7 @@
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
   padding: var(--space-5);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
 }
 
 .card-header {
@@ -209,7 +209,7 @@
   background: var(--primitive-error-50);
   border-radius: var(--radius-xl);
   padding: var(--space-5);
-  border: 0.0625rem solid var(--primitive-error-200);
+  border: var(--border-1) solid var(--primitive-error-200);
 }
 
 .attention-section .section-header h3 i {
@@ -232,7 +232,7 @@
 }
 
 .athlete-card.attention {
-  border-left: 0.25rem solid var(--primitive-error-400);
+  border-left: var(--space-1) solid var(--primitive-error-400);
 }
 
 .athlete-info {
@@ -320,7 +320,7 @@
   padding: var(--space-2) var(--space-3);
   background: white;
   border-radius: var(--radius-full);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
 }
 
 .chip-name {
@@ -365,7 +365,7 @@
 
 .athletes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--size-100), 1fr));
   gap: var(--space-3);
 }
 
@@ -377,7 +377,7 @@
   padding: var(--space-4);
   background: var(--surface-primary);
   border-radius: var(--radius-lg);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   cursor: pointer;
   transition:
     transform var(--transition-fast),
@@ -386,7 +386,7 @@
 }
 
 .athlete-mini-card:hover {
-  transform: translateY(-0.125rem);
+  transform: translateY(-var(--border-2));
   box-shadow: var(--shadow-md);
 }
 
@@ -403,10 +403,10 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: var(--space-3);
+  height: var(--space-3);
   border-radius: 50%;
-  border: 0.125rem solid white;
+  border: var(--border-2) solid white;
 }
 
 .status-indicator.optimal {
@@ -465,10 +465,10 @@
 
 .not-checked-badge {
   position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
+  top: var(--space-1);
+  right: var(--space-1);
+  width: var(--space-5);
+  height: var(--space-5);
   background: var(--primitive-warning-100);
   border-radius: 50%;
   display: flex;
@@ -488,14 +488,14 @@
   gap: var(--space-4);
   padding: var(--space-4);
   background: var(--primitive-info-50);
-  border: 0.0625rem solid var(--primitive-info-200);
+  border: var(--border-1) solid var(--primitive-info-200);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-4);
 }
 
 .notice-icon {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
   background: var(--primitive-info-100);
   border-radius: 50%;
   display: flex;
@@ -583,10 +583,10 @@
 
 .blocked-badge {
   position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
+  top: var(--space-1);
+  right: var(--space-1);
+  width: var(--space-5);
+  height: var(--space-5);
   background: var(--color-border-primary);
   border-radius: 50%;
   display: flex;
@@ -615,6 +615,6 @@
   }
 
   .athletes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--size-80), 1fr));
   }
 }

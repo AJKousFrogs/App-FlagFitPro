@@ -8,44 +8,10 @@
   margin: 0 auto;
 }
 
-// Status Card
-.status-card {
-  margin-bottom: var(--space-4);
-}
-
 .cycle-status-content {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-}
-
-.current-phase-highlight {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  background: var(--ds-surface-elevated);
-  border-radius: var(--radius-lg);
-
-  .phase-icon {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--ds-primary-green);
-  }
-
-  .phase-details {
-    flex: 1;
-
-    h3 {
-      margin: 0 0 var(--space-1) 0;
-      font-size: var(--ds-font-size-2xl);
-      color: var(--ds-text-primary);
-    }
-
-    .phase-subtitle {
-      color: var(--ds-text-secondary);
-      font-size: var(--ds-font-size-md);
-    }
-  }
 }
 
 .cycle-stats {
@@ -63,130 +29,10 @@
   }
 }
 
-.quick-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
-  gap: var(--space-3);
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: var(--space-3);
-    background: var(--ds-surface-base);
-    border-radius: var(--radius-md);
-  }
-}
-
-// Recommendations
-.recommendations-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  .recommendation-item {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    background: var(--ds-surface-base);
-    border-radius: var(--radius-md);
-
-    i {
-      font-size: var(--ds-font-size-2xl);
-      color: var(--ds-primary-green);
-      margin-top: var(--space-1);
-    }
-  }
-}
-
-// Calendar Card
-.calendar-card {
-  margin-bottom: var(--space-4);
-}
-
-.calendar-legend {
-  display: flex;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
-
-    .legend-dot {
-      width: var(--indicator-size-md);
-      height: var(--indicator-size-md);
-      border-radius: 50%;
-
-      &.menstrual {
-        background: var(--primitive-error-400);
-      }
-
-      &.follicular {
-        background: var(--primitive-cyan-400);
-      }
-
-      &.ovulation {
-        background: var(--primitive-yellow-300);
-      }
-
-      &.luteal {
-        background: var(--primitive-teal-300);
-      }
-    }
-  }
-}
-
-// Symptoms Card
-.symptoms-card {
-  margin-bottom: var(--space-4);
-}
-
 .symptoms-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-2);
-
-  .symptom-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
-    background: var(--ds-surface-base);
-    border: 0.0625rem solid var(--ds-border-subtle);
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition:
-      background-color var(--motion-base) var(--ease-standard),
-      border-color var(--motion-base) var(--ease-standard);
-
-    &:hover {
-      background: var(--ds-surface-elevated);
-    }
-
-    &.active {
-      background: var(--ds-primary-green-subtle);
-      border-color: var(--ds-primary-green);
-    }
-
-    i {
-      font-size: var(--ds-font-size-md);
-    }
-  }
-}
-
-.symptom-notes {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
 }
 
 // History Card
@@ -222,20 +68,6 @@
     }
   }
 
-  .privacy-note {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3);
-    background: var(--ds-surface-base);
-    border-radius: var(--radius-md);
-    font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
-
-    i {
-      color: var(--ds-primary-green);
-    }
-  }
 }
 
 .retention-select {
@@ -246,12 +78,6 @@
 .empty-state {
   text-align: center;
   padding: var(--space-6);
-
-  .empty-icon {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--ds-text-tertiary);
-    margin-bottom: var(--space-3);
-  }
 
   h3 {
     margin: 0 0 var(--space-2) 0;
@@ -268,15 +94,6 @@
 @include respond-to(md) {
   .cycle-tracking-page {
     padding: var(--space-3);
-  }
-
-  .current-phase-highlight {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .quick-stats {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .symptoms-grid {

@@ -64,7 +64,7 @@
 
 .rich-text-content {
   min-height: var(--chart-min-height-sm);
-  max-height: 25rem;
+  max-height: var(--chart-min-height-lg);
   overflow-y: auto;
   padding: var(--space-4);
   font-size: var(--ds-font-size-md);

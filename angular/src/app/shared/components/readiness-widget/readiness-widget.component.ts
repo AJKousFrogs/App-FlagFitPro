@@ -46,8 +46,8 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
 
       @if (loading()) {
         <div class="loading-state">
-          <p-skeleton width="100%" height="4rem" class="mb-4"></p-skeleton>
-          <p-skeleton width="60%" height="2rem"></p-skeleton>
+          <p-skeleton width="100%" height="var(--space-16)" class="mb-4"></p-skeleton>
+          <p-skeleton width="60%" height="var(--space-8)"></p-skeleton>
         </div>
       } @else if (error()) {
         <div class="error-state p-4 bg-red-50 border border-red-200 rounded-lg">

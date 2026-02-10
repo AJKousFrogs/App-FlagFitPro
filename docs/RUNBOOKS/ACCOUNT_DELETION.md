@@ -33,7 +33,7 @@ User Request → Soft Delete (immediate) → 30-day Queue → Hard Delete → Au
 
 | Component                     | Purpose                            | Location              |
 | ----------------------------- | ---------------------------------- | --------------------- |
-| `account-deletion.cjs`        | API endpoint for user requests     | `netlify/functions/`  |
+| `account-deletion.js`         | API endpoint for user requests     | `netlify/functions/`  |
 | `process-deletions`           | Edge function for queue processing | `supabase/functions/` |
 | `initiate_account_deletion()` | DB function for soft delete        | Database              |
 | `process_hard_deletion()`     | DB function for PII removal        | Database              |

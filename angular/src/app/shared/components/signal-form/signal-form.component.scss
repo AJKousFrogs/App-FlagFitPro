@@ -22,13 +22,13 @@
 label.required::after {
   content: " *";
   color: var(--color-status-error);
-  margin-left: var(--space-1); // 0.25rem
+  margin-left: var(--space-1); // var(--space-1)
 }
 
 .sr-only {
   position: absolute;
-  width: 0.0625rem;
-  height: 0.0625rem;
+  width: var(--border-1);
+  height: var(--border-1);
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;

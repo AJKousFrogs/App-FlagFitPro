@@ -37,6 +37,8 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
+import { DIALOG_WIDTHS } from "../../core/utils/design-tokens.util";
+import { DesignTokens } from "../../shared/models/design-tokens";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -754,7 +756,7 @@ const RETENTION_OPTIONS = [
         [visible]="showLogDialog()"
         (visibleChange)="showLogDialog.set($event)"
         styleClass="dialog-max-w-lg"
-        [breakpoints]="{ '640px': '95vw' }"
+        [breakpoints]="dialogBreakpoints"
         [draggable]="false"
       >
         <div class="log-form">
@@ -884,6 +886,9 @@ const RETENTION_OPTIONS = [
   styleUrl: "./cycle-tracking.component.scss",
 })
 export class CycleTrackingComponent implements OnInit {
+  readonly dialogBreakpoints = {
+    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
+  };
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);

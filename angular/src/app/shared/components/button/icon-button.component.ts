@@ -8,7 +8,6 @@ import {
   output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Ripple } from "primeng/ripple";
 import { Tooltip } from "primeng/tooltip";
 
 /**
@@ -55,7 +54,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
   selector: "app-icon-button",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Ripple, Tooltip],
+  imports: [CommonModule, RouterModule, Tooltip],
   template: `
     <!-- Link version (when routerLink is provided) -->
     @if (routerLink()) {
@@ -69,7 +68,6 @@ export type IconButtonSize = "sm" | "md" | "lg";
         [pTooltip]="tooltipText()"
         [tooltipPosition]="tooltipPosition()"
         (click)="onLinkClick($event)"
-        pRipple
       >
         <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
       </a>
@@ -88,7 +86,6 @@ export type IconButtonSize = "sm" | "md" | "lg";
         [pTooltip]="tooltipText()"
         [tooltipPosition]="tooltipPosition()"
         (click)="onClick($event)"
-        pRipple
       >
         <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
       </button>
@@ -121,7 +118,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
         align-items: center;
         justify-content: center;
         border: none;
-        border-radius: var(--radius-lg, 8px);
+        border-radius: var(--radius-lg);
         cursor: pointer;
         overflow: hidden;
         user-select: none;
@@ -140,10 +137,10 @@ export type IconButtonSize = "sm" | "md" | "lg";
         will-change: transform, box-shadow;
 
         /* Default size (md) - 44px touch target */
-        width: 44px;
-        height: 44px;
-        min-width: 44px;
-        min-height: 44px;
+        width: var(--touch-target-md);
+        height: var(--touch-target-md);
+        min-width: var(--touch-target-md);
+        min-height: var(--touch-target-md);
         padding: 0;
       }
 
@@ -151,7 +148,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
       @media (hover: hover) and (pointer: fine) {
         .icon-btn:hover:not(:disabled):not(.btn-disabled) {
           background-color: var(--ds-primary-green-hover);
-          transform: translateY(-2px);
+          transform: translateY(calc(var(--space-0-5) * -1));
           box-shadow: var(--hover-shadow-md);
         }
       }
@@ -163,8 +160,8 @@ export type IconButtonSize = "sm" | "md" | "lg";
       }
 
       .icon-btn:focus-visible {
-        outline: 3px solid var(--focus-ring-color);
-        outline-offset: 2px;
+        outline: var(--border-3) solid var(--focus-ring-color);
+        outline-offset: var(--border-2);
         box-shadow: var(--shadow-md), var(--focus-ring-shadow);
       }
 
@@ -185,11 +182,11 @@ export type IconButtonSize = "sm" | "md" | "lg";
        ================================ */
 
       .icon-btn-sm {
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
-        min-height: 36px;
-        border-radius: var(--radius-md, 6px);
+        width: var(--touch-target-sm);
+        height: var(--touch-target-sm);
+        min-width: var(--touch-target-sm);
+        min-height: var(--touch-target-sm);
+        border-radius: var(--radius-md);
       }
 
       .icon-btn-sm i {
@@ -201,11 +198,11 @@ export type IconButtonSize = "sm" | "md" | "lg";
       }
 
       .icon-btn-lg {
-        width: 52px;
-        height: 52px;
-        min-width: 52px;
-        min-height: 52px;
-        border-radius: var(--radius-xl, var(--ds-font-size-xs));
+        width: var(--touch-target-lg);
+        height: var(--touch-target-lg);
+        min-width: var(--touch-target-lg);
+        min-height: var(--touch-target-lg);
+        border-radius: var(--radius-xl);
       }
 
       .icon-btn-lg i {
@@ -272,9 +269,10 @@ export type IconButtonSize = "sm" | "md" | "lg";
       @media (hover: hover) and (pointer: fine) {
         .icon-btn-danger:hover:not(:disabled):not(.btn-disabled) {
           background-color: var(--color-interactive-destructive-hover);
-          transform: translateY(-2px);
+          transform: translateY(calc(var(--space-0-5) * -1));
           box-shadow:
-            0 8px 20px rgba(var(--primitive-error-500-rgb), 0.4),
+            0 var(--space-2) var(--space-5)
+              rgba(var(--primitive-error-500-rgb), 0.4),
             var(--shadow-md);
         }
       }
@@ -283,7 +281,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
         outline-color: var(--color-status-error);
         box-shadow:
           var(--shadow-md),
-          0 0 0 4px rgba(var(--primitive-error-500-rgb), 0.25);
+          0 0 0 var(--border-4) rgba(var(--primitive-error-500-rgb), 0.25);
       }
 
       /* ================================

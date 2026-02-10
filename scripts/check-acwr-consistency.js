@@ -10,8 +10,9 @@
  *   node scripts/check-acwr-consistency.js [athlete_id]
  */
 
-const { createClient } = require("@supabase/supabase-js");
-require("dotenv").config({ path: ".env.local" });
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey =

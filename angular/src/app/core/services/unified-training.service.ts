@@ -1,53 +1,51 @@
 import {
-  DestroyRef,
-  Injectable,
-  computed,
-  inject,
-  signal,
+    DestroyRef,
+    Injectable,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
-import { Observable, combineLatest, firstValueFrom, from, of } from "rxjs";
-import { catchError, map, shareReplay, tap } from "rxjs";
+import { Observable, catchError, combineLatest, firstValueFrom, from, map, of, shareReplay, tap } from "rxjs";
 
 import { COLORS } from "../constants/app.constants";
 import { WELLNESS } from "../constants/wellness.constants";
 import {
-  DailyProtocolResponse,
-  DailyRoutineSlot,
-  SmartRecommendationsResponse,
-  SupplementEntry,
-  TodayScheduleItem,
-  TrainingRecommendation,
-  TrainingSessionRecord,
-  UserMetadata,
+    DailyProtocolResponse,
+    DailyRoutineSlot,
+    SmartRecommendationsResponse,
+    TodayScheduleItem,
+    TrainingRecommendation,
+    TrainingSessionRecord,
+    UserMetadata,
 } from "../models/api.models";
+import type { SupplementEntry } from "../models/supplement.models";
 import {
-  Achievement,
-  ReadinessStatus,
-  SessionType,
-  TrainingDataResult,
-  TrainingStatCard,
-  WeeklyScheduleDay,
-  WellnessAlert,
-  Workout,
+    Achievement,
+    ReadinessStatus,
+    SessionType,
+    TrainingDataResult,
+    TrainingStatCard,
+    WeeklyScheduleDay,
+    WellnessAlert,
+    Workout,
 } from "../models/training.models";
 import { AcwrService } from "./acwr.service";
 import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import {
-  PerformanceDataService,
-  PhysicalMeasurement,
+    PerformanceDataService,
+    PhysicalMeasurement,
 } from "./performance-data.service";
 import {
-  PlayerProgramService,
-  ProgramAssignment,
+    PlayerProgramService,
+    ProgramAssignment,
 } from "./player-program.service";
 import { ReadinessService } from "./readiness.service";
 import { SupabaseService } from "./supabase.service";
 import { TrainingDataService } from "./training-data.service";
 import { WellnessService } from "./wellness.service";
 // Note: WellnessCheckinData is defined locally below
-// ApiResponseWrapper is deprecated - use ApiResponse from core/models/common.models
 
 /**
  * Wellness checkin record from database

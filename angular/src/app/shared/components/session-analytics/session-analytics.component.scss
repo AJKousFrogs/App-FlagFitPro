@@ -35,8 +35,8 @@
 }
 
 .stat-icon {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;

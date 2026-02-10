@@ -14,7 +14,7 @@
 
 ### For Architecture Review
 
-1. Review **[ARCHITECTURE.md](./ARCHITECTURE.md)** - DevTools system architecture
+1. Review **[DEBUG_SERVICE_ARCHITECTURE.md](./DEBUG_SERVICE_ARCHITECTURE.md)** - DevTools system architecture
 
 ### For iOS Debugging
 
@@ -53,7 +53,7 @@
 
 ---
 
-### 3. ARCHITECTURE.md
+### 3. DEBUG_SERVICE_ARCHITECTURE.md
 
 **Purpose:** DevTools system architecture and design  
 **What's Inside:**

@@ -8,7 +8,7 @@
 .session-log-form {
   background: var(--surface-primary);
   border: var(--border-1) solid var(--primitive-neutral-200);
-  border-radius: var(--radius-xl, var(--ds-font-size-xs));
+  border-radius: var(--radius-xl);
   padding: var(--space-5);
   margin-top: var(--space-4);
 }
@@ -180,10 +180,6 @@
   justify-content: flex-end;
 }
 
-.submit-btn {
-  min-width: var(--input-min-width-lg);
-}
-
 /* Mobile */
 @include respond-to(sm) {
   .duration-input-row {
@@ -199,7 +195,4 @@
     justify-content: stretch;
   }
 
-  .submit-btn {
-    width: 100%;
-  }
 }

@@ -31,7 +31,7 @@ import { RiskZone } from "../../../core/models/acwr.models";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   templateUrl: "./traffic-light-risk.component.html",
-  styleUrls: ["./traffic-light-risk.component.scss"],
+  styleUrl: "./traffic-light-risk.component.scss",
 })
 export class TrafficLightRiskComponent {
   private renderer = inject(Renderer2);

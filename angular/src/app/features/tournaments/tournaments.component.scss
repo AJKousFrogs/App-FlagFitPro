@@ -591,7 +591,7 @@
 
 /* Player Availability List */
 .player-availability-list {
-  max-height: var(--chart-min-height-md); /* 18.75rem */
+  max-height: var(--chart-min-height-md); /* var(--chart-min-height-md) */
   overflow-y: auto;
 }
 
@@ -728,7 +728,7 @@
   }
 }
 
-/* Large Screens (75rem - 87.4375rem) */
+/* Large Screens (calc(var(--size-200) * 6) - 87.4375rem) */
 @media (min-width: 75rem) and (max-width: 87.4375rem) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -814,11 +814,6 @@
     padding: var(--space-4);
   }
 
-  .countdown-section {
-    flex-direction: column;
-    text-align: center;
-  }
-
   .form-row.two-col {
     grid-template-columns: 1fr;
   }
@@ -832,8 +827,8 @@
   }
 }
 
-/* Mobile Large (30.0625rem - 47.9375rem) */
-@media (min-width: 30.0625rem) and (max-width: 48rem) {
+/* Mobile Large (30rem - 48rem) */
+@media (min-width: 30rem) and (max-width: 48rem) {
   .availability-options {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -890,10 +885,6 @@
     font-size: var(--ds-font-size-md);
   }
 
-  .tournament-meta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 
 /* Landscape Mode on Mobile */
@@ -913,7 +904,7 @@
 
   .availability-option,
   .header-actions button {
-    min-height: var(--touch-target-md); /* 2.75rem */
+    min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
   }
 }
 
@@ -921,15 +912,6 @@
    PRIMENG COMPONENT OVERRIDES
    Only layout/width constraints - form control styling is global
    ================================================================ */
-
-/*
- * EXCEPTION: Personal Badge Font Size
- * Reason: PrimeNG badge needs smaller text in context
- * Scope: .personal-badge class only
- */
-.personal-badge {
-  font-size: var(--ds-font-size-xs);
-}
 
 /*
  * Tournament Form - Layout only (no form control styling)

@@ -777,7 +777,7 @@
       }
     }
 
-    // Checked state - green background (#089949), thumb moves right
+    // Checked state - green background (var(--p-highlight-text-color)), thumb moves right
     &.p-toggleswitch-checked {
       .p-toggleswitch-slider {
         background: var(--p-toggleswitch-checked-background);
@@ -1272,7 +1272,7 @@
   .p-tag.event-type-tag {
     font-size: var(--font-caption-size);
     padding: var(--space-1) var(--space-2);
-    line-height: 1.2;
+    line-height: var(--ds-line-height-h1);
   }
 
   // ============================================

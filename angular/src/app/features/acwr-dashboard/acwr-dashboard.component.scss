@@ -10,16 +10,16 @@
   .data-freshness {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem 1.5rem;
-    margin: 0.5rem 0 1rem;
-    font-size: 0.85rem;
+    gap: var(--space-3) var(--space-6);
+    margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--ds-font-size-sm);
     color: var(--text-secondary);
 
     .data-source,
     .data-updated {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
+  gap: calc(var(--space-1) + var(--space-0-5));
     }
   }
 
@@ -149,24 +149,6 @@
   margin-bottom: var(--space-1);
 }
 
-.status-badge {
-  display: inline-block;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  margin-left: var(--space-2);
-
-  &.pending {
-    background: var(--overlay-white-20);
-    color: var(--color-text-on-primary);
-  }
-
-  &.in-progress {
-    background: var(--overlay-white-30);
-    color: var(--color-text-on-primary);
-  }
-}
 
 .action-buttons {
   display: flex;
@@ -364,8 +346,8 @@
 }
 
 .zone-dot {
-  width: var(--space-3); /* 0.75rem */
-  height: var(--space-3); /* 0.75rem */
+  width: var(--space-3); /* 0.calc(var(--size-200) * 6) */
+  height: var(--space-3); /* 0.calc(var(--size-200) * 6) */
   border-radius: var(--radius-full);
   display: inline-block;
 
@@ -463,7 +445,7 @@
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
   margin-bottom: var(--space-6);
-  max-width: var(--content-max-width-sm); /* 40rem - closest token to 31.25rem */
+  max-width: var(--content-max-width-sm); /* var(--content-max-width-sm) - closest token to var(--dialog-max-width-lg) */
   margin-left: auto;
   margin-right: auto;
 }
@@ -483,7 +465,7 @@
 }
 
 .progress-label {
-  flex: 0 0 calc(var(--space-24) * 1.458); /* 8.75rem - using spacing tokens */
+  flex: 0 0 calc(var(--space-24) * 1.458); /* 8.calc(var(--size-200) * 6) - using spacing tokens */
   text-align: left;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
@@ -506,7 +488,7 @@
 }
 
 .progress-value {
-  flex: 0 0 calc(var(--space-24) * 0.625); /* 3.75rem - using spacing tokens */
+  flex: 0 0 calc(var(--space-24) * 0.625); /* var(--button-height-xl) - using spacing tokens */
   text-align: right;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
@@ -567,7 +549,7 @@
 }
 
 .chart-container {
-  height: calc(var(--space-24) * 3.125); /* 18.75rem - using spacing tokens */
+  height: calc(var(--space-24) * 3.125); /* 18.calc(var(--size-200) * 6) - using spacing tokens */
   position: relative;
 }
 
@@ -589,8 +571,8 @@
 }
 
 .legend-dot {
-  width: var(--space-3); /* 0.75rem */
-  height: var(--space-3); /* 0.75rem */
+  width: var(--space-3); /* 0.calc(var(--size-200) * 6) */
+  height: var(--space-3); /* 0.calc(var(--size-200) * 6) */
   border-radius: var(--radius-full);
 }
 
@@ -829,9 +811,9 @@
 
   // Smaller ratio circle on mobile
   .ratio-circle {
-    width: var(--grid-card-min-xs); /* 8.75rem - component-specific size */
-    height: var(--grid-card-min-xs); /* 8.75rem - component-specific size */
-    border-width: var(--space-1); /* 0.25rem - closest token */
+    width: var(--grid-card-min-xs); /* 8.calc(var(--size-200) * 6) - component-specific size */
+    height: var(--grid-card-min-xs); /* 8.calc(var(--size-200) * 6) - component-specific size */
+    border-width: var(--space-1); /* var(--space-1) - closest token */
   }
 
   .ratio-value {
@@ -954,7 +936,7 @@
   .quick-actions .action-btn {
     padding: var(--space-3) var(--space-4);
     font-size: var(--ds-font-size-md);
-    min-height: var(--touch-target-md); /* 2.75rem - touch-friendly */
+    min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) - touch-friendly */
 
     &:active {
       transform: translateY(0);
@@ -1003,7 +985,7 @@
   }
 
   .progress-bar {
-    height: var(--progress-sm); /* 0.25rem - closest token */
+    height: var(--progress-sm); /* var(--space-1) - closest token */
   }
 
   .progress-value {
@@ -1032,7 +1014,7 @@
   }
 
   .chart-container {
-    height: 15.625rem; /* 15.625rem - component-specific size */
+    height: var(--card-min-height-xl); /* var(--card-min-height-xl) - component-specific size */
 
     // Canvas responsive styling moved to _exceptions.scss (DS-EXC-053)
     canvas {
@@ -1105,7 +1087,7 @@
 
   .modifications li {
     font-size: var(--ds-font-size-xs);
-    margin-bottom: var(--space-1); /* 0.25rem */
+    margin-bottom: var(--space-1); /* var(--space-1) */
   }
 }
 
@@ -1135,9 +1117,9 @@
   }
 
   .ratio-circle {
-    width: 7.5rem; /* 7.5rem - component-specific size */
-    height: 7.5rem; /* 7.5rem - component-specific size */
-    border-width: var(--space-1); /* 0.25rem */
+    width: var(--size-120); /* var(--size-120) - component-specific size */
+    height: var(--size-120); /* var(--size-120) - component-specific size */
+    border-width: var(--space-1); /* var(--space-1) */
   }
 
   .ratio-value {
@@ -1169,7 +1151,7 @@
   }
 
   .chart-container {
-    height: 13.75rem; /* 13.75rem - component-specific size */
+    height: calc(var(--size-200) + var(--space-5)); /* calc(var(--size-200) + var(--space-5)) - component-specific size */
   }
 
   .recommendation-card {
@@ -1192,7 +1174,7 @@
   }
 
   .risk-zone-indicator {
-    max-width: var(--chart-min-height-md); /* 18.75rem - component-specific size */
+    max-width: var(--chart-min-height-md); /* var(--chart-min-height-md) - component-specific size */
   }
 
   .load-breakdown {
@@ -1205,6 +1187,6 @@
   }
 
   .chart-container {
-    height: var(--size-200); /* 12.5rem - component-specific size */
+    height: var(--size-200); /* var(--size-200) - component-specific size */
   }
 }

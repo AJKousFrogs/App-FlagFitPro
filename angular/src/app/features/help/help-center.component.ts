@@ -122,7 +122,7 @@ interface HelpTopic {
 
       .quick-links {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(var(--size-150), 1fr));
         gap: var(--spacing-md);
       }
 
@@ -137,12 +137,12 @@ interface HelpTopic {
         text-decoration: none;
         color: var(--text-color);
         transition: all 0.2s ease;
-        border: 1px solid var(--surface-border);
+        border: var(--border-1) solid var(--surface-border);
       }
 
       .quick-link-card:hover {
         background: var(--surface-hover);
-        transform: translateY(-2px);
+        transform: translateY(calc(var(--space-0-5) * -1));
         box-shadow: var(--shadow-md);
       }
 
@@ -153,7 +153,7 @@ interface HelpTopic {
 
       .faq-item {
         padding: var(--spacing-md) 0;
-        border-bottom: 1px solid var(--surface-border);
+        border-bottom: var(--border-1) solid var(--surface-border);
       }
 
       .faq-item:last-child {

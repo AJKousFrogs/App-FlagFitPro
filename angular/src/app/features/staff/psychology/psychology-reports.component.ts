@@ -195,6 +195,10 @@ interface ReportPrivacySettings {
               <i class="pi pi-calendar"></i>
               Pre-Competition
             </p-tab>
+            <p-tab [value]="3">
+              <i class="pi pi-comments"></i>
+              Team Insights
+            </p-tab>
           </p-tablist>
 
           <p-tabpanels>
@@ -209,7 +213,7 @@ interface ReportPrivacySettings {
                   <div class="reports-grid">
                     @for (report of generatedReports(); track $index) {
                       <p-card styleClass="report-card">
-                        <ng-template #header>
+                        <ng-template pTemplate="header">
                           <div class="report-header">
                             <i
                               [class]="getReportIcon(report.type)"
@@ -245,7 +249,7 @@ interface ReportPrivacySettings {
                             </div>
                           </div>
                         </div>
-                        <ng-template #footer>
+                        <ng-template pTemplate="footer">
                           <app-button
                             variant="text"
                             iconLeft="pi-download"
@@ -657,7 +661,7 @@ interface ReportPrivacySettings {
                   <div class="precomp-grid">
                     @for (report of preCompReports(); track $index) {
                       <p-card styleClass="precomp-card">
-                        <ng-template #header>
+                        <ng-template pTemplate="header">
                           <div class="precomp-header">
                             <div class="comp-info">
                               <span class="comp-name">{{
@@ -784,7 +788,7 @@ interface ReportPrivacySettings {
                           </div>
                         </div>
 
-                        <ng-template #footer>
+                        <ng-template pTemplate="footer">
                           <app-button
                             variant="text"
                             iconLeft="pi-eye"
@@ -859,7 +863,7 @@ interface ReportPrivacySettings {
                         styleClass="insight-card"
                         [class]="'priority-' + insight.priority"
                       >
-                        <ng-template #header>
+                        <ng-template pTemplate="header">
                           <div class="insight-header">
                             <div class="insight-meta">
                               <app-status-tag
@@ -1063,7 +1067,7 @@ interface ReportPrivacySettings {
               ></textarea>
             </div>
           </div>
-          <ng-template #footer>
+          <ng-template pTemplate="footer">
             <app-button variant="text" (clicked)="showGenerateDialog.set(false)"
               >Cancel</app-button
             >
@@ -1123,7 +1127,7 @@ interface ReportPrivacySettings {
               />
             </div>
           </div>
-          <ng-template #footer>
+          <ng-template pTemplate="footer">
             <app-button variant="text" (clicked)="showPreCompDialog.set(false)"
               >Cancel</app-button
             >
@@ -1137,7 +1141,7 @@ interface ReportPrivacySettings {
       </div>
     </app-main-layout>
   `,
-  styleUrls: ["./psychology-reports.component.scss"],
+  styleUrl: "./psychology-reports.component.scss",
 })
 export class PsychologyReportsComponent implements OnInit {
   private api = inject(ApiService);
@@ -1235,24 +1239,24 @@ export class PsychologyReportsComponent implements OnInit {
         {
           label: "Mood",
           data: [6.5, 7.2, 6.8, data.wellnessTrends.avgMoodScore],
-          borderColor: "#22c55e",
-          backgroundColor: "rgba(34, 197, 94, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.1)",
           fill: true,
           tension: 0.4,
         },
         {
           label: "Stress",
           data: [5.5, 4.8, 5.2, data.wellnessTrends.avgStressLevel],
-          borderColor: "#f97316",
-          backgroundColor: "rgba(249, 115, 22, 0.1)",
+          borderColor: "var(--ds-primary-orange)",
+          backgroundColor: "var(--ds-primary-orange-subtle)",
           fill: true,
           tension: 0.4,
         },
         {
           label: "Confidence",
           data: [7.0, 7.5, 7.2, data.wellnessTrends.avgConfidence],
-          borderColor: "#3b82f6",
-          backgroundColor: "rgba(59, 130, 246, 0.1)",
+          borderColor: "var(--color-chart-tertiary)",
+          backgroundColor: "rgba(var(--primitive-info-500-rgb), 0.1)",
           fill: true,
           tension: 0.4,
         },

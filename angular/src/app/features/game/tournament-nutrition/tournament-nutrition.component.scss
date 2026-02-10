@@ -53,8 +53,8 @@
     position: absolute;
     top: -50%;
     right: -10%;
-    width: var(--chart-min-height-lg); /* 25rem */
-    height: var(--chart-min-height-lg); /* 25rem */
+    width: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
+    height: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.15) 0%,
@@ -69,8 +69,8 @@
     position: absolute;
     bottom: -30%;
     left: -5%;
-    width: var(--chart-min-height-md); /* 18.75rem */
-    height: var(--chart-min-height-md); /* 18.75rem */
+    width: var(--chart-min-height-md); /* var(--chart-min-height-md) */
+    height: var(--chart-min-height-md); /* var(--chart-min-height-md) */
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.1) 0%,
@@ -584,8 +584,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: var(--chart-min-height-sm); /* 12.5rem */
-    height: var(--chart-min-height-sm); /* 12.5rem */
+    width: var(--chart-min-height-sm); /* var(--size-200) */
+    height: var(--chart-min-height-sm); /* var(--size-200) */
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.05) 0%,
@@ -795,8 +795,8 @@
     }
     background: linear-gradient(
       135deg,
-      rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.08) 0%,
-      rgba(var(--primitive-success-500-rgb, 16, 185, 129), 0.02) 100%
+      rgba(var(--primitive-success-500-rgb), 0.08) 0%,
+      rgba(var(--primitive-success-500-rgb), 0.02) 100%
     );
   }
 }
@@ -1073,7 +1073,9 @@
     box-shadow:
       var(--shadow-xl),
       0 var(--space-1) var(--space-3) rgba(var(--ds-primary-green-rgb), 0.2);
-    transform: translateY(calc(-1 * (var(--space-1) + var(--space-0-5))))
+    transform: translateY(
+        calc(-1 * (var(--space-1) + var(--space-0-5)))
+      )
       scale(1.02);
 
     &::before {
@@ -1495,7 +1497,7 @@
       position: absolute;
       bottom: calc(-1 * var(--indicator-size-xs));
       left: 0;
-      height: var(--indicator-size-xs); /* 0.25rem */
+      height: var(--indicator-size-xs); /* var(--space-1) */
       width: 0;
       background: var(--ds-primary-green);
       transition: width var(--transition-slower) var(--ease-standard);

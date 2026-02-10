@@ -152,7 +152,7 @@ interface TeamOption {
         @if (loading()) {
           <div class="metrics-grid">
             @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-              <p-skeleton width="100%" height="120px"></p-skeleton>
+              <p-skeleton width="100%" height="var(--size-120)"></p-skeleton>
             }
           </div>
         } @else {
@@ -231,7 +231,10 @@ interface TeamOption {
             <!-- AI Classification Breakdown -->
             <p-card header="AI Classification" styleClass="analytics-card">
               @if (loading()) {
-                <p-skeleton width="100%" height="300px"></p-skeleton>
+                <p-skeleton
+                  width="100%"
+                  height="calc(var(--size-200) * 1.5)"
+                ></p-skeleton>
               } @else {
                 <div class="classification-stats">
                   <div class="stat-group">
@@ -320,7 +323,10 @@ interface TeamOption {
             <!-- Activity Trends -->
             <p-card header="Activity Trends" styleClass="analytics-card">
               @if (loading()) {
-                <p-skeleton width="100%" height="300px"></p-skeleton>
+                <p-skeleton
+                  width="100%"
+                  height="calc(var(--size-200) * 1.5)"
+                ></p-skeleton>
               } @else {
                 <div class="trends-summary">
                   <div class="trend-metric">

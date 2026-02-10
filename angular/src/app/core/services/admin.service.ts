@@ -320,7 +320,7 @@ export class AdminService {
         status: "warning",
         severity: "warning",
         icon: "pi pi-spin pi-spinner",
-        color: "#f59e0b",
+        color: "var(--color-chart-quaternary)",
       },
     ];
   }

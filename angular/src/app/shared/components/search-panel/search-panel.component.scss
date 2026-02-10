@@ -84,7 +84,7 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--space-2) 0;
-  min-height: var(--card-min-height-lg); /* 10rem */
+  min-height: var(--card-min-height-lg); /* var(--card-min-height-lg) */
   max-height: calc(70vh - var(--grid-card-min-xs));
 }
 
@@ -168,13 +168,13 @@
 
 .quick-link-card:focus-visible {
   border-color: var(--ds-primary-green);
-  box-shadow: 0 0 0 0.1875rem rgba(var(--ds-primary-green-rgb), 0.2);
+  box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2);
 }
 
 .quick-link-card.selected {
   background: var(--surface-card);
   border-color: var(--ds-primary-green);
-  box-shadow: 0 0 0 0.125rem rgba(var(--ds-primary-green-rgb), 0.15);
+  box-shadow: 0 0 0 var(--border-2) rgba(var(--ds-primary-green-rgb), 0.15);
 }
 
 .quick-link-icon {
@@ -293,7 +293,7 @@
 
 .popular-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-height-lg), 1fr));
   gap: var(--space-2);
 }
 
@@ -326,7 +326,7 @@
   background: var(--ds-primary-green);
   border-color: var(--ds-primary-green);
   color: white;
-  transform: translateY(-0.0625rem);
+  transform: translateY(-var(--border-1));
   box-shadow: var(--shadow-md);
 }
 
@@ -607,7 +607,7 @@
 .search-tips {
   text-align: left;
   width: 100%;
-  max-width: var(--chart-min-height-lg); /* 25rem */
+  max-width: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
   margin-bottom: var(--space-5);
   padding: var(--space-4);
   background: var(--surface-ground);
@@ -827,7 +827,7 @@
   }
 
   .suggestions-dropdown {
-    max-height: var(--input-min-width-md); /* 9.375rem */
+    max-height: var(--input-min-width-md); /* var(--size-150) */
     overflow-y: auto;
   }
 }

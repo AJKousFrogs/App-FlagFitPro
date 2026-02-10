@@ -191,11 +191,11 @@ The **Dashboard** serves as the central hub and primary entry point for all user
 
 **Backend Functions:**
 
-- `dashboard.cjs` - Main dashboard data aggregation
-- `coach.cjs` - Coach dashboard data
-- `compute-acwr.cjs` - ACWR calculations
-- `calc-readiness.cjs` - Readiness score calculations
-- `tournament-calendar.cjs` - Calendar events
+- `dashboard.js` - Main dashboard data aggregation
+- `coach.js` - Coach dashboard data
+- `compute-acwr.js` - ACWR calculations
+- `calc-readiness.js` - Readiness score calculations
+- `tournament-calendar.js` - Calendar events
 
 **Request Example:**
 
@@ -280,9 +280,9 @@ GET /api/dashboard?team_id=123&date=2026-01-09
 
 **Backend Functions:**
 
-- `coach.cjs` - Coach dashboard and team data
-- `coach-alerts.cjs` - Risk alerts for coaches
-- `coach-activity.cjs` - Team activity feed
+- `coach.js` - Coach dashboard and team data
+- `coach-alerts.js` - Risk alerts for coaches
+- `coach-activity.js` - Team activity feed
 
 **Request Example:**
 
@@ -379,9 +379,9 @@ Type Multipliers:
 
 **Backend Functions:**
 
-- `training-sessions.cjs` - Training session CRUD operations
-- `daily-protocol.cjs` - Daily training protocol
-- `compute-acwr.cjs` - ACWR calculation after session log
+- `training-sessions.js` - Training session CRUD operations
+- `daily-protocol.js` - Daily training protocol
+- `compute-acwr.js` - ACWR calculation after session log
 
 **Request Example:**
 
@@ -595,11 +595,11 @@ if (todayHR - baselineHR >= 10) {
 
 **Backend Functions:**
 
-- `wellness-checkin.cjs` - Wellness check-in submission
-- `wellness.cjs` - Wellness data retrieval
-- `calc-readiness.cjs` - Readiness score calculation
-- `readiness-history.cjs` - Readiness history
-- `hydration.cjs` - Hydration tracking
+- `wellness-checkin.js` - Wellness check-in submission
+- `wellness.js` - Wellness data retrieval
+- `calc-readiness.js` - Readiness score calculation
+- `readiness-history.js` - Readiness history
+- `hydration.js` - Hydration tracking
 
 **Request Example:**
 
@@ -754,9 +754,9 @@ const MIN_REQUIREMENTS = {
 
 **Backend Functions:**
 
-- `compute-acwr.cjs` - ACWR calculation engine
-- `load-management.cjs` - Load monitoring and alerts
-- `coach-alerts.cjs` - Coach alerts for high-risk players
+- `compute-acwr.js` - ACWR calculation engine
+- `load-management.js` - Load monitoring and alerts
+- `coach-alerts.js` - Coach alerts for high-risk players
 
 **Request Example:**
 
@@ -1537,9 +1537,9 @@ function calculatePerPlayerCost(tournament: Tournament): number {
 
 **Backend Functions:**
 
-- `coach.cjs` - Roster management operations
-- `team-invite.cjs` - Team invitation handling
-- `recovery.cjs` - Injury and recovery tracking
+- `coach.js` - Roster management operations
+- `team-invite.js` - Team invitation handling
+- `recovery.js` - Injury and recovery tracking
 
 **Request Example:**
 
@@ -1628,7 +1628,7 @@ const FLAG_FOOTBALL_POSITIONS = {
 
 **Backend Functions:**
 
-- `depth-chart.cjs` - Depth chart management
+- `depth-chart.js` - Depth chart management
 
 **Request Example:**
 
@@ -1908,9 +1908,9 @@ function calculatePerformanceScore(data: AnalyticsData): number {
 
 **Backend Functions:**
 
-- `analytics.cjs` - Analytics data aggregation
-- `coach-analytics.cjs` - Coach analytics view
-- `data-export.cjs` - Report export functionality
+- `analytics.js` - Analytics data aggregation
+- `coach-analytics.js` - Coach analytics view
+- `data-export.js` - Report export functionality
 
 **Request Example:**
 
@@ -1983,10 +1983,10 @@ GET /api/analytics/overview?period=30d&player_id=123
 
 **Backend Functions:**
 
-- `ai-chat.cjs` - AI chat message handling
-- `chat.cjs` - Chat session management
-- `ai-feedback.cjs` - Feedback collection
-- `update-chatbot-stats.cjs` - Usage statistics
+- `ai-chat.js` - AI chat message handling
+- `chat.js` - Chat session management
+- `ai-feedback.js` - Feedback collection
+- `update-chatbot-stats.js` - Usage statistics
 
 **Request Example:**
 

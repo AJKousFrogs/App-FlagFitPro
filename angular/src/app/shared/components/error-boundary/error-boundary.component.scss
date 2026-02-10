@@ -9,12 +9,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 25rem;
+  min-height: var(--chart-min-height-lg);
   padding: var(--space-6);
 }
 
 .error-card {
-  max-width: 31.25rem;
+  max-width: var(--dialog-max-width-lg);
   width: 100%;
 }
 

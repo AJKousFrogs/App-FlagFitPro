@@ -106,8 +106,8 @@
 /* Screen reader only utility */
 .sr-only {
   position: absolute;
-  width: 0.0625rem;
-  height: 0.0625rem;
+  width: var(--border-1);
+  height: var(--border-1);
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
@@ -117,11 +117,6 @@
 }
 
 /* Focus styles for keyboard navigation */
-.drag-item:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-}
-
 .drag-item:focus-visible {
   outline: var(--focus-outline-width) solid var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);

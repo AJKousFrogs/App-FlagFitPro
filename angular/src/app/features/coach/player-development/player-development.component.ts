@@ -415,7 +415,7 @@ const COMPARE_OPTIONS = [
                     <p-progressBar
                       [value]="skill.score"
                       [showValue]="false"
-                      height="16px"
+                      height="var(--space-4)"
                     ></p-progressBar>
                   </div>
                   <span class="skill-score">{{ skill.score }}%</span>
@@ -678,25 +678,25 @@ export class PlayerDevelopmentComponent implements OnInit {
         label: this.selectedPlayer()?.name || "Player",
         data: [85, 78, 70, 82, 88, 75],
         fill: true,
-        backgroundColor: "rgba(34, 197, 94, 0.2)",
-        borderColor: "#22c55e",
-        pointBackgroundColor: "#22c55e",
+        backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.2)",
+        borderColor: "var(--ds-primary-green)",
+        pointBackgroundColor: "var(--ds-primary-green)",
       },
       {
         label: "Elite Benchmark",
         data: [95, 92, 90, 93, 95, 90],
         fill: true,
-        backgroundColor: "rgba(59, 130, 246, 0.1)",
-        borderColor: "#3b82f6",
-        pointBackgroundColor: "#3b82f6",
+        backgroundColor: "rgba(var(--primitive-info-500-rgb), 0.1)",
+        borderColor: "var(--color-chart-tertiary)",
+        pointBackgroundColor: "var(--color-chart-tertiary)",
       },
       {
         label: "Position Avg",
         data: [75, 72, 68, 74, 76, 70],
         fill: true,
-        backgroundColor: "rgba(156, 163, 175, 0.1)",
-        borderColor: "#9ca3af",
-        pointBackgroundColor: "#9ca3af",
+        backgroundColor: "var(--surface-tertiary)",
+        borderColor: "var(--color-icon-preferences)",
+        pointBackgroundColor: "var(--color-icon-preferences)",
       },
     ],
   }));
@@ -704,8 +704,8 @@ export class PlayerDevelopmentComponent implements OnInit {
   readonly radarChartOptions = {
     scales: {
       r: {
-        angleLines: { color: "rgba(0, 0, 0, 0.1)" },
-        grid: { color: "rgba(0, 0, 0, 0.1)" },
+        angleLines: { color: "var(--color-border-subtle)" },
+        grid: { color: "var(--color-border-subtle)" },
         pointLabels: { font: { size: 12 } },
         suggestedMin: 0,
         suggestedMax: 100,
@@ -723,14 +723,14 @@ export class PlayerDevelopmentComponent implements OnInit {
         label: this.selectedMetric,
         data: this.performanceHistory().map((r) => r.value),
         fill: false,
-        borderColor: "#22c55e",
+        borderColor: "var(--ds-primary-green)",
         tension: 0.4,
       },
       {
         label: "Target",
         data: [4.45, 4.45, 4.45, 4.45, 4.45, 4.45],
         fill: false,
-        borderColor: "#ef4444",
+        borderColor: "var(--color-chart-quinary)",
         borderDash: [5, 5],
         tension: 0,
         pointRadius: 0,

@@ -163,7 +163,7 @@ import {
       </p-card>
     </div>
   `,
-  styleUrls: ["./login.component.scss"],
+  styleUrl: "./login.component.scss",
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);

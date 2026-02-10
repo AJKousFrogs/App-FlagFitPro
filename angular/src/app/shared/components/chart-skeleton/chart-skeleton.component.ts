@@ -66,7 +66,7 @@ import { CommonModule } from "@angular/common";
         display: flex;
         flex-direction: column;
         width: 100%;
-        min-height: 200px;
+        min-height: var(--size-200);
         padding: var(--space-3);
         background: var(--surface-card);
         border-radius: var(--radius-md);
@@ -92,8 +92,8 @@ import { CommonModule } from "@angular/common";
       }
 
       .skeleton-title {
-        width: 150px;
-        height: 20px;
+        width: var(--size-150);
+        height: var(--space-5);
         background: var(--surface-border);
         border-radius: var(--radius-sm);
       }
@@ -104,8 +104,8 @@ import { CommonModule } from "@angular/common";
       }
 
       .skeleton-legend-item {
-        width: 60px;
-        height: 16px;
+        width: calc(var(--size-120) * 0.5);
+        height: var(--space-4);
         background: var(--surface-border);
         border-radius: var(--radius-sm);
       }
@@ -116,7 +116,7 @@ import { CommonModule } from "@angular/common";
         display: flex;
         align-items: flex-end;
         position: relative;
-        min-height: 150px;
+        min-height: var(--size-150);
       }
 
       /* Line/Bar Chart */
@@ -124,14 +124,14 @@ import { CommonModule } from "@angular/common";
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        width: 30px;
+        width: calc(var(--size-120) * 0.25);
         height: 100%;
         margin-right: var(--space-2);
       }
 
       .skeleton-y-tick {
-        width: 20px;
-        height: 2px;
+        width: var(--space-5);
+        height: var(--border-2);
         background: var(--surface-border);
       }
 
@@ -151,7 +151,7 @@ import { CommonModule } from "@angular/common";
           var(--surface-border)
         );
         border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-        min-height: 20px;
+        min-height: var(--space-5);
         animation: shimmer 2s ease-in-out infinite;
       }
 
@@ -169,8 +169,8 @@ import { CommonModule } from "@angular/common";
 
       .skeleton-x-axis {
         position: absolute;
-        bottom: -25px;
-        left: 35px;
+        bottom: calc(var(--size-100) * -0.25);
+        left: calc(var(--size-100) * 0.35);
         right: 0;
         display: flex;
         justify-content: space-between;
@@ -179,7 +179,7 @@ import { CommonModule } from "@angular/common";
 
       .skeleton-x-label {
         flex: 1;
-        height: 12px;
+        height: var(--space-3);
         background: var(--surface-border);
         border-radius: var(--radius-sm);
       }
@@ -194,8 +194,8 @@ import { CommonModule } from "@angular/common";
       }
 
       .skeleton-pie-center {
-        width: 120px;
-        height: 120px;
+        width: var(--size-120);
+        height: var(--size-120);
         border-radius: 50%;
         background: conic-gradient(
           var(--ds-primary-green-subtle) 0deg 90deg,
@@ -225,9 +225,9 @@ import { CommonModule } from "@angular/common";
       }
 
       .skeleton-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid var(--surface-border);
+        width: var(--icon-container-md);
+        height: var(--icon-container-md);
+        border: var(--border-3) solid var(--surface-border);
         border-top-color: var(--ds-primary-green);
         border-radius: 50%;
         animation: spin 1s linear infinite;
@@ -243,12 +243,12 @@ import { CommonModule } from "@angular/common";
       .skeleton-footer {
         margin-top: var(--space-3);
         padding-top: var(--space-2);
-        border-top: 1px solid var(--surface-border);
+        border-top: var(--border-1) solid var(--surface-border);
       }
 
       .skeleton-footer-text {
-        width: 200px;
-        height: 14px;
+        width: var(--grid-min-width-md);
+        height: var(--ds-font-size-sm);
         background: var(--surface-border);
         border-radius: var(--radius-sm);
       }
@@ -260,14 +260,14 @@ import { CommonModule } from "@angular/common";
         .skeleton-y-tick,
         .skeleton-x-label,
         .skeleton-footer-text {
-          background: rgba(255, 255, 255, 0.1);
+          background: var(--p-surface-border);
         }
 
         .skeleton-bar {
           background: linear-gradient(
             to top,
-            rgba(16, 185, 129, 0.2),
-            rgba(255, 255, 255, 0.1)
+            rgba(var(--ds-primary-green-rgb), 0.2),
+            var(--p-surface-border)
           );
         }
       }
@@ -279,7 +279,7 @@ export class ChartSkeletonComponent {
   type = input<"line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea">(
     "line",
   );
-  height = input<string>("300px");
+  height = input<string>("var(--chart-min-height-md)");
 
   // Generate random bar heights for skeleton
   bars = Array.from({ length: 8 }, () => Math.random() * 60 + 20);

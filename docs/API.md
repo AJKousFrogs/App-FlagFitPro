@@ -495,27 +495,27 @@ All API endpoints are implemented as Netlify Functions in `/netlify/functions/`:
 
 | Function File           | Endpoints Handled          |
 | ----------------------- | -------------------------- |
-| `health.cjs`            | `/api/health`              |
-| `dashboard.cjs`         | `/api/dashboard/*`         |
-| `training-sessions.cjs` | `/api/training/sessions`   |
-| `training-programs.cjs` | `/api/training-programs/*` |
-| `load-management.cjs`   | `/api/load-management/*`   |
-| `nutrition.cjs`         | `/api/nutrition/*`         |
-| `recovery.cjs`          | `/api/recovery/*`          |
-| `ai-chat.cjs`           | `/api/ai/chat`             |
-| `games.cjs`             | `/api/games/*`             |
-| `tournaments.cjs`       | `/api/tournaments/*`       |
-| `analytics.cjs`         | `/api/analytics/*`         |
-| `coach.cjs`             | `/api/coach/*`             |
-| `community.cjs`         | `/api/community/*`         |
-| `plyometrics.cjs`       | `/api/plyometrics`         |
-| `isometrics.cjs`        | `/api/isometrics`          |
-| `attendance.cjs`        | `/api/attendance/*`        |
-| `depth-chart.cjs`       | `/api/depth-chart/*`       |
-| `equipment.cjs`         | `/api/equipment/*`         |
-| `officials.cjs`         | `/api/officials/*`         |
-| `chat.cjs`              | `/api/chat/*`              |
-| `push.cjs`              | `/api/push/*`              |
+| `health.js`            | `/api/health`              |
+| `dashboard.js`         | `/api/dashboard/*`         |
+| `training-sessions.js` | `/api/training/sessions`   |
+| `training-programs.js` | `/api/training-programs/*` |
+| `load-management.js`   | `/api/load-management/*`   |
+| `nutrition.js`         | `/api/nutrition/*`         |
+| `recovery.js`          | `/api/recovery/*`          |
+| `ai-chat.js`           | `/api/ai/chat`             |
+| `games.js`             | `/api/games/*`             |
+| `tournaments.js`       | `/api/tournaments/*`       |
+| `analytics.js`         | `/api/analytics/*`         |
+| `coach.js`             | `/api/coach/*`             |
+| `community.js`         | `/api/community/*`         |
+| `plyometrics.js`       | `/api/plyometrics`         |
+| `isometrics.js`        | `/api/isometrics`          |
+| `attendance.js`        | `/api/attendance/*`        |
+| `depth-chart.js`       | `/api/depth-chart/*`       |
+| `equipment.js`         | `/api/equipment/*`         |
+| `officials.js`         | `/api/officials/*`         |
+| `chat.js`              | `/api/chat/*`              |
+| `push.js`              | `/api/push/*`              |
 
 ---
 

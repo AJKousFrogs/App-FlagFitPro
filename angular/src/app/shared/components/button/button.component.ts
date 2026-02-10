@@ -11,7 +11,6 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 
-import { Ripple } from "primeng/ripple";
 import { Tooltip } from "primeng/tooltip";
 import { LoggerService } from "@core/services/logger.service";
 
@@ -67,7 +66,7 @@ export type ButtonSize = "sm" | "md" | "lg";
   selector: "app-button",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Ripple, Tooltip],
+  imports: [CommonModule, RouterModule, Tooltip],
   template: `
     <!-- Link version (when routerLink is provided) -->
     @if (routerLink()) {
@@ -83,7 +82,6 @@ export type ButtonSize = "sm" | "md" | "lg";
         [pTooltip]="tooltip()"
         [tooltipPosition]="tooltipPosition()"
         (click)="onLinkClick($event)"
-        pRipple
       >
         <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
       </a>
@@ -103,7 +101,6 @@ export type ButtonSize = "sm" | "md" | "lg";
         [pTooltip]="tooltip()"
         [tooltipPosition]="tooltipPosition()"
         (click)="onClick($event)"
-        pRipple
       >
         <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
       </button>

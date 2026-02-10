@@ -18,13 +18,13 @@
 
 .water-bottle {
   width: var(--avatar-size-xl); /* 3.5rem */
-  height: var(--card-min-height-md); /* 7.5rem */
+  height: var(--card-min-height-md); /* var(--size-120) */
   background: linear-gradient(
     to bottom,
     var(--primitive-info-50) 0%,
     var(--primitive-info-100) 100%
   );
-  border: 0.125rem solid var(--primitive-info-200);
+  border: var(--space-0-5) solid var(--primitive-info-200);
   border-radius: var(--radius-lg) var(--radius-lg) var(--radius-2xl)
     var(--radius-2xl);
   position: relative;
@@ -42,7 +42,7 @@
     var(--primitive-info-400) 100%
   );
   transition: height var(--transition-slower) var(--ease-standard);
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl); /* 0.75rem - Design System compliant */
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl); /* 0.calc(var(--size-200) * 6) - Design System compliant */
 
   &.low {
     background: linear-gradient(
@@ -74,7 +74,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--indicator-size-md); /* 0.75rem */
+  height: var(--indicator-size-md); /* 0.calc(var(--size-200) * 6) */
   background: var(--overlay-white-30);
   border-radius: 50%;
   animation: wave 2s ease-in-out infinite;
@@ -86,7 +86,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-0.1875rem);
+    transform: translateY(-var(--space-0-75));
   }
 }
 
@@ -146,7 +146,7 @@
 
 .recent-logs {
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--color-border-subtle);
+  border-top: var(--border-1) solid var(--color-border-subtle);
   margin-bottom: var(--space-3);
 }
 
@@ -178,7 +178,7 @@
   padding: var(--space-3);
   background: var(--primitive-info-50);
   border-radius: var(--radius-lg);
-  border-left: 0.1875rem solid var(--color-status-info);
+  border-left: var(--space-0-75) solid var(--color-status-info);
 
   i {
     font-size: var(--ds-font-size-md);
@@ -202,19 +202,6 @@
 
     span {
       color: var(--color-status-warning-text);
-    }
-  }
-
-  &.success {
-    background: var(--color-status-success-light);
-    border-left-color: var(--color-status-success);
-
-    i {
-      color: var(--color-status-success);
-    }
-
-    span {
-      color: var(--color-status-success);
     }
   }
 }

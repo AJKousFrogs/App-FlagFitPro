@@ -34,9 +34,9 @@
   padding: var(--space-3) var(--space-4);
   background: var(--surface-primary);
   border-radius: var(--radius-lg);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   flex-shrink: 0;
-  min-width: 7.5rem;
+  min-width: var(--size-120);
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast),
@@ -50,7 +50,7 @@
 
 .compact .stat-item {
   padding: var(--space-2) var(--space-3);
-  min-width: 6.25rem;
+  min-width: var(--size-100);
 }
 
 /* Icon */
@@ -66,8 +66,8 @@
 }
 
 .compact .stat-icon {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--badge-lg);
+  height: var(--badge-lg);
   font-size: var(--ds-font-size-md);
 }
 
@@ -120,7 +120,7 @@
 }
 
 .compact .stat-block__value {
-  font-size: var(--ds-font-size-2xl); // 1.125rem - compact variant
+  font-size: var(--ds-font-size-2xl); // var(--icon-base) - compact variant
 }
 
 .stat-unit {
@@ -167,7 +167,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 0.1875rem;
+  height: var(--space-0-75);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 

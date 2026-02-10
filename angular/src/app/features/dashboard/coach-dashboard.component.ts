@@ -1169,7 +1169,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
       <!-- End of @else for content -->
     </app-main-layout>
   `,
-  styleUrls: ["./coach-dashboard.component.scss"],
+  styleUrl: "./coach-dashboard.component.scss",
 })
 export class CoachDashboardComponent {
   // Expose constants for template use
@@ -1427,8 +1427,8 @@ export class CoachDashboardComponent {
         {
           label: "Team Performance",
           data: trend.scores,
-          borderColor: "rgb(var(--primary-500))",
-          backgroundColor: "rgba(var(--primary-500), 0.1)",
+          borderColor: "var(--color-chart-primary)",
+          backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.1)",
           fill: true,
           tension: 0.4,
           borderWidth: 3,

@@ -1022,7 +1022,7 @@ interface ScoutingReport {
       </div>
     </app-main-layout>
   `,
-  styleUrls: ["./scouting-reports.component.scss"],
+  styleUrl: "./scouting-reports.component.scss",
 })
 export class ScoutingReportsComponent implements OnInit {
   private api = inject(ApiService);

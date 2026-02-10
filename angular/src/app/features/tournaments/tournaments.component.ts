@@ -1,11 +1,11 @@
 import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  OnInit,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnInit,
+    inject,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
@@ -26,21 +26,22 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
 import { AuthService } from "../../core/services/auth.service";
-import {
-  LoggerService,
-  toLogContext,
-} from "../../core/services/logger.service";
-import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 import {
-  CreateTournamentDto,
-  Tournament,
-  TournamentService,
-  TournamentVisibilityScope,
+    LoggerService,
+    toLogContext,
+} from "../../core/services/logger.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
+import {
+    CreateTournamentDto,
+    Tournament,
+    TournamentService,
+    TournamentVisibilityScope,
 } from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { formatDateISO } from "../../shared/utils/date.utils";
+import { getCountryFlag } from "../roster/roster-utils";
 import { TournamentsDataService } from "./services/tournaments-data.service";
 
 interface PlayerAvailability {
@@ -1856,9 +1857,7 @@ export class TournamentsComponent implements OnInit {
         ? this.formatDate(this.formData.registration_deadline_obj)
         : undefined,
       flag: this.formData.country
-        ? this.tournamentService.getCountryFlag(
-            this.getCountryCode(this.formData.country),
-          )
+        ? getCountryFlag(this.formData.country)
         : undefined,
     };
 
@@ -1949,32 +1948,6 @@ export class TournamentsComponent implements OnInit {
   }
 
   private formatDate = (date: Date): string | undefined => formatDateISO(date);
-
-  private getCountryCode(country: string): string {
-    // Simple mapping for common countries
-    const codes: Record<string, string> = {
-      croatia: "HR",
-      slovenia: "SI",
-      germany: "DE",
-      austria: "AT",
-      italy: "IT",
-      france: "FR",
-      spain: "ES",
-      usa: "US",
-      "united states": "US",
-      uk: "GB",
-      "united kingdom": "GB",
-      denmark: "DK",
-      serbia: "RS",
-      hungary: "HU",
-      poland: "PL",
-      "czech republic": "CZ",
-      slovakia: "SK",
-    };
-    return (
-      codes[country.toLowerCase()] || country.substring(0, 2).toUpperCase()
-    );
-  }
 
   // ============================================================================
   // PLAYER AVAILABILITY

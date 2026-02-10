@@ -5,28 +5,27 @@
  * Applies a specific migration file to the Supabase database
  *
  * Usage: node scripts/apply-migration.js <migration-file>
- * Example: node scripts/apply-migration.js database/migrations/038_add_username_and_verification_fields.sql
+ * Example: node scripts/apply-migration.js database/migrations/033_readiness_score_system.sql
  */
 
-const { createClient } = require("@supabase/supabase-js");
-const fs = require("fs");
-const path = require("path");
-require("dotenv").config();
+import { createClient } from "@supabase/supabase-js";
+import fs from "node:fs";
+import path from "node:path";
+import "dotenv/config";
 
-// Check if migration file is provided
 const migrationFile = process.argv[2];
 if (!migrationFile) {
   console.error("❌ Error: No migration file specified");
   console.log("Usage: node scripts/apply-migration.js <migration-file>");
   console.log(
-    "Example: node scripts/apply-migration.js database/migrations/038_add_username_and_verification_fields.sql",
+    "Example: node scripts/apply-migration.js database/migrations/033_readiness_score_system.sql",
   );
   process.exit(1);
 }
 
-// Check environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+const supabaseServiceKey =
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error("❌ Error: Missing Supabase environment variables");
@@ -36,8 +35,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
   process.exit(1);
 }
 
-// Initialize Supabase client with service key (admin access)
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+const _supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,
@@ -48,7 +46,6 @@ async function applyMigration() {
   try {
     console.log("🔧 Reading migration file...");
 
-    // Read migration file
     const migrationPath = path.resolve(process.cwd(), migrationFile);
     if (!fs.existsSync(migrationPath)) {
       console.error(`❌ Error: Migration file not found: ${migrationPath}`);
@@ -59,65 +56,27 @@ async function applyMigration() {
     console.log(`✅ Migration file loaded: ${path.basename(migrationPath)}`);
     console.log(`📄 SQL length: ${migrationSQL.length} characters\n`);
 
-    // Split SQL into individual statements (handle DO blocks properly)
-    const statements = migrationSQL
-      .split(/;\s*(?=(?:[^']*'[^']*')*[^']*$)(?!\s*END)/) // Split on ; but not inside strings or DO blocks
-      .map((stmt) => stmt.trim())
-      .filter((stmt) => stmt.length > 0 && !stmt.startsWith("--"));
-
-    console.log(`🔄 Executing ${statements.length} SQL statement(s)...`);
-
-    // Execute each statement
-    for (let i = 0; i < statements.length; i++) {
-      const statement = statements[i];
-
-      // Skip empty statements and comments
-      if (!statement || statement.startsWith("--")) {
-        continue;
-      }
-
-      console.log(`\n[${i + 1}/${statements.length}] Executing statement...`);
-
-      try {
-        const { error } = await supabase.rpc("exec_sql", {
-          sql: statement,
-        });
-
-        if (error) {
-          // If exec_sql RPC doesn't exist, we'll get an error
-          // In that case, we need to use the Postgres client directly
-          console.warn(
-            "⚠️  RPC method not available, attempting direct execution...",
-          );
-
-          // For Supabase, we can't execute arbitrary SQL from JavaScript
-          // We need to use the Supabase SQL Editor or psql
-          console.error(
-            "❌ Cannot execute SQL directly from Node.js with Supabase",
-          );
-          console.log("\n📋 Please apply this migration manually:");
-          console.log("1. Go to your Supabase Dashboard → SQL Editor");
-          console.log("2. Copy and paste the following SQL:\n");
-          console.log("─".repeat(80));
-          console.log(migrationSQL);
-          console.log("─".repeat(80));
-          console.log('\n3. Click "Run" to execute the migration');
-
-          process.exit(0);
-        }
-
-        console.log(`✅ Statement ${i + 1} executed successfully`);
-      } catch (execError) {
-        console.error(
-          `❌ Error executing statement ${i + 1}:`,
-          execError.message,
-        );
-        console.error("Statement:", `${statement.substring(0, 100)}...`);
-        throw execError;
-      }
-    }
-
-    console.log("\n✅ Migration applied successfully!");
+    console.log("📋 Supabase Migration Instructions:");
+    console.log(
+      "─────────────────────────────────────────────────────────────────────────────",
+    );
+    console.log("1. Go to your Supabase Dashboard → SQL Editor");
+    const projectId =
+      supabaseUrl.split("//")[1]?.split(".")[0] || "your-project";
+    console.log(`   https://supabase.com/dashboard/project/${projectId}`);
+    console.log("2. Copy and paste the following SQL:\n");
+    console.log("─".repeat(80));
+    console.log(migrationSQL);
+    console.log("─".repeat(80));
+    console.log('\n3. Click "Run" to execute the migration');
+    console.log(
+      "4. Verify the migration was successful by checking the tables:",
+    );
+    console.log("   - wellness_logs");
+    console.log("   - fixtures");
+    console.log("   - readiness_scores");
+    console.log("   - training_sessions (should have rpe column)");
+    console.log("\n✅ Migration SQL ready to execute!");
   } catch (error) {
     console.error("\n❌ Migration failed:", error.message);
     if (error.stack) {
@@ -127,5 +86,4 @@ async function applyMigration() {
   }
 }
 
-// Run the migration
 applyMigration();

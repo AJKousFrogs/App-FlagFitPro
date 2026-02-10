@@ -16,18 +16,18 @@
 
 /* Sizes */
 .size-sm {
-  width: 5rem;
-  height: 5rem;
+  width: var(--size-80);
+  height: var(--size-80);
 }
 
 .size-md {
-  width: 7.5rem;
-  height: 7.5rem;
+  width: var(--size-120);
+  height: var(--size-120);
 }
 
 .size-lg {
-  width: 10rem;
-  height: 10rem;
+  width: var(--card-min-height-lg);
+  height: var(--card-min-height-lg);
 }
 
 .size-xl {
@@ -76,7 +76,7 @@
 /* Glow effect */
 .ring-glow {
   opacity: var(--opacity-quarter);
-  filter: blur(0.25rem);
+  filter: blur(var(--overlay-blur));
 }
 
 .ring-glow.status-success {
@@ -166,8 +166,8 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: var(--space-6);
+  height: var(--space-6);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -192,7 +192,7 @@
 /* Trend indicator */
 .trend-indicator {
   position: absolute;
-  bottom: -0.5rem;
+  bottom: calc(var(--space-2) * -1);
   left: 50%;
   transform: translateX(-50%);
   display: flex;

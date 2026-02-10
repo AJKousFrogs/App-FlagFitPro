@@ -30,7 +30,7 @@
   font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-secondary);
   background: var(--surface-100);
-  padding: var(--space-1) var(--space-3); /* 0.25rem 0.75rem for breathing room */
+  padding: var(--space-1) var(--space-3); /* var(--space-1) 0.calc(var(--size-200) * 6) for breathing room */
   border-radius: var(--radius-lg);
 }
 
@@ -40,7 +40,7 @@
   align-items: center;
 }
 
-/* Native input styling defers to global form control system (2.75rem height, 0.5rem radius) */
+/* Native input styling defers to global form control system (2.calc(var(--size-200) * 6) height, 0.5rem radius) */
 input {
   width: 100%;
 }

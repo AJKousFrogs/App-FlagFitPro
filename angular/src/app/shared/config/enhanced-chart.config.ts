@@ -200,9 +200,9 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       enabled: true,
       mode: "index",
       intersect: false,
-      backgroundColor: "rgba(0, 0, 0, 0.9)",
-      titleColor: "#fff",
-      bodyColor: "#fff",
+      backgroundColor: "var(--surface-overlay-darkest)",
+      titleColor: "var(--p-content-background)",
+      bodyColor: "var(--p-content-background)",
       borderColor: "var(--color-brand-primary)",
       borderWidth: 1,
       padding: 12,
@@ -230,7 +230,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       display: true,
       grid: {
         display: true,
-        color: "rgba(0, 0, 0, 0.05)",
+        color: "var(--color-border-subtle)",
       },
       ticks: {
         font: {
@@ -247,7 +247,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       beginAtZero: true,
       grid: {
         display: true,
-        color: "rgba(0, 0, 0, 0.05)",
+        color: "var(--color-border-subtle)",
       },
       ticks: {
         font: {
@@ -291,9 +291,9 @@ export const ENHANCED_LINE_CHART_OPTIONS = {
       enabled: true,
       mode: "index",
       intersect: false,
-      backgroundColor: "rgba(0, 0, 0, 0.9)",
-      titleColor: "#fff",
-      bodyColor: "#fff",
+      backgroundColor: "var(--surface-overlay-darkest)",
+      titleColor: "var(--p-content-background)",
+      bodyColor: "var(--p-content-background)",
       borderColor: "var(--color-brand-primary)",
       borderWidth: 1,
       padding: 12,
@@ -314,7 +314,7 @@ export const ENHANCED_LINE_CHART_OPTIONS = {
       display: true,
       grid: {
         display: true,
-        color: "rgba(0, 0, 0, 0.05)",
+        color: "var(--color-border-subtle)",
       },
       ticks: {
         font: {
@@ -331,7 +331,7 @@ export const ENHANCED_LINE_CHART_OPTIONS = {
       beginAtZero: true,
       grid: {
         display: true,
-        color: "rgba(0, 0, 0, 0.05)",
+        color: "var(--color-border-subtle)",
       },
       ticks: {
         font: {
@@ -387,9 +387,9 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
       enabled: true,
       mode: "index",
       intersect: false,
-      backgroundColor: "rgba(0, 0, 0, 0.9)",
-      titleColor: "#fff",
-      bodyColor: "#fff",
+      backgroundColor: "var(--surface-overlay-darkest)",
+      titleColor: "var(--p-content-background)",
+      bodyColor: "var(--p-content-background)",
       borderColor: "var(--color-brand-primary)",
       borderWidth: 1,
       padding: 12,
@@ -410,7 +410,7 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
       display: true,
       grid: {
         display: true,
-        color: "rgba(0, 0, 0, 0.05)",
+        color: "var(--color-border-subtle)",
       },
       ticks: {
         font: {
@@ -427,7 +427,7 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
       beginAtZero: true,
       grid: {
         display: true,
-        color: "rgba(0, 0, 0, 0.05)",
+        color: "var(--color-border-subtle)",
       },
       ticks: {
         font: {
@@ -482,9 +482,9 @@ export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<"doughnut"> = {
     },
     tooltip: {
       enabled: true,
-      backgroundColor: "rgba(0, 0, 0, 0.9)",
-      titleColor: "#fff",
-      bodyColor: "#fff",
+      backgroundColor: "var(--surface-overlay-darkest)",
+      titleColor: "var(--p-content-background)",
+      bodyColor: "var(--p-content-background)",
       borderColor: "var(--color-brand-primary)",
       borderWidth: 1,
       padding: 12,
@@ -528,7 +528,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
     },
     tooltip: {
       enabled: true,
-      backgroundColor: "rgba(0, 0, 0, 0.9)",
+      backgroundColor: "var(--surface-overlay-darkest)",
       titleFont: {
         size: getResponsiveFontSize(14),
         family: "'Poppins', sans-serif",
@@ -555,7 +555,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
         backdropColor: "transparent",
       },
       grid: {
-        color: "rgba(0, 0, 0, 0.1)",
+        color: "var(--color-border-subtle)",
       },
       pointLabels: {
         font: {

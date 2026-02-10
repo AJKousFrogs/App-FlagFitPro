@@ -122,8 +122,8 @@ export class ProgressIndicatorComponent {
   variant = input<"linear" | "circular" | "steps">("linear");
   size = input<"sm" | "md" | "lg">("md");
   showValue = input<boolean>(true);
-  color = input<string>("var(--color-brand-primary, #089949)");
-  backgroundColor = input<string>("var(--p-surface-200, #e5e7eb)");
+  color = input<string>("var(--color-brand-primary)");
+  backgroundColor = input<string>("var(--p-surface-200)");
   strokeWidth = input<number>(8);
   strokeLinecap = input<"round" | "butt" | "square">("round");
   steps = input<

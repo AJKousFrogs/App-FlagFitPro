@@ -71,10 +71,22 @@ export const ANIMATION_EASING = {
  */
 const fadeInStyle = style({ opacity: 0 });
 const _fadeOutStyle = style({ opacity: 1 });
-const slideUpStyle = style({ transform: "translateY(20px)", opacity: 0 });
-const slideDownStyle = style({ transform: "translateY(-20px)", opacity: 0 });
-const slideLeftStyle = style({ transform: "translateX(-20px)", opacity: 0 });
-const slideRightStyle = style({ transform: "translateX(20px)", opacity: 0 });
+const slideUpStyle = style({
+  transform: "translateY(var(--space-5))",
+  opacity: 0,
+});
+const slideDownStyle = style({
+  transform: "translateY(calc(var(--space-5) * -1))",
+  opacity: 0,
+});
+const slideLeftStyle = style({
+  transform: "translateX(calc(var(--space-5) * -1))",
+  opacity: 0,
+});
+const slideRightStyle = style({
+  transform: "translateX(var(--space-5))",
+  opacity: 0,
+});
 const scaleInStyle = style({ transform: "scale(0.95)", opacity: 0 });
 const _scaleOutStyle = style({ transform: "scale(1)", opacity: 1 });
 const _scaleUpStyle = style({ transform: "scale(0.9)", opacity: 0 });
@@ -135,7 +147,10 @@ export const slideDown = trigger("slideDown", [
   transition(":leave", [
     animate(
       `${ANIMATION_TIMINGS.fast} ${ANIMATION_EASING.exit}`,
-      style({ transform: "translateY(-20px)", opacity: 0 }),
+      style({
+        transform: "translateY(calc(var(--space-5) * -1))",
+        opacity: 0,
+      }),
     ),
   ]),
 ]);
@@ -155,7 +170,7 @@ export const slideUp = trigger("slideUp", [
   transition(":leave", [
     animate(
       `${ANIMATION_TIMINGS.fast} ${ANIMATION_EASING.exit}`,
-      style({ transform: "translateY(20px)", opacity: 0 }),
+      style({ transform: "translateY(var(--space-5))", opacity: 0 }),
     ),
   ]),
 ]);
@@ -175,7 +190,10 @@ export const slideLeft = trigger("slideLeft", [
   transition(":leave", [
     animate(
       `${ANIMATION_TIMINGS.fast} ${ANIMATION_EASING.exit}`,
-      style({ transform: "translateX(-20px)", opacity: 0 }),
+      style({
+        transform: "translateX(calc(var(--space-5) * -1))",
+        opacity: 0,
+      }),
     ),
   ]),
 ]);
@@ -195,7 +213,7 @@ export const slideRight = trigger("slideRight", [
   transition(":leave", [
     animate(
       `${ANIMATION_TIMINGS.fast} ${ANIMATION_EASING.exit}`,
-      style({ transform: "translateX(20px)", opacity: 0 }),
+      style({ transform: "translateX(var(--space-5))", opacity: 0 }),
     ),
   ]),
 ]);
@@ -295,7 +313,10 @@ export const staggerSlideUp = trigger("staggerSlideUp", [
     query(
       ":enter",
       [
-        style({ transform: "translateY(30px)", opacity: 0 }),
+        style({
+          transform: "translateY(calc(var(--size-120) * 0.25))",
+          opacity: 0,
+        }),
         stagger(`${ANIMATION_TIMINGS.staggerNormal}`, [
           animate(
             `${ANIMATION_TIMINGS.slow} ${ANIMATION_EASING.microSpring}`,
@@ -339,7 +360,10 @@ export const cascade = trigger("cascade", [
     query(
       ".cascade-item, [cascade-item]",
       [
-        style({ transform: "translateY(40px)", opacity: 0 }),
+        style({
+          transform: "translateY(var(--icon-container-md))",
+          opacity: 0,
+        }),
         stagger(`${ANIMATION_TIMINGS.staggerSlow}`, [
           animate(
             `${ANIMATION_TIMINGS.slower} ${ANIMATION_EASING.microSpring}`,
@@ -453,14 +477,38 @@ export const shake = trigger("shake", [
       `${ANIMATION_TIMINGS.slower}`,
       keyframes([
         style({ transform: "translateX(0)", offset: 0 }),
-        style({ transform: "translateX(-10px)", offset: 0.1 }),
-        style({ transform: "translateX(10px)", offset: 0.2 }),
-        style({ transform: "translateX(-10px)", offset: 0.3 }),
-        style({ transform: "translateX(10px)", offset: 0.4 }),
-        style({ transform: "translateX(-5px)", offset: 0.5 }),
-        style({ transform: "translateX(5px)", offset: 0.6 }),
-        style({ transform: "translateX(-2px)", offset: 0.7 }),
-        style({ transform: "translateX(2px)", offset: 0.8 }),
+        style({
+          transform:
+            "translateX(calc((var(--space-2) + var(--space-0-5)) * -1))",
+          offset: 0.1,
+        }),
+        style({
+          transform: "translateX(calc(var(--space-2) + var(--space-0-5)))",
+          offset: 0.2,
+        }),
+        style({
+          transform:
+            "translateX(calc((var(--space-2) + var(--space-0-5)) * -1))",
+          offset: 0.3,
+        }),
+        style({
+          transform: "translateX(calc(var(--space-2) + var(--space-0-5)))",
+          offset: 0.4,
+        }),
+        style({
+          transform:
+            "translateX(calc(var(--space-0-5) * -2.5))",
+          offset: 0.5,
+        }),
+        style({
+          transform: "translateX(calc(var(--space-0-5) * 2.5))",
+          offset: 0.6,
+        }),
+        style({
+          transform: "translateX(calc(var(--border-2) * -1))",
+          offset: 0.7,
+        }),
+        style({ transform: "translateX(var(--border-2))", offset: 0.8 }),
         style({ transform: "translateX(0)", offset: 1 }),
       ]),
     ),
@@ -491,8 +539,14 @@ export const wiggle = trigger("wiggle", [
  * Subtle glow pulse for highlights
  */
 export const glow = trigger("glow", [
-  state("off", style({ boxShadow: "0 0 0 0 rgba(8, 153, 73, 0)" })),
-  state("on", style({ boxShadow: "0 0 20px 5px rgba(8, 153, 73, 0.3)" })),
+  state("off", style({ boxShadow: "0 0 0 0 rgba(var(--ds-primary-green-rgb), 0)" })),
+  state(
+    "on",
+    style({
+      boxShadow:
+        "0 0 var(--space-5) calc(var(--space-0-5) * 2.5) var(--hover-border-subtle)",
+    }),
+  ),
   transition("off <=> on", [
     animate(`${ANIMATION_TIMINGS.slow} ${ANIMATION_EASING.smooth}`),
   ]),
@@ -507,7 +561,15 @@ export const routeTransition = trigger("routeTransition", [
     query(":enter, :leave", style({ position: "absolute", width: "100%" }), {
       optional: true,
     }),
-    query(":enter", [style({ opacity: 0, transform: "translateY(10px)" })], {
+    query(
+      ":enter",
+      [
+        style({
+          opacity: 0,
+          transform: "translateY(calc(var(--space-2) + var(--space-0-5)))",
+        }),
+      ],
+      {
       optional: true,
     }),
     group([
@@ -516,7 +578,11 @@ export const routeTransition = trigger("routeTransition", [
         [
           animate(
             `${ANIMATION_TIMINGS.normal} ${ANIMATION_EASING.exit}`,
-            style({ opacity: 0, transform: "translateY(-10px)" }),
+            style({
+              opacity: 0,
+              transform:
+                "translateY(calc((var(--space-2) + var(--space-0-5)) * -1))",
+            }),
           ),
         ],
         { optional: true },
@@ -541,7 +607,7 @@ export const routeTransition = trigger("routeTransition", [
  */
 export const pageEnter = trigger("pageEnter", [
   transition(":enter", [
-    style({ opacity: 0, transform: "translateY(20px)" }),
+    style({ opacity: 0, transform: "translateY(var(--space-5))" }),
     animate(
       `${ANIMATION_TIMINGS.slower} ${ANIMATION_EASING.microSpring}`,
       style({ opacity: 1, transform: "translateY(0)" }),
@@ -555,7 +621,10 @@ export const pageEnter = trigger("pageEnter", [
  */
 export const modalEnterExit = trigger("modalEnterExit", [
   transition(":enter", [
-    style({ opacity: 0, transform: "scale(0.95) translateY(-20px)" }),
+    style({
+      opacity: 0,
+      transform: "scale(0.95) translateY(calc(var(--space-5) * -1))",
+    }),
     animate(
       `${ANIMATION_TIMINGS.slow} ${ANIMATION_EASING.microSpring}`,
       style({ opacity: 1, transform: "scale(1) translateY(0)" }),
@@ -564,7 +633,10 @@ export const modalEnterExit = trigger("modalEnterExit", [
   transition(":leave", [
     animate(
       `${ANIMATION_TIMINGS.fast} ${ANIMATION_EASING.exit}`,
-      style({ opacity: 0, transform: "scale(0.95) translateY(-20px)" }),
+      style({
+        opacity: 0,
+        transform: "scale(0.95) translateY(calc(var(--space-5) * -1))",
+      }),
     ),
   ]),
 ]);
@@ -692,7 +764,10 @@ export const hoverLift = trigger("hoverLift", [
   ),
   state(
     "hover",
-    style({ transform: "translateY(-4px)", boxShadow: "var(--shadow-lg)" }),
+    style({
+      transform: "translateY(calc(var(--space-1) * -1))",
+      boxShadow: "var(--shadow-lg)",
+    }),
   ),
   transition("default <=> hover", [
     animate(`${ANIMATION_TIMINGS.normal} ${ANIMATION_EASING.microSpring}`),
@@ -759,8 +834,8 @@ export const highlight = trigger("highlight", [
       `${ANIMATION_TIMINGS.slower}`,
       keyframes([
         style({ backgroundColor: "transparent", offset: 0 }),
-        style({ backgroundColor: "rgba(8, 153, 73, 0.2)", offset: 0.3 }),
-        style({ backgroundColor: "rgba(8, 153, 73, 0.2)", offset: 0.7 }),
+        style({ backgroundColor: "rgba(var(--ds-primary-green-rgb), 0)", offset: 0.3 }),
+        style({ backgroundColor: "rgba(var(--ds-primary-green-rgb), 0)", offset: 0.7 }),
         style({ backgroundColor: "transparent", offset: 1 }),
       ]),
     ),
@@ -840,7 +915,7 @@ export function createFadeAnimation(
 export function createSlideAnimation(
   direction: "up" | "down" | "left" | "right",
   duration: string = ANIMATION_TIMINGS.normal,
-  distance: string = "20px",
+  distance: string = "var(--space-5)",
 ) {
   const directions = {
     up: {
@@ -892,7 +967,7 @@ export function createStaggerAnimation(
       query(
         ":enter",
         [
-          style({ transform: "translateY(20px)", opacity: 0 }),
+          style({ transform: "translateY(var(--space-5))", opacity: 0 }),
           stagger(staggerTime, [
             animate(
               `${animationDuration} ${ANIMATION_EASING.microSpring}`,

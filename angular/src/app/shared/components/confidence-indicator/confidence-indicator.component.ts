@@ -145,7 +145,7 @@ import { ButtonComponent } from "../button/button.component";
 
       .confidence-bar {
         width: 100%;
-        height: 8px;
+        height: var(--space-2);
         background: var(--surface-ground);
         border-radius: var(--radius-sm);
         overflow: hidden;
@@ -190,7 +190,7 @@ import { ButtonComponent } from "../button/button.component";
       .confidence-explanation {
         margin-top: var(--space-3);
         padding-top: var(--space-3);
-        border-top: 1px solid var(--color-border-secondary);
+        border-top: var(--border-1) solid var(--color-border-secondary);
         display: flex;
         flex-direction: column;
         gap: var(--space-2);
@@ -224,7 +224,7 @@ import { ButtonComponent } from "../button/button.component";
       .confidence-actions {
         margin-top: var(--space-2);
         padding-top: var(--space-2);
-        border-top: 1px solid var(--color-border-secondary);
+        border-top: var(--border-1) solid var(--color-border-secondary);
       }
 
       .confidence-actions strong {
@@ -249,15 +249,15 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       .confidence-indicator.confidence-moderate {
-        border-left: 3px solid var(--ds-primary-yellow);
+        border-left: var(--space-0-75) solid var(--ds-primary-yellow);
       }
 
       .confidence-indicator.confidence-low {
-        border-left: 3px solid var(--ds-primary-orange);
+        border-left: var(--space-0-75) solid var(--ds-primary-orange);
       }
 
       .confidence-indicator.confidence-very-low {
-        border-left: 3px solid var(--ds-primary-red);
+        border-left: var(--space-0-75) solid var(--ds-primary-red);
         background: var(--color-status-error-subtle);
       }
     `,

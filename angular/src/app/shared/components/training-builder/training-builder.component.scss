@@ -6,7 +6,7 @@
 @use "styles/mixins" as *;
 
 .training-builder {
-  max-width: 62.5rem;
+  max-width: calc(var(--size-200) * 5);
   margin: 0 auto;
 }
 
@@ -16,12 +16,12 @@
 
 .step-content {
   padding: var(--space-8) 0;
-  min-height: 25rem;
+  min-height: var(--chart-min-height-lg);
 }
 
 .goals-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15.625rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min-height-xl), 1fr));
   gap: var(--space-4);
   margin: var(--space-6) 0;
 }

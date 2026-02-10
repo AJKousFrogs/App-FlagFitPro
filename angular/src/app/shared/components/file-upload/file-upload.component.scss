@@ -12,9 +12,9 @@
 }
 
 .upload-dropzone {
-  border: 0.125rem dashed var(--color-border-primary);
+  border: var(--border-2) dashed var(--color-border-primary);
   border-radius: var(--radius-md);
-  padding: var(--space-6, var(--ds-font-size-2xl));
+  padding: var(--space-6);
   background: var(--surface-primary);
   cursor: pointer;
   transition:
@@ -54,13 +54,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2, var(--ds-font-size-0-5rem));
+  gap: var(--space-2);
 }
 
 .upload-icon {
   font-size: var(--ds-font-size-3xl);
   color: var(--color-brand-primary);
-  margin-bottom: var(--space-2, var(--ds-font-size-0-5rem));
+  margin-bottom: var(--space-2);
 }
 
 .upload-label {
@@ -79,7 +79,7 @@
 .uploaded-files-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2, var(--ds-font-size-0-5rem));
+  gap: var(--space-2);
   text-align: left;
 }
 
@@ -87,16 +87,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3, var(--ds-font-size-xs));
+  padding: var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border: 0.0625rem solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
 }
 
 .file-info {
   display: flex;
   align-items: center;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
   flex: 1;
 }
 
@@ -108,7 +108,7 @@
 .file-details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 0.25rem);
+  gap: var(--space-1);
 }
 
 .file-name {
@@ -126,7 +126,7 @@
   border: none;
   color: var(--color-status-error);
   cursor: pointer;
-  padding: var(--space-1, 0.25rem);
+  padding: var(--space-1);
   border-radius: var(--radius-md);
   transition: background var(--transition-base);
 }
@@ -136,32 +136,32 @@
 }
 
 .upload-progress {
-  margin-top: var(--space-4, var(--ds-font-size-md));
+  margin-top: var(--space-4);
 }
 
 .progress-text {
   display: block;
   text-align: center;
-  margin-top: var(--space-2, var(--ds-font-size-0-5rem));
+  margin-top: var(--space-2);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .file-preview {
-  margin-top: var(--space-4, var(--ds-font-size-md));
-  padding: var(--space-4, var(--ds-font-size-md));
+  margin-top: var(--space-4);
+  padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
 }
 
 .file-preview h4 {
-  margin: 0 0 var(--space-3, var(--ds-font-size-xs)) 0;
+  margin: 0 0 var(--space-3) 0;
   font-size: var(--ds-font-size-xl);
   color: var(--color-text-primary);
 }
 
 .preview-item {
-  margin-top: var(--space-3, var(--ds-font-size-xs));
+  margin-top: var(--space-3);
 }
 
 .preview-item img {
@@ -172,7 +172,7 @@
 
 .preview-item pre {
   background: var(--surface-primary);
-  padding: var(--space-3, var(--ds-font-size-xs));
+  padding: var(--space-3);
   border-radius: var(--radius-md);
   overflow-x: auto;
   font-size: var(--ds-font-size-sm);

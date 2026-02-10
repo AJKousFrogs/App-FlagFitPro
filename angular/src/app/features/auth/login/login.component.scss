@@ -152,7 +152,7 @@
 
   .password-toggle-btn {
     position: absolute;
-    right: 0.75rem;
+    right: var(--space-3);
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -193,10 +193,10 @@
       transform: translateX(0);
     }
     25% {
-      transform: translateX(-0.25rem);
+      transform: translateX(-var(--space-1));
     }
     75% {
-      transform: translateX(0.25rem);
+      transform: translateX(var(--space-1));
     }
   }
 
@@ -257,7 +257,7 @@
       }
 
       &:focus-visible + .checkmark {
-        box-shadow: 0 0 0 0.1875rem rgba(var(--ds-primary-green-rgb), 0.2);
+        box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2);
       }
     }
 
@@ -265,7 +265,7 @@
       width: var(--avatar-size-xs);
       height: var(--avatar-size-xs);
       min-width: var(--avatar-size-xs);
-      border: 0.125rem solid var(--color-border-primary);
+      border: var(--border-2) solid var(--color-border-primary);
       border-radius: var(--radius-sm);
       background: var(--surface-primary);
       transition:
@@ -282,7 +282,7 @@
         width: var(--indicator-size-xs);
         height: var(--indicator-size-md);
         border: solid white;
-        border-width: 0 0.125rem 0.125rem 0;
+  border-width: 0 var(--border-2) var(--border-2) 0;
         transform: rotate(45deg);
         margin-bottom: var(--space-1);
       }
@@ -320,7 +320,7 @@
     &::after {
       content: "";
       flex: 1;
-      height: 0.0625rem;
+      height: var(--border-1);
       background: var(--color-border-secondary);
     }
   }
@@ -370,7 +370,7 @@
     &.alert-info {
       background: var(--color-status-info-light);
       color: var(--primitive-info-700);
-      border: 0.0625rem solid var(--primitive-info-200);
+      border: var(--border-1) solid var(--primitive-info-200);
     }
   }
 
@@ -380,7 +380,7 @@
 
   @include respond-to(sm) {
     .login-page {
-      padding: var(--space-4, var(--ds-font-size-md));
+      padding: var(--space-4);
       align-items: flex-start;
       padding-top: var(--space-8); // 2rem
     }
@@ -418,7 +418,7 @@
 
     .login-card {
       background: var(--primitive-neutral-800);
-      border: 0.0625rem solid var(--primitive-neutral-700);
+      border: var(--border-1) solid var(--primitive-neutral-700);
     }
 
     .login-logo {
@@ -462,7 +462,6 @@
  * Scope: login component only
  */
 // PrimeNG card, input, and button overrides moved to _exceptions.scss (DS-EXC-049)
-.login-card,
-.login-submit-btn {
+.login-card {
   // Component-specific styles remain here
 }

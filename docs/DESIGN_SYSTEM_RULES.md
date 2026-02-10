@@ -94,6 +94,8 @@ Every exception MUST include:
 
 ## 4. Design Tokens (Single Source of Truth)
 
+> **Finding legacy/deprecated token usage:** Run `npm run lint:tokens` or see [LEGACY_CODE_GUIDE.md](./LEGACY_CODE_GUIDE.md).
+
 ### 4.1 Token Authority
 
 - Hex colors **ONLY** in `design-system-tokens.scss`

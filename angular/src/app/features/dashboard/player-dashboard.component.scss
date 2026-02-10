@@ -160,8 +160,8 @@
 }
 
 .merlin-avatar {
-  width: var(--space-20); /* 5rem */
-  height: var(--space-20); /* 5rem */
+  width: var(--space-20); /* var(--size-80) */
+  height: var(--space-20); /* var(--size-80) */
   border-radius: var(--radius-full);
   background: linear-gradient(
     135deg,
@@ -178,8 +178,8 @@
 
   // Mobile: Smaller avatar
   @include respond-to(md) {
-    width: var(--space-16); /* 4rem */
-    height: var(--space-16); /* 4rem */
+    width: var(--space-16); /* var(--header-height) */
+    height: var(--space-16); /* var(--header-height) */
     font-size: var(--ds-font-size-3xl);
   }
 }
@@ -243,7 +243,7 @@
 
 .chart-container {
   position: relative;
-  height: calc(var(--space-12) * 6.25); /* 18.75rem */
+  height: calc(var(--space-12) * 6.25); /* 18.calc(var(--size-200) * 6) */
   padding: var(--space-2);
 
   // Mobile: Smaller chart
@@ -279,7 +279,7 @@
   padding: var(--space-3);
   background: var(--surface-ground);
   border-radius: var(--radius-md);
-  border-left: var(--border-4) solid var(--ds-primary-green); /* 0.25rem - closest token to 0.1875rem */
+  border-left: var(--border-4) solid var(--ds-primary-green); /* var(--space-1) - closest token to var(--space-0-75) */
 
   // Mobile: Compact padding
   @include respond-to(md) {
@@ -439,8 +439,8 @@
 }
 
 .no-program-icon {
-  width: var(--space-20); /* 5rem */
-  height: var(--space-20); /* 5rem */
+  width: var(--space-20); /* var(--size-80) */
+  height: var(--space-20); /* var(--size-80) */
   border-radius: var(--radius-full);
   background: var(--color-status-error-subtle);
   color: var(--color-status-error);
@@ -451,8 +451,8 @@
   font-size: var(--ds-font-size-3xl);
 
   @include respond-to(md) {
-    width: var(--space-16); /* 4rem */
-    height: var(--space-16); /* 4rem */
+    width: var(--space-16); /* var(--header-height) */
+    height: var(--space-16); /* var(--header-height) */
     font-size: var(--ds-font-size-3xl);
   }
 }
@@ -471,7 +471,7 @@
 .no-program-message {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  max-width: var(--content-max-width-sm); /* 40rem - closest token to 37.5rem */
+  max-width: var(--content-max-width-sm); /* var(--content-max-width-sm) - closest token to calc(var(--size-200) * 3) */
   margin: 0 auto var(--space-4);
   line-height: var(--ds-line-height-relaxed);
 
@@ -490,7 +490,7 @@
   @include respond-to(sm) {
     flex-direction: column;
     align-items: stretch;
-    max-width: calc(var(--space-12) * 6.25); /* 18.75rem */
+    max-width: calc(var(--space-12) * 6.25); /* 18.calc(var(--size-200) * 6) */
     margin: 0 auto;
   }
 }

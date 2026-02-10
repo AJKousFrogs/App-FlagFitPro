@@ -145,8 +145,8 @@ Flag football HTML - APP/
 ├── netlify/                    # Netlify Functions (Backend API)
 │   └── functions/
 │       ├── utils/             # Shared utilities
-│       ├── ai-chat.cjs        # AI Coach endpoint
-│       ├── load-management.cjs # ACWR calculations
+│       ├── ai-chat.js        # AI Coach endpoint
+│       ├── load-management.js # ACWR calculations
 │       └── ... (80+ functions)
 │
 ├── database/                   # SQL migrations
@@ -264,7 +264,7 @@ npm install -g @angular/cli@21
 ### Netlify Functions 404
 
 1. Check `netlify.toml` has correct redirect
-2. Ensure function file has `.cjs` extension
+2. Ensure function file has `.js` extension (ESM)
 3. Verify `exports.handler` is defined
 
 ### Supabase Connection Error

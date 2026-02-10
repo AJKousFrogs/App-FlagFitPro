@@ -254,7 +254,7 @@ describe("WellnessService", () => {
       const status = service.getWellnessStatus(8.5);
 
       expect(status.status).toBe("excellent");
-      expect(status.color).toBe("#089949"); // STATUS_HEX_COLORS.success
+      expect(status.color).toBe("var(--p-highlight-text-color)"); // design token
       expect(status.message).toContain("excellent");
     });
 
@@ -262,14 +262,14 @@ describe("WellnessService", () => {
       const status = service.getWellnessStatus(7);
 
       expect(status.status).toBe("good");
-      expect(status.color).toBe("#3b82f6"); // STATUS_HEX_COLORS.info
+      expect(status.color).toBe("var(--color-chart-tertiary)"); // design token
     });
 
     it("should return fair status for score 4-6", () => {
       const status = service.getWellnessStatus(5);
 
       expect(status.status).toBe("fair");
-      expect(status.color).toBe("#f59e0b"); // STATUS_HEX_COLORS.warning
+      expect(status.color).toBe("var(--color-chart-quaternary)"); // design token
       expect(status.message).toContain("attention");
     });
 
@@ -277,7 +277,7 @@ describe("WellnessService", () => {
       const status = service.getWellnessStatus(2);
 
       expect(status.status).toBe("poor");
-      expect(status.color).toBe("#ef4444"); // STATUS_HEX_COLORS.error
+      expect(status.color).toBe("var(--color-chart-quinary)"); // design token
       expect(status.message).toContain("concerning");
     });
 

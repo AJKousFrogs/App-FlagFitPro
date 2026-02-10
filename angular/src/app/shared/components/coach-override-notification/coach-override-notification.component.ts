@@ -205,8 +205,8 @@ import { getTimeAgo } from "../../utils/date.utils";
   styles: [
     `
       .override-notification-card {
-        margin-bottom: 1rem;
-        border-left: 4px solid var(--primary-color);
+        margin-bottom: var(--space-4);
+        border-left: var(--space-1) solid var(--primary-color);
       }
 
       .override-header {
@@ -218,7 +218,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       .header-content {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--space-2);
       }
 
       .override-icon {
@@ -229,20 +229,20 @@ import { getTimeAgo } from "../../utils/date.utils";
       .override-content {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       .contract-section {
-        padding: 0.75rem;
+        padding: var(--space-3);
         background: var(--surface-50);
-        border-radius: 0.5rem;
+        border-radius: var(--radius-lg);
       }
 
       .contract-question {
         font-size: var(--ds-font-size-sm);
         font-weight: var(--ds-font-weight-semibold);
         color: var(--text-color-secondary);
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--space-2);
       }
 
       .contract-answer {
@@ -251,42 +251,42 @@ import { getTimeAgo } from "../../utils/date.utils";
       }
 
       .change-details {
-        margin-top: 0.5rem;
-        padding: 0.5rem;
+        margin-top: var(--space-2);
+        padding: var(--space-2);
         background: var(--surface-100);
-        border-radius: 0.25rem;
+        border-radius: var(--space-1);
         font-size: var(--ds-font-size-sm);
       }
 
       .timestamp {
         display: block;
-        margin-top: 0.5rem;
+        margin-top: var(--space-2);
         color: var(--text-color-secondary);
         font-size: var(--ds-font-size-xs);
       }
 
       .action-buttons {
         display: flex;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
         flex-wrap: wrap;
       }
 
       .transparency-panel {
-        margin-top: 1rem;
-        border-top: 1px solid var(--surface-200);
-        padding-top: 1rem;
+        margin-top: var(--space-4);
+        border-top: var(--border-1) solid var(--surface-200);
+        padding-top: var(--space-4);
       }
 
       .transparency-toggle {
         width: 100%;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem;
+        gap: var(--space-2);
+        padding: var(--space-2);
         background: transparent;
-        border: 1px solid var(--surface-300);
-        border-radius: 0.25rem;
+        border: var(--border-1) solid var(--surface-300);
+        border-radius: var(--space-1);
         cursor: pointer;
         color: var(--text-color);
         transition: all 0.2s;
@@ -297,35 +297,35 @@ import { getTimeAgo } from "../../utils/date.utils";
       }
 
       .transparency-content {
-        margin-top: 1rem;
-        padding: 1rem;
+        margin-top: var(--space-4);
+        padding: var(--space-4);
         background: var(--surface-50);
-        border-radius: 0.5rem;
+        border-radius: var(--radius-lg);
       }
 
       .comparison-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       .comparison-item {
-        padding: 0.75rem;
-        border-radius: 0.25rem;
+        padding: var(--space-3);
+        border-radius: var(--space-1);
       }
 
       .comparison-item.ai {
         background: var(--blue-50);
-        border-left: 3px solid var(--blue-500);
+        border-left: var(--space-0-75) solid var(--blue-500);
       }
 
       .comparison-item.coach {
         background: var(--green-50);
-        border-left: 3px solid var(--green-500);
+        border-left: var(--space-0-75) solid var(--green-500);
       }
 
       .comparison-item h5 {
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 var(--space-2) 0;
         font-size: var(--ds-font-size-sm);
         font-weight: var(--ds-font-weight-semibold);
       }
@@ -340,20 +340,20 @@ import { getTimeAgo } from "../../utils/date.utils";
       .history-list {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       .history-item {
-        padding: 0.75rem;
+        padding: var(--space-3);
         background: var(--surface-50);
-        border-radius: 0.25rem;
+        border-radius: var(--space-1);
       }
 
       .history-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--space-2);
       }
 
       .history-date {

@@ -578,7 +578,7 @@ interface TimelineEvent {
       </div>
     </app-main-layout>
   `,
-  styleUrls: ["./periodization-dashboard.component.scss"],
+  styleUrl: "./periodization-dashboard.component.scss",
 })
 export class PeriodizationDashboardComponent implements OnInit {
   // Services

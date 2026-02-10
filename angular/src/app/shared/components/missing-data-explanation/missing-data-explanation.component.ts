@@ -111,7 +111,7 @@ import { LoggerService } from "../../../core/services/logger.service";
     `
       .missing-data-card {
         margin-bottom: var(--space-4);
-        border-left: 4px solid;
+        border-left: var(--space-1) solid;
       }
 
       .missing-data-card.severity-warning {
@@ -212,9 +212,9 @@ import { LoggerService } from "../../../core/services/logger.service";
         align-items: center;
         gap: var(--space-2);
         padding: var(--space-3);
-        background: rgba(255, 255, 255, 0.5);
+        background: var(--overlay-white-50);
         border-radius: var(--radius-md);
-        border: 1px solid var(--color-border-primary);
+        border: var(--border-1) solid var(--color-border-primary);
       }
 
       .escalation-badge i {

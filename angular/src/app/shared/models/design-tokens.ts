@@ -16,152 +16,152 @@ export const DesignTokens = {
   colors: {
     brand: {
       primary: {
-        50: "#f0f9f7",
-        100: "#d0f0eb",
-        200: "#a0e4d7",
-        300: "#70d8c3",
-        400: "#40ccaf",
-        500: "#10c96b",
-        600: "#0ab85a",
-        700: "#089949", // PRIMARY BRAND COLOR - main CTAs
-        800: "#067a3c",
-        900: "#036d35", // Hover/pressed states
+        50: "var(--primitive-primary-50)",
+        100: "var(--primitive-primary-100)",
+        200: "var(--primitive-primary-200)",
+        300: "var(--primitive-primary-300)",
+        400: "var(--primitive-primary-400)",
+        500: "var(--p-highlight-text-color)",
+        600: "var(--color-brand-secondary-hover)",
+        700: "var(--p-highlight-text-color)", // PRIMARY BRAND COLOR - main CTAs
+        800: "var(--primitive-primary-800)",
+        900: "var(--hover-text-primary)", // Hover/pressed states
       },
       secondary: {
-        500: "#10c96b",
-        600: "#0ab85a",
-        700: "#089949",
+        500: "var(--p-highlight-text-color)",
+        600: "var(--color-brand-secondary-hover)",
+        700: "var(--p-highlight-text-color)",
       },
       accent: {
-        500: "#10c96b",
+        500: "var(--p-highlight-text-color)",
       },
       white: {
         pure: "#ffffff",
-        soft: "#f8faf9",
+        soft: "var(--p-surface-50)",
       },
     },
     primitive: {
       // Success - Yellow Scale (from SCSS)
       success: {
-        50: "#fefce8",
-        100: "#fef3c7",
-        200: "#fde68a",
-        300: "#fcd34d",
-        400: "#fbbf24",
-        500: "#f1c40f", // PRIMARY SUCCESS COLOR
-        600: "#d4a617",
-        700: "#b7941f",
-        800: "#92400e",
-        900: "#78350f",
+        50: "var(--primitive-success-50)",
+        100: "var(--primitive-warning-100)",
+        200: "var(--primitive-warning-200)",
+        300: "var(--primitive-warning-300)",
+        400: "var(--color-icon-notifications)",
+        500: "var(--color-chart-3)", // PRIMARY SUCCESS COLOR
+        600: "var(--primitive-success-600)",
+        700: "var(--primitive-success-700)",
+        800: "var(--color-warning-text-accessible)",
+        900: "var(--primitive-warning-900)",
       },
       // Warning - Orange/Amber Scale (from SCSS)
       warning: {
-        50: "#fffbeb",
-        100: "#fef3c7",
-        200: "#fde68a",
-        300: "#fcd34d",
-        400: "#fbbf24",
-        500: "#f59e0b", // PRIMARY WARNING COLOR
-        600: "#d97706",
-        700: "#b45309",
-        800: "#92400e", // Dark warning text
-        900: "#78350f",
+        50: "var(--primitive-warning-50)",
+        100: "var(--primitive-warning-100)",
+        200: "var(--primitive-warning-200)",
+        300: "var(--primitive-warning-300)",
+        400: "var(--color-icon-notifications)",
+        500: "var(--color-chart-quaternary)", // PRIMARY WARNING COLOR
+        600: "var(--primitive-warning-600)",
+        700: "var(--primitive-warning-700)",
+        800: "var(--color-warning-text-accessible)", // Dark warning text
+        900: "var(--primitive-warning-900)",
       },
       // Error - Red Scale (from SCSS)
       error: {
-        50: "#fef2f2",
-        100: "#fee2e2",
-        200: "#fecaca",
-        300: "#fca5a5",
-        400: "#f87171",
-        500: "#ef4444", // PRIMARY ERROR COLOR
-        600: "#dc2626",
-        700: "#b91c1c",
-        800: "#991b1b",
-        900: "#7f1d1d",
+        50: "var(--primitive-error-50)",
+        100: "var(--primitive-error-100)",
+        200: "var(--primitive-error-200)",
+        300: "var(--primitive-error-300)",
+        400: "var(--color-error-text-accessible-dark)",
+        500: "var(--color-chart-quinary)", // PRIMARY ERROR COLOR
+        600: "var(--color-interactive-destructive-hover)",
+        700: "var(--color-interactive-destructive-active)",
+        800: "var(--color-error-text-accessible)",
+        900: "var(--primitive-error-900)",
       },
       // Neutral Gray Palette (from SCSS)
       neutral: {
-        50: "#fafafa",
-        100: "#f5f5f5",
-        200: "#f0f0f0",
-        300: "#e5e5e5",
-        400: "#d4d4d4",
-        500: "#a3a3a3",
-        600: "#737373",
-        700: "#404040",
-        800: "#262626",
-        900: "#171717",
-        950: "#0a0a0a",
+        50: "var(--neutral-50)",
+        100: "var(--p-surface-900)",
+        200: "var(--primitive-neutral-200)",
+        300: "var(--p-surface-800)",
+        400: "var(--p-surface-700)",
+        500: "var(--p-text-color-secondary)",
+        600: "var(--p-surface-500)",
+        700: "var(--p-surface-300)",
+        800: "var(--p-surface-100)",
+        900: "var(--p-surface-0)",
+        950: "var(--primitive-neutral-950)",
       },
     },
     // Semantic Status Colors (from SCSS)
     status: {
       success: {
         main: "#63ad0e",
-        light: "rgba(99, 173, 14, 0.1)",
-        subtle: "rgba(99, 173, 14, 0.05)",
+        light: "var(--color-status-success-light)",
+        subtle: "var(--color-status-success-subtle)",
       },
       warning: {
         main: "#ffc000",
-        light: "rgba(255, 192, 0, 0.1)",
-        subtle: "rgba(255, 192, 0, 0.05)",
-        text: "#92400e", // Dark warning text for light backgrounds
+        light: "var(--color-status-warning-light)",
+        subtle: "var(--color-status-warning-subtle)",
+        text: "var(--color-warning-text-accessible)", // Dark warning text for light backgrounds
       },
       error: {
         main: "#ff003c",
-        light: "rgba(255, 0, 60, 0.1)",
-        subtle: "rgba(255, 0, 60, 0.05)",
+        light: "var(--color-status-error-light)",
+        subtle: "var(--color-status-error-subtle)",
       },
       info: {
         main: "#0ea5e9",
-        light: "rgba(14, 165, 233, 0.1)",
-        subtle: "rgba(14, 165, 233, 0.05)",
+        light: "var(--color-status-info-light)",
+        subtle: "var(--color-status-info-subtle)",
       },
       help: {
-        main: "#8b5cf6",
-        light: "rgba(139, 92, 246, 0.1)",
-        subtle: "rgba(139, 92, 246, 0.05)",
-        hover: "#7c3aed",
+        main: "var(--color-chart-senary)",
+        light: "var(--color-status-help-light)",
+        subtle: "var(--color-status-help-subtle)",
+        hover: "var(--color-status-help-hover)",
       },
     },
     text: {
-      primary: "#1a1a1a", // Black - for white backgrounds ONLY
-      secondary: "#4a4a4a", // Dark gray - secondary text on white
-      muted: "#525252", // Medium gray - muted text on white (FIXED from #6b7280)
-      tertiary: "#6b7280", // Lighter gray - for large text only
-      disabled: "#9ca3af", // Light gray - disabled text
+      primary: "var(--color-text-primary)", // Black - for white backgrounds ONLY
+      secondary: "var(--color-medal-silver-text)", // Dark gray - secondary text on white
+      muted: "var(--p-surface-400)", // Medium gray - muted text on white (FIXED from var(--color-workout-rest)
+      tertiary: "var(--color-workout-rest)", // Lighter gray - for large text only
+      disabled: "var(--color-icon-preferences)", // Light gray - disabled text
       onPrimary: "#ffffff", // White - for green backgrounds ONLY
-      onWhite: "#089949", // Green - for white backgrounds
+      onWhite: "var(--p-highlight-text-color)", // Green - for white backgrounds
     },
     border: {
-      primary: "#e5e7eb",
-      secondary: "#e5e7eb",
-      subtle: "rgba(0, 0, 0, 0.05)",
-      focus: "#089949",
-      default: "#e5e5e5",
-      muted: "#f0f0f0",
-      strong: "#d4d4d4",
+      primary: "var(--color-border-secondary)",
+      secondary: "var(--color-border-secondary)",
+      subtle: "var(--color-border-subtle)",
+      focus: "var(--p-highlight-text-color)",
+      default: "var(--p-surface-800)",
+      muted: "var(--primitive-neutral-200)",
+      strong: "var(--p-surface-700)",
     },
     surface: {
       primary: "#ffffff",
-      secondary: "#f8faf9",
-      tertiary: "#e9ecef",
+      secondary: "var(--p-surface-50)",
+      tertiary: "var(--surface-tertiary)",
       elevated: "#ffffff",
-      overlay: "rgba(0, 0, 0, 0.5)",
-      dark: "#171717",
+      overlay: "var(--surface-overlay)",
+      dark: "var(--p-surface-0)",
     },
     neutral: {
-      50: "#fafafa",
-      100: "#f5f5f5",
-      200: "#e5e5e5",
-      300: "#d4d4d4",
-      400: "#a3a3a3",
-      500: "#737373",
-      600: "#525252",
-      700: "#404040",
-      800: "#262626",
-      900: "#171717",
+      50: "var(--neutral-50)",
+      100: "var(--p-surface-900)",
+      200: "var(--p-surface-800)",
+      300: "var(--p-surface-700)",
+      400: "var(--p-text-color-secondary)",
+      500: "var(--p-surface-500)",
+      600: "var(--p-surface-400)",
+      700: "var(--p-surface-300)",
+      800: "var(--p-surface-100)",
+      900: "var(--p-surface-0)",
     },
   },
   spacing: {
@@ -440,22 +440,22 @@ export const DesignTokens = {
   },
   medal: {
     gold: {
-      main: "#ffd700",
+      main: "var(--color-medal-gold)",
       rgb: "255, 215, 0",
-      gradient: "linear-gradient(135deg, #ffd700 0%, #ffb347 100%)",
-      text: "#5c4a00",
+      gradient: "linear-gradient(135deg, var(--color-medal-gold) 0%, #ffb347 100%)",
+      text: "var(--color-medal-gold-text)",
     },
     silver: {
-      main: "#c0c0c0",
+      main: "var(--color-medal-silver)",
       rgb: "192, 192, 192",
-      gradient: "linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%)",
-      text: "#4a4a4a",
+      gradient: "linear-gradient(135deg, var(--color-medal-silver) 0%, var(--color-metallic-silver-light) 100%)",
+      text: "var(--color-medal-silver-text)",
     },
     bronze: {
-      main: "#cd7f32",
+      main: "var(--color-medal-bronze)",
       rgb: "205, 127, 50",
-      gradient: "linear-gradient(135deg, #cd7f32 0%, #d4a574 100%)",
-      text: "#3d2914",
+      gradient: "linear-gradient(135deg, var(--color-medal-bronze) 0%, #d4a574 100%)",
+      text: "var(--color-medal-bronze-text)",
     },
   },
   containers: {
@@ -508,24 +508,24 @@ export const ComponentStyles = {
       background: DesignTokens.colors.surface.secondary,
       backgroundHover: DesignTokens.colors.surface.tertiary,
       text: DesignTokens.colors.text.primary,
-      borderRadius: DesignTokens.borderRadius.lg, // 8px
+      borderRadius: DesignTokens.borderRadius.lg, // var(--space-2)
       padding: `${DesignTokens.spacing.sm} ${DesignTokens.spacing.md}`,
     },
   },
   card: {
     background: DesignTokens.colors.surface.primary,
-    borderRadius: DesignTokens.borderRadius.lg, // 8px
+    borderRadius: DesignTokens.borderRadius.lg, // var(--space-2)
     shadow: DesignTokens.shadows.sm,
     padding: DesignTokens.spacing.lg,
   },
   input: {
-    borderRadius: DesignTokens.borderRadius.lg, // 8px
+    borderRadius: DesignTokens.borderRadius.lg, // var(--space-2)
     borderColor: DesignTokens.colors.border.primary,
     borderColorFocus: DesignTokens.colors.border.focus,
     padding: `${DesignTokens.spacing.sm} ${DesignTokens.spacing.md}`,
   },
   dialog: {
-    borderRadius: DesignTokens.borderRadius.xl, // 12px
+    borderRadius: DesignTokens.borderRadius.xl, // var(--space-3)
     padding: DesignTokens.spacing.md,
   },
 };
@@ -549,12 +549,12 @@ export const ChartColors = {
 
   // Gradient colors for multi-series charts
   series: [
-    DesignTokens.colors.brand.primary[700], // #089949
-    DesignTokens.colors.brand.primary[500], // #10c96b
+    DesignTokens.colors.brand.primary[700], // var(--p-highlight-text-color)
+    DesignTokens.colors.brand.primary[500], // var(--p-highlight-text-color)
     DesignTokens.colors.status.success.main, // #63ad0e
     DesignTokens.colors.status.warning.main, // #ffc000
     DesignTokens.colors.status.info.main, // #0ea5e9
-    DesignTokens.colors.brand.primary[300], // #70d8c3
+    DesignTokens.colors.brand.primary[300], // var(--primitive-primary-300)
   ],
 };
 

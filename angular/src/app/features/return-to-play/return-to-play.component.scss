@@ -587,7 +587,7 @@
     padding: var(--space-2);
 
     .stage-name {
-      font-size: var(--ds-font-size-xs); /* 0.625rem - compact label */
+      font-size: var(--ds-font-size-xs); /* calc(var(--space-2) + var(--space-0-5)) - compact label */
     }
   }
 

@@ -12,7 +12,7 @@
 }
 
 .timeline-vertical {
-  padding-left: 2rem;
+  padding-left: var(--space-8);
 }
 
 .timeline-vertical::before {
@@ -21,13 +21,13 @@
   left: var(--space-2); // 0.5rem
   top: 0;
   bottom: 0;
-  width: 0.125rem;
+  width: var(--border-2);
   background: var(--color-border-primary);
 }
 
 .timeline-item {
   position: relative;
-  padding-bottom: 2rem;
+  padding-bottom: var(--space-8);
 }
 
 .timeline-item:last-child {
@@ -36,13 +36,13 @@
 
 .timeline-marker {
   position: absolute;
-  left: -1.75rem; // Intentional: positions marker on timeline line
-  top: var(--space-1); // 0.25rem
-  width: 1rem;
-  height: 1rem;
+  left: -var(--badge-lg); // Intentional: positions marker on timeline line
+  top: var(--space-1); // var(--space-1)
+  width: var(--space-4);
+  height: var(--space-4);
   border-radius: 50%;
   background: var(--ds-primary-green);
-  border: 0.1875rem solid var(--surface-primary);
+  border: var(--space-0-75) solid var(--surface-primary);
   z-index: 1;
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@
 
 .timeline-content {
   background: var(--surface-primary);
-  border: 0.0625rem solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
   padding: var(--space-4);
 }
@@ -87,7 +87,7 @@
 /* Horizontal Timeline */
 .timeline-horizontal {
   display: flex;
-  padding-top: 2rem;
+  padding-top: var(--space-8);
   position: relative;
 }
 
@@ -97,14 +97,14 @@
   left: 0;
   right: 0;
   top: var(--space-10); // 2.5rem = 2.5rem
-  height: 0.125rem;
+  height: var(--border-2);
   background: var(--color-border-primary);
 }
 
 .timeline-horizontal .timeline-item {
   flex: 1;
   padding-bottom: 0;
-  padding-right: 1rem;
+  padding-right: var(--space-4);
 }
 
 .timeline-horizontal .timeline-item:last-child {
@@ -115,7 +115,7 @@
   position: relative;
   left: auto;
   top: auto;
-  margin: 0 auto 1rem;
+  margin: 0 auto var(--space-4);
 }
 
 .timeline-horizontal .timeline-content {

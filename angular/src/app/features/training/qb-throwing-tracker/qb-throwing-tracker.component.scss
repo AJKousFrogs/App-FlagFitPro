@@ -9,38 +9,11 @@
   @include page-container(var(--content-max-width-lg));
 }
 
-/* Header */
-.tracker-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-5);
-}
-
-.page-title {
-  margin: 0;
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-2);
-}
-
-.page-title i {
-  color: var(--ds-primary-green);
-}
-
-.page-subtitle {
-  margin: var(--ds-space-1) 0 0 0;
-  color: var(--color-text-secondary);
-}
-
 /* Status Card - Dashboard consistent */
 .status-card {
   background: var(--surface-primary);
   border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--radius-xl); /* 0.75rem */
+  border-radius: var(--radius-xl); /* 0.calc(var(--size-200) * 6) */
   padding: var(--space-4);
   margin-bottom: var(--space-4);
   box-shadow: var(--shadow-sm);
@@ -125,7 +98,7 @@
 .section {
   background: var(--surface-primary);
   border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--radius-xl); /* 0.75rem */
+  border-radius: var(--radius-xl); /* 0.calc(var(--size-200) * 6) */
   padding: var(--space-4);
   margin-bottom: var(--space-4);
   box-shadow: var(--shadow-sm);

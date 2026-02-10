@@ -97,23 +97,19 @@ if (typeof window !== "undefined") {
   );
 }
 
-// Export for use in other scripts
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    clearServiceWorker: async () => {
-      if (typeof window !== "undefined") {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        for (const registration of registrations) {
-          await registration.unregister();
-        }
+// Export for use in other scripts (ESM)
+export const clearServiceWorker = async () => {
+  if (typeof window !== "undefined") {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const registration of registrations) {
+      await registration.unregister();
+    }
 
-        if ("caches" in window) {
-          const cacheNames = await caches.keys();
-          for (const cacheName of cacheNames) {
-            await caches.delete(cacheName);
-          }
-        }
+    if ("caches" in window) {
+      const cacheNames = await caches.keys();
+      for (const cacheName of cacheNames) {
+        await caches.delete(cacheName);
       }
-    },
-  };
-}
+    }
+  }
+};

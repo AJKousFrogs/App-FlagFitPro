@@ -10,8 +10,12 @@
  *   - Valid test user JWT token (set TEST_USER_TOKEN env var)
  */
 
-require("dotenv").config();
-const { createClient } = require("@supabase/supabase-js");
+import dotenv from "dotenv";
+import { fileURLToPath } from "node:url";
+import { createClient } from "@supabase/supabase-js";
+dotenv.config();
+
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
@@ -305,8 +309,8 @@ async function main() {
   }
 }
 
-if (require.main === module) {
+if (isMain) {
   main();
 }
 
-module.exports = { testIdempotency, testConcurrency, testProtocolHasExercises };
+export { testIdempotency, testConcurrency, testProtocolHasExercises };

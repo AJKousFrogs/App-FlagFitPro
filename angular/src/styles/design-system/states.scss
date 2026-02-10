@@ -21,7 +21,7 @@
 :root {
   /* Hover backgrounds */
   --ds-state-hover-bg: rgba(0, 0, 0, 0.04);
-  --ds-state-hover-bg-dark: rgba(255, 255, 255, 0.08);
+  --ds-state-hover-bg-dark: var(--color-border-secondary);
 
   /* Active/Pressed backgrounds */
   --ds-state-active-bg: rgba(0, 0, 0, 0.08);
@@ -328,7 +328,7 @@
   /* ACTIVE TAB */
   &.active,
   &[aria-selected="true"] {
-    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    background-color: var(--ds-primary-green-subtle, var(--ds-primary-green-subtle));
     color: var(--ds-primary-green);
     font-weight: var(--ds-font-weight-semibold, var(--font-weight-semibold));
   }
@@ -359,7 +359,7 @@
   &.p-focus,
   &.p-highlight,
   &:focus-visible {
-    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    background-color: var(--ds-primary-green-subtle, var(--ds-primary-green-subtle));
     color: var(--ds-primary-green);
     outline: none;
   }
@@ -367,7 +367,7 @@
   /* SELECTED */
   &.p-highlight,
   &[aria-selected="true"] {
-    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    background-color: var(--ds-primary-green-subtle, var(--ds-primary-green-subtle));
     color: var(--ds-primary-green);
   }
 
@@ -395,7 +395,7 @@
   &.active,
   &[aria-current="page"],
   &.router-link-active {
-    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    background-color: var(--ds-primary-green-subtle, var(--ds-primary-green-subtle));
     color: var(--ds-primary-green);
     font-weight: var(--ds-font-weight-semibold, 600);
   }

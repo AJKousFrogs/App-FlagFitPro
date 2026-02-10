@@ -30,7 +30,6 @@ import { ActivatedRoute } from "@angular/router";
 
 import { Dialog } from "primeng/dialog";
 
-import { Ripple } from "primeng/ripple";
 
 import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
@@ -147,7 +146,6 @@ interface AutocompleteSuggestion {
     FormsModule,
     Tooltip,
     Dialog,
-    Ripple,
     MainLayoutComponent,
     DailyReadinessComponent,
     MicroSessionComponent,
@@ -205,7 +203,6 @@ interface AutocompleteSuggestion {
               (click)="toggleSearchMode()"
               [pTooltip]="searchMode() ? 'Close search' : 'Search messages'"
               aria-label="Search conversations"
-              pRipple
               [class.active]="searchMode()"
             >
               <i
@@ -221,7 +218,6 @@ interface AutocompleteSuggestion {
               (click)="toggleBookmarksView()"
               [pTooltip]="showBookmarks() ? 'Show all' : 'View bookmarks'"
               aria-label="View bookmarked messages"
-              pRipple
               [class.active]="showBookmarks()"
             >
               <i
@@ -238,7 +234,6 @@ interface AutocompleteSuggestion {
               (click)="startNewConversation()"
               pTooltip="New chat"
               aria-label="Start new conversation"
-              pRipple
             >
               <i class="pi pi-plus"></i>
             </button>
@@ -315,7 +310,6 @@ interface AutocompleteSuggestion {
                     <button
                       class="suggestion-card"
                       (click)="askQuestion(suggestion.query)"
-                      pRipple
                       [attr.aria-label]="'Ask about ' + suggestion.label"
                     >
                       <div class="suggestion-icon">
@@ -542,7 +536,6 @@ interface AutocompleteSuggestion {
                             class="action-btn primary micro-session"
                             (click)="startMicroSession(action, message.id)"
                             [pTooltip]="action.reason"
-                            pRipple
                           >
                             <i class="pi pi-play-circle"></i>
                             <span>{{ action.label }}</span>
@@ -557,7 +550,6 @@ interface AutocompleteSuggestion {
                             class="action-btn secondary"
                             (click)="executeAction(action)"
                             [pTooltip]="action.reason"
-                            pRipple
                           >
                             {{ action.label }}
                           </button>
@@ -681,7 +673,6 @@ interface AutocompleteSuggestion {
                 <button
                   class="context-chip"
                   (click)="askQuestion(chip)"
-                  pRipple
                 >
                   <i class="pi pi-plus-circle"></i>
                   {{ chip }}
@@ -703,7 +694,6 @@ interface AutocompleteSuggestion {
                 <button
                   class="autocomplete-item"
                   (click)="selectAutocomplete(suggestion)"
-                  pRipple
                 >
                   <span class="autocomplete-text">{{ suggestion.text }}</span>
                   <span class="autocomplete-category">{{
@@ -761,7 +751,6 @@ interface AutocompleteSuggestion {
               [disabled]="!currentMessage.trim() || isLoading()"
               [class.ready]="currentMessage.trim() && !isLoading()"
               aria-label="Send message"
-              pRipple
             >
               @if (isLoading()) {
                 <i class="pi pi-spin pi-spinner"></i>
@@ -1152,12 +1141,12 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
     this.speechSupported.set(true);
     const recognition = new SpeechRecognitionAPI();
-    this.recognition = recognition;
+    this.recognition = recognition as SpeechRecognition;
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = "en-US";
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: { results: { length: number; [i: number]: { [j: number]: { transcript: string }; isFinal: boolean } } }) => {
       const results = event.results;
       let transcript = "";
 
@@ -1175,7 +1164,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
       }
     };
 
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+    recognition.onerror = (event: { error: string }) => {
       this.logger.error("Speech recognition error:", event.error);
       this.stopRecording();
       if (event.error !== "aborted") {

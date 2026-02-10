@@ -77,10 +77,14 @@ export interface WellnessMetric {
         @if (variant() === "ring" || variant() === "full") {
           <p-skeleton
             shape="circle"
-            [size]="variant() === 'mini' ? '60px' : '120px'"
+            [size]="
+              variant() === 'mini'
+                ? 'calc(var(--size-120) * 0.5)'
+                : 'var(--size-120)'
+            "
           ></p-skeleton>
         } @else {
-          <p-skeleton width="100%" height="40px"></p-skeleton>
+          <p-skeleton width="100%" height="var(--icon-container-lg)"></p-skeleton>
         }
       </div>
     } @else {

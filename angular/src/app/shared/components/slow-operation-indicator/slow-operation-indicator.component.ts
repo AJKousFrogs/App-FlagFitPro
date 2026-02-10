@@ -78,7 +78,7 @@ import { ButtonComponent } from "../button/button.component";
         padding: var(--ds-space-4);
         background: var(--surface-secondary);
         border-radius: var(--radius-lg);
-        border: 1px solid var(--border-color);
+        border: var(--border-1) solid var(--border-color);
       }
 
       .operation-header {
@@ -116,7 +116,7 @@ import { ButtonComponent } from "../button/button.component";
 
       /* Progress bar styling - uses PrimeNG's styleClass prop */
       :host {
-        --p-progressbar-height: 8px;
+        --p-progressbar-height: var(--space-2);
         --p-progressbar-border-radius: var(--radius-full);
       }
     `,

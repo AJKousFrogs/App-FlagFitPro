@@ -67,6 +67,7 @@
   color: var(--color-text-on-primary);
 }
 
+
 .status-number {
   font-size: var(--ds-font-size-sm);
 }
@@ -346,14 +347,6 @@
   display: flex;
   gap: var(--space-3);
   align-items: center;
-}
-
-.complete-btn {
-  flex: 1;
-}
-
-.skip-btn {
-  flex-shrink: 0;
 }
 
 .completed-badge {

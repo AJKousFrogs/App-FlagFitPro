@@ -19,7 +19,7 @@
     text-align: center;
 
     .error-icon {
-      font-size: 3rem;
+  font-size: var(--font-h1-size);
       color: var(--primitive-error-500);
     }
 

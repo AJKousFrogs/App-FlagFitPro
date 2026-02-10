@@ -8,10 +8,10 @@
 
 .error-summary {
   background: var(--primitive-error-50);
-  border: 0.1875rem solid var(--primitive-error-500);
-  border-radius: var(--radius-lg, var(--ds-font-size-xs));
-  padding: var(--space-5, var(--ds-font-size-xl));
-  margin-bottom: var(--space-6, var(--ds-font-size-3xl));
+  border: var(--space-0-75) solid var(--primitive-error-500);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
   position: relative;
 
   // Focus styles for keyboard navigation
@@ -21,16 +21,16 @@
   }
 
   @include respond-to(sm) {
-    padding: var(--space-4, var(--ds-font-size-md));
-    margin-bottom: var(--space-4, var(--ds-font-size-md));
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
   }
 }
 
 .error-summary-header {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3, var(--ds-font-size-xs));
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 
   i {
     color: var(--primitive-error-600);
@@ -58,7 +58,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .error-summary-item {
@@ -87,7 +87,7 @@
   &:focus-visible {
     outline: var(--focus-outline-width) solid var(--primitive-error-600);
     outline-offset: var(--focus-outline-offset);
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: var(--radius-sm);
   }
 
   strong {
@@ -101,10 +101,10 @@
   gap: var(--ds-space-2);
   padding: var(--ds-space-2) var(--ds-space-3);
   background: white;
-  border-radius: var(--radius-md, 0.5rem);
+  border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  border-left: 0.1875rem solid var(--primitive-warning-400);
+  border-left: var(--space-0-75) solid var(--primitive-warning-400);
 
   i {
     color: var(--primitive-warning-600);
@@ -116,15 +116,15 @@
 
 .error-summary-dismiss {
   position: absolute;
-  top: var(--space-3, var(--ds-font-size-xs));
-  right: var(--space-3, var(--ds-font-size-xs));
+  top: var(--space-3);
+  right: var(--space-3);
   background: none;
   border: none;
   color: var(--primitive-error-600);
   font-size: var(--ds-font-size-md);
   cursor: pointer;
   padding: var(--ds-space-2);
-  border-radius: var(--radius-sm, 0.25rem);
+  border-radius: var(--radius-sm);
   transition: background-color var(--transition-fast) var(--ease-standard);
 
   &:hover {
@@ -165,7 +165,7 @@
 // High contrast mode support (accessibility)
 @media (prefers-contrast: high) {
   .error-summary {
-    border-width: 0.25rem;
+  border-width: calc(var(--border-2) + var(--border-2));
   }
 
   .error-link {

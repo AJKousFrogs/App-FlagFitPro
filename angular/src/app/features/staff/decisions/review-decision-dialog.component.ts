@@ -226,7 +226,7 @@ import type {
 
       .context-item label {
         font-weight: var(--ds-font-weight-semibold);
-        min-width: 120px;
+        min-width: var(--size-120);
       }
 
       .extension-options {

@@ -7,7 +7,6 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Badge } from "primeng/badge";
-import { Ripple } from "primeng/ripple";
 
 export type NavItemVariant = "sidebar" | "bottom" | "menu";
 
@@ -15,7 +14,7 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
   selector: "app-nav-item",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Badge, Ripple],
+  imports: [CommonModule, RouterModule, Badge],
   template: `
     @if (route()) {
       <a
@@ -34,7 +33,6 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
         [attr.data-testid]="testId() || null"
         [attr.title]="label()"
         (click)="onClick($event)"
-        pRipple
       >
         <span class="nav-item-icon">
           <i [class]="'pi ' + icon()" aria-hidden="true"></i>
@@ -63,7 +61,6 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
         [attr.title]="label()"
         [disabled]="disabled()"
         (click)="onClick($event)"
-        pRipple
       >
         <span class="nav-item-icon">
           <i [class]="'pi ' + icon()" aria-hidden="true"></i>

@@ -79,8 +79,8 @@ echo ""
 echo "🧪 Testing deployment..."
 
 # Test the function
-SUPABASE_URL=$(supabase status | grep "API URL" | awk '{print $3}')
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0 status | grep "anon key" | awk '{print $3}')
+SUPABASE_URL=$(supabase status 2>/dev/null | grep "API URL" | awk '{print $3}')
+SUPABASE_ANON_KEY=$(supabase status 2>/dev/null | grep "anon key" | awk '{print $NF}')
 
 if [ -z "$SUPABASE_URL" ]; then
     echo -e "${YELLOW}⚠️  Could not auto-detect Supabase URL${NC}"

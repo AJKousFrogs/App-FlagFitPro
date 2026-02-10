@@ -1,6 +1,6 @@
 # FlagFit Pro - Documentation Index
 
-**Last Updated:** January 2026  
+**Last Updated:** February 2026  
 **Status:** ✅ Verified Clean Slate Documentation
 
 ---
@@ -41,6 +41,8 @@
 | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)     | **UI rules and design tokens** (binding) |
 | [API.md](./API.md)                                     | API reference                            |
 | [BACKEND_SETUP.md](./BACKEND_SETUP.md)                 | Backend/Netlify Functions setup          |
+| [TECH_STACK.md](./TECH_STACK.md)                       | **Tech stack** — ESM, Angular 21, tokens |
+| [LEGACY_CODE_GUIDE.md](./LEGACY_CODE_GUIDE.md)         | Finding legacy code to remove            |
 
 ---
 
@@ -100,7 +102,7 @@
 ## File Structure
 
 ```
-/docs/ (27 files)
+/docs/ (including RUNBOOKS)
 ├── DOCS_INDEX.md                 ← YOU ARE HERE
 ├── FEATURE_DOCUMENTATION.md      ← 49 features + Appendix E (6500+ lines)
 ├── ARCHITECTURE.md
@@ -112,6 +114,7 @@
 ├── FLAG_FOOTBALL_TRAINING_SCIENCE.md
 ├── AI_GOVERNANCE.md
 ├── RUNBOOKS/                     ← 8 operational docs
+├── archive/                      ← Historical/migration docs
 └── [Legal docs]
 ```
 

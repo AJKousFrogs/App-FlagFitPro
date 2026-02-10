@@ -15,6 +15,7 @@ import { Injectable, inject } from "@angular/core";
 import { PreloadingStrategy, Route, Router } from "@angular/router";
 import { Observable, of } from "rxjs";
 import { DOCUMENT } from "@angular/common";
+import { DesignTokens } from "../../shared/models/design-tokens";
 
 @Injectable({
   providedIn: "root",
@@ -24,6 +25,7 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
   private document = inject(DOCUMENT);
   private preloadedRoutes = new Set<string>();
   private observer?: IntersectionObserver;
+  private readonly preloadMargin = DesignTokens.spacing[12];
 
   constructor() {
     // Initialize Intersection Observer for link visibility detection
@@ -74,7 +76,7 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
         });
       },
       {
-        rootMargin: "50px", // Start preloading 50px before link enters viewport
+        rootMargin: this.preloadMargin, // Start preloading before link enters viewport
         threshold: 0.1,
       },
     );
@@ -126,13 +128,32 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
       window.innerHeight || this.document.documentElement.clientHeight;
     const viewportWidth =
       window.innerWidth || this.document.documentElement.clientWidth;
+    const margin = this.getPreloadMarginPx();
 
     return (
-      rect.top >= -50 &&
-      rect.left >= -50 &&
-      rect.bottom <= viewportHeight + 50 &&
-      rect.right <= viewportWidth + 50
+      rect.top >= -margin &&
+      rect.left >= -margin &&
+      rect.bottom <= viewportHeight + margin &&
+      rect.right <= viewportWidth + margin
     );
+  }
+
+  private getPreloadMarginPx(): number {
+    return this.toPixels(this.preloadMargin);
+  }
+
+  private toPixels(value: string): number {
+    if (value.endsWith("px")) {
+      return Number.parseFloat(value);
+    }
+    if (value.endsWith("rem")) {
+      const rem = Number.parseFloat(value);
+      const base = Number.parseFloat(
+        getComputedStyle(this.document.documentElement).fontSize || "16",
+      );
+      return rem * base;
+    }
+    return 0;
   }
 
   private shouldSkipPreload(): boolean {

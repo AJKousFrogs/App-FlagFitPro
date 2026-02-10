@@ -802,7 +802,7 @@ interface TournamentNutritionBrief {
       </div>
     </app-main-layout>
   `,
-  styleUrls: ["./nutritionist-dashboard.component.scss"],
+  styleUrl: "./nutritionist-dashboard.component.scss",
 })
 export class NutritionistDashboardComponent implements OnInit {
   private api = inject(ApiService);

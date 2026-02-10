@@ -210,7 +210,6 @@ export const appConfig: ApplicationConfig = {
 
     // DEFERRED SERVICES: These are initialized lazily when needed
     // They are tree-shakeable and won't add to initial bundle if not used
-    // Note: CoreWebVitalsService auto-initializes in constructor when provided in root
     AcwrService,
     LoadMonitoringService,
     AcwrAlertsService,

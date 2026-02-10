@@ -7,6 +7,8 @@ node_modules.old/
 netlify/functions/*.zip
 netlify/functions/manifest.json
 database/migration_results/mcp_migrations
+database/migration_results/chunk_*
+database/migration_results/sql_files_list.txt
 
 # Environment files
 .env

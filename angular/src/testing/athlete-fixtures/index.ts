@@ -58,11 +58,11 @@ const buildWeights = (
 
 const buildWellness = (
   baseDate: string,
-  entries: WellnessEntryFixture[],
+  entries: Omit<WellnessEntryFixture, "date">[],
 ): WellnessEntryFixture[] =>
   entries.map((entry, index) => ({
-    date: toDateString(baseDate, index),
     ...entry,
+    date: toDateString(baseDate, index),
   }));
 
 // Fixture A — Normal Athlete (stable loads, minor variation)

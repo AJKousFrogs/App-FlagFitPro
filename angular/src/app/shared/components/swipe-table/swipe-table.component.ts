@@ -31,7 +31,7 @@ import { Table, TableModule } from "primeng/table";
       <p-table
         [value]="data()"
         [scrollable]="true"
-        scrollHeight="400px"
+        scrollHeight="calc(var(--size-200) * 2)"
         class="swipe-enabled-table"
         [columns]="columns()"
       >

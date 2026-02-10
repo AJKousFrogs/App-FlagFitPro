@@ -329,7 +329,7 @@ import { Textarea } from "primeng/textarea";
     `
       .step-content {
         padding: var(--space-4);
-        min-height: 400px;
+        min-height: calc(var(--size-200) * 2);
       }
 
       .step-panel {
@@ -361,7 +361,10 @@ import { Textarea } from "primeng/textarea";
 
       .data-points-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: repeat(
+          auto-fill,
+          minmax(calc(var(--size-100) + var(--size-150)), 1fr)
+        );
         gap: var(--space-3);
       }
 
@@ -399,7 +402,7 @@ import { Textarea } from "primeng/textarea";
 
       .summary-item label {
         font-weight: var(--ds-font-weight-semibold);
-        min-width: 120px;
+        min-width: var(--size-120);
       }
 
       .confidence-preview {

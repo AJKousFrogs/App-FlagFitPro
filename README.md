@@ -94,12 +94,12 @@ angular/src/app/
 
 ```
 netlify/functions/
-├── ai-chat.cjs              # AI coaching with ACWR safety
+├── ai-chat.js              # AI coaching with ACWR safety
 ├── utils/
-│   └── ai-safety-classifier.cjs # 3-tier risk classification
-├── load-management.cjs      # ACWR, monotony, TSB
-├── training-plan.cjs        # Periodized training
-├── smart-training-recommendations.cjs
+│   └── ai-safety-classifier.js # 3-tier risk classification
+├── load-management.js      # ACWR, monotony, TSB
+├── training-plan.js        # Periodized training
+├── smart-training-recommendations.js
 └── ... (80 total functions)
 ```
 

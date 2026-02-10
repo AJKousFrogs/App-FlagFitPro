@@ -1223,12 +1223,18 @@ export class AcwrDashboardComponent implements OnInit {
         return;
       }
 
+      const computedBackground =
+        getComputedStyle(dashboard).backgroundColor ||
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--surface-primary")
+          .trim();
+
       // Create canvas from dashboard
       const canvas = await html2canvas(dashboard, {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: "#ffffff",
+        backgroundColor: computedBackground || undefined,
       });
 
       // Create PDF

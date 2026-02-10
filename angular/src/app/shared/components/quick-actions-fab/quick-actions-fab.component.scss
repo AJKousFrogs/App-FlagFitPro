@@ -19,8 +19,8 @@
   right: 0;
   bottom: 0;
   background: var(--surface-overlay-medium);
-  backdrop-filter: blur(0.25rem);
-  -webkit-backdrop-filter: blur(0.25rem);
+  backdrop-filter: blur(var(--overlay-blur));
+  -webkit-backdrop-filter: blur(var(--overlay-blur));
   z-index: var(--z-modal);
   animation: fabBackdropFade 0.2s ease forwards;
 }
@@ -105,8 +105,8 @@
 
 /* Action Label - Raised style (0.5rem radius), Poppins font */
 .action-label {
-  min-width: var(--input-min-width-sm); /* 7.5rem */
-  max-width: min(90vw, 14rem);
+  min-width: var(--input-min-width-sm); /* var(--size-120) */
+  max-width: min(90vw, calc(var(--grid-card-min-sm) + var(--space-6)));
   padding: var(--space-4) var(--space-5);
   background: var(--surface-card);
   border-radius: var(--radius-lg); /* Raised style - NOT pill */
@@ -130,7 +130,7 @@
   color: var(--color-text-on-primary);
   box-shadow:
     var(--shadow-md),
-    0 0.375rem 1rem rgba(var(--ds-primary-green-rgb), 0.25);
+    0 calc(var(--space-1) + var(--space-0-5)) 1rem rgba(var(--ds-primary-green-rgb), 0.25);
 }
 
 /* Action Icon - Raised style (0.5rem radius) */
@@ -146,7 +146,7 @@
   background: var(--ds-primary-green);
   box-shadow:
     var(--shadow-sm),
-    0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.3);
+    0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.3);
   transition:
     background-color var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard),
@@ -166,7 +166,7 @@
   transform: scale(1.05);
   box-shadow:
     var(--shadow-md),
-    0 0.375rem 1rem rgba(var(--ds-primary-green-rgb), 0.4);
+    0 calc(var(--space-1) + var(--space-0-5)) 1rem rgba(var(--ds-primary-green-rgb), 0.4);
 }
 
 /* ================================================================
@@ -183,7 +183,7 @@
   background: var(--ds-primary-green);
   box-shadow:
     var(--shadow-md),
-    0 0.375rem 1.25rem rgba(var(--ds-primary-green-rgb), 0.35);
+    0 calc(var(--space-1) + var(--space-0-5)) 1.25rem rgba(var(--ds-primary-green-rgb), 0.35);
   transition:
     background-color var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1),
@@ -196,7 +196,7 @@
   transform: scale(1.05);
   box-shadow:
     var(--shadow-md),
-    0 0.5rem 1.75rem rgba(var(--ds-primary-green-rgb), 0.4);
+    0 0.5rem var(--badge-lg) rgba(var(--ds-primary-green-rgb), 0.4);
 }
 
 .main-fab:active {

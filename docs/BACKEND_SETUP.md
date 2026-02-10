@@ -123,36 +123,33 @@ All backend functions are in `/netlify/functions/`:
 ```
 netlify/functions/
 ├── utils/                          # Shared utilities
-│   ├── base-handler.cjs            # Standardized handler pattern
-│   ├── error-handler.cjs           # Error response utilities
-│   ├── auth-helper.cjs             # Auth verification
-│   ├── rate-limiter.cjs            # Rate limiting
-│   ├── ai-safety-classifier.cjs    # AI safety tiers
-│   └── groq-client.cjs             # Groq LLM client
-├── health.cjs                      # Health check
-├── dashboard.cjs                   # Dashboard data
-├── auth-login.cjs                  # Login endpoint
-├── auth-me.cjs                     # Token verification
-├── ai-chat.cjs                     # AI coaching
-├── load-management.cjs             # ACWR, monotony, TSB
-├── training-programs.cjs           # Training programs
-├── nutrition.cjs                   # Nutrition tracking
-├── recovery.cjs                    # Recovery protocols
+│   ├── base-handler.js            # Standardized handler pattern
+│   ├── error-handler.js           # Error response utilities
+│   ├── auth-helper.js             # Auth verification
+│   ├── rate-limiter.js            # Rate limiting
+│   ├── ai-safety-classifier.js    # AI safety tiers
+│   └── groq-client.js             # Groq LLM client
+├── health.js                      # Health check
+├── dashboard.js                   # Dashboard data
+├── auth-login.js                  # Login endpoint
+├── auth-me.js                     # Token verification
+├── ai-chat.js                     # AI coaching
+├── load-management.js             # ACWR, monotony, TSB
+├── training-programs.js           # Training programs
+├── nutrition.js                   # Nutrition tracking
+├── recovery.js                    # Recovery protocols
 └── ... (80 total functions)
 ```
 
 ### Base Handler Pattern
 
-All functions use a standardized `baseHandler`:
+All functions use ESM and a standardized `baseHandler`:
 
 ```javascript
-const { baseHandler } = require("./utils/base-handler.cjs");
-const {
-  createSuccessResponse,
-  createErrorResponse,
-} = require("./utils/error-handler.cjs");
+import { baseHandler } from "./utils/base-handler.js";
+import { createSuccessResponse } from "./utils/error-handler.js";
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "my-function",
     allowedMethods: ["GET", "POST"],
@@ -211,7 +208,7 @@ See [API.md](./API.md) for the complete API reference.
 All protected endpoints verify JWT tokens from Supabase Auth:
 
 ```javascript
-// In base-handler.cjs
+// In base-handler.js
 const {
   data: { user },
   error,
@@ -257,10 +254,10 @@ AI responses are classified into safety tiers:
 1. Create file in `/netlify/functions/`:
 
 ```javascript
-// netlify/functions/my-function.cjs
-const { baseHandler } = require("./utils/base-handler.cjs");
-const { createSuccessResponse } = require("./utils/error-handler.cjs");
-const { supabaseAdmin } = require("./supabase-client.cjs");
+// netlify/functions/my-function.js
+const { baseHandler } = require("./utils/base-handler.js");
+const { createSuccessResponse } = require("./utils/error-handler.js");
+const { supabaseAdmin } = require("./supabase-client.js");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
@@ -341,7 +338,7 @@ git push origin main
 
 1. **Function Not Found (404)**
    - Check redirect in `netlify.toml`
-   - Ensure function file has `.cjs` extension
+   - Ensure function file has `.js` extension
    - Verify `exports.handler` is defined
 
 2. **Unauthorized (401)**

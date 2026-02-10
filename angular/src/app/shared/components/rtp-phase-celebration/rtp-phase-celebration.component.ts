@@ -132,7 +132,7 @@ export interface RTPPhaseInfo {
           var(--color-status-success-subtle) 0%,
           var(--surface-primary) 100%
         );
-        border: 2px solid var(--color-status-success);
+        border: var(--border-2) solid var(--color-status-success);
         border-radius: var(--radius-xl);
         padding: var(--space-6);
       }
@@ -171,7 +171,7 @@ export interface RTPPhaseInfo {
         flex-direction: column;
         gap: var(--space-2);
         padding: var(--space-4);
-        background: rgba(255, 255, 255, 0.5);
+        background: var(--overlay-white-50);
         border-radius: var(--radius-md);
         margin-bottom: var(--space-4);
       }

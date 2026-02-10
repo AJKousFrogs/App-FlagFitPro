@@ -178,7 +178,7 @@ export interface TablePreferences {
           [resizableColumns]="resizableColumns()"
           columnResizeMode="expand"
           [scrollable]="true"
-          scrollHeight="600px"
+          scrollHeight="calc(var(--size-200) * 3)"
           [virtualScroll]="data().length > 100"
           [virtualScrollItemSize]="46"
           (onColReorder)="onColumnReorder($event)"

@@ -223,8 +223,7 @@ export function createSignalFormGroup<
 //     SignalValidators.email()
 //   );
 //
-// For direct function validators (non-factory pattern), see FormValidators
-// in @shared/utils/form.utils.ts (deprecated, use SignalValidators when possible).
+// Use SignalValidators for all signal-based form validation.
 //
 // ============================================================================
 

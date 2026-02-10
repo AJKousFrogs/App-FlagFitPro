@@ -22,10 +22,10 @@ import { ButtonComponent } from "../button/button.component";
 import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
 import {
-  FormValidators,
   combineValidators,
   createSignalFormField,
 } from "../../utils/form.utils";
+import { SignalValidators } from "../../../core/config/signal-forms.config";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
 
@@ -197,17 +197,20 @@ export class SignalFormComponent {
   // Enhanced form fields with validation and accessibility
   nameField = createSignalFormField(
     () => this.name(),
-    combineValidators(FormValidators.required),
+    combineValidators(SignalValidators.required()),
   );
 
   emailField = createSignalFormField(
     () => this.email(),
-    combineValidators(FormValidators.required, FormValidators.email),
+    combineValidators(SignalValidators.required(), SignalValidators.email()),
   );
 
   passwordField = createSignalFormField(
     () => this.password(),
-    combineValidators(FormValidators.required, FormValidators.minLength(8)),
+    combineValidators(
+      SignalValidators.required(),
+      SignalValidators.minLength(8),
+    ),
   );
 
   // Form validity (computed signal)

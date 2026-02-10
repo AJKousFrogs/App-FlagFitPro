@@ -56,7 +56,7 @@
 }
 
 .streak-badge {
-  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem for breathing room */
+  padding: var(--space-2) var(--space-3); /* 0.5rem 0.calc(var(--size-200) * 6) for breathing room */
   background: var(--ds-primary-orange-subtle);
   border-radius: var(--radius-lg);
   font-size: var(--ds-font-size-sm);
@@ -231,7 +231,7 @@
   color: var(--color-text-on-primary);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--space-1) var(--space-2); /* Compact badge: 0.25rem 0.5rem */
+  padding: var(--space-1) var(--space-2); /* Compact badge: var(--space-1) 0.5rem */
   border-radius: var(--radius-md);
   min-width: var(--space-4);
   text-align: center;
@@ -294,7 +294,7 @@
   color: var(--color-text-on-primary);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--space-1) var(--space-2); /* Compact badge: 0.25rem 0.5rem */
+  padding: var(--space-1) var(--space-2); /* Compact badge: var(--space-1) 0.5rem */
   border-radius: var(--radius-md);
   text-transform: var(--ds-text-transform-uppercase);
 }
@@ -310,19 +310,6 @@
   margin-bottom: var(--space-4);
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.section-header h2 {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
 
 // ============================================================================
 // WEEKLY SCHEDULE
@@ -578,21 +565,6 @@
 
   .schedule-day-compact {
     flex: 0 0 calc(25% - var(--space-1));
-  }
-}
-
-@include respond-to(sm) {
-  .wellness-alert-banner:not(.compact) {
-    flex-direction: column;
-  }
-
-  .alert-actions {
-    flex-direction: row;
-    width: 100%;
-  }
-
-  .alert-btn {
-    flex: 1;
   }
 }
 

@@ -78,7 +78,7 @@ interface AnalyticsData {
       <div class="stats-grid">
         <div class="stat-card completion-rate">
           @if (loading()) {
-            <p-skeleton width="100%" height="80px"></p-skeleton>
+            <p-skeleton width="100%" height="var(--size-80)"></p-skeleton>
           } @else {
             <div class="stat-icon">
               <i class="pi pi-check-circle"></i>
@@ -99,7 +99,7 @@ interface AnalyticsData {
 
         <div class="stat-card streak">
           @if (loading()) {
-            <p-skeleton width="100%" height="80px"></p-skeleton>
+            <p-skeleton width="100%" height="var(--size-80)"></p-skeleton>
           } @else {
             <div class="stat-icon fire">
               <i class="pi pi-bolt"></i>
@@ -118,7 +118,7 @@ interface AnalyticsData {
 
         <div class="stat-card completed">
           @if (loading()) {
-            <p-skeleton width="100%" height="80px"></p-skeleton>
+            <p-skeleton width="100%" height="var(--size-80)"></p-skeleton>
           } @else {
             <div class="stat-icon success">
               <i class="pi pi-flag-fill"></i>
@@ -157,7 +157,7 @@ interface AnalyticsData {
               type="bar"
               [data]="chartData()"
               [options]="chartOptions"
-              height="200px"
+              height="var(--size-200)"
             ></app-lazy-chart>
           </div>
         </p-card>
@@ -237,7 +237,7 @@ export class SessionAnalyticsComponent implements OnInit {
       y: {
         beginAtZero: true,
         grid: {
-          color: "rgba(0, 0, 0, 0.05)",
+          color: "var(--color-border-subtle)",
         },
       },
     },

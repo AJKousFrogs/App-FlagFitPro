@@ -539,6 +539,16 @@
   }
 }
 
+// Shared transition for interactive cards (onboarding, preference toggles, etc.)
+@mixin card-transition {
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
 // ================================
 // INTERACTION STATE MIXINS
 // Angular 21 Best Practices

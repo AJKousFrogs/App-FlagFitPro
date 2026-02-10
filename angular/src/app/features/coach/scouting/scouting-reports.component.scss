@@ -299,7 +299,7 @@
 
     .formation-bar {
       display: grid;
-      grid-template-columns: 6.25rem 1fr 3.125rem;
+      grid-template-columns: var(--size-100) 1fr calc(var(--avatar-size-lg) + var(--space-0-5));
       align-items: center;
       gap: var(--ds-spacing-sm);
 

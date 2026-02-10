@@ -6,7 +6,7 @@
  * 2. >= minimum days -> REAL_DATA and valid values
  * 3. No data -> NO_DATA state
  *
- * Based on: utils/data-state.cjs and load-management.cjs
+ * Based on: utils/data-state.js and load-management.js
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
@@ -22,7 +22,7 @@ import {
   isDataSafe,
   canCalculate,
   getDataStateFromRiskZone,
-} from "../../netlify/functions/utils/data-state.cjs";
+} from "../../netlify/functions/utils/data-state.js";
 
 // Test configuration
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;

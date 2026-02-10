@@ -17,7 +17,6 @@ import { MessageService, PrimeTemplate } from "primeng/api";
 
 import { Dialog } from "primeng/dialog";
 import { Paginator } from "primeng/paginator";
-import { Ripple } from "primeng/ripple";
 
 import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
@@ -66,7 +65,6 @@ interface Category {
     FormsModule,
     Paginator,
     Tooltip,
-    Ripple,
     Dialog,
     PrimeTemplate,
 
@@ -134,7 +132,6 @@ interface Category {
                   [class.active]="selectedCategory() === category.name"
                   (click)="filterByCategory(category.name)"
                   [pTooltip]="'Filter by ' + category.name"
-                  pRipple
                 >
                   <i [class]="'pi ' + category.icon"></i>
                   <span>{{ category.name }}</span>
@@ -223,7 +220,6 @@ interface Category {
                 <button
                   class="action-btn secondary"
                   (click)="viewExerciseDetails(exercise)"
-                  pRipple
                   [pTooltip]="'View full exercise details'"
                 >
                   <i class="pi pi-eye"></i>
@@ -232,7 +228,6 @@ interface Category {
                 <button
                   class="action-btn primary"
                   (click)="addToWorkout(exercise)"
-                  pRipple
                   [pTooltip]="'Add to your workout plan'"
                 >
                   <i class="pi pi-plus"></i>
@@ -254,7 +249,7 @@ interface Category {
               Try adjusting your search or filters to find what you're looking
               for.
             </p>
-            <button class="reset-btn" (click)="resetFilters()" pRipple>
+            <button class="reset-btn" (click)="resetFilters()">
               <i class="pi pi-refresh"></i>
               Reset Filters
             </button>

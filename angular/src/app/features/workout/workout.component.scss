@@ -9,31 +9,6 @@
   padding: var(--space-6);
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-6);
-  padding: var(--space-5);
-  background: var(--surface-primary);
-  border-radius: var(--radius-md);
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-semibold);
-  margin-bottom: var(--space-2);
-  color: var(--color-text-primary);
-}
-
-.page-subtitle {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin: 0;
-}
 
 .active-workout-card {
   margin-bottom: var(--space-6);
@@ -93,7 +68,7 @@
   justify-content: flex-end;
   gap: var(--space-3);
   padding-top: var(--space-4);
-  border-top: 0.0625rem solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .workout-history-card {
@@ -150,12 +125,6 @@
 }
 
 @include respond-to(md) {
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-4);
-  }
-
   .exercise-item {
     flex-direction: column;
     align-items: flex-start;

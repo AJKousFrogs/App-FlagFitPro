@@ -76,9 +76,9 @@ const isBoolean = (value: unknown): value is boolean =>
           <div class="loading-state">
             @for (i of [1, 2, 3]; track i) {
               <app-card-shell>
-                <p-skeleton width="100%" height="2rem"></p-skeleton>
-                <p-skeleton width="80%" height="1rem"></p-skeleton>
-                <p-skeleton width="60%" height="1rem"></p-skeleton>
+                <p-skeleton width="100%" height="var(--space-8)"></p-skeleton>
+                <p-skeleton width="80%" height="var(--space-4)"></p-skeleton>
+                <p-skeleton width="60%" height="var(--space-4)"></p-skeleton>
               </app-card-shell>
             }
           </div>

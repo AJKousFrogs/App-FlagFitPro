@@ -121,7 +121,6 @@ export class CardComponent {
     | "interactive"
     | "gradient"
     | "session"
-    | "glass"
   >("default");
   hasFooter = input<boolean>(false);
   compact = input<boolean>(false);

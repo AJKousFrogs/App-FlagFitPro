@@ -480,10 +480,10 @@ export class SleepDebtComponent implements OnInit {
           data: history.map((h) => h.hoursSlept),
           backgroundColor: history.map((h) =>
             h.hoursSlept >= optimal
-              ? "rgba(34, 197, 94, 0.7)"
+              ? "rgba(var(--ds-primary-green-rgb), 0.7)"
               : h.hoursSlept >= optimal - 1
-                ? "rgba(234, 179, 8, 0.7)"
-                : "rgba(239, 68, 68, 0.7)",
+                ? "rgba(var(--primitive-warning-500-rgb), 0.7)"
+                : "rgba(var(--primitive-error-500-rgb), 0.7)",
           ),
           borderRadius: 4,
         },
@@ -516,8 +516,8 @@ export class SleepDebtComponent implements OnInit {
         {
           label: "Cumulative Debt (hrs)",
           data: debtData,
-          borderColor: "#ef4444",
-          backgroundColor: "rgba(239, 68, 68, 0.1)",
+          borderColor: "var(--color-chart-quinary)",
+          backgroundColor: "rgba(var(--primitive-error-500-rgb), 0.1)",
           tension: 0.3,
           fill: true,
         },
@@ -537,7 +537,7 @@ export class SleepDebtComponent implements OnInit {
             type: "line",
             yMin: 8,
             yMax: 8,
-            borderColor: "#22c55e",
+            borderColor: "var(--ds-primary-green)",
             borderWidth: 2,
             borderDash: [5, 5],
             label: {

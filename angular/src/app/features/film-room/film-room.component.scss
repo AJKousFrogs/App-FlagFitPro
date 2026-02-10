@@ -32,7 +32,7 @@
   // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 
   .stat-divider {
-    width: 0.0625rem;
+    width: var(--border-1);
     height: var(--avatar-size-md);
     background: var(--ds-border-subtle);
   }
@@ -283,7 +283,7 @@
   padding: var(--space-3);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border-left: 0.1875rem solid;
+  border-left: var(--space-0-75) solid;
   cursor: pointer;
   transition:
     background-color var(--motion-base) var(--ease-standard),
@@ -348,7 +348,7 @@
 .discussion-thread {
   margin-top: var(--space-3);
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--ds-border-subtle);
 }
 
 .thread-message {
@@ -413,7 +413,7 @@
   display: flex;
   justify-content: center;
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--ds-border-subtle);
 }
 
 // Responsive

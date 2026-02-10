@@ -10,7 +10,7 @@
 }
 
 .no-data-card {
-  border: 0.125rem dashed var(--color-border-secondary);
+  border: var(--border-2) dashed var(--color-border-secondary);
   background: linear-gradient(
     135deg,
     var(--surface-secondary) 0%,
@@ -34,12 +34,12 @@
   padding: var(--space-6);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  border: 0.0625rem dashed var(--color-border-secondary);
+  border: var(--border-1) dashed var(--color-border-secondary);
 }
 
 .no-data-icon {
-  width: 5rem;
-  height: 5rem;
+  width: var(--size-80);
+  height: var(--size-80);
   border-radius: 50%;
   background: linear-gradient(
     135deg,
@@ -54,12 +54,12 @@
 }
 
 .compact .no-data-icon {
-  width: 3.75rem;
-  height: 3.75rem;
+  width: var(--button-height-xl);
+  height: var(--button-height-xl);
 }
 
 .no-data-icon i {
-  font-size: var(--ds-font-size-4rem);
+  font-size: var(--ds-font-size-var(--header-height));
   color: white;
 }
 
@@ -97,7 +97,7 @@
 .no-data-message {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  max-width: 31.25rem;
+  max-width: var(--dialog-max-width-lg);
   margin-bottom: var(--space-6);
   line-height: var(--ds-line-height-1-6);
 }
@@ -109,7 +109,7 @@
 
 .benefits-section {
   width: 100%;
-  max-width: 25rem;
+  max-width: var(--chart-min-height-lg);
   margin-bottom: var(--space-6);
   text-align: left;
 }
@@ -176,7 +176,7 @@
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-xs);
   color: var(--color-status-success);
-  max-width: 25rem;
+  max-width: var(--chart-min-height-lg);
 }
 
 .safety-note i {
@@ -190,8 +190,8 @@
   }
 
   .no-data-icon {
-    width: 3.75rem;
-    height: 3.75rem;
+    width: var(--button-height-xl);
+    height: var(--button-height-xl);
   }
 
   .no-data-icon i {

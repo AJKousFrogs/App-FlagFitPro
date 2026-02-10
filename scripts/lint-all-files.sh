@@ -42,7 +42,7 @@ echo ""
 
 # Use stylelint with default config (warnings for legacy violations)
 npx stylelint "src/**/*.{scss,css}" \
-  --config ../.stylelintrc.cjs \
+  --config ../stylelint.config.js \
   --formatter verbose \
   --max-warnings 999999 || true
 

@@ -22,18 +22,12 @@ export { CardComponent } from "./card/card.component";
 // FORM COMPONENTS
 // ============================================================================
 export { InputComponent } from "./input/input.component";
-// DEPRECATED & REMOVED: These components were unused and have been removed
-// Use PrimeNG components directly:
-// - SelectComponent → Use PrimeNG p-select (removed 2025-01-XX)
-// - CheckboxComponent → Use PrimeNG p-checkbox (removed 2025-01-XX)
-// - RadioComponent → Use PrimeNG p-radioButton (removed 2025-01-XX)
 export { TextareaComponent } from "./textarea/textarea.component";
 export { ControlRowComponent } from "./control-row/control-row.component";
 
 // ============================================================================
 // DATA DISPLAY COMPONENTS
 // ============================================================================
-// TableComponent removed - use PrimeNG p-table or p-datatable directly
 export { AvatarComponent } from "./avatar/avatar.component";
 export { BadgeComponent } from "./badge/badge.component";
 export {
@@ -104,9 +98,7 @@ export { TabsComponent, type TabItem } from "./tabs/tabs.component";
 // FEEDBACK COMPONENTS
 // ============================================================================
 export { AlertComponent } from "./alert/alert.component";
-// ModalComponent removed - use PrimeNG p-dialog directly
 export { ToastComponent } from "./toast/toast.component";
-// SpinnerComponent removed - use PrimeNG p-progressSpinner directly
 
 // ============================================================================
 // DIALOG COMPONENTS

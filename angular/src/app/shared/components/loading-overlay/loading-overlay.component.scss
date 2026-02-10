@@ -14,8 +14,8 @@
   justify-content: center;
   align-items: center;
   z-index: var(--z-index-loading-overlay);
-  -webkit-backdrop-filter: blur(0.25rem);
-  backdrop-filter: blur(0.25rem);
+  -webkit-backdrop-filter: blur(var(--overlay-blur));
+  backdrop-filter: blur(var(--overlay-blur));
   transition: opacity var(--transition-slow);
 }
 
@@ -29,7 +29,7 @@
 .loading-spinner {
   width: var(--avatar-size-lg); /* 3rem */
   height: var(--avatar-size-lg); /* 3rem */
-  border: 0.25rem solid var(--overlay-white-10);
+  border: var(--space-1) solid var(--overlay-white-10);
   border-left-color: var(--color-brand-primary);
   border-radius: var(--radius-full);
   animation: spin 1s linear infinite;
@@ -45,7 +45,7 @@
   margin-top: var(--space-4);
   padding: var(--space-2) var(--space-4);
   background: var(--overlay-white-20);
-  border: 0.0625rem solid var(--overlay-white-30);
+  border: var(--border-1) solid var(--overlay-white-30);
   color: var(--color-text-on-primary);
   border-radius: var(--radius-sm);
   cursor: pointer;

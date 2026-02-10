@@ -34,7 +34,7 @@
 .action-card:focus-visible {
   outline: var(--focus-outline-width) solid var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 0.1875rem rgba(var(--ds-primary-green-rgb), 0.3);
+  box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.3);
 }
 
 .action-card:focus:not(:focus-visible) {
@@ -171,8 +171,8 @@
 /* Notification dot */
 .notification-dot {
   position: absolute;
-  top: calc(-1 * var(--space-1));
-  right: calc(-1 * var(--space-1));
+top: calc(-1 * var(--space-1));
+    right: calc(-1 * var(--space-1));
   width: var(--space-3);
   height: var(--space-3);
   background: var(--color-status-error);
@@ -233,7 +233,7 @@
 
 .action-card:hover .action-arrow {
   color: var(--color-brand-primary);
-  transform: translateX(0.25rem);
+  transform: translateX(var(--space-1));
 }
 
 /* Ripple effect */
@@ -246,8 +246,8 @@
 
 .ripple {
   position: absolute;
-  width: 6.25rem;
-  height: 6.25rem;
+  width: var(--size-100);
+  height: var(--size-100);
   background: rgba(var(--ds-primary-green-rgb), 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(0);

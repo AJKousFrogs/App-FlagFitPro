@@ -7,7 +7,7 @@ const ROUTES_FILE = path.resolve(
   "angular/src/app/core/routes/feature-routes.ts",
 );
 
-const allowedEntries = new Set(["deeplink", "hub", "internal"]);
+const allowedEntries = new Set(["deeplink", "hub", "internal", "legacy"]);
 
 function readRoutesFile() {
   return fs.readFileSync(ROUTES_FILE, "utf8");
@@ -70,7 +70,7 @@ function auditEntryClassification(routes) {
       continue;
     }
     const match = route.source.match(
-      /\bentry\s*:\s*["'](deeplink|hub|internal)["']/,
+      /\bentry\s*:\s*["'](deeplink|hub|internal|legacy)["']/,
     );
     if (!match) {
       missing.push(route.path);

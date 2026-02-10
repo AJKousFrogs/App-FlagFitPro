@@ -64,12 +64,12 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
                 ></app-skeleton-loader>
                 <app-skeleton-loader
                   variant="card"
-                  height="200px"
+                  height="var(--size-200)"
                 ></app-skeleton-loader>
                 <div class="flex-row mt-6 gap-4">
                   <app-skeleton-loader
                     variant="avatar"
-                    size="48px"
+                    size="var(--icon-container-lg)"
                   ></app-skeleton-loader>
                   <div class="flex-grow">
                     <app-skeleton-loader

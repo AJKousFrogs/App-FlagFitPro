@@ -407,7 +407,7 @@ class FeatureValidator {
   async testJWTValidation() {
     try {
       // Check if JWT validation exists in error handler
-      const errorHandlerPath = "./netlify/functions/utils/error-handler.cjs";
+      const errorHandlerPath = "./netlify/functions/utils/error-handler.js";
       const content = await fs.readFile(errorHandlerPath, "utf8");
 
       const hasJWTValidation =
@@ -425,8 +425,8 @@ class FeatureValidator {
     try {
       // Check if demo tokens are properly restricted to development
       const authFiles = [
-        "./netlify/functions/auth-login.cjs",
-        "./netlify/functions/auth-me.cjs",
+        "./netlify/functions/auth-login.js",
+        "./netlify/functions/auth-me.js",
         "./angular/src/app/core/services/auth.service.ts",
       ];
 
@@ -461,7 +461,7 @@ class FeatureValidator {
   async testRoleBasedAccess() {
     try {
       // Check for RBAC implementation
-      const files = ["./netlify/functions/utils/error-handler.cjs"];
+      const files = ["./netlify/functions/utils/error-handler.js"];
 
       let hasRBAC = false;
       for (const file of files) {

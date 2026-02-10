@@ -144,7 +144,7 @@
 /* Touch feedback */
 @media (hover: none) and (pointer: coarse) {
   .nav-arrow {
-    width: var(--touch-target-md); /* 2.75rem */
+    width: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
     height: var(--touch-target-md);
   }
 

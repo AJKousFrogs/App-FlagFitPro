@@ -78,7 +78,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       .ownership-badge {
         padding: var(--space-3) var(--space-4);
         border-radius: var(--radius-lg);
-        border: 1px solid var(--color-border-primary);
+        border: var(--border-1) solid var(--color-border-primary);
         background: var(--surface-primary);
         margin-bottom: var(--space-3);
       }
@@ -139,7 +139,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       .badge-details {
         margin-top: var(--space-3);
         padding-top: var(--space-3);
-        border-top: 1px solid var(--color-border-secondary);
+        border-top: var(--border-1) solid var(--color-border-secondary);
         display: flex;
         flex-direction: column;
         gap: var(--space-2);
@@ -154,7 +154,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       .detail-label {
         font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-secondary);
-        min-width: 120px;
+        min-width: var(--size-120);
       }
 
       .detail-value {

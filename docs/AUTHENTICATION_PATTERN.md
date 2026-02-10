@@ -34,8 +34,8 @@ FlagFit Pro uses **Supabase Authentication** for user management and JWT-based a
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                    NETLIFY FUNCTIONS                            │
-│  ├── auth-helper.cjs (supabase.auth.getUser)                   │
-│  ├── base-handler.cjs (auth middleware)                        │
+│  ├── auth-helper.js (supabase.auth.getUser)                   │
+│  ├── base-handler.js (auth middleware)                        │
 │  └── Protected endpoints (require valid JWT)                   │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -113,7 +113,7 @@ supabase.auth.getUser(token) → Validate with Supabase
 Use user.id for database queries
 ```
 
-**Backend Code (auth-helper.cjs):**
+**Backend Code (auth-helper.js):**
 
 ```javascript
 async function authenticateRequest(event) {

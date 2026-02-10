@@ -13,7 +13,7 @@ import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { PrimeTemplate } from "primeng/api";
 import { Skeleton } from "primeng/skeleton";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
@@ -95,7 +95,6 @@ interface CoachVisibilityRecord {
   imports: [
     CommonModule,
     Card,
-    Table,
     TableModule,
     Tag,
     StatusTagComponent,
@@ -229,7 +228,10 @@ interface CoachVisibilityRecord {
         @if (loading()) {
           <div class="loading-state">
             @for (i of [1, 2, 3]; track i) {
-              <p-skeleton height="60px" styleClass="mb-2"></p-skeleton>
+              <p-skeleton
+                height="calc(var(--size-120) * 0.5)"
+                styleClass="mb-2"
+              ></p-skeleton>
             }
           </div>
         } @else if (recommendations().length === 0) {

@@ -36,7 +36,7 @@ export class SkeletonComponent {
   width = input<string>("100%");
 
   /** Height (CSS value: px, %, rem) */
-  height = input<string>("1rem");
+  height = input<string>("var(--ds-font-size-base)");
 
   /** Border radius (CSS value) */
   borderRadius = input<string>();

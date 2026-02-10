@@ -21,18 +21,18 @@
 // ============================================================================
 //
 // ❌ FAILED (Fixed Below):
-// 1. --text-secondary on light bg: #64748b on #ffffff = 4.48:1 (FAIL for small text)
-// 2. --text-muted on light bg: #94a3b8 on #ffffff = 2.98:1 (FAIL)
-// 3. --color-border-primary: #e2e8f0 on #ffffff = 1.36:1 (FAIL for UI)
-// 4. Warning text on warning-light: #f59e0b on #fffbeb = 2.1:1 (FAIL)
-// 5. Info text on info-light: #3b82f6 on #eff6ff = 2.8:1 (FAIL)
-// 6. Placeholder text: #94a3b8 on #ffffff = 2.98:1 (FAIL)
+// 1. --text-secondary on light bg: var(--p-text-color-secondary) on #ffffff = 4.48:1 (FAIL for small text)
+// 2. --text-muted on light bg: var(--p-surface-400) on #ffffff = 2.98:1 (FAIL)
+// 3. --color-border-primary: var(--p-surface-border) on #ffffff = 1.36:1 (FAIL for UI)
+// 4. Warning text on warning-light: var(--color-chart-quaternary) on var(--primitive-warning-50) = 2.1:1 (FAIL)
+// 5. Info text on info-light: var(--color-chart-tertiary) on #eff6ff = 2.8:1 (FAIL)
+// 6. Placeholder text: var(--p-surface-400) on #ffffff = 2.98:1 (FAIL)
 //
 // ✅ PASSED:
-// - --ds-primary-green (#089949) on white: 4.54:1 ✓
-// - --color-text-primary (#0f172a) on white: 16.1:1 ✓
-// - --color-status-error (#ef4444) on white: 4.0:1 (OK for large text/UI)
-// - --color-status-success (#10b981) on white: 3.1:1 (OK for large text/UI)
+// - --ds-primary-green (var(--p-highlight-text-color)) on white: 4.54:1 ✓
+// - --color-text-primary (var(--p-text-color)) on white: 16.1:1 ✓
+// - --color-status-error (var(--color-chart-quinary)) on white: 4.0:1 (OK for large text/UI)
+// - --color-status-success (var(--color-phase-competition)) on white: 3.1:1 (OK for large text/UI)
 //
 // ============================================================================
 

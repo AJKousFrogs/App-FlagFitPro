@@ -633,7 +633,7 @@
   /* ================================
      HELP BUTTON
      Purple for help/support actions
-     allowed: purple (#8b5cf6) not in design token palette - PrimeNG standard severity
+     allowed: purple (var(--color-chart-senary)) not in design token palette - PrimeNG standard severity
      ================================ */
   .p-button-help:not(.p-button-outlined):not(.p-button-text) {
     // allowed: purple severity gradient
@@ -3772,7 +3772,7 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-title button,
 .p-datepicker-panel .p-datepicker-title span {
   font-family: var(--font-family-sans);
-  font-weight: 600;
+  font-weight: var(--ds-font-weight-semibold);
   font-size: var(--font-body-size);
   color: var(--color-text-primary);
   margin: 0 calc(var(--space-1) / 2);

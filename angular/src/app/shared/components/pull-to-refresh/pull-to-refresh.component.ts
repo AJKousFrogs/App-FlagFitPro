@@ -90,7 +90,7 @@ export class PullToRefreshComponent implements OnDestroy {
   indicatorTransform = computed(() => {
     if (this.isRefreshing()) return "translateY(0)";
     const distance = Math.min(this.pullDistance(), this.maxPull());
-    return `translateY(${distance - 60}px)`;
+    return `translateY(calc(${distance}px - (var(--size-120) * 0.5)))`;
   });
 
   indicatorOpacity = computed(() => {
@@ -99,7 +99,8 @@ export class PullToRefreshComponent implements OnDestroy {
   });
 
   contentTransform = computed(() => {
-    if (this.isRefreshing()) return "translateY(60px)";
+    if (this.isRefreshing())
+      return "translateY(calc(var(--size-120) * 0.5))";
     const distance = Math.min(this.pullDistance(), this.maxPull());
     return `translateY(${distance}px)`;
   });

@@ -1243,7 +1243,7 @@ interface AnalyticsAcwrData {
       <!-- End of @else for content -->
     </app-main-layout>
   `,
-  styleUrls: ["./analytics.component.scss"],
+  styleUrl: "./analytics.component.scss",
 })
 export class AnalyticsComponent implements AfterViewInit {
   // Angular 21: Use viewChildren() signal instead of @ViewChildren()
@@ -1691,7 +1691,7 @@ export class AnalyticsComponent implements AfterViewInit {
                     response.data as { labels: string[]; values: number[] }
                   ).values,
                   borderColor: "var(--ds-primary-green)",
-                  backgroundColor: "rgba(16, 201, 107, 0.2)", // Using rgba for specific opacity
+                  backgroundColor: "var(--p-highlight-background)", // Using rgba for specific opacity
                   borderWidth: 2,
                 },
               ],
@@ -1802,7 +1802,7 @@ export class AnalyticsComponent implements AfterViewInit {
                     : COLORS.PRIMARY_LIGHT,
                   backgroundColor: ds.label.includes("40")
                     ? "var(--ds-primary-green-subtle)"
-                    : "rgba(16, 201, 107, 0.1)",
+                    : "var(--p-highlight-background)",
                 })),
               });
             } else {
@@ -2358,8 +2358,8 @@ export class AnalyticsComponent implements AfterViewInit {
           datasets.push({
             label: "10-Yard Sprint",
             data: sprint10Data,
-            borderColor: "rgba(16, 201, 107, 0.6)",
-            backgroundColor: "rgba(16, 201, 107, 0.1)",
+            borderColor: "rgba(var(--primitive-primary-500-rgb), 0.6)",
+            backgroundColor: "var(--p-highlight-background)",
             tension: 0.4,
           });
         }

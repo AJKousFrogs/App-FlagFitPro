@@ -22,8 +22,7 @@ export default tseslint.config(
   // Base configurations
   js.configs.recommended,
   ...tseslint.configs.recommended, // Ignore patterns
-  // Console logging is temporarily allowed because LoggerService is unavailable while bootstrapping validation
-  // and Supabase diagnostics need console.group output for deep inspection.
+  // Console logging is temporarily allowed because LoggerService is unavailable while bootstrapping validation.
   {
     ignores: [
       "node_modules/**",
@@ -59,6 +58,14 @@ export default tseslint.config(
       // Block inline styles - use SCSS classes or design-system utilities instead
       // This catches: style="...", [style]="...", [ngStyle]="..."
       "@angular-eslint/template/no-inline-styles": "error",
+      // Warn on function calls in templates (e.g. {{ getLabel() }}) - prefer computed signals or pipes
+      // Event handlers like (click)="fn()" are allowed via allowList
+      "@angular-eslint/template/no-call-expression": [
+        "warn",
+        {
+          allowList: ["$any"],
+        },
+      ],
       "@typescript-eslint/ban-ts-comment": "off",
     },
   },
@@ -228,10 +235,7 @@ export default tseslint.config(
     },
   },
   {
-    files: [
-      "src/app/core/constants/constants-validation.ts",
-      "src/app/core/services/supabase-debug.service.ts",
-    ],
+    files: ["src/app/core/constants/constants-validation.ts"],
     rules: {
       "no-console": "off",
       "no-alert": "off",
@@ -281,10 +285,7 @@ export default tseslint.config(
     },
   },
   {
-    files: [
-      "src/app/core/constants/constants-validation.ts",
-      "src/app/core/services/supabase-debug.service.ts",
-    ],
+    files: ["src/app/core/constants/constants-validation.ts"],
     rules: {
       "no-console": "off",
       "no-alert": "off",

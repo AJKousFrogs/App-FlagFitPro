@@ -42,12 +42,6 @@
   align-items: stretch; /* Ensure equal card heights */
 }
 
-.chart-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .loading-text {
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
@@ -65,8 +59,8 @@
 
 .checkin-form {
   .checkin-impact-note {
-    margin: 0 0 1rem;
-    font-size: 0.85rem;
+    margin: 0 0 var(--space-4);
+  font-size: var(--ds-font-size-sm);
     color: var(--text-secondary);
   }
 

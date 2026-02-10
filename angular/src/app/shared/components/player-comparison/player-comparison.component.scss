@@ -30,8 +30,8 @@
 }
 
 .vs-badge {
-  width: 3rem;
-  height: 3rem;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +63,7 @@
   padding: var(--space-4);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
-  border: 0.125rem solid transparent;
+  border: var(--border-2) solid transparent;
 }
 
 .player-header.player1 {
@@ -121,7 +121,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-bottom: 0.0625rem solid var(--color-border-secondary);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 }
 
 .card-header h4 {
@@ -133,7 +133,7 @@
   display: flex;
   justify-content: center;
   padding: var(--space-4);
-  max-height: 25rem;
+  max-height: var(--chart-min-height-lg);
 }
 
 /* Stats Comparison */
@@ -212,7 +212,7 @@
 
 .comparison-bar {
   display: flex;
-  height: 0.375rem;
+  height: calc(var(--space-1) + var(--space-0-5));
   background: var(--color-border-secondary);
   border-radius: var(--radius-sm);
   margin-top: var(--space-1);
@@ -274,7 +274,7 @@
   padding: var(--space-8);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
-  border: 0.125rem dashed var(--color-border-secondary);
+  border: var(--border-2) dashed var(--color-border-secondary);
 }
 
 .empty-state i {

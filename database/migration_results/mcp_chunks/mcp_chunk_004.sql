@@ -6748,7 +6748,7 @@ To rollback this migration, restore the previous AVG-based functions from
 migration 069_prerequisites_check_and_setup.sql
 
 TESTING:
-Run the regression test at tests/logic/acwr-regression.test.cjs to verify
+Run the regression test at tests/logic/acwr-regression.test.js to verify
 the fix produces expected values from the synthetic dataset.
 
 npm run test:acwr

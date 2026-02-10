@@ -200,19 +200,19 @@ export class AcwrDashboardComponent {
 
 ```
 netlify/functions/
-├── ai-chat.cjs                     # AI coaching with ACWR safety
+├── ai-chat.js                     # AI coaching with ACWR safety
 ├── utils/
-│   ├── ai-safety-classifier.cjs    # 3-tier risk classification
-│   ├── groq-client.cjs             # Groq LLM integration
-│   ├── base-handler.cjs            # Standardized handler pattern
-│   └── error-handler.cjs           # Error response utilities
-├── load-management.cjs             # ACWR, monotony, TSB
-├── training-plan.cjs               # Periodized training
-├── smart-training-recommendations.cjs
-├── calc-readiness.cjs              # Readiness score
-├── training-stats-enhanced.cjs     # Enhanced statistics
-├── coach.cjs                       # Coach endpoints
-├── knowledge-search.cjs            # Knowledge base search
+│   ├── ai-safety-classifier.js    # 3-tier risk classification
+│   ├── groq-client.js             # Groq LLM integration
+│   ├── base-handler.js            # Standardized handler pattern
+│   └── error-handler.js           # Error response utilities
+├── load-management.js             # ACWR, monotony, TSB
+├── training-plan.js               # Periodized training
+├── smart-training-recommendations.js
+├── calc-readiness.js              # Readiness score
+├── training-stats-enhanced.js     # Enhanced statistics
+├── coach.js                       # Coach endpoints
+├── knowledge-search.js            # Knowledge base search
 └── ... (80 total functions)
 ```
 
@@ -500,6 +500,7 @@ export abstract class BaseViewModel {
 ## 📚 Related Documentation
 
 - [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) - Complete feature & business logic guide
+- [../angular/DEBUG_SERVICE_ARCHITECTURE.md](../angular/DEBUG_SERVICE_ARCHITECTURE.md) - DevTools/Debug service architecture
 - [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) - Angular 21 + PrimeNG 21 patterns
 - [API.md](./API.md) - API reference
 - [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Database schema

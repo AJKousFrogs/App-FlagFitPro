@@ -392,7 +392,7 @@
         :global(.p-inputtext),
         :global(.p-select) {
           min-height: 2.75rem;
-          font-size: 1rem; // Prevent iOS zoom
+          font-size: var(--ds-font-size-md); // Prevent iOS zoom
           padding: var(--space-2) var(--space-3);
         }
       }
@@ -401,7 +401,7 @@
       :global(input),
       :global(select),
       :global(textarea) {
-        font-size: 1rem; // Prevent iOS zoom
+        font-size: var(--ds-font-size-md); // Prevent iOS zoom
       }
 
       .play-type-option {
@@ -478,7 +478,7 @@
           :global(input),
           :global(select),
           :global(textarea) {
-            font-size: 1rem; // Prevent iOS zoom
+            font-size: var(--ds-font-size-md); // Prevent iOS zoom
           }
         }
       }
@@ -621,7 +621,7 @@
         width: auto;
 
         i {
-          font-size: 1rem;
+          font-size: var(--ds-font-size-md);
           color: var(--text-color-secondary);
           opacity: var(--opacity-dimmed);
           transition:
@@ -632,8 +632,8 @@
 
       &:last-child,
       &.search-shortcut-addon {
-        padding-left: 0.5rem;
-        padding-right: 0.75rem;
+        padding-left: var(--space-2);
+        padding-right: var(--space-3);
         width: auto;
       }
     }
@@ -642,8 +642,8 @@
       border: none;
       background: transparent;
       height: 100%;
-      font-size: 0.875rem;
-      padding: 0 0.75rem;
+      font-size: var(--ds-font-size-sm);
+      padding: 0 var(--space-3);
       margin: 0;
       line-height: 2.75rem;
       box-shadow: none;
@@ -653,7 +653,7 @@
       &::placeholder {
         color: var(--text-color-secondary);
         opacity: var(--opacity-muted);
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
       }
 
       &:hover,
@@ -1176,7 +1176,7 @@
   body > .p-dialog-mask:has(.command-palette-dialog) {
     backdrop-filter: blur(0.5rem);
     -webkit-backdrop-filter: blur(0.5rem);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--surface-overlay);
     z-index: calc(var(--z-index-modal) - 1);
     position: fixed;
     inset: 0;
@@ -1187,7 +1187,7 @@
       z-index: calc(var(--z-index-modal) - 1);
       backdrop-filter: blur(0.5rem);
       -webkit-backdrop-filter: blur(0.5rem);
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: var(--surface-overlay);
     }
   }
 
@@ -1523,7 +1523,7 @@
         &::before {
           content: "";
           position: absolute;
-          top: 1rem;
+          top: var(--space-4);
           left: 10%;
           right: 10%;
           height: 0.125rem;
@@ -1749,7 +1749,7 @@
             font-size: var(
               --font-compact-md
             ); /* 0.6875rem minimum - 0.5625rem too small for accessibility */
-            padding: 0 0.125rem;
+            padding: 0 var(--space-0-5);
           }
 
           &.p-steps-current {
@@ -2344,7 +2344,7 @@
   }
 
   .p-breadcrumb-separator {
-    margin: 0 0.75rem;
+    margin: 0 var(--space-3);
     color: var(--text-tertiary);
     font-size: var(--font-size-badge);
 
@@ -2381,22 +2381,22 @@
 
   .p-toast-message-success {
     background: var(--p-toast-success-background);
-    border-left: 0.25rem solid var(--p-toast-success-border-color);
+    border-left: var(--space-1) solid var(--p-toast-success-border-color);
   }
 
   .p-toast-message-info {
     background: var(--p-toast-info-background);
-    border-left: 0.25rem solid var(--p-toast-info-border-color);
+    border-left: var(--space-1) solid var(--p-toast-info-border-color);
   }
 
   .p-toast-message-warn {
     background: var(--p-toast-warn-background);
-    border-left: 0.25rem solid var(--p-toast-warn-border-color);
+    border-left: var(--space-1) solid var(--p-toast-warn-border-color);
   }
 
   .p-toast-message-error {
     background: var(--p-toast-error-background);
-    border-left: 0.25rem solid var(--p-toast-error-border-color);
+    border-left: var(--space-1) solid var(--p-toast-error-border-color);
   }
 
   .p-toast-icon-close {
@@ -2606,7 +2606,7 @@
     color: white;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--p-surface-border);
     }
   }
 }
@@ -3189,7 +3189,7 @@
 
     // Textarea font-size override to prevent iOS zoom
     textarea {
-      font-size: 1rem; // Prevent iOS zoom
+      font-size: var(--ds-font-size-md); // Prevent iOS zoom
     }
   }
 }

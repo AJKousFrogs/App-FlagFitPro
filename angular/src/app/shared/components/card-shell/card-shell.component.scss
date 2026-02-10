@@ -35,7 +35,7 @@
 
 // ============================================
 // INTERACTIVE STATE — Dashboard baseline
-// Hover: translateY(-0.0625rem) + shadow-md
+// Hover: translateY(-var(--border-1) + shadow-md
 // No green border on hover.
 // ============================================
 
@@ -48,7 +48,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .card-shell--interactive:hover {
-    transform: translateY(-0.0625rem);
+    transform: translateY(-var(--border-1));
     box-shadow: var(--shadow-md);
   }
 }
@@ -145,7 +145,7 @@
 .card-shell__title {
   // CANONICAL: Player Dashboard title style
   margin: 0;
-  font-size: var(--ds-font-size-2xl); // 1.125rem
+  font-size: var(--ds-font-size-2xl); // var(--icon-base)
   font-weight: var(--ds-font-weight-semibold); // 600
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-tight); // 1.2
@@ -214,7 +214,7 @@
   justify-content: center;
   text-align: center;
   padding: var(--space-6);
-  min-height: var(--card-min-height-lg); /* 10rem */
+  min-height: var(--card-min-height-lg); /* var(--card-min-height-lg) */
 
   // Subtle entrance animation
   animation: card-empty-fade-in 0.4s var(--ease-standard);
@@ -234,7 +234,7 @@
 // Compact variant for smaller cards
 .card-empty-state--compact {
   padding: var(--space-4);
-  min-height: var(--card-min-height-md); /* 7.5rem */
+  min-height: var(--card-min-height-md); /* var(--size-120) */
 }
 
 // Inline variant (icon + text horizontal)
@@ -299,7 +299,7 @@
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-muted);
   line-height: var(--ds-line-height-normal);
-  max-width: var(--grid-card-min-md); /* 17.5rem */
+  max-width: var(--grid-card-min-md); /* var(--grid-card-min-md) */
 }
 
 .card-empty-state--compact .card-empty-state__text {
@@ -395,7 +395,7 @@
 
 // Compact variant (dense layouts)
 .stat-block--compact .stat-block__value {
-  font-size: var(--ds-font-size-2xl); // 1.125rem
+  font-size: var(--ds-font-size-2xl); // var(--icon-base)
 }
 
 .stat-block__tag {

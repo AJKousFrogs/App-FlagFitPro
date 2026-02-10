@@ -132,7 +132,7 @@
 }
 
 .fat-bar {
-  height: 0.25rem;
+  height: var(--space-1);
   background: var(--color-border-primary);
   border-radius: var(--radius-full);
   margin-top: var(--space-2);
@@ -176,7 +176,7 @@
     color: var(--ds-primary-green-hover);
 
     i {
-      transform: translateX(0.125rem);
+      transform: translateX(var(--border-2));
     }
   }
 

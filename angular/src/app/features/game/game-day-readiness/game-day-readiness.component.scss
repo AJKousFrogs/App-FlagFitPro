@@ -79,7 +79,7 @@
 
 .metric-card {
   background: var(--surface-primary);
-  border-radius: var(--radius-xl); /* 0.75rem */
+  border-radius: var(--radius-xl); /* 0.calc(var(--size-200) * 6) */
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
   border: var(--border-1) solid var(--surface-border);
@@ -267,7 +267,7 @@
   }
 
   &.good {
-    background: rgba(var(--primitive-blue-500-rgb, 59, 130, 246), 0.1);
+    background: rgba(var(--primitive-blue-500-rgb), 0.1);
   }
 
   &.caution {

@@ -1,14 +1,14 @@
 /**
  * Load Management Consent Tests
  *
- * Tests that the load-management.cjs function properly:
+ * Tests that the load-management.js function properly:
  * 1. Uses ConsentDataReader for coach-context access
  * 2. Returns DataState contract in all responses
  * 3. Returns null metrics + warnings for INSUFFICIENT_DATA
  * 4. Filters coach requests by consent
  *
- * @see netlify/functions/load-management.cjs
- * @see netlify/functions/utils/consent-data-reader.cjs
+ * @see netlify/functions/load-management.js
+ * @see netlify/functions/utils/consent-data-reader.js
  */
 
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
@@ -18,7 +18,7 @@ import { createClient } from "@supabase/supabase-js";
 import {
   DataState,
   MINIMUM_DATA_REQUIREMENTS,
-} from "../../netlify/functions/utils/data-state.cjs";
+} from "../../netlify/functions/utils/data-state.js";
 
 // Test configuration
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -88,7 +88,7 @@ describe.skipIf(!canRunDbTests)(
     describe("ConsentDataReader for coach context", () => {
       it("should return data for players with performance_sharing_enabled", async () => {
         const { ConsentDataReader, AccessContext } =
-          await import("../../netlify/functions/utils/consent-data-reader.cjs");
+          await import("../../netlify/functions/utils/consent-data-reader.js");
 
         const reader = new ConsentDataReader(supabaseAdmin, {
           enableAuditLogging: false,
@@ -111,7 +111,7 @@ describe.skipIf(!canRunDbTests)(
 
       it("should block data for players without consent", async () => {
         const { ConsentDataReader, AccessContext } =
-          await import("../../netlify/functions/utils/consent-data-reader.cjs");
+          await import("../../netlify/functions/utils/consent-data-reader.js");
 
         const reader = new ConsentDataReader(supabaseAdmin, {
           enableAuditLogging: false,
@@ -148,7 +148,7 @@ describe.skipIf(!canRunDbTests)(
         // The actual ACWR calculation would return null for insufficient data
         // This is validated by checking the data state logic
         const { evaluateDataState } =
-          await import("../../netlify/functions/utils/data-state.cjs");
+          await import("../../netlify/functions/utils/data-state.js");
 
         const dataState = evaluateDataState(dataCount, "acwr");
         expect(dataState).toBe(DataState.INSUFFICIENT_DATA);
@@ -156,7 +156,7 @@ describe.skipIf(!canRunDbTests)(
 
       it("should include warning message for insufficient data", async () => {
         const { createDataResponse } =
-          await import("../../netlify/functions/utils/data-state.cjs");
+          await import("../../netlify/functions/utils/data-state.js");
 
         // Simulate 10 days of data (insufficient for ACWR which needs 28)
         const response = createDataResponse(1.25, 10, "acwr");
@@ -172,7 +172,7 @@ describe.skipIf(!canRunDbTests)(
     describe("Response structure includes DataState", () => {
       it("should include dataState in ConsentDataReader response", async () => {
         const { ConsentDataReader, AccessContext } =
-          await import("../../netlify/functions/utils/consent-data-reader.cjs");
+          await import("../../netlify/functions/utils/consent-data-reader.js");
 
         const reader = new ConsentDataReader(supabaseAdmin, {
           enableAuditLogging: false,
@@ -196,7 +196,7 @@ describe.skipIf(!canRunDbTests)(
 
       it("should include dataStateInfo with warnings", async () => {
         const { ConsentDataReader, AccessContext } =
-          await import("../../netlify/functions/utils/consent-data-reader.cjs");
+          await import("../../netlify/functions/utils/consent-data-reader.js");
 
         const reader = new ConsentDataReader(supabaseAdmin, {
           enableAuditLogging: false,
@@ -216,7 +216,7 @@ describe.skipIf(!canRunDbTests)(
 
       it("should mark isReliable as false for insufficient data", async () => {
         const { wrapWithDataState } =
-          await import("../../netlify/functions/utils/data-state.cjs");
+          await import("../../netlify/functions/utils/data-state.js");
 
         const wrapped = wrapWithDataState(
           {},
@@ -233,7 +233,7 @@ describe.skipIf(!canRunDbTests)(
 
       it("should mark isReliable as true for real data", async () => {
         const { wrapWithDataState } =
-          await import("../../netlify/functions/utils/data-state.cjs");
+          await import("../../netlify/functions/utils/data-state.js");
 
         const wrapped = wrapWithDataState(
           {},
@@ -252,7 +252,7 @@ describe.skipIf(!canRunDbTests)(
     describe("Coach requests are filtered by consent", () => {
       it("should filter team data by consent when coach queries multiple players", async () => {
         const { ConsentDataReader, AccessContext } =
-          await import("../../netlify/functions/utils/consent-data-reader.cjs");
+          await import("../../netlify/functions/utils/consent-data-reader.js");
 
         const reader = new ConsentDataReader(supabaseAdmin, {
           enableAuditLogging: false,
@@ -282,7 +282,7 @@ describe.skipIf(!canRunDbTests)(
 
       it("should return consent_blocked status for non-consenting player", async () => {
         const { ConsentDataReader, AccessContext } =
-          await import("../../netlify/functions/utils/consent-data-reader.cjs");
+          await import("../../netlify/functions/utils/consent-data-reader.js");
 
         const reader = new ConsentDataReader(supabaseAdmin, {
           enableAuditLogging: false,
@@ -307,7 +307,7 @@ describe.skipIf(!canRunDbTests)(
     describe("Player own data access", () => {
       it("should allow player to access their own data without consent check", async () => {
         const { ConsentDataReader, AccessContext } =
-          await import("../../netlify/functions/utils/consent-data-reader.cjs");
+          await import("../../netlify/functions/utils/consent-data-reader.js");
 
         const reader = new ConsentDataReader(supabaseAdmin, {
           enableAuditLogging: false,

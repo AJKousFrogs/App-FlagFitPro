@@ -70,7 +70,7 @@
   align-items: flex-start;
   position: relative;
   padding-left: var(--space-10); // 2.5rem
-  min-height: calc(var(--touch-target-md) + var(--space-4)); // 3.75rem
+  min-height: calc(var(--touch-target-md) + var(--space-4)); // var(--button-height-xl)
 }
 
 .orientation-vertical .item-content {
@@ -86,7 +86,7 @@
 
 .orientation-vertical .connector {
   position: absolute;
-  left: calc(var(--space-3) + var(--space-0-75)); // 0.9375rem
+  left: calc(var(--space-3) + var(--space-0-75)); // calc(var(--space-3) + var(--space-0-75))
   width: var(--space-0-75);
   background: var(--color-border-secondary);
 }
@@ -159,8 +159,8 @@
 
 /* Current pulse */
 .current-pulse {
-  width: calc(var(--space-2) + var(--space-0-5)); // 0.625rem
-  height: calc(var(--space-2) + var(--space-0-5)); // 0.625rem
+  width: calc(var(--space-2) + var(--space-0-5)); // calc(var(--space-2) + var(--space-0-5))
+  height: calc(var(--space-2) + var(--space-0-5)); // calc(var(--space-2) + var(--space-0-5))
   border-radius: 50%;
   background: var(--ds-color-brand-contrast);
   animation: current-pulse 2s ease-in-out infinite;
@@ -252,15 +252,15 @@
 }
 
 .variant-compact .orientation-horizontal .connector {
-  top: var(--space-3); // 0.75rem
+  top: var(--space-3); // 0.calc(var(--size-200) * 6)
 }
 
 .variant-compact .orientation-horizontal .connector-before {
-  margin-right: var(--space-3); // 0.75rem
+  margin-right: var(--space-3); // 0.calc(var(--size-200) * 6)
 }
 
 .variant-compact .orientation-horizontal .connector-after {
-  margin-left: var(--space-3); // 0.75rem
+  margin-left: var(--space-3); // 0.calc(var(--size-200) * 6)
 }
 
 /* Hover effects */
@@ -275,8 +275,8 @@
   }
 
   .orientation-horizontal .status-dot {
-    width: var(--badge-lg); // 1.75rem
-    height: var(--badge-lg); // 1.75rem
+    width: var(--badge-lg); // var(--badge-lg)
+    height: var(--badge-lg); // var(--badge-lg)
   }
 
   .orientation-horizontal .connector {

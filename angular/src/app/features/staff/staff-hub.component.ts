@@ -50,6 +50,6 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
       </div>
     </app-main-layout>
   `,
-  styleUrls: ["./staff-hub.component.scss"],
+  styleUrl: "./staff-hub.component.scss",
 })
 export class StaffHubComponent {}

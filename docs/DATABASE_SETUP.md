@@ -53,7 +53,7 @@ The FlagFit Pro database is organized into the following systems:
 - `sweat_rate_assessments` - Sweat rate testing for personalized hydration
 - `supplement_calculations` - Calculated supplement dosages (caffeine, creatine, beta-alanine)
 
-**API Endpoints (in `nutrition.cjs`):**
+**API Endpoints (in `nutrition.js`):**
 
 - `GET /api/nutrition/athletes-plate?dayType=moderate` - Athletes Plate recommendations
 - `POST /api/nutrition/calculate-targets` - Calculate personalized macro targets
@@ -164,7 +164,7 @@ The FlagFit Pro database is organized into the following systems:
 | 10   | Univ. of Bath                      | UK          | Plyometrics, recovery protocols          |
 | -    | Australian Institute of Sport      | Australia   | High performance, ABCD framework         |
 
-**API Endpoints (in `research-sync.cjs`):**
+**API Endpoints (in `research-sync.js`):**
 
 - `POST /api/research/sync` - Trigger full research sync from all APIs
 - `POST /api/research/sync-institutions` - Sync from top institutions
@@ -252,25 +252,25 @@ Available seeding scripts in `scripts/`:
 
 ```bash
 # Plyometrics (90 exercises)
-node scripts/seedPlyometricsResearchDatabase.cjs
+node scripts/seedPlyometricsResearchDatabase.js
 
 # Isometrics (23 exercises)
-node scripts/seedIsometricsTrainingDatabase.cjs
+node scripts/seedIsometricsTrainingDatabase.js
 
 # Hydration research
-node scripts/seedHydrationResearchDatabase.cjs
+node scripts/seedHydrationResearchDatabase.js
 
 # Supplement research
-node scripts/seedSupplementResearchDatabase.cjs
+node scripts/seedSupplementResearchDatabaseCorrected.js
 
 # Recovery system
-node scripts/seedRecoverySystem.cjs
+node scripts/seedRecoverySystem.js
 
 # Nutrition system
-node scripts/seedNutritionSystem.cjs
+node scripts/seedNutritionSystem.js
 
 # Competition protocols
-node scripts/seedCompetitionProtocolsFinal.cjs
+node scripts/seedCompetitionProtocolsFinal.js
 ```
 
 ### 3. Verify Installation
@@ -366,13 +366,13 @@ All tables have Row Level Security enabled. Key policies:
 
 | Script                                | Purpose                 |
 | ------------------------------------- | ----------------------- |
-| `seedPlyometricsResearchDatabase.cjs` | 90 plyometric exercises |
-| `seedIsometricsTrainingDatabase.cjs`  | 23 isometric exercises  |
-| `seedHydrationResearchDatabase.cjs`   | Hydration protocols     |
-| `seedSupplementResearchDatabase.cjs`  | Supplement data         |
-| `seedRecoverySystem.cjs`              | Recovery protocols      |
-| `seedNutritionSystem.cjs`             | Nutrition data          |
-| `seedCompetitionProtocolsFinal.cjs`   | Competition protocols   |
+| `seedPlyometricsResearchDatabase.js` | 90 plyometric exercises |
+| `seedIsometricsTrainingDatabase.js`  | 23 isometric exercises  |
+| `seedHydrationResearchDatabase.js`   | Hydration protocols     |
+| `seedSupplementResearchDatabaseCorrected.js`  | Supplement data         |
+| `seedRecoverySystem.js`              | Recovery protocols      |
+| `seedNutritionSystem.js`             | Nutrition data          |
+| `seedCompetitionProtocolsFinal.js`   | Competition protocols   |
 | `seedDashboardData.js`                | Dashboard sample data   |
 
 ### Scripts That DON'T Exist
@@ -415,7 +415,7 @@ The following scripts mentioned in previous documentation do NOT exist:
   - Added recovery knowledge: sleep optimization, active recovery
   - Added psychology knowledge: mental prep, confidence, focus
   - Added API integration guides: USDA search, research database, protocols
-  - Updated `knowledge-search.cjs` to use correct schema with Supabase client
+  - Updated `knowledge-search.js` to use correct schema with Supabase client
   - Added source types: research, ais, api, curated
 - **v2.2 (2025-12-29)**: Sports Science Research API Integration
   - Added free scholarly API integrations: PubMed, Europe PMC, OpenAlex
@@ -426,7 +426,7 @@ The following scripts mentioned in previous documentation do NOT exist:
   - Created `training_protocols` table with 5 evidence-based protocols
   - Created `user_saved_research` for user bookmarks
   - Created `research_institutions` table with 11 top sports science institutions (Shanghai Ranking 2024)
-  - Implemented `research-sync.cjs` Netlify function with search, sync, and institution endpoints
+  - Implemented `research-sync.js` Netlify function with search, sync, and institution endpoints
   - Added institution-specific searches for Deakin, SDU, NIH, Copenhagen, Victoria, VU Amsterdam, NTNU, KU Leuven, Bath, AIS
   - Included AIS Athlete Dataset (202 athletes) as featured study
   - Auto-calculates relevance scores for flag football applicability

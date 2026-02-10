@@ -156,9 +156,6 @@ export interface WarmupProtocol {
   notes: string;
 }
 
-// Note: This service uses ApiResponse from api.service.ts (canonical)
-// The local interface was removed as it's not used
-
 // ============================================================================
 // SERVICE
 // ============================================================================

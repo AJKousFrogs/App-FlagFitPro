@@ -22,21 +22,21 @@
 }
 
 :host(.badge-overlay-top-right) {
-  top: calc(var(--space-2, 0.5rem) * -1);
-  right: calc(var(--space-2, 0.5rem) * -1);
+  top: calc(var(--space-2) * -1);
+  right: calc(var(--space-2) * -1);
 }
 
 :host(.badge-overlay-top-left) {
-  top: calc(var(--space-2, 0.5rem) * -1);
-  left: calc(var(--space-2, 0.5rem) * -1);
+  top: calc(var(--space-2) * -1);
+  left: calc(var(--space-2) * -1);
 }
 
 :host(.badge-overlay-bottom-right) {
-  bottom: calc(var(--space-2, 0.5rem) * -1);
-  right: calc(var(--space-2, 0.5rem) * -1);
+  bottom: calc(var(--space-2) * -1);
+  right: calc(var(--space-2) * -1);
 }
 
 :host(.badge-overlay-bottom-left) {
-  bottom: calc(var(--space-2, 0.5rem) * -1);
-  left: calc(var(--space-2, 0.5rem) * -1);
+  bottom: calc(var(--space-2) * -1);
+  left: calc(var(--space-2) * -1);
 }

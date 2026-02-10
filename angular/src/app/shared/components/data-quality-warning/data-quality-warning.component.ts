@@ -97,17 +97,17 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
 
       .quality-insufficient {
         background: rgba(var(--color-status-danger-rgb), 0.1);
-        border-left: 4px solid var(--color-status-danger);
+        border-left: var(--space-1) solid var(--color-status-danger);
       }
 
       .quality-low {
         background: rgba(var(--color-status-warning-rgb), 0.1);
-        border-left: 4px solid var(--color-status-warning);
+        border-left: var(--space-1) solid var(--color-status-warning);
       }
 
       .quality-medium {
         background: rgba(var(--color-status-info-rgb), 0.08);
-        border-left: 4px solid var(--color-status-info);
+        border-left: var(--space-1) solid var(--color-status-info);
       }
 
       .quality-high {
@@ -151,7 +151,9 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
       }
 
       .warning-details {
-        padding-left: calc(1.1rem + var(--ds-space-2));
+        padding-left: calc(
+          var(--ds-font-size-1-1rem) + var(--ds-space-2)
+        );
       }
 
       .warning-message {
@@ -181,7 +183,9 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
       }
 
       .warning-action {
-        padding-left: calc(1.1rem + var(--ds-space-2));
+        padding-left: calc(
+          var(--ds-font-size-1-1rem) + var(--ds-space-2)
+        );
       }
     `,
   ],

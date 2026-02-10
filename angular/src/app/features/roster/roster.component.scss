@@ -15,46 +15,6 @@
   flex-wrap: wrap;
 }
 
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-12);
-  min-height: var(--chart-min-height-md);
-}
-
-.loading-message {
-  margin-top: var(--space-4);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
-
-.no-results {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-12);
-  text-align: center;
-  color: var(--color-text-secondary);
-}
-
-.no-results i {
-  font-size: var(--ds-font-size-3xl);
-  margin-bottom: var(--space-4);
-  opacity: var(--opacity-dimmed);
-}
-
-.no-results h3 {
-  margin: 0 0 var(--space-2);
-  color: var(--color-text-primary);
-}
-
-.no-results p {
-  margin: 0 0 var(--space-4);
-}
-
 .position-section {
   margin-bottom: var(--space-8);
 }
@@ -63,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--ds-font-size-2xl); /* H2: Section titles - 1.125rem */
+  font-size: var(--ds-font-size-2xl); /* H2: Section titles - var(--icon-base) */
   font-weight: var(--ds-font-weight-semibold); /* H2: Semibold (600) */
   line-height: var(--ds-line-height-tight);
   margin-bottom: var(--space-6);
@@ -266,7 +226,7 @@
   padding: var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
 }
 
 .benchmark-header {
@@ -368,17 +328,17 @@
 
   &.risk-level-moderate {
     background: var(--color-status-warning-bg);
-    border: 0.0625rem solid var(--color-status-warning);
+    border: var(--border-1) solid var(--color-status-warning);
   }
 
   &.risk-level-high {
     background: rgba(var(--primitive-warning-500-rgb), 0.15);
-    border: 0.0625rem solid var(--color-status-warning);
+    border: var(--border-1) solid var(--color-status-warning);
   }
 
   &.risk-level-critical {
     background: var(--color-status-error-bg);
-    border: 0.0625rem solid var(--color-status-error);
+    border: var(--border-1) solid var(--color-status-error);
   }
 
   h3 {
@@ -518,7 +478,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  max-height: 25rem;
+  max-height: var(--chart-min-height-lg);
   overflow-y: auto;
 }
 
@@ -715,7 +675,7 @@
 /* Touch devices */
 @media (hover: none) and (pointer: coarse) {
   .header-actions button {
-    min-height: var(--touch-target-md); /* 2.75rem */
+    min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
     min-width: var(--touch-target-md);
   }
 }

@@ -135,11 +135,11 @@ kbd {
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   background: var(--surface-primary);
-  border: 0.0625rem solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-sm);
   box-shadow:
     var(--shadow-sm),
-    inset 0 -0.0625rem 0 var(--color-border-subtle);
+    inset 0 -var(--border-1) 0 var(--color-border-subtle);
 }
 
 /* Platform Hint */

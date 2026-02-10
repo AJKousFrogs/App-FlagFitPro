@@ -79,11 +79,17 @@ export class LazyScreenshotService {
   ): Promise<HTMLCanvasElement> {
     await this.loadLibrary();
 
+    const computedBackground =
+      getComputedStyle(element).backgroundColor ||
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--surface-primary")
+        .trim();
+
     const defaultOptions: ScreenshotOptions = {
       scale: 2,
       useCORS: true,
       allowTaint: false,
-      backgroundColor: "#ffffff",
+      backgroundColor: computedBackground || undefined,
       ...options,
     };
 

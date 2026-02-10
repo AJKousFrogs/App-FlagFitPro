@@ -9,7 +9,7 @@
  */
 
 /* ================================================================
-   HEADER CONTAINER - EXACT 4rem HEIGHT
+   HEADER CONTAINER - EXACT var(--header-height) HEIGHT
    ================================================================ */
 
 :host {
@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  height: var(--header-height, var(--ds-font-size-4rem));
+  height: var(--header-height, var(--ds-font-size-var(--header-height)));
 }
 
 .header-center {
@@ -44,9 +44,9 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  max-width: 26.25rem;
-  min-width: 17.5rem;
-  height: var(--header-height, var(--ds-font-size-4rem));
+  max-width: calc(var(--grid-card-min-xl) + var(--space-5));
+  min-width: var(--grid-card-min-md);
+  height: var(--header-height, var(--ds-font-size-var(--header-height)));
   cursor: pointer;
   padding: 0 var(--ds-space-2);
 }
@@ -61,7 +61,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  height: var(--header-height, var(--ds-font-size-4rem));
+  height: var(--header-height, var(--ds-font-size-var(--header-height)));
 }
 
 @media (max-width: 80rem) {
@@ -72,7 +72,7 @@
   }
 
   .header-center {
-    max-width: 20rem;
+    max-width: var(--element-max-width-md);
   }
 }
 
@@ -199,7 +199,7 @@
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
-  max-width: var(--card-min-height-sm); /* 5rem */
+  max-width: var(--card-min-height-sm); /* var(--size-80) */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -298,7 +298,7 @@
 
 .search-input {
   cursor: pointer;
-  min-width: 11.25rem;
+  min-width: var(--input-min-width-md);
   width: 100%;
 }
 
@@ -314,17 +314,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.375rem;
-  height: 1.375rem;
+  min-width: var(--tag-height-xs);
+  height: var(--tag-height-xs);
   padding: 0 calc(var(--ds-space-3) / 2);
-  background: var(--surface-100, var(--surface-secondary));
-  border: 0.0625rem solid var(--surface-border, var(--color-border-primary));
-  border-radius: 0.375rem;
+  background: var(--surface-100);
+  border: var(--border-1) solid var(--surface-border);
+  border-radius: var(--radius-sm);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   line-height: var(--ds-line-height-1);
-  box-shadow: 0 0.0625rem 0 var(--surface-border, var(--color-border-primary));
+  box-shadow: 0 var(--border-1) 0 var(--surface-border);
 }
 
 // PrimeNG input group hover override moved to _exceptions.scss (DS-EXC-004)
@@ -355,7 +355,7 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
   background: var(--surface-ground);
-  border: 0.0625rem solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
 
   // Visual indicator based on theme
   position: relative;
@@ -363,11 +363,11 @@
   &::before {
     content: "";
     position: absolute;
-    left: 0.125rem;
+    left: var(--space-0-5);
     top: 50%;
     transform: translateY(-50%);
-    width: 0.375rem;
-    height: 0.375rem;
+    width: calc(var(--space-1) + var(--space-0-5));
+    height: calc(var(--space-1) + var(--space-0-5));
     border-radius: var(--radius-full);
     transition: background-color var(--motion-fast) var(--ease-standard);
   }
@@ -382,7 +382,7 @@
         var(--primitive-warning-400) 0%,
         var(--primitive-warning-500) 100%
       );
-      box-shadow: 0 0 0.25rem rgba(var(--primitive-warning-500-rgb), 0.5);
+      box-shadow: 0 0 var(--space-1) rgba(var(--primitive-warning-500-rgb), 0.5);
     }
   }
 
@@ -396,7 +396,7 @@
         var(--color-status-help) 0%,
         var(--color-staff-coaching) 100%
       );
-      box-shadow: 0 0 0.25rem rgba(var(--color-status-help-rgb), 0.5);
+      box-shadow: 0 0 var(--space-1) rgba(var(--color-status-help-rgb), 0.5);
     }
   }
 
@@ -412,7 +412,7 @@
         var(--color-status-help) 50%,
         var(--color-status-help) 100%
       );
-      box-shadow: 0 0 0.25rem rgba(var(--color-status-help-rgb), 0.3);
+      box-shadow: 0 0 var(--space-1) rgba(var(--color-status-help-rgb), 0.3);
     }
   }
 }
@@ -465,12 +465,12 @@
   }
 
   .header-center {
-    min-width: 15rem;
-    max-width: 22.5rem;
+    min-width: var(--input-min-width-lg);
+    max-width: var(--grid-card-min-lg);
   }
 
   .search-input {
-    min-width: 10rem;
+    min-width: var(--card-min-height-lg);
   }
 
   .theme-label {
@@ -495,7 +495,7 @@
   .header-start,
   .header-center,
   .header-end {
-    height: var(--header-height-mobile, 3.5rem);
+    height: var(--header-height-mobile);
   }
 
   .mobile-menu-toggle {
@@ -573,7 +573,7 @@
   padding: var(--space-3);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border: 0.0625rem solid var(--ds-border-subtle);
+  border: var(--border-1) solid var(--ds-border-subtle);
 
   &:hover {
     background: var(--ds-surface-elevated);
@@ -595,17 +595,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.5rem;
-    height: 1.5rem;
+    min-width: var(--space-6);
+    height: var(--space-6);
     padding: 0 var(--space-2);
     background: var(--ds-surface-elevated);
-    border: 0.0625rem solid var(--ds-border-default);
+    border: var(--border-1) solid var(--ds-border-default);
     border-radius: var(--radius-sm);
     font-family: var(--ds-font-family-mono); /* ds-exception: key hint */
     font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-primary);
-    box-shadow: 0 0.125rem 0 var(--ds-border-subtle);
+    box-shadow: 0 var(--border-2) 0 var(--ds-border-subtle);
   }
 }
 
@@ -624,7 +624,7 @@
   color: var(--ds-text-tertiary);
   font-size: var(--ds-font-size-xs);
   background: var(--ds-surface-base);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--ds-border-subtle);
 
   i {
     flex-shrink: 0;
@@ -633,7 +633,7 @@
   kbd {
     padding: var(--space-1) var(--space-2);
     background: var(--ds-surface-elevated);
-    border: 0.0625rem solid var(--ds-border-default);
+    border: var(--border-1) solid var(--ds-border-default);
     border-radius: var(--radius-xs);
     font-family: var(--ds-font-family-mono); /* ds-exception: key hint */
     font-size: var(--ds-font-size-xs);

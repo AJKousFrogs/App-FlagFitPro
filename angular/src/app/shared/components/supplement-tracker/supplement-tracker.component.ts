@@ -192,7 +192,7 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     EmptyStateComponent,
   ],
   templateUrl: "./supplement-tracker.component.html",
-  styleUrls: ["./supplement-tracker.component.scss"],
+  styleUrl: "./supplement-tracker.component.scss",
 })
 export class SupplementTrackerComponent implements OnInit {
   private apiService = inject(ApiService);

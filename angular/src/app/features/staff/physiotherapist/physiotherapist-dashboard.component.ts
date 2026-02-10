@@ -1169,7 +1169,7 @@ const RTP_PHASES = [
       </div>
     </app-main-layout>
   `,
-  styleUrls: ["./physiotherapist-dashboard.component.scss"],
+  styleUrl: "./physiotherapist-dashboard.component.scss",
 })
 export class PhysiotherapistDashboardComponent implements OnInit {
   private api = inject(ApiService);

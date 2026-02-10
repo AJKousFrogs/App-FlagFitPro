@@ -8,9 +8,9 @@
 .stepper-container {
   width: 100%;
   padding: var(--space-4) 0;
-  border-bottom: 0.0625rem solid var(--color-border-muted);
+  border-bottom: var(--border-1) solid var(--color-border-muted);
   position: sticky;
-  top: var(--header-height, var(--ds-font-size-4rem));
+  top: var(--header-height, var(--ds-font-size-var(--header-height)));
   z-index: var(--z-sticky);
   background: var(--surface-primary);
   box-shadow: var(--shadow-sm);
@@ -55,7 +55,7 @@
   &:hover:not(.disabled) {
     .step-label {
       color: var(--ds-primary-green);
-      transform: translateY(-0.0625rem);
+      transform: translateY(calc(var(--border-1) * -1));
     }
 
     .step-indicator {
@@ -74,8 +74,8 @@
       background: var(--ds-primary-green);
       color: var(--color-text-on-primary);
       box-shadow:
-        0 0 0 0.25rem rgba(var(--ds-primary-green-rgb), 0.1),
-        0 0.25rem 0.75rem rgba(var(--ds-primary-green-rgb), 0.2);
+        0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.1),
+        0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.2);
       transform: scale(1.1);
     }
 
@@ -107,7 +107,7 @@
   height: var(--avatar-size-md); /* 2.5rem */
   border-radius: var(--radius-full);
   background: var(--surface-secondary);
-  border: 0.125rem solid var(--color-border-primary);
+  border: var(--border-2) solid var(--color-border-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,9 +154,9 @@
 
 .step-connector {
   position: absolute;
-  top: 1.25rem;
-  left: calc(50% + 1.25rem);
-  right: calc(-50% + 1.25rem);
+  top: var(--space-5);
+  left: calc(50% + var(--space-5));
+  right: calc(-50% + var(--space-5));
   height: var(--border-2);
   background: var(--color-border-primary);
   z-index: 1;
@@ -186,7 +186,7 @@
 
   .stepper-step {
     padding: var(--space-2) var(--space-1);
-    min-width: var(--card-min-height-sm); /* 5rem */
+    min-width: var(--card-min-height-sm); /* var(--size-80) */
   }
 
   .step-indicator {
@@ -202,7 +202,7 @@
 @include respond-to(md) {
   .stepper-container {
     padding: var(--space-3) 0;
-    top: var(--header-height-mobile, 3.5rem);
+    top: var(--header-height-mobile);
   }
 
   .stepper-nav {
@@ -233,7 +233,7 @@
 // Dark mode support
 [data-theme="dark"] .stepper-container,
 .dark-theme .stepper-container {
-  background: rgba(var(--surface-primary-rgb, 18, 18, 18), 0.95);
+  background: rgba(var(--surface-primary-rgb), 0.95);
   border-bottom-color: var(--color-border-secondary);
 }
 

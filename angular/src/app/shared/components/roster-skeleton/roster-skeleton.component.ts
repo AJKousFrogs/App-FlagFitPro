@@ -20,19 +20,23 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
     <div class="roster-skeleton" aria-label="Loading roster...">
       <!-- Header Skeleton -->
       <div class="roster-header-skeleton">
-        <app-skeleton variant="text" width="150px" height="28px"></app-skeleton>
+        <app-skeleton
+          variant="text"
+          width="var(--size-150)"
+          height="calc(var(--space-5) + var(--space-2))"
+        ></app-skeleton>
         <div class="header-actions-skeleton">
           <app-skeleton
             variant="rectangle"
-            width="120px"
-            height="40px"
-            borderRadius="8px"
+            width="var(--size-120)"
+            height="var(--icon-container-md)"
+            borderRadius="var(--radius-lg)"
           ></app-skeleton>
           <app-skeleton
             variant="rectangle"
-            width="100px"
-            height="40px"
-            borderRadius="8px"
+            width="var(--size-100)"
+            height="var(--icon-container-md)"
+            borderRadius="var(--radius-lg)"
           ></app-skeleton>
         </div>
       </div>
@@ -41,15 +45,15 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
       <div class="filter-bar-skeleton">
         <app-skeleton
           variant="rectangle"
-          width="300px"
-          height="40px"
-          borderRadius="8px"
+          width="calc(var(--size-150) * 2)"
+          height="var(--icon-container-md)"
+          borderRadius="var(--radius-lg)"
         ></app-skeleton>
         <app-skeleton
           variant="rectangle"
-          width="150px"
-          height="40px"
-          borderRadius="8px"
+          width="var(--size-150)"
+          height="var(--icon-container-md)"
+          borderRadius="var(--radius-lg)"
         ></app-skeleton>
       </div>
 
@@ -62,7 +66,7 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
               <app-skeleton
                 variant="text"
                 [width]="col.width"
-                height="16px"
+                height="var(--space-4)"
               ></app-skeleton>
             </div>
           }
@@ -76,21 +80,21 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
                 @if (col.type === "avatar") {
                   <app-skeleton
                     variant="circle"
-                    width="40px"
-                    height="40px"
+                    width="var(--icon-container-md)"
+                    height="var(--icon-container-md)"
                   ></app-skeleton>
                 } @else if (col.type === "badge") {
                   <app-skeleton
                     variant="rectangle"
-                    width="80px"
-                    height="24px"
-                    borderRadius="12px"
+                    width="var(--size-80)"
+                    height="var(--space-6)"
+                    borderRadius="var(--radius-xl)"
                   ></app-skeleton>
                 } @else {
                   <app-skeleton
                     variant="text"
                     [width]="col.cellWidth || col.width"
-                    height="16px"
+                    height="var(--space-4)"
                   ></app-skeleton>
                 }
               </div>
@@ -101,31 +105,35 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
 
       <!-- Pagination Skeleton -->
       <div class="pagination-skeleton">
-        <app-skeleton variant="text" width="120px" height="16px"></app-skeleton>
+        <app-skeleton
+          variant="text"
+          width="var(--size-120)"
+          height="var(--space-4)"
+        ></app-skeleton>
         <div class="pagination-buttons-skeleton">
           <app-skeleton
             variant="rectangle"
-            width="32px"
-            height="32px"
-            borderRadius="4px"
+            width="var(--space-8)"
+            height="var(--space-8)"
+            borderRadius="var(--radius-sm)"
           ></app-skeleton>
           <app-skeleton
             variant="rectangle"
-            width="32px"
-            height="32px"
-            borderRadius="4px"
+            width="var(--space-8)"
+            height="var(--space-8)"
+            borderRadius="var(--radius-sm)"
           ></app-skeleton>
           <app-skeleton
             variant="rectangle"
-            width="32px"
-            height="32px"
-            borderRadius="4px"
+            width="var(--space-8)"
+            height="var(--space-8)"
+            borderRadius="var(--radius-sm)"
           ></app-skeleton>
           <app-skeleton
             variant="rectangle"
-            width="32px"
-            height="32px"
-            borderRadius="4px"
+            width="var(--space-8)"
+            height="var(--space-8)"
+            borderRadius="var(--radius-sm)"
           ></app-skeleton>
         </div>
       </div>
@@ -145,11 +153,15 @@ export class RosterSkeletonComponent {
       type?: "text" | "avatar" | "badge";
     }>
   >([
-    { width: "60px", type: "avatar" },
-    { width: "180px", cellWidth: "150px", type: "text" },
-    { width: "120px", cellWidth: "100px", type: "text" },
-    { width: "100px", cellWidth: "80px", type: "badge" },
-    { width: "120px", cellWidth: "100px", type: "text" },
-    { width: "100px", cellWidth: "80px", type: "text" },
+    { width: "calc(var(--size-120) * 0.5)", type: "avatar" },
+    {
+      width: "calc(var(--size-200) * 0.9)",
+      cellWidth: "var(--size-150)",
+      type: "text",
+    },
+    { width: "var(--size-120)", cellWidth: "var(--size-100)", type: "text" },
+    { width: "var(--size-100)", cellWidth: "var(--size-80)", type: "badge" },
+    { width: "var(--size-120)", cellWidth: "var(--size-100)", type: "text" },
+    { width: "var(--size-100)", cellWidth: "var(--size-80)", type: "text" },
   ]);
 }

@@ -3,18 +3,18 @@
 # Netlify configuration template for Angular SPA deployment
 
 [build]
-  command = "npm ci && npm run build"
-  publish = "."
+  command = "cd angular && npm ci --legacy-peer-deps && npm run build && cd .. && node scripts/inject-env-into-html-angular.js"
+  publish = "angular/dist/flagfit-pro/browser"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "22"
   NPM_FLAGS = "--legacy-peer-deps"
   VITE_APP_ENVIRONMENT = "production"
   VITE_APP_NAME = "FlagFit Pro"
   VITE_APP_VERSION = "1.0.7"
-  # Supabase Configuration
-  VITE_SUPABASE_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co"
-  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0"
+  # Supabase Configuration - Set in Netlify UI (Environment Variables)
+  # VITE_SUPABASE_URL = "https://your-project.supabase.co"
+  # VITE_SUPABASE_ANON_KEY = "your-anon-key"
   VITE_ENABLE_ANALYTICS = "false"
   VITE_ENABLE_SENTRY = "false"
 

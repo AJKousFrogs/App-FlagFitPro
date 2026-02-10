@@ -20,8 +20,8 @@
 }
 
 .header-icon {
-  width: 4rem;
-  height: 4rem;
+  width: var(--header-height);
+  height: var(--header-height);
   background: var(--primitive-success-100);
   border-radius: 50%;
   display: flex;
@@ -64,8 +64,8 @@
 }
 
 .step-number {
-  width: 2rem;
-  height: 2rem;
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
   border-radius: 50%;
   background: var(--color-border-secondary);
   color: var(--color-text-secondary);
@@ -100,8 +100,8 @@
 }
 
 .step-line {
-  width: 2.5rem;
-  height: 0.125rem;
+  width: var(--avatar-size-md);
+  height: var(--border-2);
   background: var(--color-border-secondary);
   margin-bottom: var(--space-5); /* 1.25rem */
   transition: background var(--transition-slow);
@@ -137,7 +137,7 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(0.625rem);
+    transform: translateY(calc(var(--space-2) + var(--space-0-5)));
   }
   to {
     opacity: 1;
@@ -159,9 +159,9 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-3);
-  border: 0.125rem solid var(--color-border-secondary);
+  border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
-  background: white;
+  background: var(--surface-primary);
   cursor: pointer;
   transition:
     transform var(--transition-fast),
@@ -178,7 +178,7 @@
   background: color-mix(
     in srgb,
     var(--rpe-color, var(--color-brand-primary)) 10%,
-    white
+    var(--surface-primary)
   );
 }
 
@@ -242,7 +242,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3);
-  border: 0.125rem solid var(--color-border-secondary);
+  border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   background: white;
   cursor: pointer;
@@ -275,8 +275,8 @@
 }
 
 .dot {
-  width: 0.75rem;
-  height: 0.75rem;
+  width: var(--space-3);
+  height: var(--space-3);
   border-radius: 50%;
   background: var(--color-border-secondary);
   cursor: pointer;
@@ -317,7 +317,7 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  border-left: 0.25rem solid var(--color-border-secondary);
+  border-left: var(--space-1) solid var(--color-border-secondary);
 }
 
 .recommendation-card.priority-high {
@@ -336,8 +336,8 @@
 }
 
 .rec-icon {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
   border-radius: var(--radius-lg);
   background: white;
   display: flex;
@@ -393,7 +393,7 @@
   align-items: center;
   gap: var(--space-3);
   padding-top: var(--space-4);
-  border-top: 0.0625rem solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .action-spacer {

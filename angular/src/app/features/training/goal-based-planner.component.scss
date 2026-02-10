@@ -78,10 +78,6 @@
   color: var(--color-status-error);
 }
 
-.text-blue-600 {
-  color: var(--color-status-info);
-}
-
 .sessions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));

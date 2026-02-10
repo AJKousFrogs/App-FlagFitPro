@@ -100,7 +100,7 @@ export interface Insight {
         <div class="insights-loading">
           @for (i of [1, 2, 3]; track i) {
             <div class="insight-skeleton">
-              <p-skeleton width="100%" height="100px"></p-skeleton>
+              <p-skeleton width="100%" height="var(--size-100)"></p-skeleton>
             </div>
           }
         </div>

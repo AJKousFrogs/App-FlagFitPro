@@ -116,6 +116,4 @@ If the URL-based MCP server doesn't work, you can use the Supabase CLI MCP serve
 
 ## Related Documentation
 
-- [Supabase Migration Guide](./SUPABASE_MIGRATION.md)
-- [Migration Steps](./MIGRATION_STEPS.md)
-- [Database Setup](./DATABASE_SETUP.md)
+- [Database Setup](./DATABASE_SETUP.md) for schema setup; [Backend Setup](./BACKEND_SETUP.md) for API

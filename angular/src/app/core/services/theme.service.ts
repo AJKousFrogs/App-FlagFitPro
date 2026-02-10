@@ -24,8 +24,8 @@ const THEME_STORAGE_KEY = "flagfit_theme";
  * Theme-color meta tag values for mobile browser chrome
  * Maps to design system but hardcoded for SSR compatibility
  */
-const THEME_META_COLOR_LIGHT = "#089949"; // --ds-primary-green
-const THEME_META_COLOR_DARK = "#171717"; // --primitive-neutral-900
+const THEME_META_COLOR_LIGHT = "var(--p-highlight-text-color)"; // --ds-primary-green
+const THEME_META_COLOR_DARK = "var(--p-surface-0)"; // --primitive-neutral-900
 
 @Injectable({
   providedIn: "root",
@@ -326,34 +326,34 @@ export class ThemeService {
 
     if (theme === "dark") {
       // Dark mode: --primitive-neutral scale (inverted)
-      root.style.setProperty("--p-surface-0", "#171717"); // --primitive-neutral-900
-      root.style.setProperty("--p-surface-50", "#1f1f1f");
-      root.style.setProperty("--p-surface-100", "#262626"); // --primitive-neutral-800
-      root.style.setProperty("--p-surface-200", "#333333");
-      root.style.setProperty("--p-surface-300", "#404040"); // --primitive-neutral-700
-      root.style.setProperty("--p-surface-400", "#525252");
-      root.style.setProperty("--p-surface-500", "#737373"); // --primitive-neutral-600
-      root.style.setProperty("--p-surface-600", "#a3a3a3"); // --primitive-neutral-500
-      root.style.setProperty("--p-surface-700", "#d4d4d4"); // --primitive-neutral-400
-      root.style.setProperty("--p-surface-800", "#e5e5e5"); // --primitive-neutral-300
-      root.style.setProperty("--p-surface-900", "#f5f5f5"); // --primitive-neutral-100
-      root.style.setProperty("--p-text-color", "#ffffff");
-      root.style.setProperty("--p-text-color-secondary", "#a3a3a3");
+      root.style.setProperty("--p-surface-0", "var(--p-surface-0)"); // --primitive-neutral-900
+      root.style.setProperty("--p-surface-50", "var(--p-surface-50)");
+      root.style.setProperty("--p-surface-100", "var(--p-surface-100)"); // --primitive-neutral-800
+      root.style.setProperty("--p-surface-200", "var(--primitive-neutral-800)");
+      root.style.setProperty("--p-surface-300", "var(--p-surface-300)"); // --primitive-neutral-700
+      root.style.setProperty("--p-surface-400", "var(--p-surface-400)");
+      root.style.setProperty("--p-surface-500", "var(--p-surface-500)"); // --primitive-neutral-600
+      root.style.setProperty("--p-surface-600", "var(--p-text-color-secondary)"); // --primitive-neutral-500
+      root.style.setProperty("--p-surface-700", "var(--p-surface-700)"); // --primitive-neutral-400
+      root.style.setProperty("--p-surface-800", "var(--p-surface-800)"); // --primitive-neutral-300
+      root.style.setProperty("--p-surface-900", "var(--p-surface-900)"); // --primitive-neutral-100
+      root.style.setProperty("--p-text-color", "var(--color-text-on-primary)");
+      root.style.setProperty("--p-text-color-secondary", "var(--p-text-color-secondary)");
     } else {
       // Light mode: Standard surface scale from design tokens
-      root.style.setProperty("--p-surface-0", "#ffffff"); // --surface-primary
-      root.style.setProperty("--p-surface-50", "#f8faf9"); // --surface-secondary
-      root.style.setProperty("--p-surface-100", "#f1f5f4");
-      root.style.setProperty("--p-surface-200", "#e2e8f0");
-      root.style.setProperty("--p-surface-300", "#cbd5e1");
-      root.style.setProperty("--p-surface-400", "#94a3b8");
-      root.style.setProperty("--p-surface-500", "#64748b");
-      root.style.setProperty("--p-surface-600", "#475569");
-      root.style.setProperty("--p-surface-700", "#334155");
-      root.style.setProperty("--p-surface-800", "#1e293b");
-      root.style.setProperty("--p-surface-900", "#0f172a");
-      root.style.setProperty("--p-text-color", "#0f172a");
-      root.style.setProperty("--p-text-color-secondary", "#64748b");
+      root.style.setProperty("--p-surface-0", "var(--surface-primary)"); // --surface-primary
+      root.style.setProperty("--p-surface-50", "var(--p-surface-50)"); // --surface-secondary
+      root.style.setProperty("--p-surface-100", "var(--p-surface-100)");
+      root.style.setProperty("--p-surface-200", "var(--p-surface-border)");
+      root.style.setProperty("--p-surface-300", "var(--p-surface-300)");
+      root.style.setProperty("--p-surface-400", "var(--p-surface-400)");
+      root.style.setProperty("--p-surface-500", "var(--p-text-color-secondary)");
+      root.style.setProperty("--p-surface-600", "var(--p-surface-600)");
+      root.style.setProperty("--p-surface-700", "var(--p-surface-700)");
+      root.style.setProperty("--p-surface-800", "var(--p-surface-800)");
+      root.style.setProperty("--p-surface-900", "var(--p-text-color)");
+      root.style.setProperty("--p-text-color", "var(--p-text-color)");
+      root.style.setProperty("--p-text-color-secondary", "var(--p-text-color-secondary)");
     }
   }
 

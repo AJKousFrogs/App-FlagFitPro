@@ -23,7 +23,7 @@
   gap: var(--space-1);
   padding: var(--space-4);
   border-radius: var(--radius-md);
-  border: 0.0625rem solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   background: var(--surface-card);
   color: inherit;
   text-decoration: none;
@@ -33,7 +33,7 @@
 }
 
 .staff-hub-link:hover {
-  transform: translateY(-0.125rem);
+  transform: translateY(-var(--border-2));
   box-shadow: var(--shadow-sm);
 }
 

@@ -849,9 +849,9 @@ class HealthChecker {
 
         // Check for critical functions
         const criticalFunctions = [
-          "auth-me.cjs",
-          "dashboard.cjs",
-          "auth-login.cjs",
+          "auth-me.js",
+          "dashboard.js",
+          "auth-login.js",
         ];
         let criticalFound = 0;
 
@@ -872,7 +872,7 @@ class HealthChecker {
 
       // Check error handler utility exists
       try {
-        await fs.access("./netlify/functions/utils/error-handler.cjs");
+        await fs.access("./netlify/functions/utils/error-handler.js");
         api.score += 15; // 15 points for error handler
       } catch {
         api.issues.push("Missing error handler utility");

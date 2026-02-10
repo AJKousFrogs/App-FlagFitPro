@@ -14,8 +14,8 @@
 }
 
 .ring-outer {
-  width: 7.5rem;
-  height: 7.5rem;
+  width: var(--size-120);
+  height: var(--size-120);
   border-radius: 50%;
   border: var(--border-4) solid var(--color-status-success);
   display: flex;
@@ -203,8 +203,8 @@
 }
 
 .score-ring {
-  width: 7.5rem;
-  height: 7.5rem;
+  width: var(--size-120);
+  height: var(--size-120);
   border-radius: 50%;
   border: var(--border-4) solid var(--color-status-success);
   display: flex;
@@ -393,8 +393,8 @@
 @include respond-to(md) {
   .ring-outer,
   .score-ring {
-    width: 6.25rem;
-    height: 6.25rem;
+    width: var(--size-100);
+    height: var(--size-100);
   }
 
   .score-value {

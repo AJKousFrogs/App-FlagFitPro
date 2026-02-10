@@ -129,14 +129,6 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
-.form-row.three-col {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.form-row.two-col {
-  grid-template-columns: repeat(2, 1fr);
-}
-
 .form-field {
   display: flex;
   flex-direction: column;
@@ -236,41 +228,6 @@
   padding-top: var(--space-6);
   border-top: var(--border-1) solid var(--color-border-secondary);
   margin-top: var(--space-6);
-}
-
-/* ================================================================
-   PLAY TRACKER CARD
-   ================================================================ */
-
-.game-header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-  padding: var(--space-5) var(--space-6);
-  background: linear-gradient(to right, var(--surface-secondary), transparent);
-  border-bottom: var(--border-1) solid var(--color-border-secondary);
-}
-
-.game-header-content h3 {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.game-header-content h3::before {
-  content: "";
-  display: block;
-  width: var(--space-1);
-  height: var(--space-5);
-  background: var(--ds-primary-green);
-  border-radius: var(--radius-sm);
 }
 
 .score-display {
@@ -521,45 +478,6 @@
 }
 
 /* ================================================================
-   GAMES LIST TABLE - Column-specific styling
-
-
-/* Column-specific classes to apply in template */
-.col-date {
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.col-opponent {
-  font-weight: var(--ds-font-weight-semibold);
-}
-
-.col-location {
-  color: var(--color-text-secondary);
-}
-
-.col-score {
-  font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
-  font-weight: var(--ds-font-weight-bold);
-  letter-spacing: var(--ds-letter-spacing-wide);
-}
-
-/* ================================================================
-   FORM CONTROLS - Full width styling
-   ================================================================ */
-
-.game-form-card,
-.play-tracker-card {
-  .form-control-full {
-    width: 100%;
-  }
-
-  /* Hide number input spinner buttons */
-  .no-spinner {
-    /* Applied via component class */
-  }
-}
-
-/* ================================================================
    RESPONSIVE - Mobile Optimized (Chrome & Safari)
    ================================================================ */
 
@@ -605,9 +523,7 @@
     gap: var(--space-3);
   }
 
-  .form-row.four-col,
-  .form-row.three-col,
-  .form-row.two-col {
+  .form-row.four-col {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
@@ -667,21 +583,6 @@
       .play-type-label-text {
         font-size: var(--ds-font-size-md);
       }
-    }
-  }
-
-  // ================================================================
-  // GAME HEADER - MOBILE STACK
-  // ================================================================
-
-  .game-header-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-4);
-    padding: var(--space-4);
-
-    h3 {
-      font-size: var(--ds-font-size-xl);
     }
   }
 
@@ -765,7 +666,7 @@
 
     // Force table to allow horizontal scroll
     :global(table) {
-      min-width: 50rem; // Minimum width to trigger scroll
+      min-width: var(--dialog-max-width-2xl); // Minimum width to trigger scroll
     }
 
     // Sticky first column (Date) for context while scrolling
@@ -788,17 +689,6 @@
     :global(th),
     :global(td) {
       white-space: nowrap;
-    }
-
-    // Action buttons - touch-friendly
-    .action-cell {
-      gap: var(--space-1);
-
-      .action-btn {
-        min-width: var(--space-10);
-        min-height: var(--space-10);
-        padding: var(--space-2);
-      }
     }
 
     // Tags - smaller on mobile
@@ -876,49 +766,10 @@
   }
 }
 
-/* ================================================================
-   EMPTY STATE CONTAINER
-   ================================================================ */
-
-.empty-state-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-8);
-  text-align: center;
-  min-height: calc(var(--space-20) * 3 + var(--space-6));
-}
-
-.empty-state-container i {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-4);
-}
-
-.empty-state-container p {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
-
 /* Small mobile - Extra compact */
 @include respond-to(sm) {
   .game-tracker-page {
     padding: var(--space-2);
-  }
-
-  .empty-state-container {
-    padding: var(--space-6);
-    min-height: calc(var(--space-10) * 5);
-  }
-
-  .game-header-content {
-    padding: var(--space-3);
-
-    h3 {
-      font-size: var(--ds-font-size-md);
-    }
   }
 
   .quick-stats-grid {
@@ -932,13 +783,6 @@
 
   .outcome-buttons {
     grid-template-columns: 1fr; // Stack outcomes vertically
-  }
-
-  .form-actions {
-    .btn-full-width {
-      width: 100%;
-      justify-content: center;
-    }
   }
 
   // Smaller cards/sections

@@ -162,16 +162,13 @@ database/
 └── seed-three-guides-knowledge.sql (25 KB) ← Speed+Preseason+Hamstrings combined
 ```
 
-### Documentation (8 files)
+### Documentation (5 files)
 
 ```
 database/
 ├── SHOULDER_KNOWLEDGE_README.md
 ├── CALF_ACHILLES_KNOWLEDGE_README.md
-├── THREE_GUIDES_SUMMARY.md
-├── KNOWLEDGE_BASE_SUMMARY.md
 ├── MASTER_KNOWLEDGE_BASE_SUMMARY.md (this file)
-├── IMPORT_SUMMARY.txt
 ├── QUICK_REFERENCE.md
 └── CALF_ACHILLES_QUICK_REFERENCE.md
 ```

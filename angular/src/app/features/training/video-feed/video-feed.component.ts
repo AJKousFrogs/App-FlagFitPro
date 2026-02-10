@@ -36,7 +36,6 @@ import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
-import { Ripple } from "primeng/ripple";
 import { Skeleton } from "primeng/skeleton";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -81,7 +80,6 @@ interface FilterChip {
     Tooltip,
 
     Avatar,
-    Ripple,
     MainLayoutComponent,
     ButtonComponent,
     StatusTagComponent,
@@ -111,7 +109,6 @@ interface FilterChip {
                   pTooltip="Browse all training videos"
                   tooltipPosition="bottom"
                   (click)="scrollToVideos()"
-                  pRipple
                 >
                   <i class="pi pi-video"></i>
                   <span class="stat-number">{{ totalVideos() }}</span>
@@ -123,7 +120,6 @@ interface FilterChip {
                   pTooltip="View all creators"
                   tooltipPosition="bottom"
                   (click)="scrollToCreators()"
-                  pRipple
                 >
                   <i class="pi pi-star"></i>
                   <span class="stat-number">{{ totalCreators() }}</span>
@@ -167,7 +163,6 @@ interface FilterChip {
                   (click)="togglePositionFilter(chip)"
                   [attr.aria-pressed]="chip.active"
                   [attr.aria-label]="'Filter by ' + chip.label"
-                  pRipple
                 >
                   @if (chip.icon) {
                     <i [class]="chip.icon"></i>
@@ -192,7 +187,6 @@ interface FilterChip {
                   (click)="toggleFocusFilter(chip)"
                   [attr.aria-pressed]="chip.active"
                   [attr.aria-label]="'Filter by ' + chip.label"
-                  pRipple
                 >
                   <span class="chip-label">{{ chip.label }}</span>
                 </button>
@@ -227,22 +221,25 @@ interface FilterChip {
                 <div class="video-card skeleton-card">
                   <p-skeleton
                     width="100%"
-                    height="280px"
-                    borderRadius="16px"
+                    height="calc(var(--size-200) * 1.4)"
+                    borderRadius="var(--radius-2xl)"
                   ></p-skeleton>
                   <div class="skeleton-content">
-                    <p-skeleton width="70%" height="1.2rem"></p-skeleton>
-                    <p-skeleton width="100%" height="0.9rem"></p-skeleton>
+                    <p-skeleton width="70%" height="var(--space-5)"></p-skeleton>
+                    <p-skeleton
+                      width="100%"
+                      height="var(--ds-font-size-sm)"
+                    ></p-skeleton>
                     <div class="skeleton-meta">
                       <p-skeleton
-                        width="80px"
-                        height="24px"
-                        borderRadius="12px"
+                        width="var(--size-80)"
+                        height="var(--space-6)"
+                        borderRadius="var(--radius-xl)"
                       ></p-skeleton>
                       <p-skeleton
-                        width="60px"
-                        height="24px"
-                        borderRadius="12px"
+                        width="calc(var(--size-120) * 0.5)"
+                        height="var(--space-6)"
+                        borderRadius="var(--radius-xl)"
                       ></p-skeleton>
                     </div>
                   </div>

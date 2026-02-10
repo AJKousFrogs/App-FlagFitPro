@@ -41,23 +41,23 @@
 .hero-gradient-2 {
   position: absolute;
   border-radius: var(--radius-full);
-  filter: blur(7.5rem);
+  filter: blur(var(--size-120));
   opacity: var(--opacity-minimal);
   animation: float 20s ease-in-out infinite;
 }
 
 .hero-gradient-1 {
-  width: 37.5rem;
-  height: 37.5rem;
+  width: calc(var(--size-200) * 3);
+  height: calc(var(--size-200) * 3);
   background: var(--color-brand-primary);
-  top: -15.625rem;
+  top: -var(--card-min-height-xl);
   right: calc(var(--size-200) * -1);
   animation-delay: 0s;
 }
 
 .hero-gradient-2 {
-  width: 31.25rem;
-  height: 31.25rem;
+  width: var(--dialog-max-width-lg);
+  height: var(--dialog-max-width-lg);
   background: var(--color-brand-secondary);
   bottom: calc(var(--size-200) * -1);
   left: calc(var(--size-150) * -1);
@@ -70,13 +70,22 @@
     transform: translate(0, 0) scale(1);
   }
   25% {
-    transform: translate(1.875rem, -1.875rem) scale(1.05);
+    transform: translate(
+        calc(var(--space-6) + var(--space-1) + var(--space-0-5)),
+        calc(-1 * (var(--space-6) + var(--space-1) + var(--space-0-5)))
+      )
+      scale(1.05);
   }
   50% {
-    transform: translate(-1.25rem, var(--ds-font-size-xl)) scale(0.95);
+    transform: translate(calc(-1 * var(--space-5)), var(--ds-font-size-xl))
+      scale(0.95);
   }
   75% {
-    transform: translate(1.25rem, 0.625rem) scale(1.02);
+    transform: translate(
+        var(--space-5),
+        calc(var(--space-2) + var(--space-0-5))
+      )
+      scale(1.02);
   }
 }
 
@@ -104,7 +113,7 @@
     opacity: var(--opacity-quarter);
   }
   50% {
-    transform: translateY(-6.25rem) scale(1.5);
+    transform: translateY(-var(--size-100)) scale(1.5);
     opacity: var(--opacity-muted);
   }
 }
@@ -124,7 +133,9 @@
 /* Staggered animation for hero content */
 .animate-item {
   opacity: 0;
-  transform: translateY(1.875rem);
+  transform: translateY(
+    calc(var(--space-6) + var(--space-1) + var(--space-0-5))
+  );
   transition:
     opacity var(--transition-slower) var(--ease-standard),
     transform var(--transition-slower) var(--ease-standard);
@@ -173,8 +184,8 @@
 }
 
 .hero-logo {
-  width: 6.25rem;
-  height: 6.25rem;
+  width: var(--size-100);
+  height: var(--size-100);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,7 +204,7 @@
 .merlin-icon {
   font-size: var(--ds-font-size-3xl);
   line-height: var(--ds-line-height-1);
-  filter: drop-shadow(0 0.125rem 0.25rem var(--surface-overlay-light));
+  filter: drop-shadow(0 var(--border-2) var(--space-1) var(--surface-overlay-light));
 }
 
 @keyframes logo-pulse {
@@ -212,11 +223,11 @@
   padding: var(--space-2) var(--space-5);
   background: linear-gradient(
     135deg,
-    rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1) 0%,
-    rgba(var(--color-brand-secondary-rgb, 139, 92, 246), 0.1) 100%
+    rgba(var(--color-brand-primary-rgb), 0.1) 0%,
+    rgba(var(--color-brand-secondary-rgb), 0.1) 100%
   );
   border: var(--border-1) solid
-    rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
+    rgba(var(--color-brand-primary-rgb), 0.2);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
@@ -287,7 +298,7 @@
 
 .countdown-value {
   font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
-  font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-4-5rem));
+  font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-2xl));
   font-weight: var(--ds-font-weight-bold);
   line-height: var(--ds-line-height-1);
   color: var(--color-text-primary);
@@ -302,7 +313,7 @@
 }
 
 .countdown-unit {
-  font-size: clamp(var(--ds-font-size-0-5rem), 1.5vw, var(--ds-font-size-sm));
+  font-size: clamp(var(--ds-font-size-xs), 1.5vw, var(--ds-font-size-sm));
   font-weight: var(--ds-font-weight-semibold);
   letter-spacing: var(--ds-letter-spacing-wide);
   color: var(--color-text-secondary);
@@ -311,7 +322,7 @@
 
 .countdown-separator {
   font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
-  font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-4-5rem));
+  font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-2xl));
   font-weight: var(--ds-font-weight-bold);
   line-height: var(--ds-line-height-1);
   color: var(--color-text-primary);
@@ -320,7 +331,7 @@
 }
 
 .hero-title {
-  font-size: clamp(var(--ds-font-size-2-5rem), 8vw, var(--ds-font-size-3xl));
+  font-size: clamp(var(--ds-font-size-2xl), 8vw, var(--ds-font-size-3xl));
   font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-6);
   line-height: var(--ds-line-height-1-1);
@@ -366,7 +377,7 @@
 .hero-stat {
   text-align: center;
   opacity: 0;
-  transform: translateY(1.25rem);
+  transform: translateY(var(--space-5));
   animation: stat-appear 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: calc(0.8s + var(--stat-delay, 0) * 0.1s);
 }
@@ -443,7 +454,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(0.5rem);
+    transform: translateY(var(--space-2));
   }
 }
 
@@ -480,7 +491,7 @@
   }
   50% {
     opacity: var(--opacity-quarter);
-    transform: translateX(-50%) translateY(0.625rem);
+    transform: translateX(-50%) translateY(calc(var(--space-2) + var(--space-0-5)));
   }
 }
 
@@ -535,8 +546,8 @@
 }
 
 .feature-icon-wrapper {
-  width: 5rem;
-  height: 5rem;
+  width: var(--size-80);
+  height: var(--size-80);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -634,7 +645,7 @@
   }
 
   &:hover i {
-    transform: translateX(0.25rem);
+    transform: translateX(var(--space-1));
   }
 }
 
@@ -721,7 +732,7 @@
 
   &:hover {
     color: var(--color-brand-primary);
-    transform: translateX(0.25rem);
+    transform: translateX(var(--space-1));
   }
 }
 
@@ -751,8 +762,8 @@
   }
 
   .hero-logo {
-    width: 5rem;
-    height: 5rem;
+    width: var(--size-80);
+    height: var(--size-80);
   }
 
   .merlin-icon {

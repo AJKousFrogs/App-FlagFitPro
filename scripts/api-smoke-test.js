@@ -19,8 +19,8 @@
  *   node scripts/api-smoke-test.js https://your-site.netlify.app YOUR_JWT_TOKEN
  */
 
-const https = require("https");
-const http = require("http");
+import https from "https";
+import http from "http";
 
 // Colors for terminal output
 const colors = {

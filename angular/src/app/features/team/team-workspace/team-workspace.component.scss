@@ -72,13 +72,13 @@
 
   &:hover {
     border-color: var(--ds-primary-green);
-    transform: translateY(-0.25rem);
+    transform: translateY(-var(--space-1));
     box-shadow: var(--shadow-md);
     background: var(--surface-hover);
   }
 
   &:active {
-    transform: translateY(-0.125rem);
+    transform: translateY(-var(--border-2));
   }
 
   // Tablet: Reduce padding
@@ -109,7 +109,7 @@
     @include respond-to(md) {
       font-size: calc(
         var(--ds-font-size-2xl) + var(--space-1)
-      ); // 1.75rem on mobile
+      ); // var(--badge-lg) on mobile
       margin-bottom: var(--space-3);
     }
   }
@@ -120,7 +120,7 @@
 
   // Card title
   h3 {
-    font-size: var(--ds-font-size-2xl); // 1.125rem
+    font-size: var(--ds-font-size-2xl); // var(--icon-base)
     font-weight: var(--ds-font-weight-semibold); // 600
     color: var(--color-text-primary);
     margin: 0 0 var(--space-2) 0;
@@ -140,7 +140,7 @@
     line-height: var(--ds-line-height-body);
 
     @include respond-to(md) {
-      font-size: var(--ds-font-size-xs); // 0.75rem on mobile
+      font-size: var(--ds-font-size-xs); // 0.calc(var(--size-200) * 6) on mobile
       line-height: var(--ds-line-height-body-sm);
     }
   }

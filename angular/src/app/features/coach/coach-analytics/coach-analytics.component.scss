@@ -44,12 +44,6 @@
   color: var(--color-text-secondary);
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
 .header-filters {
   display: flex;
   gap: var(--space-3);
@@ -129,7 +123,7 @@
 
 .analytics-grid {
   display: grid;
-  grid-template-columns: 1fr 20rem;
+  grid-template-columns: 1fr var(--element-max-width-md);
   gap: var(--space-6);
 }
 
@@ -212,48 +206,8 @@
 }
 
 .chart-container {
-  height: var(--chart-min-height-md); /* 18.75rem */
+  height: var(--chart-min-height-md); /* var(--chart-min-height-md) */
   position: relative;
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
-  gap: var(--space-6);
-  margin-bottom: var(--space-6);
-}
-
-.trends-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-.trend-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-4);
-}
-
-.trend-header h3 {
-  margin: 0;
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.trend-summary {
-  display: flex;
-  gap: var(--space-4);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
-
-.leaderboard-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
 }
 
 .feedback-section {
@@ -262,37 +216,11 @@
   gap: var(--space-6);
 }
 
-.feedback-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
-  gap: var(--space-4);
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3) 0;
-  border-bottom: 0.0625rem solid var(--surface-border);
-}
-
-.stat-row:last-child {
-  border-bottom: none;
-}
-
 @include respond-to(lg) {
   .analytics-grid {
     grid-template-columns: 1fr;
   }
   .side-column {
     order: -1;
-  }
-
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .feedback-grid {
-    grid-template-columns: 1fr;
   }
 }

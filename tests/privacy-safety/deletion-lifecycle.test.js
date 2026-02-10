@@ -7,7 +7,7 @@
  * 3. Deletion processed -> PII deleted, audit log records completion
  * 4. Emergency medical records are NOT deleted until 7-year retention threshold
  *
- * Based on: account-deletion.cjs, process-deletions/index.ts,
+ * Based on: account-deletion.js, process-deletions/index.ts,
  *           and migration 073_deletion_retention_enforcement.sql
  */
 

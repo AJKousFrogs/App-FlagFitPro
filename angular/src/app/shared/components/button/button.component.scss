@@ -65,7 +65,7 @@ a.btn {
   justify-content: center;
   gap: var(--space-2);
 
-  // FIXED HEIGHT - exactly 2.75rem, not min-height
+  // FIXED HEIGHT - exactly 2.calc(var(--size-200) * 6), not min-height
   height: var(--button-height-md);
 
   // FIXED PADDING - identical for all variants
@@ -128,7 +128,7 @@ a.btn {
     background-color: var(--color-text-on-primary);
     color: var(--ds-primary-green);
     border-color: var(--ds-primary-green);
-    transform: translateY(-0.125rem);
+    transform: translateY(-var(--border-2));
     box-shadow:
       0 0.5rem 1.25rem rgba(var(--ds-primary-green-rgb), 0.3),
       var(--shadow-sm);
@@ -153,7 +153,7 @@ a.btn {
   outline-offset: var(--focus-outline-offset);
   box-shadow:
     var(--shadow-md),
-    0 0 0 0.25rem rgba(var(--ds-primary-green-rgb), 0.25);
+    0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.25);
 }
 
 .btn:focus:not(:focus-visible) {
@@ -302,7 +302,7 @@ a.btn {
   outline-color: var(--color-status-error);
   box-shadow:
     var(--shadow-md),
-    0 0 0 0.25rem rgba(var(--primitive-error-500-rgb), 0.25);
+    0 0 0 var(--space-1) rgba(var(--primitive-error-500-rgb), 0.25);
 }
 
 // SUCCESS - Same as primary (green)
@@ -353,7 +353,7 @@ a.btn {
 // ============================================
 
 .btn.btn-icon-only {
-  width: var(--button-height-md); /* 2.75rem */
+  width: var(--button-height-md); /* 2.calc(var(--size-200) * 6) */
   height: var(--button-height-md);
   padding: 0;
   flex-shrink: 0;
@@ -406,8 +406,8 @@ a.btn {
 
 .btn-content.visually-hidden {
   position: absolute;
-  width: 0.0625rem;
-  height: 0.0625rem;
+  width: var(--border-1);
+  height: var(--border-1);
   padding: 0;
   margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
@@ -475,7 +475,7 @@ a.btn {
 
 @media (prefers-contrast: high) {
   .btn {
-    border-width: 0.125rem;
+  border-width: var(--border-2);
   }
 
   .btn-text {
@@ -483,7 +483,7 @@ a.btn {
   }
 
   .btn:focus-visible {
-    outline-width: 0.1875rem;
+    outline-width: var(--space-0-75);
   }
 }
 

@@ -476,12 +476,9 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach",
-    loadComponent: () =>
-      import("../../features/coach/coach.component").then(
-        (m) => m.CoachComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "hub" },
+    redirectTo: "coach/dashboard",
+    pathMatch: "full",
+    data: { entry: "hub" },
   },
   {
     path: "coach/dashboard",
@@ -528,6 +525,12 @@ export const teamRoutes: Routes = [
       ),
     canActivate: [authGuard],
     data: { preload: true, priority: "medium", entry: "internal" }, // Team management
+  },
+  {
+    path: "coach/team-management",
+    redirectTo: "coach/team",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/programs",

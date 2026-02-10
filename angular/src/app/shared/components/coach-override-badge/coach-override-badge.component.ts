@@ -76,7 +76,7 @@ export type CoachOverridePlacement =
         transition: all var(--motion-fast) var(--ease-standard);
         background: var(--color-status-info-subtle);
         color: var(--color-status-info);
-        border-left: 3px solid var(--color-status-info);
+        border-left: var(--space-0-75) solid var(--color-status-info);
       }
 
       /* Placement Styles */

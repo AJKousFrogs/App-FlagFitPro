@@ -20,7 +20,7 @@
   align-items: center;
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-3);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
   flex-wrap: wrap;
   gap: var(--space-2);
 
@@ -55,7 +55,7 @@
   grid-template-columns: repeat(7, 1fr);
   gap: calc(
     var(--ds-space-1) / 4
-  ); /* Intentionally 0.0625rem for calendar grid lines */
+  ); /* Intentionally var(--border-1) for calendar grid lines */
   margin-bottom: var(--space-2);
 
   .weekday {
@@ -72,9 +72,9 @@
   grid-template-columns: repeat(7, 1fr);
   gap: calc(
     var(--ds-space-1) / 4
-  ); /* Intentionally 0.0625rem for calendar grid lines */
+  ); /* Intentionally var(--border-1) for calendar grid lines */
   background: var(--ds-border-subtle);
-  border: 0.0625rem solid var(--ds-border-default);
+  border: var(--border-1) solid var(--ds-border-default);
   border-radius: var(--radius-md);
 }
 
@@ -131,19 +131,19 @@
     }
 
     &.type-practice {
-      border-left: 0.1875rem solid var(--ds-primary-green);
+      border-left: var(--space-0-75) solid var(--ds-primary-green);
     }
 
     &.type-game {
-      border-left: 0.1875rem solid var(--primitive-blue-500);
+      border-left: var(--space-0-75) solid var(--primitive-blue-500);
     }
 
     &.type-tournament {
-      border-left: 0.1875rem solid var(--primitive-warning-500);
+      border-left: var(--space-0-75) solid var(--primitive-warning-500);
     }
 
     &.type-meeting {
-      border-left: 0.1875rem solid var(--primitive-purple-500);
+      border-left: var(--space-0-75) solid var(--primitive-purple-500);
     }
   }
 
@@ -193,8 +193,8 @@
 .event-card {
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 0.0625rem solid var(--ds-border-default);
-  border-left: 0.25rem solid var(--ds-primary-green);
+  border: var(--border-1) solid var(--ds-border-default);
+  border-left: var(--space-1) solid var(--ds-primary-green);
   overflow: hidden;
 
   &.type-game {
@@ -216,7 +216,7 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background: var(--ds-surface-base);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   .event-title {
     display: flex;
@@ -249,7 +249,7 @@
 
 .event-details {
   padding: var(--space-3) var(--space-4);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   p {
     margin: 0;
@@ -262,7 +262,7 @@
   display: flex;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   .rsvp-item {
     font-size: var(--ds-font-size-md);
@@ -357,7 +357,7 @@
 
 .form-section {
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--ds-border-subtle);
 
   h5 {
     margin: 0 0 var(--space-2) 0;
@@ -468,7 +468,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2);
-  border-bottom: 0.0625rem solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--ds-border-subtle);
   font-size: var(--ds-font-size-md);
 
   &:last-child {
@@ -502,7 +502,7 @@
   justify-content: flex-end;
   gap: var(--space-2);
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--ds-border-subtle);
 }
 
 // Responsive

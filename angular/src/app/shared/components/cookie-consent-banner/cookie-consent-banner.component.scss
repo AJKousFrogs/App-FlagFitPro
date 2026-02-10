@@ -18,7 +18,7 @@
   border-top: var(--border-1) solid var(--color-border-subtle);
   box-shadow: var(--shadow-lg), var(--shadow-sm);
   animation: slide-up var(--motion-slow) var(--ease-decelerate);
-  backdrop-filter: blur(0.75rem);
+  backdrop-filter: blur(calc(var(--size-200) * 0.375));
 }
 
 @keyframes slide-up {
@@ -33,7 +33,7 @@
 }
 
 .cookie-content {
-  max-width: var(--container-max-lg); /* 75rem */
+  max-width: var(--container-max-lg); /* calc(var(--size-200) * 6) */
   margin: 0 auto;
   padding: var(--space-8) var(--space-6);
   display: flex;

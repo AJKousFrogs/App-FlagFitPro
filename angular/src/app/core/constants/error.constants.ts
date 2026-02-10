@@ -81,7 +81,7 @@ export enum ErrorType {
   NETWORK = "network",
   CLIENT = "client",
 
-  // Backend errorType values (from error-handler.cjs)
+  // Backend errorType values (from error-handler.js)
   VALIDATION = "validation_error",
   AUTHENTICATION = "authentication_error",
   AUTHORIZATION = "authorization_error",

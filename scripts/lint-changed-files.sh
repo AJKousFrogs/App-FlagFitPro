@@ -131,7 +131,7 @@ if [ ${#SCSS_FILES[@]} -gt 0 ]; then
     echo -e "${BLUE}Checking: $RELATIVE_FILE${NC}"
     
     # Run stylelint with error severity (strict mode)
-    if ! npx stylelint "$RELATIVE_FILE" --config ../.stylelintrc.cjs --formatter verbose; then
+    if ! npx stylelint "$RELATIVE_FILE" --config ../stylelint.config.js --formatter verbose; then
       echo -e "${RED}❌ Violations found in: $RELATIVE_FILE${NC}"
       FAILED=1
     else

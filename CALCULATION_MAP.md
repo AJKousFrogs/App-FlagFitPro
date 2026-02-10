@@ -17,14 +17,14 @@ This document lists calculation hotspots responsible for athlete performance met
   - Formula: threshold gate (> 1.5) triggers caps
   - Risk level: Medium
 
-- `netlify/functions/load-management.cjs`
+- `netlify/functions/load-management.js`
   - Function: GET `/acwr`
   - Inputs: authenticated user
   - Outputs: stored `acwr`, `acute_load`, `chronic_load`
   - Formula: none (reads from persisted load monitoring)
   - Risk level: Medium
 
-- `netlify/functions/load-management.cjs`
+- `netlify/functions/load-management.js`
   - Function: GET `/api/load-management/acwr`
   - Inputs: training sessions (rpe, duration)
   - Outputs: acute, chronic, ACWR ratio, status label
@@ -63,7 +63,7 @@ This document lists calculation hotspots responsible for athlete performance met
   - Formula: server-side weighted scoring
   - Risk level: High (core readiness logic is server-side)
 
-- `netlify/functions/calc-readiness.cjs`
+- `netlify/functions/calc-readiness.js`
   - Function: `/api/calc-readiness`
   - Inputs: wellness check-in metrics, weekly training load
   - Outputs: readiness score and recommendations
@@ -101,19 +101,19 @@ This document lists calculation hotspots responsible for athlete performance met
   - Risk level: Low
 
 ## Performance Scores / Analytics
-- `netlify/functions/dashboard.cjs`
+- `netlify/functions/dashboard.js`
   - Formula: performance score = `100 − (avgRpe − 5) × 10`, clamped
   - Inputs: last 30 days training sessions
   - Risk level: Medium
 
-- `netlify/functions/analytics.cjs`
+- `netlify/functions/analytics.js`
   - Functions: performance trends, averages, grouped performance by type
   - Inputs: performance metrics tables
   - Outputs: per-week averages, top averages, summaries
   - Formula: average of performance_score with rounding to 1 decimal
   - Risk level: Medium
 
-- `netlify/functions/performance-data.cjs`
+- `netlify/functions/performance-data.js`
   - Function: `calculatePerformanceTrends`
   - Inputs: performance tests data
   - Outputs: trends, deltas, averages

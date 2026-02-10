@@ -510,23 +510,23 @@ interface MonthlyStats {
                 @for (i of [1, 2, 3]; track i) {
                   <div class="session-item session-item-skeleton">
                     <div class="session-info">
-                      <p-skeleton width="60%" height="1.25rem"></p-skeleton>
+                      <p-skeleton width="60%" height="var(--space-5)"></p-skeleton>
                       <p-skeleton
                         width="80%"
-                        height="0.875rem"
+                        height="var(--ds-font-size-sm)"
                         class="skeleton-date"
                       ></p-skeleton>
                       <p-skeleton
                         width="40%"
-                        height="0.75rem"
+                        height="var(--ds-font-size-xs)"
                         class="skeleton-duration"
                       ></p-skeleton>
                     </div>
                     <div class="session-actions">
                       <p-skeleton
-                        width="5rem"
-                        height="1.5rem"
-                        borderRadius="1rem"
+                        width="var(--size-80)"
+                        height="var(--space-6)"
+                        borderRadius="var(--radius-2xl)"
                       ></p-skeleton>
                     </div>
                   </div>

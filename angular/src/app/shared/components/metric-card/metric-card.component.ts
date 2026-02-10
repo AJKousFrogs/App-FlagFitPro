@@ -114,7 +114,7 @@ export interface MetricTrend {
       <ng-content select="[metric-footer]"></ng-content>
     </div>
   `,
-  styleUrls: ["./metric-card.component.scss"],
+  styleUrl: "./metric-card.component.scss",
 })
 export class MetricCardComponent {
   // Required inputs

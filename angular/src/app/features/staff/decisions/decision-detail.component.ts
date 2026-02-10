@@ -365,7 +365,10 @@ import type {
 
       .detail-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        grid-template-columns: repeat(
+          auto-fit,
+          minmax(calc(var(--size-200) * 2), 1fr)
+        );
         gap: var(--space-4);
         margin-top: var(--space-6);
       }
@@ -431,7 +434,7 @@ import type {
       .data-points-list li,
       .constraints-list li {
         padding: var(--space-2) 0;
-        border-bottom: 1px solid var(--color-border-secondary);
+        border-bottom: var(--border-1) solid var(--color-border-secondary);
       }
 
       .data-quality {

@@ -35,6 +35,8 @@ import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { DialogService } from "../../../../core/ui/dialog.service";
 import { ApiResponse } from "../../../../core/models/common.models";
+import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
+import { DesignTokens } from "../../../../shared/models/design-tokens";
 
 export interface Tournament {
   id: string;
@@ -247,7 +249,7 @@ interface EventTypeOption {
       [modal]="true"
       [visible]="showDialog()"
       (visibleChange)="showDialog.set($event)"
-      [breakpoints]="{ '640px': '95vw' }"
+      [breakpoints]="dialogBreakpoints"
       [draggable]="false"
       styleClass="training-tournament-dialog"
     >
@@ -414,6 +416,9 @@ interface EventTypeOption {
   styleUrl: "./tournament-calendar.component.scss",
 })
 export class TournamentCalendarComponent {
+  readonly dialogBreakpoints = {
+    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
+  };
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly dialogService = inject(DialogService);

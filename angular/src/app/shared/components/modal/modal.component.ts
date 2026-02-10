@@ -134,9 +134,7 @@ import { ButtonComponent } from "../button/button.component";
 
       app-modal .p-dialog {
         border-radius: var(--radius-xl);
-        box-shadow:
-          0 25px 50px -12px rgba(0, 0, 0, 0.25),
-          0 12px 24px -8px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-xl);
         overflow: hidden;
         animation: modal-scale-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
       }
@@ -169,7 +167,7 @@ import { ButtonComponent } from "../button/button.component";
       @keyframes modal-scale-in {
         from {
           opacity: 0;
-          transform: scale(0.95) translateY(-20px);
+          transform: scale(0.95) translateY(calc(var(--space-5) * -1));
         }
         to {
           opacity: 1;
@@ -182,9 +180,9 @@ import { ButtonComponent } from "../button/button.component";
          ================================ */
 
       app-modal .p-dialog-mask {
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        background: var(--surface-overlay);
+        backdrop-filter: blur(var(--overlay-blur));
+        -webkit-backdrop-filter: blur(var(--overlay-blur));
         animation: backdrop-fade 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
       }
 
@@ -195,7 +193,7 @@ import { ButtonComponent } from "../button/button.component";
         }
         to {
           opacity: 1;
-          backdrop-filter: blur(4px);
+          backdrop-filter: blur(var(--overlay-blur));
         }
       }
 
@@ -205,7 +203,7 @@ import { ButtonComponent } from "../button/button.component";
 
       app-modal .p-dialog-header {
         padding: var(--space-5);
-        border-bottom: 1px solid var(--color-border-secondary);
+        border-bottom: var(--border-1) solid var(--color-border-secondary);
         background: var(--surface-primary);
       }
 
@@ -223,8 +221,8 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       .modal-header-icon {
-        width: 48px;
-        height: 48px;
+        width: var(--icon-container-lg);
+        height: var(--icon-container-lg);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -245,7 +243,7 @@ import { ButtonComponent } from "../button/button.component";
 
       .icon-warning {
         background: var(--color-status-warning-light);
-        color: #92400e;
+        color: var(--color-warning-text-accessible);
       }
 
       .icon-error {
@@ -283,8 +281,8 @@ import { ButtonComponent } from "../button/button.component";
          ================================ */
 
       app-modal .p-dialog-header-close {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: var(--icon-container-md);
+        height: var(--icon-container-md);
         border-radius: var(--radius-lg);
         color: var(--color-text-secondary);
         transition:
@@ -306,9 +304,10 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       app-modal .p-dialog-header-close:focus-visible {
-        outline: 2px solid var(--ds-primary-green);
-        outline-offset: 2px;
-        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+        outline: var(--border-2) solid var(--ds-primary-green);
+        outline-offset: var(--border-2);
+        box-shadow: 0 0 0 var(--border-3)
+          rgba(var(--ds-primary-green-rgb), 0.3);
       }
 
       app-modal .p-dialog-header-close:focus:not(:focus-visible) {
@@ -336,7 +335,7 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       .modal-content-scrollable::-webkit-scrollbar {
-        width: 6px;
+        width: calc(var(--space-3) * 0.5);
       }
 
       .modal-content-scrollable::-webkit-scrollbar-track {
@@ -359,7 +358,7 @@ import { ButtonComponent } from "../button/button.component";
 
       app-modal .p-dialog-footer {
         padding: var(--space-4) var(--space-5);
-        border-top: 1px solid var(--color-border-secondary);
+        border-top: var(--border-1) solid var(--color-border-secondary);
         background: var(--surface-secondary);
       }
 
@@ -393,7 +392,7 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       app-modal .modal-btn {
-        min-width: 100px;
+        min-width: var(--size-100);
       }
 
       app-modal .modal-btn-cancel {
@@ -411,28 +410,28 @@ import { ButtonComponent } from "../button/button.component";
          ================================ */
 
       app-modal .modal-sm {
-        width: 400px;
-        max-width: 95vw;
+        width: var(--dialog-width-sm);
+        max-width: var(--dialog-width-xl);
       }
 
       app-modal .modal-md {
-        width: 560px;
-        max-width: 95vw;
+        width: var(--dialog-width-md);
+        max-width: var(--dialog-width-xl);
       }
 
       app-modal .modal-lg {
-        width: 800px;
-        max-width: 95vw;
+        width: var(--dialog-width-lg);
+        max-width: var(--dialog-width-xl);
       }
 
       app-modal .modal-xl {
-        width: 1140px;
-        max-width: 95vw;
+        width: var(--layout-width-3xl);
+        max-width: var(--dialog-width-xl);
       }
 
       app-modal .modal-full {
-        width: 95vw;
-        height: 90vh;
+        width: var(--dialog-width-xl);
+        height: var(--dialog-max-height);
       }
 
       app-modal .modal-full .p-dialog-content {
@@ -502,7 +501,7 @@ import { ButtonComponent } from "../button/button.component";
 
       [data-theme="dark"] app-modal .p-dialog-mask,
       .dark-theme app-modal .p-dialog-mask {
-        background: rgba(0, 0, 0, 0.7);
+        background: var(--surface-overlay);
       }
     `,
   ],

@@ -127,7 +127,7 @@
 @keyframes toast-slide-in-center {
   from {
     opacity: 0;
-    transform: translateY(-1.25rem) scale(0.95);
+    transform: translateY(calc(-1 * var(--space-5))) scale(0.95);
   }
   to {
     opacity: 1;

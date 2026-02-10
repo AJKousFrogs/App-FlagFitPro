@@ -35,6 +35,8 @@ import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { FeatureFlagsService } from "../../../core/services/feature-flags.service";
 import { ApiResponse } from "../../../core/models/common.models";
+import { DIALOG_WIDTHS } from "../../../core/utils/design-tokens.util";
+import { DesignTokens } from "../../../shared/models/design-tokens";
 
 interface ThrowingSession {
   id: string;
@@ -336,7 +338,7 @@ interface SessionTypeOption {
       [modal]="true"
       [visible]="showLogDialog()"
       (visibleChange)="showLogDialog.set($event)"
-      [breakpoints]="{ '640px': '95vw' }"
+      [breakpoints]="dialogBreakpoints"
       [draggable]="false"
       styleClass="qb-throwing-log-dialog"
     >
@@ -486,6 +488,9 @@ interface SessionTypeOption {
   styleUrl: "./qb-throwing-tracker.component.scss",
 })
 export class QbThrowingTrackerComponent {
+  readonly dialogBreakpoints = {
+    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
+  };
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);

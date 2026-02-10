@@ -21,8 +21,16 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
     <div class="dashboard-skeleton" aria-label="Loading dashboard...">
       <!-- Header Skeleton -->
       <div class="header-skeleton">
-        <app-skeleton variant="text" width="200px" height="32px"></app-skeleton>
-        <app-skeleton variant="text" width="300px" height="20px"></app-skeleton>
+        <app-skeleton
+          variant="text"
+          width="var(--size-200)"
+          height="var(--space-8)"
+        ></app-skeleton>
+        <app-skeleton
+          variant="text"
+          width="calc(var(--size-150) * 2)"
+          height="var(--space-5)"
+        ></app-skeleton>
       </div>
 
       <!-- Stat Cards Grid (4 cards) -->
@@ -32,27 +40,27 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
             <div class="stat-icon-skeleton">
               <app-skeleton
                 variant="circle"
-                width="48px"
-                height="48px"
+                width="var(--icon-container-lg)"
+                height="var(--icon-container-lg)"
               ></app-skeleton>
             </div>
             <div class="stat-content-skeleton">
               <app-skeleton
                 variant="text"
-                width="60px"
-                height="28px"
+                width="calc(var(--size-120) * 0.5)"
+                height="calc(var(--space-5) + var(--space-2))"
               ></app-skeleton>
               <app-skeleton
                 variant="text"
-                width="80px"
-                height="16px"
+                width="var(--size-80)"
+                height="var(--space-4)"
               ></app-skeleton>
             </div>
             <app-skeleton
               variant="rectangle"
-              width="60px"
-              height="24px"
-              borderRadius="12px"
+              width="calc(var(--size-120) * 0.5)"
+              height="var(--space-6)"
+              borderRadius="var(--radius-xl)"
             ></app-skeleton>
           </div>
         }
@@ -65,24 +73,24 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
           <div class="card-header-skeleton">
             <app-skeleton
               variant="text"
-              width="140px"
-              height="20px"
+              width="calc(var(--size-100) + var(--space-10))"
+              height="var(--space-5)"
             ></app-skeleton>
           </div>
           <div class="progress-skeleton">
             @for (day of [1, 2, 3, 4, 5, 6, 7]; track day) {
               <app-skeleton
                 variant="circle"
-                width="40px"
-                height="40px"
+                width="var(--icon-container-md)"
+                height="var(--icon-container-md)"
               ></app-skeleton>
             }
           </div>
           <app-skeleton
             variant="rectangle"
             width="100%"
-            height="8px"
-            borderRadius="4px"
+            height="var(--space-2)"
+            borderRadius="var(--radius-sm)"
           ></app-skeleton>
         </div>
 
@@ -91,27 +99,27 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
           <div class="card-header-skeleton">
             <app-skeleton
               variant="text"
-              width="140px"
-              height="20px"
+              width="calc(var(--size-100) + var(--space-10))"
+              height="var(--space-5)"
             ></app-skeleton>
           </div>
           @for (item of [1, 2, 3]; track item) {
             <div class="schedule-item-skeleton">
               <app-skeleton
                 variant="circle"
-                width="32px"
-                height="32px"
+                width="var(--space-8)"
+                height="var(--space-8)"
               ></app-skeleton>
               <div class="schedule-content-skeleton">
                 <app-skeleton
                   variant="text"
-                  width="120px"
-                  height="16px"
+                  width="var(--size-120)"
+                  height="var(--space-4)"
                 ></app-skeleton>
                 <app-skeleton
                   variant="text"
-                  width="80px"
-                  height="14px"
+                  width="var(--size-80)"
+                  height="var(--ds-font-size-sm)"
                 ></app-skeleton>
               </div>
             </div>
@@ -123,14 +131,14 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
           <div class="card-header-skeleton">
             <app-skeleton
               variant="text"
-              width="180px"
-              height="20px"
+              width="calc(var(--size-200) * 0.9)"
+              height="var(--space-5)"
             ></app-skeleton>
           </div>
           <app-skeleton
             variant="rectangle"
             width="100%"
-            height="180px"
+            height="calc(var(--size-200) * 0.9)"
           ></app-skeleton>
         </div>
 
@@ -139,8 +147,8 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
           <div class="card-header-skeleton">
             <app-skeleton
               variant="text"
-              width="120px"
-              height="20px"
+              width="var(--size-120)"
+              height="var(--space-5)"
             ></app-skeleton>
           </div>
           <div class="quick-actions-skeleton">
@@ -148,8 +156,8 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
               <app-skeleton
                 variant="rectangle"
                 width="100%"
-                height="48px"
-                borderRadius="8px"
+                height="var(--icon-container-lg)"
+                borderRadius="var(--radius-lg)"
               ></app-skeleton>
             }
           </div>

@@ -94,7 +94,7 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
   styles: [
     `
       .weather-widget {
-        min-height: 200px;
+        min-height: var(--size-200);
       }
 
       .weather-content {
@@ -169,7 +169,7 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
         gap: var(--space-2);
         padding: var(--space-3);
         background: var(--color-warning-50);
-        border: 1px solid var(--color-warning-200);
+        border: var(--border-1) solid var(--color-warning-200);
         border-radius: var(--border-radius-md);
         color: var(--color-warning-700);
         font-size: var(--ds-font-size-sm);

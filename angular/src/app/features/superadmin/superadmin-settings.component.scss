@@ -21,7 +21,7 @@
 
 /* Status Card */
 .status-card {
-  border-left: 0.25rem solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green);
 }
 
 .status-grid {
@@ -87,7 +87,7 @@
 
 .info-notice {
   background: var(--ds-primary-green-ultra-subtle);
-  border: 0.0625rem solid var(--ds-primary-green-subtle);
+  border: var(--border-1) solid var(--ds-primary-green-subtle);
 }
 
 .info-notice i {
@@ -106,7 +106,7 @@
 
 .warning-notice {
   background: rgba(var(--primitive-warning-500-rgb), 0.05);
-  border: 0.0625rem solid rgba(var(--primitive-warning-500-rgb), 0.2);
+  border: var(--border-1) solid rgba(var(--primitive-warning-500-rgb), 0.2);
 }
 
 .warning-notice i {
@@ -192,7 +192,7 @@
     var(--ds-primary-green-ultra-subtle),
     white
   );
-  border: 0.0625rem solid var(--ds-primary-green-subtle);
+  border: var(--border-1) solid var(--ds-primary-green-subtle);
 }
 
 .olympic-tracks {
@@ -206,7 +206,7 @@
   padding: var(--space-4);
   background: white;
   border-radius: var(--radius-md);
-  border-left: 0.25rem solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green);
 }
 
 .track-card h4 {
@@ -266,8 +266,8 @@
   content: "";
   height: var(--avatar-size-xs);
   width: var(--avatar-size-xs);
-  left: 0.1875rem;
-  bottom: 0.1875rem;
+  left: var(--space-0-75);
+  bottom: var(--space-0-75);
   background-color: white;
   transition: var(--transition-slow) var(--ease-standard);
   border-radius: 50%;
@@ -278,7 +278,7 @@
 }
 
 .toggle input:checked + .toggle-slider::before {
-  transform: translateX(1.375rem);
+  transform: translateX(var(--tag-height-xs));
 }
 
 .toggle input:disabled + .toggle-slider {
@@ -310,7 +310,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  border-bottom: 0.0625rem solid var(--color-border-primary);
+  border-bottom: var(--border-1) solid var(--color-border-primary);
 }
 
 .modal-header h3 {
@@ -342,7 +342,7 @@
   justify-content: flex-end;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-top: 0.0625rem solid var(--color-border-primary);
+  border-top: var(--border-1) solid var(--color-border-primary);
 }
 
 .form-group {
@@ -361,7 +361,7 @@
 .form-group textarea {
   width: 100%;
   padding: var(--space-3);
-  border: 0.0625rem solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
 }

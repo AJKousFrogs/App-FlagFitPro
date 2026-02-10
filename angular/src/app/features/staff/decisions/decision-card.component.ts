@@ -183,11 +183,11 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
       }
 
       :host.decision-card--critical {
-        border-left: 4px solid var(--ds-primary-red);
+        border-left: var(--space-1) solid var(--ds-primary-red);
       }
 
       :host.decision-card--low-confidence {
-        border-left: 4px solid var(--ds-primary-orange);
+        border-left: var(--space-1) solid var(--ds-primary-orange);
       }
     `,
   ],

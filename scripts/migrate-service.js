@@ -10,8 +10,8 @@
  *   node migrate-service.js wellness.service.ts
  */
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 // ANSI color codes for terminal output
 const colors = {

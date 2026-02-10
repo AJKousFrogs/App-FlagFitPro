@@ -97,45 +97,46 @@ export type ActionPanelType =
   styles: [
     `
       .action-panel {
-        background: var(--surface-primary, #ffffff);
-        border-radius: var(--radius-lg, var(--ds-font-size-xs));
-        padding: var(--space-6, var(--ds-font-size-2xl));
-        margin: var(--space-4, var(--ds-font-size-md)) 0;
-        border: 2px solid var(--color-border-secondary);
+        background: var(--surface-primary);
+        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+        margin: var(--space-4) 0;
+        border: var(--border-2) solid var(--color-border-secondary);
         transition: all 0.3s ease;
       }
 
       /* Urgency-based border styling - follows semantic grammar */
       .action-panel.urgency-low {
-        border-color: var(--color-status-info, #3b82f6);
-        border-width: 2px;
+        border-color: var(--color-status-info);
+        border-width: var(--border-2);
       }
 
       .action-panel.urgency-medium {
-        border-color: var(--ds-primary-orange, #f97316);
-        border-width: 2px;
+        border-color: var(--ds-primary-orange);
+        border-width: var(--border-2);
       }
 
       .action-panel.urgency-high {
-        border-color: var(--ds-primary-orange, #f97316);
-        border-width: 3px;
-        box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        border-color: var(--ds-primary-orange);
+        border-width: var(--border-3);
+        box-shadow: 0 0 0 var(--space-1) var(--ds-primary-orange-subtle);
       }
 
       .action-panel.urgency-critical {
-        border-color: var(--color-status-error, #ef4444);
-        border-width: 3px;
-        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        border-color: var(--color-status-error);
+        border-width: var(--border-3);
+        box-shadow: 0 0 0 var(--space-1) var(--color-staff-medical-light);
         animation: pulse-panel 2s infinite;
       }
 
       @keyframes pulse-panel {
         0%,
         100% {
-          box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+          box-shadow: 0 0 0 var(--space-1) var(--color-staff-medical-light);
         }
         50% {
-          box-shadow: 0 0 0 8px rgba(239, 68, 68, 0.08);
+          box-shadow: 0 0 0 var(--space-2)
+            rgba(var(--primitive-error-500-rgb), 0.08);
         }
       }
 
@@ -148,12 +149,12 @@ export type ActionPanelType =
       .action-panel.blocking::before {
         content: "";
         position: absolute;
-        inset: -4px;
-        border-radius: calc(var(--radius-lg, var(--ds-font-size-xs)) + 4px);
+        inset: calc(var(--space-1) * -1);
+        border-radius: calc(var(--radius-lg) + var(--space-1));
         background: linear-gradient(
           135deg,
-          rgba(249, 115, 22, 0.1) 0%,
-          rgba(239, 68, 68, 0.1) 100%
+          var(--ds-primary-orange-subtle) 0%,
+          rgba(var(--primitive-error-500-rgb), 0.1) 100%
         );
         z-index: -1;
       }
@@ -161,22 +162,22 @@ export type ActionPanelType =
       .action-panel.blocking.urgency-critical::before {
         background: linear-gradient(
           135deg,
-          rgba(239, 68, 68, 0.15) 0%,
-          rgba(239, 68, 68, 0.1) 100%
+          var(--color-staff-medical-light) 0%,
+          rgba(var(--primitive-error-500-rgb), 0.1) 100%
         );
       }
 
       .action-panel-content {
         display: flex;
         align-items: flex-start;
-        gap: var(--space-4, var(--ds-font-size-md));
+        gap: var(--space-4);
       }
 
       .action-panel-icon {
         flex-shrink: 0;
-        width: 48px;
-        height: 48px;
-        border-radius: var(--radius-md, 8px);
+        width: var(--icon-min-width-lg);
+        height: var(--icon-min-width-lg);
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -184,23 +185,23 @@ export type ActionPanelType =
       }
 
       .urgency-low .action-panel-icon {
-        background: rgba(59, 130, 246, 0.1);
-        color: var(--color-status-info, #3b82f6);
+        background: rgba(var(--primitive-info-500-rgb), 0.1);
+        color: var(--color-status-info);
       }
 
       .urgency-medium .action-panel-icon {
-        background: rgba(249, 115, 22, 0.1);
-        color: var(--ds-primary-orange, #f97316);
+        background: var(--ds-primary-orange-subtle);
+        color: var(--ds-primary-orange);
       }
 
       .urgency-high .action-panel-icon {
-        background: rgba(249, 115, 22, 0.15);
-        color: var(--ds-primary-orange, #f97316);
+        background: rgba(var(--primitive-orange-500-rgb), 0.15);
+        color: var(--ds-primary-orange);
       }
 
       .urgency-critical .action-panel-icon {
-        background: rgba(239, 68, 68, 0.15);
-        color: var(--color-status-error, #ef4444);
+        background: var(--color-staff-medical-light);
+        color: var(--color-status-error);
       }
 
       .action-panel-body {
@@ -212,7 +213,7 @@ export type ActionPanelType =
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
-        margin: 0 0 var(--space-1, 0.25rem) 0;
+        margin: 0 0 var(--space-1) 0;
         line-height: var(--ds-line-height-tight);
       }
 
@@ -235,23 +236,23 @@ export type ActionPanelType =
       }
 
       .action-panel-btn.urgency-low {
-        background: var(--color-status-info, #3b82f6);
-        border-color: var(--color-status-info, #3b82f6);
+        background: var(--color-status-info);
+        border-color: var(--color-status-info);
       }
 
       .action-panel-btn.urgency-medium {
-        background: var(--ds-primary-orange, #f97316);
-        border-color: var(--ds-primary-orange, #f97316);
+        background: var(--ds-primary-orange);
+        border-color: var(--ds-primary-orange);
       }
 
       .action-panel-btn.urgency-high {
-        background: var(--ds-primary-orange, #f97316);
-        border-color: var(--ds-primary-orange, #f97316);
+        background: var(--ds-primary-orange);
+        border-color: var(--ds-primary-orange);
       }
 
       .action-panel-btn.urgency-critical {
-        background: var(--color-status-error, #ef4444);
-        border-color: var(--color-status-error, #ef4444);
+        background: var(--color-status-error);
+        border-color: var(--color-status-error);
         animation: pulse-btn 1.5s infinite;
       }
 
@@ -269,10 +270,10 @@ export type ActionPanelType =
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: var(--space-2, var(--ds-font-size-0-5rem));
-        margin-top: var(--space-4, var(--ds-font-size-md));
-        padding-top: var(--space-3, var(--ds-font-size-xs));
-        border-top: 1px dashed var(--color-border-secondary);
+        gap: var(--space-2);
+        margin-top: var(--space-4);
+        padding-top: var(--space-3);
+        border-top: var(--border-1) dashed var(--color-border-secondary);
         font-size: var(--ds-font-size-xs);
         color: var(--color-text-tertiary);
         font-weight: var(--ds-font-weight-medium);
@@ -296,7 +297,7 @@ export type ActionPanelType =
 
         .action-panel-actions {
           justify-content: center;
-          margin-top: var(--space-2, var(--ds-font-size-0-5rem));
+          margin-top: var(--space-2);
         }
 
         .action-panel-btn {

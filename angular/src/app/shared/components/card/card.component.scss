@@ -47,14 +47,14 @@
 
 @media (hover: hover) and (pointer: fine) {
   .card-elevated:hover {
-    transform: translateY(-0.125rem);
+    transform: translateY(-var(--border-2));
     box-shadow: var(--shadow-lg);
   }
 }
 
 /* Outlined Card - Keep border for this specific variant only */
 .card-outlined {
-  border: 0.0625rem solid var(--color-border-subtle);
+  border: var(--border-1) solid var(--color-border-subtle);
   box-shadow: none;
 }
 
@@ -74,21 +74,21 @@
 
 @media (hover: hover) and (pointer: fine) {
   .card-interactive:hover {
-    transform: translateY(-0.125rem);
+    transform: translateY(-var(--border-2));
     box-shadow: var(--shadow-md);
   }
 }
 
 .card-interactive:active,
 .card-interactive.card-pressed {
-  transform: translateY(-0.125rem) scale(0.99);
+  transform: translateY(-var(--border-2)) scale(0.99);
   box-shadow: var(--shadow-md);
 }
 
 .card-interactive:focus-visible {
   outline: var(--focus-outline-width) solid var(--ds-primary-green);
   outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 0.1875rem rgba(var(--ds-primary-green-rgb), 0.3);
+  box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.3);
 }
 
 .card-interactive:focus:not(:focus-visible) {
@@ -126,40 +126,26 @@
 
 @media (hover: hover) and (pointer: fine) {
   .card-gradient:hover {
-    transform: translateY(-0.25rem);
+    transform: translateY(-var(--space-1));
     box-shadow:
-      0 1rem 3.125rem rgba(var(--ds-primary-green-rgb), 0.4),
+      0 1rem calc(var(--avatar-size-lg) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.4),
       var(--shadow-lg);
   }
 }
 
 /* Session Card (with accent bar) */
 .card-session {
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   box-shadow: var(--shadow-sm);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .card-session:hover {
-    transform: translateY(-0.25rem);
+    transform: translateY(-var(--space-1));
     box-shadow:
-      0 0.75rem 2.5rem rgba(var(--ds-primary-green-rgb), 0.15),
+      0 calc(var(--size-200) * 0.375) 2.5rem rgba(var(--ds-primary-green-rgb), 0.15),
       var(--shadow-md);
     border-color: var(--ds-primary-green);
-  }
-}
-
-/* Glass Card - REMOVED: Using standard card styling instead */
-.card-glass {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--color-border-muted);
-  box-shadow: var(--shadow-1);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .card-glass:hover {
-    background: var(--surface-secondary);
-    box-shadow: var(--shadow-2);
   }
 }
 
@@ -172,7 +158,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: var(--indicator-size-xs); /* 0.25rem */
+  height: var(--indicator-size-xs); /* var(--space-1) */
   background: linear-gradient(
     90deg,
     var(--ds-primary-green) 0%,
@@ -208,7 +194,7 @@
 }
 
 .card-header-icon {
-  width: var(--touch-target-md); /* 2.75rem */
+  width: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
   height: var(--touch-target-md);
   display: flex;
   align-items: center;
@@ -398,21 +384,5 @@
   .card:hover,
   .card:active {
     transform: none;
-  }
-}
-
-/* ================================
-   DARK MODE ADJUSTMENTS
-   ================================ */
-
-:host-context([data-theme="dark"]),
-:host-context(.dark-theme) {
-  .card-glass {
-    background: var(--surface-overlay-darkest);
-    border-color: var(--overlay-white-10);
-  }
-
-  .card-glass:hover {
-    background: var(--surface-overlay-darkest);
   }
 }

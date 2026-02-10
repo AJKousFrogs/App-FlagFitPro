@@ -14,7 +14,7 @@
     />
 
     <!-- PWA & Mobile Meta Tags -->
-    <meta name="theme-color" content="#089949" />
+    <meta name="theme-color" content="var(--p-highlight-text-color)" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
@@ -62,9 +62,9 @@
     <style>
       /* Critical CSS - Inline for fastest render */
       :root {
-        --ds-primary-green: #089949;
+        --ds-primary-green: var(--p-highlight-text-color);
         --surface-primary: #ffffff;
-        --color-text-primary: #1a1a1a;
+        --color-text-primary: var(--color-text-primary);
         --font-family-sans: "Poppins";
       }
 
@@ -100,7 +100,7 @@
         align-items: center;
         height: 100vh;
         width: 100%;
-        background: linear-gradient(135deg, #f8faf9 0%, #ffffff 100%);
+        background: linear-gradient(135deg, var(--p-surface-50) 0%, #ffffff 100%);
       }
 
       /* Loading spinner for app-root */
@@ -112,7 +112,7 @@
         width: 40px;
         height: 40px;
         margin: -20px 0 0 -20px;
-        border: 3px solid #e5e7eb;
+        border: 3px solid var(--color-border-secondary);
         border-top-color: var(--ds-primary-green);
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
@@ -127,14 +127,14 @@
       /* Dark mode critical styles */
       @media (prefers-color-scheme: dark) {
         :root {
-          --surface-primary: #0a0a0a;
-          --color-text-primary: #fafafa;
+          --surface-primary: var(--primitive-neutral-950);
+          --color-text-primary: var(--neutral-50);
         }
         app-root:empty::before {
-          background: linear-gradient(135deg, #0a0a0a 0%, #171717 100%);
+          background: linear-gradient(135deg, var(--primitive-neutral-950) 0%, var(--p-surface-0) 100%);
         }
         app-root:empty::after {
-          border-color: #404040;
+          border-color: var(--p-surface-300);
           border-top-color: var(--ds-primary-green);
         }
       }
@@ -175,7 +175,7 @@
       <div
         style="
           text-align: center;
-          padding: 40px;
+          padding: var(--space-10);
           font-family: system-ui, sans-serif;
         "
       >

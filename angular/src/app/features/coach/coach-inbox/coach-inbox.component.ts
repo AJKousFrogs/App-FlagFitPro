@@ -126,7 +126,7 @@ interface InboxStats {
             <div class="items-list">
               @if (loading()) {
                 @for (i of [1, 2, 3]; track i) {
-                  <p-skeleton height="150px" styleClass="mb-4"></p-skeleton>
+                  <p-skeleton height="var(--size-150)" styleClass="mb-4"></p-skeleton>
                 }
               } @else {
                 @for (item of safetyAlerts(); track item.id) {

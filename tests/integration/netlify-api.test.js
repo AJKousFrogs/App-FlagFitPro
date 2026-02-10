@@ -1,10 +1,8 @@
 import "dotenv/config";
 import { describe, it, expect, beforeAll } from "vitest";
-import { createRequire } from "module";
 
-const require = createRequire(import.meta.url);
-const { handler: healthHandler } = require("../../netlify/functions/health.cjs");
-const { handler: apiDocsHandler } = require("../../netlify/functions/api-docs.cjs");
+let healthHandler;
+let apiDocsHandler;
 
 const buildEvent = (path) => ({
   httpMethod: "GET",
@@ -16,7 +14,7 @@ const buildEvent = (path) => ({
 });
 
 describe("Netlify Functions (API smoke)", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     const required = [
       "SUPABASE_URL",
       "SUPABASE_SERVICE_KEY",
@@ -28,6 +26,10 @@ describe("Netlify Functions (API smoke)", () => {
         `Missing required environment variables for Netlify Functions: ${missing.join(", ")}`,
       );
     }
+    const health = await import("../../netlify/functions/health.js");
+    const apiDocs = await import("../../netlify/functions/api-docs.js");
+    healthHandler = health.handler;
+    apiDocsHandler = apiDocs.handler;
   });
 
   it("GET /api/health returns a valid health payload", async () => {

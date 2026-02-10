@@ -37,6 +37,8 @@ import {
   toLogContext,
 } from "../../../../core/services/logger.service";
 import { ApiResponse } from "../../../../core/models/common.models";
+import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
+import { DesignTokens } from "../../../../shared/models/design-tokens";
 
 export interface FlagPracticeSlot {
   day: number; // 0-6 (Sunday-Saturday)
@@ -102,7 +104,7 @@ interface DayOption {
       [modal]="true"
       [visible]="visible()"
       (visibleChange)="onVisibleChange($event)"
-      [breakpoints]="{ '640px': '95vw' }"
+      [breakpoints]="dialogBreakpoints"
       [draggable]="false"
       [resizable]="false"
       styleClass="player-settings-dialog"
@@ -350,6 +352,9 @@ interface DayOption {
   styleUrl: "./player-settings-dialog.component.scss",
 })
 export class PlayerSettingsDialogComponent {
+  readonly dialogBreakpoints = {
+    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
+  };
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
 

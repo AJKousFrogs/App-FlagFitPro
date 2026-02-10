@@ -252,7 +252,7 @@ const storyStyles = `
     gap: var(--space-6);
   }
   .story-card {
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
     border-radius: var(--radius-xl);
     overflow: hidden;
   }

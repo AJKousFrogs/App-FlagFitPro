@@ -11,7 +11,7 @@
  * - Decision 8: Semantic color tokens
  * - Decision 14: Border-first cards
  * - Decision 19: Specific transitions
- * - Decision 41: Checkbox standards (2.75rem hit target)
+ * - Decision 41: Checkbox standards (2.calc(var(--size-200) * 6) hit target)
  */
 
 @use "styles/variables" as *;
@@ -24,7 +24,7 @@
 .supplement-card {
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
-  border: 0.0625rem solid var(--primitive-neutral-200);
+  border: var(--border-1) solid var(--primitive-neutral-200);
   box-shadow: var(--shadow-1);
   overflow: hidden;
   height: 100%;
@@ -39,9 +39,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-4, var(--ds-font-size-md))
-      var(--space-5, var(--ds-font-size-xl));
-    border-bottom: 0.0625rem solid var(--primitive-neutral-100);
+    padding: var(--space-4)
+      var(--space-5);
+    border-bottom: var(--border-1) solid var(--primitive-neutral-100);
   }
 
   .header-title {
@@ -74,7 +74,7 @@
     color: var(--color-text-secondary);
     background: var(--surface-secondary);
     padding: var(--ds-space-1) var(--ds-space-2);
-    border-radius: var(--radius-md, 0.5rem);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-1);
   }
 
@@ -83,23 +83,23 @@
   // =============================================
 
   .supplement-progress {
-    padding: var(--space-3, var(--ds-font-size-xs))
-      var(--space-5, var(--ds-font-size-xl));
+    padding: var(--space-3)
+      var(--space-5);
     background: var(--surface-secondary);
   }
 
   .progress-bar {
     height: var(--indicator-size-sm); /* 0.5rem */
     background: var(--primitive-neutral-200);
-    border-radius: var(--radius-full, 624.9375rem);
+    border-radius: var(--radius-full);
     overflow: hidden;
-    margin-bottom: var(--space-2, 0.5rem);
+    margin-bottom: var(--space-2);
   }
 
   .progress-fill {
     height: 100%;
     background: var(--ds-primary-green);
-    border-radius: var(--radius-full, 624.9375rem);
+    border-radius: var(--radius-full);
     transition: width var(--transition-base) var(--ease-standard);
 
     &.complete {
@@ -117,17 +117,17 @@
   // =============================================
 
   .supplement-loading {
-    padding: var(--space-4, var(--ds-font-size-md))
-      var(--space-5, var(--ds-font-size-xl));
+    padding: var(--space-4)
+      var(--space-5);
     display: flex;
     flex-direction: column;
-    gap: var(--space-3, var(--ds-font-size-xs));
+    gap: var(--space-3);
   }
 
   .skeleton-row {
     display: flex;
     align-items: center;
-    gap: var(--space-3, var(--ds-font-size-xs));
+    gap: var(--space-3);
   }
 
   // =============================================
@@ -135,8 +135,8 @@
   // =============================================
 
   .supplement-list {
-    padding: var(--space-3, var(--ds-font-size-xs)) 0;
-    max-height: var(--chart-min-height-lg); /* 25rem */
+    padding: var(--space-3) 0;
+    max-height: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
     overflow-y: auto;
     flex: 1;
   }
@@ -144,9 +144,9 @@
   // Timing Groups
   .timing-group {
     &:not(:last-child) {
-      margin-bottom: var(--space-3, var(--ds-font-size-xs));
-      padding-bottom: var(--space-3, var(--ds-font-size-xs));
-      border-bottom: 0.0625rem solid var(--primitive-neutral-100);
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-3);
+      border-bottom: var(--border-1) solid var(--primitive-neutral-100);
     }
   }
 
@@ -171,7 +171,7 @@
   .supplement-item {
     display: flex;
     align-items: center;
-    gap: var(--space-3, var(--ds-font-size-xs));
+    gap: var(--space-3);
     padding: var(--ds-space-2) var(--ds-space-5);
     cursor: pointer;
     transition: background-color var(--transition-fast) var(--ease-standard);
@@ -192,12 +192,12 @@
     }
   }
 
-  // Decision 41: 2.75rem minimum hit target
+  // Decision 41: 2.calc(var(--size-200) * 6) minimum hit target
   .item-checkbox {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: var(--touch-target-md); /* 2.75rem */
+    min-width: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
     min-height: var(--touch-target-md);
   }
 
@@ -222,41 +222,13 @@
   }
 
   // =============================================
-  // EMPTY STATE
-  // =============================================
-
-  .supplement-empty {
-    padding: var(--space-8, var(--ds-font-size-3xl))
-      var(--space-5, var(--ds-font-size-xl));
-    text-align: center;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    i {
-      font-size: var(--ds-font-size-3xl);
-      color: var(--color-text-muted);
-      margin-bottom: var(--space-3, var(--ds-font-size-xs));
-      display: block;
-    }
-
-    p {
-      margin: 0 0 var(--space-4, var(--ds-font-size-md)) 0;
-      color: var(--color-text-secondary);
-      font-size: var(--ds-font-size-sm);
-    }
-  }
-
-  // =============================================
   // DIALOG STYLES
   // =============================================
 
   .dialog-form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4, var(--ds-font-size-md));
+    gap: var(--space-4);
   }
 
   .form-field {
@@ -280,7 +252,7 @@
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4, var(--ds-font-size-md));
+    gap: var(--space-4);
 
     @include respond-to(sm) {
       grid-template-columns: 1fr;
@@ -311,14 +283,14 @@
 
   @include respond-to(sm) {
     .supplement-card {
-      border-radius: var(--radius-lg, 0.5rem);
+      border-radius: var(--radius-lg);
     }
 
     .supplement-header {
       flex-direction: column;
       align-items: flex-start;
-      gap: var(--space-3, var(--ds-font-size-xs));
-      padding: var(--space-4, var(--ds-font-size-md));
+      gap: var(--space-3);
+      padding: var(--space-4);
     }
 
     .header-actions {
@@ -327,13 +299,13 @@
     }
 
     .supplement-item {
-      padding: var(--space-3, var(--ds-font-size-xs))
-        var(--space-4, var(--ds-font-size-md));
+      padding: var(--space-3)
+        var(--space-4);
     }
 
     .supplement-progress {
-      padding: var(--space-3, var(--ds-font-size-xs))
-        var(--space-4, var(--ds-font-size-md));
+      padding: var(--space-3)
+        var(--space-4);
     }
   }
 
@@ -353,7 +325,7 @@
     &:focus-visible {
       outline: var(--focus-outline-width) solid var(--ds-primary-green);
       outline-offset: var(--focus-outline-offset);
-      border-radius: var(--radius-sm, 0.25rem);
+      border-radius: var(--radius-sm);
     }
   }
 }

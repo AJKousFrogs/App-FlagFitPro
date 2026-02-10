@@ -26,6 +26,12 @@ describe("EnhancedDataTableComponent", () => {
     { field: "status", header: "Status", sortable: false, editable: false },
   ];
 
+  const WIDTH_180 = "calc(var(--size-150) + var(--space-8))";
+  const WIDTH_200 = "var(--size-200)";
+  const WIDTH_220 = "calc(var(--size-200) + var(--space-5))";
+  const WIDTH_250 = "calc(var(--size-200) + var(--space-12))";
+  const WIDTH_300 = "var(--grid-card-min-md-plus)";
+
   const createMockData = () => [
     {
       id: 1,
@@ -213,7 +219,7 @@ describe("EnhancedDataTableComponent", () => {
       const event = {
         element: {
           dataset: { field: "name" },
-          style: { width: "200px" },
+          style: { width: WIDTH_200 },
         } as unknown as HTMLElement & {
           dataset: { field: string };
           style: { width: string };
@@ -222,14 +228,14 @@ describe("EnhancedDataTableComponent", () => {
 
       component.onColumnResize(event as any);
 
-      expect(component.columnWidths()["name"]).toBe("200px");
+      expect(component.columnWidths()["name"]).toBe(WIDTH_200);
       expect(localStorage.setItem).toHaveBeenCalled();
     });
 
     it("should restore column widths from localStorage", () => {
       const savedPrefs = {
         visibleColumns: ["name", "email"],
-        columnWidths: { name: "250px", email: "300px" },
+        columnWidths: { name: WIDTH_250, email: WIDTH_300 },
         columnOrder: [],
       };
       localStorageMock.set("enhanced-table", JSON.stringify(savedPrefs));
@@ -237,25 +243,25 @@ describe("EnhancedDataTableComponent", () => {
       (component as any).loadPreferences();
 
       expect(component.columnWidths()).toEqual({
-        name: "250px",
-        email: "300px",
+        name: WIDTH_250,
+        email: WIDTH_300,
       });
     });
 
     it("should get column width from saved widths", () => {
-      component.columnWidths.set({ name: "220px" });
+      component.columnWidths.set({ name: WIDTH_220 });
 
       const width = component.getColumnWidth({ field: "name", header: "Name" });
-      expect(width).toBe("220px");
+      expect(width).toBe(WIDTH_220);
     });
 
     it("should use default width when not in saved widths", () => {
       const width = component.getColumnWidth({
         field: "email",
         header: "Email",
-        width: "180px",
+        width: WIDTH_180,
       });
-      expect(width).toBe("180px");
+      expect(width).toBe(WIDTH_180);
     });
 
     it("should use auto width when no saved or default width", () => {
@@ -362,7 +368,7 @@ describe("EnhancedDataTableComponent", () => {
 
     it("should include all preferences in saved data", () => {
       component.visibleColumnFields.set(["name", "email"]);
-      component.columnWidths.set({ name: "200px" });
+      component.columnWidths.set({ name: WIDTH_200 });
       component.columnOrderState.set(["email", "name"]);
 
       (component as any).savePreferencesToStorage();
@@ -371,7 +377,7 @@ describe("EnhancedDataTableComponent", () => {
       const prefs = JSON.parse(saved!);
 
       expect(prefs.visibleColumns).toEqual(["name", "email"]);
-      expect(prefs.columnWidths).toEqual({ name: "200px" });
+      expect(prefs.columnWidths).toEqual({ name: WIDTH_200 });
       expect(prefs.columnOrder).toEqual(["email", "name"]);
     });
 
@@ -387,7 +393,7 @@ describe("EnhancedDataTableComponent", () => {
 
     it("should reset preferences correctly", () => {
       component.visibleColumnFields.set(["name"]);
-      component.columnWidths.set({ name: "200px" });
+      component.columnWidths.set({ name: WIDTH_200 });
       component.columnOrderState.set(["name", "email"]);
 
       component.resetPreferences();

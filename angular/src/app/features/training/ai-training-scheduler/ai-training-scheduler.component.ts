@@ -233,15 +233,18 @@ interface AthleteMetrics {
                 @for (i of [1, 2, 3]; track i) {
                   <div class="suggestion-item">
                     <div class="suggestion-content">
-                      <p-skeleton width="80px" height="24px"></p-skeleton>
+                      <p-skeleton
+                        width="var(--size-80)"
+                        height="var(--space-6)"
+                      ></p-skeleton>
                       <p-skeleton
                         width="100%"
-                        height="40px"
+                        height="var(--icon-container-md)"
                         class="mt-2"
                       ></p-skeleton>
                       <p-skeleton
-                        width="120px"
-                        height="14px"
+                        width="var(--size-120)"
+                        height="var(--ds-font-size-sm)"
                         class="mt-2"
                       ></p-skeleton>
                     </div>

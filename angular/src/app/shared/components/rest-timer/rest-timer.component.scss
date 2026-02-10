@@ -8,7 +8,7 @@
 
 .floating-timer {
   position: fixed;
-  bottom: 5rem;
+  bottom: var(--space-20);
   right: var(--space-4);
   z-index: var(--z-modal);
   display: flex;
@@ -21,7 +21,7 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   box-shadow: var(--shadow-lg);
-  min-width: var(--card-min-height-md); /* 7.5rem */
+  min-width: var(--card-min-height-md); /* var(--size-120) */
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast),
@@ -61,7 +61,7 @@
 
 .floating-progress {
   width: 100%;
-  height: var(--indicator-size-xs); /* 0.25rem */
+  height: var(--indicator-size-xs); /* var(--space-1) */
   background: var(--overlay-white-30);
   border-radius: var(--radius-sm);
   margin-top: var(--space-2);
@@ -112,8 +112,8 @@
 /* Timer Display */
 .timer-display {
   position: relative;
-  width: var(--chart-min-height-sm); /* 12.5rem */
-  height: var(--chart-min-height-sm); /* 12.5rem */
+  width: var(--chart-min-height-sm); /* var(--size-200) */
+  height: var(--chart-min-height-sm); /* var(--size-200) */
   margin: 0 auto;
 }
 
@@ -180,7 +180,7 @@
 
 .preset-btn {
   padding: var(--space-2);
-  border: 0.0625rem solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);

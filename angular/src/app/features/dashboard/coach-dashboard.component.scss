@@ -123,7 +123,7 @@
       padding-bottom: var(--space-2);
 
       &::-webkit-scrollbar {
-        height: var(--space-1); /* 0.25rem */
+        height: var(--space-1); /* var(--space-1) */
       }
       &::-webkit-scrollbar-thumb {
         background: var(--color-border-secondary);
@@ -223,6 +223,7 @@
 
   .next-gen-preview-tag {
     margin-top: var(--space-2);
+
     @include preview-badge($color: var(--color-text-secondary));
   }
 
@@ -232,7 +233,7 @@
 
   .next-gen-preview-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--size-150), 1fr));
     gap: var(--space-3);
     margin-bottom: var(--space-3);
   }
@@ -258,6 +259,7 @@
 
   .preview-note {
     margin: 0;
+
     @include preview-callout($font-size: var(--ds-font-size-xs));
   }
 
@@ -513,12 +515,6 @@
         &.good {
           color: var(--color-status-success);
         }
-        &.moderate {
-          color: var(--color-status-warning);
-        }
-        &.poor {
-          color: var(--color-status-error);
-        }
         &.warning {
           color: var(--color-status-error);
         }
@@ -633,6 +629,7 @@
 
   .analytics-preview-note {
     margin-top: var(--space-3);
+
     @include preview-callout;
   }
 
@@ -692,7 +689,7 @@
     padding: var(--space-2);
     border-radius: var(--radius-md);
     background: var(--surface-ground);
-    border-left: var(--border-4) solid var(--surface-border); /* 0.25rem - closest token */
+    border-left: var(--border-4) solid var(--surface-border); /* var(--space-1) - closest token */
 
     &.game {
       border-left-color: var(--color-status-warning);
@@ -739,306 +736,6 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
-  }
-
-  /* ============================================
-   STATS GRID - IMPROVED RESPONSIVE
-   ============================================ */
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: var(--space-3);
-    margin-bottom: var(--space-6); /* space(5) = 1.5rem, closest token */
-
-    // Large desktop (> 96rem) - keep 6 columns
-
-    // Desktop (80rem-96rem) - 5 columns
-    @include respond-to(xxl) {
-      grid-template-columns: repeat(5, 1fr);
-    }
-
-    // Large tablet (64rem-80rem) - 4 columns (IMPROVED)
-    @include respond-to(xl) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    // Tablet landscape (48rem-64rem) - 3 columns (IMPROVED)
-    @include respond-to(lg) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    // Small tablet / Mobile landscape (40rem-48rem) - 2 columns
-    @include respond-to(md) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-2);
-    }
-
-    // Mobile (< 40rem) - 1 column
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .stat-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-1);
-  }
-
-  // Custom stat typography REMOVED
-  // Use .stat-block classes from card-shell instead
-  // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
-
-  .stat-detail {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-    margin-top: var(--space-1);
-
-    &.warning {
-      color: var(--color-status-error);
-    }
-  }
-
-  .alert-card {
-    border-color: var(--color-status-error);
-    background: var(--color-status-error-light);
-  }
-
-  /* ============================================
-   MAIN GRID - IMPROVED RESPONSIVE
-   ============================================ */
-
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr; // left, center, right
-    gap: var(--space-4);
-
-    // Desktop (80rem+) - 3 columns
-
-    // Large tablet (64rem-80rem) - 2 columns (center + right)
-    // LEFT column goes full width above
-    @include respond-to(xl) {
-      grid-template-columns: 1fr 1fr;
-
-      .left-column {
-        grid-column: span 2;
-      }
-    }
-
-    // Tablet landscape (48rem-64rem) - 2 columns (IMPROVED)
-    // Keep left and center side-by-side, right goes full width below
-    @include respond-to(lg) {
-      grid-template-columns: 1fr 1.5fr;
-
-      .left-column {
-        grid-column: auto;
-      }
-
-      .right-column {
-        grid-column: span 2;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-4);
-      }
-    }
-
-    // Mobile (< 48rem) - 1 column
-    @include respond-to(md) {
-      grid-template-columns: 1fr;
-
-      .left-column,
-      .right-column {
-        grid-column: auto;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-  }
-
-  .left-column,
-  .center-column,
-  .right-column {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  /* ============================================
-   CARD HEADERS - REMOVED
-   Use app-card-shell component instead
-   @see docs/CARD_SHELL_CONTRACT.md
-   ============================================ */
-
-  // .card-header styles deleted per Card Shell Contract v1
-  // Migration: Replace <div class="card-header"> with <app-card-shell title="...">
-
-  /* ============================================
-   CHART CARD
-   ============================================ */
-
-  .chart-insights {
-    @include flex-between;
-
-    padding: var(--space-3) 0;
-    border-top: var(--border-1) solid var(--color-border-subtle);
-    margin-top: var(--space-3);
-
-    // Mobile - wrap
-    @include respond-to(md) {
-      flex-wrap: wrap;
-      gap: var(--space-3);
-    }
-  }
-
-  .insight {
-    text-align: center;
-
-    // Mobile - grow to fill space
-    @include respond-to(md) {
-      flex: 1;
-      min-width: calc(
-        var(--space-24) * 0.833
-      ); /* 5rem - using spacing tokens */
-    }
-  }
-
-  .insight-value {
-    display: block;
-
-    @include text-style(xl, bold);
-
-    color: var(--ds-primary-green);
-
-    &.trend-up {
-      color: var(--color-status-success);
-    }
-  }
-
-  .insight-label {
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-  }
-
-  /* ============================================
-   ALERTS CARD
-   ============================================ */
-
-  .alerts-list {
-    @include flex-column;
-
-    gap: var(--space-3);
-  }
-
-  .alert-item {
-    padding: var(--space-3);
-    background: var(--color-status-warning-light);
-    border-radius: var(--radius-lg);
-    border: var(--border-1) solid var(--color-status-warning-subtle);
-
-    &.critical {
-      background: var(--color-status-error-light);
-      border-color: var(--color-status-error-subtle);
-    }
-  }
-
-  .alert-header {
-    @include flex-start;
-
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
-  }
-
-  .alert-player {
-    flex: 1;
-
-    .player-name {
-      display: block;
-      font-weight: var(--ds-font-weight-semibold);
-    }
-
-    .player-position {
-      @include text-style(xs, normal);
-
-      color: var(--color-text-secondary);
-    }
-  }
-
-  .alert-message {
-    margin: var(--space-2) 0;
-
-    @include text-style(sm, normal);
-
-    color: var(--color-text-primary);
-  }
-
-  .alert-recommendation {
-    margin: var(--space-2) 0;
-
-    @include text-style(xs, normal);
-
-    color: var(--color-text-secondary);
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-
-    i {
-      color: var(--color-status-warning);
-    }
-  }
-
-  .alert-metrics {
-    display: flex;
-    gap: var(--space-3);
-    margin: var(--space-2) 0;
-
-    // Mobile - wrap
-    @include respond-to(md) {
-      flex-wrap: wrap;
-    }
-
-    .metric {
-      @include text-style(xs, normal);
-
-      padding: var(--space-1) var(--space-2);
-      background: var(--surface-tertiary);
-      border-radius: var(--radius-sm);
-
-      &.danger {
-        background: var(--color-status-error-light);
-        color: var(--color-status-error);
-      }
-    }
-  }
-
-  .alert-actions {
-    display: flex;
-    gap: var(--space-2);
-    margin-top: var(--space-2);
-
-    // Mobile - full width buttons
-    @include respond-to(md) {
-      flex-direction: column;
-    }
-  }
-
-  .no-alerts {
-    text-align: center;
-    padding: var(--space-6);
-    color: var(--color-status-success);
-
-    i {
-      font-size: var(--ds-font-size-2xl);
-      margin-bottom: var(--space-2);
-    }
-
-    p {
-      margin: 0;
-      color: var(--color-text-secondary);
-    }
   }
 
   /* ============================================
@@ -1145,6 +842,6 @@
   }
 
   .missing-data-strip {
-    border-left: var(--border-4) solid var(--color-status-warning); /* 0.25rem */
+    border-left: var(--border-4) solid var(--color-status-warning); /* var(--space-1) */
   }
 } // End of @layer features

@@ -81,15 +81,6 @@
   color: white;
 }
 
-.parental-icon {
-  background: linear-gradient(
-    135deg,
-    var(--primitive-pink-400) 0%,
-    var(--primitive-yellow-300) 100%
-  );
-  color: white;
-}
-
 .rights-icon {
   background: linear-gradient(
     135deg,
@@ -175,7 +166,7 @@
   gap: var(--space-3);
   padding: var(--space-4);
   background: var(--primitive-warning-50);
-  border: 0.0625rem solid var(--primitive-warning-200);
+  border: var(--border-1) solid var(--primitive-warning-200);
   border-radius: var(--radius-md);
   margin-top: var(--space-4);
 }
@@ -194,7 +185,7 @@
 .consent-info {
   margin-top: var(--space-3);
   padding-top: var(--space-3);
-  border-top: 0.0625rem solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .consent-info small {
@@ -262,7 +253,7 @@
   background: linear-gradient(
     90deg,
     var(--color-brand-primary),
-    var(--color-brand-secondary, var(--color-brand-primary))
+    var(--color-brand-secondary)
   );
   border-radius: var(--radius-sm);
   transition: width var(--transition-slow) ease;
@@ -350,7 +341,7 @@
 }
 
 .category-chips p-chip:hover {
-  transform: translateY(-0.125rem);
+  transform: translateY(-var(--border-2));
 }
 
 // PrimeNG chip override moved to _exceptions.scss (DS-EXC-047)
@@ -403,60 +394,6 @@
   color: var(--color-text-secondary);
 }
 
-/* Parental Consent */
-.consent-status {
-  text-align: center;
-  padding: var(--space-4);
-}
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
-  font-weight: var(--ds-font-weight-semibold);
-  margin-bottom: var(--space-3);
-}
-
-.status-badge.verified {
-  background: var(--color-status-success-bg);
-  color: var(--color-status-success);
-}
-
-.status-badge.pending {
-  background: var(--primitive-warning-100);
-  color: var(--primitive-warning-700);
-}
-
-.status-badge.revoked {
-  background: var(--color-status-error-bg);
-  color: var(--color-status-error);
-}
-
-.consent-details {
-  margin-top: var(--space-4);
-  text-align: left;
-}
-
-.consent-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-
-.no-consent {
-  text-align: center;
-  padding: var(--space-6);
-}
-
-.no-consent i {
-  font-size: var(--ds-font-size-2xl);
-  color: var(--primitive-warning-500);
-  margin-bottom: var(--space-3);
-}
-
 /* Data Rights */
 .rights-grid {
   display: grid;
@@ -488,8 +425,7 @@
 }
 
 /* Dialog Forms */
-.contact-form,
-.consent-form {
+.contact-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);

@@ -6,7 +6,7 @@
  * 2. Users under 16 WITH parental consent can access features
  * 3. Users 16+ have full access
  *
- * Based on: PRIVACY_POLICY.md, parental-consent.cjs, privacy-settings.cjs
+ * Based on: PRIVACY_POLICY.md, parental-consent.js, privacy-settings.js
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
@@ -101,7 +101,7 @@ describe.skipIf(!canRunTests)("Age Gating (16+ / Parental Consent)", () => {
     });
 
     it("should block health data features for minors without consent", async () => {
-      // The privacy-settings.cjs checks for parental consent
+      // The privacy-settings.js checks for parental consent
       // Minors without consent should not have health_sharing enabled
       const { data: settings } = await supabaseAdmin
         .from("privacy_settings")
@@ -263,7 +263,7 @@ describe.skipIf(!canRunTests)("Age Gating (16+ / Parental Consent)", () => {
   describe("Server-side enforcement", () => {
     it("should enforce age gating at API level, not just UI", async () => {
       // This test verifies that age checks happen server-side
-      // The privacy-settings.cjs endpoint checks parental consent status
+      // The privacy-settings.js endpoint checks parental consent status
 
       // For a minor without consent, certain operations should be blocked
       // This is enforced in the API handlers, not just the frontend

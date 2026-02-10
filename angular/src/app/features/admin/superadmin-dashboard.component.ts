@@ -8,7 +8,14 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService, PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -79,6 +86,7 @@ interface AdminTeam {
 @Component({
   selector: "app-superadmin-dashboard",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
