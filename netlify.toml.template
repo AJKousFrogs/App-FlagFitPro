@@ -96,9 +96,10 @@
   status = 200
   force = true
 
+# Training stats (consolidated into training-stats-enhanced)
 [[redirects]]
   from = "/training-stats"
-  to = "/.netlify/functions/training-stats"
+  to = "/.netlify/functions/training-stats-enhanced"
   status = 200
   force = true
 

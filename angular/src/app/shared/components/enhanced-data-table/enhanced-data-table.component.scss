@@ -15,34 +15,7 @@
   padding: var(--space-4);
 }
 
-/* ================================
-   PRIMENG TABLE SCROLLABLE FIX
-   Ensures horizontal scroll works on all devices
-   ================================ */
-.enhanced-table-container {
-  // PrimeNG DataTable scrollable wrapper
-  :global(.p-datatable-scrollable) {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  :global(.p-datatable-wrapper) {
-    overflow-x: auto;
-    overflow-y: visible;
-  }
-
-  // Sticky first column on scroll
-  :global(.p-datatable-scrollable-header-table),
-  :global(.p-datatable-scrollable-body-table) {
-    min-inline-size: max-content;
-  }
-
-  // Touch-friendly scrolling
-  :global(.p-datatable-scrollable-body) {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-  }
-}
+/* PrimeNG override: DS-PNGO-002 in _exceptions.scss (p-datatable scroll/layout) */
 
 /* Toolbar */
 .table-toolbar {
@@ -211,12 +184,7 @@ tr.selected {
     flex-wrap: wrap;
   }
 
-  // Force card view on narrow containers
-  .enhanced-table-container:not(.mobile-view) {
-    :global(.p-datatable) {
-      display: none;
-    }
-  }
+  // Force card view on narrow containers - DS-EXC-004 in _exceptions.scss
 }
 
 /* Media Query Fallback */

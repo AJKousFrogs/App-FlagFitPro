@@ -1,99 +1,19 @@
 @use "styles/mixins" as *;
 
 /* ================================================================
-   FLAGFIT PRO - SPACING SYSTEM
-   Consistent spacing across all components
-   ================================================================
-   
-   SPACING SCALE (8-point grid):
-   - space-1: 0.25rem (0.25rem)  - Tight spacing
-   - space-2: 0.5rem  (0.5rem)  - Small spacing
-   - space-3: 0.75rem (0.75rem) - Medium-small
-   - space-4: 1rem    (1rem) - Default spacing
-   - space-5: 1.25rem (1.25rem) - Medium
-   - space-6: 1.5rem  (1.5rem) - Medium-large
-   - space-8: 2rem    (2rem) - Large spacing
-   - space-10: 2.5rem (2.5rem) - Extra large
-   - space-12: 3rem   (3rem) - Section spacing
-   
-   COMPONENT SPACING GUIDELINES:
-   - Form field gap: space-4 (1rem)
-   - Card padding: space-5 to space-6 (20-1.5rem)
-   - Section margin: space-6 to space-8 (24-2rem)
-   - Dialog padding: space-5 to space-6 (20-1.5rem)
-   - Button padding: space-3 vertical, space-6 horizontal
-   - Input padding: space-3 to space-4 (12-1rem)
+   FLAGFIT PRO - SPACING PATTERNS (NON-PRIMENG)
+   Form, list, stat-card, stack, cluster utilities
+
+   NOTE: PrimeNG card/dialog/input spacing → primeng-integration.scss
+   NOTE: .p-*, .m-*, .gap-* utilities → design-system-tokens.scss
    ================================================================ */
 
 @use "../tokens/design-system-tokens" as *;
 
 /* ================================================================
-   CARD & PANEL SPACING
-   ================================================================ */
-
-/* Standard Card Padding */
-.p-card .p-card-body {
-  padding: var(--space-5); /* 1.25rem */
-}
-
-.p-card .p-card-content {
-  padding: 0;
-}
-
-.p-card .p-card-header {
-  padding: var(--space-5) var(--space-5) 0;
-}
-
-.p-card .p-card-footer {
-  padding: var(--space-4) var(--space-5) var(--space-5);
-}
-
-/* Compact Card Variant */
-.card-compact .p-card-body {
-  padding: var(--space-4);
-}
-
-.card-compact .p-card-header {
-  padding: var(--space-4) var(--space-4) 0;
-}
-
-/* ================================================================
-   DIALOG SPACING
-   ================================================================ */
-
-.p-dialog .p-dialog-header {
-  padding: var(--space-5) var(--space-6);
-  border-bottom: var(--border-1) solid var(--color-border-primary);
-}
-
-.p-dialog .p-dialog-content {
-  padding: var(--space-5) var(--space-6);
-}
-
-.p-dialog .p-dialog-footer {
-  padding: var(--space-4) var(--space-6) var(--space-5);
-  border-top: var(--border-1) solid var(--color-border-primary);
-  gap: var(--space-3);
-}
-
-/* Compact Dialog */
-.dialog-compact .p-dialog-header {
-  padding: var(--space-4) var(--space-5);
-}
-
-.dialog-compact .p-dialog-content {
-  padding: var(--space-4) var(--space-5);
-}
-
-.dialog-compact .p-dialog-footer {
-  padding: var(--space-3) var(--space-5) var(--space-4);
-}
-
-/* ================================================================
    FORM SPACING
    ================================================================ */
 
-/* Form Field Group */
 .form-field {
   margin-bottom: var(--space-4);
 
@@ -102,12 +22,10 @@
   }
 }
 
-/* Form Field Label */
 .form-field label {
   margin-bottom: var(--space-2);
 }
 
-/* Form Row (multiple fields) */
 .form-row {
   display: grid;
   gap: var(--space-4);
@@ -118,7 +36,6 @@
   }
 }
 
-/* Form Actions (buttons at bottom) */
 .form-actions {
   display: flex;
   gap: var(--space-3);
@@ -136,46 +53,9 @@
 }
 
 /* ================================================================
-   INPUT SPACING
+   LIST & TABLE SPACING (non-PrimeNG selectors)
    ================================================================ */
 
-/* Text Inputs */
-.p-inputtext,
-.p-select,
-.p-multiselect,
-.p-textarea {
-  padding: var(--space-3) var(--space-4); /* 0.75rem 1rem */
-  min-height: var(--touch-target-md); /* Touch target minimum */
-}
-
-/* Small Inputs */
-.p-inputtext-sm,
-input.input-sm {
-  padding: var(--space-2) var(--space-3); /* 0.5rem 0.75rem */
-  min-height: var(--touch-target-sm);
-}
-
-/* Large Inputs */
-.p-inputtext-lg,
-input.input-lg {
-  padding: var(--space-4) var(--space-5); /* 1rem 1.25rem */
-  min-height: var(--touch-target-lg);
-}
-
-/* Input Groups */
-.p-inputgroup {
-  gap: 0;
-
-  .p-inputgroup-addon {
-    padding: var(--space-3) var(--space-4);
-  }
-}
-
-/* ================================================================
-   LIST & TABLE SPACING
-   ================================================================ */
-
-/* List Items */
 .list-item,
 .item {
   padding: var(--space-4);
@@ -185,58 +65,8 @@ input.input-lg {
   }
 }
 
-/* Compact List Items */
 .list-item-compact {
   padding: var(--space-3);
-}
-
-/* Table Cells */
-.p-datatable .p-datatable-thead > tr > th {
-  padding: var(--space-3) var(--space-4);
-}
-
-.p-datatable .p-datatable-tbody > tr > td {
-  padding: var(--space-3) var(--space-4);
-}
-
-/* Compact Table */
-.table-compact .p-datatable-thead > tr > th,
-.table-compact .p-datatable-tbody > tr > td {
-  padding: var(--space-2) var(--space-3);
-}
-
-/* ================================================================
-   SECTION SPACING
-   ================================================================ */
-
-/* Page Section */
-.section {
-  margin-bottom: var(--space-8);
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-/* Section Header */
-.section-header {
-  margin-bottom: var(--space-4);
-}
-
-/* Section Content */
-.section-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-/* Compact Section */
-.section-compact {
-  margin-bottom: var(--space-6);
-
-  .section-header {
-    margin-bottom: var(--space-3);
-  }
 }
 
 /* ================================================================
@@ -267,7 +97,6 @@ input.input-lg {
   }
 }
 
-/* Compact Stat Card */
 .stat-card-compact {
   padding: var(--space-4);
 
@@ -306,7 +135,6 @@ input.input-lg {
   }
 }
 
-/* Compact Empty State */
 .empty-state-compact {
   padding: var(--space-6);
 
@@ -320,27 +148,7 @@ input.input-lg {
 }
 
 /* ================================================================
-   GRID GAPS
-   ================================================================ */
-
-.grid-gap-xs {
-  gap: var(--space-2);
-}
-.grid-gap-sm {
-  gap: var(--space-3);
-}
-.grid-gap-md {
-  gap: var(--space-4);
-}
-.grid-gap-lg {
-  gap: var(--space-6);
-}
-.grid-gap-xl {
-  gap: var(--space-8);
-}
-
-/* ================================================================
-   STACK (Vertical Spacing)
+   STACK (Vertical) & CLUSTER (Horizontal)
    ================================================================ */
 
 .stack-xs {
@@ -367,10 +175,6 @@ input.input-lg {
   gap: var(--space-6);
 }
 
-/* ================================================================
-   CLUSTER (Horizontal Spacing)
-   ================================================================ */
-
 .cluster-xs {
   display: flex;
   flex-wrap: wrap;
@@ -396,71 +200,21 @@ input.input-lg {
 }
 
 /* ================================================================
-   RESPONSIVE SPACING ADJUSTMENTS
+   GRID GAPS (semantic variants; .gap-1..gap-8 canonical in tokens)
    ================================================================ */
 
-@include respond-to(md) {
-  /* Reduce card padding on mobile */
-  .p-card .p-card-body {
-    padding: var(--space-4);
-  }
-
-  .p-card .p-card-header {
-    padding: var(--space-4) var(--space-4) 0;
-  }
-
-  /* Reduce dialog padding on mobile */
-  .p-dialog .p-dialog-header {
-    padding: var(--space-4) var(--space-5);
-  }
-
-  .p-dialog .p-dialog-content {
-    padding: var(--space-4) var(--space-5);
-  }
-
-  .p-dialog .p-dialog-footer {
-    padding: var(--space-3) var(--space-5) var(--space-4);
-  }
-
-  /* Reduce section spacing */
-  .section {
-    margin-bottom: var(--space-6);
-  }
-
-  /* Reduce stat card padding */
-  .stat-card {
-    padding: var(--space-4);
-  }
-
-  /* Reduce empty state padding */
-  .empty-state {
-    padding: var(--space-8);
-  }
+.grid-gap-xs {
+  gap: var(--space-2);
 }
-
-@include respond-to(sm) {
-  /* Further reduce on small screens */
-  .p-card .p-card-body {
-    padding: var(--space-3);
-  }
-
-  .p-dialog .p-dialog-content {
-    padding: var(--space-3) var(--space-4);
-  }
-
-  .section {
-    margin-bottom: var(--space-5);
-  }
-
-  .form-field {
-    margin-bottom: var(--space-3);
-  }
-
-  .empty-state {
-    padding: var(--space-6);
-  }
+.grid-gap-sm {
+  gap: var(--space-3);
 }
-
-/* ================================================================
-   END OF SPACING SYSTEM
-   ================================================================ */
+.grid-gap-md {
+  gap: var(--space-4);
+}
+.grid-gap-lg {
+  gap: var(--space-6);
+}
+.grid-gap-xl {
+  gap: var(--space-8);
+}

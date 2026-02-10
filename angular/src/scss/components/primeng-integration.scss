@@ -1,4 +1,4 @@
-@use "../../styles/mixins" as *;
+@use "styles/mixins" as *;
 
 /**
  * ================================================================
@@ -6,14 +6,17 @@
  * Maps FlagFit Pro design tokens to PrimeNG CSS variables
  * ================================================================
  *
- * PrimeNG 21 uses CSS variables for theming instead of SASS.
- * This file creates a bridge between our custom design system
- * and PrimeNG's expected variable structure.
+ * LOAD ORDER (scss/components/index): token-mapping → brand-overrides → THIS FILE
+ *
+ * Split:
+ * - primeng/_token-mapping.scss: Component-level --p-* (buttons, cards, inputs, etc.)
+ * - primeng/_brand-overrides.scss: Green-on-primary enforcement
+ * - THIS FILE: :root light/dark themes, form control rules, overlay panels
  *
  * Key principles:
  * 1. PrimeNG components read from --p-* CSS variables
  * 2. We map our design tokens (--ds-*, --color-*) to PrimeNG vars
-
+ */
 
 /* ================================================================
    DARK MODE THEME OVERRIDES
@@ -21,8 +24,8 @@
 
 [data-theme="dark"] {
   /* Primary colors - fallback chain for Aura resilience */
-  --p-primary-color: var(--ds-color-brand, var(--ds-primary-green, var(--color-brand-primary, #089949)));
-  --p-primary-contrast-color: var(--color-text-on-primary, #fff);
+  --p-primary-color: var(--ds-color-brand, var(--ds-primary-green, var(--color-brand-primary)));
+  --p-primary-contrast-color: var(--color-text-on-primary);
 
   /* Text colors for dark mode */
   --p-text-color: var(--primitive-neutral-100);
@@ -258,7 +261,7 @@
 /* Dialog Padding */
 .p-dialog .p-dialog-header {
   padding: var(--space-5) var(--space-6);
-  border-bottom: var(--border-1) solid var(--color-border-primary);
+  border-bottom: var(--border-1) solid var(--surface-border, var(--color-border-muted));
 }
 
 .p-dialog .p-dialog-content {
@@ -267,7 +270,7 @@
 
 .p-dialog .p-dialog-footer {
   padding: var(--space-4) var(--space-6) var(--space-5);
-  border-top: var(--border-1) solid var(--color-border-primary);
+  border-top: var(--border-1) solid var(--surface-border, var(--color-border-muted));
 }
 
 /* ================================================================
@@ -444,9 +447,9 @@
 .p-multiselect-panel,
 .p-autocomplete-panel {
   border-radius: var(--p-dropdown-panel-border-radius, var(--radius-lg));
-  box-shadow: var(--p-dropdown-panel-shadow);
-  border: var(--border-1) solid var(--color-border-primary);
-  background: var(--surface-primary);
+  box-shadow: var(--p-dropdown-panel-shadow, var(--shadow-lg));
+  border: var(--border-1) solid var(--p-overlay-panel-border-color, var(--surface-border));
+  background: var(--p-overlay-panel-background, var(--surface-elevated));
   margin-top: var(--space-1);
   overflow: hidden;
 }
@@ -721,9 +724,8 @@
   --p-primary-950: var(--primitive-primary-900);
 
   /* PrimeNG Primary Color - Main - fallback chain for Aura resilience */
-  --p-primary-color: var(--ds-color-brand, var(--ds-primary-green, var(--color-brand-primary, #089949)));
-  --p-primary-contrast-color: var(--color-text-on-primary, #fff); /* CRITICAL: White text on green */
-
+  --p-primary-color: var(--ds-color-brand, var(--ds-primary-green, var(--color-brand-primary)));
+  --p-primary-contrast-color: var(--color-text-on-primary); /* CRITICAL: White text on green */
   --p-primary-hover-color: var(
     --color-brand-primary-dark,
     var(--primitive-primary-800)

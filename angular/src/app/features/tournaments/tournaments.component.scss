@@ -908,19 +908,7 @@
   }
 }
 
-/* ================================================================
-   PRIMENG COMPONENT OVERRIDES
-   Only layout/width constraints - form control styling is global
-   ================================================================ */
-
-/*
- * Tournament Form - Layout only (no form control styling)
- * Form control height/radius/padding/focus handled by global system
- */
-.tournament-form textarea.p-inputtextarea {
-  min-height: var(--space-20);
-  resize: vertical;
-}
+/* PrimeNG override: DS-EXC-022 in _exceptions.scss (tournament-form textarea) */
 
 /*
  * EXCEPTION: Print Styles

@@ -14,4 +14,4 @@ Prioritized by impact vs effort. Verification: `npm test` unless noted.
 
 ## Low-Priority
 
-- Confirm `angular/src/app/today/**` usage; remove if orphaned.
+- ~~Confirm `angular/src/app/today/**` usage; remove if orphaned.~~ (folder removed)

@@ -1,13 +1,13 @@
 <!-- Traffic Light Risk Indicator -->
-<div class="traffic-light-container" [class.compact]="compact()">
+<div class="traffic-light-container" [class.compact]="isCompact">
   <!-- Header: Title & ACWR Value -->
   <div class="risk-header">
     <h3 class="risk-title">
       <i class="pi pi-shield"></i>
       Injury Risk
     </h3>
-    <span class="acwr-value" [class]="getAcwrClass()">
-      {{ acwrValue() | number: "1.2-2" }}
+    <span class="acwr-value" [class]="acwrClass">
+      {{ acwrDisplay | number: "1.2-2" }}
     </span>
   </div>
 
@@ -15,13 +15,13 @@
   <div
     class="traffic-light"
     role="img"
-    [attr.aria-label]="'Risk level: ' + currentRisk().label"
+    [attr.aria-label]="'Risk level: ' + risk.label"
   >
     <!-- Green = Optimal -->
     <div
       class="light green"
-      [class.active]="currentRisk().level === 'sweet-spot'"
-      [attr.aria-hidden]="currentRisk().level !== 'sweet-spot'"
+      [class.active]="risk.level === 'sweet-spot'"
+      [attr.aria-hidden]="risk.level !== 'sweet-spot'"
     >
       <span class="light-label">Optimal</span>
     </div>
@@ -29,8 +29,8 @@
     <!-- Yellow = Elevated -->
     <div
       class="light yellow"
-      [class.active]="currentRisk().level === 'elevated-risk'"
-      [attr.aria-hidden]="currentRisk().level !== 'elevated-risk'"
+      [class.active]="risk.level === 'elevated-risk'"
+      [attr.aria-hidden]="risk.level !== 'elevated-risk'"
     >
       <span class="light-label">Caution</span>
     </div>
@@ -38,8 +38,8 @@
     <!-- Red = Danger -->
     <div
       class="light red"
-      [class.active]="currentRisk().level === 'danger-zone'"
-      [attr.aria-hidden]="currentRisk().level !== 'danger-zone'"
+      [class.active]="risk.level === 'danger-zone'"
+      [attr.aria-hidden]="risk.level !== 'danger-zone'"
     >
       <span class="light-label">Danger</span>
     </div>
@@ -47,8 +47,8 @@
     <!-- Orange = Under-training -->
     <div
       class="light orange"
-      [class.active]="currentRisk().level === 'under-training'"
-      [attr.aria-hidden]="currentRisk().level !== 'under-training'"
+      [class.active]="risk.level === 'under-training'"
+      [attr.aria-hidden]="risk.level !== 'under-training'"
     >
       <span class="light-label">Under</span>
     </div>
@@ -56,21 +56,21 @@
     <!-- Gray = No Data -->
     <div
       class="light gray"
-      [class.active]="currentRisk().level === 'no-data'"
-      [attr.aria-hidden]="currentRisk().level !== 'no-data'"
+      [class.active]="risk.level === 'no-data'"
+      [attr.aria-hidden]="risk.level !== 'no-data'"
     >
       <span class="light-label">No Data</span>
     </div>
   </div>
 
   <!-- Risk Info Card -->
-  <div class="risk-info" [class]="'info-' + currentRisk().level">
+  <div class="risk-info" [class]="'info-' + risk.level">
     <div class="info-header">
-      <h4 class="info-title">{{ currentRisk().label }}</h4>
+      <h4 class="info-title">{{ risk.label }}</h4>
     </div>
-    <p class="risk-description">{{ currentRisk().description }}</p>
+    <p class="risk-description">{{ risk.description }}</p>
     <div class="risk-recommendation">
-      <strong>Recommendation:</strong> {{ currentRisk().recommendation }}
+      <strong>Recommendation:</strong> {{ risk.recommendation }}
     </div>
   </div>
 
@@ -78,7 +78,7 @@
   <div class="risk-scale" aria-hidden="true">
     <!-- Marker showing current ACWR position -->
     <div class="scale-marker" #scaleMarker>
-      <div class="marker-value">{{ acwrValue() | number: "1.2-2" }}</div>
+      <div class="marker-value">{{ acwrDisplay | number: "1.2-2" }}</div>
       <div class="marker-line"></div>
     </div>
 
@@ -86,25 +86,25 @@
     <div class="scale-bar">
       <div
         class="scale-segment segment-under"
-        [class.active]="currentRisk().level === 'under-training'"
+        [class.active]="risk.level === 'under-training'"
       >
         <span class="segment-label">&lt; 0.80</span>
       </div>
       <div
         class="scale-segment segment-sweet"
-        [class.active]="currentRisk().level === 'sweet-spot'"
+        [class.active]="risk.level === 'sweet-spot'"
       >
         <span class="segment-label">0.80 - 1.30</span>
       </div>
       <div
         class="scale-segment segment-elevated"
-        [class.active]="currentRisk().level === 'elevated-risk'"
+        [class.active]="risk.level === 'elevated-risk'"
       >
         <span class="segment-label">1.30 - 1.50</span>
       </div>
       <div
         class="scale-segment segment-danger"
-        [class.active]="currentRisk().level === 'danger-zone'"
+        [class.active]="risk.level === 'danger-zone'"
       >
         <span class="segment-label">&gt; 1.50</span>
       </div>
@@ -113,8 +113,8 @@
 
   <!-- Screen reader status -->
   <span class="sr-status">
-    Current ACWR value is {{ acwrValue() | number: "1.2-2" }}. Risk level:
-    {{ currentRisk().label }}.
-    {{ currentRisk().recommendation }}
+    Current ACWR value is {{ acwrDisplay | number: "1.2-2" }}. Risk level:
+    {{ risk.label }}.
+    {{ risk.recommendation }}
   </span>
 </div>

@@ -114,14 +114,16 @@
 
     // ============================================
     // DIALOG / DRAWER (Decision 25)
+    // Overlays: surface-elevated, surface-border, shadow-lg
     // ============================================
 
     --p-dialog-border-radius: var(
       --radius-lg
     ); /* 0.5rem - Design System standard */
 
-    --p-dialog-shadow: var(--shadow-3);
-    --p-dialog-background: var(--color-surface-primary);
+    --p-dialog-shadow: var(--shadow-lg, var(--shadow-3));
+    --p-dialog-background: var(--surface-elevated, var(--color-surface-primary));
+    --p-dialog-border-color: var(--surface-border, var(--color-border-muted));
 
     // Dialog header
     --p-dialog-header-padding: var(--space-5);
@@ -189,14 +191,15 @@
     --p-select-border-color: var(--color-border-default);
     --p-select-focus-border-color: var(--color-border-focus);
 
-    // Dropdown panel
-    --p-select-panel-background: var(--color-surface-primary);
+    // Dropdown panel (overlay consistency)
+    --p-select-panel-background: var(--surface-elevated, var(--color-surface-primary));
     --p-select-panel-border-radius: var(--radius-xl);
-    --p-select-panel-shadow: var(--shadow-3);
-    --p-select-panel-border: var(--border-1) solid var(--color-border-default);
+    --p-select-panel-shadow: var(--shadow-lg, var(--shadow-3));
+    --p-select-panel-border: var(--border-1) solid var(--surface-border, var(--color-border-default));
     --p-dropdown-panel-border-radius: var(--radius-lg);
-    --p-dropdown-panel-shadow: var(--shadow-3);
-    --p-dropdown-panel-border-color: var(--color-border-default);
+    --p-dropdown-panel-shadow: var(--shadow-lg, var(--shadow-3));
+    --p-dropdown-panel-border-color: var(--surface-border, var(--color-border-default));
+    --p-dropdown-panel-background: var(--surface-elevated, var(--color-surface-primary));
     --p-dropdown-panel-margin-top: var(--space-1);
     --p-dropdown-panel-max-height: var(--panel-max-height-md);
     --p-dropdown-trigger-width: var(--space-10); /* 2.5rem */
@@ -236,11 +239,11 @@
     --p-datatable-sm-row-padding: var(--space-2) var(--space-3);
 
     // ============================================
-    // TOAST (Decision 26)
+    // TOAST (Decision 26) - Overlay consistency
     // ============================================
 
     --p-toast-border-radius: var(--radius-lg);
-    --p-toast-shadow: var(--shadow-2);
+    --p-toast-shadow: var(--shadow-lg, var(--shadow-2));
     --p-toast-padding: var(--space-3) var(--space-4);
 
     // Toast severities
@@ -260,24 +263,27 @@
     // ============================================
     // TOOLTIP (Decision 31)
     // Enhanced with better spacing & animations
+    // Inverse surface for contrast; elevated fallback for light mode
     // ============================================
 
-    --p-tooltip-background: var(--color-surface-inverse);
+    --p-tooltip-background: var(--color-surface-inverse, var(--surface-elevated));
     --p-tooltip-color: var(--color-text-on-inverse);
     --p-tooltip-border-radius: var(--radius-lg);
     --p-tooltip-padding: var(--space-4) var(--space-5);
     --p-tooltip-font-size: var(--font-body-sm-size);
     --p-tooltip-max-width: var(--tooltip-max-width);
-    --p-tooltip-shadow: var(--shadow-3);
+    --p-tooltip-shadow: var(--shadow-lg, var(--shadow-3));
     --p-tooltip-line-height: var(--line-height-normal);
 
     // ============================================
-    // OVERLAYS / PANELS
+    // OVERLAYS / PANELS (Decision: consistent surface/border/shadow)
+    // Dialog, Dropdown, Calendar, OverlayPanel, Tooltip, Toast
     // ============================================
 
     --p-overlay-panel-shadow: var(--shadow-lg);
     --p-overlay-panel-border-radius: var(--radius-lg);
-    --p-overlay-panel-border-color: var(--color-border-default);
+    --p-overlay-panel-border-color: var(--surface-border, var(--color-border-default));
+    --p-overlay-panel-background: var(--surface-elevated, var(--color-surface-primary));
     --p-overlay-panel-margin-top: var(--space-1);
     --p-datepicker-panel-min-width: var(--panel-width-md);
     --p-datepicker-panel-max-width: var(--panel-width-lg);

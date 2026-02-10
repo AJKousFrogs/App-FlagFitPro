@@ -88,6 +88,7 @@ $ds-font-weight-bold: 700;
   --primitive-neutral-800: #262626; /* Very dark gray */
   --primitive-neutral-900: #171717; /* Almost black - primary text */
   --primitive-neutral-950: #0a0a0a; /* Pure black - rarely used */
+  --primitive-neutral-500-rgb: 163, 163, 163; /* #a3a3a3 */
 
   /* Success - Yellow Scale
      DEPRECATED: Naming conflict. Semantic success = green (--color-status-success).
@@ -124,9 +125,22 @@ $ds-font-weight-bold: 700;
   --primitive-amber-500-rgb: var(--primitive-warning-500-rgb);
 
   /* Orange Scale */
+  --primitive-orange-50: #fff7ed;
+  --primitive-orange-200: #fed7aa;
+  --primitive-orange-300: #fdba74;
   --primitive-orange-500: var(--ds-primary-orange);
   --primitive-orange-600: #ea580c;
+  --primitive-orange-700: #c2410c;
+  --primitive-orange-800: #9a3412;
   --primitive-orange-500-rgb: var(--ds-primary-orange-rgb);
+  /* Aliases for PrimeNG/component compatibility */
+  --orange-50: var(--primitive-orange-50);
+  --orange-200: var(--primitive-orange-200);
+  --orange-300: var(--primitive-orange-300);
+  --orange-500: var(--primitive-orange-500);
+  --orange-600: var(--primitive-orange-600);
+  --orange-700: var(--primitive-orange-700);
+  --orange-800: var(--primitive-orange-800);
 
   /* Gold */
   --primitive-gold-500: #ffd700;
@@ -141,6 +155,7 @@ $ds-font-weight-bold: 700;
   --primitive-purple-500-rgb: 139, 92, 246;
 
   /* Info Blue */
+  --primitive-info-400: #60a5fa; /* Lighter blue for icons/accessible text */
   --primitive-info-500: var(--ds-color-info, #0ea5e9);
   --primitive-info-500-rgb: 14, 165, 233;
 
@@ -170,9 +185,9 @@ $ds-font-weight-bold: 700;
   --color-brand-primary-light: var(--ds-primary-green-light);
   --color-brand-primary-subtle: var(--ds-primary-green-subtle);
   /* Secondary/Accent: Provides accents for important elements, applied sparingly */
-  --color-brand-secondary: #10c96b;
-  --color-brand-secondary-hover: #0ab85a;
-  --color-brand-accent: #10c96b;
+  --color-brand-secondary: var(--primitive-primary-500);
+  --color-brand-secondary-hover: var(--primitive-primary-600);
+  --color-brand-accent: var(--primitive-primary-500);
 
   /* Accent Purple (visual highlight) */
   --color-accent-purple: var(--primitive-purple-500);
@@ -262,6 +277,8 @@ $ds-font-weight-bold: 700;
   --color-text-tertiary: #6b7280; /* Lighter gray - for large text only (contrast: 5.0:1) */
   --color-text-disabled: #9ca3af; /* Light gray - disabled text (not required to meet contrast) */
   --color-text-on-primary: #fff; /* White - for green backgrounds ONLY (contrast: 4.7:1 on #089949) */
+  --on-primary: var(--color-text-on-primary); /* Alias for text on green */
+  --green-bg-text: var(--color-text-on-primary); /* Alias for text on green */
   --color-text-on-white: var(
     --ds-primary-green
   ); /* Green - for white backgrounds (contrast: 4.7:1) */
@@ -294,14 +311,9 @@ $ds-font-weight-bold: 700;
 
   /* Warning: Yellow/Orange for potential problems or non-critical alerts */
   --color-status-warning: var(--ds-color-warning, var(--primitive-warning-500));
-  --color-status-warning-light: rgba(255, 192, 0, 0.1);
-  --color-status-warning-subtle: rgba(255, 192, 0, 0.05);
-  --color-status-warning-surface: rgba(
-    255,
-    192,
-    0,
-    0.1
-  ); /* NEW: Background for warning tags */
+  --color-status-warning-light: rgba(var(--primitive-warning-500-rgb), 0.1);
+  --color-status-warning-subtle: rgba(var(--primitive-warning-500-rgb), 0.05);
+  --color-status-warning-surface: rgba(var(--primitive-warning-500-rgb), 0.1);
 
   /* Error: Red for critical issues, deletions, or blocking actions */
   --color-status-error: var(--ds-color-danger, var(--primitive-error-500));
@@ -316,21 +328,16 @@ $ds-font-weight-bold: 700;
 
   /* Info: Blue for informational messages, tips, or default states */
   --color-status-info: var(--ds-color-info, var(--primitive-info-500));
-  --color-status-info-light: rgba(14, 165, 233, 0.1);
-  --color-status-info-subtle: rgba(14, 165, 233, 0.05);
-  --color-status-info-surface: rgba(
-    14,
-    165,
-    233,
-    0.1
-  ); /* NEW: Background for info tags */
+  --color-status-info-light: rgba(var(--primitive-info-500-rgb), 0.1);
+  --color-status-info-subtle: rgba(var(--primitive-info-500-rgb), 0.05);
+  --color-status-info-surface: rgba(var(--primitive-info-500-rgb), 0.1);
 
   /* Help/Purple: Secondary brand/PrimeNG help color */
-  --color-status-help: #8b5cf6;
-  --color-status-help-rgb: 139, 92, 246;
-  --color-status-help-light: rgba(139, 92, 246, 0.1);
-  --color-status-help-subtle: rgba(139, 92, 246, 0.05);
-  --color-status-help-hover: #7c3aed;
+  --color-status-help: var(--primitive-purple-500);
+  --color-status-help-rgb: var(--primitive-purple-500-rgb);
+  --color-status-help-light: rgba(var(--primitive-purple-500-rgb), 0.1);
+  --color-status-help-subtle: rgba(var(--primitive-purple-500-rgb), 0.05);
+  --color-status-help-hover: var(--primitive-purple-600);
 
   /* ================================
      INTERACTION STATE TOKENS
@@ -359,8 +366,8 @@ $ds-font-weight-bold: 700;
 
   /* Interactive Colors - Destructive */
   --color-interactive-destructive: var(--color-status-error);
-  --color-interactive-destructive-hover: #dc2626;
-  --color-interactive-destructive-active: #b91c1c;
+  --color-interactive-destructive-hover: var(--primitive-error-600);
+  --color-interactive-destructive-active: var(--primitive-error-700);
 
   /* State Opacity Modifiers */
   --state-hover-opacity: 0.08;
@@ -385,7 +392,7 @@ $ds-font-weight-bold: 700;
     var(--state-hover-opacity)
   );
   --state-layer-on-primary: rgba(255, 255, 255, var(--state-hover-opacity));
-  --state-layer-error: rgba(239, 68, 68, var(--state-hover-opacity));
+  --state-layer-error: rgba(var(--primitive-error-500-rgb), var(--state-hover-opacity));
 
   /* White Overlay Tokens (for colored backgrounds) */
   --overlay-white-10: rgba(255, 255, 255, 0.1);
@@ -410,30 +417,25 @@ $ds-font-weight-bold: 700;
      ================================ */
 
   /* Hover Background Colors */
-  --hover-bg-primary: #036d35; /* Darkened green for solid buttons */
-  --hover-bg-primary-light: #07933f; /* Slightly darkened green */
-  --hover-bg-secondary: #f0f9f4; /* Light green tint for cards/lists */
-  --hover-bg-tertiary: rgba(8, 153, 73, 0.08); /* Very subtle green tint */
-  --hover-bg-ultra-light: rgba(
-    8,
-    153,
-    73,
-    0.05
-  ); /* Ultra subtle for large areas */
+  --hover-bg-primary: var(--ds-primary-green-hover);
+  --hover-bg-primary-light: var(--primitive-primary-600);
+  --hover-bg-secondary: var(--primitive-primary-50);
+  --hover-bg-tertiary: rgba(var(--ds-primary-green-rgb), 0.08);
+  --hover-bg-ultra-light: rgba(var(--ds-primary-green-rgb), 0.05);
 
   /* Hover Border Colors */
-  --hover-border-primary: #089949; /* Brand green border */
-  --hover-border-subtle: rgba(8, 153, 73, 0.3); /* Subtle green border */
+  --hover-border-primary: var(--ds-primary-green);
+  --hover-border-subtle: rgba(var(--ds-primary-green-rgb), 0.3);
 
   /* Hover Text Colors */
-  --hover-text-primary: #036d35; /* Darker green for links */
-  --hover-text-on-primary: #fff; /* White text on green hover */
+  --hover-text-primary: var(--ds-primary-green-hover);
+  --hover-text-on-primary: var(--color-text-on-primary);
 
   /* Hover Shadows - Green-tinted for brand consistency */
-  --hover-shadow-sm: 0 2px 8px rgba(8, 153, 73, 0.12);
-  --hover-shadow-md: 0 4px 16px rgba(8, 153, 73, 0.15);
-  --hover-shadow-lg: 0 8px 24px rgba(8, 153, 73, 0.18);
-  --hover-shadow-xl: 0 12px 32px rgba(8, 153, 73, 0.22);
+  --hover-shadow-sm: 0 2px 8px rgba(var(--ds-primary-green-rgb), 0.12);
+  --hover-shadow-md: 0 4px 16px rgba(var(--ds-primary-green-rgb), 0.15);
+  --hover-shadow-lg: 0 8px 24px rgba(var(--ds-primary-green-rgb), 0.18);
+  --hover-shadow-xl: 0 12px 32px rgba(var(--ds-primary-green-rgb), 0.22);
   --shadow-brand-icon: 0 2px 4px rgba(var(--ds-primary-green-rgb), 0.2);
   --shadow-overlay-md: 0 4px 12px var(--surface-overlay-darkest);
   --shadow-text-sm: 0 2px 4px var(--surface-overlay-light);
@@ -695,6 +697,8 @@ $ds-font-weight-bold: 700;
   --shadow-md: var(--ds-shadow-2, 0 4px 12px rgba(0, 0, 0, 0.15));
   --shadow-lg: var(--ds-shadow-3, 0 8px 24px rgba(0, 0, 0, 0.12));
   --shadow-xl: var(--ds-shadow-4, 0 12px 48px rgba(0, 0, 0, 0.15));
+  --shadow-2xl: 0 1.5625rem 3.125rem -0.75rem rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.06);
   --text-shadow-subtle: 0 1px 1px rgba(0, 0, 0, 0.1);
 
   /* Elevation Aliases */
@@ -836,9 +840,11 @@ $ds-font-weight-bold: 700;
   --z-index-loading: 10001;
   --z-index-loading-overlay: 10002;
 
-  /* Z-Index shorthand aliases (used by primitives) */
+  /* Z-Index shorthand aliases (used by primitives + PrimeNG token mapping) */
   --z-dropdown: var(--z-index-dropdown);
   --z-modal: var(--z-index-modal);
+  --z-tooltip: var(--z-index-tooltip);
+  --z-toast: var(--z-index-notification);
 
   /* ================================
      COMPONENT SPECIFIC TOKENS
@@ -887,6 +893,10 @@ $ds-font-weight-bold: 700;
   --p-text-color-secondary: var(--color-text-secondary);
   --p-border-radius: var(--radius-lg);
   --p-focus-ring: var(--shadow-focus);
+  --p-focus-ring-width: var(--focus-ring-width, 3px);
+  --p-focus-ring-color: var(--color-focus-ring, var(--ds-primary-green));
+  --p-focus-ring-offset: var(--focus-ring-offset, 2px);
+  --p-focus-ring-style: solid;
   --p-transition-duration: var(--transition-base);
 
   /* ================================
@@ -1092,20 +1102,20 @@ $ds-font-weight-bold: 700;
   --spacing-component-xl: var(--space-8);
 
   /* ================================
-     WORKOUT TYPE COLORS
-     Used in calendar and training components
+     FEATURE PALETTE - NOT for semantic UI status
+     These are domain-specific (workout/position/rarity/staff).
+     Do NOT use for --color-status-success/warning/error.
      ================================ */
-  --color-workout-strength: #ef4444;
-  --color-workout-cardio: #f59e0b;
-  --color-workout-mobility: #10b981;
-  --color-workout-practice: #3b82f6;
-  --color-workout-game: #8b5cf6;
-  --color-workout-rest: #6b7280;
 
-  /* ================================
-     ACHIEVEMENT RARITY COLORS
-     Used for gamification badges
-     ================================ */
+  /* Workout Type Colors - calendar and training components */
+  --color-workout-strength: var(--primitive-error-500);
+  --color-workout-cardio: var(--primitive-warning-500);
+  --color-workout-mobility: var(--primitive-primary-600);
+  --color-workout-practice: var(--primitive-info-500);
+  --color-workout-game: var(--primitive-purple-500);
+  --color-workout-rest: var(--primitive-neutral-500);
+
+  /* Achievement Rarity Colors - gamification badges */
   --color-rarity-common: var(--color-border-primary);
   --color-rarity-uncommon: #1eff00;
   --color-rarity-rare: #0070dd;
@@ -1196,20 +1206,20 @@ $ds-font-weight-bold: 700;
      SPECIAL UI COLORS
      Specific use-case colors
      ================================ */
-  --color-star-rating: #ffd700;
+  --color-star-rating: var(--primitive-gold-500);
   --color-video-background: #000;
   --color-field-grass: #2d5016;
   --color-field-lines: #fff;
 
-  /* Settings Page Icon Backgrounds (Ad-hoc) */
-  --color-icon-bg-profile: rgba(59, 130, 246, 0.15);
-  --color-icon-profile: #60a5fa;
-  --color-icon-bg-notifications: rgba(234, 179, 8, 0.15);
-  --color-icon-notifications: #fbbf24;
-  --color-icon-bg-privacy: rgba(168, 85, 247, 0.15);
-  --color-icon-privacy: #c084fc;
-  --color-icon-bg-preferences: rgba(107, 114, 128, 0.15);
-  --color-icon-preferences: #9ca3af;
+  /* Settings Page Icon Backgrounds */
+  --color-icon-bg-profile: rgba(var(--primitive-info-500-rgb), 0.15);
+  --color-icon-profile: var(--primitive-info-400);
+  --color-icon-bg-notifications: rgba(var(--primitive-warning-500-rgb), 0.15);
+  --color-icon-notifications: var(--primitive-warning-400);
+  --color-icon-bg-privacy: rgba(var(--primitive-purple-500-rgb), 0.15);
+  --color-icon-privacy: var(--primitive-purple-400);
+  --color-icon-bg-preferences: rgba(var(--primitive-neutral-500-rgb), 0.15);
+  --color-icon-preferences: var(--primitive-neutral-500);
 
   /* Achievement Badge Metallic Colors */
   --color-metallic-bronze: #cd7f32;
@@ -1217,182 +1227,12 @@ $ds-font-weight-bold: 700;
   --color-metallic-silver: #c0c0c0;
   --color-metallic-silver-light: #e8e8e8;
   --color-metallic-silver-dark: #a8a8a8;
-  --color-metallic-gold: #ffd700;
+  --color-metallic-gold: var(--primitive-gold-500);
   --color-metallic-gold-dark: #daa520;
   --color-metallic-platinum: #e5e4e2;
   --color-metallic-platinum-dark: #a0a0a0;
   --color-metallic-diamond: #b9f2ff;
   --color-metallic-diamond-dark: #00bfff;
-}
-
-/* ================================================================
-   COLOR RULE ENFORCEMENT - CRITICAL SYSTEM
-   🚨 ABSOLUTE RULES - NEVER OVERRIDE THESE:
-   
-   1. NEVER black/dark text (#000, #1a1a1a, black) on green backgrounds
-   2. ALWAYS white (#ffffff) text on primary green (#089949)
-   3. WCAG AA minimum contrast enforced everywhere
-   
-   These rules are NON-NEGOTIABLE and enforced with
-   ================================================================ */
-
-/* Semantic token for text on primary (green) - single source of truth */
-:root {
-  --on-primary: #fff; /* ALWAYS use this for text on green backgrounds */
-  --green-bg-text: #fff; /* Alias for --on-primary */
-}
-
-/* ================================================================
-   BULLETPROOF GREEN CONTAINER RULE - NEVER OVERRIDABLE
-   All elements with green backgrounds MUST have white text
-   ================================================================ */
-
-/* Inline style green backgrounds */
-*[style*="background-color: rgb(8, 153, 73)"],
-*[style*="background-color:#089949"],
-*[style*="background: #089949"],
-*[style*="background:#089949"],
-*[style*="background-color: #089949"],
-*[style*="089949"] {
-  color: #fff;
-
-  --text-color: #fff;
-}
-
-*[style*="background-color: rgb(8, 153, 73)"] *,
-*[style*="background-color:#089949"] *,
-*[style*="background: #089949"] *,
-*[style*="background:#089949"] *,
-*[style*="background-color: #089949"] * {
-  color: #fff;
-}
-
-/* Class-based green backgrounds */
-.p-button-green,
-.btn-green,
-[class*="green-bg"],
-[class*="bg-green"],
-.bg-primary-green,
-.primary-bg {
-  color: #fff;
-
-  --text-color: #fff;
-}
-
-.p-button-green *,
-.btn-green *,
-[class*="green-bg"] *,
-[class*="bg-green"] *,
-.bg-primary-green *,
-.primary-bg * {
-  color: #fff;
-}
-
-/* PrimeNG components with green backgrounds */
-:where(
-  .p-button,
-  .p-card,
-  .p-panel,
-  .p-tabview-title,
-  .p-tag,
-  .p-badge,
-  .p-chip
-) {
-  &[style*="089949"],
-  &.p-button-green,
-  &.bg-primary,
-  &.p-button-primary {
-    --text-color: #fff;
-    --p-button-text-color: #fff;
-    color: #fff;
-
-    * {
-      color: #fff;
-    }
-
-    .p-button-label,
-    .p-button-icon,
-    span,
-    i {
-      color: #fff;
-    }
-  }
-}
-
-/* Green on White - Use for primary actions, links, icons on white */
-.green-on-white {
-  color: var(--ds-primary-green);
-  background-color: var(--surface-primary);
-}
-
-/* White on Green - Use for text/icons on green backgrounds */
-.white-on-green {
-  color: var(--color-text-on-primary);
-  background-color: var(--ds-primary-green);
-
-  * {
-    color: var(--color-text-on-primary);
-  }
-}
-
-/* Black on White - Use for primary text on white backgrounds */
-.black-on-white {
-  color: var(--color-text-primary);
-  background-color: var(--surface-primary);
-}
-
-/* 🚫 FORBIDDEN: Prevent black on green - This combination is BLOCKED */
-.black-on-green {
-  /* This class exists only to document that this combination is FORBIDDEN */
-  /* Automatically corrected to white text */
-  color: #fff;
-  background-color: var(--ds-primary-green);
-}
-
-/* 🚨 AGGRESSIVE BLOCK: Prevent any dark color on green backgrounds */
-[class*="bg-green"],
-[class*="bg-primary"],
-.p-button-primary,
-.p-tag-primary,
-.p-badge-primary {
-  color: #fff;
-
-  // Block common dark colors
-  &[style*="color: black"],
-  &[style*="color: #000"],
-  &[style*="color: #1a1a1a"],
-  &[style*="color: rgb(0, 0, 0)"] {
-    color: #fff;
-  }
-}
-
-/* ================================================================
-   GLOBAL GREEN BACKGROUND TEXT OVERRIDE
-   Catches ANY element that might have green background
-   ================================================================ */
-
-/* DS Primary Green backgrounds - ALWAYS white text */
-[style*="var(--ds-primary-green)"],
-[style*="var(--color-brand-primary)"],
-[style*="var(--p-primary-color)"] {
-  color: #fff;
-
-  &,
-  & * {
-    color: #fff;
-  }
-}
-
-/* Gradient backgrounds containing green */
-[style*="linear-gradient"][style*="089949"],
-[style*="linear-gradient"][style*="0ab85a"],
-[style*="linear-gradient"][style*="ds-primary-green"] {
-  color: #fff;
-
-  &,
-  & * {
-    color: #fff;
-  }
 }
 
 /* ================================================================
@@ -1448,10 +1288,10 @@ body.dark-theme {
   --surface-overlay: rgba(0, 0, 0, 0.7);
 
   /* Hover Tokens - Dark Mode */
-  --hover-bg-secondary: rgba(16, 201, 107, 0.15);
-  --hover-bg-tertiary: rgba(16, 201, 107, 0.1);
-  --hover-bg-ultra-light: rgba(16, 201, 107, 0.05);
-  --hover-border-subtle: rgba(16, 201, 107, 0.3);
+  --hover-bg-secondary: rgba(var(--primitive-primary-500-rgb), 0.15);
+  --hover-bg-tertiary: rgba(var(--primitive-primary-500-rgb), 0.1);
+  --hover-bg-ultra-light: rgba(var(--primitive-primary-500-rgb), 0.05);
+  --hover-border-subtle: rgba(var(--primitive-primary-500-rgb), 0.3);
   --hover-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --hover-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --hover-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
@@ -1504,6 +1344,10 @@ body.dark-theme {
   --p-content-background: var(--primitive-neutral-900);
   --p-highlight-background: rgba(16, 201, 107, 0.2);
   --p-highlight-text-color: #10c96b;
+
+  /* Overlay consistency (surface-elevated for dark mode) */
+  --p-dialog-background: var(--surface-elevated);
+  --p-overlay-panel-background: var(--surface-elevated);
 }
 
 /* Manual Light Mode Toggle - supports both data-theme attribute and .light-theme class */
@@ -1540,6 +1384,10 @@ body.light-theme {
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.15);
+
+  /* Overlay consistency (surface-elevated for light mode) */
+  --p-dialog-background: var(--surface-elevated);
+  --p-overlay-panel-background: var(--surface-elevated);
 
   /* PrimeNG Surface Variables - Light Mode */
   --p-surface-0: #fff;
@@ -1588,11 +1436,11 @@ body.light-theme {
      MEDAL COLORS
      Achievement/ranking color palette
      ================================ */
-  --color-medal-gold: #ffd700;
-  --color-medal-gold-rgb: 255, 215, 0;
+  --color-medal-gold: var(--primitive-gold-500);
+  --color-medal-gold-rgb: var(--primitive-gold-500-rgb);
   --color-medal-gold-gradient: linear-gradient(
     135deg,
-    #ffd700 0%,
+    var(--primitive-gold-500) 0%,
     #ffb347 100%
   );
   --color-medal-gold-text: #5c4a00; /* Dark text for gold background */

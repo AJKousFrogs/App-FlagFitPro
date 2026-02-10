@@ -312,10 +312,12 @@ const config = {
   overrides: [
     // ====================================
     // Allow hex colors ONLY in tokens file
+    // design-tokens.scss forwards to design-system-tokens (no definitions)
     // ====================================
     {
       files: [
         "**/design-system-tokens.scss",
+        "**/design-tokens.scss",
         "**/assets/styles/tokens/**/*.scss",
       ],
       rules: {

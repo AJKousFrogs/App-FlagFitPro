@@ -20,16 +20,10 @@ This document describes calculation formulas, window assumptions, missing-data h
 - Example (Fixture A, week of 2026-01-26): 4 sessions → totalLoad `1295`, totalDuration `235`, avgIntensity `5.5`, weekEnd `2026-02-01` (UTC).
 
 ## Training Stats Aggregation (Client-Side)
-- Source: `angular/src/app/core/services/training-stats.service.ts`
-- Week boundary: Sunday start (uses `getDay()`), week = Sunday → Saturday.
-- Month boundary: first day of current month (local time).
-- Weekly metrics:
-  - `weeklyVolume`: sum of `workload`
-  - `weeklyDuration`: sum of `duration_minutes`
-  - `weeklyAvgIntensity`: average `intensity_level`, 1 decimal
-- Streak:
-  - Active if trained today or yesterday
-  - Requires consecutive daily training (no gaps) for streak to grow
+- Source: `angular/src/app/core/services/training-stats-calculation.service.ts`
+- Week boundary: ISO week (Monday–Sunday).
+- Weekly metrics: totalLoad, totalDuration, sessionCount, avgIntensity.
+- Streak: calculated from session dates; active if trained today or yesterday.
 
 ## Sleep Debt & Safety Limits
 - Source: `angular/src/app/core/services/training-safety.service.ts`

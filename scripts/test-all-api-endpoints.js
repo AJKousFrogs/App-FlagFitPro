@@ -282,7 +282,7 @@ const endpoints = [
     expectedStatus: [200, 401],
   },
 
-  // Training endpoints
+  // Training endpoints (consolidated into training-stats-enhanced)
   {
     name: "Training Stats",
     endpoint: "/training-stats",

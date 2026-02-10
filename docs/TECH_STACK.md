@@ -18,9 +18,9 @@
 
 | Layer | Technology | Version |
 |-------|------------|---------|
-| Framework | Angular | 21.x |
-| UI Library | PrimeNG | 21.x |
-| Themes | @primeuix/themes | 2.x |
+| Framework | Angular | 21.1.x |
+| UI Library | PrimeNG | 21.1.x |
+| Themes | @primeuix/themes | 2.0.x |
 | State | Angular Signals | Built-in |
 | Change Detection | Zoneless (optional) | - |
 | Styling | SCSS + CSS custom properties | - |

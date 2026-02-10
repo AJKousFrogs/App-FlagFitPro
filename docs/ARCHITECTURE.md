@@ -240,7 +240,7 @@ exports.handler = async (event, context) => {
 | ------------------- | ------------------------------------------------ | ------------------- |
 | **AI Coaching**     | `/api/ai/chat`, `/api/ai/feedback`               | AI chat with safety |
 | **Load Management** | `/api/load-management/acwr`, `/monotony`, `/tsb` | ACWR calculations   |
-| **Training**        | `/api/training-stats`, `/training-plan`          | Training data       |
+| **Training**        | `/training-stats`, `/training-stats-enhanced`, `/api/training-plan` | Training data       |
 | **Readiness**       | `/api/calc-readiness`, `/readiness-history`      | Readiness scores    |
 | **Recommendations** | `/api/smart-training-recommendations`            | AI recommendations  |
 

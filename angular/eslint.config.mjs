@@ -58,14 +58,9 @@ export default tseslint.config(
       // Block inline styles - use SCSS classes or design-system utilities instead
       // This catches: style="...", [style]="...", [ngStyle]="..."
       "@angular-eslint/template/no-inline-styles": "error",
-      // Warn on function calls in templates (e.g. {{ getLabel() }}) - prefer computed signals or pipes
-      // Event handlers like (click)="fn()" are allowed via allowList
-      "@angular-eslint/template/no-call-expression": [
-        "warn",
-        {
-          allowList: ["$any"],
-        },
-      ],
+      // no-call-expression: Disabled because Angular signals require invocation in templates (e.g. {{ signal() }}).
+      // The rule conflicts with Angular 16+ signal API. Prefer getters for methods; signal reads are idiomatic.
+      "@angular-eslint/template/no-call-expression": "off",
       "@typescript-eslint/ban-ts-comment": "off",
     },
   },

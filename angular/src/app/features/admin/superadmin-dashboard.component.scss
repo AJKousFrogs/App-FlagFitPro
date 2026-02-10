@@ -237,20 +237,12 @@
 }
 
 // Management Filters
+/* PrimeNG override: DS-EXC-021 in _exceptions.scss (.management-filters .p-input-icon-left) */
 .management-filters {
   display: flex;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
   flex-wrap: wrap;
-
-  .p-input-icon-left {
-    flex: 1;
-    min-width: var(--input-min-width-lg);
-
-    input {
-      width: 100%;
-    }
-  }
 }
 
 // Responsive

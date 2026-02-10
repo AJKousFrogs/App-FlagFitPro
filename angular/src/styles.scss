@@ -15,23 +15,24 @@
    ALL @USE RULES (Must be first per SCSS spec)
    ============================================ */
 
-/* TIER 1: CRITICAL - Required for FCP/LCP */
-@use "./scss/tokens/design-system-tokens" as *;
-@use "./scss/utilities" as *;
+/* TIER 1: Tokens + design-system typography/states/utilities (single source) */
 @use "./styles/design-system/index" as *;
+/* TIER 2: Utilities - mixins, responsive, layout, typography-system */
+@use "./scss/utilities" as *;
+@use "./assets/fonts/poppins";
 
-/* TIER 2: COMPONENT STYLES - Required for UI */
+/* TIER 3: Components - PrimeNG mapping, integration */
 @use "./scss/components/index" as *;
 
-/* TIER 3: ENHANCEMENT STYLES - Non-blocking */
+/* TIER 4: Pages - enhancement styles */
 @use "./scss/pages/index" as *;
+
+/* TIER 5: Overrides - documented exceptions, color guards */
+@use "./assets/styles/overrides" as *;
 
 /* ============================================
    ALL @IMPORT RULES (Must come after @use)
    ============================================ */
-
-/* Poppins Font - Locally Hosted (critical for text rendering) */
-@use "./assets/fonts/poppins";
 
 /* PrimeIcons - imported from node_modules */
 @import "primeicons/primeicons.css";

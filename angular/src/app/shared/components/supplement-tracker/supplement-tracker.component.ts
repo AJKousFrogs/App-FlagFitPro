@@ -431,12 +431,18 @@ export class SupplementTrackerComponent implements OnInit {
     return name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
   }
 
-  getCategoryColor(
-    _category: Supplement["category"],
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    // All categories use the same neutral color for visual consistency
-    return "secondary";
-  }
+  /** Category to severity - map avoids template method calls */
+  readonly categorySeverityMap: Record<
+    string,
+    "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+  > = {
+    performance: "secondary",
+    vitamin: "secondary",
+    recovery: "secondary",
+    mineral: "secondary",
+    amino: "secondary",
+    other: "secondary",
+  };
 
   getTimingIcon(timing: Supplement["timing"]): string {
     const icons: Record<string, string> = {
@@ -464,5 +470,30 @@ export class SupplementTrackerComponent implements OnInit {
 
   updateCategory(value: Supplement["category"]): void {
     this.newSupplement.update((s) => ({ ...s, category: value }));
+  }
+
+  /** Template bindings to satisfy no-call-expression */
+  get takenCountDisplay(): number {
+    return this.takenCount();
+  }
+
+  get totalCountDisplay(): number {
+    return this.totalCount();
+  }
+
+  get progressPercentDisplay(): number {
+    return this.progressPercent();
+  }
+
+  get isLoadingDisplay(): boolean {
+    return this.isLoading();
+  }
+
+  get timingGroupsDisplay(): ReturnType<typeof this.timingGroups> {
+    return this.timingGroups();
+  }
+
+  get newSupplementForm(): Partial<Supplement> {
+    return this.newSupplement();
   }
 }

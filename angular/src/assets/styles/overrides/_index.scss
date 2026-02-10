@@ -1,24 +1,13 @@
 /**
  * Overrides Layer Index
  * =====================
- * 
- * The overrides layer is the LAST layer in the cascade.
- * It contains documented exceptions that cannot follow design system rules.
- * 
- * LAYER ORDER (from DESIGN_SYSTEM_RULES.md):
- *   @layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
- * 
- * RULES:
- * 1. Every override MUST have a ticket number
- * 2. Every override MUST have a removal date
- * 3. Every override MUST be scoped to specific components
- * 4. Undocumented overrides are violations
- * 
- * See Decision 10 in DESIGN_SYSTEM_RULES.md.
+ *
+ * Last in cascade. Documented exceptions to design system rules.
+ *
+ * LAYER ORDER: reset → tokens → primeng-base → primeng-brand → primitives → features → overrides
+ *
+ * RULES: Ticket + removal date + scoped. See Decision 10 in DESIGN_SYSTEM_RULES.md.
  */
 
-// Documented exceptions with tickets
 @use "exceptions";
-
-// Future: Add temporary migration overrides
-// @use 'migration-temp';
+@use "color-guards";

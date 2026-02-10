@@ -482,13 +482,13 @@ describe("API Integration Tests", () => {
           success: true,
           data: {
             totalSessions: 45,
-            totalDuration: 2700, // minutes
-            averageIntensity: 7.5,
-            weeklyStreak: 4,
-            topExercises: [
-              { name: "Sprint intervals", count: 25 },
-              { name: "Flag pulling drills", count: 20 },
-            ],
+            totalDuration: 2700,
+            currentStreak: 4,
+            acwr: 1.1,
+            sessionsByType: {
+              speed: { count: 25, totalDuration: 1500, totalLoad: 12000 },
+              agility: { count: 20, totalDuration: 1200, totalLoad: 9600 },
+            },
           },
         }),
       };
@@ -496,7 +496,7 @@ describe("API Integration Tests", () => {
       global.fetch.mockResolvedValueOnce(statsResponse);
 
       const response = await global.fetch(
-        "/.netlify/functions/training-stats",
+        "/.netlify/functions/training-stats-enhanced",
         {
           headers: { Authorization: "Bearer test-token" },
         },
@@ -506,7 +506,7 @@ describe("API Integration Tests", () => {
 
       expect(response.ok).toBe(true);
       expect(result.data.totalSessions).toBe(45);
-      expect(result.data.topExercises).toHaveLength(2);
+      expect(result.data.sessionsByType).toBeDefined();
     });
   });
 

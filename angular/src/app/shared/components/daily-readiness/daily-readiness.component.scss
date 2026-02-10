@@ -202,12 +202,7 @@
   margin-left: var(--space-1);
 }
 
-.weight-input :global(.p-inputnumber-input) {
-  text-align: center;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-}
-
+/* PrimeNG override: DS-EXC-026 in _exceptions.scss (.daily-readiness .weight-input .p-inputnumber-input) */
 .weight-hint {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);

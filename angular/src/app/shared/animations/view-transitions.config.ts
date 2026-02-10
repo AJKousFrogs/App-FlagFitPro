@@ -414,6 +414,7 @@ export const VIEW_TRANSITION_STYLES = `
     ::view-transition-group(*),
     ::view-transition-old(*),
     ::view-transition-new(*) {
+      /* !important required: override view-transition defaults for a11y (WCAG 2.2) */
       animation-duration: 0.01ms !important;
       animation-delay: 0ms !important;
     }

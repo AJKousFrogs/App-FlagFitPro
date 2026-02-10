@@ -36,6 +36,8 @@
 
 // ================================
 // FLEXBOX UTILITIES
+// Prefer layout-system.scss .flex + .flex-col for flex layouts.
+// These legacy classes (.flex-row, .flex-column, .align-*) retained for compatibility.
 // ================================
 
 .flex-row {
@@ -130,17 +132,8 @@
 
 // ================================
 // TEXT UTILITIES
+// text-left, text-center, text-right: typography-system.scss (canonical)
 // ================================
-
-.text-left {
-  text-align: left;
-}
-.text-center {
-  text-align: center;
-}
-.text-right {
-  text-align: right;
-}
 
 .text-truncate {
   @include text-truncate;
@@ -312,22 +305,31 @@
 
 // ================================
 // BORDER RADIUS UTILITIES
+// Canonical: design-system-tokens.scss (.rounded-sm, .rounded-md, .rounded-lg, .rounded-xl, .rounded-full)
+// Additional: .rounded-none, .rounded-2xl for edge cases
 // ================================
 
-@each $key, $value in $radius {
-  .rounded-#{$key} {
-    border-radius: $value;
-  }
+.rounded-none {
+  border-radius: 0;
+}
+.rounded-2xl {
+  border-radius: var(--radius-2xl);
 }
 
 // ================================
 // SHADOW UTILITIES
+// Canonical: design-system-tokens.scss (.shadow-sm through .shadow-xl)
+// Additional: .shadow-none, .shadow-2xl, .shadow-inner for edge cases
 // ================================
 
-@each $key, $value in $shadows {
-  .shadow-#{$key} {
-    box-shadow: $value;
-  }
+.shadow-none {
+  box-shadow: none;
+}
+.shadow-2xl {
+  box-shadow: var(--shadow-2xl);
+}
+.shadow-inner {
+  box-shadow: var(--shadow-inner);
 }
 
 // ================================

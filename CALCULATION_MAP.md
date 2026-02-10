@@ -48,13 +48,6 @@ This document lists calculation hotspots responsible for athlete performance met
   - Formula: load = duration × RPE, averages = sum ÷ count
   - Risk level: High
 
-- `angular/src/app/core/services/training-stats.service.ts`
-  - Functions: `calculateStats`, `calculateStreak`, `calculateWeeklyTotals`
-  - Inputs: training sessions (duration, workload)
-  - Outputs: averages, streaks, weekly progress
-  - Formula: averages and counts from session arrays
-  - Risk level: Medium
-
 ## Readiness Scoring
 - `angular/src/app/core/services/readiness.service.ts`
   - Function: `calculateToday`, `calculateForDay` (delegated to backend)

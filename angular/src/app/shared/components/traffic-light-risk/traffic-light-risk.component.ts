@@ -77,8 +77,8 @@ export class TrafficLightRiskComponent {
     });
   }
 
-  // Get CSS class for ACWR value color
-  getAcwrClass(): string {
+  /** CSS class for ACWR value color - getter to satisfy no-call-expression */
+  get acwrClass(): string {
     const level = this.currentRisk().level;
     switch (level) {
       case "sweet-spot":
@@ -92,5 +92,20 @@ export class TrafficLightRiskComponent {
       default:
         return "no-data";
     }
+  }
+
+  /** Snapshot of current risk for template binding - avoids repeated signal calls */
+  get risk(): RiskZone {
+    return this.currentRisk();
+  }
+
+  /** Compact mode for template binding */
+  get isCompact(): boolean {
+    return this.compact();
+  }
+
+  /** ACWR value for template binding */
+  get acwrDisplay(): number {
+    return this.acwrValue();
   }
 }

@@ -487,6 +487,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
       group: "me",
     },
     {
+      label: "Help",
+      route: "/help",
+      icon: "pi-question-circle",
+      ariaLabel: "Help Center - Get support and guidance",
+      group: "me",
+    },
+    {
       label: "Achievements",
       route: "/achievements",
       icon: "pi-trophy",
@@ -497,9 +504,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   /**
    * Additional navigation items (shown after primary nav)
-   * Currently empty - can be used for less frequently accessed items
    */
   private additionalNavItems: NavItem[] = [
+    {
+      label: "Staff Hub",
+      route: "/staff",
+      icon: "pi-building",
+      ariaLabel: "Staff Hub - Access nutritionist, physio, and psychology dashboards",
+      roles: [
+        "physiotherapist",
+        "nutritionist",
+        "psychologist",
+        "strength_conditioning_coach",
+      ],
+      group: "secondary",
+    },
     {
       label: "Team Hub",
       route: "/team/workspace",
@@ -513,6 +532,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       route: "/coach/team",
       icon: "pi-sitemap",
       ariaLabel: "Team Management - Manage team settings and roster",
+      roles: ["coach", "assistant_coach", "admin"],
+      group: "secondary",
+    },
+    {
+      label: "Exercise DB",
+      route: "/exercisedb",
+      icon: "pi-database",
+      ariaLabel: "Exercise DB - Manage exercise database (coach)",
       roles: ["coach", "assistant_coach", "admin"],
       group: "secondary",
     },

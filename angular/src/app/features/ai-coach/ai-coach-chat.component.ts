@@ -1778,6 +1778,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
           messageId: message.id,
           bookmarked: isNowBookmarked,
         })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           error: (err) => this.logger.error("Failed to save bookmark:", err),
         });

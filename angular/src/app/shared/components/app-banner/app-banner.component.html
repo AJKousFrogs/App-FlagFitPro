@@ -1,35 +1,35 @@
 <div
   class="banner"
-  [class.banner-info]="type() === 'info'"
-  [class.banner-warning]="type() === 'warning'"
-  [class.banner-alert]="type() === 'alert'"
-  [class.banner-error]="type() === 'error'"
+  [class.banner-info]="typeDisplay === 'info'"
+  [class.banner-warning]="typeDisplay === 'warning'"
+  [class.banner-alert]="typeDisplay === 'alert'"
+  [class.banner-error]="typeDisplay === 'error'"
 >
   <div class="banner-content">
-    <i [class]="getIconClass()" class="banner-icon" aria-hidden="true"></i>
-    <p class="banner-message">{{ message() }}</p>
+    <i [class]="iconClass" class="banner-icon" aria-hidden="true"></i>
+    <p class="banner-message">{{ messageDisplay }}</p>
   </div>
 
-  @if (primaryCta() || secondaryCta()) {
+  @if (primaryCtaDisplay || secondaryCtaDisplay) {
     <div class="banner-actions">
-      @if (primaryCta()) {
+      @if (primaryCtaDisplay) {
         <app-button
           [variant]="
-            primaryCta()?.variant === 'secondary' ? 'outlined' : 'primary'
+            primaryCtaDisplay.variant === 'secondary' ? 'outlined' : 'primary'
           "
           size="sm"
-          (clicked)="onCtaClick(primaryCta()!.action)"
+          (clicked)="onCtaClick(primaryCtaDisplay!.action)"
         >
-          {{ primaryCta()!.label }}
+          {{ primaryCtaDisplay!.label }}
         </app-button>
       }
-      @if (secondaryCta()) {
+      @if (secondaryCtaDisplay) {
         <app-button
           variant="text"
           size="sm"
-          (clicked)="onCtaClick(secondaryCta()!.action)"
+          (clicked)="onCtaClick(secondaryCtaDisplay!.action)"
         >
-          {{ secondaryCta()!.label }}
+          {{ secondaryCtaDisplay!.label }}
         </app-button>
       }
     </div>

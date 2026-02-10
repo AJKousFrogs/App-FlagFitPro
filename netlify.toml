@@ -323,10 +323,10 @@
   status = 200
   force = true
 
-# API Routes for Training Stats
+# API Routes for Training Stats (deprecated training-stats merged into training-stats-enhanced)
 [[redirects]]
   from = "/training-stats"
-  to = "/.netlify/functions/training-stats"
+  to = "/.netlify/functions/training-stats-enhanced"
   status = 200
   force = true
 
@@ -823,10 +823,10 @@
   status = 200
   force = true
 
-# API Routes for Training Stats (fix redirects)
+# API Routes for Training Stats (consolidated into training-stats-enhanced)
 [[redirects]]
   from = "/api/training/stats"
-  to = "/.netlify/functions/training-stats"
+  to = "/.netlify/functions/training-stats-enhanced"
   status = 200
   force = true
 

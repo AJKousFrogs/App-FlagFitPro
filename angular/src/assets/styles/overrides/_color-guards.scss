@@ -1,0 +1,154 @@
+/**
+ * Color Guards - White Text on Green Enforcement
+ * ================================================
+ *
+ * override-reason: WCAG contrast + brand | component: global | issue: DS-COLOR-GUARDS
+ * Ticket: DS-EXC-COLOR-GUARDS
+ * Remove by: 2027-01-01
+ *
+ * These selectors enforce "white text on green" and "no black on green" rules.
+ * Placed in overrides layer so they run after tokens and PrimeNG.
+ * Tokens (--color-text-on-primary, --on-primary) are defined in design-system-tokens.scss.
+ *
+ * Layer order: tokens -> primeng base/brand -> primitives/features -> overrides
+ */
+
+@layer overrides {
+  /* Inline style green backgrounds - force white text */
+  *[style*="background-color: rgb(8, 153, 73)"],
+  *[style*="background-color:#089949"],
+  *[style*="background: #089949"],
+  *[style*="background:#089949"],
+  *[style*="background-color: #089949"],
+  *[style*="089949"] {
+    color: var(--color-text-on-primary);
+
+    --text-color: var(--color-text-on-primary);
+  }
+
+  *[style*="background-color: rgb(8, 153, 73)"] *,
+  *[style*="background-color:#089949"] *,
+  *[style*="background: #089949"] *,
+  *[style*="background:#089949"] *,
+  *[style*="background-color: #089949"] * {
+    color: var(--color-text-on-primary);
+  }
+
+  /* Class-based green backgrounds */
+  .p-button-green,
+  .btn-green,
+  [class*="green-bg"],
+  [class*="bg-green"],
+  .bg-primary-green,
+  .primary-bg {
+    color: var(--color-text-on-primary);
+
+    --text-color: var(--color-text-on-primary);
+  }
+
+  .p-button-green *,
+  .btn-green *,
+  [class*="green-bg"] *,
+  [class*="bg-green"] *,
+  .bg-primary-green *,
+  .primary-bg * {
+    color: var(--color-text-on-primary);
+  }
+
+  /* PrimeNG components with green backgrounds */
+  :where(
+    .p-button,
+    .p-card,
+    .p-panel,
+    .p-tabview-title,
+    .p-tag,
+    .p-badge,
+    .p-chip
+  ) {
+    &[style*="089949"],
+    &.p-button-green,
+    &.bg-primary,
+    &.p-button-primary {
+      --text-color: var(--color-text-on-primary);
+      --p-button-text-color: var(--color-text-on-primary);
+      color: var(--color-text-on-primary);
+
+      * {
+        color: var(--color-text-on-primary);
+      }
+
+      .p-button-label,
+      .p-button-icon,
+      span,
+      i {
+        color: var(--color-text-on-primary);
+      }
+    }
+  }
+
+  /* Semantic utility classes - document correct combinations */
+  .green-on-white {
+    color: var(--ds-primary-green);
+    background-color: var(--surface-primary);
+  }
+
+  .white-on-green {
+    color: var(--color-text-on-primary);
+    background-color: var(--ds-primary-green);
+
+    * {
+      color: var(--color-text-on-primary);
+    }
+  }
+
+  .black-on-white {
+    color: var(--color-text-primary);
+    background-color: var(--surface-primary);
+  }
+
+  /* FORBIDDEN combo - corrected to white on green */
+  .black-on-green {
+    color: var(--color-text-on-primary);
+    background-color: var(--ds-primary-green);
+  }
+
+  /* Block dark text on green backgrounds */
+  [class*="bg-green"],
+  [class*="bg-primary"],
+  .p-button-primary,
+  .p-tag-primary,
+  .p-badge-primary {
+    color: var(--color-text-on-primary);
+
+    &[style*="color: black"],
+    &[style*="color: #000"],
+    &[style*="color: #1a1a1a"],
+    &[style*="color: rgb(0, 0, 0)"] {
+      color: var(--color-text-on-primary);
+    }
+  }
+
+  /* Elements with green background via CSS var - force white text */
+  [style*="var(--ds-primary-green)"],
+  [style*="var(--color-brand-primary)"],
+  [style*="var(--p-primary-color)"] {
+    color: var(--color-text-on-primary);
+
+    &,
+    & * {
+      color: var(--color-text-on-primary);
+    }
+  }
+
+  /* Gradient backgrounds containing green */
+  [style*="linear-gradient"][style*="089949"],
+  [style*="linear-gradient"][style*="0ab85a"],
+  [style*="linear-gradient"][style*="ds-primary-green"] {
+    color: var(--color-text-on-primary);
+
+    &,
+    & * {
+      color: var(--color-text-on-primary);
+    }
+  }
+}

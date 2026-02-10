@@ -109,7 +109,9 @@ Run these via npm commands from the project root:
 
 ### Code Quality
 
-- `fix-duplicate-imports.js` - Fix duplicate imports
+- `fix-duplicate-imports.js` - Fix duplicate imports (one-time fix; archive after applied)
+- `fix-logger-errors.js` - Fix logger-related errors (one-time fix; archive after applied)
+- `fix-trailing-newlines.js` - Fix trailing newlines (one-time fix; archive after applied)
 - `add-security-headers.js` - Add security headers
 
 ### Wireframe Processing

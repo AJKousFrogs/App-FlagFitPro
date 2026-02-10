@@ -1,13 +1,13 @@
 <div class="acwr-baseline">
   <div class="acwr-header">
-    <span class="acwr-label">{{ label() }}</span>
+    <span class="acwr-label">{{ labelDisplay }}</span>
     <span class="acwr-progress-text">
-      Building baseline: {{ daysLogged() }}/{{ targetDays() }} days
+      Building baseline: {{ daysLoggedDisplay }}/{{ targetDaysDisplay }} days
     </span>
   </div>
 
   <p-progressBar
-    [value]="progressPercent()"
+    [value]="progressPercentDisplay"
     [showValue]="false"
     styleClass="acwr-progress-bar"
   ></p-progressBar>

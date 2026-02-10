@@ -1,3 +1,14 @@
+/**
+ * FlagFit Pro - Utilities Index
+ *
+ * CANONICAL PATHS (per AUDIT_FE.md):
+ * - Spacing (.p-*, .m-*, .gap-*): design-system-tokens.scss
+ * - Flex (.flex): layout-system.scss
+ * - Non-spacing utilities: _utilities.scss
+ *
+ * spacing-system: Form/list/stat-card patterns only (PrimeNG spacing → primeng-integration)
+ */
+
 @forward "./variables";
 @forward "./mixins";
 @forward "./responsive-utilities";

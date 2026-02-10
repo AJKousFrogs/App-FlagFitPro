@@ -4,16 +4,9 @@
 // ============================================================================
 @use "styles/mixins" as *;
 
-/* Dialog content styling via class */
-.walkthrough-dialog {
-  .p-dialog {
-    border-radius: var(--radius-2xl);
-  }
-
-  .p-dialog-content {
-    padding: 0;
-  }
-}
+/* Dialog content: moved to _exceptions.scss (DS-PNGO-001 walkthrough).
+   Token mapping uses --radius-lg; walkthrough needs radius-2xl + zero content padding.
+   See assets/styles/overrides/_exceptions.scss */
 
 .walkthrough-content {
   padding: var(--space-6);

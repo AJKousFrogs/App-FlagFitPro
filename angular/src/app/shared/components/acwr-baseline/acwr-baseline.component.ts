@@ -30,4 +30,21 @@ export class AcwrBaselineComponent {
   progressPercent = computed(() => {
     return Math.min((this.daysLogged() / this.targetDays()) * 100, 100);
   });
+
+  /** Template bindings to satisfy no-call-expression */
+  get labelDisplay(): string {
+    return this.label();
+  }
+
+  get daysLoggedDisplay(): number {
+    return this.daysLogged();
+  }
+
+  get targetDaysDisplay(): number {
+    return this.targetDays();
+  }
+
+  get progressPercentDisplay(): number {
+    return this.progressPercent();
+  }
 }

@@ -392,7 +392,5 @@
     transition: none;
   }
 
-  .p-slider-handle {
-    transition: none;
-  }
+  /* .p-slider-handle reduced-motion: DS-EXC-012 in _exceptions.scss */
 }

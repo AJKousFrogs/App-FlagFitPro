@@ -243,54 +243,9 @@
 
   // ============================================
   // FLEXBOX UTILITIES
+  // Canonical: layout-system.scss (.flex, .flex-col, .items-*, .justify-*)
+  // gap-*: design-system-tokens.scss (.gap-1..gap-8)
   // ============================================
-
-  .flex {
-    display: flex;
-  }
-
-  .flex-col {
-    flex-direction: column;
-  }
-
-  .flex-wrap {
-    flex-wrap: wrap;
-  }
-
-  // Alignment
-  .items-start {
-    align-items: flex-start;
-  }
-  .items-center {
-    align-items: center;
-  }
-  .items-end {
-    align-items: flex-end;
-  }
-  .items-stretch {
-    align-items: stretch;
-  }
-  .items-baseline {
-    align-items: baseline;
-  }
-
-  .justify-start {
-    justify-content: flex-start;
-  }
-  .justify-center {
-    justify-content: center;
-  }
-  .justify-end {
-    justify-content: flex-end;
-  }
-  .justify-between {
-    justify-content: space-between;
-  }
-  .justify-around {
-    justify-content: space-around;
-  }
-
-  /* gap-* utilities: canonical in design-system-tokens.scss (.gap-1..gap-8) */
 
   // ============================================
   // STACK (Vertical spacing pattern)

@@ -119,12 +119,9 @@ export const publicRoutes: Routes = [
   },
   {
     path: "privacy-policy",
-    loadComponent: () =>
-      import("../../features/legal/legal-doc.component").then(
-        (m) => m.LegalDocComponent,
-      ),
-    data: { preload: false, legalDoc: "privacy-policy", entry: "internal" },
-    title: "Privacy Policy - FlagFit Pro",
+    redirectTo: "privacy",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
 ];
 

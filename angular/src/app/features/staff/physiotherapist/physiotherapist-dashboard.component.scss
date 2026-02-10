@@ -398,10 +398,7 @@
       align-items: center;
       gap: var(--ds-spacing-sm);
 
-      .p-progressbar {
-        flex: 1;
-        height: var(--space-2);
-      }
+      /* .p-progressbar override: DS-EXC-005 in _exceptions.scss */
 
       span {
         font-size: var(--ds-font-size-md);

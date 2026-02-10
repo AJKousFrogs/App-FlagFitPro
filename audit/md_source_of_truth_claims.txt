@@ -1,0 +1,123 @@
+./scripts/README.md:39:**Canonical approach:** `npm run migrate:quickstart`
+./AUDIT_FE.md:18:| Design system tokens | `angular/src/scss/tokens/design-system-tokens.scss` |
+./AUDIT_FE.md:19:| Legacy token alias | `angular/src/scss/tokens/design-tokens.scss` (forwards to design-system-tokens) |
+./AUDIT_FE.md:22:### 2) Global Stylesheet Entrypoints (angular.json)
+./AUDIT_FE.md:29:1. `design-system-tokens`
+./AUDIT_FE.md:31:3. `styles/design-system/index` → forwards tokens, typography, states, utilities
+./AUDIT_FE.md:40:| `scss/utilities/_utilities.scss` generates .p-*, .m-*, .gap-* from `$spacing-scale` | P1 – duplicates design-system-tokens.scss utilities (lines 1751–1935) |
+./AUDIT_FE.md:67:- [x] `--border-1..4` – Already defined in design-system-tokens.scss
+./AUDIT_FE.md:85:- **design-system-tokens.scss:** token-based .p-*, .px-*, .py-*, .pt-*, .pb-*, .pl-*, .pr-*, .m-*, .mt-*, .mb-*, .mr-*, .ml-*, .gap-* (canonical)
+./AUDIT_FE.md:102:- Dark mode tokens in design-system-tokens.scss `.dark-theme` block
+./AUDIT_FE.md:126:| 1 | Add --color-border-warning | design-system-tokens.scss | P0 ✓ |
+./AUDIT_FE.md:127:| 2 | Add --color-status-success-bg | design-system-tokens.scss | P0 ✓ |
+./AUDIT_FE.md:129:| 4 | Add deprecated comment for primitive-success naming conflict | design-system-tokens.scss | P1 ✓ |
+./AUDIT_FE.md:139:3. ~~**Vitest smoke tests:** Add design token availability test~~ ✓ Done – design-system-compliance.spec.ts
+./AUDIT_FE.md:150:| 1 | Design token E2E smoke test | design-system-compliance.spec.ts | P1 ✓ |
+./AUDIT_FE.md:156:| 7 | Add mr-*, ml-*, pt-*, pb-*, pl-*, pr-*, mt-0, mb-0, mt-8, mb-8 to design-system-tokens | design-system-tokens.scss | P1 ✓ |
+./AUDIT_FE.md:192:**design-system-tokens.scss** (already hardened in prior rounds):
+./AUDIT_FE.md:197:### Phase 2 – Utilities: Single Source of Truth (P1)
+./AUDIT_FE.md:204:- Added comment: `/* gap-* utilities: canonical in design-system-tokens.scss (.gap-1..gap-8) */`
+./AUDIT_FE.md:206:**Canonical utilities:** `angular/src/scss/tokens/design-system-tokens.scss` — .p-*, .m-*, .px-*, .py-*, .pt-*, .pb-*, .pl-*, .pr-*, .mt-*, .mb-*, .mr-*, .ml-*, .gap-1..gap-8
+./AUDIT_FE.md:231:| **Utilities** | Canonical: design-system-tokens.scss. Duplicates removed from primitives/_layout.scss. |
+./AUDIT_FE.md:242:### Phase 0 – Inventory + Single Source of Truth
+./AUDIT_FE.md:244:**Canonical paths (enforced):**
+./AUDIT_FE.md:245:- Global styles entrypoint: `angular/src/styles.scss` (angular.json styles)
+./AUDIT_FE.md:246:- Token file: `angular/src/scss/tokens/design-system-tokens.scss`
+./AUDIT_FE.md:247:- Spacing utilities (.p-*, .m-*, .gap-*): `design-system-tokens.scss` (canonical)
+./AUDIT_FE.md:252:1. **standardized-components.scss** – Removed duplicate `.flex` block and `&.gap-2`, `&.gap-4`, `&.gap-6` modifiers. Use canonical `.flex` from layout-system.scss and `.gap-1..gap-8` from design-system-tokens.scss.
+./AUDIT_FE.md:254:3. **design-system-tokens.scss** – Added `--shadow-2xl`, `--shadow-inner` tokens for utility parity.
+./AUDIT_FE.md:256:**design-tokens.scss** – Kept as forward alias to design-system-tokens.scss.
+./AUDIT_FE.md:263:1. **angular/src/scss/README.design-system.md** – Added design system contract doc (canonical paths, PrimeNG mapping, rules).
+./AUDIT_FE.md:270:1. **styles.scss** – Added TIER 4: `@use "./assets/styles/overrides"` so the overrides layer entrypoint is explicitly loaded.
+./AUDIT_FE.md:277:1. **loading.component.scss** – Removed duplicate .mb-4, .mt-6, .gap-4, .flex-row, .flex-grow; use canonical utilities from design-system-tokens.
+./AUDIT_FE.md:279:3. **README.design-system.md** – Added component SCSS pattern (host first, spacing via tokens, no duplicated utilities).
+./AUDIT_FE.md:285:2. **README.design-system.md** – Documented state/subscription boundary rules.
+./AUDIT_FE.md:290:1. **README.design-system.md** – Documented canonical Loading/Empty/Error components (app-loading, app-empty-state, app-page-error-state).
+./AUDIT_FE.md:296:2. E2E design-system-compliance.spec.ts, smoke.spec.ts, navigation-routing.spec.ts already cover app boot, routes, design tokens.
+./AUDIT_FE.md:320:| `angular/src/scss/tokens/design-system-tokens.scss` | Removed enforcement block (~170 lines): `*[style*="089949"]`, `.p-button-green`, `.white-on-green`, `.black-on-green`, gradient overrides, etc. Normalized hover tokens to `var(--ds-primary-green-hover)` / `var(--primitive-*-rgb)`. Replaced hardcodes: `--color-status-help`→primitive, `--color-workout-*`→primitives, Settings icon tokens→rgba(var(--*-rgb), 0.15). Added `--primitive-info-400`, `--primitive-neutral-500-rgb`. Grouped **FEATURE PALETTE** (workout/positions/rarity) with clear "NOT for semantic UI status" comment. Dark mode hover tokens use `rgba(var(--primitive-primary-500-rgb), …)`. |
+./AUDIT_FE.md:333:| `angular/src/scss/tokens/design-system-tokens.scss` | Consolidated gold tokens: `--color-star-rating`, `--color-metallic-gold`, `--color-medal-gold` → `var(--primitive-gold-500)`; `--color-medal-gold-rgb` → `var(--primitive-gold-500-rgb)`; medal gold gradient start → `var(--primitive-gold-500)`. |
+./AUDIT_FE.md:414:| design-system-tokens.scss | Added `--z-tooltip`, `--z-toast`; `--p-focus-ring-*` fallbacks; overlay vars for dark/light |
+./docs/TECH_STACK.md:1:# FlagFit Pro — Tech Stack (Single Source of Truth)
+./docs/TECH_STACK.md:56:| Tokens | `angular/src/scss/tokens/design-system-tokens.scss` |
+./docs/TECH_STACK.md:81:| Design system check | `npm run lint:design-system` |
+./docs/DOCS_INDEX.md:23:## Core Documentation (Single Source of Truth)
+./docs/DESIGN_SYSTEM_RULES.md:22:This document defines the **single source of truth** for FlagFit Pro's UI system.
+./docs/DESIGN_SYSTEM_RULES.md:95:## 4. Design Tokens (Single Source of Truth)
+./docs/DESIGN_SYSTEM_RULES.md:101:- Hex colors **ONLY** in `design-system-tokens.scss`
+./docs/DESIGN_SYSTEM_RULES.md:477:### 9.1 Control Sizes (CANONICAL)
+./docs/DESIGN_SYSTEM_RULES.md:633:> **Hex colors are ONLY allowed in `design-system-tokens.scss`**  
+./docs/DESIGN_SYSTEM_RULES.md:640:| `design-system-tokens.scss` | 242           | ✅ ALLOWED (this IS the source) |
+./docs/DESIGN_SYSTEM_RULES.md:648:// ❌ FORBIDDEN (anywhere except design-system-tokens.scss)
+./docs/DESIGN_SYSTEM_RULES.md:689:// CSS tokens (design-system-tokens.scss) - 8-point grid
+./docs/DESIGN_SYSTEM_RULES.md:1444:│   └── design-system-tokens.scss   # Single source of truth
+./docs/DESIGN_SYSTEM_RULES.md:2133:### Unified Typography Tokens (SINGLE SOURCE OF TRUTH)
+./docs/DESIGN_SYSTEM_RULES.md:2135:**Source file:** `angular/src/scss/tokens/design-system-tokens.scss`  
+./docs/DESIGN_SYSTEM_RULES.md:3542: * Owner: @design-system-team
+./docs/DESIGN_SYSTEM_RULES.md:4434:├── design-system-tokens.scss    # Source (authored here)
+./docs/DESIGN_SYSTEM_RULES.md:4472:"build:tokens": "sass tokens/design-system-tokens.scss dist/tokens.css"
+./docs/LEGACY_CODE_GUIDE.md:12:**Single source of truth:** `scripts/lint-design-tokens.js` → `CONFIG.deprecatedTokens`
+./docs/LEGACY_CODE_GUIDE.md:48:- Hex colors **only** in `design-system-tokens.scss`
+./docs/LEGACY_CODE_GUIDE.md:110:npm run lint:design-system
+./docs/LINT_EXCEPTIONS.md:3:The lint policy now treats `angular/src/app/**` as the single source of truth for runtime code, so `no-console`/`no-alert` are errors everywhere in the app. The handful of remaining console usages are explicitly exempted until the foundational logging improvements are in place:
+./docs/ANGULAR_PRIMENG_GUIDE.md:19:7. [Design System](#design-system)
+./docs/ARCHITECTURE.md:289:│  daily_wellness_checkin   │  Sleep, mood, stress (canonical)    │
+docs/TECH_STACK.md:1:# FlagFit Pro — Tech Stack (Single Source of Truth)
+docs/TECH_STACK.md:56:| Tokens | `angular/src/scss/tokens/design-system-tokens.scss` |
+docs/TECH_STACK.md:81:| Design system check | `npm run lint:design-system` |
+./docs/FEATURE_DOCUMENTATION.md:7086:-- Wellness tracking (canonical table)
+docs/DOCS_INDEX.md:23:## Core Documentation (Single Source of Truth)
+docs/DESIGN_SYSTEM_RULES.md:22:This document defines the **single source of truth** for FlagFit Pro's UI system.
+docs/DESIGN_SYSTEM_RULES.md:95:## 4. Design Tokens (Single Source of Truth)
+docs/DESIGN_SYSTEM_RULES.md:101:- Hex colors **ONLY** in `design-system-tokens.scss`
+docs/DESIGN_SYSTEM_RULES.md:477:### 9.1 Control Sizes (CANONICAL)
+docs/DESIGN_SYSTEM_RULES.md:633:> **Hex colors are ONLY allowed in `design-system-tokens.scss`**  
+docs/DESIGN_SYSTEM_RULES.md:640:| `design-system-tokens.scss` | 242           | ✅ ALLOWED (this IS the source) |
+docs/DESIGN_SYSTEM_RULES.md:648:// ❌ FORBIDDEN (anywhere except design-system-tokens.scss)
+docs/DESIGN_SYSTEM_RULES.md:689:// CSS tokens (design-system-tokens.scss) - 8-point grid
+docs/DESIGN_SYSTEM_RULES.md:1444:│   └── design-system-tokens.scss   # Single source of truth
+docs/DESIGN_SYSTEM_RULES.md:2133:### Unified Typography Tokens (SINGLE SOURCE OF TRUTH)
+docs/DESIGN_SYSTEM_RULES.md:2135:**Source file:** `angular/src/scss/tokens/design-system-tokens.scss`  
+docs/DESIGN_SYSTEM_RULES.md:3542: * Owner: @design-system-team
+docs/DESIGN_SYSTEM_RULES.md:4434:├── design-system-tokens.scss    # Source (authored here)
+docs/DESIGN_SYSTEM_RULES.md:4472:"build:tokens": "sass tokens/design-system-tokens.scss dist/tokens.css"
+docs/LEGACY_CODE_GUIDE.md:12:**Single source of truth:** `scripts/lint-design-tokens.js` → `CONFIG.deprecatedTokens`
+docs/LEGACY_CODE_GUIDE.md:48:- Hex colors **only** in `design-system-tokens.scss`
+docs/LEGACY_CODE_GUIDE.md:110:npm run lint:design-system
+docs/LINT_EXCEPTIONS.md:3:The lint policy now treats `angular/src/app/**` as the single source of truth for runtime code, so `no-console`/`no-alert` are errors everywhere in the app. The handful of remaining console usages are explicitly exempted until the foundational logging improvements are in place:
+angular/src/scss/README.md:3:- Tokens: `angular/src/scss/tokens/design-system-tokens.scss` is the single source of truth for CSS custom properties.
+angular/src/scss/README.md:4:- Global entrypoint: `angular/src/styles.scss` is the only stylesheet wired in `angular.json`.
+docs/ANGULAR_PRIMENG_GUIDE.md:19:7. [Design System](#design-system)
+angular/src/scss/README.design-system.md:3:**Enforced:** 2026-02-10 | **Single source:** `angular/src/scss/README.design-system.md`
+angular/src/scss/README.design-system.md:5:## Canonical Paths
+angular/src/scss/README.design-system.md:9:| **Tokens** | `angular/src/scss/tokens/design-system-tokens.scss` |
+angular/src/scss/README.design-system.md:10:| **Global entry** | `angular/src/styles.scss` (only entrypoint in angular.json) |
+angular/src/scss/README.design-system.md:11:| **Import order** | tokens (design-system/index) → utilities → components (PrimeNG) → pages → overrides |
+angular/src/scss/README.design-system.md:12:| **Spacing utilities** | `.p-*`, `.m-*`, `.gap-*` in design-system-tokens.scss |
+angular/src/scss/README.design-system.md:27:1. Add primitive in `:root` (design-system-tokens.scss) if new raw value
+angular/src/scss/README.design-system.md:57:2. Use canonical utilities (`.p-*`, `.m-*`, `.gap-*`)
+docs/ARCHITECTURE.md:289:│  daily_wellness_checkin   │  Sleep, mood, stress (canonical)    │
+docs/FEATURE_DOCUMENTATION.md:7086:-- Wellness tracking (canonical table)
+./angular/src/scss/README.md:3:- Tokens: `angular/src/scss/tokens/design-system-tokens.scss` is the single source of truth for CSS custom properties.
+./angular/src/scss/README.md:4:- Global entrypoint: `angular/src/styles.scss` is the only stylesheet wired in `angular.json`.
+./angular/src/scss/README.design-system.md:3:**Enforced:** 2026-02-10 | **Single source:** `angular/src/scss/README.design-system.md`
+./angular/src/scss/README.design-system.md:5:## Canonical Paths
+./angular/src/scss/README.design-system.md:9:| **Tokens** | `angular/src/scss/tokens/design-system-tokens.scss` |
+./angular/src/scss/README.design-system.md:10:| **Global entry** | `angular/src/styles.scss` (only entrypoint in angular.json) |
+./angular/src/scss/README.design-system.md:11:| **Import order** | tokens (design-system/index) → utilities → components (PrimeNG) → pages → overrides |
+./angular/src/scss/README.design-system.md:12:| **Spacing utilities** | `.p-*`, `.m-*`, `.gap-*` in design-system-tokens.scss |
+./angular/src/scss/README.design-system.md:27:1. Add primitive in `:root` (design-system-tokens.scss) if new raw value
+./angular/src/scss/README.design-system.md:57:2. Use canonical utilities (`.p-*`, `.m-*`, `.gap-*`)
+./README.md:163:- **SCSS entrypoints**
+./README.md:164:  - `angular/src/styles.scss` (main entrypoint that brings together `styles/`, `assets/styles/`, and `scss/tokens/` layers).
+./README.md:165:  - `angular/src/scss/tokens/design-system-tokens.scss` (isolated tokens entry used for tooling that only needs CSS variables).
+./README.md:173:  - For local iteration, run `npm run sass:watch`: the wrapper automatically enables polling on macOS while compiling the same five entrypoints before bundling.
+angular/e2e/RUN_TESTS.md:9:npm run e2e:design-system:watch
+angular/e2e/RUN_TESTS.md:16:npx playwright test e2e/design-system-compliance.spec.ts --ui --project=chromium
+angular/e2e/RUN_TESTS.md:54:   npm run e2e:design-system
+angular/e2e/RUN_TESTS.md:62:- `e2e/design-system-compliance.spec.ts` - Design token violations
+./angular/e2e/RUN_TESTS.md:9:npm run e2e:design-system:watch
+./angular/e2e/RUN_TESTS.md:16:npx playwright test e2e/design-system-compliance.spec.ts --ui --project=chromium
+./angular/e2e/RUN_TESTS.md:54:   npm run e2e:design-system
+./angular/e2e/RUN_TESTS.md:62:- `e2e/design-system-compliance.spec.ts` - Design token violations
+./ROUTE_MAP.md:4:endpoints. The canonical API endpoint list lives in:
+./database/BASELINE.md:4:It is used as the canonical reference for forward-only patch migrations.

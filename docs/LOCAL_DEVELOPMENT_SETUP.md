@@ -229,7 +229,7 @@ cd angular
 ng build
 
 # Should complete without errors
-# Output in: angular/dist/flagfit-pro/browser/
+# Output in: angular/dist/flagfit-pro/browser/ (created by ng build)
 ```
 
 ### 3. Database Connection
@@ -269,7 +269,7 @@ npm install -g @angular/cli@21
 
 ### Supabase Connection Error
 
-1. Verify `.env` file exists in project root
+1. Verify `.env` file exists in project root (gitignored; create from `.env.example` if present)
 2. Check `SUPABASE_URL` format: `https://xxx.supabase.co`
 3. Ensure keys are correct (no extra spaces)
 

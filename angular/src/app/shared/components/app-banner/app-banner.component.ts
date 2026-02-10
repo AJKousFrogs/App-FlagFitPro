@@ -42,19 +42,34 @@ export class AppBannerComponent {
     this.ctaClick.emit(action);
   }
 
-  getIconClass(): string {
-    if (this.icon()) {
-      return `pi ${this.icon()}`;
-    }
+  /** Template bindings to satisfy no-call-expression */
+  get typeDisplay(): "info" | "warning" | "alert" | "error" {
+    return this.type();
+  }
 
-    // Default icons by type
+  get messageDisplay(): string {
+    return this.message();
+  }
+
+  get primaryCtaDisplay(): BannerCta | null {
+    return this.primaryCta();
+  }
+
+  get secondaryCtaDisplay(): BannerCta | null {
+    return this.secondaryCta();
+  }
+
+  get iconClass(): string {
+    const iconVal = this.icon();
+    if (iconVal) {
+      return `pi ${iconVal}`;
+    }
     const iconMap: Record<string, string> = {
       info: "pi-info-circle",
       warning: "pi-exclamation-triangle",
       alert: "pi-bell",
       error: "pi-times-circle",
     };
-
-    return `pi ${iconMap[this.type()] || "pi-info-circle"}`;
+    return `pi ${iconMap[this.typeDisplay] || "pi-info-circle"}`;
   }
 }

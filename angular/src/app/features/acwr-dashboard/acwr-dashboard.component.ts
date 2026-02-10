@@ -559,7 +559,7 @@ import { DataState } from "../../core/services/data-source.service";
             </button>
             <button class="action-btn" (click)="viewHistory()">
               <i class="icon-chart"></i>
-              View Load History
+              View Training Schedule
             </button>
             <button class="action-btn" (click)="downloadReport()">
               <i class="icon-download"></i>

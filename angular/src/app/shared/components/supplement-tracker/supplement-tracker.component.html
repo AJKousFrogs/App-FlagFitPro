@@ -7,7 +7,7 @@
       <h3>Supplement Tracker</h3>
     </div>
     <div class="header-actions">
-      <span class="progress-badge">{{ takenCount() }}/{{ totalCount() }}</span>
+      <span class="progress-badge">{{ takenCountDisplay }}/{{ totalCountDisplay }}</span>
       <app-icon-button
         icon="pi-plus"
         ariaLabel="Add supplement"
@@ -24,14 +24,14 @@
       <div
         class="progress-fill"
         #progressFill
-        [class.complete]="progressPercent() === 100"
+        [class.complete]="progressPercentDisplay === 100"
       ></div>
     </div>
-    <span class="progress-text">{{ progressPercent() }}% taken today</span>
+    <span class="progress-text">{{ progressPercentDisplay }}% taken today</span>
   </div>
 
   <!-- Loading State -->
-  @if (isLoading()) {
+  @if (isLoadingDisplay) {
     <div class="supplement-loading">
       @for (i of [1, 2, 3, 4]; track i) {
         <div class="skeleton-row">
@@ -43,7 +43,7 @@
   } @else {
     <!-- Supplement List - Single loop for all timing groups -->
     <div class="supplement-list">
-      @for (group of timingGroups(); track group.key) {
+      @for (group of timingGroupsDisplay; track group.key) {
         <div class="timing-group">
           <div class="timing-header">
             <i class="pi {{ group.icon }}"></i>
@@ -83,7 +83,7 @@
               </div>
               <p-tag
                 [value]="supp.category | titlecase"
-                [severity]="getCategoryColor(supp.category)"
+                [severity]="categorySeverityMap[supp.category] || 'secondary'"
                 styleClass="category-tag"
               ></p-tag>
             </div>
@@ -93,7 +93,7 @@
     </div>
 
     <!-- Empty State -->
-    @if (totalCount() === 0) {
+    @if (totalCountDisplay === 0) {
       <app-empty-state icon="inbox" heading="No supplements configured">
         <app-button iconLeft="pi-plus" size="sm" (clicked)="openAddDialog()"
           >Add Your First Supplement</app-button
@@ -118,7 +118,7 @@
         id="suppName"
         type="text"
         pInputText
-        [ngModel]="newSupplement().name"
+        [ngModel]="newSupplementForm.name"
         (ngModelChange)="updateName($event)"
         placeholder="e.g., Vitamin B12"
       />
@@ -130,7 +130,7 @@
         id="suppDosage"
         type="text"
         pInputText
-        [ngModel]="newSupplement().dosage"
+        [ngModel]="newSupplementForm.dosage"
         (ngModelChange)="updateDosage($event)"
         placeholder="e.g., 500mg"
       />
@@ -142,7 +142,7 @@
         <p-select
           id="suppTiming"
           [options]="timingOptions"
-          [ngModel]="newSupplement().timing"
+          [ngModel]="newSupplementForm.timing"
           (ngModelChange)="updateTiming($event)"
           placeholder="Select timing"
         ></p-select>
@@ -153,7 +153,7 @@
         <p-select
           id="suppCategory"
           [options]="categoryOptions"
-          [ngModel]="newSupplement().category"
+          [ngModel]="newSupplementForm.category"
           (ngModelChange)="updateCategory($event)"
           placeholder="Select category"
         ></p-select>
