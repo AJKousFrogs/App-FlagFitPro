@@ -26,21 +26,35 @@ class AppPerformanceChecker {
     };
   }
 
+  getDistPath() {
+    // Angular outputs to angular/dist/flagfit-pro
+    const angularDist = join(projectRoot, "angular", "dist", "flagfit-pro");
+    const rootDist = join(projectRoot, "dist");
+    if (existsSync(angularDist)) return angularDist;
+    if (existsSync(rootDist)) return rootDist;
+    return null;
+  }
+
   async checkBuildPerformance() {
     console.log("🔨 Checking Build Performance...");
 
     try {
-      // Check if dist directory exists
-      const distPath = join(projectRoot, "dist");
-      if (!existsSync(distPath)) {
+      let distPath = this.getDistPath();
+      if (!distPath) {
         console.log("   ℹ️  No build found, running build test...");
         await this.runBuildTest();
-        return;
+        distPath = this.getDistPath();
+        if (!distPath) {
+          console.log("   ❌ Build completed but dist not found");
+          this.results.build.status = "error";
+          return;
+        }
       }
 
       // Analyze build size
       const buildStats = this.analyzeBuildSize(distPath);
       this.results.build.size = buildStats;
+      this.results.build.status = "ok";
 
       console.log(`   Total build size: ${buildStats.totalSize}`);
       console.log(`   JavaScript: ${buildStats.jsSize}`);
@@ -80,9 +94,12 @@ class AppPerformanceChecker {
       console.log(`   ✅ Build completed in ${buildTime.toFixed(0)}ms`);
 
       // Analyze the new build
-      const distPath = join(projectRoot, "dist");
-      const buildStats = this.analyzeBuildSize(distPath);
-      this.results.build.size = buildStats;
+      const distPath = this.getDistPath();
+      if (distPath) {
+        const buildStats = this.analyzeBuildSize(distPath);
+        this.results.build.size = buildStats;
+      }
+      this.results.build.status = "ok";
     } catch (error) {
       console.log(`   ❌ Build failed: ${error.message}`);
       this.results.build.status = "error";
@@ -155,7 +172,8 @@ class AppPerformanceChecker {
     return stats;
   }
 
-  getAllFiles(dir, files = []) {
+  getAllFiles(dir, files = [], rootDir = null) {
+    const root = rootDir || dir;
     const items = readdirSync(dir);
 
     items.forEach((item) => {
@@ -163,9 +181,9 @@ class AppPerformanceChecker {
       const stat = statSync(fullPath);
 
       if (stat.isDirectory()) {
-        this.getAllFiles(fullPath, files);
+        this.getAllFiles(fullPath, files, root);
       } else {
-        files.push(relative(dir, fullPath));
+        files.push(relative(root, fullPath));
       }
     });
 
@@ -186,8 +204,9 @@ class AppPerformanceChecker {
     console.log("\n📦 Checking Bundle Analysis...");
 
     try {
+      const distPath = this.getDistPath() || join(projectRoot, "dist");
       // Check for bundle analyzer
-      const analyzerPath = join(projectRoot, "dist", "bundle-analyzer.html");
+      const analyzerPath = join(distPath, "bundle-analyzer.html");
       if (existsSync(analyzerPath)) {
         console.log("   ✅ Bundle analyzer report available");
         this.results.bundle.status = "analyzed";
@@ -199,7 +218,7 @@ class AppPerformanceChecker {
       }
 
       // Check for source maps
-      const sourceMaps = this.findSourceMaps(join(projectRoot, "dist"));
+      const sourceMaps = this.findSourceMaps(distPath);
       if (sourceMaps.length > 0) {
         console.log(`   ✅ Source maps found: ${sourceMaps.length} files`);
       } else {
@@ -512,7 +531,8 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run when executed directly (e.g. node scripts/app-performance-check.js)
+if (process.argv[1]?.includes("app-performance-check")) {
   main().catch(console.error);
 }
 

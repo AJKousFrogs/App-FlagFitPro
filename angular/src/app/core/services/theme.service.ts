@@ -6,7 +6,14 @@
  * and persistence to localStorage and Supabase.
  */
 
-import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import {
+  computed,
+  effect,
+  inject,
+  Injectable,
+  OnDestroy,
+  signal,
+} from "@angular/core";
 import { CHART_PALETTE } from "../utils/design-tokens.util";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -30,13 +37,17 @@ const THEME_META_COLOR_DARK = "var(--p-surface-0)"; // --primitive-neutral-900
 @Injectable({
   providedIn: "root",
 })
-export class ThemeService {
+export class ThemeService implements OnDestroy {
   private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
 
   // State signals
   private _mode = signal<ThemeMode>("auto");
   private _systemPreference = signal<"light" | "dark">("light");
+
+  // Media query for system preference
+  private mediaQuery: MediaQueryList | null = null;
+  private mediaQueryHandler: ((e: MediaQueryListEvent) => void) | null = null;
 
   // Public computed signals
   mode = this._mode.asReadonly();
@@ -51,9 +62,6 @@ export class ThemeService {
 
   isDark = computed(() => this.resolvedTheme() === "dark");
   isLight = computed(() => this.resolvedTheme() === "light");
-
-  // Media query for system preference
-  private mediaQuery: MediaQueryList | null = null;
 
   constructor() {
     // Initialize on client side only
@@ -167,20 +175,23 @@ export class ThemeService {
     this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     this._systemPreference.set(this.mediaQuery.matches ? "dark" : "light");
 
-    // Listen for system preference changes
-    const handler = (e: MediaQueryListEvent) => {
+    // Listen for system preference changes (addEventListener is supported in all target browsers)
+    this.mediaQueryHandler = (e: MediaQueryListEvent) => {
       this._systemPreference.set(e.matches ? "dark" : "light");
       this.logger.debug(
         `[ThemeService] System preference changed to: ${e.matches ? "dark" : "light"}`,
       );
     };
+    this.mediaQuery.addEventListener("change", this.mediaQueryHandler);
+  }
 
-    // Use addEventListener for modern browsers
-    if (this.mediaQuery.addEventListener) {
-      this.mediaQuery.addEventListener("change", handler);
-    } else {
-      // Fallback for older browsers
-      this.mediaQuery.addListener(handler);
+  ngOnDestroy(): void {
+    if (
+      this.mediaQuery &&
+      this.mediaQueryHandler
+    ) {
+      this.mediaQuery.removeEventListener("change", this.mediaQueryHandler);
+      this.mediaQueryHandler = null;
     }
   }
 
@@ -309,51 +320,22 @@ export class ThemeService {
   }
 
   /**
-   * Update PrimeNG theme dynamically
-   *
-   * These hex values mirror design-system-tokens.scss dark/light mode definitions.
-   * They must be hardcoded here because we're programmatically setting CSS variables
-   * for runtime theme switching (CSS can't reference variables to set other variables).
-   *
-   * Values map to:
-   * - Dark: --primitive-neutral-* scale (reversed for dark mode)
-   * - Light: Standard surface scale from design tokens
+   * Update PrimeNG theme dynamically.
+   * design-system-tokens.scss [data-theme] block defines dark/light vars.
+   * We only override vars that need runtime updates; CSS handles the rest.
    */
   private updatePrimeNGTheme(theme: "light" | "dark"): void {
-    // PrimeNG 21 uses CSS variables, so the data-theme attribute should handle it
-    // But we can also update specific PrimeNG surface variables if needed
     const root = document.documentElement;
-
     if (theme === "dark") {
-      // Dark mode: --primitive-neutral scale (inverted)
-      root.style.setProperty("--p-surface-0", "var(--p-surface-0)"); // --primitive-neutral-900
-      root.style.setProperty("--p-surface-50", "var(--p-surface-50)");
-      root.style.setProperty("--p-surface-100", "var(--p-surface-100)"); // --primitive-neutral-800
       root.style.setProperty("--p-surface-200", "var(--primitive-neutral-800)");
-      root.style.setProperty("--p-surface-300", "var(--p-surface-300)"); // --primitive-neutral-700
-      root.style.setProperty("--p-surface-400", "var(--p-surface-400)");
-      root.style.setProperty("--p-surface-500", "var(--p-surface-500)"); // --primitive-neutral-600
-      root.style.setProperty("--p-surface-600", "var(--p-text-color-secondary)"); // --primitive-neutral-500
-      root.style.setProperty("--p-surface-700", "var(--p-surface-700)"); // --primitive-neutral-400
-      root.style.setProperty("--p-surface-800", "var(--p-surface-800)"); // --primitive-neutral-300
-      root.style.setProperty("--p-surface-900", "var(--p-surface-900)"); // --primitive-neutral-100
+      root.style.setProperty("--p-surface-600", "var(--p-text-color-secondary)");
       root.style.setProperty("--p-text-color", "var(--color-text-on-primary)");
-      root.style.setProperty("--p-text-color-secondary", "var(--p-text-color-secondary)");
     } else {
-      // Light mode: Standard surface scale from design tokens
-      root.style.setProperty("--p-surface-0", "var(--surface-primary)"); // --surface-primary
-      root.style.setProperty("--p-surface-50", "var(--p-surface-50)"); // --surface-secondary
-      root.style.setProperty("--p-surface-100", "var(--p-surface-100)");
+      root.style.setProperty("--p-surface-0", "var(--surface-primary)");
+      root.style.setProperty("--p-surface-50", "var(--p-surface-50)");
       root.style.setProperty("--p-surface-200", "var(--p-surface-border)");
-      root.style.setProperty("--p-surface-300", "var(--p-surface-300)");
-      root.style.setProperty("--p-surface-400", "var(--p-surface-400)");
       root.style.setProperty("--p-surface-500", "var(--p-text-color-secondary)");
-      root.style.setProperty("--p-surface-600", "var(--p-surface-600)");
-      root.style.setProperty("--p-surface-700", "var(--p-surface-700)");
-      root.style.setProperty("--p-surface-800", "var(--p-surface-800)");
       root.style.setProperty("--p-surface-900", "var(--p-text-color)");
-      root.style.setProperty("--p-text-color", "var(--p-text-color)");
-      root.style.setProperty("--p-text-color-secondary", "var(--p-text-color-secondary)");
     }
   }
 

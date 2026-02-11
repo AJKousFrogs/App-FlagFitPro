@@ -4,8 +4,7 @@
  * Centralized error extraction and formatting
  * Eliminates duplicated `error instanceof Error` patterns across 50+ files
  *
- * PREFERRED: Use these utilities for all error handling in Angular components/services.
- * DEPRECATED: ErrorHandlerUtil.extractErrorMessage (use getErrorMessage instead)
+ * PREFERRED: Use getErrorMessage() for all error handling in Angular components/services.
  */
 
 import { isDevMode } from "@angular/core";

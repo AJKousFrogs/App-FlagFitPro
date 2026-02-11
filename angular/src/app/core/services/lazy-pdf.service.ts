@@ -15,27 +15,23 @@ export interface PDFExportOptions {
   orientation?: "portrait" | "landscape";
   quality?: number;
   scale?: number;
+  /** Header text centered at top (e.g. "ACWR Dashboard Report") */
+  headerText?: string;
+  /** Subtitle text below header (e.g. generated date) */
+  subtitleText?: string;
+  /** Image format: png for charts, jpeg for photos */
+  imageFormat?: "jpeg" | "png";
+  /** Y position (mm) to place image when header/subtitle used */
+  imageStartY?: number;
+  /** Max image height (mm) to cap tall content */
+  imageMaxHeight?: number;
 }
 
 // Dynamic import types - these libraries are loaded lazily
 type JsPDFOrientation = "p" | "l" | "portrait" | "landscape";
 type JsPDFUnit = "in" | "em" | "ex" | "cm" | "pt" | "px" | "mm" | "pc";
-type JsPDFConstructor = new (options: {
-  orientation: JsPDFOrientation;
-  unit: JsPDFUnit;
-  format: string;
-}) => {
-  addImage: (
-    data: string,
-    format: string,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-  ) => void;
-  addPage: () => void;
-  save: (filename: string) => void;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type JsPDFConstructor = new (options: any) => any;
 type Html2CanvasFunction = (
   element: HTMLElement,
   options: Record<string, unknown>,
@@ -78,7 +74,7 @@ export class LazyPdfService {
         import("html2canvas"),
       ]);
 
-      this.jsPDF = jsPDFModule.default || jsPDFModule.jsPDF;
+      this.jsPDF = (jsPDFModule.default ?? (jsPDFModule as { jsPDF?: unknown }).jsPDF) as JsPDFConstructor;
       this.html2canvas = html2canvasModule.default;
       this.loaded.set(true);
     } catch (error) {
@@ -104,6 +100,11 @@ export class LazyPdfService {
       orientation = "portrait",
       quality = 0.95,
       scale = 2,
+      headerText,
+      subtitleText,
+      imageFormat = "jpeg",
+      imageStartY = 0,
+      imageMaxHeight,
     } = options;
 
     try {
@@ -125,7 +126,10 @@ export class LazyPdfService {
 
       // Get canvas dimensions
       const imgWidth = format === "a4" ? 210 : 216; // mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+      if (imageMaxHeight != null && imgHeight > imageMaxHeight) {
+        imgHeight = imageMaxHeight;
+      }
 
       // Create PDF
       if (!this.jsPDF) {
@@ -137,9 +141,24 @@ export class LazyPdfService {
         format,
       });
 
-      // Add image to PDF
-      const imgData = canvas.toDataURL("image/jpeg", quality);
-      pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
+      let imgY = imageStartY;
+      if (headerText) {
+        pdf.setFontSize(20);
+        pdf.text(headerText, imgWidth / 2, 15, { align: "center" });
+        imgY = 22;
+      }
+      if (subtitleText) {
+        pdf.setFontSize(10);
+        pdf.text(subtitleText, imgWidth / 2, imgY, { align: "center" });
+        imgY += 8;
+      }
+      imgY = headerText || subtitleText ? Math.max(imgY, 30) : imageStartY;
+
+      const imgData =
+        imageFormat === "png"
+          ? canvas.toDataURL("image/png")
+          : canvas.toDataURL("image/jpeg", quality);
+      pdf.addImage(imgData, imageFormat.toUpperCase(), 0, imgY, imgWidth, imgHeight);
 
       // Save PDF
       pdf.save(filename);

@@ -15,12 +15,8 @@
    USAGE:
    Import this file directly where hover utilities are needed (e.g., `styles.scss` already loads it via `scss/pages/index.scss`).
    
-   Or apply utility classes directly:
-   - .hover-primary    - Primary button hover effect
-   - .hover-card       - Card hover lift + border glow
-   - .hover-list-item  - List item hover background
-   - .hover-link       - Link hover with underline
-   - .hover-icon       - Icon scale + color on hover
+   Utility classes: .hover-primary, .hover-card, .hover-list-item,
+   .hover-link, .hover-icon, .hover-secondary, .hover-ghost
    ================================================================ */
 
 /* ================================================================
@@ -47,7 +43,6 @@
     --primitive-primary-50
   ); /* Light green tint for cards/lists */
 
-  --hover-bg-tertiary: var(--hover-bg-tertiary); /* Very subtle green tint */
   --hover-bg-ultra-light: rgba(
     8,
     153,
@@ -57,7 +52,6 @@
 
   /* Border colors on hover */
   --hover-border-primary: var(--ds-primary-green); /* Brand green border */
-  --hover-border-subtle: var(--hover-border-subtle); /* Subtle green border */
 
   /* Text colors on hover */
   --hover-text-primary: var(
@@ -86,11 +80,7 @@
   --hover-scale-normal: scale(1.05);
   --hover-scale-icon: scale(1.1);
 
-  /* Transition timing - Premium feel */
-  --hover-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --hover-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  --hover-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  --hover-transition-bounce: 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Transition timing - use design-system-tokens (--hover-transition-*) */
 
   /* Focus ring (accessibility) */
   --hover-focus-ring: 0 0 0 var(--space-0-75)
@@ -198,22 +188,6 @@
   }
 }
 
-/* Subtle card hover - less dramatic */
-.hover-card-subtle {
-  transition:
-    transform var(--hover-transition-bounce),
-    box-shadow var(--hover-transition-normal),
-    border-color var(--hover-transition-normal);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: var(--hover-lift-normal);
-      box-shadow: var(--hover-shadow-md);
-      border-color: var(--hover-border-subtle);
-    }
-  }
-}
-
 /* ================================================================
    LIST ITEM HOVER
    Background tint + left border accent
@@ -248,22 +222,6 @@
     background: var(--ds-primary-green);
     transform: scaleY(0);
     transition: transform var(--hover-transition-fast);
-  }
-}
-
-/* Menu item hover - slide effect */
-.hover-menu-item {
-  transition:
-    background-color var(--hover-transition-fast),
-    color var(--hover-transition-fast),
-    padding-left var(--hover-transition-fast);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--hover-bg-tertiary);
-      color: var(--ds-primary-green);
-      padding-left: calc(var(--space-4, 1rem) + var(--space-1));
-    }
   }
 }
 
@@ -305,17 +263,6 @@
   }
 }
 
-/* Standard link hover without underline animation */
-.hover-link-simple {
-  transition: color var(--hover-transition-fast);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      color: var(--hover-text-primary);
-    }
-  }
-}
-
 /* ================================================================
    ICON HOVER
    Scale + color change
@@ -330,26 +277,6 @@
     &:hover {
       transform: var(--hover-scale-icon);
       color: var(--ds-primary-green);
-    }
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-/* Icon button hover */
-.hover-icon-button {
-  transition:
-    background-color var(--hover-transition-fast),
-    transform var(--hover-transition-bounce),
-    box-shadow var(--hover-transition-fast);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--hover-bg-tertiary);
-      transform: var(--hover-scale-subtle);
-      box-shadow: var(--hover-shadow-sm);
     }
   }
 
@@ -693,37 +620,9 @@
     }
   }
 
-  /* ================================
-     p-progressbar - Progress bar hover
-     ================================ */
-
-  .p-progressbar-value {
-    transition: width var(--transition-slower) cubic-bezier(0.25, 0.1, 0.25, 1);
-
-    /* Shine effect on hover */
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--overlay-white-30) 50%,
-        transparent 100%
-      );
-      animation: progress-shine 2s infinite;
-    }
-  }
 } /* End @layer primeng-brand */
 
-@keyframes progress-shine {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
+/* p-progressbar shine: defined in primeng-theme.scss */
 
 /* ================================================================
    GLOBAL LINK HOVER STYLES

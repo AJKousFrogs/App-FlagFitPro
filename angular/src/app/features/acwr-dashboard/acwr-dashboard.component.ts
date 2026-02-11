@@ -70,6 +70,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
 import { DataState } from "../../core/services/data-source.service";
+import { LazyPdfService } from "../../core/services/lazy-pdf.service";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -592,6 +593,7 @@ export class AcwrDashboardComponent implements OnInit {
     OwnershipTransitionService,
   );
   private logger = inject(LoggerService);
+  private readonly lazyPdf = inject(LazyPdfService);
 
   // Angular 21: viewChild signal for PDF export dashboard reference
   private readonly dashboardElement =
@@ -1209,13 +1211,6 @@ export class AcwrDashboardComponent implements OnInit {
     try {
       this.toastService.info(TOAST.INFO.PDF_REPORT_GENERATING);
 
-      // Dynamically import jspdf and html2canvas
-      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import("jspdf"),
-        import("html2canvas"),
-      ]);
-
-      // Use viewChild reference instead of document.querySelector
       const dashboardRef = this.dashboardElement();
       const dashboard = dashboardRef?.nativeElement as HTMLElement;
       if (!dashboard) {
@@ -1223,44 +1218,14 @@ export class AcwrDashboardComponent implements OnInit {
         return;
       }
 
-      const computedBackground =
-        getComputedStyle(dashboard).backgroundColor ||
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--surface-primary")
-          .trim();
-
-      // Create canvas from dashboard
-      const canvas = await html2canvas(dashboard, {
+      await this.lazyPdf.exportElementToPDF(dashboard, {
+        filename: `acwr-report-${new Date().toISOString().split("T")[0]}.pdf`,
+        headerText: "ACWR Dashboard Report",
+        subtitleText: `Generated: ${formatDate(new Date(), "P")}`,
+        imageFormat: "png",
+        imageMaxHeight: 250,
         scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: computedBackground || undefined,
       });
-
-      // Create PDF
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      // Add title
-      pdf.setFontSize(20);
-      pdf.text("ACWR Dashboard Report", 105, 15, { align: "center" });
-      pdf.setFontSize(10);
-      pdf.text(`Generated: ${formatDate(new Date(), "P")}`, 105, 22, {
-        align: "center",
-      });
-
-      // Add dashboard image
-      const imgData = canvas.toDataURL("image/png");
-      pdf.addImage(imgData, "PNG", 0, 30, imgWidth, Math.min(imgHeight, 250));
-
-      // Save PDF
-      pdf.save(`acwr-report-${new Date().toISOString().split("T")[0]}.pdf`);
 
       this.toastService.success(TOAST.SUCCESS.PDF_REPORT_DOWNLOADED);
     } catch (error) {

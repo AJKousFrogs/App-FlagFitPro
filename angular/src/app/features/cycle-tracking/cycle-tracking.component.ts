@@ -1153,13 +1153,36 @@ export class CycleTrackingComponent implements OnInit {
   }
 
   exportData(): void {
+    const history = this.cycleHistory();
+    if (history.length === 0) {
+      this.messageService.add({
+        severity: "info",
+        summary: "No Data",
+        detail: "You have no cycle data to export.",
+        life: 3000,
+      });
+      return;
+    }
+    const headers = ["Start Date", "End Date", "Length (days)"];
+    const rows = history.map((e) => [
+      e.startDate,
+      e.endDate ?? "",
+      String(e.length ?? ""),
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `cycle-tracking-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
     this.messageService.add({
-      severity: "info",
-      summary: "Export Started",
-      detail: "Your data will be downloaded shortly.",
+      severity: "success",
+      summary: "Export Complete",
+      detail: "Your cycle data has been downloaded.",
       life: 3000,
     });
-    // TODO: Implement actual export
   }
 
   confirmDeleteData(): void {

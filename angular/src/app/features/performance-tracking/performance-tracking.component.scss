@@ -11,15 +11,10 @@
     flex-wrap: wrap;
     gap: var(--space-3) var(--space-6);
     margin: var(--space-2) 0 var(--space-4);
-  font-size: var(--ds-font-size-sm);
+    font-size: var(--ds-font-size-sm);
     color: var(--text-secondary);
 
-    .data-source,
-    .data-updated {
-      display: inline-flex;
-      align-items: center;
-  gap: calc(var(--space-1) + var(--space-0-5));
-    }
+    @include data-source-meta;
   }
 
   @include page-container(var(--content-max-width-2xl));

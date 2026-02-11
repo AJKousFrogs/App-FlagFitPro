@@ -212,7 +212,7 @@
 
 .comparison-bar {
   display: flex;
-  height: calc(var(--space-1) + var(--space-0-5));
+  height: var(--progress-bar-height-sm);
   background: var(--color-border-secondary);
   border-radius: var(--radius-sm);
   margin-top: var(--space-1);

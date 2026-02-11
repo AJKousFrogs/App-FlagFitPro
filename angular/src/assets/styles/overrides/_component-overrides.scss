@@ -26,7 +26,7 @@
   .acwr-baseline {
     .acwr-progress-bar {
       .p-progressbar {
-        height: var(--space-2);
+        height: var(--progress-bar-height-md);
         background: var(--surface-secondary);
         border-radius: var(--radius-full);
 
@@ -70,7 +70,7 @@
       @include respond-to(md) {
         :global(.p-message) {
           padding: var(--space-3);
-          font-size: var(--font-size-h4);
+          font-size: var(--font-h4-size);
         }
       }
 
@@ -85,7 +85,7 @@
     // Progressbar mobile
     @include respond-to(md) {
       .p-progressbar {
-        height: calc(var(--space-1) + var(--space-0-5));
+        height: var(--progress-bar-height-sm);
       }
     }
 
@@ -237,7 +237,7 @@
         th,
         td {
           padding: var(--space-2) var(--space-3);
-          font-size: var(--font-size-h4);
+          font-size: var(--font-h4-size);
         }
 
         // Tags - smaller on mobile
@@ -548,7 +548,7 @@
       max-height: var(--touch-target-md);
 
       .p-button-icon {
-        font-size: var(--font-size-body);
+        font-size: var(--font-body-size);
       }
     }
   }
@@ -563,7 +563,7 @@
     background: var(--ds-primary-green);
     color: var(--color-text-on-primary);
     font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-h4);
+    font-size: var(--font-h4-size);
     letter-spacing: 0.02em;
     border: none;
     box-shadow: none;
@@ -670,7 +670,7 @@
 
   @include respond-to(sm) {
     .body-comp-dialog.p-dialog {
-      max-height: 80vh;
+      max-height: var(--overlay-max-height-dialog);
       max-height: 80dvh;
       display: flex;
       flex-direction: column;
@@ -805,7 +805,7 @@
    * ------------------------------------------------ */
   .completion-bar {
     .p-progressbar {
-      height: calc(var(--space-1) + var(--space-0-5));
+      height: var(--progress-bar-height-sm);
       border-radius: var(--radius-sm);
       background: var(--surface-100);
     }
@@ -817,7 +817,7 @@
 
   .type-bar {
     .p-progressbar {
-      height: var(--space-1);
+      height: var(--progress-bar-height-xs);
       border-radius: var(--radius-sm);
       background: var(--surface-100);
     }
@@ -862,12 +862,12 @@
     }
 
     .p-checkbox {
-      width: var(--space-6);
-      height: var(--space-6);
+      width: var(--p-checkbox-width);
+      height: var(--p-checkbox-height);
 
       .p-checkbox-box {
-        width: var(--space-6);
-        height: var(--space-6);
+        width: var(--p-checkbox-width);
+        height: var(--p-checkbox-height);
         border-radius: var(--radius-sm);
         border: var(--space-0-5) solid var(--primitive-neutral-300);
         background: var(--surface-primary);
@@ -925,7 +925,7 @@
   app-wellness-checkin {
     .p-slider {
       flex: 1;
-      height: calc(var(--space-1) + var(--space-0-5));
+      height: var(--slider-track-height);
 
       .p-slider-handle {
         width: var(--space-5);
@@ -986,7 +986,7 @@
     box-shadow: none;
     width: var(--layout-width-2xl);
     max-width: 95vw;
-    top: 10%;
+    top: var(--overlay-top-offset);
     z-index: var(--z-index-modal);
 
     .p-dialog-content {
@@ -1067,7 +1067,7 @@
     border: none;
 
     .p-button-icon {
-      font-size: var(--font-size-h4);
+      font-size: var(--font-h4-size);
       color: var(--text-color-secondary);
     }
   }
@@ -1637,7 +1637,7 @@
 
 .window-footer {
   .p-button {
-    font-size: var(--font-size-h4);
+    font-size: var(--font-h4-size);
   }
 }
 
@@ -1666,7 +1666,7 @@
 .search-wrapper {
   .p-input-icon-left > i {
     left: var(--space-5);
-    font-size: var(--font-size-h2);
+    font-size: var(--font-h2-size);
     color: var(--ds-primary-green);
   }
 }
@@ -1732,11 +1732,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: var(--font-size-body);
+      font-size: var(--font-body-size);
     }
 
     th {
-      font-size: var(--font-size-h4);
+      font-size: var(--font-h4-size);
     }
   }
 
@@ -1745,7 +1745,7 @@
   }
 
   .calendar-container .p-datepicker-title {
-    font-size: var(--font-size-h3);
+    font-size: var(--font-h3-size);
   }
 
   .calendar-container .p-datepicker-header button {
@@ -1764,7 +1764,7 @@
     span {
       width: var(--space-9);
       height: var(--space-9);
-      font-size: var(--font-size-h4);
+      font-size: var(--font-h4-size);
     }
   }
 }
@@ -1937,7 +1937,7 @@ app-daily-readiness {
   }
 
   .p-slider {
-    height: var(--space-2);
+    height: var(--slider-track-height);
 
     .p-slider-range {
       background: var(--ds-primary-green);
@@ -2019,7 +2019,7 @@ app-daily-readiness {
     width: 100%;
     justify-content: center;
     padding: var(--space-3) var(--space-5);
-    font-size: var(--font-size-body);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     border-radius: var(--radius-xl);
   }
@@ -2071,7 +2071,7 @@ app-daily-readiness {
     width: calc(var(--space-24) + var(--space-1));
     text-align: center;
     font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-body);
+    font-size: var(--font-body-size);
     padding: var(--space-3);
     border-radius: var(--radius-lg);
     border: var(--border-1) solid var(--color-border-default);
@@ -2132,7 +2132,7 @@ app-daily-readiness {
 .search-container {
   .p-inputicon {
     color: var(--color-text-muted);
-    font-size: var(--font-size-h2);
+    font-size: var(--font-h2-size);
   }
 }
 
@@ -2394,7 +2394,7 @@ app-daily-readiness {
 .quick-checkin-modal {
   &.p-dialog {
     @media (max-width: 26.875rem) {
-      max-height: 80vh;
+      max-height: var(--overlay-max-height-dialog);
       max-height: 80dvh;
       display: flex;
       flex-direction: column;
@@ -2440,7 +2440,7 @@ app-daily-readiness {
 .body-comp-dialog {
   &.p-dialog {
     @media (max-width: 26.875rem) {
-      max-height: 80vh;
+      max-height: var(--overlay-max-height-dialog);
       max-height: 80dvh;
       display: flex;
       flex-direction: column;
@@ -2502,7 +2502,7 @@ app-daily-readiness {
    * ------------------------------------------------ */
 .overall-bar {
   .p-progressbar {
-    height: var(--space-1);
+    height: var(--progress-bar-height-xs);
     border-radius: var(--radius-sm);
   }
 
@@ -2513,7 +2513,7 @@ app-daily-readiness {
 
 .step-bar {
   .p-progressbar {
-    height: calc(var(--space-1) + var(--space-0-5));
+    height: var(--progress-bar-height-sm);
     border-radius: var(--radius-sm);
   }
 
@@ -2642,7 +2642,7 @@ app-daily-readiness {
    * ------------------------------------------------ */
 .psychology-reports {
   .p-progressbar {
-    height: var(--space-2);
+    height: var(--progress-bar-height-md);
   }
 
   .stress-bar {
@@ -2665,7 +2665,7 @@ app-daily-readiness {
   .soreness-bar {
     .p-progressbar {
       flex: 1;
-      height: var(--space-2);
+      height: var(--progress-bar-height-md);
     }
   }
 }
@@ -2724,7 +2724,7 @@ app-daily-readiness {
     gap: var(--space-2);
 
     label {
-      font-size: var(--font-size-h4);
+      font-size: var(--font-h4-size);
       font-weight: var(--font-weight-medium);
     }
   }
@@ -2742,7 +2742,7 @@ app-daily-readiness {
   .form-field {
     label {
       display: block;
-      font-size: var(--font-size-h4);
+      font-size: var(--font-h4-size);
       font-weight: var(--font-weight-medium);
       color: var(--color-text-secondary);
     }
@@ -2770,7 +2770,7 @@ app-daily-readiness {
 
     &::before {
       content: "⚠";
-      font-size: var(--font-size-h4);
+      font-size: var(--font-h4-size);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -2870,17 +2870,17 @@ app-daily-readiness {
       margin-bottom: var(--space-2);
       font-weight: var(--font-weight-medium);
       color: var(--color-text-primary);
-      font-size: var(--font-size-h4);
+      font-size: var(--font-h4-size);
     }
   }
 
   .security-actions {
     .p-divider {
-      margin: var(--space-2) 0;
+      margin: var(--p-divider-margin-compact) 0;
 
       &::before {
-        border-color: var(--color-border-muted);
-        opacity: var(--opacity-dimmed);
+        border-color: var(--p-divider-border-color);
+        opacity: var(--p-divider-opacity);
       }
     }
   }
@@ -2948,7 +2948,7 @@ app-daily-readiness {
 
   .export-dialog {
     .p-dialog {
-      width: 90%;
+      width: var(--modal-width-responsive);
       max-width: var(--dialog-max-width-lg);
     }
   }
@@ -3024,7 +3024,7 @@ app-daily-readiness {
       }
 
       .p-dialog-title {
-        font-size: var(--font-size-body);
+        font-size: var(--font-body-size);
       }
 
       .p-dialog-content {
@@ -3043,7 +3043,7 @@ app-daily-readiness {
         }
 
         .p-dialog-title {
-          font-size: var(--font-size-h3);
+          font-size: var(--font-h3-size);
           font-weight: var(--font-weight-semibold);
         }
 

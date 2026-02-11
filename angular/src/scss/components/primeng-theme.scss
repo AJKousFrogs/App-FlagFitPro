@@ -3136,7 +3136,7 @@
 
   .p-progressbar {
     border-radius: var(--radius-full);
-    height: var(--space-2);
+    height: var(--progress-bar-height-md);
     background: var(--surface-tertiary);
     overflow: hidden;
   }
@@ -3227,19 +3227,6 @@
 }
 
 /* ================================================================
-   CRITICAL: BUTTON ICON SPACING
-   Ensure proper gap between icon and label
-   ================================================================ */
-
-.p-button .p-button-icon-left {
-  margin-right: var(--space-2);
-}
-
-.p-button .p-button-icon-right {
-  margin-left: var(--space-2);
-}
-
-/* ================================================================
    🚨 CRITICAL: NO BLACK TEXT ON GREEN - PERMANENT DESIGN SYSTEM RULE
    ================================================================
    
@@ -3263,8 +3250,7 @@
 *[style*="background: var(--ds-primary-green)"],
 *[style*="background:var(--ds-primary-green)"],
 *[style*="background-color: var(--ds-primary-green)"],
-*[style*="089949"],
-*[style*="green"] {
+*[style*="089949"] {
   color: var(--color-text-on-primary);
   text-shadow: var(--text-shadow-subtle);
 
@@ -3341,6 +3327,7 @@
 
 @layer primeng-brand {
   /* Primary/default buttons - WHITE text on GREEN background */
+/* Primary/solid buttons - white text on green */
 .p-button:not(.p-button-outlined):not(.p-button-text):not(
     .p-button-secondary
   ):not(.p-button-link),
@@ -3354,60 +3341,42 @@
 .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
   color: var(--color-text-on-primary);
 
-  .p-button-label {
-    color: var(--color-text-on-primary);
-  }
-
-  .p-button-icon {
-    color: var(--color-text-on-primary);
-  }
-
+  .p-button-label,
+  .p-button-icon,
   span {
     color: var(--color-text-on-primary);
   }
 }
 
-/* Warning button - dark text for contrast on yellow/amber */
+/* Warning - dark text on yellow/amber */
 .p-button-warning:not(.p-button-outlined):not(.p-button-text),
 .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
   color: var(--color-status-warning-text);
 
-  .p-button-label {
-    color: var(--color-status-warning-text);
-  }
-
-  .p-button-icon {
-    color: var(--color-status-warning-text);
-  }
-
+  .p-button-label,
+  .p-button-icon,
   span {
     color: var(--color-status-warning-text);
   }
 }
 
-/* Outlined and text buttons - GREEN text on WHITE/transparent background */
+/* Outlined/text/link - green text */
 .p-button-outlined,
 .p-button-text,
 .p-button-link {
   color: var(--ds-primary-green);
 
-  .p-button-label {
-    color: var(--ds-primary-green);
-  }
-
+  .p-button-label,
   .p-button-icon {
     color: var(--ds-primary-green);
   }
 }
 
-/* Secondary button - inherit text color or use secondary text */
+/* Secondary solid */
 .p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
   color: var(--color-text-primary);
 
-  .p-button-label {
-    color: var(--color-text-primary);
-  }
-
+  .p-button-label,
   .p-button-icon {
     color: var(--color-text-primary);
   }
@@ -3506,68 +3475,6 @@
 
 .p-button-text.p-button-contrast {
   color: var(--color-text-primary);
-}
-
-/* ================================================================
-   GLOBAL BUTTON OVERRIDES - DESIGN SYSTEM ALIGNMENT
-   Ensures all PrimeNG buttons match the app-button design contract
-   
-   DESIGN CONTRACT:
-   - Shape: --radius-button (0.5rem) - RAISED RECTANGULAR, NOT PILL
-   - Height: min-height 2.75rem
-   - Hover: white background + green text (inverted)
-   ================================================================ */
-
-/* RAISED RECTANGULAR border-radius on ALL PrimeNG buttons - NOT PILL */
-.p-button,
-button.p-button,
-.p-button.p-component,
-p-button .p-button,
-.p-button:not(.p-button-icon-only) {
-  border-radius: var(--radius-button);
-  min-height: var(--button-height-md);
-}
-
-/* Icon-only buttons - square with same radius */
-.p-button.p-button-icon-only {
-  border-radius: var(--radius-button);
-  min-width: var(--button-height-md);
-  min-height: var(--button-height-md);
-}
-
-/* Primary button - GREEN background with WHITE text */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link),
-.p-button.p-button-primary {
-  background: var(--ds-primary-green);
-  border: var(--border-2) solid transparent;
-  color: var(--color-text-on-primary);
-  box-shadow: var(--shadow-md);
-}
-
-/* Primary button hover - WHITE background with GREEN text (inverted) */
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link):hover:not(:disabled),
-.p-button.p-button-primary:hover:not(:disabled) {
-  background: var(--color-text-on-primary);
-  color: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
-  box-shadow: var(--hover-shadow-md);
-}
-
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link)
-  .p-button-label,
-.p-button:not(.p-button-outlined):not(.p-button-text):not(
-    .p-button-secondary
-  ):not(.p-button-link)
-  .p-button-icon,
-.p-button.p-button-primary .p-button-label,
-.p-button.p-button-primary .p-button-icon {
-  color: inherit;
 }
 
 /* ================================================================

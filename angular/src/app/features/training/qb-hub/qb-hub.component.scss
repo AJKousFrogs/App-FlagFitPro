@@ -2,27 +2,15 @@
 
 /**
  * QB Hub Composite View Styles
- * ================================================================
  * Design System Compliant - Fixed January 9, 2026
-
+ * TAB ICON SPACING: Uses global .mr-2 from design-system-tokens
+ */
 
 .hub-tab-content {
   padding: var(--space-6) 0;
 
-  /*
-   * COMPOSITE VIEW PATTERN
-   * Child components inherit this CSS variable which hides their headers.
-   * PageHeaderComponent reads --page-header-display on :host.
-
+  /* COMPOSITE VIEW: Child components inherit --page-header-display on :host */
 }
-
-.mr-2 {
-  margin-right: var(--space-2);
-}
-
- * Removed encapsulation piercing - Using CSS custom property cascade
- * ================================================================
- */
 
 .qb-hub-page {
   padding: var(--space-4);

@@ -10,8 +10,7 @@
 
 // Stats Grid
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
+  @include stats-grid;
   gap: var(--space-3);
 }
 

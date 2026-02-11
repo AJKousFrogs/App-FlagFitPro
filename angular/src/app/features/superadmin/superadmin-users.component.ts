@@ -21,6 +21,7 @@ import { InputText } from "primeng/inputtext";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
+import { ToastService } from "../../core/services/toast.service";
 
 interface User {
   id: string;
@@ -299,6 +300,7 @@ interface User {
 })
 export class SuperadminUsersComponent implements OnInit {
   private superadminService = inject(SuperadminService);
+  private toast = inject(ToastService);
 
   users: User[] = [];
   filteredUsers: User[] = [];
@@ -412,10 +414,10 @@ export class SuperadminUsersComponent implements OnInit {
   }
 
   editUser(_user: User): void {
-    // TODO: Implement user edit functionality
+    this.toast.info("User edit functionality coming soon.", "User edit");
   }
 
   viewUser(_user: User): void {
-    // TODO: Implement user view functionality
+    this.toast.info("User view functionality coming soon.", "User details");
   }
 }

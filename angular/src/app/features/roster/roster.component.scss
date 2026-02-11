@@ -567,13 +567,13 @@
   }
 }
 
-@media (min-width: 75rem) and (max-width: 87.4375rem) {
+@include respond-between(xl-min, xl-max) {
   .roster-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 64rem) and (max-width: 74.9375rem) {
+@include respond-between(lg, lg-max) {
   .roster-grid {
     grid-template-columns: repeat(2, 1fr);
   }

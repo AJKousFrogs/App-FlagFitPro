@@ -154,10 +154,4 @@
   }
 }
 
-// ================================================================
-// TAB ICON SPACING
-// ================================================================
-
-.mr-2 {
-  margin-right: var(--space-2);
-}
+// TAB ICON SPACING: Uses global .mr-2 from design-system-tokens

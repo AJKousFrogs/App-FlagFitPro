@@ -16,7 +16,7 @@
   flex-wrap: wrap;
 }
 
-// Stats Grid
+// Stats Grid (custom breakpoints md/sm differ from stats-grid mixin)
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
@@ -70,6 +70,7 @@
     gap: var(--space-1);
   }
 
+  // Override stat-block for .stat-card context (larger label)
   .stat-block__label {
     font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
@@ -78,7 +79,6 @@
   .stat-block__value {
     font-size: var(--ds-font-size-2xl);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
 
     &.recent {
       font-size: var(--ds-font-size-md);

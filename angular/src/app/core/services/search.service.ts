@@ -589,10 +589,4 @@ export class SearchService implements OnDestroy {
     this._suggestions.set([]);
   }
 
-  /**
-   * Get suggestions based on partial input (legacy method - use getInstantSuggestions)
-   */
-  async getSuggestions(partial: string): Promise<string[]> {
-    return this.getInstantSuggestions(partial);
-  }
 }

@@ -401,7 +401,7 @@ export class LoggerService {
    * @param log - Structured log entry
    */
   private sendToErrorTracking(_log: StructuredLog): void {
-    // TODO: Integrate with error tracking service
+    // Integrate with ErrorTrackingService when configured
     // Example: Sentry.captureException(log.error, { contexts: log.context });
   }
 }

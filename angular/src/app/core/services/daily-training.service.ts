@@ -148,7 +148,19 @@ export class DailyTrainingService {
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
 
-  private readonly apiUrl = environment.apiUrl || "/.netlify/functions";
+  private readonly apiUrl = this.getApiBaseUrl();
+
+  private getApiBaseUrl(): string {
+    if (environment.apiUrl) {
+      return environment.apiUrl;
+    }
+
+    if (typeof window !== "undefined") {
+      return window.location.origin;
+    }
+
+    return "";
+  }
 
   /**
    * Get personalized daily training plan

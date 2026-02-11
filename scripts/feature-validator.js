@@ -7,6 +7,7 @@ import fs from "fs/promises";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import { getDirectorySize } from "./lib/file-utils.js";
 
 dotenv.config();
 
@@ -730,32 +731,13 @@ class FeatureValidator {
         return Math.round(totalSize / 1024); // Convert to KB
       } catch {
         // Dist doesn't exist, estimate from node_modules
-        const nodeModulesSize = await this.getDirectorySize("./node_modules");
+        const nodeModulesSize = await getDirectorySize("./node_modules");
         // Rough estimate: 10% of node_modules might be bundled
         return Math.round((nodeModulesSize * 0.1) / 1024);
       }
     } catch {
       return 500; // Default estimate
     }
-  }
-
-  async getDirectorySize(dirPath) {
-    let totalSize = 0;
-    try {
-      const files = await fs.readdir(dirPath);
-      for (const file of files) {
-        const filePath = path.join(dirPath, file);
-        const stats = await fs.stat(filePath);
-        if (stats.isDirectory()) {
-          totalSize += await this.getDirectorySize(filePath);
-        } else {
-          totalSize += stats.size;
-        }
-      }
-    } catch {
-      // Ignore errors
-    }
-    return totalSize;
   }
 
   async measureMemoryUsage() {

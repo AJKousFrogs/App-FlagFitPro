@@ -23,6 +23,9 @@ const SIZE_LIMITS = {
   styles: 100,
   // Chunk limits
   chunk: 350,
+  // Known heavy lazy chunks - loaded only on demand (PDF export, etc.)
+  jspdf: 450,
+  html2canvas: 250,
 };
 
 const COLORS = {
@@ -99,7 +102,9 @@ function checkBundleSizes() {
     .sort((a, b) => b.size - a.size);
 
   jsBundles.forEach(({ file, size, sizeKb, category }) => {
-    const limit = SIZE_LIMITS[category] || SIZE_LIMITS.chunk;
+    const knownChunk = Object.keys(SIZE_LIMITS).find((k) => file.startsWith(k));
+    const limit =
+      SIZE_LIMITS[knownChunk] ?? SIZE_LIMITS[category] ?? SIZE_LIMITS.chunk;
     let status = COLORS.green + "✓" + COLORS.reset;
 
     if (sizeKb > limit) {

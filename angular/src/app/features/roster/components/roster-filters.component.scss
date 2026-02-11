@@ -40,7 +40,7 @@
 }
 
 /* Responsive */
-@media (min-width: 48.0625rem) and (max-width: 63.9375rem) {
+@include respond-between(md-min, lg-min) {
   .search-filter-bar {
     flex-wrap: wrap;
   }

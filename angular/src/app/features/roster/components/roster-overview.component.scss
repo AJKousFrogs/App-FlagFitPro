@@ -61,19 +61,19 @@
   }
 }
 
-@media (min-width: 75rem) and (max-width: 87.4375rem) {
+@include respond-between(xl-min, xl-max) {
   .team-overview-grid {
     grid-template-columns: repeat(5, 1fr);
   }
 }
 
-@media (min-width: 64rem) and (max-width: 74.9375rem) {
+@include respond-between(lg, lg-max) {
   .team-overview-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (min-width: 48.0625rem) and (max-width: 64rem) {
+@include respond-between(md-min, lg) {
   .team-overview-grid {
     grid-template-columns: repeat(3, 1fr);
   }

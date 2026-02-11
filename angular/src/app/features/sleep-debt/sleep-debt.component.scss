@@ -102,7 +102,7 @@
   margin: 0;
 }
 
-// Stats Grid
+// Stats Grid (custom breakpoints md/sm differ from stats-grid mixin)
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));

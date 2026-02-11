@@ -261,7 +261,7 @@
 .modal-content {
   background: var(--surface-elevated);
   border-radius: var(--radius-lg);
-  width: 90%;
+  width: var(--modal-width-responsive);
   max-width: var(--dialog-max-width-md);
   box-shadow: var(--shadow-3);
 }

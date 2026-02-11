@@ -8,7 +8,7 @@
  * so overrides/exceptions + color-guards still win within their layers.
  * See DESIGN_SYSTEM_RULES.md cascade.
  */
-@forward "./premium-interactions";
+@forward "./premium-essential";
 @forward "./hover-system";
 @forward "./ui-standardization";
 @forward "./color-contrast-fixes";

@@ -142,9 +142,9 @@
   position: absolute;
   bottom: var(--size-80);
   right: 0;
-  width: 90vw;
+  width: var(--dialog-width-xl);
   max-width: var(--dialog-max-width-sm);
-  max-height: 80vh;
+  max-height: var(--overlay-max-height-dialog);
   overflow-y: auto;
   background: var(--surface-primary);
   border-radius: var(--radius-2xl);

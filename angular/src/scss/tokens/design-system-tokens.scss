@@ -585,17 +585,17 @@ $ds-font-weight-bold: 700;
   --font-caption-weight: var(--ds-font-weight-regular);
 
   /* ================================
-     LEGACY FONT SIZE TOKENS (backward compatibility)
-     These map to the new unified system
+     LEGACY FONT SIZE TOKENS (deprecated - use --font-h1-size etc. instead)
+     Kept for backward compatibility; prefer canonical tokens above
      ================================ */
 
-  /* Heading Sizes - Legacy (mapped to new system) */
+  /* Heading Sizes - Legacy (@deprecated use --font-h1-size, --font-h2-size, etc.) */
   --font-size-h1: var(--font-h1-size);
   --font-size-h2: var(--font-h2-size);
   --font-size-h3: var(--font-h3-size);
   --font-size-h4: var(--font-h4-size);
 
-  /* Body Sizes - Legacy */
+  /* Body Sizes - Legacy (@deprecated use --font-body-size, --font-caption-size) */
   --font-size-body: var(--font-body-size);
   --font-size-caption: var(--font-caption-size);
   --font-size-badge: var(--ds-font-size-xs, 0.75rem); /* 12px - Badge/tag text */
@@ -619,59 +619,9 @@ $ds-font-weight-bold: 700;
      Mapped to new contract values
      ================================ */
 
-  /* ================================
-     DEPRECATED FONT TOKENS
-     @deprecated January 9, 2026
-     REMOVAL DEADLINE: 2026-07-01
-     No new usage. Migrate to unified typography tokens.
-     Canonical: --font-h1-size, --font-h2-size, --font-h3-size, --font-h4-size,
-     --font-body-size, --font-body-sm-size, --font-label-size, --font-caption-size
-     ================================ */
-
-  /* @deprecated Use --font-h1-size (32px) instead */
-  --font-display-2xl: 4.5rem; /* 72px - DEPRECATED */
-  /* @deprecated Use --font-h1-size (32px) instead */
-  --font-display-xl: 3.75rem; /* 60px - DEPRECATED */
-  /* @deprecated Use --font-h1-size (32px) instead */
-  --font-display-lg: 3rem; /* 48px - DEPRECATED */
-  /* @deprecated Use --font-h1-size (32px) instead */
-  --font-display-md: 2.5rem; /* 40px - DEPRECATED */
-  /* @deprecated Use --font-h1-size (32px) instead */
-  --font-display-sm: 2rem; /* 32px - DEPRECATED */
-
-  /* @deprecated Use --font-h1-size or --font-h2-size instead */
-  --font-heading-2xl: 2.5rem; /* 40px - DEPRECATED */
-  /* @deprecated Use --font-h2-size (24px) instead */
-  --font-heading-xl: 1.875rem; /* 30px - DEPRECATED */
-  /* @deprecated Use --font-h2-size (24px) instead */
-  --font-heading-lg: 1.5rem; /* 24px - DEPRECATED */
-  /* @deprecated Use --font-h3-size (20px) instead */
-  --font-heading-md: 1.25rem; /* 20px - DEPRECATED */
-  /* @deprecated Use --font-h4-size (16px) instead */
-  --font-heading-sm: 1.125rem; /* 18px - DEPRECATED */
-  /* @deprecated Use --font-h4-size (16px) instead */
-  --font-heading-xs: 1rem; /* 16px - DEPRECATED */
-
-  /* @deprecated Use --font-body-size (16px) instead */
-  --font-body-lg: 1.125rem; /* 18px - DEPRECATED */
-  /* @deprecated Use --font-body-size (16px) instead */
-  --font-body-md: 1rem; /* 16px - DEPRECATED */
-  /* @deprecated Use --font-body-sm-size (14px) instead */
-  --font-body-sm: 0.875rem; /* 14px - DEPRECATED */
-  /* @deprecated Use --font-caption-size (12px) instead */
-  --font-body-xs: 0.75rem; /* 12px - DEPRECATED */
-  /* @deprecated Avoid micro sizes; use --font-caption-size (12px) minimum */
-  --font-body-2xs: 0.625rem; /* 10px - DEPRECATED */
-  /* @deprecated Avoid micro sizes; use --font-caption-size (12px) minimum */
-  --font-body-3xs: 0.5rem; /* 8px - DEPRECATED */
-
   /* Font Sizes - Compact/Dense UI (for data-heavy components) */
   --font-compact-lg: var(--ds-font-size-compact-lg, 0.8125rem); /* 13px */
   --font-compact-md: var(--ds-font-size-compact-md, 0.6875rem); /* 11px */
-  /* @deprecated Remove by 2026-07-01. Use --font-compact-md */
-  --font-compact-sm: 0.625rem; /* 10px */
-  /* @deprecated Remove by 2026-07-01. Use --font-compact-md */
-  --font-compact-xs: 0.5rem; /* 8px */
 
   /* Letter Spacing */
   --letter-spacing-tight: var(--ds-letter-spacing-tight, -0.025em);
@@ -967,6 +917,10 @@ $ds-font-weight-bold: 700;
   --tag-height-sm: 1.5rem; /* 24px - small tags */
   --tag-height-xs: 1.375rem; /* 22px - micro tags */
   --dialog-max-height: 90vh;
+  --overlay-max-height-panel: 70vh; /* Search panel, smaller overlays */
+  --overlay-max-height-dialog: 80vh; /* Standard modal height */
+  --overlay-top-offset: 10%; /* Command palette / dropdown offset from top */
+  --modal-width-responsive: 90%; /* Responsive modal width on narrow viewports */
   --dialog-width-sm: 25rem; /* 400px */
   --dialog-width-md: 35rem; /* 560px */
   --dialog-width-lg: 50rem; /* 800px */
@@ -1001,6 +955,10 @@ $ds-font-weight-bold: 700;
   --progress-sm: 0.25rem; /* 4px - standard progress */
   --progress-md: 0.5rem; /* 8px - emphasized progress */
   --progress-lg: 0.75rem; /* 12px - large progress */
+  /* Semantic aliases for PrimeNG progressbar */
+  --progress-bar-height-xs: var(--space-1); /* 4px - minimal bars */
+  --progress-bar-height-sm: calc(var(--space-1) + var(--space-0-5)); /* ~4.5px - compact bars */
+  --progress-bar-height-md: var(--space-2); /* 8px - default height */
 
   /* Badge/Chip Heights */
   --badge-sm: 1.25rem; /* 20px */

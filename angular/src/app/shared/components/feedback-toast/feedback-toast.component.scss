@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .toast-container {
   position: fixed;
   top: var(--space-5);
@@ -15,7 +17,7 @@
   width: min(100%, var(--layout-width-lg));
 }
 
-@media (max-width: 30rem) {
+@include respond-to(xs-narrow) {
   .toast-container {
     left: var(--space-3);
     right: var(--space-3);

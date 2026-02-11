@@ -340,7 +340,7 @@
     --p-progressbar-background: var(--color-surface-secondary);
     --p-progressbar-value-background: var(--ds-primary-green);
     --p-progressbar-border-radius: var(--radius-full);
-    --p-progressbar-height: var(--space-2);
+    --p-progressbar-height: var(--progress-bar-height-md);
 
     // ============================================
     // SLIDER
@@ -572,6 +572,8 @@
     --p-divider-border-color: var(--color-border-muted);
     --p-divider-border-width: var(--border-1);
     --p-divider-margin: var(--space-4);
+    --p-divider-margin-compact: var(--space-2); /* Compact vertical margin (e.g. settings) */
+    --p-divider-opacity: var(--opacity-dimmed);
 
     // ============================================
     // Z-INDEX (Decision 20)

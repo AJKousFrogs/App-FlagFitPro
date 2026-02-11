@@ -18,7 +18,7 @@ import {
   input,
   signal,
 } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 
@@ -376,6 +376,7 @@ export class CoachOverrideNotificationComponent {
 
   private overrideLoggingService = inject(OverrideLoggingService);
   private logger = inject(LoggerService);
+  private router = inject(Router);
 
   showTransparency = signal(false);
   showHistory = signal(false);
@@ -484,10 +485,8 @@ export class CoachOverrideNotificationComponent {
   }
 
   async askCoach(): Promise<void> {
-    // Navigate to chat/messaging with coach
-    // This would integrate with your messaging system
     this.logger.info("[OverrideNotification] Ask coach clicked");
-    // TODO: Implement navigation to coach chat
+    this.router.navigate(["/team-chat"]);
   }
 
   async loadHistory(): Promise<void> {

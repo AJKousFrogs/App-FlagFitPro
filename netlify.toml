@@ -503,6 +503,18 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/api/auth/me"
+  to = "/.netlify/functions/auth-me"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/auth-me"
+  to = "/.netlify/functions/auth-me"
+  status = 200
+  force = true
+
 # API Routes for Notifications
 [[redirects]]
   from = "/notifications"
@@ -512,6 +524,18 @@
 
 [[redirects]]
   from = "/notifications/*"
+  to = "/.netlify/functions/notifications"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/notifications"
+  to = "/.netlify/functions/notifications"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/notifications/*"
   to = "/.netlify/functions/notifications"
   status = 200
   force = true

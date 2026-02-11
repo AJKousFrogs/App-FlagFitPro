@@ -11,15 +11,14 @@ import { MessageService } from "primeng/api";
 import { Toast } from "primeng/toast";
 
 /**
- *Component - Angular 21 Premium Edition
+ * Toast Component - Angular 21 + PrimeNG 21
  *
- * A wrapper around PrimeNG with premium animations
- * Place this component once in your app root
+ * A wrapper around PrimeNG Toast. Place once in app root.
  * Features:
- * - Slide-in animations
+ * - Slide-in animations (PrimeNG 21 native CSS; deprecated showTransformOptions removed)
  * - Auto-dismiss with progress bar
- * - Multiple severity styles
- * - Stacked notifications
+ * - Multiple severity styles (success, info, warn, error)
+ * - Stacked notifications with preventDuplicates
  */
 @Component({
   selector: "app-toast",
@@ -35,8 +34,6 @@ import { Toast } from "primeng/toast";
       [autoZIndex]="autoZIndex()"
       [key]="key()"
       [preventOpenDuplicates]="preventDuplicates()"
-      [showTransformOptions]="showTransformOptions()"
-      [hideTransformOptions]="hideTransformOptions()"
     >
       <ng-template let-message #message>
         <div class="toast-content">
@@ -75,8 +72,6 @@ export class ToastComponent implements OnInit, OnDestroy {
   autoZIndex = input<boolean>(true);
   key = input<string>("app-toast");
   preventDuplicates = input<boolean>(true);
-  showTransformOptions = input<string>("translateX(100%)");
-  hideTransformOptions = input<string>("translateX(100%)");
 
   ngOnInit(): void {
     // Component initialized

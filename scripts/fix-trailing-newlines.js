@@ -8,6 +8,7 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
+import { walkDirectory } from "./lib/directory-walker.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,37 +42,17 @@ function fixTrailingNewline(filePath) {
   return false;
 }
 
-function processDirectory(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      if (
-        entry.name === "node_modules" ||
-        entry.name === "dist" ||
-        entry.name === ".git"
-      ) {
-        continue;
-      }
-      processDirectory(fullPath);
-    } else if (
-      entry.isFile() &&
-      (entry.name.endsWith(".ts") ||
-        entry.name.endsWith(".scss") ||
-        entry.name.endsWith(".html"))
-    ) {
-      if (fixTrailingNewline(fullPath)) {
-        stats.filesProcessed++;
-      }
-    }
+function processFile(filePath) {
+  if (fixTrailingNewline(filePath)) {
+    stats.filesProcessed++;
   }
 }
 
 console.log("🔧 Fixing trailing newlines...\n");
 
-processDirectory(ANGULAR_SRC);
+walkDirectory(ANGULAR_SRC, processFile, {
+  extensions: [".ts", ".scss", ".html"],
+});
 
 console.log("\n✅ Trailing newlines fixed!\n");
 console.log("Statistics:");

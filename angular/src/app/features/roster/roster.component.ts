@@ -65,10 +65,10 @@ import {
   RosterStaffCardComponent,
 } from "./components";
 import { getPositionDisplayName } from "../../core/constants";
+import { getCountryFlag } from "../../core/constants";
 import {
   formatHeight,
   formatWeight,
-  getCountryFlag,
   getJerseyColor,
   getPlayerStats,
   getPositionIcon,

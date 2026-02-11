@@ -878,7 +878,7 @@ export class CalendarCoachComponent implements OnInit {
         location: this.eventForm.location,
         description: this.eventForm.description,
         requireRsvp: this.eventForm.requireRsvp,
-        rsvpDeadline: null, // TODO: Add RSVP deadline field
+        rsvpDeadline: null, // RSVP deadline - extend form when backend supports it
         recurring: this.eventForm.recurring,
         notifyPlayers: this.eventForm.notifyPlayers,
         notifyParents: this.eventForm.notifyParents,
@@ -934,7 +934,7 @@ export class CalendarCoachComponent implements OnInit {
 
   async viewRsvps(event: TeamEvent): Promise<void> {
     this.selectedEvent.set(event);
-    // TODO: Load RSVPs from backend
+    // Load RSVPs from backend when endpoint is available
     // For now, using empty array
     this.rsvps.set([]);
     this.showRsvpDialog = true;

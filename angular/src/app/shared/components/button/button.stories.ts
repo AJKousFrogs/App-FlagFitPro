@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/angular";
 import { moduleMetadata } from "@storybook/angular";
-import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "./button.component";
 import { IconButtonComponent } from "./icon-button.component";
 // Note: play functions temporarily disabled due to Storybook 10 + @storybook/test incompatibility

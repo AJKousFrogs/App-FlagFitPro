@@ -16,7 +16,7 @@
 import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ChartOptions } from "chart.js";
+import type { ChartOptions } from "chart.js";
 import { Card } from "primeng/card";
 import { Divider } from "primeng/divider";
 import { ProgressBar } from "primeng/progressbar";

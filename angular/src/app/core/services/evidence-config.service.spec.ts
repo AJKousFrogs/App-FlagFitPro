@@ -8,36 +8,11 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-
-// Mock environment BEFORE any imports that use it
-vi.mock("../../../environments/environment", () => ({
-  environment: {
-    production: false,
-    apiUrl: "http://localhost:8888",
-    supabase: {
-      url: "https://test.supabase.co",
-      anonKey: "test-anon-key-for-testing",
-    },
-  },
-}));
-
-// Mock Supabase client
-vi.mock("@supabase/supabase-js", () => ({
-  createClient: vi.fn(() => ({
-    auth: {
-      getSession: vi
-        .fn()
-        .mockResolvedValue({ data: { session: null }, error: null }),
-      onAuthStateChange: vi
-        .fn()
-        .mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
-    },
-  })),
-}));
-
 import { TestBed } from "@angular/core/testing";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
+import { AuthService } from "./auth.service";
 
 // Mock LoggerService
 const mockLoggerService = {
@@ -48,10 +23,22 @@ const mockLoggerService = {
   success: vi.fn(),
 };
 
-// TODO: These tests need environment mock fix for Angular 21's @angular/build:unit-test builder
-// The vi.mock for environment file isn't being picked up correctly with esbuild
-// Skip until proper solution is found
-describe.skip("EvidenceConfigService", () => {
+// Mock SupabaseService to avoid environment dependency
+const mockSupabaseService = {
+  client: {
+    from: vi.fn(() => ({
+      insert: vi.fn(() => Promise.resolve({ error: null })),
+      select: vi.fn(() => ({ eq: vi.fn(() => ({ single: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })),
+    })),
+  },
+};
+
+// Mock AuthService
+const mockAuthService = {
+  getUser: vi.fn(() => null),
+};
+
+describe("EvidenceConfigService", () => {
   let service: EvidenceConfigService;
 
   beforeEach(() => {
@@ -61,6 +48,8 @@ describe.skip("EvidenceConfigService", () => {
       providers: [
         EvidenceConfigService,
         { provide: LoggerService, useValue: mockLoggerService },
+        { provide: SupabaseService, useValue: mockSupabaseService },
+        { provide: AuthService, useValue: mockAuthService },
       ],
     });
 

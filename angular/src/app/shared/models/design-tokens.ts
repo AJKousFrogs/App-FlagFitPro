@@ -301,7 +301,7 @@ export const DesignTokens = {
     xl: "0.75rem", // 12px - dialogs
     "2xl": "1rem", // 16px
     "3xl": "1.5rem", // 24px
-    full: "9999px", // DEPRECATED for buttons/tags/badges - only for avatars
+    full: "9999px", // Use for avatars/circles only; prefer --radius-button for buttons/tags
     button: "8px", // SINGLE SOURCE OF TRUTH for button radius
   },
   shadows: {

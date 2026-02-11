@@ -2334,59 +2334,31 @@ export class TodayComponent {
         break;
 
       case "view_practice_details":
-        // TODO: Navigate to practice details or show modal
-        this.messageService.add({
-          severity: "info",
-          summary: "Practice Details",
-          detail: "Practice details view coming soon",
+        this.router.navigate(["/training/schedule"], {
+          queryParams: { date: this.todayDate() },
         });
         break;
 
       case "view_film_room_details":
-        // TODO: Navigate to film room details
-        this.messageService.add({
-          severity: "info",
-          summary: "Film Room",
-          detail: "Film room details view coming soon",
-        });
+        this.router.navigate(["/film-room"]);
         break;
 
       case "view_rehab":
       case "view_rehab_details":
-        // TODO: Navigate to rehab details
-        this.messageService.add({
-          severity: "info",
-          summary: "Rehab Protocol",
-          detail: "Rehab details view coming soon",
-        });
+        this.router.navigate(["/return-to-play"]);
         break;
 
       case "contact_coach":
-        // TODO: Open coach contact/messaging
-        this.messageService.add({
-          severity: "info",
-          summary: "Contact Coach",
-          detail: "Coach messaging coming soon",
-        });
+        this.router.navigate(["/team-chat"]);
         break;
 
       case "contact_physio":
-        // TODO: Open physio contact
-        this.messageService.add({
-          severity: "info",
-          summary: "Contact Physio",
-          detail: "Physio contact coming soon",
-        });
+        this.router.navigate(["/team-chat"]);
         break;
 
       case "view_taper":
       case "view_taper_plan":
-        // TODO: Navigate to taper plan
-        this.messageService.add({
-          severity: "info",
-          summary: "Taper Plan",
-          detail: "Taper plan view coming soon",
-        });
+        this.router.navigate(["/training/advanced"]);
         break;
 
       case "log_session":
@@ -2530,7 +2502,6 @@ export class TodayComponent {
   }
 
   private showCoachNoteDialog(): void {
-    // TODO: Show coach note in dialog
     this.messageService.add({
       severity: "info",
       summary: "Coach Note",

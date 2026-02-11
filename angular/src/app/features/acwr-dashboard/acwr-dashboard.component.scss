@@ -12,15 +12,10 @@
     flex-wrap: wrap;
     gap: var(--space-3) var(--space-6);
     margin: var(--space-2) 0 var(--space-4);
-  font-size: var(--ds-font-size-sm);
+    font-size: var(--ds-font-size-sm);
     color: var(--text-secondary);
 
-    .data-source,
-    .data-updated {
-      display: inline-flex;
-      align-items: center;
-  gap: calc(var(--space-1) + var(--space-0-5));
-    }
+    @include data-source-meta;
   }
 
   @include page-container(var(--content-max-width-xl));
@@ -261,17 +256,7 @@
   text-align: center;
 }
 
-.metric-label {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-2);
-}
-
-.metric-value {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-brand-primary);
-}
+@include metric-display;
 
 .metric-description {
   font-size: var(--ds-font-size-xs);

@@ -15,12 +15,27 @@ const buildEvent = (path) => ({
 
 describe("Netlify Functions (API smoke)", () => {
   beforeAll(async () => {
-    const required = [
-      "SUPABASE_URL",
-      "SUPABASE_SERVICE_KEY",
-      "SUPABASE_ANON_KEY",
-    ];
-    const missing = required.filter((key) => !process.env[key]);
+    if (
+      !process.env.SUPABASE_SERVICE_KEY &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    ) {
+      process.env.SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    }
+
+    const missing = [];
+    if (!process.env.SUPABASE_URL) {
+      missing.push("SUPABASE_URL");
+    }
+    if (!process.env.SUPABASE_ANON_KEY) {
+      missing.push("SUPABASE_ANON_KEY");
+    }
+    if (
+      !process.env.SUPABASE_SERVICE_KEY &&
+      !process.env.SUPABASE_SERVICE_ROLE_KEY
+    ) {
+      missing.push("SUPABASE_SERVICE_KEY (or SUPABASE_SERVICE_ROLE_KEY)");
+    }
+
     if (missing.length > 0) {
       throw new Error(
         `Missing required environment variables for Netlify Functions: ${missing.join(", ")}`,

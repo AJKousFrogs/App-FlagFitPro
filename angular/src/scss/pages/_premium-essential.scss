@@ -1,0 +1,40 @@
+/**
+ * Premium Essential - Minimal animation subset
+ * Replaces full premium-interactions (~27KB) with ~2KB of used styles.
+ * Used by: onboarding, feature-walkthrough, post-training-recovery.
+ */
+
+:root {
+  --anim-slow: 300ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-fade-in {
+  animation: fade-in var(--anim-slow) var(--ease-out-expo) forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+
+  /* Global reduced motion (a11y) */
+  *,
+  *::before,
+  *::after {
+    animation-duration: var(--transition-instant);
+    animation-iteration-count: 1;
+    transition-duration: var(--transition-instant);
+    scroll-behavior: auto;
+  }
+}

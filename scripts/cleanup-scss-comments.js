@@ -8,6 +8,7 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
+import { walkDirectory } from "./lib/directory-walker.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -93,30 +94,9 @@ function cleanupSCSSFile(filePath) {
   return modified;
 }
 
-function cleanupDirectory(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      if (
-        entry.name === "node_modules" ||
-        entry.name === "dist" ||
-        entry.name === ".git"
-      ) {
-        continue;
-      }
-      cleanupDirectory(fullPath);
-    } else if (entry.isFile() && entry.name.endsWith(".scss")) {
-      cleanupSCSSFile(fullPath);
-    }
-  }
-}
-
 console.log("🧹 Starting SCSS commented code cleanup...\n");
 
-cleanupDirectory(ANGULAR_SRC);
+walkDirectory(ANGULAR_SRC, cleanupSCSSFile, { extensions: [".scss"] });
 
 console.log("\n✅ SCSS cleanup complete!\n");
 console.log("Statistics:");

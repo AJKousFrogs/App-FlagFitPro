@@ -64,7 +64,7 @@
   height: var(--header-height, var(--ds-font-size-var(--header-height)));
 }
 
-@media (max-width: 80rem) {
+@include respond-to(xl) {
   .header-end {
     flex-wrap: wrap;
     justify-content: flex-end;

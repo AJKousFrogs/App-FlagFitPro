@@ -13,6 +13,7 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
+import { walkDirectory } from "./lib/directory-walker.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -127,28 +128,6 @@ function cleanupFile(filePath) {
   return modified;
 }
 
-function cleanupDirectory(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      // Skip node_modules and dist
-      if (
-        entry.name === "node_modules" ||
-        entry.name === "dist" ||
-        entry.name === ".git"
-      ) {
-        continue;
-      }
-      cleanupDirectory(fullPath);
-    } else if (entry.isFile() && entry.name.endsWith(".ts")) {
-      cleanupFile(fullPath);
-    }
-  }
-}
-
 // Main execution
 console.log("🧹 Starting frontend code cleanup...\n");
 console.log("Configuration:");
@@ -160,7 +139,7 @@ if (CONFIG.dryRun) {
   console.log("⚠️  DRY RUN MODE - No files will be modified\n");
 }
 
-cleanupDirectory(ANGULAR_SRC);
+walkDirectory(ANGULAR_SRC, cleanupFile, { extensions: [".ts"] });
 
 console.log("\n✅ Cleanup complete!\n");
 console.log("Statistics:");

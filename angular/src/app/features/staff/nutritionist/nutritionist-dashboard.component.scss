@@ -21,8 +21,7 @@
 
 // Stats Grid
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
+  @include stats-grid;
   gap: var(--ds-spacing-md);
   margin-bottom: var(--ds-spacing-xl);
 }

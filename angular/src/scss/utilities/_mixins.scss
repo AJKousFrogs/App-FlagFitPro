@@ -201,6 +201,31 @@
   }
 }
 
+// Data source / updated meta (shared across acwr, analytics, performance-tracking)
+@mixin data-source-meta {
+  .data-source,
+  .data-updated {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--space-1) + var(--space-0-5));
+  }
+}
+
+// Metric label + value display
+@mixin metric-display {
+  .metric-label {
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+  }
+
+  .metric-value {
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--color-brand-primary);
+  }
+}
+
 // Container with max-width
 @mixin container($size: xl) {
   width: 100%;

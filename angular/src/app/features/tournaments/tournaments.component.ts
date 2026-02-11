@@ -41,7 +41,7 @@ import {
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { formatDateISO } from "../../shared/utils/date.utils";
-import { getCountryFlag } from "../roster/roster-utils";
+import { getCountryFlag } from "../../core/constants";
 import { TournamentsDataService } from "./services/tournaments-data.service";
 
 interface PlayerAvailability {

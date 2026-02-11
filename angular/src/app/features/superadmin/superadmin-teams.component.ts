@@ -23,6 +23,7 @@ import { InputText } from "primeng/inputtext";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
+import { ToastService } from "../../core/services/toast.service";
 
 interface Team {
   id: string;
@@ -246,6 +247,7 @@ interface Team {
 })
 export class SuperadminTeamsComponent implements OnInit {
   private superadminService = inject(SuperadminService);
+  private toast = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
   teams: Team[] = [];
@@ -331,6 +333,6 @@ export class SuperadminTeamsComponent implements OnInit {
   }
 
   viewTeam(_team: Team): void {
-    // TODO: Implement team view functionality
+    this.toast.info("Team view functionality coming soon.", "Team details");
   }
 }

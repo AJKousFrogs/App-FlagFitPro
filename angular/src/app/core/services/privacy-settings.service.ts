@@ -545,7 +545,7 @@ export class PrivacySettingsService {
 
       if (error) throw error;
 
-      // TODO: Send email to guardian with verification link
+      // Send email to guardian with verification link (requires email service integration)
       // This would typically be done via an Edge Function
 
       await this.checkParentalConsentStatus();

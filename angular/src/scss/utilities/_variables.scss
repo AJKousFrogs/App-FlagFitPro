@@ -86,14 +86,26 @@ $line-heights: (
 $breakpoints: (
   xs: 23.375rem,
   // Extra small mobile
+  xs-narrow: 30rem,
+  // Narrow mobile (e.g. feedback toast)
   sm: 40rem,
   // Mobile
   md: 48rem,
   // Tablet
+  md-min: 48.0625rem,
+  // Just above md (769px)
   lg: 64rem,
   // Desktop
+  lg-min: 63.9375rem,
+  // Just below lg (1023px)
+  lg-max: 74.9375rem,
+  // Desktop upper (1199px) - 2-col grid transition
+  xl-min: 75rem,
+  // XL lower (1200px)
   xl: 80rem,
   // Large desktop
+  xl-max: 87.4375rem,
+  // XL upper (1399px) - roster 3-col transition
   xxl-wide: 87.5rem,
   // Wide desktop (1400px)
   xxl: 96rem, // Extra large desktop

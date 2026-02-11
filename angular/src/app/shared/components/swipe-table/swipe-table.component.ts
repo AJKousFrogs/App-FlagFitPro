@@ -7,13 +7,13 @@ import {
   input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 
 @Component({
   selector: "app-swipe-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Table, TableModule],
+  imports: [CommonModule, TableModule],
   template: `
     <div
       class="swipe-table-container"

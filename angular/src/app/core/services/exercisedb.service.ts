@@ -178,21 +178,10 @@ export class ExerciseDBService {
     }
 
     if (typeof window !== "undefined") {
-      const hostname = window.location.hostname;
-
-      if (
-        hostname.includes("netlify.app") ||
-        hostname.includes("netlify.com")
-      ) {
-        return window.location.origin + "/.netlify/functions";
-      }
-
-      if (hostname === "localhost" || hostname === "127.0.0.1") {
-        return "http://localhost:8888/.netlify/functions";
-      }
+      return window.location.origin;
     }
 
-    return "/.netlify/functions";
+    return "";
   }
 
   /**

@@ -509,8 +509,11 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <i class="pi pi-history" aria-hidden="true"></i>
                   <h5>View Audit Log</h5>
                   <p>See a history of how your data has been accessed.</p>
-                  <app-button variant="outlined" size="sm" [disabled]="true"
-                    >Coming Soon</app-button
+                  <app-button
+                    variant="outlined"
+                    size="sm"
+                    (clicked)="showAuditLog()"
+                    >View Log</app-button
                   >
                 </div>
               </div>
@@ -634,6 +637,40 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
           >
         </ng-template>
       </p-dialog>
+
+      <!-- Audit Log Dialog -->
+      <p-dialog
+        header="Privacy Audit Log"
+        [(visible)]="showAuditLogDialog"
+        [modal]="true"
+        [style]="{ width: 'min(90vw, 600px)' }"
+        (onHide)="auditLogEntries.set([])"
+      >
+        <div class="audit-log-content">
+          @if (auditLogLoading()) {
+            <p><i class="pi pi-spin pi-spinner"></i> Loading...</p>
+          } @else if (auditLogEntries().length === 0) {
+            <p>No audit log entries yet.</p>
+          } @else {
+            <div class="audit-log-list">
+              @for (entry of auditLogEntries(); track entry.id) {
+                <div class="audit-log-entry">
+                  <span class="audit-action">{{ entry.action }}</span>
+                  @if (entry.affectedTable) {
+                    <span class="audit-table">{{ entry.affectedTable }}</span>
+                  }
+                  <span class="audit-date">{{ entry.createdAt | date : 'short' }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <ng-template #footer>
+          <app-button variant="text" (clicked)="showAuditLogDialog = false"
+            >Close</app-button
+          >
+        </ng-template>
+      </p-dialog>
     </app-main-layout>
   `,
   styleUrl: "./privacy-controls.component.scss",
@@ -670,6 +707,17 @@ export class PrivacyControlsComponent implements OnInit {
   // Dialog visibility
   showAddContactDialog = false;
   showDeleteAccountDialog = false;
+  showAuditLogDialog = false;
+  auditLogLoading = signal(false);
+  auditLogEntries = signal<
+    Array<{
+      id: string;
+      action: string;
+      affectedTable: string | null;
+      affectedData: Record<string, unknown> | null;
+      createdAt: string;
+    }>
+  >([]);
 
   // Form data
   newContact: Partial<EmergencyContact> = {};
@@ -902,8 +950,12 @@ export class PrivacyControlsComponent implements OnInit {
     await this.deletionService.cancelDeletion();
   }
 
-  showAuditLog(): void {
-    // TODO: Navigate to audit log page or show dialog
-    this.toastService.info(TOAST.INFO.AUDIT_LOG_COMING_SOON);
+  async showAuditLog(): Promise<void> {
+    this.showAuditLogDialog = true;
+    this.auditLogLoading.set(true);
+    this.auditLogEntries.set([]);
+    const entries = await this.deletionService.getAuditLog(50);
+    this.auditLogLoading.set(false);
+    this.auditLogEntries.set(entries);
   }
 }

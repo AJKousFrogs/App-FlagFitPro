@@ -31,12 +31,12 @@ import {
   PlayerMetricsService,
   PlayerWithMetrics,
 } from "../services/player-metrics.service";
+import { getCountryFlag } from "../../../core/constants";
 import {
   getJerseyColor,
   getPlayerStats,
   formatHeight,
   formatWeight,
-  getCountryFlag,
 } from "../roster-utils";
 import { TRAINING } from "../../../core/constants/app.constants";
 

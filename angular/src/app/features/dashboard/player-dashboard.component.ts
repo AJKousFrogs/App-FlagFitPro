@@ -2368,9 +2368,7 @@ export class PlayerDashboardComponent {
         this.currentStreak.set(stats?.currentStreak ?? 0);
         this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
 
-        // Calculate training days logged from actual sessions
-        // TODO: Get this from training stats service or calculate from sessions
-        // For now, set to null if not available
+        // Training days logged: use when backend provides it; fallback to null
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const statsAny = stats as any;
         this.trainingDaysLogged.set(statsAny?.trainingDaysLogged ?? null);

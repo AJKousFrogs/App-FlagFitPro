@@ -701,16 +701,13 @@
      ================================ */
   .p-checkbox {
     flex-shrink: 0;
-  }
-
-  /* NOTE: .p-toggleswitch styles consolidated in primeng/_brand-overrides.scss */
-
-  .p-checkbox {
     width: var(--p-checkbox-width);
     height: var(--p-checkbox-height);
     min-width: var(--p-checkbox-width);
     min-height: var(--p-checkbox-height);
   }
+
+  /* NOTE: .p-toggleswitch styles consolidated in primeng/_brand-overrides.scss */
 
   .p-checkbox .p-checkbox-box {
     width: var(--p-checkbox-width);
@@ -803,12 +800,6 @@
     border-radius: var(--p-card-border-radius);
   }
 
-  /* ================================
-     TAG/BADGE - RAISED RECTANGULAR styling
-     NOTE: Primary tag styles are in primeng/_brand-overrides.scss
-     This block provides additional utility class support only
-     ================================ */
-  /* Tag styles consolidated in _brand-overrides.scss - removed duplicate */
 } /* End @layer overrides */
 
 /* ================================================================

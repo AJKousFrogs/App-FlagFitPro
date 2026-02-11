@@ -9,6 +9,7 @@ import fs from "fs/promises";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import { getDirectorySize } from "./lib/file-utils.js";
 
 const execAsync = promisify(exec);
 
@@ -514,7 +515,7 @@ class HealthChecker {
     try {
       // Check bundle size (estimate from node_modules)
       try {
-        const nodeModulesSize = await this.getDirectorySize("./node_modules");
+        const nodeModulesSize = await getDirectorySize("./node_modules");
         performance.metrics.nodeModulesSize = `${Math.round(nodeModulesSize / (1024 * 1024))}MB`;
 
         // Large node_modules might indicate bundle size issues
@@ -649,29 +650,6 @@ class HealthChecker {
 
     this.results.categories.documentation = docs;
     console.log(`   Score: ${docs.score}/100`);
-  }
-
-  async getDirectorySize(dirPath) {
-    let totalSize = 0;
-
-    try {
-      const files = await fs.readdir(dirPath);
-
-      for (const file of files) {
-        const filePath = path.join(dirPath, file);
-        const stats = await fs.stat(filePath);
-
-        if (stats.isDirectory()) {
-          totalSize += await this.getDirectorySize(filePath);
-        } else {
-          totalSize += stats.size;
-        }
-      }
-    } catch {
-      // Directory access error
-    }
-
-    return totalSize;
   }
 
   calculateOverallHealth() {

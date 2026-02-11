@@ -31,7 +31,7 @@ const TOKEN_FILES = [
   "angular/src/scss/utilities/spacing-system.scss",
   "angular/src/scss/utilities/layout-system.scss",
   "angular/src/scss/pages/hover-system.scss",
-  "angular/src/scss/pages/premium-interactions.scss",
+  "angular/src/scss/pages/_premium-essential.scss",
   "angular/src/scss/components/standardized-components.scss",
   "angular/src/scss/utilities/_mixins.scss",
   "angular/src/styles.scss",
@@ -235,8 +235,8 @@ async function generateAudit() {
                   ? "Layout patterns and utilities"
                   : file.includes("hover")
                     ? "Hover state tokens"
-                    : file.includes("premium-interactions")
-                      ? "Animation tokens"
+                    : file.includes("premium-essential")
+                      ? "Animation tokens (fade-in, reduced-motion)"
                       : file.includes("standardized-components")
                         ? "Component styles using tokens"
                         : file.includes("_mixins")
