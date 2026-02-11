@@ -921,11 +921,21 @@ async function handleRequest(event, _context, { userId }) {
 // =============================================================================
 
 export const handler = async (event, context) => {
+  const isPublicPath = event.path.includes("/protocols");
+  if (!isPublicPath) {
+    return baseHandler(event, context, {
+      functionName: "recovery",
+      allowedMethods: ["GET", "POST", "PUT"],
+      rateLimitType: "DEFAULT",
+      requireAuth: true,
+      handler: handleRequest,
+    });
+  }
   return baseHandler(event, context, {
     functionName: "recovery",
     allowedMethods: ["GET", "POST", "PUT"],
     rateLimitType: "DEFAULT",
-    requireAuth: !event.path.includes("/protocols"),
+    requireAuth: false,
     handler: handleRequest,
   });
 };

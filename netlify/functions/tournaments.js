@@ -458,17 +458,6 @@ export const handler = async (event, context) => {
   // Route to appropriate handler based on HTTP method
   const method = event.httpMethod;
 
-  // GET requests - public, no auth required
-  if (method === "GET") {
-    return baseHandler(event, context, {
-      functionName: "tournaments-get",
-      allowedMethods: ["GET"],
-      rateLimitType: "READ",
-      requireAuth: false, // Public read access
-      handler: getTournaments,
-    });
-  }
-
   // POST, PUT, DELETE - require authentication
   if (method === "POST") {
     return baseHandler(event, context, {
@@ -497,6 +486,17 @@ export const handler = async (event, context) => {
       rateLimitType: "DELETE",
       requireAuth: true,
       handler: deleteTournament,
+    });
+  }
+
+  // GET requests - public, no auth required
+  if (method === "GET") {
+    return baseHandler(event, context, {
+      functionName: "tournaments-get",
+      allowedMethods: ["GET"],
+      rateLimitType: "READ",
+      requireAuth: false, // Public read access
+      handler: getTournaments,
     });
   }
 

@@ -454,7 +454,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "response-feedback",
     allowedMethods: ["GET", "POST"],
-    rateLimitType: "WRITE",
+    rateLimitType: "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();

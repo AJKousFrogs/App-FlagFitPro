@@ -255,9 +255,11 @@ async function getActivitySummary(userId) {
 // ============================================================================
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "CREATE";
   return baseHandler(event, context, {
     functionName: "coach-activity",
     allowedMethods: ["GET", "POST"],
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       const path = event.path

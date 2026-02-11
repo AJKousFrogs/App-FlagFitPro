@@ -442,7 +442,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "payments",
     allowedMethods: ["GET", "POST", "PUT"],
-    rateLimitType: "WRITE",
+    rateLimitType: "CREATE",
     requireAuth: true, // P0-002: Explicitly require authentication for financial data
     handler: async (event, context, { userId }) => {
       const path = event.path.replace("/.netlify/functions/payments", "");

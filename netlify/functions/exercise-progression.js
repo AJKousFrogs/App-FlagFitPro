@@ -1,5 +1,4 @@
-import { supabaseAdmin } from "./supabase-client.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
 /**
@@ -14,11 +13,6 @@ import { createErrorResponse, handleValidationError } from "./utils/error-handle
  *
  * Returns exact prescriptions (e.g., "3x11 pushups") not ranges.
  */
-
-const getSupabase = (_authHeader) => {
-  // Use shared admin client
-  return supabaseAdmin;
-};
 
 /**
  * Progression rules per exercise type
@@ -89,70 +83,48 @@ const READINESS_ADJUSTMENTS = {
   low: { factor: 0, threshold: 40 },
 };
 
-export const handler = async (event) => {
-  const { httpMethod, body, headers } = event;
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "exercise-progression",
+    allowedMethods: ["POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId, supabase }) => {
+      try {
+        let payload = {};
+        try {
+          payload = JSON.parse(evt.body || "{}");
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+        const { exerciseIds, date, acwrValue, readinessScore } = payload;
 
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Content-Type": "application/json",
-  };
+        if (!exerciseIds || !Array.isArray(exerciseIds)) {
+          return handleValidationError("exerciseIds array required");
+        }
 
-  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
+        const targetDate = date || new Date().toISOString().split("T")[0];
 
-  if (httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: corsHeaders, body: "" };
-  }
+        // CRITICAL: Do NOT use defaults for ACWR and readiness
+        // These must come from actual user data. Use null to indicate no data.
+        // Progression logic should handle missing data gracefully (conservative defaults)
+        const acwr =
+          acwrValue !== undefined && acwrValue !== null ? acwrValue : null;
+        const readiness =
+          readinessScore !== undefined && readinessScore !== null
+            ? readinessScore
+            : null;
 
-  if (httpMethod !== "POST") {
-    return withHeaders(
-      createErrorResponse("Method not allowed", 405, "method_not_allowed"),
-    );
-  }
+        // Get yesterday's date
+        const yesterday = new Date(targetDate);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-  const auth = await authenticateRequest(event);
-  if (!auth.success) {
-    return withHeaders(auth.error);
-  }
-
-  const { user } = auth;
-  const supabase = getSupabase();
-
-  try {
-    let payload = {};
-    try {
-      payload = JSON.parse(body || "{}");
-    } catch (_parseError) {
-      return withHeaders(handleValidationError("Invalid JSON in request body"));
-    }
-    const { exerciseIds, date, acwrValue, readinessScore } = payload;
-
-    if (!exerciseIds || !Array.isArray(exerciseIds)) {
-      return withHeaders(handleValidationError("exerciseIds array required"));
-    }
-
-    const targetDate = date || new Date().toISOString().split("T")[0];
-
-    // CRITICAL: Do NOT use defaults for ACWR and readiness
-    // These must come from actual user data. Use null to indicate no data.
-    // Progression logic should handle missing data gracefully (conservative defaults)
-    const acwr =
-      acwrValue !== undefined && acwrValue !== null ? acwrValue : null;
-    const readiness =
-      readinessScore !== undefined && readinessScore !== null
-        ? readinessScore
-        : null;
-
-    // Get yesterday's date
-    const yesterday = new Date(targetDate);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split("T")[0];
-
-    // Fetch yesterday's protocol exercises for these exercises
-    const { data: yesterdayExercises } = await supabase
-      .from("protocol_exercises")
-      .select(
-        `
+        // Fetch yesterday's protocol exercises for these exercises
+        const { data: yesterdayExercises } = await supabase
+          .from("protocol_exercises")
+          .select(
+            `
         exercise_id,
         prescribed_sets,
         prescribed_reps,
@@ -164,60 +136,58 @@ export const handler = async (event) => {
         status,
         daily_protocols!inner(protocol_date, user_id)
       `,
-      )
-      .eq("daily_protocols.user_id", user.id)
-      .eq("daily_protocols.protocol_date", yesterdayStr)
-      .in("exercise_id", exerciseIds);
+          )
+          .eq("daily_protocols.user_id", userId)
+          .eq("daily_protocols.protocol_date", yesterdayStr)
+          .in("exercise_id", exerciseIds);
 
-    // Create a map of yesterday's performance
-    const yesterdayMap = new Map();
-    if (yesterdayExercises) {
-      yesterdayExercises.forEach((ex) => {
-        yesterdayMap.set(ex.exercise_id, {
-          sets: ex.actual_sets || ex.prescribed_sets,
-          reps: ex.actual_reps || ex.prescribed_reps,
-          holdSeconds: ex.actual_hold_seconds || ex.prescribed_hold_seconds,
-          durationSeconds: ex.prescribed_duration_seconds,
-          completed: ex.status === "complete",
+        // Create a map of yesterday's performance
+        const yesterdayMap = new Map();
+        if (yesterdayExercises) {
+          yesterdayExercises.forEach((ex) => {
+            yesterdayMap.set(ex.exercise_id, {
+              sets: ex.actual_sets || ex.prescribed_sets,
+              reps: ex.actual_reps || ex.prescribed_reps,
+              holdSeconds: ex.actual_hold_seconds || ex.prescribed_hold_seconds,
+              durationSeconds: ex.prescribed_duration_seconds,
+              completed: ex.status === "complete",
+            });
+          });
+        }
+
+        // Fetch exercise details
+        const { data: exercises } = await supabase
+          .from("exercises")
+          .select("*")
+          .in("id", exerciseIds);
+
+        // Calculate progressions
+        const progressions = exercises.map((exercise) => {
+          const yesterdayPerf = yesterdayMap.get(exercise.id);
+
+          return calculateProgression(exercise, yesterdayPerf, acwr, readiness);
         });
-      });
-    }
 
-    // Fetch exercise details
-    const { data: exercises } = await supabase
-      .from("exercises")
-      .select("*")
-      .in("id", exerciseIds);
-
-    // Calculate progressions
-    const progressions = exercises.map((exercise) => {
-      const yesterdayPerf = yesterdayMap.get(exercise.id);
-
-      return calculateProgression(exercise, yesterdayPerf, acwr, readiness);
-    });
-
-    return {
-      statusCode: 200,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        success: true,
-        data: progressions,
-        context: {
-          acwr,
-          readiness,
-          targetDate,
-        },
-      }),
-    };
-  } catch (err) {
-    console.error("Progression calculation error:", err);
-    return withHeaders(
-      createErrorResponse("Internal server error", 500, "server_error", {
-        details: err.message,
-      }),
-    );
-  }
-};
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            success: true,
+            data: progressions,
+            context: {
+              acwr,
+              readiness,
+              targetDate,
+            },
+          }),
+        };
+      } catch (err) {
+        console.error("Progression calculation error:", err);
+        return createErrorResponse("Internal server error", 500, "server_error", {
+          details: err.message,
+        });
+      }
+    },
+  });
 
 /**
  * Calculate the progression for a single exercise

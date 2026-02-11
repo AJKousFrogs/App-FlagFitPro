@@ -1,74 +1,55 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
-export const handler = async (event) => {
-  const headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  };
-  const withHeaders = (response) => ({ ...response, headers });
-
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers, body: "" };
-  }
-
-  try {
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return withHeaders(auth.error);
-    }
-    const { user } = auth;
-    const supabase = supabaseAdmin;
-
-    const path = event.path
-      .replace("/.netlify/functions/achievements", "")
-      .replace("/api/achievements", "");
-    const method = event.httpMethod;
-
-    // GET /achievements - Get all achievements with user progress
-    if (method === "GET" && (path === "" || path === "/")) {
-      return await getAchievements(supabase, user.id, headers);
-    }
-
-    // GET /achievements/stats - Get user stats
-    if (method === "GET" && path === "/stats") {
-      return await getUserStats(supabase, user.id, headers);
-    }
-
-    // GET /achievements/streaks - Get user streaks
-    if (method === "GET" && path === "/streaks") {
-      return await getUserStreaks(supabase, user.id, headers);
-    }
-
-    // POST /achievements/check - Check and award any earned achievements
-    if (method === "POST" && path === "/check") {
-      return await checkAchievements(supabase, user.id, headers);
-    }
-
-    // POST /achievements/streak - Update a streak
-    if (method === "POST" && path === "/streak") {
-      let payload = {};
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "achievements",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId }) => {
       try {
-        payload = JSON.parse(event.body || "{}");
-      } catch (_parseError) {
-        return withHeaders(
-          handleValidationError("Invalid JSON in request body"),
-        );
+        const path = evt.path
+          .replace("/.netlify/functions/achievements", "")
+          .replace("/api/achievements", "");
+        const method = evt.httpMethod;
+
+        if (method === "GET" && (path === "" || path === "/")) {
+          return getAchievements(supabaseAdmin, userId);
+        }
+
+        if (method === "GET" && path === "/stats") {
+          return getUserStats(supabaseAdmin, userId);
+        }
+
+        if (method === "GET" && path === "/streaks") {
+          return getUserStreaks(supabaseAdmin, userId);
+        }
+
+        if (method === "POST" && path === "/check") {
+          return checkAchievements(supabaseAdmin, userId);
+        }
+
+        if (method === "POST" && path === "/streak") {
+          let payload = {};
+          try {
+            payload = JSON.parse(evt.body || "{}");
+          } catch (_parseError) {
+            return handleValidationError("Invalid JSON in request body");
+          }
+          return updateStreak(supabaseAdmin, userId, payload);
+        }
+
+        return createErrorResponse("Not found", 404, "not_found");
+      } catch (error) {
+        console.error("Achievements error:", error);
+        return createErrorResponse(error.message, 500, "server_error");
       }
-      return await updateStreak(supabase, user.id, payload, headers);
-    }
+    },
+  });
 
-    return withHeaders(createErrorResponse("Not found", 404, "not_found"));
-  } catch (error) {
-    console.error("Achievements error:", error);
-    return withHeaders(createErrorResponse(error.message, 500, "server_error"));
-  }
-};
-
-async function getAchievements(supabase, userId, headers) {
+async function getAchievements(supabase, userId) {
   // Get all achievement definitions
   const { data: definitions, error: defError } = await supabase
     .from("achievement_definitions")
@@ -77,10 +58,7 @@ async function getAchievements(supabase, userId, headers) {
     .order("display_order");
 
   if (defError) {
-    return {
-      ...createErrorResponse(defError.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(defError.message, 500, "database_error");
   }
 
   // Get user's earned achievements
@@ -146,7 +124,6 @@ async function getAchievements(supabase, userId, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {
@@ -194,7 +171,7 @@ function calculateProgress(criteria, streakMap, stats) {
   }
 }
 
-async function getUserStats(supabase, userId, headers) {
+async function getUserStats(supabase, userId) {
   // Get or create stats
   const { data: stats, error } = await supabase
     .from("player_training_stats")
@@ -203,10 +180,7 @@ async function getUserStats(supabase, userId, headers) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    return {
-      ...createErrorResponse(error.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(error.message, 500, "database_error");
   }
 
   // Get recent activity
@@ -227,7 +201,6 @@ async function getUserStats(supabase, userId, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {
@@ -251,17 +224,14 @@ async function getUserStats(supabase, userId, headers) {
   };
 }
 
-async function getUserStreaks(supabase, userId, headers) {
+async function getUserStreaks(supabase, userId) {
   const { data: streaks, error } = await supabase
     .from("player_streaks")
     .select("*")
     .eq("user_id", userId);
 
   if (error) {
-    return {
-      ...createErrorResponse(error.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(error.message, 500, "database_error");
   }
 
   // Format streaks with additional info
@@ -282,16 +252,15 @@ async function getUserStreaks(supabase, userId, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({ success: true, data: { streaks: formatted } }),
   };
 }
 
-async function updateStreak(supabase, userId, payload, headers) {
+async function updateStreak(supabase, userId, payload) {
   const { streakType, date } = payload;
 
   if (!streakType) {
-    return { ...handleValidationError("streakType required"), headers };
+    return handleValidationError("streakType required");
   }
 
   const { data: result, error } = await supabase.rpc("update_player_streak", {
@@ -301,10 +270,7 @@ async function updateStreak(supabase, userId, payload, headers) {
   });
 
   if (error) {
-    return {
-      ...createErrorResponse(error.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(error.message, 500, "database_error");
   }
 
   // Award any unlocked achievements
@@ -334,7 +300,6 @@ async function updateStreak(supabase, userId, payload, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {
@@ -345,7 +310,7 @@ async function updateStreak(supabase, userId, payload, headers) {
   };
 }
 
-async function checkAchievements(supabase, userId, headers) {
+async function checkAchievements(supabase, userId) {
   // Get user's stats
   const { data: stats } = await supabase
     .from("player_training_stats")
@@ -398,7 +363,6 @@ async function checkAchievements(supabase, userId, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {

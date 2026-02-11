@@ -652,7 +652,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "decisions",
     allowedMethods: ["GET", "POST"],
-    rateLimitType,
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: handleRequest,
   });

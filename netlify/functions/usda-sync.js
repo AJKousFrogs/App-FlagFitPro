@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "./supabase-client.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -532,87 +533,101 @@ async function handleSearch(event) {
 /**
  * Main handler
  */
-export const handler = async (event, _context) => {
-  // CORS headers
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  };
+export const handler = async (event, context) =>
+  event.httpMethod === "POST"
+    ? baseHandler(event, context, {
+        functionName: "usda-sync",
+        allowedMethods: ["GET", "POST"],
+        rateLimitType: "UPDATE",
+        requireAuth: true,
+        handler: async (evt) => {
+          if (!isUSDAConfigured) {
+            return {
+              statusCode: 503,
+              body: JSON.stringify({
+                success: false,
+                error: "USDA API key not configured",
+                message:
+                  "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
+                setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
+              }),
+            };
+          }
 
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers, body: "" };
-  }
-
-  // Check if USDA API key is configured
-  if (!isUSDAConfigured) {
-    return {
-      statusCode: 503,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        error: "USDA API key not configured",
-        message:
-          "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
-        setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
-      }),
-    };
-  }
-
-  const path = event.path.replace("/.netlify/functions/usda-sync", "");
-
-  try {
-    // Route handling
-    if (event.httpMethod === "GET" && (path === "/status" || path === "")) {
-      const result = await handleStatus();
-      return { ...result, headers: { ...result.headers, ...headers } };
-    }
-
-    if (event.httpMethod === "GET" && path === "/search") {
-      const result = await handleSearch(event);
-      return { ...result, headers: { ...result.headers, ...headers } };
-    }
-
-    if (event.httpMethod === "POST" && (path === "/sync" || path === "")) {
-      const auth = await authenticateRequest(event);
-      if (!auth.success) {
-        return { ...auth.error, headers };
-      }
-      const role = await getUserRole(auth.user.id);
-      if (role !== "admin") {
+          try {
+            const auth = await authenticateRequest(evt);
+            if (!auth.success) {
+              return auth.error;
+            }
+            const role = await getUserRole(auth.user.id);
+            if (role !== "admin") {
+              return createErrorResponse(
+                "Admin role required",
+                403,
+                "authorization_error",
+              );
+            }
+            return handleSync(evt);
+          } catch (error) {
+            console.error("Handler error:", error);
+            return createErrorResponse(
+              "Failed to handle USDA sync request",
+              500,
+              "server_error",
+              { details: error.message },
+            );
+          }
+        },
+      })
+    : baseHandler(event, context, {
+        functionName: "usda-sync",
+        allowedMethods: ["GET", "POST"],
+        rateLimitType: "READ",
+        requireAuth: false,
+        handler: async (evt) => {
+      if (!isUSDAConfigured) {
         return {
-          ...createErrorResponse(
-            "Admin role required",
-            403,
-            "authorization_error",
-          ),
-          headers,
+          statusCode: 503,
+          body: JSON.stringify({
+            success: false,
+            error: "USDA API key not configured",
+            message:
+              "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
+            setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
+          }),
         };
       }
-      const result = await handleSync(event);
-      return { ...result, headers: { ...result.headers, ...headers } };
-    }
 
-    return {
-      ...createErrorResponse("Not found", 404, "not_found", {
-        details: [
-          "GET /status - Get sync status and stats",
-          "GET /search?q=query - Search foods in database",
-          "POST /sync - Trigger USDA data sync",
-        ],
-      }),
-      headers,
-    };
-  } catch (error) {
-    console.error("Handler error:", error);
-    return {
-      ...createErrorResponse(
-        "Failed to handle USDA sync request",
-        500,
-        "server_error",
-        { details: error.message },
-      ),
-      headers,
-    };
-  }
-};
+      const path = evt.path.replace("/.netlify/functions/usda-sync", "");
+
+      try {
+        if (evt.httpMethod === "GET" && (path === "/status" || path === "")) {
+          return handleStatus();
+        }
+
+        if (evt.httpMethod === "GET" && path === "/search") {
+          return handleSearch(evt);
+        }
+
+        if (evt.httpMethod === "POST" && (path === "/sync" || path === "")) {
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+        }
+
+        return createErrorResponse("Not found", 404, "not_found", {
+          details: [
+            "GET /status - Get sync status and stats",
+            "GET /search?q=query - Search foods in database",
+            "POST /sync - Trigger USDA data sync",
+          ],
+        });
+      } catch (error) {
+        console.error("Handler error:", error);
+        return createErrorResponse(
+          "Failed to handle USDA sync request",
+          500,
+          "server_error",
+          { details: error.message },
+        );
+      }
+        },
+      });

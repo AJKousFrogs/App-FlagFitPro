@@ -3,7 +3,6 @@ import { createSuccessResponse, createErrorResponse, handleValidationError } fro
 import { requireAuthorization, getUserRole, logViolation } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { prepareStateTransition } from "./utils/session-state-helper.js";
-import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 // Netlify Function: Training Sessions API

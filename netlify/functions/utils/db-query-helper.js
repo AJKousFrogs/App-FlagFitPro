@@ -1,9 +1,4 @@
 import { createErrorResponse, handleValidationError } from "./error-handler.js";
-import { executeQuery } from "./utils/db-query-helper.js";
-import { parseAthleteId } from "./utils/db-query-helper.js";
-import { parseIntParam } from "./utils/db-query-helper.js";
-import { parseDateParam } from "./utils/db-query-helper.js";
-import { calculateDateRange } from "./utils/db-query-helper.js";
 
 /**
  * Database Query Helper Utilities

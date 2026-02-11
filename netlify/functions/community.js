@@ -795,12 +795,30 @@ export const handler = async (event, context) => {
   // Community has special auth handling: optional for GET, required for POST
   const rateLimitType = event.httpMethod === "POST" ? "CREATE" : "READ";
 
+  if (event.httpMethod === "POST" || event.httpMethod === "DELETE") {
+    return baseHandler(event, context, {
+      functionName: "community",
+      allowedMethods: ["GET", "POST", "DELETE"],
+      rateLimitType: rateLimitType,
+      requireAuth: true,
+      handler: async (event, _context, { requestId }) => {
+        return handleCommunityRequest(event, requestId);
+      },
+    });
+  }
+
   return baseHandler(event, context, {
     functionName: "community",
     allowedMethods: ["GET", "POST", "DELETE"],
-    rateLimitType,
-    requireAuth: false, // We handle auth manually for flexibility
+    rateLimitType: rateLimitType,
+    requireAuth: false, // Optional auth for read-only access
     handler: async (event, _context, { requestId }) => {
+      return handleCommunityRequest(event, requestId);
+    },
+  });
+};
+
+async function handleCommunityRequest(event, requestId) {
       // SECURITY: Authentication (optional for GET, required for POST/DELETE)
       let userId = null;
       const authHeader =
@@ -995,6 +1013,4 @@ export const handler = async (event, context) => {
         "method_not_allowed",
         requestId,
       );
-    },
-  });
-};
+}

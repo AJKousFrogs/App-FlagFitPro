@@ -149,6 +149,15 @@ function systemTransition(newState, reason) {
   });
 }
 
+export {
+  prepareStateTransition,
+  transitionToVisible,
+  transitionToAcknowledged,
+  transitionToInProgress,
+  transitionToCompleted,
+  systemTransition,
+};
+
 export default {
   prepareStateTransition,
   transitionToVisible,

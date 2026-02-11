@@ -1,28 +1,36 @@
-import { createHandler } from "./utils/handler-factory.js";
+import { baseHandler } from "./utils/base-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 import { getSupabaseClient, supabaseAdmin } from "./supabase-client.js";
-import { handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 
 /**
  * Season Reports Function
  * Generates summary reports for players, coach, and team
  */
 
-export const handler = createHandler({
-  functionName: "season-reports",
-  handler: async (event, context, { userId, userRole }) => {
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "season-reports",
+    allowedMethods: ["POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (event, context, { userId }) => {
     const supabase = getSupabaseClient();
+    const userRole = await getUserRole(userId);
 
     // Only coaches/admins can generate reports
     if (
       !["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)
     ) {
-      return {
-        statusCode: 403,
-        body: JSON.stringify({
-          error: "Unauthorized",
-          message: "Only coaches can generate season reports",
-        }),
-      };
+      return createErrorResponse(
+        "Only coaches can generate season reports",
+        403,
+        "authorization_error",
+      );
     }
 
     if (event.httpMethod === "POST") {
@@ -94,34 +102,25 @@ export const handler = createHandler({
           throw insertError;
         }
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            success: true,
-            reports,
-            message: `Generated ${reports.length} reports`,
-          }),
-        };
+        return createSuccessResponse(
+          { reports },
+          200,
+          `Generated ${reports.length} reports`,
+        );
       } catch (error) {
         console.error("[SeasonReports] Error:", error);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({
-            error: "Failed to generate reports",
-            message: error.message,
-          }),
-        };
+        return createErrorResponse(
+          "Failed to generate reports",
+          500,
+          "server_error",
+          { details: error.message },
+        );
       }
     }
 
-    return {
-      statusCode: 405,
-      body: JSON.stringify({
-        error: "Method not allowed",
-      }),
-    };
-  },
-});
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+    },
+  });
 
 async function generateTeamReport(supabase, season, players) {
   // Aggregate team statistics

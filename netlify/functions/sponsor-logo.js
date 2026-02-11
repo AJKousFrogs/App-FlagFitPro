@@ -1,5 +1,6 @@
 import https from "https";
 import http from "http";
+import { baseHandler } from "./utils/base-handler.js";
 import { CORS_HEADERS, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
 // Netlify Function: Sponsor Logo Proxy
@@ -81,31 +82,20 @@ async function fetchImageAsBase64(imageUrl) {
   });
 }
 
-export const handler = async (event, _context) => {
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: {
-        ...CORS_HEADERS,
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-      },
-      body: "",
-    };
-  }
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "sponsor-logo",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: false,
+    handler: async (evt) => {
+      try {
+        // Get image URL from query parameter
+        const imageUrl = evt.queryStringParameters?.url;
 
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
-
-  try {
-    // Get image URL from query parameter
-    const imageUrl = event.queryStringParameters?.url;
-
-    if (!imageUrl) {
-      return handleValidationError("url query parameter is required");
-    }
+        if (!imageUrl) {
+          return handleValidationError("url query parameter is required");
+        }
 
     // Validate URL is from allowed domains
     const allowedDomains = [
@@ -114,74 +104,75 @@ export const handler = async (event, _context) => {
       "gearxpro-sports.com",
     ];
 
-    let urlObj;
-    try {
-      urlObj = new URL(imageUrl);
-    } catch (urlError) {
-      console.error("Invalid URL:", imageUrl, urlError);
-      return handleValidationError("Invalid URL format");
-    }
+        let urlObj;
+        try {
+          urlObj = new URL(imageUrl);
+        } catch (urlError) {
+          console.error("Invalid URL:", imageUrl, urlError);
+          return handleValidationError("Invalid URL format");
+        }
 
-    const isAllowed = allowedDomains.some((domain) =>
-      urlObj.hostname.includes(domain),
-    );
+        const isAllowed = allowedDomains.some((domain) =>
+          urlObj.hostname.includes(domain),
+        );
 
-    if (!isAllowed) {
-      return createErrorResponse(
-        "Domain not allowed",
-        403,
-        "authorization_error",
-      );
-    }
+        if (!isAllowed) {
+          return createErrorResponse(
+            "Domain not allowed",
+            403,
+            "authorization_error",
+          );
+        }
 
     // Check cache
-    const cacheKey = imageUrl;
-    const cached = logoCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-      return {
-        statusCode: 200,
-        headers: {
-          ...CORS_HEADERS,
-          "Content-Type": cached.contentType,
-          "Cache-Control": "public, max-age=86400", // 24 hours
-          "Cross-Origin-Resource-Policy": "cross-origin",
-        },
-        body: cached.data,
-        isBase64Encoded: true,
-      };
-    }
+        const cacheKey = imageUrl;
+        const cached = logoCache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+          return {
+            statusCode: 200,
+            headers: {
+              ...CORS_HEADERS,
+              "Content-Type": cached.contentType,
+              "Cache-Control": "public, max-age=86400",
+              "Cross-Origin-Resource-Policy": "cross-origin",
+            },
+            body: cached.data,
+            isBase64Encoded: true,
+          };
+        }
 
     // Fetch image
-    const imageData = await fetchImageAsBase64(imageUrl);
+        const imageData = await fetchImageAsBase64(imageUrl);
 
     // Cache the result
-    logoCache.set(cacheKey, {
-      data: imageData.data,
-      contentType: imageData.contentType,
-      timestamp: Date.now(),
-    });
+        logoCache.set(cacheKey, {
+          data: imageData.data,
+          contentType: imageData.contentType,
+          timestamp: Date.now(),
+        });
 
     // Return image with proper headers
-    return {
-      statusCode: 200,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": imageData.contentType,
-        "Cache-Control": "public, max-age=86400", // 24 hours
-        "Cross-Origin-Resource-Policy": "cross-origin",
-      },
-      body: imageData.data,
-      isBase64Encoded: true,
-    };
-  } catch (error) {
-    console.error("Error proxying sponsor logo:", error);
-    return createErrorResponse(
-      "Failed to proxy sponsor logo",
-      500,
-      "server_error",
-      {
-        details: error.message,
-      },
-    );
-  }
-};
+        return {
+          statusCode: 200,
+          headers: {
+            ...CORS_HEADERS,
+            "Content-Type": imageData.contentType,
+            "Cache-Control": "public, max-age=86400",
+            "Cross-Origin-Resource-Policy": "cross-origin",
+          },
+          body: imageData.data,
+          isBase64Encoded: true,
+        };
+      } catch (error) {
+        console.error("Error proxying sponsor logo:", error);
+        return createErrorResponse(
+          "Failed to proxy sponsor logo",
+          500,
+          "server_error",
+          {
+            details: error.message,
+          },
+        );
+      }
+    },
+  });

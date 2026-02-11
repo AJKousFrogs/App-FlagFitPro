@@ -3,14 +3,21 @@
  * Handles account pause and resume
  */
 
-import { createHandler } from "./utils/handler-factory.js";
-
+import { baseHandler } from "./utils/base-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 
-export const handler = createHandler({
-  functionName: "account-pause",
-  handler: async (event, _context, { userId }) => {
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "account-pause",
+    allowedMethods: ["POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
     if (event.httpMethod === "POST") {
       let body = {};
       try {
@@ -37,23 +44,19 @@ export const handler = createHandler({
             throw error;
           }
 
-          return {
-            statusCode: 200,
-            body: JSON.stringify({
-              success: true,
-              pause_id: data,
-              message: "Account paused successfully",
-            }),
-          };
+          return createSuccessResponse(
+            { pause_id: data },
+            200,
+            "Account paused successfully",
+          );
         } catch (error) {
           console.error("[AccountPause] Error:", error);
-          return {
-            statusCode: 500,
-            body: JSON.stringify({
-              error: "Failed to pause account",
-              message: error.message,
-            }),
-          };
+          return createErrorResponse(
+            "Failed to pause account",
+            500,
+            "server_error",
+            { details: error.message },
+          );
         }
       } else if (action === "resume") {
         try {
@@ -67,47 +70,32 @@ export const handler = createHandler({
           }
 
           if (!data) {
-            return {
-              statusCode: 400,
-              body: JSON.stringify({
-                error: "No active pause found",
-              }),
-            };
+            return createErrorResponse(
+              "No active pause found",
+              400,
+              "validation_error",
+            );
           }
 
-          return {
-            statusCode: 200,
-            body: JSON.stringify({
-              success: true,
-              message: "Account resumed successfully",
-            }),
-          };
+          return createSuccessResponse({}, 200, "Account resumed successfully");
         } catch (error) {
           console.error("[AccountPause] Error:", error);
-          return {
-            statusCode: 500,
-            body: JSON.stringify({
-              error: "Failed to resume account",
-              message: error.message,
-            }),
-          };
+          return createErrorResponse(
+            "Failed to resume account",
+            500,
+            "server_error",
+            { details: error.message },
+          );
         }
       }
 
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          error: "Invalid action",
-          message: "Action must be 'pause' or 'resume'",
-        }),
-      };
+      return createErrorResponse(
+        "Action must be 'pause' or 'resume'",
+        400,
+        "validation_error",
+      );
     }
 
-    return {
-      statusCode: 405,
-      body: JSON.stringify({
-        error: "Method not allowed",
-      }),
-    };
-  },
-});
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+    },
+  });

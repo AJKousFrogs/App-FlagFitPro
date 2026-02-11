@@ -447,10 +447,15 @@ async function assignTemplate(
 // =====================================================
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET"
+    ? "READ"
+    : event.httpMethod === "DELETE"
+      ? "DELETE"
+      : "UPDATE";
   return baseHandler(event, context, {
     functionName: "team-templates",
     allowedMethods: ["GET", "POST", "PATCH", "DELETE"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();

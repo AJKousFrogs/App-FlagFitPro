@@ -1,7 +1,10 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { canCoachViewWellness, filterWellnessDataForCoach, // canCoachViewReadiness, filterReadinessForCoach - reserved for readiness endpoint expansion } from "./utils/consent-guard.js";
+import {
+  canCoachViewWellness,
+  filterWellnessDataForCoach,
+} from "./utils/consent-guard.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
@@ -116,7 +119,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "performance-data",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
-    rateLimitType,
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const { httpMethod, path, body, queryStringParameters } = event;

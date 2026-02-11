@@ -252,6 +252,15 @@ setInterval(
   5 * 60 * 1000,
 );
 
+export {
+  cache,
+  getOrFetch,
+  CACHE_TTL,
+  CACHE_PREFIX,
+  invalidateUserCache,
+  invalidatePrefixCache,
+};
+
 export default {
   cache,
   getOrFetch,

@@ -8,77 +8,49 @@
  */
 
 import { supabaseAdmin } from "./supabase-client.js";
-
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
-const getSupabase = (_authHeader) => {
-  // Use shared admin client
-  return supabaseAdmin;
-};
-
-export const handler = async (event) => {
-  const { httpMethod, path, body, headers } = event;
-
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-    "Content-Type": "application/json",
-  };
-  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
-
-  if (httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: corsHeaders, body: "" };
-  }
-
-  const auth = await authenticateRequest(event);
-  if (!auth.success) {
-    return withHeaders(auth.error);
-  }
-  const { user } = auth;
-  const supabase = getSupabase();
-
-  try {
-    const endpoint = path.split("/").pop();
-
-    if (httpMethod === "GET") {
-      return await getTournaments(supabase, user.id, corsHeaders);
-    }
-
-    if (httpMethod === "POST") {
-      let payload = {};
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "tournament-calendar",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId }) => {
       try {
-        payload = body ? JSON.parse(body) : {};
-      } catch (_parseError) {
-        return withHeaders(
-          handleValidationError("Invalid JSON in request body"),
-        );
+        const endpoint = evt.path.split("/").pop();
+
+        if (evt.httpMethod === "GET") {
+          return getTournaments(supabaseAdmin, userId);
+        }
+
+        let payload = {};
+        try {
+          payload = evt.body ? JSON.parse(evt.body) : {};
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+
+        if (endpoint === "delete") {
+          return deleteTournament(supabaseAdmin, userId, payload);
+        }
+
+        return saveTournament(supabaseAdmin, userId, payload);
+      } catch (err) {
+        console.error("Tournament calendar error:", err);
+        return createErrorResponse("Internal server error", 500, "server_error", {
+          details: err.message,
+        });
       }
-
-      if (endpoint === "delete") {
-        return await deleteTournament(supabase, user.id, payload, corsHeaders);
-      }
-
-      return await saveTournament(supabase, user.id, payload, corsHeaders);
-    }
-
-    return withHeaders(createErrorResponse("Not found", 404, "not_found"));
-  } catch (err) {
-    console.error("Tournament calendar error:", err);
-    return withHeaders(
-      createErrorResponse("Internal server error", 500, "server_error", {
-        details: err.message,
-      }),
-    );
-  }
-};
+    },
+  });
 
 /**
  * GET /api/tournament-calendar
  * Fetch upcoming tournaments (next 12 months)
  */
-async function getTournaments(supabase, userId, headers) {
+async function getTournaments(supabase, userId) {
   const today = new Date().toISOString().split("T")[0];
 
   // Get tournaments from next 12 months
@@ -139,7 +111,6 @@ async function getTournaments(supabase, userId, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: enrichedTournaments,
@@ -151,7 +122,7 @@ async function getTournaments(supabase, userId, headers) {
  * POST /api/tournament-calendar
  * Add or update a tournament
  */
-async function saveTournament(supabase, userId, payload, headers) {
+async function saveTournament(supabase, userId, payload) {
   const {
     id,
     name,
@@ -170,10 +141,7 @@ async function saveTournament(supabase, userId, payload, headers) {
   } = payload;
 
   if (!name || !startDate || !endDate) {
-    return {
-      ...handleValidationError("name, startDate, and endDate are required"),
-      headers,
-    };
+    return handleValidationError("name, startDate, and endDate are required");
   }
 
   const tournamentData = {
@@ -225,7 +193,6 @@ async function saveTournament(supabase, userId, payload, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: result,
@@ -238,11 +205,11 @@ async function saveTournament(supabase, userId, payload, headers) {
  * POST /api/tournament-calendar/delete
  * Delete a tournament
  */
-async function deleteTournament(supabase, userId, payload, headers) {
+async function deleteTournament(supabase, userId, payload) {
   const { id } = payload;
 
   if (!id) {
-    return { ...handleValidationError("tournamentId is required"), headers };
+    return handleValidationError("tournamentId is required");
   }
 
   // Verify ownership or allow if user is coach
@@ -259,14 +226,11 @@ async function deleteTournament(supabase, userId, payload, headers) {
   // For now, allow deletion if user created it
   // TODO: Add coach role check for national team events
   if (tournament.created_by && tournament.created_by !== userId) {
-    return {
-      ...createErrorResponse(
-        "Not authorized to delete this tournament",
-        403,
-        "authorization_error",
-      ),
-      headers,
-    };
+    return createErrorResponse(
+      "Not authorized to delete this tournament",
+      403,
+      "authorization_error",
+    );
   }
 
   const { error: deleteError } = await supabase
@@ -280,7 +244,6 @@ async function deleteTournament(supabase, userId, payload, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       message: "Tournament deleted",

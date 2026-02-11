@@ -370,6 +370,8 @@ The FlagFit Pro Team
 
 const emailService = new EmailService();
 
+export { EmailService, emailService };
+
 export default {
   EmailService,
   emailService,

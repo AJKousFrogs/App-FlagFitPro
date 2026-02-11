@@ -13,10 +13,11 @@ import { getSupabaseClient } from "./supabase-client.js";
  */
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "privacy-settings",
     allowedMethods: ["GET", "PUT"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true, // P0-005: Explicitly require authentication for privacy settings
     handler: async (event, context, { userId }) => {
       const supabase = getSupabaseClient();

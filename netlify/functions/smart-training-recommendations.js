@@ -1,6 +1,6 @@
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 
 // Netlify Function: Smart Training Recommendations
 // Integrates tournaments, ACWR, RPE, injuries, and periodization
@@ -506,93 +506,107 @@ function generateRecommendations(data) {
 // =====================================================
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "smart-training-recommendations",
     allowedMethods: ["GET", "POST"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      checkEnvVars();
+      try {
+        checkEnvVars();
 
-      // Parse request
-      let athleteId = userId;
-      let targetDate = new Date();
+        // Parse request
+        let athleteId = userId;
+        let targetDate = new Date();
 
-      if (event.httpMethod === "POST") {
-        try {
-          const body = JSON.parse(event.body || "{}");
-          if (body.athleteId) {
-            ({ athleteId } = body);
+        if (event.httpMethod === "POST") {
+          try {
+            const body = JSON.parse(event.body || "{}");
+            if (body.athleteId) {
+              ({ athleteId } = body);
+            }
+            if (body.date) {
+              targetDate = new Date(body.date);
+            }
+          } catch {
+            // Use defaults
           }
-          if (body.date) {
-            targetDate = new Date(body.date);
+        } else {
+          const params = event.queryStringParameters || {};
+          if (params.athleteId) {
+            ({ athleteId } = params);
           }
-        } catch {
-          // Use defaults
+          if (params.date) {
+            targetDate = new Date(params.date);
+          }
         }
-      } else {
-        const params = event.queryStringParameters || {};
-        if (params.athleteId) {
-          ({ athleteId } = params);
-        }
-        if (params.date) {
-          targetDate = new Date(params.date);
-        }
-      }
 
-      // Gather all data in parallel
-      const [acwr, tournaments, injuries, wellness, phase, monotony] =
-        await Promise.all([
-          calculateACWR(athleteId, targetDate),
-          getUpcomingTournaments(athleteId, 30),
-          getActiveInjuries(athleteId),
-          getWellnessData(athleteId, targetDate),
-          getCurrentPhase(athleteId, targetDate),
-          calculateMonotony(athleteId, targetDate),
-        ]);
+        // Gather all data in parallel
+        const [acwr, tournaments, injuries, wellness, phase, monotony] =
+          await Promise.all([
+            calculateACWR(athleteId, targetDate),
+            getUpcomingTournaments(athleteId, 30),
+            getActiveInjuries(athleteId),
+            getWellnessData(athleteId, targetDate),
+            getCurrentPhase(athleteId, targetDate),
+            calculateMonotony(athleteId, targetDate),
+          ]);
 
-      // Generate recommendations
-      const recommendations = generateRecommendations({
-        acwr,
-        tournaments,
-        injuries,
-        wellness,
-        phase,
-        monotony,
-        date: targetDate,
-      });
+        // Generate recommendations
+        const recommendations = generateRecommendations({
+          acwr,
+          tournaments,
+          injuries,
+          wellness,
+          phase,
+          monotony,
+          date: targetDate,
+        });
 
-      return createSuccessResponse(
-        {
-          date: targetDate.toISOString().split("T")[0],
-          athleteId,
-          recommendations,
-          metrics: {
-            acwr,
-            monotony,
-            activeInjuries: injuries.length,
-            upcomingTournaments: tournaments.length,
-            nextTournament: tournaments[0] || null,
+        return createSuccessResponse(
+          {
+            date: targetDate.toISOString().split("T")[0],
+            athleteId,
+            recommendations,
+            metrics: {
+              acwr,
+              monotony,
+              activeInjuries: injuries.length,
+              upcomingTournaments: tournaments.length,
+              nextTournament: tournaments[0] || null,
+            },
+            wellness: wellness
+              ? {
+                  sleepQuality: wellness.sleep_quality,
+                  fatigue: wellness.fatigue,
+                  soreness: wellness.soreness,
+                  mood: wellness.mood,
+                  energy: wellness.energy,
+                }
+              : null,
+            phase: phase
+              ? {
+                  name: phase.name,
+                  description: phase.description,
+                  focusAreas: phase.focus_areas,
+                }
+              : null,
           },
-          wellness: wellness
-            ? {
-                sleepQuality: wellness.sleep_quality,
-                fatigue: wellness.fatigue,
-                soreness: wellness.soreness,
-                mood: wellness.mood,
-                energy: wellness.energy,
-              }
-            : null,
-          phase: phase
-            ? {
-                name: phase.name,
-                description: phase.description,
-                focusAreas: phase.focus_areas,
-              }
-            : null,
-        },
-        requestId,
-      );
+          requestId,
+        );
+      } catch (error) {
+        console.error(
+          "[smart-training-recommendations] Unexpected handler error:",
+          error,
+        );
+        return createErrorResponse(
+          "Failed to generate training recommendations",
+          500,
+          "database_error",
+          requestId,
+        );
+      }
     },
   });
 };

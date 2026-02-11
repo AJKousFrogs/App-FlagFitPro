@@ -663,10 +663,11 @@ async function getUserRole(userId) {
 // =====================================================
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "notification-digest",
     allowedMethods: ["GET", "POST", "PATCH"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();

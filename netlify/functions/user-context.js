@@ -4,7 +4,7 @@
 
 import { baseHandler } from "./utils/base-handler.js";
 
-import { createSuccessResponse } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 
 /**
@@ -226,9 +226,19 @@ export const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true, // SECURITY: Explicit auth for user context
-    handler: async (event, context, { userId }) => {
-      const result = await getUserContext(userId);
-      return createSuccessResponse(result);
+    handler: async (event, context, { userId, requestId }) => {
+      try {
+        const result = await getUserContext(userId);
+        return createSuccessResponse(result);
+      } catch (error) {
+        console.error("[user-context] Unexpected handler error:", error);
+        return createErrorResponse(
+          "Failed to fetch user context",
+          500,
+          "database_error",
+          requestId,
+        );
+      }
     },
   });
 };

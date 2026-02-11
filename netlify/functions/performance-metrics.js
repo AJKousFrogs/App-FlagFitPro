@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 // Netlify Function: Performance Metrics API
@@ -236,12 +236,22 @@ export const handler = async (event, context) => {
     rateLimitType: "READ",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      const athleteId = event.queryStringParameters?.athleteId || userId;
+      try {
+        const athleteId = event.queryStringParameters?.athleteId || userId;
 
-      // Get performance metrics
-      const metrics = await getPerformanceMetrics(athleteId);
+        // Get performance metrics
+        const metrics = await getPerformanceMetrics(athleteId);
 
-      return createSuccessResponse({ metrics }, requestId);
+        return createSuccessResponse({ metrics }, requestId);
+      } catch (error) {
+        console.error("[performance-metrics] Unexpected handler error:", error);
+        return createErrorResponse(
+          "Failed to fetch performance metrics",
+          500,
+          "database_error",
+          requestId,
+        );
+      }
     },
   });
 };

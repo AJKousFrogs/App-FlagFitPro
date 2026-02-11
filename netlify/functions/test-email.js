@@ -1,48 +1,28 @@
 import nodemailer from "nodemailer";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
 // Test email endpoint
-export const handler = async (event, _context) => {
-  // Handle CORS
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "test-email",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
+    requireAuth: false,
+    handler: async (evt) => {
+      try {
+        let bodyData = {};
+        try {
+          bodyData = JSON.parse(evt.body);
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
 
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers,
-      body: "",
-    };
-  }
+        const { email, provider: _provider = "smtp" } = bodyData;
 
-  if (event.httpMethod !== "POST") {
-    return {
-      ...createErrorResponse("Method not allowed", 405, "method_not_allowed"),
-      headers,
-    };
-  }
-
-  try {
-    // Parse and validate request body
-    let bodyData = {};
-    try {
-      bodyData = JSON.parse(event.body);
-    } catch (_parseError) {
-      return {
-        ...handleValidationError("Invalid JSON in request body"),
-        headers,
-      };
-    }
-
-    const { email, provider: _provider = "smtp" } = bodyData;
-
-    if (!email) {
-      return { ...handleValidationError("email is required"), headers };
-    }
+        if (!email) {
+          return handleValidationError("email is required");
+        }
 
     // Test email configuration
     let transporter;
@@ -82,22 +62,21 @@ export const handler = async (event, _context) => {
           },
         });
         providerName = "SMTP";
-      } else {
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({
-            configured: false,
-            message:
-              "No email service configured. Please check your environment variables.",
-            instructions:
-              "Add GMAIL_EMAIL + GMAIL_APP_PASSWORD or SENDGRID_API_KEY or SMTP credentials to .env file",
-          }),
-        };
-      }
+          } else {
+            return {
+              statusCode: 200,
+              body: JSON.stringify({
+                configured: false,
+                message:
+                  "No email service configured. Please check your environment variables.",
+                instructions:
+                  "Add GMAIL_EMAIL + GMAIL_APP_PASSWORD or SENDGRID_API_KEY or SMTP credentials to .env file",
+              }),
+            };
+          }
 
-      // Test connection
-      await transporter.verify();
+          // Test connection
+          await transporter.verify();
 
       // Send test email
       const mailOptions = {
@@ -167,48 +146,42 @@ Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
         `.trim(),
       };
 
-      const result = await transporter.sendMail(mailOptions);
+          const result = await transporter.sendMail(mailOptions);
 
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          success: true,
-          configured: true,
-          provider: providerName,
-          message: `Test email sent successfully via ${providerName}!`,
-          messageId: result.messageId,
-          testEmail: email,
-        }),
-      };
-    } catch (emailError) {
-      console.error("Email service error:", emailError);
+          return {
+            statusCode: 200,
+            body: JSON.stringify({
+              success: true,
+              configured: true,
+              provider: providerName,
+              message: `Test email sent successfully via ${providerName}!`,
+              messageId: result.messageId,
+              testEmail: email,
+            }),
+          };
+        } catch (emailError) {
+          console.error("Email service error:", emailError);
 
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          configured: false,
-          error: emailError.message,
-          message: "Email service configuration issue",
-          troubleshooting: {
-            gmail: "Check GMAIL_EMAIL and GMAIL_APP_PASSWORD",
-            sendgrid: "Check SENDGRID_API_KEY",
-            smtp: "Check SMTP_HOST, SMTP_USER, SMTP_PASS",
-          },
-        }),
-      };
-    }
-  } catch (error) {
-    console.error("Test email error:", error);
+          return {
+            statusCode: 200,
+            body: JSON.stringify({
+              configured: false,
+              error: emailError.message,
+              message: "Email service configuration issue",
+              troubleshooting: {
+                gmail: "Check GMAIL_EMAIL and GMAIL_APP_PASSWORD",
+                sendgrid: "Check SENDGRID_API_KEY",
+                smtp: "Check SMTP_HOST, SMTP_USER, SMTP_PASS",
+              },
+            }),
+          };
+        }
+      } catch (error) {
+        console.error("Test email error:", error);
 
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        error: "Internal server error",
-        message: error.message,
-      }),
-    };
-  }
-};
+        return createErrorResponse("Internal server error", 500, "server_error", {
+          details: error.message,
+        });
+      }
+    },
+  });

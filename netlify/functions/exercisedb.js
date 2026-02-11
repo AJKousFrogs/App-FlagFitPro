@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
 /**
@@ -18,28 +18,15 @@ const supabase = supabaseAdmin;
 // ExerciseDB API configuration
 const EXERCISEDB_API_URL = "https://exercisedb-api.vercel.app/api/v1";
 
-const headers = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-  "Content-Type": "application/json",
-};
-
 /**
  * Verify user has coach/admin role
  */
-async function verifyCoachRole(event) {
-  const auth = await authenticateRequest(event);
-  if (!auth.success) {
-    return { authorized: false, error: auth.error };
-  }
-  const { user } = auth;
-
+async function verifyCoachRole(userId) {
   // Get role from team_members table (not users table)
   const { data: memberData } = await supabase
     .from("team_members")
     .select("role")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .maybeSingle();
 
   const role = memberData?.role || "player";
@@ -54,7 +41,7 @@ async function verifyCoachRole(event) {
     };
   }
 
-  return { authorized: true, user, role };
+  return { authorized: true, userId, role };
 }
 
 /**
@@ -430,131 +417,107 @@ async function approveExercise(exerciseId, userId, approvalData) {
 /**
  * Main handler
  */
-export const handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers, body: "" };
-  }
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "exercisedb",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId }) => {
+      const path = evt.path
+        .replace("/.netlify/functions/exercisedb", "")
+        .replace("/api/exercisedb", "");
+      const params = evt.queryStringParameters || {};
 
-  const path = event.path
-    .replace("/.netlify/functions/exercisedb", "")
-    .replace("/api/exercisedb", "");
-  const params = event.queryStringParameters || {};
-
-  try {
-    // GET requests
-    if (event.httpMethod === "GET") {
-      // GET /api/exercisedb/filters - Get filter options
-      if (path === "/filters") {
-        const filters = await getFilterOptions();
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ success: true, filters }),
-        };
-      }
-
-      // GET /api/exercisedb/search - Search ExerciseDB API
-      if (path === "/search") {
-        const auth = await verifyCoachRole(event);
-        if (!auth.authorized) {
-          return auth.error;
-        }
-
-        const results = await searchExerciseDB(params);
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ success: true, ...results }),
-        };
-      }
-
-      // GET /api/exercisedb/logs - Get import logs
-      if (path === "/logs") {
-        const auth = await verifyCoachRole(event);
-        if (!auth.authorized) {
-          return auth.error;
-        }
-
-        const { data: logs, error } = await supabase
-          .from("exercisedb_import_logs")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(20);
-
-        if (error) {
-          throw error;
-        }
-
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ success: true, logs }),
-        };
-      }
-
-      // GET /api/exercisedb - Get curated exercises
-      const results = await getCuratedExercises(params);
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ success: true, ...results }),
-      };
-    }
-
-    // POST requests (require auth)
-    if (event.httpMethod === "POST") {
-      const auth = await verifyCoachRole(event);
-      if (!auth.authorized) {
-        return auth.error;
-      }
-
-      let body = {};
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
+        if (evt.httpMethod === "GET") {
+          if (path === "/filters") {
+            const filters = await getFilterOptions();
+            return {
+              statusCode: 200,
+              body: JSON.stringify({ success: true, filters }),
+            };
+          }
+
+          if (path === "/search") {
+            const auth = await verifyCoachRole(userId);
+            if (!auth.authorized) {
+              return auth.error;
+            }
+
+            const results = await searchExerciseDB(params);
+            return {
+              statusCode: 200,
+              body: JSON.stringify({ success: true, ...results }),
+            };
+          }
+
+          if (path === "/logs") {
+            const auth = await verifyCoachRole(userId);
+            if (!auth.authorized) {
+              return auth.error;
+            }
+
+            const { data: logs, error } = await supabase
+              .from("exercisedb_import_logs")
+              .select("*")
+              .order("created_at", { ascending: false })
+              .limit(20);
+
+            if (error) {
+              throw error;
+            }
+
+            return {
+              statusCode: 200,
+              body: JSON.stringify({ success: true, logs }),
+            };
+          }
+
+          const results = await getCuratedExercises(params);
+          return {
+            statusCode: 200,
+            body: JSON.stringify({ success: true, ...results }),
+          };
+        }
+
+        const auth = await verifyCoachRole(userId);
+        if (!auth.authorized) {
+          return auth.error;
+        }
+
+        let body = {};
+        try {
+          body = JSON.parse(evt.body || "{}");
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+
+        if (path === "/import") {
+          const result = await importExercises(body, userId);
+          return {
+            statusCode: 200,
+            body: JSON.stringify(result),
+          };
+        }
+
+        if (path.startsWith("/approve/")) {
+          const exerciseId = path.replace("/approve/", "");
+          const result = await approveExercise(exerciseId, userId, body);
+          return {
+            statusCode: 200,
+            body: JSON.stringify(result),
+          };
+        }
+
+        return createErrorResponse("Endpoint not found", 404, "not_found");
+      } catch (error) {
+        console.error("ExerciseDB API error:", error);
+        return createErrorResponse(
+          error.message || "Internal server error",
+          500,
+          "server_error",
+        );
       }
-
-      // POST /api/exercisedb/import - Import exercises
-      if (path === "/import") {
-        const result = await importExercises(body, auth.user.id);
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify(result),
-        };
-      }
-
-      // POST /api/exercisedb/approve/:id - Approve an exercise
-      if (path.startsWith("/approve/")) {
-        const exerciseId = path.replace("/approve/", "");
-        const result = await approveExercise(exerciseId, auth.user.id, body);
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify(result),
-        };
-      }
-
-      return {
-        ...createErrorResponse("Endpoint not found", 404, "not_found"),
-        headers,
-      };
-    }
-
-    return {
-      ...createErrorResponse("Method not allowed", 405, "method_not_allowed"),
-      headers,
-    };
-  } catch (error) {
-    console.error("ExerciseDB API error:", error);
-    return {
-      ...createErrorResponse(
-        error.message || "Internal server error",
-        500,
-        "server_error",
-      ),
-      headers,
-    };
-  }
-};
+    },
+  });

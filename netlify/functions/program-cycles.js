@@ -1,59 +1,33 @@
-import { supabaseAdmin } from "./supabase-client.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
-export const handler = async (event) => {
-  const headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  };
-
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers, body: "" };
-  }
-
-  try {
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return { ...auth.error, headers };
-    }
-    const { user } = auth;
-    const supabase = supabaseAdmin;
-
-    const method = event.httpMethod;
-
-    // GET - Get all cycles with player progress
-    if (method === "GET") {
-      return await getCycles(supabase, user.id, headers);
-    }
-
-    // POST - Update cycle status
-    if (method === "POST") {
-      let payload = {};
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "program-cycles",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId, supabase }) => {
       try {
-        payload = JSON.parse(event.body || "{}");
-      } catch (_parseError) {
-        return {
-          ...handleValidationError("Invalid JSON in request body"),
-          headers,
-        };
+        if (evt.httpMethod === "GET") {
+          return getCycles(supabase, userId);
+        }
+
+        let payload = {};
+        try {
+          payload = JSON.parse(evt.body || "{}");
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+        return updateCycleStatus(supabase, userId, payload);
+      } catch (error) {
+        console.error("Program cycles error:", error);
+        return createErrorResponse(error.message, 500, "server_error");
       }
-      return await updateCycleStatus(supabase, user.id, payload, headers);
-    }
+    },
+  });
 
-    return { ...createErrorResponse("Not found", 404, "not_found"), headers };
-  } catch (error) {
-    console.error("Program cycles error:", error);
-    return {
-      ...createErrorResponse(error.message, 500, "server_error"),
-      headers,
-    };
-  }
-};
-
-async function getCycles(supabase, userId, headers) {
+async function getCycles(supabase, userId) {
   // Get all program cycles
   const { data: cycles, error: cyclesError } = await supabase
     .from("program_cycles")
@@ -62,10 +36,7 @@ async function getCycles(supabase, userId, headers) {
     .order("cycle_order");
 
   if (cyclesError) {
-    return {
-      ...createErrorResponse(cyclesError.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(cyclesError.message, 500, "database_error");
   }
 
   // Get player's progress for each cycle
@@ -118,16 +89,15 @@ async function getCycles(supabase, userId, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({ success: true, data: result }),
   };
 }
 
-async function updateCycleStatus(supabase, userId, payload, headers) {
+async function updateCycleStatus(supabase, userId, payload) {
   const { cycleId, status, completionPercentage, notes } = payload;
 
   if (!cycleId) {
-    return { ...handleValidationError("cycleId required"), headers };
+    return handleValidationError("cycleId required");
   }
 
   // Upsert player cycle progress
@@ -153,15 +123,11 @@ async function updateCycleStatus(supabase, userId, payload, headers) {
     .single();
 
   if (error) {
-    return {
-      ...createErrorResponse(error.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(error.message, 500, "database_error");
   }
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({ success: true, data }),
   };
 }

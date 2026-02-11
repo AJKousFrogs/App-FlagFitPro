@@ -3,76 +3,58 @@
  * Provides isometric exercises from the database for training plans
  */
 
-import { supabaseAdmin } from "./supabase-client.js";
-
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 
-const supabase = supabaseAdmin;
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "isometrics",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: false,
+    handler: async (evt, _ctx, { supabase }) => {
+      try {
+        const params = evt.queryStringParameters || {};
+        const { difficulty } = params;
+        const { category } = params;
+        const limit = Number.parseInt(params.limit, 10) || 10;
 
-const headers = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Content-Type": "application/json",
-};
+        let query = supabase
+          .from("isometrics_exercises")
+          .select("*")
+          .order("difficulty_level", { ascending: true })
+          .limit(limit);
 
-function withHeaders(response) {
-  return { ...response, headers };
-}
+        if (difficulty) {
+          query = query.eq("difficulty_level", difficulty);
+        }
 
-export const handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers, body: "" };
-  }
+        if (category) {
+          query = query.eq("category", category);
+        }
 
-  if (event.httpMethod !== "GET") {
-    return withHeaders(
-      createErrorResponse("Method not allowed", 405, "method_not_allowed"),
-    );
-  }
+        const { data: exercises, error } = await query;
 
-  try {
-    const params = event.queryStringParameters || {};
-    const { difficulty } = params;
-    const { category } = params;
-    const limit = parseInt(params.limit) || 10;
+        if (error) {
+          console.error("Error fetching isometric exercises:", error);
+          return createErrorResponse(
+            "Failed to fetch exercises",
+            500,
+            "database_error",
+          );
+        }
 
-    let query = supabase
-      .from("isometrics_exercises")
-      .select("*")
-      .order("difficulty_level", { ascending: true })
-      .limit(limit);
-
-    if (difficulty) {
-      query = query.eq("difficulty_level", difficulty);
-    }
-
-    if (category) {
-      query = query.eq("category", category);
-    }
-
-    const { data: exercises, error } = await query;
-
-    if (error) {
-      console.error("Error fetching isometric exercises:", error);
-      return withHeaders(
-        createErrorResponse("Failed to fetch exercises", 500, "database_error"),
-      );
-    }
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
-        success: true,
-        count: exercises.length,
-        exercises,
-      }),
-    };
-  } catch (error) {
-    console.error("Isometrics API error:", error);
-    return withHeaders(
-      createErrorResponse("Internal server error", 500, "server_error"),
-    );
-  }
-};
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            success: true,
+            count: exercises.length,
+            exercises,
+          }),
+        };
+      } catch (error) {
+        console.error("Isometrics API error:", error);
+        return createErrorResponse("Internal server error", 500, "server_error");
+      }
+    },
+  });

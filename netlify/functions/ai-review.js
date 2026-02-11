@@ -633,12 +633,22 @@ async function handleRequest(event, _context, { userId, user }) {
 // =============================================================================
 
 export const handler = async (event, context) => {
+  const isPublicPath =
+    event.path.includes("/criteria") || event.path.includes("/check");
+  if (!isPublicPath) {
+    return baseHandler(event, context, {
+      functionName: "ai-review",
+      allowedMethods: ["GET", "POST", "PUT"],
+      rateLimitType: "DEFAULT",
+      requireAuth: true,
+      handler: handleRequest,
+    });
+  }
   return baseHandler(event, context, {
     functionName: "ai-review",
     allowedMethods: ["GET", "POST", "PUT"],
     rateLimitType: "DEFAULT",
-    requireAuth:
-      !event.path.includes("/criteria") && !event.path.includes("/check"),
+    requireAuth: false,
     handler: handleRequest,
   });
 };

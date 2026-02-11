@@ -849,10 +849,11 @@ async function handleRequest(
 }
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "Admin",
     allowedMethods: ["GET", "POST"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, context, { userId }) => {
       // Get user info to check admin role

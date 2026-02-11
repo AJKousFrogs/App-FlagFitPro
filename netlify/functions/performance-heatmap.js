@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 // Netlify Function: Performance Heatmap API
@@ -150,25 +150,35 @@ export const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true,
-    handler: async (event, _context, { userId }) => {
-      const timeRange = event.queryStringParameters?.timeRange || "6months";
+    handler: async (event, _context, { userId, requestId }) => {
+      try {
+        const timeRange = event.queryStringParameters?.timeRange || "6months";
 
-      // Get heatmap data
-      const cells = await getHeatmapData(userId, timeRange);
+        // Get heatmap data
+        const cells = await getHeatmapData(userId, timeRange);
 
-      // Return real data (even if empty) - no mock data fallback
-      // This ensures the frontend shows accurate state
-      const hasTrainingData = cells.some((cell) => cell.sessions > 0);
+        // Return real data (even if empty) - no mock data fallback
+        // This ensures the frontend shows accurate state
+        const hasTrainingData = cells.some((cell) => cell.sessions > 0);
 
-      return createSuccessResponse({
-        cells,
-        timeRange,
-        hasData: hasTrainingData,
-        totalSessions: cells.reduce((sum, c) => sum + c.sessions, 0),
-        message: hasTrainingData
-          ? null
-          : "No training sessions found. Log sessions to see your training heatmap.",
-      });
+        return createSuccessResponse({
+          cells,
+          timeRange,
+          hasData: hasTrainingData,
+          totalSessions: cells.reduce((sum, c) => sum + c.sessions, 0),
+          message: hasTrainingData
+            ? null
+            : "No training sessions found. Log sessions to see your training heatmap.",
+        });
+      } catch (error) {
+        console.error("[performance-heatmap] Unexpected handler error:", error);
+        return createErrorResponse(
+          "Failed to fetch performance heatmap",
+          500,
+          "database_error",
+          requestId,
+        );
+      }
     },
   });
 };

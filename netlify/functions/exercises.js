@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 
 /**
@@ -11,19 +11,6 @@ import { createErrorResponse } from "./utils/error-handler.js";
  * GET /api/exercises?category=mobility - Filter by category
  * GET /api/exercises?search=hip - Search by name/description
  */
-
-const supabase = supabaseAdmin;
-
-const headers = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Content-Type": "application/json",
-};
-
-function withHeaders(response) {
-  return { ...response, headers };
-}
 
 /**
  * Map plyometric exercise to unified format
@@ -142,7 +129,7 @@ function extractYoutubeId(url) {
 /**
  * GET - Retrieve exercises from all sources
  */
-async function getExercises(params) {
+async function getExercises(supabase, params) {
   const { category, search, limit = 500, offset = 0 } = params;
 
   const allExercises = [];
@@ -231,36 +218,27 @@ async function getExercises(params) {
 /**
  * Main handler
  */
-export const handler = async (event) => {
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers, body: "" };
-  }
-
-  // Only allow GET requests
-  if (event.httpMethod !== "GET") {
-    return withHeaders(
-      createErrorResponse("Method not allowed", 405, "method_not_allowed"),
-    );
-  }
-
-  const params = event.queryStringParameters || {};
-
-  try {
-    const results = await getExercises(params);
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ success: true, data: results.exercises }),
-    };
-  } catch (error) {
-    console.error("Exercises API error:", error);
-    return withHeaders(
-      createErrorResponse(
-        error.message || "Internal server error",
-        500,
-        "server_error",
-      ),
-    );
-  }
-};
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "exercises",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: false,
+    handler: async (evt, _ctx, { supabase }) => {
+      const params = evt.queryStringParameters || {};
+      try {
+        const results = await getExercises(supabase, params);
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ success: true, data: results.exercises }),
+        };
+      } catch (error) {
+        console.error("Exercises API error:", error);
+        return createErrorResponse(
+          error.message || "Internal server error",
+          500,
+          "server_error",
+        );
+      }
+    },
+  });

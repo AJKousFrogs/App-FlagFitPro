@@ -12,7 +12,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "notifications-preferences",
     allowedMethods: ["GET", "POST", "PUT"],
-    rateLimitType,
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       if (event.httpMethod === "GET") {

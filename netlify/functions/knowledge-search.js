@@ -59,10 +59,11 @@ const ALLOWED_SUBCATEGORIES = [
 ];
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "CREATE";
   return baseHandler(event, context, {
     functionName: "knowledge-search",
     allowedMethods: ["GET", "POST"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: false, // Knowledge search is public
     handler: async (event, _context, { requestId }) => {
       const supabase = getSupabase();
@@ -248,12 +249,6 @@ export const handler = async (event, context) => {
                 requestId,
               );
             }
-
-            // Increment query count
-            await supabase
-              .from("knowledge_base_entries")
-              .update({ query_count: (data.query_count || 0) + 1 })
-              .eq("id", entryId);
 
             return createSuccessResponse(data, requestId);
           }

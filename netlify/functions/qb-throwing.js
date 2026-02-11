@@ -8,77 +8,49 @@
  */
 
 import { supabaseAdmin } from "./supabase-client.js";
-
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
-const getSupabase = (_authHeader) => {
-  // Use shared admin client
-  return supabaseAdmin;
-};
-
-export const handler = async (event) => {
-  const { httpMethod, path, body, headers } = event;
-
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
-  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
-
-  if (httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: corsHeaders, body: "" };
-  }
-
-  const auth = await authenticateRequest(event);
-  if (!auth.success) {
-    return withHeaders(auth.error);
-  }
-  const { user } = auth;
-  const supabase = getSupabase();
-
-  try {
-    const endpoint = path.split("/").pop();
-
-    if (httpMethod === "GET") {
-      return await getThrowingData(supabase, user.id, corsHeaders);
-    }
-
-    if (httpMethod === "POST") {
-      let payload = {};
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "qb-throwing",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId }) => {
       try {
-        payload = body ? JSON.parse(body) : {};
-      } catch (_parseError) {
-        return withHeaders(
-          handleValidationError("Invalid JSON in request body"),
-        );
+        const endpoint = evt.path.split("/").pop();
+
+        if (evt.httpMethod === "GET") {
+          return getThrowingData(supabaseAdmin, userId);
+        }
+
+        let payload = {};
+        try {
+          payload = evt.body ? JSON.parse(evt.body) : {};
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+
+        if (endpoint === "arm-care") {
+          return markArmCareDone(supabaseAdmin, userId, payload);
+        }
+
+        return logThrowingSession(supabaseAdmin, userId, payload);
+      } catch (err) {
+        console.error("QB throwing error:", err);
+        return createErrorResponse("Internal server error", 500, "server_error", {
+          details: err.message,
+        });
       }
-
-      if (endpoint === "arm-care") {
-        return await markArmCareDone(supabase, user.id, payload, corsHeaders);
-      }
-
-      return await logThrowingSession(supabase, user.id, payload, corsHeaders);
-    }
-
-    return withHeaders(createErrorResponse("Not found", 404, "not_found"));
-  } catch (err) {
-    console.error("QB throwing error:", err);
-    return withHeaders(
-      createErrorResponse("Internal server error", 500, "server_error", {
-        details: err.message,
-      }),
-    );
-  }
-};
+    },
+  });
 
 /**
  * GET /api/qb-throwing
  * Get QB throwing progression, weekly stats, and recent sessions
  */
-async function getThrowingData(supabase, userId, headers) {
+async function getThrowingData(supabase, userId) {
   // Get progression status using the function
   const { data: progressionData } = await supabase.rpc(
     "get_qb_throwing_progression",
@@ -222,7 +194,6 @@ async function getThrowingData(supabase, userId, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {
@@ -238,7 +209,7 @@ async function getThrowingData(supabase, userId, headers) {
  * POST /api/qb-throwing
  * Log a new throwing session
  */
-async function logThrowingSession(supabase, userId, payload, headers) {
+async function logThrowingSession(supabase, userId, payload) {
   const {
     sessionType,
     totalThrows,
@@ -261,10 +232,7 @@ async function logThrowingSession(supabase, userId, payload, headers) {
   } = payload;
 
   if (!sessionType || !totalThrows) {
-    return {
-      ...handleValidationError("sessionType and totalThrows required"),
-      headers,
-    };
+    return handleValidationError("sessionType and totalThrows required");
   }
 
   const today = sessionDate || new Date().toISOString().split("T")[0];
@@ -354,7 +322,6 @@ async function logThrowingSession(supabase, userId, payload, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: result,
@@ -368,11 +335,11 @@ async function logThrowingSession(supabase, userId, payload, headers) {
  * POST /api/qb-throwing/arm-care
  * Mark arm care as complete for a session
  */
-async function markArmCareDone(supabase, userId, payload, headers) {
+async function markArmCareDone(supabase, userId, payload) {
   const { sessionId } = payload;
 
   if (!sessionId) {
-    return { ...handleValidationError("sessionId required"), headers };
+    return handleValidationError("sessionId required");
   }
 
   const { error } = await supabase
@@ -390,7 +357,6 @@ async function markArmCareDone(supabase, userId, payload, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       message: "Arm care marked as complete",

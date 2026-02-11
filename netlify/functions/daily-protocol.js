@@ -1,4 +1,5 @@
 import { supabaseAdmin, getSupabaseClient } from "./supabase-client.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { resolveTodaySession } from "./utils/session-resolver.js";
@@ -1913,7 +1914,7 @@ function getTaperRecommendation(daysUntil, isPeakEvent) {
 /**
  * Main handler
  */
-export const handler = async (event) => {
+const legacyDailyProtocolHandler = async (event) => {
   const { httpMethod, path, queryStringParameters, body, headers } = event;
 
   // CORS headers
@@ -2004,6 +2005,15 @@ export const handler = async (event) => {
     };
   }
 };
+
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "daily-protocol",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt) => legacyDailyProtocolHandler(evt),
+  });
 
 /**
  * GET /api/daily-protocol

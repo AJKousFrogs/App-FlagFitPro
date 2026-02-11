@@ -2,64 +2,39 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consent-guard.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
-export const handler = async (event) => {
-  const headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  };
-
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers, body: "" };
-  }
-
-  try {
-    const auth = await authenticateRequest(event);
-    if (!auth.success) {
-      return auth.error;
-    }
-    const { user } = auth;
-    const supabase = supabaseAdmin;
-
-    const method = event.httpMethod;
-
-    // GET - Get checkin for a date
-    if (method === "GET") {
-      const params = event.queryStringParameters || {};
-      const date = params.date || new Date().toISOString().split("T")[0];
-      const athleteId = params.athleteId || user.id;
-      return await getCheckin(supabase, user.id, athleteId, date, headers);
-    }
-
-    // POST - Save checkin
-    if (method === "POST") {
-      let payload = {};
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "wellness-checkin",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId }) => {
       try {
-        payload = JSON.parse(event.body || "{}");
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
+        if (evt.httpMethod === "GET") {
+          const params = evt.queryStringParameters || {};
+          const date = params.date || new Date().toISOString().split("T")[0];
+          const athleteId = params.athleteId || userId;
+          return getCheckin(supabaseAdmin, userId, athleteId, date);
+        }
+
+        let payload = {};
+        try {
+          payload = JSON.parse(evt.body || "{}");
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+        return saveCheckin(supabaseAdmin, userId, payload);
+      } catch (error) {
+        console.error("Wellness checkin error:", error);
+        return createErrorResponse(error.message, 500, "server_error");
       }
-      return await saveCheckin(supabase, user.id, payload, headers);
-    }
+    },
+  });
 
-    return {
-      ...createErrorResponse("Not found", 404, "not_found"),
-      headers,
-    };
-  } catch (error) {
-    console.error("Wellness checkin error:", error);
-    return {
-      ...createErrorResponse(error.message, 500, "server_error"),
-      headers,
-    };
-  }
-};
-
-async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
+async function getCheckin(supabase, userId, requestedAthleteId, date) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
   const isCoach = ["coach", "admin"].includes(role);
@@ -72,16 +47,12 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    return {
-      ...createErrorResponse(error.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(error.message, 500, "database_error");
   }
 
   if (!data) {
     return {
       statusCode: 200,
-      headers,
       body: JSON.stringify({ success: true, data: null }),
     };
   }
@@ -123,7 +94,6 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: responseData,
@@ -131,7 +101,7 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
   };
 }
 
-async function saveCheckin(supabase, userId, payload, headers) {
+async function saveCheckin(supabase, userId, payload) {
   const {
     date,
     sleepQuality,
@@ -297,10 +267,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
     .single();
 
   if (error) {
-    return {
-      ...createErrorResponse(error.message, 500, "database_error"),
-      headers,
-    };
+    return createErrorResponse(error.message, 500, "database_error");
   }
 
   // PHASE 2: Dual-write to wellness_entries for historical continuity
@@ -629,7 +596,6 @@ async function saveCheckin(supabase, userId, payload, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {

@@ -5,7 +5,7 @@
 
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 
-import { createSuccessResponse, createErrorResponse as _createErrorResponse } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 /**
@@ -330,14 +330,24 @@ export const handler = async (event, context) => {
     rateLimitType: "READ",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      const queryParams = event.queryStringParameters || {};
-      const options = {
-        startDate: queryParams.startDate,
-        endDate: queryParams.endDate,
-      };
+      try {
+        const queryParams = event.queryStringParameters || {};
+        const options = {
+          startDate: queryParams.startDate,
+          endDate: queryParams.endDate,
+        };
 
-      const trainingStats = await getTrainingStats(userId, options);
-      return createSuccessResponse(trainingStats, requestId);
+        const trainingStats = await getTrainingStats(userId, options);
+        return createSuccessResponse(trainingStats, requestId);
+      } catch (error) {
+        console.error("[training-stats-enhanced] Unexpected handler error:", error);
+        return createErrorResponse(
+          "Failed to fetch training stats",
+          500,
+          "database_error",
+          requestId,
+        );
+      }
     },
   });
 };

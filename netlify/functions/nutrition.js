@@ -679,13 +679,23 @@ async function handleRequest(event, _context, { userId }) {
 // =============================================================================
 
 export const handler = async (event, context) => {
+  const isPublicPath =
+    event.path.includes("/calculate") ||
+    event.path.includes("/macros/reference");
+  if (!isPublicPath) {
+    return baseHandler(event, context, {
+      functionName: "nutrition",
+      allowedMethods: ["GET", "POST", "PUT"],
+      rateLimitType: "DEFAULT",
+      requireAuth: true,
+      handler: handleRequest,
+    });
+  }
   return baseHandler(event, context, {
     functionName: "nutrition",
     allowedMethods: ["GET", "POST", "PUT"],
     rateLimitType: "DEFAULT",
-    requireAuth:
-      !event.path.includes("/calculate") &&
-      !event.path.includes("/macros/reference"),
+    requireAuth: false,
     handler: handleRequest,
   });
 };

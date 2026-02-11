@@ -3,25 +3,32 @@
  * Sends notifications to inactive players
  */
 
-import { createHandler } from "./utils/handler-factory.js";
-
+import { baseHandler } from "./utils/base-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 
-export const handler = createHandler({
-  functionName: "inactive-player-notify",
-  handler: async (event, _context, { userId, userRole }) => {
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "inactive-player-notify",
+    allowedMethods: ["POST"],
+    rateLimitType: "CREATE",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+    const userRole = await getUserRole(userId);
     // Only coaches/admins can send notifications
     if (
       !["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)
     ) {
-      return {
-        statusCode: 403,
-        body: JSON.stringify({
-          error: "Unauthorized",
-          message: "Only coaches can send notifications",
-        }),
-      };
+      return createErrorResponse(
+        "Only coaches can send notifications",
+        403,
+        "authorization_error",
+      );
     }
 
     if (event.httpMethod === "POST") {
@@ -69,30 +76,26 @@ export const handler = createHandler({
           `[InactivePlayer] Notification sent to ${player.email} (${days_inactive} days inactive)`,
         );
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            success: true,
-            message: `Notification sent to ${player.first_name} ${player.last_name}`,
-          }),
-        };
+        return createSuccessResponse(
+          {
+            user_id,
+            days_inactive,
+            sent_by: userId,
+          },
+          200,
+          `Notification sent to ${player.first_name} ${player.last_name}`,
+        );
       } catch (error) {
         console.error("[InactivePlayer] Error:", error);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({
-            error: "Failed to send notification",
-            message: error.message,
-          }),
-        };
+        return createErrorResponse(
+          "Failed to send notification",
+          500,
+          "server_error",
+          { details: error.message },
+        );
       }
     }
 
-    return {
-      statusCode: 405,
-      body: JSON.stringify({
-        error: "Method not allowed",
-      }),
-    };
-  },
-});
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+    },
+  });

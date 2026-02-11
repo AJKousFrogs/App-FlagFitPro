@@ -1,5 +1,4 @@
-import { supabaseAdmin } from "./supabase-client.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
 /**
@@ -10,65 +9,38 @@ import { createErrorResponse, handleValidationError } from "./utils/error-handle
  * - POST /api/player-settings - Save/update player settings
  */
 
-const getSupabase = (_authHeader) => {
-  // Use shared admin client
-  return supabaseAdmin;
-};
-
-export const handler = async (event) => {
-  const { httpMethod, body, headers } = event;
-
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
-  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
-
-  if (httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: corsHeaders, body: "" };
-  }
-
-  const auth = await authenticateRequest(event);
-  if (!auth.success) {
-    return withHeaders(auth.error);
-  }
-  const { user } = auth;
-  const supabase = getSupabase();
-
-  try {
-    if (httpMethod === "GET") {
-      return await getSettings(supabase, user.id, corsHeaders);
-    }
-
-    if (httpMethod === "POST") {
-      let payload = {};
+export const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "player-settings",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: async (evt, _ctx, { userId, supabase }) => {
       try {
-        payload = body ? JSON.parse(body) : {};
-      } catch (_parseError) {
-        return withHeaders(
-          handleValidationError("Invalid JSON in request body"),
-        );
-      }
-      return await saveSettings(supabase, user.id, payload, corsHeaders);
-    }
+        if (evt.httpMethod === "GET") {
+          return getSettings(supabase, userId);
+        }
 
-    return withHeaders(createErrorResponse("Not found", 404, "not_found"));
-  } catch (err) {
-    console.error("Player settings error:", err);
-    return withHeaders(
-      createErrorResponse("Internal server error", 500, "server_error", {
-        details: err.message,
-      }),
-    );
-  }
-};
+        let payload = {};
+        try {
+          payload = evt.body ? JSON.parse(evt.body) : {};
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+        return saveSettings(supabase, userId, payload);
+      } catch (err) {
+        console.error("Player settings error:", err);
+        return createErrorResponse("Internal server error", 500, "server_error", {
+          details: err.message,
+        });
+      }
+    },
+  });
 
 /**
  * GET /api/player-settings
  */
-async function getSettings(supabase, userId, headers) {
+async function getSettings(supabase, userId) {
   // Get from athlete_training_config
   const { data: config, error } = await supabase
     .from("athlete_training_config")
@@ -91,7 +63,6 @@ async function getSettings(supabase, userId, headers) {
 
     return {
       statusCode: 200,
-      headers,
       body: JSON.stringify({
         success: true,
         data: {
@@ -115,7 +86,6 @@ async function getSettings(supabase, userId, headers) {
   // PROMPT 2.11: Rename flag_practice_schedule to availability (non-authority)
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {
@@ -147,7 +117,7 @@ async function getSettings(supabase, userId, headers) {
 /**
  * POST /api/player-settings
  */
-async function saveSettings(supabase, userId, payload, headers) {
+async function saveSettings(supabase, userId, payload) {
   const {
     primaryPosition,
     secondaryPosition,
@@ -229,7 +199,6 @@ async function saveSettings(supabase, userId, payload, headers) {
 
   return {
     statusCode: 200,
-    headers,
     body: JSON.stringify({
       success: true,
       data: {

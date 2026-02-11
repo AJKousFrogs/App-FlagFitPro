@@ -11,6 +11,39 @@ env:
   NPM_VERSION: "10"
 
 jobs:
+  backend-audits:
+    name: Backend Audit Gates
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Error shape audit
+        run: node scripts/audit-error-shape-contracts.js
+
+      - name: RLS boundary audit
+        run: node scripts/audit-rls-boundaries.js
+
+      - name: Rate-limit audit
+        run: node scripts/audit-rate-limit-coverage.js
+
+      - name: DB resilience audit
+        run: node scripts/audit-db-resilience.js
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

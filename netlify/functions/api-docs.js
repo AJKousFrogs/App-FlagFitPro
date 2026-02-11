@@ -23,7 +23,7 @@ const API_ENDPOINTS = {
 
   // Authentication
   "auth-login": {
-    path: "/api/auth-login",
+    path: "/api/auth/login",
     method: "POST",
     description: "Authenticate user and return JWT token",
     auth: false,
@@ -32,7 +32,7 @@ const API_ENDPOINTS = {
     response: { user: {}, token: "string" },
   },
   "auth-me": {
-    path: "/api/auth-me",
+    path: "/api/auth/me",
     method: "GET",
     description: "Get current authenticated user information",
     auth: true,

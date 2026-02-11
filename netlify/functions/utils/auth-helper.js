@@ -1,8 +1,8 @@
 import { supabaseAdmin, setAuthContextToken } from "../supabase-client.js";
-import { handleAuthenticationError } from "./error-handler.js";
-import { handleAuthorizationError } from "./error-handler.js";
-import { handleAuthorizationError } from "./error-handler.js";
-import { handleAuthorizationError } from "./error-handler.js";
+import {
+  handleAuthenticationError,
+  handleAuthorizationError,
+} from "./error-handler.js";
 
 /**
  * Shared Authentication Helper for Netlify Functions
@@ -161,8 +161,28 @@ async function getUserTeamId(userId) {
   }
 }
 
+/**
+ * Resolve lightweight user context for handlers that need player/team linkage.
+ * @param {string} userId
+ * @returns {Promise<{ user_id: string, player_id: string, team_id: string|null }|null>}
+ */
+async function getUserContext(userId) {
+  if (!userId) {
+    return null;
+  }
+
+  const teamId = await getUserTeamId(userId);
+  return {
+    user_id: userId,
+    // In this model, authenticated user id is the player id for player-owned rows.
+    player_id: userId,
+    team_id: teamId || null,
+  };
+}
+
 export { getSupabaseClient,
   authenticateRequest,
   checkResourceOwnership,
   checkTeamMembership,
-  getUserTeamId, };
+  getUserTeamId,
+  getUserContext, };

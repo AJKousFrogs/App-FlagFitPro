@@ -1,6 +1,6 @@
 import { db, supabaseAdmin } from "./supabase-client.js";
 import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
-import { createSuccessResponse } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getTimeAgo } from "./utils/date-utils.js";
 import { baseHandler } from "./utils/base-handler.js";
 
@@ -283,51 +283,61 @@ export const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true, // P0-004: Explicitly require authentication for dashboard data
-    handler: async (event, _context, { userId }) => {
-      // Parse path to determine endpoint
-      const path = event.path.replace("/.netlify/functions/dashboard", "");
+    handler: async (event, _context, { userId, requestId }) => {
+      try {
+        // Parse path to determine endpoint
+        const path = event.path.replace("/.netlify/functions/dashboard", "");
 
-      // Route to appropriate handler
-      if (
-        path.includes("/training-calendar") ||
-        path.endsWith("/training-calendar")
-      ) {
-        const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:training-calendar`;
-        const data = await getOrFetch(
+        // Route to appropriate handler
+        if (
+          path.includes("/training-calendar") ||
+          path.endsWith("/training-calendar")
+        ) {
+          const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:training-calendar`;
+          const data = await getOrFetch(
+            cacheKey,
+            async () => await getTrainingCalendar(userId),
+            CACHE_TTL.DASHBOARD,
+          );
+          return createSuccessResponse(data);
+        }
+
+        if (
+          path.includes("/team-chemistry") ||
+          path.endsWith("/team-chemistry")
+        ) {
+          const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:team-chemistry`;
+          const data = await getOrFetch(
+            cacheKey,
+            async () => await getTeamChemistry(userId),
+            CACHE_TTL.DASHBOARD,
+          );
+          return createSuccessResponse(data);
+        }
+
+        if (path.includes("/health") || path.endsWith("/health")) {
+          const data = await getHealth();
+          return createSuccessResponse(data);
+        }
+
+        // Default: return overview
+        const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:overview`;
+        const dashboardData = await getOrFetch(
           cacheKey,
-          async () => await getTrainingCalendar(userId),
+          async () => await getDashboardData(userId),
           CACHE_TTL.DASHBOARD,
         );
-        return createSuccessResponse(data);
-      }
 
-      if (
-        path.includes("/team-chemistry") ||
-        path.endsWith("/team-chemistry")
-      ) {
-        const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:team-chemistry`;
-        const data = await getOrFetch(
-          cacheKey,
-          async () => await getTeamChemistry(userId),
-          CACHE_TTL.DASHBOARD,
+        return createSuccessResponse(dashboardData);
+      } catch (error) {
+        console.error("[dashboard] Unexpected handler error:", error);
+        return createErrorResponse(
+          "Failed to load dashboard data",
+          500,
+          "database_error",
+          requestId,
         );
-        return createSuccessResponse(data);
       }
-
-      if (path.includes("/health") || path.endsWith("/health")) {
-        const data = await getHealth();
-        return createSuccessResponse(data);
-      }
-
-      // Default: return overview
-      const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:overview`;
-      const dashboardData = await getOrFetch(
-        cacheKey,
-        async () => await getDashboardData(userId),
-        CACHE_TTL.DASHBOARD,
-      );
-
-      return createSuccessResponse(dashboardData);
     },
   });
 };

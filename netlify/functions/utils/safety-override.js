@@ -66,6 +66,8 @@ async function detectACWRTrigger(athleteId) {
   return { triggered: data !== null, overrideId: data };
 }
 
+export { checkSafetyOverride, detectPainTrigger, detectACWRTrigger };
+
 export default {
   checkSafetyOverride,
   detectPainTrigger,

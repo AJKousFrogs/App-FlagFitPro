@@ -151,9 +151,11 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
  * Main handler
  */
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "coach-alerts",
     allowedMethods: ["POST", "OPTIONS"],
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const path = event.path

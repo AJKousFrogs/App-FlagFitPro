@@ -166,8 +166,9 @@ async function baseHandler(event, context, options = {}) {
           typeof parsed.error === "object" &&
           parsed.error.code &&
           parsed.error.message;
+        const hasStructuredSuccess = parsed?.success === true;
 
-        if (!hasStructuredError) {
+        if (!hasStructuredError && !hasStructuredSuccess) {
           const fallbackMessage =
             parsed?.error?.message ||
             parsed?.error ||

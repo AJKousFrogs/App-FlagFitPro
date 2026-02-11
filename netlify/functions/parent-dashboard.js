@@ -508,10 +508,11 @@ async function updateYouthSettings(childId, parentId, updates) {
 // =====================================================
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "parent-dashboard",
     allowedMethods: ["GET", "POST", "PATCH"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();

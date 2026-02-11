@@ -4,10 +4,78 @@ import { AsyncLocalStorage } from "node:async_hooks";
 // Supabase client for Netlify Functions
 // Handles database connections and operations
 
+function sanitizeEnvValue(value) {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1).trim();
+  }
+
+  return trimmed;
+}
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function isRetryableFetchError(error) {
+  const message = `${error?.message || ""} ${error?.cause?.message || ""}`;
+  const code = error?.cause?.code || error?.code || "";
+  const retryableCodes = new Set([
+    "ENOTFOUND",
+    "EAI_AGAIN",
+    "ETIMEDOUT",
+    "ECONNRESET",
+    "ECONNREFUSED",
+  ]);
+
+  if (retryableCodes.has(code)) {
+    return true;
+  }
+
+  return (
+    message.includes("fetch failed") ||
+    message.includes("ENOTFOUND") ||
+    message.includes("network") ||
+    message.includes("timeout")
+  );
+}
+
+function createRetryingFetch(baseFetch = globalThis.fetch) {
+  return async (input, init) => {
+    let lastError;
+    const maxAttempts = 3;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        return await baseFetch(input, init);
+      } catch (error) {
+        lastError = error;
+        if (!isRetryableFetchError(error) || attempt === maxAttempts) {
+          break;
+        }
+        await sleep(100 * attempt);
+      }
+    }
+
+    throw lastError;
+  };
+}
+
+const retryingFetch = createRetryingFetch();
+
 // Environment variables (set in Netlify UI)
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY; // Service key for admin operations
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY; // Anon key for regular operations
+const supabaseUrl = sanitizeEnvValue(process.env.SUPABASE_URL);
+const supabaseServiceKey = sanitizeEnvValue(
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
+); // Service key for admin operations
+const supabaseAnonKey = sanitizeEnvValue(
+  process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY,
+); // Anon key for regular operations
 
 // Create Supabase client with service key for admin operations
 // Only create if environment variables are available
@@ -23,12 +91,19 @@ try {
         autoRefreshToken: false,
         persistSession: false,
       },
+      global: {
+        fetch: retryingFetch,
+      },
     });
   }
 
   if (supabaseUrl && supabaseAnonKey) {
     // Create Supabase client with anon key for regular operations
-    supabase = createClient(supabaseUrl, supabaseAnonKey);
+    supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        fetch: retryingFetch,
+      },
+    });
   }
 } catch (error) {
   console.error("Failed to initialize Supabase clients:", error);
@@ -60,6 +135,7 @@ function getSupabaseClient(token = null) {
       persistSession: false,
     },
     global: {
+      fetch: retryingFetch,
       headers,
     },
   });
@@ -1135,7 +1211,7 @@ function enhanceSupabaseError(error, context = "Database operation") {
 function requireSupabaseAdmin(context = "Database operation") {
   if (!supabaseAdmin) {
     throw new Error(
-      `Supabase admin client is not initialized for ${context}. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.`,
+      `Supabase admin client is not initialized for ${context}. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY (or SUPABASE_SERVICE_ROLE_KEY) environment variables.`,
     );
   }
 }
@@ -1184,10 +1260,10 @@ function checkEnvVars() {
       missing.push("SUPABASE_URL");
     }
     if (!supabaseServiceKey) {
-      missing.push("SUPABASE_SERVICE_KEY");
+      missing.push("SUPABASE_SERVICE_KEY (or SUPABASE_SERVICE_ROLE_KEY)");
     }
     if (!supabaseAnonKey) {
-      missing.push("SUPABASE_ANON_KEY");
+      missing.push("SUPABASE_ANON_KEY (or VITE_SUPABASE_ANON_KEY)");
     }
 
     console.error("Missing environment variables:", missing.join(", "));
@@ -1195,8 +1271,14 @@ function checkEnvVars() {
       SUPABASE_URL: supabaseUrl
         ? `${supabaseUrl.substring(0, 20)}...`
         : "MISSING",
-      SUPABASE_SERVICE_KEY: supabaseServiceKey ? "SET" : "MISSING",
-      SUPABASE_ANON_KEY: supabaseAnonKey ? "SET" : "MISSING",
+      SUPABASE_SERVICE_KEY:
+        process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+          ? "SET"
+          : "MISSING",
+      SUPABASE_ANON_KEY:
+        process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+          ? "SET"
+          : "MISSING",
     });
     throw new Error(
       `Missing required Supabase environment variables: ${missing.join(", ")}. Please set them in Netlify.`,

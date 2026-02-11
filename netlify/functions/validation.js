@@ -600,6 +600,20 @@ const ERROR_CODES = {
   INVALID_INPUT: "INVALID_INPUT",
 };
 
+export {
+  validate,
+  validateField,
+  validateRequestBody,
+  validateQueryParams,
+  sanitize,
+  createValidationErrorResponse,
+  validatePasswordComplexity,
+  createSuccessResult,
+  createErrorResult,
+  ERROR_CODES,
+  VALIDATION_RULES,
+};
+
 export default {
   validate,
   validateField,

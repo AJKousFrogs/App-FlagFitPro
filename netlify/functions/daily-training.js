@@ -874,7 +874,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "daily-training",
     allowedMethods: ["GET", "POST"],
-    rateLimitType: "READ",
+    rateLimitType: event.httpMethod === "GET" ? "READ" : "UPDATE",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();

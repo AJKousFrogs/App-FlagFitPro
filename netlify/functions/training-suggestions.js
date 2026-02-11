@@ -1,5 +1,5 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 
 // Netlify Function: Training Suggestions
@@ -356,7 +356,7 @@ function generateSuggestions(analysis, params = {}) {
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId }) {
+async function handleRequest(event, context, { userId, requestId }) {
   // #region agent log
   console.log(
     "[training-suggestions] handleRequest called, userId:",
@@ -433,15 +433,21 @@ async function handleRequest(event, context, { userId }) {
       error.stack,
     );
     // #endregion
-    throw error;
+    return createErrorResponse(
+      "Failed to generate training suggestions",
+      500,
+      "database_error",
+      requestId,
+    );
   }
 }
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "Training-Suggestions",
     allowedMethods: ["GET", "POST"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: handleRequest,
   });

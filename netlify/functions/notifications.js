@@ -6,10 +6,11 @@ import { createSuccessResponse, createErrorResponse, handleValidationError } fro
 // Returns user notifications using Supabase
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "notifications",
     allowedMethods: ["GET", "POST", "PATCH"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true, // SECURITY: Explicit auth for notifications
     handler: async (event, _context, { userId }) => {
       if (event.httpMethod === "GET") {

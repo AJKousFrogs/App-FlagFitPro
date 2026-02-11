@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "./supabase-client.js";
+import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
@@ -1107,32 +1108,68 @@ async function getTrainingProtocols(category = null, athleteLevel = null) {
 // NETLIFY HANDLER
 // =============================================================================
 
-export const handler = async (event, _context) => {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
-  const withHeaders = (response) => ({ ...response, headers });
+export const handler = async (event, context) =>
+  event.httpMethod === "POST"
+    ? baseHandler(event, context, {
+        functionName: "research-sync",
+        allowedMethods: ["GET", "POST"],
+        rateLimitType: "UPDATE",
+        requireAuth: true,
+        handler: async (evt) => {
+          try {
+            const path = evt.path
+              .replace(/^\/api\/research\/?/, "")
+              .replace(/^\.netlify\/functions\/research-sync\/?/, "");
+            const segments = path.split("/").filter(Boolean);
+            const endpoint = segments[0] || "search";
 
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers, body: "" };
-  }
+            if (endpoint === "sync" || endpoint === "sync-institutions") {
+              const role = await getUserRole((await authenticateRequest(evt)).user.id);
+              if (role !== "admin") {
+                return createErrorResponse(
+                  "Admin role required",
+                  403,
+                  "authorization_error",
+                );
+              }
+            }
 
-  try {
-    const path = event.path
-      .replace(/^\/api\/research\/?/, "")
-      .replace(/^\.netlify\/functions\/research-sync\/?/, "");
+            return handleResearchRequest(evt);
+          } catch (error) {
+            console.error("Research sync error:", error);
+            return createErrorResponse(error.message, 500, "server_error");
+          }
+        },
+      })
+    : baseHandler(event, context, {
+        functionName: "research-sync",
+        allowedMethods: ["GET", "POST"],
+        rateLimitType: "READ",
+        requireAuth: false,
+        handler: async (evt) => {
+          try {
+            return handleResearchRequest(evt);
+          } catch (error) {
+            console.error("Research sync error:", error);
+            return createErrorResponse(error.message, 500, "server_error");
+          }
+        },
+      });
+
+async function handleResearchRequest(evt) {
+      try {
+        const path = evt.path
+          .replace(/^\/api\/research\/?/, "")
+          .replace(/^\.netlify\/functions\/research-sync\/?/, "");
     const segments = path.split("/").filter(Boolean);
     const endpoint = segments[0] || "search";
 
-    const params = event.queryStringParameters || {};
+    const params = evt.queryStringParameters || {};
     let body = {};
     try {
-      body = event.body ? JSON.parse(event.body) : {};
+      body = evt.body ? JSON.parse(evt.body) : {};
     } catch (_parseError) {
-      return withHeaders(handleValidationError("Invalid JSON in request body"));
+      return handleValidationError("Invalid JSON in request body");
     }
 
     let result;
@@ -1141,18 +1178,16 @@ export const handler = async (event, _context) => {
       case "sync":
         // Trigger full research sync (admin only)
         {
-          const auth = await authenticateRequest(event);
+          const auth = await authenticateRequest(evt);
           if (!auth.success) {
-            return withHeaders(auth.error);
+            return auth.error;
           }
           const role = await getUserRole(auth.user.id);
           if (role !== "admin") {
-            return withHeaders(
-              createErrorResponse(
-                "Admin role required",
-                403,
-                "authorization_error",
-              ),
+            return createErrorResponse(
+              "Admin role required",
+              403,
+              "authorization_error",
             );
           }
         }
@@ -1242,18 +1277,16 @@ export const handler = async (event, _context) => {
       case "sync-institutions":
         // Sync research from top institutions (admin only)
         {
-          const auth = await authenticateRequest(event);
+          const auth = await authenticateRequest(evt);
           if (!auth.success) {
-            return withHeaders(auth.error);
+            return auth.error;
           }
           const role = await getUserRole(auth.user.id);
           if (role !== "admin") {
-            return withHeaders(
-              createErrorResponse(
-                "Admin role required",
-                403,
-                "authorization_error",
-              ),
+            return createErrorResponse(
+              "Admin role required",
+              403,
+              "authorization_error",
             );
           }
         }
@@ -1312,25 +1345,18 @@ export const handler = async (event, _context) => {
       }
 
       default:
-        return withHeaders(
-          createErrorResponse(
-            `Unknown endpoint: ${endpoint}`,
-            404,
-            "not_found",
-          ),
-        );
+        return createErrorResponse(`Unknown endpoint: ${endpoint}`, 404, "not_found");
     }
 
     return {
       statusCode: 200,
-      headers,
       body: JSON.stringify(result),
     };
-  } catch (error) {
-    console.error("Research sync error:", error);
-    return withHeaders(createErrorResponse(error.message, 500, "server_error"));
-  }
-};
+      } catch (error) {
+        console.error("Research sync error:", error);
+        return createErrorResponse(error.message, 500, "server_error");
+      }
+}
 
 // ESM exports for use in admin.js and other modules
 export { syncAllResearch, searchResearch, getResearchTopics, getTrainingProtocols };

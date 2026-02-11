@@ -555,9 +555,11 @@ async function getUnreadCount(userId, channelId) {
 // ============================================================================
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "chat",
     allowedMethods: ["GET", "POST", "PATCH", "DELETE"],
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       const path = event.path

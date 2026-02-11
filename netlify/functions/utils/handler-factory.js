@@ -1,5 +1,3 @@
-import { createHandler } from "./utils/handler-factory.js";
-
 /**
  * Handler Factory for Netlify Functions
  * Provides a simplified wrapper around baseHandler that includes userRole
@@ -67,5 +65,7 @@ function createHandler(options) {
     });
   };
 }
+
+export { createHandler };
 
 export default { createHandler };

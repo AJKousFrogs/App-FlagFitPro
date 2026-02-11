@@ -359,10 +359,11 @@ async function getInboxItemDetail(itemId, coachId) {
 // =====================================================
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "coach-inbox",
     allowedMethods: ["GET", "PATCH", "POST"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();

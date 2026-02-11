@@ -20,11 +20,181 @@ import { handler as _sendEmailHandler } from "./send-email.js";
  */
 
 export const handler = async (event, context) => {
+  if (event.httpMethod !== "PUT") {
+    return baseHandler(event, context, {
+      functionName: "parental-consent",
+      allowedMethods: ["GET", "POST", "PUT"],
+      rateLimitType: "CREATE",
+      requireAuth: true,
+      handler: async (event, context, { userId }) => {
+        const supabase = getSupabaseClient();
+
+        // GET - Get consent status for current user (minor)
+        if (event.httpMethod === "GET") {
+          // First check if user is a minor
+          const { data: user, error: userError } = await supabase
+            .from("users")
+            .select("date_of_birth")
+            .eq("id", userId)
+            .single();
+
+          if (userError || !user?.date_of_birth) {
+            return createSuccessResponse({
+              isMinor: false,
+              hasConsent: false,
+              consentStatus: "not_required",
+              message: "User is not a minor or date of birth not set",
+            });
+          }
+
+          const age = calculateAge(user.date_of_birth);
+          const isMinor = age < 18;
+
+          if (!isMinor) {
+            return createSuccessResponse({
+              isMinor: false,
+              hasConsent: false,
+              consentStatus: "not_required",
+              age,
+              message: "User is 18 or older, parental consent not required",
+            });
+          }
+
+          // Check consent record
+          const { data: consent, error: consentError } = await supabase
+            .from("athlete_consent_settings")
+            .select("*")
+            .eq("athlete_id", userId)
+            .single();
+
+          if (consentError && consentError.code !== "PGRST116") {
+            return createErrorResponse(
+              "Failed to fetch consent settings",
+              500,
+              "database_error",
+            );
+          }
+
+          return createSuccessResponse({
+            isMinor: true,
+            age,
+            hasConsent: consent?.consent_granted || false,
+            consentStatus: consent?.consent_status || "pending",
+            consentDate: consent?.consent_date,
+            guardianEmail: consent?.guardian_email,
+            canAccessData: consent?.consent_granted || false,
+          });
+        }
+
+        // POST - Initiate parental consent request
+        if (event.httpMethod === "POST") {
+          let body = {};
+          try {
+            body = JSON.parse(event.body || "{}");
+          } catch (_parseError) {
+            return handleValidationError("Invalid JSON in request body");
+          }
+
+          const { guardianEmail, guardianName } = body;
+
+          if (!guardianEmail) {
+            return handleValidationError("guardianEmail is required");
+          }
+
+          // Check if user is minor
+          const { data: user, error: userError } = await supabase
+            .from("users")
+            .select("date_of_birth, full_name")
+            .eq("id", userId)
+            .single();
+
+          if (userError || !user?.date_of_birth) {
+            return createErrorResponse(
+              "Date of birth required to verify minor status",
+              400,
+              "validation_error",
+            );
+          }
+
+          const age = calculateAge(user.date_of_birth);
+          if (age >= 18) {
+            return createErrorResponse(
+              "Parental consent not required for users 18+",
+              400,
+              "validation_error",
+            );
+          }
+
+          // Generate verification token
+          const verificationToken = generateVerificationToken();
+          const tokenExpiry = new Date();
+          tokenExpiry.setDate(tokenExpiry.getDate() + 7); // 7 days expiry
+
+          // Upsert consent request
+          const { error: upsertError } = await supabase
+            .from("athlete_consent_settings")
+            .upsert(
+              {
+                athlete_id: userId,
+                guardian_email: guardianEmail,
+                guardian_name: guardianName || null,
+                consent_status: "pending",
+                consent_granted: false,
+                verification_token: verificationToken,
+                token_expires_at: tokenExpiry.toISOString(),
+                requested_at: new Date().toISOString(),
+              },
+              {
+                onConflict: "athlete_id",
+              },
+            );
+
+          if (upsertError) {
+            return createErrorResponse(
+              "Failed to create consent request",
+              500,
+              "database_error",
+            );
+          }
+
+          // Create verification URL
+          const baseUrl =
+            process.env.APP_URL || process.env.URL || "https://flagfit-pro.netlify.app";
+          const verificationUrl = `${baseUrl}/api/parental-consent?token=${verificationToken}`;
+
+          // TODO: Send email to guardian (integrate with email service)
+          // For now, return verification URL for testing
+
+          // Log consent request
+          await supabase.from("consent_change_log").insert({
+            athlete_id: userId,
+            action: "consent_requested",
+            requested_by: userId,
+            details: {
+              guardian_email: guardianEmail,
+              guardian_name: guardianName,
+            },
+          });
+
+          return createSuccessResponse({
+            message: "Parental consent request sent",
+            guardianEmail,
+            // Remove this in production after email integration
+            verificationUrl:
+              process.env.NODE_ENV === "development" ? verificationUrl : undefined,
+            expiresAt: tokenExpiry.toISOString(),
+          });
+        }
+
+        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      },
+    });
+  }
   return baseHandler(event, context, {
     functionName: "parental-consent",
     allowedMethods: ["GET", "POST", "PUT"],
     rateLimitType: "CREATE",
-    requireAuth: event.httpMethod !== "PUT", // PUT is for guardian verification (uses token)
+    requireAuth: false, // PUT is for guardian verification (uses token)
     handler: async (event, context, { userId }) => {
       const supabase = getSupabaseClient();
 

@@ -875,10 +875,15 @@ async function handleRequest(event, context, { userId }) {
 }
 
 export const handler = async (event, context) => {
+  const rateLimitType = event.httpMethod === "GET"
+    ? "READ"
+    : event.httpMethod === "DELETE"
+      ? "DELETE"
+      : "UPDATE";
   return baseHandler(event, context, {
     functionName: "Coach",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
-    rateLimitType: "READ",
+rateLimitType: rateLimitType,
     requireAuth: true,
     handler: handleRequest,
   });
