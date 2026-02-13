@@ -2,6 +2,46 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 
+const ATHLETE_ROLES = ["player", "athlete"];
+const COACH_ANALYTICS_ROLES = [
+  "owner",
+  "admin",
+  "head_coach",
+  "coach",
+  "assistant_coach",
+  "offense_coordinator",
+  "defense_coordinator",
+];
+
+const parseBoundedPositiveInt = (value, fieldName, { min = 1, max = 365 } = {}) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  if (!/^\d+$/.test(String(value))) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    const error = new Error("Invalid JSON in request body");
+    error.code = "invalid_json";
+    throw error;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+};
+
 /**
  * Netlify Function: Coach Analytics
  *
@@ -31,7 +71,8 @@ async function verifyCoachAccess(userId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", userId)
-    .in("role", ["coach", "assistant_coach", "admin"]);
+    .eq("status", "active")
+    .in("role", COACH_ANALYTICS_ROLES);
 
   if (error) {
     console.error("[Coach Analytics] Error verifying coach access:", error);
@@ -40,7 +81,7 @@ async function verifyCoachAccess(userId) {
 
   return {
     isCoach: data && data.length > 0,
-    teamIds: (data || []).map((d) => d.team_id),
+    teamIds: [...new Set((data || []).map((d) => d.team_id))],
   };
 }
 
@@ -397,7 +438,7 @@ async function getTeamAnalytics(teamId, _options = {}) {
 
   // Build athlete list with stats
   const athletes = (members || [])
-    .filter((m) => m.role === "athlete")
+    .filter((m) => ATHLETE_ROLES.includes(m.role))
     .map((m) => ({
       id: m.user_id,
       name: m.user
@@ -465,7 +506,7 @@ async function getTeamLeaderboard(teamId, options = {}) {
     )
     .eq("team_id", teamId)
     .eq("status", "active")
-    .eq("role", "athlete");
+    .in("role", ATHLETE_ROLES);
 
   const memberIds = (members || []).map((m) => m.user_id);
 
@@ -635,7 +676,10 @@ rateLimitType: rateLimitType,
         if (method === "GET" && resource === "trends") {
           const memberIds = await getTeamMemberIds(teamIds);
           const trends = await getTrends(memberIds, {
-            days: parseInt(params.days) || 30,
+            days: parseBoundedPositiveInt(params.days, "days", {
+              min: 1,
+              max: 365,
+            }) ?? 30,
           });
           return createSuccessResponse(trends, requestId);
         }
@@ -668,19 +712,31 @@ rateLimitType: rateLimitType,
           }
 
           const leaderboard = await getTeamLeaderboard(resourceId, {
-            limit: parseInt(params.limit) || 10,
-            days: parseInt(params.days) || 30,
+            limit: parseBoundedPositiveInt(params.limit, "limit", {
+              min: 1,
+              max: 100,
+            }) ?? 10,
+            days: parseBoundedPositiveInt(params.days, "days", {
+              min: 1,
+              max: 365,
+            }) ?? 30,
           });
           return createSuccessResponse({ leaderboard }, requestId);
         }
 
         // POST /api/coach-analytics/refresh - Refresh cache
         if (method === "POST" && resource === "refresh") {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            body = {};
+          const body = parseJsonObjectBody(event.body);
+          if (
+            body.teamId !== undefined &&
+            (typeof body.teamId !== "string" || body.teamId.trim().length === 0)
+          ) {
+            return createErrorResponse(
+              "teamId must be a non-empty string when provided",
+              422,
+              "validation_error",
+              requestId,
+            );
           }
 
           const targetTeamId = body.teamId || teamIds[0];
@@ -709,13 +765,27 @@ rateLimitType: rateLimitType,
           return createSuccessResponse(overview, requestId);
         }
 
-        return createErrorResponse(
-          "Method not allowed",
-          405,
-          "method_not_allowed",
-          requestId,
-        );
+        return createErrorResponse("Endpoint not found", 404, "not_found", requestId);
       } catch (error) {
+        if (error.code === "invalid_json") {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId,
+          );
+        }
+        if (
+          error.message?.includes("must be an integer between") ||
+          error.message?.includes("Request body must be an object")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
         console.error("[Coach Analytics] Error:", error);
         return createErrorResponse(
           error.message || "Failed to fetch analytics",

@@ -5,7 +5,6 @@ import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
-import { BodyWeightLoadService } from "./body-weight-load.service";
 import {
   INCOMPLETE_ATHLETE,
   NORMAL_ATHLETE,
@@ -148,7 +147,6 @@ describe("Calculation Verification", () => {
     TestBed.configureTestingModule({
       providers: [
         AcwrService,
-        BodyWeightLoadService,
         { provide: EvidenceConfigService, useValue: mockEvidenceConfigService },
         { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: LoggerService, useValue: mockLoggerService },
@@ -222,20 +220,6 @@ describe("Calculation Verification", () => {
     const result = acwrService.acwrData();
     expect(result.ratio).toBe(0);
     expect(result.riskZone.level).toBe("no-data");
-  });
-
-  it("calculates bodyweight weekly change and trend correctly", () => {
-    const bodyWeightService = TestBed.inject(BodyWeightLoadService);
-    const weightHistory = NORMAL_ATHLETE.weights.map((entry) => ({
-      date: new Date(`${entry.date}T12:00:00Z`),
-      weight: entry.weight,
-    }));
-    bodyWeightService.setWeightHistory(weightHistory);
-
-    const analysis = bodyWeightService.analyzeWeightChanges();
-    expect(analysis.weeklyChange).toBeCloseTo(0.3, 2);
-    expect(analysis.weeklyChangePercent).toBeCloseTo((0.3 / 80.1) * 100, 2);
-    expect(analysis.trend).toBe("stable");
   });
 
   it("calculates dashboard performance score using avg RPE formula", () => {

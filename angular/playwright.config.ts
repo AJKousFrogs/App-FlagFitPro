@@ -59,9 +59,12 @@ export default defineConfig({
     {
       name: "design-system",
       testMatch: /design-system.*\.spec\.ts/,
+      timeout: 90 * 1000, // Design-system tests visit multiple routes
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
+        actionTimeout: 15000,
+        navigationTimeout: 45000,
       },
     },
     // Visual regression tests - Desktop screenshots

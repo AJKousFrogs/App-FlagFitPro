@@ -19,6 +19,11 @@ function getTodayEndOfDay() {
   return today.toISOString();
 }
 
+function toFiniteNumber(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 /**
  * Get player aggregated statistics across all games up to and including today
  * This is the single source of truth for player stats
@@ -85,7 +90,7 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
     );
 
     // Aggregate statistics from all plays
-    const stats = aggregateStatsFromPlays(uniquePlays, games);
+    const stats = aggregateStatsFromPlays(uniquePlays, games, playerId);
 
     return stats;
   } catch (error) {
@@ -98,7 +103,7 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
  * Aggregate statistics from game events/plays
  * Uses consistent mathematical logic for all calculations
  */
-function aggregateStatsFromPlays(plays, games) {
+function aggregateStatsFromPlays(plays, games, playerId) {
   const stats = {
     // Game counts
     gamesPlayed: new Set(plays.map((p) => p.game_id)).size,
@@ -154,24 +159,28 @@ function aggregateStatsFromPlays(plays, games) {
   plays.forEach((play) => {
     const playType = play.play_type?.toLowerCase();
     const playResult = play.play_result?.toLowerCase();
+    const isPrimaryPlayer = play.primary_player_id === playerId;
+    const secondaryPlayerIds = Array.isArray(play.secondary_player_ids)
+      ? play.secondary_player_ids
+      : [];
+    const isSecondaryPlayer = secondaryPlayerIds.includes(playerId);
+    const yardsGained = toFiniteNumber(play.yards_gained);
+    const receivingYards = toFiniteNumber(play.receiving_yards);
+    const yardsAfterCatch = toFiniteNumber(play.yards_after_catch);
 
-    // Passing stats
-    if (playType === "pass" || playType === "throw") {
+    // Passing stats only for the primary passer.
+    if ((playType === "pass" || playType === "throw") && isPrimaryPlayer) {
       stats.passAttempts++;
-      stats.targets++;
 
       if (playResult === "completion") {
         stats.completions++;
-        stats.receptions++;
       } else if (playResult === "interception") {
         stats.interceptions++;
-      } else if (playResult === "drop") {
-        stats.drops++;
       }
 
-      if (play.yards_gained) {
-        stats.passingYards += play.yards_gained;
-        stats.totalYards += play.yards_gained;
+      if (yardsGained !== null) {
+        stats.passingYards += yardsGained;
+        stats.totalYards += yardsGained;
       }
 
       if (playResult === "touchdown") {
@@ -179,18 +188,26 @@ function aggregateStatsFromPlays(plays, games) {
       }
     }
 
-    // Receiving stats (from receiving_stats table or game_events)
-    if (playType === "reception" || playResult === "completion") {
+    // Receiving stats only when player is the receiving participant.
+    const isReceivingContext =
+      playType === "reception" ||
+      ((playType === "pass" || playType === "throw") && isSecondaryPlayer);
+    if (isReceivingContext) {
       stats.targets++;
-      stats.receptions++;
-
-      if (play.receiving_yards) {
-        stats.receivingYards += play.receiving_yards;
-        stats.totalYards += play.receiving_yards;
+      if (playResult === "completion" || playType === "reception") {
+        stats.receptions++;
+      } else if (playResult === "drop") {
+        stats.drops++;
       }
 
-      if (play.yards_after_catch) {
-        stats.yardsAfterCatch += play.yards_after_catch;
+      const creditedReceivingYards = receivingYards ?? yardsGained;
+      if (creditedReceivingYards !== null) {
+        stats.receivingYards += creditedReceivingYards;
+        stats.totalYards += creditedReceivingYards;
+      }
+
+      if (yardsAfterCatch !== null) {
+        stats.yardsAfterCatch += yardsAfterCatch;
       }
 
       if (playResult === "touchdown") {
@@ -202,9 +219,9 @@ function aggregateStatsFromPlays(plays, games) {
     if (playType === "run" || playType === "rush") {
       stats.rushingAttempts++;
 
-      if (play.yards_gained) {
-        stats.rushingYards += play.yards_gained;
-        stats.totalYards += play.yards_gained;
+      if (yardsGained !== null) {
+        stats.rushingYards += yardsGained;
+        stats.totalYards += yardsGained;
       }
 
       if (playResult === "touchdown") {
@@ -304,16 +321,32 @@ function getEmptyStats() {
     interceptions: 0,
     completionPercentage: 0,
     avgYardsPerAttempt: 0,
+    badThrows: 0,
+    throwAways: 0,
+    sacks: 0,
     targets: 0,
     receptions: 0,
     receivingYards: 0,
+    receivingTouchdowns: 0,
     drops: 0,
     dropRate: 0,
+    yardsAfterCatch: 0,
+    avgYardsPerReception: 0,
+    contestedCatches: 0,
+    longestReception: 0,
     rushingAttempts: 0,
     rushingYards: 0,
+    rushingTouchdowns: 0,
+    yardsPerCarry: 0,
+    brokenTackles: 0,
+    longestRun: 0,
     flagPullAttempts: 0,
     flagPulls: 0,
     flagPullSuccessRate: 0,
+    missedFlagPulls: 0,
+    defendedPasses: 0,
+    interceptionsDef: 0,
+    tacklesForLoss: 0,
     totalPlays: 0,
     totalYards: 0,
   };
@@ -372,7 +405,7 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
       new Map(allPlays.map((p) => [p.id, p])).values(),
     );
 
-    return aggregateStatsFromPlays(uniquePlays, games);
+    return aggregateStatsFromPlays(uniquePlays, games, playerId);
   } catch (error) {
     console.error("Error getting player stats by date range:", error);
     throw error;
@@ -447,7 +480,7 @@ export const handler = async (event, context) => {
       if (!playerId) {
         return createErrorResponse(
           "Player ID is required",
-          400,
+          422,
           "validation_error",
         );
       }
@@ -475,7 +508,14 @@ export const handler = async (event, context) => {
         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
           return createErrorResponse(
             "Invalid date format. Use ISO 8601 format (YYYY-MM-DD)",
-            400,
+            422,
+            "validation_error",
+          );
+        }
+        if (startDate > endDate) {
+          return createErrorResponse(
+            "startDate must be before or equal to endDate",
+            422,
             "validation_error",
           );
         }

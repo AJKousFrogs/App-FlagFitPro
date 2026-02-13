@@ -103,6 +103,56 @@ const MOTIVATIONAL_MESSAGES = [
   "Excellence is not a destination, it's a continuous journey.",
 ];
 
+const EXECUTION_UPDATE_FIELDS = new Set([
+  "status",
+  "rpe",
+  "duration_minutes",
+  "notes",
+  "completed_blocks",
+  "session_feedback",
+  "block_progress",
+  "energy_level",
+  "soreness_level",
+  "fatigue_level",
+]);
+
+function sanitizeExecutionUpdates(input = {}) {
+  const updates = {};
+  const errors = [];
+
+  for (const [key, value] of Object.entries(input)) {
+    if (!EXECUTION_UPDATE_FIELDS.has(key)) {
+      continue;
+    }
+    updates[key] = value;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    errors.push("No valid execution update fields provided");
+  }
+
+  if (
+    updates.status !== undefined &&
+    !["in_progress", "completed"].includes(updates.status)
+  ) {
+    errors.push("status must be one of: in_progress, completed");
+  }
+  if (updates.rpe !== undefined) {
+    const rpe = Number(updates.rpe);
+    if (!Number.isFinite(rpe) || rpe < 1 || rpe > 10) {
+      errors.push("rpe must be a number between 1 and 10");
+    }
+  }
+  if (updates.duration_minutes !== undefined) {
+    const duration = Number(updates.duration_minutes);
+    if (!Number.isInteger(duration) || duration < 1 || duration > 480) {
+      errors.push("duration_minutes must be an integer between 1 and 480");
+    }
+  }
+
+  return { updates, errors };
+}
+
 /**
  * Get user profile and training context
  */
@@ -765,6 +815,16 @@ function getCoachingNotes(season, sessionType) {
  */
 async function updateTrainingProgress(userId, updates, requestInfo = {}) {
   try {
+    const sanitized = sanitizeExecutionUpdates(updates);
+    if (sanitized.errors.length > 0) {
+      return {
+        success: false,
+        statusCode: 422,
+        code: "validation_error",
+        message: sanitized.errors.join("; "),
+      };
+    }
+
     const today = new Date().toISOString().split("T")[0];
 
     // Check if there's an existing session for today
@@ -791,9 +851,18 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
       );
 
       if (!authCheck.success) {
+        let authMessage = "Authorization failed";
+        try {
+          const parsed = JSON.parse(authCheck.error.body || "{}");
+          authMessage = parsed?.error?.message || authMessage;
+        } catch {
+          // no-op
+        }
         return {
           success: false,
-          message: authCheck.error.body || "Authorization failed",
+          statusCode: 403,
+          code: "authorization_error",
+          message: authMessage,
         };
       }
 
@@ -801,7 +870,7 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
       const { error: updateError } = await supabaseAdmin
         .from("training_sessions")
         .update({
-          ...updates,
+          ...sanitized.updates,
           updated_at: new Date().toISOString(),
         })
         .eq("id", existing.id);
@@ -836,7 +905,7 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
           status: "in_progress",
           session_state: "IN_PROGRESS",
           coach_locked: false,
-          ...updates,
+          ...sanitized.updates,
         });
 
       if (insertError) {
@@ -847,7 +916,12 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
     }
   } catch (error) {
     console.error("[DailyTraining] Error updating progress:", error);
-    return { success: false, message: error.message };
+    return {
+      success: false,
+      statusCode: 500,
+      code: "update_error",
+      message: "Failed to update progress",
+    };
   }
 }
 
@@ -915,13 +989,22 @@ export const handler = async (event, context) => {
         }
 
         try {
-          const result = await updateTrainingProgress(userId, body);
+          const requestInfo = {
+            path: event.path,
+            method: event.httpMethod,
+            ip:
+              event.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() ||
+              event.headers?.["x-real-ip"],
+            userAgent: event.headers?.["user-agent"],
+            body: event.body,
+          };
+          const result = await updateTrainingProgress(userId, body, requestInfo);
 
           if (!result.success) {
             return createErrorResponse(
               result.message || "Failed to update progress",
-              500,
-              "update_error",
+              result.statusCode || 500,
+              result.code || "update_error",
               requestId,
             );
           }

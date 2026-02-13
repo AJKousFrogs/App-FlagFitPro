@@ -17,6 +17,7 @@ import {
 } from "../../core/services/training-metrics.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../shared/utils/date.utils";
 
 @Component({
@@ -28,6 +29,7 @@ import { formatDate } from "../../shared/utils/date.utils";
     RouterModule,
     TableModule,
     LazyChartComponent,
+    EmptyStateComponent,
   ],
   template: `
     <div
@@ -53,52 +55,14 @@ import { formatDate } from "../../shared/utils/date.utils";
 
       <!-- Empty State -->
       @else if (!hasData()) {
-        <div class="empty-state-container">
-          <div class="empty-state-icon">
-            <i class="pi pi-chart-line"></i>
-          </div>
-          <h3>No Training Load Data Yet</h3>
-          <p>
-            Start logging your training sessions to track your workload, ACWR,
-            and flag football metrics.
-          </p>
-
-          <div class="empty-state-benefits">
-            <h4>What you'll see here:</h4>
-            <ul>
-              <li>
-                <i class="pi pi-check-circle"></i>
-                <div>
-                  <strong>ACWR Analysis</strong>
-                  <span
-                    >Track acute and chronic workload to prevent injury</span
-                  >
-                </div>
-              </li>
-              <li>
-                <i class="pi pi-check-circle"></i>
-                <div>
-                  <strong>4-Week Metrics</strong>
-                  <span>Visualize performance trends over time</span>
-                </div>
-              </li>
-              <li>
-                <i class="pi pi-check-circle"></i>
-                <div>
-                  <strong>Load Monitoring</strong>
-                  <span>Optimize training intensity and recovery</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="empty-state-cta">
-            <a routerLink="/training" class="cta-button">
-              <i class="pi pi-calendar"></i>
-              Go to Training Schedule
-            </a>
-          </div>
-        </div>
+        <app-empty-state
+          context="training"
+          [useCard]="true"
+          [customTitle]="'No Training Load Data Yet'"
+          [customMessage]="'Start logging your training sessions to track your workload, ACWR, and flag football metrics.'"
+          [customRoute]="'/training'"
+          [customActionLabel]="'Go to Training Schedule'"
+        />
       }
 
       <!-- Data Content -->

@@ -166,6 +166,21 @@ const PRIORITY_LEVELS = {
   },
 };
 
+const parseBoundedInt = (value, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    return null;
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    return null;
+  }
+  return parsed;
+};
+
 // =============================================================================
 // HELPER FUNCTIONS
 // =============================================================================
@@ -325,12 +340,15 @@ async function createReviewRequest(data) {
  */
 async function getPendingReviews(filters = {}) {
   const {
-    priority: _priority,
-    status: _status = "pending",
+    priority,
+    status = "pending",
     limit = 50,
   } = filters;
 
-  const query = supabaseAdmin
+  const safeLimit =
+    Number.isInteger(limit) && limit > 0 && limit <= 200 ? limit : 50;
+
+  let query = supabaseAdmin
     .from("ai_coach_interactions")
     .select(
       `
@@ -340,9 +358,17 @@ async function getPendingReviews(filters = {}) {
     `,
     )
     .eq("requires_review", true)
-    .is("reviewed_at", null)
     .order("created_at", { ascending: true })
-    .limit(limit);
+    .limit(safeLimit);
+
+  if (status === "pending") {
+    query = query.is("reviewed_at", null);
+  } else if (status === "reviewed") {
+    query = query.not("reviewed_at", "is", null);
+  }
+  if (priority) {
+    query = query.eq("review_priority", priority);
+  }
 
   const { data, error } = await query;
 
@@ -363,6 +389,19 @@ async function submitReview(reviewData) {
     reviewNotes,
     modifiedRecommendation,
   } = reviewData;
+
+  if (!interactionId) {
+    const error = new Error("interactionId is required");
+    error.isValidation = true;
+    throw error;
+  }
+  if (!["approved", "modified", "rejected"].includes(outcome)) {
+    const error = new Error(
+      "outcome must be one of: approved, modified, rejected",
+    );
+    error.isValidation = true;
+    throw error;
+  }
 
   const { data, error } = await supabaseAdmin
     .from("ai_coach_interactions")
@@ -401,13 +440,13 @@ async function submitReview(reviewData) {
  */
 async function getReviewStats() {
   // Get counts by status
-  const { data: pendingCount } = await supabaseAdmin
+  const { count: pendingCount } = await supabaseAdmin
     .from("ai_coach_interactions")
     .select("id", { count: "exact", head: true })
     .eq("requires_review", true)
     .is("reviewed_at", null);
 
-  const { data: reviewedCount } = await supabaseAdmin
+  const { count: reviewedCount } = await supabaseAdmin
     .from("ai_coach_interactions")
     .select("id", { count: "exact", head: true })
     .eq("requires_review", true)
@@ -445,6 +484,8 @@ async function getReviewStats() {
  * Get review history for a user
  */
 async function getUserReviewHistory(userId, limit = 20) {
+  const safeLimit =
+    Number.isInteger(limit) && limit > 0 && limit <= 200 ? limit : 20;
   const { data, error } = await supabaseAdmin
     .from("ai_coach_interactions")
     .select(
@@ -463,7 +504,7 @@ async function getUserReviewHistory(userId, limit = 20) {
     .eq("user_id", userId)
     .eq("requires_review", true)
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .limit(safeLimit);
 
   if (error) {
     throw error;
@@ -474,7 +515,30 @@ async function getUserReviewHistory(userId, limit = 20) {
 /**
  * Flag an existing interaction for review
  */
-async function flagInteractionForReview(interactionId, reason, flaggedBy) {
+async function flagInteractionForReview(
+  interactionId,
+  reason,
+  flaggedBy,
+  isReviewer,
+) {
+  const { data: existing, error: fetchError } = await supabaseAdmin
+    .from("ai_coach_interactions")
+    .select("id, user_id")
+    .eq("id", interactionId)
+    .single();
+
+  if (fetchError || !existing) {
+    const error = new Error("Interaction not found");
+    error.isNotFound = true;
+    throw error;
+  }
+
+  if (!isReviewer && existing.user_id !== flaggedBy) {
+    const error = new Error("Not authorized to flag this interaction");
+    error.isAuthorization = true;
+    throw error;
+  }
+
   const { data, error } = await supabaseAdmin
     .from("ai_coach_interactions")
     .update({
@@ -507,7 +571,7 @@ async function flagInteractionForReview(interactionId, reason, flaggedBy) {
 // REQUEST HANDLER
 // =============================================================================
 
-async function handleRequest(event, _context, { userId, user }) {
+async function handleRequest(event, _context, { userId, authUser }) {
   const path =
     event.path
       .replace("/.netlify/functions/ai-review", "")
@@ -525,10 +589,10 @@ async function handleRequest(event, _context, { userId, user }) {
 
   // Check if user is admin/reviewer for certain endpoints
   const isAdmin =
-    user?.role === "admin" || user?.user_metadata?.role === "admin";
+    authUser?.role === "admin" || authUser?.metadata?.role === "admin";
   const isReviewer =
-    user?.role === "reviewer" ||
-    user?.user_metadata?.role === "reviewer" ||
+    authUser?.role === "reviewer" ||
+    authUser?.metadata?.role === "reviewer" ||
     isAdmin;
 
   try {
@@ -548,10 +612,17 @@ async function handleRequest(event, _context, { userId, user }) {
           "missing_id",
         );
       }
+      if (
+        reason !== undefined &&
+        (typeof reason !== "string" || reason.trim().length === 0)
+      ) {
+        return createErrorResponse("reason must be a non-empty string", 422, "validation_error");
+      }
       const flagged = await flagInteractionForReview(
         interactionId,
         reason,
         userId,
+        isReviewer,
       );
       return createSuccessResponse(flagged);
     }
@@ -566,10 +637,31 @@ async function handleRequest(event, _context, { userId, user }) {
         );
       }
       const params = event.queryStringParameters || {};
+      const parsedLimit = parseBoundedInt(params.limit, { min: 1, max: 200 });
+      if (
+        params.limit !== undefined &&
+        parsedLimit === null
+      ) {
+        return createErrorResponse(
+          "limit must be an integer between 1 and 200",
+          422,
+          "validation_error",
+        );
+      }
+      if (
+        params.status !== undefined &&
+        !["pending", "reviewed"].includes(params.status)
+      ) {
+        return createErrorResponse(
+          "status must be one of: pending, reviewed",
+          422,
+          "validation_error",
+        );
+      }
       const reviews = await getPendingReviews({
         priority: params.priority,
         status: params.status,
-        limit: parseInt(params.limit) || 50,
+        limit: parsedLimit || 50,
       });
       return createSuccessResponse(reviews);
     }
@@ -606,9 +698,20 @@ async function handleRequest(event, _context, { userId, user }) {
     // Get user's own review history
     if (event.httpMethod === "GET" && path === "history") {
       const params = event.queryStringParameters || {};
+      const parsedLimit = parseBoundedInt(params.limit, { min: 1, max: 200 });
+      if (
+        params.limit !== undefined &&
+        parsedLimit === null
+      ) {
+        return createErrorResponse(
+          "limit must be an integer between 1 and 200",
+          422,
+          "validation_error",
+        );
+      }
       const history = await getUserReviewHistory(
         userId,
-        parseInt(params.limit) || 20,
+        parsedLimit || 20,
       );
       return createSuccessResponse(history);
     }
@@ -624,6 +727,15 @@ async function handleRequest(event, _context, { userId, user }) {
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
     console.error("AI Review API error:", error);
+    if (error.isValidation) {
+      return createErrorResponse(error.message, 422, "validation_error");
+    }
+    if (error.isAuthorization) {
+      return createErrorResponse(error.message, 403, "authorization_error");
+    }
+    if (error.isNotFound) {
+      return createErrorResponse(error.message, 404, "not_found");
+    }
     throw error;
   }
 }

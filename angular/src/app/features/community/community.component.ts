@@ -522,7 +522,7 @@ interface ApiPollVoteResponse {
                         @if (post.media.type === "image") {
                           <img
                             [src]="post.media.url"
-                            alt="Post image"
+                            [alt]="'Image in post by ' + post.author"
                             class="media-image"
                           />
                         }

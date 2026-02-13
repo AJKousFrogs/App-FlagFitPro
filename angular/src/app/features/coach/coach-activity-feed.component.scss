@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .activity-feed {
   background: var(--surface-primary);
   border-radius: var(--radius-md);
@@ -48,8 +50,6 @@
 
 .loading-state {
   padding: var(--space-4);
-  display: flex;
-  flex-direction: column;
   gap: var(--space-3);
 }
 
@@ -64,28 +64,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-.empty-state {
-  padding: var(--space-8) var(--space-4);
-  text-align: center;
-  color: var(--color-text-secondary);
-}
-
-.empty-state i {
-  font-size: var(--ds-font-size-3xl);
-  margin-bottom: var(--space-3);
-  opacity: var(--opacity-dimmed);
-}
-
-.empty-state p {
-  margin: 0 0 var(--space-2);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-}
-
-.empty-state span {
-  font-size: var(--ds-font-size-md);
 }
 
 .activity-list {
@@ -122,10 +100,8 @@
     transform var(--transition-fast),
     opacity var(--transition-fast);
   position: relative;
-}
 
-.activity-item:hover {
-  background: var(--surface-secondary);
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 .activity-item.unread {
@@ -182,7 +158,7 @@
   right: -var(--border-2);
   width: var(--icon-base);
   height: var(--icon-base);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,7 +205,7 @@
 .unread-dot {
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--color-brand-primary);
   flex-shrink: 0;
   margin-top: var(--space-2);

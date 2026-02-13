@@ -20,6 +20,8 @@ import {
 } from "../../shared/utils/status.utils";
 import { TableModule } from "primeng/table";
 import { InputText } from "primeng/inputtext";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
@@ -51,6 +53,8 @@ interface Team {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateComponent,
+    AppLoadingComponent,
   ],
   template: `
     <app-main-layout>
@@ -116,21 +120,20 @@ interface Team {
         <!-- Teams Table -->
         <p-card>
           @if (isLoading()) {
-            <div class="loading-state">
-              <i class="pi pi-spin pi-spinner"></i>
-              <span>Loading teams...</span>
-            </div>
+            <app-loading message="Loading teams..." variant="inline" />
           } @else if (filteredTeams.length === 0) {
-            <div class="empty-state">
-              <i class="pi pi-building"></i>
-              <h4>No Teams Found</h4>
-              <p>No teams match your current filters.</p>
-            </div>
+            <app-empty-state
+              icon="pi-building"
+              heading="No Teams Found"
+              description="No teams match your current filters."
+            />
           } @else {
             <p-table
               [value]="filteredTeams"
               [paginator]="true"
               [rows]="10"
+              [virtualScroll]="filteredTeams.length > 50"
+              [virtualScrollItemSize]="46"
               class="p-datatable-sm table-standard"
             >
               <ng-template #header>
@@ -225,23 +228,6 @@ interface Team {
         gap: var(--spacing-xs);
       }
 
-      .loading-state,
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--spacing-xl);
-        text-align: center;
-        color: var(--text-secondary);
-      }
-
-      .empty-state i,
-      .loading-state i {
-        font-size: var(--ds-font-size-2-5rem);
-        margin-bottom: var(--spacing-md);
-        opacity: 0.5;
-      }
     `,
   ],
 })

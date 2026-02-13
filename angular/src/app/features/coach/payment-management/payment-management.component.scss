@@ -128,8 +128,6 @@
   }
 }
 
-// Card Headers - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
 // Note: .balance-filters should be moved to header-actions slot
 
 .balance-filters {
@@ -420,7 +418,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  // .card-header responsive styles removed - use app-card-shell
   // Note: .balance-filters responsive styles moved here
   .balance-filters {
     width: 100%;

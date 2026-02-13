@@ -7,6 +7,32 @@ import { authenticateRequest } from "./utils/auth-helper.js";
 // Netlify Function: Community API
 // Returns community feed, posts, and leaderboard data
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    return {};
+  }
+  const parsed = JSON.parse(rawBody);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+};
+
 // Get community feed from database with privacy filtering
 const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
   try {
@@ -652,6 +678,10 @@ const _createPoll = async (postId, pollData) => {
 
 // Vote on a poll
 const votePoll = async (userId, optionId) => {
+  const expectedMessages = new Set([
+    "Poll option not found",
+    "You have already voted on this poll",
+  ]);
   try {
     checkEnvVars();
 
@@ -729,7 +759,9 @@ const votePoll = async (userId, optionId) => {
       totalVotes,
     };
   } catch (error) {
-    console.error("Error voting on poll:", error);
+    if (!expectedMessages.has(error?.message)) {
+      console.error("Error voting on poll:", error);
+    }
     throw error;
   }
 };
@@ -821,8 +853,8 @@ export const handler = async (event, context) => {
 async function handleCommunityRequest(event, requestId) {
       // SECURITY: Authentication (optional for GET, required for POST/DELETE)
       let userId = null;
-      const authHeader =
-        event.headers.authorization || event.headers.Authorization;
+      const headers = event.headers || {};
+      const authHeader = headers.authorization || headers.Authorization;
 
       // SECURITY FIX: Require auth header for POST/DELETE even before checking token
       if (event.httpMethod === "POST" || event.httpMethod === "DELETE") {
@@ -872,14 +904,28 @@ async function handleCommunityRequest(event, requestId) {
         category,
       } = queryParams;
 
+      let parsedLimit;
+      let parsedOffset;
+      try {
+        parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 });
+        parsedOffset = parseBoundedInt(offset, "offset", { min: 0, max: 1000000 });
+      } catch (error) {
+        return createErrorResponse(
+          error.message || "Invalid query parameter",
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+
       // Handle GET requests
       if (event.httpMethod === "GET") {
         // Get feed
         if (feed === "true" || feed === true) {
           const feedData = await getCommunityFeed(
             userId,
-            parseInt(limit) || 20,
-            parseInt(offset) || 0,
+            parsedLimit ?? 20,
+            parsedOffset ?? 0,
           );
           return createSuccessResponse({ posts: feedData }, requestId);
         }
@@ -888,14 +934,14 @@ async function handleCommunityRequest(event, requestId) {
         if (leaderboard === "true" || leaderboard === true) {
           const leaderboardData = await getCommunityLeaderboard(
             category || "overall",
-            parseInt(limit) || 10,
+            parsedLimit ?? 10,
           );
           return createSuccessResponse(leaderboardData, requestId);
         }
 
         // Get trending topics
         if (trending === "true" || trending === true) {
-          const topics = await getTrendingTopics(parseInt(limit) || 5);
+          const topics = await getTrendingTopics(parsedLimit ?? 5);
           return createSuccessResponse({ topics }, requestId);
         }
 
@@ -914,8 +960,8 @@ async function handleCommunityRequest(event, requestId) {
         // Default: return feed
         const feedData = await getCommunityFeed(
           userId,
-          parseInt(limit) || 20,
-          parseInt(offset) || 0,
+          parsedLimit ?? 20,
+          parsedOffset ?? 0,
         );
         return createSuccessResponse({ posts: feedData }, requestId);
       }
@@ -947,12 +993,20 @@ async function handleCommunityRequest(event, requestId) {
         if (postId && comment === "true") {
           let body = {};
           try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
+            body = parseJsonObjectBody(event.body);
+          } catch (error) {
+            if (error instanceof SyntaxError) {
+              return createErrorResponse(
+                "Invalid JSON in request body",
+                400,
+                "invalid_json",
+                requestId,
+              );
+            }
             return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
+              error.message,
+              422,
+              "validation_error",
               requestId,
             );
           }
@@ -977,10 +1031,26 @@ async function handleCommunityRequest(event, requestId) {
             const result = await votePoll(userId, optionId);
             return createSuccessResponse(result, requestId);
           } catch (error) {
+            if (error.message === "Poll option not found") {
+              return createErrorResponse(
+                "Poll option not found",
+                404,
+                "not_found",
+                requestId,
+              );
+            }
+            if (error.message === "You have already voted on this poll") {
+              return createErrorResponse(
+                "You have already voted on this poll",
+                409,
+                "conflict",
+                requestId,
+              );
+            }
             return createErrorResponse(
-              error.message || "Failed to vote",
-              400,
-              "vote_failed",
+              "Failed to vote",
+              500,
+              "server_error",
               requestId,
             );
           }
@@ -989,12 +1059,20 @@ async function handleCommunityRequest(event, requestId) {
         // Create a new post
         let postData = {};
         try {
-          postData = JSON.parse(event.body || "{}");
-        } catch {
+          postData = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            return createErrorResponse(
+              "Invalid JSON in request body",
+              400,
+              "invalid_json",
+              requestId,
+            );
+          }
           return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
+            error.message,
+            422,
+            "validation_error",
             requestId,
           );
         }

@@ -12,36 +12,6 @@
   flex-direction: column;
 }
 
-/* Empty State */
-.empty-state {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--space-6);
-}
-
-.empty-icon {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--primitive-neutral-300);
-  margin-bottom: var(--space-3);
-}
-
-.empty-title {
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-tertiary);
-  margin: 0 0 var(--space-1) 0;
-}
-
-.empty-description {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4) 0;
-  max-width: var(--grid-card-min-sm);
-}
 
 .primary-metric {
   text-align: center;

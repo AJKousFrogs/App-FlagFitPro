@@ -50,6 +50,178 @@ function getVapidPublicKey() {
   return process.env.VAPID_PUBLIC_KEY || null;
 }
 
+const ALLOWED_DEVICE_TYPES = new Set(["web", "ios", "android"]);
+const ALLOWED_PREFERENCE_KEYS = new Set(["push_enabled", "categories", "quiet_hours"]);
+const ALLOWED_CATEGORY_KEYS = new Set([
+  "team_announcements",
+  "game_reminders",
+  "practice_reminders",
+  "stats_updates",
+  "training_reminders",
+  "chat_mentions",
+  "coach_feedback",
+]);
+const ALLOWED_SENDER_ROLES = new Set(["coach", "assistant_coach", "admin", "staff"]);
+const QUIET_HOURS_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+function validateRegisterPayload(tokenData) {
+  const errors = [];
+  if (!tokenData || typeof tokenData !== "object" || Array.isArray(tokenData)) {
+    return ["Request body must be an object"];
+  }
+
+  const { token, device_type, device_name, subscription } = tokenData;
+  const hasToken = typeof token === "string" && token.trim().length > 0;
+  const hasSubscription =
+    subscription &&
+    typeof subscription === "object" &&
+    !Array.isArray(subscription) &&
+    typeof subscription.endpoint === "string" &&
+    subscription.endpoint.trim().length > 0;
+
+  if (!hasToken && !hasSubscription) {
+    errors.push("token or subscription.endpoint is required");
+  }
+
+  if (token !== undefined && (typeof token !== "string" || token.trim().length === 0)) {
+    errors.push("token must be a non-empty string when provided");
+  }
+
+  if (device_type !== undefined && !ALLOWED_DEVICE_TYPES.has(device_type)) {
+    errors.push("device_type must be one of: web, ios, android");
+  }
+
+  if (
+    device_name !== undefined &&
+    (typeof device_name !== "string" || device_name.trim().length === 0)
+  ) {
+    errors.push("device_name must be a non-empty string when provided");
+  }
+
+  if (subscription !== undefined) {
+    if (!subscription || typeof subscription !== "object" || Array.isArray(subscription)) {
+      errors.push("subscription must be an object");
+    } else {
+      if (typeof subscription.endpoint !== "string" || subscription.endpoint.trim().length === 0) {
+        errors.push("subscription.endpoint is required");
+      }
+      if (!subscription.keys || typeof subscription.keys !== "object") {
+        errors.push("subscription.keys is required");
+      } else {
+        if (typeof subscription.keys.p256dh !== "string" || subscription.keys.p256dh.trim().length === 0) {
+          errors.push("subscription.keys.p256dh is required");
+        }
+        if (typeof subscription.keys.auth !== "string" || subscription.keys.auth.trim().length === 0) {
+          errors.push("subscription.keys.auth is required");
+        }
+      }
+    }
+  }
+
+  return errors;
+}
+
+function validatePreferencesPayload(preferences) {
+  const errors = [];
+  if (!preferences || typeof preferences !== "object" || Array.isArray(preferences)) {
+    return ["preferences must be an object"];
+  }
+
+  for (const key of Object.keys(preferences)) {
+    if (!ALLOWED_PREFERENCE_KEYS.has(key)) {
+      errors.push(`Unknown preference field: ${key}`);
+    }
+  }
+
+  if (
+    preferences.push_enabled !== undefined &&
+    typeof preferences.push_enabled !== "boolean"
+  ) {
+    errors.push("push_enabled must be a boolean");
+  }
+
+  if (preferences.categories !== undefined) {
+    if (
+      !preferences.categories ||
+      typeof preferences.categories !== "object" ||
+      Array.isArray(preferences.categories)
+    ) {
+      errors.push("categories must be an object");
+    } else {
+      for (const [category, enabled] of Object.entries(preferences.categories)) {
+        if (!ALLOWED_CATEGORY_KEYS.has(category)) {
+          errors.push(`Unknown category: ${category}`);
+          continue;
+        }
+        if (typeof enabled !== "boolean") {
+          errors.push(`categories.${category} must be a boolean`);
+        }
+      }
+    }
+  }
+
+  if (preferences.quiet_hours !== undefined && preferences.quiet_hours !== null) {
+    if (
+      typeof preferences.quiet_hours !== "object" ||
+      Array.isArray(preferences.quiet_hours)
+    ) {
+      errors.push("quiet_hours must be an object or null");
+    } else {
+      const { start, end, timezone } = preferences.quiet_hours;
+      if (typeof start !== "string" || !QUIET_HOURS_REGEX.test(start)) {
+        errors.push("quiet_hours.start must use HH:MM 24-hour format");
+      }
+      if (typeof end !== "string" || !QUIET_HOURS_REGEX.test(end)) {
+        errors.push("quiet_hours.end must use HH:MM 24-hour format");
+      }
+      if (timezone !== undefined && (typeof timezone !== "string" || timezone.trim().length === 0)) {
+        errors.push("quiet_hours.timezone must be a non-empty string when provided");
+      }
+    }
+  }
+
+  return errors;
+}
+
+async function canSendNotificationToTargetUser(senderUserId, targetUserId) {
+  const { data: senderMemberships, error: senderMembershipError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id, role")
+    .eq("user_id", senderUserId)
+    .eq("status", "active")
+    .in("role", Array.from(ALLOWED_SENDER_ROLES));
+
+  if (senderMembershipError) {
+    throw senderMembershipError;
+  }
+
+  if (!senderMemberships || senderMemberships.length === 0) {
+    return false;
+  }
+
+  const senderTeamIds = senderMemberships
+    .map((membership) => membership.team_id)
+    .filter(Boolean);
+  if (senderTeamIds.length === 0) {
+    return false;
+  }
+
+  const { data: targetMembership, error: targetMembershipError } = await supabaseAdmin
+    .from("team_members")
+    .select("user_id")
+    .eq("user_id", targetUserId)
+    .eq("status", "active")
+    .in("team_id", senderTeamIds)
+    .limit(1)
+    .single();
+
+  if (targetMembershipError && targetMembershipError.code !== "PGRST116") {
+    throw targetMembershipError;
+  }
+
+  return Boolean(targetMembership);
+}
+
 // Register a push notification token/subscription
 const registerToken = async (userId, tokenData) => {
   checkEnvVars();
@@ -351,7 +523,7 @@ const sendNotificationToUser = async (userId, notification) => {
       results.failed++;
       results.errors.push({
         tokenId: tokenRecord.id,
-        error: error.message,
+        error: "Delivery attempt failed",
       });
     }
   }
@@ -411,7 +583,7 @@ const _sendBulkNotification = async (userIds, notification) => {
       }
       results.devicesFailed += userResult.failed || 0;
     } catch (error) {
-      results.errors.push({ userId, error: error.message });
+      results.errors.push({ userId, error: "Notification dispatch failed" });
     }
   }
 
@@ -439,15 +611,20 @@ export const handler = async (event, context) => {
         try {
           body = JSON.parse(event.body);
         } catch {
-          return createErrorResponse("Invalid JSON", 400, ErrorType.VALIDATION);
+          return createErrorResponse("Invalid JSON", 400, "invalid_json");
         }
       }
 
       try {
         // Register token
         if (event.httpMethod === "POST" && path === "register") {
+          const errors = validateRegisterPayload(body);
+          if (errors.length > 0) {
+            return createErrorResponse(errors.join("; "), 422, ErrorType.VALIDATION);
+          }
+
           const result = await registerToken(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         // Unregister token
@@ -464,6 +641,11 @@ export const handler = async (event, context) => {
           }
 
           if (event.httpMethod === "PUT") {
+            const errors = validatePreferencesPayload(body);
+            if (errors.length > 0) {
+              return createErrorResponse(errors.join("; "), 422, ErrorType.VALIDATION);
+            }
+
             const result = await updatePreferences(userId, body);
             return createSuccessResponse(result);
           }
@@ -498,47 +680,26 @@ export const handler = async (event, context) => {
         if (event.httpMethod === "POST" && path === "send-to-user") {
           const { targetUserId, ...notification } = body;
 
-          if (!targetUserId) {
+          if (typeof targetUserId !== "string" || targetUserId.trim().length === 0) {
             return createErrorResponse(
               "targetUserId is required",
-              400,
-              "validation_error",
+              422,
+              ErrorType.VALIDATION,
             );
           }
 
-          // Verify caller has permission to send to this user
-          // For ACWR alerts, coaches can send to their team members
-          // Check if caller is coach and target is on their team
-          const { data: callerTeam } = await supabaseAdmin
-            .from("team_members")
-            .select("team_id")
-            .eq("user_id", userId)
-            .eq("role", "coach")
-            .limit(1)
-            .single();
-
-          if (callerTeam?.team_id) {
-            const { data: targetTeam } = await supabaseAdmin
-              .from("team_members")
-              .select("team_id")
-              .eq("user_id", targetUserId)
-              .eq("team_id", callerTeam.team_id)
-              .limit(1)
-              .single();
-
-            if (!targetTeam) {
+          if (targetUserId !== userId) {
+            const authorized = await canSendNotificationToTargetUser(
+              userId,
+              targetUserId,
+            );
+            if (!authorized) {
               return createErrorResponse(
-                "Unauthorized: You can only send notifications to members of your team",
+                "Unauthorized: insufficient permissions for target user",
                 403,
-                "unauthorized",
+                ErrorType.AUTHORIZATION,
               );
             }
-          } else {
-            // For now, allow system/automated calls (ACWR alerts)
-            // In production, add more strict checks (service role, etc.)
-            console.log(
-              `[Push] Sending notification to user ${targetUserId} from ${userId}`,
-            );
           }
 
           const result = await sendNotificationToUser(

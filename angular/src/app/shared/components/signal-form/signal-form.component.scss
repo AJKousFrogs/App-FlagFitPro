@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .form-status {
   padding: var(--space-2);
   background: var(--surface-secondary);
@@ -37,9 +39,8 @@ label.required::after {
   border-width: 0;
 }
 
-input:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
+input {
+  @include ds-focus-ring;
 }
 
 input[aria-invalid="true"] {

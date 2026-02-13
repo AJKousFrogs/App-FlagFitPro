@@ -4,7 +4,6 @@
 // ============================================================================
 
 @use "styles/mixins" as *;
-@include stat-block;
 
 .session-analytics {
   display: flex;
@@ -61,16 +60,7 @@
   flex-direction: column;
 }
 
-.stat-block__value {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.stat-block__label {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
+/* stat-block: use primitives; stat-card needs stat-block--card for label/value */
 
 .streak-info,
 .total-info {
@@ -78,10 +68,7 @@
   color: var(--color-text-muted);
 }
 
-// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-009)
-.completion-bar {
-  // Component-specific styles remain here
-}
+// PrimeNG progressbar overrides: _component-overrides.scss (DS-EXC-009)
 
 .chart-card {
   border-radius: var(--radius-xl);
@@ -155,31 +142,3 @@
   color: var(--color-text-secondary);
 }
 
-// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-009)
-.type-bar {
-  // Component-specific styles remain here
-}
-
-.empty-state {
-  text-align: center;
-  padding: var(--space-12) var(--space-4);
-  background: var(--surface-card);
-  border-radius: var(--radius-xl);
-}
-
-.empty-state i {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--surface-300);
-  margin-bottom: var(--space-4);
-}
-
-.empty-state h3 {
-  margin: 0 0 var(--space-2) 0;
-  color: var(--color-text-primary);
-}
-
-.empty-state p {
-  margin: 0;
-  color: var(--color-text-secondary);
-  font-size: var(--ds-font-size-md);
-}

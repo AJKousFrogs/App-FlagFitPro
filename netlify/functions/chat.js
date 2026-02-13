@@ -3,6 +3,38 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { baseHandler } from "./utils/base-handler.js";
 import { validate } from "./validation.js";
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    const error = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    error.isValidation = true;
+    throw error;
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    const error = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    error.isValidation = true;
+    throw error;
+  }
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    return {};
+  }
+  const parsed = JSON.parse(rawBody);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    const error = new Error("Request body must be an object");
+    error.isValidation = true;
+    throw error;
+  }
+  return parsed;
+};
+
 /**
  * Chat API Function
  *
@@ -120,6 +152,7 @@ async function createChannel(userId, channelData) {
       .select("role")
       .eq("user_id", userId)
       .eq("team_id", channelData.team_id)
+      .eq("status", "active")
       .single();
 
     if (
@@ -189,6 +222,12 @@ async function getMessages(userId, channelId, options = {}) {
     throw new Error("Access denied to this channel");
   }
 
+  const parsedLimit = parseBoundedInt(options.limit, "limit", {
+    min: 1,
+    max: 100,
+  });
+  const limit = parsedLimit ?? 50;
+
   let query = supabase
     .from("chat_messages")
     .select(
@@ -202,7 +241,7 @@ async function getMessages(userId, channelId, options = {}) {
     .eq("channel_id", channelId)
     .is("thread_id", null)
     .order("created_at", { ascending: true })
-    .limit(options.limit || 50);
+    .limit(limit);
 
   if (options.before) {
     query = query.lt("created_at", options.before);
@@ -402,6 +441,10 @@ async function deleteMessage(userId, messageId) {
  */
 async function markChannelRead(userId, channelId) {
   const supabase = getSupabase();
+  const hasAccess = await verifyChannelAccess(userId, channelId);
+  if (!hasAccess) {
+    throw new Error("Access denied to this channel");
+  }
 
   const { error } = await supabase.from("channel_members").upsert(
     {
@@ -522,6 +565,7 @@ async function verifyIsCoach(userId, channelId) {
     .select("role")
     .eq("team_id", channel.team_id)
     .eq("user_id", userId)
+    .eq("status", "active")
     .single();
 
   return member && ["coach", "assistant_coach"].includes(member.role);
@@ -559,7 +603,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "chat",
     allowedMethods: ["GET", "POST", "PATCH", "DELETE"],
-rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       const path = event.path
@@ -568,10 +612,18 @@ rateLimitType: rateLimitType,
       const method = event.httpMethod;
 
       let body = {};
-      if (event.body) {
+      if (event.body && ["POST", "PATCH"].includes(method)) {
         try {
-          body = JSON.parse(event.body);
-        } catch {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error?.isValidation) {
+            return createErrorResponse(
+              error.message,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
           return createErrorResponse(
             "Invalid JSON",
             400,
@@ -647,11 +699,19 @@ rateLimitType: rateLimitType,
           );
         }
 
-        return createErrorResponse(
-          error.message || "Internal error",
-          error.message?.includes("denied") || error.message?.includes("cannot")
+        const statusCode = error.message?.includes("not found")
+          ? 404
+          : error.message?.includes("denied") ||
+              error.message?.includes("cannot") ||
+              error.message?.includes("Only coaches")
             ? 403
-            : 500,
+            : 500;
+
+        return createErrorResponse(
+          statusCode === 500
+            ? "Internal server error"
+            : error.message || (statusCode === 404 ? "Not found" : "Access denied"),
+          statusCode,
           "chat_error",
           requestId,
         );

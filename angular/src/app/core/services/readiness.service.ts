@@ -32,6 +32,7 @@ import { catchError, map, tap } from "rxjs";
 import { ApiService } from "./api.service";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { LoggerService } from "./logger.service";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 
 export type ReadinessLevel = "low" | "moderate" | "high";
 export type Suggestion = "deload" | "maintain" | "push";
@@ -181,12 +182,12 @@ export class ReadinessService {
             this.loading.set(false);
           },
           error: (err) => {
-            this.error.set(err.message || "Failed to calculate readiness");
+            this.error.set(getErrorMessage(err, "Failed to calculate readiness"));
             this.loading.set(false);
           },
         }),
         catchError((error) => {
-          this.error.set(error.message || "Failed to calculate readiness");
+          this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
           this.loading.set(false);
           return throwError(() => error);
         }),
@@ -215,12 +216,12 @@ export class ReadinessService {
             this.loading.set(false);
           },
           error: (err) => {
-            this.error.set(err.message || "Failed to calculate readiness");
+            this.error.set(getErrorMessage(err, "Failed to calculate readiness"));
             this.loading.set(false);
           },
         }),
         catchError((error) => {
-          this.error.set(error.message || "Failed to calculate readiness");
+          this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
           this.loading.set(false);
           return throwError(() => error);
         }),

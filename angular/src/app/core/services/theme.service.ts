@@ -293,6 +293,9 @@ export class ThemeService implements OnDestroy {
     root.setAttribute("data-theme", theme);
     body.setAttribute("data-theme", theme);
 
+    // Data attribute for e2e/testing - signals theme is fully applied
+    root.setAttribute("data-theme-ready", theme);
+
     // Also set class for backwards compatibility
     body.classList.remove("light-theme", "dark-theme");
     body.classList.add(`${theme}-theme`);

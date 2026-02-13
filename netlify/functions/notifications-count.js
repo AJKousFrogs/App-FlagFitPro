@@ -6,7 +6,29 @@
 import { db } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
+import { createErrorResponse } from "./utils/error-handler.js";
 import { successObjectResponse } from "./utils/response-helper.js";
+
+function normalizeUnreadCount(value) {
+  if (!Number.isInteger(value) || value < 0) {
+    return 0;
+  }
+  return value;
+}
+
+function normalizeLastOpenedAt(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (typeof value !== "string") {
+    return null;
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+  return value;
+}
 
 export const handler = async (event, context) => {
   return baseHandler(event, context, {
@@ -14,21 +36,34 @@ export const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true, // Explicit auth requirement for notification data
-    handler: async (event, context, { userId }) => {
+    handler: async (event, context, { userId, requestId }) => {
       try {
         // Get unread count (already filters muted types)
-        const unreadCount = await db.notifications.getUnreadCount(userId);
+        const unreadCount = normalizeUnreadCount(
+          await db.notifications.getUnreadCount(userId),
+        );
 
         // Also get last opened timestamp
-        const lastOpenedAt = await db.notifications.getLastOpenedAt(userId);
+        const lastOpenedAt = normalizeLastOpenedAt(
+          await db.notifications.getLastOpenedAt(userId),
+        );
 
         return successObjectResponse({
           unreadCount,
           lastOpenedAt,
         });
       } catch (dbError) {
-        console.error("Database error:", dbError);
-        throw new Error("Failed to get notification count");
+        if (dbError?.code) {
+          console.error("Database error in notifications-count", { code: dbError.code });
+        } else {
+          console.error("Database error in notifications-count");
+        }
+        return createErrorResponse(
+          "Failed to get notification count",
+          500,
+          "database_error",
+          requestId,
+        );
       }
     },
   });

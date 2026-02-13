@@ -194,6 +194,165 @@
   }
 
   // ============================================
+  // CARD EMPTY STATE (inside card body - canonical)
+  // Used inside app-card-shell or p-card. Single source of truth.
+  // ============================================
+
+  .card-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-6);
+    min-height: var(--card-min-height-lg);
+    animation: card-empty-fade-in 0.4s var(--ease-standard);
+  }
+
+  @keyframes card-empty-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--indicator-size-sm));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-empty-state--compact {
+    padding: var(--space-4);
+    min-height: var(--card-min-height-md);
+  }
+
+  .card-empty-state--inline {
+    flex-direction: row;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    min-height: auto;
+
+    .card-empty-state__icon {
+      margin-bottom: 0;
+      font-size: var(--ds-font-size-2xl);
+    }
+
+    .card-empty-state__content {
+      text-align: left;
+    }
+
+    .card-empty-state__title {
+      font-size: var(--ds-font-size-md);
+      margin-bottom: var(--space-1);
+    }
+
+    .card-empty-state__text {
+      font-size: var(--ds-font-size-sm);
+    }
+  }
+
+  .card-empty-state__icon {
+    font-size: var(--ds-font-size-3rem);
+    color: var(--color-text-muted);
+    opacity: var(--opacity-dimmed);
+    margin-bottom: var(--space-3);
+    line-height: var(--ds-line-height-1);
+  }
+
+  .card-empty-state--compact .card-empty-state__icon {
+    font-size: var(--ds-font-size-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .card-empty-state__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-empty-state__title {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
+    color: var(--color-text-primary);
+    line-height: var(--ds-line-height-snug);
+  }
+
+  .card-empty-state--compact .card-empty-state__title {
+    font-size: var(--ds-font-size-sm);
+  }
+
+  .card-empty-state__text {
+    margin: 0;
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--ds-line-height-normal);
+    max-width: var(--grid-card-min-md);
+  }
+
+  .card-empty-state--compact .card-empty-state__text {
+    font-size: var(--ds-font-size-xs);
+    max-width: var(--input-min-width-lg);
+  }
+
+  .card-empty-state__action {
+    margin-top: var(--space-3);
+  }
+
+  .card-empty-state--compact .card-empty-state__action {
+    margin-top: var(--space-2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-empty-state {
+      animation: none;
+    }
+  }
+
+  // Legacy .empty-state with i, h3, h4, p (for backward compat during migration)
+  .empty-state i,
+  .empty-state .pi {
+    font-size: var(--ds-font-size-2xl);
+    margin-bottom: var(--space-2);
+    opacity: var(--opacity-dimmed);
+  }
+
+  .empty-state h3,
+  .empty-state h4 {
+    font-size: var(--ds-font-size-xl);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-2);
+  }
+
+  .empty-state p {
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .empty-state.compact {
+    padding: var(--space-4);
+    font-size: var(--ds-font-size-md);
+  }
+
+  // .empty-icon: circular icon container (optional)
+  .empty-icon {
+    width: var(--size-80);
+    height: var(--size-80);
+    margin: 0 auto var(--space-6);
+    background: var(--ds-primary-green-ultra-subtle);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .empty-icon i {
+    font-size: var(--ds-font-size-3xl);
+    color: var(--ds-primary-green);
+  }
+
+  // ============================================
   // LOADING STATES
   // ============================================
 
@@ -217,6 +376,19 @@
 
   .loading-state__text {
     margin-top: var(--space-4);
+    font-size: var(--font-body-sm-size);
+    color: var(--color-text-muted);
+  }
+
+  /* Legacy loading-state with i + span (no BEM) */
+  .loading-state i,
+  .loading-state .pi {
+    font-size: var(--font-h1-size);
+    margin-bottom: var(--space-4);
+    opacity: var(--opacity-dimmed);
+  }
+
+  .loading-state span {
     font-size: var(--font-body-sm-size);
     color: var(--color-text-muted);
   }

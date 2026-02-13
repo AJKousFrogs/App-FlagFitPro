@@ -2,6 +2,19 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 
+function isUuid(value) {
+  return (
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      value,
+    )
+  );
+}
+
+function isValidDateString(value) {
+  return typeof value === "string" && !Number.isNaN(new Date(value).getTime());
+}
+
 /**
  * Training Programs API
  *
@@ -105,6 +118,9 @@ async function getProgram(programId) {
     .eq("id", programId)
     .single();
 
+  if (error && error.code === "PGRST116") {
+    return null;
+  }
   if (error) {
     throw error;
   }
@@ -128,16 +144,20 @@ async function getFullProgram(programId) {
   }
 
   // Get all weeks for the program's phases
-  const phaseIds = program.training_phases.map((p) => p.id);
+  const phaseIds = (program.training_phases || []).map((p) => p.id);
 
-  const { data: weeks, error: weeksError } = await supabaseAdmin
-    .from("training_weeks")
-    .select("*")
-    .in("phase_id", phaseIds)
-    .order("week_number", { ascending: true });
+  let weeks = [];
+  if (phaseIds.length > 0) {
+    const { data: weeksData, error: weeksError } = await supabaseAdmin
+      .from("training_weeks")
+      .select("*")
+      .in("phase_id", phaseIds)
+      .order("week_number", { ascending: true });
 
-  if (weeksError) {
-    throw weeksError;
+    if (weeksError) {
+      throw weeksError;
+    }
+    weeks = weeksData || [];
   }
 
   // Get all session templates for the program
@@ -427,6 +447,14 @@ export const handler = async (event, context) => {
               requestId,
             );
           }
+          if (!isUuid(programId)) {
+            return createErrorResponse(
+              "programId must be a valid UUID",
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
           result = await getPhases(programId);
         } else if (path === "/weeks" || queryParams.action === "weeks") {
           // Get weeks for a phase
@@ -434,6 +462,14 @@ export const handler = async (event, context) => {
           if (!phaseId) {
             return createErrorResponse(
               "phaseId is required",
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (!isUuid(phaseId)) {
+            return createErrorResponse(
+              "phaseId must be a valid UUID",
               400,
               "validation_error",
               requestId,
@@ -451,6 +487,14 @@ export const handler = async (event, context) => {
               requestId,
             );
           }
+          if (!isUuid(weekId)) {
+            return createErrorResponse(
+              "weekId must be a valid UUID",
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
           result = await getSessions(weekId);
         } else if (
           path === "/exercises" ||
@@ -461,6 +505,14 @@ export const handler = async (event, context) => {
           if (!sessionId) {
             return createErrorResponse(
               "sessionId is required",
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (!isUuid(sessionId)) {
+            return createErrorResponse(
+              "sessionId must be a valid UUID",
               400,
               "validation_error",
               requestId,
@@ -482,9 +534,36 @@ export const handler = async (event, context) => {
               requestId,
             );
           }
+          if (!isUuid(programId)) {
+            return createErrorResponse(
+              "programId must be a valid UUID",
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (
+            queryParams.date !== undefined &&
+            !isValidDateString(queryParams.date)
+          ) {
+            return createErrorResponse(
+              "date must be a valid date string",
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
           result = await getCurrentWeek(programId, queryParams.date);
         } else if (queryParams.id) {
           // Get single program
+          if (!isUuid(queryParams.id)) {
+            return createErrorResponse(
+              "id must be a valid UUID",
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
           if (queryParams.full === "true") {
             result = await getFullProgram(queryParams.id);
           } else {
@@ -518,7 +597,7 @@ export const handler = async (event, context) => {
           error,
         );
         return createErrorResponse(
-          error.message || "Failed to fetch training programs",
+          "Failed to fetch training programs",
           500,
           "server_error",
           requestId,

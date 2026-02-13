@@ -1,6 +1,76 @@
 import nodemailer from "nodemailer";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PROVIDERS = new Set(["auto", "gmail", "sendgrid", "smtp"]);
+
+function resolveTransport(provider = "auto") {
+  const targetProvider = (provider || "auto").toLowerCase();
+  if (!PROVIDERS.has(targetProvider)) {
+    return { error: "provider must be one of: auto, gmail, sendgrid, smtp" };
+  }
+
+  const useGmail =
+    (targetProvider === "auto" || targetProvider === "gmail") &&
+    process.env.GMAIL_EMAIL &&
+    process.env.GMAIL_APP_PASSWORD;
+  if (useGmail) {
+    return {
+      transporter: nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.GMAIL_EMAIL,
+          pass: process.env.GMAIL_APP_PASSWORD,
+        },
+      }),
+      providerName: "Gmail",
+    };
+  }
+
+  const useSendgrid =
+    (targetProvider === "auto" || targetProvider === "sendgrid") &&
+    process.env.SENDGRID_API_KEY;
+  if (useSendgrid) {
+    return {
+      transporter: nodemailer.createTransport({
+        service: "SendGrid",
+        auth: {
+          user: "apikey",
+          pass: process.env.SENDGRID_API_KEY,
+        },
+      }),
+      providerName: "SendGrid",
+    };
+  }
+
+  const useSmtp =
+    (targetProvider === "auto" || targetProvider === "smtp") &&
+    process.env.SMTP_HOST &&
+    process.env.SMTP_USER &&
+    process.env.SMTP_PASS;
+  if (useSmtp) {
+    return {
+      transporter: nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT, 10) || 587,
+        secure: process.env.SMTP_SECURE === "true",
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      }),
+      providerName: "SMTP",
+    };
+  }
+
+  return { configured: false };
+}
 
 // Test email endpoint
 export const handler = async (event, context) =>
@@ -8,8 +78,8 @@ export const handler = async (event, context) =>
     functionName: "test-email",
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
-    requireAuth: false,
-    handler: async (evt) => {
+    requireAuth: true,
+    handler: async (evt, _context, { userId, requestId }) => {
       try {
         let bodyData = {};
         try {
@@ -18,62 +88,42 @@ export const handler = async (event, context) =>
           return handleValidationError("Invalid JSON in request body");
         }
 
-        const { email, provider: _provider = "smtp" } = bodyData;
+        const { email, provider = "auto" } = bodyData;
 
-        if (!email) {
+        if (typeof email !== "string" || email.trim().length === 0) {
           return handleValidationError("email is required");
         }
+        if (!EMAIL_REGEX.test(email)) {
+          return handleValidationError("email must be a valid email address");
+        }
 
-    // Test email configuration
-    let transporter;
-    let providerName = "Unknown";
+        const role = await getUserRole(userId);
+        if (!["admin", "coach"].includes(role || "")) {
+          return createErrorResponse(
+            "Only admin/coach users can send test emails",
+            403,
+            "authorization_error",
+          );
+        }
 
-    try {
-      if (process.env.GMAIL_EMAIL && process.env.GMAIL_APP_PASSWORD) {
-        transporter = nodemailer.createTransporter({
-          service: "gmail",
-          auth: {
-            user: process.env.GMAIL_EMAIL,
-            pass: process.env.GMAIL_APP_PASSWORD,
-          },
-        });
-        providerName = "Gmail";
-      } else if (process.env.SENDGRID_API_KEY) {
-        transporter = nodemailer.createTransporter({
-          service: "SendGrid",
-          auth: {
-            user: "apikey",
-            pass: process.env.SENDGRID_API_KEY,
-          },
-        });
-        providerName = "SendGrid";
-      } else if (
-        process.env.SMTP_HOST &&
-        process.env.SMTP_USER &&
-        process.env.SMTP_PASS
-      ) {
-        transporter = nodemailer.createTransporter({
-          host: process.env.SMTP_HOST,
-          port: parseInt(process.env.SMTP_PORT) || 587,
-          secure: process.env.SMTP_SECURE === "true",
-          auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-          },
-        });
-        providerName = "SMTP";
-          } else {
-            return {
-              statusCode: 200,
-              body: JSON.stringify({
-                configured: false,
-                message:
-                  "No email service configured. Please check your environment variables.",
-                instructions:
-                  "Add GMAIL_EMAIL + GMAIL_APP_PASSWORD or SENDGRID_API_KEY or SMTP credentials to .env file",
-              }),
-            };
+        // Test email configuration
+        let transporter;
+        let providerName = "Unknown";
+
+        try {
+          const resolvedTransport = resolveTransport(provider);
+          if (resolvedTransport.error) {
+            return handleValidationError(resolvedTransport.error);
           }
+          if (!resolvedTransport.configured && !resolvedTransport.transporter) {
+            return createErrorResponse(
+              "No email service configured. Add GMAIL, SENDGRID, or SMTP credentials.",
+              503,
+              "service_unavailable",
+            );
+          }
+          transporter = resolvedTransport.transporter;
+          providerName = resolvedTransport.providerName;
 
           // Test connection
           await transporter.verify();
@@ -148,40 +198,31 @@ Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
 
           const result = await transporter.sendMail(mailOptions);
 
-          return {
-            statusCode: 200,
-            body: JSON.stringify({
+          return createSuccessResponse(
+            {
               success: true,
               configured: true,
               provider: providerName,
               message: `Test email sent successfully via ${providerName}!`,
               messageId: result.messageId,
               testEmail: email,
-            }),
-          };
+            },
+            200,
+          );
         } catch (emailError) {
           console.error("Email service error:", emailError);
 
-          return {
-            statusCode: 200,
-            body: JSON.stringify({
-              configured: false,
-              error: emailError.message,
-              message: "Email service configuration issue",
-              troubleshooting: {
-                gmail: "Check GMAIL_EMAIL and GMAIL_APP_PASSWORD",
-                sendgrid: "Check SENDGRID_API_KEY",
-                smtp: "Check SMTP_HOST, SMTP_USER, SMTP_PASS",
-              },
-            }),
-          };
+          return createErrorResponse(
+            "Email service configuration issue",
+            502,
+            "email_service_error",
+            requestId,
+          );
         }
       } catch (error) {
         console.error("Test email error:", error);
 
-        return createErrorResponse("Internal server error", 500, "server_error", {
-          details: error.message,
-        });
+        return createErrorResponse("Internal server error", 500, "server_error", requestId);
       }
     },
   });

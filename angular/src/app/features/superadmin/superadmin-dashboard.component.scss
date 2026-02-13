@@ -4,7 +4,6 @@
 // ============================================================================
 
 @use "styles/mixins" as *;
-@include stat-block;
 
 .dashboard-content {
   padding: var(--space-6);
@@ -20,16 +19,9 @@
   text-decoration: none;
 }
 
-/* Stats Grid */
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
   margin-bottom: var(--space-6);
 }
-
-// .stat-card p-card padding REMOVED - use app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md
 
 .stat-content {
   display: flex;
@@ -67,28 +59,6 @@
   color: var(--color-status-info);
 }
 
-// .stat-info/.stat-value/.stat-label REMOVED
-// Use .stat-block classes from card-shell instead
-// @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
-
-/* Card Header - REMOVED (use app-card-shell component)
-   @see docs/CARD_SHELL_CONTRACT.md */
-
-/* Loading State */
-.loading-state {
-  text-align: center;
-  padding: var(--space-8);
-  color: var(--color-text-secondary);
-}
-
-.loading-state i {
-  font-size: var(--ds-font-size-3xl);
-  margin-bottom: var(--space-3);
-}
-
-/* .empty-state REMOVED - use .card-empty-state from card-shell
-   @see docs/CARD_SHELL_CONTRACT.md §8 */
-
 /* Approvals List */
 .approvals-list {
   display: flex;
@@ -104,9 +74,6 @@
   overflow: hidden;
   transition: border-color var(--transition-base) var(--ease-standard);
 }
-
-// .approval-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .approval-card.team {
   border-left: var(--space-1) solid var(--color-status-warning);
@@ -236,9 +203,6 @@
     background var(--transition-fast);
 }
 
-// .action-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
-
 .action-card i {
   font-size: var(--ds-font-size-2xl);
 }
@@ -288,10 +252,8 @@
   padding: var(--space-2);
   color: var(--color-text-muted);
   transition: color var(--transition-base) var(--ease-standard);
-}
 
-.modal-close:hover {
-  color: var(--color-text-primary);
+  @include ds-hover-state(transparent, $color: var(--color-text-primary));
 }
 
 .modal-body {
@@ -312,14 +274,8 @@
   resize: vertical;
 }
 
-.modal-body textarea:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-  border-color: var(--ds-primary-green);
-}
-
-.modal-body textarea:focus:not(:focus-visible) {
-  outline: none;
+.modal-body textarea {
+  @include ds-focus-ring($border-color: var(--ds-primary-green));
 }
 
 .modal-footer {

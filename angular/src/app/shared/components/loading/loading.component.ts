@@ -8,7 +8,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
 /**
  * Unified Loading Component - Angular 21 Premium Edition
  *
- * Replaces both legacy app-loading and app-loading-state.
+ * Unified loading indicator with spinner, skeleton, and overlay variants.
  * Uses Angular 21 signals and premium skeleton loaders.
  */
 @Component({

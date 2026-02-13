@@ -105,7 +105,7 @@
 .intensity-indicator {
   width: var(--space-3);
   height: var(--space-3);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 }
 
 .intensity-indicator.intensity-low {
@@ -160,7 +160,7 @@
 .timeline-marker {
   width: var(--space-10);
   height: var(--space-10);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;

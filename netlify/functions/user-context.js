@@ -24,6 +24,12 @@ async function getUserContext(userId) {
       .single();
 
     if (userError) {
+      if (userError.code === "PGRST116") {
+        const notFoundError = new Error("User not found");
+        notFoundError.code = "not_found";
+        notFoundError.statusCode = 404;
+        throw notFoundError;
+      }
       console.error("Error fetching user data:", userError);
       throw userError;
     }
@@ -173,12 +179,12 @@ async function getUserContext(userId) {
 
     return {
       userId: userData.id,
-      role: userData.role || "player",
+      role: teamRole || "player",
       position: userData.position || null,
       teamRole,
       bodyMetrics: {
-        height: userData.height || null,
-        weight: userData.weight || null,
+        height: userData.height_cm || null,
+        weight: userData.weight_kg || null,
         lastUpdated: userData.updated_at || null,
       },
       injuries: (injuries || []).map((injury) => ({
@@ -215,7 +221,6 @@ async function getUserContext(userId) {
       },
     };
   } catch (error) {
-    console.error("Error in getUserContext:", error);
     throw error;
   }
 }
@@ -231,6 +236,9 @@ export const handler = async (event, context) => {
         const result = await getUserContext(userId);
         return createSuccessResponse(result);
       } catch (error) {
+        if (error?.statusCode === 404 || error?.code === "not_found") {
+          return createErrorResponse("User not found", 404, "not_found", requestId);
+        }
         console.error("[user-context] Unexpected handler error:", error);
         return createErrorResponse(
           "Failed to fetch user context",

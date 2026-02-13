@@ -1,22 +1,18 @@
 // ============================================================================
 // stats-grid.component Styles
-// MATCHES Player Dashboard stat cards EXACTLY
-// Cross-referenced with player-dashboard.component.ts lines 577-667
+// Uses .stat-block from primitives/_dashboard.scss; adds responsive overrides.
 // ============================================================================
 
-// Grid layout - matches Dashboard .stats-overview EXACTLY
 @use "styles/mixins" as *;
-@include stat-block;
 
 .stats-overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
-  gap: var(--space-3); // Dashboard: var(--space-3) = 0.calc(var(--size-200) * 6)
+  gap: var(--space-3);
   width: 100%;
   max-width: 100%;
 }
 
-// Card styling - matches Dashboard .stat-card
 .stat-card {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -28,21 +24,17 @@
     transform: translateY(-var(--border-1));
     box-shadow: var(--shadow-md);
   }
-
-  // PrimeNG card overrides moved to _exceptions.scss (DS-EXC-027)
 }
 
-// Content layout - matches Dashboard .stat-card-content
 .stat-card-content {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  flex-wrap: nowrap; // Keep items in a row
+  flex-wrap: nowrap;
 }
 
-// Icon container - matches Dashboard .stat-icon
 .stat-icon {
-  width: var(--space-10); // 2.5rem
+  width: var(--space-10);
   height: var(--space-10);
   min-width: var(--space-10);
   border-radius: var(--radius-md);
@@ -53,7 +45,6 @@
   flex-shrink: 0;
 }
 
-// Icon color variants - matches Dashboard icon classes
 .icon-primary {
   background: rgba(var(--ds-primary-green-rgb), 0.08);
   color: var(--color-brand-primary);
@@ -74,8 +65,6 @@
   color: var(--color-status-info);
 }
 
-// Stats details container - matches Dashboard .stat-details
-// min-width prevents excessive squeezing in auto-fit grids (avoids mid-word breaks)
 .stat-details {
   display: flex;
   flex-direction: column;
@@ -84,32 +73,18 @@
   gap: var(--space-1);
 }
 
-// Value text - matches Dashboard .stat-block__value
 .stat-block__value {
-  font-size: var(--ds-font-size-2xl); // 1.5rem
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-  line-height: var(--ds-line-height-tight);
   overflow-wrap: break-word;
 }
 
-// Label text - matches Dashboard .stat-block__label
-// word-break: normal prevents mid-word breaks (e.g. "Rec over y Scor e")
 .stat-block__label {
-  font-size: var(--ds-font-size-xs); // 0.8125rem
-  font-weight: var(--ds-font-weight-regular);
-  color: var(--color-text-muted);
-  line-height: var(--ds-line-height-normal);
-  letter-spacing: var(--ds-letter-spacing-caption);
-  text-transform: var(--ds-text-transform-uppercase);
   overflow-wrap: break-word;
   word-break: normal;
 }
 
-// Tag styling - matches Dashboard .stat-tag
 .stat-tag {
   font-size: var(--ds-font-size-sm);
-  padding: var(--space-2) var(--space-3); /* 0.5rem 0.calc(var(--size-200) * 6) for breathing room */
+  padding: var(--space-2) var(--space-3);
   line-height: var(--ds-line-height-h1);
 }
 
@@ -126,7 +101,7 @@
   }
 
   .stat-block__value {
-    font-size: var(--ds-font-size-xl);
+    font-size: var(--stat-block-value-compact);
   }
 }
 
@@ -168,17 +143,17 @@
   }
 
   .stat-icon {
-    width: var(--space-9); // 2.25rem
+    width: var(--space-9);
     height: var(--space-9);
     min-width: var(--space-9);
     font-size: var(--ds-font-size-sm);
   }
 
   .stat-block__value {
-    font-size: var(--ds-font-size-md);
+    font-size: var(--stat-block-value-sm);
   }
 
   .stat-block__label {
-    font-size: var(--ds-font-size-xs);
+    font-size: var(--stat-block-label-compact);
   }
 }

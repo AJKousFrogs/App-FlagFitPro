@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .import-dataset-container {
   background: var(--surface-primary);
   padding: var(--space-6);
@@ -175,11 +177,9 @@
   font-family: var(--font-family-mono);
 }
 
-.form-input:focus-visible,
-.form-textarea:focus-visible {
-  outline: none;
-  border-color: var(--color-brand-primary);
-  box-shadow: var(--shadow-focus);
+.form-input,
+.form-textarea {
+  @include ds-input-focus($color: var(--color-brand-primary));
 }
 
 .form-helper {

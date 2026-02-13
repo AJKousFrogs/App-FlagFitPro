@@ -21,6 +21,78 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 
+const VALID_NOTIFICATION_STATUSES = new Set([
+  "unread",
+  "read",
+  "actioned",
+  "dismissed",
+]);
+const BOOLEAN_SETTING_FIELDS = new Set([
+  "restrict_supplement_topics",
+  "restrict_weight_training",
+  "restrict_high_intensity",
+  "restrict_nutrition_advice",
+  "require_parent_approval_programs",
+  "require_parent_approval_supplements",
+  "use_simplified_language",
+  "include_parent_cc",
+]);
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_ID_LENGTH = 200;
+
+function parseBoundedInt(rawValue, fieldName, { min = 0, max = 200 } = {}) {
+  if (rawValue === undefined || rawValue === null || rawValue === "") {
+    return null;
+  }
+  if (!/^\d+$/.test(String(rawValue))) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(String(rawValue), 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+function parseJsonObjectBody(rawBody) {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    const error = new Error("Invalid JSON");
+    error.code = "invalid_json";
+    throw error;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+}
+
+function parseOptionalDate(rawValue, fieldName) {
+  if (rawValue === undefined || rawValue === null || rawValue === "") {
+    return null;
+  }
+  if (typeof rawValue !== "string") {
+    throw new Error(`${fieldName} must be a valid date`);
+  }
+  const parsed = new Date(rawValue);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error(`${fieldName} must be a valid date`);
+  }
+  return rawValue;
+}
+
+function parseRequiredId(rawValue, fieldName) {
+  if (typeof rawValue !== "string" || rawValue.trim().length === 0) {
+    throw new Error(`${fieldName} must be a non-empty string`);
+  }
+  if (rawValue.trim().length > MAX_ID_LENGTH) {
+    throw new Error(`${fieldName} is too long`);
+  }
+  return rawValue.trim();
+}
+
 // =====================================================
 // HELPER FUNCTIONS
 // =====================================================
@@ -339,6 +411,9 @@ async function getParentNotifications(parentId, options = {}) {
  */
 async function updateNotification(notificationId, parentId, updates) {
   const { status, action_taken, action_notes } = updates;
+  if (!VALID_NOTIFICATION_STATUSES.has(status)) {
+    throw new Error("Invalid notification status");
+  }
 
   const updateData = { status };
   if (status === "read") {
@@ -356,10 +431,13 @@ async function updateNotification(notificationId, parentId, updates) {
     .eq("id", notificationId)
     .eq("parent_id", parentId)
     .select()
-    .single();
+    .maybeSingle();
 
-  if (error) {
+  if (error || !data) {
     console.error("[Parent Dashboard] Error updating notification:", error);
+    if (!data) {
+      throw new Error("Notification not found");
+    }
     throw error;
   }
 
@@ -415,6 +493,25 @@ async function processApprovalDecision(
   decision,
   notes = null,
 ) {
+  const { data: existing, error: existingError } = await supabaseAdmin
+    .from("approval_requests")
+    .select("id, status")
+    .eq("id", approvalId)
+    .eq("approver_id", parentId)
+    .eq("approver_type", "parent")
+    .maybeSingle();
+
+  if (existingError) {
+    console.error("[Parent Dashboard] Error loading approval request:", existingError);
+    throw existingError;
+  }
+  if (!existing) {
+    throw new Error("Approval request not found");
+  }
+  if (existing.status !== "pending") {
+    throw new Error("Approval request has already been processed");
+  }
+
   const { data, error } = await supabaseAdmin
     .from("approval_requests")
     .update({
@@ -424,11 +521,16 @@ async function processApprovalDecision(
     })
     .eq("id", approvalId)
     .eq("approver_id", parentId)
+    .eq("approver_type", "parent")
+    .eq("status", "pending")
     .select()
-    .single();
+    .maybeSingle();
 
-  if (error) {
+  if (error || !data) {
     console.error("[Parent Dashboard] Error processing approval:", error);
+    if (!data) {
+      throw new Error("Approval request has already been processed");
+    }
     throw error;
   }
 
@@ -577,6 +679,26 @@ rateLimitType: rateLimitType,
           resourceId &&
           subResource === "activity"
         ) {
+          const options = event.queryStringParameters || {};
+          const parsedLimit = parseBoundedInt(options.limit, "limit", {
+            min: 1,
+            max: 200,
+          });
+          const parsedOffset = parseBoundedInt(options.offset, "offset", {
+            min: 0,
+            max: 10000,
+          });
+          const dateFrom = parseOptionalDate(options.date_from, "date_from");
+          const dateTo = parseOptionalDate(options.date_to, "date_to");
+          if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
+            return createErrorResponse(
+              "date_from must be on or before date_to",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
           // Verify parent has access and can view AI chats
           const { isParent, links } = await verifyParentStatus(
             userId,
@@ -601,12 +723,11 @@ rateLimitType: rateLimitType,
             );
           }
 
-          const options = event.queryStringParameters || {};
           const activity = await getChildActivityFeed(resourceId, {
-            limit: parseInt(options.limit) || 50,
-            offset: parseInt(options.offset) || 0,
-            dateFrom: options.date_from,
-            dateTo: options.date_to,
+            limit: parsedLimit ?? 50,
+            offset: parsedOffset ?? 0,
+            dateFrom,
+            dateTo,
           });
 
           return createSuccessResponse(
@@ -618,10 +739,29 @@ rateLimitType: rateLimitType,
         // GET /api/parent-dashboard/notifications - Get notifications
         if (method === "GET" && resource === "notifications" && !resourceId) {
           const options = event.queryStringParameters || {};
+          const parsedLimit = parseBoundedInt(options.limit, "limit", {
+            min: 1,
+            max: 200,
+          });
+          const parsedOffset = parseBoundedInt(options.offset, "offset", {
+            min: 0,
+            max: 10000,
+          });
+          if (
+            options.status !== undefined &&
+            !VALID_NOTIFICATION_STATUSES.has(options.status)
+          ) {
+            return createErrorResponse(
+              "Invalid notification status",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
           const notifications = await getParentNotifications(userId, {
             status: options.status,
-            limit: parseInt(options.limit) || 50,
-            offset: parseInt(options.offset) || 0,
+            limit: parsedLimit ?? 50,
+            offset: parsedOffset ?? 0,
           });
 
           // Also get unread count
@@ -643,17 +783,7 @@ rateLimitType: rateLimitType,
 
         // PATCH /api/parent-dashboard/notifications/:id - Update notification
         if (method === "PATCH" && resource === "notifications" && resourceId) {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
-              requestId,
-            );
-          }
+          const body = parseJsonObjectBody(event.body);
 
           const notification = await updateNotification(
             resourceId,
@@ -674,17 +804,7 @@ rateLimitType: rateLimitType,
 
         // PATCH /api/parent-dashboard/approvals/:id - Process approval
         if (method === "PATCH" && resource === "approvals" && resourceId) {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
-              requestId,
-            );
-          }
+          const body = parseJsonObjectBody(event.body);
 
           if (
             !body.decision ||
@@ -692,7 +812,7 @@ rateLimitType: rateLimitType,
           ) {
             return createErrorResponse(
               "Decision must be 'approved' or 'denied'",
-              400,
+              422,
               "validation_error",
               requestId,
             );
@@ -738,17 +858,7 @@ rateLimitType: rateLimitType,
             );
           }
 
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
-              requestId,
-            );
-          }
+          const body = parseJsonObjectBody(event.body);
 
           // Only allow updating specific fields
           const allowedFields = [
@@ -766,8 +876,38 @@ rateLimitType: rateLimitType,
           const updates = {};
           for (const field of allowedFields) {
             if (body[field] !== undefined) {
+              if (
+                BOOLEAN_SETTING_FIELDS.has(field) &&
+                typeof body[field] !== "boolean"
+              ) {
+                return createErrorResponse(
+                  `${field} must be a boolean`,
+                  422,
+                  "validation_error",
+                  requestId,
+                );
+              }
+              if (
+                field === "max_session_duration_minutes" &&
+                (!Number.isInteger(body[field]) || body[field] <= 0)
+              ) {
+                return createErrorResponse(
+                  "max_session_duration_minutes must be a positive integer",
+                  422,
+                  "validation_error",
+                  requestId,
+                );
+              }
               updates[field] = body[field];
             }
+          }
+          if (Object.keys(updates).length === 0) {
+            return createErrorResponse(
+              "No valid settings fields provided",
+              422,
+              "validation_error",
+              requestId,
+            );
           }
 
           const settings = await updateYouthSettings(
@@ -780,14 +920,30 @@ rateLimitType: rateLimitType,
 
         // POST /api/parent-dashboard/link - Request link to child
         if (method === "POST" && resource === "link") {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
+          const body = parseJsonObjectBody(event.body);
+
+          if (
+            body.youth_email !== undefined &&
+            (typeof body.youth_email !== "string" || !EMAIL_REGEX.test(body.youth_email))
+          ) {
             return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
+              "youth_email must be a valid email address",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
+          if (
+            body.relationship !== undefined &&
+            (typeof body.relationship !== "string" ||
+              body.relationship.trim().length === 0 ||
+              body.relationship.trim().length > 50)
+          ) {
+            return createErrorResponse(
+              "relationship must be a non-empty string up to 50 characters",
+              422,
+              "validation_error",
               requestId,
             );
           }
@@ -795,7 +951,7 @@ rateLimitType: rateLimitType,
           if (!body.youth_email && !body.youth_id) {
             return createErrorResponse(
               "youth_email or youth_id is required",
-              400,
+              422,
               "validation_error",
               requestId,
             );
@@ -803,6 +959,18 @@ rateLimitType: rateLimitType,
 
           // Find youth by email or ID
           let youthId = body.youth_id;
+          if (youthId !== undefined) {
+            try {
+              youthId = parseRequiredId(youthId, "youth_id");
+            } catch (validationError) {
+              return createErrorResponse(
+                validationError.message,
+                422,
+                "validation_error",
+                requestId,
+              );
+            }
+          }
           if (!youthId && body.youth_email) {
             const { data: user } = await supabaseAdmin
               .from("users")
@@ -820,19 +988,48 @@ rateLimitType: rateLimitType,
             }
             youthId = user.id;
           }
+          if (youthId === userId) {
+            return createErrorResponse(
+              "Cannot create a parent link to your own account",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (body.youth_id) {
+            const { data: youth, error: youthError } = await supabaseAdmin
+              .from("users")
+              .select("id")
+              .eq("id", youthId)
+              .maybeSingle();
+            if (youthError) {
+              throw youthError;
+            }
+            if (!youth) {
+              return createErrorResponse(
+                "Youth account not found",
+                404,
+                "not_found",
+                requestId,
+              );
+            }
+          }
 
           // Check for existing link
-          const { data: existingLink } = await supabaseAdmin
+          const { data: existingLink, error: existingLinkError } = await supabaseAdmin
             .from("parent_guardian_links")
             .select("id, status")
             .eq("parent_id", userId)
             .eq("youth_id", youthId)
-            .single();
+            .maybeSingle();
+          if (existingLinkError) {
+            throw existingLinkError;
+          }
 
           if (existingLink) {
             return createErrorResponse(
               `Link already exists with status: ${existingLink.status}`,
-              400,
+              409,
               "link_exists",
               requestId,
             );
@@ -872,6 +1069,44 @@ rateLimitType: rateLimitType,
           requestId,
         );
       } catch (error) {
+        if (error.code === "invalid_json") {
+          return createErrorResponse(
+            "Invalid JSON",
+            400,
+            "invalid_json",
+            requestId,
+          );
+        }
+        if (
+          error.message?.includes("Invalid notification status") ||
+          error.message?.includes("must be a boolean") ||
+          error.message?.includes("positive integer") ||
+          error.message?.includes("Request body must be an object") ||
+          error.message?.includes("must be an integer between")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+        if (error.message?.includes("already been processed")) {
+          return createErrorResponse(
+            error.message,
+            409,
+            "already_processed",
+            requestId,
+          );
+        }
+        if (error.message?.includes("not found")) {
+          return createErrorResponse(
+            error.message,
+            404,
+            "not_found",
+            requestId,
+          );
+        }
         console.error("[Parent Dashboard] Error:", error);
         return createErrorResponse(
           error.message || "Failed to process request",

@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
@@ -40,6 +40,8 @@ import {
 } from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { formatDateISO } from "../../shared/utils/date.utils";
 import { getCountryFlag } from "../../core/constants";
 import { TournamentsDataService } from "./services/tournaments-data.service";
@@ -170,8 +172,9 @@ const toDateOrNull = (value: unknown): Date | null => {
     ButtonComponent,
     IconButtonComponent,
     StatusTagComponent,
+    EmptyStateComponent,
+    AppLoadingComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
       <p-confirmDialog></p-confirmDialog>
@@ -205,24 +208,18 @@ const toDateOrNull = (value: unknown): Date | null => {
 
         <!-- Loading State -->
         @if (tournamentService.loading()) {
-          <div class="loading-state">
-            <i class="pi pi-spin pi-spinner icon-2xl"></i>
-            <p>Loading tournaments...</p>
-          </div>
+          <app-loading message="Loading tournaments..." variant="inline" />
         }
 
         <!-- Empty State -->
         @if (!tournamentService.loading() && tournaments().length === 0) {
-          <div class="empty-state">
-            <i class="pi pi-calendar-times icon-3xl icon-secondary"></i>
-            <h3>No Tournaments Scheduled</h3>
-            <p>There are no tournaments in the system yet.</p>
-            @if (isAuthenticated()) {
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
-                >Add First Tournament</app-button
-              >
-            }
-          </div>
+          <app-empty-state
+            icon="pi-calendar-times"
+            heading="No Tournaments Scheduled"
+            description="There are no tournaments in the system yet."
+            [actionLabel]="isAuthenticated() ? 'Add First Tournament' : null"
+            [actionHandler]="isAuthenticated() ? openCreateDialogHandler : null"
+          />
         }
 
         <!-- Tournament Tabs -->
@@ -1555,7 +1552,7 @@ export class TournamentsComponent implements OnInit {
   private authService = inject(AuthService);
   private teamMembershipService = inject(TeamMembershipService);
   private tournamentsDataService = inject(TournamentsDataService);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
   private confirmDialog = inject(ConfirmDialogService);
   private logger = inject(LoggerService);
   private elementRef = inject(ElementRef);
@@ -1569,6 +1566,8 @@ export class TournamentsComponent implements OnInit {
   // Dialog state
   showDialog = false;
   editingTournament: Tournament | null = null;
+
+  readonly openCreateDialogHandler = (): void => this.openCreateDialog();
 
   // Availability dialogs
   showAvailabilityDialog = false;
@@ -1828,22 +1827,17 @@ export class TournamentsComponent implements OnInit {
   async saveTournament(): Promise<void> {
     // Validate required fields
     if (!this.formData.name || !this.formData.start_date_obj) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Validation Error",
-        detail: "Tournament name and start date are required",
-      });
+      this.toastService.error(
+        "Tournament name and start date are required",
+        "Validation Error",
+      );
       return;
     }
 
     // Convert date objects to strings
     const startDate = this.formatDate(this.formData.start_date_obj);
     if (!startDate) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Start date is required",
-      });
+      this.toastService.error("Start date is required");
       return;
     }
 
@@ -1880,20 +1874,17 @@ export class TournamentsComponent implements OnInit {
     }
 
     if (success) {
-      this.messageService.add({
-        severity: "success",
-        summary: "Success",
-        detail: this.editingTournament
+      this.toastService.success(
+        this.editingTournament
           ? "Tournament updated"
           : "Tournament created",
-      });
+        "Success",
+      );
       this.closeDialog();
     } else {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: this.tournamentService.error() || "Failed to save tournament",
-      });
+      this.toastService.error(
+        this.tournamentService.error() || "Failed to save tournament",
+      );
     }
   }
 
@@ -1912,17 +1903,9 @@ export class TournamentsComponent implements OnInit {
       tournament.id,
     );
     if (success) {
-      this.messageService.add({
-        severity: "success",
-        summary: "Deleted",
-        detail: "Tournament deleted successfully",
-      });
+      this.toastService.success("Tournament deleted successfully", "Deleted");
     } else {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to delete tournament",
-      });
+      this.toastService.error("Failed to delete tournament");
     }
   }
 
@@ -2087,22 +2070,14 @@ export class TournamentsComponent implements OnInit {
 
       if (error) throw error;
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Saved",
-        detail: "Your availability has been updated",
-      });
+      this.toastService.success("Your availability has been updated", "Saved");
 
       this.showAvailabilityDialog = false;
     } catch (error: unknown) {
       this.logger.error("Error saving availability:", error);
       const message =
         error instanceof Error ? error.message : "Failed to save availability";
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: message,
-      });
+      this.toastService.error(message);
     } finally {
       this.savingAvailability.set(false);
     }
@@ -2257,11 +2232,10 @@ export class TournamentsComponent implements OnInit {
 
   async sendAvailabilityReminders(): Promise<void> {
     // Would integrate with email service
-    this.messageService.add({
-      severity: "info",
-      summary: "Reminders Sent",
-      detail: "Reminder emails have been sent to players who haven't responded",
-    });
+    this.toastService.info(
+      "Reminder emails have been sent to players who haven't responded",
+      "Reminders Sent",
+    );
   }
 
   exportAvailabilityReport(): void {
@@ -2366,11 +2340,7 @@ export class TournamentsComponent implements OnInit {
 
       if (error) throw error;
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Saved",
-        detail: "Budget has been updated",
-      });
+      this.toastService.success("Budget has been updated", "Saved");
 
       // Reload budget to get calculated fields
       await this.loadTournamentBudget(this.selectedTournament.id);
@@ -2379,11 +2349,7 @@ export class TournamentsComponent implements OnInit {
       this.logger.error("Error saving budget:", error);
       const message =
         error instanceof Error ? error.message : "Failed to save budget";
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: message,
-      });
+      this.toastService.error(message);
     } finally {
       this.savingBudget.set(false);
     }

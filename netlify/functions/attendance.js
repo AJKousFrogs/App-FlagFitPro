@@ -6,6 +6,31 @@ import { checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
 // Netlify Function: Attendance API
 // Handles practice attendance tracking, events, and absence requests
 
+const VALID_ATTENDANCE_STATUSES = new Set([
+  "present",
+  "absent",
+  "late",
+  "excused",
+]);
+const VALID_ABSENCE_REVIEW_STATUSES = new Set(["approved", "rejected"]);
+
+const assertActiveTeamPlayer = async (teamId, playerId) => {
+  const { data: member, error } = await supabaseAdmin
+    .from("team_members")
+    .select("id")
+    .eq("team_id", teamId)
+    .eq("user_id", playerId)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+  if (!member) {
+    throw new Error("player_id must reference an active team player in this team");
+  }
+};
+
 // Get team events with optional filters
 const getTeamEvents = async (userId, queryParams) => {
   checkEnvVars();
@@ -41,7 +66,11 @@ const getTeamEvents = async (userId, queryParams) => {
   }
 
   if (limit) {
-    query = query.limit(parseInt(limit));
+    const parsedLimit = Number.parseInt(limit, 10);
+    if (!Number.isInteger(parsedLimit) || parsedLimit <= 0) {
+      throw new Error("limit must be a positive integer");
+    }
+    query = query.limit(parsedLimit);
   }
 
   const { data, error } = await query;
@@ -226,6 +255,14 @@ const recordAttendance = async (userId, attendanceData) => {
   checkEnvVars();
 
   const { event_id, player_id, status, notes } = attendanceData;
+  if (!event_id || !player_id || !status) {
+    throw new Error("event_id, player_id, and status are required");
+  }
+  if (!VALID_ATTENDANCE_STATUSES.has(status)) {
+    throw new Error(
+      `Invalid attendance status. Allowed: ${Array.from(VALID_ATTENDANCE_STATUSES).join(", ")}`,
+    );
+  }
 
   // Get event to verify access
   const { data: event, error: eventError } = await supabaseAdmin
@@ -247,6 +284,7 @@ const recordAttendance = async (userId, attendanceData) => {
   if (!["coach", "admin"].includes(role) && player_id !== userId) {
     throw new Error("Players can only record their own attendance");
   }
+  await assertActiveTeamPlayer(event.team_id, player_id);
 
   // Upsert attendance record
   const { data, error } = await supabaseAdmin
@@ -283,6 +321,9 @@ const bulkRecordAttendance = async (userId, bulkData) => {
   checkEnvVars();
 
   const { event_id, records } = bulkData;
+  if (!event_id || !Array.isArray(records) || records.length === 0) {
+    throw new Error("event_id and non-empty records array are required");
+  }
 
   const { data: event, error: eventError } = await supabaseAdmin
     .from("team_events")
@@ -299,7 +340,22 @@ const bulkRecordAttendance = async (userId, bulkData) => {
     throw new Error("Only coaches and admins can bulk record attendance");
   }
 
-  const attendanceRecords = records.map((record) => ({
+  const dedupedRecords = new Map();
+  for (const record of records) {
+    if (!record?.player_id || !record?.status) {
+      throw new Error("Each attendance record must include player_id and status");
+    }
+    if (!VALID_ATTENDANCE_STATUSES.has(record.status)) {
+      throw new Error(
+        `Invalid attendance status. Allowed: ${Array.from(VALID_ATTENDANCE_STATUSES).join(", ")}`,
+      );
+    }
+    await assertActiveTeamPlayer(event.team_id, record.player_id);
+    dedupedRecords.set(record.player_id, record);
+  }
+
+  const normalizedRecords = [...dedupedRecords.values()];
+  const attendanceRecords = normalizedRecords.map((record) => ({
     event_id,
     player_id: record.player_id,
     status: record.status,
@@ -321,7 +377,7 @@ const bulkRecordAttendance = async (userId, bulkData) => {
   }
 
   // Update stats for all affected players
-  for (const record of records) {
+  for (const record of normalizedRecords) {
     await updatePlayerAttendanceStats(record.player_id, event.team_id);
   }
 
@@ -432,6 +488,12 @@ const submitAbsenceRequest = async (userId, requestData) => {
   checkEnvVars();
 
   const { event_id, reason } = requestData;
+  if (!event_id) {
+    throw new Error("event_id is required");
+  }
+  if (!reason || !String(reason).trim()) {
+    throw new Error("reason is required");
+  }
 
   const { data: event, error: eventError } = await supabaseAdmin
     .from("team_events")
@@ -448,6 +510,21 @@ const submitAbsenceRequest = async (userId, requestData) => {
     throw new Error("Not authorized");
   }
 
+  const { data: existingPending, error: existingError } = await supabaseAdmin
+    .from("absence_requests")
+    .select("id")
+    .eq("event_id", event_id)
+    .eq("player_id", userId)
+    .eq("status", "pending")
+    .maybeSingle();
+
+  if (existingError) {
+    throw existingError;
+  }
+  if (existingPending) {
+    throw new Error("An absence request is already pending for this event");
+  }
+
   const { data, error } = await supabaseAdmin
     .from("absence_requests")
     .insert({
@@ -460,6 +537,9 @@ const submitAbsenceRequest = async (userId, requestData) => {
     .single();
 
   if (error) {
+    if (error.code === "23505") {
+      throw new Error("An absence request is already pending for this event");
+    }
     throw error;
   }
   return data;
@@ -495,6 +575,11 @@ const getPendingAbsenceRequests = async (userId, teamId) => {
 // Review absence request
 const reviewAbsenceRequest = async (userId, requestId, status) => {
   checkEnvVars();
+  if (!VALID_ABSENCE_REVIEW_STATUSES.has(status)) {
+    throw new Error(
+      `Invalid review status. Allowed: ${Array.from(VALID_ABSENCE_REVIEW_STATUSES).join(", ")}`,
+    );
+  }
 
   // Get the request
   const { data: request, error: fetchError } = await supabaseAdmin
@@ -528,10 +613,14 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
       reviewed_at: new Date().toISOString(),
     })
     .eq("id", requestId)
+    .eq("status", "pending")
     .select()
-    .single();
+    .maybeSingle();
 
-  if (error) {
+  if (error || !data) {
+    if (!data) {
+      throw new Error("Absence request has already been reviewed");
+    }
     throw error;
   }
 
@@ -588,7 +677,7 @@ export const handler = async (event, context) => {
 
         if (event.httpMethod === "POST" && path === "events") {
           const result = await createEvent(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         const eventMatch = path.match(/^events\/([^/]+)$/);
@@ -615,12 +704,12 @@ export const handler = async (event, context) => {
 
         if (event.httpMethod === "POST" && path === "record") {
           const result = await recordAttendance(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         if (event.httpMethod === "POST" && path === "record/bulk") {
           const result = await bulkRecordAttendance(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         // Stats endpoints
@@ -646,7 +735,7 @@ export const handler = async (event, context) => {
         // Absence request endpoints
         if (event.httpMethod === "POST" && path === "absence-request") {
           const result = await submitAbsenceRequest(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         if (event.httpMethod === "GET" && path === "absence-requests") {
@@ -677,6 +766,20 @@ export const handler = async (event, context) => {
           error.message.includes("permission")
         ) {
           return createErrorResponse(error.message, 403, "forbidden");
+        }
+        if (
+          error.message.includes("required") ||
+          error.message.includes("Invalid") ||
+          error.message.includes("must be") ||
+          error.message.includes("active team player") ||
+          error.message.includes("already pending") ||
+          error.message.includes("already been reviewed")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            ErrorType.VALIDATION,
+          );
         }
         throw error;
       }

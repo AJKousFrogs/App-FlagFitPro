@@ -44,6 +44,29 @@ const PROGRAM_IDS = {
   WRDB: "22222222-2222-2222-2222-222222222222", // WR/DB Speed & Agility Program 2025-2026
 };
 
+const VALID_STATUSES = new Set(["active", "paused", "completed", "inactive"]);
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isUuid(value) {
+  return (
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      value,
+    )
+  );
+}
+
+function isValidDateString(value) {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const parsed = new Date(value);
+  return !Number.isNaN(parsed.getTime());
+}
+
 /**
  * Position mapping from UI values to modifier keys
  * Maps onboarding position values to position_exercise_modifiers.position values
@@ -169,20 +192,28 @@ async function handlePost(event, context, { userId }) {
   } catch {
     return handleValidationError("Invalid JSON body");
   }
+  if (!isPlainObject(body)) {
+    return handleValidationError("Request body must be an object");
+  }
 
   const { program_id, start_date, status = "active", force = false } = body;
 
   // Validate program_id
-  if (!program_id) {
-    return handleValidationError("program_id is required");
+  if (!isUuid(program_id)) {
+    return handleValidationError("program_id must be a valid UUID");
   }
 
   // Validate status
-  const validStatuses = ["active", "paused", "completed", "inactive"];
-  if (!validStatuses.includes(status)) {
+  if (!VALID_STATUSES.has(status)) {
     return handleValidationError(
-      `status must be one of: ${validStatuses.join(", ")}`,
+      `status must be one of: ${Array.from(VALID_STATUSES).join(", ")}`,
     );
+  }
+  if (start_date !== undefined && start_date !== null && !isValidDateString(start_date)) {
+    return handleValidationError("start_date must be a valid date string");
+  }
+  if (typeof force !== "boolean") {
+    return handleValidationError("force must be a boolean");
   }
 
   // Check if program exists
@@ -357,6 +388,9 @@ async function handlePut(event, context, { userId }) {
   if (!assignmentId || assignmentId === "player-programs") {
     return handleValidationError("Assignment ID required in path");
   }
+  if (!isUuid(assignmentId)) {
+    return handleValidationError("Assignment ID must be a valid UUID");
+  }
 
   // Parse body
   let body;
@@ -365,8 +399,34 @@ async function handlePut(event, context, { userId }) {
   } catch {
     return handleValidationError("Invalid JSON body");
   }
+  if (!isPlainObject(body)) {
+    return handleValidationError("Request body must be an object");
+  }
 
   const { status, end_date, program_id, notes, modifications } = body;
+  if (
+    status === undefined &&
+    end_date === undefined &&
+    program_id === undefined &&
+    notes === undefined &&
+    modifications === undefined
+  ) {
+    return handleValidationError("No valid update fields provided");
+  }
+  if (program_id !== undefined && !isUuid(program_id)) {
+    return handleValidationError("program_id must be a valid UUID");
+  }
+  if (end_date !== undefined && end_date !== null && !isValidDateString(end_date)) {
+    return handleValidationError("end_date must be a valid date string");
+  }
+  if (notes !== undefined && notes !== null) {
+    if (typeof notes !== "string" || notes.length > 2000) {
+      return handleValidationError("notes must be a string up to 2000 characters");
+    }
+  }
+  if (modifications !== undefined && modifications !== null && !isPlainObject(modifications)) {
+    return handleValidationError("modifications must be an object");
+  }
 
   // Fetch existing assignment
   const { data: existing, error: fetchError } = await supabase
@@ -498,10 +558,9 @@ async function handlePut(event, context, { userId }) {
   };
 
   if (status !== undefined) {
-    const validStatuses = ["active", "paused", "completed", "inactive"];
-    if (!validStatuses.includes(status)) {
+    if (!VALID_STATUSES.has(status)) {
       return handleValidationError(
-        `status must be one of: ${validStatuses.join(", ")}`,
+        `status must be one of: ${Array.from(VALID_STATUSES).join(", ")}`,
       );
     }
     updates.status = status;

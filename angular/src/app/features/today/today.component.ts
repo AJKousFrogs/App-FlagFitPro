@@ -36,12 +36,12 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 
 import { ProgressBar } from "primeng/progressbar";
-import { Skeleton } from "primeng/skeleton";
+import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
 
 
 import { from, type Observable } from "rxjs";
@@ -143,7 +143,7 @@ interface QuickFormData {
     Dialog,
     
     ProgressBar,
-    Skeleton,
+    SkeletonLoaderComponent,
 
     MainLayoutComponent,
     ProtocolBlockComponent,
@@ -152,7 +152,6 @@ interface QuickFormData {
     AppBannerComponent,
     AcwrBaselineComponent,
   ],
-  providers: [MessageService],
   animations: [
     trigger("fadeSlideIn", [
       transition(":enter", [
@@ -580,37 +579,6 @@ interface QuickFormData {
       }
 
       /* --------------------------------------------------------------------------
-       EMPTY STATE
-       -------------------------------------------------------------------------- */
-      .empty-state {
-        text-align: center;
-        padding: var(--space-8) var(--space-4);
-        background: var(--surface-tertiary);
-        border: var(--border-2) dashed var(--color-border-secondary);
-        border-radius: var(--radius-lg);
-      }
-
-      .empty-state i {
-        font-size: var(--ds-font-size-3rem); /* 48px - hero/empty state icon */
-        color: var(--color-text-muted);
-        opacity: 0.5;
-        margin-bottom: var(--space-3);
-      }
-
-      .empty-state h3 {
-        margin: 0 0 var(--space-2);
-        font-size: var(--ds-font-size-md);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-text-primary);
-      }
-
-      .empty-state p {
-        margin: 0 0 var(--space-4);
-        font-size: var(--ds-font-size-sm);
-        color: var(--color-text-secondary);
-      }
-
-      /* --------------------------------------------------------------------------
        SKELETON LOADING
        -------------------------------------------------------------------------- */
       .skeleton-grid {
@@ -870,7 +838,7 @@ interface QuickFormData {
 
       /* --------------------------------------------------------------------------
        QUICK CHECK-IN MODAL - Styles moved to global exceptions file
-       See: angular/src/assets/styles/overrides/_exceptions.scss (DS-EXC-036b)
+       See: angular/src/assets/styles/overrides/_component-overrides.scss (DS-EXC-036b)
        -------------------------------------------------------------------------- */
 
       /* --------------------------------------------------------------------------
@@ -912,7 +880,7 @@ interface QuickFormData {
         width: var(--space-2);
         height: var(--space-2);
         background: var(--color-brand-primary);
-        border-radius: 50%;
+        border-radius: var(--radius-circle);
         animation: confetti-fall 2s ease-out forwards;
         animation-delay: var(--delay);
         transform: translateX(var(--x));
@@ -1069,16 +1037,6 @@ interface QuickFormData {
         color: var(--color-text-secondary);
         text-transform: var(--ds-text-transform-uppercase);
         letter-spacing: var(--ds-letter-spacing-wide);
-      }
-
-      /* --------------------------------------------------------------------------
-       EMPTY STATE ACTIONS
-       -------------------------------------------------------------------------- */
-      .empty-state-actions {
-        display: flex;
-        gap: var(--space-3);
-        justify-content: center;
-        flex-wrap: wrap;
       }
 
       /* --------------------------------------------------------------------------
@@ -1305,7 +1263,7 @@ export class TodayComponent {
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly headerService = inject(HeaderService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
   private readonly dataSourceService = inject(DataSourceService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(ApiService);
@@ -2057,11 +2015,10 @@ export class TodayComponent {
   // EVENT HANDLERS
   // ============================================================================
   onWellnessComplete(result: { readinessScore: number }): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Wellness Logged",
-      detail: `Readiness: ${result.readinessScore}%. Let's optimize your session.`,
-    });
+    this.toastService.success(
+      `Readiness: ${result.readinessScore}%. Let's optimize your session.`,
+      "Wellness Logged",
+    );
     // Refresh protocol data after check-in
     this.refreshProtocol();
   }
@@ -2165,22 +2122,17 @@ export class TodayComponent {
 
         if (typedResponse?.success) {
           this.showQuickCheckin.set(false);
-          this.messageService.add({
-            severity: "success",
-            summary: "Quick Check-in Complete",
-            detail: `Readiness: ${readiness}%. Ready to train!`,
-          });
+          this.toastService.success(
+            `Readiness: ${readiness}%. Ready to train!`,
+            "Quick Check-in Complete",
+          );
           // Announce to screen readers
           this.screenReaderAnnouncer.announceSuccess(
             `Quick check-in saved. Your readiness is ${readiness} percent.`,
           );
           this.refreshProtocol();
         } else {
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to save check-in. Please try again.",
-          });
+          this.toastService.error("Failed to save check-in. Please try again.");
           // Announce error to screen readers
           this.screenReaderAnnouncer.announceAssertive(
             "Error: Failed to save check-in. Please try again.",
@@ -2190,11 +2142,7 @@ export class TodayComponent {
       },
       error: (err: unknown) => {
         this.logger.error("Failed to save quick checkin", err);
-        this.messageService.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to save check-in. Please try again.",
-        });
+        this.toastService.error("Failed to save check-in. Please try again.");
         this.isSavingQuickCheckin.set(false);
       },
     });
@@ -2263,11 +2211,7 @@ export class TodayComponent {
         if (response?.success && response.data) {
           targetSignal.set(response.data as Partial<DailyProtocol>);
           if (toast) {
-            this.messageService.add({
-              severity: "success",
-              summary: toast.success,
-              detail: toast.detail,
-            });
+            this.toastService.success(toast.detail, toast.success);
             // Announce success to screen readers
             this.screenReaderAnnouncer.announceSuccess(toast.detail);
           }
@@ -2277,11 +2221,7 @@ export class TodayComponent {
       error: (err) => {
         if (toast) {
           this.logger.error("Protocol request failed", err);
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: "Request failed. Please try again.",
-          });
+          this.toastService.error("Request failed. Please try again.");
           // Announce error to screen readers
           this.screenReaderAnnouncer.announceAssertive(
             "Error: Request failed. Please try again.",
@@ -2388,11 +2328,7 @@ export class TodayComponent {
 
       default:
         this.logger.warn(`Unknown CTA action: ${actionId}`);
-        this.messageService.add({
-          severity: "warning",
-          summary: "Action Not Available",
-          detail: "This action is not yet implemented",
-        });
+        this.toastService.warn("This action is not yet implemented", "Action Not Available");
     }
   }
 
@@ -2425,23 +2361,13 @@ export class TodayComponent {
       protocol.coach_alert_message || "Coach has updated your plan.";
     const coachName = protocol.modified_by_coach_name || "Your coach";
 
-    this.messageService.add({
-      severity: "info",
-      summary: `Coach Alert from ${coachName}`,
-      detail: alertMessage,
-      life: 10000, // Show for 10 seconds
-    });
+    this.toastService.info(alertMessage, `Coach Alert from ${coachName}`, 10000);
 
     // If there's a coach note, show that too
     if (protocol.coach_note?.content) {
       const noteContent = protocol.coach_note.content;
       setTimeout(() => {
-        this.messageService.add({
-          severity: "info",
-          summary: `Coach Note from ${coachName}`,
-          detail: noteContent,
-          life: 10000,
-        });
+        this.toastService.info(noteContent, `Coach Note from ${coachName}`, 10000);
       }, 500);
     }
   }
@@ -2451,11 +2377,7 @@ export class TodayComponent {
     const protocol = this.protocolJson();
 
     if (!vm || !protocol || !protocol.id) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Unable to acknowledge alert. Please refresh the page.",
-      });
+      this.toastService.error("Unable to acknowledge alert. Please refresh the page.");
       return;
     }
 
@@ -2475,38 +2397,22 @@ export class TodayComponent {
       .subscribe({
         next: (response) => {
           if (response?.success) {
-            this.messageService.add({
-              severity: "success",
-              summary: "Alert Acknowledged",
-              detail: "You can now proceed with training",
-            });
+            this.toastService.success("You can now proceed with training", "Alert Acknowledged");
             // Refresh protocol to update state
             this.loadTodayData();
           } else {
-            this.messageService.add({
-              severity: "error",
-              summary: "Error",
-              detail: response?.error || "Failed to acknowledge alert",
-            });
+            this.toastService.error(response?.error || "Failed to acknowledge alert");
           }
         },
         error: (err) => {
           this.logger.error("Failed to acknowledge coach alert", err);
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to acknowledge alert. Please try again.",
-          });
+          this.toastService.error("Failed to acknowledge alert. Please try again.");
         },
       });
   }
 
   private showCoachNoteDialog(): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Coach Note",
-      detail: "Coach note view coming soon",
-    });
+    this.toastService.info("Coach note view coming soon", "Coach Note");
   }
 
   // ============================================================================

@@ -59,9 +59,6 @@
   margin-bottom: var(--space-6);
 }
 
-// .empty-state REMOVED - use .card-empty-state from card-shell
-// @see docs/CARD_SHELL_CONTRACT.md §8
-
 @include respond-to(md) {
   .charts-grid {
     grid-template-columns: 1fr;
@@ -273,7 +270,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
 
-  // PrimeNG field override moved to _exceptions.scss (DS-EXC-048)
+  // PrimeNG field override moved to _component-overrides.scss (DS-EXC-048)
 }
 
 .help-text {
@@ -527,47 +524,6 @@
 .summary-value {
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-}
-
-.no-data-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  margin-bottom: var(--space-6);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-  color: var(--color-text-secondary);
-
-  i {
-    color: var(--ds-primary-green);
-  }
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-8);
-  text-align: center;
-
-  .empty-icon {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-4);
-  }
-
-  h4 {
-    margin: 0 0 var(--space-2) 0;
-    color: var(--color-text-primary);
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-text-secondary);
-    max-width: var(--content-max-width-xs);
-  }
 }
 
 @include respond-to(md) {

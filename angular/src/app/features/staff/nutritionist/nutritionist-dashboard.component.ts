@@ -29,6 +29,8 @@ import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §30
 interface AthleteNutritionData {
@@ -141,6 +143,8 @@ interface TournamentNutritionBrief {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    AppLoadingComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -158,10 +162,7 @@ interface TournamentNutritionBrief {
         </app-page-header>
 
         @if (loading()) {
-          <div class="loading-state">
-            <i class="pi pi-spin pi-spinner"></i>
-            <span>Loading nutrition data...</span>
-          </div>
+          <app-loading message="Loading nutrition data..." variant="inline" />
         } @else {
           <!-- Overview Stats -->
           <div class="stats-grid">
@@ -589,14 +590,11 @@ interface TournamentNutritionBrief {
                       }
                     </div>
                   } @else {
-                    <div class="empty-state">
-                      <i class="pi pi-calendar-times"></i>
-                      <h4>No Upcoming Tournaments</h4>
-                      <p>
-                        Create a tournament nutrition brief when a competition
-                        is scheduled.
-                      </p>
-                    </div>
+                    <app-empty-state
+                      icon="pi-calendar-times"
+                      heading="No Upcoming Tournaments"
+                      description="Create a tournament nutrition brief when a competition is scheduled."
+                    />
                   }
                 </div>
               </p-tabpanel>

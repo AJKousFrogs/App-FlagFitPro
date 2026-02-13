@@ -58,31 +58,17 @@
     background-color var(--ds-state-transition),
     color var(--ds-state-transition),
     transform var(--ds-state-transition);
-}
 
-// Desktop-only hover
-@media (hover: hover) and (pointer: fine) {
-  .sidebar-close-btn:hover {
-    background: var(--color-border-secondary);
-    color: var(--color-text-primary);
-  }
+  @include ds-focus-ring;
+  @include ds-hover-state(
+    var(--color-border-secondary),
+    $color: var(--color-text-primary)
+  );
 }
 
 // Active state for touch
 .sidebar-close-btn:active {
   transform: scale(0.95);
-}
-
-// Consistent focus ring
-.sidebar-close-btn:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.25);
-}
-
-.sidebar-close-btn:focus:not(:focus-visible) {
-  outline: none;
-  box-shadow: none;
 }
 
 .sidebar-logo {
@@ -99,15 +85,15 @@
     background var(--transition-fast);
   min-height: var(--header-height, var(--ds-font-size-var(--header-height)));
   text-decoration: none;
+
+  @include ds-hover-state(var(--surface-secondary));
 }
 
-.sidebar-logo:hover {
-  background: var(--surface-secondary);
-}
-
-.sidebar-logo:hover .logo-icon-wrapper {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-2);
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-logo:hover .logo-icon-wrapper {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-2);
+  }
 }
 
 .logo-icon-wrapper {
@@ -239,26 +225,12 @@
     background var(--transition-fast),
     color var(--transition-fast);
   min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) WCAG */
-}
 
-// Desktop-only hover
-@media (hover: hover) and (pointer: fine) {
-  .me-group-header:hover {
-    background: var(--surface-secondary);
-    color: var(--color-text-primary);
-  }
-}
-
-// Consistent focus ring
-.me-group-header:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.25);
-}
-
-.me-group-header:focus:not(:focus-visible) {
-  outline: none;
-  box-shadow: none;
+  @include ds-focus-ring;
+  @include ds-hover-state(
+    var(--surface-secondary),
+    $color: var(--color-text-primary)
+  );
 }
 
 .me-group-icon {

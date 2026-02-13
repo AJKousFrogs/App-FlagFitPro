@@ -5,20 +5,6 @@
   @include page-container(var(--content-max-width-2xl));
 }
 
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--ds-spacing-3xl);
-  gap: var(--ds-spacing-md);
-  color: var(--text-color-secondary);
-
-  i {
-    font-size: var(--ds-font-size-2xl);
-  }
-}
-
 // Stats Grid
 .stats-grid {
   @include stats-grid;
@@ -62,8 +48,6 @@
     }
   }
 
-  // .stat-content/.stat-value/.stat-label REMOVED
-  // Use .stat-block classes from card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 }
 
@@ -153,8 +137,6 @@
     gap: var(--ds-spacing-lg);
   }
 
-  // .rtp-card .p-card-header REMOVED
-  // Use app-card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md
 
   .rtp-header {
@@ -215,7 +197,7 @@
         align-items: center;
         gap: var(--ds-spacing-xs);
 
-        // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-045)
+        // PrimeNG progressbar override moved to _component-overrides.scss (DS-EXC-045)
       }
     }
   }
@@ -254,7 +236,7 @@
 .rtp-section .phase-number {
   width: var(--space-8);
   height: var(--space-8);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -306,8 +288,6 @@
       border-color: var(--orange-300);
     }
 
-    // .p-card-header REMOVED - use app-card-shell
-    // @see docs/CARD_SHELL_CONTRACT.md
   }
 
   .risk-header {
@@ -397,7 +377,7 @@
       align-items: center;
       gap: var(--ds-spacing-sm);
 
-      /* .p-progressbar override: DS-EXC-005 in _exceptions.scss */
+      /* .p-progressbar override: DS-EXC-005 in _component-overrides.scss */
 
       span {
         font-size: var(--ds-font-size-md);
@@ -467,8 +447,6 @@
       border: var(--border-1) solid var(--surface-border);
       min-width: var(--input-min-width-md);
 
-      // .stat-value/.stat-label REMOVED
-      // Use .stat-block classes from card-shell instead
       // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
     }
   }
@@ -712,9 +690,6 @@
     }
   }
 }
-
-// Empty state - REMOVED (use .card-empty-state from card-shell)
-// @see docs/CARD_SHELL_CONTRACT.md §8
 
 // Responsive
 @include respond-to(md) {

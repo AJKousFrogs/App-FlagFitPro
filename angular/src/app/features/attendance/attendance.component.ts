@@ -36,6 +36,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { getInitials } from "../../shared/utils/format.utils";
 
 type EventType =
@@ -71,6 +72,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     DatePipe,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -146,10 +148,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             </ng-template>
 
             @if (filteredEvents().length === 0) {
-              <div class="empty-state">
-                <i class="pi pi-calendar-times"></i>
-                <p>No upcoming events scheduled</p>
-              </div>
+              <app-empty-state
+                icon="pi-calendar-times"
+                heading="No upcoming events scheduled"
+                description="Events will appear here when practices, games, or meetings are scheduled."
+              />
             } @else {
               <div class="events-list">
                 @for (event of filteredEvents(); track event.id) {

@@ -15,9 +15,6 @@
     box-shadow var(--transition-fast) var(--ease-standard);
 }
 
-// .exercise-card:hover REMOVED - use app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
-
 .exercise-card.completed {
   background: var(--color-status-success-subtle);
   border-color: var(--color-status-success-light);
@@ -101,10 +98,8 @@
   justify-content: center;
   color: var(--color-text-secondary);
   transition: background-color var(--transition-fast) var(--ease-standard);
-}
 
-.expand-toggle:hover {
-  background: var(--primitive-neutral-200);
+  @include ds-hover-state(var(--primitive-neutral-200));
 }
 
 /* Body */

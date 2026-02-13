@@ -55,6 +55,16 @@ const MACRO_RATIOS = {
     carbs: 0.6, // 60% - High carb for endurance
     fat: 0.2, // 20% - Essential fats
   },
+  aggressive_cut: {
+    protein: 0.35, // mirrors cutting ratio with larger calorie deficit
+    carbs: 0.35,
+    fat: 0.3,
+  },
+  aggressive_bulk: {
+    protein: 0.25, // mirrors bulking ratio with larger calorie surplus
+    carbs: 0.55,
+    fat: 0.2,
+  },
 };
 
 // Calorie adjustments by goal
@@ -77,6 +87,158 @@ const PROTEIN_PER_KG = {
   cutting: 2.0, // Higher protein when cutting
   bulking: 1.8, // Muscle building
 };
+
+const NUTRITION_PLAN_FORBIDDEN_FIELDS = new Set([
+  "id",
+  "user_id",
+  "is_active",
+  "created_at",
+  "updated_at",
+]);
+const VALID_SEXES = new Set(["male", "female"]);
+const VALID_ACTIVITY_LEVELS = new Set(Object.keys(ACTIVITY_MULTIPLIERS));
+const VALID_GOALS = new Set(Object.keys(CALORIE_ADJUSTMENTS));
+const VALID_TRAINING_TIMES = new Set(["morning", "afternoon", "evening"]);
+
+function createValidationError(message) {
+  const error = new Error(message);
+  error.isValidation = true;
+  return error;
+}
+
+function parseOptionalBoundedInt(value, { min, max, field }) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+function parseOptionalBoundedFloat(value, { min, max, field }) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) {
+    throw createValidationError(`${field} must be a number between ${min} and ${max}`);
+  }
+  const parsed = Number.parseFloat(normalized);
+  if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
+    throw createValidationError(`${field} must be a number between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+function parseBooleanQuery(value, field) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const normalized = String(value).trim().toLowerCase();
+  if (normalized === "true") {
+    return true;
+  }
+  if (normalized === "false") {
+    return false;
+  }
+  throw createValidationError(`${field} must be true or false`);
+}
+
+function parseJsonObjectBody(rawBody) {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    const error = new Error("Invalid JSON body");
+    error.code = "invalid_json";
+    throw error;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw createValidationError("Request body must be an object");
+  }
+  return parsed;
+}
+
+function normalizeNutritionInputs(input) {
+  const weightKg = parseOptionalBoundedFloat(input.weightKg, {
+    min: 20,
+    max: 300,
+    field: "weightKg",
+  });
+  const heightCm = parseOptionalBoundedFloat(input.heightCm, {
+    min: 100,
+    max: 260,
+    field: "heightCm",
+  });
+  const age = parseOptionalBoundedFloat(input.age, {
+    min: 8,
+    max: 100,
+    field: "age",
+  });
+
+  const normalizedSex = String(input.sex || "")
+    .trim()
+    .toLowerCase();
+
+  if (
+    weightKg === undefined ||
+    heightCm === undefined ||
+    age === undefined ||
+    normalizedSex.length === 0
+  ) {
+    throw createValidationError(
+      "Missing required fields: weightKg, heightCm, age, sex",
+    );
+  }
+
+  if (!VALID_SEXES.has(normalizedSex)) {
+    throw createValidationError("sex must be one of: male, female");
+  }
+
+  const activityLevel = input.activityLevel ?? "moderate";
+  if (!VALID_ACTIVITY_LEVELS.has(activityLevel)) {
+    throw createValidationError(
+      `activityLevel must be one of: ${Array.from(VALID_ACTIVITY_LEVELS).join(", ")}`,
+    );
+  }
+
+  const goal = input.goal ?? "performance";
+  if (!VALID_GOALS.has(goal)) {
+    throw createValidationError(
+      `goal must be one of: ${Array.from(VALID_GOALS).join(", ")}`,
+    );
+  }
+
+  const trainingTime = input.trainingTime ?? "afternoon";
+  if (!VALID_TRAINING_TIMES.has(trainingTime)) {
+    throw createValidationError(
+      `trainingTime must be one of: ${Array.from(VALID_TRAINING_TIMES).join(", ")}`,
+    );
+  }
+
+  const isTrainingDay =
+    input.isTrainingDay === undefined ? true : input.isTrainingDay;
+  if (typeof isTrainingDay !== "boolean") {
+    throw createValidationError("isTrainingDay must be a boolean");
+  }
+
+  return {
+    weightKg,
+    heightCm,
+    age,
+    sex: normalizedSex,
+    activityLevel,
+    goal,
+    trainingTime,
+    isTrainingDay,
+  };
+}
 
 // =============================================================================
 // CALCULATION FUNCTIONS
@@ -316,16 +478,11 @@ function calculateNutritionProfile(athleteData) {
     heightCm,
     age,
     sex,
-    activityLevel = "moderate",
-    goal = "performance",
-    trainingTime = "afternoon",
-    isTrainingDay = true,
-  } = athleteData;
-
-  // Validate required fields
-  if (!weightKg || !heightCm || !age || !sex) {
-    throw new Error("Missing required fields: weightKg, heightCm, age, sex");
-  }
+    activityLevel,
+    goal,
+    trainingTime,
+    isTrainingDay,
+  } = normalizeNutritionInputs(athleteData || {});
 
   // Calculate BMR
   const bmr = calculateBMR(weightKg, heightCm, age, sex);
@@ -441,6 +598,11 @@ async function getNutritionPlan(userId) {
  * Create or update nutrition plan
  */
 async function saveNutritionPlan(userId, planData) {
+  const sanitizedPlanData = { ...(planData || {}) };
+  for (const field of NUTRITION_PLAN_FORBIDDEN_FIELDS) {
+    delete sanitizedPlanData[field];
+  }
+
   // Deactivate existing plans
   await supabaseAdmin
     .from("nutrition_plans")
@@ -451,7 +613,7 @@ async function saveNutritionPlan(userId, planData) {
     .from("nutrition_plans")
     .insert({
       user_id: userId,
-      ...planData,
+      ...sanitizedPlanData,
       is_active: true,
       created_at: new Date().toISOString(),
     })
@@ -498,15 +660,26 @@ async function getMealTemplates(filters = {}) {
  * Search USDA foods
  */
 async function searchFoods(searchQuery, limit = 20) {
+  const trimmedQuery = String(searchQuery || "").trim();
+  if (!/^[a-zA-Z0-9\s\-']{1,100}$/.test(trimmedQuery)) {
+    const error = new Error(
+      "Search query can only include letters, numbers, spaces, apostrophes, and hyphens",
+    );
+    error.isValidation = true;
+    throw error;
+  }
+
+  const safeLimit = Number.isInteger(limit) && limit > 0 && limit <= 100 ? limit : 20;
+
   const { data, error } = await supabaseAdmin
     .from("usda_foods")
     .select(
       "id, fdc_id, description, food_category, energy_kcal, protein_g, carbohydrates_g, fat_g, serving_size, serving_size_unit",
     )
     .or(
-      `description.ilike.%${searchQuery}%,search_keywords.cs.{${searchQuery.toLowerCase()}}`,
+      `description.ilike.%${trimmedQuery}%,search_keywords.cs.{${trimmedQuery.toLowerCase()}}`,
     )
-    .limit(limit);
+    .limit(safeLimit);
 
   if (error) {
     throw error;
@@ -528,8 +701,14 @@ async function handleRequest(event, _context, { userId }) {
   let body = {};
   if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
     try {
-      body = JSON.parse(event.body);
-    } catch {
+      body = parseJsonObjectBody(event.body);
+    } catch (error) {
+      if (error.code === "invalid_json") {
+        return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+      }
+      if (error.isValidation) {
+        return createErrorResponse(error.message, 422, "validation_error");
+      }
       return createErrorResponse("Invalid JSON body", 400, "invalid_json");
     }
   }
@@ -582,7 +761,6 @@ async function handleRequest(event, _context, { userId }) {
           saved,
           profile: calculatedProfile,
         },
-        null,
         201,
       );
     }
@@ -603,19 +781,37 @@ async function handleRequest(event, _context, { userId }) {
     // Create nutrition plan
     if (event.httpMethod === "POST" && path === "plan") {
       const plan = await saveNutritionPlan(userId, body);
-      return createSuccessResponse(plan, null, 201);
+      return createSuccessResponse(plan, 201);
     }
 
     // Get meal templates
     if (event.httpMethod === "GET" && path === "meals") {
       const params = event.queryStringParameters || {};
+      let maxCalories;
+      let minProtein;
+      try {
+        maxCalories = parseOptionalBoundedInt(params.maxCalories, {
+          min: 1,
+          max: 10000,
+          field: "maxCalories",
+        });
+        minProtein = parseOptionalBoundedInt(params.minProtein, {
+          min: 0,
+          max: 500,
+          field: "minProtein",
+        });
+      } catch (validationError) {
+        return createErrorResponse(
+          validationError.message || "Invalid meals filter parameter",
+          422,
+          "validation_error",
+        );
+      }
       const meals = await getMealTemplates({
         category: params.category,
         mealType: params.mealType,
-        maxCalories: params.maxCalories
-          ? parseInt(params.maxCalories)
-          : undefined,
-        minProtein: params.minProtein ? parseInt(params.minProtein) : undefined,
+        maxCalories,
+        minProtein,
       });
       return createSuccessResponse(meals);
     }
@@ -630,31 +826,71 @@ async function handleRequest(event, _context, { userId }) {
           "missing_query",
         );
       }
-      const foods = await searchFoods(params.q, parseInt(params.limit) || 20);
+      let limit;
+      try {
+        limit = parseOptionalBoundedInt(params.limit, {
+          min: 1,
+          max: 100,
+          field: "limit",
+        });
+      } catch (validationError) {
+        return createErrorResponse(
+          validationError.message || "limit must be an integer between 1 and 100",
+          422,
+          "validation_error",
+        );
+      }
+      const foods = await searchFoods(params.q, limit ?? 20);
       return createSuccessResponse(foods);
     }
 
     // Get hydration recommendations
     if (event.httpMethod === "GET" && path === "hydration") {
       const params = event.queryStringParameters || {};
-      const weightKg = parseFloat(params.weightKg);
-      const activityLevel = params.activityLevel || "moderate";
-      const isTrainingDay = params.trainingDay === "true";
-
-      if (!weightKg) {
-        return createErrorResponse(
-          "Weight in kg is required",
-          400,
-          "missing_weight",
+      try {
+        const weightKg = parseOptionalBoundedFloat(params.weightKg, {
+          min: 20,
+          max: 300,
+          field: "weightKg",
+        });
+        const activityLevel = params.activityLevel || "moderate";
+        const parsedTrainingDay = parseBooleanQuery(
+          params.trainingDay,
+          "trainingDay",
         );
-      }
+        const isTrainingDay = parsedTrainingDay ?? false;
 
-      const hydration = calculateHydration(
-        weightKg,
-        activityLevel,
-        isTrainingDay,
-      );
-      return createSuccessResponse(hydration);
+        if (weightKg === undefined) {
+          return createErrorResponse(
+            "weightKg is required",
+            422,
+            "validation_error",
+          );
+        }
+        if (!VALID_ACTIVITY_LEVELS.has(activityLevel)) {
+          return createErrorResponse(
+            `activityLevel must be one of: ${Array.from(VALID_ACTIVITY_LEVELS).join(", ")}`,
+            422,
+            "validation_error",
+          );
+        }
+
+        const hydration = calculateHydration(
+          weightKg,
+          activityLevel,
+          isTrainingDay,
+        );
+        return createSuccessResponse(hydration);
+      } catch (validationError) {
+        if (validationError.isValidation) {
+          return createErrorResponse(
+            validationError.message,
+            422,
+            "validation_error",
+          );
+        }
+        throw validationError;
+      }
     }
 
     // Get macro ratios reference
@@ -670,6 +906,9 @@ async function handleRequest(event, _context, { userId }) {
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
     console.error("Nutrition API error:", error);
+    if (error.isValidation) {
+      return createErrorResponse(error.message, 422, "validation_error");
+    }
     throw error;
   }
 }

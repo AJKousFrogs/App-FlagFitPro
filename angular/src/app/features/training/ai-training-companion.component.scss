@@ -363,8 +363,6 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
   transition: background var(--transition-base);
-}
 
-.ai-enable-link:hover {
-  background: var(--color-brand-primary-hover);
+  @include ds-hover-state(var(--color-brand-primary-hover));
 }

@@ -8,6 +8,98 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 
+function parseJsonObjectBody(rawBody) {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    const error = new Error("Invalid JSON in request body");
+    error.code = "invalid_json";
+    throw error;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+}
+
+function parseOptionalBoundedNumber(value, { field, min, max, integer = false }) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) {
+    throw new Error(`${field} must be a number between ${min} and ${max}`);
+  }
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${field} must be a number between ${min} and ${max}`);
+  }
+  if (integer && !Number.isInteger(parsed)) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+function parseCompletionPayload(body) {
+  const sessionIdRaw = body.sessionId ?? body.session_id;
+  if (
+    sessionIdRaw === undefined ||
+    sessionIdRaw === null ||
+    String(sessionIdRaw).trim().length === 0
+  ) {
+    throw new Error("sessionId is required");
+  }
+
+  const sessionId = String(sessionIdRaw).trim();
+  const duration = parseOptionalBoundedNumber(body.duration, {
+    field: "duration",
+    min: 1,
+    max: 600,
+    integer: true,
+  });
+  const intensity = parseOptionalBoundedNumber(body.intensity, {
+    field: "intensity",
+    min: 1,
+    max: 10,
+  });
+  const rpe = parseOptionalBoundedNumber(body.rpe, {
+    field: "rpe",
+    min: 1,
+    max: 10,
+  });
+  const workload = parseOptionalBoundedNumber(body.workload, {
+    field: "workload",
+    min: 1,
+    max: 10000,
+  });
+  const notes =
+    body.notes === undefined || body.notes === null ? undefined : body.notes;
+  if (notes !== undefined && (typeof notes !== "string" || notes.length > 2000)) {
+    throw new Error("notes must be a string up to 2000 characters");
+  }
+  if (
+    body.metrics !== undefined &&
+    (body.metrics === null ||
+      typeof body.metrics !== "object" ||
+      Array.isArray(body.metrics))
+  ) {
+    throw new Error("metrics must be an object when provided");
+  }
+
+  return {
+    sessionId,
+    completionData: {
+      duration,
+      intensity,
+      workload,
+      rpe,
+      notes,
+      metrics: body.metrics,
+    },
+  };
+}
+
 /**
  * Award points for completing a training session
  * Points are based on duration and intensity
@@ -55,7 +147,7 @@ async function awardTrainingPoints(userId, duration, intensity) {
     return { points: totalPoints };
   } catch (error) {
     console.warn("[Training Complete] Could not award points:", error.message);
-    return { points: 0, error: error.message };
+    return { points: 0 };
   }
 }
 
@@ -161,21 +253,37 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       };
     }
 
-    // Calculate workload if not provided
-    // Workload = duration_minutes * intensity_level / 10
-    const duration = completionData.duration || session.duration_minutes || 60;
-    const intensity = completionData.intensity || session.intensity_level || 6;
+    // Calculate workload if not provided.
+    // Prefer explicit completion payload, then session values.
+    const duration = completionData.duration ?? session.duration_minutes ?? null;
+    const intensity =
+      completionData.intensity ?? session.intensity_level ?? null;
     const rpe =
       completionData.rpe !== undefined && completionData.rpe !== null
         ? completionData.rpe
         : session.rpe;
 
-    const workload =
+    const workloadFromPayload =
       completionData.workload !== undefined && completionData.workload !== null
         ? completionData.workload
-        : rpe !== undefined && rpe !== null
+        : null;
+    const computedWorkload =
+      workloadFromPayload !== null
+        ? workloadFromPayload
+        : rpe !== undefined && rpe !== null && duration !== null
           ? Math.round(rpe * duration)
-          : Math.round((duration * intensity) / 10);
+          : duration !== null && intensity !== null
+            ? Math.round((duration * intensity) / 10)
+            : null;
+
+    if (computedWorkload === null) {
+      return {
+        success: false,
+        statusCode: 422,
+        error:
+          "Unable to compute workload. Provide workload, or provide duration with rpe/intensity.",
+      };
+    }
 
     // Update session with completion data
     const completedAt = new Date().toISOString();
@@ -183,12 +291,12 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       status: "completed",
       completed_at: completedAt,
       updated_at: new Date().toISOString(),
-      workload,
+      workload: computedWorkload,
       // Update duration and intensity if provided
-      ...(completionData.duration && {
+      ...(completionData.duration !== undefined && {
         duration_minutes: completionData.duration,
       }),
-      ...(completionData.intensity && {
+      ...(completionData.intensity !== undefined && {
         intensity_level: completionData.intensity,
       }),
       // Store completion notes if provided
@@ -227,7 +335,11 @@ async function completeTrainingSession(userId, sessionId, completionData) {
     );
 
     // Award points for completing the session
-    const pointsResult = await awardTrainingPoints(userId, duration, intensity);
+    const pointsResult = await awardTrainingPoints(
+      userId,
+      duration || 0,
+      intensity || 0,
+    );
 
     // Create completion notification
     await createCompletionNotification(
@@ -239,7 +351,7 @@ async function completeTrainingSession(userId, sessionId, completionData) {
     return {
       success: true,
       session: updatedSession,
-      workload,
+      workload: computedWorkload,
       pointsEarned: pointsResult.points,
     };
   } catch (error) {
@@ -258,35 +370,37 @@ async function handleRequest(event, context, { userId }) {
       return createErrorResponse("Method not allowed. Use POST.", 405);
     }
 
-    // Parse request body
-    let body = {};
+    // Parse and validate request body
+    let parsedPayload;
     try {
-      body = JSON.parse(event.body || "{}");
-    } catch (_parseError) {
-      return createErrorResponse("Invalid JSON in request body", 400);
+      parsedPayload = parseCompletionPayload(parseJsonObjectBody(event.body));
+    } catch (validationError) {
+      if (validationError.code === "invalid_json") {
+        return createErrorResponse(
+          "Invalid JSON in request body",
+          400,
+          "invalid_json",
+        );
+      }
+      return createErrorResponse(
+        validationError.message,
+        422,
+        "validation_error",
+      );
     }
-
-    // Validate required fields
-    if (!body.sessionId && !body.session_id) {
-      return createErrorResponse("sessionId is required", 400);
-    }
-
-    const sessionId = body.sessionId || body.session_id;
+    const { sessionId, completionData } = parsedPayload;
 
     // Complete the session
-    const result = await completeTrainingSession(userId, sessionId, {
-      duration: body.duration,
-      intensity: body.intensity,
-      workload: body.workload,
-      rpe: body.rpe,
-      notes: body.notes,
-      metrics: body.metrics,
-    });
+    const result = await completeTrainingSession(
+      userId,
+      sessionId,
+      completionData,
+    );
 
     if (!result.success) {
       return createErrorResponse(
         result.error || "Failed to complete training session",
-        400,
+        result.statusCode || 400,
       );
     }
 

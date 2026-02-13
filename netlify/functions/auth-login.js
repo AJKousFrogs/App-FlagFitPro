@@ -43,6 +43,15 @@ export const handler = async (event, context) => {
         );
       }
 
+      if (!data?.user || !data?.session) {
+        return createErrorResponse(
+          "Login service returned an invalid response",
+          502,
+          "auth_response_invalid",
+          requestId,
+        );
+      }
+
       // Return success response with user and session data
       return createSuccessResponse(
         {

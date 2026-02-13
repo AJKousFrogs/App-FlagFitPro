@@ -55,6 +55,7 @@ import { Textarea } from "primeng/textarea";
 
 
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
@@ -110,6 +111,7 @@ interface VideoSuggestion {
     ButtonComponent,
     IconButtonComponent,
     CardShellComponent,
+    EmptyStateComponent,
     StatusTagComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -342,18 +344,11 @@ interface VideoSuggestion {
                 }
               </div>
             } @else if (mySuggestions().length === 0) {
-              <!-- Empty State -->
-              <div class="card-empty-state">
-                <div class="card-empty-state__icon">
-                  <i class="pi pi-inbox"></i>
-                </div>
-                <div class="card-empty-state__content">
-                  <p class="card-empty-state__title">No submissions yet</p>
-                  <p class="card-empty-state__text">
-                    Your submitted videos will appear here
-                  </p>
-                </div>
-              </div>
+              <app-empty-state
+                icon="pi-inbox"
+                heading="No submissions yet"
+                description="Your submitted videos will appear here"
+              />
             } @else {
               <!-- Suggestions List -->
               <div class="suggestions-list">
@@ -472,10 +467,11 @@ interface VideoSuggestion {
           </div>
 
           @if (teamApprovedVideos().length === 0) {
-            <div class="empty-state compact">
-              <i class="pi pi-video"></i>
-              <span>No team-approved videos yet</span>
-            </div>
+            <app-empty-state
+              icon="pi-video"
+              heading="No team-approved videos yet"
+              [compact]="true"
+            />
           } @else {
             <div class="approved-videos-scroll">
               @for (video of teamApprovedVideos(); track video.id) {

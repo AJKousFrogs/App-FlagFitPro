@@ -413,10 +413,8 @@
   transition:
     background-color var(--transition-fast),
     border-color var(--transition-fast);
-}
 
-.status-option:hover {
-  background: var(--surface-secondary);
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 .status-option.selected {
@@ -513,11 +511,11 @@
   transition:
     border-color var(--transition-fast),
     background-color var(--transition-fast);
-}
 
-.invitation-item:hover {
-  border-color: var(--ds-primary-green);
-  background: var(--surface-primary);
+  @include ds-hover-state(
+    var(--surface-primary),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 .invitation-item.expired {

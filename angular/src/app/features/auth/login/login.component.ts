@@ -25,6 +25,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import {
   getFormControlError,
@@ -290,7 +291,7 @@ export class LoginComponent {
         },
         error: (error: Error) => {
           this.toastService.error(
-            error.message || "Login failed. Please try again.",
+            getErrorMessage(error, "Login failed. Please try again."),
           );
           this.isLoading.set(false);
         },

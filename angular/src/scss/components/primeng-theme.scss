@@ -1063,7 +1063,7 @@
     min-height: var(--button-height-md);
 
     /* Circular design - modern & clean */
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
 
     /* Layout */
     display: inline-flex;
@@ -2412,7 +2412,7 @@
     width: var(--space-5);
     height: var(--space-5);
     margin-left: var(--space-1);
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     cursor: pointer;
     transition: background-color var(--transition-fast) var(--ease-standard);
   }
@@ -3694,7 +3694,7 @@
   width: var(--p-form-control-icon-width);
   height: var(--p-form-control-icon-width);
   min-width: var(--p-form-control-icon-width);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   color: var(--color-text-secondary);
   background: var(--surface-secondary);
   border: var(--border-1) solid var(--color-border-secondary);
@@ -3973,7 +3973,7 @@
     height: var(--button-height-md);
     min-width: var(--button-height-md);
     min-height: var(--button-height-md);
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -4028,7 +4028,7 @@
   height: var(--space-6);
   min-width: var(--space-6);
   min-height: var(--space-6);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4073,7 +4073,7 @@
   justify-content: center;
   width: var(--space-5);
   height: var(--space-5);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: transparent;
   color: var(--color-text-muted);
   cursor: pointer;

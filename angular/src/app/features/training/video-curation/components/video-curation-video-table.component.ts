@@ -92,6 +92,8 @@ import {
         [value]="videos()"
         [paginator]="true"
         [rows]="10"
+        [virtualScroll]="videos().length > 50"
+        [virtualScrollItemSize]="46"
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} videos"
         [rowsPerPageOptions]="[10, 25, 50]"

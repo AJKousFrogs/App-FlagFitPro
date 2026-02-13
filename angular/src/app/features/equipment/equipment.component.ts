@@ -37,6 +37,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 
 type ItemType =
   | "jersey"
@@ -70,6 +71,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     DatePipe,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -281,10 +283,11 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               </ng-template>
 
               @if (activeAssignments().length === 0) {
-                <div class="empty-state">
-                  <i class="pi pi-users"></i>
-                  <p>No active equipment assignments</p>
-                </div>
+                <app-empty-state
+                  icon="pi-users"
+                  heading="No active equipment assignments"
+                  description="Equipment assignments will appear here when players are assigned gear."
+                />
               } @else {
                 <p-table
                   [value]="activeAssignments()"

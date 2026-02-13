@@ -31,6 +31,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
+import { EmptyStateComponent } from "../empty-state/empty-state.component";
 
 interface BodyCompositionData {
   weight: number | null;
@@ -61,6 +62,7 @@ interface BodyCompositionData {
     
     
     InputNumber,
+    EmptyStateComponent,
   ],
   template: `
     <app-card
@@ -76,22 +78,14 @@ interface BodyCompositionData {
     >
       <!-- Empty State -->
       @if (!isLoading() && !hasData()) {
-        <div class="empty-state">
-          <i class="pi pi-scale empty-icon"></i>
-          <p class="empty-title">No measurements yet</p>
-          <p class="empty-description">
-            Log your first body composition measurement to track changes over
-            time.
-          </p>
-          <app-button
-            variant="primary"
-            size="md"
-            iconLeft="pi-plus"
-            (clicked)="openLogDialog()"
-          >
-            Log Measurement
-          </app-button>
-        </div>
+        <app-empty-state
+          icon="pi-scale"
+          heading="No measurements yet"
+          description="Log your first body composition measurement to track changes over time."
+          actionLabel="Log Measurement"
+          actionIcon="pi-plus"
+          [actionHandler]="openLogDialogHandler"
+        />
       }
 
       <!-- Data Display -->
@@ -387,6 +381,8 @@ export class BodyCompositionCardComponent implements OnInit {
   ngOnInit(): void {
     // Data is automatically loaded/refreshed by UnifiedTrainingService
   }
+
+  readonly openLogDialogHandler = (): void => this.openLogDialog();
 
   openLogDialog(): void {
     // Reset form

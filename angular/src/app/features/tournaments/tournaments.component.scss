@@ -15,19 +15,6 @@
   gap: var(--space-3);
 }
 
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-8);
-  text-align: center;
-  gap: var(--space-4);
-}
-
-// .empty-state REMOVED - use .card-empty-state from card-shell
-// @see docs/CARD_SHELL_CONTRACT.md §8
-
 .empty-season {
   grid-column: 1 / -1;
   text-align: center;
@@ -46,8 +33,6 @@
 }
 
 .tournament-card {
-  // Hover transition/transform REMOVED - use app-card-shell with state="interactive"
-  // @see docs/CARD_SHELL_CONTRACT.md §2.8
 }
 
 /* Personal tournament card styling */
@@ -427,11 +412,11 @@
     border-color var(--transition-fast),
     background-color var(--transition-fast);
   text-align: center;
-}
 
-.availability-option:hover {
-  border-color: var(--ds-primary-green);
-  background: var(--surface-secondary);
+  @include ds-hover-state(
+    var(--surface-secondary),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 .availability-option.selected {
@@ -541,8 +526,6 @@
   border: var(--border-1) solid var(--color-border-secondary);
 }
 
-// .summary-stat .stat-value/.stat-label REMOVED
-// Use .stat-block classes from card-shell instead
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 
 /* Budget Overview */
@@ -900,15 +883,13 @@
 
 /* Touch Device Optimizations */
 @media (hover: none) and (pointer: coarse) {
-  // .tournament-card:hover REMOVED - card-shell handles touch devices
-
   .availability-option,
   .header-actions button {
     min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
   }
 }
 
-/* PrimeNG override: DS-EXC-022 in _exceptions.scss (tournament-form textarea) */
+/* PrimeNG override: DS-EXC-022 in _component-overrides.scss (tournament-form textarea) */
 
 /*
  * EXCEPTION: Print Styles

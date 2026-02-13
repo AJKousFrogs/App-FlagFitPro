@@ -27,6 +27,8 @@ import { LoggerService } from "@core/services/logger.service";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { ButtonComponent } from "@shared/components/button/button.component";
+import { EmptyStateComponent } from "@shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "@shared/components/loading/loading.component";
 
 import { Select } from "primeng/select";
 
@@ -43,6 +45,8 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
     FormsModule,
     RouterModule,
     ButtonComponent,
+    EmptyStateComponent,
+    AppLoadingComponent,
     Select,
     PageHeaderComponent,
     CardShellComponent,
@@ -155,9 +159,11 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 
       <!-- Loading State -->
       @if (decisionService.isLoading()) {
-        <div class="loading-state">
-          <p>Loading decisions...</p>
-        </div>
+        <app-loading
+          [visible]="true"
+          variant="inline"
+          message="Loading decisions..."
+        />
       }
 
       <!-- Error State -->
@@ -217,12 +223,13 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
           </ng-container>
 
           @if (decisions().length === 0) {
-            <div class="empty-state">
-              <p>No decisions found</p>
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
-                >Create First Decision</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-inbox"
+              heading="No decisions found"
+              actionLabel="Create First Decision"
+              actionIcon="pi-plus"
+              [actionHandler]="openCreateDialogHandler"
+            />
           } @else {
             <div class="decisions-grid">
               @for (
@@ -327,16 +334,9 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
         gap: var(--space-4);
       }
 
-      .loading-state,
       .error-state {
         padding: var(--space-8);
         text-align: center;
-      }
-
-      .empty-state {
-        padding: var(--space-8);
-        text-align: center;
-        color: var(--color-text-secondary);
       }
 
       @media (max-width: 768px) {
@@ -442,6 +442,8 @@ export class DecisionLedgerDashboardComponent implements OnInit {
   openCreateDialog(): void {
     this.showCreateDialog.set(true);
   }
+
+  readonly openCreateDialogHandler = (): void => this.openCreateDialog();
 
   onCreateDialogVisibleChange(visible: boolean): void {
     this.showCreateDialog.set(visible);

@@ -59,6 +59,14 @@ async function handleCreateFeedback(event, userId, requestId) {
   } catch {
     return createErrorResponse("Invalid JSON", 400, "invalid_json", requestId);
   }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return createErrorResponse(
+      "Request body must be an object",
+      422,
+      "validation_error",
+      requestId,
+    );
+  }
 
   const {
     message_id,
@@ -69,10 +77,10 @@ async function handleCreateFeedback(event, userId, requestId) {
   } = body;
 
   // Validate required fields
-  if (!message_id) {
+  if (typeof message_id !== "string" || !message_id.trim()) {
     return createErrorResponse(
-      "message_id is required",
-      400,
+      "message_id is required and must be a non-empty string",
+      422,
       "validation_error",
       requestId,
     );
@@ -81,13 +89,38 @@ async function handleCreateFeedback(event, userId, requestId) {
   if (!feedback_type || !VALID_FEEDBACK_TYPES.includes(feedback_type)) {
     return createErrorResponse(
       `Invalid feedback_type. Must be one of: ${VALID_FEEDBACK_TYPES.join(", ")}`,
-      400,
+      422,
       "validation_error",
       requestId,
     );
   }
 
   try {
+    // Ensure the feedback target message belongs to the caller.
+    const { data: targetMessage, error: targetMessageError } = await supabaseAdmin
+      .from("ai_messages")
+      .select("id, user_id")
+      .eq("id", message_id)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (targetMessageError) {
+      console.error("[AI Feedback] Message ownership check error:", targetMessageError);
+      return createErrorResponse(
+        "Failed to validate message",
+        500,
+        "database_error",
+        requestId,
+      );
+    }
+    if (!targetMessage) {
+      return createErrorResponse(
+        "Not authorized to submit feedback for this message",
+        403,
+        "authorization_error",
+        requestId,
+      );
+    }
+
     // Check if user already submitted feedback for this message
     const { data: existingFeedback } = await supabaseAdmin
       .from("ai_feedback")

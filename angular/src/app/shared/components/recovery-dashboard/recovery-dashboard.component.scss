@@ -280,7 +280,7 @@
 .step-marker {
   width: var(--space-10);
   height: var(--space-10);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -361,10 +361,7 @@
   justify-content: center;
 }
 
-// PrimeNG selectbutton override moved to _exceptions.scss (DS-EXC-010)
-.category-filter {
-  // Component-specific styles remain here
-}
+// PrimeNG selectbutton: _component-overrides.scss (DS-EXC-010)
 
 /* Loading and Empty States */
 .loading-protocols,
@@ -618,7 +615,7 @@
 .step-number {
   width: var(--space-8);
   height: var(--space-8);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
   display: flex;
@@ -688,7 +685,7 @@
     flex-wrap: wrap;
   }
 
-  // PrimeNG selectbutton override moved to _exceptions.scss (DS-EXC-010)
+  // PrimeNG selectbutton override moved to _component-overrides.scss (DS-EXC-010)
 
   .detail-meta {
     flex-direction: column;

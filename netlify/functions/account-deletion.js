@@ -20,7 +20,7 @@ export const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "DELETE"],
     rateLimitType: "CREATE",
     requireAuth: true, // P0-006: Explicitly require authentication for account deletion
-    handler: async (event, context, { userId }) => {
+    handler: async (event, context, { userId, requestId }) => {
       const supabase = getSupabaseClient();
 
       // GET - Get deletion request status
@@ -34,7 +34,12 @@ export const handler = async (event, context) => {
           .single();
 
         if (error && error.code !== "PGRST116") {
-          return createErrorResponse(error.message, 500, "database_error");
+          return createErrorResponse(
+            "Failed to retrieve account deletion status",
+            500,
+            "database_error",
+            requestId,
+          );
         }
 
         if (!request) {
@@ -71,10 +76,26 @@ export const handler = async (event, context) => {
         try {
           body = JSON.parse(event.body || "{}");
         } catch {
-          return createErrorResponse("Invalid JSON body", 400, "invalid_body");
+          return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+        }
+        if (!body || typeof body !== "object" || Array.isArray(body)) {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+          );
         }
 
         const { reason, confirmDelete } = body;
+        if (reason !== undefined && reason !== null) {
+          if (typeof reason !== "string" || reason.trim().length > 1000) {
+            return createErrorResponse(
+              "reason must be a string up to 1000 characters",
+              422,
+              "validation_error",
+            );
+          }
+        }
 
         // Require explicit confirmation
         if (confirmDelete !== true) {
@@ -86,12 +107,21 @@ export const handler = async (event, context) => {
         }
 
         // Check for existing pending request
-        const { data: existingRequest } = await supabase
+        const { data: existingRequest, error: existingRequestError } =
+          await supabase
           .from("account_deletion_requests")
           .select("id, status")
           .eq("user_id", userId)
           .eq("status", "pending")
-          .single();
+          .maybeSingle();
+        if (existingRequestError) {
+          return createErrorResponse(
+            "Failed to verify existing deletion request",
+            500,
+            "database_error",
+            requestId,
+          );
+        }
 
         if (existingRequest) {
           return createErrorResponse(
@@ -111,7 +141,12 @@ export const handler = async (event, context) => {
         );
 
         if (error) {
-          return createErrorResponse(error.message, 500, "database_error");
+          return createErrorResponse(
+            "Failed to initiate account deletion",
+            500,
+            "database_error",
+            requestId,
+          );
         }
 
         // DO NOT revoke sessions during grace period (GDPR Article 17)
@@ -136,12 +171,21 @@ export const handler = async (event, context) => {
       // DELETE - Cancel pending deletion request
       if (event.httpMethod === "DELETE") {
         // Get the pending request
-        const { data: pendingRequest } = await supabase
+        const { data: pendingRequest, error: pendingRequestError } =
+          await supabase
           .from("account_deletion_requests")
           .select("id")
           .eq("user_id", userId)
           .eq("status", "pending")
-          .single();
+          .maybeSingle();
+        if (pendingRequestError) {
+          return createErrorResponse(
+            "Failed to retrieve pending deletion request",
+            500,
+            "database_error",
+            requestId,
+          );
+        }
 
         if (!pendingRequest) {
           return createErrorResponse(
@@ -161,7 +205,12 @@ export const handler = async (event, context) => {
         );
 
         if (error) {
-          return createErrorResponse(error.message, 500, "database_error");
+          return createErrorResponse(
+            "Failed to cancel account deletion",
+            500,
+            "database_error",
+            requestId,
+          );
         }
 
         if (!success) {

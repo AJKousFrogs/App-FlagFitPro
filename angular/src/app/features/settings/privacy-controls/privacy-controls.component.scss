@@ -9,15 +9,6 @@
   padding: var(--space-6);
 }
 
-.loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-12);
-  color: var(--color-text-secondary);
-}
-
 .privacy-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
@@ -260,18 +251,6 @@
 }
 
 /* Team Settings */
-.empty-state {
-  text-align: center;
-  padding: var(--space-8);
-  color: var(--color-text-secondary);
-}
-
-.empty-state i {
-  font-size: var(--ds-font-size-3xl);
-  margin-bottom: var(--space-4);
-  opacity: var(--opacity-dimmed);
-}
-
 .team-header {
   display: flex;
   justify-content: space-between;
@@ -344,10 +323,7 @@
   transform: translateY(-var(--border-2));
 }
 
-// PrimeNG chip override moved to _exceptions.scss (DS-EXC-047)
-.category-chips p-chip.selected {
-  // Component-specific styles remain here
-}
+// PrimeNG chip: _component-overrides.scss (DS-EXC-047)
 
 /* Emergency Contacts */
 .emergency-contacts {
@@ -431,7 +407,7 @@
   gap: var(--space-4);
 }
 
-// PrimeNG field overrides moved to _exceptions.scss (DS-EXC-047)
+// PrimeNG field overrides moved to _component-overrides.scss (DS-EXC-047)
 
 /* Delete Warning */
 .delete-warning {

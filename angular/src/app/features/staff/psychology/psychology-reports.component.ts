@@ -30,6 +30,8 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../../shared/utils/date.utils";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §32
@@ -153,6 +155,8 @@ interface ReportPrivacySettings {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    AppLoadingComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -274,19 +278,14 @@ interface ReportPrivacySettings {
                     }
                   </div>
                 } @else {
-                  <div class="empty-state">
-                    <i class="pi pi-file"></i>
-                    <h4>No Reports Generated</h4>
-                    <p>
-                      Generate a report to share your mental wellness data with
-                      your sports psychologist or counselor.
-                    </p>
-                    <app-button
-                      iconLeft="pi-plus"
-                      (clicked)="showGenerateDialog.set(true)"
-                      >Generate Report</app-button
-                    >
-                  </div>
+                  <app-empty-state
+                    icon="pi-file"
+                    heading="No Reports Generated"
+                    description="Generate a report to share your mental wellness data with your sports psychologist or counselor."
+                    actionLabel="Generate Report"
+                    actionIcon="pi-plus"
+                    [actionHandler]="openGenerateDialogHandler"
+                  />
                 }
               </div>
             </p-tabpanel>
@@ -806,19 +805,14 @@ interface ReportPrivacySettings {
                     }
                   </div>
                 } @else {
-                  <div class="empty-state">
-                    <i class="pi pi-calendar"></i>
-                    <h4>No Pre-Competition Assessments</h4>
-                    <p>
-                      Create a pre-competition assessment to track your mental
-                      state before important events.
-                    </p>
-                    <app-button
-                      iconLeft="pi-plus"
-                      (clicked)="showPreCompDialog.set(true)"
-                      >New Assessment</app-button
-                    >
-                  </div>
+                  <app-empty-state
+                    icon="pi-calendar"
+                    heading="No Pre-Competition Assessments"
+                    description="Create a pre-competition assessment to track your mental state before important events."
+                    actionLabel="New Assessment"
+                    actionIcon="pi-plus"
+                    [actionHandler]="openPreCompDialogHandler"
+                  />
                 }
               </div>
             </p-tabpanel>
@@ -838,21 +832,15 @@ interface ReportPrivacySettings {
                 </div>
 
                 @if (insightFeedService.loading()) {
-                  <div class="loading-state">
-                    <i class="pi pi-spin pi-spinner"></i>
-                    <span>Loading insights...</span>
-                  </div>
+                  <app-loading message="Loading insights..." variant="inline" />
                 } @else if (
                   insightFeedService.filteredInsights().length === 0
                 ) {
-                  <div class="empty-state">
-                    <i class="pi pi-info-circle"></i>
-                    <p>No shared insights available</p>
-                    <small
-                      >Insights from coaches, physiotherapists, and
-                      nutritionists will appear here</small
-                    >
-                  </div>
+                  <app-empty-state
+                    icon="pi-info-circle"
+                    heading="No shared insights"
+                    description="Insights from coaches, physiotherapists, and nutritionists will appear here."
+                  />
                 } @else {
                   <div class="insights-list">
                     @for (
@@ -1167,6 +1155,11 @@ export class PsychologyReportsComponent implements OnInit {
   selectedPeriod = "30days";
   showGenerateDialog = signal(false);
   showPreCompDialog = signal(false);
+
+  readonly openGenerateDialogHandler = (): void =>
+    this.showGenerateDialog.set(true);
+  readonly openPreCompDialogHandler = (): void =>
+    this.showPreCompDialog.set(true);
 
   // Form data
   newReport = {

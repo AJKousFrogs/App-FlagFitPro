@@ -19,7 +19,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -41,6 +41,7 @@ import { DIALOG_WIDTHS } from "../../core/utils/design-tokens.util";
 import { DesignTokens } from "../../shared/models/design-tokens";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 
 // ===== Interfaces =====
 interface CyclePhase {
@@ -307,8 +308,8 @@ const RETENTION_OPTIONS = [
     PageHeaderComponent,
     ButtonComponent,
     StatusTagComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="cycle-tracking-page">
@@ -573,13 +574,11 @@ const RETENTION_OPTIONS = [
               </p-message>
             </div>
           } @else {
-            <div class="empty-state">
-              <i class="pi pi-info-circle"></i>
-              <p>
-                ACWR data not available. Log training sessions to see
-                phase-adjusted training recommendations.
-              </p>
-            </div>
+            <app-empty-state
+              icon="pi-info-circle"
+              heading="ACWR data not available"
+              description="Log training sessions to see phase-adjusted training recommendations."
+            />
           }
         </p-card>
 
@@ -641,12 +640,17 @@ const RETENTION_OPTIONS = [
         <!-- Cycle History -->
         <p-card header="Recent Cycles" class="history-card">
           @if (cycleHistory().length === 0) {
-            <div class="empty-state">
-              <i class="pi pi-calendar"></i>
-              <p>
-                No cycles logged yet. Log your first period to start tracking.
-              </p>
-            </div>
+            <app-empty-state
+              context="generic"
+              [inline]="true"
+              [compact]="true"
+              [showBenefits]="false"
+              [showSafetyNote]="false"
+              [customTitle]="'No cycles logged yet'"
+              [customMessage]="'Log your first period to start tracking.'"
+              [customActionLabel]="'Log First Period'"
+              [actionHandler]="openLogDialog"
+            />
           } @else {
             <p-table
               [value]="cycleHistory()"
@@ -890,7 +894,7 @@ export class CycleTrackingComponent implements OnInit {
   };
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly cycleStatus = signal<CycleStatus>({
@@ -1102,19 +1106,10 @@ export class CycleTrackingComponent implements OnInit {
 
       this.closeLogDialog();
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Period Logged",
-        detail: "Your cycle has been updated.",
-        life: 3000,
-      });
+      this.toastService.success("Your cycle has been updated.", "Period Logged");
     } catch (err) {
       this.logger.error("Failed to save period", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save period. Please try again.",
-      });
+      this.toastService.error("Failed to save period. Please try again.");
     } finally {
       this.isSavingPeriod.set(false);
     }
@@ -1131,22 +1126,13 @@ export class CycleTrackingComponent implements OnInit {
         }),
       );
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Symptoms Logged",
-        detail: "Your symptoms have been recorded.",
-        life: 3000,
-      });
+      this.toastService.success("Your symptoms have been recorded.", "Symptoms Logged");
 
       // Reset form
       this.todaySymptoms = { symptoms: [], severity: "none" };
     } catch (err) {
       this.logger.error("Failed to save symptoms", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save symptoms. Please try again.",
-      });
+      this.toastService.error("Failed to save symptoms. Please try again.");
     } finally {
       this.isSavingSymptoms.set(false);
     }
@@ -1155,12 +1141,7 @@ export class CycleTrackingComponent implements OnInit {
   exportData(): void {
     const history = this.cycleHistory();
     if (history.length === 0) {
-      this.messageService.add({
-        severity: "info",
-        summary: "No Data",
-        detail: "You have no cycle data to export.",
-        life: 3000,
-      });
+      this.toastService.info("You have no cycle data to export.", "No Data");
       return;
     }
     const headers = ["Start Date", "End Date", "Length (days)"];
@@ -1177,12 +1158,7 @@ export class CycleTrackingComponent implements OnInit {
     a.download = `cycle-tracking-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    this.messageService.add({
-      severity: "success",
-      summary: "Export Complete",
-      detail: "Your cycle data has been downloaded.",
-      life: 3000,
-    });
+    this.toastService.success("Your cycle data has been downloaded.", "Export Complete");
   }
 
   confirmDeleteData(): void {
@@ -1196,19 +1172,10 @@ export class CycleTrackingComponent implements OnInit {
       this.cycleHistory.set([]);
       this.showDeleteDialog.set(false);
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Data Deleted",
-        detail: "All your cycle tracking data has been deleted.",
-        life: 3000,
-      });
+      this.toastService.success("All your cycle tracking data has been deleted.", "Data Deleted");
     } catch (err) {
       this.logger.error("Failed to delete data", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to delete data. Please try again.",
-      });
+      this.toastService.error("Failed to delete data. Please try again.");
     }
   }
 

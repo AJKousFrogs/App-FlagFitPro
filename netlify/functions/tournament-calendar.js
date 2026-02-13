@@ -11,6 +11,28 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
+const COACH_ROLES = [
+  "coach",
+  "manager",
+  "admin",
+  "head_coach",
+  "assistant_coach",
+];
+
+async function getUserRole(userId) {
+  if (!userId) {
+    return "player";
+  }
+
+  const { data } = await supabaseAdmin
+    .from("team_members")
+    .select("role")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  return data?.role || "player";
+}
+
 export const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "tournament-calendar",
@@ -39,9 +61,7 @@ export const handler = async (event, context) =>
         return saveTournament(supabaseAdmin, userId, payload);
       } catch (err) {
         console.error("Tournament calendar error:", err);
-        return createErrorResponse("Internal server error", 500, "server_error", {
-          details: err.message,
-        });
+        return createErrorResponse("Internal server error", 500, "server_error");
       }
     },
   });
@@ -144,6 +164,18 @@ async function saveTournament(supabase, userId, payload) {
     return handleValidationError("name, startDate, and endDate are required");
   }
 
+  const userRole = await getUserRole(userId);
+  const isCoachOrAdmin = COACH_ROLES.includes(userRole);
+  const requestsNationalTeamEvent = isNationalTeamEvent === true;
+
+  if (!isCoachOrAdmin && requestsNationalTeamEvent) {
+    return createErrorResponse(
+      "Only coaches and admins can create national team events",
+      403,
+      "authorization_error",
+    );
+  }
+
   const tournamentData = {
     name,
     start_date: startDate,
@@ -158,13 +190,50 @@ async function saveTournament(supabase, userId, payload) {
     taper_weeks_before: taperWeeksBefore || 1,
     notes: notes || null,
     external_url: externalUrl || null,
-    created_by: userId,
     updated_at: new Date().toISOString(),
   };
 
   let result;
 
   if (id) {
+    const { data: existing, error: existingError } = await supabase
+      .from("tournament_calendar")
+      .select("id, created_by, is_national_team_event")
+      .eq("id", id)
+      .single();
+
+    if (existingError || !existing) {
+      return createErrorResponse("Tournament not found", 404, "not_found");
+    }
+
+    const isOwner = existing.created_by === userId;
+    if (!isCoachOrAdmin && !isOwner) {
+      return createErrorResponse(
+        "Not authorized to update this tournament",
+        403,
+        "authorization_error",
+      );
+    }
+
+    if (existing.is_national_team_event && !isCoachOrAdmin) {
+      return createErrorResponse(
+        "Only coaches and admins can update national team events",
+        403,
+        "authorization_error",
+      );
+    }
+    if (
+      !isCoachOrAdmin &&
+      isNationalTeamEvent !== undefined &&
+      isNationalTeamEvent !== existing.is_national_team_event
+    ) {
+      return createErrorResponse(
+        "Only coaches and admins can change national team event status",
+        403,
+        "authorization_error",
+      );
+    }
+
     // Update existing
     const { data, error } = await supabase
       .from("tournament_calendar")
@@ -178,6 +247,8 @@ async function saveTournament(supabase, userId, payload) {
     }
     result = data;
   } else {
+    tournamentData.created_by = userId;
+
     // Insert new
     const { data, error } = await supabase
       .from("tournament_calendar")
@@ -212,22 +283,35 @@ async function deleteTournament(supabase, userId, payload) {
     return handleValidationError("tournamentId is required");
   }
 
-  // Verify ownership or allow if user is coach
+  // Verify ownership or coach/admin privileges
   const { data: tournament, error: fetchError } = await supabase
     .from("tournament_calendar")
-    .select("created_by")
+    .select("created_by, is_national_team_event")
     .eq("id", id)
     .single();
 
   if (fetchError) {
+    if (fetchError.code === "PGRST116") {
+      return createErrorResponse("Tournament not found", 404, "not_found");
+    }
     throw fetchError;
   }
 
-  // For now, allow deletion if user created it
-  // TODO: Add coach role check for national team events
-  if (tournament.created_by && tournament.created_by !== userId) {
+  const userRole = await getUserRole(userId);
+  const isCoachOrAdmin = COACH_ROLES.includes(userRole);
+  const isOwner = tournament.created_by === userId;
+
+  if (!isCoachOrAdmin && !isOwner) {
     return createErrorResponse(
       "Not authorized to delete this tournament",
+      403,
+      "authorization_error",
+    );
+  }
+
+  if (tournament.is_national_team_event && !isCoachOrAdmin) {
+    return createErrorResponse(
+      "Only coaches and admins can delete national team events",
       403,
       "authorization_error",
     );

@@ -1,6 +1,7 @@
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 
 // Netlify Function: Smart Training Recommendations
 // Integrates tournaments, ACWR, RPE, injuries, and periodization
@@ -73,6 +74,8 @@ const INJURY_IMPACT = {
   },
   5: { volumeModifier: 0, intensityModifier: 0, description: "Rest required" },
 };
+
+const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"]);
 
 // =====================================================
 // HELPER FUNCTIONS
@@ -510,7 +513,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "smart-training-recommendations",
     allowedMethods: ["GET", "POST"],
-rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       try {
@@ -530,7 +533,12 @@ rateLimitType: rateLimitType,
               targetDate = new Date(body.date);
             }
           } catch {
-            // Use defaults
+            return createErrorResponse(
+              "Request body must be valid JSON",
+              400,
+              "validation_error",
+              requestId,
+            );
           }
         } else {
           const params = event.queryStringParameters || {};
@@ -539,6 +547,79 @@ rateLimitType: rateLimitType,
           }
           if (params.date) {
             targetDate = new Date(params.date);
+          }
+        }
+
+        if (typeof athleteId !== "string" || athleteId.trim().length === 0) {
+          return createErrorResponse(
+            "athleteId must be a non-empty string",
+            400,
+            "validation_error",
+            requestId,
+          );
+        }
+
+        if (Number.isNaN(targetDate.getTime())) {
+          return createErrorResponse(
+            "date must be a valid date",
+            400,
+            "validation_error",
+            requestId,
+          );
+        }
+
+        if (athleteId !== userId) {
+          const role = await getUserRole(userId);
+          if (!COACH_ROLES.has(role)) {
+            return createErrorResponse(
+              "Not authorized to view another athlete's recommendations",
+              403,
+              "authorization_error",
+              requestId,
+            );
+          }
+
+          const { data: actorTeamMemberships, error: actorTeamsError } =
+            await supabaseAdmin
+              .from("team_members")
+              .select("team_id")
+              .eq("user_id", userId)
+              .eq("is_active", true)
+              .in("role", [...COACH_ROLES]);
+          if (actorTeamsError) {
+            throw actorTeamsError;
+          }
+
+          const actorTeamIds = (actorTeamMemberships || [])
+            .map((m) => m.team_id)
+            .filter(Boolean);
+          if (actorTeamIds.length === 0) {
+            return createErrorResponse(
+              "Not authorized to view another athlete's recommendations",
+              403,
+              "authorization_error",
+              requestId,
+            );
+          }
+
+          const { data: targetMembership, error: targetMembershipError } =
+            await supabaseAdmin
+              .from("team_members")
+              .select("team_id")
+              .eq("user_id", athleteId)
+              .eq("is_active", true)
+              .in("team_id", actorTeamIds)
+              .limit(1);
+          if (targetMembershipError) {
+            throw targetMembershipError;
+          }
+          if (!targetMembership || targetMembership.length === 0) {
+            return createErrorResponse(
+              "Not authorized to view another athlete's recommendations",
+              403,
+              "authorization_error",
+              requestId,
+            );
           }
         }
 

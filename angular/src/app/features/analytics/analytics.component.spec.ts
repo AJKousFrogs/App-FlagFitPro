@@ -12,7 +12,7 @@ import { TrainingStatsCalculationService } from "../../core/services/training-st
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import { NotificationService } from "../../core/services/notification.service";
+import { ToastService } from "../../core/services/toast.service";
 import { ConfirmationService, MessageService } from "primeng/api";
 // Chart utility imports for mocking (prefixed to indicate mock usage)
 import type {
@@ -41,7 +41,7 @@ describe("AnalyticsComponent", () => {
   let mockTrainingStatsService: any;
   let mockTrainingDataService: any;
   let mockLoggerService: any;
-  let mockNotificationService: any;
+  let mockToastService: any;
 
   beforeEach(async () => {
     // Create mock services
@@ -87,12 +87,12 @@ describe("AnalyticsComponent", () => {
       debug: vi.fn(),
       success: vi.fn(),
     };
-    mockNotificationService = {
+    mockToastService = {
       info: vi.fn(),
       success: vi.fn(),
       warn: vi.fn(),
       error: vi.fn(),
-      notify: vi.fn(),
+      show: vi.fn(),
     };
 
     // Mock SupabaseService to prevent real initialization
@@ -140,7 +140,7 @@ describe("AnalyticsComponent", () => {
         },
         { provide: TrainingDataService, useValue: mockTrainingDataService },
         { provide: LoggerService, useValue: mockLoggerService },
-        { provide: NotificationService, useValue: mockNotificationService },
+        { provide: ToastService, useValue: mockToastService },
         { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: MessageService, useValue: mockMessageService },
         { provide: ConfirmationService, useValue: { confirm: vi.fn() } },
@@ -331,9 +331,9 @@ describe("AnalyticsComponent", () => {
       expect(mockLoggerService.info).toHaveBeenCalledWith(
         "Customizing performance chart",
       );
-      expect(mockNotificationService.info).toHaveBeenCalled();
+      expect(mockToastService.info).toHaveBeenCalled();
 
-      const alertMessage = mockNotificationService.info.mock.calls[0][0] as string;
+      const alertMessage = mockToastService.info.mock.calls[0][0] as string;
       expect(alertMessage).toContain("Zoom:");
       expect(alertMessage).toContain("Pan:");
       expect(alertMessage).toContain("Legend:");
@@ -344,7 +344,7 @@ describe("AnalyticsComponent", () => {
     it("should include instructions for all interaction types", () => {
       component.customizeChart("chemistry");
 
-      const alertMessage = mockNotificationService.info.mock.calls[0][0] as string;
+      const alertMessage = mockToastService.info.mock.calls[0][0] as string;
       expect(alertMessage).toContain("Scroll with mouse wheel to zoom");
       expect(alertMessage).toContain("Hold Shift + drag to pan");
       expect(alertMessage).toContain("Click legend items to show/hide");

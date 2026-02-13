@@ -17,7 +17,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 
 import { ProgressBar } from "primeng/progressbar";
@@ -30,6 +29,7 @@ import { ApiResponse } from "../../core/models/common.models";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 
 // ===== Interfaces =====
 interface SleepEntry {
@@ -87,8 +87,8 @@ const DEBT_THRESHOLDS = {
     MainLayoutComponent,
     PageHeaderComponent,
     StatusTagComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="sleep-debt-page">
@@ -116,19 +116,17 @@ const DEBT_THRESHOLDS = {
           </p-card>
         } @else {
           <p-card class="debt-status-card">
-            <div class="empty-state">
-              <i class="pi pi-info-circle"></i>
-              <h3>No Sleep Data Yet</h3>
-              <p>
-                @if (userAge() === null) {
-                  Please provide your age and log sleep data in wellness
-                  check-ins to see your sleep debt analysis.
-                } @else {
-                  Log sleep data in wellness check-ins to see your sleep debt
-                  analysis.
-                }
-              </p>
-            </div>
+            <app-empty-state
+              context="wellness"
+              [inline]="true"
+              [compact]="true"
+              [showBenefits]="false"
+              [showSafetyNote]="false"
+              [customTitle]="'No Sleep Data Yet'"
+              [customMessage]="sleepEmptyMessage()"
+              [customRoute]="'/wellness'"
+              [customActionLabel]="'Log Wellness'"
+            />
           </p-card>
         }
 
@@ -375,10 +373,11 @@ const DEBT_THRESHOLDS = {
               [options]="sleepChartOptions"
             ></app-lazy-chart>
           } @else {
-            <div class="empty-state">
-              <i class="pi pi-chart-bar"></i>
-              <p>Log your sleep in wellness check-ins to see your history</p>
-            </div>
+            <app-empty-state
+              icon="pi-chart-bar"
+              heading="No sleep history yet"
+              description="Log your sleep in wellness check-ins to see your history."
+            />
           }
         </p-card>
 
@@ -391,10 +390,11 @@ const DEBT_THRESHOLDS = {
               [options]="debtChartOptions"
             ></app-lazy-chart>
           } @else {
-            <div class="empty-state">
-              <i class="pi pi-chart-line"></i>
-              <p>Insufficient data to show debt trend</p>
-            </div>
+            <app-empty-state
+              icon="pi-chart-line"
+              heading="Insufficient data"
+              description="Log more sleep to show your debt trend."
+            />
           }
         </p-card>
 
@@ -433,14 +433,18 @@ const DEBT_THRESHOLDS = {
 export class SleepDebtComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
-
   // Expose Math for template
   Math = Math;
 
   // State
   readonly sleepHistory = signal<SleepEntry[]>([]);
   readonly userAge = signal<number | null>(null); // No default - must be provided by user
+
+  readonly sleepEmptyMessage = computed(() =>
+    this.userAge() === null
+      ? "Please provide your age and log sleep data in wellness check-ins to see your sleep debt analysis."
+      : "Log sleep data in wellness check-ins to see your sleep debt analysis.",
+  );
   readonly isLoading = signal(true);
 
   // Computed values

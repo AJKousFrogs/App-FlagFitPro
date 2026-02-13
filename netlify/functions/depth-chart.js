@@ -29,6 +29,57 @@ const FLAG_FOOTBALL_POSITIONS = {
   ],
 };
 
+const VALID_CHART_TYPES = new Set(["offense", "defense", "special_teams"]);
+
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    return {};
+  }
+
+  const parsed = JSON.parse(rawBody);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    throw new Error("Request body must be an object");
+  }
+
+  return parsed;
+};
+
+const assertActiveTeamPlayer = async (teamId, playerId) => {
+  const { data: member, error } = await supabaseAdmin
+    .from("team_members")
+    .select("id")
+    .eq("team_id", teamId)
+    .eq("user_id", playerId)
+    .eq("role", "player")
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+  if (!member) {
+    throw new Error("player_id must reference an active player in this team");
+  }
+};
+
 // Get all depth chart templates for a team
 const getTeamDepthCharts = async (userId, teamId) => {
   checkEnvVars();
@@ -106,6 +157,15 @@ const createDepthChart = async (userId, chartData) => {
   checkEnvVars();
 
   const { team_id, name, chart_type, positions } = chartData;
+  if (!team_id || !name || !chart_type) {
+    throw new Error("team_id, name, and chart_type are required");
+  }
+  if (!VALID_CHART_TYPES.has(chart_type)) {
+    throw new Error("Invalid chart_type");
+  }
+  if (positions !== undefined && !Array.isArray(positions)) {
+    throw new Error("positions must be an array when provided");
+  }
 
   const { authorized, role } = await checkTeamMembership(userId, team_id);
   if (!authorized || !["coach", "admin"].includes(role)) {
@@ -141,8 +201,12 @@ const createDepthChart = async (userId, chartData) => {
       depth_order: 1,
       updated_by: userId,
     }));
-
-    await supabaseAdmin.from("depth_chart_entries").insert(entries);
+    const { error: insertError } = await supabaseAdmin
+      .from("depth_chart_entries")
+      .insert(entries);
+    if (insertError) {
+      throw insertError;
+    }
   }
 
   return template;
@@ -250,6 +314,16 @@ const updateEntry = async (userId, entryId, updates) => {
   );
   if (!authorized || !["coach", "admin"].includes(role)) {
     throw new Error("Only coaches and admins can update depth charts");
+  }
+  if (
+    updates.player_id !== undefined &&
+    updates.player_id !== null &&
+    updates.player_id !== ""
+  ) {
+    await assertActiveTeamPlayer(
+      entry.depth_chart_templates.team_id,
+      updates.player_id,
+    );
   }
 
   // Record history if player is changing
@@ -372,6 +446,17 @@ const addPosition = async (userId, positionData) => {
 
   const { template_id, position_name, position_abbreviation, depth_order } =
     positionData;
+  if (!template_id || !position_name || !position_abbreviation) {
+    throw new Error(
+      "template_id, position_name, and position_abbreviation are required",
+    );
+  }
+  if (
+    depth_order !== undefined &&
+    (!Number.isInteger(depth_order) || depth_order <= 0)
+  ) {
+    throw new Error("depth_order must be a positive integer");
+  }
 
   const { data: template, error: templateError } = await supabaseAdmin
     .from("depth_chart_templates")
@@ -412,6 +497,10 @@ const addPosition = async (userId, positionData) => {
 // Get depth chart history
 const getDepthChartHistory = async (userId, templateId, queryParams) => {
   checkEnvVars();
+  const parsedLimit = parseBoundedInt(queryParams.limit, "limit", {
+    min: 1,
+    max: 200,
+  });
 
   const { data: template, error: templateError } = await supabaseAdmin
     .from("depth_chart_templates")
@@ -441,8 +530,8 @@ const getDepthChartHistory = async (userId, templateId, queryParams) => {
     .eq("template_id", templateId)
     .order("changed_at", { ascending: false });
 
-  if (queryParams.limit) {
-    query = query.limit(parseInt(queryParams.limit));
+  if (parsedLimit !== null) {
+    query = query.limit(parsedLimit);
   }
 
   if (queryParams.start_date) {
@@ -488,7 +577,8 @@ const getUnassignedPlayers = async (userId, templateId, teamId) => {
     `,
     )
     .eq("team_id", teamId)
-    .eq("role", "player");
+    .eq("role", "player")
+    .eq("status", "active");
 
   if (membersError) {
     throw membersError;
@@ -580,9 +670,20 @@ export const handler = async (event, context) => {
       let body = {};
       if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
         try {
-          body = JSON.parse(event.body);
-        } catch {
-          return createErrorResponse("Invalid JSON", 400, ErrorType.VALIDATION);
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            return createErrorResponse(
+              "Invalid JSON",
+              400,
+              ErrorType.VALIDATION,
+            );
+          }
+          return createErrorResponse(
+            error.message,
+            422,
+            ErrorType.VALIDATION,
+          );
         }
       }
 
@@ -595,7 +696,7 @@ export const handler = async (event, context) => {
 
         if (event.httpMethod === "POST" && path === "templates") {
           const result = await createDepthChart(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         const templateMatch = path.match(/^templates\/([^/]+)$/);
@@ -643,7 +744,7 @@ export const handler = async (event, context) => {
         // Entries endpoints
         if (event.httpMethod === "POST" && path === "entries") {
           const result = await addPosition(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         const entryMatch = path.match(/^entries\/([^/]+)$/);
@@ -660,7 +761,7 @@ export const handler = async (event, context) => {
         // Initialize endpoint
         if (event.httpMethod === "POST" && path === "initialize") {
           const result = await initializeTeamDepthCharts(userId, body.team_id);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
@@ -673,6 +774,14 @@ export const handler = async (event, context) => {
           error.message.includes("permission")
         ) {
           return createErrorResponse(error.message, 403, "forbidden");
+        }
+        if (
+          error.message.includes("required") ||
+          error.message.includes("Invalid") ||
+          error.message.includes("must be") ||
+          error.message.includes("active player")
+        ) {
+          return createErrorResponse(error.message, 422, ErrorType.VALIDATION);
         }
         throw error;
       }

@@ -97,6 +97,88 @@ const ENDPOINT_HANDLERS = {
   export: handleExport,
 };
 
+const COACH_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
+
+function parseBoundedInt(value, fallback, { min, max, field }) {
+  if (value === undefined || value === null || value === "") {
+    return fallback;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+function parseJsonObjectBody(rawBody) {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    return {
+      ok: false,
+      response: createErrorResponse(
+        "Invalid JSON in request body",
+        400,
+        "invalid_json",
+      ),
+    };
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return {
+      ok: false,
+      response: createErrorResponse(
+        "Request body must be an object",
+        422,
+        "validation_error",
+      ),
+    };
+  }
+  return { ok: true, data: parsed };
+}
+
+async function coachCanAccessAthlete(coachUserId, athleteUserId) {
+  if (!coachUserId || !athleteUserId || coachUserId === athleteUserId) {
+    return false;
+  }
+
+  const { data: coachMemberships, error: coachError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id, role")
+    .eq("user_id", coachUserId);
+
+  if (coachError) {
+    throw coachError;
+  }
+
+  const coachTeamIds = (coachMemberships || [])
+    .filter((m) => COACH_ROLES.has(m.role))
+    .map((m) => m.team_id)
+    .filter(Boolean);
+
+  if (coachTeamIds.length === 0) {
+    return false;
+  }
+
+  const { data: athleteMembership, error: athleteError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", athleteUserId)
+    .in("team_id", coachTeamIds)
+    .limit(1)
+    .maybeSingle();
+
+  if (athleteError && athleteError.code !== "PGRST116") {
+    throw athleteError;
+  }
+
+  return !!athleteMembership;
+}
+
 export const handler = async (event, context) => {
   // Apply Merlin guard for mutation endpoints
   if (event.httpMethod !== "GET" && event.httpMethod !== "OPTIONS") {
@@ -118,13 +200,24 @@ export const handler = async (event, context) => {
 
   return baseHandler(event, context, {
     functionName: "performance-data",
-    allowedMethods: ["GET", "POST", "PUT", "DELETE"],
-rateLimitType: rateLimitType,
+    allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    rateLimitType: rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const { httpMethod, path, body, queryStringParameters } = event;
       const pathSegments = path.split("/").filter(Boolean);
-      const endpoint = pathSegments[pathSegments.length - 1];
+      const knownEndpoints = new Set(Object.keys(ENDPOINT_HANDLERS));
+      let endpoint = pathSegments[pathSegments.length - 1];
+      let resourceId = null;
+
+      // Support nested resource paths like /performance-data/injuries/:id
+      if (!knownEndpoints.has(endpoint) && pathSegments.length >= 2) {
+        const candidateEndpoint = pathSegments[pathSegments.length - 2];
+        if (knownEndpoints.has(candidateEndpoint)) {
+          endpoint = candidateEndpoint;
+          resourceId = pathSegments[pathSegments.length - 1];
+        }
+      }
 
       // Use handler registry instead of switch statement
       const handler = ENDPOINT_HANDLERS[endpoint];
@@ -141,24 +234,53 @@ rateLimitType: rateLimitType,
       // Extract athleteId from query for coach requests
       const requestedAthleteId = queryStringParameters?.athleteId || userId;
 
+      if (endpoint === "wellness" || endpoint === "trends") {
+        return await handler(
+          httpMethod,
+          userId,
+          requestedAthleteId,
+          body,
+          queryStringParameters,
+          resourceId,
+        );
+      }
+
       return await handler(
         httpMethod,
         userId,
-        requestedAthleteId,
         body,
         queryStringParameters,
+        resourceId,
       );
     },
   });
 };
 
 // Physical Measurements Handler
-async function handleMeasurements(method, userId, body, query) {
+async function handleMeasurements(method, userId, body, query, _resourceId) {
   switch (method) {
     case "GET": {
       const timeframe = query?.timeframe || "6m";
-      const page = parseInt(query?.page || "1", 10);
-      const limit = Math.min(parseInt(query?.limit || "50", 10), 100);
+      let page;
+      let limit;
+      try {
+        page = parseBoundedInt(query?.page, 1, {
+          min: 1,
+          max: 1000000,
+          field: "page",
+        });
+        limit = parseBoundedInt(query?.limit, 50, {
+          min: 1,
+          max: 100,
+          field: "limit",
+        });
+      } catch (validationError) {
+        return createErrorResponse(
+          validationError.message || "Invalid pagination parameters",
+          422,
+          "validation_error",
+        );
+      }
       const offset = (page - 1) * limit;
 
       // Calculate date range
@@ -222,7 +344,11 @@ async function handleMeasurements(method, userId, body, query) {
     }
 
     case "POST": {
-      const measurementData = JSON.parse(body);
+      const parsedBody = parseJsonObjectBody(body);
+      if (!parsedBody.ok) {
+        return parsedBody.response;
+      }
+      const measurementData = parsedBody.data;
 
       // Validate data
       const errors = validateMeasurementData(measurementData);
@@ -335,13 +461,31 @@ async function handleMeasurements(method, userId, body, query) {
 
 // Performance Tests Handler
 // Uses 'performance_tests' table (aligned with frontend) - UUID-based with auth.users FK
-async function handlePerformanceTests(method, userId, body, query) {
+async function handlePerformanceTests(method, userId, body, query, _resourceId) {
   switch (method) {
     case "GET": {
       const testType = query?.testType;
       const timeframe = query?.timeframe || "12m";
-      const page = parseInt(query?.page || "1", 10);
-      const limit = Math.min(parseInt(query?.limit || "50", 10), 100);
+      let page;
+      let limit;
+      try {
+        page = parseBoundedInt(query?.page, 1, {
+          min: 1,
+          max: 1000000,
+          field: "page",
+        });
+        limit = parseBoundedInt(query?.limit, 50, {
+          min: 1,
+          max: 100,
+          field: "limit",
+        });
+      } catch (validationError) {
+        return createErrorResponse(
+          validationError.message || "Invalid pagination parameters",
+          422,
+          "validation_error",
+        );
+      }
       const offset = (page - 1) * limit;
 
       const startDate = getStartDateForTimeframe(timeframe);
@@ -416,7 +560,11 @@ async function handlePerformanceTests(method, userId, body, query) {
     }
 
     case "POST": {
-      const testData = JSON.parse(body);
+      const parsedBody = parseJsonObjectBody(body);
+      if (!parsedBody.ok) {
+        return parsedBody.response;
+      }
+      const testData = parsedBody.data;
 
       // Validate required fields
       if (!testData.testType) {
@@ -501,13 +649,33 @@ async function handlePerformanceTests(method, userId, body, query) {
 }
 
 // Wellness Data Handler
-async function handleWellness(method, userId, requestedAthleteId, body, query) {
+async function handleWellness(method, userId, requestedAthleteId, body, query, _resourceId) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
-  const isCoach = ["coach", "admin"].includes(role);
+  const isCoach = ["coach", "assistant_coach", "head_coach", "admin"].includes(
+    role,
+  );
 
   switch (method) {
     case "GET": {
+      if (targetAthleteId !== userId) {
+        if (!isCoach) {
+          return createErrorResponse(
+            "Not authorized to view another athlete's wellness data",
+            403,
+            "authorization_error",
+          );
+        }
+        const canAccess = await coachCanAccessAthlete(userId, targetAthleteId);
+        if (!canAccess) {
+          return createErrorResponse(
+            "Not authorized to view another athlete's wellness data",
+            403,
+            "authorization_error",
+          );
+        }
+      }
+
       const timeframe = query?.timeframe || "30d";
       const startDate = getStartDateForTimeframe(timeframe);
 
@@ -571,7 +739,11 @@ async function handleWellness(method, userId, requestedAthleteId, body, query) {
     }
 
     case "POST": {
-      const wellnessData = JSON.parse(body);
+      const parsedBody = parseJsonObjectBody(body);
+      if (!parsedBody.ok) {
+        return parsedBody.response;
+      }
+      const wellnessData = parsedBody.data;
 
       // Safety override: Check for pain triggers (muscle_soreness >3/10)
       if (
@@ -642,7 +814,7 @@ async function handleWellness(method, userId, requestedAthleteId, body, query) {
 }
 
 // Supplements Handler
-async function handleSupplements(method, userId, body, query) {
+async function handleSupplements(method, userId, body, query, _resourceId) {
   switch (method) {
     case "GET": {
       const timeframe = query?.timeframe || "30d";
@@ -692,7 +864,11 @@ async function handleSupplements(method, userId, body, query) {
     }
 
     case "POST": {
-      const supplementData = JSON.parse(body);
+      const parsedBody = parseJsonObjectBody(body);
+      if (!parsedBody.ok) {
+        return parsedBody.response;
+      }
+      const supplementData = parsedBody.data;
 
       // Validate supplement data
       const validationErrors = validateSupplementData(supplementData);
@@ -767,7 +943,7 @@ async function handleSupplements(method, userId, body, query) {
 }
 
 // Injuries Handler - Fully migrated to Supabase
-async function handleInjuries(method, userId, body, query) {
+async function handleInjuries(method, userId, body, query, resourceId) {
   switch (method) {
     case "GET": {
       const status = query?.status; // active, recovered, all
@@ -839,7 +1015,11 @@ async function handleInjuries(method, userId, body, query) {
     }
 
     case "POST": {
-      const injuryData = JSON.parse(body);
+      const parsedBody = parseJsonObjectBody(body);
+      if (!parsedBody.ok) {
+        return { ...parsedBody.response, headers: CORS_HEADERS };
+      }
+      const injuryData = parsedBody.data;
 
       // Validate required fields
       if (!injuryData.type || !injuryData.severity || !injuryData.startDate) {
@@ -920,9 +1100,12 @@ async function handleInjuries(method, userId, body, query) {
 
     case "PATCH":
     case "PUT": {
-      const updateData = JSON.parse(body);
-      const pathSegments = query?.path?.split("/") || [];
-      const injuryId = pathSegments[pathSegments.length - 1] || query?.id;
+      const parsedBody = parseJsonObjectBody(body);
+      if (!parsedBody.ok) {
+        return { ...parsedBody.response, headers: CORS_HEADERS };
+      }
+      const updateData = parsedBody.data;
+      const injuryId = resourceId || query?.id;
 
       if (!injuryId) {
         return {
@@ -1014,7 +1197,7 @@ async function handleInjuries(method, userId, body, query) {
 }
 
 // Trends Analysis Handler
-async function handleTrends(method, userId, requestedAthleteId, body, query) {
+async function handleTrends(method, userId, requestedAthleteId, body, query, _resourceId) {
   const targetAthleteId = requestedAthleteId || userId;
   if (method !== "GET") {
     return createErrorResponse("Method not allowed", 405, "method_not_allowed");
@@ -1024,18 +1207,50 @@ async function handleTrends(method, userId, requestedAthleteId, body, query) {
   const startDate = getStartDateForTimeframe(timeframe);
 
   try {
+    if (targetAthleteId !== userId) {
+      const role = await getUserRole(userId);
+      const isCoach = ["coach", "assistant_coach", "head_coach", "admin"].includes(
+        role,
+      );
+      if (!isCoach) {
+        return createErrorResponse(
+          "Not authorized to view another athlete's trends",
+          403,
+          "authorization_error",
+        );
+      }
+
+      const canAccess = await coachCanAccessAthlete(userId, targetAthleteId);
+      if (!canAccess) {
+        return createErrorResponse(
+          "Not authorized to view another athlete's trends",
+          403,
+          "authorization_error",
+        );
+      }
+
+      const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
+      if (!consentCheck.allowed) {
+        return createErrorResponse(
+          "Consent required to view this athlete's trend data",
+          403,
+          "consent_required",
+        );
+      }
+    }
+
     // Fetch all data from Supabase for trend analysis
     const [measurementsResult, performanceTestsResult, wellnessResult] =
       await Promise.all([
         supabaseAdmin
           .from("physical_measurements")
           .select("*")
-          .eq("user_id", userId)
+          .eq("user_id", targetAthleteId)
           .gte("created_at", startDate.toISOString()),
         supabaseAdmin
-          .from("athlete_performance_tests")
+          .from("performance_tests")
           .select("*")
-          .eq("user_id", userId)
+          .eq("user_id", targetAthleteId)
           .gte("test_date", startDate.toISOString().split("T")[0]),
         supabaseAdmin
           .from("wellness_entries")
@@ -1055,8 +1270,8 @@ async function handleTrends(method, userId, requestedAthleteId, body, query) {
 
     const performanceTests = (performanceTestsResult.data || []).map((t) => ({
       userId: t.user_id,
-      testType: t.test_type || t.test_protocol_id?.toString(),
-      result: t.best_result || t.average_result,
+      testType: t.test_type,
+      result: t.result_value,
       timestamp: t.test_date || t.created_at,
     }));
 
@@ -1124,7 +1339,7 @@ async function handleExport(userId, query) {
         .eq("user_id", userId)
         .gte("created_at", startDate.toISOString()),
       supabaseAdmin
-        .from("athlete_performance_tests")
+        .from("performance_tests")
         .select("*")
         .eq("user_id", userId)
         .gte("test_date", startDate.toISOString().split("T")[0]),
@@ -1152,8 +1367,8 @@ async function handleExport(userId, query) {
       })),
       performanceTests: (performanceTestsResult.data || []).map((t) => ({
         userId: t.user_id,
-        testType: t.test_type || t.test_protocol_id?.toString(),
-        result: t.best_result || t.average_result,
+        testType: t.test_type,
+        result: t.result_value,
         timestamp: t.test_date || t.created_at,
       })),
       wellness: (wellnessResult.data || []).map((w) => ({

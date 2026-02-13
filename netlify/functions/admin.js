@@ -2,7 +2,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { syncAllResearch } from "./research-sync.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 
 // Netlify Function: Admin API
 // Handles admin-only operations: health metrics, data syncs, backups, statistics
@@ -31,11 +31,14 @@ import { authenticateRequest } from "./utils/auth-helper.js";
 //
 // =============================================================================
 
-/**
- * Check if user has admin role
- */
-function isAdmin(user) {
-  return user?.role === "admin" || user?.user_metadata?.role === "admin";
+function getOperationFailureStatus(result, fallbackStatus = 500) {
+  if (
+    typeof result?.error === "string" &&
+    result.error.toLowerCase().includes("not configured")
+  ) {
+    return 503;
+  }
+  return fallbackStatus;
 }
 
 /**
@@ -330,7 +333,7 @@ async function syncUSDAData(options = {}) {
       if (error) {
         syncDetails.recordsFailed += batch.length;
         syncDetails.hasErrors = true;
-        syncDetails.errorMessage = error.message;
+        syncDetails.errorMessage = "Batch upsert failed";
       } else {
         syncDetails.recordsAdded += data?.length || 0;
       }
@@ -373,7 +376,7 @@ async function syncUSDAData(options = {}) {
       durationMs,
       timestamp: new Date().toISOString(),
       message: syncDetails.hasErrors
-        ? `USDA sync completed with errors: ${syncDetails.errorMessage}`
+        ? "USDA sync completed with errors"
         : `USDA sync completed successfully - ${syncDetails.recordsAdded} records synced`,
     };
   } catch (error) {
@@ -385,15 +388,15 @@ async function syncUSDAData(options = {}) {
       result: "failure",
       severity: "error",
       records_failed: syncDetails.recordsFailed,
-      error_message: error.message,
+      error_message: "USDA sync failed",
       duration_ms: durationMs,
     });
 
     return {
       success: false,
-      error: error.message,
+      error: "USDA sync failed",
       timestamp: new Date().toISOString(),
-      message: `USDA sync failed: ${error.message}`,
+      message: "USDA sync failed due to an internal error",
     };
   }
 }
@@ -425,13 +428,17 @@ async function syncResearchData() {
       errors: result.errors,
     };
   } catch (error) {
-    console.error("Research sync error:", error);
+    if (error?.code) {
+      console.error("Research sync error", { code: error.code });
+    } else {
+      console.error("Research sync error");
+    }
     return {
       success: false,
       recordsUpdated: 0,
       timestamp: new Date().toISOString(),
-      message: `Research sync failed: ${error.message}`,
-      error: error.message,
+      message: "Research sync failed due to an internal error",
+      error: "Research sync failed",
     };
   }
 }
@@ -562,13 +569,20 @@ async function createDatabaseBackup() {
         };
         backupResults.totalRecords += recordCount;
       } catch (tableError) {
+        if (tableError?.code) {
+          console.error(`[Admin] Backup table error for ${table}`, {
+            code: tableError.code,
+          });
+        } else {
+          console.error(`[Admin] Backup table error for ${table}`);
+        }
         backupResults.errors.push({
           table,
-          error: tableError.message,
+          error: "Table backup failed",
         });
         backupResults.tables[table] = {
           status: "error",
-          error: tableError.message,
+          error: "Table backup failed",
         };
       }
     }
@@ -632,7 +646,7 @@ async function createDatabaseBackup() {
       source: "database_backup",
       result: "failure",
       severity: "error",
-      error_message: error.message,
+      error_message: "Database backup failed",
       duration_ms: durationMs,
     });
 
@@ -640,9 +654,9 @@ async function createDatabaseBackup() {
       backupId,
       timestamp: new Date().toISOString(),
       status: "failed",
-      error: error.message,
+      error: "Backup failed",
       durationMs,
-      message: `Backup failed: ${error.message}`,
+      message: "Backup failed due to an internal error",
       _isMock: false,
     };
   }
@@ -778,7 +792,7 @@ async function getResearchDataStats() {
 async function handleRequest(
   event,
   _context,
-  { userId: _userId, user: _user },
+  { userId: _userId },
 ) {
   // Extract endpoint from path
   const path = event.path.replace("/.netlify/functions/admin", "") || "/";
@@ -800,7 +814,14 @@ async function handleRequest(
         return createErrorResponse("Method not allowed", 405);
       }
       const usdaResult = await syncUSDAData();
-      return createSuccessResponse(usdaResult, usdaResult.success);
+      if (!usdaResult.success) {
+        return createErrorResponse(
+          usdaResult.message || "USDA sync failed",
+          getOperationFailureStatus(usdaResult),
+          "sync_error",
+        );
+      }
+      return createSuccessResponse(usdaResult);
     }
 
     case "/sync-research": {
@@ -808,14 +829,28 @@ async function handleRequest(
         return createErrorResponse("Method not allowed", 405);
       }
       const researchResult = await syncResearchData();
-      return createSuccessResponse(researchResult, researchResult.success);
+      if (!researchResult.success) {
+        return createErrorResponse(
+          researchResult.message || "Research sync failed",
+          getOperationFailureStatus(researchResult),
+          "sync_error",
+        );
+      }
+      return createSuccessResponse(researchResult);
     }
 
     case "/create-backup": {
       if (event.httpMethod !== "POST") {
         return createErrorResponse("Method not allowed", 405);
       }
-      const backup = await createDatabaseBackup(); // Now async
+      const backup = await createDatabaseBackup();
+      if (backup.status === "failed") {
+        return createErrorResponse(
+          backup.message || "Database backup failed",
+          500,
+          "backup_error",
+        );
+      }
       return createSuccessResponse(backup);
     }
 
@@ -853,22 +888,15 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "Admin",
     allowedMethods: ["GET", "POST"],
-rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, context, { userId }) => {
-      // Get user info to check admin role
-      const auth = await authenticateRequest(event);
-
-      if (!auth.success || !auth.user) {
-        return createErrorResponse("Unauthorized", 401);
-      }
-
-      // Check admin role
-      if (!isAdmin(auth.user)) {
+      const role = await getUserRole(userId);
+      if (role !== "admin") {
         return createErrorResponse("Forbidden - Admin access required", 403);
       }
 
-      return handleRequest(event, context, { userId, user: auth.user });
+      return handleRequest(event, context, { userId });
     },
   });
 };

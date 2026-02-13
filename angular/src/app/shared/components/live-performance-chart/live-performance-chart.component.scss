@@ -35,7 +35,7 @@
   justify-content: center;
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   font-size: var(--ds-font-size-2xl);
   margin-bottom: var(--space-4);
 }

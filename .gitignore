@@ -88,6 +88,7 @@ jspm_packages/
 # Storybook build outputs
 .out
 .storybook-out
+angular/storybook-static/
 
 # Audit outputs (ephemeral)
 audit_dead_weight_*/

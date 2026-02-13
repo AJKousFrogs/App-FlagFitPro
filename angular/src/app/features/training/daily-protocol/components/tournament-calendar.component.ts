@@ -19,6 +19,8 @@ import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { DatePipe } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -83,6 +85,8 @@ interface EventTypeOption {
 
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateComponent,
+    AppLoadingComponent,
   ],
   template: `
     <div class="tournament-calendar">
@@ -101,18 +105,16 @@ interface EventTypeOption {
       </div>
 
       @if (isLoading()) {
-        <div class="loading-state" role="status" aria-live="polite">
-          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-          <span>Loading tournaments...</span>
-        </div>
+        <app-loading message="Loading tournaments..." variant="inline" />
       } @else if (tournaments().length === 0) {
-        <div class="empty-state" role="status">
-          <i class="pi pi-calendar-times" aria-hidden="true"></i>
-          <p>No upcoming tournaments</p>
-          <app-button iconLeft="pi-plus" (clicked)="openAddDialog()"
-            >Add Your First Tournament</app-button
-          >
-        </div>
+        <app-empty-state
+          icon="pi-calendar-times"
+          heading="No upcoming tournaments"
+          description="Add your first tournament to plan your season."
+          actionLabel="Add Your First Tournament"
+          actionIcon="pi-plus"
+          [actionHandler]="openAddDialogHandler"
+        />
       } @else {
         <div class="tournament-list">
           @for (tournament of tournaments(); track tournament.id) {
@@ -465,6 +467,8 @@ export class TournamentCalendarComponent {
       this.isLoading.set(false);
     }
   }
+
+  readonly openAddDialogHandler = (): void => this.openAddDialog();
 
   openAddDialog(): void {
     this.formData = this.getEmptyForm();

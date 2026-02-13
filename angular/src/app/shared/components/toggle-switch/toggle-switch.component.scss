@@ -9,6 +9,8 @@
 // - Disabled: opacity 0.6, not interactive
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -65,7 +67,7 @@
   left: var(--space-0-75);
   top: var(--space-0-75);
   background-color: var(--surface-primary);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   transition: transform var(--transition-base) var(--ease-standard);
   box-shadow: var(--shadow-sm);
 }
@@ -80,11 +82,12 @@
   transform: translateX(var(--space-5)); // 44 - 18 - 6 = 20
 }
 
-// Focus state - consistent focus ring
-.toggle-input:focus-visible + .toggle-slider {
-  outline: none;
-  box-shadow: 0 0 0 var(--focus-ring-width)
-    rgba(var(--ds-primary-green-rgb), 0.15);
+.toggle-input {
+  @include ds-focus-visible-sibling(
+    ".toggle-slider",
+    0 0 0 var(--focus-ring-width) rgba(var(--ds-primary-green-rgb), 0.15),
+    none
+  );
 }
 
 // Disabled state

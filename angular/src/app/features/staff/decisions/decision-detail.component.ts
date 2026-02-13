@@ -31,6 +31,7 @@ import {
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
+import { AppLoadingComponent } from "@shared/components/loading/loading.component";
 import { ReviewDecisionDialogComponent } from "./review-decision-dialog.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
@@ -56,14 +57,13 @@ import type {
     CardShellComponent,
     ConfidenceIndicatorComponent,
     ReviewDecisionDialogComponent,
+    AppLoadingComponent,
   ],
   template: `
     <div class="decision-detail">
       <!-- Loading State -->
       @if (isLoading()) {
-        <div class="loading-state">
-          <p>Loading decision details...</p>
-        </div>
+        <app-loading message="Loading decision details..." variant="inline" />
       }
 
       <!-- Error State -->
@@ -479,7 +479,6 @@ import type {
         text-decoration: underline;
       }
 
-      .loading-state,
       .error-state {
         padding: var(--space-8);
         text-align: center;

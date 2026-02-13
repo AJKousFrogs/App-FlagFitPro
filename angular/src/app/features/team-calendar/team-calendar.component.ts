@@ -19,8 +19,9 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
@@ -109,8 +110,8 @@ const EVENT_TYPE_CONFIG: Record<
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="calendar-page">
@@ -248,19 +249,11 @@ const EVENT_TYPE_CONFIG: Record<
 
         @if (groupedEvents().length === 0) {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-calendar"></i>
-              <h3>No upcoming events</h3>
-              <p>
-                @if (selectedType) {
-                  No
-                  {{ getEventTypeConfig(selectedType).label.toLowerCase() }}
-                  events scheduled
-                } @else {
-                  Check back later for team events
-                }
-              </p>
-            </div>
+            <app-empty-state
+              icon="pi-calendar"
+              heading="No upcoming events"
+              [description]="selectedType ? 'No ' + getEventTypeConfig(selectedType).label.toLowerCase() + ' events scheduled' : 'Check back later for team events'"
+            />
           </p-card>
         }
       </div>
@@ -437,7 +430,7 @@ export class TeamCalendarComponent implements OnInit {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly events = signal<TeamEvent[]>([]);
@@ -576,11 +569,10 @@ export class TeamCalendarComponent implements OnInit {
 
     this.api.post("/api/team-calendar/rsvp", submission).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: "RSVP Submitted",
-          detail: `You're ${this.getRsvpLabel(rsvpStatus)} for ${event.title}`,
-        });
+        this.toastService.success(
+          `You're ${this.getRsvpLabel(rsvpStatus)} for ${event.title}`,
+          "RSVP Submitted",
+        );
       },
       error: (err) => this.logger.error("Failed to submit RSVP", err),
     });
@@ -596,19 +588,17 @@ export class TeamCalendarComponent implements OnInit {
         if (url) {
           window.open(url, "_blank");
         } else {
-          this.messageService.add({
-            severity: "info",
-            summary: "Calendar Sync",
-            detail: "Calendar sync URL copied to clipboard",
-          });
+          this.toastService.info(
+            "Calendar sync URL copied to clipboard",
+            "Calendar Sync",
+          );
         }
       },
       error: () => {
-        this.messageService.add({
-          severity: "info",
-          summary: "Calendar Sync",
-          detail: "Subscribe URL: webcal://app.example.com/calendar/team.ics",
-        });
+        this.toastService.info(
+          "Subscribe URL: webcal://app.example.com/calendar/team.ics",
+          "Calendar Sync",
+        );
       },
     });
   }

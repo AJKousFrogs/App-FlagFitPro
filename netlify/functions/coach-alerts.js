@@ -15,6 +15,28 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 
+const parseJsonObjectBody = (rawBody) => {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    return {};
+  }
+
+  const parsed = JSON.parse(rawBody);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    throw new Error("Request body must be an object");
+  }
+
+  return parsed;
+};
+
+const isValidDateOnly = (value) => {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const candidate = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(candidate.getTime()) && candidate.toISOString().startsWith(value);
+};
+
 /**
  * Acknowledge a coach alert
  *
@@ -155,7 +177,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "coach-alerts",
     allowedMethods: ["POST", "OPTIONS"],
-rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const path = event.path
@@ -163,15 +185,35 @@ rateLimitType: rateLimitType,
         .replace(/^\/api\/coach-alerts\/?/, "");
 
       const method = event.httpMethod;
-      const body = event.body ? JSON.parse(event.body) : {};
+      let body = {};
+      if (event.body && method === "POST") {
+        try {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            return createErrorResponse("Invalid JSON", 400, "invalid_json");
+          }
+          return createErrorResponse(
+            error.message || "Invalid request body",
+            422,
+            "validation_error",
+          );
+        }
+      }
 
       try {
         // POST /api/coach-alerts/:alertId/acknowledge
         const acknowledgeMatch = path.match(/^([^/]+)\/acknowledge$/);
         if (method === "POST" && acknowledgeMatch) {
           const alertId = acknowledgeMatch[1];
-          const sessionDate =
-            body.sessionDate || new Date().toISOString().split("T")[0];
+          const sessionDate = body.sessionDate || new Date().toISOString().split("T")[0];
+          if (!isValidDateOnly(sessionDate)) {
+            return createErrorResponse(
+              "sessionDate must be in YYYY-MM-DD format",
+              422,
+              "validation_error",
+            );
+          }
 
           // Verify user is athlete (not coach trying to acknowledge for athlete)
           // This is enforced by checking user_id matches in acknowledgeCoachAlert
@@ -184,9 +226,15 @@ rateLimitType: rateLimitType,
           );
 
           if (!result.success) {
+            const statusByCode = {
+              ALERT_NOT_FOUND: 404,
+              ALERT_NOT_ACTIVE: 422,
+              ACK_NOT_REQUIRED: 422,
+              UPDATE_FAILED: 500,
+            };
             return createErrorResponse(
               result.error || "Failed to acknowledge alert",
-              400,
+              statusByCode[result.code] || 400,
               result.code || "ACKNOWLEDGE_FAILED",
             );
           }
@@ -194,13 +242,13 @@ rateLimitType: rateLimitType,
           return createSuccessResponse(result.data);
         }
 
-        return createErrorResponse("Endpoint not found", 404, "NOT_FOUND");
+        return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
         console.error("[coach-alerts] Error:", error);
         return createErrorResponse(
-          error.message || "Internal server error",
+          "Internal server error",
           500,
-          "SERVER_ERROR",
+          "server_error",
         );
       }
     },

@@ -109,6 +109,15 @@ export const handler = async (event, context) => {
         );
       }
 
+      if (invitation.status !== "pending") {
+        return createErrorResponse(
+          "This invitation is no longer active",
+          409,
+          "invitation_inactive",
+          requestId,
+        );
+      }
+
       // Check if already a member
       const { data: existingMember } = await supabase
         .from("team_members")

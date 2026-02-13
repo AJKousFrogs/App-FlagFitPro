@@ -16,7 +16,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ColorPicker } from "primeng/colorpicker";
@@ -62,7 +62,6 @@ interface TeamSettings {
     ButtonComponent,
     AppLoadingComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
       <app-loading
@@ -207,7 +206,7 @@ interface TeamSettings {
 export class TeamManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly isLoading = signal(true);
@@ -251,11 +250,10 @@ export class TeamManagementComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: "success",
-            summary: "Settings Saved",
-            detail: "Team settings have been updated",
-          });
+          this.toastService.success(
+            "Team settings have been updated",
+            "Settings Saved",
+          );
         },
         error: (err) => this.logger.error("Failed to save settings", err),
       });

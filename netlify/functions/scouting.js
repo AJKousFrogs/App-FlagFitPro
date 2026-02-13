@@ -62,7 +62,7 @@ async function getScoutingReports(teamId, options = {}) {
 /**
  * Get single scouting report
  */
-async function getScoutingReport(reportId) {
+async function getScoutingReport(reportId, teamId) {
   const { data, error } = await supabaseAdmin
     .from("scouting_reports")
     .select(
@@ -72,6 +72,7 @@ async function getScoutingReport(reportId) {
     `,
     )
     .eq("id", reportId)
+    .eq("team_id", teamId)
     .single();
 
   if (error) {
@@ -116,14 +117,43 @@ async function createScoutingReport(teamId, userId, reportData) {
 /**
  * Update scouting report
  */
-async function updateScoutingReport(reportId, updates) {
+async function updateScoutingReport(reportId, teamId, updates) {
+  const allowedFields = new Set([
+    "opponent_name",
+    "opponent_profile",
+    "game_date",
+    "location",
+    "offensive_notes",
+    "defensive_notes",
+    "special_teams_notes",
+    "key_players",
+    "tendencies",
+    "game_plan",
+    "film_links",
+    "status",
+  ]);
+
+  const sanitizedUpdates = {};
+  for (const [key, value] of Object.entries(updates || {})) {
+    if (allowedFields.has(key) && value !== undefined) {
+      sanitizedUpdates[key] = value;
+    }
+  }
+
+  if (Object.keys(sanitizedUpdates).length === 0) {
+    const error = new Error("No valid fields to update");
+    error.isValidation = true;
+    throw error;
+  }
+
   const { data, error } = await supabaseAdmin
     .from("scouting_reports")
     .update({
-      ...updates,
+      ...sanitizedUpdates,
       updated_at: new Date().toISOString(),
     })
     .eq("id", reportId)
+    .eq("team_id", teamId)
     .select()
     .single();
 
@@ -136,11 +166,12 @@ async function updateScoutingReport(reportId, updates) {
 /**
  * Delete scouting report
  */
-async function deleteScoutingReport(reportId) {
+async function deleteScoutingReport(reportId, teamId) {
   const { error } = await supabaseAdmin
     .from("scouting_reports")
     .delete()
-    .eq("id", reportId);
+    .eq("id", reportId)
+    .eq("team_id", teamId);
 
   if (error) {
     throw error;
@@ -334,7 +365,7 @@ async function analyzeTendencies(teamId, opponentName) {
  * Share report with team chat
  */
 async function shareReportToChat(reportId, teamId, userId) {
-  const report = await getScoutingReport(reportId);
+  const report = await getScoutingReport(reportId, teamId);
 
   // Create chat message with report summary
   const { error } = await supabaseAdmin.from("chat_messages").insert({
@@ -355,38 +386,83 @@ async function shareReportToChat(reportId, teamId, userId) {
   }
 
   // Update report as shared
-  await updateScoutingReport(reportId, { status: "shared" });
+  await updateScoutingReport(reportId, teamId, { status: "shared" });
 
   return { success: true };
 }
 
 // Main handler
-async function handler(event) {
-  return baseHandler(event, async (event, userId) => {
+async function handleRequest(event, _context, { userId }) {
     const path = event.path.replace("/.netlify/functions/scouting", "");
     const method = event.httpMethod;
     const params = event.queryStringParameters || {};
+    const parseBoundedInt = (value, fallback, { min, max, field }) => {
+      if (value === undefined || value === null || value === "") {
+        return fallback;
+      }
+      const normalized = String(value).trim();
+      if (!/^-?\d+$/.test(normalized)) {
+        throw new Error(`${field} must be an integer between ${min} and ${max}`);
+      }
+      const parsed = Number.parseInt(normalized, 10);
+      if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+        throw new Error(`${field} must be an integer between ${min} and ${max}`);
+      }
+      return parsed;
+    };
+    const parseJsonBody = () => {
+      let parsedBody;
+      try {
+        parsedBody = JSON.parse(event.body || "{}");
+      } catch {
+        return { ok: false, body: null, code: "invalid_json" };
+      }
+      if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) {
+        return {
+          ok: false,
+          body: null,
+          code: "validation_error",
+          error: "Request body must be an object",
+        };
+      }
+      return { ok: true, body: parsedBody };
+    };
 
-    // Verify coach access
-    const access = await verifyCoachAccess(userId);
-    if (!access) {
-      return createErrorResponse(
-        "Access denied. Coach role required.",
-        403,
-        ErrorType.AUTHORIZATION,
-      );
-    }
+    try {
+      // Verify coach access
+      const access = await verifyCoachAccess(userId);
+      if (!access) {
+        return createErrorResponse(
+          "Access denied. Coach role required.",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
 
-    const teamId = access.team_id;
+      const teamId = access.team_id;
 
     // GET /reports - Get all scouting reports
     if (
       method === "GET" &&
       (path === "" || path === "/" || path === "/reports")
     ) {
+      let limit;
+      try {
+        limit = parseBoundedInt(params.limit, 50, {
+          min: 1,
+          max: 200,
+          field: "limit",
+        });
+      } catch (validationError) {
+        return createErrorResponse(
+          validationError.message || "limit must be an integer between 1 and 200",
+          422,
+          "validation_error",
+        );
+      }
       const reports = await getScoutingReports(teamId, {
         status: params.status,
-        limit: parseInt(params.limit || "50"),
+        limit,
       });
       return createSuccessResponse({ reports });
     }
@@ -394,18 +470,29 @@ async function handler(event) {
     // GET /reports/:id - Get single report
     if (method === "GET" && path.match(/^\/reports\/[\w-]+$/)) {
       const reportId = path.split("/")[2];
-      const report = await getScoutingReport(reportId);
+      const report = await getScoutingReport(reportId, teamId);
       return createSuccessResponse({ report });
     }
 
     // POST /reports - Create new report
     if (method === "POST" && path === "/reports") {
-      const body = JSON.parse(event.body || "{}");
-      if (!body.opponentName) {
+      const parsed = parseJsonBody();
+      if (!parsed.ok) {
+        return createErrorResponse(
+          parsed.error || "Invalid JSON in request body",
+          parsed.code === "invalid_json" ? 400 : 422,
+          parsed.code === "invalid_json" ? "invalid_json" : "validation_error",
+        );
+      }
+      const body = parsed.body;
+      if (
+        typeof body.opponentName !== "string" ||
+        body.opponentName.trim().length === 0
+      ) {
         return createErrorResponse(
           "Missing required field: opponentName",
-          400,
-          ErrorType.VALIDATION,
+          422,
+          "validation_error",
         );
       }
       const report = await createScoutingReport(teamId, userId, body);
@@ -415,15 +502,23 @@ async function handler(event) {
     // PUT /reports/:id - Update report
     if (method === "PUT" && path.match(/^\/reports\/[\w-]+$/)) {
       const reportId = path.split("/")[2];
-      const body = JSON.parse(event.body || "{}");
-      const report = await updateScoutingReport(reportId, body);
+      const parsed = parseJsonBody();
+      if (!parsed.ok) {
+        return createErrorResponse(
+          parsed.error || "Invalid JSON in request body",
+          parsed.code === "invalid_json" ? 400 : 422,
+          parsed.code === "invalid_json" ? "invalid_json" : "validation_error",
+        );
+      }
+      const body = parsed.body;
+      const report = await updateScoutingReport(reportId, teamId, body);
       return createSuccessResponse({ report });
     }
 
     // DELETE /reports/:id - Delete report
     if (method === "DELETE" && path.match(/^\/reports\/[\w-]+$/)) {
       const reportId = path.split("/")[2];
-      await deleteScoutingReport(reportId);
+      await deleteScoutingReport(reportId, teamId);
       return createSuccessResponse({ success: true });
     }
 
@@ -435,12 +530,20 @@ async function handler(event) {
 
     // POST /opponents - Add opponent
     if (method === "POST" && path === "/opponents") {
-      const body = JSON.parse(event.body || "{}");
-      if (!body.name) {
+      const parsed = parseJsonBody();
+      if (!parsed.ok) {
+        return createErrorResponse(
+          parsed.error || "Invalid JSON in request body",
+          parsed.code === "invalid_json" ? 400 : 422,
+          parsed.code === "invalid_json" ? "invalid_json" : "validation_error",
+        );
+      }
+      const body = parsed.body;
+      if (typeof body.name !== "string" || body.name.trim().length === 0) {
         return createErrorResponse(
           "Missing required field: name",
-          400,
-          ErrorType.VALIDATION,
+          422,
+          "validation_error",
         );
       }
       const opponent = await addOpponent(teamId, body);
@@ -464,8 +567,35 @@ async function handler(event) {
       });
     }
 
-    return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
-  });
+      return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
+    } catch (error) {
+      if (error?.isValidation) {
+        return createErrorResponse(
+          error.message || "Validation failed",
+          422,
+          "validation_error",
+        );
+      }
+      throw error;
+    }
 }
 
-export { handler };
+export const handler = async (event, context) => {
+  if (event.httpMethod === "GET") {
+    return baseHandler(event, context, {
+      functionName: "scouting",
+      allowedMethods: ["GET"],
+      rateLimitType: "READ",
+      requireAuth: true,
+      handler: handleRequest,
+    });
+  }
+
+  return baseHandler(event, context, {
+    functionName: "scouting",
+    allowedMethods: ["POST", "PUT", "DELETE"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: handleRequest,
+  });
+};

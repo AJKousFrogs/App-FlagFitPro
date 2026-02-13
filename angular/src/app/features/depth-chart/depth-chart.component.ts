@@ -38,6 +38,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { getInitials } from "../../shared/utils/format.utils";
 
 interface PositionGroup {
@@ -69,6 +70,7 @@ interface PositionGroup {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -92,21 +94,13 @@ interface PositionGroup {
         <div class="depth-chart-content">
           @if (depthCharts().length === 0) {
             <p-card class="empty-card">
-              <div class="empty-state">
-                <i class="pi pi-sitemap"></i>
-                <h3>No Depth Charts</h3>
-                <p>
-                  Initialize depth charts to start managing your roster
-                  positions.
-                </p>
-                @if (isCoach()) {
-                  <app-button
-                    iconLeft="pi-plus"
-                    (clicked)="initializeDepthCharts()"
-                    >Initialize Depth Charts</app-button
-                  >
-                }
-              </div>
+              <app-empty-state
+                icon="pi-sitemap"
+                heading="No Depth Charts"
+                description="Initialize depth charts to start managing your roster positions."
+                [actionLabel]="isCoach() ? 'Initialize Depth Charts' : null"
+                [actionHandler]="isCoach() ? initializeDepthChartsHandler : null"
+              />
             </p-card>
           } @else {
             <p-tabs
@@ -439,6 +433,9 @@ export class DepthChartComponent implements OnInit {
   getInitialsStr(name: string): string {
     return getInitials(name);
   }
+
+  readonly initializeDepthChartsHandler = (): void =>
+    this.initializeDepthCharts();
 
   initializeDepthCharts(): void {
     const teamId = this.authService.getUser()?.user_metadata?.team_id;

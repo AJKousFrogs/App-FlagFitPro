@@ -199,24 +199,6 @@
   }
 
   /* ------------------------------------------------
-   * PrimeNG override exception: DS-PNGO-001
-   * Owner: @design-system-team
-   * Scope: feature-walkthrough .walkthrough-dialog
-   * Remove by: 2026-07-01
-   * Reason: Walkthrough uses radius-2xl and zero content padding.
-   *         Token: --radius-lg | https://design-system-tokens
-   * ------------------------------------------------ */
-  .walkthrough-dialog {
-    .p-dialog {
-      border-radius: var(--radius-2xl);
-    }
-
-    .p-dialog-content {
-      padding: 0;
-    }
-  }
-
-  /* ------------------------------------------------
    * EXCEPTION: mobile pointer/touch overrides
    * Ticket: DS-LEGACY-004
    * Owner: @design-system-team

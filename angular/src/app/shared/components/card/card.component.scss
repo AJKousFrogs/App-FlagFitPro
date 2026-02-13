@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -70,6 +72,8 @@
   border: none;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
+
+  @include ds-focus-ring;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -83,16 +87,6 @@
 .card-interactive.card-pressed {
   transform: translateY(-var(--border-2)) scale(0.99);
   box-shadow: var(--shadow-md);
-}
-
-.card-interactive:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-  box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.3);
-}
-
-.card-interactive:focus:not(:focus-visible) {
-  outline: none;
 }
 
 /* Gradient Card */

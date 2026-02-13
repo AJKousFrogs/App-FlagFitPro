@@ -10,7 +10,6 @@ import { supabaseAdmin } from "./supabase-client.js";
  * Or athlete viewing their own data
  */
 async function verifyPsychologyAccess(userId, targetUserId = null) {
-  // If viewing own data, allow
   if (targetUserId && userId === targetUserId) {
     return { access: "self", teamId: null };
   }
@@ -20,6 +19,7 @@ async function verifyPsychologyAccess(userId, targetUserId = null) {
     .select("role, team_id")
     .eq("user_id", userId)
     .in("role", ["sports_psychologist", "coach", "admin", "staff"])
+    .eq("status", "active")
     .limit(1)
     .single();
 
@@ -27,7 +27,47 @@ async function verifyPsychologyAccess(userId, targetUserId = null) {
     throw error;
   }
 
-  return member ? { access: "staff", teamId: member.team_id } : null;
+  if (!member) {
+    return null;
+  }
+
+  // Staff can only access athletes on their own team
+  if (targetUserId) {
+    const { data: athleteMembership, error: athleteError } = await supabaseAdmin
+      .from("team_members")
+      .select("team_id, role, status")
+      .eq("user_id", targetUserId)
+      .eq("team_id", member.team_id)
+      .eq("role", "player")
+      .eq("status", "active")
+      .limit(1)
+      .single();
+
+    if (athleteError && athleteError.code !== "PGRST116") {
+      throw athleteError;
+    }
+    if (!athleteMembership) {
+      return null;
+    }
+  }
+
+  return { access: "staff", teamId: member.team_id };
+}
+
+function parseDaysParam(daysRaw, fallback = 30) {
+  const parsed = Number.parseInt(daysRaw ?? String(fallback), 10);
+  if (!Number.isInteger(parsed) || parsed < 1 || parsed > 365) {
+    return { valid: false, value: null };
+  }
+  return { valid: true, value: parsed };
+}
+
+function isValidIsoDate(dateStr) {
+  if (typeof dateStr !== "string" || !dateStr.trim()) {
+    return false;
+  }
+  const date = new Date(dateStr);
+  return Number.isFinite(date.getTime()) && dateStr.includes("-");
 }
 
 /**
@@ -480,24 +520,34 @@ function generateMentalRecommendations(metrics, patterns) {
 }
 
 // Main handler
-async function handler(event) {
-  return baseHandler(event, async (event, userId) => {
+async function handleRequest(event, _context, { userId }) {
     const path = event.path.replace("/.netlify/functions/staff-psychology", "");
     const method = event.httpMethod;
     const params = event.queryStringParameters || {};
 
-    // For self-access routes
-    const targetUserId = params.athleteId || userId;
-
-    // Verify access
-    const access = await verifyPsychologyAccess(userId, targetUserId);
-    if (!access) {
-      return createErrorResponse("Access denied", 403, ErrorType.AUTHORIZATION);
+    let parsedBody = {};
+    if (["POST", "PUT", "PATCH"].includes(method) && event.body) {
+      try {
+        parsedBody = JSON.parse(event.body);
+      } catch {
+        return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
+      }
     }
+
+    const selfAccess = { access: "self", teamId: null };
+    const staffAccess = await verifyPsychologyAccess(userId);
 
     // GET /my-data - Get own mental data (athlete self-service)
     if (method === "GET" && path === "/my-data") {
-      const days = parseInt(params.days || "30");
+      const daysResult = parseDaysParam(params.days, 30);
+      if (!daysResult.valid) {
+        return createErrorResponse(
+          "days must be an integer between 1 and 365",
+          422,
+          "validation_error",
+        );
+      }
+      const days = daysResult.value;
       const [mentalLogs, wellness, assessments] = await Promise.all([
         getMentalPerformanceLogs(userId, days),
         getWellnessTrends(userId, days),
@@ -508,15 +558,23 @@ async function handler(event) {
 
     // POST /my-data/log - Log mental performance (athlete self-service)
     if (method === "POST" && path === "/my-data/log") {
-      const body = JSON.parse(event.body || "{}");
-      const log = await logMentalPerformance(userId, body);
+      const log = await logMentalPerformance(userId, parsedBody);
       return createSuccessResponse({ log });
     }
 
     // POST /reports/wellness - Generate wellness report
     if (method === "POST" && path === "/reports/wellness") {
-      const body = JSON.parse(event.body || "{}");
-      const reportUserId = body.athleteId || userId;
+      const reportUserId = parsedBody.athleteId || userId;
+      if (parsedBody.days !== undefined) {
+        const daysResult = parseDaysParam(parsedBody.days, 30);
+        if (!daysResult.valid) {
+          return createErrorResponse(
+            "days must be an integer between 1 and 365",
+            422,
+            "validation_error",
+          );
+        }
+      }
 
       // Verify access to target user's data
       const canAccess = await verifyPsychologyAccess(userId, reportUserId);
@@ -528,32 +586,63 @@ async function handler(event) {
         );
       }
 
-      const report = await generateMentalWellnessReport(reportUserId, body);
+      const report = await generateMentalWellnessReport(reportUserId, parsedBody);
       return createSuccessResponse({ report });
     }
 
     // POST /reports/pre-competition - Generate pre-competition report
     if (method === "POST" && path === "/reports/pre-competition") {
-      const body = JSON.parse(event.body || "{}");
-      const reportUserId = body.athleteId || userId;
-      const gameDate = body.gameDate || new Date().toISOString().split("T")[0];
+      const reportUserId = parsedBody.athleteId || userId;
+      const gameDate = parsedBody.gameDate || new Date().toISOString().split("T")[0];
+      if (!isValidIsoDate(gameDate)) {
+        return createErrorResponse(
+          "gameDate must be a valid date",
+          422,
+          "validation_error",
+        );
+      }
+
+      const canAccess = await verifyPsychologyAccess(userId, reportUserId);
+      if (!canAccess) {
+        return createErrorResponse(
+          "Access denied to athlete data",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
 
       const report = await generatePreCompetitionReport(reportUserId, gameDate);
       return createSuccessResponse({ report });
     }
 
     // Staff-only routes
-    if (access.access === "staff") {
+    if (staffAccess?.access === "staff") {
       // GET /team - Get team mental overview
       if (method === "GET" && path === "/team") {
-        const overview = await getTeamMentalOverview(access.teamId);
+        const overview = await getTeamMentalOverview(staffAccess.teamId);
         return createSuccessResponse({ athletes: overview });
       }
 
       // GET /athletes/:id - Get athlete mental data
       if (method === "GET" && path.match(/^\/athletes\/[\w-]+$/)) {
         const athleteId = path.split("/")[2];
-        const days = parseInt(params.days || "30");
+        const canAccessAthlete = await verifyPsychologyAccess(userId, athleteId);
+        if (!canAccessAthlete) {
+          return createErrorResponse(
+            "Access denied to athlete data",
+            403,
+            ErrorType.AUTHORIZATION,
+          );
+        }
+        const daysResult = parseDaysParam(params.days, 30);
+        if (!daysResult.valid) {
+          return createErrorResponse(
+            "days must be an integer between 1 and 365",
+            422,
+            "validation_error",
+          );
+        }
+        const days = daysResult.value;
         const [mentalLogs, wellness, assessments] = await Promise.all([
           getMentalPerformanceLogs(athleteId, days),
           getWellnessTrends(athleteId, days),
@@ -564,15 +653,53 @@ async function handler(event) {
 
       // POST /assessments - Create assessment
       if (method === "POST" && path === "/assessments") {
-        const body = JSON.parse(event.body || "{}");
-        body.coachId = userId;
-        const assessment = await createAssessment(body.athleteId, body);
+        if (!parsedBody.athleteId || !parsedBody.type) {
+          return createErrorResponse(
+            "athleteId and type are required",
+            422,
+            "validation_error",
+          );
+        }
+        const canAccessAthlete = await verifyPsychologyAccess(
+          userId,
+          parsedBody.athleteId,
+        );
+        if (!canAccessAthlete) {
+          return createErrorResponse(
+            "Access denied to athlete data",
+            403,
+            ErrorType.AUTHORIZATION,
+          );
+        }
+        parsedBody.coachId = userId;
+        const assessment = await createAssessment(parsedBody.athleteId, parsedBody);
         return createSuccessResponse({ assessment });
       }
     }
 
+    if (selfAccess.access !== "self" && !staffAccess) {
+      return createErrorResponse("Access denied", 403, ErrorType.AUTHORIZATION);
+    }
+
     return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
-  });
 }
 
-export { handler };
+export const handler = async (event, context) => {
+  if (event.httpMethod === "GET") {
+    return baseHandler(event, context, {
+      functionName: "staff-psychology",
+      allowedMethods: ["GET"],
+      rateLimitType: "READ",
+      requireAuth: true,
+      handler: handleRequest,
+    });
+  }
+
+  return baseHandler(event, context, {
+    functionName: "staff-psychology",
+    allowedMethods: ["POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: handleRequest,
+  });
+};

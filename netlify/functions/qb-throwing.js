@@ -11,6 +11,18 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isValidDateString(value) {
+  return typeof value === "string" && !Number.isNaN(new Date(value).getTime());
+}
+
+function isNonNegativeInteger(value) {
+  return Number.isInteger(value) && value >= 0;
+}
+
 export const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "qb-throwing",
@@ -22,7 +34,7 @@ export const handler = async (event, context) =>
         const endpoint = evt.path.split("/").pop();
 
         if (evt.httpMethod === "GET") {
-          return getThrowingData(supabaseAdmin, userId);
+          return await getThrowingData(supabaseAdmin, userId);
         }
 
         let payload = {};
@@ -31,17 +43,18 @@ export const handler = async (event, context) =>
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
-
-        if (endpoint === "arm-care") {
-          return markArmCareDone(supabaseAdmin, userId, payload);
+        if (!isPlainObject(payload)) {
+          return handleValidationError("Request body must be an object");
         }
 
-        return logThrowingSession(supabaseAdmin, userId, payload);
+        if (endpoint === "arm-care") {
+          return await markArmCareDone(supabaseAdmin, userId, payload);
+        }
+
+        return await logThrowingSession(supabaseAdmin, userId, payload);
       } catch (err) {
         console.error("QB throwing error:", err);
-        return createErrorResponse("Internal server error", 500, "server_error", {
-          details: err.message,
-        });
+        return createErrorResponse("Internal server error", 500, "server_error");
       }
     },
   });
@@ -231,20 +244,67 @@ async function logThrowingSession(supabase, userId, payload) {
     sessionDate,
   } = payload;
 
-  if (!sessionType || !totalThrows) {
-    return handleValidationError("sessionType and totalThrows required");
+  if (typeof sessionType !== "string" || sessionType.trim().length === 0) {
+    return handleValidationError("sessionType is required");
+  }
+  if (!Number.isInteger(totalThrows) || totalThrows < 1 || totalThrows > 1000) {
+    return handleValidationError("totalThrows must be an integer between 1 and 1000");
+  }
+  if (shortThrows !== undefined && !isNonNegativeInteger(shortThrows)) {
+    return handleValidationError("shortThrows must be a non-negative integer");
+  }
+  if (mediumThrows !== undefined && !isNonNegativeInteger(mediumThrows)) {
+    return handleValidationError("mediumThrows must be a non-negative integer");
+  }
+  if (longThrows !== undefined && !isNonNegativeInteger(longThrows)) {
+    return handleValidationError("longThrows must be a non-negative integer");
+  }
+
+  const segmentedThrowsTotal =
+    (shortThrows || 0) + (mediumThrows || 0) + (longThrows || 0);
+  if (segmentedThrowsTotal > totalThrows) {
+    return handleValidationError(
+      "shortThrows + mediumThrows + longThrows cannot exceed totalThrows",
+    );
+  }
+
+  if (
+    (preThrowingWarmupDone !== undefined &&
+      typeof preThrowingWarmupDone !== "boolean") ||
+    (postThrowingArmCareDone !== undefined &&
+      typeof postThrowingArmCareDone !== "boolean") ||
+    (iceApplied !== undefined && typeof iceApplied !== "boolean")
+  ) {
+    return handleValidationError(
+      "preThrowingWarmupDone, postThrowingArmCareDone, and iceApplied must be booleans",
+    );
+  }
+
+  if (sessionDate !== undefined && !isValidDateString(sessionDate)) {
+    return handleValidationError("sessionDate must be a valid date string");
+  }
+
+  if (
+    fatigueLevel !== undefined &&
+    (!Number.isInteger(fatigueLevel) || fatigueLevel < 1 || fatigueLevel > 10)
+  ) {
+    return handleValidationError("fatigueLevel must be an integer between 1 and 10");
   }
 
   const today = sessionDate || new Date().toISOString().split("T")[0];
 
   // Check if session already exists for this date/type
-  const { data: existing } = await supabase
+  const { data: existing, error: existingError } = await supabase
     .from("qb_throwing_sessions")
     .select("id")
     .eq("user_id", userId)
     .eq("session_date", today)
     .eq("session_type", sessionType)
     .single();
+
+  if (existingError && existingError.code !== "PGRST116") {
+    throw new Error("Failed to check existing throwing session");
+  }
 
   let result;
 
@@ -338,8 +398,8 @@ async function logThrowingSession(supabase, userId, payload) {
 async function markArmCareDone(supabase, userId, payload) {
   const { sessionId } = payload;
 
-  if (!sessionId) {
-    return handleValidationError("sessionId required");
+  if (typeof sessionId !== "string" || sessionId.trim().length === 0) {
+    return handleValidationError("sessionId is required");
   }
 
   const { error } = await supabase

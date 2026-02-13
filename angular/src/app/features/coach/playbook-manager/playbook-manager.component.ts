@@ -17,8 +17,9 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
@@ -119,9 +120,9 @@ const ROUTES = [
     PageHeaderComponent,
 
     ButtonComponent,
+    EmptyStateComponent,
     StatusTagComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="playbook-manager-page">
@@ -314,14 +315,14 @@ const ROUTES = [
           </div>
         } @else {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-book"></i>
-              <h3>No Plays Found</h3>
-              <p>Create your first play to get started</p>
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
-                >Create Play</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-book"
+              heading="No Plays Found"
+              description="Create your first play to get started"
+              actionLabel="Create Play"
+              actionIcon="pi-plus"
+              [actionHandler]="openCreateDialogHandler"
+            />
           </p-card>
         }
       </div>
@@ -580,7 +581,7 @@ const ROUTES = [
 export class PlaybookManagerComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly activeTab = signal<
@@ -726,6 +727,8 @@ export class PlaybookManagerComponent implements OnInit {
     this.showPlayDialog = true;
   }
 
+  readonly openCreateDialogHandler = (): void => this.openCreateDialog();
+
   editPlay(play: Play): void {
     this.isEditing.set(true);
     this.playForm = {
@@ -746,21 +749,16 @@ export class PlaybookManagerComponent implements OnInit {
   savePlay(): void {
     if (!this.playForm.name) return;
 
-    this.messageService.add({
-      severity: "success",
-      summary: "Play Saved",
-      detail: `${this.playForm.name} has been saved`,
-    });
+    this.toastService.success(
+      `${this.playForm.name} has been saved`,
+      "Play Saved",
+    );
     this.showPlayDialog = false;
     // Would submit to API
   }
 
   viewPlay(play: Play): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "View Play",
-      detail: `Opening ${play.name} in full view`,
-    });
+    this.toastService.info(`Opening ${play.name} in full view`, "View Play");
   }
 
   viewStats(play: Play): void {
@@ -774,28 +772,22 @@ export class PlaybookManagerComponent implements OnInit {
         p.id === play.id ? { ...p, status: "archived" as const } : p,
       ),
     );
-    this.messageService.add({
-      severity: "info",
-      summary: "Play Archived",
-      detail: `${play.name} has been archived`,
-    });
+    this.toastService.info(`${play.name} has been archived`, "Play Archived");
   }
 
   sendReminder(status: MemorizationStatus): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminder Sent",
-      detail: `Reminder sent to ${status.playerName}`,
-    });
+    this.toastService.success(
+      `Reminder sent to ${status.playerName}`,
+      "Reminder Sent",
+    );
   }
 
   sendAllReminders(): void {
     const count = this.needsReviewPlayers().length;
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminders Sent",
-      detail: `Reminders sent to ${count} players`,
-    });
+    this.toastService.success(
+      `Reminders sent to ${count} players`,
+      "Reminders Sent",
+    );
   }
 
   // Helper methods

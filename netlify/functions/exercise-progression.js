@@ -83,6 +83,64 @@ const READINESS_ADJUSTMENTS = {
   low: { factor: 0, threshold: 40 },
 };
 
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isValidIsoDate(value) {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const parsed = new Date(value);
+  return !Number.isNaN(parsed.getTime());
+}
+
+function isFiniteNumber(value) {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function validatePayload(payload) {
+  if (!isPlainObject(payload)) {
+    return "Request body must be an object";
+  }
+
+  if (!Array.isArray(payload.exerciseIds) || payload.exerciseIds.length === 0) {
+    return "exerciseIds must be a non-empty array";
+  }
+  if (payload.exerciseIds.length > 100) {
+    return "exerciseIds cannot exceed 100 items";
+  }
+  const invalidExerciseId = payload.exerciseIds.find(
+    (id) =>
+      (typeof id !== "string" && typeof id !== "number") ||
+      String(id).trim().length === 0,
+  );
+  if (invalidExerciseId !== undefined) {
+    return "exerciseIds must contain only non-empty ids";
+  }
+
+  if (payload.date !== undefined && payload.date !== null && !isValidIsoDate(payload.date)) {
+    return "date must be a valid date string";
+  }
+  if (
+    payload.acwrValue !== undefined &&
+    payload.acwrValue !== null &&
+    (!isFiniteNumber(payload.acwrValue) || payload.acwrValue < 0 || payload.acwrValue > 10)
+  ) {
+    return "acwrValue must be a number between 0 and 10";
+  }
+  if (
+    payload.readinessScore !== undefined &&
+    payload.readinessScore !== null &&
+    (!isFiniteNumber(payload.readinessScore) ||
+      payload.readinessScore < 0 ||
+      payload.readinessScore > 100)
+  ) {
+    return "readinessScore must be a number between 0 and 100";
+  }
+  return null;
+}
+
 export const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "exercise-progression",
@@ -97,11 +155,13 @@ export const handler = async (event, context) =>
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
-        const { exerciseIds, date, acwrValue, readinessScore } = payload;
 
-        if (!exerciseIds || !Array.isArray(exerciseIds)) {
-          return handleValidationError("exerciseIds array required");
+        const validationError = validatePayload(payload);
+        if (validationError) {
+          return handleValidationError(validationError);
         }
+
+        const { exerciseIds, date, acwrValue, readinessScore } = payload;
 
         const targetDate = date || new Date().toISOString().split("T")[0];
 
@@ -121,7 +181,7 @@ export const handler = async (event, context) =>
         const yesterdayStr = yesterday.toISOString().split("T")[0];
 
         // Fetch yesterday's protocol exercises for these exercises
-        const { data: yesterdayExercises } = await supabase
+        const { data: yesterdayExercises, error: yesterdayError } = await supabase
           .from("protocol_exercises")
           .select(
             `
@@ -140,6 +200,13 @@ export const handler = async (event, context) =>
           .eq("daily_protocols.user_id", userId)
           .eq("daily_protocols.protocol_date", yesterdayStr)
           .in("exercise_id", exerciseIds);
+        if (yesterdayError) {
+          return createErrorResponse(
+            "Failed to fetch previous exercise performance",
+            500,
+            "database_error",
+          );
+        }
 
         // Create a map of yesterday's performance
         const yesterdayMap = new Map();
@@ -156,10 +223,20 @@ export const handler = async (event, context) =>
         }
 
         // Fetch exercise details
-        const { data: exercises } = await supabase
+        const { data: exercises, error: exercisesError } = await supabase
           .from("exercises")
           .select("*")
           .in("id", exerciseIds);
+        if (exercisesError) {
+          return createErrorResponse(
+            "Failed to fetch exercise definitions",
+            500,
+            "database_error",
+          );
+        }
+        if (!Array.isArray(exercises) || exercises.length === 0) {
+          return handleValidationError("No matching exercises found");
+        }
 
         // Calculate progressions
         const progressions = exercises.map((exercise) => {
@@ -182,9 +259,7 @@ export const handler = async (event, context) =>
         };
       } catch (err) {
         console.error("Progression calculation error:", err);
-        return createErrorResponse("Internal server error", 500, "server_error", {
-          details: err.message,
-        });
+        return createErrorResponse("Internal server error", 500, "server_error");
       }
     },
   });

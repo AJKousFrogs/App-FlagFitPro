@@ -59,8 +59,6 @@
   gap: var(--space-6);
 }
 
-// .card-header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
 // Note: This component had transparent bg + no border (closer to canonical)
 // but still needs migration to app-card-shell for consistency
 
@@ -1513,8 +1511,6 @@
   .travel-recovery-page {
     padding: var(--space-3);
   }
-
-  // .card-header responsive styles removed - use app-card-shell
 
   .gauge-circle {
     width: calc(var(--space-20) + var(--space-5));

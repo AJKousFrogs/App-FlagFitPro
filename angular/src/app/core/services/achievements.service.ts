@@ -9,6 +9,7 @@ import { Observable, catchError, map, of, tap } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { ToastService } from "./toast.service";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 
 export interface Achievement {
   id: string;
@@ -128,7 +129,7 @@ export class AchievementsService {
           });
         }),
         catchError((error) => {
-          this.error.set(error.message || "Failed to load achievements");
+          this.error.set(getErrorMessage(error, "Failed to load achievements"));
           this.loading.set(false);
           this.logger.error("[Achievements] Error loading achievements", error);
           return of({
@@ -187,7 +188,7 @@ export class AchievementsService {
           return of({
             success: false,
             alreadyUnlocked: false,
-            message: error.message || "Failed to unlock achievement",
+            message: getErrorMessage(error, "Failed to unlock achievement"),
           });
         }),
       );

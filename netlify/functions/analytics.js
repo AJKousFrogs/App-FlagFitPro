@@ -14,6 +14,25 @@ import { baseHandler } from "./utils/base-handler.js";
 // Initialize consent-aware data reader for team analytics
 const consentReader = new ConsentDataReader(supabaseAdmin);
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || Number.isNaN(parsed) || String(parsed) !== String(value)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  if (parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
+const parsePeriod = (value) => {
+  const allowed = new Set(["7days", "30days", "90days"]);
+  if (!allowed.has(value)) {
+    throw new Error("period must be one of: 7days, 30days, 90days");
+  }
+  return value;
+};
+
 // Get performance trends over time (PLAYER OWN DATA - not coach context)
 // Always filters data up to and including today
 const getPerformanceTrends = async (userId, weeks = 7) => {
@@ -135,6 +154,7 @@ const getTeamChemistry = async (userId) => {
       .from("team_members")
       .select("team_id")
       .eq("user_id", userId)
+      .eq("status", "active")
       .limit(1);
 
     if (teamError || !teamMemberships || teamMemberships.length === 0) {
@@ -147,7 +167,8 @@ const getTeamChemistry = async (userId) => {
     const { data: _members, error: membersError } = await supabaseAdmin
       .from("team_members")
       .select("user_id")
-      .eq("team_id", teamId);
+      .eq("team_id", teamId)
+      .eq("status", "active");
 
     if (membersError) {
       throw membersError;
@@ -295,6 +316,7 @@ const getPositionPerformance = async (userId) => {
       .from("team_members")
       .select("team_id")
       .eq("user_id", userId)
+      .eq("status", "active")
       .limit(1);
 
     if (teamError || !teamMemberships || teamMemberships.length === 0) {
@@ -309,7 +331,8 @@ const getPositionPerformance = async (userId) => {
     const { data: memberRows, error: membersError } = await supabaseAdmin
       .from("team_members")
       .select("user_id, position")
-      .eq("team_id", teamId);
+      .eq("team_id", teamId)
+      .eq("status", "active");
 
     if (membersError) {
       throw membersError;
@@ -722,85 +745,112 @@ export const handler = async (event, context) => {
     rateLimitType: "READ",
     requireAuth: true, // P0-007: Explicitly require authentication for analytics data
     handler: async (event, _context, { userId }) => {
-      // Parse path to determine endpoint
-      const path = event.path.replace("/.netlify/functions/analytics", "");
-      const queryParams = event.queryStringParameters || {};
+      try {
+        // Parse path to determine endpoint
+        const path = event.path.replace("/.netlify/functions/analytics", "");
+        const queryParams = event.queryStringParameters || {};
 
-      // Validate query parameters
-      const validation = validateQueryParams(queryParams);
-      if (!validation.valid) {
-        return validation.response;
+        // Validate query parameters
+        const validation = validateQueryParams(queryParams);
+        if (!validation.valid) {
+          return createErrorResponse(
+            validation.errors.join(", "),
+            422,
+            "validation_error",
+          );
+        }
+
+        const sanitizedQuery = validation.sanitized || {};
+        const hasWeeks = Object.prototype.hasOwnProperty.call(
+          sanitizedQuery,
+          "weeks",
+        );
+        const hasPeriod = Object.prototype.hasOwnProperty.call(
+          sanitizedQuery,
+          "period",
+        );
+        const weeks = hasWeeks
+          ? parseBoundedInt(String(sanitizedQuery.weeks), "weeks", { min: 1, max: 52 })
+          : 7;
+        const period = hasPeriod
+          ? parsePeriod(String(sanitizedQuery.period))
+          : "30days";
+
+        let data;
+        let cacheKey;
+
+        if (
+          path.includes("/performance-trends") ||
+          path.endsWith("/performance-trends")
+        ) {
+          cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:performance-trends:${weeks}`;
+          data = await getOrFetch(
+            cacheKey,
+            async () => await getPerformanceTrends(userId, weeks),
+            CACHE_TTL.ANALYTICS,
+          );
+        } else if (
+          path.includes("/team-chemistry") ||
+          path.endsWith("/team-chemistry")
+        ) {
+          cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:team-chemistry`;
+          data = await getOrFetch(
+            cacheKey,
+            async () => await getTeamChemistry(userId),
+            CACHE_TTL.ANALYTICS,
+          );
+        } else if (
+          path.includes("/training-distribution") ||
+          path.endsWith("/training-distribution")
+        ) {
+          cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:training-distribution:${period}`;
+          data = await getOrFetch(
+            cacheKey,
+            async () => await getTrainingDistribution(userId, period),
+            CACHE_TTL.ANALYTICS,
+          );
+        } else if (
+          path.includes("/position-performance") ||
+          path.endsWith("/position-performance")
+        ) {
+          cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:position-performance`;
+          data = await getOrFetch(
+            cacheKey,
+            async () => await getPositionPerformance(userId),
+            CACHE_TTL.ANALYTICS,
+          );
+        } else if (
+          path.includes("/speed-development") ||
+          path.endsWith("/speed-development")
+        ) {
+          cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:speed-development:${weeks}`;
+          data = await getOrFetch(
+            cacheKey,
+            async () => await getSpeedDevelopment(userId, weeks),
+            CACHE_TTL.ANALYTICS,
+          );
+        } else if (path.includes("/summary") || path.endsWith("/summary")) {
+          cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:summary`;
+          data = await getOrFetch(
+            cacheKey,
+            async () => await getAnalyticsSummary(userId),
+            CACHE_TTL.ANALYTICS,
+          );
+        } else {
+          return createErrorResponse("Endpoint not found", 404, "not_found");
+        }
+
+        // Return with 5-minute cache headers (300 seconds)
+        return createSuccessResponse(data, 200, null, 300);
+      } catch (error) {
+        if (error?.message?.includes("must be an integer between")) {
+          return createErrorResponse(error.message, 422, "validation_error");
+        }
+        if (error?.message?.includes("period must be one of")) {
+          return createErrorResponse(error.message, 422, "validation_error");
+        }
+        throw error;
       }
-
-      const weeks = parseInt(queryParams.weeks) || 7;
-      const period = queryParams.period || "30days";
-
-      let data;
-      let cacheKey;
-
-      if (
-        path.includes("/performance-trends") ||
-        path.endsWith("/performance-trends")
-      ) {
-        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:performance-trends:${weeks}`;
-        data = await getOrFetch(
-          cacheKey,
-          async () => await getPerformanceTrends(userId, weeks),
-          CACHE_TTL.ANALYTICS,
-        );
-      } else if (
-        path.includes("/team-chemistry") ||
-        path.endsWith("/team-chemistry")
-      ) {
-        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:team-chemistry`;
-        data = await getOrFetch(
-          cacheKey,
-          async () => await getTeamChemistry(userId),
-          CACHE_TTL.ANALYTICS,
-        );
-      } else if (
-        path.includes("/training-distribution") ||
-        path.endsWith("/training-distribution")
-      ) {
-        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:training-distribution:${period}`;
-        data = await getOrFetch(
-          cacheKey,
-          async () => await getTrainingDistribution(userId, period),
-          CACHE_TTL.ANALYTICS,
-        );
-      } else if (
-        path.includes("/position-performance") ||
-        path.endsWith("/position-performance")
-      ) {
-        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:position-performance`;
-        data = await getOrFetch(
-          cacheKey,
-          async () => await getPositionPerformance(userId),
-          CACHE_TTL.ANALYTICS,
-        );
-      } else if (
-        path.includes("/speed-development") ||
-        path.endsWith("/speed-development")
-      ) {
-        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:speed-development:${weeks}`;
-        data = await getOrFetch(
-          cacheKey,
-          async () => await getSpeedDevelopment(userId, weeks),
-          CACHE_TTL.ANALYTICS,
-        );
-      } else if (path.includes("/summary") || path.endsWith("/summary")) {
-        cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:summary`;
-        data = await getOrFetch(
-          cacheKey,
-          async () => await getAnalyticsSummary(userId),
-          CACHE_TTL.ANALYTICS,
-        );
-      } else {
-        return createErrorResponse("Endpoint not found", 404, "not_found");
-      }
-
-      // Return with 5-minute cache headers (300 seconds)
-      return createSuccessResponse(data, 200, null, 300);
     },
   });
 };

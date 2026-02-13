@@ -26,6 +26,13 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 // HELPER FUNCTIONS
 // =====================================================
 
+function createHttpError(message, statusCode, code) {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  error.code = code;
+  return error;
+}
+
 /**
  * Verify user is a coach and get their team IDs
  * @param {string} userId - User ID
@@ -36,8 +43,8 @@ async function verifyCoachAndGetTeams(userId) {
     .from("team_members")
     .select("team_id, role")
     .eq("user_id", userId)
-    .in("role", ["coach", "assistant_coach"])
-    .eq("status", "active");
+    .in("role", ["coach", "assistant_coach", "head_coach", "admin"])
+    .or("is_active.eq.true,status.eq.active");
 
   if (error) {
     console.error("[Team Templates] Error verifying coach status:", error);
@@ -104,7 +111,12 @@ async function createTemplate(templateData, userId) {
  * @param {string} userId - Creator user ID
  * @returns {Object} - Created template
  */
-async function createTemplateFromInbox(inboxItemId, templateOverrides, userId) {
+async function createTemplateFromInbox(
+  inboxItemId,
+  templateOverrides,
+  userId,
+  allowedTeamIds,
+) {
   // Get the inbox item
   const { data: inboxItem, error: inboxError } = await supabaseAdmin
     .from("coach_inbox_items")
@@ -114,6 +126,13 @@ async function createTemplateFromInbox(inboxItemId, templateOverrides, userId) {
 
   if (inboxError || !inboxItem) {
     throw new Error("Inbox item not found");
+  }
+  if (!allowedTeamIds.includes(inboxItem.team_id)) {
+    throw createHttpError(
+      "Not authorized to create a template for this team",
+      403,
+      "not_authorized",
+    );
   }
 
   // Get the source message if it's an AI message
@@ -346,19 +365,39 @@ async function assignTemplate(
   templateId,
   athleteIds,
   assignedBy,
+  allowedTeamIds,
   reason = null,
   sourceInboxItemId = null,
 ) {
   // Get the template
   const { data: template, error: templateError } = await supabaseAdmin
     .from("team_templates")
-    .select("*")
+    .select("id, team_id, template_type, content, name, description, category, position_filter")
     .eq("id", templateId)
     .single();
 
   if (templateError || !template) {
     throw new Error("Template not found");
   }
+  if (!allowedTeamIds.includes(template.team_id)) {
+    throw createHttpError(
+      "Not authorized to assign this template",
+      403,
+      "not_authorized",
+    );
+  }
+
+  const { data: athleteMemberships, error: athleteMembershipsError } =
+    await supabaseAdmin
+      .from("team_members")
+      .select("user_id")
+      .eq("team_id", template.team_id)
+      .in("user_id", athleteIds)
+      .or("is_active.eq.true,status.eq.active");
+  if (athleteMembershipsError) {
+    throw athleteMembershipsError;
+  }
+  const eligibleAthleteIds = new Set((athleteMemberships || []).map((a) => a.user_id));
 
   const results = {
     assigned: [],
@@ -367,6 +406,10 @@ async function assignTemplate(
 
   for (const athleteId of athleteIds) {
     try {
+      if (!eligibleAthleteIds.has(athleteId)) {
+        throw new Error("Athlete is not an active member of template team");
+      }
+
       let microSessionId = null;
 
       // If it's a micro_session template, create a micro-session for the athlete
@@ -434,7 +477,7 @@ async function assignTemplate(
       );
       results.failed.push({
         athlete_id: athleteId,
-        error: error.message,
+        error: "Assignment failed",
       });
     }
   }
@@ -513,6 +556,7 @@ rateLimitType: rateLimitType,
             body.inbox_item_id,
             body,
             userId,
+            teamIds,
           );
 
           return createSuccessResponse(template, requestId);
@@ -549,6 +593,7 @@ rateLimitType: rateLimitType,
             templateId,
             body.athlete_ids,
             userId,
+            teamIds,
             body.reason,
             body.source_inbox_item_id,
           );
@@ -664,8 +709,16 @@ rateLimitType: rateLimitType,
         );
       } catch (error) {
         console.error("[Team Templates] Error:", error);
+        if (error?.statusCode) {
+          return createErrorResponse(
+            error.message,
+            error.statusCode,
+            error.code || "request_error",
+            requestId,
+          );
+        }
         return createErrorResponse(
-          error.message || "Failed to process request",
+          "Failed to process team template request",
           500,
           "internal_error",
           requestId,

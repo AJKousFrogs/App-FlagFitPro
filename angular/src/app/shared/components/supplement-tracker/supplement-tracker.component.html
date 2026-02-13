@@ -35,8 +35,8 @@
     <div class="supplement-loading">
       @for (i of [1, 2, 3, 4]; track i) {
         <div class="skeleton-row">
-          <p-skeleton shape="circle" size="var(--space-6)"></p-skeleton>
-          <p-skeleton width="80%" height="var(--space-5)"></p-skeleton>
+          <app-skeleton-loader variant="avatar" size="var(--space-6)" />
+          <app-skeleton-loader variant="text" width="80%" />
         </div>
       }
     </div>

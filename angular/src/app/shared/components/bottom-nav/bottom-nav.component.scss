@@ -87,14 +87,12 @@
   min-height: var(--touch-target-md);
   cursor: pointer;
   color: var(--color-text-secondary);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.close-btn:hover {
-  background: var(--surface-tertiary);
+  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .more-menu-items {

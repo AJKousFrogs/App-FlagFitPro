@@ -20,6 +20,12 @@ const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
+const createUploadValidationError = (message) => {
+  const error = new Error(message);
+  error.code = "UPLOAD_VALIDATION";
+  return error;
+};
+
 // Upload file to Supabase Storage
 const uploadFile = async (userId, fileData, fileType, fileName) => {
   try {
@@ -34,19 +40,29 @@ const uploadFile = async (userId, fileData, fileType, fileName) => {
       maxSize = MAX_VIDEO_SIZE;
       mediaType = "video";
     } else if (!ALLOWED_IMAGE_TYPES.includes(fileType)) {
-      throw new Error(
+      throw createUploadValidationError(
         `Invalid file type: ${fileType}. Allowed types: ${[...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES].join(", ")}`,
       );
+    }
+
+    if (typeof fileData !== "string" || fileData.trim().length === 0) {
+      throw createUploadValidationError("file must be a non-empty base64 string");
+    }
+    if (typeof fileName !== "string" || fileName.trim().length === 0) {
+      throw createUploadValidationError("fileName must be a non-empty string");
     }
 
     // Decode base64 file data
     const base64Data = fileData.replace(/^data:[^;]+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
+    if (!buffer || buffer.length === 0) {
+      throw createUploadValidationError("file must contain decodable base64 data");
+    }
 
     // Validate file size
     if (buffer.length > maxSize) {
       const maxSizeMB = maxSize / (1024 * 1024);
-      throw new Error(
+      throw createUploadValidationError(
         `File too large. Maximum size for ${mediaType}s is ${maxSizeMB}MB`,
       );
     }
@@ -116,12 +132,12 @@ export const handler = async (event, context) => {
       // Authenticate request
       const auth = await authenticateRequest(event);
       if (!auth.success) {
-        return createErrorResponse(
-          "Authentication required",
-          401,
-          "auth_required",
-          requestId,
-        );
+      return createErrorResponse(
+        "Authentication required",
+        401,
+        "authentication_error",
+        requestId,
+      );
       }
 
       const userId = auth.user.id;
@@ -140,13 +156,22 @@ export const handler = async (event, context) => {
           );
         }
 
+        if (body === null || typeof body !== "object" || Array.isArray(body)) {
+          return createErrorResponse(
+            "Request body must be an object",
+            400,
+            "validation_error",
+            requestId,
+          );
+        }
+
         const { file, fileType, fileName } = body;
 
         if (!file || !fileType || !fileName) {
           return createErrorResponse(
             "Missing required fields: file, fileType, fileName",
             400,
-            "missing_fields",
+            "validation_error",
             requestId,
           );
         }
@@ -155,13 +180,21 @@ export const handler = async (event, context) => {
           const result = await uploadFile(userId, file, fileType, fileName);
           return createSuccessResponse(
             { ...result, message: "File uploaded successfully" },
-            requestId,
             201,
+            "File uploaded successfully",
           );
         } catch (error) {
+          if (error?.code === "UPLOAD_VALIDATION") {
+            return createErrorResponse(
+              error.message,
+              400,
+              "validation_error",
+              requestId,
+            );
+          }
           return createErrorResponse(
-            error.message || "Upload failed",
-            400,
+            "Upload failed",
+            500,
             "upload_failed",
             requestId,
           );
@@ -177,7 +210,7 @@ export const handler = async (event, context) => {
           return createErrorResponse(
             "Missing required parameter: path",
             400,
-            "missing_path",
+            "validation_error",
             requestId,
           );
         }
@@ -204,15 +237,15 @@ export const handler = async (event, context) => {
         }
 
         try {
-          await deleteFile(filePath);
+          await deleteFile(normalizedPath);
           return createSuccessResponse(
             { message: "File deleted successfully" },
-            requestId,
+            200,
           );
         } catch (error) {
           return createErrorResponse(
-            error.message || "Delete failed",
-            400,
+            "Delete failed",
+            500,
             "delete_failed",
             requestId,
           );

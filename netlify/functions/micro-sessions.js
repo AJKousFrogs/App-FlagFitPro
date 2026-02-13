@@ -29,6 +29,30 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 // HELPER FUNCTIONS
 // =====================================================
 
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isValidId(value) {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    value.trim().length <= 128 &&
+    /^[A-Za-z0-9_-]+$/.test(value.trim())
+  );
+}
+
+function parseBoundedInt(value, field, min, max, defaultValue = null) {
+  if (value === undefined || value === null || value === "") {
+    return { value: defaultValue };
+  }
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    return { error: `${field} must be an integer between ${min} and ${max}` };
+  }
+  return { value: parsed };
+}
+
 /**
  * Create a micro-session from an AI suggestion
  * @param {Object} sessionData - Session data
@@ -362,7 +386,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "micro-sessions",
     allowedMethods: ["GET", "POST", "PATCH"],
-rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();
@@ -382,6 +406,15 @@ rateLimitType: rateLimitType,
           : null;
       const action = pathParts[1] || null;
 
+      if (sessionId && !isValidId(sessionId)) {
+        return createErrorResponse(
+          "Invalid session id",
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+
       try {
         // GET /api/micro-sessions/today - Today's pending sessions
         if (method === "GET" && subPath === "today") {
@@ -398,8 +431,17 @@ rateLimitType: rateLimitType,
         // GET /api/micro-sessions/analytics - Completion analytics
         if (method === "GET" && subPath === "analytics") {
           const { weeks } = event.queryStringParameters || {};
+          const parsedWeeks = parseBoundedInt(weeks, "weeks", 1, 52, 4);
+          if (parsedWeeks.error) {
+            return createErrorResponse(
+              parsedWeeks.error,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
           const analytics = await getCompletionAnalytics(userId, {
-            weeks: weeks ? parseInt(weeks) : 4,
+            weeks: parsedWeeks.value,
           });
           return createSuccessResponse(analytics, requestId);
         }
@@ -420,7 +462,36 @@ rateLimitType: rateLimitType,
 
         // GET /api/micro-sessions - List sessions
         if (method === "GET") {
-          const filters = event.queryStringParameters || {};
+          const rawFilters = event.queryStringParameters || {};
+          const parsedLimit = parseBoundedInt(rawFilters.limit, "limit", 1, 200, 50);
+          if (parsedLimit.error) {
+            return createErrorResponse(
+              parsedLimit.error,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          const parsedOffset = parseBoundedInt(
+            rawFilters.offset,
+            "offset",
+            0,
+            1000000,
+            0,
+          );
+          if (parsedOffset.error) {
+            return createErrorResponse(
+              parsedOffset.error,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          const filters = {
+            ...rawFilters,
+            limit: parsedLimit.value,
+            offset: parsedOffset.value,
+          };
           const sessions = await getMicroSessions(userId, filters);
           return createSuccessResponse(
             {
@@ -446,15 +517,26 @@ rateLimitType: rateLimitType,
             );
           }
 
+          if (!isPlainObject(body)) {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
           // Validate rating
           if (
             body.rating === undefined ||
+            typeof body.rating !== "number" ||
+            !Number.isFinite(body.rating) ||
             body.rating < 0 ||
             body.rating > 10
           ) {
             return createErrorResponse(
               "Rating is required and must be between 0 and 10",
-              400,
+              422,
               "validation_error",
               requestId,
             );
@@ -478,11 +560,24 @@ rateLimitType: rateLimitType,
             );
           }
 
-          // Validate required fields
-          if (!body.title) {
+          if (!isPlainObject(body)) {
             return createErrorResponse(
-              "Title is required",
-              400,
+              "Request body must be an object",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
+          // Validate required fields
+          if (
+            typeof body.title !== "string" ||
+            body.title.trim().length === 0 ||
+            body.title.length > 160
+          ) {
+            return createErrorResponse(
+              "title is required and must be 1-160 characters",
+              422,
               "validation_error",
               requestId,
             );
@@ -506,6 +601,15 @@ rateLimitType: rateLimitType,
             );
           }
 
+          if (!isPlainObject(body)) {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
           // Validate status if provided
           const validStatuses = [
             "pending",
@@ -516,8 +620,36 @@ rateLimitType: rateLimitType,
           if (body.status && !validStatuses.includes(body.status)) {
             return createErrorResponse(
               `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
-              400,
-              "invalid_status",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
+          if (
+            body.actual_duration_minutes !== undefined &&
+            (!Number.isInteger(body.actual_duration_minutes) ||
+              body.actual_duration_minutes < 0 ||
+              body.actual_duration_minutes > 240)
+          ) {
+            return createErrorResponse(
+              "actual_duration_minutes must be an integer between 0 and 240",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
+          const hasAnySupportedField =
+            body.status !== undefined ||
+            body.started_at !== undefined ||
+            body.completed_at !== undefined ||
+            body.actual_duration_minutes !== undefined;
+          if (!hasAnySupportedField) {
+            return createErrorResponse(
+              "No valid update fields provided",
+              422,
+              "validation_error",
               requestId,
             );
           }

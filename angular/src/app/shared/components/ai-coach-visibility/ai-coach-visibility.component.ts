@@ -28,6 +28,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../button/button.component";
+import { EmptyStateComponent } from "../empty-state/empty-state.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { getInitials } from "../../utils/format.utils";
 
@@ -105,6 +106,7 @@ interface CoachVisibilityRecord {
     Skeleton,
 
     ButtonComponent,
+    EmptyStateComponent,
     IconButtonComponent,
   ],
   template: `
@@ -234,11 +236,11 @@ interface CoachVisibilityRecord {
             }
           </div>
         } @else if (recommendations().length === 0) {
-          <div class="empty-state">
-            <i class="pi pi-inbox"></i>
-            <p>No AI recommendations yet</p>
-            <span>Recommendations made to your players will appear here</span>
-          </div>
+          <app-empty-state
+            icon="pi-inbox"
+            heading="No AI recommendations yet"
+            description="Recommendations made to your players will appear here"
+          />
         } @else {
           <p-table
             [value]="recommendations()"

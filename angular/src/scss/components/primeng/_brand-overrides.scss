@@ -742,7 +742,7 @@
         max-width: var(--p-toggleswitch-handle-size);
         max-height: var(--p-toggleswitch-handle-size);
         background: var(--p-toggleswitch-handle-background);
-        border-radius: 50%;
+        border-radius: var(--radius-circle);
         box-shadow: var(--p-toggleswitch-handle-shadow);
         transition: left var(--motion-base) var(--ease-standard);
         box-sizing: border-box;
@@ -763,7 +763,7 @@
         max-width: var(--p-toggleswitch-handle-size);
         max-height: var(--p-toggleswitch-handle-size);
         background: var(--p-toggleswitch-handle-background);
-        border-radius: 50%;
+        border-radius: var(--radius-circle);
         box-shadow: var(--p-toggleswitch-handle-shadow);
         transition: left var(--motion-base) var(--ease-standard);
         box-sizing: border-box;

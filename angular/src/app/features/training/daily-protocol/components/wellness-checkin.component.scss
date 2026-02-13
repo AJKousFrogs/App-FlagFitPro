@@ -228,7 +228,7 @@
     }
   }
 
-  // PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-012)
+  // PrimeNG slider overrides moved to _component-overrides.scss (DS-EXC-012)
 }
 
 /* ========================================================================
@@ -260,7 +260,7 @@
       border-color: var(--color-brand-primary);
     }
 
-    // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-012)
+    // PrimeNG checkbox override moved to _component-overrides.scss (DS-EXC-012)
   }
 }
 
@@ -392,5 +392,5 @@
     transition: none;
   }
 
-  /* .p-slider-handle reduced-motion: DS-EXC-012 in _exceptions.scss */
+  /* .p-slider-handle reduced-motion: DS-EXC-012 in _component-overrides.scss */
 }

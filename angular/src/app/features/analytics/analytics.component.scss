@@ -100,11 +100,7 @@
     margin-bottom: var(--space-4);
   }
 
-  // PrimeNG card body override moved to _exceptions.scss (DS-EXC-052)
-  .metric-card {
-    // Component-specific styles remain here
-  }
-
+  // PrimeNG card body override moved to _component-overrides.scss (DS-EXC-052)
   .metric-card-content {
     gap: var(--space-3);
   }
@@ -142,7 +138,7 @@
   .chart-card {
     min-height: var(--chart-min-height-md); // Smaller on mobile
 
-    // PrimeNG card header/body overrides moved to _exceptions.scss (DS-EXC-052)
+    // PrimeNG card header/body overrides moved to _component-overrides.scss (DS-EXC-052)
   }
 
   // ================================================================
@@ -190,7 +186,7 @@
       height: var(--chart-min-height-md); // var(--chart-min-height-md)
     }
 
-    // Canvas responsive styling moved to _exceptions.scss (DS-EXC-052)
+    // Canvas responsive styling moved to _component-overrides.scss (DS-EXC-052)
     canvas {
       // Component-specific styles remain here
     }
@@ -451,10 +447,6 @@
     }
   }
 
-  .share-dialog {
-    // PrimeNG dialog mobile overrides moved to _exceptions.scss (DS-EXC-052)
-  }
-
   .share-intro {
     font-size: var(--ds-font-size-md);
     margin-bottom: var(--space-3);
@@ -491,7 +483,7 @@
       font-size: var(--ds-font-size-xs);
     }
 
-    // Font-size !important moved to _exceptions.scss (DS-EXC-052)
+    // Font-size !important moved to _component-overrides.scss (DS-EXC-052)
     textarea {
       padding: var(--space-2);
       min-height: var(--card-min-height-md);
@@ -593,7 +585,7 @@
     gap: var(--space-2);
   }
 
-  // PrimeNG card body override moved to _exceptions.scss (DS-EXC-052)
+  // PrimeNG card body override moved to _component-overrides.scss (DS-EXC-052)
 
   .charts-grid {
     gap: var(--space-2);
@@ -602,7 +594,7 @@
   .chart-card {
     min-height: var(--chart-min-height-md);
 
-    // PrimeNG card header/body overrides moved to _exceptions.scss (DS-EXC-052)
+    // PrimeNG card header/body overrides moved to _component-overrides.scss (DS-EXC-052)
   }
 
   .chart-container {
@@ -735,7 +727,7 @@
     }
   }
 
-  // PrimeNG card body/content overrides moved to _exceptions.scss (DS-EXC-052)
+  // PrimeNG card body/content overrides moved to _component-overrides.scss (DS-EXC-052)
 }
 
 // Horizontal layout: icon LEFT of text (Design System Rule 6.4)
@@ -817,7 +809,7 @@
 .chart-card {
   min-height: var(--chart-min-height-lg);
 
-  // PrimeNG card header/body overrides moved to _exceptions.scss (DS-EXC-052)
+  // PrimeNG card header/body overrides moved to _component-overrides.scss (DS-EXC-052)
 }
 
 .chart-card.full-width {
@@ -953,10 +945,8 @@
   text-align: center;
 }
 
-// .stat-label/.stat-value REMOVED
-// Use .stat-block classes from card-shell instead
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
-
+// .stats-grid: Aligns with primitives/_dashboard.scss (--grid-card-min-md variant)
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
@@ -1265,9 +1255,7 @@
   margin-bottom: var(--space-2);
   transition: background var(--transition-fast);
 
-  &:hover {
-    background: var(--surface-tertiary);
-  }
+  @include ds-hover-state(var(--surface-tertiary));
 
   label {
     display: flex;
@@ -1311,15 +1299,7 @@
       border-color var(--transition-fast),
       box-shadow var(--transition-fast);
 
-    &:focus-visible {
-      outline: none;
-      border-color: var(--ds-primary-green);
-      box-shadow: var(--shadow-focus);
-    }
-
-    &:focus:not(:focus-visible) {
-      outline: none;
-    }
+    @include ds-input-focus;
 
     &::placeholder {
       color: var(--color-text-muted);
@@ -1327,10 +1307,7 @@
   }
 }
 
-// PrimeNG share dialog overrides moved to _exceptions.scss (DS-EXC-052)
-.share-dialog {
-  // Component-specific styles remain here
-}
+// PrimeNG share dialog: _component-overrides.scss (DS-EXC-052)
 
 // ============================================================================
 // GAP ANALYSIS VISUALIZATION

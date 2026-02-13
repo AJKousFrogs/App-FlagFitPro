@@ -94,7 +94,9 @@ describe("EmptyStateComponent", () => {
       fixture.detectChanges();
 
       const iconEl = fixture.nativeElement.querySelector(".empty-icon");
-      expect(iconEl.style.color).toBe("var(--ds-primary-green)");
+      expect(iconEl?.style.getPropertyValue("--empty-icon-color")).toBe(
+        "var(--ds-primary-green)",
+      );
     });
   });
 

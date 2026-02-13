@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-@include stat-block;
 
 /**
  * Training Schedule - Mobile Responsive Styles
@@ -168,9 +167,7 @@
 // MONTHLY STATS SIDEBAR - RESPONSIVE
 // ================================================================
 
-.monthly-stats {
-  // PrimeNG card body overrides moved to _exceptions.scss (DS-EXC-020)
-}
+/* monthly-stats: PrimeNG overrides in _component-overrides.scss (DS-EXC-020) */
 
 .stat-item {
   padding: var(--space-3);
@@ -189,33 +186,7 @@
   }
 }
 
-.stat-item .stat-block__label {
-  font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
-  font-weight: var(--ds-font-weight-medium);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-xs);
-  }
-}
-
-.stat-item .stat-block__value {
-  font-size: var(--ds-font-size-3xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--ds-text-primary);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-2xl);
-  }
-
-  @include respond-to(sm) {
-    font-size: var(--ds-font-size-xl);
-  }
-}
-
-.stat-item.completion .stat-block__value {
-  color: var(--ds-primary-green);
-}
+/* stat-block--stat-item: use primitives (_dashboard.scss) */
 
 // ================================================================
 // SESSION LIST - RESPONSIVE
@@ -492,13 +463,8 @@
   }
 }
 
+/* legend-item: use primitives; responsive override */
 .legend-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
-
   @include respond-to(md) {
     font-size: var(--ds-font-size-xs);
   }
@@ -875,7 +841,7 @@
   height: var(--space-5);
   background: var(--primitive-warning-50);
   color: var(--primitive-warning-600);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   margin-left: var(--space-2);
   vertical-align: middle;
   cursor: help;

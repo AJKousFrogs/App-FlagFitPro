@@ -1,24 +1,13 @@
 @use "styles/mixins" as *;
 @use "app/shared/styles/animations" as *;
 
-// ============================================================================
-// Tournament Nutrition Component Styles
-// Design System Compliant - All tokens from design-system-tokens.scss
-// ============================================================================
-
 .tournament-nutrition-page {
   @include page-container(var(--content-max-width-xl));
 }
 
 @include stat-block;
 
-.supplements-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-4);
-}
-
+.supplements-section,
 .tips-section {
   display: flex;
   flex-direction: column;
@@ -26,35 +15,27 @@
   padding: var(--space-4);
 }
 
-// ===== Tournament Banner - Modern Design =====
 .tournament-banner {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: var(--space-8);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.15) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.05) 100%
-  );
-  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.2);
+  background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.15),rgba(var(--ds-primary-green-rgb),.05));
+  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb),.2);
   border-radius: var(--radius-2xl);
   margin-bottom: var(--space-6);
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(var(--blur-lg));
-  box-shadow:
-    var(--shadow-lg),
-    var(--shadow-sm),
-    inset 0 var(--border-1) 0 var(--overlay-white-10);
+  box-shadow: var(--shadow-lg),var(--shadow-sm),inset 0 var(--border-1) 0 var(--overlay-white-10);
 
   &::before {
     content: "";
     position: absolute;
     top: -50%;
     right: -10%;
-    width: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
-    height: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
+    width: var(--chart-min-height-lg);
+    height: var(--chart-min-height-lg);
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.15) 0%,
@@ -69,8 +50,8 @@
     position: absolute;
     bottom: -30%;
     left: -5%;
-    width: var(--chart-min-height-md); /* var(--chart-min-height-md) */
-    height: var(--chart-min-height-md); /* var(--chart-min-height-md) */
+    width: var(--chart-min-height-md);
+    height: var(--chart-min-height-md);
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.1) 0%,
@@ -135,21 +116,14 @@
   align-items: flex-start;
   gap: var(--space-1);
   padding: var(--space-5) var(--space-6);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.95) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.85) 100%
-  );
+  background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.95),rgba(var(--ds-primary-green-rgb),.85));
   border-radius: var(--radius-2xl);
   min-width: var(--input-min-width-md);
   flex: 1;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(var(--blur-md));
-  box-shadow:
-    0 var(--space-1) var(--space-4) rgba(var(--ds-primary-green-rgb), 0.3),
-    var(--shadow-sm),
-    inset 0 var(--border-1) 0 var(--overlay-white-20);
+  box-shadow: 0 var(--space-1) var(--space-4) rgba(var(--ds-primary-green-rgb),.3),var(--shadow-sm),inset 0 var(--border-1) 0 var(--overlay-white-20);
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -171,15 +145,12 @@
 
   &:hover {
     transform: var(--transform-hover-lift);
-    box-shadow:
-      0 var(--space-2) var(--space-6) rgba(var(--ds-primary-green-rgb), 0.4),
-      var(--shadow-sm),
-      inset 0 var(--border-1) 0 var(--overlay-white-30);
+    box-shadow: 0 var(--space-2) var(--space-6) rgba(var(--ds-primary-green-rgb),.4),var(--shadow-sm),inset 0 var(--border-1) 0 var(--overlay-white-30);
   }
 }
 
 .stat .stat-block__value {
-  font-size: var(--ds-font-size-2xl);
+  font-size: var(--stat-block-value-card);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-on-primary);
   line-height: var(--ds-line-height-tight);
@@ -189,7 +160,7 @@
 }
 
 .stat .stat-block__label {
-  font-size: var(--ds-font-size-xs);
+  font-size: var(--stat-block-label-compact);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--overlay-white-90);
   text-transform: var(--ds-text-transform-uppercase);
@@ -198,21 +169,13 @@
   z-index: 1;
 }
 
-// ===== Hydration Card - Modern Glass Design =====
 .hydration-card {
   margin-bottom: var(--space-6);
   border-radius: var(--radius-2xl);
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
   overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.03) 0%,
-    var(--surface-primary) 100%
-  );
-  box-shadow:
-    var(--shadow-lg),
-    var(--shadow-sm),
-    inset 0 var(--border-1) 0 var(--overlay-white-10);
+  background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.03),var(--surface-primary));
+  box-shadow: var(--shadow-lg),var(--shadow-sm),inset 0 var(--border-1) 0 var(--overlay-white-10);
   backdrop-filter: blur(var(--blur-md));
 }
 
@@ -315,14 +278,8 @@
 
   &.selected {
     border-color: var(--ds-primary-green);
-    background: linear-gradient(
-      135deg,
-      rgba(var(--ds-primary-green-rgb), 0.15) 0%,
-      rgba(var(--ds-primary-green-rgb), 0.08) 100%
-    );
-    box-shadow:
-      0 0 0 var(--border-3) rgba(var(--ds-primary-green-rgb), 0.2),
-      0 var(--space-1) var(--space-3) rgba(var(--ds-primary-green-rgb), 0.2);
+    background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.15),rgba(var(--ds-primary-green-rgb),.08));
+    box-shadow: 0 0 0 var(--border-3) rgba(var(--ds-primary-green-rgb),.2),0 var(--space-1) var(--space-3) rgba(var(--ds-primary-green-rgb),.2);
     transform: scale(1.05);
 
     &::before {
@@ -350,13 +307,9 @@
   }
 }
 
-// ===== Schedule Editor =====
 .schedule-editor-card {
   margin-bottom: var(--space-6);
 }
-
-// .card-header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
 
 .schedule-form {
   padding: var(--space-4);
@@ -420,7 +373,6 @@
   justify-content: flex-end;
 }
 
-// ===== Timeline - Design System =====
 .nutrition-timeline {
   margin-bottom: var(--space-6);
 }
@@ -482,11 +434,7 @@
   }
 
   &.critical .marker-dot {
-    background: linear-gradient(
-      135deg,
-      var(--color-status-error) 0%,
-      var(--primitive-error-600) 100%
-    );
+background: linear-gradient(135deg,var(--color-status-error),var(--primitive-error-600));
     box-shadow:
       0 0 0 var(--border-4) rgba(var(--primitive-error-500-rgb), 0.2),
       0 var(--space-0-5) var(--space-2)
@@ -504,11 +452,7 @@
 
   &.critical .timeline-content {
     border-left: var(--border-4) solid var(--color-status-error);
-    background: linear-gradient(
-      135deg,
-      rgba(var(--primitive-error-500-rgb), 0.05) 0%,
-      var(--surface-primary) 100%
-    );
+    background: linear-gradient(135deg,rgba(var(--primitive-error-500-rgb),.05),var(--surface-primary));
   }
 }
 
@@ -543,9 +487,7 @@
   border-radius: var(--radius-full);
   background: var(--color-border-secondary);
   border: var(--border-3) solid var(--surface-primary);
-  box-shadow:
-    0 0 0 var(--border-2) var(--color-border-secondary),
-    var(--shadow-sm);
+  box-shadow: 0 0 0 var(--border-2) var(--color-border-secondary),var(--shadow-sm);
   z-index: 1;
   transition:
     background-color var(--transition-fast),
@@ -563,11 +505,7 @@
 
 .timeline-content {
   flex: 1;
-  background: linear-gradient(
-    135deg,
-    var(--surface-primary) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.02) 100%
-  );
+  background: linear-gradient(135deg,var(--surface-primary),rgba(var(--ds-primary-green-rgb),.02));
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-2xl);
   padding: var(--space-6);
@@ -585,7 +523,7 @@
     top: 0;
     right: 0;
     width: var(--chart-min-height-sm); /* var(--size-200) */
-    height: var(--chart-min-height-sm); /* var(--size-200) */
+    height: var(--chart-min-height-sm);
     background: radial-gradient(
       circle,
       rgba(var(--ds-primary-green-rgb), 0.05) 0%,
@@ -699,7 +637,6 @@
   }
 }
 
-// ===== Recommendations Grid - Design System =====
 .recommendations-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
@@ -741,63 +678,20 @@
   }
 
   &.food {
-    &::before {
-      background: linear-gradient(
-        180deg,
-        var(--color-status-warning),
-        var(--primitive-amber-600)
-      );
-    }
-    background: linear-gradient(
-      135deg,
-      rgba(var(--primitive-amber-500-rgb), 0.08) 0%,
-      rgba(var(--primitive-amber-500-rgb), 0.02) 100%
-    );
+    &::before { background: linear-gradient(180deg,var(--color-status-warning),var(--primitive-amber-600)); }
+    background: linear-gradient(135deg,rgba(var(--primitive-amber-500-rgb),.08),rgba(var(--primitive-amber-500-rgb),.02));
   }
-
   &.drink {
-    &::before {
-      background: linear-gradient(
-        180deg,
-        var(--ds-primary-green),
-        rgba(var(--ds-primary-green-rgb), 0.7)
-      );
-    }
-    background: linear-gradient(
-      135deg,
-      rgba(var(--ds-primary-green-rgb), 0.08) 0%,
-      rgba(var(--ds-primary-green-rgb), 0.02) 100%
-    );
+    &::before { background: linear-gradient(180deg,var(--ds-primary-green),rgba(var(--ds-primary-green-rgb),.7)); }
+    background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.08),rgba(var(--ds-primary-green-rgb),.02));
   }
-
   &.supplement {
-    &::before {
-      background: linear-gradient(
-        180deg,
-        var(--primitive-purple-500),
-        var(--primitive-purple-600)
-      );
-    }
-    background: linear-gradient(
-      135deg,
-      rgba(var(--primitive-purple-500-rgb), 0.08) 0%,
-      rgba(var(--primitive-purple-500-rgb), 0.02) 100%
-    );
+    &::before { background: linear-gradient(180deg,var(--primitive-purple-500),var(--primitive-purple-600)); }
+    background: linear-gradient(135deg,rgba(var(--primitive-purple-500-rgb),.08),rgba(var(--primitive-purple-500-rgb),.02));
   }
-
   &.action {
-    &::before {
-      background: linear-gradient(
-        180deg,
-        var(--color-status-success),
-        var(--ds-primary-green-hover)
-      );
-    }
-    background: linear-gradient(
-      135deg,
-      rgba(var(--ds-primary-green-rgb), 0.08) 0%,
-      rgba(var(--ds-primary-green-rgb), 0.02) 100%
-    );
+    &::before { background: linear-gradient(180deg,var(--color-status-success),var(--ds-primary-green-hover)); }
+    background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.08),rgba(var(--ds-primary-green-rgb),.02));
   }
 }
 
@@ -811,9 +705,7 @@
   justify-content: center;
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
-  box-shadow:
-    var(--shadow-sm),
-    inset 0 var(--border-1) 0 var(--overlay-white-10);
+  box-shadow: var(--shadow-sm),inset 0 var(--border-1) 0 var(--overlay-white-10);
   transition: transform var(--transition-fast);
 }
 
@@ -893,21 +785,13 @@
   font-weight: var(--ds-font-weight-semibold);
 }
 
-// ===== Section Cards - Modern Glass Design =====
 .section-card {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.03) 0%,
-    var(--surface-primary) 100%
-  );
+  background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.03),var(--surface-primary));
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
   border-radius: var(--radius-2xl);
   padding: var(--space-8);
   margin-bottom: var(--space-6);
-  box-shadow:
-    var(--shadow-lg),
-    var(--shadow-sm),
-    inset 0 var(--border-1) 0 var(--overlay-white-10);
+  box-shadow: var(--shadow-lg),var(--shadow-sm),inset 0 var(--border-1) 0 var(--overlay-white-10);
   position: relative;
   overflow: hidden;
 
@@ -943,11 +827,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.15) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.08) 100%
-  );
+  background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.15),rgba(var(--ds-primary-green-rgb),.08));
   border-radius: var(--radius-2xl);
   flex-shrink: 0;
   box-shadow:
@@ -979,11 +859,7 @@
   }
 
   &.warning {
-    background: linear-gradient(
-      135deg,
-      rgba(var(--primitive-amber-500-rgb), 0.15) 0%,
-      rgba(var(--primitive-amber-500-rgb), 0.08) 100%
-    );
+    background: linear-gradient(135deg,rgba(var(--primitive-amber-500-rgb),.15),rgba(var(--primitive-amber-500-rgb),.08));
     box-shadow:
       0 var(--space-1) var(--space-3) rgba(var(--primitive-amber-500-rgb), 0.2),
       inset 0 var(--border-1) 0 var(--overlay-white-10);
@@ -1009,7 +885,6 @@
   }
 }
 
-// ===== Supplements Grid =====
 .supplements-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
@@ -1041,11 +916,7 @@
     left: 0;
     right: 0;
     height: var(--indicator-size-xs);
-    background: linear-gradient(
-      90deg,
-      var(--ds-primary-green) 0%,
-      rgba(var(--ds-primary-green-rgb), 0.6) 100%
-    );
+    background: linear-gradient(90deg,var(--ds-primary-green),rgba(var(--ds-primary-green-rgb),.6));
     transform: scaleX(0);
     transition: transform var(--transition-fast);
     transform-origin: left;
@@ -1095,7 +966,7 @@
   }
 }
 
-@for $i from 1 through 24 {
+@for $i from 1 through 12 {
   .supplement-card:nth-child(#{$i}) {
     animation-delay: #{$i * 80}ms;
   }
@@ -1125,16 +996,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    135deg,
-    var(--surface-tertiary) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.1) 100%
-  );
+  background: linear-gradient(135deg,var(--surface-tertiary),rgba(var(--ds-primary-green-rgb),.1));
   border-radius: var(--radius-2xl);
   flex-shrink: 0;
-  box-shadow:
-    var(--shadow-md),
-    inset 0 var(--border-1) 0 var(--overlay-white-10);
+  box-shadow: var(--shadow-md),inset 0 var(--border-1) 0 var(--overlay-white-10);
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -1169,7 +1034,6 @@
   margin-bottom: var(--space-2);
 }
 
-// Evidence tag - Modern pill design with gradient
 .supp-evidence {
   display: inline-flex;
   align-items: center;
@@ -1192,29 +1056,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      135deg,
-      var(--overlay-white-20) 0%,
-      transparent 100%
-    );
+    background: linear-gradient(135deg,var(--overlay-white-20),transparent);
     pointer-events: none;
   }
 
-  &.evidence-strong {
-    background: linear-gradient(
-      135deg,
-      var(--ds-primary-green) 0%,
-      rgba(var(--ds-primary-green-rgb), 0.85) 100%
-    );
-  }
-
-  &.evidence-conditional {
-    background: linear-gradient(
-      135deg,
-      var(--primitive-orange-500) 0%,
-      var(--primitive-orange-600) 100%
-    );
-  }
+  &.evidence-strong { background: linear-gradient(135deg,var(--ds-primary-green),rgba(var(--ds-primary-green-rgb),.85)); }
+  &.evidence-conditional { background: linear-gradient(135deg,var(--primitive-orange-500),var(--primitive-orange-600)); }
 }
 
 .supp-details {
@@ -1223,9 +1070,7 @@
   gap: var(--space-1);
   margin-bottom: var(--space-2);
   flex-shrink: 0;
-  min-height: var(
-    --input-height
-  ); /* Ensure consistent height for details section */
+  min-height: var(--input-height);
 }
 
 .supp-row {
@@ -1251,7 +1096,7 @@
   margin-bottom: var(--space-2);
   line-height: var(--ds-line-height-relaxed);
   flex-shrink: 0;
-  min-height: 3em; /* Ensure consistent minimum height for reason section */
+  min-height: 3em;
 }
 
 .supp-notes {
@@ -1264,19 +1109,16 @@
   margin-top: auto;
   padding-top: var(--space-2);
   border-top: var(--border-1) dashed var(--color-border-secondary);
-  min-height: var(
-    --input-height
-  ); /* Ensure consistent height for notes section */
+  min-height: var(--input-height);
 
   i {
     font-size: var(--ds-font-size-xs);
-    margin-top: var(--space-0-5); /* Align icon with text baseline */
+    margin-top: var(--space-0-5);
     flex-shrink: 0;
     line-height: var(--ds-line-height-1);
   }
 }
 
-// ===== Tips Grid =====
 .tips-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
@@ -1337,7 +1179,7 @@
   }
 }
 
-@for $i from 1 through 8 {
+@for $i from 1 through 6 {
   .tip-item:nth-child(#{$i}) {
     animation-delay: #{$i * 100}ms;
   }
@@ -1351,15 +1193,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    135deg,
-    var(--surface-tertiary) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.1) 100%
-  );
+  background: linear-gradient(135deg,var(--surface-tertiary),rgba(var(--ds-primary-green-rgb),.1));
   border-radius: var(--radius-2xl);
-  box-shadow:
-    var(--shadow-md),
-    inset 0 var(--border-1) 0 var(--overlay-white-10);
+  box-shadow: var(--shadow-md),inset 0 var(--border-1) 0 var(--overlay-white-10);
   transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -1398,7 +1234,6 @@
   }
 }
 
-// ===== Referee Alert =====
 .referee-alert-card {
   margin-bottom: var(--space-6);
   border-left: var(--border-4) solid var(--color-status-warning);
@@ -1430,17 +1265,12 @@
   }
 }
 
-// ===== Quick Reference =====
 .quick-ref-card {
   margin-bottom: var(--space-6);
   border-radius: var(--radius-2xl);
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
   overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.03) 0%,
-    var(--surface-primary) 100%
-  );
+  background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.03),var(--surface-primary));
   box-shadow: var(--shadow-lg), var(--shadow-sm);
 }
 
@@ -1454,11 +1284,7 @@
 .pack-category {
   animation: fadeInUp 500ms ease-out backwards;
   padding: var(--space-5);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.03) 0%,
-    var(--surface-secondary) 100%
-  );
+  background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.03),var(--surface-secondary));
   border-radius: var(--radius-2xl);
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.1);
   transition:
@@ -1484,12 +1310,7 @@
     gap: var(--space-2);
     padding-bottom: var(--space-3);
     border-bottom: var(--border-3) solid transparent;
-    border-image: linear-gradient(
-        90deg,
-        var(--ds-primary-green) 0%,
-        rgba(var(--ds-primary-green-rgb), 0.3) 100%
-      )
-      1;
+    border-image: linear-gradient(90deg,var(--ds-primary-green),rgba(var(--ds-primary-green-rgb),.3)) 1;
     position: relative;
 
     &::after {
@@ -1533,11 +1354,7 @@
       transform: translateY(-50%);
       width: var(--indicator-size-sm);
       height: var(--indicator-size-sm);
-      background: linear-gradient(
-        135deg,
-        var(--ds-primary-green) 0%,
-        rgba(var(--ds-primary-green-rgb), 0.7) 100%
-      );
+      background: linear-gradient(135deg,var(--ds-primary-green),rgba(var(--ds-primary-green-rgb),.7));
       border-radius: var(--radius-full);
       transition:
         transform var(--transition-fast),
@@ -1655,15 +1472,6 @@
   }
 }
 
-// ============================================================================
-// @layer overrides - PrimeNG Component Overrides
-
-// Card header/border overrides REMOVED
-// Use app-card-shell component instead
-// @see docs/CARD_SHELL_CONTRACT.md
-
-// ===== REDUCED MOTION =====
-// Reason: Accessibility - respect user preference for reduced motion
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

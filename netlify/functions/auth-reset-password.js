@@ -19,30 +19,30 @@ export const handler = async (event, context) => {
 
       const { email, action = "request", token, newPassword } = validation.data;
 
-      if (!email) {
-        return createErrorResponse(
-          "Email is required",
-          400,
-          "validation_error",
-          requestId,
-        );
-      }
-
-      // Initialize email service if not already done
-      if (!emailService.isInitialized) {
-        const initialized = await emailService.initialize("smtp");
-        if (!initialized) {
-          console.error("Failed to initialize email service");
+      if (action === "request") {
+        if (!email) {
           return createErrorResponse(
-            "Unable to send reset email at this time. Please try again later.",
-            503,
-            "service_unavailable",
+            "Email is required",
+            400,
+            "validation_error",
             requestId,
           );
         }
-      }
 
-      if (action === "request") {
+        // Initialize email service only for email-delivery flow.
+        if (!emailService.isInitialized) {
+          const initialized = await emailService.initialize("smtp");
+          if (!initialized) {
+            console.error("Failed to initialize email service");
+            return createErrorResponse(
+              "Unable to send reset email at this time. Please try again later.",
+              503,
+              "service_unavailable",
+              requestId,
+            );
+          }
+        }
+
         // Send password reset email
         const resetUrl = `${process.env.URL || "http://localhost:8888"}/reset-password`;
 

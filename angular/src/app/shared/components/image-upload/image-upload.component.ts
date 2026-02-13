@@ -76,7 +76,11 @@ export interface ImageUploadResult {
       <!-- Image Preview -->
       @if (uploadedImage()) {
         <div class="image-preview-container">
-          <div class="image-preview-wrapper">
+          <div
+            class="image-preview-wrapper"
+            [style.--preview-max-width.px]="maxWidth()"
+            [style.--preview-max-height.px]="maxHeight()"
+          >
             <img
               appMobileOptimized
               [width]="maxWidth()"
@@ -85,8 +89,6 @@ export interface ImageUploadResult {
               [src]="uploadedImage()!.preview"
               [alt]="uploadedImage()!.file.name"
               class="preview-image"
-              [style.max-width]="maxWidth() + 'px'"
-              [style.max-height]="maxHeight() + 'px'"
             />
             @if (showRemoveButton()) {
               <button

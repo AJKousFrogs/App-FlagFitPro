@@ -105,7 +105,6 @@ const getDashboardData = async (userId) => {
       ...getFallbackDashboardData(),
       _isFallback: true,
       _fallbackReason: "database_error",
-      _error: error.message || "Unknown error",
     };
   }
 };
@@ -193,6 +192,7 @@ const getTeamChemistry = async (userId) => {
       .from("team_members")
       .select("team_id")
       .eq("user_id", userId)
+      .eq("status", "active")
       .limit(1);
 
     if (teamError || !teamMemberships || teamMemberships.length === 0) {
@@ -210,7 +210,8 @@ const getTeamChemistry = async (userId) => {
     const { data: members, error: membersError } = await supabaseAdmin
       .from("team_members")
       .select("user_id, role, position, jersey_number, status")
-      .eq("team_id", teamId);
+      .eq("team_id", teamId)
+      .eq("status", "active");
 
     if (membersError) {
       console.error("Error fetching team members:", membersError);

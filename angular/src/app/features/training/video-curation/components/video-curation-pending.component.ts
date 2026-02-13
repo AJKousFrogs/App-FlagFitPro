@@ -12,6 +12,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
+
 // PrimeNG
 
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
@@ -22,15 +24,20 @@ import { InstagramVideo } from "../video-curation.models";
   selector: "app-video-curation-pending",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StatusTagComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    EmptyStateComponent,
+    StatusTagComponent,
+    ButtonComponent,
+  ],
   template: `
     <div class="tab-content">
       @if (videos().length === 0) {
-        <div class="empty-state">
-          <i class="pi pi-check-circle" aria-hidden="true"></i>
-          <h3>All caught up!</h3>
-          <p>No videos pending review</p>
-        </div>
+        <app-empty-state
+          icon="pi-check-circle"
+          heading="All caught up!"
+          description="No videos pending review."
+        />
       } @else {
         <div class="pending-grid">
           @for (video of videos(); track video.id) {

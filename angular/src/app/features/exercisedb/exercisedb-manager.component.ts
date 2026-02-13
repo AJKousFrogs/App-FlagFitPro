@@ -13,6 +13,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { InputText } from "primeng/inputtext";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -26,7 +27,7 @@ import { Chip } from "primeng/chip";
 import { Skeleton } from "primeng/skeleton";
 import { Badge } from "primeng/badge";
 
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
@@ -47,7 +48,6 @@ import { capitalize } from "../../shared/utils/format.utils";
   selector: "app-exercisedb-manager",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService],
   imports: [
     CommonModule,
     FormsModule,
@@ -72,6 +72,7 @@ import { capitalize } from "../../shared/utils/format.utils";
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
+    EmptyStateComponent,
     StatusTagComponent,
     SearchInputComponent,
   ],
@@ -330,14 +331,11 @@ import { capitalize } from "../../shared/utils/format.utils";
                   </div>
 
                   @if (filteredExercises().length === 0) {
-                    <div class="empty-state">
-                      <i class="pi pi-inbox"></i>
-                      <h3>No exercises found</h3>
-                      <p>
-                        Try adjusting your filters or import exercises from
-                        ExerciseDB
-                      </p>
-                    </div>
+                    <app-empty-state
+                      icon="pi-inbox"
+                      heading="No exercises found"
+                      description="Try adjusting your filters or import exercises from ExerciseDB"
+                    />
                   }
                 }
               </div>
@@ -563,11 +561,11 @@ import { capitalize } from "../../shared/utils/format.utils";
                 </div>
 
                 @if (pendingExercises().length === 0) {
-                  <div class="empty-state">
-                    <i class="pi pi-check-circle"></i>
-                    <h3>All caught up!</h3>
-                    <p>No exercises pending approval</p>
-                  </div>
+                  <app-empty-state
+                    icon="pi-check-circle"
+                    heading="All caught up!"
+                    description="No exercises pending approval"
+                  />
                 }
               </div>
             </p-tabpanel>
@@ -858,7 +856,7 @@ import { capitalize } from "../../shared/utils/format.utils";
 export class ExerciseDBManagerComponent implements OnInit {
   private exerciseDBService = inject(ExerciseDBService);
   private destroyRef = inject(DestroyRef);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
 
   // Design system tokens
   // State
@@ -1130,30 +1128,23 @@ export class ExerciseDBManagerComponent implements OnInit {
       .approveExercise(exercise.id, this.approvalData)
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
         if (result.success) {
-          this.messageService.add({
-            severity: "success",
-            summary: "Success",
-            detail: `${exercise.name} has been approved`,
-          });
+          this.toastService.success(
+            `${exercise.name} has been approved`,
+            "Success",
+          );
           this.showApprovalDialog = false;
           this.loadExercises();
         } else {
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: result.error || "Failed to approve exercise",
-          });
+          this.toastService.error(
+            result.error || "Failed to approve exercise",
+          );
         }
       });
   }
 
   skipExercise(exercise: ExerciseDBExercise): void {
     // Just remove from pending view for now
-    this.messageService.add({
-      severity: "info",
-      summary: "Skipped",
-      detail: `${exercise.name} skipped`,
-    });
+    this.toastService.info(`${exercise.name} skipped`, "Skipped");
   }
 
   startImport(): void {
@@ -1167,20 +1158,18 @@ export class ExerciseDBManagerComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
         if (result.success) {
           this.lastImportStats.set(result.stats || null);
-          this.messageService.add({
-            severity: "success",
-            summary: "Import Complete",
-            detail: `Successfully imported ${result.stats?.imported || 0} exercises`,
-          });
+          this.toastService.success(
+            `Successfully imported ${result.stats?.imported || 0} exercises`,
+            "Import Complete",
+          );
           this.loadExercises();
           this.loadFilters();
           this.loadImportLogs();
         } else {
-          this.messageService.add({
-            severity: "error",
-            summary: "Import Failed",
-            detail: result.error || "Failed to import exercises",
-          });
+          this.toastService.error(
+            result.error || "Failed to import exercises",
+            "Import Failed",
+          );
         }
       });
   }

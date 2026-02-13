@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -141,7 +141,6 @@ const BALANCE_FILTERS = [
     PageHeaderComponent,
     ButtonComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="payment-management-page">
@@ -750,7 +749,7 @@ export class PaymentManagementComponent implements OnInit {
   private readonly context = inject(ContextService);
   private readonly roster = inject(RosterService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly fees = signal<TeamFee[]>([]);
@@ -917,11 +916,7 @@ export class PaymentManagementComponent implements OnInit {
     try {
       const teamId = this.roster.currentTeamId();
       if (!teamId) {
-        this.messageService.add({
-          severity: "error",
-          summary: "Error",
-          detail: "No team selected",
-        });
+        this.toastService.error("No team selected");
         return;
       }
 
@@ -940,21 +935,16 @@ export class PaymentManagementComponent implements OnInit {
       );
 
       if (response?.success) {
-        this.messageService.add({
-          severity: "success",
-          summary: "Fee Created",
-          detail: `${this.feeForm.name} has been created`,
-        });
+        this.toastService.success(
+          `${this.feeForm.name} has been created`,
+          "Fee Created",
+        );
         this.showFeeDialog = false;
         await this.loadData(); // Reload data
       }
     } catch (err) {
       this.logger.error("Failed to create fee", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to create fee. Please try again.",
-      });
+      this.toastService.error("Failed to create fee. Please try again.");
     }
   }
 
@@ -962,11 +952,7 @@ export class PaymentManagementComponent implements OnInit {
     try {
       const teamId = this.roster.currentTeamId();
       if (!teamId) {
-        this.messageService.add({
-          severity: "error",
-          summary: "Error",
-          detail: "No team selected",
-        });
+        this.toastService.error("No team selected");
         return;
       }
 
@@ -982,47 +968,36 @@ export class PaymentManagementComponent implements OnInit {
       );
 
       if (response?.success) {
-        this.messageService.add({
-          severity: "success",
-          summary: "Payment Recorded",
-          detail: `Payment of $${this.paymentForm.amount} has been recorded`,
-        });
+        this.toastService.success(
+          `Payment of $${this.paymentForm.amount} has been recorded`,
+          "Payment Recorded",
+        );
         this.showPaymentDialog = false;
         await this.loadData(); // Reload data
       }
     } catch (err) {
       this.logger.error("Failed to record payment", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to record payment. Please try again.",
-      });
+      this.toastService.error("Failed to record payment. Please try again.");
     }
   }
 
   // Action methods
   viewFeeDetails(fee: TeamFee): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Fee Details",
-      detail: `Viewing details for ${fee.name}`,
-    });
+    this.toastService.info(`Viewing details for ${fee.name}`, "Fee Details");
   }
 
   sendFeeReminders(fee: TeamFee): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminders Sent",
-      detail: `Reminders sent for ${fee.name}`,
-    });
+    this.toastService.success(
+      `Reminders sent for ${fee.name}`,
+      "Reminders Sent",
+    );
   }
 
   sendPlayerReminder(balance: PlayerBalance): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminder Sent",
-      detail: `Reminder sent to ${balance.playerName}`,
-    });
+    this.toastService.success(
+      `Reminder sent to ${balance.playerName}`,
+      "Reminder Sent",
+    );
   }
 
   markPlayerPaid(balance: PlayerBalance): void {
@@ -1038,19 +1013,14 @@ export class PaymentManagementComponent implements OnInit {
 
   sendAllReminders(): void {
     const count = this.playersOwing();
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminders Sent",
-      detail: `Reminders sent to ${count} players`,
-    });
+    this.toastService.success(
+      `Reminders sent to ${count} players`,
+      "Reminders Sent",
+    );
   }
 
   exportCSV(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Export Started",
-      detail: "CSV file is being generated",
-    });
+    this.toastService.success("CSV file is being generated", "Export Started");
   }
 
   // Helpers

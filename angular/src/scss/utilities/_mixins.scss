@@ -5,6 +5,7 @@
  */
 
 @use "./variables" as *;
+@use "../../styles/design-system/states" as states;
 
 // ================================
 // RESPONSIVE BREAKPOINTS
@@ -753,4 +754,189 @@
     /* stylelint-disable-next-line no-invalid-position-declaration */
     display: block;
   }
+}
+
+// ================================
+// SHARED INTERACTION & PSEUDO MIXINS
+// Consolidates :hover, :focus-visible, ::before patterns
+// Use these instead of duplicating in component SCSS
+// ================================
+
+/// No visible focus ring - for elements where focus is handled by parent/context
+@mixin ds-focus-none {
+  &:focus-visible,
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/// Validation focus overrides - use on .is-invalid / .is-valid (after base ds-focus-ring)
+/// @param {string} $ring-width - Ring width (default var(--focus-ring-width))
+/// @param {number} $opacity - Shadow opacity (default 0.2)
+@mixin ds-input-focus-invalid(
+  $ring-width: var(--focus-ring-width),
+  $opacity: 0.2
+) {
+  &:focus-visible {
+    border-color: var(--color-status-error);
+    box-shadow: 0 0 0 $ring-width rgba(var(--primitive-error-500-rgb), $opacity);
+  }
+}
+
+@mixin ds-input-focus-valid(
+  $ring-width: var(--focus-ring-width),
+  $opacity: 0.2
+) {
+  &:focus-visible {
+    border-color: var(--color-status-success);
+    box-shadow: 0 0 0 $ring-width rgba(var(--ds-primary-green-rgb), $opacity);
+  }
+}
+
+/// Input-style focus - outline:none + border + shadow (for inputs, textareas)
+/// @param {color} $color - Border color on focus (null = no border change)
+/// @param {string} $shadow - Box-shadow (default var(--shadow-focus))
+/// @param {color} $bg - Background on focus (null = no change, for borderless inputs)
+@mixin ds-input-focus(
+  $color: var(--ds-primary-green),
+  $shadow: var(--shadow-focus),
+  $bg: null
+) {
+  &:focus-visible {
+    outline: none;
+    @if $color {
+      border-color: $color;
+    }
+    box-shadow: $shadow;
+    @if $bg {
+      background: $bg;
+    }
+  }
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/// Focus ring - use instead of raw :focus-visible
+/// @param {color} $color - Outline/border color
+/// @param {length} $offset - Outline offset (null = default)
+/// @param {length} $radius - Border-radius for outline
+/// @param {color} $border-color - Optional border-color (for inputs)
+/// @param {length} $outline-width - Outline width (null = var(--focus-outline-width))
+/// @param {string} $box-shadow - Custom box-shadow (null = var(--shadow-focus))
+@mixin ds-focus-ring(
+  $color: var(--ds-primary-green),
+  $offset: null,
+  $radius: null,
+  $border-color: null,
+  $outline-width: null,
+  $box-shadow: null
+) {
+  @if $offset == null and $radius == null and $border-color == null and $outline-width == null and $box-shadow == null {
+    @include states.ds-focus-ring($color);
+  } @else {
+    &:focus-visible {
+      outline: ($outline-width or var(--focus-outline-width)) solid $color;
+      @if $offset {
+        outline-offset: $offset;
+      } @else {
+        outline-offset: var(--focus-outline-offset);
+      }
+      @if $radius {
+        border-radius: $radius;
+      }
+      @if $border-color {
+        border-color: $border-color;
+      }
+      box-shadow: $box-shadow or var(--shadow-focus);
+    }
+    &:focus:not(:focus-visible) {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}
+
+/// Focus styles sibling when this element receives focus (for hidden checkbox/toggle patterns)
+/// @param {string} $sibling - Adjacent sibling selector (e.g. '.checkmark', '.toggle-slider')
+/// @param {string} $shadow - Box-shadow for sibling
+/// @param {string} $outline - Outline (default: none)
+@mixin ds-focus-visible-sibling(
+  $sibling,
+  $shadow: var(--shadow-focus),
+  $outline: none
+) {
+  &:focus-visible + #{$sibling} {
+    outline: $outline;
+    box-shadow: $shadow;
+  }
+}
+
+/// Interactive card - shared hover and focus-visible (border, bg, transform, shadow)
+@mixin ds-interactive-card-focus(
+  $border-color: var(--ds-primary-green),
+  $bg: var(--ds-primary-green-subtle),
+  $transform: var(--transform-hover-lift),
+  $shadow: var(--shadow-2)
+) {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: $border-color;
+      background: $bg;
+      transform: $transform;
+      box-shadow: $shadow;
+    }
+  }
+  &:focus-visible {
+    border-color: $border-color;
+    background: $bg;
+    transform: $transform;
+    box-shadow: $shadow;
+  }
+}
+
+/// Hover state - desktop only, use instead of raw :hover
+/// @param {color} $bg - Background color
+/// @param {color} $color - Optional text color
+/// @param {color} $border-color - Optional border color
+@mixin ds-hover-state(
+  $bg: var(--ds-state-hover-bg),
+  $color: null,
+  $border-color: null
+) {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]):not(.disabled) {
+      background-color: $bg;
+      @if $color {
+        color: $color;
+      }
+      @if $border-color {
+        border-color: $border-color;
+      }
+    }
+  }
+}
+
+/// Common ::before pseudo - icon, divider, overlay patterns
+@mixin pseudo-before(
+  $content: "",
+  $display: block,
+  $position: absolute
+) {
+  &::before {
+    content: $content;
+    display: $display;
+    position: $position;
+    @content;
+  }
+}
+
+/// Stat-block value size - use token var()
+@mixin stat-block-value-size($token: var(--stat-block-value-card)) {
+  font-size: $token;
+}
+
+/// Stat-block label size - use token var()
+@mixin stat-block-label-size($token: var(--stat-block-label-compact)) {
+  font-size: $token;
 }

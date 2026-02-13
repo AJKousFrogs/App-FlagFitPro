@@ -50,9 +50,6 @@
     opacity var(--transition-fast);
 }
 
-// .tournament-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
-
 .tournament-card.peak-event {
   border-color: var(--primitive-error-300);
   background: var(--primitive-error-50);
@@ -165,24 +162,6 @@
   margin-top: var(--space-2);
   border-top: var(--border-1) solid var(--primitive-neutral-100);
   padding-top: var(--space-2);
-}
-
-/* States */
-.loading-state,
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-6);
-  text-align: center;
-  color: var(--color-text-secondary);
-}
-
-.loading-state i,
-.empty-state i {
-  font-size: var(--ds-font-size-2xl);
-  color: var(--color-text-muted);
 }
 
 /* Form */

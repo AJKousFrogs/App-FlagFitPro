@@ -7,6 +7,7 @@
 
 ## Documentation Rule
 
+- **DOCS_INDEX.md is the single source of truth** — all docs are referenced here.  
 - **Docs describe current behavior or enforced rules.**  
 - One-time audits, trackers, and investigations are archived or deleted.  
 - If a doc is not referenced by this index, it should not exist.  
@@ -21,10 +22,12 @@
 | Understand all features & business logic | [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)     |
 | Set up my dev environment                | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) |
 | Understand the architecture              | [ARCHITECTURE.md](./ARCHITECTURE.md)                       |
+| Map routes to data sources               | [ROUTE_MAP.md](./ROUTE_MAP.md)                             |
 | Work with the API                        | [API.md](./API.md)                                         |
 | Set up the database                      | [DATABASE_SETUP.md](./DATABASE_SETUP.md)                   |
 | Follow Angular/PrimeNG patterns          | [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md)     |
 | Follow UI/design rules                   | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)         |
+| Understand calculation formulas          | [CALCULATION_SPEC.md](./CALCULATION_SPEC.md)                |
 | Understand security                      | [SECURITY.md](./SECURITY.md)                               |
 
 ---
@@ -46,8 +49,12 @@
 | Document                                               | Description                              |
 | ------------------------------------------------------ | ---------------------------------------- |
 | [ARCHITECTURE.md](./ARCHITECTURE.md)                   | System architecture overview             |
+| [ROUTE_MAP.md](./ROUTE_MAP.md)                         | Routes → data sources & API endpoints     |
+| [CALCULATION_SPEC.md](./CALCULATION_SPEC.md)           | Calculation formulas, windows, rounding  |
+| [CALCULATION_MAP.md](./CALCULATION_MAP.md)             | Calculation hotspots (services → code)   |
 | [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG 21 patterns         |
 | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)     | **UI rules and design tokens** (binding) |
+| [CARD_COMPONENT_GUIDELINES.md](./CARD_COMPONENT_GUIDELINES.md) | app-card vs p-card usage          |
 | [API.md](./API.md)                                     | API reference                            |
 | [BACKEND_SETUP.md](./BACKEND_SETUP.md)                 | Backend/Netlify Functions setup          |
 | [TECH_STACK.md](./TECH_STACK.md)                       | **Tech stack** — ESM, Angular 21, tokens |
@@ -79,6 +86,14 @@
 | Document                                                   | Description                                                          |
 | ---------------------------------------------------------- | -------------------------------------------------------------------- |
 | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) | **Start here** - Local dev setup for Angular 21 + Netlify + Supabase |
+| [MCP_SUPABASE_SETUP.md](./MCP_SUPABASE_SETUP.md)           | MCP + Supabase integration for Cursor/AI                             |
+
+### 🧩 Angular-Specific (angular/docs/)
+
+| Document                                                                 | Description                                           |
+| ------------------------------------------------------------------------ | ----------------------------------------------------- |
+| [COMPONENT_OVERRIDES_TRACKING.md](../angular/docs/COMPONENT_OVERRIDES_TRACKING.md) | PrimeNG override migration (DS-EXC tickets, deadlines) |
+| [EMPTY_STATE_COMPONENTS.md](../angular/docs/EMPTY_STATE_COMPONENTS.md)   | app-empty-state vs app-no-data-entry usage             |
 
 ---
 
@@ -95,6 +110,15 @@
 
 ---
 
+### 🐛 Debugging & Testing (angular/)
+
+| Document                                                                 | Description                          |
+| ------------------------------------------------------------------------ | ------------------------------------ |
+| [ANGULAR_DEBUGGING_INDEX.md](../angular/ANGULAR_DEBUGGING_INDEX.md)       | Index for debugging & testing docs   |
+| [DEBUGGING_GUIDE.md](../angular/DEBUGGING_GUIDE.md)                     | Angular DevTools, signals, API debug |
+| [IOS_DEBUGGING_GUIDE.md](../angular/IOS_DEBUGGING_GUIDE.md)             | iOS Safari Web Inspector setup       |
+| [TESTING_CHECKLIST.md](../angular/TESTING_CHECKLIST.md)                 | DevTools + debug service verification|
+
 ### 📜 Legal
 
 | Document                                 | Description      |
@@ -109,17 +133,23 @@
 
 ```
 /docs/ (including RUNBOOKS)
-├── DOCS_INDEX.md                 ← YOU ARE HERE
+├── DOCS_INDEX.md                 ← YOU ARE HERE (single source of truth)
 ├── FEATURE_DOCUMENTATION.md      ← 49 features + Appendix E (6500+ lines)
 ├── ARCHITECTURE.md
+├── ROUTE_MAP.md                  ← Routes → data sources
+├── CALCULATION_SPEC.md           ← Calculation formulas
+├── CALCULATION_MAP.md            ← Calculation code locations
 ├── API.md
+├── CARD_COMPONENT_GUIDELINES.md
 ├── DATABASE_SETUP.md
 ├── SECURITY.md
 ├── ANGULAR_PRIMENG_GUIDE.md
 ├── DESIGN_SYSTEM_RULES.md
 ├── UX_READY_CRITERIA.md         ← UI polish gate
 ├── FLAG_FOOTBALL_TRAINING_SCIENCE.md
+├── MCP_SUPABASE_SETUP.md
 ├── RUNBOOKS/                     ← 6 operational docs
+├── angular/docs/                 ← COMPONENT_OVERRIDES_TRACKING, EMPTY_STATE_COMPONENTS
 └── [Legal: ../LICENSE.md, angular/src/assets/legal/]
 ```
 

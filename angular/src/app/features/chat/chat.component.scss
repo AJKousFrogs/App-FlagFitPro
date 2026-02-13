@@ -178,18 +178,16 @@
   margin-bottom: var(--space-2);
   position: relative;
   overflow: hidden;
-}
 
-.channel-item::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: var(--space-1);
-  background: var(--ds-primary-green);
-  transform: scaleY(0);
-  transition: transform var(--transition-fast);
+  @include pseudo-before("", block, absolute) {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--space-1);
+    background: var(--ds-primary-green);
+    transform: scaleY(0);
+    transition: transform var(--transition-fast);
+  }
 }
 
 .channel-item:hover {
@@ -571,11 +569,11 @@
     background-color var(--motion-fast) var(--ease-standard),
     color var(--motion-fast) var(--ease-standard);
 
-  &:hover {
-    background: var(--ds-primary-green-ultra-subtle);
-    border-color: var(--ds-primary-green);
-    color: var(--ds-primary-green);
-  }
+  @include ds-hover-state(
+    var(--ds-primary-green-ultra-subtle),
+    $color: var(--ds-primary-green),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 /* ============================================
@@ -603,10 +601,8 @@
   padding: var(--space-2) var(--space-3);
   cursor: pointer;
   transition: background-color var(--transition-fast);
-}
 
-.mention-item:hover {
-  background: var(--surface-secondary);
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 /* ============================================
@@ -795,9 +791,6 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
 }
-
-// .member-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .member-card.is-online {
   border-left: var(--space-1) solid var(--color-brand-primary);
@@ -1033,7 +1026,7 @@
    Documented exceptions per DESIGN_SYSTEM_RULES.md Section 2.2
    ================================================================ */
 
-// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-006)
+// PrimeNG button overrides moved to _component-overrides.scss (DS-EXC-006)
 
 /*
  * EXCEPTION: Message Mention Styling

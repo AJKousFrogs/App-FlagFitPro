@@ -440,7 +440,7 @@ interface MonthlyStats {
           @if (viewMode() === "month" && monthlyStats().totalSessions > 0) {
             <app-card-shell title="Monthly Summary" headerIcon="pi-chart-bar">
               <div class="monthly-stats">
-                <div class="stat-item stat-block stat-block--large">
+                <div class="stat-item stat-block stat-block--stat-item">
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       monthlyStats().totalSessions
@@ -448,7 +448,7 @@ interface MonthlyStats {
                     <span class="stat-block__label">Total Sessions</span>
                   </div>
                 </div>
-                <div class="stat-item completed stat-block stat-block--large">
+                <div class="stat-item completed stat-block stat-block--stat-item">
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       monthlyStats().completedSessions
@@ -456,7 +456,7 @@ interface MonthlyStats {
                     <span class="stat-block__label">Completed</span>
                   </div>
                 </div>
-                <div class="stat-item missed stat-block stat-block--large">
+                <div class="stat-item missed stat-block stat-block--stat-item">
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       monthlyStats().missedSessions
@@ -464,7 +464,7 @@ interface MonthlyStats {
                     <span class="stat-block__label">Missed</span>
                   </div>
                 </div>
-                <div class="stat-item stat-block stat-block--large">
+                <div class="stat-item stat-block stat-block--stat-item">
                   <div class="stat-block__content">
                     <span class="stat-block__value"
                       >{{ monthlyStats().totalDuration }}m</span
@@ -472,7 +472,7 @@ interface MonthlyStats {
                     <span class="stat-block__label">Total Duration</span>
                   </div>
                 </div>
-                <div class="stat-item completion stat-block stat-block--large">
+                <div class="stat-item completion stat-block stat-block--stat-item">
                   <div class="stat-block__content">
                     <span class="stat-block__value"
                       >{{ monthlyStats().completionRate }}%</span

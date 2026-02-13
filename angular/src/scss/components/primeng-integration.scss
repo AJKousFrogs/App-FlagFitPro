@@ -606,7 +606,7 @@
 }
 
 /* ================================================================
-   OLD INPUTSWITCH STYLES (Legacy - can be removed if not used)
+   InputSwitch - PrimeNG component styling
    ================================================================ */
 
 .p-inputswitch {
@@ -642,7 +642,7 @@
   left: var(--space-0-75);
   top: var(--space-0-75);
   background: var(--p-inputswitch-handle-background);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   transition: left 0.2s ease;
   box-shadow: 0 var(--space-0-5) var(--space-1) rgba(0, 0, 0, 0.2);
 }

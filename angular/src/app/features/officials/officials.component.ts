@@ -38,6 +38,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
 
@@ -73,6 +74,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     CurrencyPipe,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -222,10 +224,11 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             </ng-template>
 
             @if (upcomingAssignments().length === 0) {
-              <div class="empty-state">
-                <i class="pi pi-calendar"></i>
-                <p>No upcoming game assignments</p>
-              </div>
+              <app-empty-state
+                icon="pi-calendar"
+                heading="No upcoming game assignments"
+                description="Game assignments will appear here when officials are scheduled."
+              />
             } @else {
               <div class="assignments-list">
                 @for (

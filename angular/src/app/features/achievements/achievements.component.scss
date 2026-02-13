@@ -7,20 +7,11 @@
   gap: var(--space-4);
 }
 
-@include stat-block;
-
 .header-filters {
   display: flex;
   gap: var(--space-3);
   align-items: center;
   flex-wrap: wrap;
-}
-
-// Stats Grid (custom breakpoints md/sm differ from stats-grid mixin)
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
 }
 
 .stat-card {
@@ -70,19 +61,9 @@
     gap: var(--space-1);
   }
 
-  // Override stat-block for .stat-card context (larger label)
-  .stat-block__label {
+  /* stat-block--card: use primitives; .recent modifier kept for Recent Unlock */
+  .stat-block__value.recent {
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
-  }
-
-  .stat-block__value {
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-semibold);
-
-    &.recent {
-      font-size: var(--ds-font-size-md);
-    }
   }
 
   .stat-hint {
@@ -151,7 +132,7 @@
   width: var(--avatar-size-xl);
   height: var(--avatar-size-xl);
   min-width: var(--badge-min-width-sm);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,7 +158,7 @@
     right: calc(var(--space-1) * -1);
     width: var(--avatar-size-xs);
     height: var(--avatar-size-xs);
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     background: var(--color-status-success);
     color: var(--color-text-on-primary);
     display: flex;

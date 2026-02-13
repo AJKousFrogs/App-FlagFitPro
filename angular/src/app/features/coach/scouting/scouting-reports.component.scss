@@ -6,20 +6,6 @@
   margin: 0 auto;
 }
 
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--ds-spacing-3xl);
-  gap: var(--ds-spacing-md);
-  color: var(--text-color-secondary);
-
-  i {
-    font-size: var(--ds-font-size-2xl);
-  }
-}
-
 // Section styles
 .section-header {
   display: flex;
@@ -58,8 +44,6 @@
     gap: var(--ds-spacing-lg);
   }
 
-  // .report-card .p-card-header/.p-card-footer REMOVED
-  // Use app-card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md
 
   .report-header {
@@ -134,8 +118,6 @@
     gap: var(--ds-spacing-lg);
   }
 
-  // .opponent-card .p-card-header REMOVED
-  // Use app-card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md
 
   .opponent-header {
@@ -571,28 +553,6 @@
       gap: var(--ds-spacing-sm);
       cursor: pointer;
     }
-  }
-}
-
-// Empty State
-.empty-state {
-  text-align: center;
-  padding: var(--ds-spacing-3xl);
-
-  i {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--text-color-secondary);
-    opacity: var(--opacity-dimmed);
-    margin-bottom: var(--ds-spacing-md);
-  }
-
-  h4 {
-    margin: 0 0 var(--ds-spacing-sm);
-  }
-
-  p {
-    margin: 0 0 var(--ds-spacing-lg);
-    color: var(--text-color-secondary);
   }
 }
 

@@ -10,6 +10,50 @@ import { baseHandler } from "./utils/base-handler.js";
 // Endpoint: /api/training/sessions
 
 // Note: authenticateRequest, applyRateLimit, and CORS are handled by baseHandler
+const TRAINING_SESSION_UPDATE_FIELDS = new Set([
+  "session_date",
+  "session_type",
+  "duration_minutes",
+  "intensity_level",
+  "status",
+  "session_state",
+  "notes",
+  "rpe",
+  "metadata",
+  "transition_reason",
+]);
+const VALID_SESSION_STATUSES = new Set([
+  "planned",
+  "in_progress",
+  "completed",
+  "skipped",
+  "deleted",
+]);
+
+function parseBoundedInt(value, fieldName, { min, max }) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+function sanitizeSessionUpdates(updates = {}) {
+  const cleaned = {};
+  for (const [key, value] of Object.entries(updates)) {
+    if (TRAINING_SESSION_UPDATE_FIELDS.has(key)) {
+      cleaned[key] = value;
+    }
+  }
+  return cleaned;
+}
 
 /**
  * Create a training session from the Training Builder
@@ -436,6 +480,9 @@ function extractSessionIdFromPath(path = "") {
  * - limit (optional, default: 50)
  */
 async function getTrainingSessions(userId, queryParams, supabase) {
+  const { limit = 50 } = queryParams || {};
+  const parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 }) || 50;
+
   try {
     if (!supabase) {
       throw new Error("Supabase client is required for RLS enforcement");
@@ -444,7 +491,6 @@ async function getTrainingSessions(userId, queryParams, supabase) {
       status,
       startDate,
       endDate,
-      limit = 50,
       includeUpcoming = false,
     } = queryParams || {};
 
@@ -453,7 +499,7 @@ async function getTrainingSessions(userId, queryParams, supabase) {
       .select("*")
       .eq("user_id", userId)
       .order("session_date", { ascending: false })
-      .limit(parseInt(limit));
+      .limit(parsedLimit);
 
     // By default, only show sessions up to and including today
     // This ensures training statistics only reflect real, completed data
@@ -524,13 +570,25 @@ async function updateTrainingSession(
   }
 
   // Prepare state transition metadata if state is being changed
+  const sanitizedUpdates = sanitizeSessionUpdates(updates);
+  if (Object.keys(sanitizedUpdates).length === 0) {
+    throw new Error("No valid updatable fields provided");
+  }
+  if (
+    sanitizedUpdates.status !== undefined &&
+    !VALID_SESSION_STATUSES.has(sanitizedUpdates.status)
+  ) {
+    throw new Error(
+      `Invalid status. Allowed: ${Array.from(VALID_SESSION_STATUSES).join(", ")}`,
+    );
+  }
   let updatePayload = {
-    ...updates,
+    ...sanitizedUpdates,
     updated_at: new Date().toISOString(),
   };
 
   // If session_state is being updated, add transition metadata
-  if (updates.session_state) {
+  if (sanitizedUpdates.session_state) {
     const role = await getUserRole(userId);
     const actorRole =
       role === "coach" ? "coach" : role === "admin" ? "admin" : "athlete";
@@ -539,8 +597,8 @@ async function updateTrainingSession(
       newState: updates.session_state,
       actorRole,
       actorId: userId,
-      reason: updates.transition_reason || "Session state updated",
-      metadata: updates.metadata || {},
+      reason: sanitizedUpdates.transition_reason || "Session state updated",
+      metadata: sanitizedUpdates.metadata || {},
     });
 
     updatePayload = {
@@ -618,12 +676,19 @@ export const handler = async (event, context) => {
 
       // Handle GET request - retrieve sessions
       if (event.httpMethod === "GET") {
-        const sessions = await getTrainingSessions(
-          userId,
-          event.queryStringParameters,
-          supabase,
-        );
-        return createSuccessResponse(sessions);
+        try {
+          const sessions = await getTrainingSessions(
+            userId,
+            event.queryStringParameters,
+            supabase,
+          );
+          return createSuccessResponse(sessions);
+        } catch (error) {
+          if (error.message?.includes("must be an integer between")) {
+            return handleValidationError(error.message);
+          }
+          throw error;
+        }
       }
 
       // Handle POST request - create new session
@@ -634,6 +699,9 @@ export const handler = async (event, context) => {
           sessionData = JSON.parse(event.body);
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
+        }
+        if (!sessionData || typeof sessionData !== "object" || Array.isArray(sessionData)) {
+          return handleValidationError("Request body must be an object");
         }
 
         try {
@@ -697,6 +765,9 @@ export const handler = async (event, context) => {
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
+        if (!updateData || typeof updateData !== "object" || Array.isArray(updateData)) {
+          return handleValidationError("Request body must be an object");
+        }
 
         const { sessionId, ...updates } = updateData;
 
@@ -718,6 +789,12 @@ export const handler = async (event, context) => {
           if (error.statusCode) {
             return error;
           }
+          if (
+            error.message?.includes("No valid updatable fields") ||
+            error.message?.includes("Invalid status. Allowed")
+          ) {
+            return handleValidationError(error.message);
+          }
           return createErrorResponse(
             error.message || "Failed to update training session",
             403,
@@ -732,6 +809,9 @@ export const handler = async (event, context) => {
           deletePayload = event.body ? JSON.parse(event.body) : {};
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
+        }
+        if (!deletePayload || typeof deletePayload !== "object" || Array.isArray(deletePayload)) {
+          return handleValidationError("Request body must be an object");
         }
 
         const sessionId =

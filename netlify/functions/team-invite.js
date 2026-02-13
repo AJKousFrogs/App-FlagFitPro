@@ -10,7 +10,7 @@ import { baseHandler } from "./utils/base-handler.js";
 // Get email transporter
 function getEmailTransporter() {
   if (process.env.GMAIL_EMAIL && process.env.GMAIL_APP_PASSWORD) {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.GMAIL_EMAIL,
@@ -20,7 +20,7 @@ function getEmailTransporter() {
   }
 
   if (process.env.SENDGRID_API_KEY) {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: "SendGrid",
       auth: {
         user: "apikey",
@@ -30,7 +30,7 @@ function getEmailTransporter() {
   }
 
   if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT) || 587,
       secure: process.env.SMTP_SECURE === "true" || false,
@@ -65,6 +65,18 @@ function getAppUrl() {
 function generateInvitationToken() {
   return crypto.randomBytes(32).toString("hex");
 }
+
+const ALLOWED_INVITE_ROLES = new Set(["player", "assistant_coach"]);
+const ALLOWED_INVITER_ROLES = new Set([
+  "owner",
+  "admin",
+  "head_coach",
+  "coach",
+  "assistant_coach",
+  "offense_coordinator",
+  "defense_coordinator",
+]);
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Team invitation email template
 function getTeamInvitationTemplate(
@@ -174,6 +186,15 @@ export const handler = async (event, context) => {
         );
       }
 
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return createErrorResponse(
+          "Request body must be an object",
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+
       const { teamId, email, role, position, jerseyNumber, coachMessage } =
         body;
 
@@ -186,11 +207,41 @@ export const handler = async (event, context) => {
         );
       }
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
+      const normalizedEmail = String(email).trim().toLowerCase();
+      if (!EMAIL_REGEX.test(normalizedEmail)) {
         return createErrorResponse(
           "Invalid email format",
-          400,
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+      if (role !== undefined && !ALLOWED_INVITE_ROLES.has(role)) {
+        return createErrorResponse(
+          `role must be one of: ${Array.from(ALLOWED_INVITE_ROLES).join(", ")}`,
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+      if (
+        jerseyNumber !== undefined &&
+        (!Number.isInteger(jerseyNumber) || jerseyNumber <= 0 || jerseyNumber > 999)
+      ) {
+        return createErrorResponse(
+          "jerseyNumber must be an integer between 1 and 999",
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+      if (
+        coachMessage !== undefined &&
+        (typeof coachMessage !== "string" || coachMessage.length > 1000)
+      ) {
+        return createErrorResponse(
+          "coachMessage must be a string up to 1000 characters",
+          422,
           "validation_error",
           requestId,
         );
@@ -209,29 +260,59 @@ export const handler = async (event, context) => {
         return handleNotFoundError("Team", requestId);
       }
 
-      if (team.coach_id !== userId) {
+      const { data: inviterMembership, error: inviterMembershipError } = await supabase
+        .from("team_members")
+        .select("role, status")
+        .eq("team_id", teamId)
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .in("role", Array.from(ALLOWED_INVITER_ROLES))
+        .maybeSingle();
+      if (inviterMembershipError) {
+        throw inviterMembershipError;
+      }
+      if (!inviterMembership && team.coach_id !== userId) {
         return createErrorResponse(
-          "Only the team coach can send invitations",
+          "Only active coaches or staff can send invitations",
           403,
           "forbidden",
           requestId,
         );
       }
 
+      // Ensure email service is available before creating an invitation record.
+      const transporter = getEmailTransporter();
+      if (!transporter) {
+        return createErrorResponse(
+          "Email service not configured",
+          503,
+          "service_unavailable",
+          requestId,
+        );
+      }
+
       // Check for existing pending invitation
-      const { data: existingInvitation } = await supabase
+      const { data: existingInvitation, error: existingInviteError } = await supabase
         .from("team_invitations")
-        .select("id, status")
+        .select("id, status, expires_at")
         .eq("team_id", teamId)
-        .eq("email", email.toLowerCase())
+        .eq("email", normalizedEmail)
         .eq("status", "pending")
-        .single();
+        .maybeSingle();
+
+      if (existingInviteError && existingInviteError.code !== "PGRST116") {
+        throw existingInviteError;
+      }
 
       if (existingInvitation) {
-        return createErrorResponse(
-          "An invitation has already been sent to this email",
-          400,
-          "duplicate_invitation",
+        return createSuccessResponse(
+          {
+            invitationId: existingInvitation.id,
+            email: normalizedEmail,
+            teamName: team.name,
+            expiresAt: existingInvitation.expires_at || null,
+            message: "Invitation already pending",
+          },
           requestId,
         );
       }
@@ -245,7 +326,7 @@ export const handler = async (event, context) => {
         .from("team_invitations")
         .insert({
           team_id: teamId,
-          email: email.toLowerCase(),
+          email: normalizedEmail,
           invited_by: userId,
           token: invToken,
           role: role || "player",
@@ -257,19 +338,29 @@ export const handler = async (event, context) => {
         .single();
 
       if (inviteError) {
+        if (inviteError.code === "23505") {
+          const { data: duplicateInvite } = await supabase
+            .from("team_invitations")
+            .select("id, expires_at")
+            .eq("team_id", teamId)
+            .eq("email", normalizedEmail)
+            .eq("status", "pending")
+            .maybeSingle();
+          if (duplicateInvite) {
+            return createSuccessResponse(
+              {
+                invitationId: duplicateInvite.id,
+                email: normalizedEmail,
+                teamName: team.name,
+                expiresAt: duplicateInvite.expires_at || null,
+                message: "Invitation already pending",
+              },
+              requestId,
+            );
+          }
+        }
         console.error("Error creating invitation:", inviteError);
         throw new Error("Failed to create invitation");
-      }
-
-      // Send email
-      const transporter = getEmailTransporter();
-      if (!transporter) {
-        return createErrorResponse(
-          "Email service not configured",
-          503,
-          "service_unavailable",
-          requestId,
-        );
       }
 
       const invitationUrl = `${getAppUrl()}/accept-invitation?token=${invToken}`;
@@ -297,14 +388,20 @@ export const handler = async (event, context) => {
         text: `Hi there,\n\n${inviterName} has invited you to join ${team.name} on FlagFit Pro.\n\nClick here to accept: ${invitationUrl}\n\nThis invitation expires in 7 days.\n\nBest regards,\nThe FlagFit Pro Team`,
       };
 
-      await transporter.sendMail(mailOptions);
+      try {
+        await transporter.sendMail(mailOptions);
+      } catch (mailError) {
+        // Avoid leaving pending invitations that were never delivered.
+        await supabase.from("team_invitations").delete().eq("id", invitation.id);
+        throw mailError;
+      }
 
       console.log(`✅ Team invitation sent to ${email} for team ${team.name}`);
 
       return createSuccessResponse(
         {
           invitationId: invitation.id,
-          email,
+          email: normalizedEmail,
           teamName: team.name,
           expiresAt: expiresAt.toISOString(),
           message: "Invitation sent successfully",

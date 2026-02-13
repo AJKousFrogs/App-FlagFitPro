@@ -14,6 +14,7 @@ import { CommonModule } from "@angular/common";
 
 // PrimeNG
 
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -31,6 +32,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    EmptyStateComponent,
     StatusTagComponent,
     ButtonComponent,
     IconButtonComponent,
@@ -43,11 +45,11 @@ import {
       </div>
 
       @if (suggestions().length === 0) {
-        <div class="empty-state">
-          <i class="pi pi-lightbulb" aria-hidden="true"></i>
-          <h3>No suggestions yet</h3>
-          <p>When players suggest videos, they'll appear here for review</p>
-        </div>
+        <app-empty-state
+          icon="pi-lightbulb"
+          heading="No suggestions yet"
+          description="When players suggest videos, they'll appear here for review."
+        />
       } @else {
         <div class="suggestions-grid">
           @for (suggestion of suggestions(); track suggestion.id) {

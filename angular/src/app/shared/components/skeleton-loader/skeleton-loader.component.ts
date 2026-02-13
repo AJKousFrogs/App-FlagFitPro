@@ -11,6 +11,7 @@ export type SkeletonVariant =
   | "title"
   | "avatar"
   | "thumbnail"
+  | "block"
   | "card"
   | "table-row"
   | "chart"
@@ -70,6 +71,15 @@ export type SkeletonVariant =
           class="skeleton skeleton-thumbnail"
           [style.width]="width()"
           [style.height]="height()"
+          [style.animation-delay]="animationDelay()"
+        ></div>
+      }
+      @case ("block") {
+        <div
+          class="skeleton skeleton-block"
+          [style.width]="width()"
+          [style.height]="height()"
+          [style.border-radius]="borderRadius()"
           [style.animation-delay]="animationDelay()"
         ></div>
       }
@@ -275,6 +285,7 @@ export class SkeletonLoaderComponent {
   width = input<string>("100%");
   height = input<string>("var(--space-5)");
   size = input<string>("var(--icon-container-md)");
+  borderRadius = input<string | undefined>(undefined);
   columns = input<number[]>([1, 2, 1, 1]);
   delay = input<number>(0);
 

@@ -12,14 +12,167 @@ import { getSupabaseClient } from "./supabase-client.js";
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 
+const EMERGENCY_SHARING_LEVELS = new Set([
+  "none",
+  "medical_only",
+  "medical_and_location",
+  "full",
+]);
+
+const ALLOWED_METRIC_CATEGORIES = new Set([
+  "performance",
+  "training_load",
+  "readiness",
+  "wellness",
+  "injury_history",
+  "body_composition",
+]);
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isBoolean(value) {
+  return typeof value === "boolean";
+}
+
+function isValidId(value) {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    value.trim().length <= 128 &&
+    /^[A-Za-z0-9_-]+$/.test(value.trim())
+  );
+}
+
+function validateEmergencyContacts(contacts) {
+  if (!Array.isArray(contacts)) {
+    return "emergencyContacts must be an array";
+  }
+  for (const contact of contacts) {
+    if (!isPlainObject(contact)) {
+      return "each emergency contact must be an object";
+    }
+    if (
+      typeof contact.name !== "string" ||
+      !contact.name.trim() ||
+      contact.name.length > 120
+    ) {
+      return "emergency contact name must be a non-empty string up to 120 characters";
+    }
+    if (
+      typeof contact.phone !== "string" ||
+      !contact.phone.trim() ||
+      contact.phone.length > 40
+    ) {
+      return "emergency contact phone must be a non-empty string up to 40 characters";
+    }
+    if (
+      contact.email !== undefined &&
+      (typeof contact.email !== "string" || contact.email.length > 254)
+    ) {
+      return "emergency contact email must be a string up to 254 characters";
+    }
+    if (
+      typeof contact.relationship !== "string" ||
+      !contact.relationship.trim() ||
+      contact.relationship.length > 80
+    ) {
+      return "emergency contact relationship must be a non-empty string up to 80 characters";
+    }
+  }
+  return null;
+}
+
+function validateSettingsPayload(settings) {
+  if (!isPlainObject(settings)) {
+    return "settings must be an object";
+  }
+
+  if (
+    settings.aiProcessingEnabled !== undefined &&
+    !isBoolean(settings.aiProcessingEnabled)
+  ) {
+    return "aiProcessingEnabled must be a boolean";
+  }
+  if (settings.researchOptIn !== undefined && !isBoolean(settings.researchOptIn)) {
+    return "researchOptIn must be a boolean";
+  }
+  if (
+    settings.marketingOptIn !== undefined &&
+    !isBoolean(settings.marketingOptIn)
+  ) {
+    return "marketingOptIn must be a boolean";
+  }
+  if (
+    settings.performanceSharingDefault !== undefined &&
+    !isBoolean(settings.performanceSharingDefault)
+  ) {
+    return "performanceSharingDefault must be a boolean";
+  }
+  if (
+    settings.healthSharingDefault !== undefined &&
+    !isBoolean(settings.healthSharingDefault)
+  ) {
+    return "healthSharingDefault must be a boolean";
+  }
+  if (settings.emergencySharingLevel !== undefined) {
+    if (
+      typeof settings.emergencySharingLevel !== "string" ||
+      !EMERGENCY_SHARING_LEVELS.has(settings.emergencySharingLevel)
+    ) {
+      return "emergencySharingLevel is invalid";
+    }
+  }
+  if (settings.emergencyContacts !== undefined) {
+    const error = validateEmergencyContacts(settings.emergencyContacts);
+    if (error) {
+      return error;
+    }
+  }
+  return null;
+}
+
+function validateTeamSettingsPayload(teamSettings) {
+  if (!isPlainObject(teamSettings)) {
+    return "teamSettings must be an object";
+  }
+
+  if (
+    teamSettings.performanceSharingEnabled !== undefined &&
+    !isBoolean(teamSettings.performanceSharingEnabled)
+  ) {
+    return "performanceSharingEnabled must be a boolean";
+  }
+  if (
+    teamSettings.healthSharingEnabled !== undefined &&
+    !isBoolean(teamSettings.healthSharingEnabled)
+  ) {
+    return "healthSharingEnabled must be a boolean";
+  }
+  if (teamSettings.allowedMetricCategories !== undefined) {
+    if (!Array.isArray(teamSettings.allowedMetricCategories)) {
+      return "allowedMetricCategories must be an array";
+    }
+    const invalid = teamSettings.allowedMetricCategories.find(
+      (category) =>
+        typeof category !== "string" || !ALLOWED_METRIC_CATEGORIES.has(category),
+    );
+    if (invalid) {
+      return "allowedMetricCategories contains invalid category";
+    }
+  }
+  return null;
+}
+
 export const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "privacy-settings",
     allowedMethods: ["GET", "PUT"],
-rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true, // P0-005: Explicitly require authentication for privacy settings
-    handler: async (event, context, { userId }) => {
+    handler: async (event, context, { userId, requestId }) => {
       const supabase = getSupabaseClient();
 
       // GET - Retrieve privacy settings
@@ -41,14 +194,20 @@ rateLimitType: rateLimitType,
 
           if (insertError) {
             return createErrorResponse(
-              insertError.message,
+              "Failed to create default privacy settings",
               500,
               "database_error",
+              requestId,
             );
           }
           settings = newSettings;
         } else if (error) {
-          return createErrorResponse(error.message, 500, "database_error");
+          return createErrorResponse(
+            "Failed to retrieve privacy settings",
+            500,
+            "database_error",
+            requestId,
+          );
         }
 
         // Also get team sharing settings
@@ -109,13 +268,37 @@ rateLimitType: rateLimitType,
         try {
           body = JSON.parse(event.body || "{}");
         } catch {
-          return createErrorResponse("Invalid JSON body", 400, "invalid_body");
+          return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+        }
+
+        if (!isPlainObject(body)) {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+          );
         }
 
         const { settings: newSettings, teamId, teamSettings } = body;
+        if (newSettings === undefined && (teamId === undefined || teamSettings === undefined)) {
+          return createErrorResponse(
+            "Provide settings and/or teamId with teamSettings",
+            422,
+            "validation_error",
+          );
+        }
 
         // Update main privacy settings
         if (newSettings) {
+          const settingsValidationError = validateSettingsPayload(newSettings);
+          if (settingsValidationError) {
+            return createErrorResponse(
+              settingsValidationError,
+              422,
+              "validation_error",
+            );
+          }
+
           const updateData = {};
 
           if (newSettings.aiProcessingEnabled !== undefined) {
@@ -160,17 +343,64 @@ rateLimitType: rateLimitType,
           if (Object.keys(updateData).length > 0) {
             const { error } = await supabase
               .from("privacy_settings")
-              .update(updateData)
-              .eq("user_id", userId);
+              .upsert(
+                {
+                  user_id: userId,
+                  ...updateData,
+                },
+                { onConflict: "user_id" },
+              );
 
             if (error) {
-              return createErrorResponse(error.message, 500, "database_error");
+              return createErrorResponse(
+                "Failed to update privacy settings",
+                500,
+                "database_error",
+                requestId,
+              );
             }
           }
         }
 
         // Update team-specific settings
         if (teamId && teamSettings) {
+          if (!isValidId(teamId)) {
+            return createErrorResponse("teamId is invalid", 422, "validation_error");
+          }
+
+          const teamSettingsValidationError =
+            validateTeamSettingsPayload(teamSettings);
+          if (teamSettingsValidationError) {
+            return createErrorResponse(
+              teamSettingsValidationError,
+              422,
+              "validation_error",
+            );
+          }
+
+          const { data: membership, error: membershipError } = await supabase
+            .from("team_members")
+            .select("team_id")
+            .eq("user_id", userId)
+            .eq("team_id", teamId)
+            .limit(1)
+            .maybeSingle();
+
+          if (membershipError) {
+            return createErrorResponse(
+              "Failed to verify team membership",
+              500,
+              "database_error",
+            );
+          }
+          if (!membership) {
+            return createErrorResponse(
+              "Not authorized to update team sharing settings for this team",
+              403,
+              "authorization_error",
+            );
+          }
+
           const teamUpdateData = {
             user_id: userId,
             team_id: teamId,
@@ -191,6 +421,14 @@ rateLimitType: rateLimitType,
               teamSettings.allowedMetricCategories;
           }
 
+          if (Object.keys(teamUpdateData).length === 2) {
+            return createErrorResponse(
+              "No valid teamSettings fields provided",
+              422,
+              "validation_error",
+            );
+          }
+
           const { error } = await supabase
             .from("team_sharing_settings")
             .upsert(teamUpdateData, {
@@ -198,17 +436,25 @@ rateLimitType: rateLimitType,
             });
 
           if (error) {
-            return createErrorResponse(error.message, 500, "database_error");
+            return createErrorResponse(
+              "Failed to update team sharing settings",
+              500,
+              "database_error",
+              requestId,
+            );
           }
         }
 
         // Log the privacy change
-        await supabase.from("privacy_audit_log").insert({
+        const { error: auditError } = await supabase.from("privacy_audit_log").insert({
           user_id: userId,
           action: "settings_updated",
           affected_table: teamId ? "team_sharing_settings" : "privacy_settings",
           affected_data: body,
         });
+        if (auditError) {
+          console.warn("[privacy-settings] Failed to insert audit log:", auditError.message);
+        }
 
         return createSuccessResponse({
           success: true,

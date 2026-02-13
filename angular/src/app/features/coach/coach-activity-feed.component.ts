@@ -29,6 +29,7 @@ import {
 } from "../../core/services/team-notification.service";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { Avatar } from "primeng/avatar";
@@ -53,6 +54,7 @@ import { getInitials } from "../../shared/utils/format.utils";
     Skeleton,
     ScrollPanel,
     ButtonComponent,
+    EmptyStateComponent,
     IconButtonComponent,
   ],
   template: `
@@ -109,13 +111,11 @@ import { getInitials } from "../../shared/utils/format.utils";
 
       <!-- Empty State -->
       @if (!loading() && activities().length === 0) {
-        <div class="empty-state">
-          <i class="pi pi-inbox"></i>
-          <p>No recent player activity</p>
-          <span
-            >Activity will appear here when players log training or stats</span
-          >
-        </div>
+        <app-empty-state
+          icon="pi-inbox"
+          heading="No recent player activity"
+          description="Activity will appear here when players log training or stats"
+        />
       }
 
       <!-- Activity List -->

@@ -6,6 +6,55 @@ import { supabaseAdmin } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isValidAthleteId(value) {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    value.trim().length <= 128 &&
+    /^[A-Za-z0-9_-]+$/.test(value.trim())
+  );
+}
+
+async function verifyAthleteAccess(requestUserId, athleteId) {
+  if (athleteId === requestUserId) {
+    return { authorized: true };
+  }
+
+  const role = await getUserRole(requestUserId);
+  if (!["coach", "assistant_coach", "head_coach", "admin"].includes(role)) {
+    return { authorized: false };
+  }
+
+  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", requestUserId)
+    .limit(1)
+    .maybeSingle();
+
+  if (requesterError || !requesterMembership?.team_id) {
+    return { authorized: false };
+  }
+
+  const { data: athleteMembership, error: athleteError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", athleteId)
+    .limit(1)
+    .maybeSingle();
+
+  if (athleteError || !athleteMembership?.team_id) {
+    return { authorized: false };
+  }
+
+  return { authorized: athleteMembership.team_id === requesterMembership.team_id };
+}
 
 /**
  * Compute ACWR for an athlete
@@ -29,14 +78,33 @@ export const handler = async (event, context) => {
         );
       }
 
+      if (!isPlainObject(body)) {
+        return createErrorResponse(
+          "Request body must be an object",
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+
       // If athleteId not provided, use authenticated user's ID
       const { athleteId = userId } = body;
 
-      if (!athleteId) {
+      if (!athleteId || !isValidAthleteId(athleteId)) {
         return createErrorResponse(
-          "athleteId is required",
-          400,
+          "athleteId must be a non-empty alphanumeric identifier",
+          422,
           "validation_error",
+          requestId,
+        );
+      }
+
+      const access = await verifyAthleteAccess(userId, athleteId);
+      if (!access.authorized) {
+        return createErrorResponse(
+          "Not authorized to compute ACWR for this athlete",
+          403,
+          "authorization_error",
           requestId,
         );
       }

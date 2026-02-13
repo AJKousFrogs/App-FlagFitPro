@@ -80,6 +80,15 @@ export const handler = async (event, context) => {
         );
       }
 
+      if (invitation.status !== "pending") {
+        return createErrorResponse(
+          "This invitation is no longer active",
+          409,
+          "invitation_inactive",
+          requestId,
+        );
+      }
+
       return createSuccessResponse(
         {
           invitation: {

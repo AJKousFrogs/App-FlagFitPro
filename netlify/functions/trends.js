@@ -10,6 +10,17 @@ import { getWeekNumber } from "./utils/date-utils.js";
 // - Game-to-game performance metrics
 // Endpoint: /api/trends/:type
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || Number.isNaN(parsed) || String(parsed) !== String(value)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  if (parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
 /**
  * Get change of direction sessions trend
  */
@@ -243,37 +254,66 @@ export const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true,
-    handler: async (event, _context, { userId }) => {
-      // Parse path parameters
-      const pathParts = event.path.split("/").filter((p) => p);
-      const trendType = pathParts[pathParts.length - 1];
+    handler: async (event, _context, { userId, requestId }) => {
+      try {
+        // Parse path parameters
+        const pathParts = event.path.split("/").filter((p) => p);
+        const trendType = pathParts[pathParts.length - 1];
 
-      // Parse query parameters
-      const athleteId = event.queryStringParameters?.athleteId || userId;
-      const weeks = parseInt(event.queryStringParameters?.weeks || "4", 10);
-      const games = parseInt(event.queryStringParameters?.games || "5", 10);
+        // Parse query parameters
+        const athleteId = event.queryStringParameters?.athleteId || userId;
+        let weeks = 4;
+        let games = 5;
+        const weeksParam = event.queryStringParameters?.weeks;
+        const gamesParam = event.queryStringParameters?.games;
 
-      let result;
+        if (weeksParam !== undefined) {
+          weeks = parseBoundedInt(String(weeksParam), "weeks", { min: 1, max: 52 });
+        }
+        if (gamesParam !== undefined) {
+          games = parseBoundedInt(String(gamesParam), "games", { min: 1, max: 50 });
+        }
 
-      switch (trendType) {
-        case "change-of-direction":
-          result = await getChangeOfDirectionTrend(athleteId, weeks);
-          break;
-        case "sprint-volume":
-          result = await getSprintVolumeTrend(athleteId, weeks);
-          break;
-        case "game-performance":
-          result = await getGamePerformanceTrend(athleteId, games);
-          break;
-        default:
+        if (athleteId !== userId) {
           return createErrorResponse(
-            `Unknown trend type: ${trendType}. Supported: change-of-direction, sprint-volume, game-performance`,
-            400,
-            "invalid_trend_type",
+            "Not authorized to view another athlete's trends",
+            403,
+            "authorization_error",
+            requestId,
           );
-      }
+        }
+        let result;
 
-      return createSuccessResponse(result);
+        switch (trendType) {
+          case "change-of-direction":
+            result = await getChangeOfDirectionTrend(athleteId, weeks);
+            break;
+          case "sprint-volume":
+            result = await getSprintVolumeTrend(athleteId, weeks);
+            break;
+          case "game-performance":
+            result = await getGamePerformanceTrend(athleteId, games);
+            break;
+          default:
+            return createErrorResponse(
+              `Unknown trend type: ${trendType}. Supported: change-of-direction, sprint-volume, game-performance`,
+              400,
+              "invalid_trend_type",
+            );
+        }
+
+        return createSuccessResponse(result);
+      } catch (error) {
+        if (error?.message?.includes("must be an integer between")) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+        throw error;
+      }
     },
   });
 };

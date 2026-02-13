@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
-import { Skeleton } from "primeng/skeleton";
+import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
 import { ReadinessService } from "../../../core/services/readiness.service";
 import { FeatureFlagsService } from "../../../core/services/feature-flags.service";
 import { NextGenMetricsService } from "../../../core/services/next-gen-metrics.service";
@@ -28,7 +28,7 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
     CommonModule,
     CardComponent,
     StatusTagComponent,
-    Skeleton,
+    SkeletonLoaderComponent,
     ButtonComponent,
   ],
   template: `
@@ -46,8 +46,8 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
 
       @if (loading()) {
         <div class="loading-state">
-          <p-skeleton width="100%" height="var(--space-16)" class="mb-4"></p-skeleton>
-          <p-skeleton width="60%" height="var(--space-8)"></p-skeleton>
+          <app-skeleton-loader variant="block" width="100%" height="var(--space-16)" class="mb-4" />
+          <app-skeleton-loader variant="block" width="60%" height="var(--space-8)" />
         </div>
       } @else if (error()) {
         <div class="error-state p-4 bg-red-50 border border-red-200 rounded-lg">

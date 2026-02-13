@@ -28,8 +28,9 @@ import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Tooltip } from "primeng/tooltip";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -103,8 +104,8 @@ interface SessionTypeOption {
 
     Tooltip,
     ButtonComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
 <div class="qb-throwing-tracker">
       <!-- Progression Status Card -->
@@ -180,10 +181,11 @@ interface SessionTypeOption {
       <div class="section">
         <h2 class="section-title">Weekly History</h2>
         @if (weeklyStats().length === 0) {
-          <div class="empty-state">
-            <i class="pi pi-chart-bar"></i>
-            <p>No throwing data yet. Log your first session!</p>
-          </div>
+          <app-empty-state
+            icon="pi-chart-bar"
+            heading="No throwing data yet"
+            description="Log your first session to see weekly history."
+          />
         } @else {
           <div class="weekly-chart">
             @for (week of weeklyStats(); track week.weekStart) {
@@ -214,10 +216,11 @@ interface SessionTypeOption {
       <div class="section">
         <h2 class="section-title">Recent Sessions</h2>
         @if (recentSessions().length === 0) {
-          <div class="empty-state">
-            <i class="pi pi-calendar"></i>
-            <p>No sessions logged yet.</p>
-          </div>
+          <app-empty-state
+            icon="pi-calendar"
+            heading="No sessions yet"
+            description="Log your first throwing session to see recent history."
+          />
         } @else {
           <div class="sessions-list">
             @for (session of recentSessions(); track session.id) {
@@ -493,7 +496,7 @@ export class QbThrowingTrackerComponent {
   };
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
   private readonly featureFlags = inject(FeatureFlagsService);
 
   // State
@@ -581,22 +584,17 @@ export class QbThrowingTrackerComponent {
     try {
       await firstValueFrom(this.api.post("/api/qb-throwing", this.formData));
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Session Logged",
-        detail: `${this.formData.totalThrows} throws recorded!`,
-        life: 3000,
-      });
+      this.toastService.success(
+        `${this.formData.totalThrows} throws recorded!`,
+        "Session Logged",
+        3000,
+      );
 
       await this.loadData();
       this.closeLogDialog();
     } catch (err) {
       this.logger.error("Failed to save throwing session", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save session. Please try again.",
-      });
+      this.toastService.error("Failed to save session. Please try again.");
     } finally {
       this.isSaving.set(false);
     }
@@ -705,12 +703,11 @@ export class QbThrowingTrackerComponent {
         }),
       );
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Arm Care Complete",
-        detail: "Great job taking care of your arm!",
-        life: 2000,
-      });
+      this.toastService.success(
+        "Great job taking care of your arm!",
+        "Arm Care Complete",
+        2000,
+      );
 
       await this.loadData();
     } catch (err) {

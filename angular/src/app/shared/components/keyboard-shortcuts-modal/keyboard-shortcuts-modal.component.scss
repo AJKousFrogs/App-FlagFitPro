@@ -100,10 +100,8 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
   transition: background-color var(--transition-fast) var(--ease-standard);
-}
 
-.shortcut-item:hover {
-  background: var(--surface-tertiary);
+  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .shortcut-description {
@@ -203,8 +201,4 @@ kbd {
   }
 }
 
-/* Dialog Styling Override */
-// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-039)
-.shortcuts-modal {
-  // Component-specific styles remain here
-}
+/* Dialog: PrimeNG overrides in _component-overrides.scss (DS-EXC-039) */

@@ -238,6 +238,14 @@ export const handler = async (event, context) => {
     handler: async (event, _context, { userId, requestId }) => {
       try {
         const athleteId = event.queryStringParameters?.athleteId || userId;
+        if (athleteId !== userId) {
+          return createErrorResponse(
+            "Not authorized to view another athlete's metrics",
+            403,
+            "authorization_error",
+            requestId,
+          );
+        }
 
         // Get performance metrics
         const metrics = await getPerformanceMetrics(athleteId);

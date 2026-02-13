@@ -26,7 +26,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -130,7 +129,6 @@ const PAYMENT_METHOD_CONFIG: Record<
     ButtonComponent,
     StatusTagComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="payments-page">
@@ -389,8 +387,6 @@ const PAYMENT_METHOD_CONFIG: Record<
 export class PaymentsComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
-
   // Design system tokens
   protected readonly tableColumnWidths = TABLE_COLUMN_WIDTHS;
 

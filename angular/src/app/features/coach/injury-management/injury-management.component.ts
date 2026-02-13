@@ -17,9 +17,10 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -222,9 +223,9 @@ const RTP_STAGES: RtpStage[] = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
     StatusTagComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="injury-management-page">
@@ -555,11 +556,11 @@ const RTP_STAGES: RtpStage[] = [
         <!-- Empty State -->
         @if (filteredInjuries().length === 0) {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-heart"></i>
-              <h3>No Injuries</h3>
-              <p>Great news! No injuries in this category.</p>
-            </div>
+            <app-empty-state
+              icon="pi-heart"
+              heading="No Injuries"
+              description="Great news! No injuries in this category."
+            />
           </p-card>
         }
 
@@ -889,7 +890,7 @@ const RTP_STAGES: RtpStage[] = [
 export class InjuryManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly activeTab = signal<"active" | "rtp" | "cleared" | "history">(
@@ -1107,11 +1108,7 @@ export class InjuryManagementComponent implements OnInit {
   }
 
   submitReport(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Injury Reported",
-      detail: "RTP protocol has been initiated",
-    });
+    this.toastService.success("RTP protocol has been initiated", "Injury Reported");
     this.showReportDialog = false;
     // Would submit to API
   }
@@ -1125,11 +1122,7 @@ export class InjuryManagementComponent implements OnInit {
   }
 
   submitCheckin(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Check-in Saved",
-      detail: "Progress has been recorded",
-    });
+    this.toastService.success("Progress has been recorded", "Check-in Saved");
     this.showCheckinDialog = false;
   }
 
@@ -1147,11 +1140,10 @@ export class InjuryManagementComponent implements OnInit {
           : i,
       ),
     );
-    this.messageService.add({
-      severity: "success",
-      summary: "RTP Started",
-      detail: `${injury.playerName} has begun the return-to-play protocol`,
-    });
+    this.toastService.success(
+      `${injury.playerName} has begun the return-to-play protocol`,
+      "RTP Started",
+    );
   }
 
   advanceStage(injury: InjuryRecord): void {
@@ -1170,11 +1162,10 @@ export class InjuryManagementComponent implements OnInit {
       ),
     );
 
-    this.messageService.add({
-      severity: "success",
-      summary: "Stage Advanced",
-      detail: `${injury.playerName} advanced to Stage ${nextStage}`,
-    });
+    this.toastService.success(
+      `${injury.playerName} advanced to Stage ${nextStage}`,
+      "Stage Advanced",
+    );
   }
 
   canAdvanceStage(injury: InjuryRecord): boolean {
@@ -1186,19 +1177,14 @@ export class InjuryManagementComponent implements OnInit {
   }
 
   viewRtpDetails(injury: InjuryRecord): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "View RTP",
-      detail: `Opening full RTP for ${injury.playerName}`,
-    });
+    this.toastService.info(
+      `Opening full RTP for ${injury.playerName}`,
+      "View RTP",
+    );
   }
 
   requestMedical(_injury: InjuryRecord): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Medical Report Requested",
-      detail: "Request sent to medical team",
-    });
+    this.toastService.info("Request sent to medical team", "Medical Report Requested");
   }
 
   // Helpers

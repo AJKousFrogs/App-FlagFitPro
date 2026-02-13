@@ -12,9 +12,6 @@
   gap: var(--space-6);
 }
 
-/* Card Header - REMOVED (use app-card-shell component)
-   @see docs/CARD_SHELL_CONTRACT.md */
-
 .olympic-icon {
   font-size: var(--ds-font-size-2xl);
 }
@@ -60,7 +57,7 @@
 .status-dot {
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--ds-primary-green);
   animation: pulse 2s infinite;
 }
@@ -119,21 +116,6 @@
   margin: 0;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-}
-
-/* Loading State */
-.loading-state {
-  text-align: center;
-  padding: var(--space-6);
-  color: var(--color-text-secondary);
-}
-
-/* .empty-state REMOVED - use .card-empty-state from card-shell
-   @see docs/CARD_SHELL_CONTRACT.md §8 */
-
-.loading-state i {
-  font-size: var(--ds-font-size-2xl);
-  margin-bottom: var(--space-2);
 }
 
 /* Table Styles */
@@ -270,7 +252,7 @@
   bottom: var(--space-0-75);
   background-color: var(--surface-elevated);
   transition: var(--transition-slow) var(--ease-standard);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 }
 
 .toggle input:checked + .toggle-slider {
@@ -364,18 +346,8 @@
   border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
-}
 
-.form-group input:focus-visible,
-.form-group textarea:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-  border-color: var(--ds-primary-green);
-}
-
-.form-group input:focus:not(:focus-visible),
-.form-group textarea:focus:not(:focus-visible) {
-  outline: none;
+  @include ds-focus-ring($border-color: var(--ds-primary-green));
 }
 
 .form-group textarea {
@@ -394,5 +366,4 @@
     gap: var(--space-3);
   }
 
-  // .card-header responsive styles removed - use app-card-shell
 }

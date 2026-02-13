@@ -35,6 +35,32 @@ function isCoachOrAdmin(role) {
   ].includes(role);
 }
 
+function parseBoundedInt(value, fieldName, { min, max }) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+async function getTeamMembership(userId, teamId) {
+  if (!teamId) {
+    return { authorized: false, role: null };
+  }
+  const membership = await _checkTeamMembership(userId, teamId);
+  return {
+    authorized: membership?.authorized === true,
+    role: membership?.role || null,
+  };
+}
+
 // Check if coach has consent to view player's personal games
 async function hasPlayerConsent(coachId, playerId) {
   const { data, error } = await supabaseAdmin
@@ -173,18 +199,23 @@ const getGames = async (userId, options = {}) => {
       query = query.lte("game_date", todayEndOfDay.toISOString());
     }
 
-    if (options.limit) {
-      query = query.limit(parseInt(options.limit));
+    if (options.limit !== undefined) {
+      const limit = parseBoundedInt(options.limit, "limit", {
+        min: 1,
+        max: 200,
+      });
+      query = query.limit(limit);
     }
 
     if (options.season) {
       // Filter by year from game_date
-      const year = parseInt(options.season);
-      if (!isNaN(year)) {
-        query = query
-          .gte("game_date", `${year}-01-01`)
-          .lte("game_date", `${year}-12-31`);
-      }
+      const year = parseBoundedInt(options.season, "season", {
+        min: 1900,
+        max: 2100,
+      });
+      query = query
+        .gte("game_date", `${year}-01-01`)
+        .lte("game_date", `${year}-12-31`);
     }
 
     const { data: allGames, error } = await query;
@@ -199,7 +230,7 @@ const getGames = async (userId, options = {}) => {
     for (const game of allGames || []) {
       // Team games - visible to team members
       if (game.visibility_scope === "team") {
-        if (game.team_id === teamId || !teamId) {
+        if (teamId && game.team_id === teamId) {
           filteredGames.push(game);
         }
       }
@@ -274,6 +305,11 @@ const getGameDetails = async (userId, gameId) => {
         } else {
           throw new Error("You don't have permission to view this game");
         }
+      }
+    } else if (game.visibility_scope === "team") {
+      const teamAccess = await getTeamMembership(userId, game.team_id);
+      if (!teamAccess.authorized) {
+        throw new Error("You don't have permission to view this game");
       }
     }
 
@@ -382,9 +418,6 @@ const updateGame = async (userId, gameId, updates) => {
       throw error;
     }
 
-    const userRole = await getUserRole(userId);
-    const isCoach = isCoachOrAdmin(userRole);
-
     // First, get the game to verify ownership
     const { data: game, error: fetchError } = await supabaseAdmin
       .from("games")
@@ -401,12 +434,22 @@ const updateGame = async (userId, gameId, updates) => {
       game.player_owner_id === userId || game.created_by === userId;
 
     if (game.visibility_scope === "personal" && !isOwner) {
-      throw new Error("You don't have permission to modify this game");
+      const userRole = await getUserRole(userId);
+      if (!isCoachOrAdmin(userRole) || !game.player_owner_id) {
+        throw new Error("You don't have permission to modify this game");
+      }
+      const hasConsent = await hasPlayerConsent(userId, game.player_owner_id);
+      if (!hasConsent) {
+        throw new Error("You don't have permission to modify this game");
+      }
     }
 
-    if (game.visibility_scope === "team" && !isCoach) {
-      // Players can't modify team games directly
-      throw new Error("Only coaches can modify team games");
+    if (game.visibility_scope === "team") {
+      const teamAccess = await getTeamMembership(userId, game.team_id);
+      if (!teamAccess.authorized || !isCoachOrAdmin(teamAccess.role)) {
+        // Players can't modify team games directly
+        throw new Error("Only coaches can modify team games");
+      }
     }
 
     // Sanitize updates
@@ -498,8 +541,6 @@ const savePlay = async (userId, gameId, playData) => {
   try {
     checkEnvVars();
 
-    const userRole = await getUserRole(userId);
-
     // Verify game exists and user has access
     const { data: game, error: gameError } = await supabaseAdmin
       .from("games")
@@ -514,25 +555,77 @@ const savePlay = async (userId, gameId, playData) => {
     // Check permission to add stats
     const isOwner =
       game.player_owner_id === userId || game.created_by === userId;
-    const isCoach = isCoachOrAdmin(userRole);
 
-    if (game.visibility_scope === "personal" && !isOwner && !isCoach) {
-      throw new Error("You don't have permission to add stats to this game");
+    let recordedByRole = "player";
+
+    if (game.visibility_scope === "personal" && !isOwner) {
+      const userRole = await getUserRole(userId);
+      const isCoach = isCoachOrAdmin(userRole);
+      if (!isCoach || !game.player_owner_id) {
+        throw new Error("You don't have permission to add stats to this game");
+      }
+      const hasConsent = await hasPlayerConsent(userId, game.player_owner_id);
+      if (!hasConsent) {
+        throw new Error("You don't have permission to add stats to this game");
+      }
+      recordedByRole = "coach";
+    }
+
+    if (game.visibility_scope === "team") {
+      const teamAccess = await getTeamMembership(userId, game.team_id);
+      if (!teamAccess.authorized) {
+        throw new Error("You don't have permission to add stats to this game");
+      }
+      recordedByRole = isCoachOrAdmin(teamAccess.role) ? "coach" : "player";
+    }
+
+    const normalizedPlay = {
+      game_id: gameId,
+      player_id: playData.playerId || userId,
+      event_type: playData.eventType || playData.playType,
+      quarter: playData.quarter || playData.half,
+      game_time: playData.gameTime || null,
+      yards: playData.yards || playData.yardsGained || 0,
+      description: playData.description || playData.notes || null,
+      recorded_by: userId,
+      recorded_by_role: recordedByRole,
+    };
+
+    // Retry-safe dedupe: if an identical event was recorded very recently,
+    // return the existing row instead of creating a duplicate.
+    const duplicateWindowStart = new Date(Date.now() - 30 * 1000).toISOString();
+    let duplicateQuery = supabaseAdmin
+      .from("game_events")
+      .select("*")
+      .eq("game_id", normalizedPlay.game_id)
+      .eq("player_id", normalizedPlay.player_id)
+      .eq("event_type", normalizedPlay.event_type)
+      .eq("quarter", normalizedPlay.quarter)
+      .eq("recorded_by", normalizedPlay.recorded_by)
+      .eq("yards", normalizedPlay.yards)
+      .gte("created_at", duplicateWindowStart)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    duplicateQuery =
+      normalizedPlay.game_time === null
+        ? duplicateQuery.is("game_time", null)
+        : duplicateQuery.eq("game_time", normalizedPlay.game_time);
+    duplicateQuery =
+      normalizedPlay.description === null
+        ? duplicateQuery.is("description", null)
+        : duplicateQuery.eq("description", normalizedPlay.description);
+
+    const { data: duplicateEvent, error: duplicateError } =
+      await duplicateQuery.maybeSingle();
+
+    if (!duplicateError && duplicateEvent) {
+      return duplicateEvent;
     }
 
     const { data, error } = await supabaseAdmin
       .from("game_events")
-      .insert({
-        game_id: gameId,
-        player_id: playData.playerId || userId,
-        event_type: playData.eventType || playData.playType,
-        quarter: playData.quarter || playData.half,
-        game_time: playData.gameTime || null,
-        yards: playData.yards || playData.yardsGained || 0,
-        description: playData.description || playData.notes || null,
-        recorded_by: userId,
-        recorded_by_role: isCoach ? "coach" : "player",
-      })
+      .insert(normalizedPlay)
       .select()
       .single();
 
@@ -788,7 +881,18 @@ export const handler = async (event, context) => {
         try {
           body = JSON.parse(event.body);
         } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+          );
+        }
+        if (!body || typeof body !== "object" || Array.isArray(body)) {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+          );
         }
       }
 
@@ -858,6 +962,13 @@ export const handler = async (event, context) => {
         if (error.isValidation) {
           return handleValidationError(error.errors || error.message);
         }
+        if (
+          error.message &&
+          (error.message.includes("must be") ||
+            error.message.includes("Invalid"))
+        ) {
+          return handleValidationError(error.message);
+        }
 
         if (error.message && error.message.includes("not found")) {
           return handleNotFoundError(error.message);
@@ -866,7 +977,8 @@ export const handler = async (event, context) => {
         if (
           error.message &&
           (error.message.includes("permission") ||
-            error.message.includes("consent"))
+            error.message.includes("consent") ||
+            error.message.includes("Only coaches"))
         ) {
           return handleAuthorizationError(error.message);
         }

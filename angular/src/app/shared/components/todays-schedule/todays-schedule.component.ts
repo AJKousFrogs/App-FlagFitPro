@@ -26,7 +26,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterModule } from "@angular/router";
-import { Skeleton } from "primeng/skeleton";
+import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
 import { Tag } from "primeng/tag";
 import { Tooltip } from "primeng/tooltip";
 
@@ -56,7 +56,7 @@ export interface ScheduleItem {
     CardComponent,
     Tag,
     Tooltip,
-    Skeleton,
+    SkeletonLoaderComponent,
   ],
   templateUrl: "./todays-schedule.component.html",
   styleUrl: "./todays-schedule.component.scss",

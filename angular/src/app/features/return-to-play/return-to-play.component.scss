@@ -17,28 +17,10 @@
   margin-bottom: var(--space-4);
 }
 
-.empty-state.small {
-  padding: var(--space-4);
-  font-size: var(--ds-font-size-md);
-
-  i {
-    font-size: var(--ds-font-size-2xl);
-    margin-bottom: var(--space-2);
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
-}
-
 // ===== Empty State =====
 .no-protocol-card {
   margin-bottom: var(--space-6);
 }
-
-// .empty-state REMOVED - use .card-empty-state from card-shell
-// @see docs/CARD_SHELL_CONTRACT.md §8
 
 // ===== Protocol Overview Card =====
 .protocol-overview-card {
@@ -92,8 +74,6 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
-  // .stat/.stat-label/.stat-value REMOVED
-  // Use .stat-block classes from card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 }
 
@@ -464,7 +444,7 @@
 .chart-card {
   margin-bottom: var(--space-6);
 
-  // PrimeNG chart override moved to _exceptions.scss (DS-EXC-017)
+  // PrimeNG chart override moved to _component-overrides.scss (DS-EXC-017)
 }
 
 // ===== Checkins Table =====

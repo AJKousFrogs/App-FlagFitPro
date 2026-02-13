@@ -41,12 +41,13 @@ async function checkDatabase() {
     return {
       status: "unhealthy",
       latency: Date.now() - startTime,
-      error: lastError?.message || "Database check failed",
+      error: "Database check failed",
     };
   } catch (error) {
+    console.error("[health] Database health check error:", error);
     return {
       status: "unhealthy",
-      error: error.message,
+      error: "Database check failed",
     };
   }
 }
@@ -64,9 +65,10 @@ async function checkAuth() {
       latency,
     };
   } catch (error) {
+    console.error("[health] Auth health check error:", error);
     return {
       status: "unhealthy",
-      error: error.message,
+      error: "Auth check failed",
     };
   }
 }

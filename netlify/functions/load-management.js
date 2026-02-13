@@ -20,6 +20,67 @@ const consentReader = new ConsentDataReader(supabaseAdmin, {
   enableAuditLogging: true,
 });
 
+const LOAD_MANAGEMENT_STAFF_ROLES = ["coach", "assistant_coach", "admin", "staff"];
+
+async function validateCrossUserAccess(requesterId, targetUserId, teamId) {
+  if (requesterId === targetUserId) {
+    return { authorized: true };
+  }
+  if (!teamId) {
+    return {
+      authorized: false,
+      message: "teamId is required when accessing another player's data",
+      code: "authorization_error",
+      statusCode: 403,
+    };
+  }
+
+  const { data: requesterMember, error: requesterError } = await supabaseAdmin
+    .from("team_members")
+    .select("role, team_id")
+    .eq("user_id", requesterId)
+    .eq("team_id", teamId)
+    .eq("status", "active")
+    .in("role", LOAD_MANAGEMENT_STAFF_ROLES)
+    .limit(1)
+    .single();
+
+  if (requesterError && requesterError.code !== "PGRST116") {
+    throw requesterError;
+  }
+  if (!requesterMember) {
+    return {
+      authorized: false,
+      message: "Not authorized to access another player's load data",
+      code: "authorization_error",
+      statusCode: 403,
+    };
+  }
+
+  const { data: targetMember, error: targetError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id, status")
+    .eq("user_id", targetUserId)
+    .eq("team_id", teamId)
+    .eq("status", "active")
+    .limit(1)
+    .single();
+
+  if (targetError && targetError.code !== "PGRST116") {
+    throw targetError;
+  }
+  if (!targetMember) {
+    return {
+      authorized: false,
+      message: "Target player is not an active member of this team",
+      code: "authorization_error",
+      statusCode: 403,
+    };
+  }
+
+  return { authorized: true };
+}
+
 /**
  * Determine access context based on request parameters
  * @param {string} requesterId - The authenticated user making the request
@@ -103,7 +164,7 @@ async function getTrainingLoads(
             accessibleCount: 0,
           },
           dataState: DataState.NO_DATA,
-          error: result.error,
+          error: "Failed to fetch training loads",
         };
       }
 
@@ -168,7 +229,7 @@ async function getTrainingLoads(
         loads: [],
         consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
         dataState: DataState.NO_DATA,
-        error: sessionsError.message,
+        error: "Failed to fetch training loads",
       };
     }
 
@@ -199,7 +260,7 @@ async function getTrainingLoads(
       loads: [],
       consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
       dataState: DataState.NO_DATA,
-      error: error.message,
+      error: "Failed to fetch training loads",
     };
   }
 }
@@ -1017,6 +1078,17 @@ export const handler = async (event, context) => {
       const pathSegments = path.split("/").filter(Boolean);
       const endpoint = pathSegments[pathSegments.length - 1];
       const query = queryStringParameters || {};
+      const targetUserId = query?.playerId || userId;
+      const teamId = query?.teamId || null;
+
+      const access = await validateCrossUserAccess(userId, targetUserId, teamId);
+      if (!access.authorized) {
+        return createErrorResponse(
+          access.message,
+          access.statusCode || 403,
+          access.code || "authorization_error",
+        );
+      }
 
       let response;
 

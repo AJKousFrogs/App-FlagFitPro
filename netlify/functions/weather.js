@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 
 // Netlify Function: Weather Data
 // Provides current weather information for training planning
@@ -137,20 +140,57 @@ async function getOpenMeteoData(latitude, longitude, city) {
     };
   } catch (error) {
     console.error("Open-Meteo error:", error);
-    // Return default data on error
+    // Return conservative safety-first data on error (never optimistic).
     return {
-      temp: 72,
+      temp: null,
       condition: "Unknown",
-      description: "Weather data temporarily unavailable",
-      humidity: 50,
-      windSpeed: 5,
+      description:
+        "Weather data temporarily unavailable. Check local weather before outdoor training.",
+      humidity: null,
+      windSpeed: null,
       visibility: null,
-      suitable: true,
-      suitability: "good",
-      icon: "🌤️",
+      suitable: false,
+      suitability: "poor",
+      icon: "⚠️",
       location: city || "Unknown",
+      safetyWarning: true,
     };
   }
+}
+
+function parseCoordinateParam(value, label, min, max) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+
+  const raw = String(value).trim();
+  if (!/^-?\d+(?:\.\d+)?$/.test(raw)) {
+    throw new Error(`${label} must be a valid number`);
+  }
+
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`${label} must be a valid number`);
+  }
+  if (parsed < min || parsed > max) {
+    throw new Error(`${label} must be between ${min} and ${max}`);
+  }
+
+  return parsed;
+}
+
+function parseCityParam(value) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const city = String(value).trim();
+  if (city.length === 0) {
+    return null;
+  }
+  if (city.length > 120) {
+    throw new Error("city must be 120 characters or less");
+  }
+  return city;
 }
 
 /**
@@ -301,10 +341,17 @@ async function handleRequest(event, _context, { userId: _userId }) {
   try {
     const query = event.queryStringParameters || {};
 
-    // Get location from query params or use defaults
-    const latitude = query.lat ? parseFloat(query.lat) : null;
-    const longitude = query.lon ? parseFloat(query.lon) : null;
-    const city = query.city || query.location || null;
+    const latitude = parseCoordinateParam(query.lat, "lat", -90, 90);
+    const longitude = parseCoordinateParam(query.lon, "lon", -180, 180);
+    const city = parseCityParam(query.city || query.location);
+
+    const hasLat = latitude !== null;
+    const hasLon = longitude !== null;
+    if (hasLat !== hasLon) {
+      return handleValidationError(
+        "lat and lon must both be provided when using coordinates",
+      );
+    }
 
     // Get weather data
     const weatherData = await getWeatherData(latitude, longitude, city);
@@ -320,9 +367,17 @@ async function handleRequest(event, _context, { userId: _userId }) {
       description: weatherData.description,
       location: weatherData.location,
       icon: weatherData.icon,
+      safetyWarning: weatherData.safetyWarning || false,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
+    if (
+      /must be a valid number|must be between|120 characters or less/i.test(
+        error.message || "",
+      )
+    ) {
+      return handleValidationError(error.message);
+    }
     console.error("Error in weather handler:", error);
     throw error;
   }

@@ -19,7 +19,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -39,6 +39,7 @@ import { firstValueFrom } from "rxjs";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -170,10 +171,10 @@ const PHASE_PRESETS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="program-builder-page">
@@ -389,14 +390,14 @@ const PHASE_PRESETS = [
         <!-- Empty State -->
         @if (programs().length === 0) {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-list-check"></i>
-              <h3>No Programs Yet</h3>
-              <p>Create your first training program to get started</p>
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
-                >Create Program</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-list-check"
+              heading="No Programs Yet"
+              description="Create your first training program to get started"
+              actionLabel="Create Program"
+              actionIcon="pi-plus"
+              [actionHandler]="openCreateDialogHandler"
+            />
           </p-card>
         }
       </div>
@@ -624,7 +625,7 @@ export class ProgramBuilderComponent implements OnInit {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
 
   // Expose constants to template
@@ -756,6 +757,8 @@ export class ProgramBuilderComponent implements OnInit {
     this.showCreateDialog = true;
   }
 
+  readonly openCreateDialogHandler = (): void => this.openCreateDialog();
+
   editProgram(program: TrainingProgram): void {
     this.isEditing.set(true);
     this.formData = {
@@ -804,11 +807,10 @@ export class ProgramBuilderComponent implements OnInit {
 
     this.api.post("/api/coach/programs/draft", program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: "Draft Saved",
-          detail: `${this.formData.name} saved as draft`,
-        });
+        this.toastService.success(
+          `${this.formData.name} saved as draft`,
+          "Draft Saved",
+        );
         this.showCreateDialog = false;
         this.loadData();
       },
@@ -817,11 +819,10 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   previewProgram(): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Preview",
-      detail: "Program preview would open here",
-    });
+    this.toastService.info(
+      "Program preview would open here",
+      "Preview",
+    );
   }
 
   publishNewProgram(): void {
@@ -836,11 +837,10 @@ export class ProgramBuilderComponent implements OnInit {
 
     this.api.post("/api/coach/programs", program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: "Program Published",
-          detail: `${this.formData.name} is now active`,
-        });
+        this.toastService.success(
+          `${this.formData.name} is now active`,
+          "Program Published",
+        );
         this.showCreateDialog = false;
         this.loadData();
       },
@@ -851,11 +851,10 @@ export class ProgramBuilderComponent implements OnInit {
   publishProgram(program: TrainingProgram): void {
     this.api.put(`/api/coach/programs/${program.id}/publish`, {}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: "Program Published",
-          detail: `${program.name} is now active`,
-        });
+        this.toastService.success(
+          `${program.name} is now active`,
+          "Program Published",
+        );
         this.loadData();
       },
       error: (err) => this.logger.error("Failed to publish program", err),
@@ -873,37 +872,31 @@ export class ProgramBuilderComponent implements OnInit {
 
     this.api.delete(`/api/coach/programs/${program.id}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: "info",
-          summary: "Program Deleted",
-        });
+        this.toastService.info("Program deleted", "Program Deleted");
       },
       error: (err) => this.logger.error("Failed to delete program", err),
     });
   }
 
   duplicateProgram(program: TrainingProgram): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Duplicating",
-      detail: `Creating copy of ${program.name}...`,
-    });
+    this.toastService.info(
+      `Creating copy of ${program.name}...`,
+      "Duplicating",
+    );
   }
 
   viewProgramDetails(program: TrainingProgram): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "View Details",
-      detail: `Opening ${program.name} details`,
-    });
+    this.toastService.info(
+      `Opening ${program.name} details`,
+      "View Details",
+    );
   }
 
   viewCompliance(program: TrainingProgram): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Compliance Report",
-      detail: `Opening compliance for ${program.name}`,
-    });
+    this.toastService.info(
+      `Opening compliance for ${program.name}`,
+      "Compliance Report",
+    );
   }
 
   openProgramMenu(_event: Event, _program: TrainingProgram): void {

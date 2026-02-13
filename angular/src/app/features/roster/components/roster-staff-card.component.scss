@@ -9,8 +9,6 @@
 .staff-card {
   position: relative;
 
-  // Hover transition/transform REMOVED - use app-card-shell with state="interactive"
-  // @see docs/CARD_SHELL_CONTRACT.md §2.8
 }
 
 /* Staff card category borders */
@@ -168,5 +166,4 @@
 
 /* Touch devices */
 @media (hover: none) and (pointer: coarse) {
-  // .staff-card:hover REMOVED - card-shell handles touch devices
 }

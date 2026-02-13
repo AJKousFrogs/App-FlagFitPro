@@ -18,6 +18,20 @@ function getSupabase() {
   return supabaseAdmin;
 }
 
+function parseBoundedInt(value, fieldName, { min = 0, max = 1000 } = {}) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  if (!/^\d+$/.test(String(value))) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
 /**
  * Get activity feed for coach
  */
@@ -29,6 +43,7 @@ async function getActivityFeed(userId, options = {}) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", userId)
+    .eq("status", "active")
     .in("role", ["coach", "assistant_coach"]);
 
   if (teamError) {
@@ -100,6 +115,7 @@ async function getUnreadCount(userId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", userId)
+    .eq("status", "active")
     .in("role", ["coach", "assistant_coach"]);
 
   if (!teams || teams.length === 0) {
@@ -144,6 +160,7 @@ async function markActivityRead(userId, activityId) {
     .select("role")
     .eq("team_id", activity.team_id)
     .eq("user_id", userId)
+    .eq("status", "active")
     .in("role", ["coach", "assistant_coach"])
     .single();
 
@@ -177,6 +194,7 @@ async function markAllActivityRead(userId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", userId)
+    .eq("status", "active")
     .in("role", ["coach", "assistant_coach"]);
 
   if (!teams || teams.length === 0) {
@@ -214,6 +232,7 @@ async function getActivitySummary(userId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", userId)
+    .eq("status", "active")
     .in("role", ["coach", "assistant_coach"]);
 
   if (!teams || teams.length === 0) {
@@ -271,9 +290,17 @@ rateLimitType: rateLimitType,
       try {
         // GET / - Get activity feed
         if (method === "GET" && (path === "" || path === "/")) {
+          const parsedLimit = parseBoundedInt(queryParams.limit, "limit", {
+            min: 1,
+            max: 200,
+          });
+          const parsedOffset = parseBoundedInt(queryParams.offset, "offset", {
+            min: 0,
+            max: 10000,
+          });
           const activities = await getActivityFeed(userId, {
-            limit: parseInt(queryParams.limit) || 50,
-            offset: parseInt(queryParams.offset) || 0,
+            limit: parsedLimit ?? 50,
+            offset: parsedOffset ?? 0,
             unread_only: queryParams.unread_only === "true",
           });
           return createSuccessResponse(activities, requestId);
@@ -308,10 +335,29 @@ rateLimitType: rateLimitType,
         return createErrorResponse("Not found", 404, "not_found", requestId);
       } catch (error) {
         console.error("Coach activity API error:", error);
+        if (
+          error.message?.includes("must be an integer between")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+        if (error.message?.includes("Activity not found")) {
+          return createErrorResponse(
+            error.message,
+            404,
+            "not_found",
+            requestId,
+          );
+        }
+        const statusCode = error.message?.includes("denied") ? 403 : 500;
         return createErrorResponse(
-          error.message || "Internal error",
-          error.message?.includes("denied") ? 403 : 500,
-          "activity_error",
+          statusCode === 500 ? "Internal server error" : error.message || "Access denied",
+          statusCode,
+          statusCode === 500 ? "server_error" : "activity_error",
           requestId,
         );
       }

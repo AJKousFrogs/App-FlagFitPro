@@ -1998,9 +1998,7 @@ const legacyDailyProtocolHandler = async (event) => {
   } catch (err) {
     console.error("Daily protocol error:", err);
     return {
-      ...createErrorResponse("Internal server error", 500, "server_error", {
-        details: err.message,
-      }),
+      ...createErrorResponse("Internal server error", 500, "server_error"),
       headers: corsHeaders,
     };
   }
@@ -2719,17 +2717,36 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // Calculate confidence metadata based on what we actually have
   // BREACH FIX #1: Use context.sessionResolution (now returned from getUserTrainingContext)
   // PROMPT 2.19: Remove duplicate override field - sessionResolution is the single source of truth
+  const readinessHasCheckin = context.readiness?.hasCheckin === true;
+  const readinessDaysStale = await computeReadinessDaysStale(
+    supabase,
+    userId,
+    date,
+    {
+      hasCheckinToday: readinessHasCheckin,
+      readinessScore,
+    },
+  );
+  const trainingDaysLogged = await computeTrainingDaysLogged(
+    supabase,
+    userId,
+    date,
+  );
+
   const confidenceMetadata = {
     readiness: {
       hasData: readinessScore !== null,
-      source: context.readiness?.hasCheckin ? "wellness_checkin" : "none",
-      daysStale: null, // TODO: Calculate from last checkin date
+      source: readinessHasCheckin ? "wellness_checkin" : "none",
+      daysStale: readinessDaysStale,
       confidence: readinessScore !== null ? "high" : "none",
     },
     acwr: {
       hasData: acwrValue !== null,
-      source: acwrValue !== null ? "training_sessions" : "none",
-      trainingDaysLogged: null, // TODO: Calculate from session history
+      source:
+        acwrValue !== null || trainingDaysLogged !== null
+          ? "training_sessions"
+          : "none",
+      trainingDaysLogged,
       confidence: acwrValue !== null ? "high" : "building_baseline",
     },
     sessionResolution: {
@@ -4431,8 +4448,17 @@ async function completeExercise(supabase, userId, payload, headers) {
     };
   }
 
+  // Idempotency: if already complete, treat as success and avoid duplicate completion logs.
+  if (exercise.status === "complete") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ success: true, idempotent: true }),
+    };
+  }
+
   // Update the exercise (RLS ensures user can only update their own)
-  const { error: updateError } = await supabase
+  const { data: updatedExercise, error: updateError } = await supabase
     .from("protocol_exercises")
     .update({
       status: "complete",
@@ -4441,21 +4467,26 @@ async function completeExercise(supabase, userId, payload, headers) {
       actual_reps: actualReps,
       actual_hold_seconds: actualHoldSeconds,
     })
-    .eq("id", protocolExerciseId);
+    .eq("id", protocolExerciseId)
+    .neq("status", "complete")
+    .select("id")
+    .maybeSingle();
 
   if (updateError) {
     throw updateError;
   }
 
-  // Log the completion
-  await supabase.from("protocol_completions").insert({
-    user_id: userId,
-    protocol_id: exercise.protocol_id,
-    protocol_exercise_id: protocolExerciseId,
-    completion_date: exercise.daily_protocols.protocol_date,
-    block_type: exercise.block_type,
-    exercise_id: exercise.exercise_id,
-  });
+  // Log completion only when a transition to complete occurred.
+  if (updatedExercise) {
+    await supabase.from("protocol_completions").insert({
+      user_id: userId,
+      protocol_id: exercise.protocol_id,
+      protocol_exercise_id: protocolExerciseId,
+      completion_date: exercise.daily_protocols.protocol_date,
+      block_type: exercise.block_type,
+      exercise_id: exercise.exercise_id,
+    });
+  }
 
   // The trigger will update protocol progress automatically
 
@@ -4475,6 +4506,24 @@ async function skipExercise(supabase, userId, payload, headers) {
 
   if (!protocolExerciseId) {
     return { ...handleValidationError("protocolExerciseId required"), headers };
+  }
+
+  // Verify ownership first (RLS should enforce, explicit check improves error quality)
+  const { data: exercise, error: fetchError } = await supabase
+    .from("protocol_exercises")
+    .select("id, daily_protocols!inner(user_id)")
+    .eq("id", protocolExerciseId)
+    .single();
+
+  if (fetchError) {
+    throw fetchError;
+  }
+
+  if (exercise.daily_protocols.user_id !== userId) {
+    return {
+      ...createErrorResponse("Not authorized", 403, "authorization_error"),
+      headers,
+    };
   }
 
   // Update the exercise
@@ -4507,6 +4556,13 @@ async function completeBlock(supabase, userId, payload, headers) {
   if (!protocolId || !blockType) {
     return {
       ...handleValidationError("protocolId and blockType required"),
+      headers,
+    };
+  }
+
+  if (!BLOCK_TYPES[blockType]) {
+    return {
+      ...handleValidationError("Invalid blockType"),
       headers,
     };
   }
@@ -4591,6 +4647,13 @@ async function skipBlock(supabase, userId, payload, headers) {
   if (!protocolId || !blockType) {
     return {
       ...handleValidationError("protocolId and blockType required"),
+      headers,
+    };
+  }
+
+  if (!BLOCK_TYPES[blockType]) {
+    return {
+      ...handleValidationError("Invalid blockType"),
       headers,
     };
   }
@@ -4955,6 +5018,92 @@ async function logSession(supabase, userId, payload, headers) {
   };
 }
 
+function toUtcDateOnly(dateString) {
+  return new Date(`${dateString}T00:00:00.000Z`);
+}
+
+function formatUtcDateOnly(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+async function computeReadinessDaysStale(
+  supabase,
+  userId,
+  date,
+  { hasCheckinToday = false, readinessScore = null } = {},
+) {
+  if (hasCheckinToday) {
+    return 0;
+  }
+
+  const { data: lastCheckin, error } = await supabase
+    .from("daily_wellness_checkin")
+    .select("checkin_date")
+    .eq("user_id", userId)
+    .lte("checkin_date", date)
+    .order("checkin_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error && error.code !== "PGRST116") {
+    console.warn("[daily-protocol] Failed to compute readiness staleness:", error);
+    return readinessScore !== null ? 0 : null;
+  }
+
+  if (!lastCheckin?.checkin_date) {
+    return readinessScore !== null ? 0 : null;
+  }
+
+  const targetDate = toUtcDateOnly(date);
+  const lastDate = toUtcDateOnly(lastCheckin.checkin_date);
+  const diffDays = Math.floor(
+    (targetDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  return Math.max(diffDays, 0);
+}
+
+async function computeTrainingDaysLogged(
+  supabase,
+  userId,
+  date,
+  windowDays = 21,
+) {
+  const startDate = toUtcDateOnly(date);
+  startDate.setUTCDate(startDate.getUTCDate() - (windowDays - 1));
+  const windowStart = formatUtcDateOnly(startDate);
+
+  const { data: sessions, error } = await supabase
+    .from("training_sessions")
+    .select("session_date, session_state")
+    .eq("user_id", userId)
+    .not("session_date", "is", null)
+    .gte("session_date", windowStart)
+    .lte("session_date", date);
+
+  if (error) {
+    console.warn(
+      "[daily-protocol] Failed to compute training days logged:",
+      error.message,
+    );
+    return null;
+  }
+
+  const completedStates = new Set(["completed", "complete"]);
+  const uniqueDays = new Set();
+
+  for (const session of sessions || []) {
+    const state = session.session_state?.toLowerCase?.();
+    if (state && !completedStates.has(state)) {
+      continue;
+    }
+    if (session.session_date) {
+      uniqueDays.add(session.session_date);
+    }
+  }
+
+  return uniqueDays.size;
+}
+
 /**
  * Dynamically compute confidence_metadata based on CURRENT wellness check-in status
  * This ensures the banner reflects the latest check-in, not stale stored values from protocol generation
@@ -4993,28 +5142,15 @@ async function computeDynamicConfidenceMetadata(
     todayWellness?.overall_readiness_score ??
     protocol.readiness_score;
 
-  // Calculate days stale if no check-in today but we have stored data
-  let daysStale = null;
-  if (!hasCheckinToday && protocol.readiness_score !== null) {
-    // Find last check-in to calculate staleness
-    const { data: lastCheckin } = await supabase
-      .from("daily_wellness_checkin")
-      .select("checkin_date")
-      .eq("user_id", userId)
-      .order("checkin_date", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (lastCheckin?.checkin_date) {
-      const lastDate = new Date(lastCheckin.checkin_date);
-      const today = new Date(date);
-      daysStale = Math.floor(
-        (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
-      );
-    }
-  } else if (hasCheckinToday) {
-    daysStale = 0;
-  }
+  const daysStale = await computeReadinessDaysStale(supabase, userId, date, {
+    hasCheckinToday,
+    readinessScore,
+  });
+  const trainingDaysLogged = await computeTrainingDaysLogged(
+    supabase,
+    userId,
+    date,
+  );
 
   // Determine readiness confidence
   let readinessConfidence = "none";
@@ -5036,6 +5172,8 @@ async function computeDynamicConfidenceMetadata(
     readinessConfidence,
   });
 
+  const acwrHasData = protocol.acwr_value !== null;
+
   return {
     readiness: {
       hasData: hasCheckinToday || readinessScore !== null,
@@ -5049,11 +5187,18 @@ async function computeDynamicConfidenceMetadata(
       // Internal field for updating protocol.readiness_score in the response
       _readinessScore: readinessScore,
     },
-    acwr: storedMeta.acwr || {
-      hasData: protocol.acwr_value !== null,
-      source: protocol.acwr_value !== null ? "training_sessions" : "none",
-      trainingDaysLogged: null,
-      confidence: protocol.acwr_value !== null ? "high" : "building_baseline",
+    acwr: {
+      hasData: storedMeta.acwr?.hasData ?? acwrHasData,
+      source:
+        storedMeta.acwr?.source ||
+        (acwrHasData || trainingDaysLogged !== null
+          ? "training_sessions"
+          : "none"),
+      trainingDaysLogged:
+        trainingDaysLogged ?? storedMeta.acwr?.trainingDaysLogged ?? null,
+      confidence:
+        storedMeta.acwr?.confidence ||
+        (acwrHasData ? "high" : "building_baseline"),
     },
     sessionResolution: storedMeta.sessionResolution || {
       success: true,

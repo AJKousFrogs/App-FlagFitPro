@@ -70,17 +70,7 @@
   flex-direction: column;
 }
 
-.stat-block__value {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.stat-block__label {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
+/* stat-block: use primitives */
 .card-header {
   display: flex;
   align-items: center;
@@ -135,7 +125,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--color-border-secondary);
   color: var(--color-text-secondary);
   flex-shrink: 0;
@@ -182,29 +172,6 @@
   display: flex;
   gap: var(--space-1);
   align-items: flex-start;
-}
-
-.loading-state,
-.empty-state {
-  padding: var(--space-8);
-  text-align: center;
-}
-
-.empty-state i {
-  font-size: var(--ds-font-size-3rem);
-  color: var(--color-border-secondary);
-  margin-bottom: var(--space-4);
-}
-
-.empty-state p {
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
-}
-
-.empty-state span {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
 }
 
 .player-cell {

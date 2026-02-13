@@ -2,6 +2,56 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 
+const COACH_INBOX_ROLES = [
+  "owner",
+  "admin",
+  "head_coach",
+  "coach",
+  "assistant_coach",
+  "offense_coordinator",
+  "defense_coordinator",
+];
+const VALID_INBOX_TYPES = new Set(["safety_alert", "review_needed", "win"]);
+const VALID_INBOX_STATUSES = new Set([
+  "pending",
+  "viewed",
+  "approved",
+  "overridden",
+  "noted",
+  "saved_template",
+]);
+const VALID_PRIORITIES = new Set(["low", "medium", "high", "critical"]);
+const VALID_ACTIONS = new Set(["approve", "add_note", "override", "save_template"]);
+
+const parseBoundedInt = (value, fieldName, { min = 0, max = 200 } = {}) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  if (!/^\d+$/.test(String(value))) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    const error = new Error("Invalid JSON in request body");
+    error.code = "invalid_json";
+    throw error;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+};
+
 /**
  * Netlify Function: Coach Inbox
  *
@@ -33,7 +83,7 @@ async function verifyCoachAndGetTeams(userId) {
     .from("team_members")
     .select("team_id, role")
     .eq("user_id", userId)
-    .in("role", ["coach", "assistant_coach"])
+    .in("role", COACH_INBOX_ROLES)
     .eq("status", "active");
 
   if (error) {
@@ -100,7 +150,16 @@ async function getInboxStats(coachId, teamIds) {
  * @returns {Array} - Inbox items with player info
  */
 async function listInboxItems(coachId, teamIds, filters = {}) {
-  const { inbox_type, status, priority, limit = 50, offset = 0 } = filters;
+  const {
+    inbox_type,
+    status,
+    priority,
+    limit: rawLimit = 50,
+    offset: rawOffset = 0,
+  } = filters;
+  const limit = parseBoundedInt(rawLimit, "limit", { min: 1, max: 200 }) ?? 50;
+  const offset =
+    parseBoundedInt(rawOffset, "offset", { min: 0, max: 10000 }) ?? 0;
 
   let query = supabaseAdmin
     .from("coach_inbox_items")
@@ -232,9 +291,12 @@ async function updateInboxItem(itemId, coachId, updates) {
     .eq("id", itemId)
     .eq("coach_id", coachId)
     .select()
-    .single();
+    .maybeSingle();
 
-  if (error) {
+  if (error || !data) {
+    if (!data) {
+      throw new Error("Inbox item not found");
+    }
     console.error("[Coach Inbox] Error updating item:", error);
     throw error;
   }
@@ -284,9 +346,12 @@ async function markItemViewed(itemId, coachId) {
     .eq("id", itemId)
     .eq("coach_id", coachId)
     .select()
-    .single();
+    .maybeSingle();
 
-  if (error) {
+  if (error || !data) {
+    if (!data) {
+      throw new Error("Inbox item not found");
+    }
     console.error("[Coach Inbox] Error marking item viewed:", error);
     throw error;
   }
@@ -417,6 +482,30 @@ rateLimitType: rateLimitType,
         // GET /api/coach-inbox - List inbox items
         if (method === "GET") {
           const filters = event.queryStringParameters || {};
+          if (filters.inbox_type && !VALID_INBOX_TYPES.has(filters.inbox_type)) {
+            return createErrorResponse(
+              `Invalid inbox_type. Must be one of: ${Array.from(VALID_INBOX_TYPES).join(", ")}`,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (filters.status && !VALID_INBOX_STATUSES.has(filters.status)) {
+            return createErrorResponse(
+              `Invalid status. Must be one of: ${Array.from(VALID_INBOX_STATUSES).join(", ")}`,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (filters.priority && !VALID_PRIORITIES.has(filters.priority)) {
+            return createErrorResponse(
+              `Invalid priority. Must be one of: ${Array.from(VALID_PRIORITIES).join(", ")}`,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
           const items = await listInboxItems(userId, teamIds, filters);
           return createSuccessResponse(
             {
@@ -436,47 +525,41 @@ rateLimitType: rateLimitType,
 
         // PATCH /api/coach-inbox/:id - Update inbox item
         if (method === "PATCH" && itemId) {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
+          const body = parseJsonObjectBody(event.body);
+          const updatableFields = [
+            "action",
+            "status",
+            "notes",
+            "override_reason",
+            "override_alternative",
+          ];
+          const hasAnyUpdate = updatableFields.some(
+            (field) => body[field] !== undefined,
+          );
+          if (!hasAnyUpdate) {
             return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
+              "No valid update fields provided",
+              422,
+              "validation_error",
               requestId,
             );
           }
 
           // Validate action if provided
-          const validActions = [
-            "approve",
-            "add_note",
-            "override",
-            "save_template",
-          ];
-          if (body.action && !validActions.includes(body.action)) {
+          if (body.action && !VALID_ACTIONS.has(body.action)) {
             return createErrorResponse(
-              `Invalid action. Must be one of: ${validActions.join(", ")}`,
-              400,
+              `Invalid action. Must be one of: ${Array.from(VALID_ACTIONS).join(", ")}`,
+              422,
               "invalid_action",
               requestId,
             );
           }
 
           // Validate status if provided
-          const validStatuses = [
-            "pending",
-            "viewed",
-            "approved",
-            "overridden",
-            "noted",
-            "saved_template",
-          ];
-          if (body.status && !validStatuses.includes(body.status)) {
+          if (body.status && !VALID_INBOX_STATUSES.has(body.status)) {
             return createErrorResponse(
-              `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
-              400,
+              `Invalid status. Must be one of: ${Array.from(VALID_INBOX_STATUSES).join(", ")}`,
+              422,
               "invalid_status",
               requestId,
             );
@@ -486,10 +569,65 @@ rateLimitType: rateLimitType,
           if (body.action === "override" && !body.override_reason) {
             return createErrorResponse(
               "Override action requires override_reason",
-              400,
+              422,
               "missing_override_reason",
               requestId,
             );
+          }
+          if (
+            body.action === "approve" &&
+            body.status &&
+            body.status !== "approved"
+          ) {
+            return createErrorResponse(
+              "approve action requires status=approved when status is provided",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (
+            body.action === "override" &&
+            body.status &&
+            body.status !== "overridden"
+          ) {
+            return createErrorResponse(
+              "override action requires status=overridden when status is provided",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (body.notes !== undefined) {
+            if (typeof body.notes !== "string") {
+              return createErrorResponse(
+                "notes must be a string when provided",
+                422,
+                "validation_error",
+                requestId,
+              );
+            }
+            if (body.notes.length > 4000) {
+              return createErrorResponse(
+                "notes must be 4000 characters or fewer",
+                422,
+                "validation_error",
+                requestId,
+              );
+            }
+          }
+          if (body.override_reason !== undefined) {
+            if (
+              typeof body.override_reason !== "string" ||
+              body.override_reason.trim().length === 0
+            ) {
+              return createErrorResponse(
+                "override_reason must be a non-empty string when provided",
+                422,
+                "validation_error",
+                requestId,
+              );
+            }
           }
 
           const updatedItem = await updateInboxItem(itemId, userId, body);
@@ -504,9 +642,31 @@ rateLimitType: rateLimitType,
           requestId,
         );
       } catch (error) {
+        if (error.code === "invalid_json") {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId,
+          );
+        }
+        if (
+          error.message?.includes("must be an integer between") ||
+          error.message?.includes("Request body must be an object")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+        if (error.message?.includes("Inbox item not found")) {
+          return createErrorResponse(error.message, 404, "not_found", requestId);
+        }
         console.error("[Coach Inbox] Error:", error);
         return createErrorResponse(
-          "Failed to process request",
+          error.message || "Failed to process request",
           500,
           "internal_error",
           requestId,

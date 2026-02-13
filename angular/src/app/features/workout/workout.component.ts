@@ -17,6 +17,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -57,6 +58,7 @@ interface Workout {
     PageHeaderComponent,
     EmptyStateComponent,
     ButtonComponent,
+    AppLoadingComponent,
   ],
   template: `
     <app-main-layout>
@@ -136,18 +138,15 @@ interface Workout {
             <h3>Workout History</h3>
           </ng-template>
           @if (isLoading()) {
-            <div class="loading-state">
-              <i class="pi pi-spin pi-spinner"></i>
-              <p>Loading workouts...</p>
-            </div>
+            <app-loading message="Loading workouts..." variant="inline" />
           } @else if (workoutHistory().length === 0) {
             <app-empty-state
-              icon="pi-bolt"
-              title="No Workouts Yet"
-              message="Start logging your strength and conditioning sessions to track your training progress."
-              actionLabel="Log First Workout"
-              (actionClicked)="createNewWorkout()"
-            ></app-empty-state>
+              context="training"
+              [useCard]="true"
+              [customTitle]="'No Workouts Yet'"
+              [customActionLabel]="'Log First Workout'"
+              [actionHandler]="createNewWorkout"
+            />
           } @else {
             <div class="workouts-list">
               @for (

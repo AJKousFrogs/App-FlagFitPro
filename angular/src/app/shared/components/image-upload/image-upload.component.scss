@@ -87,8 +87,10 @@
 
 .preview-image {
   display: block;
-  max-width: 100%;
+  max-width: min(var(--preview-max-width, 100%), 100%);
+  max-height: min(var(--preview-max-height, 100%), 100%);
   height: auto;
+  object-fit: contain;
 }
 
 .remove-image-btn {

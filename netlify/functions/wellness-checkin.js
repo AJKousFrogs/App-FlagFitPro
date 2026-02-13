@@ -11,13 +11,13 @@ export const handler = async (event, context) =>
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId }) => {
+    handler: async (evt, _ctx, { userId, requestId }) => {
       try {
         if (evt.httpMethod === "GET") {
           const params = evt.queryStringParameters || {};
           const date = params.date || new Date().toISOString().split("T")[0];
           const athleteId = params.athleteId || userId;
-          return getCheckin(supabaseAdmin, userId, athleteId, date);
+          return getCheckin(supabaseAdmin, userId, athleteId, date, requestId);
         }
 
         let payload = {};
@@ -26,18 +26,30 @@ export const handler = async (event, context) =>
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
-        return saveCheckin(supabaseAdmin, userId, payload);
+        return saveCheckin(supabaseAdmin, userId, payload, requestId);
       } catch (error) {
         console.error("Wellness checkin error:", error);
-        return createErrorResponse(error.message, 500, "server_error");
+        return createErrorResponse(
+          "Failed to process wellness check-in request",
+          500,
+          "server_error",
+          requestId,
+        );
       }
     },
   });
 
-async function getCheckin(supabase, userId, requestedAthleteId, date) {
+async function getCheckin(supabase, userId, requestedAthleteId, date, requestId) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
   const isCoach = ["coach", "admin"].includes(role);
+  if (targetAthleteId !== userId && !isCoach) {
+    return createErrorResponse(
+      "Not authorized to view another athlete's wellness data",
+      403,
+      "authorization_error",
+    );
+  }
 
   const { data, error } = await supabase
     .from("daily_wellness_checkin")
@@ -47,7 +59,12 @@ async function getCheckin(supabase, userId, requestedAthleteId, date) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    return createErrorResponse(error.message, 500, "database_error");
+    return createErrorResponse(
+      "Failed to retrieve wellness check-in",
+      500,
+      "database_error",
+      requestId,
+    );
   }
 
   if (!data) {
@@ -101,7 +118,7 @@ async function getCheckin(supabase, userId, requestedAthleteId, date) {
   };
 }
 
-async function saveCheckin(supabase, userId, payload) {
+async function saveCheckin(supabase, userId, payload, requestId) {
   const {
     date,
     sleepQuality,
@@ -267,7 +284,12 @@ async function saveCheckin(supabase, userId, payload) {
     .single();
 
   if (error) {
-    return createErrorResponse(error.message, 500, "database_error");
+    return createErrorResponse(
+      "Failed to save wellness check-in",
+      500,
+      "database_error",
+      requestId,
+    );
   }
 
   // PHASE 2: Dual-write to wellness_entries for historical continuity

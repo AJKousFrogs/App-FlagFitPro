@@ -12,7 +12,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { Skeleton } from "primeng/skeleton";
+import { SkeletonLoaderComponent } from "../../../shared/components/skeleton-loader/skeleton-loader.component";
 import { AuthService } from "../../../core/services/auth.service";
 import { TrainingSessionDetailDataService } from "../services/training-session-detail-data.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -54,7 +54,7 @@ const isBoolean = (value: unknown): value is boolean =>
     MainLayoutComponent,
     PageHeaderComponent,
     StatusTagComponent,
-    Skeleton,
+    SkeletonLoaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -76,9 +76,9 @@ const isBoolean = (value: unknown): value is boolean =>
           <div class="loading-state">
             @for (i of [1, 2, 3]; track i) {
               <app-card-shell>
-                <p-skeleton width="100%" height="var(--space-8)"></p-skeleton>
-                <p-skeleton width="80%" height="var(--space-4)"></p-skeleton>
-                <p-skeleton width="60%" height="var(--space-4)"></p-skeleton>
+                <app-skeleton-loader variant="title" width="100%" />
+                <app-skeleton-loader variant="text" width="80%" />
+                <app-skeleton-loader variant="text" width="60%" />
               </app-card-shell>
             }
           </div>

@@ -8,7 +8,7 @@ export const handler = async (event, context) =>
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId }) => {
+    handler: async (evt, _ctx, { userId, requestId }) => {
       try {
         const path = evt.path
           .replace("/.netlify/functions/achievements", "")
@@ -38,13 +38,16 @@ export const handler = async (event, context) =>
           } catch (_parseError) {
             return handleValidationError("Invalid JSON in request body");
           }
+          if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+            return handleValidationError("Request body must be an object");
+          }
           return updateStreak(supabaseAdmin, userId, payload);
         }
 
         return createErrorResponse("Not found", 404, "not_found");
       } catch (error) {
         console.error("Achievements error:", error);
-        return createErrorResponse(error.message, 500, "server_error");
+        return createErrorResponse("Internal server error", 500, "server_error", requestId);
       }
     },
   });
@@ -58,7 +61,7 @@ async function getAchievements(supabase, userId) {
     .order("display_order");
 
   if (defError) {
-    return createErrorResponse(defError.message, 500, "database_error");
+    return createErrorResponse("Failed to load achievements", 500, "database_error");
   }
 
   // Get user's earned achievements
@@ -96,10 +99,10 @@ async function getAchievements(supabase, userId) {
       contextData: earnedData?.context_data,
       progress: progress.current,
       progressMax: progress.max,
-      progressPercent: Math.min(
-        100,
-        Math.round((progress.current / progress.max) * 100),
-      ),
+      progressPercent:
+        progress.max > 0
+          ? Math.min(100, Math.round((progress.current / progress.max) * 100))
+          : 0,
     };
   });
 
@@ -180,7 +183,7 @@ async function getUserStats(supabase, userId) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    return createErrorResponse(error.message, 500, "database_error");
+    return createErrorResponse("Failed to load user stats", 500, "database_error");
   }
 
   // Get recent activity
@@ -231,7 +234,7 @@ async function getUserStreaks(supabase, userId) {
     .eq("user_id", userId);
 
   if (error) {
-    return createErrorResponse(error.message, 500, "database_error");
+    return createErrorResponse("Failed to load streaks", 500, "database_error");
   }
 
   // Format streaks with additional info
@@ -259,8 +262,22 @@ async function getUserStreaks(supabase, userId) {
 async function updateStreak(supabase, userId, payload) {
   const { streakType, date } = payload;
 
-  if (!streakType) {
+  if (typeof streakType !== "string" || !streakType.trim()) {
     return handleValidationError("streakType required");
+  }
+  if (date !== undefined && date !== null) {
+    if (typeof date !== "string") {
+      return handleValidationError("date must be in YYYY-MM-DD format");
+    }
+    const parsed = new Date(`${date}T00:00:00.000Z`);
+    const isIsoLike = /^\d{4}-\d{2}-\d{2}$/.test(date);
+    if (Number.isNaN(parsed.getTime())) {
+      return handleValidationError("date must be in YYYY-MM-DD format");
+    }
+    const normalized = parsed.toISOString().split("T")[0];
+    if (!isIsoLike || normalized !== date) {
+      return handleValidationError("date must be in YYYY-MM-DD format");
+    }
   }
 
   const { data: result, error } = await supabase.rpc("update_player_streak", {
@@ -270,7 +287,7 @@ async function updateStreak(supabase, userId, payload) {
   });
 
   if (error) {
-    return createErrorResponse(error.message, 500, "database_error");
+    return createErrorResponse("Failed to update streak", 500, "database_error");
   }
 
   // Award any unlocked achievements

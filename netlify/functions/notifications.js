@@ -13,16 +13,95 @@ export const handler = async (event, context) => {
 rateLimitType: rateLimitType,
     requireAuth: true, // SECURITY: Explicit auth for notifications
     handler: async (event, _context, { userId }) => {
+      const parseStrictPositiveInt = (raw, field, { min = 1, max = Number.POSITIVE_INFINITY } = {}) => {
+        if (raw === undefined || raw === null || raw === "") {
+          return null;
+        }
+        if (!/^\d+$/.test(String(raw))) {
+          throw new Error(`${field} must be a positive integer`);
+        }
+        const parsed = Number.parseInt(String(raw), 10);
+        if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+          if (Number.isFinite(max)) {
+            throw new Error(`${field} must be an integer between ${min} and ${max}`);
+          }
+          throw new Error(`${field} must be an integer >= ${min}`);
+        }
+        return parsed;
+      };
+
+      const validateNotificationId = (value, fieldName = "notificationId") => {
+        if (typeof value !== "string" || value.trim().length === 0) {
+          throw new Error(`${fieldName} must be a non-empty string`);
+        }
+        if (value.trim().length > 200) {
+          throw new Error(`${fieldName} is too long`);
+        }
+        return value.trim();
+      };
+
+      let parsedBody = null;
+      if (event.body) {
+        try {
+          parsedBody = JSON.parse(event.body);
+        } catch {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+          );
+        }
+        if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+          );
+        }
+      }
+
       if (event.httpMethod === "GET") {
-        // Get notifications for user with query params
-        const limit = event.queryStringParameters?.limit
-          ? parseInt(event.queryStringParameters.limit, 10)
-          : 20;
-        const page = event.queryStringParameters?.page
-          ? parseInt(event.queryStringParameters.page, 10)
-          : 1;
-        const onlyUnread = event.queryStringParameters?.onlyUnread === "true";
-        const lastOpenedAt = event.queryStringParameters?.lastOpenedAt || null;
+        let limit = 20;
+        let page = 1;
+        let onlyUnread = false;
+        let lastOpenedAt = null;
+        try {
+          const parsedLimit = parseStrictPositiveInt(
+            event.queryStringParameters?.limit,
+            "limit",
+            { min: 1, max: 100 },
+          );
+          const parsedPage = parseStrictPositiveInt(
+            event.queryStringParameters?.page,
+            "page",
+            { min: 1 },
+          );
+          limit = parsedLimit ?? 20;
+          page = parsedPage ?? 1;
+
+          const onlyUnreadParam = event.queryStringParameters?.onlyUnread;
+          if (onlyUnreadParam !== undefined) {
+            if (onlyUnreadParam !== "true" && onlyUnreadParam !== "false") {
+              throw new Error("onlyUnread must be true or false");
+            }
+            onlyUnread = onlyUnreadParam === "true";
+          }
+
+          const lastOpenedAtParam = event.queryStringParameters?.lastOpenedAt;
+          if (lastOpenedAtParam) {
+            const parsed = new Date(lastOpenedAtParam);
+            if (Number.isNaN(parsed.getTime())) {
+              throw new Error("lastOpenedAt must be a valid date");
+            }
+            lastOpenedAt = lastOpenedAtParam;
+          }
+        } catch (validationError) {
+          return createErrorResponse(
+            validationError.message,
+            422,
+            "validation_error",
+          );
+        }
 
         try {
           const notifications = await db.notifications.getUserNotifications(
@@ -41,8 +120,7 @@ rateLimitType: rateLimitType,
         const isLastOpened =
           path.includes("/last-opened") ||
           event.queryStringParameters?.action === "last-opened" ||
-          (event.body &&
-            JSON.parse(event.body || "{}").action === "last-opened");
+          parsedBody?.action === "last-opened";
 
         if (isLastOpened) {
           try {
@@ -65,7 +143,7 @@ rateLimitType: rateLimitType,
       }
 
       if (event.httpMethod === "POST") {
-        const body = JSON.parse(event.body || "{}");
+        const body = parsedBody || {};
         const { notificationId, ids } = body;
 
         if (notificationId === "all") {
@@ -87,12 +165,39 @@ rateLimitType: rateLimitType,
         }
 
         if (Array.isArray(ids) && ids.length > 0) {
+          const normalizedIds = [];
+          for (const id of ids) {
+            try {
+              normalizedIds.push(validateNotificationId(id, "ids[]"));
+            } catch (validationError) {
+              return createErrorResponse(
+                validationError.message,
+                422,
+                "validation_error",
+              );
+            }
+          }
+          const uniqueIds = [...new Set(normalizedIds)];
+          if (uniqueIds.length === 0) {
+            return createErrorResponse(
+              "ids must contain at least one non-empty notification id",
+              422,
+              "validation_error",
+            );
+          }
+          if (uniqueIds.length > 100) {
+            return createErrorResponse(
+              "ids cannot contain more than 100 notification ids",
+              422,
+              "validation_error",
+            );
+          }
           try {
-            await db.notifications.markManyAsRead(userId, ids);
+            await db.notifications.markManyAsRead(userId, uniqueIds);
             return createSuccessResponse(
               null,
               200,
-              `${ids.length} notifications marked as read`,
+              `${uniqueIds.length} notifications marked as read`,
             );
           } catch (dbError) {
             console.error("Database error:", dbError);
@@ -105,8 +210,18 @@ rateLimitType: rateLimitType,
         }
 
         if (notificationId) {
+          let normalizedNotificationId;
           try {
-            await db.notifications.markAsRead(userId, notificationId);
+            normalizedNotificationId = validateNotificationId(notificationId);
+          } catch (validationError) {
+            return createErrorResponse(
+              validationError.message,
+              422,
+              "validation_error",
+            );
+          }
+          try {
+            await db.notifications.markAsRead(userId, normalizedNotificationId);
             return createSuccessResponse(
               null,
               200,

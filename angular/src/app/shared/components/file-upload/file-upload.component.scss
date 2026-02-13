@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -129,10 +131,8 @@
   padding: var(--space-1);
   border-radius: var(--radius-md);
   transition: background var(--transition-base);
-}
 
-.remove-file-btn:hover {
-  background: var(--surface-tertiary);
+  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .upload-progress {

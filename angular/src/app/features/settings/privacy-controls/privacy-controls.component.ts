@@ -30,6 +30,8 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -72,6 +74,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     ButtonComponent,
     IconButtonComponent,
     StatusTagComponent,
+    AppLoadingComponent,
+    EmptyStateComponent,
   ],
   template: `
 <app-main-layout>
@@ -90,10 +94,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         </app-page-header>
 
         @if (loading()) {
-          <div class="loading-state" role="status" aria-live="polite">
-            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-            <span>Loading privacy settings...</span>
-          </div>
+          <app-loading
+            message="Loading privacy settings..."
+            variant="inline"
+          />
         } @else {
           <div class="privacy-grid">
             <!-- AI Processing Section -->
@@ -204,11 +208,11 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               </ng-template>
 
               @if (teamSettings().length === 0) {
-                <div class="empty-state" role="status">
-                  <i class="pi pi-users" aria-hidden="true"></i>
-                  <p>You're not currently on any teams.</p>
-                  <small>Join a team to manage data sharing preferences.</small>
-                </div>
+                <app-empty-state
+                  icon="pi-users"
+                  heading="You're not on any teams"
+                  description="Join a team to manage data sharing preferences."
+                />
               } @else {
                 <p-accordion [multiple]="true">
                   @for (team of teamSettings(); track team.teamId) {

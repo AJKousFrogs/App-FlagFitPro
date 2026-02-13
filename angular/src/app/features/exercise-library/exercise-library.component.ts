@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 
 import { Dialog } from "primeng/dialog";
 import { Paginator } from "primeng/paginator";
@@ -24,6 +24,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 
@@ -71,8 +72,8 @@ interface Category {
     MainLayoutComponent,
     ButtonComponent,
     SearchInputComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
       <div class="exercise-library-page">
@@ -240,20 +241,14 @@ interface Category {
 
         <!-- Empty State -->
         @if (filteredExercises().length === 0) {
-          <div class="empty-state">
-            <div class="empty-icon">
-              <i class="pi pi-search"></i>
-            </div>
-            <h3>No exercises found</h3>
-            <p>
-              Try adjusting your search or filters to find what you're looking
-              for.
-            </p>
-            <button class="reset-btn" (click)="resetFilters()">
-              <i class="pi pi-refresh"></i>
-              Reset Filters
-            </button>
-          </div>
+          <app-empty-state
+            icon="pi-search"
+            heading="No exercises found"
+            description="Try adjusting your search or filters to find what you're looking for."
+            actionLabel="Reset Filters"
+            actionIcon="pi-refresh"
+            [actionHandler]="resetFiltersHandler"
+          />
         }
 
         <!-- Pagination -->
@@ -474,7 +469,7 @@ interface Category {
 export class ExerciseLibraryComponent implements OnInit {
   private apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);
-  private messageService = inject(MessageService);
+  private toastService = inject(ToastService);
   private trainingService = inject(UnifiedTrainingService);
   private sanitizer = inject(DomSanitizer);
   private logger = inject(LoggerService);
@@ -615,22 +610,12 @@ export class ExerciseLibraryComponent implements OnInit {
           this.exercises.set(mappedExercises);
           this.applyFilters();
         } else {
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to load exercises",
-            life: 3000,
-          });
+          this.toastService.error("Failed to load exercises");
         }
       },
       error: (err) => {
         this.logger.error("Failed to load exercises", err);
-        this.messageService.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load exercises from database",
-          life: 3000,
-        });
+        this.toastService.error("Failed to load exercises from database");
       },
     });
   }
@@ -753,23 +738,20 @@ export class ExerciseLibraryComponent implements OnInit {
     this.trainingService
       .logTrainingSession(sessionData)
       .then(() => {
-        this.messageService.add({
-          severity: "success",
-          summary: "Exercise Added",
-          detail: `"${exercise.name}" has been added to your training log`,
-          life: 3000,
-        });
+        this.toastService.success(
+          `"${exercise.name}" has been added to your training log`,
+          "Exercise Added",
+        );
       })
       .catch((err) => {
         this.logger.error("Failed to add exercise", err);
-        this.messageService.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to add exercise to training log. Please try again.",
-          life: 3000,
-        });
+        this.toastService.error(
+          "Failed to add exercise to training log. Please try again.",
+        );
       });
   }
+
+  readonly resetFiltersHandler = (): void => this.resetFilters();
 
   resetFilters(): void {
     this.searchQuery = "";

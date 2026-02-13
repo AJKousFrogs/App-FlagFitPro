@@ -74,22 +74,6 @@
   width: var(--input-min-width-md);
 }
 
-// Empty State
-.empty-state {
-  text-align: center;
-  padding: var(--space-6);
-
-  h3 {
-    margin: 0 0 var(--space-2) 0;
-    color: var(--ds-text-primary);
-  }
-
-  p {
-    margin: 0;
-    color: var(--ds-text-secondary);
-  }
-}
-
 // Responsive
 @include respond-to(md) {
   .cycle-tracking-page {

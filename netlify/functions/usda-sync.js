@@ -385,7 +385,7 @@ async function handleSync(event) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         success: false,
-        error: error.message,
+        error: "Failed to sync USDA foods",
         stats: syncDetails,
       }),
     };
@@ -400,9 +400,12 @@ async function handleStatus() {
 
   try {
     // Get food counts by data type
-    const { data: foods, count: totalFoods } = await supabase
+    const { data: foods, count: totalFoods, error: foodsError } = await supabase
       .from("usda_foods")
       .select("data_type", { count: "exact" });
+    if (foodsError) {
+      throw foodsError;
+    }
 
     // Count by data type
     const dataTypeCounts = {};
@@ -414,15 +417,18 @@ async function handleStatus() {
     }
 
     // Get recent sync logs
-    const { data: recentSyncs } = await supabase
+    const { data: recentSyncs, error: recentSyncsError } = await supabase
       .from("sync_logs")
       .select("*")
       .eq("source", "usda_foods")
       .order("timestamp", { ascending: false })
       .limit(10);
+    if (recentSyncsError) {
+      throw recentSyncsError;
+    }
 
     // Get last successful sync
-    const { data: lastSuccess } = await supabase
+    const { data: lastSuccess, error: lastSuccessError } = await supabase
       .from("sync_logs")
       .select("*")
       .eq("source", "usda_foods")
@@ -430,6 +436,9 @@ async function handleStatus() {
       .order("timestamp", { ascending: false })
       .limit(1)
       .single();
+    if (lastSuccessError && lastSuccessError.code !== "PGRST116") {
+      throw lastSuccessError;
+    }
 
     return {
       statusCode: 200,
@@ -451,7 +460,7 @@ async function handleStatus() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         success: false,
-        error: error.message,
+        error: "Failed to retrieve USDA sync status",
       }),
     };
   }
@@ -465,19 +474,34 @@ async function handleSearch(event) {
 
   const params = event.queryStringParameters || {};
   const query = params.q || params.query || "";
-  const limit = Math.min(parseInt(params.limit) || 20, 100);
-  const offset = parseInt(params.offset) || 0;
+  const rawLimit = params.limit;
+  const rawOffset = params.offset;
+  const parsedLimit = rawLimit === undefined ? 20 : parseInt(rawLimit, 10);
+  const parsedOffset = rawOffset === undefined ? 0 : parseInt(rawOffset, 10);
+  if (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 100) {
+    return createErrorResponse(
+      "limit must be an integer between 1 and 100",
+      400,
+      "validation_error",
+    );
+  }
+  if (!Number.isInteger(parsedOffset) || parsedOffset < 0) {
+    return createErrorResponse(
+      "offset must be an integer greater than or equal to 0",
+      400,
+      "validation_error",
+    );
+  }
+  const limit = parsedLimit;
+  const offset = parsedOffset;
   const dataType = params.dataType || null;
 
   if (!query || query.length < 2) {
-    return {
-      statusCode: 400,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        success: false,
-        error: "Query must be at least 2 characters",
-      }),
-    };
+    return createErrorResponse(
+      "Query must be at least 2 characters",
+      400,
+      "validation_error",
+    );
   }
 
   try {
@@ -524,7 +548,7 @@ async function handleSearch(event) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         success: false,
-        error: error.message,
+        error: "Failed to search USDA foods",
       }),
     };
   }
@@ -574,7 +598,7 @@ export const handler = async (event, context) =>
               "Failed to handle USDA sync request",
               500,
               "server_error",
-              { details: error.message },
+              {},
             );
           }
         },
@@ -626,7 +650,7 @@ export const handler = async (event, context) =>
           "Failed to handle USDA sync request",
           500,
           "server_error",
-          { details: error.message },
+          {},
         );
       }
         },

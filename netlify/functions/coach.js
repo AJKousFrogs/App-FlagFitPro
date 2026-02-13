@@ -10,6 +10,58 @@ import { getUserRole, requireRole, logViolation } from "./utils/authorization-gu
 
 // Initialize consent-aware data reader
 const consentReader = new ConsentDataReader(supabaseAdmin);
+const CALENDAR_EVENT_TYPES = new Set(["practice", "game", "meeting", "other"]);
+const COACH_ROLES = [
+  "owner",
+  "admin",
+  "head_coach",
+  "coach",
+  "assistant_coach",
+  "offense_coordinator",
+  "defense_coordinator",
+];
+
+const isValidTime = (value) => typeof value === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+
+const isValidDate = (value) => {
+  if (!value || typeof value !== "string") {
+    return false;
+  }
+  const parsed = new Date(value);
+  return !Number.isNaN(parsed.getTime());
+};
+
+const buildDateTime = (date, time) => {
+  if (!date) {
+    return null;
+  }
+  if (time) {
+    return `${date}T${time}:00`;
+  }
+  return `${date}T00:00:00`;
+};
+
+const parseJsonBody = (body) => {
+  if (!body) {
+    return {};
+  }
+  try {
+    const parsed = JSON.parse(body);
+    if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+      const validationError = new Error("Request body must be an object");
+      validationError.isValidation = true;
+      throw validationError;
+    }
+    return parsed;
+  } catch (err) {
+    if (err?.isValidation) {
+      throw err;
+    }
+    const parseError = new Error("Invalid JSON in request body");
+    parseError.isInvalidJson = true;
+    throw parseError;
+  }
+};
 
 /**
  * Get the team ID for a coach
@@ -20,7 +72,8 @@ async function getCoachTeamId(coachId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", coachId)
-    .eq("role", "coach")
+    .in("role", COACH_ROLES)
+    .eq("status", "active")
     .limit(1);
 
   if (error || !teams || teams.length === 0) {
@@ -193,8 +246,8 @@ async function getCoachDashboard(userId) {
         squadMembers.push({
           id: userData.id,
           user_id: userData.id,
-          name: userData.name || "Unknown",
-          full_name: userData.name || "Unknown",
+          name: userData.full_name || "Unknown",
+          full_name: userData.full_name || "Unknown",
           position: userData.position || "N/A",
           workload,
           today_workload: workload / 7, // Daily average
@@ -230,6 +283,19 @@ async function getCoachDashboard(userId) {
     console.error("Error getting coach dashboard:", error);
     throw error;
   }
+}
+
+async function resolveTargetCoachId(requesterId, requestedCoachId) {
+  if (!requestedCoachId || requestedCoachId === requesterId) {
+    return requesterId;
+  }
+
+  const adminCheck = await requireRole(requesterId, ["admin"]);
+  if (!adminCheck.authorized) {
+    throw new Error("Not authorized to access another coach's data");
+  }
+
+  return requestedCoachId;
 }
 
 /**
@@ -497,6 +563,25 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
     if (!targetUserId) {
       throw new Error("user_id is required");
     }
+    const teamId = await getCoachTeamId(userId);
+    if (!teamId) {
+      throw new Error("No team found for coach");
+    }
+
+    const { data: targetMember, error: memberError } = await supabaseAdmin
+      .from("team_members")
+      .select("id")
+      .eq("team_id", teamId)
+      .eq("user_id", targetUserId)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (memberError) {
+      throw memberError;
+    }
+    if (!targetMember) {
+      throw new Error("user_id must reference an active team member in coach team");
+    }
 
     const session = {
       user_id: targetUserId,
@@ -589,7 +674,17 @@ async function getGames(userId, coachId) {
  * Handle calendar requests (GET, POST, PUT, DELETE)
  */
 async function handleCalendarRequest(event, userId, coachId) {
-  const body = event.body ? JSON.parse(event.body) : {};
+  let body = {};
+  if (event.body) {
+    try {
+      body = parseJsonBody(event.body);
+    } catch (error) {
+      if (error?.isValidation) {
+        return createErrorResponse(error.message, 422, "validation_error");
+      }
+      return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
+    }
+  }
   const query = event.queryStringParameters || {};
   const teamId = await getCoachTeamId(coachId);
 
@@ -658,11 +753,39 @@ async function handleCalendarRequest(event, userId, coachId) {
         rsvpDeadline,
       } = body;
 
+      if (!title || !String(title).trim()) {
+        return createErrorResponse("title is required", 422, "validation_error");
+      }
+      if (!date || !isValidDate(date)) {
+        return createErrorResponse("date must be a valid date", 422, "validation_error");
+      }
+      if (!startTime || !isValidTime(startTime)) {
+        return createErrorResponse("startTime must be in HH:MM format", 422, "validation_error");
+      }
+      if (!endTime || !isValidTime(endTime)) {
+        return createErrorResponse("endTime must be in HH:MM format", 422, "validation_error");
+      }
+      if (buildDateTime(date, startTime) >= buildDateTime(date, endTime)) {
+        return createErrorResponse("endTime must be after startTime", 422, "validation_error");
+      }
+      if (type && !CALENDAR_EVENT_TYPES.has(type)) {
+        return createErrorResponse(
+          `type must be one of: ${Array.from(CALENDAR_EVENT_TYPES).join(", ")}`,
+          422,
+          "validation_error",
+        );
+      }
+      if (rsvpDeadline && !isValidDate(rsvpDeadline)) {
+        return createErrorResponse(
+          "rsvpDeadline must be a valid date",
+          422,
+          "validation_error",
+        );
+      }
+
       // Combine date and time
-      const startDateTime =
-        date && startTime ? `${date}T${startTime}:00` : date || null;
-      const endDateTime =
-        date && endTime ? `${date}T${endTime}:00` : date || null;
+      const startDateTime = buildDateTime(date, startTime);
+      const endDateTime = buildDateTime(date, endTime);
 
       const { data, error } = await supabaseAdmin
         .from("team_events")
@@ -685,7 +808,7 @@ async function handleCalendarRequest(event, userId, coachId) {
         throw error;
       }
 
-      return createSuccessResponse(data, null, 201);
+      return createSuccessResponse(data, 201);
     }
 
     if (event.httpMethod === "PUT") {
@@ -711,6 +834,44 @@ async function handleCalendarRequest(event, userId, coachId) {
       }
 
       const updates = {};
+      if (body.type && !CALENDAR_EVENT_TYPES.has(body.type)) {
+        return createErrorResponse(
+          `type must be one of: ${Array.from(CALENDAR_EVENT_TYPES).join(", ")}`,
+          422,
+          "validation_error",
+        );
+      }
+      if (body.date && !isValidDate(body.date)) {
+        return createErrorResponse("date must be a valid date", 422, "validation_error");
+      }
+      if (body.startTime && !isValidTime(body.startTime)) {
+        return createErrorResponse("startTime must be in HH:MM format", 422, "validation_error");
+      }
+      if (body.endTime && !isValidTime(body.endTime)) {
+        return createErrorResponse("endTime must be in HH:MM format", 422, "validation_error");
+      }
+      if ((body.startTime || body.endTime) && !body.date) {
+        return createErrorResponse(
+          "date is required when startTime or endTime is provided",
+          422,
+          "validation_error",
+        );
+      }
+      if (
+        body.date &&
+        body.startTime &&
+        body.endTime &&
+        buildDateTime(body.date, body.startTime) >= buildDateTime(body.date, body.endTime)
+      ) {
+        return createErrorResponse("endTime must be after startTime", 422, "validation_error");
+      }
+      if (body.rsvpDeadline !== undefined && body.rsvpDeadline !== null && !isValidDate(body.rsvpDeadline)) {
+        return createErrorResponse(
+          "rsvpDeadline must be a valid date",
+          422,
+          "validation_error",
+        );
+      }
       if (body.title) {
         updates.title = body.title;
       }
@@ -724,13 +885,16 @@ async function handleCalendarRequest(event, userId, coachId) {
         updates.location = body.location;
       }
       if (body.date && body.startTime) {
-        updates.start_time = `${body.date}T${body.startTime}:00`;
+        updates.start_time = buildDateTime(body.date, body.startTime);
       }
       if (body.date && body.endTime) {
-        updates.end_time = `${body.date}T${body.endTime}:00`;
+        updates.end_time = buildDateTime(body.date, body.endTime);
       }
       if (body.rsvpDeadline !== undefined) {
         updates.rsvp_deadline = body.rsvpDeadline;
+      }
+      if (Object.keys(updates).length === 0) {
+        return createErrorResponse("No updatable fields provided", 422, "validation_error");
       }
 
       const { data, error } = await supabaseAdmin
@@ -784,6 +948,9 @@ async function handleCalendarRequest(event, userId, coachId) {
     return createErrorResponse("Method not allowed", 405);
   } catch (error) {
     console.error("Calendar error:", error);
+    if (error.message?.includes("Invalid JSON")) {
+      return createErrorResponse(error.message, 400, "invalid_json");
+    }
     return createErrorResponse(
       error.message || "Failed to process calendar request",
       500,
@@ -800,7 +967,7 @@ async function handleRequest(event, context, { userId }) {
     const path = event.path.replace("/.netlify/functions/coach", "") || "/";
     const endpoint = path.split("?")[0]; // Remove query params
     const query = event.queryStringParameters || {};
-    const coachId = query.coachId || userId;
+    const targetCoachId = await resolveTargetCoachId(userId, query.coachId);
 
     // Route to appropriate handler
     switch (endpoint) {
@@ -809,7 +976,7 @@ async function handleRequest(event, context, { userId }) {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const dashboard = await getCoachDashboard(coachId);
+        const dashboard = await getCoachDashboard(targetCoachId);
         return createSuccessResponse(dashboard);
       }
 
@@ -817,7 +984,7 @@ async function handleRequest(event, context, { userId }) {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const teamResult = await getTeamInfo(userId, coachId);
+        const teamResult = await getTeamInfo(userId, targetCoachId);
         // Preserve backwards compatibility: return members array at top level
         // but include consentInfo and dataState
         return createSuccessResponse({
@@ -831,7 +998,7 @@ async function handleRequest(event, context, { userId }) {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const analytics = await getTrainingAnalytics(userId, coachId);
+        const analytics = await getTrainingAnalytics(userId, targetCoachId);
         return createSuccessResponse(analytics);
       }
 
@@ -839,7 +1006,7 @@ async function handleRequest(event, context, { userId }) {
         if (event.httpMethod !== "POST") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const body = JSON.parse(event.body || "{}");
+        const body = parseJsonBody(event.body);
         const session = await createTrainingSession(userId, body);
         return createSuccessResponse(session);
       }
@@ -848,12 +1015,12 @@ async function handleRequest(event, context, { userId }) {
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const games = await getGames(userId, coachId);
+        const games = await getGames(userId, targetCoachId);
         return createSuccessResponse(games);
       }
 
       case "/calendar": {
-        return await handleCalendarRequest(event, userId, coachId);
+        return await handleCalendarRequest(event, userId, targetCoachId);
       }
 
       case "/health":
@@ -869,6 +1036,21 @@ async function handleRequest(event, context, { userId }) {
         return createErrorResponse("Endpoint not found", 404);
     }
   } catch (error) {
+    if (error?.isInvalidJson) {
+      return createErrorResponse(error.message, 400, "invalid_json");
+    }
+    if (error.message.includes("Not authorized")) {
+      return createErrorResponse(error.message, 403, "authorization_error");
+    }
+    if (
+      error.message?.includes("is required") ||
+      error.message?.includes("must be") ||
+      error.message?.includes("must reference") ||
+      error.message?.includes("active team member") ||
+      error.message?.includes("Invalid")
+    ) {
+      return createErrorResponse(error.message, 422, "validation_error");
+    }
     console.error("Error in coach handler:", error);
     throw error;
   }

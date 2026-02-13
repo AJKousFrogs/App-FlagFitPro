@@ -24,8 +24,9 @@ import {
 import { CommonModule } from "@angular/common";
 import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
-import { Skeleton } from "primeng/skeleton";
+import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
 import { Tooltip } from "primeng/tooltip";
+import { EmptyStateComponent } from "../empty-state/empty-state.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -67,8 +68,9 @@ interface AnalyticsData {
     CommonModule,
     Card,
     ProgressBar,
-    Skeleton,
+    SkeletonLoaderComponent,
     Tooltip,
+    EmptyStateComponent,
     LazyChartComponent,
     StatusTagComponent,
   ],
@@ -78,12 +80,12 @@ interface AnalyticsData {
       <div class="stats-grid">
         <div class="stat-card completion-rate">
           @if (loading()) {
-            <p-skeleton width="100%" height="var(--size-80)"></p-skeleton>
+            <app-skeleton-loader variant="block" width="100%" height="var(--size-80)" />
           } @else {
             <div class="stat-icon">
               <i class="pi pi-check-circle"></i>
             </div>
-            <div class="stat-content">
+            <div class="stat-content stat-block--card">
               <span class="stat-block__value"
                 >{{ analytics()?.totals?.completion_rate || 0 }}%</span
               >
@@ -99,12 +101,12 @@ interface AnalyticsData {
 
         <div class="stat-card streak">
           @if (loading()) {
-            <p-skeleton width="100%" height="var(--size-80)"></p-skeleton>
+            <app-skeleton-loader variant="block" width="100%" height="var(--size-80)" />
           } @else {
             <div class="stat-icon fire">
               <i class="pi pi-bolt"></i>
             </div>
-            <div class="stat-content">
+            <div class="stat-content stat-block--card">
               <span class="stat-block__value">{{
                 analytics()?.streaks?.current || 0
               }}</span>
@@ -118,12 +120,12 @@ interface AnalyticsData {
 
         <div class="stat-card completed">
           @if (loading()) {
-            <p-skeleton width="100%" height="var(--size-80)"></p-skeleton>
+            <app-skeleton-loader variant="block" width="100%" height="var(--size-80)" />
           } @else {
             <div class="stat-icon success">
               <i class="pi pi-flag-fill"></i>
             </div>
-            <div class="stat-content">
+            <div class="stat-content stat-block--card">
               <span class="stat-block__value">{{
                 analytics()?.totals?.total_completed || 0
               }}</span>
@@ -196,14 +198,11 @@ interface AnalyticsData {
         (!analytics()?.totals?.total_assigned ||
           analytics()?.totals?.total_assigned === 0)
       ) {
-        <div class="empty-state">
-          <i class="pi pi-chart-bar"></i>
-          <h3>No Sessions Yet</h3>
-          <p>
-            Start micro-sessions from Merlin AI suggestions to track your
-            progress here.
-          </p>
-        </div>
+        <app-empty-state
+          icon="pi-chart-bar"
+          heading="No Sessions Yet"
+          description="Start micro-sessions from Merlin AI suggestions to track your progress here."
+        />
       }
     </div>
   `,

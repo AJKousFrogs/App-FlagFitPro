@@ -1115,7 +1115,7 @@ export const handler = async (event, context) =>
         allowedMethods: ["GET", "POST"],
         rateLimitType: "UPDATE",
         requireAuth: true,
-        handler: async (evt) => {
+        handler: async (evt, _ctx, { requestId }) => {
           try {
             const path = evt.path
               .replace(/^\/api\/research\/?/, "")
@@ -1137,7 +1137,12 @@ export const handler = async (event, context) =>
             return handleResearchRequest(evt);
           } catch (error) {
             console.error("Research sync error:", error);
-            return createErrorResponse(error.message, 500, "server_error");
+            return createErrorResponse(
+              "Internal server error",
+              500,
+              "server_error",
+              requestId,
+            );
           }
         },
       })
@@ -1146,12 +1151,17 @@ export const handler = async (event, context) =>
         allowedMethods: ["GET", "POST"],
         rateLimitType: "READ",
         requireAuth: false,
-        handler: async (evt) => {
+        handler: async (evt, _ctx, { requestId }) => {
           try {
             return handleResearchRequest(evt);
           } catch (error) {
             console.error("Research sync error:", error);
-            return createErrorResponse(error.message, 500, "server_error");
+            return createErrorResponse(
+              "Internal server error",
+              500,
+              "server_error",
+              requestId,
+            );
           }
         },
       });
@@ -1354,7 +1364,7 @@ async function handleResearchRequest(evt) {
     };
       } catch (error) {
         console.error("Research sync error:", error);
-        return createErrorResponse(error.message, 500, "server_error");
+        return createErrorResponse("Internal server error", 500, "server_error");
       }
 }
 

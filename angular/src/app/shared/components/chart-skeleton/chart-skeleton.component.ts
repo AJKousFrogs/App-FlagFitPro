@@ -196,7 +196,7 @@ import { CommonModule } from "@angular/common";
       .skeleton-pie-center {
         width: var(--size-120);
         height: var(--size-120);
-        border-radius: 50%;
+        border-radius: var(--radius-circle);
         background: conic-gradient(
           var(--ds-primary-green-subtle) 0deg 90deg,
           var(--surface-border) 90deg 180deg,
@@ -229,7 +229,7 @@ import { CommonModule } from "@angular/common";
         height: var(--icon-container-md);
         border: var(--border-3) solid var(--surface-border);
         border-top-color: var(--ds-primary-green);
-        border-radius: 50%;
+        border-radius: var(--radius-circle);
         animation: spin 1s linear infinite;
       }
 

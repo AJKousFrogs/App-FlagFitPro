@@ -37,12 +37,15 @@ async function submitAthleteFeedback(
   // First, get the message to capture original values
   const { data: message, error: msgError } = await supabaseAdmin
     .from("ai_messages")
-    .select("risk_level, intent_type, classification_confidence, session_id")
+    .select("risk_level, intent_type, classification_confidence, session_id, user_id")
     .eq("id", messageId)
     .single();
 
   if (msgError) {
     throw new Error("Message not found");
+  }
+  if (message.user_id !== userId) {
+    throw new Error("Not authorized to submit feedback for this message");
   }
 
   // Create feedback record
@@ -125,16 +128,21 @@ async function submitCoachFeedback(messageId, coachId, feedbackData) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", coachId)
+    .eq("status", "active")
     .in("role", ["coach", "assistant_coach"]);
+  const coachTeamIds = [...new Set((coachTeams || []).map((t) => t.team_id))];
+  if (coachTeamIds.length === 0) {
+    throw new Error("Not authorized to review this message");
+  }
 
-  const { data: athleteTeam } = await supabaseAdmin
+  const { data: athleteTeams } = await supabaseAdmin
     .from("team_members")
     .select("team_id")
     .eq("user_id", message.user_id)
-    .single();
-
-  const coachTeamIds = (coachTeams || []).map((t) => t.team_id);
-  if (athleteTeam && !coachTeamIds.includes(athleteTeam.team_id)) {
+    .eq("status", "active");
+  const athleteTeamIds = [...new Set((athleteTeams || []).map((t) => t.team_id))];
+  const sharesTeam = athleteTeamIds.some((teamId) => coachTeamIds.includes(teamId));
+  if (!sharesTeam) {
     throw new Error("Not authorized to review this message");
   }
 
@@ -196,6 +204,46 @@ async function getMessageFeedback(messageId) {
   return data || [];
 }
 
+async function ensureMessageAccess(messageId, requesterId) {
+  const { data: message, error } = await supabaseAdmin
+    .from("ai_messages")
+    .select("id, user_id")
+    .eq("id", messageId)
+    .single();
+
+  if (error || !message) {
+    throw new Error("Message not found");
+  }
+
+  if (message.user_id === requesterId) {
+    return;
+  }
+
+  const { data: requesterTeams } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", requesterId)
+    .eq("status", "active")
+    .in("role", ["coach", "assistant_coach"]);
+
+  const requesterTeamIds = [...new Set((requesterTeams || []).map((t) => t.team_id))];
+  if (requesterTeamIds.length === 0) {
+    throw new Error("Not authorized to access this message");
+  }
+
+  const { data: athleteTeams } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", message.user_id)
+    .eq("status", "active");
+
+  const athleteTeamIds = [...new Set((athleteTeams || []).map((t) => t.team_id))];
+  const sharesTeam = athleteTeamIds.some((teamId) => requesterTeamIds.includes(teamId));
+  if (!sharesTeam) {
+    throw new Error("Not authorized to access this message");
+  }
+}
+
 /**
  * Get feedback statistics for coach
  * @param {string} coachId - Coach user ID
@@ -209,6 +257,18 @@ async function getFeedbackStats(coachId, teamId = null, options = {}) {
   // Get team members if team specified
   let teamMemberIds = [];
   if (teamId) {
+    const { data: coachMembership } = await supabaseAdmin
+      .from("team_members")
+      .select("team_id")
+      .eq("team_id", teamId)
+      .eq("user_id", coachId)
+      .eq("status", "active")
+      .in("role", ["coach", "assistant_coach"])
+      .maybeSingle();
+    if (!coachMembership) {
+      throw new Error("Not authorized to access this team's feedback statistics");
+    }
+
     const { data: members } = await supabaseAdmin
       .from("team_members")
       .select("user_id")
@@ -221,6 +281,7 @@ async function getFeedbackStats(coachId, teamId = null, options = {}) {
       .from("team_members")
       .select("team_id")
       .eq("user_id", coachId)
+      .eq("status", "active")
       .in("role", ["coach", "assistant_coach"]);
 
     if (coachTeams && coachTeams.length > 0) {
@@ -472,7 +533,7 @@ export const handler = async (event, context) => {
 
       try {
         // POST /api/response-feedback - Submit athlete feedback
-        if (method === "POST" && !resource) {
+  if (method === "POST" && !resource) {
           let body;
           try {
             body = JSON.parse(event.body || "{}");
@@ -487,10 +548,10 @@ export const handler = async (event, context) => {
 
           const { messageId, wasHelpful, feedbackText, categories } = body;
 
-          if (!messageId) {
+          if (!messageId || typeof messageId !== "string") {
             return createErrorResponse(
               "messageId is required",
-              400,
+              422,
               "validation_error",
               requestId,
             );
@@ -499,7 +560,30 @@ export const handler = async (event, context) => {
           if (typeof wasHelpful !== "boolean") {
             return createErrorResponse(
               "wasHelpful must be boolean",
-              400,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (
+            feedbackText !== undefined &&
+            (typeof feedbackText !== "string" || feedbackText.length > 2000)
+          ) {
+            return createErrorResponse(
+              "feedbackText must be a string up to 2000 characters",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (
+            categories !== undefined &&
+            (!Array.isArray(categories) ||
+              categories.some((category) => typeof category !== "string"))
+          ) {
+            return createErrorResponse(
+              "categories must be an array of strings when provided",
+              422,
               "validation_error",
               requestId,
             );
@@ -544,10 +628,10 @@ export const handler = async (event, context) => {
             feedbackText,
           } = body;
 
-          if (!messageId) {
+          if (!messageId || typeof messageId !== "string") {
             return createErrorResponse(
               "messageId is required",
-              400,
+              422,
               "validation_error",
               requestId,
             );
@@ -556,7 +640,7 @@ export const handler = async (event, context) => {
           if (!classificationAccuracy) {
             return createErrorResponse(
               "classificationAccuracy is required",
-              400,
+              422,
               "validation_error",
               requestId,
             );
@@ -571,7 +655,18 @@ export const handler = async (event, context) => {
           if (!validAccuracies.includes(classificationAccuracy)) {
             return createErrorResponse(
               `classificationAccuracy must be one of: ${validAccuracies.join(", ")}`,
-              400,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          if (
+            feedbackText !== undefined &&
+            (typeof feedbackText !== "string" || feedbackText.length > 2000)
+          ) {
+            return createErrorResponse(
+              "feedbackText must be a string up to 2000 characters",
+              422,
               "validation_error",
               requestId,
             );
@@ -595,6 +690,7 @@ export const handler = async (event, context) => {
 
         // GET /api/response-feedback/message/:id - Get feedback for message
         if (method === "GET" && resource === "message" && resourceId) {
+          await ensureMessageAccess(resourceId, userId);
           const feedback = await getMessageFeedback(resourceId);
           return createSuccessResponse({ feedback }, requestId);
         }
@@ -616,9 +712,28 @@ export const handler = async (event, context) => {
           requestId,
         );
       } catch (error) {
+        const isAuthorizationError = error.message?.includes("Not authorized");
+        const isNotFoundError = error.message?.includes("Message not found");
+
+        if (isAuthorizationError) {
+          return createErrorResponse(
+            error.message,
+            403,
+            "authorization_error",
+            requestId,
+          );
+        }
+        if (isNotFoundError) {
+          return createErrorResponse(
+            error.message,
+            404,
+            "not_found",
+            requestId,
+          );
+        }
         console.error("[Response Feedback] Error:", error);
         return createErrorResponse(
-          error.message || "Failed to process feedback",
+          "Failed to process feedback",
           500,
           "internal_error",
           requestId,

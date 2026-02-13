@@ -6,6 +6,7 @@ import { SkipToContentComponent } from "./shared/components/skip-to-content/skip
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { ToastComponent } from "./shared/components/toast/toast.component";
 import { PlatformDetectionService } from "./core/services/platform-detection.service";
+import { ThemeService } from "./core/services/theme.service";
 
 @Component({
   selector: "app-root",
@@ -35,4 +36,6 @@ import { PlatformDetectionService } from "./core/services/platform-detection.ser
 export class AppComponent {
   // Side-effect: triggers constructor to add platform classes (iOS, Android, Safari, Chrome) to document.body
   private readonly _platformDetection = inject(PlatformDetectionService);
+  // Side-effect: ensures ThemeService initializes on bootstrap so theme (light/dark) applies before first paint
+  private readonly _themeService = inject(ThemeService);
 }

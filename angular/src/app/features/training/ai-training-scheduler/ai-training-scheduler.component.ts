@@ -19,6 +19,7 @@ import { Skeleton } from "primeng/skeleton";
 import { ProgressBar } from "primeng/progressbar";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -105,6 +106,7 @@ interface AthleteMetrics {
     PageHeaderComponent,
     AiConsentRequiredComponent,
     ButtonComponent,
+    EmptyStateComponent,
   ],
   template: `
 <app-main-layout>
@@ -201,14 +203,11 @@ interface AthleteMetrics {
           </div>
         } @else {
           <p-card class="readiness-card">
-            <div class="empty-state">
-              <i class="pi pi-info-circle"></i>
-              <h4>No Readiness Data Available</h4>
-              <p>
-                Complete your wellness check-in to see your readiness metrics
-                here.
-              </p>
-            </div>
+            <app-empty-state
+              icon="pi-info-circle"
+              heading="No Readiness Data Available"
+              description="Complete your wellness check-in to see your readiness metrics here."
+            />
           </p-card>
         }
 
@@ -252,11 +251,11 @@ interface AthleteMetrics {
                 }
               </div>
             } @else if (suggestions().length === 0) {
-              <div class="empty-state">
-                <i class="pi pi-check-circle"></i>
-                <h4>All Optimized!</h4>
-                <p>No suggestions at this time. Your schedule looks optimal!</p>
-              </div>
+              <app-empty-state
+                icon="pi-check-circle"
+                heading="All Optimized!"
+                description="No suggestions at this time. Your schedule looks optimal!"
+              />
             } @else {
               <div class="suggestions-list">
                 @for (suggestion of suggestions(); track suggestion.id) {

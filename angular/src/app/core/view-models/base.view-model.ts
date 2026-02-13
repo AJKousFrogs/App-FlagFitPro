@@ -15,8 +15,8 @@
  *
  * Usage:
  * ```typescript
- * export class DashboardViewModel extends BaseViewModel {
- *   private dashboardService = inject(DashboardDataService);
+ * export class MyViewModel extends BaseViewModel {
+ *   private dataService = inject(MyDataService);
  *
  *   // State (Signals)
  *   stats = signal<Stat[]>([]);
@@ -24,7 +24,7 @@
  *   // Data fetching (RxJS) - error/loading handled automatically
  *   loadDashboard() {
  *     this.subscribe(
- *       this.dashboardService.getDashboard(),
+ *       this.dataService.getData(),
  *       {
  *         next: (data) => this.stats.set(data.stats),
  *       }

@@ -23,6 +23,8 @@ import {
 import { Router, RouterModule } from "@angular/router";
 
 import { Tooltip } from "primeng/tooltip";
+
+import { EmptyStateComponent } from "../empty-state/empty-state.component";
 import {
   Notification,
   NotificationCategory,
@@ -36,7 +38,7 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
   selector: "app-notifications-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Tooltip],
+  imports: [RouterModule, Tooltip, EmptyStateComponent],
   template: `
     <!-- Backdrop -->
     @if (visible) {
@@ -154,17 +156,11 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
 
         <!-- Empty State -->
         @if (!isLoading() && filteredNotifications().length === 0) {
-          <div class="empty-state">
-            <div class="empty-icon">
-              @if (selectedCategory()) {
-                <i [class]="'pi ' + getCategoryIcon(selectedCategory()!)"></i>
-              } @else {
-                <i class="pi pi-bell-slash"></i>
-              }
-            </div>
-            <h4>{{ getEmptyStateTitle() }}</h4>
-            <p>{{ getEmptyStateMessage() }}</p>
-          </div>
+          <app-empty-state
+            [icon]="selectedCategory() ? getCategoryIcon(selectedCategory()!) : 'pi-bell-slash'"
+            [heading]="getEmptyStateTitle()"
+            [description]="getEmptyStateMessage()"
+          />
         }
 
         <!-- Notifications List with Virtual Scroll -->

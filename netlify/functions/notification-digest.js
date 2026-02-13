@@ -2,6 +2,121 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 
+const VALID_DIGEST_TYPES = new Set(["daily", "weekly", "monthly"]);
+const COACH_ROLES = new Set([
+  "owner",
+  "admin",
+  "head_coach",
+  "coach",
+  "assistant_coach",
+  "offense_coordinator",
+  "defense_coordinator",
+]);
+const BOOLEAN_PREFERENCE_FIELDS = new Set([
+  "daily_digest_enabled",
+  "weekly_digest_enabled",
+  "email_enabled",
+  "push_enabled",
+  "in_app_enabled",
+  "sms_enabled",
+  "include_ai_summary",
+  "include_session_stats",
+  "include_injury_alerts",
+  "include_acwr_warnings",
+  "include_achievement_alerts",
+  "include_team_overview",
+  "include_high_risk_summary",
+  "include_child_activity",
+  "quiet_hours_enabled",
+]);
+
+const isValidTimeString = (value) =>
+  typeof value === "string" &&
+  /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(value);
+
+const parseHistoryLimit = (value) => {
+  if (value === undefined || value === null || value === "") {
+    return 20;
+  }
+  if (!/^\d+$/.test(String(value))) {
+    throw new Error("limit must be an integer between 1 and 200");
+  }
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isInteger(parsed) || parsed < 1 || parsed > 200) {
+    throw new Error("limit must be an integer between 1 and 200");
+  }
+  return parsed;
+};
+
+const resolveDigestType = (value) => {
+  const normalized = value || "weekly";
+  if (!VALID_DIGEST_TYPES.has(normalized)) {
+    throw new Error("digest type must be one of: daily, weekly, monthly");
+  }
+  return normalized;
+};
+
+const resolveDigestPeriod = (digestType, now = new Date()) => {
+  const periodEnd = now;
+  const periodStart = new Date(now);
+  if (digestType === "daily") {
+    periodStart.setHours(0, 0, 0, 0);
+  } else if (digestType === "weekly") {
+    periodStart.setDate(periodStart.getDate() - 7);
+  } else {
+    periodStart.setDate(periodStart.getDate() - 30);
+  }
+  return { periodStart, periodEnd };
+};
+
+const validatePreferenceUpdates = (updates) => {
+  if (!updates || Object.keys(updates).length === 0) {
+    throw new Error("No valid preference fields provided");
+  }
+
+  for (const [field, value] of Object.entries(updates)) {
+    if (BOOLEAN_PREFERENCE_FIELDS.has(field) && typeof value !== "boolean") {
+      throw new Error(`${field} must be a boolean`);
+    }
+    if (field === "weekly_digest_day") {
+      if (!Number.isInteger(value) || value < 0 || value > 6) {
+        throw new Error("weekly_digest_day must be an integer between 0 and 6");
+      }
+    }
+    if (
+      ["daily_digest_time", "weekly_digest_time", "quiet_hours_start", "quiet_hours_end"].includes(
+        field,
+      )
+    ) {
+      if (!isValidTimeString(value)) {
+        throw new Error(`${field} must be a valid HH:MM or HH:MM:SS time`);
+      }
+    }
+    if (field === "timezone") {
+      if (!value || typeof value !== "string" || !value.trim()) {
+        throw new Error("timezone must be a non-empty string");
+      }
+    }
+  }
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    const error = new Error("Invalid JSON");
+    error.code = "invalid_json";
+    throw error;
+  }
+
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("Request body must be an object");
+  }
+
+  return parsed;
+};
+
 /**
  * Netlify Function: Notification Digest
  *
@@ -200,7 +315,8 @@ async function generateCoachDigest(
     .from("team_members")
     .select("team_id, teams(name)")
     .eq("user_id", coachId)
-    .in("role", ["coach", "assistant_coach"]);
+    .eq("status", "active")
+    .in("role", [...COACH_ROLES]);
 
   if (!teams || teams.length === 0) {
     content.sections.push({
@@ -610,7 +726,7 @@ async function recordDigestSent(
   content,
   deliveryChannel,
 ) {
-  await supabaseAdmin.from("digest_history").insert({
+  const payload = {
     user_id: userId,
     digest_type: digestType,
     period_start: periodStart.toISOString().split("T")[0],
@@ -620,7 +736,16 @@ async function recordDigestSent(
     delivery_channel: deliveryChannel,
     delivered_at: new Date().toISOString(),
     delivery_status: "delivered",
-  });
+  };
+
+  const { error } = await supabaseAdmin.from("digest_history").insert(payload);
+  if (error) {
+    if (error.code === "23505") {
+      return { duplicate: true };
+    }
+    throw error;
+  }
+  return { duplicate: false };
 }
 
 /**
@@ -634,9 +759,10 @@ async function getUserRole(userId) {
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
-    .in("role", ["coach", "assistant_coach"])
+    .eq("status", "active")
+    .in("role", [...COACH_ROLES])
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (coachRole) {
     return "coach";
@@ -686,19 +812,8 @@ rateLimitType: rateLimitType,
       try {
         // GET /api/notification-digest/preview - Preview digest
         if (method === "GET" && resource === "preview") {
-          const digestType = params.type || "weekly";
-          const now = new Date();
-          let periodStart, periodEnd;
-
-          if (digestType === "daily") {
-            periodStart = new Date(now);
-            periodStart.setHours(0, 0, 0, 0);
-            periodEnd = now;
-          } else {
-            periodStart = new Date(now);
-            periodStart.setDate(periodStart.getDate() - 7);
-            periodEnd = now;
-          }
+          const digestType = resolveDigestType(params.type);
+          const { periodStart, periodEnd } = resolveDigestPeriod(digestType);
 
           const role = await getUserRole(userId);
           let content;
@@ -744,17 +859,7 @@ rateLimitType: rateLimitType,
 
         // PATCH /api/notification-digest/preferences - Update preferences
         if (method === "PATCH" && resource === "preferences") {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
-              requestId,
-            );
-          }
+          const body = parseJsonObjectBody(event.body);
 
           // Whitelist allowed fields
           const allowedFields = [
@@ -787,6 +892,7 @@ rateLimitType: rateLimitType,
               updates[field] = body[field];
             }
           }
+          validatePreferenceUpdates(updates);
 
           const preferences = await updateNotificationPreferences(
             userId,
@@ -797,9 +903,10 @@ rateLimitType: rateLimitType,
 
         // GET /api/notification-digest/history - Get history
         if (method === "GET" && resource === "history") {
+          const digestType = params.type ? resolveDigestType(params.type) : undefined;
           const history = await getDigestHistory(userId, {
-            limit: parseInt(params.limit) || 20,
-            digestType: params.type,
+            limit: parseHistoryLimit(params.limit),
+            digestType,
           });
           return createSuccessResponse({ history }, requestId);
         }
@@ -809,26 +916,10 @@ rateLimitType: rateLimitType,
           // This endpoint would typically be called by a scheduler
           // For now, it generates and records a digest for the user
 
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            body = {};
-          }
+          const body = parseJsonObjectBody(event.body);
 
-          const digestType = body.digestType || "weekly";
-          const now = new Date();
-          let periodStart, periodEnd;
-
-          if (digestType === "daily") {
-            periodStart = new Date(now);
-            periodStart.setDate(periodStart.getDate() - 1);
-            periodEnd = now;
-          } else {
-            periodStart = new Date(now);
-            periodStart.setDate(periodStart.getDate() - 7);
-            periodEnd = now;
-          }
+          const digestType = resolveDigestType(body.digestType);
+          const { periodStart, periodEnd } = resolveDigestPeriod(digestType);
 
           const role = await getUserRole(userId);
           let content;
@@ -857,7 +948,7 @@ rateLimitType: rateLimitType,
           }
 
           // Record the digest
-          await recordDigestSent(
+          const recordResult = await recordDigestSent(
             userId,
             digestType,
             periodStart,
@@ -868,22 +959,40 @@ rateLimitType: rateLimitType,
 
           return createSuccessResponse(
             {
-              message: "Digest generated and recorded",
+              message: recordResult.duplicate
+                ? "Digest already recorded for this period and channel"
+                : "Digest generated and recorded",
               digestType,
               role,
               content,
+              duplicate: recordResult.duplicate,
             },
             requestId,
           );
         }
 
-        return createErrorResponse(
-          "Method not allowed",
-          405,
-          "method_not_allowed",
-          requestId,
-        );
+        return createErrorResponse("Endpoint not found", 404, "not_found", requestId);
       } catch (error) {
+        if (error.code === "invalid_json") {
+          return createErrorResponse("Invalid JSON", 400, "invalid_json", requestId);
+        }
+        if (
+          error.message?.includes("digest type must be") ||
+          error.message?.includes("must be a boolean") ||
+          error.message?.includes("must be an integer between 0 and 6") ||
+          error.message?.includes("must be a valid HH:MM") ||
+          error.message?.includes("timezone must be a non-empty string") ||
+          error.message?.includes("No valid preference fields provided") ||
+          error.message?.includes("Request body must be an object") ||
+          error.message?.includes("limit must be an integer between 1 and 200")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
         console.error("[Notification Digest] Error:", error);
         return createErrorResponse(
           error.message || "Failed to process request",

@@ -65,8 +65,6 @@
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
 
-  // .stat-icon/.stat-content/.stat-value/.stat-label REMOVED
-  // Use .stat-block classes from card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 
   .stat-sub {
@@ -75,15 +73,10 @@
   }
 }
 
-// Card Headers - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
 // Migration: Replace <div class="card-header"> with <app-card-shell title="...">
 // .card-header styles deleted per Card Shell Contract v1
 
 // Spider Chart
-// .chart-card p-card padding REMOVED - use app-card-shell with flush=true
-// @see docs/CARD_SHELL_CONTRACT.md
-
 .spider-chart-container {
   display: flex;
   justify-content: center;
@@ -110,7 +103,7 @@
   .legend-color {
     width: var(--indicator-size-md);
     height: var(--indicator-size-md);
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
 
     &.player {
       background: var(--ds-primary-green);
@@ -127,9 +120,6 @@
 }
 
 // Goals Card
-// .goals-card p-card padding REMOVED - use app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md
-
 .goals-list {
   display: flex;
   flex-direction: column;
@@ -221,9 +211,6 @@
 }
 
 // History Card
-// .history-card p-card padding REMOVED - use app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md
-
 .history-filters {
   display: flex;
   gap: var(--space-3);
@@ -251,9 +238,6 @@
 }
 
 // Assessments Card
-// .assessments-card p-card padding REMOVED - use app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md
-
 .assessment-actions {
   display: flex;
   align-items: center;
@@ -306,9 +290,6 @@
 }
 
 // Notes Card
-// .notes-card p-card padding REMOVED - use app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md
-
 .notes-list {
   display: flex;
   flex-direction: column;
@@ -350,9 +331,6 @@
     line-height: var(--ds-line-height-1-6);
   }
 }
-
-// Empty State - REMOVED (use .card-empty-state from card-shell)
-// @see docs/CARD_SHELL_CONTRACT.md §8
 
 // Form Styles
 .goal-form,
@@ -438,5 +416,4 @@
     grid-template-columns: 1fr;
   }
 
-  // .card-header responsive styles removed - use app-card-shell
 }

@@ -6,10 +6,88 @@ import { supabaseAdmin } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 
 // Flag-football specific thresholds
 const HIGH_SPEED_M_S = 5.5; // High-speed running threshold (m/s)
 const SPRINT_M_S = 7.0; // Sprint threshold (m/s)
+const MAX_DATASET_SIZE = 10000;
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isValidId(value) {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    value.trim().length <= 128 &&
+    /^[A-Za-z0-9_-]+$/.test(value.trim())
+  );
+}
+
+const STAFF_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
+
+async function verifyAthleteAccess(requestUserId, athleteId) {
+  if (athleteId === requestUserId) {
+    return { authorized: true };
+  }
+
+  const role = await getUserRole(requestUserId);
+  if (!STAFF_ROLES.has(role)) {
+    return { authorized: false };
+  }
+
+  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", requestUserId)
+    .limit(1)
+    .maybeSingle();
+  if (requesterError || !requesterMembership?.team_id) {
+    return { authorized: false };
+  }
+
+  const { data: targetMembership, error: targetError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", athleteId)
+    .limit(1)
+    .maybeSingle();
+  if (targetError || !targetMembership?.team_id) {
+    return { authorized: false };
+  }
+
+  return { authorized: targetMembership.team_id === requesterMembership.team_id };
+}
+
+function validateDataset(dataset) {
+  if (!Array.isArray(dataset)) {
+    return "dataset must be an array";
+  }
+  if (dataset.length === 0) {
+    return "dataset array cannot be empty";
+  }
+  if (dataset.length > MAX_DATASET_SIZE) {
+    return `dataset cannot exceed ${MAX_DATASET_SIZE} entries`;
+  }
+  for (const entry of dataset) {
+    if (!isPlainObject(entry)) {
+      return "dataset entries must be objects";
+    }
+    const rawSpeed = entry.speed_m_s ?? entry.speed ?? 0;
+    const rawDistance = entry.distance_m ?? entry.distance ?? 0;
+    const speed = Number(rawSpeed);
+    const distance = Number(rawDistance);
+    if (!Number.isFinite(speed) || speed < 0 || speed > 20) {
+      return "dataset speed values must be numbers between 0 and 20 m/s";
+    }
+    if (!Number.isFinite(distance) || distance < 0 || distance > 1000) {
+      return "dataset distance values must be numbers between 0 and 1000 m";
+    }
+  }
+  return null;
+}
 
 /**
  * Compute flag-football metrics from raw dataset
@@ -31,8 +109,11 @@ function computeMetrics(raw) {
   let sprintCount = 0;
 
   raw.forEach((entry) => {
-    const speed = entry.speed_m_s ?? entry.speed ?? 0;
-    const dist = entry.distance_m ?? entry.distance ?? 0;
+    const speed = Number(entry.speed_m_s ?? entry.speed ?? 0);
+    const dist = Number(entry.distance_m ?? entry.distance ?? 0);
+    if (!Number.isFinite(speed) || !Number.isFinite(dist) || dist < 0 || speed < 0) {
+      return;
+    }
 
     totalDistance += dist;
 
@@ -74,20 +155,32 @@ export const handler = async (event, context) => {
         return handleValidationError("Invalid JSON in request body");
       }
 
+      if (!isPlainObject(body)) {
+        return handleValidationError("Request body must be an object");
+      }
+
       // If athleteId not provided, use authenticated user's ID
       const { athleteId = userId, dataset } = body;
 
       // Validate required fields
-      if (!athleteId) {
-        return handleValidationError("athleteId is required");
+      if (!isValidId(athleteId)) {
+        return handleValidationError(
+          "athleteId must be a non-empty alphanumeric identifier",
+        );
       }
 
-      if (!dataset || !Array.isArray(dataset)) {
-        return handleValidationError("dataset must be a non-empty array");
+      const access = await verifyAthleteAccess(userId, athleteId);
+      if (!access.authorized) {
+        return createErrorResponse(
+          "Not authorized to import data for this athlete",
+          403,
+          "authorization_error",
+        );
       }
 
-      if (dataset.length === 0) {
-        return handleValidationError("dataset array cannot be empty");
+      const datasetValidationError = validateDataset(dataset);
+      if (datasetValidationError) {
+        return handleValidationError(datasetValidationError);
       }
 
       // Compute metrics from dataset
@@ -113,7 +206,7 @@ export const handler = async (event, context) => {
       if (error) {
         console.error("Database error:", error);
         return createErrorResponse(
-          `Failed to insert session: ${error.message}`,
+          "Failed to insert session",
           500,
           "database_error",
         );

@@ -111,9 +111,6 @@
   }
 }
 
-// Card Headers - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
-
 // Fees Card
 .fees-list {
   display: flex;
@@ -401,5 +398,4 @@
     border-top: var(--border-1) dashed var(--color-border-subtle);
   }
 
-  // .card-header responsive styles removed - use app-card-shell
 }

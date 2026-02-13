@@ -58,6 +58,32 @@ const ALLOWED_SUBCATEGORIES = [
   "prevention",
 ];
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    return {};
+  }
+  const parsed = JSON.parse(rawBody);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+};
+
 export const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "CREATE";
   return baseHandler(event, context, {
@@ -72,17 +98,36 @@ rateLimitType: rateLimitType,
         if (event.httpMethod === "POST") {
           let bodyData = {};
           try {
-            bodyData = JSON.parse(event.body || "{}");
-          } catch {
+            bodyData = parseJsonObjectBody(event.body);
+          } catch (error) {
+            if (error instanceof SyntaxError) {
+              return createErrorResponse(
+                "Invalid JSON in request body",
+                400,
+                "invalid_json",
+                requestId,
+              );
+            }
             return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
+              error.message || "Invalid request body",
+              422,
+              "validation_error",
               requestId,
             );
           }
 
           const { query, category, subcategory, limit = 10 } = bodyData;
+          let sanitizedLimit;
+          try {
+            sanitizedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 50 }) ?? 10;
+          } catch (error) {
+            return createErrorResponse(
+              error.message,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
 
           if (!query || typeof query !== "string") {
             return createErrorResponse(
@@ -119,11 +164,6 @@ rateLimitType: rateLimitType,
               requestId,
             );
           }
-
-          const sanitizedLimit = Math.min(
-            Math.max(parseInt(limit) || 10, 1),
-            50,
-          );
 
           // Build query
           let queryBuilder = supabase
@@ -342,7 +382,7 @@ rateLimitType: rateLimitType,
       } catch (error) {
         console.error("Knowledge search error:", error);
         return createErrorResponse(
-          error.message || "Internal server error",
+          "Internal server error",
           500,
           "internal_error",
           requestId,

@@ -396,9 +396,8 @@
   opacity: 1;
 }
 
-.filter-chip:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
+.filter-chip {
+  @include ds-focus-ring;
 }
 
 .active-filters {
@@ -455,8 +454,6 @@
   }
 }
 
-// .video-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
 // Note: translateY(-0.calc(var(--size-200) * 6)) was non-standard; contract specifies -var(--border-2)
 
 .video-card.bookmarked {
@@ -569,9 +566,6 @@
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
-
-// .video-card:hover .video-overlay REMOVED
-// Overlay visibility should be handled by card-shell interactive state
 
 .overlay-btn {
   width: var(--avatar-size-md);
@@ -715,8 +709,6 @@
   cursor: default;
 }
 
-// .skeleton-card:hover REMOVED - skeleton cards are not interactive
-
 .skeleton-content {
   padding: var(--space-4);
   display: flex;
@@ -727,39 +719,6 @@
 .skeleton-meta {
   display: flex;
   gap: var(--space-2);
-}
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: var(--space-16) var(--space-6);
-}
-
-.empty-icon {
-  width: var(--size-80);
-  height: var(--size-80);
-  margin: 0 auto var(--space-6);
-  background: var(--ds-primary-green-ultra-subtle);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.empty-icon i {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--ds-primary-green);
-}
-
-.empty-state h3 {
-  font-size: var(--ds-font-size-2xl);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-2);
-}
-
-.empty-state p {
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-6);
 }
 
 /* Creators Section */
@@ -826,9 +785,6 @@
     box-shadow var(--transition-base);
   box-shadow: var(--shadow-1);
 }
-
-// .creator-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .creator-details {
   display: flex;
@@ -996,7 +952,7 @@
   }
 
   .stat-block__label {
-    font-size: var(--ds-font-size-xs);
+    font-size: var(--stat-block-label-compact);
   }
 
   .filter-section,
@@ -1090,7 +1046,7 @@
   }
 
   .stat-block__label {
-    font-size: var(--ds-font-size-xs);
+    font-size: var(--stat-block-label-compact);
   }
 
   .stat-action-icon {
@@ -1123,7 +1079,7 @@
    Using global selectors - dialogs render in overlay outside component
    ================================================================ */
 
-// PrimeNG input icon override moved to _exceptions.scss (DS-EXC-018)
+// PrimeNG input icon override moved to _component-overrides.scss (DS-EXC-018)
 
 /*
  * EXCEPTION: Creator Avatar Styling
@@ -1148,7 +1104,7 @@
   margin-bottom: var(--space-3);
 }
 
-// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-018)
+// PrimeNG button overrides moved to _component-overrides.scss (DS-EXC-018)
 .suggest-btn {
   // Component-specific styles remain here
 }

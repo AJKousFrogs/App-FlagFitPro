@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .register-page {
   display: flex;
   align-items: center;
@@ -68,10 +70,7 @@
     text-decoration: underline;
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--color-brand-primary);
-    outline-offset: var(--focus-outline-offset);
-  }
+  @include ds-focus-ring(var(--color-brand-primary));
 }
 
 .required::after {
@@ -120,8 +119,5 @@
     text-decoration: underline;
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--color-brand-primary);
-    outline-offset: var(--focus-outline-offset);
-  }
+  @include ds-focus-ring(var(--color-brand-primary));
 }

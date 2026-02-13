@@ -1,6 +1,35 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 
+function parseBoundedInt(rawValue, fieldName, { min, max, fallback }) {
+  if (rawValue === undefined || rawValue === null || rawValue === "") {
+    return fallback;
+  }
+  const normalized = String(rawValue).trim();
+  if (!/^\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
+function parseSearch(rawValue) {
+  if (rawValue === undefined || rawValue === null) {
+    return null;
+  }
+  const normalized = String(rawValue).trim();
+  if (normalized.length === 0) {
+    return null;
+  }
+  if (normalized.length > 120) {
+    throw new Error("search must be 120 characters or less");
+  }
+  return normalized;
+}
+
 /**
  * Exercises API
  * Serves exercises from the exercise library for the Exercise Library component
@@ -130,7 +159,21 @@ function extractYoutubeId(url) {
  * GET - Retrieve exercises from all sources
  */
 async function getExercises(supabase, params) {
-  const { category, search, limit = 500, offset = 0 } = params;
+  const category =
+    params.category === undefined || params.category === null
+      ? null
+      : String(params.category).trim();
+  const search = parseSearch(params.search);
+  const limit = parseBoundedInt(params.limit, "limit", {
+    min: 1,
+    max: 500,
+    fallback: 500,
+  });
+  const offset = parseBoundedInt(params.offset, "offset", {
+    min: 0,
+    max: 1_000_000,
+    fallback: 0,
+  });
 
   const allExercises = [];
 
@@ -207,10 +250,7 @@ async function getExercises(supabase, params) {
   allExercises.sort((a, b) => a.name.localeCompare(b.name));
 
   // Apply pagination
-  const paginatedExercises = allExercises.slice(
-    parseInt(offset),
-    parseInt(offset) + parseInt(limit),
-  );
+  const paginatedExercises = allExercises.slice(offset, offset + limit);
 
   return { exercises: paginatedExercises, count: allExercises.length };
 }
@@ -233,9 +273,20 @@ export const handler = async (event, context) =>
           body: JSON.stringify({ success: true, data: results.exercises }),
         };
       } catch (error) {
+        if (
+          /must be an integer between|120 characters or less/i.test(
+            error.message || "",
+          )
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+          );
+        }
         console.error("Exercises API error:", error);
         return createErrorResponse(
-          error.message || "Internal server error",
+          "Internal server error",
           500,
           "server_error",
         );

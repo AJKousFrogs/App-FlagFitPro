@@ -1,6 +1,7 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 
 /**
  * Netlify Function: Calibration Logs API
@@ -75,6 +76,126 @@ async function logRecommendation(userId, data) {
     console.error("Error in logRecommendation:", error);
     throw error;
   }
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isValidId(value) {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    value.trim().length <= 128 &&
+    /^[A-Za-z0-9_-]+$/.test(value.trim())
+  );
+}
+
+const STAFF_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
+
+async function verifyAthleteAccess(requestUserId, athleteId) {
+  if (athleteId === requestUserId) {
+    return { authorized: true };
+  }
+
+  const role = await getUserRole(requestUserId);
+  if (!STAFF_ROLES.has(role)) {
+    return { authorized: false };
+  }
+
+  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", requestUserId)
+    .limit(1)
+    .maybeSingle();
+
+  if (requesterError || !requesterMembership?.team_id) {
+    return { authorized: false };
+  }
+
+  const { data: athleteMembership, error: athleteError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", athleteId)
+    .limit(1)
+    .maybeSingle();
+
+  if (athleteError || !athleteMembership?.team_id) {
+    return { authorized: false };
+  }
+
+  return { authorized: athleteMembership.team_id === requesterMembership.team_id };
+}
+
+function validateRecommendationPayload(data) {
+  if (!isPlainObject(data)) {
+    return "Request body must be an object";
+  }
+  if (!isValidId(data.athleteId)) {
+    return "athleteId must be a non-empty alphanumeric identifier";
+  }
+  if (!isPlainObject(data.recommendation)) {
+    return "recommendation must be an object";
+  }
+  if (!["deload", "maintain", "push"].includes(data.recommendation.type)) {
+    return "recommendation.type must be 'deload', 'maintain', or 'push'";
+  }
+  if (
+    data.recommendation.readinessScore !== undefined &&
+    (!Number.isFinite(data.recommendation.readinessScore) ||
+      data.recommendation.readinessScore < 0 ||
+      data.recommendation.readinessScore > 100)
+  ) {
+    return "recommendation.readinessScore must be a number between 0 and 100";
+  }
+  if (
+    data.recommendation.acwr !== undefined &&
+    (!Number.isFinite(data.recommendation.acwr) ||
+      data.recommendation.acwr < 0 ||
+      data.recommendation.acwr > 10)
+  ) {
+    return "recommendation.acwr must be a number between 0 and 10";
+  }
+  return null;
+}
+
+function validateOutcomePayload(data) {
+  if (!isPlainObject(data)) {
+    return "Request body must be an object";
+  }
+  if (!isValidId(data.athleteId)) {
+    return "athleteId must be a non-empty alphanumeric identifier";
+  }
+  if (typeof data.timestamp !== "string" || Number.isNaN(new Date(data.timestamp).getTime())) {
+    return "timestamp must be a valid ISO date-time string";
+  }
+  if (data.outcomes !== undefined && !isPlainObject(data.outcomes)) {
+    return "outcomes must be an object";
+  }
+  if (
+    data.outcomes?.performanceRating !== undefined &&
+    (!Number.isFinite(data.outcomes.performanceRating) ||
+      data.outcomes.performanceRating < 1 ||
+      data.outcomes.performanceRating > 10)
+  ) {
+    return "outcomes.performanceRating must be a number between 1 and 10";
+  }
+  if (
+    data.outcomes?.sessionQuality !== undefined &&
+    (!Number.isFinite(data.outcomes.sessionQuality) ||
+      data.outcomes.sessionQuality < 1 ||
+      data.outcomes.sessionQuality > 10)
+  ) {
+    return "outcomes.sessionQuality must be a number between 1 and 10";
+  }
+  if (
+    data.outcomes?.injuryFlagged !== undefined &&
+    typeof data.outcomes.injuryFlagged !== "boolean"
+  ) {
+    return "outcomes.injuryFlagged must be a boolean";
+  }
+  return null;
 }
 
 /**
@@ -394,6 +515,26 @@ export const handler = async (event, context) => {
             );
           }
 
+          const outcomeValidationError = validateOutcomePayload(outcomeData);
+          if (outcomeValidationError) {
+            return createErrorResponse(
+              outcomeValidationError,
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+
+          const access = await verifyAthleteAccess(userId, outcomeData.athleteId);
+          if (!access.authorized) {
+            return createErrorResponse(
+              "Not authorized to log outcomes for this athlete",
+              403,
+              "authorization_error",
+              requestId,
+            );
+          }
+
           const result = await logOutcome(userId, outcomeData);
           return createSuccessResponse(
             result,
@@ -415,6 +556,27 @@ export const handler = async (event, context) => {
           );
         }
 
+        const recommendationValidationError =
+          validateRecommendationPayload(recommendationData);
+        if (recommendationValidationError) {
+          return createErrorResponse(
+            recommendationValidationError,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+
+        const access = await verifyAthleteAccess(userId, recommendationData.athleteId);
+        if (!access.authorized) {
+          return createErrorResponse(
+            "Not authorized to log recommendations for this athlete",
+            403,
+            "authorization_error",
+            requestId,
+          );
+        }
+
         const result = await logRecommendation(userId, recommendationData);
         return createSuccessResponse(
           result,
@@ -427,14 +589,25 @@ export const handler = async (event, context) => {
       // GET /api/calibration-logs/stats/:athleteId
       if (path.includes("/stats/")) {
         const athleteId = path.split("/stats/")[1]?.split("/")[0];
-        if (!athleteId) {
+        if (!isValidId(athleteId)) {
           return createErrorResponse(
-            "athleteId is required",
-            400,
+            "athleteId must be a non-empty alphanumeric identifier",
+            422,
             "validation_error",
             requestId,
           );
         }
+
+        const access = await verifyAthleteAccess(userId, athleteId);
+        if (!access.authorized) {
+          return createErrorResponse(
+            "Not authorized to view calibration stats for this athlete",
+            403,
+            "authorization_error",
+            requestId,
+          );
+        }
+
         const result = await getAthleteStats(athleteId);
         return createSuccessResponse(result, requestId);
       }
@@ -442,14 +615,25 @@ export const handler = async (event, context) => {
       // GET /api/calibration-logs/preset-stats/:presetId
       if (path.includes("/preset-stats/")) {
         const presetId = path.split("/preset-stats/")[1]?.split("/")[0];
-        if (!presetId) {
+        if (!isValidId(presetId)) {
           return createErrorResponse(
-            "presetId is required",
-            400,
+            "presetId must be a non-empty alphanumeric identifier",
+            422,
             "validation_error",
             requestId,
           );
         }
+
+        const role = await getUserRole(userId);
+        if (!STAFF_ROLES.has(role)) {
+          return createErrorResponse(
+            "Not authorized to view preset calibration stats",
+            403,
+            "authorization_error",
+            requestId,
+          );
+        }
+
         const result = await getPresetStats(presetId);
         return createSuccessResponse(result, requestId);
       }

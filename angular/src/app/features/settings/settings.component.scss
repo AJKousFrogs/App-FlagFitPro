@@ -17,10 +17,8 @@
   padding: var(--space-2) var(--space-3);
   cursor: pointer;
   transition: background-color var(--transition-fast);
-}
 
-.lang-item:hover {
-  background: var(--surface-secondary);
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 .lang-flag {
@@ -85,21 +83,16 @@
   cursor: pointer;
   width: auto;
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--ds-primary-green);
-    outline-offset: var(--focus-outline-offset);
-  }
+  @include ds-focus-ring;
+  @include ds-hover-state(
+    var(--surface-tertiary),
+    $color: var(--ds-primary-green),
+    $border-color: var(--ds-primary-green)
+  );
 
   &:active {
     transform: scale(0.98);
   }
-}
-
-.settings-nav-item:hover {
-  background: var(--surface-tertiary);
-  /* HOVER FIX: Border width stays var(--border-2), only color changes */
-  border-color: var(--ds-primary-green);
-  color: var(--ds-primary-green);
 }
 
 .settings-nav-item i {
@@ -214,11 +207,9 @@
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-md);
 
-  &:focus-visible {
-    outline: none;
-    border-color: var(--ds-primary-green);
-    box-shadow: 0 0 0 var(--border-2) var(--ds-primary-green-ultra-subtle);
-  }
+  @include ds-input-focus(
+    $shadow: 0 0 0 var(--border-2) var(--ds-primary-green-ultra-subtle)
+  );
 }
 
 .time-separator {
@@ -347,9 +338,8 @@
   min-height: var(--card-min-height-sm);
 }
 
-.security-item:hover {
-  background: var(--surface-secondary);
-  /* HOVER FIX: Border stays var(--border-2), no layout shift */
+.security-item {
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 .security-info {
@@ -388,8 +378,8 @@
   color: var(--color-status-error);
 }
 
-.security-item.danger:hover {
-  background: var(--color-status-error-light);
+.security-item.danger {
+  @include ds-hover-state(var(--color-status-error-light));
 }
 
 .status-badge {
@@ -992,11 +982,11 @@
   min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) - locked height */
 }
 
-.theme-option:hover {
-  background: var(--surface-secondary);
-  /* HOVER FIX: Border stays var(--border-2), only color changes */
-  border-color: var(--ds-primary-green);
-  /* No need to re-specify border-radius - it's inherited */
+.theme-option {
+  @include ds-hover-state(
+    var(--surface-secondary),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 .theme-option.active {
@@ -1238,10 +1228,8 @@
     padding: var(--space-2) var(--space-3);
     cursor: pointer;
     transition: background-color var(--transition-fast);
-  }
 
-  .lang-item:hover {
-    background: var(--surface-secondary);
+    @include ds-hover-state(var(--surface-secondary));
   }
 
   .lang-flag {
@@ -1436,9 +1424,11 @@
   text-align: center;
 }
 
-.format-option:hover {
-  border-color: var(--color-border-primary);
-  background: var(--surface-tertiary);
+.format-option {
+  @include ds-hover-state(
+    var(--surface-tertiary),
+    $border-color: var(--color-border-primary)
+  );
 }
 
 .format-option.active {
@@ -1483,8 +1473,8 @@
   transition: background var(--transition-fast);
 }
 
-.data-option:hover {
-  background: var(--surface-tertiary);
+.data-option {
+  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .option-info {
@@ -1604,11 +1594,9 @@
     box-shadow var(--transition-fast);
 }
 
-.form-field input:focus-visible,
-.form-field textarea:focus-visible {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-focus);
+.form-field input,
+.form-field textarea {
+  @include ds-input-focus($color: var(--color-primary));
 }
 
 .form-field textarea {

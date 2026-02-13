@@ -16,6 +16,8 @@
 // NOTE: No @layer here - component styles are scoped by Angular's ViewEncapsulation
 // and should have highest specificity within the component
 
+@use "styles/mixins" as *;
+
 :host {
   display: inline-block;
 }
@@ -148,16 +150,15 @@ a.btn {
 // FOCUS STYLES (Accessibility)
 // ============================================
 
-.btn:focus-visible {
-  outline: var(--border-3) solid rgba(var(--ds-primary-green-rgb), 0.5);
-  outline-offset: var(--focus-outline-offset);
-  box-shadow:
-    var(--shadow-md),
-    0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.25);
-}
-
-.btn:focus:not(:focus-visible) {
-  outline: none;
+.btn {
+  @include ds-focus-ring(
+    rgba(var(--ds-primary-green-rgb), 0.5),
+    $outline-width: var(--border-3),
+    $box-shadow: (
+      var(--shadow-md),
+      0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.25)
+    )
+  );
 }
 
 // ============================================
@@ -298,11 +299,15 @@ a.btn {
   }
 }
 
-.btn.btn-danger:focus-visible {
-  outline-color: var(--color-status-error);
-  box-shadow:
-    var(--shadow-md),
-    0 0 0 var(--space-1) rgba(var(--primitive-error-500-rgb), 0.25);
+.btn.btn-danger {
+  @include ds-focus-ring(
+    var(--color-status-error),
+    $outline-width: var(--border-3),
+    $box-shadow: (
+      var(--shadow-md),
+      0 0 0 var(--space-1) rgba(var(--primitive-error-500-rgb), 0.25)
+    )
+  );
 }
 
 // SUCCESS - Same as primary (green)

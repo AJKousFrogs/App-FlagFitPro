@@ -92,7 +92,6 @@
   gap: var(--space-1);
 }
 
-// .metric-label/.metric-value REMOVED
 // Use .stat-block classes from card-shell instead
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 
@@ -107,9 +106,6 @@
     grid-template-columns: 1fr;
   }
 }
-
-// .card-header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
 
 .suggestions-list {
   display: flex;
@@ -173,9 +169,6 @@
   gap: var(--space-2);
   margin-left: var(--space-4);
 }
-
-// .empty-state styles REMOVED - use .card-empty-state from card-shell
-// @see docs/CARD_SHELL_CONTRACT.md §8
 
 .schedule-section {
   display: flex;

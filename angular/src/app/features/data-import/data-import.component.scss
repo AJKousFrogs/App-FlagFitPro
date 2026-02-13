@@ -99,9 +99,7 @@
   margin-bottom: var(--space-4);
 }
 
-.upload-component {
-  // PrimeNG fileupload override moved to _exceptions.scss (DS-EXC-023)
-}
+/* upload-component: PrimeNG fileupload in _component-overrides.scss (DS-EXC-023) */
 
 .upload-placeholder {
   display: flex;
@@ -118,10 +116,10 @@
     border-color var(--motion-base) var(--ease-standard),
     box-shadow var(--motion-base) var(--ease-standard);
 
-  &:hover {
-    border-color: var(--ds-primary-green);
-    background: var(--ds-primary-green-subtle);
-  }
+  @include ds-hover-state(
+    var(--ds-primary-green-subtle),
+    $border-color: var(--ds-primary-green)
+  );
 
   p {
     margin: 0;
@@ -295,7 +293,7 @@
   .result-icon {
     width: var(--size-80);
     height: var(--size-80);
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     background: var(--primitive-error-50);
     display: flex;
     align-items: center;

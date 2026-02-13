@@ -28,15 +28,8 @@
       color: var(--color-brand-primary);
     }
   }
-
-  .subtitle {
-    color: var(--color-text-secondary);
-    font-size: var(--ds-font-size-md);
-  }
 }
 
-// .phase-card .p-card-header REMOVED
-// Use app-card-shell instead
 // @see docs/CARD_SHELL_CONTRACT.md
 
 .phase-card {
@@ -368,15 +361,12 @@
   overflow-x: auto;
 }
 
-// PrimeNG timeline override moved to _exceptions.scss (DS-EXC-050)
-.phase-timeline {
-  // Component-specific styles remain here
-}
+// PrimeNG timeline: _component-overrides.scss (DS-EXC-050)
 
 .timeline-marker {
   width: var(--space-10);
   height: var(--space-10);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -543,24 +533,4 @@
   }
 }
 
-@include respond-to(md) {
-  .periodization-dashboard {
-    padding: var(--space-4);
-  }
-
-  .weekly-schedule {
-    grid-template-columns: 1fr;
-  }
-
-  .weekly-totals .totals-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .phase-detail .phase-metrics {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .research-cards {
-    grid-template-columns: 1fr;
-  }
-}
+/* Responsive overrides consolidated in _component-overrides.scss */

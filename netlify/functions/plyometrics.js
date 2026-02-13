@@ -6,6 +6,28 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    const error = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    error.isValidation = true;
+    throw error;
+  }
+
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    const error = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    error.isValidation = true;
+    throw error;
+  }
+
+  return parsed;
+};
+
 export const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "plyometrics",
@@ -17,7 +39,10 @@ export const handler = async (event, context) =>
         const params = evt.queryStringParameters || {};
         const { difficulty } = params;
         const { category } = params;
-        const limit = Number.parseInt(params.limit, 10) || 10;
+        const limit = parseBoundedInt(params.limit, "limit", {
+          min: 1,
+          max: 100,
+        }) ?? 10;
 
         let query = supabase
           .from("plyometrics_exercises")
@@ -53,6 +78,9 @@ export const handler = async (event, context) =>
           }),
         };
       } catch (error) {
+        if (error?.isValidation) {
+          return createErrorResponse(error.message, 422, "validation_error");
+        }
         console.error("Plyometrics API error:", error);
         return createErrorResponse("Internal server error", 500, "server_error");
       }

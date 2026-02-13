@@ -73,7 +73,6 @@ angular/src/app/
 │   ├── view-models/
 │   │   ├── base.view-model.ts
 │   │   ├── reactive.view-model.ts
-│   │   ├── dashboard.view-model.ts
 │   │   └── analytics.view-model.ts
 │   └── models/
 │       ├── acwr.models.ts

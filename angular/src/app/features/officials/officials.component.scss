@@ -18,9 +18,6 @@
   gap: var(--space-6);
 }
 
-// .card-header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
-
 .official-cell {
   display: flex;
   align-items: center;
@@ -53,8 +50,6 @@
   gap: var(--space-1);
 }
 
-// .empty-state, .empty-message REMOVED
-// Use .card-empty-state from card-shell
 // @see docs/CARD_SHELL_CONTRACT.md §8
 
 .assignments-list {

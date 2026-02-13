@@ -97,12 +97,12 @@ export const handler = async (event, context) =>
           return handleValidationError("url query parameter is required");
         }
 
-    // Validate URL is from allowed domains
-    const allowedDomains = [
-      "laprimafit.com",
-      "chemius.net",
-      "gearxpro-sports.com",
-    ];
+        // Validate URL is from allowed domains
+        const allowedDomains = [
+          "laprimafit.com",
+          "chemius.net",
+          "gearxpro-sports.com",
+        ];
 
         let urlObj;
         try {
@@ -112,8 +112,9 @@ export const handler = async (event, context) =>
           return handleValidationError("Invalid URL format");
         }
 
-        const isAllowed = allowedDomains.some((domain) =>
-          urlObj.hostname.includes(domain),
+        const isAllowed = allowedDomains.some(
+          (domain) =>
+            urlObj.hostname === domain || urlObj.hostname.endsWith(`.${domain}`),
         );
 
         if (!isAllowed) {
@@ -124,7 +125,7 @@ export const handler = async (event, context) =>
           );
         }
 
-    // Check cache
+        // Check cache
         const cacheKey = imageUrl;
         const cached = logoCache.get(cacheKey);
         if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -141,17 +142,17 @@ export const handler = async (event, context) =>
           };
         }
 
-    // Fetch image
+        // Fetch image
         const imageData = await fetchImageAsBase64(imageUrl);
 
-    // Cache the result
+        // Cache the result
         logoCache.set(cacheKey, {
           data: imageData.data,
           contentType: imageData.contentType,
           timestamp: Date.now(),
         });
 
-    // Return image with proper headers
+        // Return image with proper headers
         return {
           statusCode: 200,
           headers: {
@@ -169,9 +170,7 @@ export const handler = async (event, context) =>
           "Failed to proxy sponsor logo",
           500,
           "server_error",
-          {
-            details: error.message,
-          },
+          {},
         );
       }
     },

@@ -176,9 +176,7 @@
     cursor: pointer;
     transition: background-color var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      background: var(--color-surface-hover);
-    }
+    @include ds-hover-state(var(--color-surface-hover));
 
     &.taken {
       .item-name {
@@ -246,7 +244,7 @@
       width: 100%;
     }
 
-    // PrimeNG select override moved to _exceptions.scss (DS-EXC-011)
+    // PrimeNG select override moved to _component-overrides.scss (DS-EXC-011)
   }
 
   .form-row {
@@ -275,7 +273,7 @@
     padding: var(--space-1) var(--space-2);
   }
 
-  // PrimeNG checkbox and dialog overrides moved to _exceptions.scss (DS-EXC-011)
+  // PrimeNG checkbox and dialog overrides moved to _component-overrides.scss (DS-EXC-011)
 
   // =============================================
   // RESPONSIVE
@@ -322,10 +320,6 @@
   }
 
   .supplement-item {
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: var(--focus-outline-offset);
-      border-radius: var(--radius-sm);
-    }
+    @include ds-focus-ring(var(--ds-primary-green), null, var(--radius-sm));
   }
 }

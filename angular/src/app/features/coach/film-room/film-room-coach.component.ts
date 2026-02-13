@@ -17,8 +17,9 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
@@ -105,8 +106,8 @@ const TAG_TYPES = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="film-room-page">
@@ -284,14 +285,14 @@ const TAG_TYPES = [
               </div>
             </div>
           } @empty {
-            <div class="empty-state">
-              <i class="pi pi-video"></i>
-              <h3>No Film Found</h3>
-              <p>Upload your first film to get started</p>
-              <app-button iconLeft="pi-upload" (clicked)="openUploadDialog()"
-                >Upload Film</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-video"
+              heading="No Film Found"
+              description="Upload your first film to get started"
+              actionLabel="Upload Film"
+              actionIcon="pi-upload"
+              [actionHandler]="openUploadDialogHandler"
+            />
           }
         </div>
       </div>
@@ -502,7 +503,7 @@ const TAG_TYPES = [
 export class FilmRoomCoachComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly sessions = signal<FilmSession[]>([]);
@@ -622,48 +623,42 @@ export class FilmRoomCoachComponent implements OnInit {
     this.showUploadDialog = true;
   }
 
+  readonly openUploadDialogHandler = (): void => this.openUploadDialog();
+
   uploadFilm(): void {
     if (!this.uploadForm.title) return;
-    this.messageService.add({
-      severity: "success",
-      summary: "Film Uploaded",
-      detail: `${this.uploadForm.title} has been uploaded`,
-    });
+    this.toastService.success(
+      `${this.uploadForm.title} has been uploaded`,
+      "Film Uploaded",
+    );
     this.showUploadDialog = false;
   }
 
   watchFilm(session: FilmSession): void {
     this.selectedSession.set(session);
-    this.messageService.add({
-      severity: "info",
-      summary: "Opening Film",
-      detail: `Playing ${session.title}`,
-    });
+    this.toastService.info(`Playing ${session.title}`, "Opening Film");
   }
 
   editTags(session: FilmSession): void {
     this.selectedSession.set(session);
-    this.messageService.add({
-      severity: "info",
-      summary: "Tag Editor",
-      detail: `Opening tag editor for ${session.title}`,
-    });
+    this.toastService.info(
+      `Opening tag editor for ${session.title}`,
+      "Tag Editor",
+    );
   }
 
   viewCompliance(session: FilmSession): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Compliance",
-      detail: `${session.watchedCount}/${session.totalAssigned} have watched`,
-    });
+    this.toastService.info(
+      `${session.watchedCount}/${session.totalAssigned} have watched`,
+      "Compliance",
+    );
   }
 
   sendReminder(session: FilmSession): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminders Sent",
-      detail: `Reminders sent to ${session.notWatched.length} players`,
-    });
+    this.toastService.success(
+      `Reminders sent to ${session.notWatched.length} players`,
+      "Reminders Sent",
+    );
   }
 
   openAddTag(): void {
@@ -673,11 +668,10 @@ export class FilmRoomCoachComponent implements OnInit {
 
   saveTag(): void {
     if (!this.tagForm.comment) return;
-    this.messageService.add({
-      severity: "success",
-      summary: "Tag Saved",
-      detail: "Timestamp tag has been added",
-    });
+    this.toastService.success(
+      "Timestamp tag has been added",
+      "Tag Saved",
+    );
     this.showTagDialog = false;
   }
 

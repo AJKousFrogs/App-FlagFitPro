@@ -8,6 +8,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 import type {
   DecisionLedgerEntry,
   DecisionFilters,
@@ -84,7 +85,7 @@ export class DecisionLedgerService {
       throw new Error(response.error || "Failed to fetch decisions");
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        getErrorMessage(error, "Unknown error");
       this.error.set(errorMessage);
       this.logger.error("[DecisionLedger] Error fetching decisions:", error);
       throw error;
@@ -113,7 +114,7 @@ export class DecisionLedgerService {
       throw new Error(response.error || "Failed to fetch statistics");
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        getErrorMessage(error, "Unknown error");
       this.error.set(errorMessage);
       this.logger.error("[DecisionLedger] Error fetching stats:", error);
       throw error;
@@ -150,7 +151,7 @@ export class DecisionLedgerService {
       throw new Error(response.error || "Failed to fetch reminders");
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        getErrorMessage(error, "Unknown error");
       this.error.set(errorMessage);
       this.logger.error("[DecisionLedger] Error fetching reminders:", error);
       throw error;
@@ -189,7 +190,7 @@ export class DecisionLedgerService {
       throw new Error(response.error || "Decision not found");
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        getErrorMessage(error, "Unknown error");
       this.error.set(errorMessage);
       this.logger.error("[DecisionLedger] Error fetching decision:", error);
       throw error;
@@ -232,7 +233,7 @@ export class DecisionLedgerService {
       throw new Error(response.error || "Failed to create decision");
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        getErrorMessage(error, "Unknown error");
       this.error.set(errorMessage);
       this.logger.error("[DecisionLedger] Error creating decision:", error);
       throw error;
@@ -284,7 +285,7 @@ export class DecisionLedgerService {
       throw new Error(response.error || "Failed to review decision");
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        getErrorMessage(error, "Unknown error");
       this.error.set(errorMessage);
       this.logger.error("[DecisionLedger] Error reviewing decision:", error);
       throw error;

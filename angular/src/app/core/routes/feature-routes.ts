@@ -140,9 +140,12 @@ export const dashboardRoutes: Routes = [
   },
   {
     path: "dashboard",
-    redirectTo: "player-dashboard",
-    pathMatch: "full",
-    data: { entry: "internal" },
+    loadComponent: () =>
+      import("../../features/dashboard/dashboard.component").then(
+        (m) => m.DashboardComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high", entry: "internal" },
   },
   {
     path: "player-dashboard",

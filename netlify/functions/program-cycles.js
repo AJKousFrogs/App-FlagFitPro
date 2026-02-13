@@ -1,5 +1,24 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
+
+const VALID_STATUSES = new Set(["not_started", "in_progress", "completed"]);
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isUuid(value) {
+  return (
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      value,
+    )
+  );
+}
 
 export const handler = async (event, context) =>
   baseHandler(event, context, {
@@ -19,10 +38,17 @@ export const handler = async (event, context) =>
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
+        if (!isPlainObject(payload)) {
+          return handleValidationError("Request body must be an object");
+        }
         return updateCycleStatus(supabase, userId, payload);
       } catch (error) {
         console.error("Program cycles error:", error);
-        return createErrorResponse(error.message, 500, "server_error");
+        return createErrorResponse(
+          "Failed to process program cycles request",
+          500,
+          "server_error",
+        );
       }
     },
   });
@@ -36,7 +62,11 @@ async function getCycles(supabase, userId) {
     .order("cycle_order");
 
   if (cyclesError) {
-    return createErrorResponse(cyclesError.message, 500, "database_error");
+    return createErrorResponse(
+      "Failed to fetch program cycles",
+      500,
+      "database_error",
+    );
   }
 
   // Get player's progress for each cycle
@@ -55,7 +85,7 @@ async function getCycles(supabase, userId) {
   );
 
   // Combine cycles with player progress
-  const result = cycles.map((cycle) => {
+  const result = (cycles || []).map((cycle) => {
     const playerProgress = progressMap.get(cycle.id);
 
     // Determine status based on dates if not explicitly set
@@ -87,17 +117,32 @@ async function getCycles(supabase, userId) {
     };
   });
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ success: true, data: result }),
-  };
+  return createSuccessResponse(result);
 }
 
 async function updateCycleStatus(supabase, userId, payload) {
   const { cycleId, status, completionPercentage, notes } = payload;
 
-  if (!cycleId) {
-    return handleValidationError("cycleId required");
+  if (!isUuid(cycleId)) {
+    return handleValidationError("cycleId must be a valid UUID");
+  }
+  if (status !== undefined && !VALID_STATUSES.has(status)) {
+    return handleValidationError(
+      "status must be one of: not_started, in_progress, completed",
+    );
+  }
+  if (
+    completionPercentage !== undefined &&
+    (!Number.isFinite(completionPercentage) ||
+      completionPercentage < 0 ||
+      completionPercentage > 100)
+  ) {
+    return handleValidationError(
+      "completionPercentage must be a number between 0 and 100",
+    );
+  }
+  if (notes !== undefined && notes !== null && typeof notes !== "string") {
+    return handleValidationError("notes must be a string");
   }
 
   // Upsert player cycle progress
@@ -108,7 +153,7 @@ async function updateCycleStatus(supabase, userId, payload) {
         user_id: userId,
         cycle_id: cycleId,
         status: status || "in_progress",
-        completion_percentage: completionPercentage || 0,
+        completion_percentage: completionPercentage ?? 0,
         notes,
         started_at:
           status === "in_progress" ? new Date().toISOString() : undefined,
@@ -123,11 +168,12 @@ async function updateCycleStatus(supabase, userId, payload) {
     .single();
 
   if (error) {
-    return createErrorResponse(error.message, 500, "database_error");
+    return createErrorResponse(
+      "Failed to update cycle status",
+      500,
+      "database_error",
+    );
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ success: true, data }),
-  };
+  return createSuccessResponse(data);
 }

@@ -34,6 +34,7 @@ import { Router } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { Skeleton } from "primeng/skeleton";
@@ -82,6 +83,7 @@ interface FilterChip {
     Avatar,
     MainLayoutComponent,
     ButtonComponent,
+    EmptyStateComponent,
     StatusTagComponent,
     SearchInputComponent,
     AppDialogComponent,
@@ -247,17 +249,14 @@ interface FilterChip {
               }
             </div>
           } @else if (filteredVideos().length === 0) {
-            <!-- Empty State -->
-            <div class="empty-state">
-              <div class="empty-icon">
-                <i class="pi pi-video"></i>
-              </div>
-              <h3>No videos found</h3>
-              <p>Try adjusting your filters or search query</p>
-              <app-button iconLeft="pi-refresh" (clicked)="clearAllFilters()"
-                >Clear Filters</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-video"
+              heading="No videos found"
+              description="Try adjusting your filters or search query"
+              actionLabel="Clear Filters"
+              actionIcon="pi-refresh"
+              [actionHandler]="clearAllFiltersHandler"
+            />
           } @else {
             <!-- Video Cards Grid -->
             <div class="video-grid">
@@ -735,6 +734,9 @@ export class VideoFeedComponent {
     this.updateChipStates();
     this.toastService.info(TOAST.INFO.FILTERS_CLEARED);
   }
+
+  /** Bound handler for EmptyStateComponent actionHandler input */
+  readonly clearAllFiltersHandler = (): void => this.clearAllFilters();
 
   // Video actions
   openVideo(video: InstagramVideo): void {

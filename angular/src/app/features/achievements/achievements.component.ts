@@ -17,7 +17,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -274,7 +273,6 @@ const CATEGORY_LABELS: Record<
     MainLayoutComponent,
     PageHeaderComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="achievements-page">
@@ -291,7 +289,7 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <i class="pi pi-trophy stat-icon"></i>
               </div>
-              <div class="stat-details stat-block__content">
+              <div class="stat-details stat-block__content stat-block--card">
                 <span class="stat-block__label">Total Points</span>
                 <span class="stat-block__value">{{
                   totalPoints() | number
@@ -310,7 +308,7 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <span class="stat-emoji">🎖️</span>
               </div>
-              <div class="stat-details stat-block__content">
+              <div class="stat-details stat-block__content stat-block--card">
                 <span class="stat-block__label">Achievements Unlocked</span>
                 <span class="stat-block__value"
                   >{{ unlockedCount() }} / {{ totalAchievements() }}</span
@@ -324,7 +322,7 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <i class="pi pi-chart-line stat-icon"></i>
               </div>
-              <div class="stat-details stat-block__content">
+              <div class="stat-details stat-block__content stat-block--card">
                 <span class="stat-block__label">Progress</span>
                 <span class="stat-block__value">{{ progressPercent() }}%</span>
                 <p-progressBar
@@ -341,7 +339,7 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <i class="pi pi-bolt stat-icon"></i>
               </div>
-              <div class="stat-details stat-block__content">
+              <div class="stat-details stat-block__content stat-block--card">
                 <span class="stat-block__label">Recent Unlock</span>
                 <span class="stat-block__value recent">{{
                   recentUnlock() ? recentUnlock()!.name : "None yet"
@@ -484,7 +482,13 @@ const CATEGORY_LABELS: Record<
             </div>
           </ng-template>
 
-          <p-table [value]="leaderboard()" class="p-datatable-sm">
+          <p-table
+            [value]="leaderboard()"
+            [virtualScroll]="leaderboard().length > 50"
+            [virtualScrollItemSize]="46"
+            dataKey="playerId"
+            class="p-datatable-sm"
+          >
             <ng-template #header>
               <tr>
                 <th [style.width]="tableColumnWidths.rank">Rank</th>
@@ -540,8 +544,6 @@ export class AchievementsComponent implements OnInit {
   protected readonly UI_LIMITS = UI_LIMITS;
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
-
   // Design system tokens
   protected readonly tableColumnWidths = TABLE_COLUMN_WIDTHS;
 

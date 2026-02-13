@@ -25,10 +25,32 @@ export const handler = async (event, context) =>
       } catch (_parseError) {
         return handleValidationError("Invalid JSON in request body");
       }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return handleValidationError("Request body must be an object");
+      }
       const { action, paused_until, reason } = body;
 
-      if (!action) {
+      if (typeof action !== "string" || !action.trim()) {
         return handleValidationError("action is required");
+      }
+      if (!["pause", "resume"].includes(action)) {
+        return handleValidationError("action must be 'pause' or 'resume'");
+      }
+      if (reason !== undefined && reason !== null) {
+        if (typeof reason !== "string" || reason.trim().length > 1000) {
+          return handleValidationError(
+            "reason must be a string up to 1000 characters",
+          );
+        }
+      }
+      if (paused_until !== undefined && paused_until !== null) {
+        if (typeof paused_until !== "string") {
+          return handleValidationError("paused_until must be an ISO date string");
+        }
+        const parsed = new Date(paused_until);
+        if (Number.isNaN(parsed.getTime())) {
+          return handleValidationError("paused_until must be a valid date");
+        }
       }
 
       if (action === "pause") {
@@ -55,7 +77,6 @@ export const handler = async (event, context) =>
             "Failed to pause account",
             500,
             "server_error",
-            { details: error.message },
           );
         }
       } else if (action === "resume") {
@@ -84,16 +105,9 @@ export const handler = async (event, context) =>
             "Failed to resume account",
             500,
             "server_error",
-            { details: error.message },
           );
         }
       }
-
-      return createErrorResponse(
-        "Action must be 'pause' or 'resume'",
-        400,
-        "validation_error",
-      );
     }
 
     return createErrorResponse("Method not allowed", 405, "method_not_allowed");

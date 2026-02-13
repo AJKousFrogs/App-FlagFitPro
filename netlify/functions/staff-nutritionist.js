@@ -14,6 +14,7 @@ async function verifyNutritionistAccess(userId) {
     .select("role, team_id")
     .eq("user_id", userId)
     .in("role", ["nutritionist", "coach", "admin", "staff"])
+    .eq("status", "active")
     .limit(1)
     .single();
 
@@ -22,6 +23,22 @@ async function verifyNutritionistAccess(userId) {
   }
 
   return member;
+}
+
+async function verifyAthleteOnTeam(teamId, athleteId) {
+  const { data: member, error } = await supabaseAdmin
+    .from("team_members")
+    .select("user_id")
+    .eq("team_id", teamId)
+    .eq("user_id", athleteId)
+    .eq("status", "active")
+    .limit(1)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    throw error;
+  }
+  return !!member;
 }
 
 /**
@@ -378,9 +395,23 @@ function generateRecommendations(profile, weightChange, avgHydration) {
   return recommendations;
 }
 
+function parseBoundedInt(value, fallback, { min, max, field }) {
+  if (value === undefined || value === null || value === "") {
+    return fallback;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
 // Main handler
-async function handler(event) {
-  return baseHandler(event, async (event, userId) => {
+async function handleRequest(event, _context, { userId }) {
     const path = event.path.replace(
       "/.netlify/functions/staff-nutritionist",
       "",
@@ -410,7 +441,28 @@ async function handler(event) {
     // GET /athletes/:id/trends - Get body composition trends
     if (method === "GET" && path.match(/^\/athletes\/[\w-]+\/trends$/)) {
       const athleteId = path.split("/")[2];
-      const days = parseInt(event.queryStringParameters?.days || "90");
+      let days;
+      try {
+        days = parseBoundedInt(event.queryStringParameters?.days, 90, {
+          min: 1,
+          max: 365,
+          field: "days",
+        });
+      } catch (validationError) {
+        return createErrorResponse(
+          validationError.message || "days must be an integer between 1 and 365",
+          422,
+          "validation_error",
+        );
+      }
+      const canAccessAthlete = await verifyAthleteOnTeam(teamId, athleteId);
+      if (!canAccessAthlete) {
+        return createErrorResponse(
+          "Access denied to athlete data",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
       const trends = await getBodyCompositionTrends(athleteId, days);
       return createSuccessResponse({ trends });
     }
@@ -430,8 +482,28 @@ async function handler(event) {
     // POST /reports/:athleteId - Generate nutrition report
     if (method === "POST" && path.match(/^\/reports\/[\w-]+$/)) {
       const athleteId = path.split("/")[2];
-      const body = JSON.parse(event.body || "{}");
+      let body = {};
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch {
+        return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
+      }
       const reportType = body.type || "weekly";
+      if (!["weekly", "monthly"].includes(reportType)) {
+        return createErrorResponse(
+          "type must be one of: weekly, monthly",
+          422,
+          "validation_error",
+        );
+      }
+      const canAccessAthlete = await verifyAthleteOnTeam(teamId, athleteId);
+      if (!canAccessAthlete) {
+        return createErrorResponse(
+          "Access denied to athlete data",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
       const report = await generateNutritionReport(athleteId, reportType);
       return createSuccessResponse({ report });
     }
@@ -463,7 +535,24 @@ async function handler(event) {
     }
 
     return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
-  });
 }
 
-export { handler };
+export const handler = async (event, context) => {
+  if (event.httpMethod === "GET") {
+    return baseHandler(event, context, {
+      functionName: "staff-nutritionist",
+      allowedMethods: ["GET"],
+      rateLimitType: "READ",
+      requireAuth: true,
+      handler: handleRequest,
+    });
+  }
+
+  return baseHandler(event, context, {
+    functionName: "staff-nutritionist",
+    allowedMethods: ["POST"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: handleRequest,
+  });
+};

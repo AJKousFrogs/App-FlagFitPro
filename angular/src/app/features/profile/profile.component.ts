@@ -32,6 +32,7 @@ import { ProfileCompletionService } from "../../core/services/profile-completion
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -80,6 +81,7 @@ interface PendingInvitation {
     IconButtonComponent,
     CardShellComponent,
     StatsGridComponent,
+    AppLoadingComponent,
   ],
   template: `
     <app-main-layout>
@@ -114,13 +116,7 @@ interface PendingInvitation {
 
         <!-- Loading State -->
         @if (isLoading()) {
-          <div class="loading-state">
-            <p-progressSpinner
-              class="profile-loading-spinner"
-              strokeWidth="4"
-            ></p-progressSpinner>
-            <p class="loading-message">Loading profile...</p>
-          </div>
+          <app-loading message="Loading profile..." variant="inline" />
         }
 
         <!-- Error State -->

@@ -604,6 +604,15 @@ $ds-font-weight-bold: 700;
   --font-size-metric-lg: var(--ds-font-size-3xl, 2rem);
   --font-size-metric-md: var(--ds-font-size-2xl, 1.5rem);
 
+  /* Stat Block Sizes - Use .stat-block--card, .stat-block--stat-item from primitives/_dashboard when possible */
+  --stat-block-value-hero: var(--ds-font-size-3xl, 2rem);
+  --stat-block-value-card: var(--ds-font-size-2xl, 1.5rem);
+  --stat-block-value-compact: var(--ds-font-size-xl, 1.25rem);
+  --stat-block-value-sm: var(--ds-font-size-md, 1rem);
+  --stat-block-label-compact: var(--ds-font-size-xs, 0.75rem);
+  --stat-block-label-default: var(--ds-font-size-md, 1rem);
+  --stat-block-label-compact-lg: var(--font-compact-lg, 0.8125rem);
+
   /* ================================
      LINE HEIGHTS - STRICT CONTRACT
      ================================ */
@@ -643,6 +652,8 @@ $ds-font-weight-bold: 700;
   --radius-3xl: var(--ds-radius-3xl, 24px);
   /* ⚠️ RESTRICTED: radius-full (pill/circle) - LIMITED USE ONLY */
   --radius-full: var(--ds-radius-full, 9999px);
+  /* Circle (avatars, icon containers) - use instead of hardcoded 50% */
+  --radius-circle: 50%;
 
   /* BUTTON-SPECIFIC RADIUS - RAISED rectangular style, NOT pill */
   --radius-button: var(--ds-radius-lg, 8px);

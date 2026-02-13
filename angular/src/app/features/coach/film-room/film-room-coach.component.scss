@@ -223,33 +223,6 @@
   flex-wrap: wrap;
 }
 
-// Empty State
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-6);
-  text-align: center;
-  background: var(--ds-surface-elevated);
-  border-radius: var(--radius-lg);
-
-  i {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--ds-text-tertiary);
-    margin-bottom: var(--space-3);
-  }
-
-  h3 {
-    margin: 0 0 var(--space-2) 0;
-    color: var(--ds-text-primary);
-  }
-
-  p {
-    margin: 0 0 var(--space-4) 0;
-    color: var(--ds-text-secondary);
-  }
-}
-
 // Form Styles
 .upload-form,
 .tag-form {

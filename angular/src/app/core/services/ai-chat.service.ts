@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map, tap } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 
 /**
  * Risk levels for AI responses
@@ -169,7 +170,7 @@ export class AiChatService {
         tap(() => this.loading.set(false)),
         catchError((err) => {
           this.loading.set(false);
-          const errorMessage = err.message || "Failed to send message";
+          const errorMessage = getErrorMessage(err, "Failed to send message");
           this.error.set(errorMessage);
 
           // Return fallback message

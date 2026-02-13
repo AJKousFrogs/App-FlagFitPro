@@ -119,9 +119,9 @@ function createErrorResponse(
   // Log the error with requestId if available
   const logPrefix = requestId ? `[${requestId}]` : "";
   console.error(
-    `${logPrefix}[${errorType}] ${statusCode}:`,
+    `${logPrefix}[${resolvedErrorType}] ${resolvedStatusCode}:`,
     errorMessage,
-    error.stack || "",
+    resolvedError?.stack || "",
   );
 
   const errorDetails =

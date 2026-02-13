@@ -11,7 +11,6 @@ import {
   withComponentInputBinding,
   withDebugTracing,
   withPreloading,
-  withViewTransitions,
 } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
 import {
@@ -56,12 +55,11 @@ export const appConfig: ApplicationConfig = {
     // Note: zone.js is available as optional peer dependency for third-party libraries if needed
     provideZonelessChangeDetection(),
 
-    // Angular 21: Enhanced routing with component input binding, view transitions, and smart preloading
-    // Router event inspector: Enable debug tracing in development for router event inspection
+    // Angular 21: Enhanced routing with component input binding and smart preloading
+    // View transitions DISABLED: was causing UI lag; re-add withViewTransitions() if smooth transitions needed
     provideRouter(
       routes,
       withComponentInputBinding(), // Enables route params as component inputs
-      withViewTransitions(), // Enables smooth page transitions
       withPreloading(AuthAwarePreloadStrategy), // Custom preloading strategy for authenticated routes
       ...(isDevMode() ? [withDebugTracing()] : []), // Router event inspector - only in development
     ),

@@ -2,6 +2,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { detectACWRTrigger } from "./utils/safety-override.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 
 // Netlify Function: Calculate Readiness Score
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
@@ -119,7 +120,11 @@ function calculateWellnessIndex(wellness) {
   // Calculate final subscore
   // If optional fields available, blend them; otherwise use required only
   let subscore;
-  if (optionalWeightSum > 0) {
+  if (requiredWeightSum === 0 && optionalWeightSum === 0) {
+    subscore = null;
+  } else if (requiredWeightSum === 0) {
+    subscore = optionalSubscore / optionalWeightSum;
+  } else if (optionalWeightSum > 0) {
     // Blend required (60%) and optional (40%)
     const requiredScore = requiredSubscore / requiredWeightSum;
     const optionalScore = optionalSubscore / optionalWeightSum;
@@ -150,6 +155,77 @@ function determineDataMode(wellnessIndex, threshold = 60) {
   }
   return "reduced"; // Use sleep-proxy mode
 }
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isFiniteNumber(value) {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isValidAthleteId(value) {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.length > 128) {
+    return false;
+  }
+  return /^[A-Za-z0-9_-]+$/.test(trimmed);
+}
+
+async function verifyAthleteAccess(requestUserId, athleteId) {
+  if (athleteId === requestUserId) {
+    return { authorized: true };
+  }
+
+  const role = await getUserRole(requestUserId);
+  if (!["coach", "assistant_coach", "head_coach", "admin"].includes(role)) {
+    return {
+      authorized: false,
+      message: "Not authorized to calculate readiness for another athlete",
+    };
+  }
+
+  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", requestUserId)
+    .limit(1)
+    .maybeSingle();
+
+  if (requesterError || !requesterMembership?.team_id) {
+    return {
+      authorized: false,
+      message: "Requesting user is not assigned to a team",
+    };
+  }
+
+  const { data: athleteMembership, error: athleteError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", athleteId)
+    .limit(1)
+    .maybeSingle();
+
+  if (athleteError || !athleteMembership?.team_id) {
+    return {
+      authorized: false,
+      message: "Target athlete is not assigned to a team",
+    };
+  }
+
+  if (athleteMembership.team_id !== requesterMembership.team_id) {
+    return {
+      authorized: false,
+      message: "Not authorized to access athletes outside your team",
+    };
+  }
+
+  return { authorized: true };
+}
+
 export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "calc-readiness",
@@ -171,6 +247,10 @@ export const handler = async (event, context) => {
         return handleValidationError("Invalid JSON in request body");
       }
 
+      if (!isPlainObject(body)) {
+        return handleValidationError("Request body must be an object");
+      }
+
       // If athleteId not provided, use authenticated user's ID
       const { athleteId = userId, day } = body;
 
@@ -185,9 +265,28 @@ export const handler = async (event, context) => {
         return handleValidationError("athleteId is required");
       }
 
+      if (!isValidAthleteId(athleteId)) {
+        return handleValidationError(
+          "athleteId must be a non-empty alphanumeric identifier",
+        );
+      }
+
+      if (day !== undefined && day !== null && typeof day !== "string") {
+        return handleValidationError("day must be a valid date string");
+      }
+
       const targetDate = day ? new Date(day) : new Date();
+      if (Number.isNaN(targetDate.getTime())) {
+        return handleValidationError("day must be a valid date string");
+      }
+
       const dayStr = targetDate.toISOString().slice(0, 10);
       console.log("[calc-readiness] Target date:", dayStr);
+
+      const access = await verifyAthleteAccess(userId, athleteId);
+      if (!access.authorized) {
+        return createErrorResponse(access.message, 403, "authorization_error");
+      }
 
       // 1) Load training sessions for ACWR calculation (session-RPE: RPE × minutes)
       const startChronic = new Date(targetDate);
@@ -359,20 +458,28 @@ export const handler = async (event, context) => {
       // Wellness Index score (using calculated subscore)
       // Modeled on common athlete monitoring scales (1-5 ratings)
       // Strong associations with perceived performance in team-sport contexts (Saw et al. 2016)
-      const wellnessScore = wellnessIndex.subscore;
+      const wellnessScore = isFiniteNumber(wellnessIndex.subscore)
+        ? wellnessIndex.subscore
+        : 60;
 
       // Sleep score
       // Strong evidence base: sleep duration/quality strongly linked to readiness
       // (Halson 2014, Fullagar et al. 2015)
       let sleepScore = 100;
-      if (wellness.sleep_quality <= 4) {
+      if (isFiniteNumber(wellness.sleep_quality) && wellness.sleep_quality <= 4) {
         sleepScore -= 25;
-      } else if (wellness.sleep_quality <= 6) {
+      } else if (
+        isFiniteNumber(wellness.sleep_quality) &&
+        wellness.sleep_quality <= 6
+      ) {
         sleepScore -= 15;
       }
-      if (wellness.sleep_hours !== null && wellness.sleep_hours < 6) {
+      if (isFiniteNumber(wellness.sleep_hours) && wellness.sleep_hours < 6) {
         sleepScore -= 10;
-      } else if (wellness.sleep_hours !== null && wellness.sleep_hours < 7) {
+      } else if (
+        isFiniteNumber(wellness.sleep_hours) &&
+        wellness.sleep_hours < 7
+      ) {
         sleepScore -= 5;
       }
 

@@ -16,6 +16,21 @@ import { supabaseAdmin } from "./supabase-client.js";
 //
 // =============================================================================
 
+function parseBoundedInt(rawValue, fieldName, { min, max, fallback }) {
+  if (rawValue === undefined || rawValue === null || rawValue === "") {
+    return fallback;
+  }
+  const normalized = String(rawValue).trim();
+  if (!/^\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
 // =============================================================================
 // RECOVERY PROTOCOL DEFINITIONS
 // =============================================================================
@@ -511,6 +526,89 @@ const RECOVERY_PROTOCOLS = {
   },
 };
 
+const isValidIsoDateTime = (value) => {
+  if (!value || typeof value !== "string") {
+    return false;
+  }
+  return !Number.isNaN(new Date(value).getTime());
+};
+
+function validateRecommendPayload(payload = {}) {
+  const errors = [];
+  if (payload.intensity !== undefined) {
+    const intensity = Number(payload.intensity);
+    if (!Number.isFinite(intensity) || intensity < 1 || intensity > 10) {
+      errors.push("intensity must be a number between 1 and 10");
+    }
+  }
+  if (payload.soreness !== undefined) {
+    const soreness = Number(payload.soreness);
+    if (!Number.isFinite(soreness) || soreness < 0 || soreness > 10) {
+      errors.push("soreness must be a number between 0 and 10");
+    }
+  }
+  if (payload.daysUntilNextSession !== undefined) {
+    const days = Number(payload.daysUntilNextSession);
+    if (!Number.isInteger(days) || days < 0 || days > 30) {
+      errors.push("daysUntilNextSession must be an integer between 0 and 30");
+    }
+  }
+  if (
+    payload.sleepQuality !== undefined &&
+    !["poor", "fair", "good", "excellent"].includes(payload.sleepQuality)
+  ) {
+    errors.push("sleepQuality must be one of: poor, fair, good, excellent");
+  }
+  if (payload.timeAvailable !== undefined) {
+    const minutes = Number(payload.timeAvailable);
+    if (!Number.isFinite(minutes) || minutes < 0 || minutes > 600) {
+      errors.push("timeAvailable must be a number between 0 and 600");
+    }
+  }
+  if (payload.muscleGroups !== undefined && !Array.isArray(payload.muscleGroups)) {
+    errors.push("muscleGroups must be an array when provided");
+  }
+  if (payload.equipment !== undefined && !Array.isArray(payload.equipment)) {
+    errors.push("equipment must be an array when provided");
+  }
+  return errors;
+}
+
+function validateRecoveryLogPayload(payload = {}) {
+  const errors = [];
+  if (!payload.protocol_id || !String(payload.protocol_id).trim()) {
+    errors.push("protocol_id is required");
+  }
+  if (!payload.protocol_name || !String(payload.protocol_name).trim()) {
+    errors.push("protocol_name is required");
+  }
+  if (!payload.started_at || !isValidIsoDateTime(payload.started_at)) {
+    errors.push("started_at must be a valid datetime");
+  }
+  if (payload.completed_at !== undefined && payload.completed_at !== null && !isValidIsoDateTime(payload.completed_at)) {
+    errors.push("completed_at must be a valid datetime when provided");
+  }
+  if (payload.duration_planned !== undefined) {
+    const planned = Number(payload.duration_planned);
+    if (!Number.isInteger(planned) || planned < 0 || planned > 480) {
+      errors.push("duration_planned must be an integer between 0 and 480");
+    }
+  }
+  if (payload.duration_actual !== undefined) {
+    const actual = Number(payload.duration_actual);
+    if (!Number.isInteger(actual) || actual < 0 || actual > 480) {
+      errors.push("duration_actual must be an integer between 0 and 480");
+    }
+  }
+  if (
+    payload.status !== undefined &&
+    !["in_progress", "completed", "stopped"].includes(payload.status)
+  ) {
+    errors.push("status must be one of: in_progress, completed, stopped");
+  }
+  return errors;
+}
+
 // =============================================================================
 // RECOVERY RECOMMENDATION ENGINE
 // =============================================================================
@@ -863,6 +961,10 @@ async function handleRequest(event, _context, { userId }) {
 
     // Generate recovery recommendations
     if (event.httpMethod === "POST" && path === "recommend") {
+      const errors = validateRecommendPayload(body);
+      if (errors.length > 0) {
+        return createErrorResponse(errors.join("; "), 422, "validation_error");
+      }
       const recommendations = generateRecoveryRecommendations(body);
       return createSuccessResponse(recommendations);
     }
@@ -882,23 +984,52 @@ async function handleRequest(event, _context, { userId }) {
 
     // Save athlete recovery profile
     if (event.httpMethod === "POST" && path === "profile") {
+      if (body.user_id !== undefined || body.athlete_id !== undefined) {
+        return createErrorResponse(
+          "profile payload cannot include user_id or athlete_id",
+          422,
+          "validation_error",
+        );
+      }
       const saved = await saveAthleteRecoveryProfile(userId, body);
-      return createSuccessResponse(saved, null, 201);
+      return createSuccessResponse(saved, 201);
     }
 
     // Log a recovery session
     if (event.httpMethod === "POST" && path === "log") {
+      if (body.user_id !== undefined || body.athlete_id !== undefined) {
+        return createErrorResponse(
+          "log payload cannot include user_id or athlete_id",
+          422,
+          "validation_error",
+        );
+      }
+      const errors = validateRecoveryLogPayload(body);
+      if (errors.length > 0) {
+        return createErrorResponse(errors.join("; "), 422, "validation_error");
+      }
       const logged = await logRecoverySession(userId, body);
-      return createSuccessResponse(logged, null, 201);
+      return createSuccessResponse(logged, 201);
     }
 
     // Get recovery history
     if (event.httpMethod === "GET" && path === "history") {
       const params = event.queryStringParameters || {};
-      const history = await getRecoveryHistory(
-        userId,
-        parseInt(params.limit) || 30,
-      );
+      let parsedLimit;
+      try {
+        parsedLimit = parseBoundedInt(params.limit, "limit", {
+          min: 1,
+          max: 200,
+          fallback: 30,
+        });
+      } catch (validationError) {
+        return createErrorResponse(
+          validationError.message,
+          422,
+          "validation_error",
+        );
+      }
+      const history = await getRecoveryHistory(userId, parsedLimit);
       return createSuccessResponse(history);
     }
 

@@ -64,9 +64,6 @@
   border-left: var(--space-1) solid var(--orange-500);
 }
 
-// .card-header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
-
 .item-cell {
   display: flex;
   align-items: center;
@@ -96,7 +93,7 @@
   display: inline-block;
   width: var(--indicator-size-md);
   height: var(--indicator-size-md);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   margin-left: var(--space-2);
   border: var(--border-1) solid var(--surface-border);
 }
@@ -125,8 +122,6 @@
   gap: var(--space-1);
 }
 
-// .empty-state, .empty-message REMOVED
-// Use .card-empty-state from card-shell
 // @see docs/CARD_SHELL_CONTRACT.md §8
 
 .dialog-form {

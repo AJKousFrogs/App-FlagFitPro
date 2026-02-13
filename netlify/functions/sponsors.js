@@ -17,32 +17,35 @@ export const handler = async (event, context) => {
       try {
         sponsors = await db.sponsors.getActiveSponsors();
       } catch (dbError) {
-        console.error("Database error in sponsors function:", dbError);
+        if (dbError?.code) {
+          console.error("Database error in sponsors function", { code: dbError.code });
+        } else {
+          console.error("Database error in sponsors function");
+        }
         // Return empty array if database query fails (fallback to hardcoded logos)
         sponsors = [];
       }
 
       // Build proxy URL for logos to bypass COEP restrictions
       const getProxyUrl = (originalUrl) => {
-        // Get base URL from event headers or use default
-        const host =
-          event.headers?.host ||
-          event.headers?.Host ||
-          "webflagfootballfrogs.netlify.app";
-        const protocol =
-          event.headers?.["x-forwarded-proto"] ||
-          event.headers?.["X-Forwarded-Proto"] ||
-          "https";
-        const baseUrl = `${protocol}://${host}`;
-        return `${baseUrl}/.netlify/functions/sponsor-logo?url=${encodeURIComponent(originalUrl)}`;
+        return `/.netlify/functions/sponsor-logo?url=${encodeURIComponent(originalUrl)}`;
       };
+
+      const normalizedSponsors = Array.isArray(sponsors)
+        ? sponsors.filter(
+            (sponsor) =>
+              sponsor &&
+              typeof sponsor.logo_url === "string" &&
+              sponsor.logo_url.trim().length > 0,
+          )
+        : [];
 
       // Return sponsors data with proxied logo URLs
       // If no sponsors found, return empty array (frontend will use fallback)
       return createSuccessResponse({
         sponsors:
-          sponsors.length > 0
-            ? sponsors.map((sponsor) => ({
+          normalizedSponsors.length > 0
+            ? normalizedSponsors.map((sponsor) => ({
                 id: sponsor.id,
                 name: sponsor.name,
                 logoUrl: getProxyUrl(sponsor.logo_url),

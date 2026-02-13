@@ -15,7 +15,7 @@
   padding: var(--space-4);
 }
 
-/* PrimeNG override: DS-PNGO-002 in _exceptions.scss (p-datatable scroll/layout) */
+/* PrimeNG override: DS-PNGO-002 in _component-overrides.scss (p-datatable scroll/layout) */
 
 /* Toolbar */
 .table-toolbar {
@@ -57,10 +57,8 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   transition: background var(--transition-fast) var(--ease-standard);
-}
 
-.cell-value.editable:hover {
-  background: var(--surface-secondary);
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 .inline-edit-input {
@@ -69,11 +67,11 @@
   border: var(--border-2) solid var(--color-brand-primary);
   border-radius: var(--radius-sm);
   font-size: var(--ds-font-size-md);
-}
 
-.inline-edit-input:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 var(--space-0-75) rgba(var(--color-brand-primary-rgb), 0.2);
+  @include ds-input-focus(
+    $color: var(--color-brand-primary),
+    $shadow: 0 0 0 var(--space-0-75) rgba(var(--color-brand-primary-rgb), 0.2)
+  );
 }
 
 /* Actions cell */
@@ -184,7 +182,7 @@ tr.selected {
     flex-wrap: wrap;
   }
 
-  // Force card view on narrow containers - DS-EXC-004 in _exceptions.scss
+  // Force card view on narrow containers - DS-EXC-004 in _component-overrides.scss
 }
 
 /* Media Query Fallback */

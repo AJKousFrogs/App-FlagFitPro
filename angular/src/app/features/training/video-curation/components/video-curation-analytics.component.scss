@@ -37,7 +37,7 @@
   height: var(--indicator-size-sm);
   border-radius: var(--radius-sm);
 
-  // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-042)
+  // PrimeNG progressbar override moved to _component-overrides.scss (DS-EXC-042)
 }
 
 .analytics-value {
@@ -60,9 +60,7 @@
   border-radius: var(--radius-md);
   transition: background var(--transition-base) var(--ease-standard);
 
-  &:hover {
-    background: var(--surface-secondary);
-  }
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 .creator-stat-avatar {

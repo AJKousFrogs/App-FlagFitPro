@@ -197,11 +197,12 @@ async function exportTableData(tableConfig, userId) {
       data: sanitizedData,
     };
   } catch (error) {
+    console.error(`[data-export] Section export failed for ${table}:`, error);
     return {
       name: exportName,
       description,
       status: "error",
-      error: error.message,
+      error: "Section export failed",
       records: 0,
     };
   }
@@ -332,6 +333,12 @@ async function getExportRequestStatus(userId) {
  */
 async function requestDataExport(userId, options = {}) {
   const { format = "json", deliveryMethod = "download" } = options;
+  if (!["json"].includes(format)) {
+    throw new Error("format must be one of: json");
+  }
+  if (!["download"].includes(deliveryMethod)) {
+    throw new Error("deliveryMethod must be one of: download");
+  }
 
   // Log the request
   const { data: request, error } = await supabaseAdmin
@@ -379,6 +386,13 @@ async function handleRequest(event, _context, { userId }) {
     } catch {
       return createErrorResponse("Invalid JSON body", 400, "invalid_json");
     }
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return createErrorResponse(
+        "Request body must be an object",
+        422,
+        "validation_error",
+      );
+    }
   }
 
   try {
@@ -397,7 +411,7 @@ async function handleRequest(event, _context, { userId }) {
     // Request data export (async for large exports)
     if (event.httpMethod === "POST" && path === "request") {
       const request = await requestDataExport(userId, body);
-      return createSuccessResponse(request, null, 202);
+      return createSuccessResponse(request, 202);
     }
 
     // Generate and download data export immediately
@@ -451,6 +465,9 @@ async function handleRequest(event, _context, { userId }) {
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
     console.error("Data export error:", error);
+    if (error.message?.includes("must be one of")) {
+      return createErrorResponse(error.message, 422, "validation_error");
+    }
     throw error;
   }
 }

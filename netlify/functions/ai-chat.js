@@ -3122,6 +3122,18 @@ export const handler = async (event, context) => {
             requestId,
           );
         }
+        if (
+          !analysisContext ||
+          typeof analysisContext !== "object" ||
+          Array.isArray(analysisContext)
+        ) {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
 
         try {
           // Get user context for enhanced analysis
@@ -3166,6 +3178,14 @@ export const handler = async (event, context) => {
           requestId,
         );
       }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return createErrorResponse(
+          "Request body must be an object",
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
 
       const { message, session_id, team_id } = body;
       // goal and time_horizon reserved for future personalization features
@@ -3179,8 +3199,17 @@ export const handler = async (event, context) => {
           requestId,
         );
       }
+      const normalizedMessage = message.trim();
+      if (!normalizedMessage) {
+        return createErrorResponse(
+          "Message cannot be empty",
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
 
-      if (message.length > MAX_QUERY_LENGTH) {
+      if (normalizedMessage.length > MAX_QUERY_LENGTH) {
         return createErrorResponse(
           `Message too long (max ${MAX_QUERY_LENGTH} characters)`,
           400,
@@ -3241,7 +3270,7 @@ export const handler = async (event, context) => {
 
         // 6. Phase 3: Enhanced multi-signal classification with confidence scoring
         const enhancedClassification = classifyWithConfidence(
-          message,
+          normalizedMessage,
           {
             acwr: stateGates.acwr,
             injuries: stateGates.injuries,
@@ -3282,7 +3311,7 @@ export const handler = async (event, context) => {
           const savedMessage = await saveChatMessage(
             session.id,
             userId,
-            message,
+            normalizedMessage,
             blockedResponse,
             enhancedClassification,
           );
@@ -3292,7 +3321,7 @@ export const handler = async (event, context) => {
             await createYouthParentNotification(
               userId,
               "blocked_topic",
-              `Blocked query: ${message.substring(0, 50)}...`,
+              `Blocked query: ${normalizedMessage.substring(0, 50)}...`,
               enhancedClassification.youthRestrictions.blockedReason,
               savedMessage?.id,
             );
@@ -3314,7 +3343,7 @@ export const handler = async (event, context) => {
         }
 
         // 8. Build classification object for backward compatibility
-        const baseClassification = classifyRiskLevel(message);
+        const baseClassification = classifyRiskLevel(normalizedMessage);
         baseClassification.intent = enhancedClassification.intent;
 
         // Apply state gate escalation
@@ -3327,7 +3356,7 @@ export const handler = async (event, context) => {
         const classification = applyACWRSafetyOverride(
           stateEscalatedClassification,
           userContext,
-          message,
+          normalizedMessage,
         );
 
         // Phase 3: Merge enhanced classification data
@@ -3375,7 +3404,7 @@ export const handler = async (event, context) => {
 
         // 10. SMART AI: Process query through intelligent pipeline
         const smartResult = await processSmartQuery({
-          query: message,
+          query: normalizedMessage,
           userId,
           classification,
           userContext,
@@ -3404,7 +3433,7 @@ export const handler = async (event, context) => {
           const messageId = await saveChatMessage(
             session.id,
             userId,
-            message,
+            normalizedMessage,
             {
               answer: clarificationResponse.answer,
               citations: [],
@@ -3436,7 +3465,7 @@ export const handler = async (event, context) => {
         // 10b. Use smart hybrid search (semantic + keyword) for knowledge
         const knowledge =
           smartResult.knowledge ||
-          (await searchKnowledgeHybrid(message, {
+          (await searchKnowledgeHybrid(normalizedMessage, {
             limit: 5,
             semanticWeight: isEmbeddingServiceAvailable() ? 0.7 : 0,
           }));
@@ -3451,7 +3480,7 @@ export const handler = async (event, context) => {
         if (classification.acwrOverride) {
           // Generate safety-first swap plan response for ACWR-blocked queries
           aiResponse = await generateACWRBlockedResponse(
-            message,
+            normalizedMessage,
             classification,
             userContext,
           );
@@ -3480,7 +3509,7 @@ export const handler = async (event, context) => {
           };
 
           aiResponse = await generateAIResponse(
-            message,
+            normalizedMessage,
             knowledge,
             enhancedContext,
             classification.riskLevel,
@@ -3528,7 +3557,7 @@ export const handler = async (event, context) => {
 
         // 13. Phase 4: Create conversation context if applicable
         const contextToCreate = determineContextToCreate(
-          message,
+          normalizedMessage,
           classification,
           userContext,
         );
@@ -3579,7 +3608,7 @@ export const handler = async (event, context) => {
 
         // 16. Generate suggested actions (Phase 2: micro-session structured)
         const suggestedActions = generateSuggestedActions(
-          message,
+          normalizedMessage,
           aiResponse.answer,
           userContext,
           classification.riskLevel,
@@ -3624,7 +3653,7 @@ export const handler = async (event, context) => {
         const messageId = await saveChatMessage(
           session.id,
           userId,
-          message,
+          normalizedMessage,
           response,
           classification,
         );
@@ -3634,7 +3663,7 @@ export const handler = async (event, context) => {
           await createCoachInboxItem(
             messageId,
             userId,
-            message,
+            normalizedMessage,
             classification,
             stateGates,
           );

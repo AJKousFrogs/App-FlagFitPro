@@ -202,7 +202,7 @@
   margin-left: var(--space-1);
 }
 
-/* PrimeNG override: DS-EXC-026 in _exceptions.scss (.daily-readiness .weight-input .p-inputnumber-input) */
+/* PrimeNG override: DS-EXC-026 in _component-overrides.scss (.daily-readiness .weight-input .p-inputnumber-input) */
 .weight-hint {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
@@ -222,4 +222,4 @@
   padding-top: var(--space-3);
 }
 
-// PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-026)
+// PrimeNG slider overrides moved to _component-overrides.scss (DS-EXC-026)

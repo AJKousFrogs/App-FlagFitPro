@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -29,6 +29,7 @@ import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -120,10 +121,10 @@ const RECURRING_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
     IconButtonComponent,
     StatusTagComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="calendar-coach-page">
@@ -348,13 +349,13 @@ const RECURRING_OPTIONS = [
                 </div>
               </div>
             } @empty {
-              <div class="empty-state" role="status">
-                <i class="pi pi-calendar" aria-hidden="true"></i>
-                <p>No upcoming events</p>
-                <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
-                  >Create Event</app-button
-                >
-              </div>
+              <app-empty-state
+                icon="pi-calendar"
+                heading="No upcoming events"
+                actionLabel="Create Event"
+                actionIcon="pi-plus"
+                [actionHandler]="openCreateDialogHandler"
+              />
             }
           </div>
         </div>
@@ -645,7 +646,7 @@ const RECURRING_OPTIONS = [
 export class CalendarCoachComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
 
   // Constants exposed to template
@@ -844,6 +845,8 @@ export class CalendarCoachComponent implements OnInit {
     this.showCreateDialog = true;
   }
 
+  readonly openCreateDialogHandler = (): void => this.openCreateDialog();
+
   editEvent(event: TeamEvent): void {
     this.isEditing.set(true);
     this.eventForm = {
@@ -860,11 +863,10 @@ export class CalendarCoachComponent implements OnInit {
 
   async saveEvent(): Promise<void> {
     if (!this.eventForm.title || !this.eventForm.date) {
-      this.messageService.add({
-        severity: "warning",
-        summary: "Validation Error",
-        detail: "Please fill in all required fields",
-      });
+      this.toastService.warn(
+        "Please fill in all required fields",
+        "Validation Error",
+      );
       return;
     }
 
@@ -891,11 +893,10 @@ export class CalendarCoachComponent implements OnInit {
           this.api.put(`/api/coach/calendar?id=${selectedEventId}`, eventData),
         );
         if (response?.success) {
-          this.messageService.add({
-            severity: "success",
-            summary: "Event Updated",
-            detail: `${this.eventForm.title} has been updated`,
-          });
+          this.toastService.success(
+            `${this.eventForm.title} has been updated`,
+            "Event Updated",
+          );
           await this.loadData();
         }
       } else {
@@ -904,32 +905,23 @@ export class CalendarCoachComponent implements OnInit {
           this.api.post("/api/coach/calendar", eventData),
         );
         if (response?.success) {
-          this.messageService.add({
-            severity: "success",
-            summary: "Event Created",
-            detail: `${this.eventForm.title} has been created`,
-          });
+          this.toastService.success(
+            `${this.eventForm.title} has been created`,
+            "Event Created",
+          );
           await this.loadData();
         }
       }
       this.showCreateDialog = false;
     } catch (err) {
       this.logger.error("Failed to save event", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save event. Please try again.",
-      });
+      this.toastService.error("Failed to save event. Please try again.");
     }
   }
 
   viewEvent(event: TeamEvent): void {
     this.selectedEvent.set(event);
-    this.messageService.add({
-      severity: "info",
-      summary: "Event Details",
-      detail: event.title,
-    });
+    this.toastService.info(event.title, "Event Details");
   }
 
   async viewRsvps(event: TeamEvent): Promise<void> {
@@ -941,11 +933,10 @@ export class CalendarCoachComponent implements OnInit {
   }
 
   setLineup(event: TeamEvent): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Set Lineup",
-      detail: `Opening lineup editor for ${event.title}`,
-    });
+    this.toastService.info(
+      `Opening lineup editor for ${event.title}`,
+      "Set Lineup",
+    );
   }
 
   async cancelEvent(event: TeamEvent): Promise<void> {
@@ -962,45 +953,34 @@ export class CalendarCoachComponent implements OnInit {
         this.api.delete(`/api/coach/calendar?id=${event.id}`),
       );
       if (response?.success) {
-        this.messageService.add({
-          severity: "success",
-          summary: "Event Cancelled",
-          detail: `${event.title} has been cancelled`,
-        });
+        this.toastService.success(
+          `${event.title} has been cancelled`,
+          "Event Cancelled",
+        );
         await this.loadData();
       }
     } catch (err) {
       this.logger.error("Failed to cancel event", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to cancel event. Please try again.",
-      });
+      this.toastService.error("Failed to cancel event. Please try again.");
     }
   }
 
   sendRsvpReminder(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminders Sent",
-      detail: `Reminders sent to ${this.pendingCount()} players`,
-    });
+    this.toastService.success(
+      `Reminders sent to ${this.pendingCount()} players`,
+      "Reminders Sent",
+    );
   }
 
   messageAll(group: string): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Message",
-      detail: `Opening message composer for ${group} group`,
-    });
+    this.toastService.info(
+      `Opening message composer for ${group} group`,
+      "Message",
+    );
   }
 
   exportRsvpList(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Export Started",
-      detail: "RSVP list is being exported",
-    });
+    this.toastService.success("RSVP list is being exported", "Export Started");
   }
 
   // Helpers

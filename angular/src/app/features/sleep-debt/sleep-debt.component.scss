@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-@include stat-block;
 
 .sleep-debt-page {
   padding: var(--space-4);
@@ -22,7 +21,7 @@
 .debt-circle {
   width: var(--card-min-height-lg);
   height: var(--card-min-height-lg);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   margin: 0 auto var(--space-3);
   display: flex;
   flex-direction: column;
@@ -102,13 +101,6 @@
   margin: 0;
 }
 
-// Stats Grid (custom breakpoints md/sm differ from stats-grid mixin)
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
-}
-
 .stat-card {
   .stat-content {
     display: flex;
@@ -125,9 +117,6 @@
     border-radius: var(--radius-md);
   }
 
-  // .stat-details/.stat-label/.stat-value/.stat-hint REMOVED
-  // Use .stat-block classes from card-shell instead
-  // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 }
 
 // Impact Card
@@ -169,7 +158,7 @@
       border-radius: var(--radius-sm);
       margin-bottom: var(--space-2);
 
-      // PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-046)
+      // PrimeNG progressbar overrides moved to _component-overrides.scss (DS-EXC-046)
     }
 
     .impact-description {
@@ -277,26 +266,6 @@
       color: var(--ds-text-tertiary);
       font-style: italic;
     }
-  }
-}
-
-// Empty State
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: var(--chart-min-height-sm);
-  color: var(--ds-text-tertiary);
-
-  i {
-    font-size: var(--ds-font-size-3xl);
-    margin-bottom: var(--space-2);
-  }
-
-  p {
-    margin: 0;
-    text-align: center;
   }
 }
 

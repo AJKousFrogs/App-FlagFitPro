@@ -105,14 +105,14 @@ function checkResourceOwnership(
  * Verify user is member of a team
  * @param {string} userId - User ID from auth
  * @param {string} teamId - Team ID to check
- * @returns {Promise<object>} { authorized: boolean, error?: object }
+ * @returns {Promise<object>} { authorized: boolean, role?: string, teamId?: string, error?: object }
  */
 async function checkTeamMembership(userId, teamId) {
   try {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from("team_members")
-      .select("id")
+      .select("id, role, team_id")
       .eq("user_id", userId)
       .eq("team_id", teamId)
       .single();
@@ -124,7 +124,11 @@ async function checkTeamMembership(userId, teamId) {
       };
     }
 
-    return { authorized: true };
+    return {
+      authorized: true,
+      role: data.role || null,
+      teamId: data.team_id || teamId,
+    };
   } catch (error) {
     console.error("[Auth] Error checking team membership:", error);
     return {

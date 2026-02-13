@@ -19,7 +19,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
@@ -36,6 +36,7 @@ import { ApiResponse } from "../../core/models/common.models";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 // ===== Interfaces =====
@@ -99,8 +100,8 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     MobileOptimizedImageDirective,
     ButtonComponent,
     StatusTagComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="playbook-page">
@@ -222,17 +223,11 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
           </div>
         } @else {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-book"></i>
-              <h3>No plays found</h3>
-              <p>
-                @if (searchQuery || selectedCategory || selectedStatus) {
-                  Try adjusting your filters
-                } @else {
-                  Your coach hasn't added any plays yet
-                }
-              </p>
-            </div>
+            <app-empty-state
+              icon="pi-book"
+              heading="No plays found"
+              [description]="getEmptyDescription()"
+            />
           </p-card>
         }
       </div>
@@ -498,7 +493,7 @@ export class PlaybookComponent implements OnInit {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // Design system tokens
 
@@ -589,6 +584,12 @@ export class PlaybookComponent implements OnInit {
     return Math.round((this.correctAnswers() / total) * 100);
   });
 
+  getEmptyDescription(): string {
+    return this.searchQuery || this.selectedCategory || this.selectedStatus
+      ? "Try adjusting your filters"
+      : "Your coach hasn't added any plays yet";
+  }
+
   ngOnInit(): void {
     this.loadData();
   }
@@ -649,11 +650,10 @@ export class PlaybookComponent implements OnInit {
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
-          this.messageService.add({
-            severity: "success",
-            summary: newStatus ? "Marked as Memorized" : "Marked as Learning",
-            detail: play.name,
-          });
+          this.toastService.success(
+            play.name,
+            newStatus ? "Marked as Memorized" : "Marked as Learning",
+          );
         },
         error: (err) =>
           this.logger.error("Failed to update memorized status", err),
@@ -664,11 +664,10 @@ export class PlaybookComponent implements OnInit {
   startQuiz(): void {
     const questions = this.generateQuizQuestions();
     if (questions.length === 0) {
-      this.messageService.add({
-        severity: "warning",
-        summary: "Not enough plays",
-        detail: "Add more plays to start a quiz",
-      });
+      this.toastService.warn(
+        "Add more plays to start a quiz",
+        "Not enough plays",
+      );
       return;
     }
 

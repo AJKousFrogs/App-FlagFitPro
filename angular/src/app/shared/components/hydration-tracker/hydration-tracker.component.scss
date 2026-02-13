@@ -76,7 +76,7 @@
   right: 0;
   height: var(--indicator-size-md); /* 0.calc(var(--size-200) * 6) */
   background: var(--overlay-white-30);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   animation: wave 2s ease-in-out infinite;
 }
 
@@ -124,7 +124,7 @@
   border-radius: var(--radius-full);
   background: var(--surface-tertiary);
 
-  // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-040)
+  // PrimeNG progressbar override moved to _component-overrides.scss (DS-EXC-040)
 }
 
 .quick-add-section {

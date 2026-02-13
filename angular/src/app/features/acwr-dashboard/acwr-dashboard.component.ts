@@ -13,9 +13,8 @@
  * See docs/CANONICAL_PAGES.md for full documentation.
  *
  * CLEANUP REQUIRED:
- * - Remove `!important` declarations (33 instances)
- * - Remove PrimeNG overrides from component SCSS
- * - Replace raw spacing values with tokens
+ * - Remove PrimeNG overrides from component SCSS (migrate to design tokens where needed)
+ * - Replace any remaining raw spacing values with tokens
  *
  * Displays real-time Acute:Chronic Workload Ratio with:
  * - Color-coded risk zones

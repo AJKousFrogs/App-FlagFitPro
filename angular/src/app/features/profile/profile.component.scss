@@ -131,10 +131,8 @@
   font-size: var(--ds-font-size-sm);
   color: var(--color-warning-text);
   text-decoration: underline;
-}
 
-.profile-page .deletion-help-link:hover {
-  color: var(--color-status-warning);
+  @include ds-hover-state(transparent, $color: var(--color-status-warning));
 }
 
 @include respond-to(sm) {
@@ -148,27 +146,6 @@
     justify-content: space-between;
     align-items: center;
   }
-}
-
-/* ========== Loading State ========== */
-.profile-page .loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-16);
-  min-height: var(--chart-min-height-lg);
-}
-
-.profile-page .profile-loading-spinner {
-  width: var(--avatar-size-lg);
-  height: var(--avatar-size-lg);
-}
-
-.profile-page .loading-message {
-  margin-top: var(--space-4);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
 }
 
 /* ========== Profile Header Card ==========
@@ -491,11 +468,7 @@
 }
 
 /* ========== PrimeNG Tabs Override ========== */
-// PrimeNG tabs overrides moved to _exceptions.scss (DS-EXC-014)
-.profile-page .profile-tabs-container {
-  // Component-specific styles remain here
-}
-
+// PrimeNG tabs overrides moved to _component-overrides.scss (DS-EXC-014)
 /* ========== Invitation Badge ========== */
 .profile-page .invitation-badge {
   display: inline-flex;
@@ -547,10 +520,8 @@
   border-radius: var(--radius-lg);
   transition: background-color var(--transition-base) var(--ease-standard);
   border: var(--border-1) solid transparent; // Subtle border ready for hover
-}
 
-.profile-page .activity-item:hover {
-  background: var(--surface-secondary);
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 /* Activity icon with background - matches Dashboard .stat-icon EXACTLY */
@@ -668,16 +639,14 @@
 }
 
 .profile-page .stat-block__value {
-  font-size: var(--ds-font-size-2xl); // 1.5rem - matches Dashboard
-  font-weight: var(
-    --ds-font-weight-semibold
-  ); // Reduced from bold to not compete with card title
+  font-size: var(--stat-block-value-card);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-tight);
 }
 
 .profile-page .stat-block__label {
-  font-size: var(--ds-font-size-compact-lg); // 0.8125rem
+  font-size: var(--stat-block-label-compact-lg);
   font-weight: var(--ds-font-weight-regular); // Lighter weight for labels
   color: var(--color-text-muted);
   text-transform: var(--ds-text-transform-uppercase);
@@ -1048,7 +1017,7 @@
     display: none;
   }
 
-  // PrimeNG tabs mobile overrides moved to _exceptions.scss (DS-EXC-014)
+  // PrimeNG tabs mobile overrides moved to _component-overrides.scss (DS-EXC-014)
 
   .profile-page .invitation-badge {
     margin-left: var(--space-1);

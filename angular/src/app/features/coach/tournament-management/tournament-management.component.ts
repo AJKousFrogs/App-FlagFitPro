@@ -17,10 +17,11 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
 
 import { ProgressBar } from "primeng/progressbar";
@@ -134,10 +135,10 @@ const POSITIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="tournament-management-page">
@@ -334,16 +335,14 @@ const POSITIONS = [
           </div>
         } @else {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-trophy"></i>
-              <h3>No {{ activeTab() }} Tournaments</h3>
-              <p>{{ getEmptyMessage() }}</p>
-              @if (activeTab() === "available" || activeTab() === "upcoming") {
-                <app-button iconLeft="pi-search" (clicked)="browseTournaments()"
-                  >Browse Available</app-button
-                >
-              }
-            </div>
+            <app-empty-state
+              icon="pi-trophy"
+              [heading]="'No ' + activeTab() + ' Tournaments'"
+              [description]="getEmptyMessage()"
+              [actionLabel]="(activeTab() === 'available' || activeTab() === 'upcoming') ? 'Browse Available' : null"
+              [actionIcon]="(activeTab() === 'available' || activeTab() === 'upcoming') ? 'pi-search' : null"
+              [actionHandler]="(activeTab() === 'available' || activeTab() === 'upcoming') ? browseTournamentsHandler : null"
+            />
           </p-card>
         }
       </div>
@@ -628,7 +627,7 @@ const POSITIONS = [
 export class TournamentManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly tournaments = signal<Tournament[]>([]);
@@ -705,11 +704,10 @@ export class TournamentManagementComponent implements OnInit {
 
   // Actions
   registerTeam(): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Register Team",
-      detail: "Opening tournament registration form",
-    });
+    this.toastService.info(
+      "Opening tournament registration form",
+      "Register Team",
+    );
   }
 
   manageTournament(tournament: Tournament): void {
@@ -731,40 +729,38 @@ export class TournamentManagementComponent implements OnInit {
   }
 
   sendReminders(tournament: Tournament): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminders Sent",
-      detail: `Reminders sent for ${tournament.name}`,
-    });
+    this.toastService.success(
+      `Reminders sent for ${tournament.name}`,
+      "Reminders Sent",
+    );
   }
 
   sendPendingReminders(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Reminders Sent",
-      detail: `Reminders sent to ${this.pendingRsvps().length} pending players`,
-    });
+    this.toastService.success(
+      `Reminders sent to ${this.pendingRsvps().length} pending players`,
+      "Reminders Sent",
+    );
   }
 
   sendNudge(rsvp: TournamentRsvp): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Nudge Sent",
-      detail: `Reminder sent to ${rsvp.playerName}`,
-    });
+    this.toastService.success(
+      `Reminder sent to ${rsvp.playerName}`,
+      "Nudge Sent",
+    );
   }
 
   saveLineup(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Lineup Saved",
-      detail: "Tournament lineup has been saved",
-    });
+    this.toastService.success(
+      "Tournament lineup has been saved",
+      "Lineup Saved",
+    );
   }
 
   browseTournaments(): void {
     this.activeTab.set("available");
   }
+
+  readonly browseTournamentsHandler = (): void => this.browseTournaments();
 
   getGamesForDay(day: number): TournamentGame[] {
     return this.selectedTournament()?.games?.filter((g) => g.day === day) || [];

@@ -217,11 +217,6 @@
   }
 }
 
-// .exercise-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
-
-// .card-header - REMOVED (use app-card-shell component)
-// @see docs/CARD_SHELL_CONTRACT.md
 // Temporary exception for exercise-library until migration
 .card-header {
   display: flex;
@@ -404,59 +399,6 @@
   box-shadow: var(--shadow-2);
 }
 
-/* ===== EMPTY STATE - REMOVED =====
-   Use .card-empty-state from card-shell
-   @see docs/CARD_SHELL_CONTRACT.md §8 */
-
-/* Temporary exception for exercise-library until migration */
-.empty-state {
-  text-align: center;
-  padding: var(--space-10) var(--space-6);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-xl);
-  border: var(--border-2) dashed var(--color-border-secondary);
-}
-
-.empty-icon {
-  font-size: var(--ds-font-size-var(--header-height));
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-4);
-}
-
-.empty-icon i {
-  font-size: var(--ds-font-size-var(--header-height));
-}
-
-.empty-state h3 {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
-}
-
-.empty-state p {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-5) 0;
-}
-
-.reset-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-5);
-  background: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-  border: none;
-  border-radius: var(--radius-lg);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
 
 .reset-btn i {
   color: var(--color-text-on-primary);
@@ -722,7 +664,6 @@
     animation: none;
   }
 
-  // .exercise-card:hover REMOVED - card-shell handles reduced motion
 }
 
 /* ================================================================
@@ -730,7 +671,7 @@
    Documented exceptions per DESIGN_SYSTEM_RULES.md Section 2.2
    ================================================================ */
 
-// PrimeNG inputicon override moved to _exceptions.scss (DS-EXC-029)
+// PrimeNG inputicon override moved to _component-overrides.scss (DS-EXC-029)
 
 /*
  * EXCEPTION: Reduced Motion - Instant Transitions

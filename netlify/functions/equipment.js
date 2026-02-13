@@ -6,6 +6,68 @@ import { checkTeamMembership } from "./utils/auth-helper.js";
 // Netlify Function: Equipment API
 // Handles equipment/gear tracking and assignments
 
+const MAX_RETRY_ATTEMPTS = 3;
+
+const parsePositiveQuantity = (value, fieldName) => {
+  if (value === undefined || value === null) {
+    return 1;
+  }
+
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    throw new Error(`${fieldName} must be a positive integer`);
+  }
+  return parsed;
+};
+
+const updateAvailableQuantityWithRetry = async (
+  equipmentId,
+  delta,
+  conditionAtReturn = null,
+) => {
+  for (let attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt++) {
+    const { data: item, error: fetchError } = await supabaseAdmin
+      .from("equipment_items")
+      .select("id, quantity_available, condition")
+      .eq("id", equipmentId)
+      .single();
+
+    if (fetchError || !item) {
+      throw new Error("Equipment item not found");
+    }
+
+    const nextQuantity = item.quantity_available + delta;
+    if (nextQuantity < 0) {
+      throw new Error("Not enough available equipment");
+    }
+
+    const updatePayload = { quantity_available: nextQuantity };
+    if (conditionAtReturn) {
+      const conditionOrder = ["new", "good", "fair", "poor", "needs_replacement"];
+      if (
+        conditionOrder.indexOf(conditionAtReturn) >
+        conditionOrder.indexOf(item.condition)
+      ) {
+        updatePayload.condition = conditionAtReturn;
+      }
+    }
+
+    const { data: updated, error: updateError } = await supabaseAdmin
+      .from("equipment_items")
+      .update(updatePayload)
+      .eq("id", equipmentId)
+      .eq("quantity_available", item.quantity_available)
+      .select("id")
+      .maybeSingle();
+
+    if (!updateError && updated) {
+      return;
+    }
+  }
+
+  throw new Error("Equipment inventory update conflict. Please retry.");
+};
+
 // Get all equipment items for a team
 const getTeamEquipment = async (userId, queryParams) => {
   checkEnvVars();
@@ -88,6 +150,11 @@ const createEquipmentItem = async (userId, itemData) => {
     throw new Error("Only coaches and admins can add equipment");
   }
 
+  const parsedTotal = Number.parseInt(quantity_total, 10);
+  if (!Number.isInteger(parsedTotal) || parsedTotal <= 0) {
+    throw new Error("quantity_total must be a positive integer");
+  }
+
   const { data, error } = await supabaseAdmin
     .from("equipment_items")
     .insert({
@@ -97,8 +164,8 @@ const createEquipmentItem = async (userId, itemData) => {
       description,
       size,
       color,
-      quantity_total,
-      quantity_available: quantity_total, // Initially all available
+      quantity_total: parsedTotal,
+      quantity_available: parsedTotal, // Initially all available
       condition: condition || "new",
       purchase_date,
       notes,
@@ -151,6 +218,19 @@ const updateEquipmentItem = async (userId, itemId, updates) => {
 
   // If quantity_total changed, adjust quantity_available
   if (filteredUpdates.quantity_total !== undefined) {
+    const parsedTotal = Number.parseInt(filteredUpdates.quantity_total, 10);
+    if (!Number.isInteger(parsedTotal) || parsedTotal <= 0) {
+      throw new Error("quantity_total must be a positive integer");
+    }
+
+    const assignedQuantity = item.quantity_total - item.quantity_available;
+    if (parsedTotal < assignedQuantity) {
+      throw new Error(
+        `quantity_total cannot be less than assigned quantity (${assignedQuantity})`,
+      );
+    }
+
+    filteredUpdates.quantity_total = parsedTotal;
     const diff = filteredUpdates.quantity_total - item.quantity_total;
     filteredUpdates.quantity_available = Math.max(
       0,
@@ -278,6 +358,9 @@ const checkoutEquipment = async (userId, checkoutData) => {
   checkEnvVars();
 
   const { player_id, equipment_id, quantity, notes } = checkoutData;
+  if (!player_id || !equipment_id) {
+    throw new Error("player_id and equipment_id are required");
+  }
 
   // Get equipment item
   const { data: item, error: itemError } = await supabaseAdmin
@@ -295,7 +378,7 @@ const checkoutEquipment = async (userId, checkoutData) => {
     throw new Error("Only coaches and admins can checkout equipment");
   }
 
-  const checkoutQuantity = quantity || 1;
+  const checkoutQuantity = parsePositiveQuantity(quantity, "quantity");
 
   if (item.quantity_available < checkoutQuantity) {
     throw new Error(
@@ -303,30 +386,30 @@ const checkoutEquipment = async (userId, checkoutData) => {
     );
   }
 
-  // Create assignment
-  const { data: assignment, error: assignmentError } = await supabaseAdmin
-    .from("equipment_assignments")
-    .insert({
-      equipment_id,
-      player_id,
-      quantity_assigned: checkoutQuantity,
-      condition_at_assignment: item.condition,
-      notes,
-    })
-    .select()
-    .single();
+  await updateAvailableQuantityWithRetry(equipment_id, -checkoutQuantity);
 
-  if (assignmentError) {
-    throw assignmentError;
+  try {
+    const { data: assignment, error: assignmentError } = await supabaseAdmin
+      .from("equipment_assignments")
+      .insert({
+        equipment_id,
+        player_id,
+        quantity_assigned: checkoutQuantity,
+        condition_at_assignment: item.condition,
+        notes,
+      })
+      .select()
+      .single();
+
+    if (assignmentError) {
+      throw assignmentError;
+    }
+
+    return assignment;
+  } catch (insertError) {
+    await updateAvailableQuantityWithRetry(equipment_id, checkoutQuantity);
+    throw insertError;
   }
-
-  // Update available quantity
-  await supabaseAdmin
-    .from("equipment_items")
-    .update({ quantity_available: item.quantity_available - checkoutQuantity })
-    .eq("id", equipment_id);
-
-  return assignment;
 };
 
 // Bulk checkout equipment
@@ -334,6 +417,9 @@ const bulkCheckout = async (userId, bulkData) => {
   checkEnvVars();
 
   const { equipment_id, player_ids, quantity } = bulkData;
+  if (!equipment_id || !Array.isArray(player_ids) || player_ids.length === 0) {
+    throw new Error("equipment_id and non-empty player_ids are required");
+  }
 
   const { data: item, error: itemError } = await supabaseAdmin
     .from("equipment_items")
@@ -350,8 +436,9 @@ const bulkCheckout = async (userId, bulkData) => {
     throw new Error("Only coaches and admins can checkout equipment");
   }
 
-  const checkoutQuantity = quantity || 1;
-  const totalNeeded = checkoutQuantity * player_ids.length;
+  const checkoutQuantity = parsePositiveQuantity(quantity, "quantity");
+  const uniquePlayerIds = [...new Set(player_ids)];
+  const totalNeeded = checkoutQuantity * uniquePlayerIds.length;
 
   if (item.quantity_available < totalNeeded) {
     throw new Error(
@@ -359,29 +446,30 @@ const bulkCheckout = async (userId, bulkData) => {
     );
   }
 
-  const assignments = player_ids.map((playerId) => ({
+  const assignments = uniquePlayerIds.map((playerId) => ({
     equipment_id,
     player_id: playerId,
     quantity_assigned: checkoutQuantity,
     condition_at_assignment: item.condition,
   }));
 
-  const { data, error } = await supabaseAdmin
-    .from("equipment_assignments")
-    .insert(assignments)
-    .select();
+  await updateAvailableQuantityWithRetry(equipment_id, -totalNeeded);
 
-  if (error) {
-    throw error;
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("equipment_assignments")
+      .insert(assignments)
+      .select();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (insertError) {
+    await updateAvailableQuantityWithRetry(equipment_id, totalNeeded);
+    throw insertError;
   }
-
-  // Update available quantity
-  await supabaseAdmin
-    .from("equipment_items")
-    .update({ quantity_available: item.quantity_available - totalNeeded })
-    .eq("id", equipment_id);
-
-  return data;
 };
 
 // Return equipment
@@ -418,7 +506,7 @@ const returnEquipment = async (userId, returnData) => {
     throw new Error("Only coaches and admins can process returns");
   }
 
-  // Update assignment
+  // Update assignment (conditional to prevent double-return race)
   const { data: updatedAssignment, error: updateError } = await supabaseAdmin
     .from("equipment_assignments")
     .update({
@@ -427,33 +515,22 @@ const returnEquipment = async (userId, returnData) => {
       notes: notes || assignment.notes,
     })
     .eq("id", assignment_id)
+    .is("returned_at", null)
     .select()
-    .single();
+    .maybeSingle();
 
-  if (updateError) {
+  if (updateError || !updatedAssignment) {
+    if (!updatedAssignment) {
+      throw new Error("Equipment already returned");
+    }
     throw updateError;
   }
 
-  // Update equipment available quantity and condition
-  const updateData = {
-    quantity_available:
-      assignment.equipment_items.quantity_available +
-      assignment.quantity_assigned,
-  };
-
-  // If returned in worse condition, update equipment condition
-  const conditionOrder = ["new", "good", "fair", "poor", "needs_replacement"];
-  if (
-    conditionOrder.indexOf(condition_at_return) >
-    conditionOrder.indexOf(assignment.equipment_items.condition)
-  ) {
-    updateData.condition = condition_at_return;
-  }
-
-  await supabaseAdmin
-    .from("equipment_items")
-    .update(updateData)
-    .eq("id", assignment.equipment_id);
+  await updateAvailableQuantityWithRetry(
+    assignment.equipment_id,
+    assignment.quantity_assigned,
+    condition_at_return,
+  );
 
   return updatedAssignment;
 };
@@ -598,7 +675,7 @@ export const handler = async (event, context) => {
 
         if (event.httpMethod === "POST" && path === "items") {
           const result = await createEquipmentItem(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         const itemMatch = path.match(/^items\/([^/]+)$/);
@@ -643,12 +720,12 @@ export const handler = async (event, context) => {
         // Checkout endpoints
         if (event.httpMethod === "POST" && path === "checkout") {
           const result = await checkoutEquipment(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         if (event.httpMethod === "POST" && path === "checkout/bulk") {
           const result = await bulkCheckout(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         // Return endpoint
@@ -688,6 +765,19 @@ export const handler = async (event, context) => {
             400,
             "insufficient_quantity",
           );
+        }
+        if (error.message.includes("already returned")) {
+          return createErrorResponse(error.message, 409, "conflict");
+        }
+        if (
+          error.message.includes("required") ||
+          error.message.includes("positive integer") ||
+          error.message.includes("cannot be less")
+        ) {
+          return createErrorResponse(error.message, 422, "validation_error");
+        }
+        if (error.message.includes("update conflict")) {
+          return createErrorResponse(error.message, 409, "conflict");
         }
         throw error;
       }

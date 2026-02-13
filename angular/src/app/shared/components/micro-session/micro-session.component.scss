@@ -169,10 +169,7 @@
   color: var(--color-text-secondary);
 }
 
-// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-038)
-.overall-bar {
-  // Component-specific styles remain here
-}
+// PrimeNG progressbar: _component-overrides.scss (DS-EXC-038)
 
 .current-step {
   text-align: center;
@@ -248,10 +245,7 @@
   text-transform: var(--ds-text-transform-uppercase);
 }
 
-// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-038)
-.step-bar {
-  // Component-specific styles remain here
-}
+// PrimeNG progressbar: _component-overrides.scss (DS-EXC-038)
 
 .session-controls {
   display: flex;
@@ -301,16 +295,7 @@
   align-items: center;
 }
 
-.stat-block__value {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.stat-block__label {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
+/* stat-block: use primitives from _dashboard (stat-block__value, stat-block__label) */
 
 .follow-up-section {
   background: var(--surface-50);
@@ -359,4 +344,4 @@
   margin-bottom: var(--space-4);
 }
 
-// PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-038)
+// PrimeNG slider overrides moved to _component-overrides.scss (DS-EXC-038)

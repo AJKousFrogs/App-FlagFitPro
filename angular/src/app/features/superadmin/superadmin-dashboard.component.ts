@@ -18,6 +18,8 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import {
   SuperadminService,
   ApprovalRequest,
@@ -38,6 +40,8 @@ import {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    AppLoadingComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -134,16 +138,13 @@ import {
           </ng-template>
 
           @if (isLoading()) {
-            <div class="loading-state">
-              <i class="pi pi-spin pi-spinner"></i>
-              <span>Loading approvals...</span>
-            </div>
+            <app-loading message="Loading approvals..." variant="inline" />
           } @else if (pendingApprovals().length === 0) {
-            <div class="empty-state">
-              <i class="pi pi-check-circle"></i>
-              <h4>All Caught Up!</h4>
-              <p>No pending approvals at this time.</p>
-            </div>
+            <app-empty-state
+              icon="pi-check-circle"
+              heading="All Caught Up!"
+              description="No pending approvals at this time."
+            />
           } @else {
             <div class="approvals-list">
               @for (approval of pendingApprovals(); track approval.id) {

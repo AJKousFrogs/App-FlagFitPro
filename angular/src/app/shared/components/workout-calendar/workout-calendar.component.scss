@@ -100,10 +100,8 @@
     opacity var(--transition-fast),
     background var(--transition-fast);
   border: var(--border-2) solid transparent;
-}
 
-.calendar-day:hover {
-  background: var(--surface-tertiary);
+  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .calendar-day.today {
@@ -141,7 +139,7 @@
   color: var(--color-text-on-primary);
   width: var(--space-6);
   height: var(--space-6);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,7 +155,7 @@
 .workout-dot {
   width: var(--space-2);
   height: var(--space-2);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   cursor: help;
 }
 
@@ -210,10 +208,8 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-}
 
-.workout-item:hover {
-  background: var(--color-border-secondary);
+  @include ds-hover-state(var(--color-border-secondary));
 }
 
 .workout-item.completed {
@@ -262,7 +258,7 @@
 .legend-dot {
   width: calc(var(--space-2) + var(--space-0-5));
   height: calc(var(--space-2) + var(--space-0-5));
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 }
 
 .month-stats {

@@ -55,15 +55,17 @@ async function dismissCookieBanner(page: Page): Promise<void> {
 }
 
 /**
- * Login helper
+ * Login helper - waits for auth to complete before returning
  */
 async function login(page: Page): Promise<void> {
-  await page.goto(`${BASE_URL}/login`);
+  await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded" });
+  await page.waitForLoadState("networkidle");
   await dismissCookieBanner(page);
 
   const emailInput = page.locator(
     'input[type="email"], [data-testid="email-input"]',
   );
+  await emailInput.waitFor({ state: "visible", timeout: 10000 });
   await emailInput.click();
   await emailInput.fill(TEST_USER.email);
   await emailInput.press("Tab");
@@ -75,17 +77,16 @@ async function login(page: Page): Promise<void> {
   await passwordInput.fill(TEST_USER.password);
   await passwordInput.press("Tab");
 
-  await page.waitForSelector('button[type="submit"]:not([disabled])', {
-    timeout: 10000,
-  });
+  const submitBtn = page.locator('button[type="submit"]:not([disabled])');
+  await submitBtn.waitFor({ state: "visible", timeout: 10000 });
+  await submitBtn.click();
 
-  await page.click('button[type="submit"]');
-  await page.waitForTimeout(2000);
-  await page.waitForURL(/.*(dashboard|onboarding).*/, { timeout: 15000 });
+  await page.waitForURL(/.*(dashboard|onboarding).*/, { timeout: 20000 });
+  await page.waitForLoadState("networkidle");
 }
 
 /**
- * Get computed styles for an element
+ * Get computed styles for an element (by selector - returns first match)
  */
 async function getComputedStyles(
   page: Page,
@@ -109,6 +110,19 @@ async function getComputedStyles(
     };
   }, selector);
 }
+
+/** Design token values (computed) - from design-system-tokens.scss */
+const ALLOWED_BORDER_RADIUS = new Set([
+  "0px",
+  "2px",
+  "6px",
+  "8px",
+  "12px",
+  "16px",
+  "24px",
+  "9999px",
+  "50%",
+]);
 
 /**
  * Check if a color value uses CSS variable (design token)
@@ -152,14 +166,20 @@ function isHardcodedColor(value: string): boolean {
     // Primary green hover (--ds-primary-green-hover: #036d35 = rgb(3, 109, 53))
     /^rgb\(3,\s*109,\s*53\)$/,
     /^rgba\(3,\s*109,\s*53,/,
-    // Error red (#ff003c = rgb(255, 0, 60))
+    // Error red (#ef4444 = rgb(239, 68, 68) - primitive-error-500, ds-color-danger)
+    /^rgb\(239,\s*68,\s*68\)$/,
+    /^rgba\(239,\s*68,\s*68,/,
+    // Legacy error (#ff003c = rgb(255, 0, 60))
     /^rgb\(255,\s*0,\s*60\)$/,
     /^rgba\(255,\s*0,\s*60,/,
     // Neutral grays from design system
     /^rgb\(23,\s*23,\s*23\)$/, // --primitive-neutral-900: #171717
+    /^rgb\(74,\s*74,\s*74\)$/, // --color-text-secondary: #4a4a4a
     /^rgb\(115,\s*115,\s*115\)$/, // --primitive-neutral-600: #737373
     /^rgb\(26,\s*26,\s*26\)$/, // --color-text-primary: #1a1a1a
     /^rgb\(255,\s*255,\s*255\)$/, // White (surface-primary)
+    // Surface secondary (#f8faf9 = rgb(248, 250, 249))
+    /^rgb\(248,\s*250,\s*249\)$/,
     // Success green
     /^rgb\(99,\s*173,\s*14\)$/, // --color-status-success: #63ad0e
     // Warning yellow/orange
@@ -201,6 +221,14 @@ test.describe("Design System Compliance", () => {
     await page.goto(`${BASE_URL}/`);
     await page.waitForLoadState("domcontentloaded");
 
+    // Ensure light theme so tokens are verified in light mode
+    await page.evaluate(() => {
+      localStorage.setItem("flagfit_theme", "light");
+    });
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+    await page.waitForSelector("[data-theme-ready='light']", { timeout: 10000 });
+
     const tokens = await page.evaluate(() => {
       const root = document.documentElement;
       const style = window.getComputedStyle(root);
@@ -218,6 +246,43 @@ test.describe("Design System Compliance", () => {
     expect(tokens["color-text-primary"]).toBeTruthy();
     expect(tokens["space-4"]).toBeTruthy();
     expect(tokens["border-1"]).toBe("1px");
+  });
+
+  test("should have design tokens in dark mode and apply dark-theme class", async ({
+    page,
+  }) => {
+    await page.goto(`${BASE_URL}/`);
+    await page.waitForLoadState("domcontentloaded");
+
+    // Set dark theme preference and reload so ThemeService applies it
+    await page.evaluate(() => {
+      localStorage.setItem("flagfit_theme", "dark");
+    });
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    // Wait for ThemeService to apply dark theme (data-theme-ready is set when applyTheme runs)
+    await page.waitForSelector("[data-theme-ready='dark']", { timeout: 10000 });
+
+    // Verify dark theme is applied
+    const themeState = await page.evaluate(() => {
+      const body = document.body;
+      const html = document.documentElement;
+      const style = window.getComputedStyle(html);
+      return {
+        hasDarkClass: body.classList.contains("dark-theme"),
+        dataTheme: html.getAttribute("data-theme"),
+        surface0: style.getPropertyValue("--p-surface-0").trim(),
+        colorTextPrimary: style
+          .getPropertyValue("--color-text-primary")
+          .trim(),
+      };
+    });
+
+    expect(themeState.hasDarkClass).toBe(true);
+    expect(themeState.dataTheme).toBe("dark");
+    expect(themeState.colorTextPrimary).toBeTruthy();
+    expect(themeState.surface0).toBeTruthy();
   });
 
   test("should use design tokens for colors instead of hardcoded values", async ({
@@ -356,11 +421,9 @@ test.describe("Design System Compliance", () => {
     await dismissCookieBanner(page);
     await page.waitForTimeout(1000);
 
-    // Check button sizes
+    // Check button padding - sample each button (not just first)
     const buttons = page.locator("button, app-button, .p-button");
     const buttonCount = await buttons.count();
-
-    const _buttonSizes: string[] = [];
     const buttonPadding: string[] = [];
 
     for (let i = 0; i < Math.min(buttonCount, 15); i++) {
@@ -368,27 +431,21 @@ test.describe("Design System Compliance", () => {
       if (!(await button.isVisible({ timeout: 1000 }).catch(() => false))) {
         continue;
       }
-
-      const styles = await getComputedStyles(
-        page,
-        await button.evaluate((el) => {
-          return el.tagName.toLowerCase();
-        }),
-      );
-
+      const styles = await button.evaluate((el) => ({
+        padding: getComputedStyle(el).padding,
+      }));
       if (styles.padding) {
         buttonPadding.push(styles.padding);
       }
     }
 
-    // Check for inconsistent padding (more than 3 different values suggests inconsistency)
     const uniquePadding = [...new Set(buttonPadding)];
     console.log(
       `Found ${uniquePadding.length} unique button padding values:`,
       uniquePadding,
     );
 
-    // Check card spacing
+    // Check card padding - sample each card
     const cards = page.locator("p-card, .p-card");
     const cardCount = await cards.count();
     const cardPadding: string[] = [];
@@ -398,14 +455,9 @@ test.describe("Design System Compliance", () => {
       if (!(await card.isVisible({ timeout: 1000 }).catch(() => false))) {
         continue;
       }
-
-      const styles = await getComputedStyles(
-        page,
-        await card.evaluate((el) => {
-          return el.tagName.toLowerCase();
-        }),
-      );
-
+      const styles = await card.evaluate((el) => ({
+        padding: getComputedStyle(el).padding,
+      }));
       if (styles.padding) {
         cardPadding.push(styles.padding);
       }
@@ -559,12 +611,13 @@ test.describe("Design System Compliance", () => {
           const style = el.getAttribute("style");
           if (style && style.length > 0) {
             // Filter out dynamic/necessary inline styles
-            if (
-              !style.includes("display") &&
-              !style.includes("visibility") &&
-              !style.includes("position") &&
-              style.length > 20 // Ignore very short styles
-            ) {
+            const isLayout = style.includes("display") || style.includes("visibility") || style.includes("position");
+            const isShort = style.length <= 20;
+            // Exempt: CSS custom props only (ThemeService, dynamic theming) - matches --var: value
+            const isCssVarsOnly = /^(\s*--[\w-]+\s*:\s*[^;]+;?\s*)+$/.test(style);
+            // Exempt: design token usage (color/background with var())
+            const isDesignToken = /^\s*(color|background(-color)?)\s*:\s*var\(/.test(style);
+            if (!isLayout && !isShort && !isCssVarsOnly && !isDesignToken) {
               results.push({
                 tag: el.tagName.toLowerCase(),
                 className: el.className?.toString().substring(0, 50) || "",
@@ -597,55 +650,43 @@ test.describe("Design System Compliance", () => {
     console.log(`Found ${violations.length} elements with inline styles`);
   });
 
-  test("should verify consistent border radius usage", async ({ page }) => {
+  test("should verify consistent border radius usage (design tokens only)", async ({
+    page,
+  }) => {
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState("networkidle");
     await dismissCookieBanner(page);
     await page.waitForTimeout(1000);
 
-    // Check buttons
-    const buttons = page.locator("button, app-button, .p-button");
-    const buttonCount = await buttons.count();
-
     const borderRadiusValues: string[] = [];
 
+    // Sample each button
+    const buttons = page.locator("button, app-button, .p-button");
+    const buttonCount = await buttons.count();
     for (let i = 0; i < Math.min(buttonCount, 15); i++) {
       const button = buttons.nth(i);
       if (!(await button.isVisible({ timeout: 1000 }).catch(() => false))) {
         continue;
       }
-
-      const styles = await getComputedStyles(
-        page,
-        await button.evaluate((el) => {
-          return el.tagName.toLowerCase();
-        }),
+      const br = await button.evaluate(
+        (el) => getComputedStyle(el).borderRadius,
       );
-
-      if (styles.borderRadius && styles.borderRadius !== "0px") {
-        borderRadiusValues.push(styles.borderRadius);
+      if (br && br !== "0px") {
+        borderRadiusValues.push(br);
       }
     }
 
-    // Check cards
+    // Sample each card
     const cards = page.locator("p-card, .p-card");
     const cardCount = await cards.count();
-
     for (let i = 0; i < Math.min(cardCount, 10); i++) {
       const card = cards.nth(i);
       if (!(await card.isVisible({ timeout: 1000 }).catch(() => false))) {
         continue;
       }
-
-      const styles = await getComputedStyles(
-        page,
-        await card.evaluate((el) => {
-          return el.tagName.toLowerCase();
-        }),
-      );
-
-      if (styles.borderRadius && styles.borderRadius !== "0px") {
-        borderRadiusValues.push(styles.borderRadius);
+      const br = await card.evaluate((el) => getComputedStyle(el).borderRadius);
+      if (br && br !== "0px") {
+        borderRadiusValues.push(br);
       }
     }
 
@@ -655,11 +696,15 @@ test.describe("Design System Compliance", () => {
       uniqueBorderRadius,
     );
 
-    // Warn if too many different values
-    if (uniqueBorderRadius.length > 4) {
+    const violations = uniqueBorderRadius.filter(
+      (v) => !ALLOWED_BORDER_RADIUS.has(v),
+    );
+    if (violations.length > 0) {
       console.warn(
-        "⚠️  High border radius inconsistency - consider using design tokens",
+        "⚠️  Border radius values not from design tokens (use --radius-*):",
+        violations,
       );
     }
+    expect(violations).toEqual([]);
   });
 });

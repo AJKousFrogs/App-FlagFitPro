@@ -36,11 +36,8 @@
   width: 100%;
   min-height: var(--touch-target-md);
   font-size: var(--ds-font-size-md);
-}
 
-.nav-item--sidebar:hover {
-  background: var(--surface-secondary);
-  color: var(--color-brand-primary);
+  @include ds-hover-state(var(--surface-secondary), $color: var(--color-brand-primary));
 }
 
 .nav-item--sidebar.active {
@@ -65,11 +62,8 @@
   padding: var(--space-2);
   min-width: var(--avatar-size-2xl); /* var(--header-height) */
   min-height: var(--touch-target-md);
-}
 
-.nav-item--bottom:hover {
-  color: var(--color-brand-primary);
-  background: var(--color-brand-light);
+  @include ds-hover-state(var(--color-brand-light), $color: var(--color-brand-primary));
 }
 
 .nav-item--bottom.active {
@@ -87,10 +81,8 @@
   padding: var(--space-4);
   text-align: center;
   color: var(--color-text-primary);
-}
 
-.nav-item--menu:hover {
-  background: var(--surface-tertiary);
+  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .nav-item--menu.active {
@@ -140,11 +132,8 @@
 
 .logout-btn {
   color: var(--color-status-error);
-}
 
-.logout-btn:hover {
-  background: var(--color-status-error-bg);
-  color: var(--color-status-error);
+  @include ds-hover-state(var(--color-status-error-bg), $color: var(--color-status-error));
 }
 
 @include respond-to(sm) {

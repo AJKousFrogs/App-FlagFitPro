@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { getUserRole } from "./utils/authorization-guard.js";
 
 // Initialize email transporter
 function getEmailTransporter() {
@@ -64,6 +65,25 @@ function getAppUrl() {
     "https://webflagfootballfrogs.netlify.app"
   );
 }
+
+const AUTHORIZED_EMAIL_ROLES = new Set([
+  "admin",
+  "coach",
+  "assistant_coach",
+  "staff",
+  "nutritionist",
+  "physiotherapist",
+  "sports_psychologist",
+]);
+const ALLOWED_EMAIL_TYPES = new Set([
+  "verification",
+  "parental_consent",
+  "password_reset",
+  "acwr_alert",
+  "welcome",
+  "team_invitation",
+]);
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Email verification template
 function getVerificationEmailTemplate(name, verificationUrl, role = "player") {
@@ -328,185 +348,281 @@ function getAcwrAlertEmailTemplate(
 </html>`;
 }
 
+const sendEmailRequest = async (event, _context, { userId }) => {
+  const transporter = getEmailTransporter();
+  if (!transporter) {
+    return createErrorResponse(
+      "Email service not configured. Please set up email credentials in environment variables.",
+      503,
+      "service_unavailable",
+    );
+  }
+
+  if (userId) {
+    const role = await getUserRole(userId);
+    if (!role || !AUTHORIZED_EMAIL_ROLES.has(role)) {
+      return createErrorResponse(
+        "You are not authorized to send system emails",
+        403,
+        "authorization_error",
+      );
+    }
+  }
+
+  let payload = {};
+  try {
+    payload = JSON.parse(event.body || "{}");
+  } catch {
+    return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+  }
+
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return createErrorResponse("Request body must be an object", 422, "validation_error");
+  }
+
+  const {
+    type,
+    to,
+    name,
+    verificationUrl,
+    token,
+    role,
+    minorName,
+    teamName,
+    inviterName,
+    invitationUrl,
+    // ACWR alert fields
+    coachName,
+    playerName,
+    acwrValue,
+    alertMessage,
+    recommendation,
+    dashboardUrl,
+  } = payload;
+
+  if (
+    typeof type !== "string" ||
+    type.trim().length === 0 ||
+    typeof to !== "string" ||
+    to.trim().length === 0
+  ) {
+    return createErrorResponse(
+      "Email type and recipient (to) are required",
+      422,
+      "validation_error",
+    );
+  }
+
+  // SECURITY: Validate email format to prevent abuse
+  if (!EMAIL_REGEX.test(to)) {
+    return createErrorResponse(
+      "Invalid email address format",
+      422,
+      "validation_error",
+    );
+  }
+
+  // SECURITY: Validate email type to prevent arbitrary email sending
+  if (!ALLOWED_EMAIL_TYPES.has(type)) {
+    return createErrorResponse(
+      `Invalid email type. Allowed types: ${Array.from(ALLOWED_EMAIL_TYPES).join(", ")}`,
+      422,
+      "validation_error",
+    );
+  }
+
+  const fromEmail = getFromEmail();
+  let mailOptions;
+
+  switch (type) {
+    case "verification": {
+      if (!verificationUrl && !token) {
+        return createErrorResponse(
+          "Verification URL or token is required",
+          422,
+          "validation_error",
+        );
+      }
+
+      const url = verificationUrl || `${getAppUrl()}/verify-email?token=${token}`;
+      const userRole = role || "player"; // Default to player if not provided
+      mailOptions = {
+        from: {
+          name: "FlagFit Pro",
+          address: fromEmail,
+        },
+        to,
+        subject: "Verify Your FlagFit Pro Email Address",
+        html: getVerificationEmailTemplate(name || "User", url, userRole),
+        text: `Hi ${name || "User"},\n\nPlease verify your email address by clicking this link:\n${url}\n\nThis link expires in 24 hours.\n\nBest regards,\nThe FlagFit Pro Team`,
+      };
+      break;
+    }
+
+    case "parental_consent":
+      if (!verificationUrl) {
+        return createErrorResponse(
+          "Verification URL is required for parental consent emails",
+          422,
+          "validation_error",
+        );
+      }
+      mailOptions = {
+        from: {
+          name: "FlagFit Pro",
+          address: fromEmail,
+        },
+        to,
+        subject: `Parental Consent Required for ${minorName || "your child"} - FlagFit Pro`,
+        html: getParentalConsentEmailTemplate(
+          name || "Parent/Guardian",
+          minorName || "your child",
+          verificationUrl,
+        ),
+        text: `Dear ${name || "Parent/Guardian"},\n\n${minorName || "Your child"} has requested to use FlagFit Pro. As they are under 18, we require your consent.\n\nPlease verify consent by clicking this link:\n${verificationUrl}\n\nThis link expires in 7 days.\n\nBest regards,\nThe FlagFit Pro Team`,
+      };
+      break;
+
+    case "password_reset": {
+      if (!verificationUrl && !token) {
+        return createErrorResponse(
+          "Reset URL or token is required for password reset emails",
+          422,
+          "validation_error",
+        );
+      }
+      const resetUrl =
+        verificationUrl || `${getAppUrl()}/reset-password?token=${token}`;
+      mailOptions = {
+        from: {
+          name: "FlagFit Pro",
+          address: fromEmail,
+        },
+        to,
+        subject: "Reset Your FlagFit Pro Password",
+        html: `<p>Hi ${name || "User"},</p><p>Use the link below to reset your password:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you did not request this, you can ignore this email.</p>`,
+        text: `Hi ${name || "User"},\n\nUse the link below to reset your password:\n${resetUrl}\n\nIf you did not request this, you can ignore this email.`,
+      };
+      break;
+    }
+
+    case "welcome":
+      mailOptions = {
+        from: {
+          name: "FlagFit Pro",
+          address: fromEmail,
+        },
+        to,
+        subject: "Welcome to FlagFit Pro",
+        html: `<p>Hi ${name || "Athlete"},</p><p>Welcome to FlagFit Pro. Your account is ready.</p><p>Open your dashboard: <a href="${getAppUrl()}">${getAppUrl()}</a></p>`,
+        text: `Hi ${name || "Athlete"},\n\nWelcome to FlagFit Pro. Your account is ready.\n\nOpen your dashboard: ${getAppUrl()}`,
+      };
+      break;
+
+    case "team_invitation": {
+      if (!invitationUrl && !token) {
+        return createErrorResponse(
+          "Invitation URL or token is required for team invitation emails",
+          422,
+          "validation_error",
+        );
+      }
+      const joinUrl =
+        invitationUrl || `${getAppUrl()}/accept-invitation?token=${token}`;
+      mailOptions = {
+        from: {
+          name: "FlagFit Pro",
+          address: fromEmail,
+        },
+        to,
+        subject: `You're invited to join ${teamName || "a team"} on FlagFit Pro`,
+        html: `<p>Hi ${name || "Player"},</p><p>${inviterName || "A coach"} invited you to join ${teamName || "their team"}.</p><p>Accept invitation: <a href="${joinUrl}">${joinUrl}</a></p>`,
+        text: `Hi ${name || "Player"},\n\n${inviterName || "A coach"} invited you to join ${teamName || "their team"}.\n\nAccept invitation: ${joinUrl}`,
+      };
+      break;
+    }
+
+    case "acwr_alert":
+      if (
+        !coachName ||
+        !playerName ||
+        acwrValue === undefined ||
+        !alertMessage
+      ) {
+        return createErrorResponse(
+          "coachName, playerName, acwrValue, and alertMessage are required for ACWR alert emails",
+          422,
+          "validation_error",
+        );
+      }
+      {
+        const numericAcwr = Number(acwrValue);
+        if (!Number.isFinite(numericAcwr) || numericAcwr <= 0 || numericAcwr > 10) {
+          return createErrorResponse(
+            "acwrValue must be a number greater than 0 and at most 10",
+            422,
+            "validation_error",
+          );
+        }
+
+        const alertDashboardUrl = dashboardUrl || `${getAppUrl()}/coach/dashboard`;
+        const isCritical = numericAcwr > 1.5;
+        mailOptions = {
+          from: {
+            name: "FlagFit Pro",
+            address: fromEmail,
+          },
+          to,
+          subject: `${isCritical ? "🚨 CRITICAL" : "⚠️"} ACWR Alert: ${playerName} (${numericAcwr.toFixed(2)})`,
+          html: getAcwrAlertEmailTemplate(
+            coachName,
+            playerName,
+            numericAcwr,
+            alertMessage,
+            recommendation,
+            alertDashboardUrl,
+          ),
+          text: `Hi ${coachName},\n\n${playerName} has triggered an ACWR alert.\n\nCurrent ACWR: ${numericAcwr.toFixed(2)}\n${isCritical ? "⚠️ Danger Zone (>1.5)" : "⚠️ Elevated Risk (>1.3)"}\n\nAlert: ${alertMessage}\n\nRecommendation: ${recommendation || "Please review the player's training load and consider adjustments to reduce injury risk."}\n\nView Dashboard: ${alertDashboardUrl}\n\nBest regards,\nThe FlagFit Pro Team`,
+        };
+      }
+      break;
+
+    default:
+      return createErrorResponse(
+        `Unsupported email type: ${type}`,
+        422,
+        "validation_error",
+      );
+  }
+
+  const result = await transporter.sendMail(mailOptions);
+
+  console.log(`✅ Email sent successfully to ${to}:`, result.messageId);
+
+  return createSuccessResponse(
+    {
+      messageId: result.messageId,
+      to,
+      type,
+    },
+    200,
+    "Email sent successfully",
+  );
+};
+
 export const handler = async (event, context) => {
+  const internalEmailKey = process.env.INTERNAL_EMAIL_API_KEY;
+  const providedKey =
+    event.headers?.["x-internal-email-key"] ||
+    event.headers?.["X-Internal-Email-Key"];
+  const allowInternalRequest =
+    !!internalEmailKey && !!providedKey && internalEmailKey === providedKey;
+
   return baseHandler(event, context, {
     functionName: "send-email",
     allowedMethods: ["POST"],
     rateLimitType: "AUTH", // Strict rate limiting for email sending
-    requireAuth: false, // Email sending may be called during registration
-    handler: async (event, _context, { userId: _userId }) => {
-      const transporter = getEmailTransporter();
-      if (!transporter) {
-        return createErrorResponse(
-          "Email service not configured. Please set up email credentials in environment variables.",
-          503,
-          "service_unavailable",
-        );
-      }
-
-      const {
-        type,
-        to,
-        name,
-        verificationUrl,
-        token,
-        role,
-        minorName,
-        // ACWR alert fields
-        coachName,
-        playerName,
-        acwrValue,
-        alertMessage,
-        recommendation,
-        dashboardUrl,
-      } = JSON.parse(event.body || "{}");
-
-      if (!type || !to) {
-        return createErrorResponse(
-          "Email type and recipient (to) are required",
-          400,
-          "validation_error",
-        );
-      }
-
-      // SECURITY: Validate email format to prevent abuse
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(to)) {
-        return createErrorResponse(
-          "Invalid email address format",
-          400,
-          "validation_error",
-        );
-      }
-
-      // SECURITY: Validate email type to prevent arbitrary email sending
-      const allowedTypes = [
-        "verification",
-        "parental_consent",
-        "password_reset",
-        "acwr_alert",
-        "welcome",
-        "team_invitation",
-      ];
-      if (!allowedTypes.includes(type)) {
-        return createErrorResponse(
-          `Invalid email type. Allowed types: ${allowedTypes.join(", ")}`,
-          400,
-          "validation_error",
-        );
-      }
-
-      const fromEmail = getFromEmail();
-      let mailOptions;
-
-      switch (type) {
-        case "verification": {
-          if (!verificationUrl && !token) {
-            return createErrorResponse(
-              "Verification URL or token is required",
-              400,
-              "validation_error",
-            );
-          }
-
-          const url =
-            verificationUrl || `${getAppUrl()}/verify-email?token=${token}`;
-          const userRole = role || "player"; // Default to player if not provided
-          mailOptions = {
-            from: {
-              name: "FlagFit Pro",
-              address: fromEmail,
-            },
-            to,
-            subject: "Verify Your FlagFit Pro Email Address",
-            html: getVerificationEmailTemplate(name || "User", url, userRole),
-            text: `Hi ${name || "User"},\n\nPlease verify your email address by clicking this link:\n${url}\n\nThis link expires in 24 hours.\n\nBest regards,\nThe FlagFit Pro Team`,
-          };
-          break;
-        }
-
-        case "parental_consent":
-          if (!verificationUrl) {
-            return createErrorResponse(
-              "Verification URL is required for parental consent emails",
-              400,
-              "validation_error",
-            );
-          }
-          mailOptions = {
-            from: {
-              name: "FlagFit Pro",
-              address: fromEmail,
-            },
-            to,
-            subject: `Parental Consent Required for ${minorName || "your child"} - FlagFit Pro`,
-            html: getParentalConsentEmailTemplate(
-              name || "Parent/Guardian",
-              minorName || "your child",
-              verificationUrl,
-            ),
-            text: `Dear ${name || "Parent/Guardian"},\n\n${minorName || "Your child"} has requested to use FlagFit Pro. As they are under 18, we require your consent.\n\nPlease verify consent by clicking this link:\n${verificationUrl}\n\nThis link expires in 7 days.\n\nBest regards,\nThe FlagFit Pro Team`,
-          };
-          break;
-
-        case "acwr_alert":
-          if (
-            !coachName ||
-            !playerName ||
-            acwrValue === undefined ||
-            !alertMessage
-          ) {
-            return createErrorResponse(
-              "coachName, playerName, acwrValue, and alertMessage are required for ACWR alert emails",
-              400,
-              "validation_error",
-            );
-          }
-          {
-            const alertDashboardUrl =
-              dashboardUrl || `${getAppUrl()}/coach/dashboard`;
-            const isCritical = acwrValue > 1.5;
-            mailOptions = {
-              from: {
-                name: "FlagFit Pro",
-                address: fromEmail,
-              },
-              to,
-              subject: `${isCritical ? "🚨 CRITICAL" : "⚠️"} ACWR Alert: ${playerName} (${acwrValue.toFixed(2)})`,
-              html: getAcwrAlertEmailTemplate(
-                coachName,
-                playerName,
-                acwrValue,
-                alertMessage,
-                recommendation,
-                alertDashboardUrl,
-              ),
-              text: `Hi ${coachName},\n\n${playerName} has triggered an ACWR alert.\n\nCurrent ACWR: ${acwrValue.toFixed(2)}\n${isCritical ? "⚠️ Danger Zone (>1.5)" : "⚠️ Elevated Risk (>1.3)"}\n\nAlert: ${alertMessage}\n\nRecommendation: ${recommendation || "Please review the player's training load and consider adjustments to reduce injury risk."}\n\nView Dashboard: ${alertDashboardUrl}\n\nBest regards,\nThe FlagFit Pro Team`,
-            };
-          }
-          break;
-
-        default:
-          return createErrorResponse(
-            `Unsupported email type: ${type}`,
-            400,
-            "validation_error",
-          );
-      }
-
-      const result = await transporter.sendMail(mailOptions);
-
-      console.log(`✅ Email sent successfully to ${to}:`, result.messageId);
-
-      return createSuccessResponse(
-        {
-          messageId: result.messageId,
-          to,
-          type,
-        },
-        200,
-        "Email sent successfully",
-      );
-    },
+    requireAuth: !allowInternalRequest,
+    handler: sendEmailRequest,
   });
 };

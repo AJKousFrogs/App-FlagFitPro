@@ -1587,13 +1587,6 @@ select {
 }
 
 /* ================================================================
-   BADGES - REMOVED (Duplicate)
-   ================================================================
-   Badge styles are now defined ONLY in primitives/_badges.scss
-   This duplicate block has been removed to prevent conflicts.
-   ================================================================ */
-
-/* ================================================================
    ALERTS & NOTIFICATIONS - LEGACY (Use primitives/_feedback.scss)
    ================================================================
    Alert styles are now defined in primitives/_feedback.scss
@@ -1761,7 +1754,7 @@ select {
   height: var(--icon-lg);
   border: var(--border-2) solid var(--color-border-primary);
   border-top-color: var(--ds-primary-green);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   animation: spin 0.6s linear infinite;
 
   @keyframes spin {
@@ -1823,7 +1816,7 @@ select {
 .skeleton-avatar {
   width: var(--icon-container-md);
   height: var(--icon-container-md);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 }
 
 .skeleton-button {

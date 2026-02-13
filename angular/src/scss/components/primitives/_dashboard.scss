@@ -21,6 +21,128 @@
 
 @layer primitives {
   // ============================================
+  // DASHBOARD HEADER SUBTITLE
+  // Shared by acwr-dashboard, periodization-dashboard
+  // ============================================
+  .dashboard-header .subtitle {
+    color: var(--color-text-secondary);
+    font-size: var(--ds-font-size-md);
+  }
+
+  // ============================================
+  // STATS GRID (shared across achievements, attendance, sleep-debt, etc.)
+  // ============================================
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
+    gap: var(--space-4);
+  }
+
+  // ============================================
+  // STAT BLOCK (value + label pattern - replaces per-component duplication)
+  // ============================================
+  @include stat-block;
+
+  // Stats overview uses larger typography; responsive scaling in primitives
+  .stats-overview .stat-block__label {
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-secondary);
+
+    @include respond-to(md) {
+      font-size: var(--ds-font-size-xs);
+    }
+  }
+
+  .stats-overview .stat-block__value {
+    font-size: var(--ds-font-size-3xl);
+
+    @include respond-to(sm) {
+      font-size: var(--ds-font-size-2xl);
+    }
+  }
+
+  // Stat block variants - use these instead of component-level duplication
+  .stat-block--card .stat-block__label {
+    font-size: var(--ds-font-size-md);
+    color: var(--ds-text-secondary);
+  }
+
+  .stat-block--card .stat-block__value {
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  .stat-block--stat-item .stat-block__label {
+    font-size: var(--ds-font-size-md);
+    color: var(--ds-text-secondary);
+    font-weight: var(--ds-font-weight-medium);
+
+    @include respond-to(md) {
+      font-size: var(--ds-font-size-xs);
+    }
+  }
+
+  .stat-block--stat-item .stat-block__value {
+    font-size: var(--ds-font-size-3xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--ds-text-primary);
+
+    @include respond-to(md) {
+      font-size: var(--ds-font-size-2xl);
+    }
+
+    @include respond-to(sm) {
+      font-size: var(--ds-font-size-xl);
+    }
+  }
+
+  .stat-block--stat-item.completion .stat-block__value {
+    color: var(--ds-primary-green);
+  }
+
+  .stat-block__value.positive {
+    color: var(--color-status-success);
+  }
+
+  // Header actions - shared across cards, dialogs
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  // Progress fill - shared bar pattern (override background/transition per component)
+  .progress-fill {
+    height: 100%;
+    background: var(--color-brand-primary);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow) var(--ease-standard);
+    max-width: 100%;
+  }
+
+  // Legend item - chart/card legends
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-secondary);
+  }
+
+  .legend-dot {
+    width: var(--space-2);
+    height: var(--space-2);
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+
+  // ============================================
+  // METRIC DISPLAY (metric-value + metric-label)
+  // ============================================
+  @include metric-display;
+
+  // ============================================
   // DASHBOARD LAYOUT (Decision 8)
   // ============================================
   // Main container with vertical section stacking
@@ -597,7 +719,7 @@
 
   .announcement-meta {
     font-size: var(--font-caption-size);
-    opacity: var(--opacity-muted)5;
+    opacity: var(--opacity-muted);
     margin-left: 0;
     white-space: nowrap;
 

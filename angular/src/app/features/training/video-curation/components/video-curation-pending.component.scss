@@ -9,29 +9,6 @@
   padding: var(--space-4) 0;
 }
 
-.empty-state {
-  text-align: center;
-  padding: var(--space-12);
-
-  i {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--color-brand-primary);
-    opacity: var(--opacity-dimmed);
-    margin-bottom: var(--space-4);
-  }
-
-  h3 {
-    font-size: var(--ds-font-size-2xl);
-    color: var(--color-text-primary);
-    margin: 0 0 var(--space-2);
-  }
-
-  p {
-    color: var(--color-text-secondary);
-    margin: 0;
-  }
-}
-
 .pending-grid {
   display: grid;
   grid-template-columns: repeat(

@@ -15,12 +15,19 @@ export const handler = async (event, context) => {
       // Get the user's full data from Supabase
       const authHeader =
         event.headers.authorization || event.headers.Authorization;
-      const token = authHeader.substring(7);
+      const token =
+        typeof authHeader === "string" && authHeader.startsWith("Bearer ")
+          ? authHeader.slice(7)
+          : null;
       const supabase = getSupabaseClient();
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser(token);
+      let user = null;
+      if (token) {
+        const { data, error } = await supabase.auth.getUser(token);
+        if (!error) {
+          user = data?.user || null;
+        }
+      }
 
       // Return user data from Supabase
       const safeUser = {
@@ -28,7 +35,7 @@ export const handler = async (event, context) => {
         email: user?.email,
         role: user?.user_metadata?.role || "player",
         name: user?.user_metadata?.name || user?.email,
-        email_verified: user?.email_confirmed_at !== null,
+        email_verified: Boolean(user?.email_confirmed_at),
         created_at: user?.created_at,
         updated_at: user?.updated_at,
         user_metadata: user?.user_metadata,

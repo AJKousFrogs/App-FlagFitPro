@@ -14,6 +14,7 @@ import { CommonModule } from "@angular/common";
 
 // PrimeNG
 
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 
 import { Chip } from "primeng/chip";
@@ -29,6 +30,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    EmptyStateComponent,
     StatusTagComponent,
     Chip,
     ButtonComponent,
@@ -44,14 +46,14 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
       </div>
 
       @if (playlists().length === 0) {
-        <div class="empty-state">
-          <i class="pi pi-list"></i>
-          <h3>No playlists yet</h3>
-          <p>Create your first playlist to organize training videos</p>
-          <app-button iconLeft="pi-plus" (clicked)="create.emit()"
-            >Create Playlist</app-button
-          >
-        </div>
+        <app-empty-state
+          icon="pi-list"
+          heading="No playlists yet"
+          description="Create your first playlist to organize training videos."
+          actionLabel="Create Playlist"
+          actionIcon="pi-plus"
+          [actionHandler]="createPlaylistHandler"
+        />
       } @else {
         <div class="playlists-grid">
           @for (playlist of playlists(); track playlist.id) {
@@ -118,6 +120,8 @@ export class VideoCurationPlaylistsComponent {
   edit = output<InstagramPlaylist>();
   share = output<InstagramPlaylist>();
   delete = output<InstagramPlaylist>();
+
+  readonly createPlaylistHandler = (): void => this.create.emit();
 
   getFormatFocus(focus: string): string {
     return formatFocus(focus);

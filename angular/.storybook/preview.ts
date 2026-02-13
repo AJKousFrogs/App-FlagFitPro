@@ -3,6 +3,8 @@ import { setCompodocJson } from "@storybook/addon-docs/angular";
 
 // Import global styles
 import "../src/styles.scss";
+// Design system showcase (replaces inline styles in DesignSystem.stories)
+import "../src/stories/design-system-showcase.scss";
 
 const preview: Preview = {
   parameters: {

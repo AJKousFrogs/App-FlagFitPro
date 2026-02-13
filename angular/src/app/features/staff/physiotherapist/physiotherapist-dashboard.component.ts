@@ -32,6 +32,8 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../../shared/utils/date.utils";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §31
@@ -212,6 +214,8 @@ const RTP_PHASES = [
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    AppLoadingComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -229,10 +233,7 @@ const RTP_PHASES = [
         </app-page-header>
 
         @if (loading()) {
-          <div class="loading-state">
-            <i class="pi pi-spin pi-spinner"></i>
-            <span>Loading physiotherapy data...</span>
-          </div>
+          <app-loading message="Loading physiotherapy data..." variant="inline" />
         } @else {
           <!-- Overview Stats -->
           <div class="stats-grid">
@@ -609,13 +610,11 @@ const RTP_PHASES = [
                       }
                     </div>
                   } @else {
-                    <div class="empty-state">
-                      <i class="pi pi-check-circle"></i>
-                      <h4>No Active RTP Protocols</h4>
-                      <p>
-                        All athletes are currently cleared for full activity.
-                      </p>
-                    </div>
+                    <app-empty-state
+                      icon="pi-check-circle"
+                      heading="No Active RTP Protocols"
+                      description="All athletes are currently cleared for full activity."
+                    />
                   }
                 </div>
               </p-tabpanel>
@@ -854,21 +853,15 @@ const RTP_PHASES = [
                   </div>
 
                   @if (insightFeedService.loading()) {
-                    <div class="loading-state">
-                      <i class="pi pi-spin pi-spinner"></i>
-                      <span>Loading insights...</span>
-                    </div>
+                    <app-loading message="Loading insights..." variant="inline" />
                   } @else if (
                     insightFeedService.filteredInsights().length === 0
                   ) {
-                    <div class="empty-state">
-                      <i class="pi pi-info-circle"></i>
-                      <p>No shared insights available</p>
-                      <small
-                        >Insights from coaches, nutritionists, and psychologists
-                        will appear here</small
-                      >
-                    </div>
+                    <app-empty-state
+                      icon="pi-info-circle"
+                      heading="No shared insights"
+                      description="Insights from coaches, nutritionists, and psychologists will appear here."
+                    />
                   } @else {
                     <div class="insights-list">
                       @for (

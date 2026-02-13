@@ -70,6 +70,12 @@ export class ProfileCompletionService {
   private readonly _isLoading = signal(false);
   private readonly _lastUpdated = signal<Date | null>(null);
 
+  /** In-flight request deduplication - prevents duplicate API calls when multiple components call loadProfileData() */
+  private _loadPromise: Promise<UserProfileData | null> | null = null;
+
+  /** Cache TTL in ms - skip refetch if data is newer than this */
+  private static readonly CACHE_TTL_MS = 30_000;
+
   // Public readonly signals
   readonly profileData = this._profileData.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
@@ -116,8 +122,9 @@ export class ProfileCompletionService {
   /**
    * Load profile data from database
    * Call this on app init and after profile updates
+   * Deduplicates concurrent calls and returns cached data if fresh (< 30s)
    */
-  async loadProfileData(): Promise<UserProfileData | null> {
+  async loadProfileData(forceRefresh = false): Promise<UserProfileData | null> {
     const user = this.authService.getUser();
     if (!user?.id) {
       this.logger.warn("[ProfileCompletion] No authenticated user");
@@ -125,8 +132,31 @@ export class ProfileCompletionService {
       return null;
     }
 
-    this._isLoading.set(true);
+    // Return cached data if fresh and not forcing refresh
+    if (!forceRefresh) {
+      const last = this._lastUpdated();
+      const cached = this._profileData();
+      if (cached && last && Date.now() - last.getTime() < ProfileCompletionService.CACHE_TTL_MS) {
+        return cached;
+      }
+      // Deduplicate concurrent in-flight requests
+      if (this._loadPromise) {
+        return this._loadPromise;
+      }
+    }
 
+    this._loadPromise = this.fetchProfileData(user.id);
+
+    try {
+      const result = await this._loadPromise;
+      return result;
+    } finally {
+      this._loadPromise = null;
+    }
+  }
+
+  private async fetchProfileData(userId: string): Promise<UserProfileData | null> {
+    this._isLoading.set(true);
     try {
       // Load user data from users table
       const { data: userData, error: userError } =
@@ -139,7 +169,7 @@ export class ProfileCompletionService {
           onboarding_completed, gender
         `,
           )
-          .eq("id", user.id)
+          .eq("id", userId)
           .maybeSingle();
 
       if (userError) {
@@ -150,8 +180,8 @@ export class ProfileCompletionService {
       // If user doesn't exist in users table yet, return null gracefully
       if (!userData) {
         this.logger.warn(
-          "[ProfileCompletion] User not found in users table:",
-          user.id,
+        "[ProfileCompletion] User not found in users table:",
+        userId,
         );
         return null;
       }
@@ -160,7 +190,7 @@ export class ProfileCompletionService {
       const { data: teamMember } = await this.supabaseService.client
         .from("team_members")
         .select("team_id, position, jersey_number, teams(id, name)")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .eq("role", "player")
         .maybeSingle();
 
@@ -171,7 +201,7 @@ export class ProfileCompletionService {
 
       // Build profile data with team_members taking priority for position/jersey
       const profileData: UserProfileData = {
-        id: userData.id,
+        id: userData.id as string,
         email: userData.email,
         fullName: userData.full_name,
         firstName: userData.first_name,
@@ -343,7 +373,7 @@ export class ProfileCompletionService {
    * Force refresh profile data
    */
   async refresh(): Promise<void> {
-    await this.loadProfileData();
+    await this.loadProfileData(true);
   }
 
   /**
@@ -417,7 +447,7 @@ export class ProfileCompletionService {
       }
 
       // Refresh profile data
-      await this.loadProfileData();
+      await this.loadProfileData(true);
       return true;
     } catch (error) {
       this.logger.error("[ProfileCompletion] Error updating weight:", error);

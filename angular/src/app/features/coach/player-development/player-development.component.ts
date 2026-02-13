@@ -17,8 +17,9 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
@@ -133,8 +134,8 @@ const COMPARE_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="player-development-page">
@@ -458,11 +459,11 @@ const COMPARE_OPTIONS = [
           </p-card>
         } @else {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-users"></i>
-              <h3>Select a Player</h3>
-              <p>Choose a player to view their development progress</p>
-            </div>
+            <app-empty-state
+              icon="pi-users"
+              heading="Select a Player"
+              description="Choose a player to view their development progress"
+            />
           </p-card>
         }
       </div>
@@ -609,7 +610,7 @@ const COMPARE_OPTIONS = [
 export class PlayerDevelopmentComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly players = signal<Player[]>([]);
@@ -808,28 +809,25 @@ export class PlayerDevelopmentComponent implements OnInit {
   }
 
   createGoal(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Goal Created",
-      detail: "Development goal has been created",
-    });
+    this.toastService.success(
+      "Development goal has been created",
+      "Goal Created",
+    );
     this.showGoalDialog = false;
   }
 
   updateGoal(goal: DevelopmentGoal): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Update Goal",
-      detail: `Opening update dialog for ${goal.metric}`,
-    });
+    this.toastService.info(
+      `Opening update dialog for ${goal.metric}`,
+      "Update Goal",
+    );
   }
 
   viewGoalDetails(goal: DevelopmentGoal): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Goal Details",
-      detail: `Viewing details for ${goal.metric}`,
-    });
+    this.toastService.info(
+      `Viewing details for ${goal.metric}`,
+      "Goal Details",
+    );
   }
 
   openNoteDialog(): void {
@@ -839,28 +837,22 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   saveNote(): void {
     if (!this.noteContent.trim()) return;
-    this.messageService.add({
-      severity: "success",
-      summary: "Note Saved",
-      detail: "Development note has been added",
-    });
+    this.toastService.success(
+      "Development note has been added",
+      "Note Saved",
+    );
     this.showNoteDialog = false;
   }
 
   newAssessment(): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "New Assessment",
-      detail: "Opening assessment form",
-    });
+    this.toastService.info("Opening assessment form", "New Assessment");
   }
 
   exportReport(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Export Started",
-      detail: "Development report is being generated",
-    });
+    this.toastService.success(
+      "Development report is being generated",
+      "Export Started",
+    );
   }
 
   // Helpers

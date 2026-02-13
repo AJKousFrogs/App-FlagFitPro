@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .form-input-wrapper {
   display: flex;
   flex-direction: column;
@@ -103,16 +105,12 @@ input.has-suffix {
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-}
 
-.password-toggle:hover {
-  color: var(--color-text-primary);
-  background: var(--surface-100);
-}
-
-.password-toggle:focus-visible {
-  outline: var(--focus-outline-width) solid var(--color-brand-primary);
-  outline-offset: var(--focus-outline-offset);
+  @include ds-focus-ring(var(--color-brand-primary));
+  @include ds-hover-state(
+    var(--surface-100),
+    $color: var(--color-text-primary)
+  );
 }
 
 /* Messages */

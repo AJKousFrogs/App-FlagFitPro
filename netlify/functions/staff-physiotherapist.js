@@ -20,6 +20,7 @@ async function verifyPhysioAccess(userId) {
       "admin",
       "staff",
     ])
+    .eq("status", "active")
     .limit(1)
     .single();
 
@@ -28,6 +29,26 @@ async function verifyPhysioAccess(userId) {
   }
 
   return member;
+}
+
+/**
+ * Verify an athlete belongs to the requesting staff member's team.
+ */
+async function verifyAthleteOnTeam(athleteId, teamId) {
+  const { data, error } = await supabaseAdmin
+    .from("team_members")
+    .select("user_id")
+    .eq("team_id", teamId)
+    .eq("user_id", athleteId)
+    .eq("role", "player")
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return !!data;
 }
 
 /**
@@ -229,6 +250,23 @@ async function getRTPAthletes(teamId) {
  * Update RTP progress for an athlete
  */
 async function updateRTPProgress(injuryId, updates) {
+  if (updates.progress !== undefined) {
+    const progress = Number(updates.progress);
+    if (!Number.isFinite(progress) || progress < 0 || progress > 100) {
+      const error = new Error("progress must be a number between 0 and 100");
+      error.isValidation = true;
+      throw error;
+    }
+  }
+  if (
+    updates.phase !== undefined &&
+    (typeof updates.phase !== "string" || !updates.phase.trim())
+  ) {
+    const error = new Error("phase must be a non-empty string when provided");
+    error.isValidation = true;
+    throw error;
+  }
+
   // Get current injury data to check if phase is completing
   const { data: currentInjury } = await supabaseAdmin
     .from("athlete_injuries")
@@ -533,8 +571,7 @@ function calculateRiskIndicators(loadHistory, injuries) {
 }
 
 // Main handler
-async function handler(event) {
-  return baseHandler(event, async (event, userId) => {
+async function handleRequest(event, _context, { userId }) {
     const path = event.path.replace(
       "/.netlify/functions/staff-physiotherapist",
       "",
@@ -545,8 +582,9 @@ async function handler(event) {
     const access = await verifyPhysioAccess(userId);
     if (!access) {
       return createErrorResponse(
-        403,
         "Access denied. Physiotherapist role required.",
+        403,
+        ErrorType.AUTHORIZATION,
       );
     }
 
@@ -564,6 +602,14 @@ async function handler(event) {
     // GET /athletes/:id - Get detailed injury data for athlete
     if (method === "GET" && path.match(/^\/athletes\/[\w-]+$/)) {
       const athleteId = path.split("/")[2];
+      const canAccess = await verifyAthleteOnTeam(athleteId, teamId);
+      if (!canAccess) {
+        return createErrorResponse(
+          "Access denied to athlete data",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
       const details = await getAthleteInjuryDetails(athleteId);
       return createSuccessResponse(details);
     }
@@ -577,7 +623,40 @@ async function handler(event) {
     // PUT /rtp/:injuryId - Update RTP progress
     if (method === "PUT" && path.match(/^\/rtp\/[\w-]+$/)) {
       const injuryId = path.split("/")[2];
-      const body = JSON.parse(event.body || "{}");
+      let body = {};
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch {
+        return createErrorResponse(
+          "Invalid JSON in request body",
+          400,
+          "invalid_json",
+        );
+      }
+
+      const { data: injuryRecord, error: injuryError } = await supabaseAdmin
+        .from("athlete_injuries")
+        .select("user_id")
+        .eq("id", injuryId)
+        .single();
+
+      if (injuryError || !injuryRecord) {
+        return createErrorResponse(
+          "Injury record not found",
+          404,
+          ErrorType.NOT_FOUND,
+        );
+      }
+
+      const canAccess = await verifyAthleteOnTeam(injuryRecord.user_id, teamId);
+      if (!canAccess) {
+        return createErrorResponse(
+          "Access denied to injury record",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
+
       const updated = await updateRTPProgress(injuryId, body);
       return createSuccessResponse({ injury: updated });
     }
@@ -590,13 +669,33 @@ async function handler(event) {
 
     // POST /injuries - Log new injury
     if (method === "POST" && path === "/injuries") {
-      const body = JSON.parse(event.body || "{}");
-      if (!body.userId || !body.type || !body.location) {
+      let body = {};
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch {
         return createErrorResponse(
+          "Invalid JSON in request body",
           400,
-          "Missing required fields: userId, type, location",
+          "invalid_json",
         );
       }
+      if (!body.userId || !body.type || !body.location) {
+        return createErrorResponse(
+          "Missing required fields: userId, type, location",
+          400,
+          ErrorType.VALIDATION,
+        );
+      }
+
+      const canAccess = await verifyAthleteOnTeam(body.userId, teamId);
+      if (!canAccess) {
+        return createErrorResponse(
+          "Access denied to athlete data",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
+
       // Determine role: if called from physio dashboard, role is physiotherapist
       // Otherwise, assume coach flagged it
       const createdByRole =
@@ -606,7 +705,35 @@ async function handler(event) {
     }
 
     return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
-  });
 }
 
-export { handler };
+async function safeHandleRequest(event, context, auth) {
+  try {
+    return await handleRequest(event, context, auth);
+  } catch (error) {
+    if (error.isValidation) {
+      return createErrorResponse(error.message, 422, "validation_error");
+    }
+    throw error;
+  }
+}
+
+export const handler = async (event, context) => {
+  if (event.httpMethod === "GET") {
+    return baseHandler(event, context, {
+      functionName: "staff-physiotherapist",
+      allowedMethods: ["GET"],
+      rateLimitType: "READ",
+      requireAuth: true,
+      handler: safeHandleRequest,
+    });
+  }
+
+  return baseHandler(event, context, {
+    functionName: "staff-physiotherapist",
+    allowedMethods: ["POST", "PUT"],
+    rateLimitType: "UPDATE",
+    requireAuth: true,
+    handler: safeHandleRequest,
+  });
+};

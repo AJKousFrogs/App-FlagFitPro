@@ -8,6 +8,21 @@ import { getUserRole } from "./utils/authorization-guard.js";
 // Netlify Function: Wellness API
 // Handles wellness check-ins and wellness data retrieval
 
+function parseBoundedInt(value, fallback, { min, max, field }) {
+  if (value === undefined || value === null || value === "") {
+    return fallback;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${field} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
 /**
  * Create wellness check-in
  * POST /api/wellness/checkin
@@ -220,47 +235,80 @@ export const handler = async (event, context) => {
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
     requireAuth: true, // P0-008: Explicitly require authentication for health data
     handler: async (event, context, { userId }) => {
-      if (event.httpMethod === "POST") {
-        // Handle POST /api/wellness/checkin
-        if (path.includes("/checkin") || path.endsWith("/checkin")) {
-          let checkinData = {};
-          try {
-            checkinData = JSON.parse(event.body || "{}");
-          } catch (_parseError) {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
+      try {
+        if (event.httpMethod === "POST") {
+          // Handle POST /api/wellness/checkin
+          if (path.includes("/checkin") || path.endsWith("/checkin")) {
+            let checkinData = {};
+            try {
+              checkinData = JSON.parse(event.body || "{}");
+            } catch (_parseError) {
+              return createErrorResponse(
+                "Invalid JSON in request body",
+                400,
+                "invalid_json",
+              );
+            }
+
+            const result = await createWellnessCheckin(userId, checkinData);
+            return createSuccessResponse(
+              result,
+              201,
+              "Wellness check-in created",
             );
           }
 
-          const result = await createWellnessCheckin(userId, checkinData);
-          return createSuccessResponse(
-            result,
-            201,
-            "Wellness check-in created",
-          );
+          return createErrorResponse("Endpoint not found", 404, "not_found");
         }
 
-        return createErrorResponse("Endpoint not found", 404, "not_found");
-      }
+        // Handle GET requests
+        if (path.includes("/latest") || path.endsWith("/latest")) {
+          const result = await getLatestWellnessCheckin(userId);
+          return createSuccessResponse(result);
+        }
 
-      // Handle GET requests
-      if (path.includes("/latest") || path.endsWith("/latest")) {
+        if (path.includes("/checkins") || path.endsWith("/checkins")) {
+          let limit;
+          try {
+            limit = parseBoundedInt(event.queryStringParameters?.limit, 30, {
+              min: 1,
+              max: 200,
+              field: "limit",
+            });
+          } catch (validationError) {
+            return createErrorResponse(
+              validationError.message || "limit must be an integer between 1 and 200",
+              422,
+              "validation_error",
+            );
+          }
+          const athleteId = event.queryStringParameters?.athleteId || userId;
+          if (athleteId !== userId) {
+            const role = await getUserRole(userId);
+            if (!["coach", "admin"].includes(role)) {
+              return createErrorResponse(
+                "Not authorized to view another athlete's wellness data",
+                403,
+                "authorization_error",
+              );
+            }
+          }
+          const result = await getWellnessCheckins(userId, athleteId, limit);
+          return createSuccessResponse({ checkins: result });
+        }
+
+        // Default: return latest check-in
         const result = await getLatestWellnessCheckin(userId);
         return createSuccessResponse(result);
+      } catch (error) {
+        if (
+          typeof error?.message === "string" &&
+          /(must be between|must be a)/i.test(error.message)
+        ) {
+          return createErrorResponse(error.message, 422, "validation_error");
+        }
+        throw error;
       }
-
-      if (path.includes("/checkins") || path.endsWith("/checkins")) {
-        const limit = parseInt(event.queryStringParameters?.limit) || 30;
-        const athleteId = event.queryStringParameters?.athleteId || userId;
-        const result = await getWellnessCheckins(userId, athleteId, limit);
-        return createSuccessResponse({ checkins: result });
-      }
-
-      // Default: return latest check-in
-      const result = await getLatestWellnessCheckin(userId);
-      return createSuccessResponse(result);
     },
   });
 };

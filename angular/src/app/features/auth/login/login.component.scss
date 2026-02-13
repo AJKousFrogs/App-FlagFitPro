@@ -168,15 +168,8 @@
     align-items: center;
     justify-content: center;
 
-    &:hover {
-      color: var(--color-text-primary);
-      background: var(--surface-secondary);
-    }
-
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: var(--focus-outline-offset);
-    }
+    @include ds-hover-state(var(--surface-secondary), $color: var(--color-text-primary));
+    @include ds-focus-ring;
 
     i {
       font-size: var(--ds-font-size-md);
@@ -185,7 +178,7 @@
 
   // Input field styling - moved to @layer overrides
 
-  // PrimeNG error override moved to _exceptions.scss (DS-EXC-049)
+  // PrimeNG error override moved to _component-overrides.scss (DS-EXC-049)
 
   @keyframes shake {
     0%,
@@ -225,11 +218,7 @@
       text-decoration: underline;
     }
 
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: var(--focus-outline-offset);
-      border-radius: var(--radius-sm);
-    }
+    @include ds-focus-ring(var(--ds-primary-green), null, var(--radius-sm));
   }
 
   // Custom Checkbox styling
@@ -256,9 +245,10 @@
         }
       }
 
-      &:focus-visible + .checkmark {
-        box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2);
-      }
+      @include ds-focus-visible-sibling(
+        ".checkmark",
+        0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2)
+      );
     }
 
     .checkmark {
@@ -341,14 +331,11 @@
       transform var(--transition-fast),
       opacity var(--transition-fast);
 
-    &:hover {
-      background: var(--ds-primary-green-subtle);
-      text-decoration: none;
-    }
+    @include ds-hover-state(var(--ds-primary-green-subtle));
+    @include ds-focus-ring;
 
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: var(--focus-outline-offset);
+    &:hover {
+      text-decoration: none;
     }
   }
 
@@ -436,15 +423,13 @@
       animation: none;
     }
 
-    // PrimeNG error reduced motion override moved to _exceptions.scss (DS-EXC-049)
+    // PrimeNG error reduced motion override moved to _component-overrides.scss (DS-EXC-049)
   }
 } // End @layer features
 
 // ============================================================================
 // @layer overrides - PrimeNG Component Overrides
 
-// Mobile responsive - padding overrides REMOVED
-// Login card is an EXCEPTION: auth forms may need custom spacing
 // @see docs/CARD_SHELL_CONTRACT.md Section 11 Exceptions
 
 // Reduced motion - transition override
@@ -462,7 +447,4 @@
  * Reason: Custom padding and text alignment for login card
  * Scope: login component only
  */
-// PrimeNG card, input, and button overrides moved to _exceptions.scss (DS-EXC-049)
-.login-card {
-  // Component-specific styles remain here
-}
+// PrimeNG card/input/button: _component-overrides.scss (DS-EXC-049)

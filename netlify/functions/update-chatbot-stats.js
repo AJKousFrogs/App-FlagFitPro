@@ -24,7 +24,7 @@ export const handler = async (event, context) =>
     allowedMethods: ["POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId }) => {
+    handler: async (evt, _ctx, { userId, requestId }) => {
       try {
         let bodyData = {};
         try {
@@ -33,19 +33,40 @@ export const handler = async (event, context) =>
           return handleValidationError("Invalid JSON in request body");
         }
 
+        if (bodyData === null || typeof bodyData !== "object" || Array.isArray(bodyData)) {
+          return handleValidationError("Request body must be an object");
+        }
+
         const { topic } = bodyData;
+        if (topic !== undefined) {
+          if (typeof topic !== "string") {
+            return handleValidationError("topic must be a string");
+          }
+          if (topic.trim().length > 120) {
+            return handleValidationError("topic must be 120 characters or fewer");
+          }
+        }
 
         await pool.query(`SELECT update_chatbot_query_stats($1, $2)`, [
           userId,
-          topic || null,
+          topic?.trim() ? topic.trim() : null,
         ]);
 
         return createSuccessResponse({
           message: "Statistics updated successfully",
         });
       } catch (error) {
-        console.error("Error in update-chatbot-stats function:", error);
-        return createErrorResponse("Internal server error", 500, "server_error");
+        if (error?.code) {
+          console.error("Error in update-chatbot-stats function", { code: error.code });
+        } else {
+          console.error("Error in update-chatbot-stats function");
+        }
+        return createErrorResponse(
+          "Failed to update chatbot statistics",
+          500,
+          "server_error",
+          requestId,
+        );
       } finally {
         // Don't close pool - it's reused across invocations
       }

@@ -8,8 +8,6 @@
 .player-card {
   position: relative;
 
-  // Hover transition/transform REMOVED - use app-card-shell with state="interactive"
-  // @see docs/CARD_SHELL_CONTRACT.md §2.8
   border: var(--border-2) solid transparent;
 }
 
@@ -103,7 +101,7 @@
 .player-jersey {
   width: var(--avatar-size-xl);
   height: var(--avatar-size-xl);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -195,7 +193,7 @@
 }
 
 // Progress bar override for readiness
-// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-007)
+// PrimeNG progressbar overrides moved to _component-overrides.scss (DS-EXC-007)
 .readiness-bar {
   // Component-specific styles remain here
   height: var(--progress-bar-height-sm);
@@ -252,7 +250,7 @@
   height: var(--space-3);
   background: var(--color-text-primary);
   border: var(--border-2) solid white;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   transform: translateX(-50%);
   box-shadow: var(--shadow-sm);
 }
@@ -376,7 +374,6 @@
 
 /* Touch devices */
 @media (hover: none) and (pointer: coarse) {
-  // .player-card:hover REMOVED - card-shell handles touch devices
   .card-actions button {
     min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
     min-width: var(--touch-target-md);

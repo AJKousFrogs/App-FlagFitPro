@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -101,7 +103,7 @@
   position: absolute;
   inset: -calc(var(--space-2) + var(--space-0-5));
   border: var(--space-0-75) solid var(--color-status-error);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   animation: pulse-ring 1s ease-out infinite;
 }
 
@@ -143,12 +145,12 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-}
 
-.preset-btn:hover {
-  background: var(--surface-tertiary);
-  border-color: var(--color-brand-primary);
-  color: var(--color-brand-primary);
+  @include ds-hover-state(
+    var(--surface-tertiary),
+    $color: var(--color-brand-primary),
+    $border-color: var(--color-brand-primary)
+  );
 }
 
 .preset-btn.active {

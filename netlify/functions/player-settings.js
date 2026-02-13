@@ -1,6 +1,90 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isValidDateString(value) {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const parsed = new Date(value);
+  return !Number.isNaN(parsed.getTime());
+}
+
+function validateSettingsPayload(payload) {
+  if (!isPlainObject(payload)) {
+    return "Request body must be an object";
+  }
+  if (
+    payload.primaryPosition !== undefined &&
+    (typeof payload.primaryPosition !== "string" ||
+      payload.primaryPosition.trim().length === 0 ||
+      payload.primaryPosition.length > 64)
+  ) {
+    return "primaryPosition must be a non-empty string up to 64 characters";
+  }
+  if (
+    payload.secondaryPosition !== undefined &&
+    payload.secondaryPosition !== null &&
+    (typeof payload.secondaryPosition !== "string" ||
+      payload.secondaryPosition.length > 64)
+  ) {
+    return "secondaryPosition must be a string up to 64 characters";
+  }
+  if (
+    payload.birthDate !== undefined &&
+    payload.birthDate !== null &&
+    !isValidDateString(payload.birthDate)
+  ) {
+    return "birthDate must be a valid date string";
+  }
+  if (
+    payload.availabilitySchedule !== undefined &&
+    !Array.isArray(payload.availabilitySchedule)
+  ) {
+    return "availabilitySchedule must be an array";
+  }
+  if (
+    payload.preferredTrainingDays !== undefined &&
+    (!Array.isArray(payload.preferredTrainingDays) ||
+      payload.preferredTrainingDays.some(
+        (d) => !Number.isInteger(d) || d < 0 || d > 6,
+      ))
+  ) {
+    return "preferredTrainingDays must be an array of integers between 0 and 6";
+  }
+  if (
+    payload.maxSessionsPerWeek !== undefined &&
+    (!Number.isInteger(payload.maxSessionsPerWeek) ||
+      payload.maxSessionsPerWeek < 1 ||
+      payload.maxSessionsPerWeek > 14)
+  ) {
+    return "maxSessionsPerWeek must be an integer between 1 and 14";
+  }
+  if (
+    payload.hasGymAccess !== undefined &&
+    typeof payload.hasGymAccess !== "boolean"
+  ) {
+    return "hasGymAccess must be a boolean";
+  }
+  if (
+    payload.hasFieldAccess !== undefined &&
+    typeof payload.hasFieldAccess !== "boolean"
+  ) {
+    return "hasFieldAccess must be a boolean";
+  }
+  if (
+    payload.warmupFocus !== undefined &&
+    payload.warmupFocus !== null &&
+    (typeof payload.warmupFocus !== "string" || payload.warmupFocus.length > 120)
+  ) {
+    return "warmupFocus must be a string up to 120 characters";
+  }
+  return null;
+}
+
 /**
  * Player Settings API
  *
@@ -27,12 +111,14 @@ export const handler = async (event, context) =>
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
+        const validationError = validateSettingsPayload(payload);
+        if (validationError) {
+          return handleValidationError(validationError);
+        }
         return saveSettings(supabase, userId, payload);
       } catch (err) {
         console.error("Player settings error:", err);
-        return createErrorResponse("Internal server error", 500, "server_error", {
-          details: err.message,
-        });
+        return createErrorResponse("Internal server error", 500, "server_error");
       }
     },
   });
@@ -165,7 +251,7 @@ async function saveSettings(supabase, userId, payload) {
         birth_date: birthDate || null,
         flag_practice_schedule: flagPracticeSchedule || [],
         preferred_training_days: preferredTrainingDays || [1, 2, 4, 5, 6],
-        max_sessions_per_week: maxSessionsPerWeek || 5,
+        max_sessions_per_week: maxSessionsPerWeek ?? 5,
         has_gym_access: hasGymAccess !== false,
         has_field_access: hasFieldAccess !== false,
         warmup_focus: warmupFocus || null,

@@ -79,6 +79,12 @@ export class TeamMembershipService {
   private readonly _isLoading = signal(false);
   private readonly _lastUpdated = signal<Date | null>(null);
 
+  /** In-flight request deduplication */
+  private _loadPromise: Promise<TeamMembership | null> | null = null;
+
+  /** Cache TTL in ms - skip refetch if data is newer than this */
+  private static readonly CACHE_TTL_MS = 30_000;
+
   // Public readonly signals
   readonly membership = this._membership.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
@@ -176,9 +182,9 @@ export class TeamMembershipService {
 
   /**
    * Load team membership for current user
-   * Call this on app init and after team changes
+   * Deduplicates concurrent calls and returns cached data if fresh (< 30s)
    */
-  async loadMembership(): Promise<TeamMembership | null> {
+  async loadMembership(forceRefresh = false): Promise<TeamMembership | null> {
     const user = this.authService.getUser();
     if (!user?.id) {
       this.logger.warn("[TeamMembership] No authenticated user");
@@ -186,8 +192,27 @@ export class TeamMembershipService {
       return null;
     }
 
-    this._isLoading.set(true);
+    if (!forceRefresh) {
+      const last = this._lastUpdated();
+      const cached = this._membership();
+      if (cached && last && Date.now() - last.getTime() < TeamMembershipService.CACHE_TTL_MS) {
+        return cached;
+      }
+      if (this._loadPromise) {
+        return this._loadPromise;
+      }
+    }
 
+    this._loadPromise = this.fetchMembership(user.id);
+    try {
+      return await this._loadPromise;
+    } finally {
+      this._loadPromise = null;
+    }
+  }
+
+  private async fetchMembership(userId: string): Promise<TeamMembership | null> {
+    this._isLoading.set(true);
     try {
       const { data: teamMember, error } = await this.supabaseService.client
         .from("team_members")
@@ -204,7 +229,7 @@ export class TeamMembershipService {
           teams:team_id(id, name)
         `,
         )
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .eq("status", "active")
         .maybeSingle();
 
@@ -256,7 +281,7 @@ export class TeamMembershipService {
    * Force refresh membership data
    */
   async refresh(): Promise<void> {
-    await this.loadMembership();
+    await this.loadMembership(true);
   }
 
   /**
@@ -445,7 +470,7 @@ export class TeamMembershipService {
       }
 
       // Refresh membership data
-      await this.loadMembership();
+      await this.loadMembership(true);
       return true;
     } catch (error) {
       this.logger.error("[TeamMembership] Unexpected error:", error);

@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -26,12 +28,8 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-}
 
-.time-picker-input:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-  border-color: var(--ds-primary-green);
+  @include ds-focus-ring($border-color: var(--ds-primary-green));
 }
 
 .time-picker-input.is-invalid {

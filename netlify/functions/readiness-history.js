@@ -14,6 +14,8 @@ import { successResponse } from "./utils/response-helper.js";
 import { canCoachViewReadiness, filterReadinessForCoach } from "./utils/consent-guard.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 
+const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"]);
+
 /**
  * Get readiness history for an athlete
  */
@@ -32,12 +34,35 @@ export const handler = async (event, context) => {
           return error;
         }
 
+        const rawDays = event.queryStringParameters?.days;
+        if (rawDays !== undefined) {
+          const parsedDays = Number(rawDays);
+          if (
+            !Number.isInteger(parsedDays) ||
+            parsedDays < 1 ||
+            parsedDays > 365
+          ) {
+            return createErrorResponse(
+              "days must be an integer between 1 and 365",
+              422,
+              "validation_error",
+            );
+          }
+        }
+
         const days = parseIntParam(event, "days", 7, 1, 365);
         const { startDate, endDate } = calculateDateRange(days, false); // Backward-looking
 
         // Check if coach requesting another athlete's data
         const role = await getUserRole(userId);
-        const isCoach = ["coach", "admin"].includes(role);
+        const isCoach = COACH_ROLES.has(role);
+        if (athleteId !== userId && !isCoach) {
+          return createErrorResponse(
+            "Not authorized to view another athlete's readiness history",
+            403,
+            "authorization_error",
+          );
+        }
 
         // Get readiness scores
         const query = supabaseAdmin
@@ -53,7 +78,12 @@ export const handler = async (event, context) => {
           "Failed to retrieve readiness history",
         );
         if (!result.success) {
-          return result.error;
+          return createErrorResponse(
+            "Failed to retrieve readiness history",
+            500,
+            "database_error",
+            requestId,
+          );
         }
 
         // Filter data for coach if consent not granted

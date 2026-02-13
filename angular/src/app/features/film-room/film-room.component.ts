@@ -19,7 +19,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -35,6 +35,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 // ===== Interfaces =====
@@ -91,8 +92,8 @@ interface DiscussionMessage {
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="film-room-page">
@@ -229,17 +230,11 @@ interface DiscussionMessage {
           </div>
         } @else {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-video"></i>
-              <h3>No film assigned</h3>
-              <p>
-                @if (searchQuery || selectedStatus) {
-                  Try adjusting your filters
-                } @else {
-                  Your coach hasn't assigned any film yet
-                }
-              </p>
-            </div>
+            <app-empty-state
+              icon="pi-video"
+              heading="No film assigned"
+              [description]="getEmptyDescription()"
+            />
           </p-card>
         }
       </div>
@@ -387,7 +382,7 @@ export class FilmRoomComponent implements OnInit {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly films = signal<FilmSession[]>([]);
@@ -449,6 +444,12 @@ export class FilmRoomComponent implements OnInit {
     return Math.round((this.watchedCount() / total) * 100);
   });
 
+  getEmptyDescription(): string {
+    return this.searchQuery || this.selectedStatus
+      ? "Try adjusting your filters"
+      : "Your coach hasn't assigned any film yet";
+  }
+
   ngOnInit(): void {
     this.loadData();
   }
@@ -501,11 +502,10 @@ export class FilmRoomComponent implements OnInit {
       .post("/api/film-room/watched", { filmId: film.id, watched: newStatus })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
-          this.messageService.add({
-            severity: "success",
-            summary: newStatus ? "Marked as Watched" : "Marked as Unwatched",
-            detail: film.title,
-          });
+          this.toastService.success(
+            film.title,
+            newStatus ? "Marked as Watched" : "Marked as Unwatched",
+          );
         },
         error: (err) =>
           this.logger.error("Failed to update watched status", err),
@@ -601,10 +601,7 @@ export class FilmRoomComponent implements OnInit {
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
-          this.messageService.add({
-            severity: "success",
-            summary: "Reply sent",
-          });
+          this.toastService.success("Reply sent");
         },
         error: (err) => this.logger.error("Failed to send reply", err),
       });

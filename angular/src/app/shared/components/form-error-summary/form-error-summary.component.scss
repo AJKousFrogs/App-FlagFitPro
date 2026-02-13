@@ -15,10 +15,7 @@
   position: relative;
 
   // Focus styles for keyboard navigation
-  &:focus-visible {
-    outline: var(--border-3) solid rgba(var(--primitive-error-500-rgb), 0.4);
-    outline-offset: var(--focus-outline-offset);
-  }
+  @include ds-focus-ring(rgba(var(--primitive-error-500-rgb), 0.4));
 
   @include respond-to(sm) {
     padding: var(--space-4);
@@ -84,11 +81,7 @@
     text-decoration: none;
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--primitive-error-600);
-    outline-offset: var(--focus-outline-offset);
-    border-radius: var(--radius-sm);
-  }
+  @include ds-focus-ring(var(--primitive-error-600), null, var(--radius-sm));
 
   strong {
     font-weight: var(--ds-font-weight-semibold);
@@ -127,14 +120,8 @@
   border-radius: var(--radius-sm);
   transition: background-color var(--transition-fast) var(--ease-standard);
 
-  &:hover {
-    background: var(--primitive-error-100);
-  }
-
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--primitive-error-600);
-    outline-offset: var(--focus-outline-offset);
-  }
+  @include ds-hover-state(var(--primitive-error-100));
+  @include ds-focus-ring(var(--primitive-error-600));
 }
 
 // Dark theme support

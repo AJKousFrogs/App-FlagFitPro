@@ -94,12 +94,6 @@
   min-width: var(--container-md);
 }
 
-.superadmin-team-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
 .game-tracker-play-dialog {
   width: var(--dialog-max-width-md);
   max-width: calc(100vw - var(--space-6));
@@ -329,12 +323,6 @@
 .roster-status-dialog,
 .roster-bulk-status-dialog {
   width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.superadmin-user-dialog {
-  width: var(--dialog-max-width-2xl);
   max-width: calc(100vw - var(--space-6));
   max-height: var(--dialog-max-height);
 }

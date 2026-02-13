@@ -12,10 +12,7 @@
    DIALOG CONTAINER
    ================================================================ */
 
-// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-013)
-.command-palette-dialog {
-  // Component-specific styles remain here
-}
+// PrimeNG dialog: _component-overrides.scss (DS-EXC-013)
 
 /* ================================================================
    SEARCH PANEL CONTAINER
@@ -49,10 +46,7 @@
   flex-shrink: 0;
 }
 
-// PrimeNG input overrides moved to _exceptions.scss (DS-EXC-013)
-.search-input {
-  // Component-specific styles remain here
-}
+// PrimeNG input: _component-overrides.scss (DS-EXC-013)
 
 .input-actions {
   display: flex;
@@ -71,10 +65,7 @@
   letter-spacing: var(--ds-letter-spacing-0-02em);
 }
 
-// PrimeNG button override moved to _exceptions.scss (DS-EXC-013)
-.clear-btn {
-  // Component-specific styles remain here
-}
+// PrimeNG button: _component-overrides.scss (DS-EXC-013)
 
 /* ================================================================
    PANEL CONTENT AREA
@@ -158,17 +149,16 @@
   position: relative;
   z-index: 1;
   outline: none;
+
+  @include ds-input-focus(
+    $shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2)
+  );
 }
 
 .quick-link-card:hover {
   background: var(--surface-card);
   border-color: var(--ds-primary-green);
   box-shadow: var(--shadow-sm);
-}
-
-.quick-link-card:focus-visible {
-  border-color: var(--ds-primary-green);
-  box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2);
 }
 
 .quick-link-card.selected {
@@ -243,10 +233,8 @@
   color: var(--text-color-secondary);
   cursor: pointer;
   padding: 0;
-}
 
-.clear-recent-link:hover {
-  color: var(--ds-primary-green);
+  @include ds-hover-state(transparent, $color: var(--ds-primary-green));
 }
 
 .recent-grid {
@@ -270,11 +258,11 @@
     background-color var(--motion-fast) var(--ease-standard),
     border-color var(--motion-fast) var(--ease-standard),
     color var(--motion-fast) var(--ease-standard);
-}
 
-.recent-tag:hover {
-  background: var(--surface-card);
-  border-color: var(--color-border-primary);
+  @include ds-hover-state(
+    var(--surface-card),
+    $border-color: var(--color-border-primary)
+  );
 }
 
 .recent-tag i {
@@ -676,12 +664,12 @@
     border-color var(--motion-fast) var(--ease-standard),
     color var(--motion-fast) var(--ease-standard);
   color: var(--text-color);
-}
 
-.suggestion-chip:hover {
-  background: var(--surface-card);
-  border-color: var(--ds-primary-green);
-  color: var(--ds-primary-green-hover);
+  @include ds-hover-state(
+    var(--surface-card),
+    $color: var(--ds-primary-green-hover),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 /* ================================================================
@@ -718,8 +706,8 @@
   transition: background-color var(--transition-fast) var(--ease-standard);
 }
 
-.suggestion-item:hover {
-  background: var(--color-surface-hover);
+.suggestion-item {
+  @include ds-hover-state(var(--color-surface-hover));
 }
 
 .suggestion-item i:first-child {
@@ -811,7 +799,7 @@
    ================================================================ */
 
 @include respond-to(sm) {
-  // PrimeNG dialog responsive overrides moved to _exceptions.scss (DS-EXC-013)
+  // PrimeNG dialog responsive overrides moved to _component-overrides.scss (DS-EXC-013)
 
   .search-panel {
     max-height: 100vh;

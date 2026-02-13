@@ -18,7 +18,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -49,6 +49,7 @@ import {
   LazyChartData,
 } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 
 // ===== Interfaces =====
 interface ProtocolStage {
@@ -299,8 +300,8 @@ const SEVERITY_LEVELS = [
     PageHeaderComponent,
     ButtonComponent,
     RTPPhaseCelebrationComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="return-to-play-page">
@@ -313,17 +314,14 @@ const SEVERITY_LEVELS = [
         <!-- No Active Protocol State -->
         @if (!activeProtocol()) {
           <p-card class="no-protocol-card">
-            <div class="empty-state">
-              <i class="pi pi-heart-pulse empty-icon"></i>
-              <h3>No Active Recovery Protocol</h3>
-              <p>
-                Start a return-to-play protocol if you're recovering from an
-                injury or extended absence.
-              </p>
-              <app-button iconLeft="pi-plus" (clicked)="openStartDialog()"
-                >Start Protocol</app-button
-              >
-            </div>
+            <app-empty-state
+              context="recovery"
+              [inline]="true"
+              [customTitle]="'No Active Recovery Protocol'"
+              [customMessage]="'Start a return-to-play protocol if you are recovering from an injury or extended absence.'"
+              [customActionLabel]="'Start Protocol'"
+              [actionHandler]="openStartDialog"
+            />
           </p-card>
         }
 
@@ -637,10 +635,12 @@ const SEVERITY_LEVELS = [
                 [options]="chartOptions"
               ></app-lazy-chart>
             } @else {
-              <div class="empty-state small">
-                <i class="pi pi-chart-line"></i>
-                <p>Log check-ins to see your recovery progress</p>
-              </div>
+              <app-empty-state
+                icon="pi-chart-line"
+                heading="No recovery data yet"
+                description="Log check-ins to see your recovery progress."
+                [compact]="true"
+              />
             }
           </p-card>
 
@@ -826,7 +826,7 @@ export class ReturnToPlayComponent implements OnInit {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // Constants exposed to template
   protected readonly UI_LIMITS = UI_LIMITS;
@@ -1004,19 +1004,14 @@ export class ReturnToPlayComponent implements OnInit {
       });
       this.showPhaseCelebration.set(true);
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Stage Advanced",
-        detail: `Congratulations! You've progressed to Stage ${newStage}`,
-        life: 4000,
-      });
+      this.toastService.success(
+        `Congratulations! You've progressed to Stage ${newStage}`,
+        "Stage Advanced",
+        4000,
+      );
     } catch (err) {
       this.logger.error("Failed to advance stage", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to advance stage. Please try again.",
-      });
+      this.toastService.error("Failed to advance stage. Please try again.");
     }
   }
 
@@ -1067,19 +1062,13 @@ export class ReturnToPlayComponent implements OnInit {
       // Reset form
       this.todayCheckin = this.getEmptyCheckinForm();
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Check-in Saved",
-        detail: "Your daily recovery check-in has been recorded.",
-        life: 3000,
-      });
+      this.toastService.success(
+        "Your daily recovery check-in has been recorded.",
+        "Check-in Saved",
+      );
     } catch (err) {
       this.logger.error("Failed to save checkin", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save check-in. Please try again.",
-      });
+      this.toastService.error("Failed to save check-in. Please try again.");
     } finally {
       this.isSavingCheckin.set(false);
     }
@@ -1156,19 +1145,14 @@ export class ReturnToPlayComponent implements OnInit {
       this.activeProtocol.set(newProtocol);
       this.closeStartDialog();
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Protocol Started",
-        detail: `Your ${_severity?.days || 14}-day recovery protocol has begun. Follow the stages carefully.`,
-        life: 5000,
-      });
+      this.toastService.success(
+        `Your ${_severity?.days || 14}-day recovery protocol has begun. Follow the stages carefully.`,
+        "Protocol Started",
+        5000,
+      );
     } catch (err) {
       this.logger.error("Failed to start protocol", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to start protocol. Please try again.",
-      });
+      this.toastService.error("Failed to start protocol. Please try again.");
     } finally {
       this.isStartingProtocol.set(false);
     }

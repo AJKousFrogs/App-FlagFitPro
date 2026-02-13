@@ -4,16 +4,9 @@
 // ============================================================================
 
 @use "styles/mixins" as *;
-@include stat-block;
 
 .stats-section {
   margin-bottom: var(--space-6);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
 }
 
 .stat-card {
@@ -51,12 +44,6 @@
 .stat-content {
   display: flex;
   flex-direction: column;
-}
-
-.stat-block__value {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
 }
 
 .stat-block__label {

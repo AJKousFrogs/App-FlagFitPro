@@ -166,8 +166,7 @@ database/
 ├── practitioners_guide_hip_groin_knowledge.json
 ├── practitioners_guide_isometrics_knowledge.json
 ├── practitioners_guide_plyometrics_quadriceps_knowledge.json (plyometrics, H:Q ratio)
-├── flag_football_athlete_monitoring_knowledge.json (from Evaluation of Flag Football Athlete Monitoring Metrics PDF)
-└── KNOWLEDGE_JSON_AUDIT.md
+└── flag_football_athlete_monitoring_knowledge.json (from Evaluation of Flag Football Athlete Monitoring Metrics PDF)
 ```
 
 ### SQL Import Files (5)

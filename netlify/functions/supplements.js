@@ -5,6 +5,17 @@ import { supabaseAdmin } from "./supabase-client.js";
 // Netlify Function: Supplements API
 // Handles supplement logging (read-only for AI - no dosing recommendations)
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || Number.isNaN(parsed) || String(parsed) !== String(value)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  if (parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
 /**
  * Log supplement usage
  * POST /api/supplements/log
@@ -20,18 +31,24 @@ async function logSupplement(userId, supplementData) {
       typeof supplement !== "string" ||
       supplement.trim().length === 0
     ) {
-      throw new Error("supplement name is required");
+      const error = new Error("supplement name is required");
+      error.isValidation = true;
+      throw error;
     }
 
     // Validate supplement name length
     if (supplement.length > 100) {
-      throw new Error("supplement name must be 100 characters or less");
+      const error = new Error("supplement name must be 100 characters or less");
+      error.isValidation = true;
+      throw error;
     }
 
     // Note: dose is optional - user logs it, but AI never recommends it
     if (dose !== undefined && dose !== null) {
       if (typeof dose !== "number" || dose < 0) {
-        throw new Error("dose must be a positive number if provided");
+        const error = new Error("dose must be a positive number if provided");
+        error.isValidation = true;
+        throw error;
       }
     }
 
@@ -61,9 +78,9 @@ async function logSupplement(userId, supplementData) {
     return {
       id: data.id,
       loggedAt: data.created_at,
-      supplement: data.supplement,
-      dose: data.dose,
-      takenAt: data.taken_at,
+      supplement: data.supplement_name,
+      dose: data.dosage ?? null,
+      takenAt: data.date,
       notes: data.notes,
     };
   } catch (error) {
@@ -191,42 +208,65 @@ export const handler = async (event, context) => {
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
     requireAuth: true, // P0-009: Explicitly require authentication for supplement data
     handler: async (event, context, { userId }) => {
-      if (event.httpMethod === "POST") {
-        // Handle POST /api/supplements/log
-        if (path.includes("/log") || path.endsWith("/log")) {
-          let supplementData = {};
-          try {
-            supplementData = JSON.parse(event.body || "{}");
-          } catch (_parseError) {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-            );
+      try {
+        if (event.httpMethod === "POST") {
+          // Handle POST /api/supplements/log
+          if (path.includes("/log") || path.endsWith("/log")) {
+            let supplementData = {};
+            try {
+              supplementData = JSON.parse(event.body || "{}");
+            } catch (_parseError) {
+              return createErrorResponse(
+                "Invalid JSON in request body",
+                400,
+                "invalid_json",
+              );
+            }
+
+            const result = await logSupplement(userId, supplementData);
+            return createSuccessResponse(result, 201, "Supplement logged");
           }
 
-          const result = await logSupplement(userId, supplementData);
-          return createSuccessResponse(result, 201, "Supplement logged");
+          return createErrorResponse("Endpoint not found", 404, "not_found");
         }
 
-        return createErrorResponse("Endpoint not found", 404, "not_found");
-      }
+        // Handle GET requests
+        if (path.includes("/recent") || path.endsWith("/recent")) {
+          const result = await getRecentSupplementLogs(userId);
+          return createSuccessResponse({ logs: result });
+        }
 
-      // Handle GET requests
-      if (path.includes("/recent") || path.endsWith("/recent")) {
-        const result = await getRecentSupplementLogs(userId);
-        return createSuccessResponse({ logs: result });
-      }
+        if (path.includes("/logs") || path.endsWith("/logs")) {
+          const queryLimit = event.queryStringParameters?.limit;
+          const limit =
+            queryLimit === undefined
+              ? 30
+              : parseBoundedInt(String(queryLimit), "limit", { min: 1, max: 200 });
+          const result = await getSupplementLogs(userId, limit);
+          return createSuccessResponse({ logs: result });
+        }
 
-      if (path.includes("/logs") || path.endsWith("/logs")) {
-        const limit = parseInt(event.queryStringParameters?.limit) || 30;
-        const result = await getSupplementLogs(userId, limit);
-        return createSuccessResponse({ logs: result });
-      }
+        // Default: return user supplements with today's status
+        const result = await getUserSupplements(userId);
+        return createSuccessResponse(result);
+      } catch (error) {
+        if (
+          error?.isValidation ||
+          error?.message?.includes("must be an integer between")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+          );
+        }
 
-      // Default: return user supplements with today's status
-      const result = await getUserSupplements(userId);
-      return createSuccessResponse(result);
+        return createErrorResponse(
+          "Failed to process supplements request",
+          500,
+          "internal_error",
+        );
+      }
     },
   });
 };

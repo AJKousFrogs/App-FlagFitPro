@@ -19,8 +19,9 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -129,8 +130,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="practice-planner-page">
@@ -272,14 +273,14 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           </div>
         } @else {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-calendar"></i>
-              <h3>No Practices Found</h3>
-              <p>Create your first practice plan</p>
-              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
-                >Create Practice</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-calendar"
+              heading="No Practices Found"
+              description="Create your first practice plan"
+              actionLabel="Create Practice"
+              actionIcon="pi-plus"
+              [actionHandler]="openCreateDialogHandler"
+            />
           </p-card>
         }
       </div>
@@ -608,7 +609,7 @@ export class PracticePlannerComponent implements OnInit {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly activeTab = signal<"upcoming" | "past" | "templates">("upcoming");
@@ -717,6 +718,8 @@ export class PracticePlannerComponent implements OnInit {
     this.showDialog = true;
   }
 
+  readonly openCreateDialogHandler = (): void => this.openCreateDialog();
+
   editPractice(practice: PracticePlan): void {
     this.isEditing.set(true);
     this.formData = {
@@ -761,11 +764,10 @@ export class PracticePlannerComponent implements OnInit {
   }
 
   startPractice(_practice: PracticePlan): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Starting Practice",
-      detail: "Live practice mode would start here",
-    });
+    this.toastService.info(
+      "Live practice mode would start here",
+      "Starting Practice",
+    );
   }
 
   // Activity management
@@ -871,20 +873,18 @@ export class PracticePlannerComponent implements OnInit {
 
   // Save methods
   saveDraft(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Draft Saved",
-      detail: `${this.formData.title} saved as draft`,
-    });
+    this.toastService.success(
+      `${this.formData.title} saved as draft`,
+      "Draft Saved",
+    );
     this.showDialog = false;
   }
 
   saveAsTemplate(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Template Saved",
-      detail: `${this.formData.title} saved as template`,
-    });
+    this.toastService.success(
+      `${this.formData.title} saved as template`,
+      "Template Saved",
+    );
   }
 
   saveAndNotify(): void {
@@ -892,11 +892,7 @@ export class PracticePlannerComponent implements OnInit {
 
     this.api.post("/api/coach/practices", this.formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: "success",
-          summary: "Practice Saved",
-          detail: "Team has been notified",
-        });
+        this.toastService.success("Team has been notified", "Practice Saved");
         this.showDialog = false;
         this.loadData();
       },

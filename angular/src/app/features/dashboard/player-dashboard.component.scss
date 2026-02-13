@@ -25,19 +25,6 @@
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
   align-items: stretch; /* Ensure equal card heights */
-
-  // Tablet: 2 columns
-  @include respond-to(lg) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-3);
-  }
-
-  // Mobile: 1 column (stacked)
-  @include respond-to(sm) {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
 }
 
 .stat-card {
@@ -56,19 +43,6 @@
   &:hover {
     transform: var(--transform-hover-lift);
     box-shadow: var(--shadow-md);
-  }
-
-  // Mobile: Compact padding
-  @include respond-to(md) {
-    padding: var(--space-3);
-  }
-
-  // Mobile: Horizontal layout for better space usage
-  @include respond-to(sm) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-3) var(--space-4);
   }
 }
 
@@ -89,53 +63,13 @@
   justify-content: center;
   font-size: var(--ds-font-size-2xl);
   margin-bottom: var(--space-2);
-
-  // Mobile: Smaller icons, no margin
-  @include respond-to(sm) {
-    width: var(--space-10); /* 2.5rem */
-    height: var(--space-10); /* 2.5rem */
-    font-size: var(--ds-font-size-xl);
-    margin-bottom: 0;
-    margin-right: var(--space-3);
-  }
 }
 
 .stat-content {
-  // Mobile: Flex layout
-  @include respond-to(sm) {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+  // Responsive: see consolidated @include respond-to(sm)
 }
 
-.stat-block__label {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-1);
-  font-weight: var(--ds-font-weight-medium);
-
-  // Mobile: Smaller text
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-xs);
-  }
-}
-
-.stat-block__value {
-  font-size: var(--ds-font-size-3xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-  line-height: var(--ds-line-height-h1);
-
-  // Mobile: Smaller value
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-3xl);
-  }
-
-  @include respond-to(sm) {
-    font-size: var(--ds-font-size-2xl);
-  }
-}
+// stat-block__label/value: use primitives .stats-overview scoped styles
 
 // ================================================================
 // WELCOME CARD - RESPONSIVE LAYOUT
@@ -149,14 +83,6 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);
-
-  // Mobile: Stack vertically
-  @include respond-to(sm) {
-    flex-direction: column;
-    gap: var(--space-3);
-    align-items: center;
-    text-align: center;
-  }
 }
 
 .merlin-avatar {
@@ -176,12 +102,6 @@
   color: var(--color-text-on-primary);
   box-shadow: var(--shadow-2);
 
-  // Mobile: Smaller avatar
-  @include respond-to(md) {
-    width: var(--space-16); /* var(--header-height) */
-    height: var(--space-16); /* var(--header-height) */
-    font-size: var(--ds-font-size-3xl);
-  }
 }
 
 .welcome-greeting {
@@ -189,15 +109,6 @@
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-2) 0;
-
-  // Mobile: Smaller heading
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-3xl);
-  }
-
-  @include respond-to(sm) {
-    font-size: var(--ds-font-size-2xl);
-  }
 }
 
 .merlin-insight {
@@ -205,32 +116,12 @@
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-relaxed);
   margin-bottom: var(--space-3);
-
-  // Mobile: Smaller text
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-md);
-  }
 }
 
 .welcome-actions {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
-
-  // Mobile: Stack buttons vertically
-  @include respond-to(sm) {
-    flex-direction: column;
-    width: 100%;
-
-    app-button {
-      width: 100%;
-
-      button {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-  }
 }
 
 // ================================================================
@@ -245,21 +136,7 @@
   position: relative;
   height: calc(var(--space-12) * 6.25); /* 18.calc(var(--size-200) * 6) */
   padding: var(--space-2);
-
-  // Mobile: Smaller chart
-  @include respond-to(md) {
-    height: calc(var(--space-10) * 6.25); /* 15.625rem */
-    padding: var(--space-1);
-  }
-
-  @include respond-to(sm) {
-    height: calc(var(--space-10) * 5); /* 12.5rem */
-  }
-
-  // Canvas responsive styling moved to _exceptions.scss (DS-EXC-002)
-  canvas {
-    // Component-specific styles remain here
-  }
+  /* Responsive: see consolidated breakpoints; Canvas in _component-overrides.scss */
 }
 
 // ================================================================
@@ -272,29 +149,20 @@
 
 .schedule-timeline {
   // Mobile: Compact timeline
-  // PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
+  // PrimeNG overrides moved to _component-overrides.scss (DS-EXC-002)
 }
 
 .schedule-item {
   padding: var(--space-3);
   background: var(--surface-ground);
   border-radius: var(--radius-md);
-  border-left: var(--border-4) solid var(--ds-primary-green); /* var(--space-1) - closest token to var(--space-0-75) */
-
-  // Mobile: Compact padding
-  @include respond-to(md) {
-    padding: var(--space-2);
-  }
+  border-left: var(--border-4) solid var(--ds-primary-green);
 }
 
 .schedule-time {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-tertiary);
   font-weight: var(--ds-font-weight-medium);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-xs);
-  }
 }
 
 .schedule-title {
@@ -302,10 +170,6 @@
   color: var(--color-text-primary);
   font-weight: var(--ds-font-weight-semibold);
   margin: var(--space-1) 0;
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-md);
-  }
 }
 
 // ================================================================
@@ -316,17 +180,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
-
-  // Tablet: 2 columns
-  @include respond-to(lg) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  // Mobile: 1 column (stacked)
-  @include respond-to(sm) {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
-  }
 }
 
 .quick-action-card {
@@ -344,19 +197,7 @@
   align-items: center;
   gap: var(--space-3);
 
-  // Touch-friendly on mobile
-  @include respond-to(md) {
-    min-height: calc(var(--space-8) * 2.25); /* 4.5rem - Apple HIG minimum */
-    padding: var(--space-3);
-  }
-
-  &:hover,
-  &:focus-visible {
-    border-color: var(--ds-primary-green);
-    background: var(--ds-primary-green-subtle);
-    transform: var(--transform-hover-lift);
-    box-shadow: var(--shadow-2);
-  }
+  @include ds-interactive-card-focus;
 
   // Touch feedback
   &:active {
@@ -365,8 +206,8 @@
 }
 
 .action-icon {
-  width: var(--space-12); /* 3rem */
-  height: var(--space-12); /* 3rem */
+  width: var(--space-12);
+  height: var(--space-12);
   border-radius: var(--radius-md);
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
@@ -375,12 +216,6 @@
   justify-content: center;
   font-size: var(--ds-font-size-2xl);
   flex-shrink: 0;
-
-  @include respond-to(md) {
-    width: var(--space-10); /* 2.5rem */
-    height: var(--space-10); /* 2.5rem */
-    font-size: var(--ds-font-size-xl);
-  }
 }
 
 .action-content {
@@ -392,19 +227,11 @@
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-1);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-md);
-  }
 }
 
 .action-description {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-xs);
-  }
 }
 
 // ================================================================
@@ -414,7 +241,7 @@
 .announcement-banner {
   margin-bottom: 0;
 
-  // PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
+  // PrimeNG overrides moved to _component-overrides.scss (DS-EXC-002)
 }
 
 // ================================================================
@@ -428,14 +255,6 @@
 .no-program-content {
   text-align: center;
   padding: var(--space-6);
-
-  @include respond-to(md) {
-    padding: var(--space-4);
-  }
-
-  @include respond-to(sm) {
-    padding: var(--space-3);
-  }
 }
 
 .no-program-icon {
@@ -449,12 +268,6 @@
   justify-content: center;
   margin: 0 auto var(--space-4);
   font-size: var(--ds-font-size-3xl);
-
-  @include respond-to(md) {
-    width: var(--space-16); /* var(--header-height) */
-    height: var(--space-16); /* var(--header-height) */
-    font-size: var(--ds-font-size-3xl);
-  }
 }
 
 .no-program-title {
@@ -462,22 +275,14 @@
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-3xl);
-  }
 }
 
 .no-program-message {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  max-width: var(--content-max-width-sm); /* var(--content-max-width-sm) - closest token to calc(var(--size-200) * 3) */
+  max-width: var(--content-max-width-sm);
   margin: 0 auto var(--space-4);
   line-height: var(--ds-line-height-relaxed);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-md);
-  }
 }
 
 .no-program-actions {
@@ -485,20 +290,12 @@
   gap: var(--space-3);
   justify-content: center;
   flex-wrap: wrap;
-
-  // Mobile: Stack vertically
-  @include respond-to(sm) {
-    flex-direction: column;
-    align-items: stretch;
-    max-width: calc(var(--space-12) * 6.25); /* 18.calc(var(--size-200) * 6) */
-    margin: 0 auto;
-  }
 }
 
 // ================================================================
 // PRIMENG OVERRIDES FOR MOBILE
 // ================================================================
-// PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
+// PrimeNG overrides moved to _component-overrides.scss (DS-EXC-002)
 
 // ================================================================
 // ACWR PROGRESS TRACKING (UX Audit Fix #5)
@@ -527,12 +324,6 @@
   font-size: var(--ds-font-size-2xl); /* 1.5rem */
   flex-shrink: 0;
   opacity: var(--opacity-subtle); // Dimmed to indicate "building"
-
-  @include respond-to(md) {
-    width: var(--space-10); /* 2.5rem */
-    height: var(--space-10); /* 2.5rem */
-    font-size: var(--ds-font-size-xl); /* 1.25rem */
-  }
 }
 
 .acwr-progress-details {
@@ -546,10 +337,6 @@
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-xs);
-  }
 }
 
 .acwr-progress-bar-container {
@@ -583,10 +370,6 @@
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
   white-space: nowrap;
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-xs);
-  }
 }
 
 .acwr-help-text {
@@ -595,7 +378,7 @@
   font-style: italic;
 }
 
-// Milestone tag font-size override moved to _exceptions.scss (DS-EXC-002)
+// Milestone tag font-size override moved to _component-overrides.scss (DS-EXC-002)
 .milestone-tag {
   align-self: flex-start;
 }
@@ -629,4 +412,153 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
+}
+
+// ================================================================
+// CONSOLIDATED RESPONSIVE BREAKPOINTS (reduces @media duplication)
+// lg: tablet, md: small tablet, sm: mobile
+// ================================================================
+
+@include respond-to(lg) {
+  .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@include respond-to(md) {
+  .stat-card {
+    padding: var(--space-3);
+  }
+
+  .merlin-avatar {
+    width: var(--space-16);
+    height: var(--space-16);
+    font-size: var(--ds-font-size-3xl);
+  }
+
+  .chart-container {
+    height: calc(var(--space-10) * 6.25);
+    padding: var(--space-1);
+  }
+
+  .schedule-item {
+    padding: var(--space-2);
+  }
+
+  .schedule-time {
+    font-size: var(--ds-font-size-xs);
+  }
+
+  .quick-action-card {
+    min-height: calc(var(--space-8) * 2.25); /* Apple HIG touch target */
+    padding: var(--space-3);
+  }
+
+  .action-icon {
+    width: var(--space-10);
+    height: var(--space-10);
+    font-size: var(--ds-font-size-xl);
+  }
+
+  .action-description {
+    font-size: var(--ds-font-size-xs);
+  }
+
+  .no-program-content {
+    padding: var(--space-4);
+  }
+
+  .no-program-icon {
+    width: var(--space-16);
+    height: var(--space-16);
+    font-size: var(--ds-font-size-3xl);
+  }
+
+  .acwr-icon-building {
+    width: var(--space-10);
+    height: var(--space-10);
+    font-size: var(--ds-font-size-xl);
+  }
+
+  .acwr-progress-title {
+    font-size: var(--ds-font-size-xs);
+  }
+}
+
+@include respond-to(sm) {
+  .stats-overview {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .stat-icon {
+    width: var(--space-10);
+    height: var(--space-10);
+    font-size: var(--ds-font-size-xl);
+    margin-bottom: 0;
+    margin-right: var(--space-3);
+  }
+
+  .stat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .welcome-wrapper {
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: center;
+    text-align: center;
+  }
+
+  .welcome-greeting {
+    font-size: var(--ds-font-size-2xl);
+  }
+
+  .welcome-actions {
+    flex-direction: column;
+    width: 100%;
+
+    app-button {
+      width: 100%;
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  .chart-container {
+    height: calc(var(--space-10) * 5);
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .no-program-content {
+    padding: var(--space-3);
+  }
+
+  .no-program-actions {
+    flex-direction: column;
+    align-items: stretch;
+    max-width: calc(var(--space-12) * 6.25);
+    margin: 0 auto;
+  }
 }

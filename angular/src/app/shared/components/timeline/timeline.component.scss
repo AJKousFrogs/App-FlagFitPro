@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -15,14 +17,14 @@
   padding-left: var(--space-8);
 }
 
-.timeline-vertical::before {
-  content: "";
-  position: absolute;
-  left: var(--space-2); // 0.5rem
-  top: 0;
-  bottom: 0;
-  width: var(--border-2);
-  background: var(--color-border-primary);
+.timeline-vertical {
+  @include pseudo-before("", block, absolute) {
+    left: var(--space-2);
+    top: 0;
+    bottom: 0;
+    width: var(--border-2);
+    background: var(--color-border-primary);
+  }
 }
 
 .timeline-item {
@@ -40,7 +42,7 @@
   top: var(--space-1); // var(--space-1)
   width: var(--space-4);
   height: var(--space-4);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--ds-primary-green);
   border: var(--space-0-75) solid var(--surface-primary);
   z-index: 1;
@@ -91,14 +93,14 @@
   position: relative;
 }
 
-.timeline-horizontal::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: var(--space-10); // 2.5rem = 2.5rem
-  height: var(--border-2);
-  background: var(--color-border-primary);
+.timeline-horizontal {
+  @include pseudo-before("", block, absolute) {
+    left: 0;
+    right: 0;
+    top: var(--space-10);
+    height: var(--border-2);
+    background: var(--color-border-primary);
+  }
 }
 
 .timeline-horizontal .timeline-item {

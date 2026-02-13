@@ -651,7 +651,8 @@ class ConsentDataReader {
     return warnings;
   }
 
-  _createErrorResponse(error, resourceType) {
+  _createErrorResponse(_error, resourceType) {
+    const safeMessage = `Failed to fetch ${resourceType}`;
     return {
       success: false,
       data: [],
@@ -660,14 +661,14 @@ class ConsentDataReader {
         currentDataPoints: 0,
         minimumRequiredDataPoints: 0,
         isReliable: false,
-        warnings: [`Error fetching ${resourceType}: ${error.message}`],
+        warnings: [safeMessage],
       },
       consentInfo: {
         blockedPlayerIds: [],
         blockedCount: 0,
         accessibleCount: 0,
       },
-      error: error.message,
+      error: safeMessage,
     };
   }
 

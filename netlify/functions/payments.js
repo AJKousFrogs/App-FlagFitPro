@@ -7,6 +7,44 @@ import { checkTeamMembership, getUserContext } from "./utils/auth-helper.js";
 // Handles payment tracking for players and coaches
 // Note: This is for TRACKING ONLY - no actual payment processing
 
+const parsePositiveAmount = (value, fieldName = "amount") => {
+  if (typeof value === "string") {
+    const normalized = value.trim();
+    if (!/^-?\d+(\.\d+)?$/.test(normalized)) {
+      throw new Error(`${fieldName} must be a positive number`);
+    }
+    value = normalized;
+  }
+  const parsed = Number.parseFloat(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    throw new Error(`${fieldName} must be a positive number`);
+  }
+  return parsed;
+};
+
+const assertValidDate = (value, fieldName) => {
+  if (!value || Number.isNaN(new Date(value).getTime())) {
+    throw new Error(`${fieldName} must be a valid date`);
+  }
+};
+
+const assertActiveTeamMember = async (teamId, teamMemberId) => {
+  const { data: member, error } = await supabaseAdmin
+    .from("team_members")
+    .select("id")
+    .eq("team_id", teamId)
+    .eq("id", teamMemberId)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+  if (!member) {
+    throw new Error("player_id must reference an active team member in this team");
+  }
+};
+
 // Get player payment data (player view)
 const getPlayerPayments = async (userId, queryParams) => {
   checkEnvVars();
@@ -305,6 +343,8 @@ const createFee = async (userId, body) => {
   if (!team_id || !name || !amount || !dueDate) {
     throw new Error("Missing required fields: team_id, name, amount, dueDate");
   }
+  const normalizedAmount = parsePositiveAmount(amount);
+  assertValidDate(dueDate, "dueDate");
 
   // Verify coach access
   const { authorized, role } = await checkTeamMembership(userId, team_id);
@@ -334,9 +374,25 @@ const createFee = async (userId, body) => {
     }
     membersToApply = members || [];
   } else if (applyTo === "select" && playerIds?.length > 0) {
-    membersToApply = playerIds.map((id) => ({ id }));
+    const uniqueIds = [...new Set(playerIds)];
+    const { data: members, error } = await supabaseAdmin
+      .from("team_members")
+      .select("id")
+      .eq("team_id", team_id)
+      .in("id", uniqueIds)
+      .eq("status", "active");
+    if (error) {
+      throw error;
+    }
+    if (!members || members.length !== uniqueIds.length) {
+      throw new Error("One or more selected players are not active team members");
+    }
+    membersToApply = members;
   } else {
     throw new Error("Invalid applyTo value or missing playerIds");
+  }
+  if (!membersToApply.length) {
+    throw new Error("No active team members to apply fee");
   }
 
   // Create payment records for each member
@@ -345,7 +401,7 @@ const createFee = async (userId, body) => {
     team_id,
     payment_type,
     description: name,
-    amount: parseFloat(amount),
+    amount: normalizedAmount,
     status: "pending",
     due_date: dueDate,
     created_by: userId,
@@ -371,18 +427,10 @@ const createFee = async (userId, body) => {
 const recordPayment = async (userId, body) => {
   checkEnvVars();
 
-  const {
-    team_id,
-    player_id,
-    amount,
-    method,
-    date,
-    reference,
-    payment_id, // Optional: specific payment to mark as paid
-  } = body;
+  const { team_id, player_id, amount, method, date, reference, payment_id } = body;
 
-  if (!team_id || !player_id || !amount) {
-    throw new Error("Missing required fields: team_id, player_id, amount");
+  if (!team_id) {
+    throw new Error("Missing required field: team_id");
   }
 
   // Verify coach access
@@ -393,25 +441,40 @@ const recordPayment = async (userId, body) => {
 
   // If payment_id provided, update that specific payment
   if (payment_id) {
+    const paidAt = date || new Date().toISOString();
+    assertValidDate(paidAt, "date");
+
     const { data, error } = await supabaseAdmin
       .from("player_payments")
       .update({
         status: "completed",
         payment_method: method || "other",
-        paid_at: date || new Date().toISOString(),
+        paid_at: paidAt,
         reference_number: reference || null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", payment_id)
       .eq("team_id", team_id)
+      .eq("status", "pending")
       .select()
-      .single();
+      .maybeSingle();
 
-    if (error) {
+    if (error || !data) {
+      if (!data) {
+        throw new Error("Payment not found or already completed");
+      }
       throw error;
     }
     return { success: true, payment: data };
   }
+
+  if (!player_id || !amount) {
+    throw new Error("Missing required fields: player_id, amount");
+  }
+  await assertActiveTeamMember(team_id, player_id);
+  const normalizedAmount = parsePositiveAmount(amount);
+  const paidAt = date || new Date().toISOString();
+  assertValidDate(paidAt, "date");
 
   // Otherwise, create a new payment record
   const { data, error } = await supabaseAdmin
@@ -421,10 +484,10 @@ const recordPayment = async (userId, body) => {
       team_id,
       payment_type: "other",
       description: "Payment recorded",
-      amount: parseFloat(amount),
+      amount: normalizedAmount,
       payment_method: method || "other",
       status: "completed",
-      paid_at: date || new Date().toISOString(),
+      paid_at: paidAt,
       reference_number: reference || null,
       created_by: userId,
     })
@@ -448,7 +511,25 @@ export const handler = async (event, context) => {
       const path = event.path.replace("/.netlify/functions/payments", "");
       const method = event.httpMethod;
       const queryParams = event.queryStringParameters || {};
-      const body = event.body ? JSON.parse(event.body) : {};
+      let body = {};
+      if (event.body) {
+        try {
+          body = JSON.parse(event.body);
+        } catch {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+          );
+        }
+        if (!body || typeof body !== "object" || Array.isArray(body)) {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+          );
+        }
+      }
 
       try {
         // Route: GET /api/payments (player view)
@@ -487,9 +568,29 @@ export const handler = async (event, context) => {
         return createErrorResponse("Invalid endpoint", 404);
       } catch (error) {
         console.error("Payments API error:", error);
+        if (
+          error.message?.includes("Only coaches") ||
+          error.message?.includes("Not authorized")
+        ) {
+          return createErrorResponse(error.message, 403, "authorization_error");
+        }
+        if (
+          error.message?.includes("Missing required") ||
+          error.message?.includes("must be") ||
+          error.message?.includes("Invalid") ||
+          error.message?.includes("already completed") ||
+          error.message?.includes("active team members") ||
+          error.message?.includes("selected players")
+        ) {
+          return createErrorResponse(error.message, 422, "validation_error");
+        }
+        if (error.message?.includes("not found")) {
+          return createErrorResponse(error.message, 404, "not_found");
+        }
         return createErrorResponse(
-          error.message || "Internal server error",
+          "Internal server error",
           500,
+          "internal_error",
         );
       }
     },

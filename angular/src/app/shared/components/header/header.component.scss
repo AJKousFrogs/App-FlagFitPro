@@ -23,10 +23,7 @@
   display: block;
 }
 
-// PrimeNG toolbar overrides moved to _exceptions.scss (DS-EXC-004)
-.app-header {
-  // Component-specific styles remain here
-}
+// PrimeNG toolbar: _component-overrides.scss (DS-EXC-004)
 
 /* ================================================================
    HEADER SECTIONS
@@ -49,12 +46,8 @@
   height: var(--header-height, var(--ds-font-size-var(--header-height)));
   cursor: pointer;
   padding: 0 var(--space-2);
-}
 
-.header-center:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-  border-radius: var(--radius-lg);
+  @include ds-focus-ring(var(--ds-primary-green), $radius: var(--radius-lg));
 }
 
 .header-end {
@@ -80,7 +73,7 @@
    MOBILE MENU TOGGLE (hidden by default on desktop)
    ================================================================ */
 
-// PrimeNG button override moved to _exceptions.scss (DS-EXC-004)
+// PrimeNG button override moved to _component-overrides.scss (DS-EXC-004)
 .mobile-menu-toggle {
   display: none;
 }
@@ -149,11 +142,7 @@
   line-height: var(--ds-line-height-1);
 }
 
-/* Olympics Badge */
-// PrimeNG tag override moved to _exceptions.scss (DS-EXC-004)
-.olympics-badge {
-  // Component-specific styles remain here
-}
+/* Olympics Badge: PrimeNG tag in _component-overrides.scss (DS-EXC-004) */
 
 /* ================================================================
    WEATHER INDICATOR (Compact Header Widget)
@@ -173,14 +162,14 @@
     border-color var(--motion-fast) var(--ease-standard),
     background-color var(--motion-fast) var(--ease-standard);
 
+  @include ds-hover-state(
+    var(--surface-hover),
+    $border-color: var(--surface-border)
+  );
+
   i {
     font-size: var(--ds-font-size-md);
     color: var(--text-color-secondary);
-  }
-
-  &:hover {
-    background: var(--surface-hover);
-    border-color: var(--surface-border);
   }
 }
 
@@ -291,10 +280,7 @@
    SEARCH INPUT GROUP - THE VISUAL ANCHOR
    ================================================================ */
 
-// PrimeNG input group overrides moved to _exceptions.scss (DS-EXC-004)
-.search-input-group {
-  // Component-specific styles remain here
-}
+// PrimeNG input group: _component-overrides.scss (DS-EXC-004)
 
 .search-input {
   cursor: pointer;
@@ -327,7 +313,7 @@
   box-shadow: 0 var(--border-1) 0 var(--surface-border);
 }
 
-// PrimeNG input group hover override moved to _exceptions.scss (DS-EXC-004)
+// PrimeNG input group hover override moved to _component-overrides.scss (DS-EXC-004)
 
 /* ================================================================
    THEME TOGGLE (UX Audit Fix #14)
@@ -341,10 +327,7 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
   transition: background-color var(--motion-fast) var(--ease-standard);
-
-  &:hover {
-    background: var(--surface-hover);
-  }
+  @include ds-hover-state(var(--surface-hover));
 }
 
 .theme-label {
@@ -433,19 +416,12 @@
 /* ================================================================
    HEADER ICON BUTTONS - 2.5rem UNIFORM
    ================================================================ */
-// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-004)
-.header-icon-btn {
-  // Component-specific styles remain here
-}
+// PrimeNG button: _component-overrides.scss (DS-EXC-004)
 
 /* ================================================================
    USER AVATAR - EXACTLY 2.25rem, PERFECT CIRCLE
    ================================================================ */
-// PrimeNG avatar and button overrides moved to _exceptions.scss (DS-EXC-004)
-.user-avatar,
-.user-avatar-btn {
-  // Component-specific styles remain here
-}
+// PrimeNG avatar/button: _component-overrides.scss (DS-EXC-004)
 
 /* ================================================================
    USER DROPDOWN MENU
@@ -493,7 +469,7 @@
    ================================================================ */
 
 @include respond-to(md) {
-  // PrimeNG responsive overrides moved to _exceptions.scss (DS-EXC-004)
+  // PrimeNG responsive overrides moved to _component-overrides.scss (DS-EXC-004)
   .header-start,
   .header-center,
   .header-end {
@@ -543,10 +519,7 @@
    KEYBOARD SHORTCUTS DIALOG
    ================================================================ */
 
-// PrimeNG dialog override moved to _exceptions.scss (DS-EXC-004)
-.shortcuts-dialog {
-  // Component-specific styles remain here
-}
+// PrimeNG dialog: _component-overrides.scss (DS-EXC-004)
 
 .shortcuts-content {
   display: flex;
@@ -577,10 +550,10 @@
   border-radius: var(--radius-md);
   border: var(--border-1) solid var(--ds-border-subtle);
 
-  &:hover {
-    background: var(--ds-surface-elevated);
-    border-color: var(--ds-border-default);
-  }
+  @include ds-hover-state(
+    var(--ds-surface-elevated),
+    $border-color: var(--ds-border-default)
+  );
 }
 
 .shortcut-key {

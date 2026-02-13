@@ -18,7 +18,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 
@@ -120,7 +120,6 @@ const PRACTICE_DURATIONS = [
     PageHeaderComponent,
     ButtonComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="ai-scheduler-page">
@@ -528,7 +527,7 @@ const PRACTICE_DURATIONS = [
 export class AiSchedulerComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly events = signal<TargetEvent[]>([]);
@@ -852,11 +851,10 @@ export class AiSchedulerComponent implements OnInit {
 
     this.isGenerating.set(false);
 
-    this.messageService.add({
-      severity: "success",
-      summary: "Schedule Generated",
-      detail: "Merlin has created your optimized training schedule",
-    });
+    this.toastService.success(
+      "Merlin has created your optimized training schedule",
+      "Schedule Generated",
+    );
   }
 
   resetSchedule(): void {
@@ -871,26 +869,20 @@ export class AiSchedulerComponent implements OnInit {
   }
 
   exportPdf(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Export Started",
-      detail: "PDF is being generated",
-    });
+    this.toastService.success("PDF is being generated", "Export Started");
   }
 
   addToCalendar(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Added to Calendar",
-      detail: "Sessions have been added to the team calendar",
-    });
+    this.toastService.success(
+      "Sessions have been added to the team calendar",
+      "Added to Calendar",
+    );
   }
 
   applySchedule(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Schedule Applied",
-      detail: "Training schedule is now active",
-    });
+    this.toastService.success(
+      "Training schedule is now active",
+      "Schedule Applied",
+    );
   }
 }

@@ -200,9 +200,8 @@
   box-shadow: var(--shadow-inset), var(--hover-shadow-sm);
 }
 
-.toggle-track:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus), var(--shadow-inset);
+.toggle-track {
+  @include ds-input-focus($shadow: (var(--shadow-focus), var(--shadow-inset)));
 }
 
 .toggle-thumb {
@@ -281,13 +280,7 @@
   align-items: center;
 }
 
-.stat-box .stat-block__label {
-  font-size: var(--ds-font-size-xs);
-}
-
-.stat-box .stat-block__value {
-  font-size: var(--ds-font-size-2xl);
-}
+/* stat-block value/label: use primitives _dashboard (--stat-block-value-card, --stat-block-label-compact) */
 
 .stat-box:hover {
   border-color: rgba(var(--ds-primary-green-rgb), 0.2);
@@ -533,7 +526,7 @@
       font-size: var(--ds-font-size-xs);
     }
 
-    /* Form controls: DS-EXC-003 in _exceptions.scss */
+    /* Form controls: DS-EXC-003 in _component-overrides.scss */
   }
 
   .form-actions {
@@ -570,7 +563,7 @@
       padding: var(--space-2);
       min-height: var(--touch-target-md); // Touch-friendly
 
-      // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-003)
+      // PrimeNG checkbox override moved to _component-overrides.scss (DS-EXC-003)
 
       .play-type-label-text {
         font-size: var(--ds-font-size-md);
@@ -590,7 +583,7 @@
         font-size: var(--ds-font-size-xs);
       }
 
-      /* Input: DS-EXC-003 in _exceptions.scss */
+      /* Input: DS-EXC-003 in _component-overrides.scss */
     }
 
     .score-separator {
@@ -648,7 +641,7 @@
   // ================================================================
 
   .games-list-card {
-    /* Table, th, td overrides: DS-EXC-003 in _exceptions.scss */
+    /* Table, th, td overrides: DS-EXC-003 in _component-overrides.scss */
   }
 
   // ================================================================
@@ -711,7 +704,7 @@
     padding: var(--space-3);
     margin-top: var(--space-3);
 
-    /* Form field overrides: DS-EXC-003 in _exceptions.scss */
+    /* Form field overrides: DS-EXC-003 in _component-overrides.scss */
   }
 }
 
@@ -741,7 +734,7 @@
   .games-list-card {
     margin-bottom: var(--space-3);
 
-    // PrimeNG card body override moved to _exceptions.scss (DS-EXC-003)
+    // PrimeNG card body override moved to _component-overrides.scss (DS-EXC-003)
   }
 
   .visibility-info-banner {

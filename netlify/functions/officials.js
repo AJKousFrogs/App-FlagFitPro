@@ -5,6 +5,115 @@ import { baseHandler } from "./utils/base-handler.js";
 // Netlify Function: Officials API
 // Handles referee/official scheduling and management
 
+const OFFICIALS_MANAGEMENT_ROLES = new Set([
+  "coach",
+  "assistant_coach",
+  "head_coach",
+  "manager",
+  "admin",
+]);
+const VALID_ASSIGNMENT_ROLES = new Set([
+  "head_referee",
+  "referee",
+  "line_judge",
+  "back_judge",
+  "field_judge",
+  "umpire",
+  "other",
+]);
+const VALID_ASSIGNMENT_STATUSES = new Set([
+  "scheduled",
+  "confirmed",
+  "completed",
+  "cancelled",
+]);
+const VALID_PAYMENT_STATUSES = new Set(["pending", "paid", "cancelled"]);
+const ALLOWED_STATUS_TRANSITIONS = {
+  scheduled: new Set(["confirmed", "completed", "cancelled"]),
+  confirmed: new Set(["completed", "cancelled"]),
+  completed: new Set(),
+  cancelled: new Set(),
+};
+const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_24H_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+
+function parseJsonObjectBody(rawBody) {
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody || "{}");
+  } catch {
+    return {
+      ok: false,
+      response: createErrorResponse("Invalid JSON", 400, "invalid_json"),
+    };
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return {
+      ok: false,
+      response: createErrorResponse(
+        "Request body must be an object",
+        422,
+        "validation_error",
+      ),
+    };
+  }
+  return { ok: true, data: parsed };
+}
+
+function assertValidIsoDate(value, fieldName) {
+  if (value === undefined || value === null || value === "") {
+    return;
+  }
+  if (typeof value !== "string" || !ISO_DATE_REGEX.test(value)) {
+    throw new Error(`${fieldName} must be in YYYY-MM-DD format`);
+  }
+  const [yearRaw, monthRaw, dayRaw] = value.split("-");
+  const year = Number(yearRaw);
+  const month = Number(monthRaw);
+  const day = Number(dayRaw);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  const isCalendarValid =
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() + 1 === month &&
+    parsed.getUTCDate() === day;
+  if (!isCalendarValid) {
+    throw new Error(`${fieldName} must be a valid calendar date`);
+  }
+}
+
+function assertValidTime(value, fieldName) {
+  if (value === undefined || value === null || value === "") {
+    return;
+  }
+  if (typeof value !== "string" || !TIME_24H_REGEX.test(value)) {
+    throw new Error(`${fieldName} must be in HH:MM 24-hour format`);
+  }
+}
+
+function assertDateRange(startDate, endDate) {
+  if (!startDate || !endDate) {
+    return;
+  }
+  if (endDate < startDate) {
+    throw new Error("start_date must be on or before end_date");
+  }
+}
+
+const canManageOfficials = async (userId) => {
+  const { data, error } = await supabaseAdmin
+    .from("team_members")
+    .select("role")
+    .eq("user_id", userId)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return OFFICIALS_MANAGEMENT_ROLES.has(data?.role || "");
+};
+
 // Get all officials
 const getOfficials = async (queryParams) => {
   checkEnvVars();
@@ -100,6 +209,9 @@ const updateOfficial = async (officialId, updates) => {
     if (updates[field] !== undefined) {
       filteredUpdates[field] = updates[field];
     }
+  }
+  if (Object.keys(filteredUpdates).length === 0) {
+    throw new Error("No valid fields to update");
   }
 
   const { data, error } = await supabaseAdmin
@@ -203,14 +315,31 @@ const scheduleOfficial = async (scheduleData) => {
   checkEnvVars();
 
   const { game_id, official_id, role, payment_amount, notes } = scheduleData;
+  if (!game_id || !official_id) {
+    throw new Error("game_id and official_id are required");
+  }
+  if (role && !VALID_ASSIGNMENT_ROLES.has(role)) {
+    throw new Error("Invalid official assignment role");
+  }
+  if (
+    payment_amount !== undefined &&
+    payment_amount !== null &&
+    (!Number.isFinite(Number(payment_amount)) || Number(payment_amount) < 0)
+  ) {
+    throw new Error("payment_amount must be a non-negative number");
+  }
 
   // Check if official is already scheduled for this game
-  const { data: existing } = await supabaseAdmin
+  const { data: existing, error: existingError } = await supabaseAdmin
     .from("game_officials")
     .select("id")
     .eq("game_id", game_id)
     .eq("official_id", official_id)
-    .single();
+    .maybeSingle();
+
+  if (existingError && existingError.code !== "PGRST116") {
+    throw existingError;
+  }
 
   if (existing) {
     throw new Error("Official is already scheduled for this game");
@@ -221,7 +350,7 @@ const scheduleOfficial = async (scheduleData) => {
     .insert({
       game_id,
       official_id,
-      role,
+      role: role || "referee",
       status: "scheduled",
       payment_amount,
       payment_status: payment_amount ? "pending" : null,
@@ -231,6 +360,9 @@ const scheduleOfficial = async (scheduleData) => {
     .single();
 
   if (error) {
+    if (error.code === "23505") {
+      throw new Error("Official is already scheduled for this game");
+    }
     throw error;
   }
   return data;
@@ -239,6 +371,16 @@ const scheduleOfficial = async (scheduleData) => {
 // Update a game official assignment
 const updateGameOfficial = async (assignmentId, updates) => {
   checkEnvVars();
+
+  const { data: existingAssignment, error: existingError } = await supabaseAdmin
+    .from("game_officials")
+    .select("id, status, payment_amount, payment_status")
+    .eq("id", assignmentId)
+    .single();
+
+  if (existingError || !existingAssignment) {
+    throw new Error("Assignment not found");
+  }
 
   const allowedFields = [
     "role",
@@ -252,6 +394,64 @@ const updateGameOfficial = async (assignmentId, updates) => {
     if (updates[field] !== undefined) {
       filteredUpdates[field] = updates[field];
     }
+  }
+  if (Object.keys(filteredUpdates).length === 0) {
+    throw new Error("No valid fields to update");
+  }
+  if (
+    filteredUpdates.role !== undefined &&
+    !VALID_ASSIGNMENT_ROLES.has(filteredUpdates.role)
+  ) {
+    throw new Error("Invalid official assignment role");
+  }
+  if (
+    filteredUpdates.status !== undefined &&
+    !VALID_ASSIGNMENT_STATUSES.has(filteredUpdates.status)
+  ) {
+    throw new Error("Invalid official assignment status");
+  }
+  if (
+    filteredUpdates.payment_status !== undefined &&
+    !VALID_PAYMENT_STATUSES.has(filteredUpdates.payment_status)
+  ) {
+    throw new Error("Invalid payment status");
+  }
+  if (
+    filteredUpdates.payment_amount !== undefined &&
+    filteredUpdates.payment_amount !== null &&
+    (!Number.isFinite(Number(filteredUpdates.payment_amount)) ||
+      Number(filteredUpdates.payment_amount) < 0)
+  ) {
+    throw new Error("payment_amount must be a non-negative number");
+  }
+
+  if (
+    filteredUpdates.status !== undefined &&
+    filteredUpdates.status !== existingAssignment.status
+  ) {
+    const allowedNext =
+      ALLOWED_STATUS_TRANSITIONS[existingAssignment.status] || new Set();
+    if (!allowedNext.has(filteredUpdates.status)) {
+      throw new Error(
+        `Invalid status transition from ${existingAssignment.status} to ${filteredUpdates.status}`,
+      );
+    }
+  }
+
+  const effectivePaymentAmount =
+    filteredUpdates.payment_amount !== undefined
+      ? filteredUpdates.payment_amount
+      : existingAssignment.payment_amount;
+  const effectivePaymentStatus =
+    filteredUpdates.payment_status || existingAssignment.payment_status;
+  if (
+    effectivePaymentStatus === "paid" &&
+    (!Number.isFinite(Number(effectivePaymentAmount)) ||
+      Number(effectivePaymentAmount) <= 0)
+  ) {
+    throw new Error(
+      "payment_amount must be greater than 0 when payment_status is paid",
+    );
   }
 
   const { data, error } = await supabaseAdmin
@@ -305,6 +505,15 @@ const setOfficialAvailability = async (officialId, availabilityData) => {
   checkEnvVars();
 
   const { date, is_available, start_time, end_time, notes } = availabilityData;
+  if (is_available !== undefined && typeof is_available !== "boolean") {
+    throw new Error("is_available must be a boolean");
+  }
+  assertValidIsoDate(date, "date");
+  assertValidTime(start_time, "start_time");
+  assertValidTime(end_time, "end_time");
+  if (start_time && end_time && end_time <= start_time) {
+    throw new Error("end_time must be after start_time");
+  }
 
   const { data, error } = await supabaseAdmin
     .from("official_availability")
@@ -492,14 +701,16 @@ export const handler = async (event, context) => {
 
       let body = {};
       if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
-        try {
-          body = JSON.parse(event.body);
-        } catch {
-          return createErrorResponse("Invalid JSON", 400, ErrorType.VALIDATION);
+        const parsedBody = parseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.response;
         }
+        body = parsedBody.data;
       }
 
       try {
+        const hasWriteAccess = await canManageOfficials(userId);
+
         // Officials CRUD
         if (event.httpMethod === "GET" && (path === "" || path === "/")) {
           const result = await getOfficials(queryParams);
@@ -507,26 +718,87 @@ export const handler = async (event, context) => {
         }
 
         if (event.httpMethod === "POST" && (path === "" || path === "/")) {
+          if (!hasWriteAccess) {
+            return createErrorResponse(
+              "Access denied. Coach/admin role required.",
+              403,
+              ErrorType.AUTHORIZATION,
+            );
+          }
           const result = await createOfficial(userId, body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         // Available officials
         if (event.httpMethod === "GET" && path === "available") {
+          try {
+            assertValidIsoDate(queryParams.date, "date");
+            assertValidTime(queryParams.start_time, "start_time");
+            assertValidTime(queryParams.end_time, "end_time");
+            if (queryParams.start_time && queryParams.end_time) {
+              const sameOrAfter =
+                String(queryParams.end_time) <= String(queryParams.start_time);
+              if (sameOrAfter) {
+                return createErrorResponse(
+                  "end_time must be after start_time",
+                  422,
+                  "validation_error",
+                );
+              }
+            }
+          } catch (validationError) {
+            return createErrorResponse(
+              validationError.message,
+              422,
+              "validation_error",
+            );
+          }
+          if (!queryParams.date) {
+            return createErrorResponse(
+              "date is required",
+              422,
+              "validation_error",
+            );
+          }
           const result = await getAvailableOfficials(queryParams);
           return createSuccessResponse(result);
         }
 
         // Payment summary
         if (event.httpMethod === "GET" && path === "payments/summary") {
+          if (!hasWriteAccess) {
+            return createErrorResponse(
+              "Access denied. Coach/admin role required.",
+              403,
+              ErrorType.AUTHORIZATION,
+            );
+          }
+          try {
+            assertValidIsoDate(queryParams.start_date, "start_date");
+            assertValidIsoDate(queryParams.end_date, "end_date");
+            assertDateRange(queryParams.start_date, queryParams.end_date);
+          } catch (validationError) {
+            return createErrorResponse(
+              validationError.message,
+              422,
+              "validation_error",
+            );
+          }
           const result = await getPaymentSummary(queryParams);
           return createSuccessResponse(result);
         }
 
         // Schedule endpoint
         if (event.httpMethod === "POST" && path === "schedule") {
+          if (!hasWriteAccess) {
+            return createErrorResponse(
+              "Access denied. Coach/admin role required.",
+              403,
+              ErrorType.AUTHORIZATION,
+            );
+          }
           const result = await scheduleOfficial(body);
-          return createSuccessResponse(result, null, 201);
+          return createSuccessResponse(result, 201);
         }
 
         // Single official
@@ -549,11 +821,25 @@ export const handler = async (event, context) => {
           }
 
           if (event.httpMethod === "PUT") {
+            if (!hasWriteAccess) {
+              return createErrorResponse(
+                "Access denied. Coach/admin role required.",
+                403,
+                ErrorType.AUTHORIZATION,
+              );
+            }
             const result = await updateOfficial(officialId, body);
             return createSuccessResponse(result);
           }
 
           if (event.httpMethod === "DELETE") {
+            if (!hasWriteAccess) {
+              return createErrorResponse(
+                "Access denied. Coach/admin role required.",
+                403,
+                ErrorType.AUTHORIZATION,
+              );
+            }
             const result = await deleteOfficial(officialId);
             return createSuccessResponse(result);
           }
@@ -575,6 +861,17 @@ export const handler = async (event, context) => {
           const officialId = availabilityMatch[1];
 
           if (event.httpMethod === "GET") {
+            try {
+              assertValidIsoDate(queryParams.start_date, "start_date");
+              assertValidIsoDate(queryParams.end_date, "end_date");
+              assertDateRange(queryParams.start_date, queryParams.end_date);
+            } catch (validationError) {
+              return createErrorResponse(
+                validationError.message,
+                422,
+                "validation_error",
+              );
+            }
             const result = await getOfficialAvailability(
               officialId,
               queryParams.start_date,
@@ -584,8 +881,15 @@ export const handler = async (event, context) => {
           }
 
           if (event.httpMethod === "POST") {
+            if (!hasWriteAccess) {
+              return createErrorResponse(
+                "Access denied. Coach/admin role required.",
+                403,
+                ErrorType.AUTHORIZATION,
+              );
+            }
             const result = await setOfficialAvailability(officialId, body);
-            return createSuccessResponse(result, null, 201);
+            return createSuccessResponse(result, 201);
           }
         }
 
@@ -602,11 +906,25 @@ export const handler = async (event, context) => {
           const assignmentId = assignmentMatch[1];
 
           if (event.httpMethod === "PUT") {
+            if (!hasWriteAccess) {
+              return createErrorResponse(
+                "Access denied. Coach/admin role required.",
+                403,
+                ErrorType.AUTHORIZATION,
+              );
+            }
             const result = await updateGameOfficial(assignmentId, body);
             return createSuccessResponse(result);
           }
 
           if (event.httpMethod === "DELETE") {
+            if (!hasWriteAccess) {
+              return createErrorResponse(
+                "Access denied. Coach/admin role required.",
+                403,
+                ErrorType.AUTHORIZATION,
+              );
+            }
             const result = await removeGameOfficial(assignmentId);
             return createSuccessResponse(result);
           }
@@ -615,6 +933,13 @@ export const handler = async (event, context) => {
         // Notify official
         const notifyMatch = path.match(/^assignments\/([^/]+)\/notify$/);
         if (notifyMatch && event.httpMethod === "POST") {
+          if (!hasWriteAccess) {
+            return createErrorResponse(
+              "Access denied. Coach/admin role required.",
+              403,
+              ErrorType.AUTHORIZATION,
+            );
+          }
           // In a real implementation, this would send an email/SMS
           // For now, just return success
           return createSuccessResponse({
@@ -629,7 +954,18 @@ export const handler = async (event, context) => {
           return createErrorResponse(error.message, 404, "not_found");
         }
         if (error.message.includes("already scheduled")) {
-          return createErrorResponse(error.message, 400, "already_scheduled");
+          return createErrorResponse(error.message, 409, "already_scheduled");
+        }
+        if (error.message.includes("Assignment not found")) {
+          return createErrorResponse(error.message, 404, "not_found");
+        }
+        if (
+          error.message.includes("required") ||
+          error.message.includes("Invalid") ||
+          error.message.includes("must be") ||
+          error.message.includes("No valid fields to update")
+        ) {
+          return createErrorResponse(error.message, 422, "validation_error");
         }
         throw error;
       }

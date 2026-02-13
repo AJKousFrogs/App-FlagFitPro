@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  model,
+  output,
 } from "@angular/core";
 import { Dialog } from "primeng/dialog";
 
@@ -15,21 +15,21 @@ import { Dialog } from "primeng/dialog";
   imports: [CommonModule, Dialog],
   template: `
     <p-dialog
-      [visible]="visible"
+      [visible]="visible()"
       (visibleChange)="handleVisibleChange($event)"
       (onHide)="handleHide()"
-      [modal]="modal"
-      [closable]="closable"
-      [draggable]="draggable"
-      [resizable]="resizable"
-      [maximizable]="maximizable"
-      [baseZIndex]="baseZIndex"
-      [blockScroll]="blockScroll"
-      [class]="styleClass"
-      [contentStyle]="contentStyle"
-      [closeOnEscape]="closeOnEscape"
-      [dismissableMask]="dismissableMask"
-      [appendTo]="appendTo"
+      [modal]="modal()"
+      [closable]="closable()"
+      [draggable]="draggable()"
+      [resizable]="resizable()"
+      [maximizable]="maximizable()"
+      [baseZIndex]="baseZIndex()"
+      [blockScroll]="blockScroll()"
+      [class]="styleClass()"
+      [contentStyle]="contentStyle()"
+      [closeOnEscape]="closeOnEscape()"
+      [dismissableMask]="dismissableMask()"
+      [appendTo]="appendTo()"
     >
       <ng-content select="app-dialog-header"></ng-content>
       <div class="dialog-body">
@@ -43,27 +43,26 @@ import { Dialog } from "primeng/dialog";
   ],
 })
 export class AppDialogComponent {
-  @Input() visible = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() hide = new EventEmitter<void>();
-  @Output() onHide = new EventEmitter<void>();
+  visible = model(false);
+  hide = output<void>();
+  onHide = output<void>();
 
-  @Input() modal = true;
-  @Input() closable = true;
-  @Input() draggable = true;
-  @Input() resizable = false;
-  @Input() maximizable = false;
+  modal = input(true);
+  closable = input(true);
+  draggable = input(true);
+  resizable = input(false);
+  maximizable = input(false);
 
-  @Input() baseZIndex = 1000;
-  @Input() blockScroll = false;
-  @Input() contentStyle: Record<string, string> | null = null;
-  @Input() styleClass = "";
-  @Input() closeOnEscape = true;
-  @Input() dismissableMask = false;
-  @Input() appendTo: HTMLElement | string | null = null;
+  baseZIndex = input(1000);
+  blockScroll = input(false);
+  contentStyle = input<Record<string, string> | null>(null);
+  styleClass = input("");
+  closeOnEscape = input(true);
+  dismissableMask = input(false);
+  appendTo = input<HTMLElement | string | null>(null);
 
   handleVisibleChange(value: boolean): void {
-    this.visibleChange.emit(value);
+    this.visible.set(value);
     if (!value) {
       this.hide.emit();
       this.onHide.emit();
@@ -71,7 +70,7 @@ export class AppDialogComponent {
   }
 
   handleHide(): void {
-    this.visibleChange.emit(false);
+    this.visible.set(false);
     this.hide.emit();
     this.onHide.emit();
   }

@@ -17,8 +17,9 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
 import { Dialog } from "primeng/dialog";
@@ -102,9 +103,9 @@ const VISIBILITY_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
     SearchInputComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="knowledge-base-page">
@@ -314,10 +315,10 @@ const VISIBILITY_OPTIONS = [
                 </div>
               </div>
             } @empty {
-              <div class="empty-state">
-                <i class="pi pi-book"></i>
-                <p>No resources found</p>
-              </div>
+              <app-empty-state
+                icon="pi-book"
+                heading="No resources found"
+              />
             }
           </div>
           @if (hasMoreResources()) {
@@ -494,7 +495,7 @@ const VISIBILITY_OPTIONS = [
 export class KnowledgeBaseComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // State
   readonly resources = signal<KnowledgeResource[]>([]);
@@ -613,53 +614,38 @@ export class KnowledgeBaseComponent implements OnInit {
 
   saveResource(): void {
     if (!this.resourceForm.title) return;
-    this.messageService.add({
-      severity: "success",
-      summary: "Resource Saved",
-      detail: "Resource has been added to the knowledge base",
-    });
+    this.toastService.success(
+      "Resource has been added to the knowledge base",
+      "Resource Saved",
+    );
     this.showAddDialog = false;
   }
 
   openResource(resource: KnowledgeResource): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Opening Resource",
-      detail: `Opening ${resource.title}`,
-    });
+    this.toastService.info(`Opening ${resource.title}`, "Opening Resource");
   }
 
   editResource(resource: KnowledgeResource): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Edit Resource",
-      detail: `Editing ${resource.title}`,
-    });
+    this.toastService.info(`Editing ${resource.title}`, "Edit Resource");
   }
 
   toggleFavorite(resource: KnowledgeResource): void {
     resource.isFavorite = !resource.isFavorite;
-    this.messageService.add({
-      severity: "success",
-      summary: resource.isFavorite ? "Added to Saved" : "Removed from Saved",
-      detail: resource.title,
-    });
+    this.toastService.success(
+      resource.title,
+      resource.isFavorite ? "Added to Saved" : "Removed from Saved",
+    );
   }
 
   shareResource(resource: KnowledgeResource): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Share Resource",
-      detail: `Sharing ${resource.title}`,
-    });
+    this.toastService.info(`Sharing ${resource.title}`, "Share Resource");
   }
 
   shareToTeam(resource: KnowledgeResource): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Shared to Team",
-      detail: `${resource.title} has been shared with the team`,
-    });
+    this.toastService.success(
+      `${resource.title} has been shared with the team`,
+      "Shared to Team",
+    );
   }
 
   filterByCategory(categoryId: string): void {
@@ -671,11 +657,7 @@ export class KnowledgeBaseComponent implements OnInit {
   }
 
   loadMore(): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Loading More",
-      detail: "Loading more resources...",
-    });
+    this.toastService.info("Loading more resources...", "Loading More");
   }
 
   // Helpers

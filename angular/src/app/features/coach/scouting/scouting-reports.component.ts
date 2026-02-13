@@ -24,6 +24,8 @@ import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -129,6 +131,8 @@ interface ScoutingReport {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    EmptyStateComponent,
+    AppLoadingComponent,
     IconButtonComponent,
   ],
   template: `
@@ -147,10 +151,11 @@ interface ScoutingReport {
         </app-page-header>
 
         @if (loading()) {
-          <div class="loading-state">
-            <i class="pi pi-spin pi-spinner"></i>
-            <span>Loading scouting data...</span>
-          </div>
+          <app-loading
+            [visible]="true"
+            variant="inline"
+            message="Loading scouting data..."
+          />
         } @else {
           <p-tabs [value]="0">
             <p-tablist>
@@ -260,18 +265,14 @@ interface ScoutingReport {
                       }
                     </div>
                   } @else {
-                    <div class="empty-state">
-                      <i class="pi pi-file"></i>
-                      <h4>No Scouting Reports</h4>
-                      <p>
-                        Create a report to prepare your team for upcoming games.
-                      </p>
-                      <app-button
-                        iconLeft="pi-plus"
-                        (clicked)="showNewReportDialog.set(true)"
-                        >Create Report</app-button
-                      >
-                    </div>
+                    <app-empty-state
+                      icon="pi-file"
+                      heading="No Scouting Reports"
+                      description="Create a report to prepare your team for upcoming games."
+                      actionLabel="Create Report"
+                      actionIcon="pi-plus"
+                      [actionHandler]="showNewReportHandler"
+                    />
                   }
                 </div>
               </p-tabpanel>
@@ -1039,6 +1040,8 @@ export class ScoutingReportsComponent implements OnInit {
   selectedOpponentFilter: string | null = null;
   selectedTendencyOpponent: string | null = null;
   showNewReportDialog = signal(false);
+  readonly showNewReportHandler = (): void =>
+    this.showNewReportDialog.set(true);
   showViewReportDialog = signal(false);
   showAddOpponentDialog = signal(false);
   viewingReport = signal<ScoutingReport | null>(null);

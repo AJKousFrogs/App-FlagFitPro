@@ -75,7 +75,7 @@
 }
 
 /* Timer Dialog */
-// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-035)
+// PrimeNG dialog overrides moved to _component-overrides.scss (DS-EXC-035)
 .rest-timer-dialog {
   position: fixed;
   bottom: var(--space-5);
@@ -190,11 +190,11 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-}
 
-.preset-btn:hover {
-  border-color: var(--color-brand-primary);
-  background: var(--color-brand-light);
+  @include ds-hover-state(
+    var(--color-brand-light),
+    $border-color: var(--color-brand-primary)
+  );
 }
 
 .preset-btn.active {
@@ -243,10 +243,8 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-}
 
-.sound-btn:hover {
-  background: var(--surface-tertiary);
+  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .sound-btn.muted {

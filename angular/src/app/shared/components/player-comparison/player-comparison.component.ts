@@ -15,6 +15,7 @@ import { UIChart } from "primeng/chart";
 import { Dialog } from "primeng/dialog";
 import { Select } from "primeng/select";
 import { Tag } from "primeng/tag";
+import { EmptyStateComponent } from "../empty-state/empty-state.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
 import { getInitials } from "../../utils/format.utils";
@@ -42,6 +43,7 @@ interface StatComparison {
     UIChart,
     Avatar,
     Tag,
+    EmptyStateComponent,
     StatusTagComponent,
     Tooltip,
     Dialog,
@@ -310,14 +312,11 @@ interface StatComparison {
           </div>
         </div>
       } @else {
-        <div class="empty-state">
-          <i class="pi pi-users"></i>
-          <h3>Select Two Players to Compare</h3>
-          <p>
-            Choose players from the dropdowns above to see a detailed comparison
-            of their stats and performance.
-          </p>
-        </div>
+        <app-empty-state
+          icon="pi-users"
+          heading="Select Two Players to Compare"
+          description="Choose players from the dropdowns above to see a detailed comparison of their stats and performance."
+        />
       }
     </div>
   `,

@@ -41,12 +41,12 @@
   transition: background-color var(--transition-fast);
 }
 
-.block-header:hover {
-  background: var(--hover-bg-secondary);
+.block-header {
+  @include ds-hover-state(var(--hover-bg-secondary));
 }
 
-.protocol-block.completed .block-header:hover {
-  background: var(--color-status-success-subtle);
+.protocol-block.completed .block-header {
+  @include ds-hover-state(var(--color-status-success-subtle));
 }
 
 .header-left {
@@ -116,16 +116,12 @@
   color: var(--color-text-secondary);
   transition: color var(--transition-fast);
   border-radius: var(--radius-sm);
-}
 
-.expand-toggle:hover {
-  color: var(--color-text-primary);
-  background: var(--hover-bg-tertiary);
-}
-
-.expand-toggle:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-outline-offset);
+  @include ds-focus-ring(var(--focus-ring-color));
+  @include ds-hover-state(
+    var(--hover-bg-tertiary),
+    $color: var(--color-text-primary)
+  );
 }
 
 .expand-text {

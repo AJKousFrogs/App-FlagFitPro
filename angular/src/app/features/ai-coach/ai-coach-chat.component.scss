@@ -126,10 +126,8 @@
   color: var(--ds-primary-green);
   cursor: pointer;
   transition: background-color var(--transition-fast);
-}
 
-.readiness-pill:hover {
-  background: var(--ds-primary-green-subtle);
+  @include ds-hover-state(var(--ds-primary-green-subtle));
 }
 
 .readiness-pill i {
@@ -152,12 +150,12 @@
     border-color var(--transition-fast),
     color var(--transition-fast);
   position: relative;
-}
 
-.icon-btn:hover {
-  background: var(--ds-primary-green-ultra-subtle);
-  border-color: var(--ds-primary-green);
-  color: var(--ds-primary-green);
+  @include ds-hover-state(
+    var(--ds-primary-green-ultra-subtle),
+    $color: var(--ds-primary-green),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 .icon-btn.active {
@@ -762,11 +760,12 @@
   transition:
     border-color var(--transition-fast),
     color var(--transition-fast);
-}
 
-.citations-toggle:hover {
-  border-color: var(--ds-primary-green);
-  color: var(--ds-primary-green);
+  @include ds-hover-state(
+    transparent,
+    $color: var(--ds-primary-green),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 .citations-toggle i.rotated {
@@ -797,11 +796,11 @@
 .citation-item.clickable {
   cursor: pointer;
   border: var(--border-1) solid transparent;
-}
 
-.citation-item.clickable:hover {
-  background: var(--ds-primary-green-ultra-subtle);
-  border-color: var(--ds-primary-green);
+  @include ds-hover-state(
+    var(--ds-primary-green-ultra-subtle),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 .citation-item.clickable:hover .citation-title {
@@ -899,10 +898,11 @@
   background: var(--ds-primary-green-ultra-subtle);
   color: var(--ds-primary-green);
   border: var(--border-1) solid transparent;
-}
 
-.action-btn.secondary:hover {
-  border-color: var(--ds-primary-green);
+  @include ds-hover-state(
+    var(--ds-primary-green-ultra-subtle),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 .action-btn.micro-session .duration-badge {
@@ -951,11 +951,8 @@
   transition:
     background-color var(--transition-fast),
     color var(--transition-fast);
-}
 
-.mini-btn:hover {
-  background: var(--surface-secondary);
-  color: var(--color-text-secondary);
+  @include ds-hover-state(var(--surface-secondary), $color: var(--color-text-secondary));
 }
 
 .mini-btn.feedback.active {
@@ -998,12 +995,12 @@
     border-color var(--transition-fast),
     color var(--transition-fast);
   z-index: var(--z-base);
-}
 
-.scroll-to-bottom:hover {
-  background: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
+  @include ds-hover-state(
+    var(--ds-primary-green),
+    $color: var(--color-text-on-primary),
+    $border-color: var(--ds-primary-green)
+  );
 }
 
 /* ========================================
@@ -1042,13 +1039,16 @@
     border-color var(--transition-fast),
     color var(--transition-fast),
     background-color var(--transition-fast);
-}
 
-.context-chip:hover {
-  border-style: solid;
-  border-color: var(--ds-primary-green);
-  color: var(--ds-primary-green);
-  background: var(--ds-primary-green-ultra-subtle);
+  @include ds-hover-state(
+    var(--ds-primary-green-ultra-subtle),
+    $color: var(--ds-primary-green),
+    $border-color: var(--ds-primary-green)
+  );
+
+  &:hover {
+    border-style: solid;
+  }
 }
 
 .context-chip i {
@@ -1081,10 +1081,8 @@
   cursor: pointer;
   text-align: left;
   transition: background-color var(--transition-fast);
-}
 
-.autocomplete-item:hover {
-  background: var(--ds-primary-green-ultra-subtle);
+  @include ds-hover-state(var(--ds-primary-green-ultra-subtle));
 }
 
 .autocomplete-text {
@@ -1134,18 +1132,12 @@
   min-height: var(--space-6);
   max-height: var(--size-120); /* var(--size-120) */
   line-height: var(--ds-line-height-normal);
+
+  @include ds-focus-none;
 }
 
 .message-textarea::placeholder {
   color: var(--color-text-muted);
-}
-
-.message-textarea:focus-visible {
-  outline: none;
-}
-
-.message-textarea:focus:not(:focus-visible) {
-  outline: none;
 }
 
 .input-actions {

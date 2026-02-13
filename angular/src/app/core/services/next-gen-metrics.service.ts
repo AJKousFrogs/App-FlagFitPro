@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 
 export interface NextGenBaselineStats {
   mean: number;
@@ -81,7 +82,7 @@ export class NextGenMetricsService {
           this.loading.set(false);
         },
         error: (error: Error) => {
-          this.error.set(error.message || "Failed to load next-gen metrics");
+          this.error.set(getErrorMessage(error, "Failed to load next-gen metrics"));
           this.loading.set(false);
           this.logger.error(
             "[NextGenMetricsService] Failed to load preview metrics",

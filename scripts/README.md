@@ -120,13 +120,6 @@ Run these via npm commands from the project root:
 
 ### Component Updates
 
-## Archive Directory
-
-The `archive/` directory contains deprecated, demo, or one-off scripts kept for reference:
-
-- `demo-hydration-system.js` - Legacy demo (uses pg Pool)
-- `diagnose-real-issue.js` - One-off settings/database diagnostic
-
 ## Environment Requirements
 
 Most scripts require:

@@ -13,10 +13,12 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { NotificationService } from "../../core/services/notification.service";
+import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 
 interface SuperadminUser {
@@ -38,8 +40,9 @@ interface SuperadminUser {
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
+    AppLoadingComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -109,14 +112,13 @@ interface SuperadminUser {
           </ng-template>
 
           @if (isLoading()) {
-            <div class="loading-state">
-              <i class="pi pi-spin pi-spinner"></i>
-              <span>Loading superadmins...</span>
-            </div>
+            <app-loading message="Loading superadmins..." variant="inline" />
           } @else if (superadmins().length === 0) {
-            <div class="empty-state">
-              <p>No additional superadmins configured.</p>
-            </div>
+            <app-empty-state
+              icon="pi-shield"
+              heading="No Superadmins"
+              description="No additional superadmins configured."
+            />
           } @else {
             <p-table [value]="superadmins()" tableStyleClass="superadmin-table">
               <ng-template #header>
@@ -321,7 +323,7 @@ export class SuperadminSettingsComponent implements OnInit {
   private superadminService = inject(SuperadminService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
-  private notificationService = inject(NotificationService);
+  private toastService = inject(ToastService);
   private dialogService = inject(DialogService);
 
   // State
@@ -369,7 +371,7 @@ export class SuperadminSettingsComponent implements OnInit {
     if (!this.newAdminEmail.trim()) return;
 
     // Note: In a real implementation, you'd look up the user by email first
-    this.notificationService.info(
+    this.toastService.info(
       "To add a superadmin, you need to find their user ID first. This feature requires looking up the user by email in the database.",
       "Superadmin Access",
     );

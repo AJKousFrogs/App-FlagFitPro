@@ -74,7 +74,7 @@ async function analyzeTrainingHistory(userId) {
       );
       // #endregion
       // Return default structure with error info instead of throwing
-      return { ...defaultAnalysis, error: error.message };
+      return { ...defaultAnalysis, error: "Failed to analyze training history" };
     }
 
     // #region agent log
@@ -145,7 +145,7 @@ async function analyzeTrainingHistory(userId) {
       error.message,
       error.stack,
     );
-    return { ...defaultAnalysis, error: error.message };
+    return { ...defaultAnalysis, error: "Failed to analyze training history" };
   }
 }
 
@@ -380,12 +380,12 @@ async function handleRequest(event, context, { userId, requestId }) {
         );
         // #endregion
       } catch (e) {
-        // #region agent log
-        console.error(
-          "[training-suggestions] Error parsing request body:",
-          e.message,
+        return createErrorResponse(
+          "Invalid JSON in request body",
+          400,
+          "invalid_json",
+          requestId,
         );
-        // #endregion
       }
     }
 
@@ -393,12 +393,20 @@ async function handleRequest(event, context, { userId, requestId }) {
     if (!params.userId) {
       params.userId = userId;
     }
+    if (params.userId !== userId) {
+      return createErrorResponse(
+        "Not authorized to request suggestions for another user",
+        403,
+        "not_authorized",
+        requestId,
+      );
+    }
 
     // Analyze user's training history
     // #region agent log
     console.log("[training-suggestions] Calling analyzeTrainingHistory...");
     // #endregion
-    const analysis = await analyzeTrainingHistory(userId);
+    const analysis = await analyzeTrainingHistory(params.userId);
 
     // #region agent log
     console.log(

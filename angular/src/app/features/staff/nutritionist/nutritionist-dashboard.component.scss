@@ -5,20 +5,6 @@
   @include page-container(var(--content-max-width-2xl));
 }
 
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--ds-spacing-3xl);
-  gap: var(--ds-spacing-md);
-  color: var(--text-color-secondary);
-
-  i {
-    font-size: var(--ds-font-size-2xl);
-  }
-}
-
 // Stats Grid
 .stats-grid {
   @include stats-grid;
@@ -62,8 +48,6 @@
     }
   }
 
-  // .stat-content/.stat-value/.stat-label REMOVED
-  // Use .stat-block classes from card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 }
 
@@ -151,7 +135,7 @@
     justify-content: center;
     width: var(--space-6);
     height: var(--space-6);
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     background: var(--red-500);
     color: var(--surface-0);
     font-size: var(--ds-font-size-xs);
@@ -245,8 +229,6 @@
     gap: var(--ds-spacing-lg);
   }
 
-  // .compliance-card p-card padding overrides REMOVED
-  // Use app-card-shell component instead
   // @see docs/CARD_SHELL_CONTRACT.md
 
   .compliance-header {
@@ -336,8 +318,6 @@
     gap: var(--ds-spacing-lg);
   }
 
-  // .tournament-card .p-card-header REMOVED
-  // Use app-card-shell instead
   // @see docs/CARD_SHELL_CONTRACT.md
 
   .tournament-header {
@@ -391,8 +371,6 @@
     }
   }
 
-  // .empty-state REMOVED - use .card-empty-state from card-shell
-  // @see docs/CARD_SHELL_CONTRACT.md §8
 }
 
 // Dialogs
@@ -443,10 +421,6 @@
       padding: var(--ds-spacing-md);
       background: var(--surface-ground);
       border-radius: var(--ds-radius-md);
-
-      // .metric-label/.metric-value REMOVED
-      // Use .stat-block classes from card-shell instead
-      // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
     }
   }
 

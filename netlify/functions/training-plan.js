@@ -7,6 +7,10 @@ import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
+function isIsoDateOnly(value) {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
 /**
  * Get today's date at end of day (23:59:59) for inclusive filtering
  */
@@ -870,6 +874,14 @@ export const handler = async (event, context) => {
       // Parse date (defaults to today)
       let targetDate = new Date();
       if (queryParams.date) {
+        if (!isIsoDateOnly(queryParams.date)) {
+          return createErrorResponse(
+            "Invalid date format. Use YYYY-MM-DD",
+            400,
+            "validation_error",
+            requestId,
+          );
+        }
         targetDate = new Date(queryParams.date);
         if (isNaN(targetDate.getTime())) {
           return createErrorResponse(
@@ -879,12 +891,32 @@ export const handler = async (event, context) => {
             requestId,
           );
         }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (targetDate > today) {
+          return createErrorResponse(
+            "date cannot be in the future",
+            400,
+            "validation_error",
+            requestId,
+          );
+        }
       }
 
-      // Generate training plan
-      const plan = await generateTrainingPlan(userId, targetDate);
+      try {
+        // Generate training plan
+        const plan = await generateTrainingPlan(userId, targetDate);
 
-      return createSuccessResponse(plan, requestId);
+        return createSuccessResponse(plan, requestId);
+      } catch (error) {
+        console.error("[training-plan] Unexpected handler error:", error);
+        return createErrorResponse(
+          "Failed to generate training plan",
+          500,
+          "server_error",
+          requestId,
+        );
+      }
     },
   });
 };

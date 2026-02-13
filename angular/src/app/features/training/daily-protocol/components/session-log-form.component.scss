@@ -89,7 +89,7 @@
 .rpe-slider {
   flex: 1;
 
-  // PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-008)
+  // PrimeNG slider overrides moved to _component-overrides.scss (DS-EXC-008)
 }
 
 .rpe-value {
@@ -133,12 +133,8 @@
   font-size: var(--ds-font-size-sm);
   resize: vertical;
   transition: border-color var(--transition-fast) var(--ease-standard);
-}
 
-.notes-textarea:focus-visible {
-  outline: none;
-  border-color: var(--ds-primary-green);
-  box-shadow: var(--shadow-focus);
+  @include ds-input-focus;
 }
 
 /* Load Preview */

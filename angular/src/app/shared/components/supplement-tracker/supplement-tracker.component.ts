@@ -32,7 +32,7 @@ import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { Skeleton } from "primeng/skeleton";
+import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
 import { Tag } from "primeng/tag";
 
 import { ButtonComponent } from "../button/button.component";
@@ -182,7 +182,7 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     
     Checkbox,
     Tag,
-    Skeleton,
+    SkeletonLoaderComponent,
     Dialog,
     InputText,
     Select,

@@ -20,7 +20,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 
@@ -204,7 +204,6 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     ButtonComponent,
     StatusTagComponent,
   ],
-  providers: [MessageService],
   template: `
     <app-main-layout>
 <div class="data-import-page">
@@ -360,6 +359,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   <h4>Field Mapping</h4>
                   <p-table
                     [value]="importPreview()!.fieldMappings"
+                    [virtualScroll]="importPreview()!.fieldMappings.length > 50"
+                    [virtualScrollItemSize]="46"
+                    dataKey="fileField"
                     class="p-datatable-sm"
                   >
                     <ng-template #header>
@@ -628,7 +630,7 @@ export class DataImportComponent implements OnInit {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   // Constants
   readonly importTypes = IMPORT_TYPES;
@@ -743,11 +745,7 @@ export class DataImportComponent implements OnInit {
       this.importPreview.set(preview);
       this.currentStep.set(1);
     } catch (err) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Parse Error",
-        detail: "Failed to parse the file. Please check the format.",
-      });
+      this.toastService.error("Failed to parse the file. Please check the format.", "Parse Error");
       this.logger.error("File parse error", err);
     }
   }
@@ -855,28 +853,16 @@ export class DataImportComponent implements OnInit {
   fetchFromUrl(): void {
     if (!this.importUrl) return;
 
-    this.messageService.add({
-      severity: "info",
-      summary: "Fetching",
-      detail: "Downloading file from URL...",
-    });
+    this.toastService.info("Downloading file from URL...", "Fetching");
 
     // In real implementation, this would fetch the file
     this.api.post("/api/import/fetch-url", { url: this.importUrl }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (_response: unknown) => {
         // Process fetched data
-        this.messageService.add({
-          severity: "success",
-          summary: "Downloaded",
-          detail: "File fetched successfully",
-        });
+        this.toastService.success("File fetched successfully", "Downloaded");
       },
       error: () => {
-        this.messageService.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to fetch file from URL",
-        });
+        this.toastService.error("Failed to fetch file from URL");
       },
     });
   }
@@ -958,11 +944,7 @@ export class DataImportComponent implements OnInit {
 
   // Wearable Methods
   connectDevice(device: WearableDevice): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Connecting",
-      detail: `Opening ${device.name} authorization...`,
-    });
+    this.toastService.info(`Opening ${device.name} authorization...`, "Connecting");
 
     // In real implementation, this would open OAuth flow
     setTimeout(() => {
@@ -974,20 +956,12 @@ export class DataImportComponent implements OnInit {
         ),
       );
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Connected",
-        detail: `${device.name} connected successfully`,
-      });
+      this.toastService.success(`${device.name} connected successfully`, "Connected");
     }, 1500);
   }
 
   syncDevice(device: WearableDevice): void {
-    this.messageService.add({
-      severity: "info",
-      summary: "Syncing",
-      detail: `Syncing ${device.name}...`,
-    });
+    this.toastService.info(`Syncing ${device.name}...`, "Syncing");
 
     setTimeout(() => {
       this.wearableDevices.update((devices) =>
@@ -996,11 +970,7 @@ export class DataImportComponent implements OnInit {
         ),
       );
 
-      this.messageService.add({
-        severity: "success",
-        summary: "Synced",
-        detail: `${device.name} data synced`,
-      });
+      this.toastService.success(`${device.name} data synced`, "Synced");
     }, 1000);
   }
 
@@ -1013,10 +983,6 @@ export class DataImportComponent implements OnInit {
       ),
     );
 
-    this.messageService.add({
-      severity: "info",
-      summary: "Disconnected",
-      detail: `${device.name} has been disconnected`,
-    });
+    this.toastService.info(`${device.name} has been disconnected`, "Disconnected");
   }
 }

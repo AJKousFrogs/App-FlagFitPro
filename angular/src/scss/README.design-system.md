@@ -12,15 +12,15 @@
 | **Spacing utilities** | `.p-*`, `.m-*`, `.gap-*` in design-system-tokens.scss |
 | **Flex utilities** | `angular/src/scss/utilities/layout-system.scss` |
 | **Non-spacing utilities** | `angular/src/scss/utilities/_utilities.scss` |
-| **PrimeNG overrides** | `angular/src/assets/styles/overrides/_exceptions.scss` (DS-EXC-* / DS-PNGO-* tickets) |
+| **PrimeNG overrides** | `angular/src/assets/styles/overrides/_component-overrides.scss` (DS-EXC-* / DS-PNGO-* tickets) |
 | **Color guards** | `angular/src/assets/styles/overrides/_color-guards.scss` |
 
 ## PrimeNG Overrides
 
 1. **Token mapping:** `primeng/_token-mapping.scss` – prefer token mapping over exceptions
-2. **Exceptions:** `_exceptions.scss` – every block requires ticket header (DS-EXC-* or DS-PNGO-*) + removal date
+2. **Exceptions:** `_component-overrides.scss` – every block requires ticket header (DS-EXC-* or DS-PNGO-*) + removal date
 3. **Rules:** Component SCSS may NOT style `.p-*` internals; use overrides layer only
-4. **No `::ng-deep` or `:global()`** – refactor to proper selectors in _exceptions
+4. **No `::ng-deep` or `:global()`** – refactor to proper selectors in _component-overrides
 
 ## Adding Tokens
 
@@ -55,4 +55,4 @@ reset, tokens, primeng-base, primeng-brand, primitives, features, overrides
 
 1. `:host` + layout; spacing via tokens
 2. Use canonical utilities (`.p-*`, `.m-*`, `.gap-*`)
-3. PrimeNG internals → _exceptions.scss only
+3. PrimeNG internals → _component-overrides.scss only

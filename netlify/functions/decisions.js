@@ -7,6 +7,32 @@ import { guardMerlinRequest } from "./utils/merlin-guard.js";
 // Handles decision accountability, review triggers, and confidence scoring
 // Endpoint: /api/decisions
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    return {};
+  }
+  const parsed = JSON.parse(rawBody);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+};
+
 /**
  * Verify user is a staff member with decision-making access
  */
@@ -204,8 +230,9 @@ async function getDecisions(userId, filters = {}) {
   }
 
   // Pagination
-  const limit = parseInt(filters.limit) || 50;
-  const offset = parseInt(filters.offset) || 0;
+  const limit = parseBoundedInt(filters.limit, "limit", { min: 1, max: 200 }) ?? 50;
+  const offset =
+    parseBoundedInt(filters.offset, "offset", { min: 0, max: 1000000 }) ?? 0;
   query = query.range(offset, offset + limit - 1);
 
   const { data, error } = await query;
@@ -354,6 +381,18 @@ async function createDecision(userId, decisionData) {
     throw new Error("Unauthorized: Staff access required");
   }
 
+  if (
+    !decisionData.athleteId ||
+    !decisionData.decisionType ||
+    !decisionData.decisionSummary ||
+    !decisionData.decisionCategory ||
+    !decisionData.reviewTrigger
+  ) {
+    throw new Error(
+      "athleteId, decisionType, decisionSummary, decisionCategory, and reviewTrigger are required",
+    );
+  }
+
   // Calculate review date
   const reviewDate = calculateReviewDate(
     decisionData.reviewTrigger,
@@ -423,6 +462,18 @@ async function reviewDecision(decisionId, userId, reviewData) {
   const staff = await verifyStaffAccess(userId);
   if (!staff) {
     throw new Error("Unauthorized: Staff access required");
+  }
+
+  const validOutcomes = new Set([
+    "maintained",
+    "reversed",
+    "extended",
+    "modified",
+  ]);
+  if (!validOutcomes.has(reviewData.reviewOutcome)) {
+    throw new Error(
+      "reviewOutcome must be one of: maintained, reversed, extended, modified",
+    );
   }
 
   // Get the decision
@@ -570,11 +621,14 @@ async function handleRequest(event, _context, { userId }) {
       .replace(/^\//, "") || "";
 
   let body = {};
-  if (event.body && ["POST", "PUT", "PATCH"].includes(event.httpMethod)) {
+  if (event.body && event.httpMethod === "POST") {
     try {
-      body = JSON.parse(event.body);
-    } catch {
-      return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+      body = parseJsonObjectBody(event.body);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+      }
+      return createErrorResponse(error.message, 422, "validation_error");
     }
   }
 
@@ -622,8 +676,21 @@ async function handleRequest(event, _context, { userId }) {
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
     console.error("[Decisions API] Error:", error);
+    if (error.message?.includes("Unauthorized")) {
+      return createErrorResponse(error.message, 403, "authorization_error");
+    }
+    if (error.message?.includes("not found")) {
+      return createErrorResponse(error.message, 404, "not_found");
+    }
+    if (
+      error.message?.includes("required") ||
+      error.message?.includes("Invalid") ||
+      error.message?.includes("must be")
+    ) {
+      return createErrorResponse(error.message, 422, "validation_error");
+    }
     return createErrorResponse(
-      error.message || "Internal server error",
+      "Internal server error",
       500,
       "server_error",
     );
@@ -652,7 +719,7 @@ export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "decisions",
     allowedMethods: ["GET", "POST"],
-rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: handleRequest,
   });

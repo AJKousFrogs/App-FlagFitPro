@@ -48,6 +48,7 @@ import { NutritionService } from "../../../core/services/nutrition.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -110,6 +111,7 @@ interface HydrationLog {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateComponent,
   ],
   styleUrl: "./tournament-nutrition.component.scss",
   template: `
@@ -289,19 +291,14 @@ interface HydrationLog {
         <!-- Timeline View -->
         @if (games().length === 0) {
           <p-card class="empty-state-card">
-            <div class="empty-state">
-              <i class="pi pi-calendar"></i>
-              <h3>No Tournament Schedule</h3>
-              <p>
-                Create your tournament schedule to get personalized nutrition
-                recommendations.
-              </p>
-              <app-button
-                iconLeft="pi-calendar"
-                (clicked)="showScheduleEditor = true"
-                >Create Schedule</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-calendar"
+              heading="No Tournament Schedule"
+              description="Create your tournament schedule to get personalized nutrition recommendations."
+              actionLabel="Create Schedule"
+              actionIcon="pi-calendar"
+              [actionHandler]="openScheduleEditorHandler"
+            />
           </p-card>
         } @else {
           <div class="nutrition-timeline">
@@ -603,6 +600,10 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   hydrationLogs = signal<HydrationLog[]>([]);
   tournamentName = signal("Tournament Day");
   showScheduleEditor = false;
+
+  readonly openScheduleEditorHandler = (): void => {
+    this.showScheduleEditor = true;
+  };
   selectedHydration: string | null = null;
   expandedWindows = new Set<string>(); // Track which windows are expanded
 

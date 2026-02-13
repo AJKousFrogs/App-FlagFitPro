@@ -186,13 +186,13 @@
     }
 
     .stat-block__value {
-      font-size: var(--ds-font-size-2xl);
+      font-size: var(--stat-block-value-card);
       font-weight: var(--ds-font-weight-bold);
       color: var(--ds-primary-green-dark);
     }
 
     .stat-block__label {
-      font-size: var(--ds-font-size-md);
+      font-size: var(--stat-block-label-default);
       color: var(--color-text-secondary);
     }
   }
@@ -356,7 +356,4 @@
   }
 }
 
-// PrimeNG timeline and card overrides moved to _exceptions.scss (DS-EXC-043)
-.roadmap-timeline {
-  // Component-specific styles remain here
-}
+// PrimeNG timeline/card: _component-overrides.scss (DS-EXC-043)

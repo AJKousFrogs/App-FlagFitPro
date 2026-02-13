@@ -78,7 +78,7 @@
   width: var(--avatar-size-sm); /* 2rem */
   height: var(--avatar-size-sm); /* 2rem */
   background: var(--overlay-white-20);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 }
 
 .status-icon i {
@@ -106,10 +106,7 @@
   gap: var(--space-2);
 }
 
-// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-037)
-.banner-actions {
-  // Component-specific styles remain here
-}
+// PrimeNG button overrides: _component-overrides.scss (DS-EXC-037)
 
 @include respond-to(md) {
   .offline-banner {

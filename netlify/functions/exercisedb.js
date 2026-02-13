@@ -18,6 +18,32 @@ const supabase = supabaseAdmin;
 // ExerciseDB API configuration
 const EXERCISEDB_API_URL = "https://exercisedb-api.vercel.app/api/v1";
 
+const parseBoundedInt = (value, fieldName, { min, max }) => {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+};
+
+const parseJsonObjectBody = (rawBody) => {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    return {};
+  }
+  const parsed = JSON.parse(rawBody);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    throw new Error("Request body must be an object");
+  }
+  return parsed;
+};
+
 /**
  * Verify user has coach/admin role
  */
@@ -99,13 +125,19 @@ async function getCuratedExercises(params) {
     offset = 0,
   } = params;
 
+  const parsedMinRelevance =
+    parseBoundedInt(min_relevance, "min_relevance", { min: 0, max: 10 }) ?? 5;
+  const parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 }) ?? 50;
+  const parsedOffset =
+    parseBoundedInt(offset, "offset", { min: 0, max: 1000000 }) ?? 0;
+
   let query = supabase
     .from("exercisedb_exercises")
     .select("*")
     .eq("is_active", true)
-    .gte("flag_football_relevance", parseInt(min_relevance))
+    .gte("flag_football_relevance", parsedMinRelevance)
     .order("flag_football_relevance", { ascending: false })
-    .range(parseInt(offset), parseInt(offset) + parseInt(limit) - 1);
+    .range(parsedOffset, parsedOffset + parsedLimit - 1);
 
   if (approved_only === "true") {
     query = query.eq("is_approved", true);
@@ -180,6 +212,7 @@ async function getFilterOptions() {
  */
 async function searchExerciseDB(params) {
   const { body_part, target, equipment, name, limit = 20 } = params;
+  const parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 }) ?? 20;
 
   let exercises = [];
 
@@ -187,35 +220,39 @@ async function searchExerciseDB(params) {
     if (body_part) {
       const data = await fetchFromExerciseDB(
         `/exercises/bodyPart/${encodeURIComponent(body_part)}`,
-        { limit },
+        { limit: parsedLimit },
       );
       exercises = data.data || data;
     } else if (target) {
       const data = await fetchFromExerciseDB(
         `/exercises/target/${encodeURIComponent(target)}`,
-        { limit },
+        { limit: parsedLimit },
       );
       exercises = data.data || data;
     } else if (equipment) {
       const data = await fetchFromExerciseDB(
         `/exercises/equipment/${encodeURIComponent(equipment)}`,
-        { limit },
+        { limit: parsedLimit },
       );
       exercises = data.data || data;
     } else if (name) {
       const data = await fetchFromExerciseDB(
         `/exercises/name/${encodeURIComponent(name)}`,
-        { limit },
+        { limit: parsedLimit },
       );
       exercises = data.data || data;
     } else {
       // Get general exercises
-      const data = await fetchFromExerciseDB("/exercises", { limit });
+      const data = await fetchFromExerciseDB("/exercises", {
+        limit: parsedLimit,
+      });
       exercises = data.data || data;
     }
 
     return {
-      exercises: Array.isArray(exercises) ? exercises.slice(0, limit) : [],
+      exercises: Array.isArray(exercises)
+        ? exercises.slice(0, parsedLimit)
+        : [],
       source: "exercisedb_api",
     };
   } catch (error) {
@@ -488,9 +525,12 @@ export const handler = async (event, context) =>
 
         let body = {};
         try {
-          body = JSON.parse(evt.body || "{}");
+          body = parseJsonObjectBody(evt.body);
         } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+          if (_parseError instanceof SyntaxError) {
+            return handleValidationError("Invalid JSON in request body");
+          }
+          return handleValidationError(_parseError.message);
         }
 
         if (path === "/import") {
@@ -513,8 +553,15 @@ export const handler = async (event, context) =>
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
         console.error("ExerciseDB API error:", error);
+        if (
+          error.message?.includes("must be") ||
+          error.message?.includes("Invalid") ||
+          error.message?.includes("required")
+        ) {
+          return handleValidationError(error.message);
+        }
         return createErrorResponse(
-          error.message || "Internal server error",
+          "Internal server error",
           500,
           "server_error",
         );

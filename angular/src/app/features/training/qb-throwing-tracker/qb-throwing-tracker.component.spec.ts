@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { of } from "rxjs";
-import { MessageService } from "primeng/api";
+import { ToastService } from "../../../core/services/toast.service";
 import { QbThrowingTrackerComponent } from "./qb-throwing-tracker.component";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -39,10 +39,12 @@ describe("QbThrowingTrackerComponent", () => {
       success: vi.fn(),
     };
 
-    const mockMessageService = {
-      add: vi.fn(),
-      addAll: vi.fn(),
-      clear: vi.fn(),
+    const mockToastService = {
+      success: vi.fn(),
+      error: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      show: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -50,7 +52,7 @@ describe("QbThrowingTrackerComponent", () => {
       providers: [
         { provide: ApiService, useValue: mockApiService },
         { provide: LoggerService, useValue: mockLoggerService },
-        { provide: MessageService, useValue: mockMessageService },
+        { provide: ToastService, useValue: mockToastService },
       ],
     }).compileComponents();
 

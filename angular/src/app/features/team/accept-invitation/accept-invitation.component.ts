@@ -9,6 +9,7 @@ import {
 import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import { TitleCasePipe } from "@angular/common";
 import { Card } from "primeng/card";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Message } from "primeng/message";
 import { ToastService } from "../../../core/services/toast.service";
@@ -44,7 +45,14 @@ interface InvitationData {
   selector: "app-accept-invitation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Card, Message, TitleCasePipe, ButtonComponent],
+  imports: [
+    RouterModule,
+    Card,
+    Message,
+    TitleCasePipe,
+    ButtonComponent,
+    AppLoadingComponent,
+  ],
   template: `
 <div class="accept-invitation-page">
       <p-card class="accept-invitation-card">
@@ -56,11 +64,7 @@ interface InvitationData {
         </ng-template>
 
         @if (isLoading()) {
-          <div class="loading-state">
-            <p-message severity="info" class="status-message">
-              Loading invitation...
-            </p-message>
-          </div>
+          <app-loading message="Loading invitation..." variant="inline" />
         } @else if (needsLogin()) {
           <div class="login-required-state">
             <p-message severity="warn" class="status-message">

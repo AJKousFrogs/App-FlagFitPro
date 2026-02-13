@@ -352,7 +352,7 @@
 .session-dot {
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--color-brand-primary);
 }
 
@@ -391,16 +391,14 @@
   background: var(--surface-ground);
   cursor: pointer;
   transition: background var(--motion-base) var(--ease-standard);
-}
 
-.workout-card-compact:hover {
-  background: var(--surface-secondary);
+  @include ds-hover-state(var(--surface-secondary));
 }
 
 .workout-icon-small {
   width: var(--avatar-size-sm);
   height: var(--avatar-size-sm);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -518,7 +516,7 @@
 .progress-ring-mini {
   width: var(--avatar-size-md);
   height: var(--avatar-size-md);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--overlay-white-20);
   display: flex;
   align-items: center;

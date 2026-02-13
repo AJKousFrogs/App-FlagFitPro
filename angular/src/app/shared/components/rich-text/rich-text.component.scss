@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -71,11 +73,8 @@
   line-height: var(--ds-line-height-normal);
   color: var(--color-text-primary);
   outline: none;
-}
 
-.rich-text-content:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: calc(-1 * var(--focus-outline-offset));
+  @include ds-focus-ring($offset: calc(-1 * var(--focus-outline-offset)));
 }
 
 .rich-text-content p {

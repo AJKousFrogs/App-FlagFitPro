@@ -8,7 +8,7 @@
    TOAST CONTAINER - Using :host for encapsulation
    ================================ */
 
-// PrimeNG toast overrides moved to _exceptions.scss (DS-EXC-034)
+// PrimeNG toast overrides moved to _component-overrides.scss (DS-EXC-034)
 .app-toast {
   opacity: 1;
 }
@@ -135,14 +135,14 @@
   }
 }
 
-// PrimeNG toast position animations moved to _exceptions.scss (DS-EXC-034)
+// PrimeNG toast position animations moved to _component-overrides.scss (DS-EXC-034)
 
 /* ================================
    RESPONSIVE
    ================================ */
 
 @include respond-to(sm) {
-  // PrimeNG toast responsive override moved to _exceptions.scss (DS-EXC-034)
+  // PrimeNG toast responsive override moved to _component-overrides.scss (DS-EXC-034)
   .app-toast {
     width: calc(100% - var(--space-4));
     left: var(--space-2);
@@ -155,5 +155,5 @@
    ================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  // PrimeNG toast reduced motion override moved to _exceptions.scss (DS-EXC-034)
+  // PrimeNG toast reduced motion override moved to _component-overrides.scss (DS-EXC-034)
 }

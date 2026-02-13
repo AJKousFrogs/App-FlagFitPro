@@ -79,10 +79,8 @@
   text-decoration: underline;
   text-underline-offset: var(--space-1);
   font-weight: var(--ds-font-weight-medium);
-}
 
-.cookie-link:hover {
-  color: var(--ds-primary-green);
+  @include ds-hover-state(transparent, $color: var(--ds-primary-green));
 }
 
 /* ================================
@@ -182,7 +180,7 @@
   left: calc(var(--space-1) / 2);
   bottom: calc(var(--space-1) / 2);
   background-color: var(--color-text-on-primary);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   transition: transform var(--motion-fast) var(--ease-standard);
   box-shadow: var(--shadow-1);
 }
@@ -195,8 +193,8 @@
   transform: translateX(var(--space-5));
 }
 
-.toggle-switch input:focus-visible + .toggle-slider {
-  box-shadow: var(--focus-ring-shadow);
+.toggle-switch input {
+  @include ds-focus-visible-sibling(".toggle-slider", var(--focus-ring-shadow));
 }
 
 /* ================================

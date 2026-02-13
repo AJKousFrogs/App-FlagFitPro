@@ -26,7 +26,6 @@ import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { PerformanceTrackingDataService } from "./services/performance-tracking-data.service";
 import { DataState } from "../../core/services/data-source.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -39,6 +38,7 @@ import {
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { AchievementBadgeComponent } from "../../shared/components/achievement-badge/achievement-badge.component";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { SimpleChartData } from "../../core/models/chart.models";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -175,10 +175,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     AppLoadingComponent,
     RouterModule,
     ButtonComponent,
-    IconButtonComponent,
     StatusTagComponent,
     AchievementBadgeComponent,
     DataSourceBannerComponent,
+    EmptyStateComponent,
     DatePipe,
     Tooltip,
   ],
@@ -243,13 +243,12 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
           @if (hasData()) {
             <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
           } @else {
-            <div class="no-data-banner">
-              <i class="pi pi-info-circle"></i>
-              <span
-                >No performance data yet. Log your first test to see metrics
-                here.</span
-              >
-            </div>
+            <app-empty-state
+              context="performance"
+              [useCard]="true"
+              [customActionLabel]="'Log First Test'"
+              [actionHandler]="openLogDialog"
+            />
           }
 
           <!-- Team Rankings & Achievement Badges -->
@@ -401,14 +400,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             </p-card>
           } @else if (hasTeam() && hasData()) {
             <p-card class="team-rankings-card">
-              <div class="empty-state">
-                <i class="pi pi-users empty-icon"></i>
-                <h4>Team Rankings Coming Soon</h4>
-                <p>
-                  Once more teammates log their performance tests, you'll see
-                  how you compare.
-                </p>
-              </div>
+              <app-empty-state
+                icon="pi-users"
+                heading="Team Rankings Coming Soon"
+                description="Once more teammates log their performance tests, you'll see how you compare."
+              />
             </p-card>
           }
 
@@ -431,14 +427,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                     [options]="chartOptions"
                   ></app-lazy-chart>
                 } @else {
-                  <div class="empty-state">
-                    <i class="pi pi-chart-line empty-icon"></i>
-                    <h4>No Performance Data Yet</h4>
-                    <p>
-                      Log at least 2 performance tests to see your progress over
-                      time.
-                    </p>
-                  </div>
+                  <app-empty-state
+                    icon="pi-chart-line"
+                    heading="No Performance Data Yet"
+                    description="Log at least 2 performance tests to see your progress over time."
+                  />
                 }
               </p-card>
             } @placeholder {
@@ -466,14 +459,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                     [options]="chartOptions"
                   ></app-lazy-chart>
                 } @else {
-                  <div class="empty-state">
-                    <i class="pi pi-bolt empty-icon"></i>
-                    <h4>No Speed Data Yet</h4>
-                    <p>
-                      Log your 10-yard, 20-yard, or 40-yard times to see speed
-                      metrics.
-                    </p>
-                  </div>
+                  <app-empty-state
+                    icon="pi-bolt"
+                    heading="No Speed Data Yet"
+                    description="Log your 10-yard, 20-yard, or 40-yard times to see speed metrics."
+                  />
                 }
               </p-card>
             } @placeholder {
@@ -535,14 +525,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 }
               </div>
             } @else {
-              <div class="empty-state">
-                <i class="pi pi-bullseye empty-icon"></i>
-                <h4>No Benchmark Data Yet</h4>
-                <p>
-                  Log your performance tests to compare against elite position
-                  benchmarks.
-                </p>
-              </div>
+              <app-empty-state
+                icon="pi-bullseye"
+                heading="No Benchmark Data Yet"
+                description="Log your performance tests to compare against elite position benchmarks."
+              />
             }
           </p-card>
 
@@ -555,14 +542,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               </div>
             </ng-template>
             @if (gapAnalysis().length === 0) {
-              <div class="empty-state">
-                <i class="pi pi-chart-bar empty-icon"></i>
-                <h4>No Gap Analysis Available</h4>
-                <p>
-                  Log performance metrics to see your training priorities and
-                  recommendations.
-                </p>
-              </div>
+              <app-empty-state
+                icon="pi-chart-bar"
+                heading="No Gap Analysis Available"
+                description="Log performance metrics to see your training priorities and recommendations."
+              />
             } @else {
               <p-accordion>
                 @for (gap of gapAnalysis(); track gap.metric; let i = $index) {
@@ -627,17 +611,14 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               <h3>Performance History</h3>
             </ng-template>
             @if (performanceHistory().length === 0) {
-              <div class="empty-state">
-                <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
-                <h4>{{ noDataMessage.title }}</h4>
-                <p>{{ noDataMessage.reason }}</p>
-                <app-icon-button
-                  icon="pi-plus"
-                  (clicked)="openLogDialog()"
-                  ariaLabel="Log new performance"
-                  tooltip="Log performance"
-                />
-              </div>
+              <app-empty-state
+                [icon]="noDataMessage.icon"
+                [heading]="noDataMessage.title"
+                [description]="noDataMessage.reason"
+                actionLabel="Log performance"
+                actionIcon="pi-plus"
+                [actionHandler]="openLogDialogHandler"
+              />
             } @else {
               <p-table
                 [value]="performanceHistory()"
@@ -1419,6 +1400,8 @@ export class PerformanceTrackingComponent {
 
     this.gapAnalysis.set(gaps);
   }
+
+  readonly openLogDialogHandler = (): void => this.openLogDialog();
 
   openLogDialog(): void {
     // Reset form and open dialog

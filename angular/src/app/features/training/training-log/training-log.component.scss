@@ -81,9 +81,6 @@ app-card-shell {
   text-align: center;
 }
 
-// .session-type-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
-
 .session-type-card.selected {
   border-color: var(--color-brand-primary);
   background: var(--color-brand-primary-subtle);
