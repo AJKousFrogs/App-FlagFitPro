@@ -233,7 +233,7 @@ interface SuperadminUser {
           <ng-template #header>
             <div class="card-header">
               <h3>
-                <span class="olympic-icon">🏅</span>
+                <span class="olympic-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
                 Olympic Program
               </h3>
             </div>

@@ -120,16 +120,13 @@
       .form-field {
         :global(.p-inputtext),
         :global(.p-select) {
-          min-height: var(--touch-target-md);
-          font-size: var(--ds-font-size-md); // Prevent iOS zoom
-          padding: var(--space-2) var(--space-3);
+          @include mobile-touch-inputs;
         }
 
         input,
         select,
         textarea {
-          min-height: var(--touch-target-md);
-          padding: var(--space-2) var(--space-3);
+          @include mobile-touch-inputs;
         }
       }
 
@@ -403,7 +400,7 @@
     .p-inputgroup-addon {
       background: transparent;
       border: none;
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       padding: 0;
       margin: 0;
       display: flex;
@@ -419,7 +416,7 @@
 
         i {
           font-size: var(--ds-font-size-md);
-          color: var(--text-color-secondary);
+          color: var(--color-text-secondary);
           opacity: var(--opacity-dimmed);
           transition:
             opacity var(--transition-fast) ease,
@@ -448,7 +445,7 @@
       min-width: 0;
 
       &::placeholder {
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
         opacity: var(--opacity-muted);
         font-size: var(--ds-font-size-sm);
       }
@@ -464,7 +461,7 @@
     &:hover .p-inputgroupaddon:first-child i,
     &:hover .p-inputgroup-addon:first-child i {
       opacity: var(--opacity-strong);
-      color: var(--text-color);
+      color: var(--color-text-primary);
     }
   }
 
@@ -488,7 +485,7 @@
 
     .p-button-icon {
       font-size: var(--font-body-size);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       opacity: var(--opacity-subtle);
       margin: 0;
     }
@@ -499,7 +496,7 @@
 
       .p-button-icon {
         opacity: 1;
-        color: var(--text-color);
+        color: var(--color-text-primary);
       }
     }
 
@@ -1020,13 +1017,13 @@
     font-size: var(--font-body-size);
     font-weight: var(--font-weight-regular);
     padding: 0;
-    color: var(--text-color);
+    color: var(--color-text-primary);
     box-shadow: none;
     height: var(--space-8);
     line-height: var(--space-8);
 
     &::placeholder {
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       opacity: var(--opacity-subtle);
     }
 
@@ -1046,7 +1043,7 @@
 
     .p-button-icon {
       font-size: var(--font-h4-size);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 

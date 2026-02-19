@@ -9,10 +9,7 @@
   padding: var(--space-6);
 }
 
-.header-actions {
-  display: flex;
-  gap: var(--space-3);
-}
+/* Uses shared .header-actions from _dashboard.scss */
 
 .attendance-content {
   display: flex;
@@ -120,7 +117,7 @@
   min-width: var(--avatar-size-sm);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-full);
-  font-size: var(--ds-font-size-xs); /* 0.calc(var(--size-200) * 6)/0.calc(var(--size-200) * 6) */
+  font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
 
   &.success {
@@ -174,27 +171,11 @@
   gap: var(--space-4);
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  label {
-    font-weight: var(--ds-font-weight-medium);
-    font-size: var(--ds-font-size-md);
-    color: var(--color-text-primary);
-  }
-
-  &.checkbox-field {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+/* Form layout: use primitives _forms.scss; add .two-col to form-row in template */
+.attendance-dialog .form-field label {
+  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-primary);
 }
 
 .attendance-dialog {
@@ -234,7 +215,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-3);
-  background-color: var(--surface-50);
+  background-color: var(--surface-secondary);
   border-radius: var(--radius-lg);
 }
 

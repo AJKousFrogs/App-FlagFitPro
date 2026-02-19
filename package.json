@@ -15,6 +15,7 @@
     "dev:full": "netlify dev",
     "dev:angular-only": "cd angular && npx ng serve --port 4200 --host 127.0.0.1 --live-reload --poll 2000",
     "build": "cd angular && npx ng build --progress=false --verbose",
+    "build:analyze": "cd angular && npm run build:analyze",
     "sass:compile": "mkdir -p src/css src/css/components src/css/pages src/css/utilities && sass --load-path=angular/src angular/src/styles.scss:src/css/main.css angular/src/scss/tokens/design-system-tokens.scss:src/css/tokens.css angular/src/scss/components/index.scss:src/css/components/index.css angular/src/scss/pages/index.scss:src/css/pages/index.css angular/src/scss/utilities/index.scss:src/css/utilities/index.css --style=expanded --no-source-map && node scripts/add-generated-css-banner.js",
     "sass:watch": "node scripts/sass-watch.mjs",
     "build:css": "node scripts/build-css.js",
@@ -68,6 +69,7 @@
     "audit:db-resilience": "node scripts/audit-db-resilience.js",
     "benchmark": "node scripts/app-performance-check.js",
     "audit:scss-duplications": "node scripts/audit-scss-duplications.js",
+    "audit:scss-duplications:ci": "node scripts/audit-scss-duplications.js --ci",
     "audit:ts-duplications": "node scripts/audit-ts-duplications.js",
     "audit:js-duplications": "node scripts/audit-js-duplications.js",
     "audit:security": "npm audit",
@@ -113,6 +115,7 @@
     "seed:wada": "node scripts/seedWADAProhibitedList.js",
     "seed:training": "node scripts/seedEnhancedTrainingCategories.js",
     "db:audit": "node scripts/database-audit.js",
+    "db:audit:sql": "node scripts/audit-sql-migrations.js",
     "db:tables": "node scripts/list-supabase-tables.js",
     "clean": "rm -rf dist coverage .playwright angular/dist",
     "clean:all": "rm -rf dist coverage .playwright angular/dist node_modules/.cache",
@@ -149,6 +152,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.58.2",
+    "@supabase/mcp-server-supabase": "^0.6.3",
     "@types/node": "^22.15.0",
     "chokidar": "^5.0.0",
     "concurrently": "^9.2.1",
@@ -173,9 +177,13 @@
   },
   "overrides": {
     "jws": "^4.0.1",
+    "qs": "^6.14.2",
     "netlify-cli": {
       "jsonwebtoken": "^9.0.3",
-      "jws": "^4.0.1"
+      "jws": "^4.0.1",
+      "express": {
+        "qs": "^6.14.2"
+      }
     },
     "jsonwebtoken": {
       "jws": "^4.0.1"

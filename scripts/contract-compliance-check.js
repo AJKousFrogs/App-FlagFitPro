@@ -41,7 +41,7 @@ function checkDatabaseSchema() {
     {
       name: "coach_locked column exists",
       pattern: /coach_locked.*BOOLEAN/i,
-      files: ["supabase/migrations/**/*.sql", "database/migrations/**/*.sql"],
+      files: ["supabase/migrations/**/*.sql"],
       status: "pending",
     },
     {

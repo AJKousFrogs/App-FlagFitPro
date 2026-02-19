@@ -1,9 +1,11 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 
 // Netlify Function: Staff Nutritionist API
 // Handles nutritionist dashboard data: athlete nutrition profiles, body composition, supplements
+const consentReader = new ConsentDataReader(supabaseAdmin);
 
 /**
  * Verify user is a staff member with nutritionist role
@@ -44,7 +46,7 @@ async function verifyAthleteOnTeam(teamId, athleteId) {
 /**
  * Get team athletes with nutrition data
  */
-async function getAthleteNutritionOverview(teamId) {
+async function getAthleteNutritionOverview(teamId, requesterId) {
   // Get team members who are players
   const { data: members, error: membersError } = await supabaseAdmin
     .from("team_members")
@@ -95,13 +97,14 @@ async function getAthleteNutritionOverview(teamId) {
       .single();
 
     // Get recent wellness entry for hydration
-    const { data: wellness } = await supabaseAdmin
-      .from("wellness_entries")
-      .select("hydration_level, date")
-      .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
-      .order("date", { ascending: false })
-      .limit(1)
-      .single();
+    const wellnessResult = await consentReader.readWellnessEntries({
+      requesterId,
+      playerId: userId,
+      teamId,
+      context: AccessContext.COACH_TEAM_DATA,
+      filters: { limit: 1 },
+    });
+    const wellness = wellnessResult.success ? (wellnessResult.data || [])[0] : null;
 
     // Get recent supplement logs (last 7 days)
     const sevenDaysAgo = new Date();
@@ -216,7 +219,7 @@ async function getTeamSupplementCompliance(teamId) {
 /**
  * Get hydration summary for team
  */
-async function getTeamHydrationSummary(teamId) {
+async function getTeamHydrationSummary(teamId, requesterId) {
   const { data: members } = await supabaseAdmin
     .from("team_members")
     .select("user_id")
@@ -228,13 +231,22 @@ async function getTeamHydrationSummary(teamId) {
     return { adequate: 0, warning: 0, critical: 0 };
   }
 
-  const { data: wellness } = await supabaseAdmin
-    .from("wellness_entries")
-    .select("user_id, hydration_level, date")
-    .or(
-      `user_id.in.(${userIds.join(",")}),athlete_id.in.(${userIds.join(",")})`,
-    )
-    .gte("date", new Date().toISOString().split("T")[0]);
+  const entriesByAthlete = await Promise.all(
+    userIds.map(async (athleteId) => {
+      const result = await consentReader.readWellnessEntries({
+        requesterId,
+        playerId: athleteId,
+        teamId,
+        context: AccessContext.COACH_TEAM_DATA,
+        filters: { limit: 1 },
+      });
+      if (!result.success || !Array.isArray(result.data) || result.data.length === 0) {
+        return null;
+      }
+      return result.data[0];
+    }),
+  );
+  const wellness = entriesByAthlete.filter(Boolean);
 
   const hydrationMap = new Map();
   for (const entry of wellness || []) {
@@ -434,7 +446,7 @@ async function handleRequest(event, _context, { userId }) {
       method === "GET" &&
       (path === "" || path === "/" || path === "/athletes")
     ) {
-      const athletes = await getAthleteNutritionOverview(teamId);
+      const athletes = await getAthleteNutritionOverview(teamId, userId);
       return createSuccessResponse({ athletes });
     }
 
@@ -475,7 +487,7 @@ async function handleRequest(event, _context, { userId }) {
 
     // GET /hydration - Get team hydration summary
     if (method === "GET" && path === "/hydration") {
-      const summary = await getTeamHydrationSummary(teamId);
+      const summary = await getTeamHydrationSummary(teamId, userId);
       return createSuccessResponse({ summary });
     }
 
@@ -511,8 +523,8 @@ async function handleRequest(event, _context, { userId }) {
     // GET /summary - Dashboard summary
     if (method === "GET" && path === "/summary") {
       const [athletes, hydration, supplements] = await Promise.all([
-        getAthleteNutritionOverview(teamId),
-        getTeamHydrationSummary(teamId),
+        getAthleteNutritionOverview(teamId, userId),
+        getTeamHydrationSummary(teamId, userId),
         getTeamSupplementCompliance(teamId),
       ]);
 

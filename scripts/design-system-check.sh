@@ -62,6 +62,7 @@ echo ""
 # ============================================================
 echo "📋 Decision 1: Checking for hex colors outside tokens..."
 
+# Exclude: tokens (canonical), color-guards (matches inline style strings), color-contrast (docs/comments)
 HEX=$(grep -RIn \
   --include="*.scss" \
   --include="*.css" \
@@ -71,7 +72,9 @@ HEX=$(grep -RIn \
   -E "#[0-9a-fA-F]{3,8}\b" src \
   | grep -v "design-system-tokens.scss" \
   | grep -v "// allowed:" \
-  | grep -v "/* allowed:" \
+  | grep -v "/\* allowed:" \
+  | grep -v "_color-guards.scss" \
+  | grep -v "color-contrast-fixes.scss" \
   || true)
 
 if [ -n "$HEX" ]; then
@@ -122,13 +125,14 @@ echo ""
 # ============================================================
 echo "📋 Decision 19: Checking for transition: all..."
 
+# Match transition: all; only (excludes "no transition: all" in comments)
 TRANS_ALL=$(grep -RIn \
   --include="*.scss" \
   --include="*.css" \
   --exclude-dir=node_modules \
   --exclude-dir=.angular \
   --exclude-dir=dist \
-  -E "transition:\s*all" src \
+  -E "transition:\s*all\s*;" src \
   || true)
 
 if [ -n "$TRANS_ALL" ]; then
@@ -237,6 +241,7 @@ echo ""
 # ============================================================
 echo "📋 Decision 56: Checking for hardcoded font-family..."
 
+# Exclude: tokens, @font-face (must use literal font name), var() usage
 FONT_FAMILY=$(grep -RIn \
   --include="*.scss" \
   --include="*.css" \
@@ -246,6 +251,7 @@ FONT_FAMILY=$(grep -RIn \
   -E "font-family:\s*['\"]?(Poppins|Arial|Helvetica|sans-serif)" src \
   | grep -v "design-system-tokens.scss" \
   | grep -v "var(--font" \
+  | grep -v "assets/fonts" \
   || true)
 
 if [ -n "$FONT_FAMILY" ]; then

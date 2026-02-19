@@ -13,7 +13,7 @@
 .status-card {
   background: var(--surface-primary);
   border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--radius-xl); /* 0.calc(var(--size-200) * 6) */
+  border-radius: var(--radius-xl);
   padding: var(--space-4);
   margin-bottom: var(--space-4);
   box-shadow: var(--shadow-sm);
@@ -98,7 +98,7 @@
 .section {
   background: var(--surface-primary);
   border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--radius-xl); /* 0.calc(var(--size-200) * 6) */
+  border-radius: var(--radius-xl);
   padding: var(--space-4);
   margin-bottom: var(--space-4);
   box-shadow: var(--shadow-sm);

@@ -15,11 +15,6 @@ const projectRoot = path.join(__dirname, "..");
 
 // Known external resources with their SRI hashes (reserved for future use)
 // const EXTERNAL_RESOURCES = {
-//     'https://unpkg.com/lucide@latest': {
-//         url: 'https://cdn.jsdelivr.net/npm/lucide@1.0.445/dist/umd/lucide.js',
-//         integrity: 'sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2',
-//         crossorigin: 'anonymous'
-//     },
 //     'https://fonts.googleapis.com/css2?family=Poppins': {
 //         // Fonts don't typically need SRI as they're served from trusted CDNs
 //         // and browser CORS policies protect them
@@ -99,12 +94,6 @@ class SecurityHeadersManager {
    */
   updateScriptSRI(htmlContent) {
     let updated = htmlContent;
-
-    // Replace unpkg.com lucide references with jsdelivr
-    updated = updated.replace(
-      /<script\s+src\s*=\s*["']https:\/\/unpkg\.com\/lucide@latest["']/g,
-      `<script src="https://cdn.jsdelivr.net/npm/lucide@1.0.445/dist/umd/lucide.js" integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" crossorigin="anonymous"`,
-    );
 
     // Add missing integrity attributes to external scripts
     updated = updated.replace(

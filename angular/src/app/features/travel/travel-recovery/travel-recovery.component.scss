@@ -186,15 +186,10 @@
   padding: var(--space-4);
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  label {
-    font-weight: var(--ds-font-weight-medium);
-    color: var(--color-text-primary);
-  }
+/* Form layout: use primitives _forms.scss */
+.travel-recovery-page .form-field label {
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-primary);
 }
 
 .form-actions {
@@ -1394,7 +1389,7 @@
   }
 }
 
-@media (min-width: 75rem) and (max-width: 87.4375rem) {
+@media (min-width: var(--breakpoint-xl-min)) and (max-width: var(--breakpoint-xl-max)) {
   .protocol-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1404,7 +1399,7 @@
   }
 }
 
-@media (min-width: 64rem) and (max-width: 74.9375rem) {
+@media (min-width: var(--breakpoint-lg)) and (max-width: var(--breakpoint-lg-max)) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1414,7 +1409,7 @@
   }
 }
 
-@media (min-width: 48.0625rem) and (max-width: 64rem) {
+@media (min-width: var(--breakpoint-md-min)) and (max-width: var(--breakpoint-lg)) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1497,7 +1492,7 @@
   }
 }
 
-@media (min-width: 30rem) and (max-width: 48rem) {
+@media (min-width: var(--breakpoint-xs-narrow)) and (max-width: var(--breakpoint-md)) {
   .olympic-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1571,7 +1566,7 @@
   }
 }
 
-@media (max-height: 31.25rem) and (orientation: landscape) {
+@media (max-height: var(--breakpoint-landscape-height)) and (orientation: landscape) {
   .travel-recovery-page {
     padding: var(--space-3);
   }

@@ -1,0 +1,40 @@
+/**
+ * Foundations: Interactive States
+ * ================================
+ *
+ * Shared hover/focus/disabled patterns to replace 80%+ of duplicated
+ * :hover and :focus-visible boilerplate across components.
+ *
+ * USAGE:
+ *   .button { @include interactive($focus-ring: true); }
+ *   .card { @include interactive($hover: var(--surface-secondary)); }
+ *
+ * TIP: If hover rules vary a lot, use just focus-visible + disabled first.
+ * That alone kills tons of duplication (179 :hover, 67 :focus-visible in audit).
+ *
+ * @see scss/utilities/_mixins.scss - focus-visible, interactive-states, ds-focus-ring
+ * @see styles/design-system/states.scss - ds-button-states, ds-hover-state, etc.
+ */
+
+@use "../utilities/mixins" as mixins;
+
+/// Minimal interactive boilerplate: focus-visible + disabled.
+/// Use when you don't need custom hover/active — components add those separately.
+///
+/// @param {boolean} $focus-ring - Apply focus-visible ring (default: true)
+/// @param {number} $disabled-opacity - Opacity when disabled (default: 0.5)
+@mixin interactive(
+  $focus-ring: true,
+  $disabled-opacity: 0.5
+) {
+  @if $focus-ring {
+    @include mixins.focus-visible;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: $disabled-opacity;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}

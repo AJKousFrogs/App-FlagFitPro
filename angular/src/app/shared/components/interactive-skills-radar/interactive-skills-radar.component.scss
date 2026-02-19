@@ -53,7 +53,7 @@
   font-size: var(--ds-font-size-md);
 }
 
-@media (min-width: 48rem) {
+@media (min-width: var(--breakpoint-md)) {
   .skills-container {
     flex-direction: row;
   }

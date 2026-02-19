@@ -23,7 +23,7 @@
   pointer-events: none;
   opacity: 0;
   transform: translateY(-100%);
-  transition: opacity var(--transition-base) ease;
+  transition: opacity var(--transition-base) var(--ease-standard);
 }
 
 .pull-indicator.visible {
@@ -54,7 +54,7 @@
 
 .pull-content {
   min-height: 100%;
-  transition: transform var(--transition-base) ease;
+  transition: transform var(--transition-base) var(--ease-standard);
 }
 
 .pull-indicator.refreshing + .pull-content {

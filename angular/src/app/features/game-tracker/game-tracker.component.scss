@@ -118,24 +118,8 @@
   margin-bottom: var(--space-6);
 }
 
-/* Fixed column row for game setup */
-.form-row {
-  display: grid;
-  gap: var(--space-5);
-  margin-bottom: var(--space-5);
-}
-
-.form-row.four-col {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.form-field label {
+/* Form layout: use primitives _forms.scss (.form-row, .form-field, .four-col) */
+.game-tracker-page .form-field label {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
@@ -744,7 +728,7 @@
 }
 
 /* Landscape mode on phones */
-@media (max-width: 48rem) and (orientation: landscape) {
+@media (max-width: var(--breakpoint-md)) and (orientation: landscape) {
   .outcome-buttons {
     grid-template-columns: repeat(4, 1fr);
   }

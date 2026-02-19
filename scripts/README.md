@@ -41,8 +41,8 @@ Run these via npm commands from the project root:
 | Script | Purpose |
 |--------|---------|
 | `migration-quickstart.sh` | Interactive setup: .env, verify connection, run migrations, data migration |
-| `run-all-migrations-supabase.sh` | Run all SQL from `database/migrations/` via psql (called by quickstart) |
-| `apply-migration.js` | Apply a single migration file: `node scripts/apply-migration.js database/migrations/XXX.sql` |
+| `run-all-migrations-supabase.sh` | Run all SQL from canonical `supabase/migrations/` via psql (optional legacy mode available) |
+| `apply-migration.js` | Apply a single migration file: `node scripts/apply-migration.js supabase/migrations/XXX.sql` |
 | `migrate-supabase-data.js` | Migrate data from old Supabase project (`npm run migrate:data`) |
 | `open-supabase-sql-editor.sh` | Open Supabase Dashboard SQL Editor with consolidated SQL path |
 

@@ -8,7 +8,8 @@
  * for most fields to match the ProtocolJson interface.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/** Record type for API response normalization - allows dynamic property access */
+type ApiRecord = Record<string, unknown>;
 
 /**
  * Normalizes Daily Protocol API response
@@ -17,8 +18,8 @@
 export function mapDailyProtocolResponse<T>(data: T): T {
   if (!data || typeof data !== "object") return data;
 
-  const mapped = { ...data } as any;
-  const source = data as any;
+  const mapped = { ...data } as ApiRecord;
+  const source = data as ApiRecord;
 
   // confidence_metadata mapping (CRITICAL - affects "Check-in not logged" banner)
   if ("confidenceMetadata" in source && !("confidence_metadata" in source)) {
@@ -116,8 +117,8 @@ export function mapDailyProtocolResponse<T>(data: T): T {
 export function mapWellnessResponse<T>(data: T): T {
   if (!data || typeof data !== "object") return data;
 
-  const mapped = { ...data } as any;
-  const source = data as any;
+  const mapped = { ...data } as ApiRecord;
+  const source = data as ApiRecord;
 
   // Core wellness fields - map to short names used in frontend
   if ("sleepQuality" in source && !("sleep" in source)) {
@@ -181,8 +182,8 @@ export function mapWellnessResponse<T>(data: T): T {
 export function mapTrainingSessionResponse<T>(data: T): T {
   if (!data || typeof data !== "object") return data;
 
-  const mapped = { ...data } as any;
-  const source = data as any;
+  const mapped = { ...data } as ApiRecord;
+  const source = data as ApiRecord;
 
   if ("sessionType" in source && !("session_type" in source)) {
     mapped.session_type = source.sessionType;
@@ -225,8 +226,8 @@ export function mapTrainingSessionResponse<T>(data: T): T {
 export function mapPerformanceDataResponse<T>(data: T): T {
   if (!data || typeof data !== "object") return data;
 
-  const mapped = { ...data } as any;
-  const source = data as any;
+  const mapped = { ...data } as ApiRecord;
+  const source = data as ApiRecord;
 
   // Body composition fields
   if ("bodyFat" in source && !("body_fat" in source)) {
@@ -324,8 +325,8 @@ export function normalizeApiResponse<T>(
 ): T {
   if (!data || typeof data !== "object") return data;
 
-  const mapped = { ...data } as any;
-  const source = data as any;
+  const mapped = { ...data } as ApiRecord;
+  const source = data as ApiRecord;
 
   for (const [camelCase, snakeCase] of Object.entries(fieldMappings)) {
     if (camelCase in source && !(snakeCase in source)) {

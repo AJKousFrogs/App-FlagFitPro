@@ -2,6 +2,10 @@
 /**
  * SCSS Duplication Audit
  * Finds duplicate rules, repeated patterns, and redundant code in SCSS files
+ *
+ * Usage:
+ *   node scripts/audit-scss-duplications.js           # Report only
+ *   node scripts/audit-scss-duplications.js --ci      # Fail on threshold breach (for CI)
  */
 
 import fs from "fs";
@@ -10,6 +14,18 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ANGULAR_SRC = path.join(__dirname, "../angular/src");
+
+const CI_MODE = process.argv.includes("--ci");
+const THRESHOLDS = {
+  formFieldMax: 50,
+  formRowMax: 45,
+  respondToPerFileMax: 25,
+  hoverGlobalMax: 200,
+  focusVisibleGlobalMax: 85,
+};
+
+// Keyframe keywords — not real selectors, ignore in duplicate count
+const KEYFRAME_SELECTORS = new Set(["from", "to"]);
 
 function walkDir(dir, ext, files = []) {
   if (!fs.existsSync(dir)) return files;
@@ -49,11 +65,12 @@ function findDuplicateSelectors(files) {
     const content = fs.readFileSync(file, "utf8");
     const selectors = extractRuleSignatures(content);
     const rel = path.relative(ANGULAR_SRC, file);
-    for (const sel of selectors) {
-      if (sel.length > 2) {
-        selectorCounts.set(sel, (selectorCounts.get(sel) || 0) + 1);
-        if (!selectorFiles.has(sel)) selectorFiles.set(sel, []);
-        if (!selectorFiles.get(sel).includes(rel)) selectorFiles.get(sel).push(rel);
+  for (const sel of selectors) {
+    const trimmed = sel.trim();
+    if (trimmed.length > 2 && !KEYFRAME_SELECTORS.has(trimmed)) {
+      selectorCounts.set(trimmed, (selectorCounts.get(trimmed) || 0) + 1);
+        if (!selectorFiles.has(trimmed)) selectorFiles.set(trimmed, []);
+        if (!selectorFiles.get(trimmed).includes(rel)) selectorFiles.get(trimmed).push(rel);
       }
     }
   }
@@ -97,6 +114,8 @@ function findDuplicateValueBlocks(files) {
 }
 
 function main() {
+  const violations = [];
+
   console.log("🔍 SCSS Duplication Audit\n");
   const scssFiles = walkDir(path.join(ANGULAR_SRC, "app"), ".scss");
   const globalScss = walkDir(path.join(ANGULAR_SRC, "scss"), ".scss");
@@ -106,6 +125,34 @@ function main() {
   console.log(`📁 Scanned ${allFiles.length} SCSS files\n`);
 
   const { selectorCounts, selectorFiles } = findDuplicateSelectors(allFiles);
+
+  if (CI_MODE) {
+    const formFieldCount = selectorCounts.get(".form-field") || 0;
+    const formRowCount = selectorCounts.get(".form-row") || 0;
+    const hoverCount = selectorCounts.get(":hover") || 0;
+    const focusVisibleCount = selectorCounts.get(":focus-visible") || 0;
+    if (formFieldCount > THRESHOLDS.formFieldMax) {
+      violations.push(
+        `.form-field: ${formFieldCount} occurrences (max ${THRESHOLDS.formFieldMax}). Use primitives/_forms.scss.`
+      );
+    }
+    if (formRowCount > THRESHOLDS.formRowMax) {
+      violations.push(
+        `.form-row: ${formRowCount} occurrences (max ${THRESHOLDS.formRowMax}). Use primitives/_forms.scss.`
+      );
+    }
+    if (hoverCount > THRESHOLDS.hoverGlobalMax) {
+      violations.push(
+        `:hover: ${hoverCount} occurrences (max ${THRESHOLDS.hoverGlobalMax}). Use @include interactive or foundations/_states.scss.`
+      );
+    }
+    if (focusVisibleCount > THRESHOLDS.focusVisibleGlobalMax) {
+      violations.push(
+        `:focus-visible: ${focusVisibleCount} occurrences (max ${THRESHOLDS.focusVisibleGlobalMax}). Use @include interactive or focus-visible mixin.`
+      );
+    }
+  }
+
   const highDupes = [...selectorCounts.entries()]
     .filter(([, c]) => c >= 3)
     .sort((a, b) => b[1] - a[1])
@@ -130,6 +177,15 @@ function main() {
   }
 
   const repeatedPatterns = findRepeatedPatterns(allFiles);
+  if (CI_MODE) {
+    const overLimit = repeatedPatterns.filter((p) => p.count > THRESHOLDS.respondToPerFileMax);
+    overLimit.forEach((p) => {
+      violations.push(
+        `${p.file}: ${p.count} respond-to blocks (max ${THRESHOLDS.respondToPerFileMax}). Consolidate or use layout primitives.`
+      );
+    });
+  }
+
   console.log("═".repeat(60));
   console.log("2. FILES WITH MANY respond-to BLOCKS (4+)\n");
   if (repeatedPatterns.length === 0) {
@@ -157,6 +213,13 @@ function main() {
 
   console.log("═".repeat(60));
   console.log("✓ SCSS audit complete.\n");
+
+  if (CI_MODE && violations.length > 0) {
+    console.error("❌ SCSS duplication thresholds exceeded:\n");
+    violations.forEach((v) => console.error(`   • ${v}`));
+    console.error("\nSee angular/src/scss/SCSS_PRIMITIVES.md for guidelines.\n");
+    process.exit(1);
+  }
 }
 
 main();

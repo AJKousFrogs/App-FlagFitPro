@@ -88,14 +88,14 @@ type ActivityType =
 
 // ===== Constants =====
 const ACTIVITY_TYPES: { value: ActivityType; label: string; icon: string }[] = [
-  { value: "warmup", label: "Warm-up", icon: "🏃" },
-  { value: "position", label: "Position Work", icon: "🎯" },
-  { value: "offense", label: "Team Offense", icon: "🏈" },
-  { value: "defense", label: "Team Defense", icon: "🛡️" },
-  { value: "scrimmage", label: "Scrimmage", icon: "⚔️" },
-  { value: "cooldown", label: "Cool Down", icon: "😌" },
-  { value: "conditioning", label: "Conditioning", icon: "💪" },
-  { value: "film", label: "Film Review", icon: "📹" },
+  { value: "warmup", label: "Warm-up", icon: "pi-bolt" },
+  { value: "position", label: "Position Work", icon: "pi-bullseye" },
+  { value: "offense", label: "Team Offense", icon: "pi-flag" },
+  { value: "defense", label: "Team Defense", icon: "pi-shield" },
+  { value: "scrimmage", label: "Scrimmage", icon: "pi-shield" },
+  { value: "cooldown", label: "Cool Down", icon: "pi-heart" },
+  { value: "conditioning", label: "Conditioning", icon: "pi-bolt" },
+  { value: "film", label: "Film Review", icon: "pi-video" },
 ];
 
 const DEFAULT_EQUIPMENT: EquipmentItem[] = [
@@ -177,7 +177,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
               <p-card class="practice-card">
                 <div class="practice-header">
                   <div class="practice-title">
-                    <span class="practice-icon">🏋️</span>
+                    <span class="practice-icon"><i class="pi pi-bolt" aria-hidden="true"></i></span>
                     <h4>{{ practice.title }}</h4>
                     <app-status-tag
                       [value]="getStatusLabel(practice.status)"
@@ -388,9 +388,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <div class="activity-block">
                   <div class="activity-header">
                     <span class="item-time">{{ activity.startTime }}</span>
-                    <span class="activity-icon">{{
-                      getActivityIcon(activity.type)
-                    }}</span>
+                    <span class="activity-icon"><i [class]="'pi ' + getActivityIcon(activity.type)" aria-hidden="true"></i></span>
                     <input
                       type="text"
                       pInputText
@@ -902,7 +900,7 @@ export class PracticePlannerComponent implements OnInit {
 
   // Helper methods
   getActivityIcon(type: ActivityType): string {
-    return ACTIVITY_TYPES.find((t) => t.value === type)?.icon || "📋";
+    return ACTIVITY_TYPES.find((t) => t.value === type)?.icon || "pi-list";
   }
 
   getStatusLabel(status: string): string {

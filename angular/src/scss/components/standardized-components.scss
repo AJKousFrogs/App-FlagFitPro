@@ -139,23 +139,20 @@
 
   /* Icon sizing within buttons */
   i,
-  svg,
-  [data-lucide] {
+  svg {
     width: var(--icon-base);
     height: var(--icon-base);
     flex-shrink: 0;
   }
 
   &.btn-sm i,
-  &.btn-sm svg,
-  &.btn-sm [data-lucide] {
+  &.btn-sm svg {
     width: var(--icon-md);
     height: var(--icon-md);
   }
 
   &.btn-lg i,
-  &.btn-lg svg,
-  &.btn-lg [data-lucide] {
+  &.btn-lg svg {
     width: var(--icon-lg);
     height: var(--icon-lg);
   }
@@ -954,7 +951,7 @@ select {
 /* PrimeNG Tag/Badge Overrides - Unified with design system (see primeng-theme.scss) */
 /* Note: Main p-tag styles are in primeng-theme.scss for single source of truth */
 
-/* PrimeNG Card Overrides */
+/* PrimeNG Card Overrides - padding from ui-standardization (--p-card-body-padding) */
 .p-card {
   background-color: var(--surface-primary);
   border-radius: var(--radius-lg);
@@ -962,10 +959,6 @@ select {
 
   .p-card-header {
     background-color: var(--surface-secondary);
-  }
-
-  .p-card-body {
-    padding: var(--space-6);
   }
 
   .p-card-footer {
@@ -2040,15 +2033,8 @@ select {
    Mobile-first responsive design helpers
    ================================================================ */
 
-/* Hide on Mobile */
-@include respond-to(md) {
-  .hide-mobile {
-    display: none;
-  }
-}
-
 /* Hide on Desktop */
-@media (min-width: 48rem) {
+@media (min-width: var(--breakpoint-md)) {
   .hide-desktop {
     display: none;
   }
@@ -2137,8 +2123,12 @@ select {
   position: sticky;
 }
 
-/* Safari/iOS input zoom prevention (font-size >= 1rem) */
+/* Consolidated md breakpoint - hide-mobile, input zoom, table, modal, toast, sidebar, bottom-nav */
 @include respond-to(md) {
+  .hide-mobile {
+    display: none;
+  }
+
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -2150,10 +2140,7 @@ select {
   textarea {
     font-size: var(--font-body-size, 1rem);
   }
-}
 
-/* Mobile-first responsive table */
-@include respond-to(md) {
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -2163,7 +2150,6 @@ select {
     min-width: var(--layout-width-xl);
   }
 
-  /* Alternative: Stacked table layout for mobile */
   .table-responsive-stack {
     min-width: auto;
   }
@@ -2197,10 +2183,7 @@ select {
     color: var(--color-text-secondary);
     margin-right: var(--space-4);
   }
-}
 
-/* Modal responsive fixes */
-@include respond-to(md) {
   .modal {
     width: 100%;
     max-width: 100%;
@@ -2216,18 +2199,12 @@ select {
     max-width: 100%;
   }
 
-  .modal-body {
-    padding: var(--space-4);
-  }
-
+  .modal-body,
   .modal-header,
   .modal-footer {
     padding: var(--space-4);
   }
-}
 
-/* Toast positioning for mobile */
-@include respond-to(md) {
   .toast {
     left: var(--space-4);
     right: var(--space-4);
@@ -2235,24 +2212,17 @@ select {
     min-width: auto;
     max-width: none;
   }
-}
 
-/* Sidebar responsive fixes */
-@include respond-to(md) {
   .sidebar {
     width: 100%;
     max-width: var(--layout-width-md);
     padding-bottom: var(--safe-area-bottom, var(--space-4));
   }
-}
 
-/* Bottom navigation safe area */
-@include respond-to(md) {
   .bottom-nav {
     padding-bottom: var(--safe-area-bottom, 0);
   }
 
-  /* Ensure main content doesn't get hidden behind bottom nav */
   main,
   .main-content,
   .dashboard-content {
@@ -2299,7 +2269,7 @@ select {
 }
 
 /* Landscape orientation fixes for mobile */
-@media (max-height: 31.25rem) and (orientation: landscape) {
+@media (max-height: var(--breakpoint-landscape-height)) and (orientation: landscape) {
   .modal {
     max-height: var(--layout-height-full);
     overflow-y: auto;

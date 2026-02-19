@@ -42,6 +42,13 @@
   }
 }
 
+// Mobile form inputs - min touch target, prevent iOS zoom (use inside respond-to(md))
+@mixin mobile-touch-inputs {
+  min-height: var(--touch-target-md);
+  font-size: var(--ds-font-size-md);
+  padding: var(--space-2) var(--space-3);
+}
+
 // Hover support detection
 @mixin hover-support {
   @media (hover: hover) and (pointer: fine) {
@@ -804,10 +811,12 @@
 ) {
   &:focus-visible {
     outline: none;
+
     @if $color {
       border-color: $color;
     }
     box-shadow: $shadow;
+
     @if $bg {
       background: $bg;
     }
@@ -832,19 +841,22 @@
   $outline-width: null,
   $box-shadow: null
 ) {
-  @if $offset == null and $radius == null and $border-color == null and $outline-width == null and $box-shadow == null {
+  @if not $offset and not $radius and not $border-color and not $outline-width and not $box-shadow {
     @include states.ds-focus-ring($color);
   } @else {
     &:focus-visible {
       outline: ($outline-width or var(--focus-outline-width)) solid $color;
+
       @if $offset {
         outline-offset: $offset;
       } @else {
         outline-offset: var(--focus-outline-offset);
       }
+
       @if $radius {
         border-radius: $radius;
       }
+
       @if $border-color {
         border-color: $border-color;
       }
@@ -907,9 +919,11 @@
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]):not(.disabled) {
       background-color: $bg;
+
       @if $color {
         color: $color;
       }
+
       @if $border-color {
         border-color: $border-color;
       }
@@ -939,4 +953,22 @@
 /// Stat-block label size - use token var()
 @mixin stat-block-label-size($token: var(--stat-block-label-compact)) {
   font-size: $token;
+}
+
+// ================================
+// FORM FIELD MIXIN
+// Use when component needs scoped form-field with overrides.
+// Base .form-field lives in primitives/_forms.scss - avoid redefining.
+// ================================
+
+@mixin form-field-base($gap: var(--space-2), $margin-bottom: null) {
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: $gap;
+
+    @if $margin-bottom {
+      margin-bottom: $margin-bottom;
+    }
+  }
 }

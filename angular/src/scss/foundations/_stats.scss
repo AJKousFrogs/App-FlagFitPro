@@ -1,0 +1,40 @@
+/**
+ * Foundations: Stat Block Placeholders
+ * ====================================
+ *
+ * Shared patterns for .stat-icon, .stat-block__label, .stat-block__value.
+ * 23x .stat-icon, 22x .stat-block__label, 20x .stat-block__value in audit.
+ *
+ * USAGE in stat-ish components:
+ *   .stat-block      { @extend %stat-block; }
+ *   .stat-icon       { @extend %stat-icon; }
+ *   .stat-block__label { @extend %stat-label; }
+ *   .stat-block__value { @extend %stat-value; }
+ *
+ * @see scss/utilities/_mixins.scss - stat-block mixin, stat-block-value-size, stat-block-label-size
+ * @see scss/components/primitives/_dashboard.scss - dashboard stat patterns
+ */
+
+%stat-block {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+%stat-icon {
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+}
+
+%stat-label {
+  font-size: var(--font-label-size);
+  color: var(--text-secondary, var(--color-text-secondary));
+}
+
+%stat-value {
+  font-size: var(--font-h3-size);
+  font-weight: var(--font-weight-bold);
+}

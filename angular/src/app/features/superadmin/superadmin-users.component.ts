@@ -273,7 +273,7 @@ interface User {
       .stat-block__value {
         font-size: var(--ds-font-size-2xl);
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
       }
 
       .stat-block__label {

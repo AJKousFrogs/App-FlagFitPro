@@ -56,7 +56,7 @@
 }
 
 .streak-badge {
-  padding: var(--space-2) var(--space-3); /* 0.5rem 0.calc(var(--size-200) * 6) for breathing room */
+  padding: var(--space-2) var(--space-3);
   background: var(--ds-primary-orange-subtle);
   border-radius: var(--radius-lg);
   font-size: var(--ds-font-size-sm);

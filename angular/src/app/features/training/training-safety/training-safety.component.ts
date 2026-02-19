@@ -248,16 +248,16 @@ import { calculateAge } from "../../../shared/utils/date.utils";
                   <div class="rec-icon">
                     @switch (rec.priority) {
                       @case ("critical") {
-                        🚨
+                        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                       }
                       @case ("high") {
-                        ⚠️
+                        <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
                       }
                       @case ("medium") {
-                        💡
+                        <i class="pi pi-lightbulb" aria-hidden="true"></i>
                       }
                       @default {
-                        ℹ️
+                        <i class="pi pi-info-circle" aria-hidden="true"></i>
                       }
                     }
                   </div>

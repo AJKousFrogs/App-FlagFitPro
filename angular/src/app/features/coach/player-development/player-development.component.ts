@@ -187,7 +187,7 @@ const COMPARE_OPTIONS = [
           <!-- Development Overview -->
           <div class="stats-summary">
             <div class="stat-card">
-              <span class="stat-icon">📊</span>
+              <span class="stat-icon"><i class="pi pi-chart-bar" aria-hidden="true"></i></span>
               <div class="stat-content">
                 <span class="stat-block__value"
                   >{{ selectedPlayer()?.overallProgress }}%</span
@@ -197,7 +197,7 @@ const COMPARE_OPTIONS = [
               </div>
             </div>
             <div class="stat-card">
-              <span class="stat-icon">🎯</span>
+              <span class="stat-icon"><i class="pi pi-bullseye" aria-hidden="true"></i></span>
               <div class="stat-content">
                 <span class="stat-block__value"
                   >{{ selectedPlayer()?.goalsCompleted }}/{{
@@ -209,7 +209,7 @@ const COMPARE_OPTIONS = [
               </div>
             </div>
             <div class="stat-card">
-              <span class="stat-icon">📈</span>
+              <span class="stat-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
               <div class="stat-content">
                 <span
                   class="stat-block__value"
@@ -228,7 +228,7 @@ const COMPARE_OPTIONS = [
               </div>
             </div>
             <div class="stat-card">
-              <span class="stat-icon">🏆</span>
+              <span class="stat-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
               <div class="stat-content">
                 <span class="stat-block__value">{{
                   selectedPlayer()?.achievements

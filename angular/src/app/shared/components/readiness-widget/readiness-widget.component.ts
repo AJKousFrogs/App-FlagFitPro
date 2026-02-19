@@ -35,7 +35,7 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
     <app-card title="Readiness Today">
       <div header-actions>
         <app-button
-          icon="refresh"
+          iconLeft="pi-refresh"
           variant="text"
           [loading]="loading()"
           (clicked)="refresh()"
@@ -56,7 +56,7 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
           <app-button
             variant="outlined"
             size="sm"
-            icon="refresh"
+            iconLeft="pi-refresh"
             (clicked)="refresh()"
             class="mt-3"
             >Retry</app-button

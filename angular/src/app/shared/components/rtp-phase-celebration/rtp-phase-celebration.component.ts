@@ -41,7 +41,7 @@ export interface RTPPhaseInfo {
     @if (showCelebration()) {
       <p-card class="celebration-card">
         <div class="celebration-header">
-          <div class="celebration-icon">🎉</div>
+          <div class="celebration-icon"><i class="pi pi-sparkles" aria-hidden="true"></i></div>
           <div class="celebration-content">
             <h2>You've Progressed to {{ phaseInfo()!.phaseName }}!</h2>
             <p class="celebration-subtitle">

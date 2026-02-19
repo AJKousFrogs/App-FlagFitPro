@@ -478,7 +478,7 @@ interface HydrationLog {
           </div>
           <div class="tips-grid">
             <div class="tip-item">
-              <div class="tip-icon">🧂</div>
+              <div class="tip-icon"><i class="pi pi-info-circle" aria-hidden="true"></i></div>
               <div class="tip-content">
                 <h4>Electrolyte Balance</h4>
                 <p>
@@ -488,7 +488,7 @@ interface HydrationLog {
               </div>
             </div>
             <div class="tip-item">
-              <div class="tip-icon">🍌</div>
+              <div class="tip-icon"><i class="pi pi-apple" aria-hidden="true"></i></div>
               <div class="tip-content">
                 <h4>Potassium Boost</h4>
                 <p>
@@ -498,7 +498,7 @@ interface HydrationLog {
               </div>
             </div>
             <div class="tip-item">
-              <div class="tip-icon">🧊</div>
+              <div class="tip-icon"><i class="pi pi-info-circle" aria-hidden="true"></i></div>
               <div class="tip-content">
                 <h4>Stay Cool</h4>
                 <p>
@@ -508,7 +508,7 @@ interface HydrationLog {
               </div>
             </div>
             <div class="tip-item">
-              <div class="tip-icon">🚫</div>
+              <div class="tip-icon"><i class="pi pi-ban" aria-hidden="true"></i></div>
               <div class="tip-content">
                 <h4>Avoid</h4>
                 <p>
@@ -524,7 +524,7 @@ interface HydrationLog {
         @if (hasRefereeDuty()) {
           <p-card class="referee-alert-card">
             <div class="referee-alert">
-              <div class="alert-icon">🏁</div>
+              <div class="alert-icon"><i class="pi pi-flag" aria-hidden="true"></i></div>
               <div class="alert-content">
                 <h4>Referee Duty Detected</h4>
                 <p>

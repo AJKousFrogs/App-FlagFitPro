@@ -7,10 +7,7 @@
   padding: var(--space-6);
 }
 
-.header-actions {
-  display: flex;
-  gap: var(--space-3);
-}
+/* Uses shared .header-actions from _dashboard.scss */
 
 .depth-chart-content {
   display: flex;
@@ -53,7 +50,7 @@
   justify-content: center;
   width: var(--avatar-size-md);
   height: var(--avatar-size-md);
-  background: var(--primary-color);
+  background: var(--color-brand-primary);
   color: var(--color-text-on-primary);
   border-radius: var(--radius-lg);
   font-weight: var(--ds-font-weight-bold);
@@ -77,7 +74,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  background: var(--surface-50);
+  background: var(--surface-secondary);
   border-radius: var(--radius-lg);
   border: var(--border-1) solid var(--surface-border);
   cursor: grab;
@@ -86,12 +83,12 @@
     opacity var(--transition-fast);
 
   &:hover {
-    border-color: var(--primary-color);
+    border-color: var(--color-brand-primary);
   }
 
   &.starter {
-    background: var(--primary-50);
-    border-color: var(--primary-200);
+    background: var(--ds-primary-green-ultra-subtle);
+    border-color: var(--primitive-primary-200);
   }
 
   &.empty {

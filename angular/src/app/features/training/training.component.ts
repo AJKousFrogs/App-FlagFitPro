@@ -92,7 +92,7 @@ interface AchievementStreak {
         <!-- Back to Daily Protocol Banner -->
         <app-card-shell state="interactive" (cardClick)="goToDailyProtocol()">
           <div class="protocol-banner-content">
-            <div class="banner-icon">📋</div>
+            <div class="banner-icon"><i class="pi pi-list" aria-hidden="true"></i></div>
             <div class="banner-content">
               <h3>← Back to Daily Protocol</h3>
               <p>Your AI-prescribed daily training with progressive overload</p>
@@ -136,9 +136,9 @@ interface AchievementStreak {
           >
             <div class="alert-icon">
               @if (wellnessAlert()!.severity === "critical") {
-                🚨
+                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
               } @else {
-                ⚠️
+                <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
               }
             </div>
             <div class="alert-content">
@@ -150,8 +150,8 @@ interface AchievementStreak {
               (clicked)="goToWellnessCheckin()"
               >Update</app-button
             >
-            <button class="alert-dismiss" (click)="dismissWellnessAlert()">
-              ✕
+            <button class="alert-dismiss" (click)="dismissWellnessAlert()" aria-label="Dismiss alert">
+              <i class="pi pi-times" aria-hidden="true"></i>
             </button>
           </div>
         }
@@ -323,7 +323,7 @@ interface AchievementStreak {
 
         <!-- Recent Achievements -->
         @if (recentAchievements().length > 0) {
-          <app-card-shell title="🏆 Recent Achievements">
+          <app-card-shell title="Recent Achievements" headerIcon="pi-trophy">
             <ng-container header-actions>
               <app-button
                 variant="text"
@@ -350,7 +350,7 @@ interface AchievementStreak {
         <app-card-shell state="interactive" (cardClick)="goToRoadmap()">
           <div class="la28-teaser-content">
             <div class="teaser-content">
-              <span class="teaser-icon">🏅</span>
+              <span class="teaser-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
               <div class="teaser-text">
                 <span class="teaser-title">Road to LA28</span>
                 <span class="teaser-subtitle"

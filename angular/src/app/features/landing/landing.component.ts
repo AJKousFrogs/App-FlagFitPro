@@ -43,7 +43,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
             <div class="hero-logo">
               <span class="merlin-icon">🏈</span>
             </div>
-            <div class="hero-badge">🏆 Pro Platform</div>
+            <div class="hero-badge"><i class="pi pi-trophy" aria-hidden="true"></i> Pro Platform</div>
           </div>
 
           <!-- Olympic Countdown Timer -->

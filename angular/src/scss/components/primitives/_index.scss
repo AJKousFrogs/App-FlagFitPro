@@ -43,6 +43,9 @@
 // Feedback (alerts, empty/loading states - badges moved to _badges.scss)
 @use "feedback";
 
+// Skeleton / loading placeholder (chart, card, block placeholders)
+@use "skeleton";
+
 // Dialog / overlay patterns (modals, drawers, popovers)
 @use "dialogs";
 

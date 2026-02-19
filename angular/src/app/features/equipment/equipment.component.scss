@@ -7,10 +7,7 @@
   padding: var(--space-6);
 }
 
-.header-actions {
-  display: flex;
-  gap: var(--space-3);
-}
+/* Uses shared .header-actions from _dashboard.scss */
 
 .equipment-content {
   display: flex;
@@ -32,7 +29,7 @@
 
 .summary-icon {
   font-size: var(--ds-font-size-2xl);
-  color: var(--primary-color);
+  color: var(--color-brand-primary);
 
   &.success {
     color: var(--green-500);
@@ -71,7 +68,7 @@
 
   i {
     font-size: var(--ds-font-size-2xl);
-    color: var(--primary-color);
+    color: var(--color-brand-primary);
   }
 }
 
@@ -130,21 +127,14 @@
   gap: var(--space-4);
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
+/* Form layout: use primitives _forms.scss; add .two-col to form-row in template */
+.equipment-page .form-field,
+.dialog-form .form-field {
+  gap: var(--space-4);
   label {
     font-weight: var(--ds-font-weight-medium);
     font-size: var(--ds-font-size-md);
   }
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
 }
 
 .checkout-info,

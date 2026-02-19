@@ -109,6 +109,26 @@ color: #089949;
 color: var(--ds-primary-green);
 ```
 
+#### 4.1.1 WCAG AA Color Contrast (Required)
+
+For **text and interactive elements**, use contrast-safe tokens to meet WCAG 2.1 AA (4.5:1):
+
+| Context | Token | Use When |
+|---------|-------|----------|
+| White text on green background | `--ds-primary-green-dark` | Primary buttons, success badges |
+| Green text on white/light background | `--ds-primary-green-dark` | Links, labels, outlined buttons |
+| Brand green (decorative only) | `--ds-primary-green` | Gradients, icons on dark, non-text |
+
+```scss
+/* ✅ Primary button (white on green) */
+background-color: var(--ds-primary-green-dark);
+
+/* ✅ Link/label (green on white) */
+color: var(--ds-primary-green-dark);
+```
+
+**Audit:** Run `npm run audit:a11y` (requires app at localhost:4200). Enforced in CI.
+
 ### 4.2 Spacing Scale (LOCKED)
 
 Single spacing system for padding, margin, gap, grid:
@@ -2266,12 +2286,12 @@ The typography system has been **unified** with predictable hierarchy across all
 ### Current Violations (168 instances)
 
 ```scss
-// ❌ FORBIDDEN (found 168 times across codebase)
+// ❌ FORBIDDEN - never hardcode font names
 font-family: "Poppins", sans-serif;
 font-family: "Poppins", system-ui, sans-serif;
 
-// ✅ REQUIRED
-font-family: var(--font-family-sans);
+// ✅ REQUIRED - use design tokens
+font-family: var(--font-family-sans);  /* "Poppins", system-ui, sans-serif */
 font-family: var(--font-family-display);
 font-family: inherit; // For components inheriting from parent
 ```
@@ -2297,11 +2317,17 @@ Typography already has responsive breakpoints defined:
 
 ### Poppins Weights Loaded
 
-```html
-<!-- From index.html -->
-<link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-/>
+**Implementation:** Locally hosted in `angular/src/assets/fonts/` (Poppins-*.ttf). Loaded via `@font-face` in `poppins.scss`. No CDN/Google Fonts — works offline and reduces external requests.
+
+```scss
+/* angular/src/assets/fonts/poppins.scss */
+@font-face {
+  font-family: Poppins;
+  src: url("./Poppins-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+/* Weights: 300, 400, 500, 600, 700 */
 ```
 
 | Weight | Token                    | Use Case                         |

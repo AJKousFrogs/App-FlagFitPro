@@ -21,6 +21,9 @@
 @use "./scss/utilities" as *;
 @use "./assets/fonts/poppins";
 
+/* TIER 2.5: Foundations - canonical placeholders + interactive mixin (dedupe layer) */
+@use "./scss/foundations" as *;
+
 /* TIER 3: Components - PrimeNG mapping, integration */
 @use "./scss/components/index" as *;
 

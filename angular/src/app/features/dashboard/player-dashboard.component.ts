@@ -2315,14 +2315,17 @@ export class PlayerDashboardComponent {
 
     // Trigger data loading in UnifiedTrainingService to populate schedule
     // This ensures today's schedule is available
-    this.unifiedTrainingService.getTodayOverview().subscribe({
-      next: () => {
-        this.logger.info("[Dashboard] Today's overview data loaded");
-      },
-      error: (error) => {
-        this.logger.error("[Dashboard] Error loading today's overview:", error);
-      },
-    });
+    this.unifiedTrainingService
+      .getTodayOverview()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.logger.info("[Dashboard] Today's overview data loaded");
+        },
+        error: (error) => {
+          this.logger.error("[Dashboard] Error loading today's overview:", error);
+        },
+      });
   }
 
   loadData(): void {

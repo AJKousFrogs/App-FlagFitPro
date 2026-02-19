@@ -239,7 +239,7 @@ Coach → API endpoint → Database query → Player data
 
 - `docs/RLS_POLICY_SPECIFICATION.md` - Consent enforcement patterns
 - `tests/privacy-safety/consent-gating.test.js` - Automated tests
-- `database/migrations/071_*.sql` - Consent view definitions
+- `supabase/migrations/20260113_add_consent_views.sql` - Consent view definitions
 
 ---
 

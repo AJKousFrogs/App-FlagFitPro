@@ -94,9 +94,9 @@ a.btn {
 
   // ─────────────────────────────────────────
   // DEFAULT APPEARANCE
-  // Green background + white text/icons
+  // Darker green for WCAG AA (white text 4.5:1)
   // ─────────────────────────────────────────
-  background-color: var(--ds-primary-green);
+  background-color: var(--ds-primary-green-dark);
   color: var(--color-text-on-primary);
   border: var(--border-2) solid transparent;
   box-shadow: var(--shadow-md);
@@ -128,8 +128,8 @@ a.btn {
 @media (hover: hover) and (pointer: fine) {
   .btn:hover:not(:disabled):not(.btn-disabled) {
     background-color: var(--color-text-on-primary);
-    color: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
+    border-color: var(--ds-primary-green-dark);
     transform: translateY(-var(--border-2));
     box-shadow:
       0 var(--space-2) var(--space-5) rgba(var(--ds-primary-green-rgb), 0.3),
@@ -191,9 +191,9 @@ a.btn {
 // ============================================
 
 // PRIMARY - Default (green bg + white text)
-// Explicitly defined for clarity, matches base
+// Explicitly defined for clarity; WCAG AA: darker green for white-on-green
 .btn.btn-primary {
-  background-color: var(--ds-primary-green);
+  background-color: var(--ds-primary-green-dark);
   color: var(--color-text-on-primary);
   border-color: transparent;
 }
@@ -201,8 +201,8 @@ a.btn {
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-primary:hover:not(:disabled):not(.btn-disabled) {
     background-color: var(--color-text-on-primary);
-    color: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
+    border-color: var(--ds-primary-green-dark);
   }
 }
 
@@ -218,33 +218,31 @@ a.btn {
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-secondary:hover:not(:disabled):not(.btn-disabled) {
     background-color: var(--surface-tertiary);
-    color: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
+    border-color: var(--ds-primary-green-dark);
     box-shadow: var(--shadow-2);
   }
 }
 
-// OUTLINED - Transparent with green border and green text
-// Using to ensure these override base .btn styles
+// OUTLINED - Transparent with green border and green text (WCAG AA)
 .btn.btn-outlined {
   background-color: transparent;
-  color: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
+  color: var(--ds-primary-green-dark);
+  border-color: var(--ds-primary-green-dark);
   box-shadow: none;
 
-  // Ensure text is visible
   .btn-content,
   .btn-icon,
   i {
-    color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-outlined:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--ds-primary-green);
+    background-color: var(--ds-primary-green-dark);
     color: var(--color-text-on-primary);
-    border-color: var(--ds-primary-green);
+    border-color: var(--ds-primary-green-dark);
     box-shadow: var(--shadow-1);
 
     .btn-content,
@@ -255,19 +253,17 @@ a.btn {
   }
 }
 
-// TEXT - Transparent, minimal style
-// SAME height, padding, radius as all other variants
-// Using to ensure these override base .btn styles
+// TEXT - Transparent, minimal style (WCAG AA)
 .btn.btn-text {
   background-color: transparent;
-  color: var(--ds-primary-green);
+  color: var(--ds-primary-green-dark);
   border-color: transparent;
   box-shadow: none;
 
   .btn-content,
   .btn-icon,
   i {
-    color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
   }
 }
 
@@ -310,9 +306,9 @@ a.btn {
   );
 }
 
-// SUCCESS - Same as primary (green)
+// SUCCESS - Same as primary (WCAG AA)
 .btn.btn-success {
-  background-color: var(--ds-primary-green);
+  background-color: var(--ds-primary-green-dark);
   color: var(--color-text-on-primary);
   border-color: transparent;
 }
@@ -320,8 +316,8 @@ a.btn {
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-success:hover:not(:disabled):not(.btn-disabled) {
     background-color: var(--color-text-on-primary);
-    color: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
+    border-color: var(--ds-primary-green-dark);
   }
 }
 
@@ -358,7 +354,7 @@ a.btn {
 // ============================================
 
 .btn.btn-icon-only {
-  width: var(--button-height-md); /* 2.calc(var(--size-200) * 6) */
+  width: var(--button-height-md);
   height: var(--button-height-md);
   padding: 0;
   flex-shrink: 0;

@@ -247,7 +247,7 @@
   position: absolute;
   bottom: var(--space-2);
   right: var(--space-2);
-  width: var(--button-height-md); /* 2.calc(var(--size-200) * 6) */
+  width: var(--button-height-md);
   height: var(--button-height-md);
   border-radius: var(--radius-full);
   background: var(--ds-primary-green);
@@ -509,7 +509,7 @@
 .profile-page .activity-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3); // 0.calc(var(--size-200) * 6) gap between items for breathing room
+  gap: var(--space-3);
 }
 
 .profile-page .activity-item {
@@ -797,7 +797,7 @@
  */
 
 /* Container Query - Tablet */
-@container (width < 64rem) {
+@container (width < var(--breakpoint-lg)) {
   .profile-page .stats-grid,
   .profile__stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -805,7 +805,7 @@
 }
 
 /* Container Query - Mobile */
-@container (width < 48rem) {
+@container (width < var(--breakpoint-md)) {
   .profile-page,
   .profile {
     --profile-header-bg-height: var(--size-120);

@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  height: var(--header-height, var(--ds-font-size-var(--header-height)));
+  height: var(--header-height, 4rem);
 }
 
 .header-center {
@@ -43,7 +43,7 @@
   flex: 1;
   max-width: calc(var(--grid-card-min-xl) + var(--space-5));
   min-width: var(--grid-card-min-md);
-  height: var(--header-height, var(--ds-font-size-var(--header-height)));
+  height: var(--header-height, 4rem);
   cursor: pointer;
   padding: 0 var(--space-2);
 
@@ -54,7 +54,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  height: var(--header-height, var(--ds-font-size-var(--header-height)));
+  height: var(--header-height, 4rem);
 }
 
 @include respond-to(xl) {
@@ -116,7 +116,7 @@
   ); /* ds-exception: monospace numerals */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--text-color);
+  color: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--ds-letter-spacing-0-02em);
   line-height: var(--ds-line-height-1);
@@ -125,7 +125,7 @@
 .countdown-unit {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   text-transform: var(--ds-text-transform-uppercase);
   letter-spacing: var(--ds-letter-spacing-0-02em);
 }
@@ -136,7 +136,7 @@
   ); /* ds-exception: monospace numerals */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   opacity: var(--opacity-muted);
   padding: 0 calc(var(--space-1) / 4);
   line-height: var(--ds-line-height-1);
@@ -169,7 +169,7 @@
 
   i {
     font-size: var(--ds-font-size-md);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -179,7 +179,7 @@
   ); /* ds-exception: monospace numerals */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--text-color);
+  color: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
   line-height: var(--ds-line-height-1);
 }
@@ -187,7 +187,7 @@
 .weather-location {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   max-width: var(--card-min-height-sm); /* var(--size-80) */
   overflow: hidden;
   text-overflow: ellipsis;
@@ -240,7 +240,7 @@
   justify-content: center;
 
   i {
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -258,21 +258,21 @@
 
 .breadcrumb-item {
   font-size: var(--ds-font-size-xs);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   opacity: var(--opacity-subtle);
   margin: 0;
   padding: 0;
 }
 
 .breadcrumb-item.current {
-  color: var(--text-color);
+  color: var(--color-text-primary);
   font-weight: var(--ds-font-weight-medium);
   opacity: 1;
 }
 
 .separator {
   font-size: var(--ds-font-size-xs);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   opacity: var(--opacity-dimmed);
 }
 
@@ -308,7 +308,7 @@
   border-radius: var(--radius-sm);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   line-height: var(--ds-line-height-1);
   box-shadow: 0 var(--border-1) 0 var(--surface-border);
 }
@@ -327,13 +327,14 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
   transition: background-color var(--motion-fast) var(--ease-standard);
+
   @include ds-hover-state(var(--surface-hover));
 }
 
 .theme-label {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   min-width: var(--space-8);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);

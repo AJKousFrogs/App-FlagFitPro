@@ -62,7 +62,7 @@
 
       .game-date {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -71,7 +71,7 @@
     p {
       margin: 0;
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -93,7 +93,7 @@
       align-items: center;
       gap: var(--ds-spacing-xs);
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
 
     .required-badge {
@@ -135,14 +135,14 @@
 
       .conference {
         font-size: var(--ds-font-size-xs);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
 
     .record {
       font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
-      color: var(--primary-color);
+      color: var(--color-brand-primary);
     }
   }
 
@@ -154,7 +154,7 @@
 
       .label {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       .value {
@@ -168,7 +168,7 @@
 
       .label {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
         display: block;
         margin-bottom: var(--ds-spacing-xs);
       }
@@ -189,7 +189,7 @@
 
       .label {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       .value {
@@ -225,7 +225,7 @@
 
 .opponents-section .more-players {
   font-size: var(--ds-font-size-xs);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 // Tendencies Section
@@ -249,7 +249,7 @@
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       display: flex;
       align-items: center;
       gap: var(--ds-spacing-sm);
@@ -323,7 +323,7 @@
 
       .type-value {
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
       }
     }
   }
@@ -355,7 +355,7 @@
 
       .target-share {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -374,7 +374,7 @@
 
     .rate-label {
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -384,7 +384,7 @@
     align-items: center;
     justify-content: center;
     padding: var(--ds-spacing-3xl);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
 
     i {
       font-size: var(--ds-font-size-3xl);
@@ -410,7 +410,7 @@
 
     p {
       margin: 0;
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -419,7 +419,7 @@
 
     h4 {
       margin: 0 0 var(--ds-spacing-sm);
-      color: var(--primary-color);
+      color: var(--color-brand-primary);
     }
 
     p {
@@ -437,7 +437,7 @@
       h5 {
         margin: 0 0 var(--ds-spacing-sm);
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       ul {
@@ -459,11 +459,11 @@
 
       .our-player {
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
       }
 
       .vs {
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       .their-player {
@@ -474,7 +474,7 @@
       .matchup-notes {
         margin-left: auto;
         font-size: var(--ds-font-size-xs);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
         font-style: italic;
       }
     }
@@ -483,7 +483,7 @@
 
 :is(.reports-section .formation-bars) .formation-bar .bar-container .bar-fill {
   height: 100%;
-  background: var(--primary-color);
+  background: var(--color-brand-primary);
   border-radius: var(--ds-radius-sm);
   transition: width var(--transition-slow) var(--ease-standard);
 }

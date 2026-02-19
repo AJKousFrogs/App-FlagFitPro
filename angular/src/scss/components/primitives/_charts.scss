@@ -148,6 +148,28 @@
   }
 
   // ============================================
+  // CHARTS GRID (shared across analytics, performance-tracking, wellness)
+  // Use instead of redefining in each feature component.
+  // ============================================
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+    align-items: stretch;
+
+    @include respond-to(md) {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    @include respond-to(sm) {
+      gap: var(--space-3);
+    }
+  }
+
+  // ============================================
   // RESPONSIVE BEHAVIOR
   // ============================================
 

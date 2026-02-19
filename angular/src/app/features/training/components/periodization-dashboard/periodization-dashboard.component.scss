@@ -179,7 +179,7 @@
 .day-card {
   padding: var(--space-4);
   border-radius: var(--radius-md);
-  background: var(--surface-50);
+  background: var(--surface-secondary);
   border: var(--border-1) solid var(--surface-200);
 
   &.session-training {
@@ -235,7 +235,7 @@
 }
 
 .weekly-totals {
-  background: var(--surface-50);
+  background: var(--surface-secondary);
   padding: var(--space-6);
   border-radius: var(--radius-md);
 
@@ -332,7 +332,7 @@
 .sprint-tips {
   margin-top: var(--space-8);
   padding: var(--space-6);
-  background: var(--surface-50);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   h4 {
@@ -406,7 +406,7 @@
     .metric {
       text-align: center;
       padding: var(--space-4);
-      background: var(--surface-50);
+      background: var(--surface-secondary);
       border-radius: var(--radius-md);
 
       .metric-label {
@@ -458,7 +458,7 @@
 
   .research-card {
     padding: var(--space-6);
-    background: var(--surface-50);
+    background: var(--surface-secondary);
     border-radius: var(--radius-md);
     border: var(--border-1) solid var(--surface-200);
 

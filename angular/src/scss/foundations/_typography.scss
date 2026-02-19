@@ -1,0 +1,36 @@
+/**
+ * Foundations: Typography
+ * ======================
+ *
+ * Scoped typography patterns for rich text / article content.
+ * Opt-in only — do not globalize. Use where p, h3, h4, strong, i repeat.
+ *
+ * USAGE:
+ *   .article-body { @extend %rich-text; }
+ *   .modal-content { @extend %rich-text; }
+ *
+ * @see scss/utilities/_mixins.scss - heading-1 through heading-4, body-text
+ * @see scss/utilities/typography-system.scss - responsive typography
+ */
+
+/// Scoped typography for article/rich-text areas.
+/// p, strong, h3/h4, i — use only in containers that need these defaults.
+%rich-text {
+  p {
+    margin: 0 0 var(--space-3);
+  }
+
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
+
+  h3,
+  h4 {
+    margin: 0 0 var(--space-2);
+    line-height: var(--line-height-tight);
+  }
+
+  i {
+    font-style: italic;
+  }
+}

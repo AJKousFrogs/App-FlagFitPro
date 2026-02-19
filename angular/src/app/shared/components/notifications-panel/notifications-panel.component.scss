@@ -124,11 +124,7 @@
   }
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
+/* Uses shared .header-actions from scss/components/primitives/_dashboard.scss */
 
 .mark-read-btn,
 .clear-read-btn {
@@ -166,7 +162,7 @@
   border: none;
   border-radius: var(--radius-full);
   background: var(--surface-ground);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -214,7 +210,7 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
 
-  @include ds-hover-state(var(--surface-hover), $color: var(--text-secondary));
+  @include ds-hover-state(var(--surface-hover), $color: var(--color-text-secondary));
 
   &.active {
     background: var(--ds-primary-green);
@@ -343,6 +339,7 @@
 .notification-item.unread {
   background: var(--surface-secondary);
   border-left-color: var(--ds-primary-green);
+
   @include ds-hover-state(var(--surface-hover));
 }
 
@@ -427,7 +424,7 @@
 .notification-message {
   margin: 0 0 var(--space-2);
   font-size: var(--ds-font-size-md);
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   line-height: var(--ds-line-height-normal);
 
   .notification-item.unread & {
@@ -530,7 +527,7 @@
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
   cursor: pointer;
@@ -576,7 +573,7 @@
 
 .view-all-btn:hover {
   background: var(--ds-primary-green-hover);
-  transform: translateY(-var(--border-1));
+  transform: var(--transform-hover-lift-subtle);
   box-shadow: var(--shadow-md);
 }
 
@@ -602,7 +599,7 @@
 
 .notification-icon.type-system {
   background: var(--color-border-secondary);
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
 
 /* Group header enhancements */

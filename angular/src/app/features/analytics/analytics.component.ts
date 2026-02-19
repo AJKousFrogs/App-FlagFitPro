@@ -203,7 +203,7 @@ interface AnalyticsAcwrData {
             </ng-template>
             <div class="analytics-hub-grid">
               <a routerLink="/analytics" class="analytics-hub-link">
-                <span class="analytics-hub-icon">📈</span>
+                <span class="analytics-hub-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
                 <span class="analytics-hub-title">Overview</span>
                 <span class="analytics-hub-subtitle">Team performance</span>
                 @if (nextGenEnabled()) {
@@ -211,7 +211,7 @@ interface AnalyticsAcwrData {
                 }
               </a>
               <a routerLink="/analytics/enhanced" class="analytics-hub-link">
-                <span class="analytics-hub-icon">🧪</span>
+                <span class="analytics-hub-icon"><i class="pi pi-flask" aria-hidden="true"></i></span>
                 <span class="analytics-hub-title">Enhanced</span>
                 <span class="analytics-hub-subtitle">Deep analytics</span>
                 @if (nextGenEnabled()) {
@@ -219,7 +219,7 @@ interface AnalyticsAcwrData {
                 }
               </a>
               <a routerLink="/performance-tracking" class="analytics-hub-link">
-                <span class="analytics-hub-icon">🎯</span>
+                <span class="analytics-hub-icon"><i class="pi pi-bullseye" aria-hidden="true"></i></span>
                 <span class="analytics-hub-title">Performance</span>
                 <span class="analytics-hub-subtitle">Player trends</span>
                 @if (nextGenEnabled()) {
@@ -1938,19 +1938,15 @@ export class AnalyticsComponent implements AfterViewInit {
 ↔️ Pan:
   • Hold Shift + drag to pan left/right
 
-👁️ Legend:
-  • Click legend items to show/hide datasets
+Legend: Click legend items to show/hide datasets
 
-🖱️ Details:
-  • Click on data points to view details
+Details: Click on data points to view details
 
-📊 Export:
-  • Click "Export" button to download as PNG
+Export: Click "Export" button to download as PNG
 
-🔄 Reset:
-  • Click "Reset Zoom" to restore original view
+Reset: Click "Reset Zoom" to restore original view
 
-💡 Tip: Hover over data points to see trend information!`;
+Tip: Hover over data points to see trend information!`;
 
     this.toastService.info(instructions, "Chart Interactions");
   }
@@ -2450,7 +2446,7 @@ export class AnalyticsComponent implements AfterViewInit {
         <title>FlagFit Pro Analytics - ${playerName}</title>
         <style>
           body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* ds-exception: PDF export font stack */
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Poppins when available, else system fallback */
             padding: var(--space-10);
             max-width: var(--dialog-max-width-2xl);
             margin: 0 auto;
@@ -2544,12 +2540,12 @@ export class AnalyticsComponent implements AfterViewInit {
       </head>
       <body>
         <div class="header">
-          <h1>🏈 FlagFit Pro Analytics Report</h1>
+          <h1>FlagFit Pro Analytics Report</h1>
           <p>${playerName} • ${dateStr}</p>
         </div>
 
         <div class="section">
-          <h2>📊 Key Metrics</h2>
+          <h2>Key Metrics</h2>
           <div class="metrics-grid">
             ${metrics
               .map(
@@ -2568,7 +2564,7 @@ export class AnalyticsComponent implements AfterViewInit {
           acwr
             ? `
           <div class="section">
-            <h2>⚡ Training Load (ACWR)</h2>
+            <h2>Training Load (ACWR)</h2>
             <div class="metrics-grid">
               <div class="metric-card">
                 <div class="metric-value">${acwr.acwr}</div>
@@ -2588,7 +2584,7 @@ export class AnalyticsComponent implements AfterViewInit {
           goals.length > 0
             ? `
           <div class="section">
-            <h2>🎯 Development Goals</h2>
+            <h2>Development Goals</h2>
             ${goals
               .map(
                 (g) => `
@@ -2612,7 +2608,7 @@ export class AnalyticsComponent implements AfterViewInit {
           seasonStats
             ? `
           <div class="section">
-            <h2>📈 Season Statistics</h2>
+            <h2>Season Statistics</h2>
             <table class="stats-table">
               <tr><th>Metric</th><th>Value</th></tr>
               <tr><td>Games Played</td><td>${seasonStats.gamesPlayed}</td></tr>

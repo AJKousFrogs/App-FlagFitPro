@@ -5,6 +5,7 @@ import { createErrorResponse, handleValidationError } from "./utils/error-handle
 import { resolveTodaySession } from "./utils/session-resolver.js";
 import { resolveTeamActivityForAthleteDay } from "./utils/team-activity-resolver.js";
 import crypto from "crypto";
+const TRAINING_SESSIONS_TABLE = "training_sessions";
 
 /**
  * Daily Protocol API
@@ -5073,7 +5074,7 @@ async function computeTrainingDaysLogged(
   const windowStart = formatUtcDateOnly(startDate);
 
   const { data: sessions, error } = await supabase
-    .from("training_sessions")
+    .from(TRAINING_SESSIONS_TABLE)
     .select("session_date, session_state")
     .eq("user_id", userId)
     .not("session_date", "is", null)

@@ -1,42 +1,43 @@
-/* Typography mixins and utility classes. */
+/* Typography mixins and utility classes.
+   Uses canonical --font-family-sans for consistency with typography-system. */
 
 @mixin ds-heading-1 {
-  font-family: var(--ds-font-family-sans);
+  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
   line-height: var(--ds-line-height-h1);
 }
 
 @mixin ds-heading-2 {
-  font-family: var(--ds-font-family-sans);
+  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
   line-height: var(--ds-line-height-h2);
 }
 
 @mixin ds-heading-3 {
-  font-family: var(--ds-font-family-sans);
+  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-semibold);
   line-height: var(--ds-line-height-h3);
 }
 
 @mixin ds-body {
-  font-family: var(--ds-font-family-sans);
+  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-regular);
   line-height: var(--ds-line-height-body);
 }
 
 @mixin ds-body-sm {
-  font-family: var(--ds-font-family-sans);
+  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-regular);
   line-height: var(--ds-line-height-body-sm);
 }
 
 @mixin ds-label {
-  font-family: var(--ds-font-family-sans);
+  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   line-height: var(--ds-line-height-label);
@@ -44,7 +45,7 @@
 }
 
 @mixin ds-caption {
-  font-family: var(--ds-font-family-sans);
+  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-regular);
   line-height: var(--ds-line-height-caption);

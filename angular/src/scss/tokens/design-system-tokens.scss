@@ -27,6 +27,7 @@ $ds-font-weight-regular: 400;
 $ds-font-weight-medium: 500;
 $ds-font-weight-semibold: 600;
 $ds-font-weight-bold: 700;
+$ds-font-weight-extrabold: 800;
 
 :root {
   /* ================================
@@ -262,17 +263,19 @@ $ds-font-weight-bold: 700;
   --overlay-black-60: rgba(0, 0, 0, 0.6);
   --overlay-black-80: rgba(0, 0, 0, 0.8);
 
-  /* Neutral Grays - Legacy scale; prefer primitive-neutral-* for new usage */
-  --neutral-50: #fafafa;
-  --neutral-100: #f5f5f5;
-  --neutral-200: #e5e5e5;
-  --neutral-300: #d4d4d4;
-  --neutral-400: #a3a3a3;
-  --neutral-500: #737373;
-  --neutral-600: #525252;
-  --neutral-700: #404040;
-  --neutral-800: #262626;
-  --neutral-900: #171717;
+  /* Neutral Grays - @deprecated Use --primitive-neutral-* for new usage.
+     Legacy scale; values differ from primitive (200-600 are darker).
+     Migration: data-source-banner, design-tokens.ts, index.html */
+  --neutral-50: var(--primitive-neutral-50);
+  --neutral-100: var(--primitive-neutral-100);
+  --neutral-200: #e5e5e5; /* legacy - differs from primitive-neutral-200 */
+  --neutral-300: #d4d4d4; /* legacy - differs from primitive-neutral-300 */
+  --neutral-400: #a3a3a3; /* legacy - differs from primitive-neutral-400 */
+  --neutral-500: #737373; /* legacy - = primitive-neutral-600 */
+  --neutral-600: #525252; /* legacy - differs from primitive-neutral-600 */
+  --neutral-700: var(--primitive-neutral-700);
+  --neutral-800: var(--primitive-neutral-800);
+  --neutral-900: var(--primitive-neutral-900);
 
   /* Text Colors - STRICTLY ENFORCED (WCAG AA Compliant)
      All text colors meet WCAG AA contrast ratio (4.5:1 for normal text, 3:1 for large text) */
@@ -284,9 +287,7 @@ $ds-font-weight-bold: 700;
   --color-text-on-primary: #fff; /* White - for green backgrounds ONLY (contrast: 4.7:1 on #089949) */
   --on-primary: var(--color-text-on-primary); /* Alias for text on green */
   --green-bg-text: var(--color-text-on-primary); /* Alias for text on green */
-  --color-text-on-white: var(
-    --ds-primary-green
-  ); /* Green - for white backgrounds (contrast: 4.7:1) */
+  --color-text-on-white: var(--ds-primary-green); /* Green - for white backgrounds (contrast: 4.7:1) */
 
   /* Border Colors */
   --color-border-primary: #e5e7eb;
@@ -325,6 +326,7 @@ $ds-font-weight-bold: 700;
   /* Warning: Yellow/Orange for potential problems or non-critical alerts */
   --color-status-warning: var(--ds-color-warning, var(--primitive-warning-500));
   --color-status-warning-light: rgba(var(--primitive-warning-500-rgb), 0.1);
+  --color-warning-bg: var(--color-status-warning-light); /* Alias for component compatibility */
   --color-status-warning-subtle: rgba(var(--primitive-warning-500-rgb), 0.05);
   --color-status-warning-surface: rgba(var(--primitive-warning-500-rgb), 0.1);
 
@@ -335,9 +337,7 @@ $ds-font-weight-bold: 700;
   --color-status-error-surface: rgba(var(--primitive-error-500-rgb), 0.1);
 
   /* Warning/Error text colors for use on light backgrounds */
-  --color-status-warning-text: var(
-    --primitive-warning-800
-  ); /* #92400e - dark amber for light mode */
+  --color-status-warning-text: var(--primitive-warning-800); /* #92400e - dark amber for light mode */
 
   /* Info: Blue for informational messages, tips, or default states */
   --color-status-info: var(--ds-color-info, var(--primitive-info-500));
@@ -400,10 +400,7 @@ $ds-font-weight-bold: 700;
   --opacity-three-quarters: 0.75;
 
   /* State Layer Colors (for overlays) */
-  --state-layer-primary: rgba(
-    var(--ds-primary-green-rgb),
-    var(--state-hover-opacity)
-  );
+  --state-layer-primary: rgba(var(--ds-primary-green-rgb), var(--state-hover-opacity));
   --state-layer-on-primary: rgba(255, 255, 255, var(--state-hover-opacity));
   --state-layer-error: rgba(var(--primitive-error-500-rgb), var(--state-hover-opacity));
 
@@ -500,6 +497,15 @@ $ds-font-weight-bold: 700;
   --space-2xl: var(--space-12);
   --space-3xl: var(--space-16);
 
+  /* PrimeNG Aura spacing aliases (--ds-spacing-*) - map to canonical --space-* */
+  --ds-spacing-xs: var(--space-1);
+  --ds-spacing-sm: var(--space-2);
+  --ds-spacing-md: var(--space-4);
+  --ds-spacing-lg: var(--space-6);
+  --ds-spacing-xl: var(--space-8);
+  --ds-spacing-2xl: var(--space-12);
+  --ds-spacing-3xl: var(--space-16);
+
   /* ================================
      UNIFIED TYPOGRAPHY SYSTEM - SINGLE SOURCE OF TRUTH
      Poppins font family (inherited from existing app)
@@ -527,9 +533,41 @@ $ds-font-weight-bold: 700;
      ================================ */
 
   /* Font Families - fallbacks for pre-PrimeNG load */
-  --font-family-sans: var(--ds-font-family-sans, "Poppins", system-ui, sans-serif);
-  --font-family-display: var(--ds-font-family-sans, "Poppins", system-ui, sans-serif);
+  --ds-font-family-sans: "Poppins", system-ui, sans-serif; /* Canonical: design-system owns this */
+  --font-family-sans: var(--ds-font-family-sans);
+  --font-family-display: var(--ds-font-family-sans);
   --font-family-mono: var(--ds-font-family-mono, ui-monospace, monospace);
+
+  /* PrimeNG Aura typography fallbacks - design-system provides when Aura not loaded.
+     Canonical scale: xs=12px, sm=14px, md=16px, lg=18px, xl=20px, 2xl=24px, 3xl=32px */
+  --ds-font-size-xs: 0.75rem; /* 12px - caption */
+  --ds-font-size-sm: 0.875rem; /* 14px - body-sm, label */
+  --ds-font-size-md: 1rem; /* 16px - body */
+  --ds-font-size-lg: 1.125rem; /* 18px - large body */
+  --ds-font-size-xl: 1.25rem; /* 20px - H3 */
+  --ds-font-size-2xl: 1.5rem; /* 24px - H2 */
+  --ds-font-size-3xl: 2rem; /* 32px - H1 */
+  --ds-font-size-1-75rem: 1.75rem; /* 28px - H1 responsive md */
+  --ds-font-size-1-875rem: 1.875rem; /* 30px */
+  --ds-font-size-2-25rem: 2.25rem; /* 36px */
+  --ds-font-size-3rem: 3rem; /* 48px */
+  --ds-font-size-4rem: 4rem; /* 64px */
+
+  /* Line height tokens - PrimeNG Aura may override */
+  --ds-line-height-1: 1;
+  --ds-line-height-tight: 1.2;
+  --ds-line-height-snug: 1.375;
+  --ds-line-height-normal: 1.5;
+  --ds-line-height-relaxed: 1.625;
+  --ds-line-height-1-6: 1.6;
+  --ds-line-height-h1: 1.2;
+  --ds-line-height-h2: 1.25;
+  --ds-line-height-h3: 1.3;
+  --ds-line-height-h4: 1.35;
+  --ds-line-height-body: 1.5;
+  --ds-line-height-body-sm: 1.45;
+  --ds-line-height-label: 1.2;
+  --ds-line-height-caption: 1.3;
 
   /* ================================
      FONT WEIGHTS - STRICT CONTRACT
@@ -539,12 +577,14 @@ $ds-font-weight-bold: 700;
   --ds-font-weight-medium: #{$ds-font-weight-medium};
   --ds-font-weight-semibold: #{$ds-font-weight-semibold};
   --ds-font-weight-bold: #{$ds-font-weight-bold};
+  --ds-font-weight-extrabold: #{$ds-font-weight-extrabold};
   --font-weight-light: var(--ds-font-weight-light);
   --font-weight-regular: var(--ds-font-weight-regular);
   --font-weight-normal: var(--ds-font-weight-regular); /* Alias for regular */
   --font-weight-medium: var(--ds-font-weight-medium);
   --font-weight-semibold: var(--ds-font-weight-semibold);
   --font-weight-bold: var(--ds-font-weight-bold);
+  --font-weight-extrabold: var(--ds-font-weight-extrabold);
 
   /* ================================
      UNIFIED TYPOGRAPHY TOKENS
@@ -570,6 +610,7 @@ $ds-font-weight-bold: 700;
   --font-body-size: var(--ds-font-size-md, 1rem);
   --font-body-line-height: var(--ds-line-height-body, 1.5);
   --font-body-weight: var(--ds-font-weight-regular);
+  --font-body-lg-size: var(--ds-font-size-lg, 1.125rem); /* 18px - large body/lead text */
   --font-body-sm-size: var(--ds-font-size-sm, 0.875rem);
   --font-body-sm-line-height: var(--ds-line-height-body-sm, 1.45);
   --font-body-sm-weight: var(--ds-font-weight-regular);
@@ -585,8 +626,8 @@ $ds-font-weight-bold: 700;
   --font-caption-weight: var(--ds-font-weight-regular);
 
   /* ================================
-     LEGACY FONT SIZE TOKENS (deprecated - use --font-h1-size etc. instead)
-     Kept for backward compatibility; prefer canonical tokens above
+     LEGACY FONT SIZE TOKENS (deprecated)
+     Prefer --font-h1-size, --font-h2-size, etc. for new usage
      ================================ */
 
   /* Heading Sizes - Legacy (@deprecated use --font-h1-size, --font-h2-size, etc.) */
@@ -624,8 +665,7 @@ $ds-font-weight-bold: 700;
   --line-height-jp: var(--ds-line-height-1-6, 1.6); /* Japanese/CJK text */
 
   /* ================================
-     LEGACY FONT SIZE TOKENS (for backward compatibility)
-     Mapped to new contract values
+     COMPACT FONT SIZES (dense UI)
      ================================ */
 
   /* Font Sizes - Compact/Dense UI (for data-heavy components) */
@@ -638,6 +678,19 @@ $ds-font-weight-bold: 700;
   --letter-spacing-caption: var(--ds-letter-spacing-caption, 0.05em);
   --letter-spacing-wide: var(--ds-letter-spacing-wide, 0.025em);
   --ds-letter-spacing-label: var(--letter-spacing-caption); /* Labels, datatable headers */
+
+  /* Letter spacing numeric tokens (PrimeNG Aura / component usage) */
+  --ds-letter-spacing-0-01em: 0.01em;
+  --ds-letter-spacing-0-02em: 0.02em;
+  --ds-letter-spacing-0-03em: 0.03em;
+  --ds-letter-spacing-0-08em: 0.08em;
+  --ds-letter-spacing-0-1em: 0.1em;
+  --ds-letter-spacing-0-5em: 0.05em;
+
+  /* Text transform tokens (PrimeNG Aura / component usage) */
+  --ds-text-transform-uppercase: uppercase;
+  --ds-text-transform-capitalize: capitalize;
+  --ds-text-transform-none: none;
 
   /* ================================
      BORDER RADIUS (fallbacks for Aura)
@@ -687,14 +740,10 @@ $ds-font-weight-bold: 700;
 
   /* Focus Shadows */
   --shadow-focus: var(--ds-state-focus-ring, 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3));
-  --shadow-error-focus: 0 0 0 var(--focus-ring-width)
-    rgba(var(--primitive-error-500-rgb), 0.2);
-  --shadow-success-focus: 0 0 0 var(--focus-ring-width)
-    rgba(var(--ds-primary-green-rgb), 0.2);
-  --shadow-warning-focus: 0 0 0 var(--focus-ring-width)
-    rgba(var(--primitive-warning-500-rgb), 0.2);
-  --shadow-focus-inset: inset 0 0 0 0.2rem
-    rgba(var(--ds-primary-green-rgb), 0.2);
+  --shadow-error-focus: 0 0 0 var(--focus-ring-width) rgba(var(--primitive-error-500-rgb), 0.2);
+  --shadow-success-focus: 0 0 0 var(--focus-ring-width) rgba(var(--ds-primary-green-rgb), 0.2);
+  --shadow-warning-focus: 0 0 0 var(--focus-ring-width) rgba(var(--primitive-warning-500-rgb), 0.2);
+  --shadow-focus-inset: inset 0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2);
 
   /* Specialty Shadows */
   --shadow-toast:
@@ -891,11 +940,11 @@ $ds-font-weight-bold: 700;
   --color-text: var(--color-text-primary);
   --color-border: var(--color-border-primary);
 
-  /* Icon Sizes - Standardized Scale */
+  /* Icon Sizes - Standardized Scale (base = default/emphasized, md = standard) */
   --icon-xs: 0.75rem; /* 12px - inline with small text */
   --icon-sm: 0.875rem; /* 14px - inline with body text */
-  --icon-base: 1.125rem; /* 18px - default button icons */
-  --icon-md: 1rem; /* 16px - default icon size */
+  --icon-md: 1rem; /* 16px - standard icon size */
+  --icon-base: 1.125rem; /* 18px - default button/icons (slightly larger than md) */
   --icon-lg: 1.25rem; /* 20px - emphasized icons */
   --icon-xl: 1.5rem; /* 24px - large icons, metric icons */
   --icon-2xl: 2rem; /* 32px - feature icons */
@@ -906,13 +955,22 @@ $ds-font-weight-bold: 700;
      Standardized sizes for UI elements
      ================================ */
 
-  /* Avatar Sizes */
-  --avatar-xs: 1.5rem; /* 24px */
-  --avatar-sm: 2rem; /* 32px */
-  --avatar-md: 2.5rem; /* 40px */
-  --avatar-lg: 3rem; /* 48px */
-  --avatar-xl: 4rem; /* 64px */
-  --avatar-2xl: 5rem; /* 80px */
+  /* Avatar Sizes - Canonical scale (use --avatar-size-* for new usage) */
+  --avatar-size-xs: 1.25rem; /* 20px */
+  --avatar-size-sm: 2rem; /* 32px */
+  --avatar-size-md: 2.5rem; /* 40px */
+  --avatar-size-lg: 3rem; /* 48px */
+  --avatar-size-xl: 3.5rem; /* 56px */
+  --avatar-size-2xl: 4rem; /* 64px */
+  --avatar-size-3xl: 4.5rem; /* 72px */
+
+  /* Avatar aliases - deprecated, use --avatar-size-* (kept for backward compat) */
+  --avatar-xs: var(--avatar-size-xs);
+  --avatar-sm: var(--avatar-size-sm);
+  --avatar-md: var(--avatar-size-md);
+  --avatar-lg: var(--avatar-size-lg);
+  --avatar-xl: var(--avatar-size-xl);
+  --avatar-2xl: var(--avatar-size-2xl);
 
   /* Icon Container Sizes (for background circles/squares) */
   --icon-container-sm: 2.25rem; /* 36px */
@@ -1034,15 +1092,6 @@ $ds-font-weight-bold: 700;
   --size-120: 7.5rem; /* 120px */
   --size-150: 9.375rem; /* 150px */
   --size-200: 12.5rem; /* 200px */
-
-  /* Avatar/Icon Sizes */
-  --avatar-size-xs: 1.25rem; /* 20px */
-  --avatar-size-sm: 2rem; /* 32px */
-  --avatar-size-md: 2.5rem; /* 40px */
-  --avatar-size-lg: 3rem; /* 48px */
-  --avatar-size-xl: 3.5rem; /* 56px */
-  --avatar-size-2xl: 4rem; /* 64px */
-  --avatar-size-3xl: 4.5rem; /* 72px */
 
   /* Indicator/Progress Sizes */
   --indicator-size-xs: 0.25rem; /* 4px */
@@ -1424,7 +1473,7 @@ body.light-theme {
 
 /* ================================================================
    RESPONSIVE BREAKPOINTS
-   ================================ */
+   ================================================================ */
 
 :root {
   --breakpoint-sm: 640px;
@@ -1432,6 +1481,19 @@ body.light-theme {
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
+
+  /* Extended breakpoints (for component media queries) */
+  --breakpoint-xs: 23.375rem; /* 374px */
+  --breakpoint-xs-narrow: 30rem; /* 480px */
+  --breakpoint-md-min: 48.0625rem; /* 769px - just above md */
+  --breakpoint-lg-max: 74.9375rem; /* 1199px */
+  --breakpoint-xl-min: 75rem; /* 1200px */
+  --breakpoint-xl-max: 87.4375rem; /* 1399px */
+  --breakpoint-xxl-wide: 87.5rem; /* 1400px */
+  --breakpoint-landscape-height: 31.25rem; /* 500px - short landscape */
+  --breakpoint-md-max: 47.9375rem; /* 767px - just below md */
+  --breakpoint-lg-min: 63.9375rem; /* 1023px - just below lg */
+  --breakpoint-min-height-tablet: 43.75rem; /* 700px - sidebar tablet portrait */
 
   /* ================================
      SEMANTIC BREAKPOINTS
@@ -1512,6 +1574,9 @@ body.light-theme {
 .bg-secondary {
   background-color: var(--surface-secondary);
 }
+.bg-selected {
+  background-color: var(--color-surface-selected);
+}
 .bg-brand {
   background-color: var(--color-brand-primary);
 }
@@ -1522,6 +1587,10 @@ body.light-theme {
   background-color: var(--color-status-error);
 }
 
+.border {
+  border-width: var(--border-1);
+  border-style: solid;
+}
 .border-primary {
   border-color: var(--color-border-primary);
 }
@@ -1530,6 +1599,13 @@ body.light-theme {
 }
 .border-brand {
   border-color: var(--color-brand-primary);
+}
+/* Border edge utilities (for dialogs, cards, sections) */
+.border-b-primary {
+  border-bottom: var(--border-1) solid var(--color-border-primary);
+}
+.border-t-primary {
+  border-top: var(--border-1) solid var(--color-border-primary);
 }
 
 /* Typography Utilities */
@@ -1553,7 +1629,7 @@ body.light-theme {
   font-size: var(--font-body-size);
 }
 .text-lg {
-  font-size: var(--font-body-size);
+  font-size: var(--font-body-lg-size);
 }
 .text-xl {
   font-size: var(--font-h3-size);
@@ -1590,6 +1666,12 @@ body.light-theme {
 }
 .rounded-full {
   border-radius: var(--radius-full);
+}
+
+/* Transition Utilities */
+.transition-colors {
+  transition: background-color var(--transition-colors),
+    border-color var(--transition-colors), color var(--transition-colors);
 }
 
 /* Shadow Utilities */

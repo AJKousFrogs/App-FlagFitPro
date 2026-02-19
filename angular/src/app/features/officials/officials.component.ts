@@ -348,7 +348,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               />
             </div>
 
-            <div class="form-row">
+            <div class="form-row two-col">
               <div class="form-field">
                 <label>Email</label>
                 <input
@@ -369,7 +369,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               </div>
             </div>
 
-            <div class="form-row">
+            <div class="form-row two-col">
               <div class="form-field">
                 <label>Certification Level</label>
                 <p-select

@@ -5,6 +5,7 @@ import {
   canCoachViewWellness,
   filterWellnessDataForCoach,
 } from "./utils/consent-guard.js";
+import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
@@ -98,6 +99,7 @@ const ENDPOINT_HANDLERS = {
 };
 
 const COACH_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
+const consentReader = new ConsentDataReader(supabaseAdmin);
 
 function parseBoundedInt(value, fallback, { min, max, field }) {
   if (value === undefined || value === null || value === "") {
@@ -177,6 +179,44 @@ async function coachCanAccessAthlete(coachUserId, athleteUserId) {
   }
 
   return !!athleteMembership;
+}
+
+async function getSharedTeamIdForCoachAndAthlete(coachUserId, athleteUserId) {
+  if (!coachUserId || !athleteUserId || coachUserId === athleteUserId) {
+    return null;
+  }
+
+  const { data: coachMemberships, error: coachError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id, role")
+    .eq("user_id", coachUserId);
+
+  if (coachError) {
+    throw coachError;
+  }
+
+  const coachTeamIds = (coachMemberships || [])
+    .filter((m) => COACH_ROLES.has(m.role))
+    .map((m) => m.team_id)
+    .filter(Boolean);
+
+  if (coachTeamIds.length === 0) {
+    return null;
+  }
+
+  const { data: athleteMembership, error: athleteError } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", athleteUserId)
+    .in("team_id", coachTeamIds)
+    .limit(1)
+    .maybeSingle();
+
+  if (athleteError && athleteError.code !== "PGRST116") {
+    throw athleteError;
+  }
+
+  return athleteMembership?.team_id || null;
 }
 
 export const handler = async (event, context) => {
@@ -680,18 +720,27 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
       const startDate = getStartDateForTimeframe(timeframe);
 
       try {
-        const { data: wellness, error } = await supabaseAdmin
-          .from("wellness_entries")
-          .select("*")
-          .eq("athlete_id", targetAthleteId)
-          .gte("date", startDate.toISOString().split("T")[0])
-          .order("date", { ascending: false });
+        const context =
+          isCoach && targetAthleteId !== userId
+            ? AccessContext.COACH_TEAM_DATA
+            : AccessContext.PLAYER_OWN_DATA;
+        const sharedTeamId =
+          context === AccessContext.COACH_TEAM_DATA
+            ? await getSharedTeamIdForCoachAndAthlete(userId, targetAthleteId)
+            : null;
+        const wellnessResult = await consentReader.readWellnessEntries({
+          requesterId: userId,
+          playerId: targetAthleteId,
+          teamId: sharedTeamId,
+          context,
+          filters: {
+            startDate: startDate.toISOString().split("T")[0],
+            endDate: new Date().toISOString().split("T")[0],
+            limit: 400,
+          },
+        });
 
-        if (error && error.code !== "42P01") {
-          throw error;
-        }
-
-        let wellnessData = (wellness || []).map(dataMappers.wellness);
+        let wellnessData = (wellnessResult.data || []).map(dataMappers.wellness);
 
         // Filter data for coach if consent not granted
         if (isCoach && targetAthleteId !== userId && wellnessData.length > 0) {
@@ -1239,6 +1288,11 @@ async function handleTrends(method, userId, requestedAthleteId, body, query, _re
       }
     }
 
+    const sharedTeamId =
+      targetAthleteId !== userId
+        ? await getSharedTeamIdForCoachAndAthlete(userId, targetAthleteId)
+        : null;
+
     // Fetch all data from Supabase for trend analysis
     const [measurementsResult, performanceTestsResult, wellnessResult] =
       await Promise.all([
@@ -1252,11 +1306,20 @@ async function handleTrends(method, userId, requestedAthleteId, body, query, _re
           .select("*")
           .eq("user_id", targetAthleteId)
           .gte("test_date", startDate.toISOString().split("T")[0]),
-        supabaseAdmin
-          .from("wellness_entries")
-          .select("*")
-          .eq("athlete_id", targetAthleteId)
-          .gte("date", startDate.toISOString().split("T")[0]),
+        consentReader.readWellnessEntries({
+          requesterId: userId,
+          playerId: targetAthleteId,
+          teamId: sharedTeamId,
+          context:
+            targetAthleteId !== userId
+              ? AccessContext.COACH_TEAM_DATA
+              : AccessContext.PLAYER_OWN_DATA,
+          filters: {
+            startDate: startDate.toISOString().split("T")[0],
+            endDate: new Date().toISOString().split("T")[0],
+            limit: 800,
+          },
+        }),
       ]);
 
     const measurements = (measurementsResult.data || []).map((m) => ({
@@ -1343,11 +1406,16 @@ async function handleExport(userId, query) {
         .select("*")
         .eq("user_id", userId)
         .gte("test_date", startDate.toISOString().split("T")[0]),
-      supabaseAdmin
-        .from("wellness_entries")
-        .select("*")
-        .eq("athlete_id", userId)
-        .gte("date", startDate.toISOString().split("T")[0]),
+      consentReader.readWellnessEntries({
+        requesterId: userId,
+        playerId: userId,
+        context: AccessContext.PLAYER_OWN_DATA,
+        filters: {
+          startDate: startDate.toISOString().split("T")[0],
+          endDate: new Date().toISOString().split("T")[0],
+          limit: 1200,
+        },
+      }),
       supabaseAdmin
         .from("supplement_logs")
         .select("*")

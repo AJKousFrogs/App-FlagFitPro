@@ -623,8 +623,8 @@ export const DESIGN_TOKENS = {
   --spacing-16: 16px;
   --spacing-24: 24px;
 
-  // Typography
-  --font-family: "Poppins", sans-serif;
+  // Typography - use design token (resolves to Poppins, system-ui, sans-serif)
+  --font-family: var(--font-family-sans);
 
   // Borders
   --border-color: #e5e7eb;

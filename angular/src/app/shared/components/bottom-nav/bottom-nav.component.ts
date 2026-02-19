@@ -2,14 +2,15 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   signal,
 } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
-import { Subscription, filter } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
 import { NavItemComponent } from "../nav-item.component";
@@ -89,11 +90,11 @@ interface NavItem {
   `,
   styleUrl: "./bottom-nav.component.scss",
 })
-export class BottomNavComponent implements OnInit, OnDestroy {
+export class BottomNavComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private notificationState = inject(NotificationStateService);
-  private routerSub?: Subscription;
+  private readonly destroyRef = inject(DestroyRef);
 
   showMoreMenu = signal(false);
   currentRoute = signal("");
@@ -195,16 +196,15 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentRoute.set(this.router.url);
 
-    this.routerSub = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((event) => {
         this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
         this.showMoreMenu.set(false);
       });
-  }
-
-  ngOnDestroy(): void {
-    this.routerSub?.unsubscribe();
   }
 
   toggleMoreMenu(): void {

@@ -144,7 +144,7 @@
       border-radius: var(--radius-md);
       border: var(--border-1) solid var(--surface-border);
       background: var(--surface-card);
-      color: var(--text-color);
+      color: var(--color-text-primary);
 
       // Smooth transitions
       transition:
@@ -168,7 +168,7 @@
 
       // Placeholder
       &::placeholder {
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
         opacity: var(--opacity-subtle);
       }
     }
@@ -390,7 +390,7 @@
     .form-label {
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-medium);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       margin-bottom: var(--space-2);
       display: block;
       cursor: pointer;
@@ -433,7 +433,7 @@
     .form-helper,
     small.helper-text {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       margin-top: var(--space-1);
     }
 

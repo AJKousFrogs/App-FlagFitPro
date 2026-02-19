@@ -1,5 +1,6 @@
 import { supabaseAdmin, supabaseService } from "../supabase-client.js";
 import { createErrorResponse } from "./error-handler.js";
+const TRAINING_SESSIONS_TABLE = "training_sessions";
 
 /**
  * Authorization Guard Utility
@@ -62,7 +63,7 @@ async function canModifySession(
 
   // Get session with current state
   const { data: session, error } = await supabaseAdmin
-    .from("training_sessions")
+    .from(TRAINING_SESSIONS_TABLE)
     .select(
       "coach_locked, session_state, modified_by_coach_id, user_id, athlete_id",
     )

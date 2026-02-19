@@ -7,10 +7,7 @@
   padding: var(--space-6);
 }
 
-.header-actions {
-  display: flex;
-  gap: var(--space-3);
-}
+/* Uses shared .header-actions from _dashboard.scss */
 
 .officials-content {
   display: flex;
@@ -134,21 +131,11 @@
   gap: var(--space-4);
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  label {
-    font-weight: var(--ds-font-weight-medium);
-    font-size: var(--ds-font-size-md);
-  }
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+/* Form layout: use primitives _forms.scss; add .two-col to form-row in template */
+.officials-page .form-field label,
+.dialog-form .form-field label {
+  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-md);
 }
 
 .schedule-info {

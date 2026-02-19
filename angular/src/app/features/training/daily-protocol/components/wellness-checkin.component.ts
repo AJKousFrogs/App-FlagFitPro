@@ -264,7 +264,7 @@ export interface ReadinessResult {
         @if (formData().muscleSoreness < 4) {
           <div class="form-section">
             <label class="section-label">
-              <span class="label-icon">📍</span>
+              <span class="label-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></span>
               <span>Where are you sore?</span>
             </label>
             <small class="state-narration state-narration--compact">
@@ -308,7 +308,7 @@ export interface ReadinessResult {
         <!-- Stress Level -->
         <div class="form-section">
           <label class="section-label">
-            <span class="label-icon">🧠</span>
+            <span class="label-icon"><i class="pi pi-heart" aria-hidden="true"></i></span>
             <span>Stress Level</span>
             <span class="value-badge">{{
               getStressLabel(formData().stressLevel)
@@ -340,7 +340,7 @@ export interface ReadinessResult {
         <!-- Notes -->
         <div class="form-section">
           <label class="section-label">
-            <span class="label-icon">📝</span>
+            <span class="label-icon"><i class="pi pi-pencil" aria-hidden="true"></i></span>
             <span>Notes (optional)</span>
           </label>
           <textarea

@@ -3,7 +3,8 @@
 # =============================================================================
 # Run Database Upgrade Migration
 # =============================================================================
-# This script helps you run the database upgrade migration (043)
+# This script helps you run a legacy database upgrade migration (043).
+# Canonical migration chain is under supabase/migrations.
 # 
 # Usage:
 #   chmod +x scripts/run-upgrade-migration.sh
@@ -20,7 +21,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MIGRATION_FILE="$SCRIPT_DIR/../database/migrations/043_database_upgrade_consistency.sql"
+MIGRATION_FILE="${MIGRATION_FILE:-$SCRIPT_DIR/../database/migrations/043_database_upgrade_consistency.sql}"
 
 echo -e "${BLUE}"
 echo "=============================================="
@@ -160,4 +161,3 @@ echo "  1. Verify consistency: SELECT * FROM check_database_consistency();"
 echo "  2. Check RLS policies: SELECT * FROM pg_policies WHERE tablename IN ('training_sessions', 'team_members');"
 echo "  3. Test your application to ensure everything works"
 echo ""
-

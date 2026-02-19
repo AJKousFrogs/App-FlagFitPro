@@ -2,14 +2,10 @@
  * PrimeNG 21 Configuration
  * Provides global PrimeNG settings and pass-through API configuration
  *
- * Note: PrimeNG 21 uses a different configuration approach than earlier versions.
- * Configuration is now done via providePrimeNG() in app.config.ts
+ * Uses design-system utility classes (no Tailwind dependency).
+ * Styling primarily via design tokens in primeng-integration + primeng-theme.scss.
  */
 
-/**
- * Pass-Through (pt) API Configuration
- * Allows component-level customization without encapsulation hacks
- */
 /** PrimeNG Button Props */
 interface ButtonPTProps {
   props: {
@@ -33,112 +29,92 @@ interface DataTableRowContext {
   };
 }
 
+/** Design-system utility classes (from scss/utilities + design-system-tokens) */
+const DS = {
+  button: {
+    root: "d-inline-flex align-center justify-center gap-2",
+    sm: "text-sm py-2 px-3",
+    md: "py-3 px-6",
+    lg: "text-lg py-4 px-5",
+    disabled: "opacity-50 cursor-not-allowed",
+  },
+  card: "bg-secondary rounded-xl shadow-sm border border-secondary p-5",
+  input: "w-full px-4 py-3 rounded-md border border-primary",
+  dialog: "rounded-xl shadow-2xl",
+  table: "rounded-xl overflow-hidden shadow-sm",
+} as const;
+
 export const PRIMENG_PT_CONFIG = {
-  // Button pass-through
   button: {
     root: ({ props }: ButtonPTProps) => ({
       class: [
-        // Base styles
-        "inline-flex items-center justify-center",
-        "transition-all duration-200",
-
-        // Size variants
-        props.size === "small" && "text-sm py-2 px-3",
-        props.size === "large" && "text-lg py-4 px-5",
-        !props.size && "py-3 px-4",
-
-        // Severity variants
-        props.severity === "primary" &&
-          "bg-[var(--ds-primary-green)] text-white border-[var(--ds-primary-green)]",
-        props.severity === "secondary" &&
-          "bg-transparent text-[var(--ds-primary-green)] border-[var(--ds-primary-green)]",
-        props.severity === "success" &&
-          "bg-[var(--ds-primary-green)] text-white",
-        props.severity === "danger" && "bg-red-600 text-white",
-        props.severity === "warning" && "bg-yellow-500 text-yellow-900",
-
-        // Disabled state
-        props.disabled && "opacity-60 cursor-not-allowed",
-      ],
+        DS.button.root,
+        props.size === "small" && DS.button.sm,
+        props.size === "large" && DS.button.lg,
+        !props.size && DS.button.md,
+        props.disabled && DS.button.disabled,
+      ].filter(Boolean),
     }),
   },
 
-  // Card pass-through
   card: {
     root: {
-      class:
-        "bg-[var(--surface-card)] rounded-xl shadow-sm border border-[var(--color-border-secondary)]",
+      class: DS.card,
     },
     body: {
       class: "p-5",
     },
     title: {
-      class: "text-xl font-semibold text-[var(--color-text-primary)] mb-2",
+      class: "text-xl font-semibold text-primary mb-2",
     },
     subtitle: {
-      class: "text-sm text-[var(--color-text-secondary)]",
+      class: "text-sm text-secondary",
     },
   },
 
-  // Input pass-through
   inputtext: {
     root: ({ props }: InputPTProps) => ({
       class: [
-        "w-full",
-        "px-4 py-3",
-        "rounded-md",
-        "border border-[var(--color-border-primary)]",
-        "focus:border-[var(--ds-primary-green)] focus:ring-2 focus:ring-[var(--ds-primary-green)]/20",
-        "transition-all duration-200",
-        props.disabled &&
-          "bg-[var(--surface-tertiary)] opacity-60 cursor-not-allowed",
-      ],
+        DS.input,
+        "border-primary",
+        props.disabled && DS.button.disabled,
+      ].filter(Boolean),
     }),
   },
 
-  // Dialog pass-through
   dialog: {
     root: {
-      class: "rounded-xl shadow-2xl",
+      class: DS.dialog,
     },
     header: {
-      class: "px-6 py-5 border-b border-[var(--color-border-primary)]",
+      class: "px-6 py-5 border-b-primary",
     },
     content: {
       class: "px-6 py-5",
     },
     footer: {
-      class:
-        "px-6 py-4 border-t border-[var(--color-border-primary)] flex justify-end gap-3",
+      class: "px-6 py-4 border-t-primary d-flex justify-end gap-3",
     },
   },
 
-  // Table pass-through (PrimeNG 21 p-table)
   table: {
     root: {
-      class: "rounded-xl overflow-hidden shadow-sm",
+      class: DS.table,
     },
     header: {
-      class:
-        "bg-[var(--surface-secondary)] px-4 py-4 border-b border-[var(--color-border-secondary)]",
+      class: "bg-secondary px-4 py-4 border-b-primary",
     },
     thead: {
-      class: "bg-[var(--surface-secondary)]",
+      class: "bg-secondary",
     },
     tbody: {
-      class: "bg-[var(--surface-card)]",
+      class: "bg-primary",
     },
     row: ({ context }: DataTableRowContext) => ({
       class: [
-        "transition-colors duration-200",
-        context.selected && "bg-[var(--ds-primary-green)]/10",
-        !context.selected && "hover:bg-[var(--surface-secondary)]",
-      ],
+        "transition-colors",
+        context.selected ? "bg-selected" : "",
+      ].filter(Boolean),
     }),
   },
 };
-
-/**
- * Theme config (ripple, zIndex) is defined inline in app.config.ts providePrimeNG().
- * PRIMENG_PT_CONFIG is imported and passed via pt: PRIMENG_PT_CONFIG.
- */

@@ -24,10 +24,48 @@
 @layer primitives {
   // ============================================
   // FORM FIELD CONTAINER
+  // Canonical definition - used by 37+ components.
+  // Avoid duplicating in component SCSS.
   // ============================================
 
   .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
     margin-bottom: var(--space-5);
+  }
+
+  // Full-width field (spans row in grid layouts)
+  .form-field.full-width {
+    width: 100%;
+    grid-column: 1 / -1;
+  }
+
+  // Checkbox/radio field variant (horizontal layout)
+  .form-field.checkbox-field,
+  .form-field.form-field--checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+    border: var(--border-1) solid var(--color-border-default);
+  }
+
+  .form-field .checkbox-label,
+  .form-field label.form-label--control {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    cursor: pointer;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .form-field--narrow-gap {
+    gap: var(--space-1);
   }
 
   .form-field--inline {
@@ -54,13 +92,27 @@
   // FORM LABEL
   // ============================================
 
-  .form-label {
+  .form-label,
+  .form-field > label:not(.checkbox-label) {
     display: block;
     font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-medium);
     line-height: var(--line-height-normal);
     color: var(--color-text-primary);
     margin-bottom: var(--space-2);
+  }
+
+  // Label with icon (common pattern)
+  .form-field label i,
+  .form-field .form-label i {
+    font-size: var(--font-body-sm-size);
+    color: var(--color-text-muted);
+  }
+
+  .form-field label .required {
+    color: var(--color-status-error);
+    font-weight: var(--font-weight-semibold);
+    margin-left: var(--space-1);
   }
 
   .form-label--inline {
@@ -225,22 +277,69 @@
     margin-bottom: var(--space-5);
   }
 
-  .form-row--2 {
+  .form-row--2,
+  .form-row--2col,
+  .form-row.two-col {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .form-row--3 {
+  .form-row--3,
+  .form-row--3col,
+  .form-row.three-col {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .form-row--4,
+  .form-row--4col,
+  .form-row.four-col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // Utility modifiers (alias for BEM variants - use when preference is .is-* pattern)
+  .form-row.is-inline,
+  .form-row.form-row--inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    grid-template-columns: unset;
+  }
+
+  .form-field.is-inline,
+  .form-field.form-field--inline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .form-field.is-compact,
+  .form-field.form-field--compact {
+    margin-bottom: var(--space-3);
+  }
+
+  // Stack at sm breakpoint (is-stacked-at-sm) - use on form-row when you want single column on small screens
+  .form-row.is-stacked-at-sm {
+    @include respond-to(sm) {
+      grid-template-columns: 1fr;
+    }
   }
 
   @include respond-to(md) {
     .form-row,
     .form-row--2,
-    .form-row--3 {
+    .form-row--3,
+    .form-row--4,
+    .form-row--2col,
+    .form-row--3col,
+    .form-row--4col,
+    .form-row.two-col,
+    .form-row.three-col,
+    .form-row.four-col {
       grid-template-columns: 1fr;
     }
 
-    .form-field--horizontal {
+    .form-field--horizontal,
+    .form-field.is-horizontal {
       grid-template-columns: 1fr;
     }
   }

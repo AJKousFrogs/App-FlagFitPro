@@ -40,7 +40,7 @@ const CHECKS = [
 REMEDIATION:
 1. Check that SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in .env
 2. Run missing migrations:
-   cd database/migrations
+   cd supabase/migrations
    # Apply any unapplied .sql files via Supabase dashboard or CLI
 3. If views are missing, run:
    npm run db:audit

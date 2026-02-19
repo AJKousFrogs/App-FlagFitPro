@@ -33,7 +33,6 @@ export default [
         ...globals.es2025,
         // Third-party libraries (loaded via script tags)
         Chart: "readonly",
-        lucide: "readonly",
         XLSX: "readonly",
         // Test globals
         describe: "readonly",

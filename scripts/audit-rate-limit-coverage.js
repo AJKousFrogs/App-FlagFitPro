@@ -51,7 +51,8 @@ function analyze(filePath) {
   const usesFactory = source.includes("createHandler(");
   const allowedMethods = parseAllowedMethods(source);
   const rateLiteral = parseRateLimitTypeLiteral(source);
-  const hasRateConfig = source.includes("rateLimitType:");
+  const hasRateConfig =
+    /rateLimitType\s*:/.test(source) || /rateLimitType\s*,/.test(source);
   const mutating = isMutating(allowedMethods);
 
   return {

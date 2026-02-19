@@ -77,7 +77,7 @@ interface Stats {
       <!-- Summary Card -->
       <div class="summary-card">
         <div class="summary-header">
-          <h3>🏆 Achievements</h3>
+          <h3><i class="pi pi-trophy" aria-hidden="true"></i> Achievements</h3>
           <app-icon-button
             icon="pi-external-link"
             variant="text"
@@ -115,7 +115,7 @@ interface Stats {
             <div class="stat stat-block stat-block--compact">
               <div class="stat-block__content">
                 <span class="stat-block__value">{{ currentStreak() }}</span>
-                <span class="stat-block__label">🔥 Streak</span>
+                <span class="stat-block__label"><i class="pi pi-bolt" aria-hidden="true"></i> Streak</span>
               </div>
             </div>
           </div>
@@ -180,7 +180,7 @@ interface Stats {
       <!-- Full Dialog -->
       <p-dialog
         [(visible)]="showFullDialog"
-        header="🏆 Achievements & Progress"
+        header="Achievements & Progress"
         [modal]="true"
         class="achievements-panel-dialog"
       >
@@ -330,7 +330,7 @@ interface Stats {
                   </div>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-icon">📈</span>
+                  <span class="stat-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       stats()?.total_load_au || 0
@@ -340,7 +340,7 @@ interface Stats {
                 </div>
                 @if (stats()?.total_throws && stats()!.total_throws > 0) {
                   <div class="stat-card highlight">
-                    <span class="stat-icon">🎯</span>
+                    <span class="stat-icon"><i class="pi pi-bullseye" aria-hidden="true"></i></span>
                     <div class="stat-block__content">
                       <span class="stat-block__value">{{
                         stats()?.total_throws
@@ -350,7 +350,7 @@ interface Stats {
                   </div>
                 }
                 <div class="stat-card">
-                  <span class="stat-icon">🏆</span>
+                  <span class="stat-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       stats()?.tournaments_completed || 0

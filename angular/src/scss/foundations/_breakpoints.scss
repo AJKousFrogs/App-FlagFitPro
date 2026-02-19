@@ -1,0 +1,35 @@
+/**
+ * Foundations: Breakpoints Reference
+ * ==================================
+ *
+ * Single source for breakpoint map and respond-to mixins.
+ * This file RE-EXPORTS from utilities — do not redefine.
+ *
+ * RESPOND-TO BLOCK GROUPING (reduces 25-block files by 30–60%):
+ *
+ * Instead of:
+ *   .card { ... }
+ *   @include respond-to(md) { .card { ... } }
+ *   @include respond-to(lg) { .card { ... } }
+ *
+ * Do:
+ *   .card {
+ *     ...
+ *     @include respond-to(md) { ... }
+ *     @include respond-to(lg) { ... }
+ *   }
+ *
+ * Files with 25+ respond-to blocks (audit):
+ *   - scss/components/primitives/_dashboard.scss
+ *   - assets/styles/overrides/_component-overrides.scss
+ *
+ * @see scss/utilities/_variables.scss - $breakpoints, get-breakpoint()
+ * @see scss/utilities/_mixins.scss - respond-to, respond-above, respond-min
+ * @see scss/tokens/design-system-tokens.scss - --breakpoint-* CSS vars
+ */
+
+// Re-export breakpoint utilities for foundations consumers
+// respond-to = max-width (viewport ≤ breakpoint)
+// respond-min / respond-above = min-width (viewport ≥ breakpoint)
+@forward "../utilities/variables" show $breakpoints, get-breakpoint;
+@forward "../utilities/mixins" show respond-to, respond-above, respond-min, respond-between;

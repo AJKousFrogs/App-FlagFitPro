@@ -51,7 +51,7 @@
 }
 
 .equipment-needed {
-  background: var(--surface-50);
+  background: var(--surface-secondary);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
 }
@@ -174,7 +174,7 @@
 .current-step {
   text-align: center;
   padding: var(--space-6);
-  background: var(--surface-50);
+  background: var(--surface-secondary);
   border-radius: var(--radius-xl);
   transition:
     transform var(--transition-normal),
@@ -298,7 +298,7 @@
 /* stat-block: use primitives from _dashboard (stat-block__value, stat-block__label) */
 
 .follow-up-section {
-  background: var(--surface-50);
+  background: var(--surface-secondary);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   margin-bottom: var(--space-4);

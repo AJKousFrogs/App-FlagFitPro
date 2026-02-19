@@ -1,0 +1,6 @@
+# actionlint config - ignore action resolution errors when offline or behind firewall
+# See: https://github.com/rhysd/actionlint/blob/main/docs/config.md
+paths:
+  .github/workflows/**/*.{yml,yaml}:
+    ignore:
+      - 'Unable to resolve action .+ repository or version not found'

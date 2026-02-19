@@ -351,7 +351,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                         [class.is-leader]="ranking.yourRank === 1"
                       >
                         @if (ranking.yourRank === 1) {
-                          <span class="leader-badge">🏆 Team Leader!</span>
+                          <span class="leader-badge"><i class="pi pi-trophy" aria-hidden="true"></i> Team Leader!</span>
                         } @else {
                           <span class="gap-text">{{
                             ranking.gapFormatted

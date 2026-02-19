@@ -398,7 +398,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.closeUserMenu();
     const confirmed = await this.confirmDialog.confirmLogout();
     if (!confirmed) return;
-    this.authService.logout().subscribe();
+    this.authService
+      .logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
   }
 
   onLogoError(event: Event): void {

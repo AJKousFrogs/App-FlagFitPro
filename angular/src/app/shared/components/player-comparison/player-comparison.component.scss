@@ -163,7 +163,7 @@
   align-items: center;
   padding: var(--space-2);
   border-radius: var(--radius-md);
-  transition: background var(--transition-base) ease;
+  transition: background var(--transition-base) var(--ease-standard);
 
   @include ds-hover-state(var(--surface-secondary));
 }
@@ -219,7 +219,7 @@
 
 .bar {
   height: 100%;
-  transition: width var(--transition-slow) ease;
+  transition: width var(--transition-slow) var(--ease-standard);
 }
 
 .player1-bar {

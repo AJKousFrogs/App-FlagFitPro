@@ -247,7 +247,7 @@
     var(--color-brand-secondary)
   );
   border-radius: var(--radius-sm);
-  transition: width var(--transition-slow) ease;
+  transition: width var(--transition-slow) var(--ease-standard);
 }
 
 /* Team Settings */

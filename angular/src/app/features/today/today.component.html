@@ -17,7 +17,7 @@
             ></span>
           }
         </div>
-        <div class="celebration-icon">🎉</div>
+        <div class="celebration-icon"><i class="pi pi-star" aria-hidden="true"></i></div>
         <h2 class="celebration-title">Day Complete!</h2>
         <p class="celebration-message">
           Amazing work! You've completed all your training for today.
@@ -180,7 +180,7 @@
              ==================================================================== -->
         @if (vm.banners.length > 0) {
           <section class="banners-section">
-            @for (banner of vm.banners; track $index) {
+            @for (banner of vm.banners; track trackByBanner($index, banner)) {
               <app-banner
                 [type]="banner.type"
                 [message]="banner.text"

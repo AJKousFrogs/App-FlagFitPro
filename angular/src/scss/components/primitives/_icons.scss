@@ -1,22 +1,50 @@
+@use "styles/mixins" as *;
+
 /**
  * Icon Primitives
  * ================
- * 
+ *
  * Standardized icon sizes and styles for the design system.
  * Uses PrimeIcons as the primary icon set.
- * 
+ *
  * DESIGN CONTRACT:
  * - Icon sizes: Use standardized size classes only
  * - Icon colors: Inherit from parent or use semantic colors
  * - Interactive icons: 2.75rem minimum touch target
- * 
+ * - Use .icon or [data-icon] wrapper; avoid styling raw i globally
+ *
  * USAGE:
- *   <i class="pi pi-check icon-sm"></i>
- *   <i class="pi pi-star icon-md icon-primary"></i>
- *   <button class="icon-button"><i class="pi pi-times"></i></button>
+ *   <i class="pi pi-check icon icon-sm"></i>
+ *   <span class="icon"><i class="pi pi-star"></i></span>
+ *   <span class="rec-icon"><i class="pi pi-check-circle"></i></span>
  */
 
 @layer primitives {
+  // Scoped icon wrapper - style i only inside .icon or [data-icon]
+  .icon,
+  [data-icon] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    i,
+    .pi {
+      color: inherit;
+      line-height: 1;
+      vertical-align: middle;
+    }
+  }
+
+  // REC-ICON: Recommendation card icon (acwr-dashboard, training-safety, tournament-nutrition)
+  .rec-icon {
+    @include rec-icon(var(--ds-font-size-2xl));
+    flex-shrink: 0;
+  }
+
+  .rec-icon--lg {
+    @include rec-icon(var(--ds-font-size-3xl));
+  }
+
   // Base PrimeIcon alignment + color inheritance
   .pi {
     color: inherit;

@@ -126,14 +126,8 @@
   }
 
   // ================================================================
-  // CHARTS GRID - MOBILE SINGLE COLUMN
+  // CHARTS GRID - primitive handles responsive; component overrides below
   // ================================================================
-
-  .charts-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
 
   .chart-card {
     min-height: var(--chart-min-height-md); // Smaller on mobile
@@ -154,7 +148,7 @@
   }
 
   .chart-subtitle {
-    font-size: var(--ds-font-size-xs); // ~0.calc(var(--size-200) * 6) (closest token to 0.6875rem)
+    font-size: var(--ds-font-size-xs);
   }
 
   .chart-actions {
@@ -535,7 +529,7 @@
   }
 
   .gap-metric-label .gap-value {
-    font-size: var(--ds-font-size-xs); // ~0.calc(var(--size-200) * 6)
+    font-size: var(--ds-font-size-xs);
   }
 
   .gap-bar-track {
@@ -543,7 +537,7 @@
   }
 
   .gap-bar-values {
-    font-size: var(--ds-font-size-xs); // ~0.calc(var(--size-200) * 6)
+    font-size: var(--ds-font-size-xs);
   }
 
   // Hide status icons on mobile (too crowded)
@@ -629,7 +623,7 @@
 // LANDSCAPE MODE ON PHONES
 // ================================================================
 
-@media (max-width: 48rem) and (orientation: landscape) {
+@media (max-width: var(--breakpoint-md)) and (orientation: landscape) {
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -647,12 +641,7 @@
   }
 }
 
-.loading-placeholder {
-  padding: var(--space-8);
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-size: var(--ds-font-size-md);
-}
+/* loading-placeholder: use primitive from _skeleton.scss */
 
 .empty-chart-state {
   display: flex;
@@ -696,7 +685,7 @@
     gap: var(--space-3) var(--space-6);
     margin: var(--space-2) 0 var(--space-4);
     font-size: var(--ds-font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-text-secondary);
 
     @include data-source-meta;
   }
@@ -706,12 +695,7 @@
   min-height: 100dvh;
 }
 
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
-}
+/* metrics-grid: use primitive from _dashboard.scss; local overrides in respond-to blocks above */
 
 .metric-card {
   text-align: left;
@@ -799,12 +783,7 @@
   color: var(--color-text-secondary);
 }
 
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
-  gap: var(--space-6);
-  margin-bottom: var(--space-6);
-}
+// .charts-grid: Use primitives/_charts.scss
 
 .chart-card {
   min-height: var(--chart-min-height-lg);
@@ -902,10 +881,6 @@
 }
 
 @include respond-to(md) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-
   .chart-header {
     gap: var(--space-2);
   }

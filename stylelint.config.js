@@ -287,6 +287,19 @@ const config = {
       },
     ],
 
+    // -----------------------------
+    // Foundations: Prefer :focus-visible over :focus
+    // Use :focus only in :focus:not(:focus-visible) to suppress mouse focus ring
+    // -----------------------------
+    "selector-pseudo-class-disallowed-list": [
+      ["focus"],
+      {
+        severity: "warning",
+        message:
+          "⚠️ Use :focus-visible for focus styling. Use :focus:not(:focus-visible) only to hide outline for mouse users.",
+      },
+    ],
+
     // Nesting depth limit
     "max-nesting-depth": [
       4,
@@ -374,6 +387,19 @@ const config = {
             ignorePseudoElements: ["ng-deep"],
           },
         ],
+      },
+    },
+
+    // Exempt :focus rule where :focus:not(:focus-visible) is valid
+    {
+      files: [
+        "**/design-system/**/*.scss",
+        "**/styles.scss",
+        "**/utilities/_mixins.scss",
+        "**/standardized-components.scss",
+      ],
+      rules: {
+        "selector-pseudo-class-disallowed-list": null,
       },
     },
   ],

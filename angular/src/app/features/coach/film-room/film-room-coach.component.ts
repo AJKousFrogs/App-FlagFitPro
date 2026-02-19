@@ -81,10 +81,10 @@ const FILM_TYPES = [
 ];
 
 const TAG_TYPES = [
-  { label: "✅ Positive - Great execution", value: "positive" },
-  { label: "📝 Correction - Area for improvement", value: "correction" },
-  { label: "📋 Teaching Point - General team learning", value: "teaching" },
-  { label: "👀 Opponent Tendency - Scouting observation", value: "opponent" },
+  { label: "Positive - Great execution", value: "positive" },
+  { label: "Correction - Area for improvement", value: "correction" },
+  { label: "Teaching Point - General team learning", value: "teaching" },
+  { label: "Opponent Tendency - Scouting observation", value: "opponent" },
 ];
 
 @Component({
@@ -163,7 +163,7 @@ const TAG_TYPES = [
         <!-- Film Overview Stats -->
         <div class="film-stats">
           <div class="stat-card">
-            <span class="stat-icon">🎬</span>
+            <span class="stat-icon"><i class="pi pi-video" aria-hidden="true"></i></span>
             <div class="stat-content">
               <span class="stat-block__value">{{ totalFilmCount() }}</span>
               <span class="stat-block__label">Total Film Sessions</span>
@@ -171,7 +171,7 @@ const TAG_TYPES = [
             </div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">⏱️</span>
+            <span class="stat-icon"><i class="pi pi-clock" aria-hidden="true"></i></span>
             <div class="stat-content">
               <span class="stat-block__value">{{ totalDuration() }}</span>
               <span class="stat-block__label">Total Duration</span>
@@ -179,7 +179,7 @@ const TAG_TYPES = [
             </div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">📋</span>
+            <span class="stat-icon"><i class="pi pi-list" aria-hidden="true"></i></span>
             <div class="stat-content">
               <span class="stat-block__value">{{ assignedThisWeek() }}</span>
               <span class="stat-block__label">Assigned This Week</span>
@@ -187,7 +187,7 @@ const TAG_TYPES = [
             </div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">👀</span>
+            <span class="stat-icon"><i class="pi pi-eye" aria-hidden="true"></i></span>
             <div class="stat-content">
               <span class="stat-block__value">{{ avgWatchRate() }}%</span>
               <span class="stat-block__label">Watch Rate</span>
@@ -202,7 +202,7 @@ const TAG_TYPES = [
             <div class="film-card">
               <div class="film-header">
                 <div class="film-title">
-                  <span class="film-icon">🎬</span>
+                  <span class="film-icon"><i class="pi pi-video" aria-hidden="true"></i></span>
                   <h3>{{ session.title }}</h3>
                 </div>
                 <div class="film-actions-header">

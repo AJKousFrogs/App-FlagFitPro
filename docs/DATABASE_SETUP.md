@@ -238,7 +238,7 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 ### 1. Run Migrations
 
-All database schema is managed through migration files in `database/migrations/`. There are 50+ migration files.
+All active database schema is managed through migration files in `supabase/migrations/`.
 
 ```bash
 # Run all migrations via Supabase dashboard or CLI
@@ -342,7 +342,7 @@ All tables have Row Level Security enabled. Key policies:
 
 2. **Missing Tables**
    - Run all migrations in order
-   - Check `database/migrations/` for latest migrations
+   - Check `supabase/migrations/` for latest migrations
 
 3. **Empty Exercise Libraries**
    - Run seeding scripts for plyometrics/isometrics

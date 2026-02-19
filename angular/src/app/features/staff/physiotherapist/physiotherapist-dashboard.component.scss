@@ -35,7 +35,7 @@
     }
 
     &.athletes {
-      background: var(--primary-color);
+      background: var(--color-brand-primary);
     }
     &.injuries {
       background: var(--red-500);
@@ -79,7 +79,7 @@
 
     .athlete-meta {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -110,7 +110,7 @@
 
     .more-badge {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -154,7 +154,7 @@
 
       .injury-info {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -173,7 +173,7 @@
 
     .days-in-phase {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       text-align: center;
       margin-top: var(--ds-spacing-xs);
     }
@@ -187,7 +187,7 @@
     .metric {
       .metric-label {
         font-size: var(--ds-font-size-xs);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
         display: block;
         margin-bottom: var(--space-1);
       }
@@ -243,13 +243,13 @@
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   background: var(--surface-ground);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 .rtp-section .phase-name {
   font-size: var(--ds-font-size-xs);
   text-align: center;
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 .rtp-section .phase-step.completed .phase-number {
@@ -258,12 +258,12 @@
 }
 
 .rtp-section .phase-step.current .phase-number {
-  background: var(--primary-color);
+  background: var(--color-brand-primary);
   color: var(--surface-0);
 }
 
 .rtp-section .phase-step.current .phase-name {
-  color: var(--primary-color);
+  color: var(--color-brand-primary);
   font-weight: var(--ds-font-weight-semibold);
 }
 
@@ -316,7 +316,7 @@
 
     .acwr-label {
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
 
     .acwr-value {
@@ -367,7 +367,7 @@
   .soreness-section {
     .soreness-label {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       display: block;
       margin-bottom: var(--space-1);
     }
@@ -390,7 +390,7 @@
     h5 {
       margin: 0 0 var(--ds-spacing-xs);
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
 
     .asymmetry-item {
@@ -418,7 +418,7 @@
     align-items: center;
     justify-content: center;
     padding: var(--ds-spacing-3xl);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
 
     i {
       font-size: var(--ds-font-size-3xl);
@@ -470,12 +470,12 @@
 
       .type-count {
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
       }
 
       .type-recovery {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -511,7 +511,7 @@
 
       p {
         margin: 0;
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
 
@@ -571,7 +571,7 @@
         flex-wrap: wrap;
         gap: var(--ds-spacing-md);
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -605,7 +605,7 @@
   gap: var(--ds-spacing-sm);
   padding: var(--ds-spacing-xs) 0;
   font-size: var(--ds-font-size-md);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 :is(.phase-criteria .criteria-list) li i {
@@ -623,7 +623,7 @@
 :is(.risk-profile .risk-sections) .risk-section h5 {
   margin: 0 0 var(--ds-spacing-sm);
   font-size: var(--ds-font-size-md);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 :is(.risk-profile .risk-sections) .risk-section ul {
@@ -644,7 +644,7 @@
   h3 {
     margin: 0 0 var(--ds-spacing-lg);
     text-align: center;
-    color: var(--primary-color);
+    color: var(--color-brand-primary);
   }
 
   .risk-category {
@@ -658,7 +658,7 @@
       font-size: var(--ds-font-size-md);
 
       i {
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
 

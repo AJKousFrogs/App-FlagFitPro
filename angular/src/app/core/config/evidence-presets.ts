@@ -10,14 +10,7 @@
  * - return_to_play_v1: Return-to-play protocols (more conservative)
  */
 
-import {
-  EvidencePreset,
-  type PopulationAssumptions as _PopulationAssumptions,
-  ResearchCitation,
-  type ACWREvidenceConfig as _ACWREvidenceConfig,
-  type ReadinessEvidenceConfig as _ReadinessEvidenceConfig,
-  type TaperingEvidenceConfig as _TaperingEvidenceConfig,
-} from "./evidence-config";
+import { EvidencePreset, ResearchCitation } from "./evidence-config";
 
 /**
  * Research Citations Database

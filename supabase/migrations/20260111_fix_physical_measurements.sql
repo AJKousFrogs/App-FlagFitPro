@@ -3,12 +3,8 @@
 -- Date: 2026-01-11
 -- Issue: Users cannot log body composition measurements due to missing/incorrect table structure
 
--- Drop old table if exists (WARNING: This will delete existing data!)
--- If you have existing data, export it first with pg_dump
-DROP TABLE IF EXISTS physical_measurements CASCADE;
-
--- Create proper physical_measurements table with UUID user_id and all body composition fields
-CREATE TABLE physical_measurements (
+-- Create table if missing. Keep existing data intact.
+CREATE TABLE IF NOT EXISTS physical_measurements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     
@@ -39,13 +35,14 @@ CREATE TABLE physical_measurements (
 );
 
 -- Create index for fast user lookups sorted by date
-CREATE INDEX idx_physical_measurements_user_date 
+CREATE INDEX IF NOT EXISTS idx_physical_measurements_user_date
 ON physical_measurements(user_id, created_at DESC);
 
 -- Enable Row Level Security
 ALTER TABLE physical_measurements ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy: Users can insert their own measurements
+DROP POLICY IF EXISTS "Users can insert their own measurements" ON physical_measurements;
 CREATE POLICY "Users can insert their own measurements"
 ON physical_measurements
 FOR INSERT
@@ -53,6 +50,7 @@ TO authenticated
 WITH CHECK (auth.uid() = user_id);
 
 -- RLS Policy: Users can view their own measurements
+DROP POLICY IF EXISTS "Users can view their own measurements" ON physical_measurements;
 CREATE POLICY "Users can view their own measurements"
 ON physical_measurements
 FOR SELECT
@@ -60,6 +58,7 @@ TO authenticated
 USING (auth.uid() = user_id);
 
 -- RLS Policy: Users can update their own measurements
+DROP POLICY IF EXISTS "Users can update their own measurements" ON physical_measurements;
 CREATE POLICY "Users can update their own measurements"
 ON physical_measurements
 FOR UPDATE
@@ -68,6 +67,7 @@ USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 
 -- RLS Policy: Users can delete their own measurements (for corrections)
+DROP POLICY IF EXISTS "Users can delete their own measurements" ON physical_measurements;
 CREATE POLICY "Users can delete their own measurements"
 ON physical_measurements
 FOR DELETE
@@ -75,6 +75,7 @@ TO authenticated
 USING (auth.uid() = user_id);
 
 -- RLS Policy: Coaches can view measurements of players on their teams
+DROP POLICY IF EXISTS "Coaches can view team measurements" ON physical_measurements;
 CREATE POLICY "Coaches can view team measurements"
 ON physical_measurements
 FOR SELECT
@@ -102,8 +103,32 @@ COMMENT ON COLUMN physical_measurements.basal_metabolic_rate IS 'BMR in kcal/day
 COMMENT ON COLUMN physical_measurements.waist_to_hip_ratio IS 'WHR ratio for health risk assessment (0.5-1.5)';
 COMMENT ON COLUMN physical_measurements.body_age IS 'Metabolic age estimate in years';
 
+-- Bring older deployments up to current column shape without destructive changes.
+ALTER TABLE physical_measurements
+    ADD COLUMN IF NOT EXISTS weight DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS height DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS body_fat DECIMAL(4,2),
+    ADD COLUMN IF NOT EXISTS muscle_mass DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    ADD COLUMN IF NOT EXISTS body_water_mass DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS fat_mass DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS protein_mass DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS bone_mineral_content DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS skeletal_muscle_mass DECIMAL(5,2),
+    ADD COLUMN IF NOT EXISTS muscle_percentage DECIMAL(4,2),
+    ADD COLUMN IF NOT EXISTS body_water_percentage DECIMAL(4,2),
+    ADD COLUMN IF NOT EXISTS protein_percentage DECIMAL(4,2),
+    ADD COLUMN IF NOT EXISTS bone_mineral_percentage DECIMAL(4,2),
+    ADD COLUMN IF NOT EXISTS visceral_fat_rating INTEGER,
+    ADD COLUMN IF NOT EXISTS basal_metabolic_rate INTEGER,
+    ADD COLUMN IF NOT EXISTS waist_to_hip_ratio DECIMAL(4,2),
+    ADD COLUMN IF NOT EXISTS body_age INTEGER,
+    ADD COLUMN IF NOT EXISTS notes TEXT,
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+
 -- Create view for latest measurements per user
-CREATE OR REPLACE VIEW physical_measurements_latest AS
+CREATE OR REPLACE VIEW physical_measurements_latest
+WITH (security_invoker = true) AS
 SELECT DISTINCT ON (user_id)
     id,
     user_id,

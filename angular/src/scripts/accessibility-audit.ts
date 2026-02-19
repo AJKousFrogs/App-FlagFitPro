@@ -40,11 +40,11 @@ const IMPACT_ORDER: Record<string, number> = {
 function formatViolation(v: {
   id: string;
   help: string;
-  impact?: string;
+  impact?: string | null;
   description: string;
   nodes?: { html: string; failureSummary?: string }[];
 }): string {
-  const impact = v.impact || "unknown";
+  const impact = (v.impact ?? "unknown") as string;
   const nodes = v.nodes?.length ?? 0;
   const summary =
     v.nodes?.[0]?.failureSummary?.replace(/^\s*Fix any of the following:\s*/i, "") ?? "";
@@ -70,10 +70,11 @@ async function main(): Promise<void> {
   console.log(`${DIM}Auditing ${BASE_URL}${RESET}\n`);
 
   const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext();
   let totalViolations = 0;
 
   try {
-    const page = await browser.newPage();
+    const page = await context.newPage();
 
     for (const route of ROUTES_TO_AUDIT) {
       const url = `${BASE_URL}${route}`.replace(/([^:]\/)\/+/g, "$1");
@@ -119,6 +120,7 @@ async function main(): Promise<void> {
       }
     }
 
+    await context.close();
     await browser.close();
 
     if (totalViolations > 0) {
@@ -128,6 +130,7 @@ async function main(): Promise<void> {
 
     console.log(`\n${GREEN}✓ Audit passed — no accessibility violations${RESET}\n`);
   } catch (err) {
+    await context?.close().catch(() => {});
     await browser.close();
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`${RED}Fatal: ${msg}${RESET}`);

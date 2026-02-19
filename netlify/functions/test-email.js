@@ -140,7 +140,7 @@ export const handler = async (event, context) =>
         to: email,
         subject: "🏈 FlagFit Pro - Email Service Test",
         html: `
-          <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #10c96b; border-radius: 10px;">
+          <div style="font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #10c96b; border-radius: 10px;">
             <div style="text-align: center; margin-bottom: 20px;">
               <h1 style="color: #10c96b; margin: 0;">🏈 FlagFit Pro</h1>
               <h2 style="color: #333; margin: 10px 0;">Email Service Test Successful!</h2>

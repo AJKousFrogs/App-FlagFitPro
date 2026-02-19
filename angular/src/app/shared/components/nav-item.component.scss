@@ -143,7 +143,7 @@
   }
 }
 
-@media (max-width: 64rem) and (min-width: 48.0625rem) {
+@media (max-width: var(--breakpoint-lg)) and (min-width: var(--breakpoint-md-min)) {
   .nav-item--sidebar {
     justify-content: center;
     padding: var(--space-3);

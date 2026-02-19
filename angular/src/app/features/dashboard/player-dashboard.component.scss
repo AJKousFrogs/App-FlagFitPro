@@ -134,7 +134,7 @@
 
 .chart-container {
   position: relative;
-  height: calc(var(--space-12) * 6.25); /* 18.calc(var(--size-200) * 6) */
+  height: calc(var(--space-12) * 6.25);
   padding: var(--space-2);
   /* Responsive: see consolidated breakpoints; Canvas in _component-overrides.scss */
 }

@@ -24,7 +24,7 @@ import {
   FilterMatchMode,
 } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
-import Aura from "@primeuix/themes/aura";
+import { FlagFitPreset } from "./theme/flagfit-preset";
 import { PRIMENG_PT_CONFIG } from "./primeng.config";
 import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
@@ -153,16 +153,8 @@ export const appConfig: ApplicationConfig = {
       // - angular/src/scss/components/primeng-theme.scss (component-specific overrides)
       // - primeng-integration.scss (design token mapping)
       //
-      // FUTURE ENHANCEMENT:
-      // To use definePreset() for token-based customization (recommended by PrimeNG docs):
-      // 1. Import: import { definePreset } from "primeng/config"
-      // 2. Replace preset: Aura with preset: definePreset(Aura, { primitive: {...}, semantic: {...}, components: {...} })
-      // 3. This ensures proper color scheme support (light/dark mode) and token hierarchy
-      // 4. See PrimeNG Styled Mode documentation for definePreset() API details
       theme: {
-        // Base preset: Aura (PrimeTek's modern vision)
-        // Alternative presets: Material, Lara, Nora
-        preset: Aura,
+        preset: FlagFitPreset,
 
         options: {
           // CSS variable prefix (e.g., --p-primary-color)

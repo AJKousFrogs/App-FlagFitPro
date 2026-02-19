@@ -205,28 +205,28 @@ const ROUTES = [
         <!-- Stats Summary -->
         <div class="stats-summary">
           <div class="stat-card">
-            <span class="stat-icon">📋</span>
+            <span class="stat-icon"><i class="pi pi-list" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ totalPlays() }}</span>
               <span class="stat-block__label">Total Plays</span>
             </div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">⚔️</span>
+            <span class="stat-icon"><i class="pi pi-shield" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ offensePlays() }}</span>
               <span class="stat-block__label">Offense</span>
             </div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">🛡️</span>
+            <span class="stat-icon"><i class="pi pi-shield" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ defensePlays() }}</span>
               <span class="stat-block__label">Defense</span>
             </div>
           </div>
           <div class="stat-card">
-            <span class="stat-icon">📊</span>
+            <span class="stat-icon"><i class="pi pi-chart-bar" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ avgMemorized() }}%</span>
               <span class="stat-block__label">Team Memorized</span>
@@ -526,7 +526,7 @@ const ROUTES = [
               <div class="player-list memorized">
                 @for (status of memorizedPlayers(); track status.playerId) {
                   <div class="player-row">
-                    <span class="status-icon">✅</span>
+                    <span class="status-icon"><i class="pi pi-check" aria-hidden="true"></i></span>
                     <span class="player-name">{{ status.playerName }}</span>
                     <span class="memorized-date"
                       >Memorized {{ status.memorizedAt }}</span
@@ -545,7 +545,7 @@ const ROUTES = [
                 <div class="player-list needs-review">
                   @for (status of needsReviewPlayers(); track status.playerId) {
                     <div class="player-row">
-                      <span class="status-icon">🔄</span>
+                      <span class="status-icon"><i class="pi pi-refresh" aria-hidden="true"></i></span>
                       <span class="player-name">{{ status.playerName }}</span>
                       <span class="last-studied">{{
                         status.lastStudied || "Never studied"

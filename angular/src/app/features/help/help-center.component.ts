@@ -148,7 +148,7 @@ interface HelpTopic {
 
       .quick-link-card i {
         font-size: var(--ds-font-size-2xl);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
       }
 
       .faq-item {
@@ -181,7 +181,7 @@ interface HelpTopic {
 
       .support-content i {
         font-size: var(--ds-font-size-2-5rem);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
         margin-bottom: var(--spacing-md);
       }
 

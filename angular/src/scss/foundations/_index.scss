@@ -1,0 +1,21 @@
+/**
+ * Foundations – Shared SCSS Layer
+ * ================================
+ *
+ * Canonical partials for deduplicating repeated patterns (audit 2026).
+ * Use these instead of copy-pasting :hover, .form-field, respond-to blocks.
+ *
+ * 1. _states.scss    – interactive mixin (focus-visible + disabled)
+ * 2. _typography.scss – %rich-text for article/modal content
+ * 3. _forms.scss     – %form-label, %form-field, %form-row placeholders
+ * 4. _stats.scss     – %stat-block, %stat-icon, %stat-label, %stat-value
+ * 5. _breakpoints.scss – breakpoint map + respond-to (re-exports from utilities)
+ *
+ * Load order: After utilities (mixins/vars), before components.
+ */
+
+@forward "states";
+@forward "typography";
+@forward "forms";
+@forward "stats";
+@forward "breakpoints";

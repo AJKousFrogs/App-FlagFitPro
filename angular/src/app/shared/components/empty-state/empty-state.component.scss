@@ -121,7 +121,7 @@
 }
 
 .empty-icon {
-  --empty-icon-color: var(--text-secondary);
+  --empty-icon-color: var(--color-text-secondary);
   color: var(--empty-icon-color);
   font-size: var(--ds-font-size-2xl);
   margin-bottom: var(--space-4);
@@ -214,7 +214,7 @@
   animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
 }
 
-@media (min-width: 40rem) {
+@media (min-width: var(--breakpoint-sm)) {
   .empty-actions {
     flex-direction: row;
   }
@@ -260,7 +260,7 @@ p-button {
   }
 
   .empty-icon {
-    font-size: var(--ds-font-size-var(--header-height));
+    font-size: var(--ds-font-size-3xl);
   }
 
   .empty-title {

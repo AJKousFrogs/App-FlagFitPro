@@ -230,7 +230,7 @@ export class EmptyStateComponent {
   title = input<string>("No Data Available");
   message = input<string | null>(null);
   icon = input<string | null>(null);
-  iconColor = input<string>("var(--text-secondary)");
+  iconColor = input<string>("var(--color-text-secondary)");
   compact = input<boolean>(false);
 
   // Context preset (replaces app-no-data-entry)
@@ -311,7 +311,8 @@ export class EmptyStateComponent {
   resolvedBenefits = computed(() => {
     const expl = this.benefits();
     if (expl?.length) return expl;
-    return this.showBenefits() && this.config() ? this.config()!.benefits : [];
+    const cfg = this.config();
+    return this.showBenefits() && cfg ? (cfg.benefits ?? []) : [];
   });
   resolvedBenefitsTitle = computed(() =>
     this.benefitsSectionTitle() ?? (this.context() && this.showBenefits() ? "Why track this?" : null)

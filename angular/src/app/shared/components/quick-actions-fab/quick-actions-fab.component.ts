@@ -3,15 +3,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
-  OnDestroy,
   OnInit,
   signal,
 } from "@angular/core";
 
 import { NavigationEnd, Router } from "@angular/router";
-
-import { filter, Subscription } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -77,11 +77,11 @@ interface QuickActionItem {
   `,
   styleUrl: "./quick-actions-fab.component.scss",
 })
-export class QuickActionsFABComponent implements OnInit, OnDestroy {
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private logger = inject(LoggerService);
-  private routerSub?: Subscription;
+export class QuickActionsFABComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
 
   isExpanded = signal(false);
   currentRoute = signal("");
@@ -139,16 +139,15 @@ export class QuickActionsFABComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentRoute.set(this.router.url);
 
-    this.routerSub = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((event) => {
         this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
         this.isExpanded.set(false);
       });
-  }
-
-  ngOnDestroy(): void {
-    this.routerSub?.unsubscribe();
   }
 
   toggleMenu(): void {

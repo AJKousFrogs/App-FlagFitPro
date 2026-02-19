@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-02-17T13:20:57.692Z",
+  "overallHealth": 86,
+  "categories": {
+    "dependencies": {
+      "score": 80,
+      "issues": [
+        "Missing critical dependency: react",
+        "Could not run security audit"
+      ],
+      "status": "good"
+    },
+    "tests": {
+      "score": 100,
+      "issues": [],
+      "status": "good",
+      "metrics": {
+        "unit_files": 1,
+        "integration_files": 108,
+        "e2e_files": 8,
+        "passed": 36,
+        "failed": 0,
+        "total": 36
+      }
+    },
+    "security": {
+      "score": 100,
+      "issues": [],
+      "status": "good"
+    },
+    "codeQuality": {
+      "score": 75.33333333333333,
+      "issues": [
+        "Missing core file: ./index.html",
+        "Missing configuration: ./vitest.config.js"
+      ],
+      "status": "good",
+      "metrics": {
+        "coreFiles": 4,
+        "documentation": 2,
+        "configuration": 1
+      }
+    },
+    "configuration": {
+      "score": 100,
+      "issues": [],
+      "status": "good"
+    },
+    "performance": {
+      "score": 40,
+      "issues": [
+        "Large node_modules size may affect build performance"
+      ],
+      "status": "critical",
+      "metrics": {
+        "nodeModulesSize": "664MB"
+      }
+    },
+    "documentation": {
+      "score": 81.66666666666667,
+      "issues": [],
+      "status": "good",
+      "metrics": {
+        "readmeLength": 13295,
+        "docFiles": 26
+      }
+    },
+    "database": {
+      "score": 100,
+      "issues": [],
+      "status": "good",
+      "metrics": {
+        "queryTime": "995ms",
+        "connected": true,
+        "responseTime": 995,
+        "tablesFound": 3,
+        "totalTables": 3,
+        "migrations": 42
+      }
+    },
+    "api": {
+      "score": 100,
+      "issues": [],
+      "status": "good",
+      "metrics": {
+        "functionsFound": 105,
+        "criticalFunctions": 3
+      }
+    },
+    "environment": {
+      "score": 80,
+      "issues": [
+        "Missing recommended environment variable: JWT_SECRET",
+        "Missing recommended environment variable: NODE_ENV"
+      ],
+      "status": "good",
+      "metrics": {
+        "requiredVars": 2,
+        "totalRequired": 2,
+        "recommendedVars": 1,
+        "totalRecommended": 3
+      }
+    }
+  },
+  "criticalIssues": [],
+  "warnings": [
+    "Sensitive file found: .env (ensure it's in .gitignore)",
+    "Sensitive file found: .env.local (ensure it's in .gitignore)"
+  ],
+  "recommendations": [
+    "🏆 Excellent: Production ready!"
+  ]
+}

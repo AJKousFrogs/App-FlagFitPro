@@ -454,7 +454,7 @@
   }
 }
 
-// Note: translateY(-0.calc(var(--size-200) * 6)) was non-standard; contract specifies -var(--border-2)
+// Note: translateY uses -var(--border-2) per design system contract
 
 .video-card.bookmarked {
   border: var(--border-3) solid var(--ds-primary-green);
@@ -521,7 +521,7 @@
 }
 
 .play-icon {
-  font-size: var(--ds-font-size-var(--header-height)); /* Larger, more visible */
+  font-size: var(--ds-font-size-3xl); /* Larger, more visible */
   color: var(--color-text-on-primary);
   opacity: var(--opacity-strong);
   transition:
@@ -682,7 +682,7 @@
 }
 
 .tag {
-  padding: var(--space-2) var(--space-3); /* 0.5rem 0.calc(var(--size-200) * 6) for breathing room */
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);

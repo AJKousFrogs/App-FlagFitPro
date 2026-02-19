@@ -130,13 +130,13 @@ const PROGRAM_TYPES: { label: string; value: ProgramType }[] = [
 ];
 
 const SESSION_TYPES: { label: string; value: SessionType; icon: string }[] = [
-  { label: "Speed Development", value: "speed", icon: "🏃" },
-  { label: "Strength Training", value: "strength", icon: "💪" },
-  { label: "Active Recovery", value: "recovery", icon: "🔄" },
-  { label: "Agility & Skills", value: "agility", icon: "⚡" },
-  { label: "Position Practice", value: "position", icon: "🏈" },
-  { label: "Team Practice/Game", value: "team", icon: "🏆" },
-  { label: "Rest Day", value: "rest", icon: "😴" },
+  { label: "Speed Development", value: "speed", icon: "pi-bolt" },
+  { label: "Strength Training", value: "strength", icon: "pi-heart" },
+  { label: "Active Recovery", value: "recovery", icon: "pi-refresh" },
+  { label: "Agility & Skills", value: "agility", icon: "pi-bolt" },
+  { label: "Position Practice", value: "position", icon: "pi-flag" },
+  { label: "Team Practice/Game", value: "team", icon: "pi-trophy" },
+  { label: "Rest Day", value: "rest", icon: "pi-moon" },
 ];
 
 const DAYS: DayOfWeek[] = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
@@ -222,9 +222,7 @@ const PHASE_PRESETS = [
                 <p-card class="program-card">
                   <div class="program-header">
                     <div class="program-title">
-                      <span class="program-icon">{{
-                        getProgramIcon(program.type)
-                      }}</span>
+                      <span class="program-icon"><i [class]="'pi ' + getProgramIcon(program.type)" aria-hidden="true"></i></span>
                       <h4>{{ program.name }}</h4>
                     </div>
                     <div class="program-actions">
@@ -339,7 +337,7 @@ const PHASE_PRESETS = [
                 <p-card class="program-card draft">
                   <div class="program-header">
                     <div class="program-title">
-                      <span class="program-icon">📝</span>
+                      <span class="program-icon"><i class="pi pi-pencil" aria-hidden="true"></i></span>
                       <h4>{{ program.name }} (Draft)</h4>
                     </div>
                     <div class="program-actions">
@@ -906,13 +904,13 @@ export class ProgramBuilderComponent implements OnInit {
   // Helper methods
   getProgramIcon(type: ProgramType): string {
     const icons: Record<ProgramType, string> = {
-      "competition-prep": "🏆",
-      "off-season": "📆",
-      "in-season": "🏈",
-      rtp: "🏥",
-      "position-specific": "🎯",
+      "competition-prep": "pi-trophy",
+      "off-season": "pi-calendar",
+      "in-season": "pi-flag",
+      rtp: "pi-heart",
+      "position-specific": "pi-bullseye",
     };
-    return icons[type];
+    return icons[type] ?? "pi-file";
   }
 
   getStatusLabel(status: ProgramStatus): string {

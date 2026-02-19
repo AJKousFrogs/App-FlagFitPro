@@ -32,9 +32,6 @@
   margin-top: var(--space-6);
 }
 
-.tournament-card {
-}
-
 /* Personal tournament card styling */
 .tournament-card.personal-tournament {
   border-left: var(--space-1) solid var(--color-status-warning);
@@ -261,73 +258,22 @@
   color: var(--color-text-primary);
 }
 
-.form-row {
-  display: flex;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
-}
-
+/* Form layout: use primitives _forms.scss (.form-row, .form-field, .two-col, etc.) */
 .form-row:last-child {
   margin-bottom: 0;
 }
 
-.form-row.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+.tournament-form .form-field {
   flex: 1;
 }
 
-.form-field.full-width {
-  width: 100%;
-}
 
-.form-field label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-weight: var(--ds-font-weight-medium);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
 
-.form-field label i {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-muted);
-}
-
-.form-field label .required {
-  color: var(--color-status-error);
-  font-weight: var(--ds-font-weight-semibold);
-}
-
-.form-field.checkbox-field {
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
+.tournament-form .form-field.checkbox-field {
   background: var(--surface-primary);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--color-border-secondary);
 }
 
-.form-field .checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  cursor: pointer;
-  color: var(--color-text-primary);
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.form-field .checkbox-label i {
+.tournament-form .form-field .checkbox-label i {
   color: var(--ds-primary-green);
 }
 
@@ -711,8 +657,8 @@
   }
 }
 
-/* Large Screens (calc(var(--size-200) * 6) - 87.4375rem) */
-@media (min-width: 75rem) and (max-width: 87.4375rem) {
+/* Large Screens (75rem - 87.4375rem / xl-min to xl-max) */
+@media (min-width: var(--breakpoint-xl-min)) and (max-width: var(--breakpoint-xl-max)) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -723,7 +669,7 @@
 }
 
 /* Medium-Large Screens (64rem - 74.9375rem) */
-@media (min-width: 64rem) and (max-width: 74.9375rem) {
+@media (min-width: var(--breakpoint-lg)) and (max-width: var(--breakpoint-lg-max)) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -738,7 +684,7 @@
 }
 
 /* Tablet Landscape (48.0625rem - 63.9375rem) */
-@media (min-width: 48.0625rem) and (max-width: 64rem) {
+@media (min-width: var(--breakpoint-md-min)) and (max-width: var(--breakpoint-lg)) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -811,7 +757,7 @@
 }
 
 /* Mobile Large (30rem - 48rem) */
-@media (min-width: 30rem) and (max-width: 48rem) {
+@media (min-width: var(--breakpoint-xs-narrow)) and (max-width: var(--breakpoint-md)) {
   .availability-options {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -871,7 +817,7 @@
 }
 
 /* Landscape Mode on Mobile */
-@media (max-height: 31.25rem) and (orientation: landscape) {
+@media (max-height: var(--breakpoint-landscape-height)) and (orientation: landscape) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -885,7 +831,7 @@
 @media (hover: none) and (pointer: coarse) {
   .availability-option,
   .header-actions button {
-    min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
+    min-height: var(--touch-target-md);
   }
 }
 

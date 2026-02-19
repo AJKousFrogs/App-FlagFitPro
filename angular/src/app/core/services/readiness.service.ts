@@ -28,11 +28,15 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
-import { catchError, map, tap } from "rxjs";
+import { catchError, finalize, map, tap } from "rxjs";
 import { ApiService } from "./api.service";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { LoggerService } from "./logger.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
+import {
+  mapEvidenceCitations,
+  getPresetDisplay,
+} from "../../shared/utils/evidence-info.utils";
 
 export type ReadinessLevel = "low" | "moderate" | "high";
 export type Suggestion = "deload" | "maintain" | "push";
@@ -176,21 +180,12 @@ export class ReadinessService {
       .post<ReadinessResponse>("/api/calc-readiness", {})
       .pipe(
         map((res) => res.data || ({} as ReadinessResponse)),
-        tap({
-          next: (res) => {
-            this.current.set(res);
-            this.loading.set(false);
-          },
-          error: (err) => {
-            this.error.set(getErrorMessage(err, "Failed to calculate readiness"));
-            this.loading.set(false);
-          },
-        }),
+        tap((res) => this.current.set(res)),
         catchError((error) => {
           this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
-          this.loading.set(false);
           return throwError(() => error);
         }),
+        finalize(() => this.loading.set(false)),
       );
   }
 
@@ -210,21 +205,12 @@ export class ReadinessService {
       .post<ReadinessResponse>("/api/calc-readiness", { day })
       .pipe(
         map((res) => res.data || ({} as ReadinessResponse)),
-        tap({
-          next: (res) => {
-            this.current.set(res);
-            this.loading.set(false);
-          },
-          error: (err) => {
-            this.error.set(getErrorMessage(err, "Failed to calculate readiness"));
-            this.loading.set(false);
-          },
-        }),
+        tap((res) => this.current.set(res)),
         catchError((error) => {
           this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
-          this.loading.set(false);
           return throwError(() => error);
         }),
+        finalize(() => this.loading.set(false)),
       );
   }
 
@@ -355,13 +341,8 @@ export class ReadinessService {
     const readinessConfig = preset.readiness;
 
     return {
-      preset: `${preset.name} (${preset.version})`,
-      citations: readinessConfig.citations.map((c) => ({
-        authors: c.authors,
-        year: c.year,
-        title: c.title,
-        doi: c.doi || "",
-      })),
+      preset: getPresetDisplay(preset),
+      citations: mapEvidenceCitations(readinessConfig.citations),
       scienceNotes: {
         weightings: readinessConfig.scienceNotes.weightings,
         cutPoints: readinessConfig.scienceNotes.cutPoints,

@@ -1,9 +1,11 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 
 // Netlify Function: Staff Psychology API
 // Handles mental performance data, wellness reports, and psychological assessments
+const consentReader = new ConsentDataReader(supabaseAdmin);
 
 /**
  * Verify user is a staff member with psychology access
@@ -109,34 +111,58 @@ async function getPsychologicalAssessments(userId) {
 /**
  * Get wellness trends for mental analysis
  */
-async function getWellnessTrends(userId, days = 30) {
+async function getWellnessTrends(
+  userId,
+  days = 30,
+  { requesterId = userId, teamId = null } = {},
+) {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
 
-  const { data, error } = await supabaseAdmin
-    .from("wellness_entries")
-    .select(
-      "date, mood, stress_level, sleep_quality, motivation_level, energy_level",
-    )
-    .eq("athlete_id", userId)
-    .gte("date", startDate.toISOString().split("T")[0])
-    .order("date", { ascending: true });
+  const context =
+    requesterId === userId
+      ? AccessContext.PLAYER_OWN_DATA
+      : AccessContext.COACH_TEAM_DATA;
+  const result = await consentReader.readWellnessEntries({
+    requesterId,
+    playerId: userId,
+    teamId,
+    context,
+    filters: {
+      startDate: startDate.toISOString().split("T")[0],
+      endDate: new Date().toISOString().split("T")[0],
+      limit: 365,
+    },
+  });
 
-  if (error) {
-    throw error;
+  if (!result.success) {
+    throw new Error(result.error || "Failed to fetch wellness trends");
   }
-  return data || [];
+  return (result.data || [])
+    .map((entry) => ({
+      date: entry.date,
+      mood: entry.mood,
+      stress_level: entry.stress_level,
+      sleep_quality: entry.sleep_quality,
+      motivation_level: entry.motivation_level,
+      energy_level: entry.energy_level,
+    }))
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
 }
 
 /**
  * Generate mental wellness report
  */
-async function generateMentalWellnessReport(userId, options = {}) {
+async function generateMentalWellnessReport(
+  userId,
+  options = {},
+  { requesterId = userId, teamId = null } = {},
+) {
   const { days = 30, includePrivate: _includePrivate = false } = options;
 
   // Get mental performance data
   const mentalLogs = await getMentalPerformanceLogs(userId, days);
-  const wellness = await getWellnessTrends(userId, days);
+  const wellness = await getWellnessTrends(userId, days, { requesterId, teamId });
   const assessments = await getPsychologicalAssessments(userId);
 
   // Calculate averages
@@ -209,10 +235,14 @@ async function generateMentalWellnessReport(userId, options = {}) {
 /**
  * Generate pre-competition mental assessment
  */
-async function generatePreCompetitionReport(userId, gameDate) {
+async function generatePreCompetitionReport(
+  userId,
+  gameDate,
+  { requesterId = userId, teamId = null } = {},
+) {
   // Get recent mental data
   const mentalLogs = await getMentalPerformanceLogs(userId, 7);
-  const wellness = await getWellnessTrends(userId, 7);
+  const wellness = await getWellnessTrends(userId, 7, { requesterId, teamId });
 
   // Latest entry
   const latestMental = mentalLogs[mentalLogs.length - 1] || {};
@@ -345,7 +375,7 @@ async function logMentalPerformance(userId, logData) {
 /**
  * Get athlete mental overview (for staff)
  */
-async function getTeamMentalOverview(teamId) {
+async function getTeamMentalOverview(teamId, requesterId) {
   const { data: members } = await supabaseAdmin
     .from("team_members")
     .select("user_id, users:user_id(full_name, position)")
@@ -367,13 +397,14 @@ async function getTeamMentalOverview(teamId) {
       .single();
 
     // Get latest wellness
-    const { data: wellness } = await supabaseAdmin
-      .from("wellness_entries")
-      .select("mood, stress_level, motivation_level")
-      .eq("athlete_id", userId)
-      .order("date", { ascending: false })
-      .limit(1)
-      .single();
+    const wellnessResult = await consentReader.readWellnessEntries({
+      requesterId,
+      playerId: userId,
+      teamId,
+      context: AccessContext.COACH_TEAM_DATA,
+      filters: { limit: 1 },
+    });
+    const wellness = wellnessResult.success ? (wellnessResult.data || [])[0] : null;
 
     // Calculate overall mental wellness score
     const scores = [
@@ -550,7 +581,7 @@ async function handleRequest(event, _context, { userId }) {
       const days = daysResult.value;
       const [mentalLogs, wellness, assessments] = await Promise.all([
         getMentalPerformanceLogs(userId, days),
-        getWellnessTrends(userId, days),
+        getWellnessTrends(userId, days, { requesterId: userId }),
         getPsychologicalAssessments(userId),
       ]);
       return createSuccessResponse({ mentalLogs, wellness, assessments });
@@ -586,7 +617,10 @@ async function handleRequest(event, _context, { userId }) {
         );
       }
 
-      const report = await generateMentalWellnessReport(reportUserId, parsedBody);
+      const report = await generateMentalWellnessReport(reportUserId, parsedBody, {
+        requesterId: userId,
+        teamId: canAccess.teamId || null,
+      });
       return createSuccessResponse({ report });
     }
 
@@ -611,7 +645,10 @@ async function handleRequest(event, _context, { userId }) {
         );
       }
 
-      const report = await generatePreCompetitionReport(reportUserId, gameDate);
+      const report = await generatePreCompetitionReport(reportUserId, gameDate, {
+        requesterId: userId,
+        teamId: canAccess.teamId || null,
+      });
       return createSuccessResponse({ report });
     }
 
@@ -619,7 +656,7 @@ async function handleRequest(event, _context, { userId }) {
     if (staffAccess?.access === "staff") {
       // GET /team - Get team mental overview
       if (method === "GET" && path === "/team") {
-        const overview = await getTeamMentalOverview(staffAccess.teamId);
+        const overview = await getTeamMentalOverview(staffAccess.teamId, userId);
         return createSuccessResponse({ athletes: overview });
       }
 
@@ -645,7 +682,10 @@ async function handleRequest(event, _context, { userId }) {
         const days = daysResult.value;
         const [mentalLogs, wellness, assessments] = await Promise.all([
           getMentalPerformanceLogs(athleteId, days),
-          getWellnessTrends(athleteId, days),
+          getWellnessTrends(athleteId, days, {
+            requesterId: userId,
+            teamId: staffAccess.teamId,
+          }),
           getPsychologicalAssessments(athleteId),
         ]);
         return createSuccessResponse({ mentalLogs, wellness, assessments });

@@ -71,7 +71,7 @@ case $REPLY in
   2)
     echo -e "${YELLOW}Manual migration via Dashboard:${NC}"
     echo "1. Go to: https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql"
-    echo "2. Copy/paste each migration file from database/migrations/"
+    echo "2. Copy/paste each migration file from supabase/migrations/"
     echo "3. Run them in order"
     echo ""
     read -p "Press Enter when migrations are complete..."

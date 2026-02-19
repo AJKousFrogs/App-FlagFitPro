@@ -12,7 +12,7 @@
     gap: var(--space-3) var(--space-6);
     margin: var(--space-2) 0 var(--space-4);
     font-size: var(--ds-font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-text-secondary);
 
     @include data-source-meta;
   }
@@ -36,14 +36,14 @@
   gap: var(--space-3);
 }
 
-.icon-activity,
-.icon-plus,
-.icon-alert,
-.icon-check,
-.icon-chart,
-.icon-download,
-.icon-file-pdf {
+.dashboard-header h1 .pi,
+.action-btn .pi,
+.quick-actions .action-btn .pi {
   font-size: var(--ds-font-size-xl);
+  color: inherit;
+}
+
+.dashboard-header h1 .pi {
   color: var(--ds-primary-green);
 }
 
@@ -192,12 +192,32 @@
   width: calc(var(--space-24) * 1.875); /* 11.25rem - using spacing tokens */
   height: calc(var(--space-24) * 1.875); /* 11.25rem - using spacing tokens */
   border-radius: var(--radius-full);
-  border: var(--space-2) solid;
+  border: var(--space-2) solid var(--color-border-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background: var(--surface-primary);
+
+  &.ratio-circle--sweet-spot {
+    border-color: var(--color-status-success);
+  }
+
+  &.ratio-circle--elevated-risk {
+    border-color: var(--color-status-warning-text);
+  }
+
+  &.ratio-circle--danger-zone {
+    border-color: var(--color-status-error);
+  }
+
+  &.ratio-circle--under-training {
+    border-color: var(--color-status-warning);
+  }
+
+  &.ratio-circle--no-data {
+    border-color: var(--color-border-secondary);
+  }
 }
 
 .ratio-value {
@@ -218,6 +238,26 @@
   border-radius: var(--radius-xl);
   color: var(--color-text-on-primary);
   min-width: calc(var(--space-24) * 2.604); /* 15.625rem - using spacing tokens */
+
+  &.risk-zone-indicator--sweet-spot {
+    background-color: var(--color-status-success);
+  }
+
+  &.risk-zone-indicator--elevated-risk {
+    background-color: var(--color-status-warning-text);
+  }
+
+  &.risk-zone-indicator--danger-zone {
+    background-color: var(--color-status-error);
+  }
+
+  &.risk-zone-indicator--under-training {
+    background-color: var(--color-status-warning);
+  }
+
+  &.risk-zone-indicator--no-data {
+    background-color: var(--color-border-secondary);
+  }
 }
 
 .risk-icon {
@@ -325,8 +365,8 @@
 }
 
 .zone-dot {
-  width: var(--space-3); /* 0.calc(var(--size-200) * 6) */
-  height: var(--space-3); /* 0.calc(var(--size-200) * 6) */
+  width: var(--space-3);
+  height: var(--space-3);
   border-radius: var(--radius-full);
   display: inline-block;
 
@@ -424,7 +464,7 @@
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
   margin-bottom: var(--space-6);
-  max-width: var(--content-max-width-sm); /* var(--content-max-width-sm) - closest token to var(--dialog-max-width-lg) */
+  max-width: var(--content-max-width-sm);
   margin-left: auto;
   margin-right: auto;
 }
@@ -444,7 +484,7 @@
 }
 
 .progress-label {
-  flex: 0 0 calc(var(--space-24) * 1.458); /* 8.calc(var(--size-200) * 6) - using spacing tokens */
+  flex: 0 0 calc(var(--space-24) * 1.458); /* 8.75rem */
   text-align: left;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
@@ -452,16 +492,22 @@
 
 .progress-bar {
   flex: 1;
-  height: var(--space-2); /* 0.5rem */
+  height: var(--space-2);
   background: var(--color-border-secondary);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
 
-/* progress-fill: use primitives */
+.progress-fill {
+  width: var(--progress-pct, 0%);
+  height: 100%;
+  background: var(--color-brand-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
 
 .progress-value {
-  flex: 0 0 calc(var(--space-24) * 0.625); /* var(--button-height-xl) - using spacing tokens */
+  flex: 0 0 calc(var(--space-24) * 0.625);
   text-align: right;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
@@ -522,7 +568,7 @@
 }
 
 .chart-container {
-  height: calc(var(--space-24) * 3.125); /* 18.calc(var(--size-200) * 6) - using spacing tokens */
+  height: calc(var(--space-24) * 3.125); /* 18.75rem */
   position: relative;
 }
 
@@ -538,8 +584,8 @@
 /* legend-item, legend-dot: use primitives; responsive overrides in _component-overrides */
 
 .legend-dot {
-  width: var(--space-3); /* 0.calc(var(--size-200) * 6) */
-  height: var(--space-3); /* 0.calc(var(--size-200) * 6) */
+  width: var(--space-3);
+  height: var(--space-3);
   border-radius: var(--radius-full);
 }
 
@@ -587,9 +633,7 @@
   background: var(--color-status-warning-subtle);
 }
 
-.rec-icon {
-  font-size: var(--ds-font-size-2xl);
-}
+/* rec-icon: use primitive from _icons.scss; overrides in _component-overrides.scss */
 
 /* rec-content: component-specific */
 

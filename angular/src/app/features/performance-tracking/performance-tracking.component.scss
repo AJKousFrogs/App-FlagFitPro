@@ -12,7 +12,7 @@
     gap: var(--space-3) var(--space-6);
     margin: var(--space-2) 0 var(--space-4);
     font-size: var(--ds-font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-text-secondary);
 
     @include data-source-meta;
   }
@@ -33,12 +33,7 @@
   }
 }
 
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
-  gap: var(--space-6);
-  margin-bottom: var(--space-6);
-}
+// .charts-grid: Use primitives/_charts.scss
 
 .chart-card {
   min-height: var(--chart-min-height-md);
@@ -57,12 +52,6 @@
 
 .table-card {
   margin-bottom: var(--space-6);
-}
-
-@include respond-to(md) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 // ===== Position Benchmark Section =====
@@ -279,11 +268,7 @@
   margin-top: var(--space-1);
 }
 
-.loading-placeholder {
-  padding: var(--space-8);
-  text-align: center;
-  color: var(--color-text-secondary);
-}
+/* loading-placeholder: use primitive from _skeleton.scss */
 
 // ===== Team Rankings Section =====
 .team-rankings-card {

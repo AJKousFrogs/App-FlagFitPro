@@ -86,7 +86,7 @@
     justify-content: center;
     background: var(--ds-primary-green-subtle);
     border-radius: var(--radius-xl);
-    color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
     font-size: var(--ds-font-size-2xl);
     transition: transform var(--transition-base) var(--ease-micro-bounce);
 
@@ -209,16 +209,16 @@
 
   .forgot-link {
     font-size: var(--ds-font-size-md);
-    color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
     text-decoration: none;
     transition: color var(--transition-fast);
 
     &:hover {
-      color: var(--ds-primary-green-hover);
+      color: var(--ds-primary-green);
       text-decoration: underline;
     }
 
-    @include ds-focus-ring(var(--ds-primary-green), null, var(--radius-sm));
+    @include ds-focus-ring(var(--ds-primary-green-dark), null, var(--radius-sm));
   }
 
   // Custom Checkbox styling
@@ -323,7 +323,7 @@
     display: block;
     text-align: center;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-primary-green);
+    color: var(--ds-primary-green-dark);
     text-decoration: none;
     padding: var(--space-3);
     border-radius: var(--radius-lg);

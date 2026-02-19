@@ -42,7 +42,7 @@
     var(--primitive-info-400) 100%
   );
   transition: height var(--transition-slower) var(--ease-standard);
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl); /* 0.calc(var(--size-200) * 6) - Design System compliant */
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 
   &.low {
     background: linear-gradient(
@@ -74,7 +74,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--indicator-size-md); /* 0.calc(var(--size-200) * 6) */
+  height: var(--indicator-size-md);
   background: var(--overlay-white-30);
   border-radius: var(--radius-circle);
   animation: wave 2s ease-in-out infinite;

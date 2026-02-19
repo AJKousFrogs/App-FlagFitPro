@@ -75,7 +75,7 @@ interface Milestone {
       <div class="summary-card">
         <div class="summary-header">
           <div class="header-content">
-            <h3>🏅 Road to LA28</h3>
+            <h3><i class="pi pi-trophy" aria-hidden="true"></i> Road to LA28</h3>
             <span class="days-count">{{ daysUntilOlympics() }} days</span>
           </div>
           <app-icon-button
@@ -141,7 +141,7 @@ interface Milestone {
       <!-- Full Dialog -->
       <p-dialog
         [(visible)]="showFullDialog"
-        header="🏅 Road to LA28 Olympics"
+        header="Road to LA28 Olympics"
         [modal]="true"
         class="la28-roadmap-dialog"
       >
@@ -254,7 +254,7 @@ interface Milestone {
           <!-- Olympic Countdown -->
           <div class="olympic-countdown">
             <div class="countdown-content">
-              <div class="olympic-rings">🏅</div>
+              <div class="olympic-rings"><i class="pi pi-trophy" aria-hidden="true"></i></div>
               <div class="countdown-text">
                 <h3>LA 2028 Olympics</h3>
                 <p>Flag Football Debut</p>

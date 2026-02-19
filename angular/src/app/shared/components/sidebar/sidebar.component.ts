@@ -3,17 +3,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   HostListener,
   inject,
-  OnDestroy,
   OnInit,
   PLATFORM_ID,
   Renderer2,
   signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
-import { filter, Subscription } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { filter } from "rxjs";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
@@ -199,17 +200,22 @@ interface _CollapsibleGroup {
   `,
   styleUrl: "./sidebar.component.scss",
 })
-export class SidebarComponent implements OnInit, OnDestroy {
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private confirmDialog = inject(ConfirmDialogService);
-  private renderer = inject(Renderer2);
-  private platformId = inject(PLATFORM_ID);
-  private routerSub?: Subscription;
+export class SidebarComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly renderer = inject(Renderer2);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly destroyRef = inject(DestroyRef);
 
   isOpen = signal(false);
 
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        this.renderer.removeClass(document.body, "sidebar-open");
+      }
+    });
     // Effect to manage body scroll lock when sidebar is open on mobile
     if (isPlatformBrowser(this.platformId)) {
       effect(() => {
@@ -601,20 +607,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Auto-close sidebar on navigation (mobile)
-    this.routerSub = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe(() => {
         if (window.innerWidth <= 768) {
           this.closeSidebar();
         }
       });
-  }
-
-  ngOnDestroy(): void {
-    this.routerSub?.unsubscribe();
-    if (isPlatformBrowser(this.platformId)) {
-      this.renderer.removeClass(document.body, "sidebar-open");
-    }
   }
 
   toggleSidebar(): void {
@@ -635,7 +637,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   async logout(): Promise<void> {
     const confirmed = await this.confirmDialog.confirmLogout();
     if (!confirmed) return;
-    this.authService.logout().subscribe();
+    this.authService
+      .logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
     this.closeSidebar();
   }
 

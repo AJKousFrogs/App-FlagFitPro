@@ -1,268 +1,111 @@
 #!/bin/bash
 
-# Script to run all SQL migrations on Supabase and save results locally
-# Usage: ./scripts/run-all-migrations-supabase.sh
+# Run SQL migrations in a deterministic, source-of-truth order.
+# Default source of truth: supabase/migrations
+# Optional legacy source: database/migrations when INCLUDE_LEGACY_DATABASE_MIGRATIONS=true
+#
+# Usage:
+#   ./scripts/run-all-migrations-supabase.sh
+#   DATABASE_URL='postgresql://...' ./scripts/run-all-migrations-supabase.sh
+#   INCLUDE_LEGACY_DATABASE_MIGRATIONS=true DATABASE_URL='postgresql://...' ./scripts/run-all-migrations-supabase.sh
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 RESULTS_DIR="$PROJECT_DIR/database/migration_results"
 LOG_FILE="$RESULTS_DIR/migration_run_$(date +%Y%m%d_%H%M%S).log"
+PLAN_FILE="$RESULTS_DIR/migration_execution_plan_$(date +%Y%m%d_%H%M%S).txt"
 
-# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Create results directory
 mkdir -p "$RESULTS_DIR"
 
 echo -e "${BLUE}=============================================="
-echo "  Running All Migrations on Supabase"
+echo "  Supabase Migration Runner"
 echo "==============================================${NC}"
-echo ""
-echo "Results will be saved to: $RESULTS_DIR"
-echo "Log file: $LOG_FILE"
-echo ""
 
-# Load environment variables
-if [ -f "$PROJECT_DIR/.env" ]; then
-  source "$PROJECT_DIR/.env"
-else
-  echo -e "${RED}✗${NC} .env file not found"
+echo "Project: $PROJECT_DIR"
+echo "Results: $RESULTS_DIR"
+echo "Log: $LOG_FILE"
+
+declare -a migration_roots=("$PROJECT_DIR/supabase/migrations")
+if [[ "${INCLUDE_LEGACY_DATABASE_MIGRATIONS:-false}" == "true" ]]; then
+  migration_roots+=("$PROJECT_DIR/database/migrations")
+fi
+
+declare -a migrations=()
+for root in "${migration_roots[@]}"; do
+  if [[ -d "$root" ]]; then
+    while IFS= read -r file; do
+      migrations+=("$file")
+    done < <(find "$root" -maxdepth 1 -type f -name '*.sql' | sort)
+  fi
+done
+
+if [[ ${#migrations[@]} -eq 0 ]]; then
+  echo -e "${RED}No migration SQL files found.${NC}"
   exit 1
 fi
 
-# Check for Supabase credentials
-if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_KEY" ]; then
-  echo -e "${RED}✗${NC} SUPABASE_URL or SUPABASE_SERVICE_KEY not found in .env"
-  exit 1
-fi
+printf "%s\n" "${migrations[@]}" > "$PLAN_FILE"
+echo -e "${GREEN}✓${NC} Migration plan generated: $PLAN_FILE"
+echo "Total files: ${#migrations[@]}"
 
-# Extract project ref from URL
-PROJECT_REF=$(echo "$SUPABASE_URL" | sed 's|https://||' | sed 's|\.supabase\.co||')
-echo -e "${GREEN}✓${NC} Project: $PROJECT_REF"
-echo ""
-
-# Build connection string
-# Supabase connection format: postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres
-DB_URL="postgresql://postgres.${PROJECT_REF}:${SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
-
-# Test connection
-echo -e "${BLUE}Testing connection...${NC}"
-if psql "$DB_URL" -c "SELECT version();" > /dev/null 2>&1; then
-  echo -e "${GREEN}✓${NC} Connected to Supabase"
-else
-  echo -e "${YELLOW}⚠${NC} Direct connection failed. You may need to run migrations via Supabase Dashboard SQL Editor."
-  echo ""
-  echo "To run via Dashboard:"
-  echo "1. Go to https://supabase.com/dashboard"
-  echo "2. Select project: $PROJECT_REF"
-  echo "3. Click SQL Editor → New query"
-  echo "4. Copy/paste each migration file and run"
-  echo ""
-  echo "Migration files to run:"
-  find "$PROJECT_DIR/database/migrations" -name "*.sql" -type f | sort | while read file; do
-    echo "  - $(basename "$file")"
-  done
+if [[ -z "${DATABASE_URL:-}" && -z "${SUPABASE_DB_URL:-}" ]]; then
+  echo -e "${YELLOW}⚠${NC} DATABASE_URL/SUPABASE_DB_URL not set."
+  echo "Generated plan only. No SQL executed."
+  echo
+  echo "To execute directly:"
+  echo "  DATABASE_URL='postgresql://...' ./scripts/run-all-migrations-supabase.sh"
   exit 0
 fi
 
-echo ""
+DB_URL="${DATABASE_URL:-${SUPABASE_DB_URL:-}}"
 
-# List of migration files in order
-MIGRATIONS=(
-  "database/migrations/001_base_tables.sql"
-  "database/migrations/025_complete_flag_football_player_system.sql"
-  "database/migrations/026_enhanced_strength_conditioning_system.sql"
-  "database/migrations/027_load_management_system.sql"
-  "database/migrations/028_evidence_based_knowledge_base.sql"
-  "database/migrations/029_game_events_system.sql"
-  "database/migrations/029_sponsors_table.sql"
-  "database/migrations/030_advanced_ux_components_support.sql"
-  "database/migrations/031_open_data_sessions_system.sql"
-  "database/migrations/031_wellness_and_measurements_tables.sql"
-  "database/migrations/032_acwr_compute_function.sql"
-  "database/migrations/032_fix_analytics_events_rls_performance.sql"
-  "database/migrations/033_consolidate_analytics_events_policies.sql"
-  "database/migrations/033_readiness_score_system.sql"
-  "database/migrations/033_readiness_score_system_create_tables.sql"
-  "database/migrations/034_check_acwr_rpe_consistency.sql"
-  "database/migrations/034_enable_rls_wearables_data.sql"
-  "database/migrations/035_enable_rls_remaining_tables.sql"
-  "database/migrations/036_add_rls_policies_users_implementation_steps.sql"
-  "database/migrations/037_fix_users_insert_policy_registration.sql"
-  "database/migrations/037_notifications_unification.sql"
-  "database/migrations/038_add_username_and_verification_fields.sql"
-  "database/migrations/039_chatbot_role_aware_system.sql"
-  "database/migrations/040_knowledge_base_governance.sql"
-  "database/migrations/041_player_stats_aggregation_view.sql"
-  "database/migrations/042_training_data_consistency.sql"
-  "database/migrations/043_database_upgrade_consistency.sql"
-  "database/migrations/044_fix_rls_performance_and_consolidate_policies.sql"
-  "database/migrations/045_add_missing_constraints.sql"
-  "database/migrations/046_fix_acwr_baseline_checks_supabase.sql"
-)
-
-# Other SQL files (non-migrations)
-OTHER_SQL=(
-  "database/create-auth-tables.sql"
-  "database/create-missing-tables.sql"
-  "database/create-training-schema.sql"
-  "database/supabase-rls-policies.sql"
-  "database/apply-rls-policies-missing-tables.sql"
-  "database/apply-rls-policies-users-implementation-steps.sql"
-  "database/add_email_verification.sql"
-  "database/fix-rls-performance-helper.sql"
-)
-
-# Function to run migration and save results
-run_migration() {
-  local file="$1"
-  local basename=$(basename "$file" .sql)
-  local result_file="$RESULTS_DIR/${basename}_result.txt"
-  local error_file="$RESULTS_DIR/${basename}_errors.txt"
-  
-  echo -e "${BLUE}Running:${NC} $(basename "$file")"
-  
-  # Run migration and capture output
-  if psql "$DB_URL" -f "$file" > "$result_file" 2> "$error_file"; then
-    echo -e "${GREEN}✓${NC} Success: $(basename "$file")" | tee -a "$LOG_FILE"
-    echo "  Results: $result_file" | tee -a "$LOG_FILE"
-    return 0
-  else
-    echo -e "${RED}✗${NC} Failed: $(basename "$file")" | tee -a "$LOG_FILE"
-    echo "  Errors: $error_file" | tee -a "$LOG_FILE"
-    if [ -s "$error_file" ]; then
-      echo "  Error details:" | tee -a "$LOG_FILE"
-      head -5 "$error_file" | tee -a "$LOG_FILE"
-    fi
-    return 1
-  fi
-}
-
-# Run migrations
-SUCCESS_COUNT=0
-FAILED_COUNT=0
-FAILED_FILES=()
-
-echo -e "${BLUE}=============================================="
-echo "  Running Migrations"
-echo "==============================================${NC}"
-echo ""
-
-for migration in "${MIGRATIONS[@]}"; do
-  if [ -f "$PROJECT_DIR/$migration" ]; then
-    if run_migration "$PROJECT_DIR/$migration"; then
-      ((SUCCESS_COUNT++))
-    else
-      ((FAILED_COUNT++))
-      FAILED_FILES+=("$migration")
-    fi
-    echo ""
-  else
-    echo -e "${YELLOW}⚠${NC} File not found: $migration"
-  fi
-done
-
-# Run other SQL files
-echo -e "${BLUE}=============================================="
-echo "  Running Other SQL Files"
-echo "==============================================${NC}"
-echo ""
-
-for sql_file in "${OTHER_SQL[@]}"; do
-  if [ -f "$PROJECT_DIR/$sql_file" ]; then
-    if run_migration "$PROJECT_DIR/$sql_file"; then
-      ((SUCCESS_COUNT++))
-    else
-      ((FAILED_COUNT++))
-      FAILED_FILES+=("$sql_file")
-    fi
-    echo ""
-  else
-    echo -e "${YELLOW}⚠${NC} File not found: $sql_file"
-  fi
-done
-
-# Summary
-echo -e "${BLUE}=============================================="
-echo "  Migration Summary"
-echo "==============================================${NC}"
-echo ""
-echo -e "${GREEN}✓${NC} Successful: $SUCCESS_COUNT"
-echo -e "${RED}✗${NC} Failed: $FAILED_COUNT"
-echo ""
-echo "Results saved to: $RESULTS_DIR"
-echo "Log file: $LOG_FILE"
-echo ""
-
-if [ ${#FAILED_FILES[@]} -gt 0 ]; then
-  echo -e "${YELLOW}Failed files:${NC}"
-  for file in "${FAILED_FILES[@]}"; do
-    echo "  - $file"
-  done
-  echo ""
+if ! command -v psql >/dev/null 2>&1; then
+  echo -e "${RED}psql is required for direct execution but was not found.${NC}"
+  exit 1
 fi
 
-# Create summary file
-SUMMARY_FILE="$RESULTS_DIR/migration_summary_$(date +%Y%m%d_%H%M%S).md"
-cat > "$SUMMARY_FILE" << EOF
-# Migration Run Summary
+echo -e "${BLUE}Testing database connection...${NC}"
+if ! psql "$DB_URL" -c "select current_database(), current_user;" >/dev/null 2>&1; then
+  echo -e "${RED}Could not connect using provided DATABASE_URL/SUPABASE_DB_URL.${NC}"
+  exit 1
+fi
 
-**Date**: $(date)
-**Project**: $PROJECT_REF
-**Database**: Supabase
+echo -e "${GREEN}✓${NC} Connection successful"
 
-## Results
+echo -e "${BLUE}Executing migrations...${NC}"
+SUCCESS_COUNT=0
+FAILED_COUNT=0
 
-- **Successful**: $SUCCESS_COUNT
-- **Failed**: $FAILED_COUNT
+for file in "${migrations[@]}"; do
+  base="$(basename "$file" .sql)"
+  out_file="$RESULTS_DIR/${base}_result.txt"
+  err_file="$RESULTS_DIR/${base}_errors.txt"
 
-## Migration Files Run
-
-### Successful Migrations
-EOF
-
-for migration in "${MIGRATIONS[@]}"; do
-  if [ -f "$PROJECT_DIR/$migration" ]; then
-    basename=$(basename "$migration" .sql)
-    if [ ! -s "$RESULTS_DIR/${basename}_errors.txt" ] 2>/dev/null; then
-      echo "- ✅ $(basename "$migration")" >> "$SUMMARY_FILE"
-    fi
+  echo "Running: $(basename "$file")" | tee -a "$LOG_FILE"
+  if psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$file" >"$out_file" 2>"$err_file"; then
+    echo -e "${GREEN}✓${NC} $(basename "$file")" | tee -a "$LOG_FILE"
+    SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+  else
+    echo -e "${RED}✗${NC} $(basename "$file")" | tee -a "$LOG_FILE"
+    head -20 "$err_file" | tee -a "$LOG_FILE"
+    FAILED_COUNT=$((FAILED_COUNT + 1))
   fi
+  echo
+
 done
 
-cat >> "$SUMMARY_FILE" << EOF
-
-### Failed Migrations
-EOF
-
-for file in "${FAILED_FILES[@]}"; do
-  echo "- ❌ $(basename "$file")" >> "$SUMMARY_FILE"
-done
-
-cat >> "$SUMMARY_FILE" << EOF
-
-## Files Generated
-
-All results saved to: \`database/migration_results/\`
-
-- \`*_result.txt\` - Migration output
-- \`*_errors.txt\` - Error messages (if any)
-- \`migration_run_*.log\` - Complete execution log
-- \`migration_summary_*.md\` - This summary
-
-## Next Steps
-
-1. Review failed migrations in \`*_errors.txt\` files
-2. Fix any issues and re-run failed migrations
-3. Verify database state after successful migrations
-EOF
-
-echo -e "${GREEN}✓${NC} Summary saved to: $SUMMARY_FILE"
-echo ""
-
+echo -e "${BLUE}=============================================="
+echo "  Summary"
+echo "==============================================${NC}"
+echo -e "${GREEN}Successful:${NC} $SUCCESS_COUNT"
+echo -e "${RED}Failed:${NC} $FAILED_COUNT"
+echo "Plan: $PLAN_FILE"
+echo "Log: $LOG_FILE"

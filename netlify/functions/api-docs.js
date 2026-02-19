@@ -425,7 +425,7 @@ function generateHtmlDocs(docs) {
 <head>
   <title>${docs.title}</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #0d1117; color: #c9d1d9; }
+    body { font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #0d1117; color: #c9d1d9; }
     h1 { color: #58a6ff; }
     h2 { color: #8b949e; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
     h3 { color: #58a6ff; margin-bottom: 8px; }

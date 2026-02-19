@@ -344,7 +344,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               />
             </div>
 
-            <div class="form-row">
+            <div class="form-row two-col">
               <div class="form-field">
                 <label>Type *</label>
                 <p-select
@@ -365,7 +365,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               </div>
             </div>
 
-            <div class="form-row">
+            <div class="form-row two-col">
               <div class="form-field">
                 <label>Size</label>
                 <input

@@ -1,0 +1,96 @@
+/**
+ * Shared SCSS Patterns
+ * ===================
+ * Consolidates duplicated rule blocks identified by audit:scss-duplications.
+ * Use these mixins instead of repeating patterns across components.
+ *
+ * Patterns: icon-base, metric-display, loading-placeholder, rec-icon
+ */
+
+@use "./variables" as *;
+
+// ============================================
+// ICON BASE (i selector - 18+ files)
+// Shared icon styling for PrimeIcons
+// ============================================
+
+@mixin icon-base(
+  $size: var(--ds-font-size-md),
+  $color: var(--color-text-secondary),
+  $opacity: 1
+) {
+  font-size: $size;
+  color: $color;
+  opacity: $opacity;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// Icon within parent (e.g. .section-title i, .p-tab i)
+@mixin icon-in-context($size: var(--font-body-size), $color: var(--color-text-tertiary)) {
+  font-size: $size;
+  color: $color;
+  transition: color var(--transition-base) ease;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+// ============================================
+// METRIC DISPLAY (metrics-grid + metric-value/label)
+// Shared between analytics, coach-analytics, performance-tracking
+// ============================================
+
+@mixin metrics-grid($gap: var(--space-4), $min-col: var(--grid-card-min-sm)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-col, 1fr));
+  gap: $gap;
+}
+
+@mixin metric-value-display(
+  $value-size: var(--ds-font-size-2xl),
+  $value-color: var(--color-brand-primary),
+  $label-size: var(--ds-font-size-md),
+  $label-color: var(--color-text-secondary)
+) {
+  .metric-label {
+    font-size: $label-size;
+    color: $label-color;
+    margin-bottom: var(--space-2);
+  }
+
+  .metric-value {
+    font-size: $value-size;
+    font-weight: var(--ds-font-weight-bold);
+    color: $value-color;
+  }
+}
+
+// ============================================
+// LOADING PLACEHOLDER (analytics + performance-tracking)
+// ============================================
+
+@mixin loading-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  min-height: var(--chart-min-height-md);
+  color: var(--color-text-muted);
+  font-size: var(--ds-font-size-sm);
+}
+
+// ============================================
+// REC-ICON (acwr-dashboard + training-safety)
+// Recommendation card icon styling
+// ============================================
+
+@mixin rec-icon($size: var(--ds-font-size-3xl)) {
+  font-size: $size;
+  text-align: center;
+  color: var(--ds-primary-green);
+}

@@ -94,7 +94,7 @@
 
     <!-- Empty State -->
     @if (totalCountDisplay === 0) {
-      <app-empty-state icon="inbox" heading="No supplements configured">
+      <app-empty-state icon="pi-inbox" heading="No supplements configured">
         <app-button iconLeft="pi-plus" size="sm" (clicked)="openAddDialog()"
           >Add Your First Supplement</app-button
         >
@@ -136,7 +136,7 @@
       />
     </div>
 
-    <div class="form-row">
+    <div class="form-row two-col">
       <div class="form-field">
         <label for="suppTiming">Timing</label>
         <p-select

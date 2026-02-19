@@ -206,7 +206,7 @@ import { getTimeAgo } from "../../utils/date.utils";
     `
       .override-notification-card {
         margin-bottom: var(--space-4);
-        border-left: var(--space-1) solid var(--primary-color);
+        border-left: var(--space-1) solid var(--color-brand-primary);
       }
 
       .override-header {
@@ -222,7 +222,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       }
 
       .override-icon {
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
         font-size: var(--ds-font-size-xl);
       }
 
@@ -234,7 +234,7 @@ import { getTimeAgo } from "../../utils/date.utils";
 
       .contract-section {
         padding: var(--space-3);
-        background: var(--surface-50);
+        background: var(--surface-secondary);
         border-radius: var(--radius-lg);
       }
 
@@ -299,7 +299,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       .transparency-content {
         margin-top: var(--space-4);
         padding: var(--space-4);
-        background: var(--surface-50);
+        background: var(--surface-secondary);
         border-radius: var(--radius-lg);
       }
 
@@ -345,7 +345,7 @@ import { getTimeAgo } from "../../utils/date.utils";
 
       .history-item {
         padding: var(--space-3);
-        background: var(--surface-50);
+        background: var(--surface-secondary);
         border-radius: var(--space-1);
       }
 

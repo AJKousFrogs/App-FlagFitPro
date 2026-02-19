@@ -5,7 +5,7 @@
  * Applies a specific migration file to the Supabase database
  *
  * Usage: node scripts/apply-migration.js <migration-file>
- * Example: node scripts/apply-migration.js database/migrations/033_readiness_score_system.sql
+ * Example: node scripts/apply-migration.js supabase/migrations/20260112_fix_missing_schema_elements.sql
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -18,7 +18,7 @@ if (!migrationFile) {
   console.error("❌ Error: No migration file specified");
   console.log("Usage: node scripts/apply-migration.js <migration-file>");
   console.log(
-    "Example: node scripts/apply-migration.js database/migrations/033_readiness_score_system.sql",
+    "Example: node scripts/apply-migration.js supabase/migrations/20260112_fix_missing_schema_elements.sql",
   );
   process.exit(1);
 }

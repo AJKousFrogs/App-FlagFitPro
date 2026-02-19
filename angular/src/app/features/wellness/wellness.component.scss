@@ -35,12 +35,7 @@
   width: 100%;
 }
 
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
-  gap: var(--space-6);
-  align-items: stretch; /* Ensure equal card heights */
-}
+// .charts-grid: Use primitives/_charts.scss
 
 .loading-text {
   color: var(--color-text-secondary);
@@ -61,7 +56,7 @@
   .checkin-impact-note {
     margin: 0 0 var(--space-4);
   font-size: var(--ds-font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-text-secondary);
   }
 
   display: flex;
@@ -231,10 +226,6 @@
 
 // ===== Responsive =====
 @include respond-to(md) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-
   .checkin-row {
     grid-template-columns: 1fr;
   }

@@ -191,7 +191,7 @@ const POSITIONS = [
               <div class="tournament-card">
                 <div class="tournament-header">
                   <div class="tournament-title">
-                    <span class="tournament-icon">🏆</span>
+                    <span class="tournament-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
                     <h3>{{ tournament.name }}</h3>
                   </div>
                   <div class="tournament-actions">
@@ -211,9 +211,9 @@ const POSITIONS = [
 
                 <div class="tournament-details">
                   <div class="detail-row">
-                    <span class="detail-item">📅 {{ tournament.dates }}</span>
+                    <span class="detail-item">{{ tournament.dates }}</span>
                     <span class="detail-item"
-                      >📍 {{ tournament.location }}</span
+                      >{{ tournament.location }}</span
                     >
                   </div>
                   <div class="detail-row">

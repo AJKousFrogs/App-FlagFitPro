@@ -63,14 +63,14 @@ interface ResourceCategory {
 
 // ===== Constants =====
 const CATEGORIES = [
-  { id: "drills", name: "Drills", icon: "🏃" },
-  { id: "tactics", name: "Tactics", icon: "📖" },
-  { id: "conditioning", name: "Conditioning", icon: "💪" },
-  { id: "injury", name: "Injury Prevention", icon: "🏥" },
-  { id: "rules", name: "Rules", icon: "📋" },
-  { id: "position", name: "Position Guides", icon: "🎯" },
-  { id: "mental", name: "Mental Game", icon: "🧠" },
-  { id: "nutrition", name: "Nutrition", icon: "🍎" },
+  { id: "drills", name: "Drills", icon: "pi-bolt" },
+  { id: "tactics", name: "Tactics", icon: "pi-book" },
+  { id: "conditioning", name: "Conditioning", icon: "pi-heart" },
+  { id: "injury", name: "Injury Prevention", icon: "pi-heart" },
+  { id: "rules", name: "Rules", icon: "pi-list" },
+  { id: "position", name: "Position Guides", icon: "pi-bullseye" },
+  { id: "mental", name: "Mental Game", icon: "pi-lightbulb" },
+  { id: "nutrition", name: "Nutrition", icon: "pi-apple" },
 ];
 
 const RESOURCE_TYPES = [
@@ -242,7 +242,7 @@ const VISIBILITY_OPTIONS = [
                   class="category-card"
                   (click)="filterByCategory(category.id)"
                 >
-                  <span class="category-icon">{{ category.icon }}</span>
+                  <span class="category-icon"><i [class]="'pi ' + category.icon" aria-hidden="true"></i></span>
                   <div class="category-info">
                     <span class="category-name">{{ category.name }}</span>
                     <span class="category-count"
@@ -346,7 +346,7 @@ const VISIBILITY_OPTIONS = [
             <div class="resources-list">
               @for (resource of teamResources(); track resource.id) {
                 <div class="resource-row team-resource">
-                  <div class="resource-icon-small">📝</div>
+                  <div class="resource-icon-small"><i class="pi pi-pencil" aria-hidden="true"></i></div>
                   <div class="resource-info">
                     <h4>{{ resource.title }}</h4>
                     <p class="resource-desc">{{ resource.description }}</p>

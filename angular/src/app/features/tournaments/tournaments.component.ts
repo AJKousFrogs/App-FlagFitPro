@@ -311,7 +311,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                           </div>
                         </div>
                         <div class="info-item">
-                          <div class="info-icon">📍</div>
+                          <div class="info-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></div>
                           <div>
                             <div class="info-value">
                               {{ tournament.location || "TBD" }}
@@ -323,7 +323,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                         </div>
                         @if (tournament.venue) {
                           <div class="info-item">
-                            <div class="info-icon">🏟️</div>
+                            <div class="info-icon"><i class="pi pi-building" aria-hidden="true"></i></div>
                             <div>
                               <div class="info-value">
                                 {{ tournament.venue }}
@@ -501,7 +501,7 @@ const toDateOrNull = (value: unknown): Date | null => {
                           </div>
                         </div>
                         <div class="info-item">
-                          <div class="info-icon">📍</div>
+                          <div class="info-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></div>
                           <div>
                             <div class="info-value">
                               {{ tournament.location || "TBD" }}

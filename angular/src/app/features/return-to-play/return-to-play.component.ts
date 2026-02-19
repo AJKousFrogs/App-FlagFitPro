@@ -708,7 +708,7 @@ const SEVERITY_LEVELS = [
           </div>
 
           <!-- Location & Severity Row -->
-          <div class="form-row">
+          <div class="form-row two-col">
             <div class="form-field">
               <label for="injury-location">Injury Location *</label>
               <p-select
@@ -737,7 +737,7 @@ const SEVERITY_LEVELS = [
           </div>
 
           <!-- Date Row -->
-          <div class="form-row">
+          <div class="form-row two-col">
             <div class="form-field">
               <label for="injury-date">Injury Date *</label>
               <p-datepicker

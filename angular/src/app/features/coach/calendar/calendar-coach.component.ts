@@ -198,7 +198,7 @@ const RECURRING_OPTIONS = [
                             [class]="'type-' + event.type"
                             (click)="viewEvent(event)"
                           >
-                            {{ getEventIcon(event.type) }}
+                            <i [class]="'pi ' + getEventIcon(event.type)" aria-hidden="true"></i>
                             <span class="rsvp-count"
                               >{{ event.rsvpSummary.going }}/{{
                                 event.rsvpSummary.going +
@@ -222,19 +222,19 @@ const RECURRING_OPTIONS = [
 
             <div class="calendar-legend">
               <span class="legend-item"
-                ><span class="legend-icon">🏋️</span> Practice</span
+                ><span class="legend-icon"><i class="pi pi-bolt" aria-hidden="true"></i></span> Practice</span
               >
               <span class="legend-item"
-                ><span class="legend-icon">🏈</span> Game</span
+                ><span class="legend-icon"><i class="pi pi-flag" aria-hidden="true"></i></span> Game</span
               >
               <span class="legend-item"
-                ><span class="legend-icon">🏆</span> Tournament</span
+                ><span class="legend-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span> Tournament</span
               >
               <span class="legend-item"
-                ><span class="legend-icon">📋</span> Meeting</span
+                ><span class="legend-icon"><i class="pi pi-list" aria-hidden="true"></i></span> Meeting</span
               >
               <span class="legend-item"
-                ><span class="legend-icon">●</span> Today</span
+                ><span class="legend-icon"><i class="pi pi-circle-fill" aria-hidden="true"></i></span> Today</span
               >
             </div>
           }
@@ -248,9 +248,7 @@ const RECURRING_OPTIONS = [
               <div class="event-card" [class]="'type-' + event.type">
                 <div class="event-header">
                   <div class="event-title">
-                    <span class="event-icon">{{
-                      getEventIcon(event.type)
-                    }}</span>
+                    <span class="event-icon"><i [class]="'pi ' + getEventIcon(event.type)" aria-hidden="true"></i></span>
                     <h4>{{ event.title }}</h4>
                   </div>
                   <div class="event-date">{{ event.date }}</div>
@@ -273,20 +271,20 @@ const RECURRING_OPTIONS = [
 
                 <div class="event-details">
                   <p>
-                    📍 {{ event.location }} • ⏰ {{ event.startTime }} -
+                    {{ event.location }} • {{ event.startTime }} -
                     {{ event.endTime }}
                   </p>
                 </div>
 
                 <div class="event-rsvp">
                   <span class="rsvp-item going"
-                    >✅ {{ event.rsvpSummary.going }} going</span
+                    >{{ event.rsvpSummary.going }} going</span
                   >
                   <span class="rsvp-item cant-go"
-                    >❌ {{ event.rsvpSummary.cantGo }} can't</span
+                    >{{ event.rsvpSummary.cantGo }} can't</span
                   >
                   <span class="rsvp-item pending"
-                    >❓ {{ event.rsvpSummary.pending }} pending</span
+                    >{{ event.rsvpSummary.pending }} pending</span
                   >
                 </div>
 
@@ -986,14 +984,14 @@ export class CalendarCoachComponent implements OnInit {
   // Helpers
   getEventIcon(type: string): string {
     const icons: Record<string, string> = {
-      practice: "🏋️",
-      game: "🏈",
-      tournament: "🏆",
-      meeting: "📋",
-      social: "🎉",
-      debrief: "📊",
+      practice: "pi-bolt",
+      game: "pi-flag",
+      tournament: "pi-trophy",
+      meeting: "pi-list",
+      social: "pi-star",
+      debrief: "pi-chart-bar",
     };
-    return icons[type] || "📅";
+    return icons[type] || "pi-calendar";
   }
 
   getPaymentPercent(event: TeamEvent): number {

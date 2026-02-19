@@ -306,6 +306,7 @@
       .unit-content i { color: var(--ds-primary-green); }
     }
     &:active { transform: translateY(0) scale(0.98); }
+
     @include ds-focus-ring(var(--ds-primary-green), var(--space-1), var(--radius-xl));
     &.selected {
       border-color: var(--ds-primary-green);
@@ -393,6 +394,7 @@
       .arm-radio { border-color: var(--ds-primary-green); }
     }
     &:active { transform: translateY(0) scale(0.98); }
+
     @include ds-focus-ring(var(--ds-primary-green), var(--space-1), var(--radius-xl));
 
     &.selected {
@@ -749,6 +751,7 @@
       .day-check { border-color: var(--ds-primary-green); }
     }
     &:active { transform: translateY(0) scale(0.95); }
+
     @include ds-focus-ring(var(--ds-primary-green), var(--space-1), var(--radius-full));
 
     &.selected {

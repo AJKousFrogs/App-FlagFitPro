@@ -150,7 +150,7 @@ interface TimezoneOption {
             <p-card class="olympic-card">
               <ng-template #header>
                 <div class="card-header olympic-header">
-                  <span class="olympic-rings">🏅</span>
+                  <span class="olympic-rings"><i class="pi pi-trophy" aria-hidden="true"></i></span>
                   <div>
                     <h3>Olympic Travel Planner</h3>
                     <p>Quick setup for LA28 or Brisbane 2032</p>

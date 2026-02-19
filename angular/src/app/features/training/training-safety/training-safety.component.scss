@@ -163,9 +163,7 @@
   border-left-color: var(--color-status-info);
 }
 
-.rec-icon {
-  font-size: var(--ds-font-size-2xl);
-}
+/* rec-icon: use primitive from _icons.scss */
 
 .rec-content h4 {
   margin: 0 0 var(--space-2) 0;

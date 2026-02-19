@@ -95,26 +95,26 @@ export const DesignTokens = {
         950: "var(--primitive-neutral-950)",
       },
     },
-    // Semantic Status Colors (from SCSS)
+    // Semantic Status Colors - Aligned with design-system-tokens.scss
     status: {
       success: {
-        main: "#63ad0e",
+        main: "#089949", // --ds-primary-green
         light: "var(--color-status-success-light)",
         subtle: "var(--color-status-success-subtle)",
       },
       warning: {
-        main: "#ffc000",
+        main: "#f59e0b", // --ds-color-warning
         light: "var(--color-status-warning-light)",
         subtle: "var(--color-status-warning-subtle)",
         text: "var(--color-warning-text-accessible)", // Dark warning text for light backgrounds
       },
       error: {
-        main: "#ff003c",
+        main: "#ef4444", // --ds-color-danger
         light: "var(--color-status-error-light)",
         subtle: "var(--color-status-error-subtle)",
       },
       info: {
-        main: "#0ea5e9",
+        main: "#0ea5e9", // --ds-color-info
         light: "var(--color-status-info-light)",
         subtle: "var(--color-status-info-subtle)",
       },
@@ -287,7 +287,7 @@ export const DesignTokens = {
     letterSpacing: {
       tight: "-0.02em",
       normal: "0",
-      caption: "0.04em",
+      caption: "0.05em", /* Matches --letter-spacing-wide / typography-system */
       wide: "0.05em",
     },
   },
@@ -539,22 +539,22 @@ export const ChartColors = {
   primaryLight: rgba(DesignTokens.colors.brand.primary[700], 0.5),
   primaryDark: DesignTokens.colors.brand.primary[900],
   success: DesignTokens.colors.status.success.main,
-  successLight: rgba("#63ad0e", 0.5),
+  successLight: rgba(DesignTokens.colors.status.success.main, 0.5),
   warning: DesignTokens.colors.status.warning.main,
-  warningLight: rgba("#ffc000", 0.5),
+  warningLight: rgba(DesignTokens.colors.status.warning.main, 0.5),
   error: DesignTokens.colors.status.error.main,
-  errorLight: rgba("#ff003c", 0.5),
+  errorLight: rgba(DesignTokens.colors.status.error.main, 0.5),
   info: DesignTokens.colors.status.info.main,
-  infoLight: rgba("#0ea5e9", 0.5),
+  infoLight: rgba(DesignTokens.colors.status.info.main, 0.5),
 
-  // Gradient colors for multi-series charts
+  // Gradient colors for multi-series charts (aligned with design-system)
   series: [
-    DesignTokens.colors.brand.primary[700], // var(--p-highlight-text-color)
-    DesignTokens.colors.brand.primary[500], // var(--p-highlight-text-color)
-    DesignTokens.colors.status.success.main, // #63ad0e
-    DesignTokens.colors.status.warning.main, // #ffc000
-    DesignTokens.colors.status.info.main, // #0ea5e9
-    DesignTokens.colors.brand.primary[300], // var(--primitive-primary-300)
+    DesignTokens.colors.brand.primary[700],
+    DesignTokens.colors.brand.primary[500],
+    DesignTokens.colors.status.success.main,
+    DesignTokens.colors.status.warning.main,
+    DesignTokens.colors.status.info.main,
+    DesignTokens.colors.brand.primary[300],
   ],
 };
 

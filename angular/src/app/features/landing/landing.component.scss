@@ -626,7 +626,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  color: var(--color-brand-primary);
+  color: var(--ds-primary-green-dark);
   font-weight: var(--ds-font-weight-semibold);
   cursor: pointer;
   transition:
@@ -731,7 +731,7 @@
   display: inline-block;
 
   &:hover {
-    color: var(--color-brand-primary);
+    color: var(--ds-primary-green-dark);
     transform: translateX(var(--space-1));
   }
 }

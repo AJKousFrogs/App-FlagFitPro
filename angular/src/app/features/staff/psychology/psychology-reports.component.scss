@@ -75,7 +75,7 @@
       width: var(--space-10);
       height: var(--space-10);
       border-radius: var(--ds-radius-md);
-      background: var(--primary-color);
+      background: var(--color-brand-primary);
       color: var(--surface-0);
       display: flex;
       align-items: center;
@@ -93,7 +93,7 @@
 
       .report-date {
         font-size: var(--ds-font-size-xs);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -101,14 +101,14 @@
   .report-details {
     .report-period {
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       margin-bottom: var(--ds-spacing-md);
     }
 
     .included-sections {
       .section-label {
         font-size: var(--ds-font-size-xs);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
         display: block;
         margin-bottom: var(--ds-spacing-xs);
       }
@@ -153,7 +153,7 @@
 
       .metric-label {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
 
@@ -198,13 +198,13 @@
   .recovery-stat .stat-block__value {
     font-size: var(--ds-font-size-2xl);
     font-weight: var(--ds-font-weight-bold);
-    color: var(--primary-color);
+    color: var(--color-brand-primary);
   }
 
   .sleep-stat .stat-block__label,
   .recovery-stat .stat-block__label {
     font-size: var(--ds-font-size-xs);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 
   .sleep-indicators {
@@ -217,7 +217,7 @@
       align-items: center;
       gap: var(--ds-spacing-sm);
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
 
       i {
         font-size: var(--ds-font-size-md);
@@ -244,7 +244,7 @@
   .activities-list {
     .list-label {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       display: block;
       margin-bottom: var(--ds-spacing-xs);
     }
@@ -279,7 +279,7 @@
         gap: var(--ds-spacing-sm);
         margin: 0 0 var(--ds-spacing-sm);
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       ul {
@@ -319,7 +319,7 @@
 
       .comp-date {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -334,7 +334,7 @@
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
 
     .state-metrics {
@@ -357,7 +357,7 @@
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
 
     .readiness {
@@ -378,10 +378,10 @@
 
     .concern {
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
 
       strong {
-        color: var(--text-color);
+        color: var(--color-text-primary);
       }
     }
   }
@@ -393,7 +393,7 @@
 
 :is(.mental-state .state-metrics) .state-metric .metric-label {
   font-size: var(--ds-font-size-xs);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 :is(.mental-state .state-metrics) .state-metric .metric-with-trend {
@@ -450,7 +450,7 @@
 
     .privacy-hint {
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
       margin: 0 0 var(--ds-spacing-md);
     }
 
@@ -479,7 +479,7 @@
       h5 {
         margin: 0 0 var(--ds-spacing-sm);
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       .checkbox-item {

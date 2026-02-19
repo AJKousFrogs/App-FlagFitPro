@@ -62,11 +62,7 @@
     }
   }
 
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
+  /* Base from _dashboard.scss; responsive override below */
 
   .progress-badge {
     font-size: var(--ds-font-size-sm);
@@ -229,32 +225,15 @@
     gap: var(--space-4);
   }
 
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-
-    label {
-      font-size: var(--ds-font-size-sm);
-      font-weight: var(--ds-font-weight-medium);
-      color: var(--color-text-primary);
-    }
-
-    input {
-      width: 100%;
-    }
-
-    // PrimeNG select override moved to _component-overrides.scss (DS-EXC-011)
+  /* Form layout: use primitives _forms.scss; add .two-col to form-row in template */
+  .form-field label {
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-medium);
+    color: var(--color-text-primary);
   }
 
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-    }
+  .form-field input {
+    width: 100%;
   }
 
   // =============================================

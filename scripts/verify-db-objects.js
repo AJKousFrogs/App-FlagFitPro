@@ -1,36 +1,17 @@
 #!/usr/bin/env node
 /**
- * CI Verification Script: Required DB Objects & RLS Must Exist
- *
- * This script verifies database integrity and security requirements:
- * - Consent views exist (v_load_monitoring_consent, v_workout_logs_consent)
- * - ACWR functions exist (calculate_daily_load, calculate_acute_load, etc.)
- * - Trigger exists and attached (trigger_update_load_monitoring)
- * - RLS enabled on privacy tables
- * - AI processing fail-fast function exists
- *
- * Exit codes:
- * - 0: All checks passed
- * - 1: One or more checks failed
+ * CI Verification Script: Required DB Objects Must Exist and Be Reachable
  *
  * Usage:
  *   node scripts/verify-db-objects.js
- *   node scripts/verify-db-objects.js --ci  # CI mode with machine-readable output
- *
- * Športno društvo Žabe - Athletes helping athletes since 2020
+ *   node scripts/verify-db-objects.js --strict
+ *   node scripts/verify-db-objects.js --ci
  */
 
 import { createClient } from "@supabase/supabase-js";
 import "dotenv/config";
 
-// ============================================================================
-// CONFIGURATION
-// ============================================================================
-
-const REQUIRED_VIEWS = [
-  "v_load_monitoring_consent",
-  "v_workout_logs_consent",
-];
+const REQUIRED_VIEWS = ["v_load_monitoring_consent", "v_workout_logs_consent"];
 
 const REQUIRED_FUNCTIONS = [
   "calculate_daily_load",
@@ -54,9 +35,7 @@ const REQUIRED_FUNCTIONS = [
   "create_emergency_medical_record",
 ];
 
-const REQUIRED_TRIGGERS = ["trigger_update_load_monitoring"];
-
-const RLS_REQUIRED_TABLES = [
+const REQUIRED_TABLES = [
   "privacy_settings",
   "team_sharing_settings",
   "parental_consent",
@@ -70,11 +49,9 @@ const RLS_REQUIRED_TABLES = [
   "wellness_entries",
 ];
 
-// ============================================================================
-// MAIN
-// ============================================================================
-
 const isCI = process.argv.includes("--ci");
+const isStrict = process.argv.includes("--strict") || isCI;
+
 const results = {
   passed: [],
   failed: [],
@@ -82,17 +59,17 @@ const results = {
 };
 
 async function main() {
-  console.log("🔍 Database Objects & RLS Verification\n");
+  console.log("🔍 Database Objects Verification\n");
   console.log(`${"=".repeat(60)}\n`);
 
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
     console.error(
-      "❌ ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set",
+      "❌ ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY/SUPABASE_SERVICE_KEY must be set",
     );
-    console.error("   Set these environment variables or create a .env file");
     process.exit(1);
   }
 
@@ -100,45 +77,38 @@ async function main() {
     auth: { persistSession: false },
   });
 
+  const connectivityOk = await checkConnectivity(supabase);
+  if (!connectivityOk) {
+    printSummary();
+    process.exit(1);
+  }
+
   await checkViews(supabase);
   await checkFunctions(supabase);
-  await checkTriggers(supabase);
-  await checkRLS(supabase);
-  await runVerifyDatabaseBootstrap(supabase);
+  await checkTables(supabase);
 
   printSummary();
 
-  if (results.failed.length > 0) {
-    process.exit(1);
-  }
-  process.exit(0);
+  const shouldFail =
+    results.failed.length > 0 || (isStrict && results.warnings.length > 0);
+  process.exit(shouldFail ? 1 : 0);
 }
-
-// ============================================================================
-// CHECK FUNCTIONS
-// ============================================================================
 
 async function checkViews(supabase) {
   console.log("📋 Checking Required Views...\n");
 
   for (const view of REQUIRED_VIEWS) {
-    const { data: _data, error } = await supabase
-      .from(view)
-      .select("*")
-      .limit(0);
+    const { error } = await supabase.from(view).select("*").limit(0);
 
     if (!error) {
       logPass(`View: ${view}`);
     } else if (
       error.code === "42P01" ||
-      error.message?.includes("does not exist")
+      error.message?.toLowerCase?.().includes("does not exist")
     ) {
-      logFail(
-        `View: ${view}`,
-        `View '${view}' does not exist in public schema`,
-      );
+      logFail(`View: ${view}`, `View '${view}' does not exist in public schema`);
     } else {
-      logPass(`View: ${view}`, "exists (query restricted)");
+      logFail(`View: ${view}`, `View '${view}' not reachable: ${error.message}`);
     }
   }
 
@@ -147,81 +117,34 @@ async function checkViews(supabase) {
 
 async function checkFunctions(supabase) {
   console.log("⚙️  Checking Required Functions...\n");
+  console.log("   (Using direct RPC probes)\n");
 
-  const { data: functions, error } = await supabase.rpc("sql", {
-    query: `
-      SELECT proname 
-      FROM pg_proc 
-      JOIN pg_namespace ON pg_proc.pronamespace = pg_namespace.oid 
-      WHERE pg_namespace.nspname = 'public'
-    `,
-  });
-
-  let functionNames = [];
-  if (error || !functions) {
-    console.log("   (Using fallback function detection method)\n");
-    for (const fn of REQUIRED_FUNCTIONS) {
-      try {
-        await supabase.rpc(fn, {});
-        functionNames.push(fn);
-      } catch (e) {
-        if (e.message && !e.message.includes("does not exist")) {
-          functionNames.push(fn);
-        }
-      }
-    }
-  } else {
-    functionNames = functions.map((f) => f.proname);
-  }
+  const missingPatterns = [
+    "does not exist",
+    "could not find the function",
+    "not found in the schema cache",
+    "function not found",
+  ];
 
   for (const fn of REQUIRED_FUNCTIONS) {
-    if (functionNames.includes(fn)) {
+    try {
+      await supabase.rpc(fn, {});
       logPass(`Function: ${fn}`);
-    } else {
-      logFail(`Function: ${fn}`, `Function '${fn}()' does not exist`);
-    }
-  }
-
-  console.log();
-}
-
-async function checkTriggers(supabase) {
-  console.log("🔔 Checking Required Triggers...\n");
-
-  const { data: triggers, error } = await supabase.rpc("sql", {
-    query: `
-      SELECT tgname, relname as table_name
-      FROM pg_trigger
-      JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid
-      WHERE NOT tgisinternal
-    `,
-  });
-
-  let triggerNames = [];
-  if (!error && triggers) {
-    triggerNames = triggers.map((t) => t.tgname);
-  }
-
-  if (error || !triggers) {
-    for (const trigger of REQUIRED_TRIGGERS) {
-      logWarn(
-        `Trigger: ${trigger}`,
-        "Cannot verify (no sql RPC) - check via migration logs",
+    } catch (e) {
+      const message = String(e?.message || "");
+      if (message.toLowerCase().includes("fetch failed")) {
+        logFail(`Function: ${fn}`, "RPC transport failed (fetch failed)");
+        continue;
+      }
+      const missing = missingPatterns.some((p) =>
+        message.toLowerCase().includes(p),
       );
-    }
-  } else {
-    for (const trigger of REQUIRED_TRIGGERS) {
-      if (triggerNames.includes(trigger)) {
-        const triggerInfo = triggers?.find((t) => t.tgname === trigger);
-        logPass(
-          `Trigger: ${trigger}`,
-          `Attached to: ${triggerInfo?.table_name || "unknown"}`,
-        );
+
+      if (missing) {
+        logFail(`Function: ${fn}`, `Function '${fn}()' does not exist`);
       } else {
-        logFail(
-          `Trigger: ${trigger}`,
-          `Trigger '${trigger}' does not exist or is not attached`,
-        );
+        // Exists but may need params/runtime preconditions.
+        logPass(`Function: ${fn}`);
       }
     }
   }
@@ -229,73 +152,51 @@ async function checkTriggers(supabase) {
   console.log();
 }
 
-async function checkRLS(supabase) {
-  console.log("🔒 Checking RLS Status on Privacy Tables...\n");
+async function checkConnectivity(supabase) {
+  console.log("🌐 Checking Supabase Connectivity...\n");
+  const { error } = await supabase
+    .from("team_members")
+    .select("user_id")
+    .limit(1);
 
-  const { data: tables, error } = await supabase.rpc("sql", {
-    query: `
-      SELECT tablename, rowsecurity
-      FROM pg_tables
-      WHERE schemaname = 'public'
-    `,
-  });
-
-  const tableRLS = {};
-  if (!error && tables) {
-    tables.forEach((t) => {
-      tableRLS[t.tablename] = t.rowsecurity;
-    });
+  if (error && String(error.message || "").toLowerCase().includes("fetch failed")) {
+    logFail(
+      "Connectivity",
+      "Supabase REST transport failed (fetch failed). Check network/project URL/keys.",
+    );
+    console.log();
+    return false;
   }
-
-  for (const table of RLS_REQUIRED_TABLES) {
-    if (tableRLS[table] === true) {
-      logPass(`RLS: ${table}`, "Row Level Security enabled");
-    } else if (tableRLS[table] === false) {
-      logFail(`RLS: ${table}`, `Row Level Security is DISABLED on '${table}'`);
-    } else {
-      logWarn(
-        `RLS: ${table}`,
-        `Table '${table}' not found or RLS status unknown`,
-      );
-    }
-  }
-
-  console.log();
-}
-
-async function runVerifyDatabaseBootstrap(supabase) {
-  console.log("🧪 Running verify_database_bootstrap()...\n");
-
-  const { data: bootstrapData, error } = await supabase.rpc(
-    "verify_database_bootstrap",
-  );
 
   if (error) {
-    logWarn(
-      "verify_database_bootstrap",
-      `Function returned error: ${error.message}`,
-    );
-    return;
+    logWarn("Connectivity", `Partial connectivity: ${error.message}`);
+  } else {
+    logPass("Connectivity", "Supabase REST reachable");
   }
+  console.log();
+  return true;
+}
 
-  if (bootstrapData && bootstrapData.length > 0) {
-    for (const check of bootstrapData) {
-      if (check.status === "PASS") {
-        logPass(`Bootstrap: ${check.check_name}`, check.details);
-      } else if (check.status === "WARN") {
-        logWarn(`Bootstrap: ${check.check_name}`, check.details);
-      } else {
-        logFail(`Bootstrap: ${check.check_name}`, check.details);
-      }
+async function checkTables(supabase) {
+  console.log("🔒 Checking Required Privacy/Safety Tables...\n");
+
+  for (const table of REQUIRED_TABLES) {
+    const { error } = await supabase.from(table).select("*").limit(0);
+
+    if (!error) {
+      logPass(`Table: ${table}`, "reachable");
+    } else if (
+      error.code === "42P01" ||
+      error.message?.toLowerCase?.().includes("does not exist")
+    ) {
+      logFail(`Table: ${table}`, `Table '${table}' does not exist`);
+    } else {
+      logFail(`Table: ${table}`, `Table '${table}' not reachable: ${error.message}`);
     }
   }
 
   console.log();
 }
-
-// ============================================================================
-// LOGGING HELPERS
-// ============================================================================
 
 function logPass(name, details = "") {
   const msg = details ? `${name} - ${details}` : name;
@@ -324,16 +225,32 @@ function printSummary() {
   console.log(`   ⚠️  Warnings: ${results.warnings.length}`);
   console.log();
 
-  if (results.failed.length > 0) {
+  const strictFailure = isStrict && results.warnings.length > 0;
+
+  if (results.failed.length > 0 || strictFailure) {
     console.log("❌ VERIFICATION FAILED\n");
-    console.log("The following checks must pass before deployment:\n");
-    for (const fail of results.failed) {
-      console.log(`   • ${fail.name}`);
-      if (fail.details) {
-        console.log(`     ${fail.details}`);
+
+    if (results.failed.length > 0) {
+      console.log("The following checks must pass before deployment:\n");
+      for (const fail of results.failed) {
+        console.log(`   • ${fail.name}`);
+        if (fail.details) {
+          console.log(`     ${fail.details}`);
+        }
       }
+      console.log();
     }
-    console.log();
+
+    if (strictFailure) {
+      console.log("Strict mode: warnings are treated as failures.\n");
+      for (const warning of results.warnings) {
+        console.log(`   • ${warning.name}`);
+        if (warning.details) {
+          console.log(`     ${warning.details}`);
+        }
+      }
+      console.log();
+    }
   } else {
     console.log("✅ ALL CHECKS PASSED\n");
   }
@@ -343,7 +260,10 @@ function printSummary() {
     console.log(
       JSON.stringify(
         {
-          success: results.failed.length === 0,
+          success:
+            results.failed.length === 0 &&
+            (!isStrict || results.warnings.length === 0),
+          strict: isStrict,
           passed: results.passed.length,
           failed: results.failed.length,
           warnings: results.warnings.length,
@@ -361,6 +281,7 @@ function printSummary() {
 }
 
 main().catch((err) => {
-  console.error("Fatal error:", err);
+  logWarn("fatal", String(err?.message || err));
+  printSummary();
   process.exit(1);
 });

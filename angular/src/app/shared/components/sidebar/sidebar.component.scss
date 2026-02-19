@@ -83,7 +83,7 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-  min-height: var(--header-height, var(--ds-font-size-var(--header-height)));
+  min-height: var(--header-height, 4rem);
   text-decoration: none;
 
   @include ds-hover-state(var(--surface-secondary));
@@ -289,9 +289,9 @@
 // TABLET: Collapsed sidebar (icons only)
 // Design System: --bp-tablet: 48rem, --bp-laptop: 64rem
 // ============================================
-@media (max-width: 64rem) and (min-width: 48.0625rem) {
+@media (max-width: var(--breakpoint-lg)) and (min-width: var(--breakpoint-md-min)) {
   .sidebar {
-    width: var(--sidebar-collapsed-width, var(--ds-font-size-var(--header-height)));
+    width: var(--sidebar-collapsed-width, 4rem);
   }
 
   .logo-text,
@@ -387,7 +387,7 @@
 // Samsung Galaxy S24: 1080x146.25rem (360x780 logical)
 // Samsung Galaxy S24 Ultra: 1440x193rem (480x1029 logical)
 // ============================================
-@media (max-width: 48rem) and (min-height: 43.75rem) {
+@media (max-width: var(--breakpoint-md)) and (min-height: var(--breakpoint-min-height-tablet)) {
   .sidebar {
     /* Ensure full height coverage on tall mobile screens */
     height: 100dvh;

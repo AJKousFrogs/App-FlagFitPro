@@ -83,7 +83,7 @@
 
 /* Selected row */
 tr.selected {
-  background: var(--primary-50);
+  background: var(--ds-primary-green-ultra-subtle);
 }
 
 /* Empty message */
@@ -121,7 +121,7 @@ tr.selected {
 }
 
 .mobile-card.selected {
-  background: var(--primary-50);
+  background: var(--ds-primary-green-ultra-subtle);
   border-color: var(--color-brand-primary);
 }
 
@@ -171,7 +171,7 @@ tr.selected {
 /* ================================
    RESPONSIVE - Container Queries
    ================================ */
-@container (width < 48rem) {
+@container (width < var(--breakpoint-md)) {
   .table-toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -216,7 +216,7 @@ tr.selected {
     // Ensure buttons are touch-friendly
     button,
     app-button {
-      min-block-size: 2.calc(var(--size-200) * 6);
+      min-block-size: var(--touch-target-md);
     }
   }
 }

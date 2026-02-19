@@ -2,7 +2,7 @@
 
 /**
  * Direct Migration Runner
- * Applies the username and verification fields migration
+ * Legacy helper for applying the username/verification migration.
  */
 
 import { fileURLToPath } from "node:url";
@@ -12,6 +12,19 @@ import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const migrationCandidates = [
+  "../database/migrations/038_add_username_and_verification_fields.sql",
+];
+
+function resolveMigrationPath() {
+  for (const rel of migrationCandidates) {
+    const abs = path.join(__dirname, rel);
+    if (fs.existsSync(abs)) {
+      return abs;
+    }
+  }
+  return path.join(__dirname, migrationCandidates[0]);
+}
 
 // Check environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -32,7 +45,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
   console.log("─".repeat(80));
   console.log("1. Go to Supabase Dashboard → SQL Editor");
   console.log(
-    "2. Copy the SQL from: database/migrations/038_add_username_and_verification_fields.sql",
+    "2. Copy the SQL from the migration file path shown below",
   );
   console.log("3. Paste and run the SQL in the editor");
   console.log("─".repeat(80));
@@ -40,10 +53,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
   console.log("SQL Preview:");
   console.log("─".repeat(80));
 
-  const migrationPath = path.join(
-    __dirname,
-    "../database/migrations/038_add_username_and_verification_fields.sql",
-  );
+  const migrationPath = resolveMigrationPath();
+  console.log(`Selected migration path: ${migrationPath}`);
   const sql = fs.readFileSync(migrationPath, "utf8");
   console.log(sql);
   console.log("─".repeat(80));
@@ -81,10 +92,8 @@ async function checkAndApplyMigration() {
     );
 
     console.log("─".repeat(80));
-    const migrationPath = path.join(
-      __dirname,
-      "../database/migrations/038_add_username_and_verification_fields.sql",
-    );
+    const migrationPath = resolveMigrationPath();
+    console.log(`Using migration path: ${migrationPath}`);
     const sql = fs.readFileSync(migrationPath, "utf8");
     console.log(sql);
     console.log("─".repeat(80));

@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+const TRAINING_SESSIONS_TABLE = "training_sessions";
 
 /**
  * Merlin AI Guard - Hard Technical Enforcement
@@ -214,7 +215,7 @@ async function checkCoachLockedForMerlin(sessionId) {
   const supabaseReadOnly = createClient(process.env.SUPABASE_URL, merlinKey);
 
   const { data: session, error } = await supabaseReadOnly
-    .from("training_sessions")
+    .from(TRAINING_SESSIONS_TABLE)
     .select("coach_locked, modified_by_coach_id, session_state")
     .eq("id", sessionId)
     .single();

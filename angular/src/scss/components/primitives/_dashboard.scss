@@ -36,6 +36,31 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
     gap: var(--space-4);
+
+    @include respond-to(sm) {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+  }
+
+  .stats-grid--2col {
+    grid-template-columns: repeat(2, 1fr);
+
+    @include respond-to(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stats-grid--3col {
+    grid-template-columns: repeat(3, 1fr);
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to(sm) {
+      grid-template-columns: 1fr;
+    }
   }
 
   // ============================================
@@ -47,18 +72,10 @@
   .stats-overview .stat-block__label {
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
-
-    @include respond-to(md) {
-      font-size: var(--ds-font-size-xs);
-    }
   }
 
   .stats-overview .stat-block__value {
     font-size: var(--ds-font-size-3xl);
-
-    @include respond-to(sm) {
-      font-size: var(--ds-font-size-2xl);
-    }
   }
 
   // Stat block variants - use these instead of component-level duplication
@@ -76,22 +93,30 @@
     font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
     font-weight: var(--ds-font-weight-medium);
-
-    @include respond-to(md) {
-      font-size: var(--ds-font-size-xs);
-    }
   }
 
   .stat-block--stat-item .stat-block__value {
     font-size: var(--ds-font-size-3xl);
     font-weight: var(--ds-font-weight-bold);
     color: var(--ds-text-primary);
+  }
 
-    @include respond-to(md) {
+  // Consolidated stat-block responsive typography (md, sm)
+  @include respond-to(md) {
+    .stats-overview .stat-block__label,
+    .stat-block--stat-item .stat-block__label {
+      font-size: var(--ds-font-size-xs);
+    }
+    .stat-block--stat-item .stat-block__value {
       font-size: var(--ds-font-size-2xl);
     }
+  }
 
-    @include respond-to(sm) {
+  @include respond-to(sm) {
+    .stats-overview .stat-block__value {
+      font-size: var(--ds-font-size-2xl);
+    }
+    .stat-block--stat-item .stat-block__value {
       font-size: var(--ds-font-size-xl);
     }
   }
@@ -135,6 +160,46 @@
     height: var(--space-2);
     border-radius: var(--radius-full);
     flex-shrink: 0;
+  }
+
+  // ============================================
+  // METRICS GRID (shared across analytics, coach-analytics, psychology, etc.)
+  // Use instead of redefining in each feature component.
+  // ============================================
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .metrics-grid--2col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .metrics-grid--3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .metrics-grid--4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @include respond-to(lg) {
+    .metrics-grid--3col,
+    .metrics-grid--4col {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @include respond-to(sm) {
+    .metrics-grid,
+    .metrics-grid--2col,
+    .metrics-grid--3col,
+    .metrics-grid--4col {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
   }
 
   // ============================================

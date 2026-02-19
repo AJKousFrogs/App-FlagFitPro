@@ -384,7 +384,7 @@ interface TournamentNutritionBrief {
                           Composition Alerts
                         </h4>
                         <ul class="alert-list">
-                          @for (alert of compositionAlerts(); track $index) {
+                          @for (alert of compositionAlerts(); track alert) {
                             <li class="alert-item">{{ alert }}</li>
                           }
                         </ul>
@@ -459,7 +459,7 @@ interface TournamentNutritionBrief {
                             <ul>
                               @for (
                                 issue of compliance.timingIssues;
-                                track $index
+                                track issue
                               ) {
                                 <li>{{ issue }}</li>
                               }
@@ -929,7 +929,7 @@ export class NutritionistDashboardComponent implements OnInit {
         {
           label: "Weight (kg)",
           data: data.weightHistory.map((h) => h.weight),
-          borderColor: "var(--primary-color)",
+          borderColor: "var(--color-brand-primary)",
           fill: false,
           tension: 0.4,
         },

@@ -1,0 +1,40 @@
+/**
+ * Skeleton & Loading Placeholder Primitives
+ * ========================================
+ *
+ * Canonical patterns for loading states when content is fetched.
+ * Use .loading-placeholder for chart/card/block placeholders.
+ * Use .skeleton-* (in _feedback.scss) for shimmer blocks.
+ *
+ * RULE: Feature components should NOT redefine .loading-placeholder.
+ * Only add local overrides (min-height, padding) when needed.
+ */
+
+@layer primitives {
+  // ============================================
+  // LOADING PLACEHOLDER
+  // Chart/card/block placeholder while data loads.
+  // Used by analytics, performance-tracking, charts, etc.
+  // ============================================
+
+  .loading-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: var(--ds-font-size-md);
+  }
+
+  .loading-placeholder--compact {
+    padding: var(--space-6);
+    font-size: var(--ds-font-size-xs);
+  }
+
+  .loading-placeholder--lg {
+    padding: var(--space-10);
+    min-height: var(--chart-min-height-md, 12rem);
+  }
+}

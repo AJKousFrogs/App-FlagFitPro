@@ -267,32 +267,28 @@
 
   &.grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
-
-    @include respond-to(md) {
-      grid-template-columns: 1fr;
-    }
   }
 
   &.grid-cols-3 {
     grid-template-columns: repeat(3, 1fr);
-
-    @include respond-to(lg) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include respond-to(md) {
-      grid-template-columns: 1fr;
-    }
   }
 
   &.grid-cols-4 {
     grid-template-columns: repeat(4, 1fr);
+  }
 
-    @include respond-to(lg) {
+  /* Consolidated responsive breakpoints */
+  @include respond-to(lg) {
+    &.grid-cols-3,
+    &.grid-cols-4 {
       grid-template-columns: repeat(2, 1fr);
     }
+  }
 
-    @include respond-to(md) {
+  @include respond-to(md) {
+    &.grid-cols-2,
+    &.grid-cols-3,
+    &.grid-cols-4 {
       grid-template-columns: 1fr;
     }
   }
@@ -431,7 +427,7 @@
 }
 
 /* Mobile landscape adjustments */
-@media (max-height: 31.25rem) and (orientation: landscape) {
+@media (max-height: var(--breakpoint-landscape-height)) and (orientation: landscape) {
   .dashboard-sidebar {
     width: var(--layout-width-xs);
   }
@@ -488,7 +484,7 @@
 }
 
 /* Tablet-specific layouts (48rem - 64rem) */
-@media (min-width: 48rem) and (max-width: 64rem) {
+@media (min-width: var(--breakpoint-md)) and (max-width: var(--breakpoint-lg)) {
   .dashboard-sidebar {
     width: var(--layout-width-sidebar-collapsed);
   }
@@ -505,6 +501,51 @@
   .page-header-actions {
     margin-left: auto;
     width: auto;
+  }
+}
+
+/* ================================================================
+   RESPONSIVE GRID UTILITIES
+   Use these instead of per-component respond-to blocks.
+   Mobile-first: base = small, breakpoints add columns.
+   ================================================================ */
+
+.grid-responsive-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include respond-to(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.grid-responsive-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.grid-responsive-4 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+
+  @include respond-to(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
   }
 }
 

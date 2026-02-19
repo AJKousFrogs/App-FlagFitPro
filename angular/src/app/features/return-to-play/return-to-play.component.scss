@@ -480,19 +480,11 @@
     margin-bottom: var(--space-4);
 
     label {
-      display: block;
       font-weight: var(--ds-font-weight-medium);
       color: var(--color-text-primary);
-      margin-bottom: var(--space-2);
     }
   }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
-  }
+  /* .form-row: use primitive + .two-col in template */
 
   .injury-type-options {
     display: grid;
@@ -575,13 +567,7 @@
     grid-template-columns: 1fr;
   }
 
-  .start-form {
-    .form-row {
-      grid-template-columns: 1fr;
-    }
-
-    .injury-type-options {
-      grid-template-columns: 1fr;
-    }
+  .start-form .injury-type-options {
+    grid-template-columns: 1fr;
   }
 }

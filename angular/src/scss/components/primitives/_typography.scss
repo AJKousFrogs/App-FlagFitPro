@@ -86,15 +86,15 @@
   }
 
   .body-lg {
-    font-size: var(--font-body-size);
+    font-size: var(--font-body-lg-size);
     font-weight: var(--font-weight-normal);
-    line-height: var(--line-height-normal);
+    line-height: var(--line-height-relaxed);
   }
 
   .body-sm {
     font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-normal);
-    line-height: var(--line-height-normal);
+    line-height: var(--font-body-sm-line-height);
   }
 
   // ============================================
@@ -104,7 +104,7 @@
   .caption {
     font-size: var(--font-caption-size);
     font-weight: var(--font-weight-regular);
-    line-height: var(--line-height-base);
+    line-height: var(--font-caption-line-height);
     color: var(--color-text-muted);
   }
 

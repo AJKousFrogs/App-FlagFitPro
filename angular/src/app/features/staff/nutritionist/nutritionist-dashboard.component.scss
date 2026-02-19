@@ -35,7 +35,7 @@
     }
 
     &.athletes {
-      background: var(--primary-color);
+      background: var(--color-brand-primary);
     }
     &.compliance {
       background: var(--green-500);
@@ -75,7 +75,7 @@
     border-radius: var(--ds-radius-md);
 
     i {
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
 
     input {
@@ -99,17 +99,17 @@
 
     .athlete-age {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
   .target-weight {
     font-size: var(--ds-font-size-xs);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 
   .no-data {
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
     font-style: italic;
   }
 
@@ -149,24 +149,14 @@
   .empty-message {
     text-align: center;
     padding: var(--ds-spacing-xl);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
-// Body Composition
+// Body Composition - .charts-grid from primitives/_charts.scss
 .body-composition-section {
-  .charts-grid {
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fit,
-      minmax(var(--grid-card-min-xl), 1fr)
-    );
-    gap: var(--ds-spacing-lg);
-    margin-bottom: var(--ds-spacing-lg);
-
-    p-chart {
-      height: var(--card-min-height-xl);
-    }
+  .charts-grid p-chart {
+    height: var(--card-min-height-xl);
   }
 
   .alerts-section {
@@ -204,7 +194,7 @@
     align-items: center;
     justify-content: center;
     padding: var(--ds-spacing-3xl);
-    color: var(--text-color-secondary);
+    color: var(--color-text-secondary);
 
     i {
       font-size: var(--ds-font-size-3xl);
@@ -302,7 +292,7 @@
       margin: 0;
       padding-left: var(--ds-spacing-lg);
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   }
 }
@@ -339,7 +329,7 @@
       align-items: center;
       gap: var(--ds-spacing-sm);
       padding: var(--ds-spacing-xs) 0;
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
 
       i {
         width: var(--space-5);
@@ -356,7 +346,7 @@
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
       font-size: var(--ds-font-size-md);
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
 
     .needs-grid {
@@ -388,7 +378,7 @@
 
       p {
         margin: 0;
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
 
@@ -403,7 +393,7 @@
 
       .target {
         font-size: var(--ds-font-size-md);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -438,7 +428,7 @@
 
       li {
         margin-bottom: var(--ds-spacing-xs);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -446,12 +436,12 @@
 
 .nutrition-needs .need-value {
   font-weight: var(--ds-font-weight-bold);
-  color: var(--primary-color);
+  color: var(--color-brand-primary);
 }
 
 .nutrition-needs .need-label {
   font-size: var(--ds-font-size-xs);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 // Forms
@@ -487,10 +477,6 @@
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .body-composition-section .charts-grid {
-    grid-template-columns: 1fr;
   }
 
   .tournament-form .form-row {

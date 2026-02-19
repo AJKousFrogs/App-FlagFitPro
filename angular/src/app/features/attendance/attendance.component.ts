@@ -326,7 +326,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               ></p-select>
             </div>
 
-            <div class="form-row">
+            <div class="form-row two-col">
               <div class="form-field">
                 <label for="startTime">Start Time *</label>
                 <p-datepicker

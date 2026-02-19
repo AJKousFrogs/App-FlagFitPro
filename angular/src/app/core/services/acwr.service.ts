@@ -39,11 +39,9 @@ import {
   effect,
 } from "@angular/core";
 import {
-  type LoadMetrics as _LoadMetrics,
   TrainingSession,
   ACWRData,
   RiskZone,
-  type LoadType as _LoadType,
   ACWRConfig,
   ACWRDataQuality,
   DataQualityLevel,
@@ -61,7 +59,10 @@ import {
   RealtimePostgresInsertPayload,
   RealtimePostgresUpdatePayload,
 } from "@supabase/supabase-js";
-import { ResearchCitation } from "../config/evidence-config";
+import {
+  mapEvidenceCitations,
+  getPresetDisplay,
+} from "../../shared/utils/evidence-info.utils";
 import {
   roundToPrecision,
   safeDivide,
@@ -996,13 +997,8 @@ export class AcwrService {
     const acwrConfig = preset.acwr;
 
     return {
-      preset: `${preset.name} (${preset.version})`,
-      citations: acwrConfig.citations.map((c: ResearchCitation) => ({
-        authors: c.authors,
-        year: c.year,
-        title: c.title,
-        doi: c.doi || "",
-      })),
+      preset: getPresetDisplay(preset),
+      citations: mapEvidenceCitations(acwrConfig.citations),
       scienceNotes: acwrConfig.scienceNotes.thresholds,
       coachOverride: acwrConfig.scienceNotes.coachOverride,
     };
@@ -1046,21 +1042,21 @@ export class AcwrService {
     // Add data quality warnings if applicable
     if (dataQuality.level === "low" || dataQuality.level === "insufficient") {
       modifications.push(
-        `⚠️ Low data quality: ${dataQuality.issues.join(", ")}`,
+        `Low data quality: ${dataQuality.issues.join(", ")}`,
       );
-      modifications.push(`💡 ${dataQuality.recommendations[0]}`);
+      modifications.push(`Tip: ${dataQuality.recommendations[0]}`);
     }
 
     // Risk-based modifications
     if (risk.level === "danger-zone") {
-      modifications.push("🚨 Reduce overall volume by 25-30%");
-      modifications.push("🚫 Skip all sprint sessions");
-      modifications.push("✅ Focus on technique and recovery");
-      modifications.push("📊 Monitor wellness scores daily");
+      modifications.push("Reduce overall volume by 25-30%");
+      modifications.push("Skip all sprint sessions");
+      modifications.push("Focus on technique and recovery");
+      modifications.push("Monitor wellness scores daily");
     } else if (risk.level === "elevated-risk") {
-      modifications.push("⚠️ Reduce high-intensity work by 15-20%");
-      modifications.push("🏃 Limit sprint volume to 50%");
-      modifications.push("🔄 Add extra recovery day");
+      modifications.push("Reduce high-intensity work by 15-20%");
+      modifications.push("Limit sprint volume to 50%");
+      modifications.push("Add extra recovery day");
     }
 
     // Weekly progression warnings
@@ -1069,18 +1065,18 @@ export class AcwrService {
         cfg.thresholds.maxWeeklyIncreasePercentConservative ??
         cfg.thresholds.maxWeeklyIncreasePercent;
       modifications.push(
-        `📈 Weekly load spike: ${progression.changePercent.toFixed(1)}%`,
+        `Weekly load spike: ${progression.changePercent.toFixed(1)}%`,
       );
-      modifications.push("⏸️ Maintain current load, don't increase");
+      modifications.push("Maintain current load, don't increase");
       modifications.push(
-        `🎯 Target: <${maxIncrease}% weekly increase (Gabbett 2016)`,
+        `Target: <${maxIncrease}% weekly increase (Gabbett 2016)`,
       );
     }
 
     // Tolerance detection warnings
     const tolerance = this.detectTolerance();
     if (tolerance?.detected && tolerance.recommendation === "investigate") {
-      modifications.push(`🔍 Tolerance detected: ${tolerance.message}`);
+      modifications.push(`Tolerance detected: ${tolerance.message}`);
     }
 
     return {

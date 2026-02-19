@@ -516,7 +516,7 @@ class TestAutomation {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flag Football Training App - Test Report</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        body { font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif; margin: 20px; background: #f5f5f5; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .header { text-align: center; margin-bottom: 30px; }
         .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }

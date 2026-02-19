@@ -274,7 +274,7 @@ const RTP_STAGES: RtpStage[] = [
         <!-- Summary Stats -->
         <div class="summary-stats">
           <div class="stat-card danger">
-            <div class="stat-icon">🔴</div>
+            <div class="stat-icon"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i></div>
             <div class="stat-content">
               <span class="stat-block__value">{{ activeCount() }}</span>
               <span class="stat-block__label">Active Injuries</span>
@@ -282,7 +282,7 @@ const RTP_STAGES: RtpStage[] = [
             </div>
           </div>
           <div class="stat-card warning">
-            <div class="stat-icon">🟡</div>
+            <div class="stat-icon"><i class="pi pi-exclamation-circle" aria-hidden="true"></i></div>
             <div class="stat-content">
               <span class="stat-block__value">{{ rtpCount() }}</span>
               <span class="stat-block__label">In RTP Protocol</span>
@@ -290,7 +290,7 @@ const RTP_STAGES: RtpStage[] = [
             </div>
           </div>
           <div class="stat-card success">
-            <div class="stat-icon">🟢</div>
+            <div class="stat-icon"><i class="pi pi-check-circle" aria-hidden="true"></i></div>
             <div class="stat-content">
               <span class="stat-block__value">{{ clearedCount() }}</span>
               <span class="stat-block__label">Cleared This Month</span>
@@ -298,7 +298,7 @@ const RTP_STAGES: RtpStage[] = [
             </div>
           </div>
           <div class="stat-card info">
-            <div class="stat-icon">📊</div>
+            <div class="stat-icon"><i class="pi pi-chart-bar" aria-hidden="true"></i></div>
             <div class="stat-content">
               <span class="stat-block__value">{{ totalSeasonCount() }}</span>
               <span class="stat-block__label">This Season</span>

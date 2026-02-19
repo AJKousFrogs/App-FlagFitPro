@@ -396,7 +396,7 @@
     }
   }
 
-  @media (min-width: 48.0625rem) {
+  @media (min-width: var(--breakpoint-md-min)) {
     .hide-desktop {
       display: none;
     }

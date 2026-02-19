@@ -6,6 +6,7 @@ import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
+import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 
 const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"]);
 
@@ -113,13 +114,23 @@ export const handler = async (event, context) =>
         const players = teamMembers.filter((m) => m.role === "player");
         const reports = [];
 
+        const consentReader = new ConsentDataReader(supabase);
+
         // Generate team report
-        const teamReport = await generateTeamReport(supabase, season, players);
+        const teamReport = await generateTeamReport(
+          supabase,
+          consentReader,
+          userId,
+          season,
+          players,
+        );
         reports.push(teamReport);
 
         // Generate coach report
         const coachReport = await generateCoachReport(
           supabase,
+          consentReader,
+          userId,
           season,
           players,
         );
@@ -129,6 +140,8 @@ export const handler = async (event, context) =>
         for (const player of players) {
           const playerReport = await generatePlayerReport(
             supabase,
+            consentReader,
+            userId,
             season,
             player.user_id,
           );
@@ -156,7 +169,13 @@ export const handler = async (event, context) =>
     },
   });
 
-async function generateTeamReport(supabase, season, players) {
+async function generateTeamReport(
+  supabase,
+  consentReader,
+  requesterId,
+  season,
+  players,
+) {
   // Aggregate team statistics
   const { data: wellness } = await supabase
     .from("daily_wellness_checkin")
@@ -168,15 +187,17 @@ async function generateTeamReport(supabase, season, players) {
     .gte("checkin_date", season.start_date)
     .lte("checkin_date", season.end_date);
 
-  const { data: training } = await supabase
-    .from("training_sessions")
-    .select("duration_minutes, rpe")
-    .in(
-      "user_id",
-      players.map((p) => p.user_id),
-    )
-    .gte("session_date", season.start_date)
-    .lte("session_date", season.end_date);
+  const sessionsResult = await consentReader.readTrainingSessions({
+    requesterId,
+    teamId: season.team_id,
+    context: AccessContext.COACH_TEAM_DATA,
+    filters: {
+      startDate: season.start_date,
+      endDate: season.end_date,
+      limit: 5000,
+    },
+  });
+  const training = sessionsResult.success ? sessionsResult.data || [] : [];
 
   const avgReadiness =
     wellness?.reduce((sum, w) => sum + (w.calculated_readiness || 0), 0) /
@@ -206,9 +227,21 @@ async function generateTeamReport(supabase, season, players) {
   };
 }
 
-async function generateCoachReport(supabase, season, players) {
+async function generateCoachReport(
+  supabase,
+  consentReader,
+  requesterId,
+  season,
+  players,
+) {
   // Coach-specific insights
-  const teamReport = await generateTeamReport(supabase, season, players);
+  const teamReport = await generateTeamReport(
+    supabase,
+    consentReader,
+    requesterId,
+    season,
+    players,
+  );
 
   return {
     ...teamReport,
@@ -224,7 +257,13 @@ async function generateCoachReport(supabase, season, players) {
   };
 }
 
-async function generatePlayerReport(supabase, season, playerId) {
+async function generatePlayerReport(
+  supabase,
+  consentReader,
+  requesterId,
+  season,
+  playerId,
+) {
   const { data: wellness } = await supabase
     .from("daily_wellness_checkin")
     .select("calculated_readiness, checkin_date")
@@ -233,12 +272,18 @@ async function generatePlayerReport(supabase, season, playerId) {
     .lte("checkin_date", season.end_date)
     .order("checkin_date", { ascending: true });
 
-  const { data: training } = await supabase
-    .from("training_sessions")
-    .select("duration_minutes, rpe, session_type")
-    .eq("user_id", playerId)
-    .gte("session_date", season.start_date)
-    .lte("session_date", season.end_date);
+  const sessionsResult = await consentReader.readTrainingSessions({
+    requesterId,
+    playerId,
+    teamId: season.team_id,
+    context: AccessContext.COACH_TEAM_DATA,
+    filters: {
+      startDate: season.start_date,
+      endDate: season.end_date,
+      limit: 2000,
+    },
+  });
+  const training = sessionsResult.success ? sessionsResult.data || [] : [];
 
   const { data: acwr } = await supabase
     .from("acwr_history")

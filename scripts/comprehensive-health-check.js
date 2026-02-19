@@ -7,6 +7,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
+import { pathToFileURL } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
 import { getDirectorySize } from "./lib/file-utils.js";
@@ -768,7 +769,7 @@ class HealthChecker {
 
         // Check database migrations
         try {
-          const migrationsDir = "./database/migrations";
+          const migrationsDir = "./supabase/migrations";
           const migrationFiles = await fs.readdir(migrationsDir);
           database.metrics.migrations = migrationFiles.length;
           database.score += Math.min(migrationFiles.length * 2, 20); // Up to 20 points for migrations
@@ -1035,7 +1036,10 @@ class HealthChecker {
 }
 
 // Run health check if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+const invokedScriptUrl = process.argv[1]
+  ? pathToFileURL(path.resolve(process.argv[1])).href
+  : "";
+if (import.meta.url === invokedScriptUrl) {
   const healthChecker = new HealthChecker();
   healthChecker.runComprehensiveCheck().catch(console.error);
 }

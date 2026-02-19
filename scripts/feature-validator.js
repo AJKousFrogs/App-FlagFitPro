@@ -5,6 +5,7 @@
 
 import fs from "fs/promises";
 import path from "path";
+import { pathToFileURL } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
 import { getDirectorySize } from "./lib/file-utils.js";
@@ -592,7 +593,7 @@ class FeatureValidator {
 
   async validateMigrations() {
     try {
-      const migrationsDir = "./database/migrations";
+      const migrationsDir = "./supabase/migrations";
       const files = await fs.readdir(migrationsDir);
       return {
         complete: files.length >= 20,
@@ -978,7 +979,10 @@ class FeatureValidator {
 }
 
 // Run validation if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+const invokedScriptUrl = process.argv[1]
+  ? pathToFileURL(path.resolve(process.argv[1])).href
+  : "";
+if (import.meta.url === invokedScriptUrl) {
   const validator = new FeatureValidator();
   validator.validateAll().catch(console.error);
 }

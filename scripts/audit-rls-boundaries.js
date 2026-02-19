@@ -7,6 +7,7 @@ const ROOT = process.cwd();
 const FUNCTIONS_DIR = path.join(ROOT, "netlify/functions");
 const PUBLIC_WRITE_ALLOWLIST = new Set([
   "netlify/functions/knowledge-search.js", // public query-count telemetry updates
+  "netlify/functions/parental-consent.js", // mixed auth by design: public guardian verification + authenticated minor endpoints
 ]);
 
 function getFiles() {
@@ -81,13 +82,13 @@ function main() {
     }
 
     if (item.requireAuth === "false" && item.writes) {
-      if (item.manualAuth || item.hasMixedRequireAuth) {
+      if (PUBLIC_WRITE_ALLOWLIST.has(item.file)) {
+        warnings.push(
+          `${item.file}: public write path allowlisted (verify mixed-auth behavior remains intentional)`,
+        );
+      } else if (item.manualAuth || item.hasMixedRequireAuth) {
         warnings.push(
           `${item.file}: supabaseAdmin writes with requireAuth=false (manual/mixed auth flow detected)`,
-        );
-      } else if (PUBLIC_WRITE_ALLOWLIST.has(item.file)) {
-        warnings.push(
-          `${item.file}: public write path allowlisted (verify telemetry-only behavior remains true)`,
         );
       } else {
         severe.push(

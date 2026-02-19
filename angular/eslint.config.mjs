@@ -159,7 +159,7 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: "^_",
         },
       ],
-      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-non-null-assertion": "warn",
       "@typescript-eslint/ban-ts-comment": "off",

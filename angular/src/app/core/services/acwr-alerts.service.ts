@@ -26,9 +26,6 @@ import { NotificationStateService } from "./notification-state.service";
 import {
   LoadAlert,
   ACWRData,
-  type TrainingSession as _TrainingSession,
-  type RiskLevel as _RiskLevel,
-  type PlayerACWRProfile as _PlayerACWRProfile,
   TrainingAdjustment,
   SessionType,
 } from "../models/acwr.models";
@@ -371,7 +368,7 @@ export class AcwrAlertsService {
 
       const pushPayload = {
         targetUserId: coachUserId,
-        title: `${isCritical ? "🚨 CRITICAL" : "⚠️"} ACWR Alert: ${alert.playerName}`,
+        title: `${isCritical ? "CRITICAL" : "Warning"}: ACWR Alert - ${alert.playerName}`,
         body: alert.message,
         icon: "/assets/icons/alert-icon.png",
         badge: "/assets/icons/badge.png",
@@ -587,7 +584,7 @@ export class AcwrAlertsService {
     if (avgACWR > 1.3) {
       recommendations.push("📉 Reduce overall training volume by 15-20%");
     } else if (avgACWR < 0.85) {
-      recommendations.push("📈 Gradually increase training load by 5-10%");
+      recommendations.push("Gradually increase training load by 5-10%");
     }
 
     const spikes = weeklyAlerts.filter((a) => a.type === "spike-detected");

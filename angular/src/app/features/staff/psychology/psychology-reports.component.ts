@@ -215,7 +215,7 @@ interface ReportPrivacySettings {
 
                 @if (generatedReports().length > 0) {
                   <div class="reports-grid">
-                    @for (report of generatedReports(); track $index) {
+                    @for (report of generatedReports(); track trackByGeneratedReport($index, report)) {
                       <p-card class="report-card">
                         <ng-template #header>
                           <div class="report-header">
@@ -246,7 +246,7 @@ interface ReportPrivacySettings {
                             <div class="section-tags">
                               @for (
                                 section of report.includedSections;
-                                track $index
+                                track section
                               ) {
                                 <span class="section-tag">{{ section }}</span>
                               }
@@ -658,7 +658,7 @@ interface ReportPrivacySettings {
 
                 @if (preCompReports().length > 0) {
                   <div class="precomp-grid">
-                    @for (report of preCompReports(); track $index) {
+                    @for (report of preCompReports(); track trackByPreCompReport($index, report)) {
                       <p-card class="precomp-card">
                         <ng-template #header>
                           <div class="precomp-header">
@@ -1587,6 +1587,21 @@ export class PsychologyReportsComponent implements OnInit {
       : trend === "falling"
         ? "pi pi-arrow-down"
         : "pi pi-minus";
+  }
+
+  trackByPreCompReport(
+    index: number,
+    report: PreCompetitionReport,
+  ): string {
+    const c = report.competition;
+    return `${c.name}-${c.date.getTime()}-${index}`;
+  }
+
+  trackByGeneratedReport(
+    index: number,
+    report: { type: string; generatedDate: Date; periodStart: Date },
+  ): string {
+    return `${report.type}-${report.generatedDate.getTime()}-${report.periodStart.getTime()}`;
   }
 
   downloadReport(

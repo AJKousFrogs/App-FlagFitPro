@@ -317,7 +317,7 @@ interface SessionTypeOption {
       <!-- Arm Care Reminder -->
       @if (showArmCareReminder()) {
         <div class="arm-care-reminder">
-          <div class="reminder-icon">💪</div>
+          <div class="reminder-icon"><i class="pi pi-bolt" aria-hidden="true"></i></div>
           <div class="reminder-content">
             <h4>Arm Care Reminder</h4>
             <p>

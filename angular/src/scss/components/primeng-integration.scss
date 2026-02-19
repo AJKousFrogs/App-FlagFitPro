@@ -246,11 +246,7 @@
    Ensures proper padding and spacing using design system
    ================================================================ */
 
-/* Card Body Padding */
-.p-card .p-card-body {
-  padding: var(--space-5);
-}
-
+/* Card body padding: ui-standardization (--p-card-body-padding) */
 .p-card .p-card-content {
   padding: 0;
 }
@@ -263,14 +259,10 @@
   padding: var(--space-4) var(--space-5) var(--space-5);
 }
 
-/* Dialog Padding */
+/* Dialog Padding - content padding from ui-standardization (--p-dialog-content-padding) */
 .p-dialog .p-dialog-header {
   padding: var(--space-5) var(--space-6);
   border-bottom: var(--border-1) solid var(--surface-border, var(--color-border-muted));
-}
-
-.p-dialog .p-dialog-content {
-  padding: var(--space-5) var(--space-6);
 }
 
 .p-dialog .p-dialog-footer {
@@ -867,7 +859,6 @@
     var(--primitive-neutral-200)
   );
   --p-card-border-radius: var(--radius-lg);
-
   --p-card-body-padding: var(--space-4);
   --p-card-body-gap: var(--space-3);
   --p-card-header-padding: var(--space-4);
@@ -1026,7 +1017,6 @@
 
   /* Dialog/Modal - Typography aligned to unified system */
   --p-dialog-border-radius: var(--radius-lg);
-
   --p-dialog-header-padding: var(--space-4);
   --p-dialog-header-font-size: var(--font-h2-size);
   --p-dialog-header-font-weight: var(--font-weight-semibold);
