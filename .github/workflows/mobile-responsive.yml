@@ -47,7 +47,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report-shard-${{ matrix.shard }}
           path: playwright-report/
@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload test results JSON
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: test-results-${{ matrix.shard }}
           path: test-results/
@@ -95,7 +95,7 @@ jobs:
 
       - name: Upload visual test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: visual-regression-report
           path: playwright-report/
@@ -103,7 +103,7 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: visual-regression-screenshots
           path: tests/responsive/**/*.png
@@ -149,7 +149,7 @@ jobs:
           echo "**Total:** 22 devices tested" >> merged-report/SUMMARY.md
 
       - name: Upload merged report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: test-summary
           path: merged-report/
