@@ -30,7 +30,7 @@ import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 
-import { ApiService } from "../../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service";
 import {
   LoggerService,
   toLogContext,
@@ -483,7 +483,7 @@ export class PlayerSettingsDialogComponent {
           birthDate?: string;
         }
       > = await firstValueFrom(
-        this.api.get("/api/player-settings"),
+        this.api.get(API_ENDPOINTS.playerSettings.get),
       );
       if (response?.success && response.data) {
         // Map availabilitySchedule from API to flagPracticeSchedule in component
@@ -607,7 +607,9 @@ export class PlayerSettingsDialogComponent {
       const { flagPracticeSchedule: _flagPracticeSchedule, ...finalPayload } =
         payload as typeof payload & { flagPracticeSchedule?: unknown };
 
-      await firstValueFrom(this.api.post("/api/player-settings", finalPayload));
+      await firstValueFrom(
+        this.api.post(API_ENDPOINTS.playerSettings.save, finalPayload),
+      );
 
       this.settingsSaved.emit(this.settings);
       this.visible.set(false);

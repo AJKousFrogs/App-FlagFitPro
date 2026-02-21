@@ -31,7 +31,7 @@ import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -499,7 +499,7 @@ export class FilmRoomComponent implements OnInit {
     );
 
     this.api
-      .post("/api/film-room/watched", { filmId: film.id, watched: newStatus })
+      .post(API_ENDPOINTS.filmRoom.watched, { filmId: film.id, watched: newStatus })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.toastService.success(
@@ -594,7 +594,7 @@ export class FilmRoomComponent implements OnInit {
     );
 
     this.api
-      .post("/api/film-room/reply", {
+      .post(API_ENDPOINTS.filmRoom.reply, {
         filmId: film.id,
         momentId,
         message: this.replyMessage,

@@ -275,6 +275,7 @@ export const API_ENDPOINTS = {
     list: "/api/notifications",
     count: "/api/notifications/count",
     markRead: "/api/notifications/mark-read",
+    lastOpened: "/api/notifications/last-opened",
     delete: (id: string) => `/api/notifications/${id}`,
     preferences: "/api/notifications/preferences",
   },
@@ -330,6 +331,19 @@ export const API_ENDPOINTS = {
     createTrainingSession: "/api/coach/training-session",
     games: "/api/games", // Uses main games endpoint - coach role handled server-side
     health: "/api/coach/health",
+    tournaments: "/api/coach/tournaments",
+    eventsUpcoming: "/api/coach/events/upcoming",
+    programs: "/api/coach/programs",
+    programsDraft: "/api/coach/programs/draft",
+    programPublish: (programId: string) => `/api/coach/programs/${programId}/publish`,
+    programDelete: (programId: string) => `/api/coach/programs/${programId}`,
+    playbook: "/api/coach/playbook",
+    film: "/api/coach/film",
+    practices: "/api/coach/practices",
+    payments: "/api/coach/payments",
+    paymentFees: "/api/coach/payments/fees",
+    paymentRecord: "/api/coach/payments/record",
+    playerDevelopment: "/api/coach/player-development",
   },
   community: {
     // RESTful endpoints (v2.0.0)
@@ -358,9 +372,17 @@ export const API_ENDPOINTS = {
     health: "/api/tournaments/health",
   },
   knowledge: {
+    base: "/api/knowledge",
     search: "/api/knowledge/search",
     entry: (topic: string) => `/api/knowledge/search?topic=${topic}`,
     articles: "/api/knowledge/search",
+  },
+  knowledgeGovernance: {
+    submit: "/api/knowledge-governance",
+    my: "/api/knowledge-governance/my",
+    pending: "/api/knowledge-governance/pending",
+    audit: (entryId: string) => `/api/knowledge-governance/audit/${entryId}`,
+    review: (entryId: string) => `/api/knowledge-governance/review/${entryId}`,
   },
   wellness: {
     checkin: "/api/wellness/checkin",
@@ -368,6 +390,31 @@ export const API_ENDPOINTS = {
     checkins: "/api/wellness/checkins",
     get: "/api/performance-data/wellness",
     post: "/api/performance-data/wellness",
+  },
+  achievements: {
+    list: "/api/achievements",
+    streaks: "/api/achievements/streaks",
+  },
+  playerSettings: {
+    get: "/api/player-settings",
+    save: "/api/player-settings",
+  },
+  teamCalendar: {
+    list: "/api/team-calendar",
+    rsvp: "/api/team-calendar/rsvp",
+    syncUrl: "/api/team-calendar/sync-url",
+  },
+  returnToPlay: {
+    base: "/api/return-to-play",
+    start: "/api/return-to-play/start",
+    advance: "/api/return-to-play/advance",
+    criterion: "/api/return-to-play/criterion",
+    checkin: "/api/return-to-play/checkin",
+  },
+  dataImport: {
+    wearableStatus: "/api/wearables/status",
+    fetchUrl: "/api/import/fetch-url",
+    process: "/api/import/process",
   },
   supplements: {
     log: "/api/supplements/log",
@@ -429,8 +476,17 @@ export const API_ENDPOINTS = {
     create: "/api/games",
     details: (gameId: string) => `/api/games/${gameId}`,
     update: (gameId: string) => `/api/games/${gameId}`,
+    score: (gameId: string) => `/api/games/${gameId}/score`,
     stats: (gameId: string) => `/api/games/${gameId}/stats`,
     plays: (gameId: string) => `/api/games/${gameId}/plays`,
+  },
+  gameEvents: {
+    list: "/api/game-events",
+    markPresence: "/api/game-events/mark-presence",
+    details: (eventId: string) => `/api/game-events/${eventId}`,
+  },
+  roster: {
+    players: "/api/roster/players",
   },
   // Player Stats endpoints
   playerStats: {
@@ -439,6 +495,27 @@ export const API_ENDPOINTS = {
   },
   // Fixtures
   fixtures: "/api/fixtures",
+  // Generic endpoints used by feature pages
+  payments: "/api/payments",
+  sleepData: "/api/sleep-data",
+  programCycles: "/api/program-cycles",
+  teamManagement: "/api/team-management",
+  teamSettings: "/api/team/settings",
+  cycleTracking: {
+    base: "/api/cycle-tracking",
+    period: "/api/cycle-tracking/period",
+    symptoms: "/api/cycle-tracking/symptoms",
+    clearAll: "/api/cycle-tracking/all",
+  },
+  qbThrowing: {
+    base: "/api/qb-throwing",
+    armCare: "/api/qb-throwing/arm-care",
+  },
+  tournamentCalendar: {
+    list: "/api/tournament-calendar",
+    create: "/api/tournament-calendar",
+    delete: "/api/tournament-calendar/delete",
+  },
   // Health check
   health: "/api/health",
   // API documentation
@@ -448,6 +525,8 @@ export const API_ENDPOINTS = {
     send: "/api/ai/chat",
     session: (sessionId: string) => `/api/ai/chat/session/${sessionId}`,
     feedback: "/api/ai/feedback",
+    telemetry: "/api/ai/telemetry",
+    bookmark: "/api/ai-chat/bookmark",
   },
   // Attendance endpoints
   attendance: {
@@ -595,6 +674,10 @@ export const API_ENDPOINTS = {
   // Micro-sessions endpoints
   microSessions: {
     analytics: "/api/micro-sessions/analytics",
+  },
+  dailyProtocol: {
+    generate: "/api/daily-protocol/generate",
+    byDate: (date: string) => `/api/daily-protocol?date=${date}`,
   },
   // Response feedback (AI response rating)
   responseFeedback: "/api/response-feedback",

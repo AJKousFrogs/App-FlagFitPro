@@ -1,0 +1,1369 @@
+<app-main-layout>
+      <p-confirmDialog></p-confirmDialog>
+
+      <div class="tournaments-page">
+        <app-page-header
+          title="Tournament Schedule"
+          subtitle="View and manage upcoming flag football tournaments"
+          icon="pi-trophy"
+        >
+          <div class="header-actions">
+            @if (nextTournament(); as next) {
+              <app-icon-button
+                icon="pi-calendar"
+                variant="outlined"
+                (clicked)="scrollToTournament(next.id)"
+                ariaLabel="Go to next tournament"
+                tooltip="Next tournament"
+              />
+            }
+            @if (isAuthenticated()) {
+              <app-icon-button
+                icon="pi-plus"
+                (clicked)="openCreateDialog()"
+                ariaLabel="Add new tournament"
+                tooltip="Add tournament"
+              />
+            }
+          </div>
+        </app-page-header>
+
+        <!-- Loading State -->
+        @if (tournamentService.loading()) {
+          <app-loading message="Loading tournaments..." variant="inline" />
+        }
+
+        <!-- Empty State -->
+        @if (!tournamentService.loading() && tournaments().length === 0) {
+          <app-empty-state
+            icon="pi-calendar-times"
+            heading="No Tournaments Scheduled"
+            description="There are no tournaments in the system yet."
+            [actionLabel]="isAuthenticated() ? 'Add First Tournament' : null"
+            [actionHandler]="isAuthenticated() ? openCreateDialogHandler : null"
+          />
+        }
+
+        <!-- Tournament Tabs -->
+        @if (tournaments().length > 0) {
+          <p-tabs>
+            <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
+              <div class="tournaments-grid">
+                @for (tournament of tournaments2026(); track tournament.id) {
+                  <p-card
+                    class="tournament-card"
+                    [attr.data-id]="tournament.id"
+                    [class.personal-tournament]="
+                      isPersonalTournament(tournament)
+                    "
+                  >
+                    <div class="tournament-header">
+                      <div class="header-row">
+                        <div class="tags-row">
+                          <app-status-tag
+                            [value]="
+                              tournamentService.getStatusLabel(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
+                            [severity]="
+                              tournamentService.getStatusSeverity(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
+                            size="sm"
+                          />
+                          @if (isPersonalTournament(tournament)) {
+                            <app-status-tag
+                              value="Personal"
+                              severity="warning"
+                              icon="pi-user"
+                              size="sm"
+                            />
+                          }
+                        </div>
+                        @if (isAuthenticated()) {
+                          <div class="card-actions">
+                            <app-icon-button
+                              icon="pi-pencil"
+                              variant="text"
+                              size="sm"
+                              (clicked)="openEditDialog(tournament)"
+                              ariaLabel="Edit tournament"
+                              tooltip="Edit"
+                            />
+                            <app-icon-button
+                              icon="pi-trash"
+                              variant="text"
+                              size="sm"
+                              (clicked)="confirmDelete(tournament)"
+                              ariaLabel="Delete tournament"
+                              tooltip="Delete"
+                            />
+                          </div>
+                        }
+                      </div>
+                      <h3 class="tournament-title">
+                        {{ tournament.flag }} {{ tournament.name }}
+                      </h3>
+                      <p class="tournament-subtitle">
+                        {{
+                          tournament.tournament_type === "game_day"
+                            ? "Game Day"
+                            : tournament.tournament_type || "Championship"
+                        }}
+                      </p>
+                    </div>
+                    <div class="tournament-body">
+                      <div class="tournament-info">
+                        <div class="info-item">
+                          <div class="info-icon">
+                            <i class="pi pi-calendar"></i>
+                          </div>
+                          <div>
+                            <div class="info-value">
+                              {{
+                                tournamentService.formatDateRange(
+                                  tournament.start_date,
+                                  tournament.end_date
+                                )
+                              }}
+                            </div>
+                            <div class="info-label">Date</div>
+                          </div>
+                        </div>
+                        <div class="info-item">
+                          <div class="info-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></div>
+                          <div>
+                            <div class="info-value">
+                              {{ tournament.location || "TBD" }}
+                            </div>
+                            <div class="info-label">
+                              {{ tournament.country || "Location" }}
+                            </div>
+                          </div>
+                        </div>
+                        @if (tournament.venue) {
+                          <div class="info-item">
+                            <div class="info-icon"><i class="pi pi-building" aria-hidden="true"></i></div>
+                            <div>
+                              <div class="info-value">
+                                {{ tournament.venue }}
+                              </div>
+                              <div class="info-label">Venue</div>
+                            </div>
+                          </div>
+                        }
+                        @if (tournament.expected_teams) {
+                          <div class="info-item">
+                            <div class="info-icon">
+                              <i class="pi pi-users"></i>
+                            </div>
+                            <div>
+                              <div class="info-value">
+                                {{ tournament.expected_teams }}
+                              </div>
+                              <div class="info-label">Expected Teams</div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+
+                      @if (tournament.daysUntil && tournament.daysUntil > 0) {
+                        <div class="tournament-countdown">
+                          <span class="countdown-value">{{
+                            tournament.daysUntil
+                          }}</span>
+                          <span class="countdown-label"
+                            >days until tournament</span
+                          >
+                        </div>
+                      }
+
+                      @if (tournament.notes) {
+                        <div class="tournament-notes">
+                          <p>{{ tournament.notes }}</p>
+                        </div>
+                      }
+
+                      <div class="tournament-actions">
+                        @if (tournament.website_url) {
+                          <app-button
+                            variant="outlined"
+                            size="sm"
+                            iconLeft="pi-external-link"
+                            (clicked)="openWebsite(tournament.website_url)"
+                            >Website</app-button
+                          >
+                        }
+                        @if (isAuthenticated()) {
+                          <app-button
+                            variant="outlined"
+                            size="sm"
+                            iconLeft="pi-calendar-plus"
+                            (clicked)="openAvailabilityDialog(tournament)"
+                            >My Availability</app-button
+                          >
+                        }
+                        @if (canViewTeamAvailability()) {
+                          <app-button
+                            size="sm"
+                            iconLeft="pi-users"
+                            (clicked)="openTeamAvailabilityDialog(tournament)"
+                            >Team Status</app-button
+                          >
+                        }
+                        <app-button
+                          size="sm"
+                          (clicked)="viewDetails(tournament)"
+                          >View Details</app-button
+                        >
+                      </div>
+                    </div>
+                  </p-card>
+                } @empty {
+                  <div class="empty-season">
+                    <p>No tournaments scheduled for 2026 yet.</p>
+                    @if (isAuthenticated()) {
+                      <app-button
+                        variant="outlined"
+                        iconLeft="pi-plus"
+                        (clicked)="openCreateDialog()"
+                        >Add Tournament</app-button
+                      >
+                    }
+                  </div>
+                }
+              </div>
+            </p-tabpanel>
+
+            <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
+              <div class="tournaments-grid">
+                @for (tournament of tournaments2027(); track tournament.id) {
+                  <p-card
+                    class="tournament-card"
+                    [attr.data-id]="tournament.id"
+                    [class.personal-tournament]="
+                      isPersonalTournament(tournament)
+                    "
+                  >
+                    <div class="tournament-header">
+                      <div class="header-row">
+                        <div class="tags-row">
+                          <app-status-tag
+                            [value]="
+                              tournamentService.getStatusLabel(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
+                            [severity]="
+                              tournamentService.getStatusSeverity(
+                                tournament.calculatedStatus || 'upcoming'
+                              )
+                            "
+                            size="sm"
+                          />
+                          @if (isPersonalTournament(tournament)) {
+                            <app-status-tag
+                              value="Personal"
+                              severity="warning"
+                              icon="pi-user"
+                              size="sm"
+                            />
+                          }
+                        </div>
+                        @if (isAuthenticated()) {
+                          <div class="card-actions">
+                            <app-icon-button
+                              icon="pi-pencil"
+                              variant="text"
+                              size="sm"
+                              (clicked)="openEditDialog(tournament)"
+                              ariaLabel="Edit tournament"
+                              tooltip="Edit"
+                            />
+                            <app-icon-button
+                              icon="pi-trash"
+                              variant="text"
+                              size="sm"
+                              (clicked)="confirmDelete(tournament)"
+                              ariaLabel="Delete tournament"
+                              tooltip="Delete"
+                            />
+                          </div>
+                        }
+                      </div>
+                      <h3 class="tournament-title">
+                        {{ tournament.flag }} {{ tournament.name }}
+                      </h3>
+                      <p class="tournament-subtitle">
+                        {{
+                          tournament.tournament_type === "game_day"
+                            ? "Game Day"
+                            : tournament.tournament_type || "Championship"
+                        }}
+                      </p>
+                    </div>
+                    <div class="tournament-body">
+                      <div class="tournament-info">
+                        <div class="info-item">
+                          <div class="info-icon">
+                            <i class="pi pi-calendar"></i>
+                          </div>
+                          <div>
+                            <div class="info-value">
+                              {{
+                                tournamentService.formatDateRange(
+                                  tournament.start_date,
+                                  tournament.end_date
+                                )
+                              }}
+                            </div>
+                            <div class="info-label">Date</div>
+                          </div>
+                        </div>
+                        <div class="info-item">
+                          <div class="info-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></div>
+                          <div>
+                            <div class="info-value">
+                              {{ tournament.location || "TBD" }}
+                            </div>
+                            <div class="info-label">
+                              {{ tournament.country || "Location" }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="tournament-actions">
+                        <app-button
+                          size="sm"
+                          (clicked)="viewDetails(tournament)"
+                          >View Details</app-button
+                        >
+                      </div>
+                    </div>
+                  </p-card>
+                } @empty {
+                  <div class="empty-season">
+                    <p>No tournaments scheduled for 2027 yet.</p>
+                    @if (isAuthenticated()) {
+                      <app-button
+                        variant="outlined"
+                        iconLeft="pi-plus"
+                        (clicked)="openCreateDialog()"
+                        >Add Tournament</app-button
+                      >
+                    }
+                  </div>
+                }
+              </div>
+            </p-tabpanel>
+          </p-tabs>
+        }
+      </div>
+
+      <!-- Create/Edit Tournament Dialog -->
+      <p-dialog
+        [(visible)]="showDialog"
+        [header]="getDialogTitle()"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        class="tournament-dialog"
+      >
+        <div class="tournament-form form-controls-full">
+          <!-- Visibility Info Banner -->
+          @if (isPlayer() && !editingTournament) {
+            <div class="visibility-info-banner personal">
+              <div class="banner-icon">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="banner-content">
+                <strong>Personal Game Day</strong>
+                <p>
+                  This will only be visible to you and your coaches. It won't
+                  affect other players' schedules or workload calculations.
+                </p>
+              </div>
+            </div>
+          }
+          @if (isCoachOrAdmin() && !editingTournament) {
+            <div class="visibility-info-banner team">
+              <div class="banner-icon">
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="banner-content">
+                <strong>Team Tournament</strong>
+                <p>
+                  This will be visible to all team members and will affect
+                  everyone's training schedule and workload calculations.
+                </p>
+              </div>
+            </div>
+          }
+          @if (editingTournament && isPersonalTournament(editingTournament)) {
+            <div class="visibility-info-banner personal">
+              <div class="banner-icon">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="banner-content">
+                <strong>Personal Game Day</strong>
+                <p>Only visible to the player who created it and coaches.</p>
+              </div>
+            </div>
+          }
+
+          <!-- Section: Basic Info -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-trophy"></i>
+              <span>Basic Information</span>
+            </div>
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-name">
+                  <i class="pi pi-tag"></i>
+                  {{ isPlayer() ? "Game Day Name" : "Tournament Name" }}
+                  <span class="required">*</span>
+                </label>
+                <input
+                  pInputText
+                  id="tournament-name"
+                  name="tournamentName"
+                  [(ngModel)]="formData.name"
+                  placeholder="e.g., Adria Bowl 2026"
+                  class="w-full"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-shortName">
+                  <i class="pi pi-bookmark"></i>
+                  Short Name
+                </label>
+                <input
+                  pInputText
+                  id="tournament-shortName"
+                  name="shortName"
+                  [(ngModel)]="formData.short_name"
+                  placeholder="e.g., Adria Bowl"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-teams">
+                  <i class="pi pi-users"></i>
+                  Expected Teams
+                </label>
+                <p-inputNumber
+                  inputId="tournament-teams"
+                  [(ngModel)]="formData.expected_teams"
+                  [min]="2"
+                  [max]="100"
+                  placeholder="Number of teams"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Location -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-map-marker"></i>
+              <span>Location</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-country">
+                  <i class="pi pi-globe"></i>
+                  Country
+                </label>
+                <input
+                  pInputText
+                  id="tournament-country"
+                  name="country"
+                  [(ngModel)]="formData.country"
+                  placeholder="e.g., Croatia"
+                  autocomplete="country-name"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-location">
+                  <i class="pi pi-building"></i>
+                  City
+                </label>
+                <input
+                  pInputText
+                  id="tournament-location"
+                  name="location"
+                  [(ngModel)]="formData.location"
+                  placeholder="e.g., Zagreb"
+                  autocomplete="address-level2"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-venue">
+                  <i class="pi pi-home"></i>
+                  Venue / Stadium
+                </label>
+                <input
+                  pInputText
+                  id="tournament-venue"
+                  name="venue"
+                  [(ngModel)]="formData.venue"
+                  placeholder="e.g., Stadium Name or Sports Complex"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Dates -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-calendar"></i>
+              <span>Dates</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-startDate">
+                  <i class="pi pi-calendar-plus"></i>
+                  Start Date <span class="required">*</span>
+                </label>
+                <p-datepicker
+                  inputId="tournament-startDate"
+                  [(ngModel)]="formData.start_date_obj"
+                  [showIcon]="true"
+                  [iconDisplay]="'input'"
+                  dateFormat="dd M yy"
+                  placeholder="Select start date"
+                  class="w-full"
+                  appendTo="body"
+                ></p-datepicker>
+              </div>
+              <div class="form-field">
+                <label for="tournament-endDate">
+                  <i class="pi pi-calendar-minus"></i>
+                  End Date
+                </label>
+                <p-datepicker
+                  inputId="tournament-endDate"
+                  [(ngModel)]="formData.end_date_obj"
+                  [showIcon]="true"
+                  [iconDisplay]="'input'"
+                  dateFormat="dd M yy"
+                  placeholder="Select end date"
+                  class="w-full"
+                  appendTo="body"
+                ></p-datepicker>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-deadline">
+                  <i class="pi pi-clock"></i>
+                  Registration Deadline
+                </label>
+                <p-datepicker
+                  inputId="tournament-deadline"
+                  [(ngModel)]="formData.registration_deadline_obj"
+                  [showIcon]="true"
+                  [iconDisplay]="'input'"
+                  dateFormat="dd M yy"
+                  placeholder="Select registration deadline"
+                  class="w-full"
+                  appendTo="body"
+                ></p-datepicker>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Classification -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-sliders-h"></i>
+              <span>Classification</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-type">
+                  <i class="pi pi-flag"></i>
+                  Tournament Type
+                </label>
+                <p-select
+                  inputId="tournament-type"
+                  [(ngModel)]="formData.tournament_type"
+                  [options]="tournamentTypes"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select type"
+                  class="w-full"
+                  appendTo="body"
+                ></p-select>
+              </div>
+              <div class="form-field">
+                <label for="tournament-level">
+                  <i class="pi pi-star"></i>
+                  Competition Level
+                </label>
+                <p-select
+                  inputId="tournament-level"
+                  [(ngModel)]="formData.competition_level"
+                  [options]="competitionLevels"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select level"
+                  class="w-full"
+                  appendTo="body"
+                ></p-select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field full-width checkbox-field">
+                <p-checkbox
+                  [(ngModel)]="formData.is_home_tournament"
+                  [binary]="true"
+                  variant="filled"
+                  inputId="homeTournament"
+                ></p-checkbox>
+                <label for="homeTournament" class="checkbox-label">
+                  <i class="pi pi-home"></i>
+                  This is a home tournament (we are hosting)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Links & Social -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-link"></i>
+              <span>Links & Social Media</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-website">
+                  <i class="pi pi-globe"></i>
+                  Official Website
+                </label>
+                <input
+                  pInputText
+                  id="tournament-website"
+                  name="website"
+                  [(ngModel)]="formData.website_url"
+                  placeholder="https://tournament-website.com"
+                  autocomplete="url"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-instagram">
+                  <i class="pi pi-instagram"></i>
+                  Instagram
+                </label>
+                <input
+                  pInputText
+                  id="tournament-instagram"
+                  name="instagram"
+                  [(ngModel)]="formData.instagram_url"
+                  placeholder="https://instagram.com/tournament"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-facebook">
+                  <i class="pi pi-facebook"></i>
+                  Facebook
+                </label>
+                <input
+                  pInputText
+                  id="tournament-facebook"
+                  name="facebook"
+                  [(ngModel)]="formData.facebook_url"
+                  placeholder="https://facebook.com/event/..."
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-registration">
+                  <i class="pi pi-file-edit"></i>
+                  Registration Link
+                </label>
+                <input
+                  pInputText
+                  id="tournament-registration"
+                  name="registration"
+                  [(ngModel)]="formData.registration_url"
+                  placeholder="https://registration-form.com"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Venue & Accommodation -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-map"></i>
+              <span>Venue & Accommodation</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-venue-map">
+                  <i class="pi pi-map-marker"></i>
+                  Venue Location (Google Maps)
+                </label>
+                <input
+                  pInputText
+                  id="tournament-venue-map"
+                  name="venueMap"
+                  [(ngModel)]="formData.venue_maps_url"
+                  placeholder="https://maps.google.com/..."
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-hotel-map">
+                  <i class="pi pi-building"></i>
+                  Hotel Location (Google Maps)
+                </label>
+                <input
+                  pInputText
+                  id="tournament-hotel-map"
+                  name="hotelMap"
+                  [(ngModel)]="formData.hotel_maps_url"
+                  placeholder="https://maps.google.com/..."
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-hotel-name">
+                  <i class="pi pi-home"></i>
+                  Recommended Hotel
+                </label>
+                <input
+                  pInputText
+                  id="tournament-hotel-name"
+                  name="hotelName"
+                  [(ngModel)]="formData.hotel_name"
+                  placeholder="e.g., Hotel Ambassador"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-hotel-booking">
+                  <i class="pi pi-external-link"></i>
+                  Hotel Booking Link
+                </label>
+                <input
+                  pInputText
+                  id="tournament-hotel-booking"
+                  name="hotelBooking"
+                  [(ngModel)]="formData.hotel_booking_url"
+                  placeholder="https://booking.com/..."
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Contact & Notes -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="pi pi-info-circle"></i>
+              <span>Contact & Notes</span>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-field">
+                <label for="tournament-contact-name">
+                  <i class="pi pi-user"></i>
+                  Contact Person
+                </label>
+                <input
+                  pInputText
+                  id="tournament-contact-name"
+                  name="contactName"
+                  [(ngModel)]="formData.contact_name"
+                  placeholder="e.g., John Smith"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="form-field">
+                <label for="tournament-contact-email">
+                  <i class="pi pi-envelope"></i>
+                  Contact Email
+                </label>
+                <input
+                  pInputText
+                  id="tournament-contact-email"
+                  name="contactEmail"
+                  [(ngModel)]="formData.contact_email"
+                  placeholder="contact@tournament.com"
+                  autocomplete="email"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field full-width">
+                <label for="tournament-notes">
+                  <i class="pi pi-pencil"></i>
+                  Notes & Additional Information
+                </label>
+                <textarea
+                  pTextarea
+                  id="tournament-notes"
+                  name="notes"
+                  [(ngModel)]="formData.notes"
+                  rows="3"
+                  placeholder="Travel tips, dress code, parking info, special requirements..."
+                  class="w-full"
+                  autocomplete="off"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #footer>
+          <div class="dialog-footer">
+            <app-button
+              variant="outlined"
+              iconLeft="pi-times"
+              (clicked)="closeDialog()"
+              >Cancel</app-button
+            >
+            <app-button
+              [loading]="tournamentService.loading()"
+              (clicked)="saveTournament()"
+              >Save</app-button
+            >
+          </div>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Player Availability Dialog -->
+      <p-dialog
+        [(visible)]="showAvailabilityDialog"
+        header="My Tournament Availability"
+        [modal]="true"
+        [draggable]="false"
+        class="tournament-availability-dialog"
+      >
+        @if (selectedTournament) {
+          <div class="availability-dialog">
+            <div class="tournament-summary">
+              <h3>
+                {{ selectedTournament.flag }} {{ selectedTournament.name }}
+              </h3>
+              <p class="tournament-dates">
+                <i class="pi pi-calendar"></i>
+                {{
+                  tournamentService.formatDateRange(
+                    selectedTournament.start_date,
+                    selectedTournament.end_date
+                  )
+                }}
+              </p>
+              <p class="tournament-location">
+                <i class="pi pi-map-marker"></i>
+                {{ selectedTournament.location }},
+                {{ selectedTournament.country }}
+              </p>
+            </div>
+
+            <div class="availability-form">
+              <div class="form-field">
+                <label>Will you be attending?</label>
+                <div class="availability-options">
+                  @for (option of availabilityOptions; track option.value) {
+                    <div
+                      class="availability-option"
+                      [class.selected]="
+                        availabilityForm.status === option.value
+                      "
+                      [class]="'option-' + option.value"
+                      (click)="availabilityForm.status = option.value"
+                    >
+                      <i [class]="option.icon"></i>
+                      <span>{{ option.label }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              @if (
+                availabilityForm.status === "declined" ||
+                availabilityForm.status === "tentative"
+              ) {
+                <div class="form-field">
+                  <label>Reason (optional)</label>
+                  <textarea
+                    pTextarea
+                    [(ngModel)]="availabilityForm.reason"
+                    rows="2"
+                    placeholder="Let your coach know why..."
+                    class="w-full"
+                  ></textarea>
+                </div>
+              }
+
+              @if (availabilityForm.status === "confirmed") {
+                <div class="form-grid-2">
+                  <div class="form-field">
+                    <label>Arrival Date</label>
+                    <p-datepicker
+                      [(ngModel)]="availabilityForm.arrivalDate"
+                      [showIcon]="true"
+                      dateFormat="yy-mm-dd"
+                      placeholder="When do you arrive?"
+                      class="w-full"
+                    ></p-datepicker>
+                  </div>
+                  <div class="form-field">
+                    <label>Departure Date</label>
+                    <p-datepicker
+                      [(ngModel)]="availabilityForm.departureDate"
+                      [showIcon]="true"
+                      dateFormat="yy-mm-dd"
+                      placeholder="When do you leave?"
+                      class="w-full"
+                    ></p-datepicker>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <p-checkbox
+                    [(ngModel)]="availabilityForm.accommodationNeeded"
+                    [binary]="true"
+                    variant="filled"
+                    inputId="accommodation"
+                    label="I need accommodation"
+                  ></p-checkbox>
+                </div>
+
+                <div class="form-field">
+                  <p-checkbox
+                    [(ngModel)]="availabilityForm.transportationNeeded"
+                    [binary]="true"
+                    variant="filled"
+                    inputId="transportation"
+                    label="I need transportation"
+                  ></p-checkbox>
+                </div>
+
+                <div class="form-field">
+                  <label>Dietary Restrictions</label>
+                  <input
+                    pInputText
+                    [(ngModel)]="availabilityForm.dietaryRestrictions"
+                    placeholder="Any dietary needs..."
+                    class="w-full"
+                  />
+                </div>
+              }
+
+              <!-- Cost Information -->
+              @if (
+                tournamentCost() > 0 && availabilityForm.status === "confirmed"
+              ) {
+                <div class="cost-summary">
+                  <h4><i class="pi pi-wallet"></i> Estimated Cost</h4>
+                  <div class="cost-breakdown">
+                    <div class="cost-item">
+                      <span>Your share:</span>
+                      <span class="cost-value"
+                        >€{{ tournamentCost() | number: "1.2-2" }}</span
+                      >
+                    </div>
+                    @if (availabilityForm.amountPaid > 0) {
+                      <div class="cost-item paid">
+                        <span>Already paid:</span>
+                        <span class="cost-value"
+                          >€{{
+                            availabilityForm.amountPaid | number: "1.2-2"
+                          }}</span
+                        >
+                      </div>
+                    }
+                    <div class="cost-item remaining">
+                      <span>Remaining:</span>
+                      <span class="cost-value"
+                        >€{{
+                          tournamentCost() - availabilityForm.amountPaid
+                            | number: "1.2-2"
+                        }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <ng-template #footer>
+          <app-button
+            variant="outlined"
+            (clicked)="showAvailabilityDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [loading]="savingAvailability()"
+            (clicked)="saveAvailability()"
+            >Save</app-button
+          >
+        </ng-template>
+      </p-dialog>
+
+      <!-- Team Availability Overview Dialog (for coaches) -->
+      <p-dialog
+        [(visible)]="showTeamAvailabilityDialog"
+        header="Team Availability"
+        [modal]="true"
+        [draggable]="false"
+        class="tournament-team-availability-dialog"
+      >
+        @if (selectedTournament) {
+          <div class="team-availability-dialog">
+            <div class="tournament-summary">
+              <h3>
+                {{ selectedTournament.flag }} {{ selectedTournament.name }}
+              </h3>
+              <p class="tournament-dates">
+                {{
+                  tournamentService.formatDateRange(
+                    selectedTournament.start_date,
+                    selectedTournament.end_date
+                  )
+                }}
+              </p>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="availability-summary">
+              <div class="summary-stat confirmed">
+                <div class="stat-block__value">
+                  {{ teamAvailabilitySummary().confirmed }}
+                </div>
+                <div class="stat-block__label">Confirmed</div>
+              </div>
+              <div class="summary-stat tentative">
+                <div class="stat-block__value">
+                  {{ teamAvailabilitySummary().tentative }}
+                </div>
+                <div class="stat-block__label">Tentative</div>
+              </div>
+              <div class="summary-stat declined">
+                <div class="stat-block__value">
+                  {{ teamAvailabilitySummary().declined }}
+                </div>
+                <div class="stat-block__label">Declined</div>
+              </div>
+              <div class="summary-stat pending">
+                <div class="stat-block__value">
+                  {{ teamAvailabilitySummary().pending }}
+                </div>
+                <div class="stat-block__label">No Response</div>
+              </div>
+            </div>
+
+            <!-- Budget Overview -->
+            @if (tournamentBudget()) {
+              <div class="budget-overview">
+                <h4><i class="pi pi-wallet"></i> Budget Overview</h4>
+                <div class="budget-grid">
+                  <div class="budget-item">
+                    <span class="budget-label">Total Estimated</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.totalEstimated | number: "1.2-2"
+                      }}</span
+                    >
+                  </div>
+                  <div class="budget-item">
+                    <span class="budget-label">Team Contribution</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.teamContribution | number: "1.2-2"
+                      }}</span
+                    >
+                  </div>
+                  <div class="budget-item">
+                    <span class="budget-label">Sponsor Contribution</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.sponsorContribution
+                          | number: "1.2-2"
+                      }}</span
+                    >
+                  </div>
+                  <div class="budget-item highlight">
+                    <span class="budget-label">Per Player</span>
+                    <span class="budget-value"
+                      >€{{
+                        tournamentBudget()!.perPlayer | number: "1.2-2"
+                      }}</span
+                    >
+                  </div>
+                </div>
+                <app-button
+                  variant="outlined"
+                  size="sm"
+                  iconLeft="pi-cog"
+                  (clicked)="openBudgetDialog()"
+                  >Manage Budget</app-button
+                >
+              </div>
+            }
+
+            <!-- Player List -->
+            <div class="player-availability-list">
+              <h4>Player Responses</h4>
+              @for (player of teamAvailability(); track player.playerId) {
+                <div
+                  class="player-availability-item"
+                  [class]="'status-' + player.status"
+                >
+                  <div class="player-info">
+                    <span class="player-name">{{ player.playerName }}</span>
+                    <span class="player-position">{{ player.position }}</span>
+                  </div>
+                  <div class="player-status">
+                    <app-status-tag
+                      [value]="getAvailabilityLabel(player.status)"
+                      [severity]="getAvailabilitySeverity(player.status)"
+                      size="sm"
+                    />
+                  </div>
+                  @if (player.reason) {
+                    <div class="player-reason">
+                      <i class="pi pi-info-circle"></i>
+                      {{ player.reason }}
+                    </div>
+                  }
+                  <div class="player-payment">
+                    @if (player.paymentStatus === "paid") {
+                      <app-status-tag
+                        value="Paid"
+                        severity="success"
+                        size="sm"
+                      />
+                    } @else if (player.paymentStatus === "partial") {
+                      <app-status-tag
+                        value="Partial"
+                        severity="warning"
+                        size="sm"
+                      />
+                    } @else if (player.status === "confirmed") {
+                      <app-status-tag
+                        value="Unpaid"
+                        severity="danger"
+                        size="sm"
+                      />
+                    }
+                  </div>
+                </div>
+              } @empty {
+                <div class="empty-list">
+                  <p>No player responses yet</p>
+                </div>
+              }
+            </div>
+
+            <!-- Actions -->
+            <div class="dialog-actions">
+              <app-button
+                variant="outlined"
+                iconLeft="pi-bell"
+                (clicked)="sendAvailabilityReminders()"
+                >Send Reminders</app-button
+              >
+              <app-button
+                variant="outlined"
+                iconLeft="pi-download"
+                (clicked)="exportAvailabilityReport()"
+                >Export Report</app-button
+              >
+            </div>
+          </div>
+        }
+
+        <ng-template #footer>
+          <app-button (clicked)="showTeamAvailabilityDialog = false"
+            >Close</app-button
+          >
+        </ng-template>
+      </p-dialog>
+
+      <!-- Budget Management Dialog -->
+      <p-dialog
+        [(visible)]="showBudgetDialog"
+        header="Tournament Budget"
+        [modal]="true"
+        [draggable]="false"
+        class="tournament-budget-dialog"
+      >
+        @if (selectedTournament) {
+          <div class="budget-dialog">
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Registration Fee</label>
+                <p-inputNumber
+                  [(ngModel)]="budgetForm.registrationFee"
+                  mode="currency"
+                  currency="EUR"
+                  locale="en-US"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label>Entry Fee Per Player</label>
+                <p-inputNumber
+                  [(ngModel)]="budgetForm.entryFeePerPlayer"
+                  mode="currency"
+                  currency="EUR"
+                  locale="en-US"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label>Travel Cost (Estimated)</label>
+                <p-inputNumber
+                  [(ngModel)]="budgetForm.travelCost"
+                  mode="currency"
+                  currency="EUR"
+                  locale="en-US"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label>Accommodation Per Night</label>
+                <p-inputNumber
+                  [(ngModel)]="budgetForm.accommodationPerNight"
+                  mode="currency"
+                  currency="EUR"
+                  locale="en-US"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label>Number of Nights</label>
+                <p-inputNumber
+                  [(ngModel)]="budgetForm.totalNights"
+                  [min]="0"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label>Per Diem Per Player</label>
+                <p-inputNumber
+                  [(ngModel)]="budgetForm.perDiem"
+                  mode="currency"
+                  currency="EUR"
+                  locale="en-US"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field full-width">
+                <label>Other Costs</label>
+                <p-inputNumber
+                  [(ngModel)]="budgetForm.otherCosts"
+                  mode="currency"
+                  currency="EUR"
+                  locale="en-US"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field full-width">
+                <label>Other Costs Description</label>
+                <input
+                  pInputText
+                  [(ngModel)]="budgetForm.otherCostsDescription"
+                  placeholder="Equipment, uniforms, etc."
+                  class="w-full"
+                />
+              </div>
+            </div>
+
+            <div class="budget-funding">
+              <h4>Funding Sources</h4>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>Team Contribution</label>
+                  <p-inputNumber
+                    [(ngModel)]="budgetForm.teamContribution"
+                    mode="currency"
+                    currency="EUR"
+                    locale="en-US"
+                    class="w-full"
+                  ></p-inputNumber>
+                </div>
+                <div class="form-field">
+                  <label>Sponsor Contribution</label>
+                  <p-inputNumber
+                    [(ngModel)]="budgetForm.sponsorContribution"
+                    mode="currency"
+                    currency="EUR"
+                    locale="en-US"
+                    class="w-full"
+                  ></p-inputNumber>
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculated Summary -->
+            <div class="budget-calculated">
+              <div class="calc-row">
+                <span>Total Estimated Cost:</span>
+                <span class="calc-value"
+                  >€{{ calculateTotalBudget() | number: "1.2-2" }}</span
+                >
+              </div>
+              <div class="calc-row">
+                <span>Total Funding:</span>
+                <span class="calc-value"
+                  >€{{
+                    budgetForm.teamContribution + budgetForm.sponsorContribution
+                      | number: "1.2-2"
+                  }}</span
+                >
+              </div>
+              <div class="calc-row highlight">
+                <span
+                  >Player Share ({{
+                    teamAvailabilitySummary().confirmed
+                  }}
+                  confirmed):</span
+                >
+                <span class="calc-value"
+                  >€{{ calculatePlayerShare() | number: "1.2-2" }}</span
+                >
+              </div>
+            </div>
+          </div>
+        }
+
+        <ng-template #footer>
+          <app-button variant="outlined" (clicked)="showBudgetDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [loading]="savingBudget()"
+            (clicked)="saveBudget()"
+            >Save Budget</app-button
+          >
+        </ng-template>
+      </p-dialog>
+    </app-main-layout>
+  

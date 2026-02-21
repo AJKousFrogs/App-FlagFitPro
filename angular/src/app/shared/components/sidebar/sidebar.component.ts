@@ -370,6 +370,13 @@ export class SidebarComponent implements OnInit {
       ariaLabel: "ACWR Dashboard - Acute Chronic Workload Ratio monitoring",
       group: "primary",
     },
+    {
+      label: "Knowledge Base",
+      route: "/knowledge",
+      icon: "pi-bookmark",
+      ariaLabel: "Knowledge Base - Submit and browse team knowledge resources",
+      group: "primary",
+    },
   ];
 
   private coachNavItems: NavItem[] = [
@@ -467,7 +474,7 @@ export class SidebarComponent implements OnInit {
     },
     {
       label: "Knowledge Base",
-      route: "/coach/knowledge",
+      route: "/knowledge",
       icon: "pi-bookmark",
       ariaLabel: "Knowledge Base - Training resources and guides",
       group: "primary",

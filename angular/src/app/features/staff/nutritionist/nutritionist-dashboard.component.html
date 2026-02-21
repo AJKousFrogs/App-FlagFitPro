@@ -1,0 +1,651 @@
+<app-main-layout>
+      <div class="nutritionist-dashboard">
+        <app-page-header
+          title="Nutritionist Dashboard"
+          subtitle="Monitor athlete nutrition, body composition, and supplement compliance"
+          icon="pi-apple"
+        >
+          <app-button
+            iconLeft="pi-file-pdf"
+            (clicked)="showReportDialog.set(true)"
+            >Generate Report</app-button
+          >
+        </app-page-header>
+
+        @if (loading()) {
+          <app-loading message="Loading nutrition data..." variant="inline" />
+        } @else {
+          <!-- Overview Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon athletes">
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ athletes().length }}</span>
+                <span class="stat-block__label">Athletes Monitored</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon compliance">
+                <i class="pi pi-check-circle"></i>
+              </div>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value"
+                  >{{ avgSupplementCompliance() }}%</span
+                >
+                <span class="stat-block__label">Avg Supplement Compliance</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon alerts">
+                <i class="pi pi-exclamation-triangle"></i>
+              </div>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ alertCount() }}</span>
+                <span class="stat-block__label">Active Alerts</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon hydration">
+                <i class="pi pi-bolt"></i>
+              </div>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ avgHydrationScore() }}</span>
+                <span class="stat-block__label">Avg Hydration Status</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs for different views -->
+          <p-tabs [value]="0">
+            <p-tablist>
+              <p-tab [value]="0">
+                <i class="pi pi-users"></i>
+                Athletes Overview
+              </p-tab>
+              <p-tab [value]="1">
+                <i class="pi pi-chart-line"></i>
+                Body Composition
+              </p-tab>
+              <p-tab [value]="2">
+                <i class="pi pi-check-square"></i>
+                Supplement Compliance
+              </p-tab>
+              <p-tab [value]="3">
+                <i class="pi pi-calendar"></i>
+                Tournament Prep
+              </p-tab>
+            </p-tablist>
+
+            <p-tabpanels>
+              <!-- Athletes Overview -->
+              <p-tabpanel [value]="0">
+                <div class="athletes-section">
+                  <div class="section-header">
+                    <h3>Athletes Under Care</h3>
+                    <div class="search-box">
+                      <i class="pi pi-search"></i>
+                      <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="searchQuery"
+                        placeholder="Search athletes..."
+                      />
+                    </div>
+                  </div>
+
+                  <p-table
+                    [value]="filteredAthletes()"
+                    [paginator]="true"
+                    [rows]="10"
+                    class="p-datatable-sm"
+                  >
+                    <ng-template #header>
+                      <tr>
+                        <th>Athlete</th>
+                        <th>Position</th>
+                        <th>Weight</th>
+                        <th>Body Fat %</th>
+                        <th>Compliance</th>
+                        <th>Hydration</th>
+                        <th>Alerts</th>
+                        <th>Actions</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template #body let-athlete>
+                      <tr>
+                        <td>
+                          <div class="athlete-cell">
+                            <span class="athlete-name">{{ athlete.name }}</span>
+                            <span class="athlete-age"
+                              >{{ athlete.age }} yrs</span
+                            >
+                          </div>
+                        </td>
+                        <td>{{ athlete.position }}</td>
+                        <td>
+                          {{ athlete.currentWeight }} kg
+                          @if (athlete.targetWeight) {
+                            <span class="target-weight">
+                              → {{ athlete.targetWeight }} kg
+                            </span>
+                          }
+                        </td>
+                        <td>
+                          @if (athlete.bodyFatPercentage) {
+                            {{ athlete.bodyFatPercentage }}%
+                          } @else {
+                            <span class="no-data">N/A</span>
+                          }
+                        </td>
+                        <td>
+                          <div class="compliance-cell">
+                            <p-progressBar
+                              [value]="getAthleteCompliance(athlete.id)"
+                              [showValue]="false"
+                              class="compliance-bar"
+                            ></p-progressBar>
+                            <span>{{ getAthleteCompliance(athlete.id) }}%</span>
+                          </div>
+                        </td>
+                        <td>
+                          <app-status-tag
+                            [value]="getHydrationLabel(athlete.id)"
+                            [severity]="getHydrationSeverity(athlete.id)"
+                            size="sm"
+                          />
+                        </td>
+                        <td>
+                          @if (getAthleteAlerts(athlete.id).length > 0) {
+                            <span class="alert-badge">
+                              {{ getAthleteAlerts(athlete.id).length }}
+                            </span>
+                          } @else {
+                            <i
+                              class="pi pi-check-circle ok-icon"
+                              pTooltip="No alerts"
+                            ></i>
+                          }
+                        </td>
+                        <td>
+                          <app-icon-button
+                            icon="pi-eye"
+                            variant="text"
+                            (clicked)="viewAthleteDetails(athlete)"
+                            ariaLabel="View athlete nutrition details"
+                            tooltip="View"
+                          />
+                          <app-icon-button
+                            icon="pi-file"
+                            variant="text"
+                            (clicked)="generateAthleteReport(athlete)"
+                            ariaLabel="Generate nutrition report"
+                            tooltip="Generate report"
+                          />
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template #emptymessage>
+                      <tr>
+                        <td colspan="8" class="empty-message">
+                          No athletes found matching your search.
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </p-tabpanel>
+
+              <!-- Body Composition -->
+              <p-tabpanel [value]="1">
+                <div class="body-composition-section">
+                  <div class="section-header">
+                    <h3>Body Composition Trends</h3>
+                    <p-select
+                      [options]="athleteSelectOptions()"
+                      [(ngModel)]="selectedAthleteId"
+                      placeholder="Select athlete"
+                      (onValueChange)="loadAthleteComposition()"
+                    ></p-select>
+                  </div>
+
+                  @if (selectedAthleteId) {
+                    <div class="charts-grid">
+                      <p-card header="Weight Trend">
+                        <app-lazy-chart
+                          type="line"
+                          [data]="weightChartData()"
+                          [options]="chartOptions"
+                        ></app-lazy-chart>
+                      </p-card>
+                      <p-card header="Body Fat %">
+                        <app-lazy-chart
+                          type="line"
+                          [data]="bodyFatChartData()"
+                          [options]="chartOptions"
+                        ></app-lazy-chart>
+                      </p-card>
+                    </div>
+
+                    @if (compositionAlerts().length > 0) {
+                      <div class="alerts-section">
+                        <h4>
+                          <i class="pi pi-exclamation-triangle"></i>
+                          Composition Alerts
+                        </h4>
+                        <ul class="alert-list">
+                          @for (alert of compositionAlerts(); track alert) {
+                            <li class="alert-item">{{ alert }}</li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                  } @else {
+                    <div class="select-prompt">
+                      <i class="pi pi-user"></i>
+                      <p>Select an athlete to view body composition trends</p>
+                    </div>
+                  }
+                </div>
+              </p-tabpanel>
+
+              <!-- Supplement Compliance -->
+              <p-tabpanel [value]="2">
+                <div class="supplement-section">
+                  <div class="section-header">
+                    <h3>Supplement Compliance Overview</h3>
+                  </div>
+
+                  <div class="compliance-grid">
+                    @for (
+                      compliance of supplementCompliance();
+                      track compliance.athleteId
+                    ) {
+                      <p-card class="compliance-card">
+                        <ng-template #header>
+                          <div class="compliance-header">
+                            <span class="athlete-name">{{
+                              getAthleteName(compliance.athleteId)
+                            }}</span>
+                            <app-status-tag
+                              [value]="compliance.overallComplianceRate + '%'"
+                              [severity]="
+                                getComplianceSeverity(
+                                  compliance.overallComplianceRate
+                                )
+                              "
+                              size="sm"
+                            />
+                          </div>
+                        </ng-template>
+                        <div class="supplement-list">
+                          @for (
+                            supplement of compliance.supplements;
+                            track supplement.name
+                          ) {
+                            <div class="supplement-item">
+                              <span class="supplement-name">{{
+                                supplement.name
+                              }}</span>
+                              <div class="supplement-stats">
+                                <p-progressBar
+                                  [value]="supplement.complianceRate"
+                                  [showValue]="false"
+                                  class="supplement-bar"
+                                ></p-progressBar>
+                                <span>{{ supplement.complianceRate }}%</span>
+                              </div>
+                              @if (supplement.missedDays > 0) {
+                                <span class="missed-days"
+                                  >{{ supplement.missedDays }} missed</span
+                                >
+                              }
+                            </div>
+                          }
+                        </div>
+                        @if (compliance.timingIssues.length > 0) {
+                          <div class="timing-issues">
+                            <strong>Timing Issues:</strong>
+                            <ul>
+                              @for (
+                                issue of compliance.timingIssues;
+                                track issue
+                              ) {
+                                <li>{{ issue }}</li>
+                              }
+                            </ul>
+                          </div>
+                        }
+                      </p-card>
+                    }
+                  </div>
+                </div>
+              </p-tabpanel>
+
+              <!-- Tournament Prep -->
+              <p-tabpanel [value]="3">
+                <div class="tournament-section">
+                  <div class="section-header">
+                    <h3>Tournament Nutrition Briefs</h3>
+                    <app-button
+                      iconLeft="pi-plus"
+                      (clicked)="showTournamentDialog.set(true)"
+                      >Create Brief</app-button
+                    >
+                  </div>
+
+                  @if (upcomingTournaments().length > 0) {
+                    <div class="tournament-grid">
+                      @for (
+                        tournament of upcomingTournaments();
+                        track tournament.tournament.name
+                      ) {
+                        <p-card class="tournament-card">
+                          <ng-template #header>
+                            <div class="tournament-header">
+                              <h4>{{ tournament.tournament.name }}</h4>
+                              <app-status-tag
+                                [value]="
+                                  tournament.tournament.expectedGames + ' games'
+                                "
+                                severity="info"
+                                size="sm"
+                              />
+                            </div>
+                          </ng-template>
+                          <div class="tournament-details">
+                            <div class="detail-row">
+                              <i class="pi pi-calendar"></i>
+                              <span
+                                >{{
+                                  tournament.tournament.dates.start
+                                    | date: "MMM d"
+                                }}
+                                -
+                                {{
+                                  tournament.tournament.dates.end
+                                    | date: "MMM d, yyyy"
+                                }}</span
+                              >
+                            </div>
+                            <div class="detail-row">
+                              <i class="pi pi-map-marker"></i>
+                              <span>{{ tournament.tournament.location }}</span>
+                            </div>
+                            <div class="detail-row">
+                              <i class="pi pi-sun"></i>
+                              <span
+                                >{{
+                                  tournament.tournament.climate.temperature
+                                }}°C,
+                                {{ tournament.tournament.climate.humidity }}%
+                                humidity</span
+                              >
+                            </div>
+                          </div>
+                          <div class="nutrition-needs">
+                            <h5>Calculated Needs</h5>
+                            <div class="needs-grid">
+                              <div class="need-item">
+                                <span class="need-value"
+                                  >{{
+                                    tournament.calculatedNeeds.dailyCalories
+                                  }}
+                                  kcal</span
+                                >
+                                <span class="need-label">Daily Calories</span>
+                              </div>
+                              <div class="need-item">
+                                <span class="need-value"
+                                  >{{
+                                    tournament.calculatedNeeds.dailyProtein
+                                  }}g</span
+                                >
+                                <span class="need-label">Protein</span>
+                              </div>
+                              <div class="need-item">
+                                <span class="need-value"
+                                  >{{
+                                    tournament.calculatedNeeds.dailyCarbs
+                                  }}g</span
+                                >
+                                <span class="need-label">Carbs</span>
+                              </div>
+                              <div class="need-item">
+                                <span class="need-value"
+                                  >{{
+                                    tournament.calculatedNeeds.dailyHydration
+                                  }}
+                                  ml</span
+                                >
+                                <span class="need-label">Hydration</span>
+                              </div>
+                            </div>
+                          </div>
+                          <ng-template #footer>
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-eye"
+                              (clicked)="viewTournamentBrief(tournament)"
+                              >View Full Brief</app-button
+                            >
+                            <app-button
+                              variant="text"
+                              iconLeft="pi-download"
+                              (clicked)="exportTournamentBrief(tournament)"
+                              >Export PDF</app-button
+                            >
+                          </ng-template>
+                        </p-card>
+                      }
+                    </div>
+                  } @else {
+                    <app-empty-state
+                      icon="pi-calendar-times"
+                      heading="No Upcoming Tournaments"
+                      description="Create a tournament nutrition brief when a competition is scheduled."
+                    />
+                  }
+                </div>
+              </p-tabpanel>
+            </p-tabpanels>
+          </p-tabs>
+        }
+
+        <!-- Athlete Details Dialog -->
+        <p-dialog
+          header="Athlete Nutrition Details"
+          [(visible)]="showAthleteDialog"
+          [modal]="true"
+          [dismissableMask]="true"
+          class="nutritionist-athlete-dialog"
+        >
+          @if (selectedAthlete()) {
+            <div class="athlete-details">
+              <div class="detail-header">
+                <div class="athlete-info">
+                  <h3>{{ selectedAthlete()!.name }}</h3>
+                  <p>
+                    {{ selectedAthlete()!.position }} •
+                    {{ selectedAthlete()!.age }} years
+                  </p>
+                </div>
+                <div class="weight-info">
+                  <span class="current-weight"
+                    >{{ selectedAthlete()!.currentWeight }} kg</span
+                  >
+                  @if (selectedAthlete()!.targetWeight) {
+                    <span class="target"
+                      >Target: {{ selectedAthlete()!.targetWeight }} kg</span
+                    >
+                  }
+                </div>
+              </div>
+
+              <div class="metrics-grid">
+                <div class="metric-card">
+                  <span class="metric-label">Body Fat</span>
+                  <span class="metric-value"
+                    >{{ selectedAthlete()!.bodyFatPercentage || "N/A" }}%</span
+                  >
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">BMR</span>
+                  <span class="metric-value"
+                    >{{ selectedAthlete()!.bmr || "N/A" }} kcal</span
+                  >
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">Body Water</span>
+                  <span class="metric-value"
+                    >{{
+                      selectedAthlete()!.bodyWaterPercentage || "N/A"
+                    }}%</span
+                  >
+                </div>
+              </div>
+
+              <div class="recommendations-section">
+                <h4>AI Recommendations</h4>
+                <ul class="recommendations-list">
+                  @for (rec of athleteRecommendations(); track $index) {
+                    <li>{{ rec }}</li>
+                  }
+                </ul>
+              </div>
+            </div>
+          }
+          <ng-template #footer>
+            <app-button
+              iconLeft="pi-file-pdf"
+              (clicked)="generateAthleteReport(selectedAthlete()!)"
+              >Generate Full Report</app-button
+            >
+          </ng-template>
+        </p-dialog>
+
+        <!-- Report Generation Dialog -->
+        <p-dialog
+          header="Generate Nutrition Report"
+          [(visible)]="showReportDialog"
+          [modal]="true"
+          [dismissableMask]="true"
+          class="nutritionist-report-dialog"
+        >
+          <div class="report-form">
+            <div class="form-group">
+              <label>Report Type</label>
+              <p-select
+                [options]="reportTypes"
+                [(ngModel)]="selectedReportType"
+                placeholder="Select report type"
+                class="w-full"
+              ></p-select>
+            </div>
+            <div class="form-group">
+              <label>Athlete</label>
+              <p-select
+                [options]="athleteSelectOptions()"
+                [(ngModel)]="reportAthleteId"
+                placeholder="Select athlete"
+                class="w-full"
+              ></p-select>
+            </div>
+            <div class="form-group">
+              <label>Time Period</label>
+              <p-select
+                [options]="timePeriods"
+                [(ngModel)]="selectedTimePeriod"
+                placeholder="Select period"
+                class="w-full"
+              ></p-select>
+            </div>
+          </div>
+          <ng-template #footer>
+            <app-button variant="text" (clicked)="showReportDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()"
+              >Generate</app-button
+            >
+          </ng-template>
+        </p-dialog>
+
+        <!-- Tournament Brief Dialog -->
+        <p-dialog
+          header="Create Tournament Nutrition Brief"
+          [(visible)]="showTournamentDialog"
+          [modal]="true"
+          [dismissableMask]="true"
+          class="nutritionist-tournament-dialog"
+        >
+          <div class="tournament-form">
+            <div class="form-group">
+              <label>Tournament Name</label>
+              <input
+                type="text"
+                pInputText
+                [(ngModel)]="newTournament.name"
+                placeholder="e.g., National Championships"
+                class="w-full"
+              />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Location</label>
+                <input
+                  type="text"
+                  pInputText
+                  [(ngModel)]="newTournament.location"
+                  placeholder="City, Country"
+                  class="w-full"
+                />
+              </div>
+              <div class="form-group">
+                <label>Expected Games</label>
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newTournament.expectedGames"
+                  min="1"
+                  class="w-full"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Expected Temperature (°C)</label>
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newTournament.temperature"
+                  class="w-full"
+                />
+              </div>
+              <div class="form-group">
+                <label>Humidity (%)</label>
+                <input
+                  type="number"
+                  pInputText
+                  [(ngModel)]="newTournament.humidity"
+                  min="0"
+                  max="100"
+                  class="w-full"
+                />
+              </div>
+            </div>
+          </div>
+          <ng-template #footer>
+            <app-button
+              variant="text"
+              (clicked)="showTournamentDialog.set(false)"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-plus" (clicked)="createTournamentBrief()"
+              >Create Brief</app-button
+            >
+          </ng-template>
+        </p-dialog>
+      </div>
+    </app-main-layout>

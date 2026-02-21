@@ -31,7 +31,7 @@ import { Select } from "primeng/select";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -599,7 +599,7 @@ export class PlaybookComponent implements OnInit {
 
     try {
       const response = (await firstValueFrom(
-        this.api.get("/api/playbook"),
+        this.api.get(API_ENDPOINTS.playbook.list),
       )) as ApiResponse<{ plays: Play[] }>;
       if (response?.success && response.data?.plays) {
         this.plays.set(response.data.plays);
@@ -618,7 +618,7 @@ export class PlaybookComponent implements OnInit {
     this.showPlayDetail = true;
 
     // Record study time
-    this.api.post("/api/playbook/study", { playId: play.id }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.post(API_ENDPOINTS.playbook.study, { playId: play.id }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       error: (err) => this.logger.error("Failed to record study time", err),
     });
   }
@@ -644,7 +644,7 @@ export class PlaybookComponent implements OnInit {
     );
 
     this.api
-      .post("/api/playbook/memorized", {
+      .post(API_ENDPOINTS.playbook.memorized, {
         playId: play.id,
         memorized: newStatus,
       })

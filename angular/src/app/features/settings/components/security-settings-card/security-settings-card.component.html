@@ -1,0 +1,66 @@
+<app-card title="Security" headerIcon="pi-shield" headerIconColor="primary">
+  <div class="security-actions">
+    <div class="security-item">
+      <div class="security-info">
+        <h4>Change Password</h4>
+        <p>Update your account password</p>
+      </div>
+      <app-button variant="outlined" icon="key" (clicked)="changePassword.emit()"
+        >Change</app-button
+      >
+    </div>
+    <p-divider></p-divider>
+
+    <div class="security-item">
+      <div class="security-info">
+        <h4>Two-Factor Authentication (2FA)</h4>
+        <p>
+          @if (isTwoFactorEnabled()) {
+            <span class="status-badge enabled">
+              <i class="pi pi-shield"></i> Enabled
+            </span>
+          } @else {
+            Add an extra layer of security to your account
+          }
+        </p>
+      </div>
+      @if (isTwoFactorEnabled()) {
+        <app-button
+          variant="outlined"
+          icon="times"
+          (clicked)="disableTwoFactor.emit()"
+          >Disable</app-button
+        >
+      } @else {
+        <app-button
+          variant="outlined"
+          icon="shield"
+          (clicked)="enableTwoFactor.emit()"
+          >Enable</app-button
+        >
+      }
+    </div>
+    <p-divider></p-divider>
+
+    <div class="security-item">
+      <div class="security-info">
+        <h4>Active Sessions</h4>
+        <p>Manage your logged-in devices</p>
+      </div>
+      <app-button variant="outlined" icon="desktop" (clicked)="viewSessions.emit()"
+        >View</app-button
+      >
+    </div>
+    <p-divider></p-divider>
+
+    <div class="security-item danger">
+      <div class="security-info">
+        <h4>Delete Account</h4>
+        <p>Permanently delete your account and all data</p>
+      </div>
+      <app-button variant="danger" icon="trash" (clicked)="deleteAccount.emit()"
+        >Delete</app-button
+      >
+    </div>
+  </div>
+</app-card>

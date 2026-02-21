@@ -605,13 +605,19 @@ export const teamRoutes: Routes = [
     data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
-    path: "coach/knowledge",
+    path: "knowledge",
     loadComponent: () =>
       import("../../features/coach/knowledge-base/knowledge-base.component").then(
         (m) => m.KnowledgeBaseComponent,
       ),
     canActivate: [authGuard],
     data: { preload: false, entry: "internal" }, // Reference feature
+  },
+  {
+    path: "coach/knowledge",
+    redirectTo: "knowledge",
+    pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "coach/film",

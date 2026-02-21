@@ -26,7 +26,7 @@ import {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
-import { ApiService } from "./api.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -501,7 +501,7 @@ export class NotificationStateService implements OnDestroy {
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<Notification[]>("/api/dashboard/notifications", {
+        this.apiService.get<Notification[]>(API_ENDPOINTS.notifications.list, {
           ...options,
           lastOpenedAt: this.lastOpenedAt() || options.lastOpenedAt,
         }),
@@ -566,7 +566,7 @@ export class NotificationStateService implements OnDestroy {
     try {
       const response = await firstValueFrom(
         this.apiService.post<{ success: boolean }>(
-          "/api/dashboard/notifications",
+          API_ENDPOINTS.notifications.markRead,
           { notificationId },
         ),
       );
@@ -613,7 +613,7 @@ export class NotificationStateService implements OnDestroy {
     try {
       const response = await firstValueFrom(
         this.apiService.post<{ success: boolean }>(
-          "/api/dashboard/notifications",
+          API_ENDPOINTS.notifications.markRead,
           { notificationId: "all" },
         ),
       );
@@ -661,7 +661,7 @@ export class NotificationStateService implements OnDestroy {
     try {
       const response = await firstValueFrom(
         this.apiService.post<{ success: boolean }>(
-          "/api/dashboard/notifications",
+          API_ENDPOINTS.notifications.markRead,
           { ids: notificationIds },
         ),
       );
@@ -697,7 +697,7 @@ export class NotificationStateService implements OnDestroy {
     try {
       const response = await firstValueFrom(
         this.apiService.get<{ unreadCount: number }>(
-          "/api/dashboard/notifications/count",
+          API_ENDPOINTS.notifications.count,
         ),
       );
 
@@ -740,7 +740,7 @@ export class NotificationStateService implements OnDestroy {
     try {
       await firstValueFrom(
         this.apiService.patch<{ success: boolean }>(
-          "/api/dashboard/notifications/last-opened",
+          API_ENDPOINTS.notifications.lastOpened,
           {},
         ),
       );

@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { getStatusSeverity, statusSeverityMap } from '@shared/utils/status.utils';
+ * import { getStatusSeverity, statusVariantMap } from '@shared/utils/status.utils';
  *
  * // In template:
  * // <app-status-tag [value]="status" [severity]="getStatusSeverity(status)"></app-status-tag>

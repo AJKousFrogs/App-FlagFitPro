@@ -29,7 +29,7 @@ import { Select } from "primeng/select";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -627,7 +627,7 @@ export class AiSchedulerComponent implements OnInit {
     try {
       const response: ApiResponse<{ events?: TargetEvent[] }> =
         await firstValueFrom(
-        this.api.get("/api/coach/events/upcoming"),
+        this.api.get(API_ENDPOINTS.coach.eventsUpcoming),
       );
       if (response?.success && response.data?.events) {
         this.events.set(response.data.events);

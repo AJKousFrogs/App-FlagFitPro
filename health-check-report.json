@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-17T13:20:57.692Z",
+  "timestamp": "2026-02-20T11:12:21.273Z",
   "overallHealth": 86,
   "categories": {
     "dependencies": {
@@ -16,11 +16,11 @@
       "status": "good",
       "metrics": {
         "unit_files": 1,
-        "integration_files": 108,
+        "integration_files": 111,
         "e2e_files": 8,
-        "passed": 36,
+        "passed": 37,
         "failed": 0,
-        "total": 36
+        "total": 37
       }
     },
     "security": {
@@ -62,7 +62,7 @@
       "status": "good",
       "metrics": {
         "readmeLength": 13295,
-        "docFiles": 26
+        "docFiles": 25
       }
     },
     "database": {
@@ -70,12 +70,12 @@
       "issues": [],
       "status": "good",
       "metrics": {
-        "queryTime": "995ms",
+        "queryTime": "272ms",
         "connected": true,
-        "responseTime": 995,
+        "responseTime": 272,
         "tablesFound": 3,
         "totalTables": 3,
-        "migrations": 42
+        "migrations": 51
       }
     },
     "api": {
@@ -83,7 +83,7 @@
       "issues": [],
       "status": "good",
       "metrics": {
-        "functionsFound": 105,
+        "functionsFound": 107,
         "criticalFunctions": 3
       }
     },

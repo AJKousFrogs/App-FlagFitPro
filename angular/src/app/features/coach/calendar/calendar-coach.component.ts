@@ -34,7 +34,7 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { UI_LIMITS } from "../../../core/constants/app.constants";
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { DialogService } from "../../../core/ui/dialog.service";
@@ -770,7 +770,7 @@ export class CalendarCoachComponent implements OnInit {
     try {
       const response: ApiResponse<{ events?: TeamEvent[] }> =
         await firstValueFrom(
-        this.api.get("/api/coach/calendar"),
+        this.api.get(API_ENDPOINTS.coachCalendar.list),
       );
       if (response?.success && response.data) {
         this.events.set(response.data.events || []);
@@ -888,7 +888,7 @@ export class CalendarCoachComponent implements OnInit {
         // Update existing event
         const selectedEventId = this.selectedEvent()?.id;
         const response: ApiResponse<unknown> = await firstValueFrom(
-          this.api.put(`/api/coach/calendar?id=${selectedEventId}`, eventData),
+          this.api.put(API_ENDPOINTS.coachCalendar.update(selectedEventId || ""), eventData),
         );
         if (response?.success) {
           this.toastService.success(
@@ -900,7 +900,7 @@ export class CalendarCoachComponent implements OnInit {
       } else {
         // Create new event
         const response: ApiResponse<unknown> = await firstValueFrom(
-          this.api.post("/api/coach/calendar", eventData),
+          this.api.post(API_ENDPOINTS.coachCalendar.create, eventData),
         );
         if (response?.success) {
           this.toastService.success(
@@ -948,7 +948,7 @@ export class CalendarCoachComponent implements OnInit {
 
     try {
       const response: ApiResponse<unknown> = await firstValueFrom(
-        this.api.delete(`/api/coach/calendar?id=${event.id}`),
+        this.api.delete(API_ENDPOINTS.coachCalendar.delete(event.id)),
       );
       if (response?.success) {
         this.toastService.success(

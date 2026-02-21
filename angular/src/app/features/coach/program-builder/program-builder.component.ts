@@ -41,7 +41,7 @@ import { DialogHeaderComponent } from "../../../shared/components/dialog-header/
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { DialogService } from "../../../core/ui/dialog.service";
@@ -696,7 +696,7 @@ export class ProgramBuilderComponent implements OnInit {
         programs?: TrainingProgram[];
         teamMembers?: TeamMemberOption[];
       }> = await firstValueFrom(
-        this.api.get("/api/coach/programs"),
+        this.api.get(API_ENDPOINTS.coach.programs),
       );
       if (response?.success && response.data) {
         if (response.data.programs) this.programs.set(response.data.programs);
@@ -803,7 +803,7 @@ export class ProgramBuilderComponent implements OnInit {
       startDate: this.formData.startDate.toISOString(),
     };
 
-    this.api.post("/api/coach/programs/draft", program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.post(API_ENDPOINTS.coach.programsDraft, program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toastService.success(
           `${this.formData.name} saved as draft`,
@@ -833,7 +833,7 @@ export class ProgramBuilderComponent implements OnInit {
       assignedCount: this.selectedPlayerCount(),
     };
 
-    this.api.post("/api/coach/programs", program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.post(API_ENDPOINTS.coach.programs, program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toastService.success(
           `${this.formData.name} is now active`,
@@ -847,7 +847,7 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   publishProgram(program: TrainingProgram): void {
-    this.api.put(`/api/coach/programs/${program.id}/publish`, {}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.put(API_ENDPOINTS.coach.programPublish(program.id), {}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toastService.success(
           `${program.name} is now active`,
@@ -868,7 +868,7 @@ export class ProgramBuilderComponent implements OnInit {
 
     this.programs.update((progs) => progs.filter((p) => p.id !== program.id));
 
-    this.api.delete(`/api/coach/programs/${program.id}`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.delete(API_ENDPOINTS.coach.programDelete(program.id)).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toastService.info("Program deleted", "Program Deleted");
       },

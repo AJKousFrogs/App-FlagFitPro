@@ -17,6 +17,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -30,8 +31,9 @@ import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -59,6 +61,44 @@ interface ResourceCategory {
   name: string;
   icon: string;
   count: number;
+}
+
+interface PendingKnowledgeEntry {
+  id: string;
+  entry_type: string;
+  topic: string;
+  question: string;
+  answer: string;
+  summary: string;
+  evidence_strength: string;
+  consensus_level: string;
+  merlin_submitted_by_role?: string;
+  merlin_submitted_at?: string;
+}
+
+interface MyKnowledgeSubmission {
+  id: string;
+  entry_type: string;
+  topic: string;
+  question: string;
+  summary: string;
+  evidence_strength: string;
+  consensus_level: string;
+  merlin_approval_status: "pending" | "approved" | "rejected";
+  merlin_approval_notes?: string | null;
+  merlin_submitted_at?: string;
+  merlin_approved_at?: string | null;
+  updated_at?: string;
+}
+
+interface KnowledgeReviewEvent {
+  id: number;
+  action: "approve" | "reject";
+  reviewed_by_role: string;
+  notes?: string | null;
+  quality_gate_override: boolean;
+  quality_issues?: string[];
+  created_at: string;
 }
 
 // ===== Constants =====
@@ -127,6 +167,202 @@ const VISIBILITY_OPTIONS = [
           placeholder="Search knowledge base..."
           ariaLabel="Search knowledge base"
         />
+
+        @if (activeTab() === "all") {
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">My Submissions</h3>
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-refresh"
+                (clicked)="loadMySubmissions()"
+                >Refresh</app-button
+              >
+            </div>
+            <p class="section-description">
+              Track approval status before Merlin AI can use your entries.
+            </p>
+            <div class="submission-filters">
+              <button
+                class="filter-btn"
+                [class.active]="myStatusFilter() === 'all'"
+                (click)="setMyStatusFilter('all')"
+              >
+                All
+              </button>
+              <button
+                class="filter-btn"
+                [class.active]="myStatusFilter() === 'pending'"
+                (click)="setMyStatusFilter('pending')"
+              >
+                Pending
+              </button>
+              <button
+                class="filter-btn"
+                [class.active]="myStatusFilter() === 'approved'"
+                (click)="setMyStatusFilter('approved')"
+              >
+                Approved
+              </button>
+              <button
+                class="filter-btn"
+                [class.active]="myStatusFilter() === 'rejected'"
+                (click)="setMyStatusFilter('rejected')"
+              >
+                Rejected
+              </button>
+            </div>
+            <div class="resources-list">
+              @if (isLoadingMySubmissions()) {
+                <app-empty-state
+                  icon="pi-spin pi-spinner"
+                  heading="Loading your submissions..."
+                />
+              } @else {
+                @for (entry of filteredMySubmissions(); track entry.id) {
+                  <div class="resource-row team-resource">
+                    <div class="resource-icon-small"><i class="pi pi-file-edit" aria-hidden="true"></i></div>
+                    <div class="resource-info">
+                      <h4>{{ entry.question }}</h4>
+                      <p class="resource-meta">
+                        {{ entry.entry_type }} •
+                        <span
+                          class="status-pill"
+                          [class.pending]="entry.merlin_approval_status === 'pending'"
+                          [class.approved]="entry.merlin_approval_status === 'approved'"
+                          [class.rejected]="entry.merlin_approval_status === 'rejected'"
+                        >
+                          {{ entry.merlin_approval_status }}
+                        </span>
+                        @if (entry.merlin_submitted_at) {
+                          • Submitted {{ entry.merlin_submitted_at | date: "short" }}
+                        }
+                        @if (entry.merlin_approved_at) {
+                          • Reviewed {{ entry.merlin_approved_at | date: "short" }}
+                        }
+                      </p>
+                      <p class="resource-desc">{{ entry.summary }}</p>
+                      @if (entry.merlin_approval_notes) {
+                        <p class="resource-meta">
+                          Reviewer notes: {{ entry.merlin_approval_notes }}
+                        </p>
+                      }
+                      <div class="audit-actions">
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-history"
+                          (clicked)="toggleAuditTimeline(entry.id)"
+                        >
+                          {{
+                            auditTimelineByEntry()[entry.id]
+                              ? "Hide Audit Timeline"
+                              : "View Audit Timeline"
+                          }}
+                        </app-button>
+                      </div>
+                      @if (auditLoadingByEntry()[entry.id]) {
+                        <p class="resource-meta">Loading audit timeline...</p>
+                      }
+                      @if (auditTimelineByEntry()[entry.id]) {
+                        <div class="audit-timeline">
+                          @for (
+                            event of auditTimelineByEntry()[entry.id];
+                            track event.id
+                          ) {
+                            <div class="audit-event">
+                              <p class="resource-meta">
+                                {{ event.action }} by {{ event.reviewed_by_role }}
+                                • {{ event.created_at | date: "short" }}
+                                @if (event.quality_gate_override) {
+                                  • override applied
+                                }
+                              </p>
+                              @if (event.notes) {
+                                <p class="resource-desc">{{ event.notes }}</p>
+                              }
+                            </div>
+                          } @empty {
+                            <p class="resource-meta">No review actions yet.</p>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                } @empty {
+                  <app-empty-state
+                    icon="pi-inbox"
+                    heading="No submissions yet"
+                  />
+                }
+              }
+            </div>
+          </div>
+        }
+
+        @if (isNutritionistReviewer() && activeTab() === "all") {
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">Merlin Approval Queue</h3>
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-refresh"
+                (clicked)="loadPendingEntries()"
+                >Refresh</app-button
+              >
+            </div>
+            <p class="section-description">
+              Entries stay pending until a nutritionist approves them for Merlin.
+            </p>
+            <div class="resources-list">
+              @if (isLoadingPending()) {
+                <app-empty-state
+                  icon="pi-spin pi-spinner"
+                  heading="Loading pending entries..."
+                />
+              } @else {
+                @for (entry of pendingEntries(); track entry.id) {
+                  <div class="resource-row team-resource">
+                    <div class="resource-icon-small"><i class="pi pi-clock" aria-hidden="true"></i></div>
+                    <div class="resource-info">
+                      <h4>{{ entry.question }}</h4>
+                      <p class="resource-meta">
+                        {{ entry.entry_type }} • Submitted by
+                        {{ entry.merlin_submitted_by_role || "user" }}
+                        @if (entry.merlin_submitted_at) {
+                          • {{ entry.merlin_submitted_at | date: "short" }}
+                        }
+                      </p>
+                      <p class="resource-desc">{{ entry.summary }}</p>
+                    </div>
+                    <div class="resource-actions">
+                      <app-button
+                        size="sm"
+                        iconLeft="pi-check"
+                        (clicked)="openApproveDialog(entry)"
+                        >Approve</app-button
+                      >
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        iconLeft="pi-times"
+                        (clicked)="reviewPendingEntry(entry.id, 'reject')"
+                        >Reject</app-button
+                      >
+                    </div>
+                  </div>
+                } @empty {
+                  <app-empty-state
+                    icon="pi-check-circle"
+                    heading="No pending knowledge entries"
+                  />
+                }
+              }
+            </div>
+          </div>
+        }
 
         <!-- Tab Navigation -->
         <div class="tab-navigation">
@@ -391,6 +627,12 @@ const VISIBILITY_OPTIONS = [
       >
         <div class="add-form">
           <div class="form-field">
+            <p class="resource-meta">
+              This submission will be pending until a nutritionist approves it
+              for Merlin AI consumption.
+            </p>
+          </div>
+          <div class="form-field">
             <label>Resource Type</label>
             <div class="radio-group">
               @for (type of resourceTypes; track type.value) {
@@ -483,8 +725,68 @@ const VISIBILITY_OPTIONS = [
           <app-button variant="secondary" (clicked)="showAddDialog = false"
             >Cancel</app-button
           >
-          <app-button iconLeft="pi-check" (clicked)="saveResource()"
-            >Save Resource</app-button
+          <app-button
+            iconLeft="pi-check"
+            [disabled]="isSubmitting()"
+            (clicked)="saveResource()"
+            >Submit for Review</app-button
+          >
+        </ng-template>
+      </p-dialog>
+
+      <p-dialog
+        [(visible)]="showApproveDialog"
+        header="Approve Knowledge Entry"
+        [modal]="true"
+        class="knowledge-base-add-dialog"
+      >
+        @if (selectedPendingEntry()) {
+          <div class="add-form">
+            <div class="form-field">
+              <label>Entry</label>
+              <p class="resource-meta">
+                {{ selectedPendingEntry()?.question }}
+              </p>
+            </div>
+            <div class="form-field">
+              <label>Quality Checklist</label>
+              @if (reviewQualityIssues().length > 0) {
+                <ul class="quality-list">
+                  @for (issue of reviewQualityIssues(); track issue) {
+                    <li>{{ issue }}</li>
+                  }
+                </ul>
+                <label class="override-row">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="reviewForm.overrideQualityGate"
+                  />
+                  Override quality gate (requires notes)
+                </label>
+              } @else {
+                <p class="resource-meta">All quality checks passed.</p>
+              }
+            </div>
+            <div class="form-field">
+              <label>Reviewer Notes</label>
+              <textarea
+                pTextarea
+                rows="4"
+                [(ngModel)]="reviewForm.notes"
+                placeholder="Optional notes (required for override)"
+              ></textarea>
+            </div>
+          </div>
+        }
+        <ng-template #footer>
+          <app-button variant="secondary" (clicked)="showApproveDialog = false"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [disabled]="isReviewSubmitting()"
+            (clicked)="confirmApprove()"
+            >Approve Entry</app-button
           >
         </ng-template>
       </p-dialog>
@@ -496,18 +798,39 @@ export class KnowledgeBaseComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly authService = inject(AuthService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
 
   // State
   readonly resources = signal<KnowledgeResource[]>([]);
   readonly categories = signal<ResourceCategory[]>([]);
+  readonly pendingEntries = signal<PendingKnowledgeEntry[]>([]);
+  readonly mySubmissions = signal<MyKnowledgeSubmission[]>([]);
   readonly activeTab = signal<string>("all");
   readonly isLoading = signal(true);
+  readonly isLoadingPending = signal(false);
+  readonly isLoadingMySubmissions = signal(false);
+  readonly isSubmitting = signal(false);
+  readonly isReviewSubmitting = signal(false);
+  readonly selectedPendingEntry = signal<PendingKnowledgeEntry | null>(null);
+  readonly myStatusFilter = signal<"all" | "pending" | "approved" | "rejected">(
+    "all",
+  );
+  readonly auditTimelineByEntry = signal<Record<string, KnowledgeReviewEvent[]>>(
+    {},
+  );
+  readonly auditLoadingByEntry = signal<Record<string, boolean>>({});
 
   searchQuery = "";
 
   // Dialog state
   showAddDialog = false;
+  showApproveDialog = false;
   resourceForm = this.getEmptyForm();
+  reviewForm = {
+    notes: "",
+    overrideQualityGate: false,
+  };
 
   // Options
   readonly resourceTypes = RESOURCE_TYPES;
@@ -563,9 +886,32 @@ export class KnowledgeBaseComponent implements OnInit {
   readonly hasMoreResources = computed(
     () => this.filteredResources().length >= 10,
   );
+  readonly filteredMySubmissions = computed(() => {
+    const filter = this.myStatusFilter();
+    const items = this.mySubmissions();
+    if (filter === "all") {
+      return items;
+    }
+    return items.filter((entry) => entry.merlin_approval_status === filter);
+  });
 
   ngOnInit(): void {
-    this.loadData();
+    void this.bootstrap();
+  }
+
+  private async bootstrap(): Promise<void> {
+    await Promise.all([
+      this.loadData(),
+      this.loadMySubmissions(),
+      this.teamMembershipService.loadMembership().catch((error) => {
+        this.logger.warn("Failed to load team membership", error);
+        return null;
+      }),
+    ]);
+
+    if (this.isNutritionistReviewer()) {
+      await this.loadPendingEntries();
+    }
   }
 
   async loadData(): Promise<void> {
@@ -576,7 +922,7 @@ export class KnowledgeBaseComponent implements OnInit {
         resources?: KnowledgeResource[];
         categories?: ResourceCategory[];
       }> = await firstValueFrom(
-        this.api.get("/api/knowledge"),
+        this.api.get(API_ENDPOINTS.knowledge.base),
       );
       if (response?.success && response.data) {
         this.resources.set(response.data.resources || []);
@@ -612,13 +958,320 @@ export class KnowledgeBaseComponent implements OnInit {
     this.showAddDialog = true;
   }
 
-  saveResource(): void {
-    if (!this.resourceForm.title) return;
-    this.toastService.success(
-      "Resource has been added to the knowledge base",
-      "Resource Saved",
-    );
-    this.showAddDialog = false;
+  private getEffectiveRole(): string {
+    const user = this.authService.getUser();
+    const metadata = user?.user_metadata || {};
+    const roleFromMeta = String(
+      metadata["staff_role"] || metadata["role"] || user?.role || "",
+    )
+      .trim()
+      .toLowerCase();
+    const roleFromTeam = (this.teamMembershipService.role() || "")
+      .toString()
+      .trim()
+      .toLowerCase();
+    return roleFromMeta || roleFromTeam || "player";
+  }
+
+  isNutritionistReviewer(): boolean {
+    return this.getEffectiveRole() === "nutritionist";
+  }
+
+  private mapEntryType(category: string): string {
+    const value = category.trim().toLowerCase();
+    if (value === "nutrition") return "nutrition";
+    if (value === "injury") return "injury";
+    if (value === "mental") return "psychology";
+    return "training_method";
+  }
+
+  async saveResource(): Promise<void> {
+    const title = this.resourceForm.title.trim();
+    const content = this.resourceForm.content.trim();
+    const url = this.resourceForm.url.trim();
+
+    if (!title) {
+      this.toastService.warn("Please enter a title", "Validation");
+      return;
+    }
+    if (!content && !url) {
+      this.toastService.warn(
+        "Add content or a URL before submitting",
+        "Validation",
+      );
+      return;
+    }
+
+    const payload = {
+      topic: title.toLowerCase(),
+      question: title,
+      answer: content || url,
+      summary: content ? content.slice(0, 240) : `External resource: ${url}`,
+      entry_type: this.mapEntryType(this.resourceForm.category || ""),
+      evidence_strength: "limited",
+      consensus_level: "low",
+    };
+
+    this.isSubmitting.set(true);
+    try {
+      const response = await firstValueFrom(
+        this.api.post<{ entry?: { id: string } }>(
+          API_ENDPOINTS.knowledgeGovernance.submit,
+          payload,
+        ),
+      );
+
+      if (!response?.success) {
+        throw new Error("Failed to submit knowledge entry");
+      }
+
+      this.toastService.success(
+        "Knowledge submitted for nutritionist review",
+        "Submitted",
+      );
+      this.showAddDialog = false;
+      this.resourceForm = this.getEmptyForm();
+      await this.loadMySubmissions();
+
+      if (this.isNutritionistReviewer()) {
+        await this.loadPendingEntries();
+      }
+    } catch (error) {
+      this.logger.error("Failed to submit knowledge entry", error);
+      this.toastService.error(
+        "Failed to submit knowledge entry",
+        "Submission Error",
+      );
+    } finally {
+      this.isSubmitting.set(false);
+    }
+  }
+
+  async loadPendingEntries(): Promise<void> {
+    if (!this.isNutritionistReviewer()) {
+      return;
+    }
+
+    this.isLoadingPending.set(true);
+    try {
+      const response = await firstValueFrom(
+        this.api.get<{ entries?: PendingKnowledgeEntry[] }>(
+          API_ENDPOINTS.knowledgeGovernance.pending,
+          { limit: 100 },
+        ),
+      );
+      if (!response?.success) {
+        throw new Error("Failed to load pending entries");
+      }
+      this.pendingEntries.set(response.data?.entries || []);
+    } catch (error) {
+      this.logger.error("Failed to load pending knowledge entries", error);
+      this.pendingEntries.set([]);
+      this.toastService.error(
+        "Could not load pending entries",
+        "Review Queue Error",
+      );
+    } finally {
+      this.isLoadingPending.set(false);
+    }
+  }
+
+  async loadMySubmissions(): Promise<void> {
+    this.isLoadingMySubmissions.set(true);
+    try {
+      const response = await firstValueFrom(
+        this.api.get<{ entries?: MyKnowledgeSubmission[] }>(
+          API_ENDPOINTS.knowledgeGovernance.my,
+          { limit: 100 },
+        ),
+      );
+      if (!response?.success) {
+        throw new Error("Failed to load my submissions");
+      }
+      this.mySubmissions.set(response.data?.entries || []);
+    } catch (error) {
+      this.logger.error("Failed to load my knowledge submissions", error);
+      this.mySubmissions.set([]);
+      this.toastService.error(
+        "Could not load your submissions",
+        "Submission History Error",
+      );
+    } finally {
+      this.isLoadingMySubmissions.set(false);
+    }
+  }
+
+  async reviewPendingEntry(
+    entryId: string,
+    action: "approve" | "reject",
+  ): Promise<void> {
+    if (!this.isNutritionistReviewer()) {
+      this.toastService.warn(
+        "Only nutritionists can review entries",
+        "Not Authorized",
+      );
+      return;
+    }
+
+    try {
+      const response = await firstValueFrom(
+        this.api.patch<{ entry?: { id: string } }>(
+          API_ENDPOINTS.knowledgeGovernance.review(entryId),
+          { action },
+        ),
+      );
+      if (!response?.success) {
+        throw new Error("Review failed");
+      }
+      this.toastService.success(
+        `Entry ${action}d successfully`,
+        "Review Complete",
+      );
+      await this.loadPendingEntries();
+    } catch (error) {
+      this.logger.error("Failed to review pending entry", error);
+      this.toastService.error(
+        "Failed to process review action",
+        "Review Error",
+      );
+    }
+  }
+
+  openApproveDialog(entry: PendingKnowledgeEntry): void {
+    this.selectedPendingEntry.set(entry);
+    this.reviewForm = {
+      notes: "",
+      overrideQualityGate: false,
+    };
+    this.showApproveDialog = true;
+  }
+
+  setMyStatusFilter(
+    filter: "all" | "pending" | "approved" | "rejected",
+  ): void {
+    this.myStatusFilter.set(filter);
+  }
+
+  async toggleAuditTimeline(entryId: string): Promise<void> {
+    const current = this.auditTimelineByEntry();
+    if (current[entryId]) {
+      const next = { ...current };
+      delete next[entryId];
+      this.auditTimelineByEntry.set(next);
+      return;
+    }
+    await this.loadAuditTimelineForEntry(entryId);
+  }
+
+  private async loadAuditTimelineForEntry(entryId: string): Promise<void> {
+    this.auditLoadingByEntry.update((state) => ({ ...state, [entryId]: true }));
+    try {
+      const response = await firstValueFrom(
+        this.api.get<{ events?: KnowledgeReviewEvent[] }>(
+          API_ENDPOINTS.knowledgeGovernance.audit(entryId),
+        ),
+      );
+      if (!response?.success) {
+        throw new Error("Failed to load audit timeline");
+      }
+      this.auditTimelineByEntry.update((state) => ({
+        ...state,
+        [entryId]: response.data?.events || [],
+      }));
+    } catch (error) {
+      this.logger.error("Failed to load audit timeline", error);
+      this.toastService.error("Could not load audit timeline", "Audit Error");
+    } finally {
+      this.auditLoadingByEntry.update((state) => ({ ...state, [entryId]: false }));
+    }
+  }
+
+  reviewQualityIssues(): string[] {
+    const entry = this.selectedPendingEntry();
+    if (!entry) {
+      return [];
+    }
+    return this.getQualityIssuesForEntry(entry);
+  }
+
+  private getQualityIssuesForEntry(entry: PendingKnowledgeEntry): string[] {
+    const issues: string[] = [];
+    const answer = (entry.answer || "").trim().toLowerCase();
+    const summary = (entry.summary || "").trim();
+    const entryType = (entry.entry_type || "").trim().toLowerCase();
+
+    if (answer.length < 80) {
+      issues.push("Answer should be at least 80 characters.");
+    }
+    if (summary.length < 30) {
+      issues.push("Summary should be at least 30 characters.");
+    }
+
+    if (entryType === "nutrition" || entryType === "supplement") {
+      const hasDoseSignal = /\b(\d+\s?(mg|g|mcg|iu)|dose|dosing|serving|daily|per day)\b/.test(
+        answer,
+      );
+      const hasSafetySignal =
+        /\b(side effect|contraindication|safety|warning|avoid|risk|interaction|upper limit)\b/.test(
+          answer,
+        );
+      if (!hasDoseSignal) {
+        issues.push("Include dosing guidance for nutrition/supplement entries.");
+      }
+      if (!hasSafetySignal) {
+        issues.push(
+          "Include safety considerations for nutrition/supplement entries.",
+        );
+      }
+    }
+
+    return issues;
+  }
+
+  async confirmApprove(): Promise<void> {
+    const entry = this.selectedPendingEntry();
+    if (!entry) {
+      return;
+    }
+
+    const issues = this.getQualityIssuesForEntry(entry);
+    const notes = this.reviewForm.notes.trim();
+    if (issues.length > 0 && this.reviewForm.overrideQualityGate && notes.length < 15) {
+      this.toastService.warn(
+        "Override approval requires notes with at least 15 characters",
+        "Validation",
+      );
+      return;
+    }
+
+    this.isReviewSubmitting.set(true);
+    try {
+      const response = await firstValueFrom(
+        this.api.patch<{ entry?: { id: string } }>(
+          API_ENDPOINTS.knowledgeGovernance.review(entry.id),
+          {
+            action: "approve",
+            notes: notes || null,
+            override_quality_gate: this.reviewForm.overrideQualityGate,
+          },
+        ),
+      );
+      if (!response?.success) {
+        throw new Error("Review failed");
+      }
+      this.toastService.success("Entry approved successfully", "Review Complete");
+      this.showApproveDialog = false;
+      this.selectedPendingEntry.set(null);
+      await Promise.all([this.loadPendingEntries(), this.loadMySubmissions()]);
+    } catch (error) {
+      this.logger.error("Failed to approve pending entry", error);
+      this.toastService.error(
+        "Failed to process approval action",
+        "Review Error",
+      );
+    } finally {
+      this.isReviewSubmitting.set(false);
+    }
   }
 
   openResource(resource: KnowledgeResource): void {

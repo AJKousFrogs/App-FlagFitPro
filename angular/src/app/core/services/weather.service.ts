@@ -41,7 +41,7 @@ export class WeatherService {
     // Try API
     return this.apiService
       .get<WeatherData>(
-        API_ENDPOINTS.weather?.current || "/api/weather/current",
+        API_ENDPOINTS.weather.current,
         Object.keys(params).length > 0 ? params : undefined,
       )
       .pipe(

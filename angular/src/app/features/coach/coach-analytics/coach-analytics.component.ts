@@ -499,7 +499,7 @@ export class CoachAnalyticsComponent {
 
   loadAnalytics(): void {
     this.loading.set(true);
-    // Real data would come from this.apiService.get("/api/analytics/summary")
+    // Real data would come from this.apiService.get(API_ENDPOINTS.analytics.summary)
     setTimeout(() => {
       this.overview.set({
         totalAthletes: 0,

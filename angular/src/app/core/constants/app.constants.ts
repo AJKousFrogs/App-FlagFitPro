@@ -86,7 +86,7 @@ export const ROUTES = {
   // Main navigation
   DASHBOARD: "/dashboard",
   PLAYER_DASHBOARD: "/player-dashboard",
-  COACH_DASHBOARD: "/coach-dashboard",
+  COACH_DASHBOARD: "/coach/dashboard",
 
   // Training
   TRAINING: "/training",
@@ -136,7 +136,7 @@ export const ROUTES = {
   COACH_TEAM_MANAGEMENT: "/coach/team",
   COACH_PRACTICE_PLANNER: "/coach/practice-planner",
   COACH_INJURY_MANAGEMENT: "/coach/injury-management",
-  COACH_KNOWLEDGE_BASE: "/coach/knowledge-base",
+  COACH_KNOWLEDGE_BASE: "/knowledge",
   COACH_PROGRAM_BUILDER: "/coach/program-builder",
   COACH_PLAYER_DEVELOPMENT: "/coach/player-development",
   COACH_PAYMENT_MANAGEMENT: "/coach/payment-management",

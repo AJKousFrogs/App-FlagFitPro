@@ -1,0 +1,441 @@
+<app-main-layout>
+      <div class="profile-page">
+        <!-- Deletion Pending Banner - Using Centralized UX Copy -->
+        @if (deletionPending()) {
+          <div class="deletion-pending-banner">
+            <div class="deletion-banner-content">
+              <i class="pi {{ deletionMessage.icon }}"></i>
+              <div class="deletion-banner-text">
+                <h4>{{ deletionMessage.title }}</h4>
+                <p>{{ getDeletionReason() }}</p>
+              </div>
+              <div class="deletion-banner-actions">
+                <app-icon-button
+                  icon="pi-times"
+                  [loading]="cancellingDeletion()"
+                  (clicked)="cancelDeletion()"
+                  ariaLabel="Cancel account deletion"
+                  tooltip="Cancel deletion"
+                />
+                <a
+                  [routerLink]="deletionMessage.helpLink"
+                  class="deletion-help-link"
+                >
+                  Learn More
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Loading State -->
+        @if (isLoading()) {
+          <app-loading message="Loading profile..." variant="inline" />
+        }
+
+        <!-- Error State -->
+        @else if (hasError()) {
+          <app-page-error-state
+            title="Unable to load profile"
+            [message]="errorMessage()"
+            (retry)="retryLoad()"
+          ></app-page-error-state>
+        } @else {
+          <!-- Profile Header - Redesigned -->
+          <div class="profile-header-card">
+            <!-- Background Decoration -->
+            <div class="profile-header-bg">
+              <div class="bg-pattern"></div>
+            </div>
+
+            <!-- Avatar Section -->
+            <div class="profile-avatar-container">
+              <div class="avatar-wrapper">
+                @if (avatarUrl()) {
+                  <img
+                    appMobileOptimized
+                    [width]="200"
+                    [height]="200"
+                    [lazy]="false"
+                    [src]="avatarUrl()"
+                    alt="Profile picture"
+                    class="profile-avatar-img"
+                  />
+                } @else {
+                  <div class="profile-avatar-fallback">
+                    <span>{{ userInitials() }}</span>
+                  </div>
+                }
+                <button
+                  class="avatar-upload-btn"
+                  (click)="triggerFileUpload()"
+                  [disabled]="isUploadingAvatar()"
+                >
+                  @if (isUploadingAvatar()) {
+                    <i class="pi pi-spin pi-spinner"></i>
+                  } @else {
+                    <i class="pi pi-camera"></i>
+                  }
+                </button>
+                <input
+                  #fileInput
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  class="hidden-file-input"
+                  (change)="onFileSelected($event)"
+                />
+              </div>
+
+              <!-- Jersey Number Badge -->
+              @if (jerseyNumber()) {
+                <div class="jersey-badge">
+                  <span>#{{ jerseyNumber() }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- User Info -->
+            <div class="profile-info-section">
+              <h1 class="profile-display-name">{{ userName() }}</h1>
+
+              <!-- Position & Team Info -->
+              <div class="profile-position-team">
+                @if (userPosition()) {
+                  <span class="position-tag">
+                    <i class="pi pi-user"></i>
+                    {{ userPosition() }}
+                  </span>
+                }
+                @if (teamName()) {
+                  <span class="team-tag">
+                    <i class="pi pi-users"></i>
+                    {{ teamName() }}
+                  </span>
+                }
+              </div>
+
+              <p class="profile-email-text">{{ userEmail() }}</p>
+
+              <!-- Member Since -->
+              <p class="member-since">
+                <i class="pi pi-calendar"></i>
+                Member since {{ memberSince() }}
+              </p>
+            </div>
+
+            <!-- Profile Completion Indicator -->
+            @if (profileCompletion().percentage < 100) {
+              <div class="profile-completion-card">
+                <div class="completion-header">
+                  <span class="completion-label">Profile Completion</span>
+                  <span class="completion-percentage"
+                    >{{ profileCompletion().percentage }}%</span
+                  >
+                </div>
+                <p-progressBar
+                  [value]="profileCompletion().percentage"
+                  [showValue]="false"
+                  class="completion-progress"
+                ></p-progressBar>
+                @if (profileCompletion().missingFields.length > 0) {
+                  <div class="completion-hint">
+                    <i class="pi pi-info-circle"></i>
+                    <span
+                      >Complete your profile:
+                      {{
+                        profileCompletion()
+                          .missingFields.slice(
+                            0,
+                            UI_LIMITS.MISSING_FIELDS_PREVIEW
+                          )
+                          .join(", ")
+                      }}
+                      @if (profileCompletion().missingFields.length > 2) {
+                        and
+                        {{ profileCompletion().missingFields.length - 2 }} more
+                      }
+                    </span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="profile-complete-badge">
+                <i class="pi pi-check-circle"></i>
+                <span>Profile Complete</span>
+              </div>
+            }
+
+            <!-- Action Buttons -->
+            <div class="profile-header-actions">
+              <app-button
+                iconLeft="pi-cog"
+                routerLink="/settings"
+                [disabled]="deletionPending()"
+                >Edit Profile</app-button
+              >
+              <app-icon-button
+                icon="pi-share-alt"
+                variant="outlined"
+                (clicked)="shareProfile()"
+                ariaLabel="Share profile"
+              />
+            </div>
+          </div>
+
+          <!-- Profile Stats -->
+          <app-stats-grid [stats]="stats()"></app-stats-grid>
+
+          <!-- Profile Tabs -->
+          <div class="profile-tabs-container">
+            <p-tabs [(value)]="activeTab">
+              <p-tablist>
+                <p-tab value="overview">
+                  <i class="pi pi-chart-line"></i>
+                  <span class="tab-label">Overview</span>
+                </p-tab>
+                <p-tab value="achievements">
+                  <i class="pi pi-trophy"></i>
+                  <span class="tab-label">Achievements</span>
+                </p-tab>
+                <p-tab value="statistics">
+                  <i class="pi pi-chart-bar"></i>
+                  <span class="tab-label">Statistics</span>
+                </p-tab>
+                <p-tab value="invitations">
+                  <i class="pi pi-envelope"></i>
+                  <span class="tab-label">Invitations</span>
+                  @if (pendingInvitations().length > 0) {
+                    <span class="invitation-badge">{{
+                      pendingInvitations().length
+                    }}</span>
+                  }
+                </p-tab>
+              </p-tablist>
+              <p-tabpanels>
+                <p-tabpanel value="overview">
+                  <div class="overview-content">
+                    <app-card-shell
+                      title="Recent Activity"
+                      headerIcon="pi-clock"
+                    >
+                      @if (activities().length === 0) {
+                        <div class="card-empty-state card-empty-state--compact">
+                          <i class="pi pi-clock card-empty-state__icon"></i>
+                          <div class="card-empty-state__content">
+                            <p class="card-empty-state__title">
+                              No Recent Activity
+                            </p>
+                            <p class="card-empty-state__text">
+                              Your activity will appear here once you start
+                              training.
+                            </p>
+                          </div>
+                        </div>
+                      } @else {
+                        <div class="activity-list">
+                          @for (
+                            activity of activities();
+                            track trackByActivityTitle($index, activity)
+                          ) {
+                            <div class="activity-item">
+                              <div class="activity-icon">
+                                <i class="pi" [ngClass]="activity.icon"></i>
+                              </div>
+                              <div class="activity-content">
+                                <div class="activity-title">
+                                  {{ activity.title }}
+                                </div>
+                                <div class="item-time">
+                                  {{ activity.time }}
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </app-card-shell>
+                  </div>
+                </p-tabpanel>
+                <p-tabpanel value="achievements">
+                  @if (achievements().length === 0) {
+                    <div class="card-empty-state">
+                      <i class="pi pi-trophy card-empty-state__icon"></i>
+                      <div class="card-empty-state__content">
+                        <p class="card-empty-state__title">
+                          No Achievements Yet
+                        </p>
+                        <p class="card-empty-state__text">
+                          Complete training sessions and reach milestones to
+                          earn achievements.
+                        </p>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="achievements-grid">
+                      @for (
+                        achievement of achievements();
+                        track trackByAchievementTitle($index, achievement)
+                      ) {
+                        <app-card-shell>
+                          <div class="achievement-content">
+                            <div class="achievement-icon">
+                              <i class="pi" [ngClass]="achievement.icon"></i>
+                            </div>
+                            <h4 class="achievement-title">
+                              {{ achievement.title }}
+                            </h4>
+                            <p class="achievement-description">
+                              {{ achievement.description }}
+                            </p>
+                            <div class="achievement-date">
+                              {{ achievement.date }}
+                            </div>
+                          </div>
+                        </app-card-shell>
+                      }
+                    </div>
+                  }
+                </p-tabpanel>
+                <p-tabpanel value="statistics">
+                  <app-card-shell
+                    title="Performance Statistics"
+                    headerIcon="pi-chart-bar"
+                  >
+                    <div class="performance-stats-grid">
+                      @for (
+                        stat of performanceStats();
+                        track trackByPerformanceStatLabel($index, stat)
+                      ) {
+                        <div class="stat-block">
+                          <div class="stat-block__content">
+                            <span class="stat-block__value">{{
+                              stat.value
+                            }}</span>
+                            <span class="stat-block__label">{{
+                              stat.label
+                            }}</span>
+                          </div>
+                          <app-status-tag
+                            [value]="stat.trend"
+                            [severity]="stat.trendType"
+                            size="sm"
+                          />
+                        </div>
+                      }
+                    </div>
+                  </app-card-shell>
+                </p-tabpanel>
+                <p-tabpanel value="invitations">
+                  <div class="invitations-section">
+                    @if (loadingInvitations()) {
+                      <div class="loading-invitations">
+                        <p-progressSpinner
+                          class="invitation-loading-spinner"
+                          strokeWidth="4"
+                        ></p-progressSpinner>
+                        <span>Loading invitations...</span>
+                      </div>
+                    } @else if (pendingInvitations().length === 0) {
+                      <div class="card-empty-state">
+                        <i class="pi pi-envelope card-empty-state__icon"></i>
+                        <div class="card-empty-state__content">
+                          <p class="card-empty-state__title">
+                            No Pending Invitations
+                          </p>
+                          <p class="card-empty-state__text">
+                            You don't have any team invitations at the moment.
+                          </p>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="invitations-list">
+                        @for (
+                          invitation of pendingInvitations();
+                          track invitation.id
+                        ) {
+                          <app-card-shell class="invitation-card">
+                            <div class="invitation-content">
+                              <div class="invitation-header">
+                                <h4>{{ invitation.teamName }}</h4>
+                                <app-status-tag
+                                  [value]="invitation.role | titlecase"
+                                  severity="info"
+                                  size="sm"
+                                />
+                              </div>
+                              <p class="invitation-message">
+                                @if (invitation.message) {
+                                  "{{ invitation.message }}"
+                                } @else {
+                                  You've been invited to join this team as a
+                                  {{ invitation.role }}.
+                                }
+                              </p>
+                              <div class="invitation-meta">
+                                <span
+                                  ><i class="pi pi-user"></i> Invited by
+                                  {{ invitation.invitedBy }}</span
+                                >
+                                <span
+                                  ><i class="pi pi-calendar"></i>
+                                  {{
+                                    invitation.createdAt | date: "mediumDate"
+                                  }}</span
+                                >
+                                @if (invitation.isExpired) {
+                                  <app-status-tag
+                                    value="Expired"
+                                    severity="danger"
+                                    size="sm"
+                                  />
+                                } @else {
+                                  <span class="expires-soon"
+                                    >Expires
+                                    {{
+                                      invitation.expiresAt | date: "mediumDate"
+                                    }}</span
+                                  >
+                                }
+                              </div>
+                              <div class="invitation-actions">
+                                @if (!invitation.isExpired) {
+                                  <app-button
+                                    iconLeft="pi-check"
+                                    [loading]="
+                                      processingInvitation() === invitation.id
+                                    "
+                                    (clicked)="acceptInvitation(invitation)"
+                                    >Accept</app-button
+                                  >
+                                  <app-button
+                                    variant="outlined"
+                                    iconLeft="pi-times"
+                                    [loading]="
+                                      processingInvitation() === invitation.id
+                                    "
+                                    (clicked)="declineInvitation(invitation)"
+                                    >Decline</app-button
+                                  >
+                                } @else {
+                                  <app-button
+                                    variant="outlined"
+                                    iconLeft="pi-refresh"
+                                    (clicked)="requestNewInvitation(invitation)"
+                                    >Request New Invitation</app-button
+                                  >
+                                }
+                              </div>
+                            </div>
+                          </app-card-shell>
+                        }
+                      </div>
+                    }
+                  </div>
+                </p-tabpanel>
+              </p-tabpanels>
+            </p-tabs>
+          </div>
+        }
+      </div>
+    </app-main-layout>
+  

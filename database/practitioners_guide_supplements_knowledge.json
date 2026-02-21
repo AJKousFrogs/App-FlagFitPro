@@ -1,0 +1,505 @@
+{
+  "$schema": "https://flagfit.pro/schemas/knowledge_base/v1.0.0",
+  "schema_version": "1.0.0",
+  "content_version": "1.0.0",
+  "document_id": "urn:uuid:6f6c0bd1-c3a5-4b1e-9d70-e6d2d130c341",
+  "generated_at": "2026-02-20T18:00:00Z",
+  "reviewed_at": null,
+  "rights": {
+    "is_open_access": false,
+    "licence_expression": "LicenseRef-Proprietary",
+    "permitted_use": "internal_only",
+    "attribution": {
+      "title": "Evidence-Based Supplements for Flag Football Performance",
+      "publisher": "FlagFit Pro",
+      "source_url": "https://flagfit.pro/internal/supplement-evidence",
+      "authors": [
+        "FlagFit Pro Performance Team"
+      ]
+    }
+  },
+  "metadata": {
+    "title": "Evidence-Based Supplements for Flag Football Performance",
+    "authors": [
+      "FlagFit Pro Performance Team"
+    ],
+    "organizations": [
+      "FlagFit Pro"
+    ],
+    "total_pages": 1,
+    "document_type": "practitioner_guide",
+    "primary_focus": "sports_nutrition_supplementation"
+  },
+  "research_article": {
+    "title": "Supplement Evidence Tiers for Team-Sport Athletes",
+    "authors": [
+      "FlagFit Pro Performance Team"
+    ],
+    "publication_year": 2026,
+    "publisher": "FlagFit Pro",
+    "primary_category": "nutrition",
+    "categories": [
+      "nutrition",
+      "supplementation",
+      "performance",
+      "recovery"
+    ],
+    "tags": [
+      "supplements",
+      "evidence-based",
+      "flag-football",
+      "dosing",
+      "safety"
+    ],
+    "study_type": "evidence_synthesis",
+    "evidence_level": "A",
+    "sport_type": "flag_football",
+    "key_findings": "Twelve supplements are prioritized into two tiers. Tier A has stronger consensus for performance impact when used correctly. Tier B has moderate evidence and should be targeted by athlete profile and context.",
+    "practical_applications": [
+      "Prioritize Tier A before adding Tier B",
+      "Match dosing to body mass, event demands, and tolerance",
+      "Use bloodwork and symptom screening for deficiency-driven supplements",
+      "Avoid stacking many new supplements at once"
+    ],
+    "injury_types": [],
+    "training_types": [
+      "strength_power",
+      "high_intensity",
+      "endurance_repeated_sprint"
+    ],
+    "recovery_methods": [
+      "nutrition",
+      "sleep_support",
+      "inflammation_management"
+    ],
+    "is_open_access": false,
+    "verified": true,
+    "quality_score": 9,
+    "keywords": [
+      "creatine",
+      "beta-alanine",
+      "iron",
+      "caffeine",
+      "protein",
+      "sodium bicarbonate",
+      "vitamin d",
+      "b vitamins",
+      "magnesium",
+      "vitamin c",
+      "omega-3",
+      "beetroot nitrate"
+    ]
+  },
+  "knowledge_base_entries": [
+    {
+      "entry_id": "urn:uuid:de12a7f5-1be8-4fae-9e27-6af8df13c7b1",
+      "entry_type": "supplement",
+      "topic": "supplement_creatine_monohydrate",
+      "question": "How should creatine monohydrate be used for flag football athletes?",
+      "answer": "Evidence level: Tier A (strong). Summary: The most researched ergogenic supplement for improving high-intensity output and lean mass support. Benefits: stronger repeated sprint and acceleration performance, improved power training quality. Dosing: loading option 20 g/day split in 4 doses for 5-7 days, then maintenance 3-5 g/day; no-load option 3-5 g/day for 3-4 weeks. Timing: daily consistency matters more than exact timing. Best use cases: power-speed athletes, high-volume strength blocks, in-season maintenance. Safety: generally well tolerated; possible transient GI discomfort or water weight increase. Dietary sources: small amounts in red meat and fish. Synergy: often paired with protein and carbohydrate around training. Research quality: very high volume of RCTs and long-term athlete data.",
+      "summary": "Tier A supplement with the strongest evidence for strength and power support.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "supplements",
+        "performance"
+      ],
+      "tags": [
+        "creatine",
+        "power",
+        "strength"
+      ],
+      "protocols": {
+        "loading": "20 g/day split doses for 5-7 days (optional)",
+        "maintenance": "3-5 g/day",
+        "timing": "daily, with meal if GI sensitivity"
+      },
+      "contraindications": [
+        "Use caution with known renal disease without medical supervision"
+      ],
+      "safety_warnings": [
+        "Hydration and body-mass monitoring recommended"
+      ],
+      "best_practices": [
+        "Use third-party tested products",
+        "Track body mass and sprint outputs"
+      ]
+    },
+    {
+      "entry_id": "urn:uuid:10926139-e457-445b-b9cd-2484f2d61ea2",
+      "entry_type": "supplement",
+      "topic": "supplement_beta_alanine",
+      "question": "How should beta-alanine be used for repeated high-intensity effort?",
+      "answer": "Evidence level: Tier A (strong). Summary: Effective for buffering high-intensity efforts lasting around 60-240 seconds. Benefits: improved repeated high-intensity capacity and reduced fatigue in hard intervals. Dosing: 3.2-6.4 g/day divided doses for at least 4-8 weeks. Timing: chronic loading is key, not acute pre-session timing. Best use cases: repeated sprint blocks, conditioning phases, athletes with high lactate demands. Safety: paresthesia (tingling) is common with large single doses; split doses reduce this. Dietary sources: minimal meaningful dietary beta-alanine. Synergy: commonly paired with sodium bicarbonate or creatine in selected blocks. Research quality: strong for exercise-duration specific effects.",
+      "summary": "Tier A supplement for high-intensity efforts in the 1-4 minute range.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "supplements",
+        "high_intensity"
+      ],
+      "tags": [
+        "beta-alanine",
+        "buffering",
+        "conditioning"
+      ],
+      "protocols": {
+        "loading": "3.2-6.4 g/day in divided doses",
+        "maintenance": "continue daily through target block",
+        "timing": "spread intake across day"
+      },
+      "safety_warnings": [
+        "Transient tingling possible at large single doses"
+      ],
+      "best_practices": [
+        "Split doses into 0.8-1.6 g servings"
+      ]
+    },
+    {
+      "entry_id": "urn:uuid:0e7f6451-90a9-4fec-9d42-2f8b906619f0",
+      "entry_type": "supplement",
+      "topic": "supplement_iron",
+      "question": "When and how should iron be supplemented in athletes?",
+      "answer": "Evidence level: Tier A (strong for deficient athletes). Summary: Critical for oxygen transport and endurance capacity, especially in female and low-energy-availability athletes. Benefits: restores hemoglobin and ferritin status, supports training tolerance and aerobic performance when deficiency exists. Dosing: individualized by labs; common oral approaches use 40-100 mg elemental iron on alternate days, often with vitamin C. Timing: away from calcium-rich foods and coffee/tea when possible. Best use cases: confirmed low ferritin/iron deficiency, endurance-heavy phases, menstrual blood loss risk. Safety: do not supplement blindly; GI upset and constipation possible; excess iron has risk. Dietary sources: red meat, shellfish, legumes, fortified cereals. Synergy: vitamin C can improve absorption. Research quality: high for correction of deficiency; not a universal ergogenic for iron-replete athletes.",
+      "summary": "Tier A only when deficiency is present; lab-guided use is mandatory.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "female_athletes",
+        "endurance_athletes",
+        "adolescent_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "supplements",
+        "health"
+      ],
+      "tags": [
+        "iron",
+        "ferritin",
+        "endurance"
+      ],
+      "protocols": {
+        "loading": "No universal loading; use lab-guided prescription",
+        "maintenance": "retest ferritin and adjust",
+        "timing": "often alternate-day oral dosing"
+      },
+      "contraindications": [
+        "Avoid self-prescribing without bloodwork"
+      ],
+      "safety_warnings": [
+        "Excess iron can be harmful"
+      ],
+      "best_practices": [
+        "Use ferritin, CBC and clinical symptoms to guide treatment"
+      ]
+    },
+    {
+      "entry_id": "urn:uuid:f70f3c49-fde0-4fb6-bf11-c020a6dcf5a4",
+      "entry_type": "supplement",
+      "topic": "supplement_caffeine",
+      "question": "How should caffeine be used for performance in games and key sessions?",
+      "answer": "Evidence level: Tier A (strong). Summary: One of the most effective acute ergogenic aids for alertness, reaction, and high-intensity performance. Benefits: improved sprint intent, reaction time, vigilance, and perceived effort at a given workload. Dosing: typically 2-6 mg/kg 30-60 minutes pre-event; start lower in sensitive athletes. Timing: trial in training before competition. Best use cases: key practices, game days, travel fatigue contexts. Safety: sleep disruption, anxiety, GI upset, and tachycardia risk in sensitive users. Dietary sources: coffee, tea, cocoa. Synergy: can pair with carbohydrate for prolonged efforts. Research quality: robust and consistent across many sports.",
+      "summary": "Tier A acute performance aid with strong evidence when individualized.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "supplements",
+        "competition"
+      ],
+      "tags": [
+        "caffeine",
+        "alertness",
+        "ergogenic"
+      ],
+      "protocols": {
+        "loading": "none",
+        "maintenance": "situational use",
+        "timing": "2-6 mg/kg 30-60 min pre-session"
+      },
+      "safety_warnings": [
+        "Avoid late-day use if sleep quality is affected"
+      ],
+      "best_practices": [
+        "Use the minimal effective dose",
+        "Trial in practice before match day"
+      ]
+    },
+    {
+      "entry_id": "urn:uuid:4bd578ed-ac08-4a5c-9a73-a5f7692a6b36",
+      "entry_type": "supplement",
+      "topic": "supplement_protein_whey_casein",
+      "question": "How should whey and casein protein be used around training and recovery?",
+      "answer": "Evidence level: Tier A (strong). Summary: Protein supplementation helps athletes consistently meet total daily protein targets that support adaptation and recovery. Benefits: improved muscle protein synthesis support, better recovery quality, body composition maintenance in heavy loads. Dosing: total daily target commonly 1.6-2.2 g/kg/day split into 3-5 feedings; per feeding often 0.25-0.4 g/kg high-quality protein. Timing: whey is practical post-training; casein can support overnight intake. Best use cases: high training load, suboptimal meal timing, appetite constraints, travel. Safety: generally safe; consider lactose tolerance and total calorie balance. Dietary sources: dairy, eggs, meat, fish, soy, legumes. Synergy: combine with carbohydrate post-session for glycogen plus protein restoration. Research quality: very strong for total intake and distribution principles.",
+      "summary": "Tier A supplement class mainly used to close protein intake gaps.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "supplements",
+        "recovery"
+      ],
+      "tags": [
+        "protein",
+        "whey",
+        "casein"
+      ],
+      "protocols": {
+        "loading": "none",
+        "maintenance": "1.6-2.2 g/kg/day total protein target",
+        "timing": "0.25-0.4 g/kg per feeding"
+      },
+      "best_practices": [
+        "Prioritize whole-food intake first",
+        "Use supplements to fill measured gaps"
+      ]
+    },
+    {
+      "entry_id": "urn:uuid:8f7526dd-74cd-46f6-9c13-84813c1d2de2",
+      "entry_type": "supplement",
+      "topic": "supplement_sodium_bicarbonate",
+      "question": "When should sodium bicarbonate be used for performance?",
+      "answer": "Evidence level: Tier A (strong for selected protocols). Summary: Effective extracellular buffer for repeated high-intensity efforts when tolerated. Benefits: improved high-intensity repeat capacity and end-spurt performance. Dosing: common acute strategy 0.2-0.3 g/kg 60-180 minutes pre-event; split or serial dosing can improve tolerance. Timing: highly individual based on GI response testing. Best use cases: tournaments with repeated high-intensity bouts and short recovery. Safety: GI distress is the main limitation; avoid first-time use on competition day. Dietary sources: none practical for ergogenic doses. Synergy: often paired with beta-alanine in planned training cycles. Research quality: strong, but effect is very protocol- and tolerance-dependent.",
+      "summary": "Tier A buffering aid, useful only after individual tolerance testing.",
+      "evidence_strength": "strong",
+      "consensus_level": "high",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adult_athletes",
+        "advanced_adolescent_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "supplements",
+        "high_intensity"
+      ],
+      "tags": [
+        "sodium-bicarbonate",
+        "buffering",
+        "repeated-sprint"
+      ],
+      "protocols": {
+        "loading": "none required",
+        "maintenance": "situational use for key events",
+        "timing": "0.2-0.3 g/kg 60-180 min pre-event"
+      },
+      "safety_warnings": [
+        "High risk of GI discomfort in non-responders"
+      ],
+      "best_practices": [
+        "Conduct tolerance trials in training",
+        "Use split dosing strategies"
+      ]
+    },
+    {
+      "entry_id": "urn:uuid:8f3b8340-335f-45fc-b2d9-29d50b72fd44",
+      "entry_type": "supplement",
+      "topic": "supplement_vitamin_d",
+      "question": "How should vitamin D be used in athletes?",
+      "answer": "Evidence level: Tier B (moderate, stronger in deficiency). Summary: Useful for deficient athletes to support bone health, immunity, and neuromuscular function. Benefits: can improve strength and recovery markers when baseline status is low. Dosing: lab-guided; common maintenance ranges 1000-4000 IU/day depending on status and season. Timing: daily with meals containing fat. Best use cases: low sun exposure, winter periods, confirmed low 25(OH)D. Safety: avoid chronic high dosing without follow-up labs. Dietary sources: fatty fish, fortified dairy, egg yolk. Synergy: often paired with calcium and magnesium planning. Research quality: moderate overall, stronger in deficient subgroups.",
+      "summary": "Tier B supplement with best outcomes when correcting deficiency.",
+      "evidence_strength": "moderate",
+      "consensus_level": "moderate",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "supplements",
+        "health"
+      ],
+      "tags": [
+        "vitamin-d",
+        "bone-health",
+        "deficiency"
+      ],
+      "protocols": {
+        "loading": "deficiency correction should be clinician-guided",
+        "maintenance": "1000-4000 IU/day often used",
+        "timing": "daily with fat-containing meal"
+      },
+      "safety_warnings": [
+        "Monitor blood levels to avoid excessive intake"
+      ]
+    },
+    {
+      "entry_id": "urn:uuid:fc334a5f-a4a0-4f9e-82aa-62ea5904f2e8",
+      "entry_type": "supplement",
+      "topic": "supplement_b_vitamins",
+      "question": "When are B-vitamin supplements useful for athletes?",
+      "answer": "Evidence level: Tier B (moderate). Summary: B-vitamins are central to energy metabolism; supplementation is mainly useful when dietary intake is limited or deficiency risk is higher. Benefits: supports normal energy production pathways and red blood cell function when intake is inadequate. Dosing: usually via balanced B-complex at label doses rather than mega-dosing. Timing: daily with meals. Best use cases: plant-based athletes, low-energy intake phases, confirmed inadequate intake. Safety: high-dose single B-vitamins may cause adverse effects; avoid unnecessary megadoses. Dietary sources: whole grains, legumes, meat, dairy, leafy vegetables, fortified foods. Synergy: coordinate with iron and total energy availability. Research quality: moderate, strongest for correcting inadequacy.",
+      "summary": "Tier B supplement mostly relevant for intake gaps or deficiency risk groups.",
+      "evidence_strength": "moderate",
+      "consensus_level": "moderate",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "plant_based_athletes",
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "supplements",
+        "health"
+      ],
+      "tags": [
+        "b-vitamins",
+        "energy-metabolism"
+      ],
+      "protocols": {
+        "loading": "none",
+        "maintenance": "daily B-complex at standard doses",
+        "timing": "with meals"
+      }
+    },
+    {
+      "entry_id": "urn:uuid:18899d76-74d8-46ff-939b-f948f6555d14",
+      "entry_type": "supplement",
+      "topic": "supplement_magnesium",
+      "question": "How should magnesium be used for athletes with high training stress?",
+      "answer": "Evidence level: Tier B (moderate). Summary: Magnesium supports neuromuscular function and recovery quality, and needs can be higher in heavy training. Benefits: may help muscle function, sleep quality, and cramp susceptibility when intake is low. Dosing: commonly 200-400 mg elemental magnesium/day, form-dependent tolerance. Timing: often evening or split with meals. Best use cases: suboptimal intake, sweat-heavy periods, sleep-stress phases. Safety: excess may cause loose stools; adjust form and dose. Dietary sources: nuts, seeds, legumes, whole grains, dark leafy greens. Synergy: pair with vitamin D and protein-recovery plans. Research quality: moderate with stronger effects in low-intake athletes.",
+      "summary": "Tier B supplement that is most useful when intake is low or stress is high.",
+      "evidence_strength": "moderate",
+      "consensus_level": "moderate",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "supplements",
+        "recovery"
+      ],
+      "tags": [
+        "magnesium",
+        "recovery",
+        "sleep"
+      ],
+      "protocols": {
+        "loading": "none",
+        "maintenance": "200-400 mg elemental/day",
+        "timing": "evening or split doses"
+      }
+    },
+    {
+      "entry_id": "urn:uuid:dd6ad7fc-a4c1-4f15-b2fe-13dc8d593278",
+      "entry_type": "supplement",
+      "topic": "supplement_vitamin_c",
+      "question": "What is the practical role of vitamin C for athletes?",
+      "answer": "Evidence level: Tier B (moderate). Summary: Vitamin C can support immune function, especially during heavy training and travel stress. Benefits: may reduce risk or duration of upper respiratory symptoms in high-load periods when intake is insufficient. Dosing: commonly 200-500 mg/day in targeted periods; avoid unnecessary chronic megadosing. Timing: with meals. Best use cases: congested competition schedules, travel, low fruit and vegetable intake. Safety: high chronic doses may cause GI issues and are not always beneficial for adaptation. Dietary sources: citrus, berries, kiwifruit, peppers, broccoli. Synergy: works with overall carbohydrate and sleep hygiene strategies for immune support. Research quality: moderate and context-dependent.",
+      "summary": "Tier B supplement mainly for immune support during high stress blocks.",
+      "evidence_strength": "moderate",
+      "consensus_level": "moderate",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "supplements",
+        "immune_support"
+      ],
+      "tags": [
+        "vitamin-c",
+        "immunity"
+      ],
+      "protocols": {
+        "loading": "none",
+        "maintenance": "200-500 mg/day in stress windows",
+        "timing": "with meals"
+      }
+    },
+    {
+      "entry_id": "urn:uuid:2ef8f35f-2519-4561-9812-e53ad4c7db45",
+      "entry_type": "supplement",
+      "topic": "supplement_omega3",
+      "question": "How should omega-3 fatty acids be used for recovery support?",
+      "answer": "Evidence level: Tier B (moderate). Summary: Omega-3s may support inflammation management and recovery quality, with broader cardiometabolic benefits. Benefits: potential reduction in soreness and support for joint comfort in some athletes. Dosing: commonly 1-2 g/day combined EPA+DHA, adjusted by diet and clinician guidance. Timing: daily with meals. Best use cases: low oily-fish intake, high contact volume, recovery-focused blocks. Safety: consider bleeding-risk context and quality of fish oil products. Dietary sources: salmon, sardines, mackerel, trout, algae oils. Synergy: combine with protein, sleep, and periodized load management. Research quality: moderate with heterogeneous effect sizes.",
+      "summary": "Tier B supplement for recovery and inflammation support, especially with low fish intake.",
+      "evidence_strength": "moderate",
+      "consensus_level": "moderate",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "general",
+      "categories": [
+        "supplements",
+        "recovery"
+      ],
+      "tags": [
+        "omega-3",
+        "epa",
+        "dha"
+      ],
+      "protocols": {
+        "loading": "none",
+        "maintenance": "1-2 g/day EPA+DHA combined",
+        "timing": "with meals"
+      }
+    },
+    {
+      "entry_id": "urn:uuid:db5f76da-8b7a-4e1d-9852-3e0cde4ed84a",
+      "entry_type": "supplement",
+      "topic": "supplement_beetroot_nitrate",
+      "question": "How should beetroot juice or nitrate be used in athletes?",
+      "answer": "Evidence level: Tier B (moderate). Summary: Dietary nitrate may improve exercise economy and repeated effort tolerance in some athletes. Benefits: potential support for repeated high-intensity output and oxygen efficiency. Dosing: acute strategy often targets around 400-800 mg nitrate 2-3 hours pre-session; chronic protocols also used. Timing: trial individually for GI tolerance and response. Best use cases: conditioning sessions, tournament weekends, aerobic-power blends. Safety: GI upset possible; mouthwash overuse may blunt nitrate conversion. Dietary sources: beetroot, spinach, arugula, celery. Synergy: can be integrated with carbohydrate fueling strategies. Research quality: moderate with clear responder variability.",
+      "summary": "Tier B supplement with moderate evidence and notable individual response differences.",
+      "evidence_strength": "moderate",
+      "consensus_level": "moderate",
+      "evidence_framework": "GRADE",
+      "applicable_to": [
+        "adolescent_athletes",
+        "adult_athletes"
+      ],
+      "sport_specificity": "flag_football",
+      "categories": [
+        "supplements",
+        "conditioning"
+      ],
+      "tags": [
+        "beetroot",
+        "nitrate",
+        "exercise-economy"
+      ],
+      "protocols": {
+        "loading": "optional multi-day nitrate protocol",
+        "maintenance": "situational by session type",
+        "timing": "400-800 mg nitrate 2-3 h pre-session"
+      },
+      "best_practices": [
+        "Test tolerance in training",
+        "Avoid antibacterial mouthwash around dosing window"
+      ]
+    }
+  ]
+}

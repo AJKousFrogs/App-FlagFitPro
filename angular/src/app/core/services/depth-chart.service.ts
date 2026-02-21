@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
-import { ApiService } from "./api.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
 
@@ -221,7 +221,7 @@ export class DepthChartService {
     updates: UpdateEntryPayload,
   ): Observable<DepthChartEntry | null> {
     return this.apiService
-      .put<DepthChartEntry>(`/api/depth-chart/entries/${entryId}`, updates)
+      .put<DepthChartEntry>(API_ENDPOINTS.depthChart.entry(entryId), updates)
       .pipe(
         map((response: ApiResponse<DepthChartEntry>) => response.data || null),
         catchError((error) => {
@@ -240,7 +240,7 @@ export class DepthChartService {
     reason?: string,
   ): Observable<boolean> {
     return this.apiService
-      .post("/api/depth-chart/entries/swap", {
+      .post(API_ENDPOINTS.depthChart.swap, {
         entry_id_1: entryId1,
         entry_id_2: entryId2,
         change_reason: reason,

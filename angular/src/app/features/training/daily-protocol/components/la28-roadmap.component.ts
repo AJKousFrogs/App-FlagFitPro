@@ -18,7 +18,7 @@ import { ProgressBar } from "primeng/progressbar";
 import { Dialog } from "primeng/dialog";
 import { Timeline } from "primeng/timeline";
 import { Card } from "primeng/card";
-import { ApiService } from "../../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { ApiResponse } from "../../../../core/models/common.models";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
@@ -395,7 +395,7 @@ export class La28RoadmapComponent {
     try {
       const response: ApiResponse<PlayerCycle[] | null> =
         await firstValueFrom(
-        this.api.get("/api/program-cycles"),
+        this.api.get(API_ENDPOINTS.programCycles),
       );
       if (response?.success && response.data) {
         this.playerCycles.set(response.data);

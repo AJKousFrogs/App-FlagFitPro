@@ -1788,7 +1788,7 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
       .slice(0, 5) // Limit to 5 keywords
       .map(
         (kw) =>
-          `title.ilike.%${kw}%,content.ilike.%${kw}%,category.ilike.%${kw}%,subcategory.ilike.%${kw}%`,
+          `topic.ilike.%${kw}%,question.ilike.%${kw}%,answer.ilike.%${kw}%,summary.ilike.%${kw}%,entry_type.ilike.%${kw}%`,
       )
       .join(",");
 
@@ -1798,21 +1798,24 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
       .select(
         `
         id,
-        title,
-        content,
-        category,
-        subcategory,
-        source_type,
-        evidence_grade,
-        risk_level,
-        requires_professional,
-        source_quality_score,
-        source_url
+        entry_type,
+        topic,
+        question,
+        answer,
+        summary,
+        supporting_articles,
+        evidence_strength,
+        consensus_level,
+        safety_warnings,
+        best_practices,
+        query_count,
+        updated_at
       `,
       )
+      .eq("is_merlin_approved", true)
       .or(searchConditions)
-      .eq("is_active", true)
-      .order("source_quality_score", { ascending: false, nullsFirst: false })
+      .order("query_count", { ascending: false, nullsFirst: false })
+      .order("updated_at", { ascending: false, nullsFirst: false })
       .limit(limit * 3); // Get more, then filter and rank
 
     if (error) {
@@ -1824,15 +1827,17 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
 
     // Score entries by relevance (how many keywords match)
     const scoredEntries = (entries || []).map((e) => {
-      const text =
-        `${e.title} ${e.content} ${e.category} ${e.subcategory}`.toLowerCase();
+      const title = e.topic || e.question || "";
+      const content = e.answer || e.summary || "";
+      const category = e.entry_type || "";
+      const text = `${title} ${content} ${category}`.toLowerCase();
       let matchScore = 0;
       for (const kw of keywords) {
         if (text.includes(kw.toLowerCase())) {
           // Title matches are worth more
-          if (e.title?.toLowerCase().includes(kw.toLowerCase())) {
+          if (title.toLowerCase().includes(kw.toLowerCase())) {
             matchScore += 3;
-          } else if (e.category?.toLowerCase().includes(kw.toLowerCase())) {
+          } else if (category.toLowerCase().includes(kw.toLowerCase())) {
             matchScore += 2;
           } else {
             matchScore += 1;
@@ -1847,23 +1852,32 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
       if (b.matchScore !== a.matchScore) {
         return b.matchScore - a.matchScore;
       }
-      return (b.source_quality_score || 0) - (a.source_quality_score || 0);
+      return (b.query_count || 0) - (a.query_count || 0);
     });
 
     // Transform to standard format
     const sources = scoredEntries.map((e) => ({
       id: e.id,
-      content: e.content,
-      topic: e.title,
-      category: e.category,
-      source_type: e.source_type || "curated",
-      source_title: e.title,
-      source_quality_score: e.source_quality_score || 0.8,
-      evidence_grade: e.evidence_grade || "C",
-      risk_level: e.risk_level,
-      requires_professional: e.requires_professional,
-      url: e.source_url, // Include URL for citations
-      source_url: e.source_url,
+      content: e.answer || e.summary || e.question || "",
+      topic: e.topic || e.question || "Knowledge Entry",
+      category: e.entry_type || "general",
+      source_type: "knowledge_base",
+      source_title: e.topic || e.question || "Knowledge Entry",
+      source_quality_score:
+        e.consensus_level === "high"
+          ? 0.9
+          : e.consensus_level === "moderate"
+            ? 0.7
+            : 0.5,
+      evidence_grade: mapEvidenceStrength(e.evidence_strength),
+      risk_level: null,
+      requires_professional: false,
+      url: Array.isArray(e.supporting_articles)
+        ? e.supporting_articles[0] || null
+        : null,
+      source_url: Array.isArray(e.supporting_articles)
+        ? e.supporting_articles[0] || null
+        : null,
     }));
 
     // Filter by evidence grade based on risk level
@@ -1883,6 +1897,19 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
  */
 function mapEvidenceStrength(strength) {
   if (!strength) {
+    return "C";
+  }
+  if (typeof strength === "string") {
+    const normalized = strength.trim().toUpperCase();
+    if (["A", "B", "C", "D"].includes(normalized)) {
+      return normalized;
+    }
+    if (normalized.includes("HIGH")) {
+      return "A";
+    }
+    if (normalized.includes("MODERATE") || normalized.includes("MEDIUM")) {
+      return "B";
+    }
     return "C";
   }
   if (strength >= 8) {
@@ -2063,25 +2090,38 @@ async function generateSwapPlanResponse(query, classification, userContext) {
     const { data: kbAlternatives } = await supabaseAdmin
       .from("knowledge_base_entries")
       .select(
-        "id, title, content, category, evidence_grade, source_type, intensity_level, position_relevance",
+        "id, topic, question, answer, summary, entry_type, evidence_strength, supporting_articles, query_count",
       )
-      .eq("is_recovery_alternative", true)
-      .eq("is_active", true)
-      .order("source_quality_score", { ascending: false })
+      .eq("is_merlin_approved", true)
+      .in("entry_type", [
+        "recovery",
+        "injury_prevention",
+        "training",
+        "recovery_method",
+        "training_method",
+        "injury",
+      ])
+      .or(
+        "topic.ilike.%recovery%,question.ilike.%recovery%,answer.ilike.%recovery%,summary.ilike.%recovery%",
+      )
+      .order("query_count", { ascending: false, nullsFirst: false })
       .limit(10);
 
     if (kbAlternatives && kbAlternatives.length > 0) {
-      // Filter by position relevance if available
       alternatives = kbAlternatives
-        .filter((a) => {
-          if (!a.position_relevance || a.position_relevance.length === 0) {
-            return true;
-          }
-          return (
-            a.position_relevance.includes(position) ||
-            a.position_relevance.includes("ALL")
-          );
-        })
+        .map((a) => ({
+          id: a.id,
+          title: a.topic || a.question || "Recovery option",
+          content: a.answer || a.summary || "",
+          category: a.entry_type,
+          evidence_grade: mapEvidenceStrength(a.evidence_strength),
+          source_type: "knowledge_base",
+          intensity_level: "low",
+          position_relevance: [position, "ALL"],
+          source_url: Array.isArray(a.supporting_articles)
+            ? a.supporting_articles[0] || null
+            : null,
+        }))
         .slice(0, 5);
     }
   } catch (error) {

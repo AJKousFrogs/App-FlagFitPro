@@ -32,7 +32,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -689,7 +689,7 @@ export class TournamentManagementComponent implements OnInit {
     try {
       const response: ApiResponse<{ tournaments?: Tournament[] }> =
         await firstValueFrom(
-        this.api.get("/api/coach/tournaments"),
+        this.api.get(API_ENDPOINTS.coach.tournaments),
       );
       if (response?.success && response.data?.tournaments) {
         this.tournaments.set(response.data.tournaments);

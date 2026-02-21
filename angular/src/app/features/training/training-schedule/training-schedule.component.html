@@ -1,0 +1,601 @@
+<app-main-layout>
+      <div class="training-schedule-page">
+        <!-- STEP 1: Page Header - Title/subtitle left, New Session button right -->
+        <app-page-header
+          title="Training Schedule"
+          subtitle="View and manage your training sessions"
+          icon="pi-calendar"
+        >
+          <app-button iconLeft="pi-plus" (clicked)="primaryAction()"
+            >{{ primaryActionLabel() }}</app-button
+          >
+        </app-page-header>
+
+        <app-card-shell title="Training Hub" headerIcon="pi-compass">
+          <div class="training-hub-grid">
+            <a routerLink="/todays-practice" class="training-hub-link">
+              <span class="training-hub-icon">🗓️</span>
+              <span class="training-hub-title">Today's Practice</span>
+              <span class="training-hub-subtitle">Log today’s session</span>
+            </a>
+            <a routerLink="/training/builder" class="training-hub-link">
+              <span class="training-hub-icon">🛠️</span>
+              <span class="training-hub-title">Session Builder</span>
+              <span class="training-hub-subtitle">Custom workouts</span>
+            </a>
+            <a routerLink="/training/advanced" class="training-hub-link">
+              <span class="training-hub-icon">🧠</span>
+              <span class="training-hub-title">Advanced Tools</span>
+              <span class="training-hub-subtitle">Periodization & AI</span>
+            </a>
+            @if (isCoach()) {
+              <a routerLink="/training/smart-form" class="training-hub-link">
+                <span class="training-hub-icon">⚡</span>
+                <span class="training-hub-title">Smart Form</span>
+                <span class="training-hub-subtitle">Coach quick logging</span>
+              </a>
+            }
+            <a routerLink="/workout" class="training-hub-link">
+              <span class="training-hub-icon">🏋️</span>
+              <span class="training-hub-title">Workouts</span>
+              <span class="training-hub-subtitle">Ready-made plans</span>
+            </a>
+            <a routerLink="/training/videos" class="training-hub-link">
+              <span class="training-hub-icon">🎥</span>
+              <span class="training-hub-title">Video Feed</span>
+              <span class="training-hub-subtitle">Technique library</span>
+            </a>
+          </div>
+        </app-card-shell>
+
+        <div class="schedule-content">
+          <!-- STEP 2: Calendar Card with inline DatePicker and showWeek -->
+          <app-card-shell title="Training Calendar" headerIcon="pi-calendar">
+            <p-datepicker
+              [ngModel]="selectedDate()"
+              (ngModelChange)="onDateSelect($event)"
+              [inline]="true"
+              [showWeek]="showWeekNumbers()"
+              [touchUI]="false"
+              [disabled]="false"
+              [selectOtherMonths]="true"
+              [showOtherMonths]="true"
+              aria-label="Training calendar date picker"
+            ></p-datepicker>
+
+            <!-- Calendar Legend (informational only) -->
+            <div class="calendar-legend">
+              <!-- Today indicator -->
+              <p class="legend-today">
+                <i class="pi pi-circle legend-today-icon"></i>
+                Today: {{ today | date: "MMM d" }}
+              </p>
+
+              <!-- Legend section with label -->
+              <div class="legend-section">
+                <span class="legend-label">Legend:</span>
+                <div class="legend-items">
+                  <span class="legend-item">
+                    <i class="pi pi-circle-fill legend-completed"></i>
+                    Completed
+                  </span>
+                  <span class="legend-item">
+                    <i class="pi pi-circle legend-scheduled"></i>
+                    Scheduled
+                  </span>
+                  <span class="legend-item">
+                    <i class="pi pi-circle-fill legend-in-progress"></i>
+                    In Progress
+                  </span>
+                  <span class="legend-item">
+                    <i class="pi pi-times-circle legend-missed"></i>
+                    Missed
+                  </span>
+                  <span class="legend-item">
+                    <i class="pi pi-refresh legend-replaced"></i>
+                    Replaced
+                  </span>
+                </div>
+              </div>
+
+              <!-- Show Week Numbers Checkbox -->
+              <div class="show-week-toggle">
+                <p-checkbox
+                  [ngModel]="showWeekNumbers()"
+                  (ngModelChange)="onShowWeekToggle($event)"
+                  [binary]="true"
+                  variant="filled"
+                  inputId="showWeekNumbers"
+                ></p-checkbox>
+                <label
+                  for="showWeekNumbers"
+                  [attr.aria-label]="'Toggle week numbers display on calendar'"
+                >
+                  Show Week Numbers
+                </label>
+              </div>
+
+              <!-- View Mode Toggle -->
+              <div class="view-toggle">
+                <app-button
+                  [variant]="viewMode() === 'week' ? 'primary' : 'outlined'"
+                  size="sm"
+                  (clicked)="viewMode.set('week'); loadSessions()"
+                  >Week</app-button
+                >
+                <app-button
+                  [variant]="viewMode() === 'month' ? 'primary' : 'outlined'"
+                  size="sm"
+                  (clicked)="viewMode.set('month'); loadSessions()"
+                  >Month</app-button
+                >
+              </div>
+            </div>
+          </app-card-shell>
+
+          <!-- Weather Alert Card -->
+          @if (weatherAlert()) {
+            <div
+              class="weather-alert"
+              [class.weather-alert--danger]="
+                weatherAlert()?.severity === 'danger'
+              "
+              [class.weather-alert--warning]="
+                weatherAlert()?.severity === 'warning'
+              "
+            >
+              <div class="weather-alert__icon">
+                <i
+                  class="pi"
+                  [class.pi-exclamation-triangle]="
+                    weatherAlert()?.severity === 'danger'
+                  "
+                  [class.pi-info-circle]="
+                    weatherAlert()?.severity === 'warning'
+                  "
+                ></i>
+              </div>
+              <div class="weather-alert__content">
+                <h4 class="weather-alert__title">
+                  @if (weatherAlert()?.severity === "danger") {
+                    Weather Advisory
+                  } @else {
+                    Weather Notice
+                  }
+                </h4>
+                <p class="weather-alert__reason">
+                  {{ weatherAlert()?.reason }}
+                </p>
+                <p class="weather-alert__recommendation">
+                  {{ weatherAlert()?.recommendation }}
+                </p>
+                @if (currentWeather()) {
+                  <p class="weather-alert__conditions">
+                    <i class="pi pi-cloud"></i>
+                    Current: {{ currentWeather()?.temp }}°F,
+                    {{ currentWeather()?.condition }}
+                    @if (currentWeather()?.windSpeed) {
+                      <span class="weather-wind">
+                        <i class="pi pi-arrows-h"></i>
+                        {{ currentWeather()?.windSpeed }} mph wind
+                      </span>
+                    }
+                  </p>
+                }
+              </div>
+              <div class="weather-alert__actions">
+                @if (!weatherAlert()?.canProceed) {
+                  <app-button
+                    variant="primary"
+                    size="sm"
+                    iconLeft="pi-home"
+                    (clicked)="generateSubstituteWorkout()"
+                    [loading]="isGeneratingSubstitute()"
+                  >
+                    Get Indoor Alternative
+                  </app-button>
+                }
+                <app-button
+                  variant="text"
+                  size="sm"
+                  (clicked)="dismissWeatherAlert()"
+                >
+                  Dismiss
+                </app-button>
+              </div>
+            </div>
+          }
+
+          <!-- Substitute Workout Card -->
+          @if (suggestedSubstitute()) {
+            <app-card-shell
+              title="Substitute Workout Available"
+              headerIcon="pi-bolt"
+              class="substitute-workout-card"
+            >
+              <div class="substitute-workout">
+                <div class="substitute-workout__header">
+                  <h3 class="substitute-workout__name">
+                    {{ suggestedSubstitute()?.workoutName }}
+                  </h3>
+                  <div class="substitute-workout__badges">
+                    <span class="badge badge--info">
+                      <i class="pi pi-map-marker"></i>
+                      {{
+                        getLocationLabel(suggestedSubstitute()?.locationType)
+                      }}
+                    </span>
+                    <span class="badge badge--secondary">
+                      <i class="pi pi-clock"></i>
+                      {{ suggestedSubstitute()?.durationMinutes }} min
+                    </span>
+                    <span class="badge badge--secondary">
+                      {{ suggestedSubstitute()?.intensityLevel | titlecase }}
+                      intensity
+                    </span>
+                  </div>
+                </div>
+
+                <p class="substitute-workout__description">
+                  {{ suggestedSubstitute()?.description }}
+                </p>
+
+                <!-- Equipment Needed -->
+                @if (suggestedSubstitute()?.equipmentNeeded?.length) {
+                  <div class="substitute-workout__equipment">
+                    <h4><i class="pi pi-box"></i> Equipment Needed</h4>
+                    <div class="equipment-list">
+                      @for (
+                        item of suggestedSubstitute()?.equipmentNeeded;
+                        track item
+                      ) {
+                        <span class="equipment-item">{{ item }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Workout Structure Preview -->
+                <div class="substitute-workout__preview">
+                  <div class="workout-phase">
+                    <h4><i class="pi pi-play"></i> Warm-Up</h4>
+                    <p>{{ getWarmUpPreview(suggestedSubstitute()?.warmUp) }}</p>
+                  </div>
+
+                  <div class="workout-phase">
+                    <h4>
+                      <i class="pi pi-bolt"></i> Main Workout ({{
+                        suggestedSubstitute()?.mainWorkout?.length
+                      }}
+                      exercises)
+                    </h4>
+                    <ul class="exercise-preview-list">
+                      @for (
+                        exercise of suggestedSubstitute()?.mainWorkout?.slice(
+                          0,
+                          3
+                        );
+                        track exercise.name
+                      ) {
+                        <li>
+                          <strong>{{ exercise.name }}</strong>
+                          @if (exercise.sets && exercise.reps) {
+                            - {{ exercise.sets }} × {{ exercise.reps }}
+                          } @else if (exercise.durationSeconds) {
+                            - {{ exercise.durationSeconds }}s
+                          }
+                        </li>
+                      }
+                      @if (
+                        (suggestedSubstitute()?.mainWorkout?.length || 0) > 3
+                      ) {
+                        <li class="more-exercises">
+                          +
+                          {{
+                            (suggestedSubstitute()?.mainWorkout?.length || 0) -
+                              3
+                          }}
+                          more exercises...
+                        </li>
+                      }
+                    </ul>
+                  </div>
+
+                  <div class="workout-phase">
+                    <h4><i class="pi pi-stop"></i> Cool-Down</h4>
+                    <p>
+                      {{ getCoolDownPreview(suggestedSubstitute()?.coolDown) }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Training Goals -->
+                @if (suggestedSubstitute()?.trainingGoals?.length) {
+                  <div class="substitute-workout__goals">
+                    <h4><i class="pi pi-flag"></i> Training Goals</h4>
+                    <div class="goals-list">
+                      @for (
+                        goal of suggestedSubstitute()?.trainingGoals;
+                        track goal
+                      ) {
+                        <span class="goal-tag">{{ goal }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Action Buttons -->
+                <div class="substitute-workout__actions">
+                  <app-button
+                    variant="primary"
+                    iconLeft="pi-check"
+                    (clicked)="acceptSubstituteWorkout()"
+                  >
+                    Start This Workout
+                  </app-button>
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-refresh"
+                    (clicked)="generateSubstituteWorkout()"
+                    [loading]="isGeneratingSubstitute()"
+                  >
+                    Generate Different
+                  </app-button>
+                  <app-button
+                    variant="text"
+                    (clicked)="declineSubstituteWorkout()"
+                  >
+                    Not Today
+                  </app-button>
+                </div>
+              </div>
+            </app-card-shell>
+          }
+
+          <!-- Monthly Statistics Summary -->
+          @if (viewMode() === "month" && monthlyStats().totalSessions > 0) {
+            <app-card-shell title="Monthly Summary" headerIcon="pi-chart-bar">
+              <div class="monthly-stats">
+                <div class="stat-item stat-block stat-block--stat-item">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      monthlyStats().totalSessions
+                    }}</span>
+                    <span class="stat-block__label">Total Sessions</span>
+                  </div>
+                </div>
+                <div class="stat-item completed stat-block stat-block--stat-item">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      monthlyStats().completedSessions
+                    }}</span>
+                    <span class="stat-block__label">Completed</span>
+                  </div>
+                </div>
+                <div class="stat-item missed stat-block stat-block--stat-item">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      monthlyStats().missedSessions
+                    }}</span>
+                    <span class="stat-block__label">Missed</span>
+                  </div>
+                </div>
+                <div class="stat-item stat-block stat-block--stat-item">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value"
+                      >{{ monthlyStats().totalDuration }}m</span
+                    >
+                    <span class="stat-block__label">Total Duration</span>
+                  </div>
+                </div>
+                <div class="stat-item completion stat-block stat-block--stat-item">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value"
+                      >{{ monthlyStats().completionRate }}%</span
+                    >
+                    <span class="stat-block__label">Completion Rate</span>
+                  </div>
+                </div>
+              </div>
+            </app-card-shell>
+          }
+
+          <!-- STEP 3: Sessions List Card -->
+          <app-card-shell title="Upcoming Sessions" headerIcon="pi-clipboard">
+            <div class="sessions-list">
+              <!-- STEP 4: Error State with p-message and retry -->
+              @if (hasError()) {
+                <div class="error-state">
+                  <i
+                    class="pi pi-calendar-times error-icon"
+                    aria-hidden="true"
+                  ></i>
+                  <div class="error-text">
+                    <strong>Unable to load sessions</strong>
+                    <p>{{ errorMessage() }}</p>
+                  </div>
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-refresh"
+                    (clicked)="loadSessions()"
+                    >Try Again</app-button
+                  >
+                </div>
+              } @else if (isLoading()) {
+                <!-- STEP 4: Loading State with p-skeleton -->
+                @for (i of [1, 2, 3]; track i) {
+                  <div class="session-item session-item-skeleton">
+                    <div class="session-info">
+                      <p-skeleton width="60%" height="var(--space-5)"></p-skeleton>
+                      <p-skeleton
+                        width="80%"
+                        height="var(--ds-font-size-sm)"
+                        class="skeleton-date"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="40%"
+                        height="var(--ds-font-size-xs)"
+                        class="skeleton-duration"
+                      ></p-skeleton>
+                    </div>
+                    <div class="session-actions">
+                      <p-skeleton
+                        width="var(--size-80)"
+                        height="var(--space-6)"
+                        borderRadius="var(--radius-2xl)"
+                      ></p-skeleton>
+                    </div>
+                  </div>
+                }
+              } @else if (filteredSessions().length === 0) {
+                <!-- STEP 4: Empty State - Icon + message centered -->
+                <div class="card-empty-state">
+                  <div class="card-empty-state__icon">
+                    <i class="pi pi-calendar" aria-hidden="true"></i>
+                  </div>
+                  <div class="card-empty-state__content">
+                    <p class="card-empty-state__title">No sessions scheduled</p>
+                    <p class="card-empty-state__text">
+                      Click "New Session" to add one.
+                    </p>
+                  </div>
+                </div>
+              } @else {
+                <!-- STEP 3: Session rows as card-like items -->
+                @for (session of filteredSessions(); track session.id) {
+                  <div
+                    class="session-item"
+                    [style.border-left-color]="
+                      getSessionTypeColor(session.type)
+                    "
+                    [attr.title]="
+                      session.status === 'replaced'
+                        ? 'Planned session replaced by a logged workout'
+                        : null
+                    "
+                    (click)="viewSession(session)"
+                    (keydown.enter)="viewSession(session)"
+                    (keydown.space)="viewSession(session)"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="
+                      session.type +
+                      ' on ' +
+                      (session.date | date: 'MMMM d, y') +
+                      ', ' +
+                      session.status
+                    "
+                  >
+                    <div class="session-info">
+                      <!-- Session type color indicator -->
+                      <span
+                        class="session-type-indicator"
+                        [style.background-color]="
+                          getSessionTypeColor(session.type)
+                        "
+                      ></span>
+                      <!-- Title visually dominant -->
+                      <h4 class="session-title">
+                        {{ session.type }}
+                        @if (session.status === "replaced") {
+                          <span class="status-pill status-pill--replaced">
+                            <i class="pi pi-refresh"></i>
+                            Replaced
+                          </span>
+                        }
+                        @if (
+                          !session.isTemplate && session.status === "completed"
+                        ) {
+                          <span class="status-pill status-pill--logged">
+                            <i class="pi pi-check"></i>
+                            Logged
+                          </span>
+                        }
+                        @if (session.isTeamPractice) {
+                          <span class="team-badge">
+                            <i class="pi pi-users"></i> Team
+                          </span>
+                        }
+                        @if (session.isOutdoor && session.weatherSensitive) {
+                          <span
+                            class="outdoor-badge"
+                            [title]="'Weather-sensitive outdoor session'"
+                          >
+                            <i class="pi pi-sun"></i>
+                          </span>
+                        }
+                      </h4>
+                      <!-- Date/time secondary -->
+                      <p class="session-date">
+                        {{ session.date | date: "MMM d, y 'at' h:mm a" }}
+                      </p>
+                      <!-- Duration tertiary -->
+                      <p class="session-duration">
+                        Duration: {{ session.duration }} min
+                      </p>
+                    </div>
+                    <div class="session-actions">
+                      <!-- Modern status pill -->
+                      <span class="status-tag status-{{ session.status }}">
+                        <i [class]="getStatusIcon(session.status)"></i>
+                        <span
+                          [attr.title]="
+                            session.status === 'replaced'
+                              ? 'Planned session replaced by a logged workout'
+                              : null
+                          "
+                        >
+                          {{ getStatusLabel(session.status) }}
+                        </span>
+                      </span>
+                      <!-- Weather cancel button for outdoor sessions -->
+                      @if (
+                        session.isOutdoor &&
+                        session.weatherSensitive &&
+                        session.isTemplate &&
+                        weatherAlert()?.severity === "danger"
+                      ) {
+                        <app-button
+                          variant="outlined"
+                          size="sm"
+                          iconLeft="pi-cloud"
+                          severity="warning"
+                          (clicked)="cancelForWeather($event, session)"
+                        >
+                          Cancel &amp; Get Alternative
+                        </app-button>
+                      }
+                      <!-- Mark-complete button: only for actual sessions (not templates) -->
+                      @if (
+                        session.status === "scheduled" && !session.isTemplate
+                      ) {
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-check"
+                          (clicked)="markComplete($event, session)"
+                          >Mark session as complete</app-button
+                        >
+                      }
+                      <!-- Start session button: for template sessions -->
+                      @if (
+                        session.isTemplate && session.status !== "replaced"
+                      ) {
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-play"
+                          (clicked)="startTemplateSession($event, session)"
+                          >Start this training session</app-button
+                        >
+                      }
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          </app-card-shell>
+        </div>
+      </div>
+    </app-main-layout>
+  

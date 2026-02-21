@@ -36,7 +36,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
 import { InputNumber } from "primeng/inputnumber";
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 
 // Centralized wellness constants
 import {
@@ -454,7 +454,7 @@ export class DailyReadinessComponent implements OnInit {
 
     // POST to /api/wellness/checkin (UPSERT on user_id, checkin_date)
     this.api
-      .post("/api/wellness/checkin", wellnessPayload)
+      .post(API_ENDPOINTS.wellness.checkin, wellnessPayload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async () => {

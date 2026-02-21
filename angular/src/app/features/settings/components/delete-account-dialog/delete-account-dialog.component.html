@@ -1,0 +1,64 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  class="delete-dialog"
+>
+  <div class="dialog-container">
+    <app-dialog-header
+      icon="trash"
+      title="Delete Account"
+      subtitle="This action is permanent and irreversible"
+      [danger]="true"
+      (close)="closeDialog()"
+    />
+
+    <div class="delete-content">
+      <div class="warning-box">
+        <div class="warning-icon-large">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="warning-text">
+          <h4>Are you absolutely sure?</h4>
+          <p>All your data will be permanently deleted, including:</p>
+          <ul class="delete-list">
+            <li><i class="pi pi-chart-line"></i> Training history & progress</li>
+            <li><i class="pi pi-chart-bar"></i> Performance metrics & analytics</li>
+            <li><i class="pi pi-cog"></i> Settings & preferences</li>
+            <li><i class="pi pi-user"></i> Profile information</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="confirm-field">
+        <label for="settings-deleteConfirm">
+          Type <strong>DELETE</strong> to confirm
+        </label>
+        <input
+          id="settings-deleteConfirm"
+          name="deleteConfirm"
+          type="text"
+          pInputText
+          [ngModel]="confirmText()"
+          (ngModelChange)="confirmTextChange.emit($event)"
+          placeholder="Type DELETE"
+          class="delete-input"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Delete My Account"
+      primaryIcon="trash"
+      primaryVariant="danger"
+      [loading]="loading()"
+      [disabled]="confirmText() !== 'DELETE'"
+      (cancel)="closeDialog()"
+      (primary)="submit.emit()"
+    />
+  </div>
+</p-dialog>

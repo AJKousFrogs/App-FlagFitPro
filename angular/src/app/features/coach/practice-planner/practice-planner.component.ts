@@ -36,7 +36,7 @@ import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -888,7 +888,7 @@ export class PracticePlannerComponent implements OnInit {
   saveAndNotify(): void {
     if (!this.formData.title) return;
 
-    this.api.post("/api/coach/practices", this.formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.post(API_ENDPOINTS.coach.practices, this.formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toastService.success("Team has been notified", "Practice Saved");
         this.showDialog = false;

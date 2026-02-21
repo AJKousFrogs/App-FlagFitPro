@@ -32,7 +32,7 @@ import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
 
-import { ApiService } from "../../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { DialogService } from "../../../../core/ui/dialog.service";
 import { ApiResponse } from "../../../../core/models/common.models";
@@ -456,7 +456,7 @@ export class TournamentCalendarComponent {
 
     try {
       const response: ApiResponse<Tournament[] | null> = await firstValueFrom(
-        this.api.get("/api/tournament-calendar"),
+        this.api.get(API_ENDPOINTS.tournamentCalendar.list),
       );
       if (response?.success && response.data) {
         this.tournaments.set(response.data);
@@ -506,7 +506,9 @@ export class TournamentCalendarComponent {
         id: this.editingId(),
       };
 
-      await firstValueFrom(this.api.post("/api/tournament-calendar", payload));
+      await firstValueFrom(
+        this.api.post(API_ENDPOINTS.tournamentCalendar.create, payload),
+      );
 
       await this.loadTournaments();
       this.tournamentChanged.emit();
@@ -527,7 +529,9 @@ export class TournamentCalendarComponent {
 
     try {
       await firstValueFrom(
-        this.api.post("/api/tournament-calendar/delete", { id: tournament.id }),
+        this.api.post(API_ENDPOINTS.tournamentCalendar.delete, {
+          id: tournament.id,
+        }),
       );
       await this.loadTournaments();
       this.tournamentChanged.emit();

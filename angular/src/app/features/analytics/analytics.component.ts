@@ -100,6 +100,13 @@ interface AnalyticsAcwrData {
   message: string;
 }
 
+type AnalyticsChartType =
+  | "performance"
+  | "chemistry"
+  | "distribution"
+  | "position"
+  | "speed";
+
 @Component({
   selector: "app-analytics",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -129,1118 +136,8 @@ interface AnalyticsAcwrData {
     IconButtonComponent,
     DataSourceBannerComponent,
   ],
-  template: `
-    <app-main-layout>
-      <!-- Loading State -->
-      <app-loading
-        [visible]="isPageLoading()"
-        variant="skeleton"
-        message="Loading analytics..."
-      ></app-loading>
+  templateUrl: "./analytics.component.html",
 
-      <!-- Error State -->
-      @if (hasPageError()) {
-        <app-page-error-state
-          title="Unable to load analytics"
-          [message]="pageErrorMessage()"
-          (retry)="retryLoad()"
-        ></app-page-error-state>
-      }
-
-      <!-- Content -->
-      @else {
-        <div class="analytics-page">
-          <app-page-header
-            title="FlagFit Pro Analytics"
-            subtitle="Advanced Performance Analytics & Team Insights"
-            icon="pi-chart-bar"
-          >
-            <div class="header-actions">
-              <app-button
-                variant="outlined"
-                iconLeft="pi-share-alt"
-                (clicked)="showShareDialog.set(true)"
-                >Share with Coach</app-button
-              >
-              <app-button
-                iconLeft="pi-file-pdf"
-                (clicked)="exportAnalyticsPDF()"
-                >Export PDF</app-button
-              >
-            </div>
-          </app-page-header>
-          <app-data-source-banner
-            [dataState]="analyticsDataState()"
-            [currentDataPoints]="analyticsDataPoints()"
-            [minimumRequired]="analyticsMinimumRequired"
-            metricName="analytics"
-            [showWhenReal]="true"
-          />
-          <div class="data-freshness">
-            <span class="data-source">
-              Data source: Training logs, wellness check-ins, and performance
-              tests.
-            </span>
-            @if (lastRefreshed()) {
-              <span class="data-updated">
-                Last updated: {{ lastRefreshed() | date: "short" }}
-              </span>
-            }
-          </div>
-          @if (nextGenEnabled()) {
-            <div class="analytics-preview-banner">
-              <i class="pi pi-sparkles"></i>
-              <span>
-                Next-gen analytics are in preview. Legacy charts remain the
-                source of truth until validation completes.
-              </span>
-            </div>
-          }
-
-          <p-card class="analytics-hub-card">
-            <ng-template #header>
-              <h3>Analytics Hub</h3>
-            </ng-template>
-            <div class="analytics-hub-grid">
-              <a routerLink="/analytics" class="analytics-hub-link">
-                <span class="analytics-hub-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
-                <span class="analytics-hub-title">Overview</span>
-                <span class="analytics-hub-subtitle">Team performance</span>
-                @if (nextGenEnabled()) {
-                  <span class="analytics-hub-preview">Preview</span>
-                }
-              </a>
-              <a routerLink="/analytics/enhanced" class="analytics-hub-link">
-                <span class="analytics-hub-icon"><i class="pi pi-flask" aria-hidden="true"></i></span>
-                <span class="analytics-hub-title">Enhanced</span>
-                <span class="analytics-hub-subtitle">Deep analytics</span>
-                @if (nextGenEnabled()) {
-                  <span class="analytics-hub-preview">Preview</span>
-                }
-              </a>
-              <a routerLink="/performance-tracking" class="analytics-hub-link">
-                <span class="analytics-hub-icon"><i class="pi pi-bullseye" aria-hidden="true"></i></span>
-                <span class="analytics-hub-title">Performance</span>
-                <span class="analytics-hub-subtitle">Player trends</span>
-                @if (nextGenEnabled()) {
-                  <span class="analytics-hub-preview">Preview</span>
-                }
-              </a>
-            </div>
-          </p-card>
-
-          <!-- My Development Goals (Coach Assigned) -->
-          <p-card class="development-goals-card">
-            <ng-template #header>
-              <div class="goals-header">
-                <div class="goals-title">
-                  <i class="pi pi-bullseye"></i>
-                  <h3>My Development Goals</h3>
-                  <span class="coach-label">(Coach Assigned)</span>
-                </div>
-                <a routerLink="/goals" class="view-all-link">
-                  View All <i class="pi pi-arrow-right"></i>
-                </a>
-              </div>
-            </ng-template>
-
-            @if (developmentGoals().length === 0) {
-              <div class="goals-empty-state">
-                <i class="pi pi-bullseye empty-icon"></i>
-                <h4>No goals assigned yet</h4>
-                <p>
-                  Your coach will assign development goals here. Check back soon
-                  or ask your coach to set goals for you.
-                </p>
-                <app-button
-                  variant="outlined"
-                  iconLeft="pi-envelope"
-                  routerLink="/team-chat"
-                  class="empty-state-cta"
-                  >Request Goals from Coach</app-button
-                >
-              </div>
-            } @else {
-              <div class="goals-grid">
-                @for (
-                  goal of developmentGoals().slice(
-                    0,
-                    UI_LIMITS.GOALS_PREVIEW_COUNT
-                  );
-                  track goal.id
-                ) {
-                  <div
-                    class="goal-card"
-                    [class.achieved]="goal.status === 'achieved'"
-                  >
-                    <div class="goal-header">
-                      <i [class]="getGoalIcon(goal.metricType)"></i>
-                      <span class="goal-name">{{ goal.metricName }}</span>
-                    </div>
-                    <div class="goal-targets">
-                      <div class="target-row">
-                        <span class="target-label">Target:</span>
-                        <span class="target-value"
-                          >{{ goal.targetValue }}{{ goal.targetUnit }} by
-                          {{ goal.deadline | date: "MMM d" }}</span
-                        >
-                      </div>
-                      <div class="target-row">
-                        <span class="target-label">Current:</span>
-                        <span class="current-value"
-                          >{{ goal.currentValue }}{{ goal.targetUnit }}</span
-                        >
-                      </div>
-                    </div>
-                    <div class="goal-progress">
-                      <p-progressBar
-                        [value]="calculateGoalProgress(goal)"
-                        [showValue]="false"
-                        class="goal-progress-bar"
-                      ></p-progressBar>
-                      <span class="progress-percent"
-                        >{{ calculateGoalProgress(goal) }}%</span
-                      >
-                    </div>
-                    <div class="goal-meta">
-                      <span class="days-remaining">
-                        <i class="pi pi-calendar"></i>
-                        {{ getDaysRemaining(goal.deadline) }} days remaining
-                      </span>
-                    </div>
-                    @if (goal.coachNote) {
-                      <div class="coach-note">
-                        <i class="pi pi-comment"></i>
-                        <span>"{{ goal.coachNote }}"</span>
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-            }
-          </p-card>
-
-          <!-- Key Metrics Overview -->
-          <div class="metrics-grid">
-            @for (
-              metric of metrics();
-              track trackByMetricLabel($index, metric)
-            ) {
-              <p-card class="metric-card">
-                <div class="metric-card-content">
-                  <div class="metric-icon">
-                    <i [class]="'pi ' + metric.icon"></i>
-                  </div>
-                  <div class="metric-details">
-                    <div class="metric-value">{{ metric.value }}</div>
-                    <div class="metric-label">{{ metric.label }}</div>
-                    <div
-                      class="metric-trend"
-                      [class]="'trend-' + metric.trendType"
-                    >
-                      {{ metric.trend }}
-                    </div>
-                  </div>
-                </div>
-              </p-card>
-            }
-          </div>
-
-          <!-- Team Performance Badges -->
-          @if (teamPerformanceAchievements().length > 0) {
-            <p-card class="team-badges-card">
-              <ng-template #header>
-                <div class="badges-header">
-                  <div class="badges-title">
-                    <i class="pi pi-trophy"></i>
-                    <h3>Your Team Performance Badges</h3>
-                  </div>
-                  <a
-                    routerLink="/performance-tracking"
-                    class="view-details-link"
-                  >
-                    View Details <i class="pi pi-arrow-right"></i>
-                  </a>
-                </div>
-              </ng-template>
-              <div class="badges-content">
-                <div class="badges-summary">
-                  @if (teamRankingBadgeCounts().gold > 0) {
-                    <div class="badge-stat gold">
-                      <span class="badge-emoji">🥇</span>
-                      <span class="badge-count">{{
-                        teamRankingBadgeCounts().gold
-                      }}</span>
-                      <span class="badge-label">Team Leader</span>
-                    </div>
-                  }
-                  @if (teamRankingBadgeCounts().silver > 0) {
-                    <div class="badge-stat silver">
-                      <span class="badge-emoji">🥈</span>
-                      <span class="badge-count">{{
-                        teamRankingBadgeCounts().silver
-                      }}</span>
-                      <span class="badge-label">2nd Place</span>
-                    </div>
-                  }
-                  @if (teamRankingBadgeCounts().bronze > 0) {
-                    <div class="badge-stat bronze">
-                      <span class="badge-emoji">🥉</span>
-                      <span class="badge-count">{{
-                        teamRankingBadgeCounts().bronze
-                      }}</span>
-                      <span class="badge-label">3rd Place</span>
-                    </div>
-                  }
-                </div>
-                <div class="badges-list">
-                  @for (
-                    achievement of teamPerformanceAchievements().slice(0, 4);
-                    track achievement.id
-                  ) {
-                    <div class="badge-item" [class]="achievement.tier">
-                      <span class="badge-rank">{{
-                        getRankEmoji(achievement.rank)
-                      }}</span>
-                      <span class="badge-metric">{{
-                        achievement.metricLabel
-                      }}</span>
-                      <span class="badge-value">{{
-                        achievement.valueFormatted
-                      }}</span>
-                    </div>
-                  }
-                </div>
-              </div>
-            </p-card>
-          }
-
-          <!-- Charts Grid -->
-          <div class="charts-grid">
-            <!-- Performance Trends Chart -->
-            @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Load vs Performance</h3>
-                      <p class="chart-subtitle">
-                        Acute/Chronic Workload vs Subjective Wellness
-                      </p>
-                    </div>
-                    @if (performanceChartData()) {
-                      <div class="chart-actions">
-                        <app-button
-                          variant="text"
-                          size="sm"
-                          iconLeft="pi-refresh"
-                          (clicked)="resetChartZoom('performance')"
-                          >Reset zoom</app-button
-                        >
-                        <app-icon-button
-                          icon="pi-download"
-                          variant="outlined"
-                          size="sm"
-                          (clicked)="exportChart('performance')"
-                          ariaLabel="Download performance chart"
-                          tooltip="Download"
-                        />
-                      </div>
-                    }
-                  </div>
-                </ng-template>
-                @if (performanceChartData()) {
-                  <div class="chart-container">
-                    <app-lazy-chart
-                      type="line"
-                      [data]="performanceChartData()"
-                      [options]="lineChartOptions"
-                    ></app-lazy-chart>
-                  </div>
-                  <div class="chart-insights">
-                    <div class="insight-item">
-                      <div class="insight-value">
-                        {{ acwrData()?.acwr || "0.00" }}
-                      </div>
-                      <div class="insight-label">Current ACWR</div>
-                    </div>
-                    <div class="insight-item">
-                      <div class="insight-value" [class]="acwrData()?.riskZone">
-                        {{ acwrData()?.riskZone || "N/A" | titlecase }}
-                      </div>
-                      <div class="insight-label">Safety Zone</div>
-                    </div>
-                  </div>
-                } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
-                    <h4>{{ noDataMessage.title }}</h4>
-                    <p>{{ noDataMessage.reason }}</p>
-                    <app-icon-button
-                      icon="pi-bolt"
-                      routerLink="noDataMessage.helpLink"
-                      ariaLabel="Start logging workouts"
-                      tooltip="Get started"
-                    />
-                  </div>
-                }
-              </p-card>
-            } @placeholder {
-              <p-card class="chart-card">
-                <div class="loading-placeholder">
-                  Loading performance trends...
-                </div>
-              </p-card>
-            }
-
-            <!-- Team Chemistry Chart -->
-            @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Skill Proficiency Radar</h3>
-                      <p class="chart-subtitle">
-                        Comparative assessment across core competencies
-                      </p>
-                    </div>
-                  </div>
-                </ng-template>
-                @if (chemistryChartData()) {
-                  <div class="chart-container radar">
-                    <app-lazy-chart
-                      type="radar"
-                      [data]="chemistryChartData()"
-                      [options]="radarChartOptions"
-                    ></app-lazy-chart>
-                  </div>
-                } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi pi-users empty-icon"></i>
-                    <h4>Proficiency Data Coming Soon</h4>
-                    <p>
-                      Log more varied training sessions to populate your skill
-                      proficiency radar.
-                    </p>
-                  </div>
-                }
-              </p-card>
-            } @placeholder {
-              <p-card class="chart-card">
-                <div class="loading-placeholder">
-                  Loading skill proficiency...
-                </div>
-              </p-card>
-            }
-
-            <!-- Training Distribution Chart -->
-            @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Training Mix</h3>
-                      <p class="chart-subtitle">
-                        Distribution of focus areas over 30 days
-                      </p>
-                    </div>
-                  </div>
-                </ng-template>
-                @if (distributionChartData()) {
-                  <div class="chart-container doughnut">
-                    <app-lazy-chart
-                      type="doughnut"
-                      [data]="distributionChartData()"
-                      [options]="DOUGHNUT_CHART_OPTIONS"
-                    ></app-lazy-chart>
-                  </div>
-                } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
-                    <h4>Mix Data Coming Soon</h4>
-                    <p>
-                      Log your training sessions to see how your time is
-                      distributed.
-                    </p>
-                  </div>
-                }
-              </p-card>
-            } @placeholder {
-              <p-card class="chart-card">
-                <div class="loading-placeholder">Loading training mix...</div>
-              </p-card>
-            }
-
-            <!-- Position Performance Chart -->
-            @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Benchmark Comparison</h3>
-                      <p class="chart-subtitle">
-                        Your metrics vs Olympic standard benchmarks
-                      </p>
-                    </div>
-                  </div>
-                </ng-template>
-                @if (positionChartData()) {
-                  <div class="chart-container">
-                    <app-lazy-chart
-                      type="bar"
-                      [data]="positionChartData()"
-                      [options]="BAR_CHART_OPTIONS"
-                    ></app-lazy-chart>
-                  </div>
-                } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi pi-chart-bar empty-icon"></i>
-                    <h4>Benchmarks Coming Soon</h4>
-                    <p>
-                      Complete your profile and log tests to see comparative
-                      analytics.
-                    </p>
-                  </div>
-                }
-              </p-card>
-            } @placeholder {
-              <p-card class="chart-card">
-                <div class="loading-placeholder">Loading benchmarks...</div>
-              </p-card>
-            }
-          </div>
-
-          <!-- Gap Analysis Visualization -->
-          @defer (on idle) {
-            <p-card class="chart-card full-width gap-analysis-card">
-              <ng-template #header>
-                <div class="chart-header">
-                  <div class="title-group">
-                    <h3 class="chart-title">Gap Analysis</h3>
-                    <p class="chart-subtitle">
-                      Your performance vs Olympic benchmarks
-                    </p>
-                  </div>
-                </div>
-              </ng-template>
-              @if (gapAnalysisData().length > 0) {
-                <div class="gap-analysis-content">
-                  <div class="gap-legend">
-                    <div class="legend-item">
-                      <span class="legend-dot your-level"></span>
-                      <span>Your Level</span>
-                    </div>
-                    <div class="legend-item">
-                      <span class="legend-dot benchmark"></span>
-                      <span>Olympic Benchmark</span>
-                    </div>
-                  </div>
-                  <div class="gap-bars">
-                    @for (item of gapAnalysisData(); track item.metric) {
-                      <div class="gap-bar-row">
-                        <div class="gap-metric-label">
-                          <span class="metric-name">{{ item.metric }}</span>
-                          <span
-                            class="gap-value"
-                            [class.positive]="item.gap >= 0"
-                            [class.negative]="item.gap < 0"
-                          >
-                            {{ item.gap >= 0 ? "+" : "" }}{{ item.gap
-                            }}{{ item.unit }}
-                          </span>
-                        </div>
-                        <div class="gap-bar-container">
-                          <div class="gap-bar-track">
-                            <div
-                              class="gap-bar-fill your-level"
-                              [style.width.%]="
-                                (item.current / item.benchmark) * 100
-                              "
-                            ></div>
-                            <div
-                              class="benchmark-marker"
-                              [style.left.%]="100"
-                              pTooltip="Olympic Benchmark: {{
-                                item.benchmark
-                              }}{{ item.unit }}"
-                            ></div>
-                          </div>
-                          <div class="gap-bar-values">
-                            <span class="current-value"
-                              >{{ item.current }}{{ item.unit }}</span
-                            >
-                            <span class="benchmark-value"
-                              >{{ item.benchmark }}{{ item.unit }}</span
-                            >
-                          </div>
-                        </div>
-                        <div class="gap-status">
-                          @if (item.gap >= 0) {
-                            <i class="pi pi-check-circle status-achieved"></i>
-                          } @else if (item.gap > -10) {
-                            <i class="pi pi-minus-circle status-close"></i>
-                          } @else {
-                            <i class="pi pi-exclamation-circle status-gap"></i>
-                          }
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  <div class="gap-summary">
-                    <div class="summary-item">
-                      <span class="summary-value">{{
-                        gapAnalysisSummary().achieved
-                      }}</span>
-                      <span class="summary-label">Benchmarks Met</span>
-                    </div>
-                    <div class="summary-item">
-                      <span class="summary-value">{{
-                        gapAnalysisSummary().close
-                      }}</span>
-                      <span class="summary-label">Almost There</span>
-                    </div>
-                    <div class="summary-item">
-                      <span class="summary-value">{{
-                        gapAnalysisSummary().needsWork
-                      }}</span>
-                      <span class="summary-label">Needs Improvement</span>
-                    </div>
-                    <div class="summary-item overall">
-                      <span class="summary-value"
-                        >{{ gapAnalysisSummary().overallScore }}%</span
-                      >
-                      <span class="summary-label">Overall Score</span>
-                    </div>
-                  </div>
-                </div>
-              } @else {
-                <div class="empty-chart-state">
-                  <i class="pi pi-chart-bar empty-icon"></i>
-                  <h4>Gap Analysis Coming Soon</h4>
-                  <p>
-                    Complete fitness tests and log training to see how you
-                    compare to Olympic benchmarks.
-                  </p>
-                </div>
-              }
-            </p-card>
-          } @placeholder {
-            <p-card class="chart-card full-width">
-              <div class="loading-placeholder">Loading gap analysis...</div>
-            </p-card>
-          }
-
-          <!-- Full Width Charts -->
-          <p-card class="chart-card full-width">
-            <ng-template #header>
-              <div class="chart-header">
-                <h3 class="chart-title">Speed Development Progress</h3>
-                <div class="chart-controls">
-                  <p-select
-                    [options]="timePeriods"
-                    [(ngModel)]="selectedTimePeriod"
-                    placeholder="Time Period"
-                    class="w-full md:w-14rem"
-                  ></p-select>
-                  <p-select
-                    [options]="metricOptions"
-                    [(ngModel)]="selectedMetric"
-                    placeholder="Metrics"
-                    class="w-full md:w-14rem"
-                  ></p-select>
-                </div>
-              </div>
-            </ng-template>
-            @if (speedChartData()) {
-              <app-lazy-chart
-                type="line"
-                [data]="speedChartData()"
-                [options]="lineChartOptions"
-              ></app-lazy-chart>
-              <div class="chart-insights">
-                @if (speedInsights()) {
-                  <div class="insight-item">
-                    <div class="insight-value">
-                      {{ speedInsights()!.best40 || "N/A" }}
-                    </div>
-                    <div class="insight-label">Best 40-Yard</div>
-                  </div>
-                  <div class="insight-item">
-                    <div class="insight-value">
-                      {{ speedInsights()!.best10 || "N/A" }}
-                    </div>
-                    <div class="insight-label">Best 10-Yard</div>
-                  </div>
-                  <div class="insight-item">
-                    <div class="insight-value">
-                      {{ speedInsights()!.improvement || "N/A" }}
-                    </div>
-                    <div class="insight-label">Total Improvement</div>
-                  </div>
-                  <div class="insight-item">
-                    <div class="insight-value">4.40s</div>
-                    <div class="insight-label">Olympic Target</div>
-                  </div>
-                } @else {
-                  <div class="insight-item">
-                    <div class="insight-value">-</div>
-                    <div class="insight-label">No data yet</div>
-                  </div>
-                }
-              </div>
-            } @else {
-              <div class="empty-chart-state">
-                <i class="pi pi-bolt empty-icon"></i>
-                <h4>No Speed Data Yet</h4>
-                <p>
-                  Log your sprint times in Performance Tracking to see speed
-                  development progress.
-                </p>
-                <a routerLink="/performance-tracking" class="empty-state-link">
-                  <i class="pi pi-arrow-right"></i> Go to Performance Tracking
-                </a>
-              </div>
-            }
-          </p-card>
-
-          <!-- Player Statistics Section -->
-          <p-card class="player-stats-card full-width">
-            <ng-template #header>
-              <h3 class="chart-title">Player Statistics & Attendance</h3>
-            </ng-template>
-            <p-tabs>
-              <p-tabpanel header="Per Game Stats">
-                <div class="stats-summary">
-                  <div class="stat-summary-item">
-                    <div class="stat-block__label">Games Played</div>
-                    <div class="stat-block__value">
-                      {{ playerGameStats().length }}
-                    </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-block__label">Games Missed</div>
-                    <div class="stat-block__value error">
-                      {{ gamesMissed() }}
-                    </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-block__label">Attendance Rate</div>
-                    <div class="stat-block__value">{{ attendanceRate() }}%</div>
-                  </div>
-                </div>
-                <p-table
-                  [value]="playerGameStats()"
-                  [paginator]="true"
-                  [rows]="10"
-                  class="p-datatable-sm"
-                >
-                  <ng-template #header>
-                    <tr>
-                      <th>Date</th>
-                      <th>Opponent</th>
-                      <th>Status</th>
-                      <th>Pass Att</th>
-                      <th>Completions</th>
-                      <th>Pass Yds</th>
-                      <th>Rush Att</th>
-                      <th>Rush Yds</th>
-                      <th>Flag Pulls</th>
-                      <th>Interceptions</th>
-                    </tr>
-                  </ng-template>
-                  <ng-template #body let-game>
-                    <tr>
-                      <td>{{ game.gameDate }}</td>
-                      <td>{{ game.opponent }}</td>
-                      <td>
-                        <app-status-tag
-                          [value]="game.present ? 'Present' : 'Missed'"
-                          [severity]="game.present ? 'success' : 'danger'"
-                          size="sm"
-                        />
-                      </td>
-                      <td>{{ game.passAttempts }}</td>
-                      <td>{{ game.completions }}</td>
-                      <td>{{ game.passingYards }}</td>
-                      <td>{{ game.rushingAttempts }}</td>
-                      <td>{{ game.rushingYards }}</td>
-                      <td>{{ game.flagPulls }}</td>
-                      <td>{{ game.interceptions }}</td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </p-tabpanel>
-
-              <p-tabpanel header="Season Stats">
-                @if (playerSeasonStats()) {
-                  <div class="season-stats">
-                    <div class="stats-summary">
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Season</div>
-                        <div class="stat-block__value">
-                          {{ playerSeasonStats()?.season }}
-                        </div>
-                      </div>
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Games Played</div>
-                        <div class="stat-block__value">
-                          {{ playerSeasonStats()?.gamesPlayed }}
-                        </div>
-                      </div>
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Games Missed</div>
-                        <div class="stat-block__value error">
-                          {{ playerSeasonStats()?.gamesMissed }}
-                        </div>
-                      </div>
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Attendance Rate</div>
-                        <div class="stat-block__value">
-                          {{
-                            playerSeasonStats()?.attendanceRate
-                              | number: "1.1-1"
-                          }}%
-                        </div>
-                      </div>
-                    </div>
-                    <div class="stats-grid">
-                      <div class="stat-card">
-                        <h4>Passing</h4>
-                        <div class="stat-row">
-                          <span>Attempts:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalPassAttempts
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Completions:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalCompletions
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Yards:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalPassingYards
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Completion %:</span>
-                          <strong
-                            >{{
-                              playerSeasonStats()?.completionPercentage
-                                | number: "1.1-1"
-                            }}%</strong
-                          >
-                        </div>
-                      </div>
-                      <div class="stat-card">
-                        <h4>Receiving</h4>
-                        <div class="stat-row">
-                          <span>Targets:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalTargets
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Receptions:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalReceptions
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Yards:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalReceivingYards
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Drops:</span>
-                          <strong>{{ playerSeasonStats()?.totalDrops }}</strong>
-                        </div>
-                      </div>
-                      <div class="stat-card">
-                        <h4>Rushing</h4>
-                        <div class="stat-row">
-                          <span>Attempts:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalRushingAttempts
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Yards:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalRushingYards
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Avg Yards:</span>
-                          <strong>{{
-                            playerSeasonStats()?.avgRushingYards
-                              | number: "1.1-1"
-                          }}</strong>
-                        </div>
-                      </div>
-                      <div class="stat-card">
-                        <h4>Defense</h4>
-                        <div class="stat-row">
-                          <span>Flag Pull Attempts:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalFlagPullAttempts
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Flag Pulls:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalFlagPulls
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Success Rate:</span>
-                          <strong
-                            >{{
-                              playerSeasonStats()?.flagPullSuccessRate
-                                | number: "1.1-1"
-                            }}%</strong
-                          >
-                        </div>
-                        <div class="stat-row">
-                          <span>Interceptions:</span>
-                          <strong>{{
-                            playerSeasonStats()?.totalInterceptionsDef
-                          }}</strong>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                }
-              </p-tabpanel>
-
-              <p-tabpanel header="Multi-Season Stats">
-                @if (playerMultiSeasonStats()) {
-                  <div class="multi-season-stats">
-                    <div class="stats-summary">
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Total Seasons</div>
-                        <div class="stat-block__value">
-                          {{ playerMultiSeasonStats()?.totalSeasons }}
-                        </div>
-                      </div>
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Total Games Played</div>
-                        <div class="stat-block__value">
-                          {{ playerMultiSeasonStats()?.totalGamesPlayed }}
-                        </div>
-                      </div>
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Total Games Missed</div>
-                        <div class="stat-block__value error">
-                          {{ playerMultiSeasonStats()?.totalGamesMissed }}
-                        </div>
-                      </div>
-                      <div class="stat-summary-item">
-                        <div class="stat-block__label">Overall Attendance</div>
-                        <div class="stat-block__value">
-                          {{
-                            playerMultiSeasonStats()?.overallAttendanceRate
-                              | number: "1.1-1"
-                          }}%
-                        </div>
-                      </div>
-                    </div>
-                    <h4>Career Totals</h4>
-                    <div class="stats-grid">
-                      <div class="stat-card">
-                        <h5>Passing</h5>
-                        <div class="stat-row">
-                          <span>Career Attempts:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerPassAttempts
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Career Yards:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerPassingYards
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Career TDs:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerTouchdowns
-                          }}</strong>
-                        </div>
-                      </div>
-                      <div class="stat-card">
-                        <h5>Receiving</h5>
-                        <div class="stat-row">
-                          <span>Career Receptions:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerReceptions
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Career Yards:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerReceivingYards
-                          }}</strong>
-                        </div>
-                      </div>
-                      <div class="stat-card">
-                        <h5>Rushing</h5>
-                        <div class="stat-row">
-                          <span>Career Attempts:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerRushingAttempts
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Career Yards:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerRushingYards
-                          }}</strong>
-                        </div>
-                      </div>
-                      <div class="stat-card">
-                        <h5>Defense</h5>
-                        <div class="stat-row">
-                          <span>Career Flag Pulls:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerFlagPulls
-                          }}</strong>
-                        </div>
-                        <div class="stat-row">
-                          <span>Career Interceptions:</span>
-                          <strong>{{
-                            playerMultiSeasonStats()?.careerInterceptionsDef
-                          }}</strong>
-                        </div>
-                      </div>
-                    </div>
-                    <h4>Season Breakdown</h4>
-                    <p-table
-                      [value]="playerMultiSeasonStats()?.seasons || []"
-                      [paginator]="true"
-                      [rows]="5"
-                    >
-                      <ng-template #header>
-                        <tr>
-                          <th>Season</th>
-                          <th>Games Played</th>
-                          <th>Games Missed</th>
-                          <th>Attendance Rate</th>
-                          <th>Total Yards</th>
-                          <th>Total TDs</th>
-                        </tr>
-                      </ng-template>
-                      <ng-template #body let-season>
-                        <tr>
-                          <td>{{ season.season }}</td>
-                          <td>{{ season.gamesPlayed }}</td>
-                          <td>{{ season.gamesMissed }}</td>
-                          <td>
-                            {{ season.attendanceRate | number: "1.1-1" }}%
-                          </td>
-                          <td>
-                            {{
-                              season.totalPassingYards +
-                                season.totalReceivingYards +
-                                season.totalRushingYards
-                            }}
-                          </td>
-                          <td>{{ season.totalTouchdowns }}</td>
-                        </tr>
-                      </ng-template>
-                    </p-table>
-                  </div>
-                }
-              </p-tabpanel>
-            </p-tabs>
-          </p-card>
-        </div>
-
-        <!-- Share with Coach Dialog -->
-        <p-dialog
-          [(visible)]="showShareDialogValue"
-          [modal]="true"
-          [closable]="true"
-          header="Share Analytics with Coach"
-          class="share-dialog"
-        >
-          <div class="share-content">
-            <p class="share-intro">
-              Send your analytics report to your coach for review and feedback.
-            </p>
-
-            <div class="share-options">
-              <h4>Include in Report</h4>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [(ngModel)]="shareOptions.includeCharts"
-                  />
-                  <span>Performance Charts</span>
-                </label>
-              </div>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [(ngModel)]="shareOptions.includeGoals"
-                  />
-                  <span>Development Goals</span>
-                </label>
-              </div>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [(ngModel)]="shareOptions.includeStats"
-                  />
-                  <span>Player Statistics</span>
-                </label>
-              </div>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [(ngModel)]="shareOptions.includeComments"
-                  />
-                  <span>Include My Notes</span>
-                </label>
-              </div>
-            </div>
-
-            @if (shareOptions.includeComments) {
-              <div class="message-section">
-                <label for="shareMessage">Add a message (optional)</label>
-                <textarea
-                  id="shareMessage"
-                  [(ngModel)]="shareMessageValue"
-                  placeholder="Any comments or questions for your coach..."
-                  rows="3"
-                ></textarea>
-              </div>
-            }
-          </div>
-
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showShareDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button
-              icon="send"
-              [loading]="isSharing()"
-              (clicked)="shareWithCoach()"
-              >Send to Coach</app-button
-            >
-          </ng-template>
-        </p-dialog>
-      }
-      <!-- End of @else for content -->
-    </app-main-layout>
-  `,
   styleUrl: "./analytics.component.scss",
 })
 export class AnalyticsComponent implements AfterViewInit {
@@ -1818,11 +715,7 @@ export class AnalyticsComponent implements AfterViewInit {
   loadFallbackData(): void {
     this.loadEmptyMetrics();
     // Set charts to null to show empty states
-    this.performanceChartData.set(null);
-    this.chemistryChartData.set(null);
-    this.distributionChartData.set(null);
-    this.positionChartData.set(null);
-    this.speedChartData.set(null);
+    this.clearAllChartData();
   }
 
   loadEmptyMetrics(): void {
@@ -1863,28 +756,23 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   loadFallbackPerformanceChart(): void {
-    // Return null to show empty state
-    this.performanceChartData.set(null);
+    this.setChartData("performance", null);
   }
 
   loadFallbackChemistryChart(): void {
-    // Return null to show empty state
-    this.chemistryChartData.set(null);
+    this.setChartData("chemistry", null);
   }
 
   loadFallbackDistributionChart(): void {
-    // Return null to show empty state
-    this.distributionChartData.set(null);
+    this.setChartData("distribution", null);
   }
 
   loadFallbackPositionChart(): void {
-    // Return null to show empty state
-    this.positionChartData.set(null);
+    this.setChartData("position", null);
   }
 
   loadFallbackSpeedChart(): void {
-    // Return null to show empty state
-    this.speedChartData.set(null);
+    this.setChartData("speed", null);
   }
 
   trackByMetricLabel(index: number, metric: Metric): string {
@@ -1998,6 +886,46 @@ Tip: Hover over data points to see trend information!`;
   }
 
   private getChartDataForExport(chartType: string): unknown {
+    if (!this.isAnalyticsChartType(chartType)) {
+      return { error: "Unknown chart type" };
+    }
+    return this.getChartData(chartType);
+  }
+
+  private clearAllChartData(): void {
+    this.setChartData("performance", null);
+    this.setChartData("chemistry", null);
+    this.setChartData("distribution", null);
+    this.setChartData("position", null);
+    this.setChartData("speed", null);
+  }
+
+  private setChartData(
+    chartType: AnalyticsChartType,
+    value: Record<string, unknown> | null,
+  ): void {
+    switch (chartType) {
+      case "performance":
+        this.performanceChartData.set(value);
+        return;
+      case "chemistry":
+        this.chemistryChartData.set(value);
+        return;
+      case "distribution":
+        this.distributionChartData.set(value);
+        return;
+      case "position":
+        this.positionChartData.set(value);
+        return;
+      case "speed":
+        this.speedChartData.set(value);
+        return;
+      default:
+        return;
+    }
+  }
+
+  private getChartData(chartType: AnalyticsChartType): Record<string, unknown> | null {
     switch (chartType) {
       case "performance":
         return this.performanceChartData();
@@ -2010,8 +938,18 @@ Tip: Hover over data points to see trend information!`;
       case "speed":
         return this.speedChartData();
       default:
-        return { error: "Unknown chart type" };
+        return null;
     }
+  }
+
+  private isAnalyticsChartType(chartType: string): chartType is AnalyticsChartType {
+    return (
+      chartType === "performance" ||
+      chartType === "chemistry" ||
+      chartType === "distribution" ||
+      chartType === "position" ||
+      chartType === "speed"
+    );
   }
 
   /**
@@ -2111,26 +1049,7 @@ Tip: Hover over data points to see trend information!`;
         return;
       }
 
-      // Build the report data
-      const reportData = {
-        playerId: currentUser.id,
-        playerName: currentUser.name || currentUser.email,
-        reportDate: new Date().toISOString(),
-        message: this.shareMessage(),
-        includedSections: {
-          charts: this.shareOptions.includeCharts,
-          goals: this.shareOptions.includeGoals,
-          stats: this.shareOptions.includeStats,
-          comments: this.shareOptions.includeComments,
-        },
-        // Include actual data based on options
-        metrics: this.shareOptions.includeCharts ? this.metrics() : [],
-        goals: this.shareOptions.includeGoals ? this.developmentGoals() : [],
-        seasonStats: this.shareOptions.includeStats
-          ? this.playerSeasonStats()
-          : null,
-        acwr: this.acwrData(),
-      };
+      const reportData = this.buildShareReportData(currentUser);
 
       // Send to coach via API
       this.apiService
@@ -2157,6 +1076,29 @@ Tip: Hover over data points to see trend information!`;
       this.logger.error("Error sharing analytics:", error);
       this.toastService.error(TOAST.ERROR.ANALYTICS_SHARE_FAILED);
     }
+  }
+
+  private buildShareReportData(currentUser: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+  }): Record<string, unknown> {
+    return {
+      playerId: currentUser.id,
+      playerName: currentUser.name || currentUser.email,
+      reportDate: new Date().toISOString(),
+      message: this.shareMessage(),
+      includedSections: {
+        charts: this.shareOptions.includeCharts,
+        goals: this.shareOptions.includeGoals,
+        stats: this.shareOptions.includeStats,
+        comments: this.shareOptions.includeComments,
+      },
+      metrics: this.shareOptions.includeCharts ? this.metrics() : [],
+      goals: this.shareOptions.includeGoals ? this.developmentGoals() : [],
+      seasonStats: this.shareOptions.includeStats ? this.playerSeasonStats() : null,
+      acwr: this.acwrData(),
+    };
   }
 
   /**

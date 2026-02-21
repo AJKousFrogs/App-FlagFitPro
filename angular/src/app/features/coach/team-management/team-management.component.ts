@@ -23,7 +23,7 @@ import { ColorPicker } from "primeng/colorpicker";
 import { InputText } from "primeng/inputtext";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -233,7 +233,7 @@ export class TeamManagementComponent implements OnInit {
 
     try {
       const response: ApiResponse<{ settings?: TeamSettings }> =
-        await firstValueFrom(this.api.get("/api/team-management"));
+        await firstValueFrom(this.api.get(API_ENDPOINTS.teamManagement));
       if (response?.success && response.data?.settings) {
         this.teamSettings.set(response.data.settings);
       }
@@ -246,7 +246,7 @@ export class TeamManagementComponent implements OnInit {
 
   saveSettings(): void {
     this.api
-      .put("/api/team/settings", this.teamSettings())
+      .put(API_ENDPOINTS.teamSettings, this.teamSettings())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

@@ -105,7 +105,7 @@ async function searchKnowledgeKeyword(query, options = {}) {
   const searchCondition = keywords
     .map(
       (kw) =>
-        `title.ilike.%${kw}%,content.ilike.%${kw}%,category.ilike.%${kw}%`,
+        `topic.ilike.%${kw}%,question.ilike.%${kw}%,answer.ilike.%${kw}%,summary.ilike.%${kw}%,entry_type.ilike.%${kw}%`,
     )
     .join(",");
 
@@ -113,23 +113,23 @@ async function searchKnowledgeKeyword(query, options = {}) {
     .from("knowledge_base_entries")
     .select(
       `
-      id, title, content, category, subcategory,
-      source_type, evidence_grade, risk_level, source_url,
-      source_quality_score
+      id, entry_type, topic, question, answer, summary,
+      evidence_strength, consensus_level, supporting_articles, updated_at
     `,
     )
-    .eq("is_active", true)
+    .eq("is_merlin_approved", true)
     .or(searchCondition);
 
   if (category) {
-    queryBuilder = queryBuilder.eq("category", category);
+    queryBuilder = queryBuilder.eq("entry_type", category);
   }
   if (riskLevel) {
-    queryBuilder = queryBuilder.eq("risk_level", riskLevel);
+    queryBuilder = queryBuilder.eq("consensus_level", riskLevel);
   }
 
   const { data, error } = await queryBuilder
-    .order("source_quality_score", { ascending: false })
+    .order("query_count", { ascending: false, nullsFirst: false })
+    .order("updated_at", { ascending: false, nullsFirst: false })
     .limit(limit);
 
   if (error) {
@@ -137,7 +137,28 @@ async function searchKnowledgeKeyword(query, options = {}) {
     return [];
   }
 
-  return data || [];
+  return (data || []).map((entry) => ({
+    id: entry.id,
+    title: entry.topic || entry.question || "Knowledge Entry",
+    content: entry.answer || entry.summary || entry.question || "",
+    category: entry.entry_type || "general",
+    subcategory: null,
+    source_type: "knowledge_base",
+    evidence_grade:
+      typeof entry.evidence_strength === "string"
+        ? entry.evidence_strength
+        : "C",
+    risk_level: null,
+    source_url: Array.isArray(entry.supporting_articles)
+      ? entry.supporting_articles[0] || null
+      : null,
+    source_quality_score:
+      entry.consensus_level === "high"
+        ? 0.9
+        : entry.consensus_level === "moderate"
+          ? 0.7
+          : 0.5,
+  }));
 }
 
 /**

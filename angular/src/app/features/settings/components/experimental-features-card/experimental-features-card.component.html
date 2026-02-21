@@ -1,0 +1,21 @@
+<app-card
+  title="Experimental Features"
+  headerIcon="pi-flask"
+  headerIconColor="warning"
+>
+  <div class="p-field-checkbox mb-4">
+    <label id="settings-nextgen-label" class="p-label">
+      Next-Gen Metrics Preview
+    </label>
+    <div class="toggle-wrapper">
+      <p-toggleswitch
+        [ngModel]="nextGenMetricsPreview()"
+        (ngModelChange)="nextGenMetricsPreviewChange.emit($event)"
+        ariaLabelledBy="settings-nextgen-label"
+      ></p-toggleswitch>
+    </div>
+  </div>
+  <p class="text-text-secondary text-sm">
+    Show preview readiness and workload scores in your dashboard.
+  </p>
+</app-card>

@@ -1,0 +1,72 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  class="new-team-dialog"
+>
+  <div class="dialog-container">
+    <app-dialog-header
+      icon="users"
+      title="Request New Team"
+      subtitle="Submit a request to create a new team"
+      (close)="closeDialog()"
+    />
+
+    <div class="new-team-content">
+      <div class="info-banner">
+        <i class="pi pi-info-circle"></i>
+        <p>
+          New team requests require approval from a superadmin. You will be
+          notified via email once your request has been reviewed.
+        </p>
+      </div>
+
+      <div class="form-field">
+        <label for="new-team-name">
+          <i class="pi pi-tag"></i>
+          Team Name <span class="required">*</span>
+        </label>
+        <input
+          id="new-team-name"
+          name="newTeamName"
+          type="text"
+          pInputText
+          [ngModel]="teamName()"
+          (ngModelChange)="teamNameChange.emit($event)"
+          placeholder="Enter your team name"
+          class="w-full"
+          autocomplete="organization"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="new-team-notes">
+          <i class="pi pi-file-edit"></i>
+          Additional Notes (Optional)
+        </label>
+        <textarea
+          id="new-team-notes"
+          name="newTeamNotes"
+          pInputText
+          [ngModel]="teamNotes()"
+          (ngModelChange)="teamNotesChange.emit($event)"
+          placeholder="Tell us about your team (e.g., location, league, number of members)"
+          rows="3"
+          class="w-full"
+        ></textarea>
+      </div>
+    </div>
+
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Submit Request"
+      primaryIcon="send"
+      [loading]="loading()"
+      [disabled]="!teamName().trim()"
+      (cancel)="closeDialog()"
+      (primary)="submit.emit()"
+    />
+  </div>
+</p-dialog>

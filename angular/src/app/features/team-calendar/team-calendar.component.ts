@@ -33,7 +33,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -511,7 +511,7 @@ export class TeamCalendarComponent implements OnInit {
     try {
       const response: ApiResponse<{ events?: TeamEvent[] }> =
         await firstValueFrom(
-        this.api.get("/api/team-calendar"),
+        this.api.get(API_ENDPOINTS.teamCalendar.list),
       );
       if (response?.success && response.data?.events) {
         this.events.set(response.data.events);
@@ -567,7 +567,7 @@ export class TeamCalendarComponent implements OnInit {
       ),
     );
 
-    this.api.post("/api/team-calendar/rsvp", submission).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.post(API_ENDPOINTS.teamCalendar.rsvp, submission).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toastService.success(
           `You're ${this.getRsvpLabel(rsvpStatus)} for ${event.title}`,
@@ -582,7 +582,7 @@ export class TeamCalendarComponent implements OnInit {
 
   syncToCalendar(): void {
     // Generate ICS file or link to calendar sync
-    this.api.get("/api/team-calendar/sync-url").pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.get(API_ENDPOINTS.teamCalendar.syncUrl).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response: unknown) => {
         const url = (response as { url?: string })?.url;
         if (url) {

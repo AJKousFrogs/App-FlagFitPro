@@ -25,7 +25,7 @@ import { TableModule } from "primeng/table";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
@@ -632,7 +632,7 @@ export class AchievementsComponent implements OnInit {
         achievements?: AchievementApiRecord[];
         leaderboard?: LeaderboardEntry[];
       }> = await firstValueFrom(
-        this.api.get("/api/achievements"),
+        this.api.get(API_ENDPOINTS.achievements.list),
       );
       if (response?.success && response.data) {
         if (response.data.achievements) {

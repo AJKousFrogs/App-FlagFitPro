@@ -1,0 +1,74 @@
+<app-card title="App Preferences" headerIcon="pi-cog" headerIconColor="info">
+  <form [formGroup]="preferencesForm()">
+    <div class="p-field mb-4">
+      <span id="settings-theme-label" class="p-label">Theme</span>
+      <div
+        class="theme-selector"
+        role="radiogroup"
+        aria-labelledby="settings-theme-label"
+      >
+        @for (option of themeOptions(); track option.value) {
+          <button
+            type="button"
+            class="theme-option"
+            [class.active]="preferencesForm().get('theme')?.value === option.value"
+            (click)="themeSelected.emit(option.value)"
+          >
+            <i [class]="option.icon"></i>
+            <span>{{ option.label }}</span>
+          </button>
+        }
+      </div>
+      <small class="theme-hint">
+        @switch (preferencesForm().get("theme")?.value) {
+          @case ("light") {
+            Always use light theme
+          }
+          @case ("dark") {
+            Always use dark theme
+          }
+          @case ("auto") {
+            Follows your system preference
+          }
+        }
+      </small>
+    </div>
+    <div class="p-field language-field">
+      <label for="language" class="p-label">Language</label>
+      <p-select
+        id="language"
+        formControlName="language"
+        [options]="languageOptions()"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select language"
+        class="language-selector"
+        appendTo="body"
+        [showClear]="false"
+      >
+        <ng-template #selectedItem let-selected>
+          @if (selected) {
+            <div class="lang-selected">
+              <span class="lang-flag">{{ selected.flag }}</span>
+              <span class="lang-label">{{ selected.label }}</span>
+            </div>
+          }
+        </ng-template>
+        <ng-template #item let-lang>
+          <div class="lang-item">
+            <span class="lang-flag">{{ lang.flag }}</span>
+            <div class="lang-details">
+              <span class="lang-label">{{ lang.label }}</span>
+              <span class="lang-native">{{ lang.native }}</span>
+            </div>
+            <i class="pi pi-check lang-check"></i>
+          </div>
+        </ng-template>
+      </p-select>
+      <div class="language-hint-box">
+        <i class="pi pi-info-circle"></i>
+        <span>Translation coming soon - your preference will be saved</span>
+      </div>
+    </div>
+  </form>
+</app-card>

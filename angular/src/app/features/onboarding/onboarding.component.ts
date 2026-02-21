@@ -16,7 +16,7 @@ import { Step, StepList, Stepper } from "primeng/stepper";
 import { firstValueFrom } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import {
     LoggerService,
     toLogContext,
@@ -69,112 +69,7 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
     OnboardingStepRecoveryComponent,
     OnboardingStepSummaryComponent,
   ],
-  template: `
-    <app-main-layout>
-      <div class="onboarding-page">
-        <app-page-header
-          title="Welcome to FlagFit Pro"
-          subtitle="Let's set up your profile and training preferences"
-          icon="pi-user-plus"
-        ></app-page-header>
-
-        <p-card class="onboarding-card">
-          <!-- Progress bar -->
-          <div class="progress-section">
-            <p-progressBar
-              [value]="state.progress()"
-              [showValue]="false"
-              class="onboarding-progress"
-            ></p-progressBar>
-            <div class="progress-info">
-              <span class="progress-text">{{ state.progress() }}% complete</span>
-              @if (state.lastSaved()) {
-                <span class="auto-save-indicator" [class.saving]="state.isSaving()">
-                  @if (state.isSaving()) {
-                    <i class="pi pi-spin pi-spinner"></i> Saving...
-                  } @else {
-                    <i class="pi pi-check-circle"></i> Draft saved
-                  }
-                </span>
-              }
-            </div>
-          </div>
-
-          <p-stepper
-            [value]="state.currentStep()"
-            (valueChange)="onStepperChange($event)"
-            [linear]="false"
-          >
-            <p-step-list>
-              @for (step of state.steps(); track $index) {
-                <p-step [value]="$index">
-                  <ng-template #content>
-                    <div class="step-with-icon">
-                      <i [class]="'pi ' + step.icon"></i>
-                      <span>{{ step.label }}</span>
-                    </div>
-                  </ng-template>
-                </p-step>
-              }
-            </p-step-list>
-          </p-stepper>
-
-          <div class="onboarding-content">
-            @if (state.currentStep() === 0) {
-              <app-onboarding-step-personal
-                [maxDate]="maxDate"
-                [minDate]="minDate"
-                [isEmailVerified]="isEmailVerified()"
-                [isResendingVerification]="isResendingVerification()"
-                (resendVerification)="resendVerificationEmail()"
-                (refreshVerification)="refreshVerificationStatus()"
-              />
-            } @else if (state.currentStep() === 1) {
-              <app-onboarding-step-role />
-            } @else if (state.currentStep() === 2 && state.isPlayer()) {
-              <app-onboarding-step-physical />
-            } @else if (state.currentStep() === 3 && state.isPlayer()) {
-              <app-onboarding-step-health />
-            } @else if (state.currentStep() === 4 && state.isPlayer()) {
-              <app-onboarding-step-equipment />
-            } @else if (state.currentStep() === 5 && state.isPlayer()) {
-              <app-onboarding-step-goals />
-            } @else if (state.currentStep() === 6 && state.isPlayer()) {
-              <app-onboarding-step-schedule />
-            } @else if (state.currentStep() === 7 && state.isPlayer()) {
-              <app-onboarding-step-recovery />
-            } @else if (isSummaryStep()) {
-              <app-onboarding-step-summary (consentChange)="onConsentChange($event.type, { checked: $event.checked })" />
-            }
-
-            <div class="onboarding-actions">
-              @if (state.currentStep() > 0) {
-                <app-button
-                  variant="outlined"
-                  iconLeft="pi-arrow-left"
-                  (clicked)="state.previousStep()"
-                  >Back</app-button
-                >
-              }
-              @if (state.currentStep() < state.steps().length - 1) {
-                <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()"
-                  >Next</app-button
-                >
-              } @else {
-                <app-button
-                  iconLeft="pi-check"
-                  [loading]="isCompleting()"
-                  [disabled]="!canCompleteOnboarding()"
-                  (clicked)="completeOnboarding()"
-                  >Complete Setup</app-button
-                >
-              }
-            </div>
-          </div>
-        </p-card>
-      </div>
-    </app-main-layout>
-  `,
+  templateUrl: "./onboarding.component.html",
   styleUrl: "./onboarding.component.scss",
 })
 export class OnboardingComponent implements OnInit, OnDestroy {
@@ -963,7 +858,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       };
 
       const response = await firstValueFrom(
-        this.api.post("/api/wellness/checkin", payload),
+        this.api.post(API_ENDPOINTS.wellness.checkin, payload),
       );
 
       if (!response.success) {

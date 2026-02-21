@@ -53,6 +53,14 @@
    *         styling and milestone tag font-size override.
    * ------------------------------------------------ */
   .player-dashboard {
+    .stat-card .p-card-body {
+      padding: var(--space-5);
+    }
+
+    .stat-card .p-card-content {
+      padding: 0;
+    }
+
     canvas {
       max-width: 100%;
       height: auto;

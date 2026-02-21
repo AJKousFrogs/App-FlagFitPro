@@ -151,7 +151,11 @@ export class BottomNavComponent implements OnInit {
     { label: "Video Library", icon: "pi-video", route: "/training/videos" },
     { label: "Staff Hub", icon: "pi-building", route: "/staff", roles: ["physiotherapist", "nutritionist", "psychologist", "strength_conditioning_coach"] },
     { label: "Exercise DB", icon: "pi-database", route: "/exercisedb", roles: ["coach", "assistant_coach", "admin"] },
-    { label: "Coach Knowledge", icon: "pi-bookmark", route: "/coach/knowledge", roles: ["coach", "assistant_coach", "admin"] },
+    {
+      label: "Knowledge Base",
+      icon: "pi-bookmark",
+      route: "/knowledge",
+    },
     { label: "Team Hub", icon: "pi-briefcase", route: "/team/workspace", roles: ["coach", "assistant_coach", "admin"] },
     { label: "Team Management", icon: "pi-sitemap", route: "/coach/team", roles: ["coach", "assistant_coach", "admin"] },
     { label: "Help", icon: "pi-question-circle", route: "/help" },

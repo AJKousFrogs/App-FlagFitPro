@@ -136,10 +136,7 @@ export class AiChatService {
     this.addMessageToSession(userMessage);
 
     return this.apiService
-      .post<ChatApiResponse>(
-        API_ENDPOINTS.aiChat?.send || "/api/ai/chat",
-        request,
-      )
+      .post<ChatApiResponse>(API_ENDPOINTS.aiChat.send, request)
       .pipe(
         map((response) => {
           if (!response.success || !response.data) {
@@ -206,7 +203,7 @@ export class AiChatService {
    */
   loadSession(sessionId: string): Observable<ChatSession | null> {
     return this.apiService
-      .get<{ messages: ChatMessage[] }>(`/api/ai/chat/session/${sessionId}`)
+      .get<{ messages: ChatMessage[] }>(API_ENDPOINTS.aiChat.session(sessionId))
       .pipe(
         map((response) => {
           if (response.success && response.data) {

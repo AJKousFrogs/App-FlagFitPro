@@ -30,7 +30,7 @@ import {
     Workout,
 } from "../models/training.models";
 import { AcwrService } from "./acwr.service";
-import { ApiService } from "./api.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import {
@@ -581,14 +581,14 @@ export class UnifiedTrainingService {
    */
   generateDailyProtocol(date?: string): Observable<unknown> {
     const targetDate = date || new Date().toISOString().split("T")[0];
-    return this.api.post("/api/daily-protocol/generate", { date: targetDate });
+    return this.api.post(API_ENDPOINTS.dailyProtocol.generate, { date: targetDate });
   }
 
   /**
    * Get protocol for a specific date (for viewing tomorrow's training)
    */
   getProtocolForDate(date: string): Observable<unknown> {
-    return this.api.get(`/api/daily-protocol?date=${date}`);
+    return this.api.get(API_ENDPOINTS.dailyProtocol.byDate(date));
   }
 
   /**

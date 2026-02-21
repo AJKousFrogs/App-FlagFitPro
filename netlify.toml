@@ -617,6 +617,31 @@
   status = 200
   force = true
 
+# Backward-compatible aliases used by Angular API_ENDPOINTS.knowledge
+[[redirects]]
+  from = "/api/knowledge"
+  to = "/.netlify/functions/knowledge-search"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/knowledge/search"
+  to = "/.netlify/functions/knowledge-search"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/knowledge-governance"
+  to = "/.netlify/functions/knowledge-governance"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/knowledge-governance/*"
+  to = "/.netlify/functions/knowledge-governance"
+  status = 200
+  force = true
+
 # API Routes for Performance Data (Wellness, Supplements, Measurements)
 [[redirects]]
   from = "/api/performance-data/measurements"
@@ -949,6 +974,12 @@
 [[redirects]]
   from = "/api/ai/feedback/*"
   to = "/.netlify/functions/ai-feedback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/ai/telemetry"
+  to = "/.netlify/functions/ai-telemetry"
   status = 200
   force = true
 

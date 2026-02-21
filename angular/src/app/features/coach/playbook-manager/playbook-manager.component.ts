@@ -31,7 +31,7 @@ import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -688,7 +688,7 @@ export class PlaybookManagerComponent implements OnInit {
 
     try {
       const response: ApiResponse<{ plays?: Play[] }> = await firstValueFrom(
-        this.api.get("/api/coach/playbook"),
+        this.api.get(API_ENDPOINTS.coach.playbook),
       );
       if (response?.success && response.data?.plays) {
         this.plays.set(response.data.plays);

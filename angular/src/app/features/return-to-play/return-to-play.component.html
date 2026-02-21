@@ -1,0 +1,516 @@
+<app-main-layout>
+<div class="return-to-play-page">
+        <app-page-header
+          title="Return-to-Play Protocol"
+          subtitle="Guided recovery from injury"
+          icon="pi-heart-pulse"
+        ></app-page-header>
+
+        <!-- No Active Protocol State -->
+        @if (!activeProtocol()) {
+          <p-card class="no-protocol-card">
+            <app-empty-state
+              context="recovery"
+              [inline]="true"
+              [customTitle]="'No Active Recovery Protocol'"
+              [customMessage]="'Start a return-to-play protocol if you are recovering from an injury or extended absence.'"
+              [customActionLabel]="'Start Protocol'"
+              [actionHandler]="openStartDialog"
+            />
+          </p-card>
+        }
+
+        <!-- Active Protocol Display -->
+        @if (activeProtocol(); as protocol) {
+          <!-- Phase 2.3: RTP Phase Celebration -->
+          @if (showPhaseCelebration() && phaseCelebrationInfo()) {
+            <app-rtp-phase-celebration
+              [phaseInfo]="phaseCelebrationInfo()!"
+              [daysInPreviousPhase]="previousPhaseDays()"
+            ></app-rtp-phase-celebration>
+          }
+
+          <!-- Protocol Overview Card -->
+          <p-card class="protocol-overview-card">
+            <div class="protocol-header">
+              <div class="injury-info">
+                <div class="injury-badge">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  {{ formatInjuryLocation(protocol.injuryLocation) }}
+                </div>
+                <span class="injury-type">{{
+                  formatInjuryType(protocol.injuryType)
+                }}</span>
+              </div>
+              <div class="date-info">
+                <span
+                  >Started: {{ protocol.startDate | date: "MMM d, y" }}</span
+                >
+              </div>
+            </div>
+
+            <div class="protocol-stats">
+              <div class="stat">
+                <span class="stat-block__label">Severity</span>
+                <app-status-tag
+                  [value]="formatSeverity(protocol.severity)"
+                  [severity]="getSeverityColor(protocol.severity)"
+                  size="sm"
+                />
+              </div>
+              <div class="stat">
+                <span class="stat-block__label">Day of Recovery</span>
+                <span class="stat-block__value">
+                  {{ protocol.daysInRecovery }}
+                </span>
+              </div>
+              <div class="stat">
+                <span class="stat-block__label">Est. Recovery</span>
+                <span class="stat-block__value"
+                  >{{ getEstimatedDays(protocol.severity) }} days</span
+                >
+              </div>
+              <div class="stat">
+                <span class="stat-block__label">Target Return</span>
+                <span class="stat-block__value">{{
+                  protocol.targetReturnDate | date: "MMM d"
+                }}</span>
+              </div>
+            </div>
+
+            <div class="progress-section">
+              <div class="progress-label">
+                <span>Overall Progress</span>
+                <span>{{ protocol.progressPercentage }}% Complete</span>
+              </div>
+              <p-progressBar
+                [value]="protocol.progressPercentage"
+                [showValue]="false"
+              ></p-progressBar>
+            </div>
+          </p-card>
+
+          <!-- 7-Stage Protocol Progress -->
+          <p-card header="7-Stage Protocol Progress" class="stages-card">
+            <div class="stages-visual">
+              @for (stage of protocolStages; track stage.stage) {
+                <div
+                  class="stage-box"
+                  [class.completed]="stage.stage < protocol.currentStage"
+                  [class.current]="stage.stage === protocol.currentStage"
+                  [class.upcoming]="stage.stage > protocol.currentStage"
+                >
+                  <div class="stage-number">{{ stage.stage }}</div>
+                  <div class="stage-icon">
+                    @if (stage.stage < protocol.currentStage) {
+                      <i class="pi pi-check"></i>
+                    } @else if (stage.stage === protocol.currentStage) {
+                      <i class="pi pi-circle-fill"></i>
+                    }
+                  </div>
+                  <div class="stage-name">{{ stage.shortName }}</div>
+                  <div class="stage-load">{{ stage.loadPercentage }}%</div>
+                </div>
+                @if (stage.stage < 7) {
+                  <div
+                    class="stage-connector"
+                    [class.active]="stage.stage < protocol.currentStage"
+                  ></div>
+                }
+              }
+            </div>
+            <div class="current-indicator">
+              <i class="pi pi-arrow-up"></i>
+              <span>CURRENT</span>
+            </div>
+          </p-card>
+
+          <!-- Current Stage Details -->
+          <p-card class="current-stage-card">
+            <ng-template #header>
+              <div class="stage-detail-header">
+                <div class="stage-title">
+                  <span
+                    >Stage {{ protocol.currentStage }}:
+                    {{ getCurrentStage().name }}</span
+                  >
+                </div>
+                <app-status-tag
+                  [value]="'Load: ' + getCurrentStage().loadPercentage + '%'"
+                  severity="info"
+                  size="sm"
+                />
+              </div>
+            </ng-template>
+
+            <div class="stage-day-info">
+              <i class="pi pi-calendar"></i>
+              <span
+                >Day {{ protocol.daysInCurrentStage }} of Stage
+                {{ protocol.currentStage }}</span
+              >
+              <span class="min-days"
+                >(Minimum: {{ getCurrentStage().minimumDays }} days)</span
+              >
+            </div>
+
+            <div class="activities-section">
+              <h4><i class="pi pi-check-circle"></i> ALLOWED ACTIVITIES</h4>
+              <div class="activities-list allowed">
+                @for (
+                  activity of getCurrentStage().activities;
+                  track activity
+                ) {
+                  <div class="activity-item">• {{ activity }}</div>
+                }
+              </div>
+            </div>
+
+            @if (getCurrentStage().restrictions.length > 0) {
+              <div class="activities-section">
+                <h4><i class="pi pi-times-circle"></i> RESTRICTIONS</h4>
+                <div class="activities-list restricted">
+                  @for (
+                    restriction of getCurrentStage().restrictions;
+                    track restriction
+                  ) {
+                    <div class="activity-item">• {{ restriction }}</div>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="progression-criteria">
+              <h4>
+                <i class="pi pi-flag"></i> PROGRESSION CRITERIA (Complete ALL to
+                advance)
+              </h4>
+              <div class="criteria-list">
+                @for (
+                  criterion of getCurrentStage().progressionCriteria;
+                  track criterion;
+                  let i = $index
+                ) {
+                  <div class="criterion-item">
+                    <p-checkbox
+                      [(ngModel)]="protocol.criteriaCompleted[i]"
+                      [binary]="true"
+                      variant="filled"
+                      [inputId]="'criterion-' + i"
+                      (ngModelChange)="updateCriterion(i, { checked: $event })"
+                    ></p-checkbox>
+                    <label [for]="'criterion-' + i">{{ criterion }}</label>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="advance-section">
+              <app-button
+                iconLeft="pi-arrow-right"
+                [disabled]="!canAdvanceStage()"
+                (clicked)="advanceStage()"
+                >Ready to Advance</app-button
+              >
+              @if (!canAdvanceStage()) {
+                <small class="advance-hint">
+                  Complete all criteria and minimum
+                  {{ getCurrentStage().minimumDays }} days to advance
+                </small>
+              }
+            </div>
+          </p-card>
+
+          <!-- Daily Tracking Section -->
+          <p-card header="Daily Tracking" class="daily-tracking-card">
+            <div class="checkin-form">
+              <h4><i class="pi pi-pencil"></i> Today's Check-in</h4>
+
+              <div class="metrics-row">
+                <div class="metric-input">
+                  <label>Pain Level (0-10)</label>
+                  <small>0 = No pain, 10 = Severe</small>
+                  <p-slider
+                    [(ngModel)]="todayCheckin.painLevel"
+                    [min]="0"
+                    [max]="10"
+                    [step]="1"
+                  ></p-slider>
+                  <div
+                    class="slider-value"
+                    [class.good]="todayCheckin.painLevel <= 3"
+                    [class.moderate]="
+                      todayCheckin.painLevel > 3 && todayCheckin.painLevel <= 6
+                    "
+                    [class.bad]="todayCheckin.painLevel > 6"
+                  >
+                    {{ todayCheckin.painLevel }}/10
+                  </div>
+                </div>
+
+                <div class="metric-input">
+                  <label>Function Score (%)</label>
+                  <small>Compared to pre-injury baseline</small>
+                  <p-slider
+                    [(ngModel)]="todayCheckin.functionScore"
+                    [min]="0"
+                    [max]="100"
+                    [step]="5"
+                  ></p-slider>
+                  <div class="slider-value">
+                    {{ todayCheckin.functionScore }}%
+                  </div>
+                </div>
+              </div>
+
+              <div class="metrics-row">
+                <div class="metric-input">
+                  <label>Confidence Level (1-10)</label>
+                  <small>Trust in injured area</small>
+                  <p-slider
+                    [(ngModel)]="todayCheckin.confidenceLevel"
+                    [min]="1"
+                    [max]="10"
+                    [step]="1"
+                  ></p-slider>
+                  <div class="slider-value">
+                    {{ todayCheckin.confidenceLevel }}/10
+                  </div>
+                </div>
+
+                <div class="activities-checklist">
+                  <label>Activities Completed Today</label>
+                  @for (
+                    activity of getCurrentStage().activities.slice(
+                      0,
+                      UI_LIMITS.ACTIVITIES_PREVIEW
+                    );
+                    track activity;
+                    let i = $index
+                  ) {
+                    <div class="activity-check">
+                      <p-checkbox
+                        [value]="activity"
+                        [(ngModel)]="todayCheckin.activitiesCompleted"
+                        variant="filled"
+                        [inputId]="'activity-' + i"
+                      ></p-checkbox>
+                      <label [for]="'activity-' + i">{{ activity }}</label>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="notes-section">
+                <label for="checkin-notes">Notes</label>
+                <textarea
+                  pInputTextarea
+                  id="checkin-notes"
+                  [(ngModel)]="todayCheckin.notes"
+                  rows="2"
+                  placeholder="Any observations, tightness, or concerns..."
+                ></textarea>
+              </div>
+
+              <app-button
+                iconLeft="pi-check"
+                [loading]="isSavingCheckin()"
+                (clicked)="saveCheckin()"
+                >Save Check-in</app-button
+              >
+            </div>
+          </p-card>
+
+          <!-- Recovery Progress Chart -->
+          <p-card header="Recovery Progress Chart" class="chart-card">
+            @if (chartData()) {
+              <app-lazy-chart
+                type="line"
+                [data]="chartData()"
+                [options]="chartOptions"
+              ></app-lazy-chart>
+            } @else {
+              <app-empty-state
+                icon="pi-chart-line"
+                heading="No recovery data yet"
+                description="Log check-ins to see your recovery progress."
+                [compact]="true"
+              />
+            }
+          </p-card>
+
+          <!-- Recent Check-ins -->
+          @if (recentCheckins().length > 0) {
+            <p-card header="Recent Check-ins" class="checkins-card">
+              <p-table
+                [value]="recentCheckins()"
+                [rows]="5"
+                class="p-datatable-sm"
+              >
+                <ng-template #header>
+                  <tr>
+                    <th>Date</th>
+                    <th>Pain</th>
+                    <th>Function</th>
+                    <th>Confidence</th>
+                    <th>Notes</th>
+                  </tr>
+                </ng-template>
+                <ng-template #body let-checkin>
+                  <tr>
+                    <td>{{ checkin.date | date: "EEE, MMM d" }}</td>
+                    <td>
+                      <span [class]="getPainClass(checkin.painLevel)"
+                        >{{ checkin.painLevel }}/10</span
+                      >
+                    </td>
+                    <td>{{ checkin.functionScore }}%</td>
+                    <td>{{ checkin.confidenceLevel }}/10</td>
+                    <td class="notes-cell">{{ checkin.notes || "-" }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+          }
+        }
+      </div>
+
+      <!-- Start Protocol Dialog -->
+      <p-dialog
+        header="Start Return-to-Play Protocol"
+        [modal]="true"
+        [visible]="showStartDialog()"
+        (visibleChange)="showStartDialog.set($event)"
+        class="rtp-start-dialog"
+        [draggable]="false"
+      >
+        <div class="start-form">
+          <!-- Injury Type -->
+          <div class="form-field">
+            <label>Injury Type *</label>
+            <div class="injury-type-options">
+              @for (type of injuryTypes; track type.value) {
+                <div class="type-option">
+                  <p-radioButton
+                    [value]="type.value"
+                    [(ngModel)]="newProtocol.injuryType"
+                    [inputId]="'type-' + type.value"
+                  ></p-radioButton>
+                  <label [for]="'type-' + type.value">{{ type.label }}</label>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Location & Severity Row -->
+          <div class="form-row two-col">
+            <div class="form-field">
+              <label for="injury-location">Injury Location *</label>
+              <p-select
+                id="injury-location"
+                [options]="injuryLocations"
+                [(ngModel)]="newProtocol.injuryLocation"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select location"
+                class="w-full"
+              ></p-select>
+            </div>
+            <div class="form-field">
+              <label for="severity">Severity *</label>
+              <p-select
+                id="severity"
+                [options]="severityLevels"
+                [(ngModel)]="newProtocol.severity"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select severity"
+                class="w-full"
+                (onValueChange)="onSeverityChange()"
+              ></p-select>
+            </div>
+          </div>
+
+          <!-- Date Row -->
+          <div class="form-row two-col">
+            <div class="form-field">
+              <label for="injury-date">Injury Date *</label>
+              <p-datepicker
+                id="injury-date"
+                [(ngModel)]="newProtocol.injuryDate"
+                [maxDate]="today"
+                dateFormat="M dd, yy"
+                [showIcon]="true"
+                class="w-full"
+              ></p-datepicker>
+            </div>
+            <div class="form-field">
+              <label for="return-date">Expected Return Date</label>
+              <p-datepicker
+                id="return-date"
+                [(ngModel)]="newProtocol.targetReturnDate"
+                [minDate]="today"
+                dateFormat="M dd, yy"
+                [showIcon]="true"
+                class="w-full"
+                placeholder="Auto-calculated"
+              ></p-datepicker>
+            </div>
+          </div>
+
+          <!-- Medical Notes -->
+          <div class="form-field">
+            <label for="medical-notes"
+              >Medical Professional Notes (optional)</label
+            >
+            <textarea
+              pInputTextarea
+              id="medical-notes"
+              [(ngModel)]="newProtocol.medicalNotes"
+              rows="2"
+              placeholder="Diagnosed by team physio. MRI confirmed..."
+            ></textarea>
+          </div>
+
+          <!-- Acknowledgments -->
+          <div class="acknowledgments">
+            <div class="ack-item">
+              <p-checkbox
+                [(ngModel)]="newProtocol.understandProtocol"
+                [binary]="true"
+                variant="filled"
+                inputId="understand"
+              ></p-checkbox>
+              <label for="understand"
+                >I understand this protocol and will follow it
+                responsibly</label
+              >
+            </div>
+            <div class="ack-item">
+              <p-checkbox
+                [(ngModel)]="newProtocol.notifyCoach"
+                [binary]="true"
+                variant="filled"
+                inputId="notify"
+              ></p-checkbox>
+              <label for="notify"
+                >Coach will be notified of my recovery status</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <ng-template #footer>
+          <app-button variant="outlined" (clicked)="closeStartDialog()"
+            >Cancel</app-button
+          >
+          <app-button
+            iconLeft="pi-check"
+            [loading]="isStartingProtocol()"
+            [disabled]="!isStartFormValid()"
+            (clicked)="startProtocol()"
+            >Start Protocol</app-button
+          >
+        </ng-template>
+      </p-dialog>
+    </app-main-layout>

@@ -1,0 +1,167 @@
+@use "styles/mixins" as *;
+
+.theme-selector {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.theme-option {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  border: var(--border-2) solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
+  color: var(--color-text-primary);
+  min-height: var(--touch-target-md);
+
+  @include ds-hover-state(
+    var(--surface-secondary),
+    $border-color: var(--ds-primary-green)
+  );
+}
+
+.theme-option.active {
+  background: rgba(var(--ds-primary-green-rgb), 0.08);
+  border-color: var(--ds-primary-green);
+  color: var(--ds-primary-green);
+}
+
+.theme-option.active i,
+.theme-option.active span {
+  color: var(--ds-primary-green);
+}
+
+.theme-option i {
+  font-size: var(--ds-font-size-2xl);
+  color: var(--color-text-secondary);
+}
+
+.theme-option span {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.theme-option:not(.active) i {
+  color: var(--color-text-secondary);
+}
+
+.theme-option:not(.active) span {
+  color: var(--color-text-primary);
+}
+
+.theme-hint {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-xs);
+}
+
+.language-field {
+  margin-bottom: var(--space-4);
+}
+
+.language-hint-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  padding: var(--space-5) var(--space-6);
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--ds-primary-green-rgb), 0.05) 0%,
+    rgba(var(--ds-primary-green-rgb), 0.02) 100%
+  );
+  border-radius: var(--radius-lg);
+  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
+}
+
+.language-hint-box i {
+  font-size: var(--ds-font-size-md);
+  color: var(--ds-primary-green);
+  flex-shrink: 0;
+}
+
+.language-hint-box span {
+  line-height: var(--ds-line-height-normal);
+}
+
+.language-selector {
+  width: 100%;
+
+  .lang-selected {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}
+
+.lang-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+
+  @include ds-hover-state(var(--surface-secondary));
+}
+
+.lang-flag {
+  font-size: var(--ds-font-size-2xl);
+  flex-shrink: 0;
+}
+
+.lang-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.lang-label {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.lang-native {
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.lang-check {
+  color: var(--ds-primary-green);
+  font-size: var(--ds-font-size-md);
+  flex-shrink: 0;
+}
+
+@include respond-to(md) {
+  .theme-selector {
+    flex-direction: column;
+  }
+
+  .theme-option {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .theme-option i {
+    font-size: var(--ds-font-size-xl);
+  }
+}

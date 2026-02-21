@@ -1,0 +1,692 @@
+<app-main-layout>
+      <!-- Loading State -->
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading performance data..."
+      ></app-loading>
+
+      <!-- Error State -->
+      @if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load performance data"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
+
+      <!-- Content -->
+      @else {
+        <div class="performance-page">
+          <app-page-header
+            title="Performance Tracking"
+            subtitle="Track and analyze your performance metrics over time"
+            icon="pi-bullseye"
+          >
+            <app-button iconLeft="pi-plus" (clicked)="openLogDialog()"
+              >Log Performance</app-button
+            >
+          </app-page-header>
+          <app-data-source-banner
+            [dataState]="performanceDataState()"
+            [currentDataPoints]="performanceDataPoints()"
+            [minimumRequired]="performanceMinimumRequired"
+            metricName="performance metrics"
+            [showWhenReal]="true"
+          />
+          <div class="data-freshness">
+            <span class="data-source">
+              Data source: Performance test logs and team benchmarks.
+            </span>
+            @if (lastRefreshed()) {
+              <span class="data-updated">
+                Last updated: {{ lastRefreshed() | date: "short" }}
+              </span>
+            }
+          </div>
+          @if (nextGenEnabled()) {
+            <div class="performance-preview-banner">
+              <i class="pi pi-sparkles"></i>
+              <span>
+                Next-gen performance signals are in preview. Keep using legacy
+                metrics until validation completes.
+              </span>
+            </div>
+          }
+
+          <!-- Performance Metrics -->
+          @if (hasData()) {
+            <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
+          } @else {
+            <app-empty-state
+              context="performance"
+              [useCard]="true"
+              [customActionLabel]="'Log First Test'"
+              [actionHandler]="openLogDialog"
+            />
+          }
+
+          <!-- Team Rankings & Achievement Badges -->
+          @if (teamRankings() && teamRankings()!.rankings.length > 0) {
+            <p-card class="team-rankings-card">
+              <ng-template #header>
+                <div class="rankings-header">
+                  <div class="rankings-title">
+                    <i class="pi pi-users"></i>
+                    <h3>Your Team Rankings</h3>
+                  </div>
+                  @if (performanceAchievements().length > 0) {
+                    <div class="badge-summary">
+                      @if (goldBadgeCount() > 0) {
+                        <span class="badge-count gold" pTooltip="Team Leader">
+                          🥇 {{ goldBadgeCount() }}
+                        </span>
+                      }
+                      @if (silverBadgeCount() > 0) {
+                        <span class="badge-count silver" pTooltip="2nd Place">
+                          🥈 {{ silverBadgeCount() }}
+                        </span>
+                      }
+                      @if (bronzeBadgeCount() > 0) {
+                        <span class="badge-count bronze" pTooltip="3rd Place">
+                          🥉 {{ bronzeBadgeCount() }}
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+              </ng-template>
+
+              <!-- Achievement Badges Row -->
+              @if (performanceAchievements().length > 0) {
+                <div class="achievements-row">
+                  <h4 class="achievements-title">
+                    Your Top Performance Badges
+                  </h4>
+                  <div class="achievements-grid">
+                    @for (
+                      achievement of performanceAchievements();
+                      track achievement.id
+                    ) {
+                      <app-achievement-badge
+                        [icon]="getAchievementIcon(achievement.metric)"
+                        [title]="achievement.metricLabel"
+                        [description]="getRankDescription(achievement)"
+                        [tier]="achievement.tier"
+                        [unlocked]="true"
+                        [unlockedDate]="achievement.awardedAt"
+                        [compact]="false"
+                      />
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Rankings Table -->
+              <div class="rankings-table">
+                <h4 class="rankings-subtitle">How You Compare to Teammates</h4>
+                <div class="rankings-list">
+                  @for (
+                    ranking of teamRankings()!.rankings;
+                    track ranking.metric
+                  ) {
+                    <div
+                      class="ranking-item"
+                      [class.top-three]="ranking.achievementTier"
+                    >
+                      <div class="ranking-metric">
+                        <span
+                          class="rank-badge"
+                          [class]="ranking.achievementTier || 'default'"
+                        >
+                          @if (ranking.achievementTier) {
+                            {{ getRankEmoji(ranking.yourRank) }}
+                          }
+                          {{ formatRank(ranking.yourRank) }}
+                        </span>
+                        <span class="metric-name">{{
+                          ranking.metricLabel
+                        }}</span>
+                      </div>
+                      <div class="ranking-details">
+                        <span class="your-value">
+                          {{ ranking.yourValue
+                          }}{{
+                            ranking.isLowerBetter
+                              ? "s"
+                              : getMetricUnit(ranking.metric)
+                          }}
+                        </span>
+                        <span class="rank-of-total">
+                          of {{ ranking.totalPlayers }} players
+                        </span>
+                      </div>
+                      <div
+                        class="gap-from-leader"
+                        [class.is-leader]="ranking.yourRank === 1"
+                      >
+                        @if (ranking.yourRank === 1) {
+                          <span class="leader-badge"><i class="pi pi-trophy" aria-hidden="true"></i> Team Leader!</span>
+                        } @else {
+                          <span class="gap-text">{{
+                            ranking.gapFormatted
+                          }}</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Strongest/Weakest Summary -->
+              <div class="performance-summary">
+                @if (teamRankings()!.strongestMetric) {
+                  <div class="summary-item strongest">
+                    <i class="pi pi-arrow-up"></i>
+                    <div class="summary-content">
+                      <span class="summary-label">Your Strongest</span>
+                      <span class="summary-value">
+                        {{ teamRankings()!.strongestMetric!.metricLabel }}
+                        (Top
+                        {{
+                          100 - teamRankings()!.strongestMetric!.percentile + 1
+                        }}%)
+                      </span>
+                    </div>
+                  </div>
+                }
+                @if (
+                  teamRankings()!.weakestMetric &&
+                  teamRankings()!.weakestMetric !==
+                    teamRankings()!.strongestMetric
+                ) {
+                  <div class="summary-item weakest">
+                    <i class="pi pi-arrow-down"></i>
+                    <div class="summary-content">
+                      <span class="summary-label">Room to Improve</span>
+                      <span class="summary-value">
+                        {{ teamRankings()!.weakestMetric!.metricLabel }}
+                        ({{ teamRankings()!.weakestMetric!.gapFormatted }})
+                      </span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </p-card>
+          } @else if (hasTeam() && hasData()) {
+            <p-card class="team-rankings-card">
+              <app-empty-state
+                icon="pi-users"
+                heading="Team Rankings Coming Soon"
+                description="Once more teammates log their performance tests, you'll see how you compare."
+              />
+            </p-card>
+          }
+
+          <!-- Performance Charts -->
+          <div class="charts-grid">
+            @defer (on viewport) {
+              <p-card class="chart-card">
+                <ng-template #header>
+                  <div class="chart-header-row">
+                    <h3>Performance Over Time</h3>
+                    @if (nextGenEnabled()) {
+                      <span class="chart-preview-badge">Preview</span>
+                    }
+                  </div>
+                </ng-template>
+                @if (performanceChartData()) {
+                  <app-lazy-chart
+                    type="line"
+                    [data]="performanceChartData()"
+                    [options]="chartOptions"
+                  ></app-lazy-chart>
+                } @else {
+                  <app-empty-state
+                    icon="pi-chart-line"
+                    heading="No Performance Data Yet"
+                    description="Log at least 2 performance tests to see your progress over time."
+                  />
+                }
+              </p-card>
+            } @placeholder {
+              <p-card class="chart-card">
+                <div class="loading-placeholder">
+                  Loading performance chart...
+                </div>
+              </p-card>
+            }
+
+            @defer (on viewport) {
+              <p-card class="chart-card">
+                <ng-template #header>
+                  <div class="chart-header-row">
+                    <h3>Speed Metrics (10yd, 20yd, 40yd)</h3>
+                    @if (nextGenEnabled()) {
+                      <span class="chart-preview-badge">Preview</span>
+                    }
+                  </div>
+                </ng-template>
+                @if (speedChartData()) {
+                  <app-lazy-chart
+                    type="bar"
+                    [data]="speedChartData()"
+                    [options]="chartOptions"
+                  ></app-lazy-chart>
+                } @else {
+                  <app-empty-state
+                    icon="pi-bolt"
+                    heading="No Speed Data Yet"
+                    description="Log your 10-yard, 20-yard, or 40-yard times to see speed metrics."
+                  />
+                }
+              </p-card>
+            } @placeholder {
+              <p-card class="chart-card">
+                <div class="loading-placeholder">Loading speed metrics...</div>
+              </p-card>
+            }
+          </div>
+
+          <!-- Position Benchmark Comparison -->
+          <p-card class="benchmark-card">
+            <ng-template #header>
+              <div class="benchmark-header">
+                <div class="benchmark-title">
+                  <i class="pi pi-bullseye"></i>
+                  <h3>{{ selectedPosition() }} Position Benchmarks</h3>
+                </div>
+                <p-select
+                  [options]="positionOptions"
+                  [(ngModel)]="selectedPositionValue"
+                  (ngModelChange)="onPositionChange({ value: $event })"
+                  placeholder="Change Position"
+                  class="position-selector"
+                ></p-select>
+              </div>
+            </ng-template>
+            @if (nextGenEnabled()) {
+              <p class="benchmark-preview-note">
+                Next-gen benchmarks are in preview. Use current benchmarks for
+                decisions until validation completes.
+              </p>
+            }
+            @if (positionBenchmarks().length > 0) {
+              <div class="benchmarks-list">
+                @for (
+                  benchmark of positionBenchmarks();
+                  track benchmark.metric
+                ) {
+                  <div class="benchmark-item">
+                    <div class="benchmark-metric">
+                      <span class="metric-name">{{ benchmark.metric }}</span>
+                      <span class="metric-values">
+                        You: {{ benchmark.current
+                        }}{{ benchmark.unit }} &nbsp;|&nbsp; Elite:
+                        {{ benchmark.elite }}{{ benchmark.unit }}
+                      </span>
+                    </div>
+                    <div class="benchmark-progress">
+                      <p-progressBar
+                        [value]="benchmark.percentOfElite"
+                        [showValue]="false"
+                        class="benchmark-bar"
+                      ></p-progressBar>
+                      <span class="gap-text"
+                        >({{ benchmark.gapFromElite }} away)</span
+                      >
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <app-empty-state
+                icon="pi-bullseye"
+                heading="No Benchmark Data Yet"
+                description="Log your performance tests to compare against elite position benchmarks."
+              />
+            }
+          </p-card>
+
+          <!-- Gap Analysis & Training Priorities -->
+          <p-card class="gap-analysis-card">
+            <ng-template #header>
+              <div class="gap-header">
+                <i class="pi pi-search"></i>
+                <h3>Your Training Priorities (Based on Gap Analysis)</h3>
+              </div>
+            </ng-template>
+            @if (gapAnalysis().length === 0) {
+              <app-empty-state
+                icon="pi-chart-bar"
+                heading="No Gap Analysis Available"
+                description="Log performance metrics to see your training priorities and recommendations."
+              />
+            } @else {
+              <p-accordion>
+                @for (gap of gapAnalysis(); track gap.metric; let i = $index) {
+                  <p-accordionpanel [value]="'gap-' + i">
+                    <ng-template #header>
+                      <div class="priority-header">
+                        <span class="priority-number"
+                          >Priority #{{ i + 1 }}:</span
+                        >
+                        <span class="priority-metric">{{ gap.metric }}</span>
+                        <app-status-tag
+                          [value]="gap.gapPercentage.toFixed(1) + '% gap'"
+                          [severity]="
+                            gap.gapPercentage > 10
+                              ? 'danger'
+                              : gap.gapPercentage > 5
+                                ? 'warning'
+                                : 'info'
+                          "
+                          size="sm"
+                        />
+                      </div>
+                    </ng-template>
+                    <ng-template #content>
+                      <div class="priority-content">
+                        <div class="gap-stats">
+                          <span class="gap-stat"
+                            >Gap: {{ gap.gap.toFixed(2) }} from elite</span
+                          >
+                          <span class="gap-stat"
+                            >Current: {{ gap.current }}</span
+                          >
+                          <span class="gap-stat">Target: {{ gap.target }}</span>
+                        </div>
+                        <div class="recommendations">
+                          <span class="rec-label">🎯 Recommended Focus:</span>
+                          <ul>
+                            @for (rec of gap.recommendations; track rec) {
+                              <li>{{ rec }}</li>
+                            }
+                          </ul>
+                        </div>
+                        <a
+                          routerLink="/training/videos"
+                          [queryParams]="{ category: gap.metric }"
+                          class="video-link"
+                        >
+                          <i class="pi pi-video"></i> View Related Training
+                          Videos →
+                        </a>
+                      </div>
+                    </ng-template>
+                  </p-accordionpanel>
+                }
+              </p-accordion>
+            }
+          </p-card>
+
+          <!-- Performance History Table -->
+          <p-card class="table-card">
+            <ng-template #header>
+              <h3>Performance History</h3>
+            </ng-template>
+            @if (performanceHistory().length === 0) {
+              <app-empty-state
+                [icon]="noDataMessage.icon"
+                [heading]="noDataMessage.title"
+                [description]="noDataMessage.reason"
+                actionLabel="Log performance"
+                actionIcon="pi-plus"
+                [actionHandler]="openLogDialogHandler"
+              />
+            } @else {
+              <p-table
+                [value]="performanceHistory()"
+                [paginator]="true"
+                [rows]="10"
+                [scrollable]="true"
+              >
+                <ng-template #header>
+                  <tr>
+                    <th>Date</th>
+                    <th>10m</th>
+                    <th>20m</th>
+                    <th>40yd</th>
+                    <th>5-10-5</th>
+                    <th>Vert</th>
+                    <th>Broad</th>
+                    <th>Squat</th>
+                    <th>Dead</th>
+                    <th>Score</th>
+                  </tr>
+                </ng-template>
+                <ng-template #body let-record>
+                  <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.sprint10 || "-" }}</td>
+                    <td>{{ record.sprint20 || "-" }}</td>
+                    <td>{{ record.dash40 }}</td>
+                    <td>{{ record.proAgility || "-" }}</td>
+                    <td>{{ record.vertical }}</td>
+                    <td>{{ record.broad }}</td>
+                    <td>{{ record.squat || "-" }}</td>
+                    <td>{{ record.deadlift || "-" }}</td>
+                    <td>
+                      <app-status-tag
+                        [value]="record.score + '%'"
+                        [severity]="getScoreSeverity(record.score)"
+                        size="sm"
+                      />
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            }
+          </p-card>
+        </div>
+
+        <!-- Log Performance Dialog (Extended) -->
+        <p-dialog
+          header="Log Performance"
+          [(visible)]="showLogDialog"
+          [modal]="true"
+          class="performance-dialog"
+          [closable]="true"
+        >
+          <div class="log-form">
+            <!-- Speed Metrics -->
+            <h4 class="form-section-title">⚡ Speed Metrics</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="sprint10">10m Sprint (sec)</label>
+                <p-inputNumber
+                  id="sprint10"
+                  [(ngModel)]="newPerformance.sprint10"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 1.54"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="sprint20">20m Sprint (sec)</label>
+                <p-inputNumber
+                  id="sprint20"
+                  [(ngModel)]="newPerformance.sprint20"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 2.89"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="dash40">40-Yard Dash (sec)</label>
+                <p-inputNumber
+                  id="dash40"
+                  [(ngModel)]="newPerformance.dash40"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 4.45"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+            </div>
+
+            <!-- Agility Metrics -->
+            <h4 class="form-section-title">🔄 Agility Metrics</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="proAgility">Pro Agility 5-10-5 (sec)</label>
+                <p-inputNumber
+                  id="proAgility"
+                  [(ngModel)]="newPerformance.proAgility"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 4.12"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="lDrill">L-Drill (sec)</label>
+                <p-inputNumber
+                  id="lDrill"
+                  [(ngModel)]="newPerformance.lDrill"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 6.85"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="reactiveAgility">Reactive Agility (sec)</label>
+                <p-inputNumber
+                  id="reactiveAgility"
+                  [(ngModel)]="newPerformance.reactiveAgility"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 1.24"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+            </div>
+
+            <!-- Power Metrics -->
+            <h4 class="form-section-title">⬆️ Power Metrics</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="vertical">Vertical Jump (in)</label>
+                <p-inputNumber
+                  id="vertical"
+                  [(ngModel)]="newPerformance.vertical"
+                  mode="decimal"
+                  placeholder="e.g., 38"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="broad">Broad Jump (in)</label>
+                <p-inputNumber
+                  id="broad"
+                  [(ngModel)]="newPerformance.broad"
+                  mode="decimal"
+                  placeholder="e.g., 122"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="rsi">RSI (ratio)</label>
+                <p-inputNumber
+                  id="rsi"
+                  [(ngModel)]="newPerformance.rsi"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  mode="decimal"
+                  placeholder="e.g., 2.45"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+            </div>
+
+            <!-- Strength Metrics -->
+            <h4 class="form-section-title">💪 Strength Metrics</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="bench">Bench Press 1RM (lbs)</label>
+                <p-inputNumber
+                  id="bench"
+                  [(ngModel)]="newPerformance.bench"
+                  mode="decimal"
+                  placeholder="e.g., 225"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="squat">Back Squat 1RM (lbs)</label>
+                <p-inputNumber
+                  id="squat"
+                  [(ngModel)]="newPerformance.squat"
+                  mode="decimal"
+                  placeholder="e.g., 315"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+              <div class="form-field">
+                <label for="deadlift">Deadlift 1RM (lbs)</label>
+                <p-inputNumber
+                  id="deadlift"
+                  [(ngModel)]="newPerformance.deadlift"
+                  mode="decimal"
+                  placeholder="e.g., 365"
+                  class="w-full"
+                ></p-inputNumber>
+              </div>
+            </div>
+
+            <!-- Body Weight -->
+            <h4 class="form-section-title">📊 Body Info</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="bodyWeight">Body Weight (lbs)</label>
+                <p-inputNumber
+                  id="bodyWeight"
+                  [(ngModel)]="newPerformance.bodyWeight"
+                  mode="decimal"
+                  placeholder="For relative strength"
+                  class="w-full"
+                ></p-inputNumber>
+                <small class="help-text"
+                  >Used for relative strength calculations</small
+                >
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="p-field mt-4">
+              <label for="notes">Notes (optional)</label>
+              <input
+                id="notes"
+                type="text"
+                pInputText
+                [(ngModel)]="newPerformance.notes"
+                placeholder="Any notes about this session"
+                class="w-full"
+              />
+            </div>
+          </div>
+          <ng-template #footer>
+            <app-button variant="text" (clicked)="showLogDialog = false"
+              >Cancel</app-button
+            >
+            <app-button
+              iconLeft="pi-check"
+              [loading]="isSaving()"
+              (clicked)="savePerformance()"
+              >Save Performance</app-button
+            >
+          </ng-template>
+        </p-dialog>
+      }
+      <!-- End of @else for content -->
+    </app-main-layout>
+  

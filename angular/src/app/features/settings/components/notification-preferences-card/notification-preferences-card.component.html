@@ -1,0 +1,155 @@
+<app-card
+  title="Notification Preferences"
+  headerIcon="pi-bell"
+  headerIconColor="warning"
+>
+  <form [formGroup]="notificationForm()" class="notification-form card-stack">
+    <app-control-row
+      icon="envelope"
+      title="Email Notifications"
+      description="Receive updates and alerts via email"
+    >
+      <p-toggleswitch formControlName="emailNotifications"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="mobile"
+      title="Push Notifications"
+      description="Get instant alerts on your device"
+    >
+      <p-toggleswitch formControlName="pushNotifications"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="clock"
+      title="Training Reminders"
+      description="Daily reminders for scheduled workouts"
+    >
+      <p-toggleswitch formControlName="trainingReminders"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="heart"
+      title="Wellness Reminders"
+      description="Daily wellness check-in reminders"
+    >
+      <p-toggleswitch formControlName="wellnessReminders"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="flag"
+      title="Game Alerts"
+      description="Notifications about upcoming games"
+    >
+      <p-toggleswitch formControlName="gameAlerts"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="megaphone"
+      title="Team Announcements"
+      description="Important team news and updates"
+    >
+      <p-toggleswitch formControlName="teamAnnouncements"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="user"
+      title="Coach Messages"
+      description="Direct messages from your coach"
+    >
+      <p-toggleswitch formControlName="coachMessages"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="trophy"
+      title="Achievement Alerts"
+      description="Celebrate your milestones and badges"
+    >
+      <p-toggleswitch formControlName="achievementAlerts"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="star"
+      title="Tournament Alerts"
+      description="Bracket updates, schedules, and results"
+    >
+      <p-toggleswitch formControlName="tournamentAlerts"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="exclamation-triangle"
+      title="Injury Risk Alerts"
+      description="Warnings when overtraining is detected"
+    >
+      <p-toggleswitch formControlName="injuryRiskAlerts"></p-toggleswitch>
+    </app-control-row>
+
+    <app-control-row
+      icon="inbox"
+      title="In-App Notifications"
+      description="Show notifications in the notification center"
+    >
+      <p-toggleswitch formControlName="inAppNotifications"></p-toggleswitch>
+    </app-control-row>
+
+    <div class="notification-section-header">
+      <h4>Notification Frequency</h4>
+      <p>Control how often you receive non-urgent notifications</p>
+    </div>
+
+    <app-control-row
+      icon="clock"
+      title="Digest Frequency"
+      description="How often to bundle non-urgent notifications"
+    >
+      <p-select
+        formControlName="digestFrequency"
+        [options]="[
+          { label: 'Real-time (Instant)', value: 'realtime' },
+          { label: 'Daily Digest', value: 'daily' },
+          { label: 'Weekly Summary', value: 'weekly' },
+        ]"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select frequency"
+      ></p-select>
+    </app-control-row>
+
+    <div class="notification-section-header">
+      <h4>Do Not Disturb</h4>
+      <p>Pause notifications during specific hours</p>
+    </div>
+
+    <app-control-row
+      icon="moon"
+      title="Enable Quiet Hours"
+      description="Silence non-urgent notifications at night"
+    >
+      <p-toggleswitch formControlName="quietHoursEnabled"></p-toggleswitch>
+    </app-control-row>
+
+    @if (notificationForm().get("quietHoursEnabled")?.value) {
+      <div class="quiet-hours-config">
+        <div class="time-range">
+          <div class="time-input">
+            <label>Start Time</label>
+            <input
+              type="time"
+              formControlName="quietHoursStart"
+              class="time-picker"
+            />
+          </div>
+          <span class="time-separator">to</span>
+          <div class="time-input">
+            <label>End Time</label>
+            <input type="time" formControlName="quietHoursEnd" class="time-picker" />
+          </div>
+        </div>
+        <p class="quiet-hours-note">
+          <i class="pi pi-info-circle"></i>
+          High priority alerts (game reminders, injury risks) will still come through
+        </p>
+      </div>
+    }
+  </form>
+</app-card>

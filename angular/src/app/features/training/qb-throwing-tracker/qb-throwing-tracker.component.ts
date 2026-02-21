@@ -32,7 +32,7 @@ import { EmptyStateComponent } from "../../../shared/components/empty-state/empt
 import { Tooltip } from "primeng/tooltip";
 import { ToastService } from "../../../core/services/toast.service";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { FeatureFlagsService } from "../../../core/services/feature-flags.service";
 import { ApiResponse } from "../../../core/models/common.models";
@@ -548,7 +548,7 @@ export class QbThrowingTrackerComponent {
         weeklyStats?: WeeklyStats[];
         recentSessions?: ThrowingSession[];
       }> = await firstValueFrom(
-        this.api.get("/api/qb-throwing"),
+        this.api.get(API_ENDPOINTS.qbThrowing.base),
       );
       if (response?.success) {
         const data = response.data;
@@ -582,7 +582,7 @@ export class QbThrowingTrackerComponent {
     this.isSaving.set(true);
 
     try {
-      await firstValueFrom(this.api.post("/api/qb-throwing", this.formData));
+      await firstValueFrom(this.api.post(API_ENDPOINTS.qbThrowing.base, this.formData));
 
       this.toastService.success(
         `${this.formData.totalThrows} throws recorded!`,
@@ -698,7 +698,7 @@ export class QbThrowingTrackerComponent {
 
     try {
       await firstValueFrom(
-        this.api.post("/api/qb-throwing/arm-care", {
+        this.api.post(API_ENDPOINTS.qbThrowing.armCare, {
           sessionId: lastSession.id,
         }),
       );

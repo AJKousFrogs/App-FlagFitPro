@@ -43,7 +43,7 @@
     "lint": "eslint \"src/app/**/*.{ts,html}\"",
     "lint:fix": "eslint \"src/app/**/*.{ts,html}\" --fix",
     "lint:app": "npm run lint",
-    "postinstall": "node scripts/patch-html2canvas.js && node scripts/patch-primeng-regexp.js",
+    "postinstall": "node scripts/verify-dependency-compat.js",
     "storybook": "ng run flagfit-pro:storybook",
     "build-storybook": "ng run flagfit-pro:build-storybook",
     "serve:ssr:flagfit-pro": "node dist/flagfit-pro/server/server.mjs",

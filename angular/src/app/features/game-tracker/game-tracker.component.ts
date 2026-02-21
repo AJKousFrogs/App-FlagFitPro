@@ -26,7 +26,7 @@ import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -371,7 +371,7 @@ export class GameTrackerComponent implements OnInit {
   loadPlayers(): void {
     // Load players from API or localStorage
     this.apiService
-      .get("/api/roster/players")
+      .get(API_ENDPOINTS.roster.players)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
@@ -583,7 +583,7 @@ export class GameTrackerComponent implements OnInit {
             player_owner_id: string;
           }>
         | { data: unknown[] }
-      >("/api/games")
+      >(API_ENDPOINTS.games.list)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -694,7 +694,7 @@ export class GameTrackerComponent implements OnInit {
     });
 
     this.apiService
-      .post("/api/games", gameData, { schema: GameResponseSchema })
+      .post(API_ENDPOINTS.games.create, gameData, { schema: GameResponseSchema })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
@@ -824,7 +824,7 @@ export class GameTrackerComponent implements OnInit {
 
     // Save play
     this.apiService
-      .post("/api/game-events", playData)
+      .post(API_ENDPOINTS.gameEvents.list, playData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -912,7 +912,7 @@ export class GameTrackerComponent implements OnInit {
     const uniquePlayers = [...new Set(playersInPlay)];
     uniquePlayers.forEach((playerId) => {
       this.apiService
-        .post("/api/game-events/mark-presence", {
+        .post(API_ENDPOINTS.gameEvents.markPresence, {
           gameId: this.activeGameId(),
           playerId: playerId,
           present: true,
@@ -932,7 +932,7 @@ export class GameTrackerComponent implements OnInit {
 
   deletePlay(playId: string): void {
     this.apiService
-      .delete(`/api/game-events/${playId}`)
+      .delete(API_ENDPOINTS.gameEvents.details(playId))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -1046,7 +1046,7 @@ export class GameTrackerComponent implements OnInit {
     // Update score when changed
     if (this.activeGameId()) {
       this.apiService
-        .post(`/api/games/${this.activeGameId()}/score`, {
+        .post(API_ENDPOINTS.games.score(this.activeGameId() || ""), {
           teamScore: this.teamScore(),
           opponentScore: this.opponentScore(),
         })
@@ -1072,7 +1072,7 @@ export class GameTrackerComponent implements OnInit {
 
     // Load plays for this game
     this.apiService
-      .get(`/api/games/${game.id}/plays`)
+      .get(API_ENDPOINTS.games.plays(game.id))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {

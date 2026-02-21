@@ -24,6 +24,8 @@ const ALLOWED_CATEGORIES = [
   "injury",
   "equipment",
   "strategy",
+  "training_method",
+  "recovery_method",
 ];
 
 // SECURITY: Whitelist of allowed subcategories
@@ -82,6 +84,36 @@ const parseJsonObjectBody = (rawBody) => {
     throw new Error("Request body must be an object");
   }
   return parsed;
+};
+
+const normalizeKnowledgeEntry = (entry) => {
+  const sourceUrl = Array.isArray(entry.supporting_articles)
+    ? entry.supporting_articles[0] || null
+    : null;
+  const evidenceGrade =
+    typeof entry.evidence_strength === "string"
+      ? entry.evidence_strength
+      : "C";
+
+  return {
+    id: entry.id,
+    title: entry.topic || entry.question || "Knowledge Entry",
+    content: entry.answer || entry.summary || entry.question || "",
+    category: entry.entry_type || "general",
+    subcategory: null,
+    evidenceGrade,
+    riskLevel: null,
+    requiresProfessional: false,
+    sourceType: "knowledge_base",
+    sourceUrl,
+    sourceTitle: entry.topic || "Knowledge Entry",
+    qualityScore:
+      entry.consensus_level === "high"
+        ? 0.9
+        : entry.consensus_level === "moderate"
+          ? 0.7
+          : 0.5,
+  };
 };
 
 export const handler = async (event, context) => {
@@ -165,27 +197,24 @@ rateLimitType: rateLimitType,
             );
           }
 
-          // Build query
+          // Build query against current knowledge schema
           let queryBuilder = supabase
             .from("knowledge_base_entries")
             .select("*")
-            .eq("is_active", true)
-            .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
-            .order("source_quality_score", {
+            .eq("is_merlin_approved", true)
+            .or(
+              `topic.ilike.%${query}%,question.ilike.%${query}%,answer.ilike.%${query}%,summary.ilike.%${query}%`,
+            )
+            .order("query_count", {
               ascending: false,
               nullsFirst: false,
             })
-            .order("evidence_grade", { ascending: true })
+            .order("updated_at", { ascending: false, nullsFirst: false })
             .limit(sanitizedLimit);
 
           // Apply category filter
           if (category) {
-            queryBuilder = queryBuilder.eq("category", category);
-          }
-
-          // Apply subcategory filter
-          if (subcategory) {
-            queryBuilder = queryBuilder.eq("subcategory", subcategory);
+            queryBuilder = queryBuilder.eq("entry_type", category);
           }
 
           const { data, error } = await queryBuilder;
@@ -201,20 +230,7 @@ rateLimitType: rateLimitType,
           }
 
           // Format results
-          const results = data.map((entry) => ({
-            id: entry.id,
-            title: entry.title,
-            content: entry.content,
-            category: entry.category,
-            subcategory: entry.subcategory,
-            evidenceGrade: entry.evidence_grade,
-            riskLevel: entry.risk_level,
-            requiresProfessional: entry.requires_professional,
-            sourceType: entry.source_type,
-            sourceUrl: entry.source_url,
-            sourceTitle: entry.source_title,
-            qualityScore: entry.source_quality_score,
-          }));
+          const results = data.map(normalizeKnowledgeEntry);
 
           return createSuccessResponse(
             {
@@ -237,8 +253,8 @@ rateLimitType: rateLimitType,
           if (endpoint === "categories") {
             const { data, error } = await supabase
               .from("knowledge_base_entries")
-              .select("category, subcategory")
-              .eq("is_active", true);
+              .select("entry_type")
+              .eq("is_merlin_approved", true);
 
             if (error) {
               return createErrorResponse(
@@ -252,11 +268,9 @@ rateLimitType: rateLimitType,
             // Group by category
             const categories = {};
             data.forEach((entry) => {
-              if (!categories[entry.category]) {
-                categories[entry.category] = new Set();
-              }
-              if (entry.subcategory) {
-                categories[entry.category].add(entry.subcategory);
+              const category = entry.entry_type || "general";
+              if (!categories[category]) {
+                categories[category] = new Set();
               }
             });
 
@@ -277,8 +291,8 @@ rateLimitType: rateLimitType,
             const { data, error } = await supabase
               .from("knowledge_base_entries")
               .select("*")
+              .eq("is_merlin_approved", true)
               .eq("id", entryId)
-              .eq("is_active", true)
               .single();
 
             if (error || !data) {
@@ -290,7 +304,7 @@ rateLimitType: rateLimitType,
               );
             }
 
-            return createSuccessResponse(data, requestId);
+            return createSuccessResponse(normalizeKnowledgeEntry(data), requestId);
           }
 
           // GET /knowledge-search?category=nutrition - List by category
@@ -307,21 +321,14 @@ rateLimitType: rateLimitType,
             let queryBuilder = supabase
               .from("knowledge_base_entries")
               .select(
-                "id, title, category, subcategory, evidence_grade, source_quality_score",
+                "id, entry_type, topic, question, answer, summary, evidence_strength, consensus_level, supporting_articles",
               )
-              .eq("is_active", true)
-              .eq("category", params.category)
-              .order("source_quality_score", {
+              .eq("is_merlin_approved", true)
+              .eq("entry_type", params.category)
+              .order("query_count", {
                 ascending: false,
                 nullsFirst: false,
               });
-
-            if (
-              params.subcategory &&
-              ALLOWED_SUBCATEGORIES.includes(params.subcategory)
-            ) {
-              queryBuilder = queryBuilder.eq("subcategory", params.subcategory);
-            }
 
             const { data, error } = await queryBuilder;
 
@@ -338,7 +345,7 @@ rateLimitType: rateLimitType,
               {
                 category: params.category,
                 subcategory: params.subcategory || "all",
-                entries: data,
+                entries: data.map(normalizeKnowledgeEntry),
                 total: data.length,
               },
               requestId,
@@ -348,10 +355,12 @@ rateLimitType: rateLimitType,
           // GET /knowledge-search - List all entries (summary)
           const { data, error } = await supabase
             .from("knowledge_base_entries")
-            .select("id, title, category, subcategory, evidence_grade")
-            .eq("is_active", true)
-            .order("category")
-            .order("subcategory")
+            .select(
+              "id, entry_type, topic, question, answer, summary, evidence_strength, consensus_level, supporting_articles",
+            )
+            .eq("is_merlin_approved", true)
+            .order("entry_type")
+            .order("topic")
             .limit(100);
 
           if (error) {
@@ -365,7 +374,7 @@ rateLimitType: rateLimitType,
 
           return createSuccessResponse(
             {
-              entries: data,
+              entries: data.map(normalizeKnowledgeEntry),
               total: data.length,
               hint: "Use POST with 'query' to search, or GET with 'category' to filter",
             },

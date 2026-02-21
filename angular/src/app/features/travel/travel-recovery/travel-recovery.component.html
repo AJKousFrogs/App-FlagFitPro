@@ -1,0 +1,1241 @@
+<app-main-layout>
+      <div class="travel-recovery-page">
+        <app-page-header
+          title="Travel Recovery Protocol"
+          subtitle="Optimize your recovery for peak competition performance"
+          icon="pi-globe"
+        >
+          @if (hasActivePlan() || hasActiveCarPlan()) {
+            <app-button
+              variant="outlined"
+              iconLeft="pi-plus"
+              (clicked)="startNewPlan()"
+              >New Trip</app-button
+            >
+          }
+        </app-page-header>
+
+        <!-- Travel Type Selector -->
+        <div class="travel-type-selector">
+          <button
+            class="type-btn"
+            [class.active]="travelType() === 'flight'"
+            (click)="setTravelType('flight')"
+          >
+            <i class="pi pi-send"></i>
+            <div class="type-btn-content">
+              <span>Flight Travel</span>
+              <small>Jet lag protocols</small>
+            </div>
+          </button>
+          <button
+            class="type-btn"
+            [class.active]="travelType() === 'car'"
+            (click)="setTravelType('car')"
+          >
+            <i class="pi pi-car"></i>
+            <div class="type-btn-content">
+              <span>Car Travel</span>
+              <small>6-12+ hour drives</small>
+            </div>
+          </button>
+        </div>
+
+        @if (travelType() === "flight" && !hasActivePlan()) {
+          <!-- Flight Trip Planning Form -->
+          <div class="planning-section">
+            <!-- Olympic Quick Select -->
+            <p-card class="olympic-card">
+              <ng-template #header>
+                <div class="card-header olympic-header">
+                  <span class="olympic-rings"><i class="pi pi-trophy" aria-hidden="true"></i></span>
+                  <div>
+                    <h3>Olympic Travel Planner</h3>
+                    <p>Quick setup for LA28 or Brisbane 2032</p>
+                  </div>
+                </div>
+              </ng-template>
+
+              <div class="olympic-buttons">
+                <button
+                  class="olympic-btn la28"
+                  (click)="selectOlympicVenue('LA28')"
+                  [class.selected]="selectedOlympicVenue === 'LA28'"
+                >
+                  <span class="venue-flag">🇺🇸</span>
+                  <div class="olympic-btn-content">
+                    <span class="venue-name">Los Angeles 2028</span>
+                    <span class="venue-tz">UTC-8</span>
+                  </div>
+                </button>
+                <button
+                  class="olympic-btn brisbane"
+                  (click)="selectOlympicVenue('BRISBANE32')"
+                  [class.selected]="selectedOlympicVenue === 'BRISBANE32'"
+                >
+                  <span class="venue-flag">🇦🇺</span>
+                  <div class="olympic-btn-content">
+                    <span class="venue-name">Brisbane 2032</span>
+                    <span class="venue-tz">UTC+10</span>
+                  </div>
+                </button>
+              </div>
+
+              @if (selectedOlympicVenue && olympicImpact()) {
+                <div class="olympic-impact">
+                  <div class="impact-stat stat-block stat-block--large">
+                    <div class="stat-block__content">
+                      <span class="stat-block__value">{{
+                        Math.abs(olympicImpact()!.timezonesDifference)
+                      }}</span>
+                      <span class="stat-block__label">Time Zones</span>
+                    </div>
+                  </div>
+                  <div class="impact-stat stat-block stat-block--large">
+                    <div class="stat-block__content">
+                      <span class="stat-block__value">{{
+                        olympicImpact()!.direction
+                      }}</span>
+                      <span class="stat-block__label">Direction</span>
+                    </div>
+                  </div>
+                  <div class="impact-stat stat-block stat-block--large">
+                    <div class="stat-block__content">
+                      <span class="stat-block__value">{{
+                        olympicImpact()!.estimatedRecoveryDays
+                      }}</span>
+                      <span class="stat-block__label">Recovery Days</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </p-card>
+
+            <!-- Manual Trip Setup -->
+            <p-card class="setup-card">
+              <ng-template #header>
+                <div class="card-header">
+                  <i class="pi pi-map"></i>
+                  <h3>Trip Details</h3>
+                </div>
+              </ng-template>
+
+              <div class="form-grid form-controls-full">
+                <div class="form-field">
+                  <label>Trip Name</label>
+                  <input
+                    pInputText
+                    [(ngModel)]="tripForm.tripName"
+                    placeholder="e.g., World Championships 2025"
+                  />
+                </div>
+
+                <div class="form-field">
+                  <label for="departure-timezone">Home Timezone</label>
+                  <p-select
+                    inputId="departure-timezone"
+                    [(ngModel)]="tripForm.departureTimezone"
+                    [options]="timezones"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select your home timezone"
+                    [filter]="true"
+                    filterBy="label"
+                    class="w-full"
+                    [attr.aria-label]="'Select your home timezone'"
+                  ></p-select>
+                </div>
+
+                <div class="form-field">
+                  <label for="arrival-timezone">Destination Timezone</label>
+                  <p-select
+                    inputId="arrival-timezone"
+                    [(ngModel)]="tripForm.arrivalTimezone"
+                    [options]="timezones"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select destination timezone"
+                    [filter]="true"
+                    filterBy="label"
+                    class="w-full"
+                    [attr.aria-label]="'Select destination timezone'"
+                  ></p-select>
+                </div>
+
+                <div class="form-field">
+                  <label for="departure-date">Departure Date</label>
+                  <p-datepicker
+                    inputId="departure-date"
+                    [(ngModel)]="tripForm.departureDate"
+                    [showIcon]="true"
+                    [minDate]="minDate"
+                    dateFormat="dd/mm/yy"
+                    class="w-full"
+                    [attr.aria-label]="'Select departure date'"
+                  ></p-datepicker>
+                </div>
+
+                <div class="form-field">
+                  <label for="arrival-date">Arrival Date</label>
+                  <p-datepicker
+                    inputId="arrival-date"
+                    [(ngModel)]="tripForm.arrivalDate"
+                    [showIcon]="true"
+                    [minDate]="tripForm.departureDate || minDate"
+                    dateFormat="dd/mm/yy"
+                    class="w-full"
+                    [attr.aria-label]="'Select arrival date'"
+                  ></p-datepicker>
+                </div>
+
+                <div class="form-field">
+                  <label for="competition-date"
+                    >Competition Date (Optional)</label
+                  >
+                  <p-datepicker
+                    inputId="competition-date"
+                    [(ngModel)]="tripForm.competitionDate"
+                    [showIcon]="true"
+                    [minDate]="tripForm.arrivalDate || minDate"
+                    dateFormat="dd/mm/yy"
+                    class="w-full"
+                    [attr.aria-label]="'Select competition date (optional)'"
+                  ></p-datepicker>
+                </div>
+
+                <div class="form-field">
+                  <label for="flight-duration">Flight Duration (hours)</label>
+                  <p-inputNumber
+                    inputId="flight-duration"
+                    [(ngModel)]="tripForm.flightDuration"
+                    [min]="1"
+                    [max]="30"
+                    [showButtons]="true"
+                    suffix=" hrs"
+                    [attr.aria-label]="'Flight duration in hours'"
+                  ></p-inputNumber>
+                </div>
+
+                <div class="form-field">
+                  <label for="layovers">Number of Layovers</label>
+                  <p-inputNumber
+                    inputId="layovers"
+                    [(ngModel)]="tripForm.layovers"
+                    [min]="0"
+                    [max]="5"
+                    [showButtons]="true"
+                    [attr.aria-label]="'Number of layovers'"
+                  ></p-inputNumber>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <app-button
+                  iconLeft="pi-bolt"
+                  [disabled]="!canCreatePlan()"
+                  (clicked)="createPlan()"
+                  >Generate Recovery Protocol</app-button
+                >
+              </div>
+            </p-card>
+          </div>
+        } @else if (travelType() === "flight" && hasActivePlan()) {
+          <!-- Active Flight Plan Dashboard -->
+          <div class="protocol-dashboard">
+            <!-- Severity Overview -->
+            <div class="severity-section">
+              <p-card
+                class="severity-card"
+                [ngClass]="'severity-' + jetLagSeverity().level"
+              >
+                <div class="severity-content">
+                  <div class="severity-gauge">
+                    <div class="gauge-circle">
+                      <span class="gauge-value">{{
+                        jetLagSeverity().score
+                      }}</span>
+                      <span class="gauge-label">Jet Lag Score</span>
+                    </div>
+                  </div>
+                  <div class="severity-details">
+                    <h2>{{ currentPlan()?.tripName }}</h2>
+                    <div class="detail-chips">
+                      <p-chip
+                        [label]="
+                          Math.abs(currentPlan()?.timezonesEast || 0) +
+                          ' Time Zones'
+                        "
+                        icon="pi pi-clock"
+                      ></p-chip>
+                      <p-chip
+                        [label]="
+                          currentPlan()?.travelDirection || 'none' | titlecase
+                        "
+                        [icon]="
+                          currentPlan()?.travelDirection === 'eastward'
+                            ? 'pi pi-arrow-right'
+                            : 'pi pi-arrow-left'
+                        "
+                      ></p-chip>
+                      <app-status-tag
+                        [value]="jetLagSeverity().level | titlecase"
+                        [severity]="getSeverityColor(jetLagSeverity().level)"
+                        size="sm"
+                      />
+                    </div>
+                    <div class="recovery-estimate">
+                      <i class="pi pi-calendar-plus"></i>
+                      <span
+                        >Estimated Recovery:
+                        <strong
+                          >{{
+                            jetLagSeverity().estimatedRecoveryDays
+                          }}
+                          days</strong
+                        ></span
+                      >
+                    </div>
+                    @if (daysUntilCompetition() !== null) {
+                      <div
+                        class="competition-countdown"
+                        [class.warning]="!isCompetitionReady()"
+                      >
+                        <i class="pi pi-flag"></i>
+                        <span>
+                          Competition in
+                          <strong>{{ daysUntilCompetition() }} days</strong>
+                          @if (!isCompetitionReady()) {
+                            <span class="warning-text"> - Arrive earlier!</span>
+                          }
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                @if (jetLagSeverity().symptoms.length > 0) {
+                  <div class="symptoms-section">
+                    <h4>Expected Symptoms</h4>
+                    <div class="symptoms-list">
+                      @for (
+                        symptom of jetLagSeverity().symptoms;
+                        track symptom
+                      ) {
+                        <span class="symptom-chip">{{ symptom }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </p-card>
+            </div>
+
+            <!-- Today's Protocol -->
+            @if (todayProtocol()) {
+              <p-card class="today-card">
+                <ng-template #header>
+                  <div class="card-header today-header">
+                    <div class="header-left">
+                      <i class="pi pi-sun"></i>
+                      <div>
+                        <h3>Today's Protocol</h3>
+                        <app-status-tag
+                          [value]="todayProtocol()!.phase | titlecase"
+                          [severity]="getPhaseColor(todayProtocol()!.phase)"
+                          size="sm"
+                        />
+                      </div>
+                    </div>
+                    <div class="header-right">
+                      <span class="day-badge"
+                        >Day {{ todayProtocol()!.day }}</span
+                      >
+                    </div>
+                  </div>
+                </ng-template>
+
+                <div class="protocol-grid">
+                  <!-- Sleep Window -->
+                  <div class="protocol-section">
+                    <h4><i class="pi pi-moon"></i> Sleep Window</h4>
+                    <div class="sleep-times">
+                      <div class="time-block">
+                        <span class="time-label">Bedtime</span>
+                        <span class="time-value">{{
+                          todayProtocol()!.sleepWindow.bedTime
+                        }}</span>
+                      </div>
+                      <i class="pi pi-arrow-right"></i>
+                      <div class="time-block">
+                        <span class="time-label">Wake Up</span>
+                        <span class="time-value">{{
+                          todayProtocol()!.sleepWindow.wakeTime
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Light Exposure -->
+                  <div class="protocol-section">
+                    <h4><i class="pi pi-sun"></i> Light Exposure</h4>
+                    <div class="light-windows">
+                      @for (
+                        light of todayProtocol()!.lightExposure;
+                        track light.startTime
+                      ) {
+                        <div class="light-item" [class]="light.type">
+                          <span class="light-icon">
+                            @if (light.type === "seek") {
+                              ☀️
+                            } @else {
+                              🕶️
+                            }
+                          </span>
+                          <div class="light-details">
+                            <span class="light-action"
+                              >{{ light.type === "seek" ? "Seek" : "Avoid" }}
+                              {{ light.intensity }} light</span
+                            >
+                            <span class="light-time"
+                              >{{ light.startTime }} - {{ light.endTime }}</span
+                            >
+                            <span class="light-reason">{{ light.reason }}</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Training Guidelines -->
+                  <div class="protocol-section">
+                    <h4><i class="pi pi-bolt"></i> Training</h4>
+                    <div class="training-info">
+                      <app-status-tag
+                        [value]="
+                          'Intensity: ' +
+                          (todayProtocol()!.trainingGuidelines.allowedIntensity
+                            | titlecase)
+                        "
+                        [severity]="
+                          getIntensityColor(
+                            todayProtocol()!.trainingGuidelines.allowedIntensity
+                          )
+                        "
+                        size="sm"
+                      />
+                      <span class="max-duration"
+                        >Max
+                        {{ todayProtocol()!.trainingGuidelines.maxDuration }}
+                        min</span
+                      >
+                    </div>
+                    <div class="activity-lists">
+                      <div class="activity-list recommended">
+                        <span class="list-label">✅ Recommended</span>
+                        <ul>
+                          @for (
+                            activity of todayProtocol()!.trainingGuidelines
+                              .recommendedActivities;
+                            track activity
+                          ) {
+                            <li>{{ activity }}</li>
+                          }
+                        </ul>
+                      </div>
+                      @if (
+                        todayProtocol()!.trainingGuidelines.avoidActivities
+                          .length > 0
+                      ) {
+                        <div class="activity-list avoid">
+                          <span class="list-label">❌ Avoid</span>
+                          <ul>
+                            @for (
+                              activity of todayProtocol()!.trainingGuidelines
+                                .avoidActivities;
+                              track activity
+                            ) {
+                              <li>{{ activity }}</li>
+                            }
+                          </ul>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Hydration -->
+                  <div class="protocol-section">
+                    <h4><i class="pi pi-tint"></i> Hydration Target</h4>
+                    <div class="hydration-target">
+                      <span class="hydration-value"
+                        >{{
+                          todayProtocol()!.hydrationTarget / 1000
+                            | number: "1.1-1"
+                        }}L</span
+                      >
+                      <span class="hydration-note"
+                        >Stay well hydrated throughout the day</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Key Recommendations -->
+                <div class="recommendations-section">
+                  <h4>Key Actions</h4>
+                  <div class="recommendations-list">
+                    @for (
+                      rec of todayProtocol()!.recommendations;
+                      track rec.action
+                    ) {
+                      <div
+                        class="recommendation-item"
+                        [class]="'importance-' + rec.importance"
+                      >
+                        <span class="rec-time">{{ rec.time }}</span>
+                        <span class="rec-action">{{ rec.action }}</span>
+                        <app-status-tag
+                          [value]="rec.importance"
+                          [severity]="getImportanceColor(rec.importance)"
+                          size="sm"
+                        />
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- Supplements -->
+                @if (todayProtocol()!.supplements.length > 0) {
+                  <div class="supplements-section">
+                    <h4><i class="pi pi-heart"></i> Supplements</h4>
+                    <div class="supplements-list">
+                      @for (
+                        supp of todayProtocol()!.supplements;
+                        track supp.name
+                      ) {
+                        <div class="supplement-item">
+                          <div class="supp-header">
+                            <span class="supp-name">{{ supp.name }}</span>
+                            <span class="supp-dosage">{{ supp.dosage }}</span>
+                          </div>
+                          <div class="supp-details">
+                            <span class="supp-timing"
+                              ><i class="pi pi-clock"></i>
+                              {{ supp.timing }}</span
+                            >
+                            <span class="supp-purpose">{{ supp.purpose }}</span>
+                          </div>
+                          @if (supp.caution) {
+                            <div class="supp-caution">
+                              <i class="pi pi-exclamation-triangle"></i>
+                              {{ supp.caution }}
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </p-card>
+            }
+
+            <!-- Full Protocol Timeline -->
+            <p-card class="timeline-card">
+              <ng-template #header>
+                <div class="card-header">
+                  <i class="pi pi-calendar"></i>
+                  <h3>Full Recovery Timeline</h3>
+                </div>
+              </ng-template>
+
+              <p-accordion [multiple]="true">
+                @for (protocol of recoveryProtocol(); track protocol.day) {
+                  <p-accordion-panel [value]="'day-' + protocol.day">
+                    <p-accordion-header>
+                      <div class="timeline-header">
+                        <span class="timeline-day">
+                          @if (protocol.day < 0) {
+                            {{ Math.abs(protocol.day) }} days before
+                          } @else if (protocol.day === 0) {
+                            Travel Day
+                          } @else {
+                            Day {{ protocol.day }}
+                          }
+                        </span>
+                        <span class="timeline-date">{{
+                          protocol.date | date: "EEE, MMM d"
+                        }}</span>
+                        <app-status-tag
+                          [value]="protocol.phase"
+                          [severity]="getPhaseColor(protocol.phase)"
+                          size="sm"
+                        />
+                        @if (isToday(protocol.date)) {
+                          <p-badge value="Today" severity="info"></p-badge>
+                        }
+                      </div>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                      <div class="timeline-content">
+                        <div class="timeline-summary">
+                          <div class="summary-item">
+                            <i class="pi pi-moon"></i>
+                            <span
+                              >Sleep: {{ protocol.sleepWindow.bedTime }} -
+                              {{ protocol.sleepWindow.wakeTime }}</span
+                            >
+                          </div>
+                          <div class="summary-item">
+                            <i class="pi pi-bolt"></i>
+                            <span
+                              >Training:
+                              {{
+                                protocol.trainingGuidelines.allowedIntensity
+                                  | titlecase
+                              }}
+                              ({{ protocol.trainingGuidelines.maxDuration }}min
+                              max)</span
+                            >
+                          </div>
+                          <div class="summary-item">
+                            <i class="pi pi-tint"></i>
+                            <span
+                              >Hydration:
+                              {{
+                                protocol.hydrationTarget / 1000
+                                  | number: "1.1-1"
+                              }}L</span
+                            >
+                          </div>
+                        </div>
+
+                        <div class="timeline-recommendations">
+                          @for (
+                            rec of protocol.recommendations.slice(
+                              0,
+                              UI_LIMITS.RECOMMENDATIONS_PREVIEW
+                            );
+                            track rec.action
+                          ) {
+                            <div class="mini-rec">
+                              <span
+                                class="rec-bullet"
+                                [class]="'importance-' + rec.importance"
+                                >●</span
+                              >
+                              {{ rec.action }}
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </p-accordion-content>
+                  </p-accordion-panel>
+                }
+              </p-accordion>
+            </p-card>
+
+            <!-- Travel Checklist -->
+            <p-card class="checklist-card">
+              <ng-template #header>
+                <div class="card-header">
+                  <i class="pi pi-check-square"></i>
+                  <h3>Travel Checklist</h3>
+                </div>
+              </ng-template>
+
+              <p-accordion>
+                @for (category of travelChecklist; track category.category) {
+                  <p-accordion-panel [value]="category.category">
+                    <p-accordion-header>{{
+                      category.category
+                    }}</p-accordion-header>
+                    <p-accordion-content>
+                      <div class="checklist-items">
+                        @for (item of category.items; track item.id) {
+                          <div
+                            class="checklist-item"
+                            [class.essential]="item.essential"
+                          >
+                            <p-checkbox
+                              [(ngModel)]="item.packed"
+                              [binary]="true"
+                              variant="filled"
+                              [inputId]="item.id"
+                            ></p-checkbox>
+                            <label [for]="item.id" [class.packed]="item.packed">
+                              {{ item.item }}
+                              @if (item.essential) {
+                                <span class="essential-badge">Essential</span>
+                              }
+                            </label>
+                            @if (item.notes) {
+                              <span class="item-note">{{ item.notes }}</span>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </p-accordion-content>
+                  </p-accordion-panel>
+                }
+              </p-accordion>
+            </p-card>
+          </div>
+        } @else if (travelType() === "car") {
+          <!-- Car Travel Section -->
+          <div class="car-travel-section">
+            <!-- Car Trip Setup -->
+            @if (!hasActiveCarPlan()) {
+              <p-card class="car-setup-card">
+                <ng-template #header>
+                  <div class="card-header car-header">
+                    <i class="pi pi-car"></i>
+                    <div>
+                      <h3>Long Car Travel Protocol</h3>
+                      <p>
+                        Evidence-based blood circulation management for 6-12+
+                        hour drives
+                      </p>
+                    </div>
+                  </div>
+                </ng-template>
+
+                <div class="form-grid form-controls-full">
+                  <div class="form-field">
+                    <label>Trip Name</label>
+                    <input
+                      pInputText
+                      [(ngModel)]="carTripForm.tripName"
+                      placeholder="e.g., Regional Tournament Drive"
+                    />
+                  </div>
+
+                  <div class="form-field">
+                    <label for="car-duration"
+                      >Estimated Drive Duration (hours)</label
+                    >
+                    <p-inputNumber
+                      inputId="car-duration"
+                      [(ngModel)]="carTripForm.duration"
+                      [min]="1"
+                      [max]="18"
+                      [showButtons]="true"
+                      suffix=" hrs"
+                      [attr.aria-label]="
+                        'Estimated car travel duration in hours'
+                      "
+                    ></p-inputNumber>
+                  </div>
+
+                  <div class="form-field">
+                    <label>Are you driving?</label>
+                    <div class="driver-toggle">
+                      <p-checkbox
+                        inputId="car-is-driver"
+                        [(ngModel)]="carTripForm.isDriver"
+                        [binary]="true"
+                        variant="filled"
+                        label="Yes, I'm driving"
+                        [attr.aria-label]="'Are you driving this trip'"
+                      ></p-checkbox>
+                    </div>
+                  </div>
+
+                  <div class="form-field">
+                    <label for="car-competition-date"
+                      >Competition Date (Optional)</label
+                    >
+                    <p-datepicker
+                      inputId="car-competition-date"
+                      [(ngModel)]="carTripForm.competitionDate"
+                      [showIcon]="true"
+                      [minDate]="minDate"
+                      dateFormat="dd/mm/yy"
+                      class="w-full"
+                      [attr.aria-label]="
+                        'Select competition date for car trip (optional)'
+                      "
+                    ></p-datepicker>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <app-button
+                    iconLeft="pi-bolt"
+                    [disabled]="!canCreateCarPlan()"
+                    (clicked)="createCarPlan()"
+                    >Generate Car Travel Protocol</app-button
+                  >
+                </div>
+              </p-card>
+
+              <!-- Risk Assessment Preview -->
+              @if (carTripForm.duration >= 4) {
+                <p-card class="risk-preview-card">
+                  <ng-template #header>
+                    <div
+                      class="card-header"
+                      [class]="'risk-' + carTravelRisk().riskLevel"
+                    >
+                      <i class="pi pi-exclamation-triangle"></i>
+                      <h3>Circulation Risk Assessment</h3>
+                    </div>
+                  </ng-template>
+
+                  <div class="risk-content">
+                    <div class="risk-gauge">
+                      <div
+                        class="risk-circle"
+                        [class]="'risk-' + carTravelRisk().riskLevel"
+                      >
+                        <span class="risk-score">{{
+                          carTravelRisk().score
+                        }}</span>
+                        <span class="risk-label">Risk Score</span>
+                      </div>
+                      <app-status-tag
+                        [value]="carTravelRisk().riskLevel | titlecase"
+                        [severity]="getRiskColor(carTravelRisk().riskLevel)"
+                        size="sm"
+                      />
+                    </div>
+
+                    <div class="risk-factors">
+                      <h4>Risk Factors</h4>
+                      <ul>
+                        @for (factor of carTravelRisk().factors; track factor) {
+                          <li>
+                            <i class="pi pi-exclamation-circle"></i>
+                            {{ factor }}
+                          </li>
+                        }
+                      </ul>
+                    </div>
+
+                    <div class="risk-recommendations">
+                      <h4>Key Recommendations</h4>
+                      <ul>
+                        @for (
+                          rec of carTravelRisk().recommendations;
+                          track rec
+                        ) {
+                          <li><i class="pi pi-check-circle"></i> {{ rec }}</li>
+                        }
+                      </ul>
+                    </div>
+                  </div>
+                </p-card>
+              }
+            } @else {
+              <!-- Active Car Travel Plan -->
+              <div class="car-protocol-dashboard">
+                <!-- Risk Overview -->
+                <p-card
+                  class="car-risk-card"
+                  [ngClass]="'risk-' + carTravelRisk().riskLevel"
+                >
+                  <div class="car-risk-content">
+                    <div class="risk-header">
+                      <div class="risk-gauge-small">
+                        <span class="risk-score">{{
+                          carTravelRisk().score
+                        }}</span>
+                      </div>
+                      <div class="risk-info">
+                        <h2>{{ activeCarPlan()?.tripName }}</h2>
+                        <div class="detail-chips">
+                          <p-chip
+                            [label]="activeCarPlan()?.duration + ' Hour Drive'"
+                            icon="pi pi-clock"
+                          ></p-chip>
+                          <p-chip
+                            [label]="
+                              activeCarPlan()?.isDriver
+                                ? 'Driving'
+                                : 'Passenger'
+                            "
+                            [icon]="
+                              activeCarPlan()?.isDriver
+                                ? 'pi pi-user'
+                                : 'pi pi-users'
+                            "
+                          ></p-chip>
+                          <app-status-tag
+                            [value]="carTravelRisk().riskLevel + ' Risk'"
+                            [severity]="getRiskColor(carTravelRisk().riskLevel)"
+                            size="sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Warning Symptoms -->
+                    <div class="warning-symptoms">
+                      <h4>
+                        <i class="pi pi-exclamation-triangle"></i> Stop & Seek
+                        Help If You Experience:
+                      </h4>
+                      <div class="symptoms-grid">
+                        @for (
+                          symptom of carTravelRisk().warningSymptoms;
+                          track symptom
+                        ) {
+                          <span class="warning-symptom">{{ symptom }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </p-card>
+
+                <!-- Compression Guidelines -->
+                <p-card class="compression-card">
+                  <ng-template #header>
+                    <div class="card-header compression-header">
+                      <span class="compression-icon">🦵</span>
+                      <div>
+                        <h3>Compression Garments</h3>
+                        <p>Evidence-based blood flow enhancement</p>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <div class="compression-content">
+                    <div class="compression-type">
+                      <h4>
+                        Recommended:
+                        {{ compressionGuidelines().garmentType | titlecase }}
+                      </h4>
+                      <app-status-tag
+                        [value]="compressionGuidelines().pressureMmHg"
+                        severity="info"
+                        size="sm"
+                      />
+                    </div>
+
+                    <div class="compression-timing">
+                      <div class="timing-item">
+                        <i class="pi pi-play"></i>
+                        <div>
+                          <strong>When to Wear</strong>
+                          <p>{{ compressionGuidelines().whenToWear }}</p>
+                        </div>
+                      </div>
+                      <div class="timing-item">
+                        <i class="pi pi-stop"></i>
+                        <div>
+                          <strong>When to Remove</strong>
+                          <p>{{ compressionGuidelines().whenToRemove }}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="compression-cautions">
+                      <h4>
+                        <i class="pi pi-info-circle"></i> Important Cautions
+                      </h4>
+                      <ul>
+                        @for (
+                          caution of compressionGuidelines().cautions;
+                          track caution
+                        ) {
+                          <li>{{ caution }}</li>
+                        }
+                      </ul>
+                    </div>
+
+                    <div class="evidence-note">
+                      <i class="pi pi-book"></i>
+                      <small>{{ compressionGuidelines().evidenceBase }}</small>
+                    </div>
+                  </div>
+                </p-card>
+
+                <!-- Massage Gun Protocol -->
+                <p-card class="massage-gun-card">
+                  <ng-template #header>
+                    <div class="card-header massage-header">
+                      <span class="massage-icon">💆</span>
+                      <div>
+                        <h3>Massage Gun Protocol</h3>
+                        <p>Percussion therapy for circulation</p>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <p-accordion>
+                    @for (
+                      protocol of massageGunProtocols;
+                      track protocol.timing
+                    ) {
+                      <p-accordion-panel [value]="protocol.timing">
+                        <p-accordion-header>{{
+                          getMassageTimingLabel(protocol.timing)
+                        }}</p-accordion-header>
+                        <p-accordion-content>
+                          <div class="massage-protocol">
+                            <div class="protocol-summary">
+                              <app-status-tag
+                                [value]="protocol.totalDuration + ' min total'"
+                                severity="info"
+                                size="sm"
+                              />
+                              <span class="frequency">{{
+                                protocol.frequency
+                              }}</span>
+                            </div>
+
+                            <div class="muscle-targets">
+                              @for (
+                                muscle of protocol.targetMuscles;
+                                track muscle.muscle
+                              ) {
+                                <div class="muscle-item">
+                                  <div class="muscle-header">
+                                    <strong>{{ muscle.muscle }}</strong>
+                                    <span class="muscle-duration"
+                                      >{{ muscle.duration }}s</span
+                                    >
+                                  </div>
+                                  <p class="muscle-technique">
+                                    {{ muscle.technique }}
+                                  </p>
+                                  <p class="muscle-purpose">
+                                    {{ muscle.purpose }}
+                                  </p>
+                                </div>
+                              }
+                            </div>
+
+                            <div class="massage-cautions">
+                              <h5>⚠️ Cautions</h5>
+                              <ul>
+                                @for (
+                                  caution of protocol.cautions;
+                                  track caution
+                                ) {
+                                  <li>{{ caution }}</li>
+                                }
+                              </ul>
+                            </div>
+
+                            <div class="evidence-note">
+                              <i class="pi pi-book"></i>
+                              <small>{{ protocol.evidenceBase }}</small>
+                            </div>
+                          </div>
+                        </p-accordion-content>
+                      </p-accordion-panel>
+                    }
+                  </p-accordion>
+                </p-card>
+
+                <!-- Seated Exercises -->
+                <p-card class="exercises-card">
+                  <ng-template #header>
+                    <div class="card-header exercises-header">
+                      <span class="exercises-icon">🏃</span>
+                      <div>
+                        <h3>Circulation Exercises</h3>
+                        <p>Do these every 30 minutes while seated</p>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <div class="exercises-grid">
+                    @for (exercise of seatedExercises; track exercise.name) {
+                      <div class="exercise-card">
+                        <div class="exercise-header">
+                          <h4>{{ exercise.name }}</h4>
+                          <app-status-tag
+                            [value]="exercise.targetArea | titlecase"
+                            [severity]="getTargetAreaColor(exercise.targetArea)"
+                            size="sm"
+                          />
+                        </div>
+                        <p class="exercise-description">
+                          {{ exercise.description }}
+                        </p>
+                        <div class="exercise-details">
+                          <span
+                            >{{ exercise.sets }} sets ×
+                            {{ exercise.reps }} reps</span
+                          >
+                          @if (exercise.duration) {
+                            <span>Hold {{ exercise.duration }}s</span>
+                          }
+                        </div>
+                        @if (exercise.evidenceBase) {
+                          <small class="evidence">{{
+                            exercise.evidenceBase
+                          }}</small>
+                        }
+                      </div>
+                    }
+                  </div>
+                </p-card>
+
+                <!-- Rest Stop Protocol -->
+                <p-card class="rest-stop-card">
+                  <ng-template #header>
+                    <div class="card-header rest-header">
+                      <i class="pi pi-map-marker"></i>
+                      <div>
+                        <h3>Rest Stop Protocol</h3>
+                        <p>Every 2 hours - take 10-15 minutes</p>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <div class="rest-stop-content">
+                    <div class="rest-timeline">
+                      @for (
+                        protocol of carTravelProtocols;
+                        track protocol.hourMark
+                      ) {
+                        @if (protocol.phase === "rest-stop") {
+                          <div class="rest-stop-item">
+                            <div class="stop-marker">
+                              <span class="hour"
+                                >Hour {{ protocol.hourMark }}</span
+                              >
+                            </div>
+                            <div class="stop-actions">
+                              @for (
+                                rec of protocol.recommendations.slice(
+                                  0,
+                                  UI_LIMITS.RECOMMENDATIONS_EXPANDED
+                                );
+                                track rec.action
+                              ) {
+                                <div
+                                  class="action-item"
+                                  [class]="'importance-' + rec.importance"
+                                >
+                                  <i
+                                    class="pi"
+                                    [ngClass]="getCategoryIcon(rec.category)"
+                                  ></i>
+                                  <span>{{ rec.action }}</span>
+                                  @if (rec.duration) {
+                                    <app-status-tag
+                                      [value]="rec.duration + ' min'"
+                                      severity="secondary"
+                                      size="sm"
+                                    />
+                                  }
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      }
+                    </div>
+                  </div>
+                </p-card>
+
+                <!-- Research Evidence -->
+                <p-card class="research-card">
+                  <ng-template #header>
+                    <div class="card-header research-header">
+                      <i class="pi pi-book"></i>
+                      <div>
+                        <h3>Evidence-Based Research</h3>
+                        <p>Scientific backing for these protocols</p>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <p-accordion>
+                    @for (research of researchSummary; track research.topic) {
+                      <p-accordion-panel [value]="research.topic">
+                        <p-accordion-header>{{
+                          research.topic
+                        }}</p-accordion-header>
+                        <p-accordion-content>
+                          <div class="research-item">
+                            <p class="finding">{{ research.finding }}</p>
+                            <div class="source">
+                              <strong>Source:</strong> {{ research.source }}
+                              @if (research.pubmedId) {
+                                <a
+                                  [href]="
+                                    'https://pubmed.ncbi.nlm.nih.gov/' +
+                                    research.pubmedId
+                                  "
+                                  target="_blank"
+                                  class="pubmed-link"
+                                >
+                                  PubMed: {{ research.pubmedId }}
+                                </a>
+                              }
+                            </div>
+                            <div class="recommendation">
+                              <strong>Recommendation:</strong>
+                              {{ research.recommendation }}
+                            </div>
+                          </div>
+                        </p-accordion-content>
+                      </p-accordion-panel>
+                    }
+                  </p-accordion>
+                </p-card>
+
+                <!-- Car Travel Checklist -->
+                <p-card class="checklist-card">
+                  <ng-template #header>
+                    <div class="card-header">
+                      <i class="pi pi-check-square"></i>
+                      <h3>Car Travel Checklist</h3>
+                    </div>
+                  </ng-template>
+
+                  <p-accordion>
+                    @for (
+                      category of carTravelChecklist;
+                      track category.category
+                    ) {
+                      <p-accordion-panel [value]="category.category">
+                        <p-accordion-header>{{
+                          category.category
+                        }}</p-accordion-header>
+                        <p-accordion-content>
+                          <div class="checklist-items">
+                            @for (item of category.items; track item.id) {
+                              <div
+                                class="checklist-item"
+                                [class.essential]="item.essential"
+                              >
+                                <p-checkbox
+                                  [(ngModel)]="item.packed"
+                                  [binary]="true"
+                                  variant="filled"
+                                  [inputId]="item.id"
+                                ></p-checkbox>
+                                <label
+                                  [for]="item.id"
+                                  [class.packed]="item.packed"
+                                >
+                                  {{ item.item }}
+                                  @if (item.essential) {
+                                    <span class="essential-badge"
+                                      >Essential</span
+                                    >
+                                  }
+                                </label>
+                                @if (item.notes) {
+                                  <span class="item-note">{{
+                                    item.notes
+                                  }}</span>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </p-accordion-content>
+                      </p-accordion-panel>
+                    }
+                  </p-accordion>
+                </p-card>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </app-main-layout>
+  

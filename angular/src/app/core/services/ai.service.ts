@@ -93,9 +93,7 @@ export class AIService {
       switchMap(() => {
         // Try API first (only after consent verified)
         return this.apiService
-          .post<
-            TrainingSuggestion[]
-          >(API_ENDPOINTS.training.suggestions || "/api/training/suggestions", params)
+          .post<TrainingSuggestion[]>(API_ENDPOINTS.training.suggestions, params)
           .pipe(
             map((response) => {
               if (response.success && response.data) {

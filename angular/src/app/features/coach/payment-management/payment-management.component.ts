@@ -38,7 +38,7 @@ import {
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { ContextService } from "../../../core/services/context.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
@@ -860,7 +860,7 @@ export class PaymentManagementComponent implements OnInit {
         balances?: PlayerBalance[];
         payments?: Payment[];
       }> = await firstValueFrom(
-        this.api.get("/api/coach/payments", { team_id: teamId }),
+        this.api.get(API_ENDPOINTS.coach.payments, { team_id: teamId }),
       );
       if (response?.success && response.data) {
         this.fees.set(response.data.fees || []);
@@ -921,7 +921,7 @@ export class PaymentManagementComponent implements OnInit {
       }
 
       const response = await firstValueFrom(
-        this.api.post<{ success: boolean }>("/api/coach/payments/fees", {
+        this.api.post<{ success: boolean }>(API_ENDPOINTS.coach.paymentFees, {
           team_id: teamId,
           name: this.feeForm.name,
           type: this.feeForm.type,
@@ -957,7 +957,7 @@ export class PaymentManagementComponent implements OnInit {
       }
 
       const response = await firstValueFrom(
-        this.api.post<{ success: boolean }>("/api/coach/payments/record", {
+        this.api.post<{ success: boolean }>(API_ENDPOINTS.coach.paymentRecord, {
           team_id: teamId,
           player_id: this.paymentForm.playerId,
           amount: this.paymentForm.amount,

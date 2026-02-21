@@ -1,0 +1,902 @@
+<app-main-layout>
+      <!-- Loading State - Dashboard-Specific Skeleton (Evidence-Based UX) -->
+      @if (isLoading()) {
+        <app-dashboard-skeleton></app-dashboard-skeleton>
+      }
+
+      <!-- Error State -->
+      @if (hasError()) {
+        <app-page-error-state
+          title="Unable to load dashboard"
+          [message]="errorMessage()"
+          (retry)="loadData()"
+        ></app-page-error-state>
+      }
+
+      <!-- Dashboard Content -->
+      @if (!isLoading() && !hasError()) {
+        <div class="player-dashboard section-stack">
+          <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
+          @if (needsProgramAssignment()) {
+            <section class="no-program-section">
+              <p-card class="no-program-card">
+                <div class="no-program-content">
+                  <div class="no-program-icon">
+                    <i class="pi pi-calendar-times"></i>
+                  </div>
+                  <h3 class="no-program-title">Let's Get You Set Up!</h3>
+                  <p class="no-program-message">
+                    Your training program is almost ready. Let's check what's
+                    needed:
+                  </p>
+
+                  <!-- Diagnostic Steps Checklist -->
+                  <div class="setup-checklist">
+                    <div class="checklist-item">
+                      <div class="checklist-icon checklist-complete">
+                        <i class="pi pi-check"></i>
+                      </div>
+                      <div class="checklist-content">
+                        <span class="checklist-label">Account created</span>
+                        <span class="checklist-status">Complete</span>
+                      </div>
+                    </div>
+
+                    @if (!hasCompletedOnboarding()) {
+                      <!-- Phase 3: Semantic Action Required Badge -->
+                      @if (getOnboardingActionRequiredMeaning()) {
+                        <app-semantic-meaning-renderer
+                          [meaning]="getOnboardingActionRequiredMeaning()!"
+                          [context]="{
+                            container: 'inline',
+                            priority: 'high',
+                            dismissible: false,
+                          }"
+                        ></app-semantic-meaning-renderer>
+                      }
+                      <!-- Fallback checklist item for visual consistency -->
+                      <div class="checklist-item checklist-action-needed">
+                        <div class="checklist-icon checklist-warning">
+                          <i class="pi pi-exclamation-circle"></i>
+                        </div>
+                        <div class="checklist-content">
+                          <span class="checklist-label"
+                            >Complete your profile</span
+                          >
+                          <span class="checklist-status">Action required</span>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="checklist-item">
+                        <div class="checklist-icon checklist-complete">
+                          <i class="pi pi-check"></i>
+                        </div>
+                        <div class="checklist-content">
+                          <span class="checklist-label">Profile completed</span>
+                          <span class="checklist-status">Complete</span>
+                        </div>
+                      </div>
+                    }
+
+                    <div class="checklist-item">
+                      <div class="checklist-icon checklist-waiting">
+                        <i class="pi pi-clock"></i>
+                      </div>
+                      <div class="checklist-content">
+                        <span class="checklist-label"
+                          >Coach program assignment</span
+                        >
+                        <span class="checklist-status"
+                          >Usually 24-48 hours</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Next Steps -->
+                  <div class="setup-next-steps">
+                    <h4 class="next-steps-title">What happens next?</h4>
+                    @if (!hasCompletedOnboarding()) {
+                      <ol class="next-steps-list">
+                        <li>
+                          <strong>Complete your profile</strong> (2-3 minutes)
+                        </li>
+                        <li>
+                          Your coach will review and assign a program (24-48
+                          hours)
+                        </li>
+                        <li>Start training!</li>
+                      </ol>
+                    } @else {
+                      <p class="next-steps-message">
+                        Your profile looks great! Your coach will assign a
+                        training program within 24-48 hours. You'll receive a
+                        notification when it's ready.
+                      </p>
+                      <p class="next-steps-tip">
+                        💡 <strong>In the meantime:</strong> Explore the
+                        exercise library and watch training videos!
+                      </p>
+                    }
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="no-program-actions">
+                    @if (!hasCompletedOnboarding()) {
+                      <app-button
+                        iconLeft="pi-user-edit"
+                        routerLink="/onboarding"
+                      >
+                        Complete Profile (2 min)
+                      </app-button>
+                    }
+                    @if (hasCompletedOnboarding()) {
+                      <app-button
+                        iconLeft="pi-book"
+                        routerLink="/exercise-library"
+                      >
+                        Browse Exercises
+                      </app-button>
+                      <app-button
+                        iconLeft="pi-youtube"
+                        variant="outlined"
+                        routerLink="/training/videos"
+                      >
+                        Watch Videos
+                      </app-button>
+                    }
+                    <app-button
+                      iconLeft="pi-envelope"
+                      variant="outlined"
+                      (clicked)="contactCoach()"
+                    >
+                      Contact Coach
+                    </app-button>
+                  </div>
+
+                  <!-- Expected Timeline -->
+                  <div class="setup-timeline">
+                    <i class="pi pi-info-circle"></i>
+                    <span
+                      >Most athletes get their program within 24 hours. Check
+                      back tomorrow!</span
+                    >
+                  </div>
+                </div>
+              </p-card>
+            </section>
+          }
+
+          <!-- SECTION 1: Announcement Banner -->
+          <!-- Only shows when message content exists (from backend) -->
+          @if (announcement()?.message && !announcementDismissed()) {
+            <section class="announcement-section">
+              <div class="announcement-banner">
+                <div class="announcement-content">
+                  <div class="announcement-text">
+                    <i
+                      [class]="
+                        announcement()?.priority === 'important'
+                          ? 'pi pi-exclamation-triangle'
+                          : 'pi pi-megaphone'
+                      "
+                      class="announcement-icon"
+                    ></i>
+                    <span class="announcement-message">{{
+                      announcement()?.message
+                    }}</span>
+                  </div>
+                  <span class="announcement-meta">
+                    — {{ announcement()?.coachName }} ·
+                    {{ getTimeAgoStr(announcement()?.postedAt) }}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  class="announcement-close-btn"
+                  (click)="dismissAnnouncement()"
+                  aria-label="Dismiss announcement"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            </section>
+          }
+
+          <!-- SECTION 1.5: Coach Override Notifications (Phase 3 - Semantic Meaning) -->
+          @if (recentOverrides().length > 0) {
+            <section class="override-notifications-section">
+              @for (override of recentOverrides(); track override.id) {
+                <!-- Phase 3: Semantic Coach Override Meaning -->
+                @if (getCoachOverrideMeaning(override)) {
+                  <app-semantic-meaning-renderer
+                    [meaning]="getCoachOverrideMeaning(override)!"
+                    [context]="{
+                      container: 'card',
+                      priority: 'medium',
+                      dismissible: false,
+                    }"
+                  ></app-semantic-meaning-renderer>
+                }
+                <!-- Fallback: Keep notification component for detailed view -->
+                <app-coach-override-notification
+                  [override]="override"
+                  [coachName]="getCoachName(override.coachId)"
+                  [playerId]="currentUserId()"
+                ></app-coach-override-notification>
+              }
+            </section>
+          }
+
+          <!-- SECTION 1.6: Ownership Transitions (Phase 2.1 - Trust Repair) -->
+          @if (activeTransitions().length > 0) {
+            <section class="ownership-transitions-section">
+              @for (transition of activeTransitions(); track transition.id) {
+                <app-ownership-transition-badge
+                  [transition]="transition"
+                  [showDetails]="true"
+                ></app-ownership-transition-badge>
+              }
+            </section>
+          }
+
+          <!-- SECTION 1.7: Missing Data Explanation (Phase 3 - Semantic Meaning) -->
+          @if (missingWellnessStatus() && missingWellnessStatus()!.missing) {
+            <section class="missing-data-section">
+              <!-- Detailed explanation component (5-Question Contract style) -->
+              <!-- NOTE: Semantic badge removed - MissingDataExplanation already shows severity -->
+              <app-missing-data-explanation
+                [missingStatus]="missingWellnessStatus()!"
+                [showCoachLink]="true"
+              ></app-missing-data-explanation>
+            </section>
+          }
+
+          <!-- SECTION 2: Welcome Header with Merlin AI Insight -->
+          <section class="welcome-section">
+            <p-card class="welcome-card">
+              <div class="welcome-wrapper">
+                <div class="merlin-avatar" aria-hidden="true">
+                  <i class="pi pi-sparkles"></i>
+                </div>
+                <div class="welcome-content">
+                  <div class="welcome-header-row">
+                    <h2 class="welcome-greeting">
+                      {{ greeting() }}, {{ userName() }}!
+                    </h2>
+                    <!-- Privacy Status Badge -->
+                    @if (privacySharingStatus().totalMetrics > 0) {
+                      <app-status-tag
+                        [value]="
+                          'Sharing: ' +
+                          privacySharingStatus().sharedMetrics +
+                          '/' +
+                          privacySharingStatus().totalMetrics +
+                          ' metrics'
+                        "
+                        severity="info"
+                        size="sm"
+                        [pTooltip]="
+                          'Manage your data sharing preferences in Settings'
+                        "
+                        tooltipPosition="bottom"
+                        [routerLink]="['/settings/privacy']"
+                        class="status-tag-link"
+                      ></app-status-tag>
+                    }
+                  </div>
+                  <p class="merlin-insight">{{ merlinInsight() }}</p>
+                  <div class="welcome-actions">
+                    <app-button iconLeft="pi-play" routerLink="/todays-practice"
+                      >Start Training</app-button
+                    >
+                    <app-button
+                      iconLeft="pi-comments"
+                      variant="text"
+                      routerLink="/chat"
+                      >Ask Merlin</app-button
+                    >
+                  </div>
+                </div>
+              </div>
+            </p-card>
+          </section>
+
+          <!-- SECTION 3: Key Stats Overview (4 Cards) -->
+          <section class="stats-overview" aria-label="Key statistics">
+            <!-- Readiness Card - Enhanced with Check-in Status (UX Audit Fix #4) -->
+            <p-card
+              class="stat-card stat-readiness stat-card--clickable"
+              (click)="navigateToWellness()"
+              pTooltip="Your overall readiness to train today based on sleep, soreness, stress, and energy levels. Checked daily via wellness survey."
+              tooltipPosition="bottom"
+              [showDelay]="500"
+            >
+              @if (readinessScore() !== null) {
+                <div class="stat-card-content">
+                  <div class="stat-icon readiness-icon">
+                    <i class="pi pi-heart"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-block__value">
+                      {{ readinessScore() }}%
+                    </span>
+                    <span class="stat-block__label">Readiness</span>
+                  </div>
+                  <app-status-tag
+                    [value]="getReadinessStatus()"
+                    [severity]="getReadinessSeverity()"
+                    size="sm"
+                  ></app-status-tag>
+                  @if (nextGenEnabled()) {
+                    <span class="next-gen-preview-tag">
+                      Preview:
+                      {{
+                        nextGenReadinessScore() !== null
+                          ? (nextGenReadinessScore() | number: "1.0-0")
+                          : "N/A"
+                      }}
+                    </span>
+                  }
+                </div>
+              } @else {
+                <div class="stat-card-content">
+                  <div class="stat-icon readiness-icon">
+                    <i class="pi pi-heart"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-block__value">--</span>
+                    <span class="stat-block__label">Readiness</span>
+                  </div>
+                  <app-status-tag
+                    value="No data"
+                    severity="info"
+                    size="sm"
+                  ></app-status-tag>
+                  @if (nextGenEnabled()) {
+                    <span class="next-gen-preview-tag">Preview: N/A</span>
+                  }
+                </div>
+              }
+
+              <!-- Wellness Check-in Status Indicator -->
+              <div class="wellness-checkin-status">
+                @if (wellnessCheckedInToday()) {
+                  <div class="checkin-status checkin-complete">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Checked in today</span>
+                  </div>
+                  @if (checkinStreak() > 0) {
+                    <div class="checkin-streak">
+                      🔥 {{ checkinStreak() }}-day streak!
+                    </div>
+                  }
+                } @else if (checkinOverdue()) {
+                  <div class="checkin-status checkin-overdue">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>Overdue ({{ daysSinceLastCheckin() }} days)</span>
+                  </div>
+                } @else {
+                  <div class="checkin-status checkin-due">
+                    <i class="pi pi-clock"></i>
+                    <span>Due today • Takes 2 min</span>
+                  </div>
+                }
+              </div>
+            </p-card>
+
+            <!-- ACWR Card - Enhanced with Progress Tracking (UX Audit Fix #5) -->
+            <p-card
+              class="stat-card stat-acwr cursor-pointer"
+              (click)="navigateToACWR()"
+              [pTooltip]="
+                acwrDataSufficient()
+                  ? '📊 Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' +
+                    TRAINING.ACUTE_LOAD_DAYS +
+                    ' days) to long-term fitness (' +
+                    TRAINING.CHRONIC_LOAD_DAYS +
+                    ' days).
+
+✅ Optimal range: ' +
+                    TRAINING.ACWR_SAFE_RANGE_MIN +
+                    '–' +
+                    TRAINING.ACWR_SAFE_RANGE_MAX
+                  : '💡 ACWR requires ' +
+                    TRAINING.MIN_DAYS_FOR_CHRONIC +
+                    ' days of training data to calculate.
+
+Keep logging sessions to unlock this injury prevention metric!'
+              "
+              tooltipPosition="bottom"
+              [showDelay]="500"
+            >
+              @if (acwr() !== null && acwrDataSufficient()) {
+                <!-- Full ACWR Display (MIN_DAYS_FOR_CHRONIC+ days of data) -->
+                <div class="stat-card-content">
+                  <div class="stat-icon acwr-icon">
+                    <i class="pi pi-chart-line"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-block__value">{{
+                      acwr() | number: "1.2-2"
+                    }}</span>
+                    <span class="stat-block__label">ACWR</span>
+                  </div>
+                  <app-status-tag
+                    [value]="getAcwrStatus()"
+                    [severity]="getAcwrSeverity()"
+                    size="sm"
+                  ></app-status-tag>
+                </div>
+              } @else if (trainingDaysLogged() !== null) {
+                <!-- Progress Tracking (< MIN_DAYS_FOR_CHRONIC days) -->
+                <div class="acwr-progress-content">
+                  <div class="stat-icon acwr-icon-building">
+                    <i class="pi pi-chart-line"></i>
+                  </div>
+                  <div class="acwr-progress-details">
+                    <span class="acwr-progress-title">Load Monitoring</span>
+                    <div class="acwr-progress-bar-container">
+                      <div class="acwr-progress-bar">
+                        <div
+                          class="acwr-progress-fill"
+                          [style.width.%]="
+                            (trainingDaysLogged()! /
+                              TRAINING.MIN_DAYS_FOR_CHRONIC) *
+                            100
+                          "
+                        ></div>
+                      </div>
+                      <span class="acwr-progress-text">
+                        {{ trainingDaysLogged() }}/{{
+                          TRAINING.MIN_DAYS_FOR_CHRONIC
+                        }}
+                        days
+                      </span>
+                    </div>
+                    @if (
+                      trainingDaysLogged()! >= TRAINING.ACUTE_LOAD_DAYS &&
+                      trainingDaysLogged()! < 14
+                    ) {
+                      <app-status-tag
+                        value="7-day milestone! 🎉"
+                        severity="success"
+                        size="sm"
+                        class="milestone-tag"
+                      ></app-status-tag>
+                    } @else if (
+                      trainingDaysLogged()! >= 14 &&
+                      trainingDaysLogged()! < TRAINING.MIN_DAYS_FOR_CHRONIC
+                    ) {
+                      <app-status-tag
+                        value="Halfway there!"
+                        severity="info"
+                        size="sm"
+                        class="milestone-tag"
+                      ></app-status-tag>
+                    } @else if (
+                      trainingDaysLogged()! < TRAINING.ACUTE_LOAD_DAYS
+                    ) {
+                      <span class="acwr-help-text"
+                        >Keep logging to unlock insights</span
+                      >
+                    }
+                  </div>
+                </div>
+              } @else {
+                <!-- No data -->
+                <div class="stat-card-content">
+                  <div class="stat-icon acwr-icon">
+                    <i class="pi pi-chart-line"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-block__value">--</span>
+                    <span class="stat-block__label">ACWR</span>
+                  </div>
+                  <app-status-tag
+                    value="Log training sessions"
+                    severity="info"
+                    size="sm"
+                  ></app-status-tag>
+                </div>
+              }
+
+              <!-- Data Confidence Indicator (Phase 3 - Semantic Meaning) -->
+              @if (acwr() !== null || trainingDaysLogged() !== null) {
+                <div class="confidence-indicator-wrapper">
+                  <!-- Phase 3: Semantic Incomplete Data Badge when confidence is low -->
+                  @if (
+                    acwrConfidence().score < 0.9 &&
+                    getACWRIncompleteDataMeaning()
+                  ) {
+                    <app-semantic-meaning-renderer
+                      [meaning]="getACWRIncompleteDataMeaning()!"
+                      [context]="{
+                        container: 'inline',
+                        priority:
+                          acwrConfidence().score < 0.5 ? 'critical' : 'medium',
+                        dismissible: false,
+                      }"
+                    ></app-semantic-meaning-renderer>
+                  }
+                  <!-- Detailed confidence indicator -->
+                  <app-confidence-indicator
+                    [score]="acwrConfidence().score"
+                    [missingInputs]="acwrConfidence().missingInputs"
+                    [showDetails]="false"
+                  ></app-confidence-indicator>
+                </div>
+              }
+            </p-card>
+
+            <!-- Streak Card -->
+            <p-card
+              class="stat-card stat-streak cursor-pointer"
+              pTooltip="Consecutive days with training logged. Building a streak helps maintain consistency and prevents gaps in your progress tracking."
+              tooltipPosition="bottom"
+              [showDelay]="500"
+            >
+              <div class="stat-card-content">
+                <div class="stat-icon streak-icon">
+                  <i class="pi pi-bolt"></i>
+                </div>
+                <div class="stat-details">
+                  <span class="stat-block__value">{{ currentStreak() }}</span>
+                  <span class="stat-block__label">Day Streak</span>
+                </div>
+              </div>
+            </p-card>
+
+            <!-- Weekly Sessions Card -->
+            <p-card class="stat-card stat-sessions cursor-pointer">
+              <div class="stat-card-content">
+                <div class="stat-icon sessions-icon">
+                  <i class="pi pi-calendar-plus"></i>
+                </div>
+                <div class="stat-details">
+                  <span class="stat-block__value"
+                    >{{ weeklySessionsCompleted() }}/{{
+                      weeklySessionsPlanned()
+                    }}</span
+                  >
+                  <span class="stat-block__label">This Week</span>
+                </div>
+              </div>
+            </p-card>
+          </section>
+
+          <!-- Main Content Grid -->
+          <div class="dashboard-grid">
+            <!-- SECTION 4: Weekly Progress -->
+            <p-card class="progress-card">
+              <ng-template #header>
+                <div class="card-header-custom">
+                  <i class="pi pi-chart-bar card-header-icon"></i>
+                  <span class="card-header-title">Weekly Progress</span>
+                </div>
+              </ng-template>
+              <div class="week-progress">
+                @for (day of weekDays(); track day.name) {
+                  <div class="day-column">
+                    <div
+                      class="day-indicator"
+                      [class.completed]="day.completed"
+                      [class.today]="day.isToday"
+                      [class.future]="day.isFuture"
+                      [attr.aria-label]="
+                        day.name +
+                        (day.completed
+                          ? ', completed'
+                          : day.isToday
+                            ? ', today'
+                            : '')
+                      "
+                    >
+                      @if (day.completed) {
+                        <i class="pi pi-check"></i>
+                      } @else if (day.isToday) {
+                        <i class="pi pi-circle"></i>
+                      }
+                    </div>
+                    <span class="day-name">{{ day.short }}</span>
+                  </div>
+                }
+              </div>
+              <div class="progress-summary">
+                <p-progressBar
+                  [value]="weeklyProgress()"
+                  [showValue]="false"
+                  class="custom-progress"
+                ></p-progressBar>
+                <span class="progress-text"
+                  >{{ weeklyProgress() }}% completed</span
+                >
+              </div>
+            </p-card>
+
+            <!-- SECTION 5: Today's Schedule Preview (using p-timeline) -->
+            <p-card class="schedule-card">
+              <ng-template #header>
+                <div class="card-header-custom">
+                  <i class="pi pi-clock card-header-icon"></i>
+                  <span class="card-header-title">Today's Schedule</span>
+                </div>
+              </ng-template>
+              @if (todaySchedule().length > 0) {
+                <p-timeline
+                  [value]="
+                    todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)
+                  "
+                  class="schedule-timeline"
+                >
+                  <ng-template #marker let-item>
+                    <span
+                      class="timeline-marker"
+                      [class.completed]="item.completed"
+                      [attr.aria-hidden]="true"
+                    >
+                      @if (item.completed) {
+                        <i class="pi pi-check"></i>
+                      } @else {
+                        <i class="pi pi-circle"></i>
+                      }
+                    </span>
+                  </ng-template>
+                  <ng-template #content let-item>
+                    <div
+                      class="schedule-item"
+                      [class.completed]="item.completed"
+                    >
+                      <div class="item-time">{{ item.time }}</div>
+                      <div class="item-info">
+                        <span class="item-title">{{ item.title }}</span>
+                        <span class="item-duration"
+                          >{{ item.duration }} min</span
+                        >
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-timeline>
+                @if (todaySchedule().length > 3) {
+                  <p class="more-items">
+                    +{{ todaySchedule().length - 3 }} more items
+                  </p>
+                }
+                <div class="card-footer-action">
+                  <app-button
+                    variant="text"
+                    iconRight="pi-arrow-right"
+                    routerLink="/todays-practice"
+                    >View Full Day</app-button
+                  >
+                </div>
+              } @else {
+                <div class="empty-schedule">
+                  <p-message severity="info" class="status-message">
+                    <div class="empty-content">
+                      <i class="pi pi-calendar empty-icon"></i>
+                      <span>No training scheduled for today</span>
+                    </div>
+                  </p-message>
+                  <app-button variant="text" routerLink="/training"
+                    >View Full Schedule</app-button
+                  >
+                </div>
+              }
+            </p-card>
+
+            <!-- SECTION 6: Quick Actions Grid -->
+            <p-card class="actions-card">
+              <ng-template #header>
+                <div class="card-header-custom">
+                  <i class="pi pi-bolt card-header-icon"></i>
+                  <span class="card-header-title">Quick Actions</span>
+                </div>
+              </ng-template>
+              <div class="quick-actions-grid">
+                @for (action of quickActions; track action.route) {
+                  <app-button
+                    variant="outlined"
+                    [iconLeft]="action.icon"
+                    [routerLink]="action.route"
+                    [tooltip]="action.description"
+                    [ariaLabel]="action.description"
+                    >{{ action.label }}</app-button
+                  >
+                }
+              </div>
+            </p-card>
+
+            <!-- SECTION 7: Performance Trend -->
+            <p-card class="trend-card">
+              <ng-template #header>
+                <div class="card-header-custom">
+                  <i class="pi pi-trending-up card-header-icon"></i>
+                  <span class="card-header-title">Performance Trend</span>
+                </div>
+              </ng-template>
+              @if (performanceChartData()) {
+                <div class="chart-container">
+                  @defer (on viewport; prefetch on idle) {
+                    <app-lazy-chart
+                      type="line"
+                      [data]="performanceChartData()"
+                      [options]="chartOptions"
+                      height="calc(var(--space-6) * 7.5)"
+                    ></app-lazy-chart>
+                  } @placeholder {
+                    <app-chart-skeleton
+                      type="line"
+                      height="calc(var(--space-6) * 7.5)"
+                    />
+                  } @loading (minimum 500ms) {
+                    <app-chart-skeleton
+                      type="line"
+                      height="calc(var(--space-6) * 7.5)"
+                    />
+                  }
+                </div>
+                <div class="card-footer-action">
+                  <app-button
+                    variant="text"
+                    iconRight="pi-arrow-right"
+                    routerLink="/analytics"
+                    >View Detailed Analytics</app-button
+                  >
+                </div>
+              } @else {
+                <div class="empty-chart">
+                  <p-message severity="info" class="status-message">
+                    <div class="empty-content">
+                      <i class="pi pi-chart-line empty-icon"></i>
+                      <span>Complete more sessions to see your trend</span>
+                    </div>
+                  </p-message>
+                </div>
+              }
+            </p-card>
+          </div>
+
+          <!-- SECTION 8: What's Next (Continuity Events) -->
+          @if (continuityEvents().length > 0) {
+            <section class="continuity-section" aria-label="What's next">
+              <h3 class="section-title">
+                <i class="pi pi-calendar-clock" aria-hidden="true"></i>
+                What's Next
+              </h3>
+              <div class="continuity-events">
+                @for (event of continuityEvents(); track event.type) {
+                  <p-card class="continuity-event-card">
+                    <div class="continuity-event">
+                      <span class="event-icon">{{
+                        getEventIcon(event.type)
+                      }}</span>
+                      <div class="event-details">
+                        <h4>{{ event.title }}</h4>
+                        <p>{{ event.description }}</p>
+                        @if (
+                          event.daysRemaining !== undefined &&
+                          event.daysRemaining > 0
+                        ) {
+                          <app-status-tag
+                            [value]="event.daysRemaining + ' day(s) remaining'"
+                            severity="info"
+                            size="sm"
+                            class="event-tag"
+                          ></app-status-tag>
+                        }
+                        @if (event.sessionsRemaining !== undefined) {
+                          <app-status-tag
+                            [value]="
+                              event.sessionsRemaining + ' sessions remaining'
+                            "
+                            severity="warning"
+                            size="sm"
+                            class="event-tag"
+                          ></app-status-tag>
+                        }
+                      </div>
+                    </div>
+                  </p-card>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- SECTION 9: Tomorrow's Preview -->
+          @if (tomorrowSchedule().length > 0) {
+            <section class="tomorrow-section" aria-label="Tomorrow's schedule">
+              <h3 class="section-title">
+                <i class="pi pi-calendar-plus" aria-hidden="true"></i>
+                Tomorrow's Preview
+              </h3>
+              <p-card class="schedule-card">
+                <p-timeline
+                  [value]="
+                    tomorrowSchedule().slice(
+                      0,
+                      UI_LIMITS.SCHEDULE_PREVIEW_COUNT
+                    )
+                  "
+                  class="schedule-timeline"
+                >
+                  <ng-template #marker let-item>
+                    <span
+                      class="timeline-marker upcoming"
+                      [attr.aria-hidden]="true"
+                    >
+                      <i class="pi pi-circle"></i>
+                    </span>
+                  </ng-template>
+                  <ng-template #content let-item>
+                    <div class="schedule-item upcoming">
+                      <div class="item-time">{{ item.time }}</div>
+                      <div class="item-info">
+                        <span class="item-title">{{ item.title }}</span>
+                        <span class="item-duration"
+                          >{{ item.duration }} min</span
+                        >
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-timeline>
+                @if (tomorrowSchedule().length > 3) {
+                  <p class="more-items">
+                    +{{ tomorrowSchedule().length - 3 }} more items
+                  </p>
+                }
+                <div class="card-footer-action">
+                  <app-button
+                    variant="text"
+                    iconRight="pi-arrow-right"
+                    routerLink="/calendar"
+                    >View Full Schedule</app-button
+                  >
+                </div>
+              </p-card>
+            </section>
+          }
+
+          <!-- SECTION 10: Upcoming Events -->
+          @if (upcomingEvents().length > 0) {
+            <section class="upcoming-section" aria-label="Upcoming events">
+              <h3 class="section-title">
+                <i class="pi pi-calendar" aria-hidden="true"></i>
+                Coming Up
+              </h3>
+              <div class="events-strip">
+                @for (
+                  event of upcomingEvents().slice(
+                    0,
+                    UI_LIMITS.EVENTS_PREVIEW_COUNT
+                  );
+                  track event.id
+                ) {
+                  <p-card
+                    class="event-card"
+                    [ngClass]="'event-' + event.type"
+                  >
+                    <div class="event-card-content">
+                      <div class="event-date">
+                        <span class="date-day">{{ event.day }}</span>
+                        <span class="date-month">{{ event.month }}</span>
+                      </div>
+                      <div class="event-info">
+                        <span class="event-title">{{ event.title }}</span>
+                        <app-status-tag
+                          [value]="event.typeLabel"
+                          [severity]="getEventSeverity(event.type)"
+                          size="sm"
+                          class="event-tag"
+                        ></app-status-tag>
+                      </div>
+                    </div>
+                  </p-card>
+                }
+              </div>
+            </section>
+          }
+        </div>
+      }
+    </app-main-layout>
+  

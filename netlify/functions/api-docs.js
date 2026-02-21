@@ -278,6 +278,82 @@ const API_ENDPOINTS = {
       messages: "array - Conversation history",
     },
   },
+  "ai-telemetry": {
+    path: "/api/ai/telemetry",
+    method: "GET",
+    description:
+      "Coach/admin telemetry dashboard for Merlin AI quality and usage metrics.",
+    auth: true,
+    rateLimit: "READ (100/min)",
+    queryParams: {
+      days: "number (optional, default: 30, min: 1, max: 90)",
+      team_id: "UUID (optional) - Restrict metrics to a team scope",
+    },
+    response: {
+      window_days: "number",
+      since: "ISO datetime",
+      team_scope: "string",
+      sessions: {
+        total: "number",
+        unique_users: "number",
+      },
+      messages: {
+        total: "number",
+        assistant: "number",
+        risk: "object - high/medium/low/unknown counts",
+        fallback_rate_pct: "number",
+        no_citation_rate_pct: "number",
+      },
+      recommendations: {
+        total: "number",
+        accepted: "number",
+        completed: "number",
+        acceptance_rate_pct: "number",
+        completion_rate_pct: "number",
+      },
+      knowledge_base: {
+        total_entries: "number",
+        by_type: "object",
+        pending_entries: "number",
+      },
+    },
+  },
+  "knowledge-governance": {
+    path: "/api/knowledge-governance",
+    methods: ["GET", "POST", "PATCH"],
+    description:
+      "Knowledge submission and nutritionist approval workflow. Merlin consumes only approved entries.",
+    auth: true,
+    rateLimit: "CREATE (30/min)",
+    routes: {
+      submit: "POST /api/knowledge-governance",
+      my: "GET /api/knowledge-governance/my",
+      pending: "GET /api/knowledge-governance/pending",
+      audit: "GET /api/knowledge-governance/audit/:entryId",
+      review: "POST|PATCH /api/knowledge-governance/review/:entryId",
+    },
+    body: {
+      topic: "string",
+      question: "string",
+      answer: "string",
+      summary: "string (optional)",
+      entry_type:
+        "training_method | injury | recovery_method | nutrition | supplement | psychology",
+      evidence_strength: "strong | moderate | limited",
+      consensus_level: "high | moderate | low",
+      action: "approve | reject (for review route)",
+      notes: "string (optional, for review route)",
+      override_quality_gate:
+        "boolean (optional, for approve route; requires detailed notes)",
+    },
+    notes: [
+      "Any authenticated user can submit",
+      "Any authenticated user can read their own submissions",
+      "Only nutritionists can approve/reject",
+      "Unapproved entries are excluded from Merlin knowledge search",
+      "Approval uses quality gates for answer depth, summary quality, dosing and safety (nutrition/supplement)",
+    ],
+  },
 
   // Fixtures
   fixtures: {

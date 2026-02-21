@@ -1,0 +1,91 @@
+@use "styles/mixins" as *;
+
+.security-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+}
+
+.security-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-3);
+  margin: 0 calc(var(--space-3) * -1);
+  border-radius: var(--radius-xl);
+  border: var(--border-2) solid transparent;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  min-height: var(--card-min-height-sm);
+
+  @include ds-hover-state(var(--surface-secondary));
+}
+
+.security-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.security-info h4 {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--ds-line-height-h3);
+  letter-spacing: var(--ds-letter-spacing-0-01em);
+  padding: 0;
+}
+
+.security-info p {
+  margin: 0;
+  font-size: var(--ds-font-size-compact-lg);
+  font-weight: var(--ds-font-weight-regular);
+  color: var(--color-text-muted);
+  line-height: var(--ds-line-height-body-sm);
+  padding: 0;
+}
+
+.security-item.danger .security-info h4 {
+  color: var(--color-status-error);
+}
+
+.security-item.danger {
+  @include ds-hover-state(var(--color-status-error-light));
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-lg);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+.security-item app-button {
+  flex-shrink: 0;
+  width: var(--size-120);
+  min-width: var(--input-min-width-sm);
+  max-width: var(--input-min-width-sm);
+}
+
+@include respond-to(md) {
+  .security-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+
+    app-button {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}

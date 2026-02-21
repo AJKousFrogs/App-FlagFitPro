@@ -1,0 +1,35 @@
+.dialog-container {
+  padding: 0;
+}
+
+.twofa-content {
+  padding: var(--space-6);
+}
+
+.step-section {
+  text-align: center;
+}
+
+.step-desc {
+  margin: 0 0 var(--space-6) 0;
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-normal);
+}
+
+.code-input-wrapper {
+  max-width: var(--input-min-width-lg);
+  margin: 0 auto var(--space-4);
+}
+
+.verification-code-input {
+  width: 100%;
+  font-family: var(--ds-font-family-mono);
+  font-size: var(--ds-font-size-2xl);
+  text-align: center;
+  letter-spacing: var(--ds-letter-spacing-0-5em);
+}
+
+.error-warning-icon {
+  color: var(--color-status-error);
+}

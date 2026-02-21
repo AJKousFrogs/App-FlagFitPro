@@ -37,7 +37,7 @@ import {
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -768,7 +768,7 @@ export class PlayerDevelopmentComponent implements OnInit {
         players?: Player[];
         goals?: DevelopmentGoal[];
       }> = await firstValueFrom(
-        this.api.get("/api/coach/player-development"),
+        this.api.get(API_ENDPOINTS.coach.playerDevelopment),
       );
       if (response?.success && response.data) {
         this.players.set(response.data.players || []);

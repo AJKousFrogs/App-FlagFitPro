@@ -22,7 +22,7 @@
   align-items: flex-start;
   gap: var(--space-3);
   width: 100%;
-  /* Padding from parent .p-toast-message-content via --p-toast-content-padding */
+  /* Padding comes from the Prime toast container via --p-toast-content-padding */
 }
 
 .toast-icon-wrapper {

@@ -157,40 +157,92 @@ async function runTests() {
   // Test 3: Verify immutability (try to update history - should fail)
   await describe("Immutability Enforcement", async () => {
     await test("state_transition_history blocks UPDATE", async () => {
-      // First, try to get a record (or create a test one)
-      const testId = "00000000-0000-0000-0000-000000000001";
-
-      // Try to insert a test record
-      const { data: insertData, error: insertError } = await supabase
+      // Prefer an existing history row so UPDATE/DELETE definitely target a real tuple
+      const { data: existingHistory, error: historyQueryError } = await supabase
         .from("state_transition_history")
-        .insert({
-          id: testId,
-          session_id: "00000000-0000-0000-0000-000000000002",
-          from_state: "GENERATED",
-          to_state: "VISIBLE",
-          actor_role: "system",
-          transitioned_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+        .select("id")
+        .limit(1)
+        .maybeSingle();
 
-      if (
-        insertError &&
-        !insertError.message.includes("violates foreign key")
-      ) {
-        // If insert fails for other reasons, that's okay - we'll try to update existing
-        // Check if we can query the table at least
-        const { error: queryError } = await supabase
-          .from("state_transition_history")
-          .select("id")
-          .limit(1);
+      if (historyQueryError) {
+        throw new Error(`Cannot access table: ${historyQueryError.message}`);
+      }
 
-        if (queryError) {
-          throw new Error(`Cannot access table: ${queryError.message}`);
+      let testId = existingHistory?.id;
+      let tempSessionId = null;
+
+      if (!testId) {
+        // Use a real training session to guarantee FK validity
+        const { data: session, error: sessionError } = await supabase
+        .from("training_sessions")
+        .select("id, session_state")
+        .limit(1)
+        .maybeSingle();
+
+        let sessionId = session?.id;
+        let sessionState = session?.session_state || "PLANNED";
+
+        if (sessionError) {
+          throw new Error(
+            `Cannot fetch a training session for immutability test: ${sessionError.message}`,
+          );
         }
 
-        // If we can't insert, that's fine - just verify the table exists
-        return true;
+        if (!sessionId) {
+          const { data: existingUser, error: userError } = await supabase
+            .from("users")
+            .select("id")
+            .limit(1)
+            .maybeSingle();
+
+          if (userError || !existingUser?.id) {
+            console.log(
+              "⚠️  Skipping strict immutability mutation check: no seedable users/training sessions in environment.",
+            );
+            return true;
+          }
+
+          // Seed one minimal row for contract validation when environment has no sessions.
+          tempSessionId = crypto.randomUUID();
+          const { error: seedError } = await supabase
+            .from("training_sessions")
+            .insert({
+              id: tempSessionId,
+              user_id: existingUser.id,
+              session_date: new Date().toISOString().slice(0, 10),
+              session_type: "contract_test",
+              duration_minutes: 1,
+              session_state: "PLANNED",
+              coach_locked: false,
+            });
+
+          if (seedError) {
+            throw new Error(
+              `Cannot fetch or seed a training session for immutability test: ${seedError.message}`,
+            );
+          }
+
+          sessionId = tempSessionId;
+          sessionState = "PLANNED";
+        }
+
+        testId = crypto.randomUUID();
+        const targetState = sessionState;
+
+        const { error: insertError } = await supabase
+          .from("state_transition_history")
+          .insert({
+            id: testId,
+            session_id: sessionId,
+            from_state: null,
+            to_state: targetState,
+            actor_role: "system",
+            transitioned_at: new Date().toISOString(),
+          });
+
+        if (insertError) {
+          throw new Error(`Cannot insert test history row: ${insertError.message}`);
+        }
       }
 
       // Now try to update (should fail)
@@ -219,6 +271,11 @@ async function runTests() {
 
       if (!deleteError) {
         throw new Error("DELETE was allowed (should be blocked)");
+      }
+
+      // Best-effort cleanup for any temporary seeded parent session.
+      if (tempSessionId) {
+        await supabase.from("training_sessions").delete().eq("id", tempSessionId);
       }
 
       return true;

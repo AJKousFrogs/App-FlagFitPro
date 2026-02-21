@@ -34,7 +34,7 @@ import { TableModule } from "primeng/table";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -679,7 +679,7 @@ export class DataImportComponent implements OnInit {
   async loadWearableStatus(): Promise<void> {
     try {
       const response = (await firstValueFrom(
-        this.api.get("/api/wearables/status"),
+        this.api.get(API_ENDPOINTS.dataImport.wearableStatus),
       )) as ApiResponse<WearableStatusResponse>;
       if (response?.success && response.data?.devices) {
         this.wearableDevices.set(response.data.devices);
@@ -856,7 +856,7 @@ export class DataImportComponent implements OnInit {
     this.toastService.info("Downloading file from URL...", "Fetching");
 
     // In real implementation, this would fetch the file
-    this.api.post("/api/import/fetch-url", { url: this.importUrl }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.post(API_ENDPOINTS.dataImport.fetchUrl, { url: this.importUrl }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (_response: unknown) => {
         // Process fetched data
         this.toastService.success("File fetched successfully", "Downloaded");
@@ -911,7 +911,7 @@ export class DataImportComponent implements OnInit {
 
     try {
       const response = (await firstValueFrom(
-        this.api.post("/api/import/process", {
+        this.api.post(API_ENDPOINTS.dataImport.process, {
           type: type.id,
           data: preview.previewData,
           mappings: preview.fieldMappings,

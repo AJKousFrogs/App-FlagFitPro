@@ -28,7 +28,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SwipeGestureDirective } from "../../shared/directives/swipe-gesture.directive";
 import { GameTimePipe } from "../../shared/pipes/game-time.pipe";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { AuthService } from "../../core/services/auth.service";
 import { timer, Subscription } from "rxjs";
@@ -411,7 +411,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   private loadPlayers(): void {
     // Load players from API or use field players
     this.apiService
-      .get("/api/roster/players")
+      .get(API_ENDPOINTS.roster.players)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
