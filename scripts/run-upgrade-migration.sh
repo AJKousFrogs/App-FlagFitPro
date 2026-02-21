@@ -122,7 +122,7 @@ case $choice in
             echo -e "${RED}✗${NC} SUPABASE_SERVICE_KEY not found in .env"
             echo ""
             echo "Add to .env file:"
-            echo "SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw"
+            echo "SUPABASE_SERVICE_KEY=your_service_role_key_here"
             exit 1
         fi
         

@@ -1,0 +1,224 @@
+# SQL Migration Audit
+
+Generated: 2026-02-21T16:57:09.538Z
+SQL files scanned: 182
+Files with findings: 77
+Findings: high=17, medium=31, low=56, total=104
+Supabase migrations: 52
+Legacy database migrations: 103
+Overlapping migration basenames: 0
+
+## Top Files
+- database/migrations/070_comprehensive_database_refactor.sql (4 findings)
+- database/migrations/072_exercisedb_integration.sql (3 findings)
+- database/add_email_verification.sql (2 findings)
+- database/create-training-schema.sql (2 findings)
+- database/migrations/001_base_tables.sql (2 findings)
+- database/migrations/030_advanced_ux_components_support.sql (2 findings)
+- database/migrations/063_player_tournament_availability_and_finances.sql (2 findings)
+- database/migrations/066_deploy_missing_tables_and_functions.sql (2 findings)
+- database/migrations/072_backfill_metric_entries.sql (2 findings)
+- database/migrations/075_create_ml_training_data.sql (2 findings)
+- database/migrations/077_ai_coach_phase1.sql (2 findings)
+- database/migrations/078_ai_coach_phase2.sql (2 findings)
+- database/migrations/078_flow_to_feature_fixes.sql (2 findings)
+- database/migrations/080_ai_coach_phase4.sql (2 findings)
+- database/migrations/081_smart_ai_features.sql (2 findings)
+- database/migrations/102_exercise_library.sql (2 findings)
+- database/migrations/20241227_add_push_subscriptions.sql (2 findings)
+- database/migrations/20241227_add_user_security.sql (2 findings)
+- database/migrations/20241227_add_user_settings.sql (2 findings)
+- supabase/migrations/001_role_enforcement.sql (2 findings)
+- supabase/migrations/20250108000001_knowledge_base_governance.sql (2 findings)
+- supabase/migrations/20260111_create_nutrition_tables.sql (2 findings)
+- supabase/migrations/20260111_fix_physical_measurements.sql (2 findings)
+- supabase/migrations/20260112_fix_missing_schema_elements.sql (2 findings)
+- database/migrations/029_game_events_system.sql (1 findings)
+- database/migrations/029_sponsors_table.sql (1 findings)
+- database/migrations/031_wellness_and_measurements_tables.sql (1 findings)
+- database/migrations/034_check_acwr_rpe_consistency.sql (1 findings)
+- database/migrations/034a_enable_rls_wearables_data.sql (1 findings)
+- database/migrations/035_enable_rls_remaining_tables.sql (1 findings)
+
+## Detailed Findings
+- database/add_email_verification.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/create-training-schema.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/001_base_tables.sql
+  - [medium] non_idempotent_create_table: CREATE TABLE without IF NOT EXISTS
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- database/migrations/029_game_events_system.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/029_sponsors_table.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- database/migrations/030_advanced_ux_components_support.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/031_wellness_and_measurements_tables.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/034_check_acwr_rpe_consistency.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/034a_enable_rls_wearables_data.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/035_enable_rls_remaining_tables.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/037a_notifications_unification.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/038_add_username_and_verification_fields.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- database/migrations/041_player_stats_aggregation_view.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/042_training_data_consistency.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/043_database_upgrade_consistency.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/047_ensure_postgrest_exposure.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/048_fix_security_definer_views.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/050_create_video_tables.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/051_add_service_migration_tables.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/053_ai_safety_tier_system.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/054_training_video_visibility_system.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/055_superadmin_approval_system.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/060_enhanced_chat_system.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/061_roster_management_tables.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/062_channel_member_count.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/062_extended_staff_roles.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/063_add_psychologist_role.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/063_player_tournament_availability_and_finances.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/065_plyometrics_isometrics_exercises.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/066_deploy_missing_tables_and_functions.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/069_prerequisites_check_and_setup.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/070_comprehensive_database_refactor.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/072_backfill_metric_entries.sql
+  - [medium] non_idempotent_create_table: CREATE TABLE without IF NOT EXISTS
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/072_exercisedb_integration.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/074_standardize_user_id.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/075_create_ml_training_data.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/075_fix_acwr_rolling_average_calculation.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/077_ai_coach_phase1.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/078_ai_coach_phase2.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/078_flow_to_feature_fixes.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/079_ai_coach_phase3.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/080_ai_coach_phase4.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/081_smart_ai_features.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/099_final_missing_tables.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/100_community_system.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/101_enhanced_body_composition.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/migrations/102_exercise_library.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/103_daily_protocols.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/104_add_coach_alert_fields.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/105_offboarding_flows.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/112_fix_users_table_profile_fields.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- database/migrations/116_add_workout_logs_load_fields.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- database/migrations/117_wellness_checkin_transaction.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/migrations/20241227_add_push_subscriptions.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/20241227_add_user_security.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/20241227_add_user_settings.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- database/migrations/fix_wellness_sync_trigger.sql
+  - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
+- database/schema.baseline.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/schema.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- database/validate_indexes.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/001_role_enforcement.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- supabase/migrations/20250108000001_knowledge_base_governance.sql
+  - [medium] non_idempotent_create_table: CREATE TABLE without IF NOT EXISTS
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/20250130000000_team_activities_sot.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- supabase/migrations/20251213000000_team_system.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- supabase/migrations/20260106_consent_enforcement.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/20260106_merlin_readonly_role.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/20260106_safety_override_system.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/20260106_session_versioning.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/20260106_wellness_privacy_rls.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/20260111_create_nutrition_tables.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- supabase/migrations/20260111_fix_nutrition_logs_policies.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- supabase/migrations/20260111_fix_physical_measurements.sql
+  - [medium] non_idempotent_create_table: CREATE TABLE without IF NOT EXISTS
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+- supabase/migrations/20260112_add_missing_tables_for_frontend.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- supabase/migrations/20260112_fix_missing_schema_elements.sql
+  - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- supabase/migrations/20260113_add_consent_views.sql
+  - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
+- supabase/migrations/20260217000000_database_hardening_cleanup.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
+- supabase/migrations/20260219170000_create_state_transition_history_for_contracts.sql
+  - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS

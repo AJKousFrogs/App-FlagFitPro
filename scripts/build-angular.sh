@@ -14,7 +14,7 @@ fi
 
 # Get environment variables (with defaults)
 SUPABASE_URL="${SUPABASE_URL:-}"
-SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0"
+SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-}"
 
 # Check if environment variables are set
 if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
@@ -22,7 +22,7 @@ if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
   echo "   Using empty values - ensure environment.prod.ts has correct values"
   echo "   Or set environment variables:"
   echo "   export SUPABASE_URL='your-url'"
-  echo "   export SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0'"
+  echo "   export SUPABASE_ANON_KEY='your-anon-key'"
 fi
 
 # Create backup of environment.prod.ts
@@ -82,4 +82,3 @@ echo "Next steps:"
 echo "  1. Deploy dist/flagfit-pro to your hosting platform"
 echo "  2. Ensure SUPABASE_URL and SUPABASE_ANON_KEY are set in production"
 echo "  3. Or configure Angular file replacement for automatic injection"
-

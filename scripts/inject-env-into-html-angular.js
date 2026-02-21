@@ -31,15 +31,17 @@ const sentryEnabled = process.env.VITE_ENABLE_SENTRY || "false";
 // Generate build timestamp for cache-busting
 const buildTimestamp = new Date().toISOString();
 const buildId = Date.now().toString(36);
+const maskSecret = (value) =>
+  value ? `${value.slice(0, 6)}...${value.slice(-4)}` : "✗ Missing";
+const escapeJs = (value) =>
+  String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
 console.log("🔧 Injecting environment variables into Angular build...");
 console.log(`   Source: ${indexHtmlPath}`);
 console.log(`   Build ID: ${buildId}`);
 console.log(`   Build Time: ${buildTimestamp}`);
 console.log(`   SUPABASE_URL: ${supabaseUrl ? "✓ Set" : "✗ Missing"}`);
-console.log(
-  `   SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0 ? "✓ Set" : "✗ Missing"}`,
-);
+console.log(`   SUPABASE_ANON_KEY: ${maskSecret(supabaseAnonKey)}`);
 console.log(`   SENTRY_DSN: ${sentryDsn ? "✓ Set" : "✗ Not configured"}`);
 console.log(`   SENTRY_ENABLED: ${sentryEnabled}`);
 
@@ -84,14 +86,14 @@ const envScript = `
     <!-- Build: ${buildId} @ ${buildTimestamp} -->
     <script>
       window._env = window._env || {};
-      window._env.SUPABASE_URL = '${supabaseUrl}';
-      window._env.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0';
-      window._env.VITE_SUPABASE_URL = '${supabaseUrl}';
-      window._env.VITE_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0';
-      window._env.VITE_SENTRY_DSN = '${sentryDsn}';
-      window._env.VITE_ENABLE_SENTRY = '${sentryEnabled}';
-      window._env.BUILD_ID = '${buildId}';
-      window._env.BUILD_TIMESTAMP = '${buildTimestamp}';
+      window._env.SUPABASE_URL = '${escapeJs(supabaseUrl)}';
+      window._env.SUPABASE_ANON_KEY = '${escapeJs(supabaseAnonKey)}';
+      window._env.VITE_SUPABASE_URL = '${escapeJs(supabaseUrl)}';
+      window._env.VITE_SUPABASE_ANON_KEY = '${escapeJs(supabaseAnonKey)}';
+      window._env.VITE_SENTRY_DSN = '${escapeJs(sentryDsn)}';
+      window._env.VITE_ENABLE_SENTRY = '${escapeJs(sentryEnabled)}';
+      window._env.BUILD_ID = '${escapeJs(buildId)}';
+      window._env.BUILD_TIMESTAMP = '${escapeJs(buildTimestamp)}';
     </script>`;
 
 // Insert the script right before </head>

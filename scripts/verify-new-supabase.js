@@ -24,21 +24,25 @@ try {
 }
 
 const SUPABASE_URL =
-  process.env.SUPABASE_URL || "https://grfjmnjpzvknmsxrwesx.supabase.co";
+  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
 const SUPABASE_SERVICE_KEY =
   process.env.SUPABASE_SERVICE_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw";
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  "";
 const SUPABASE_ANON_KEY =
   process.env.SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0";
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  "";
 
 console.log("🔍 Verifying New Supabase Project Connection\n");
 console.log(`📡 URL: ${SUPABASE_URL}`);
 console.log(`🔑 Service Key: ${SUPABASE_SERVICE_KEY ? "✓ Set" : "✗ Missing"}`);
 console.log(`🔑 Anon Key: ${SUPABASE_ANON_KEY ? "✓ Set" : "✗ Missing"}\n`);
 
-if (!SUPABASE_SERVICE_KEY) {
-  console.error("❌ Error: SUPABASE_SERVICE_KEY is required");
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error(
+    "❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY (or SUPABASE_SERVICE_ROLE_KEY) are required",
+  );
   process.exit(1);
 }
 

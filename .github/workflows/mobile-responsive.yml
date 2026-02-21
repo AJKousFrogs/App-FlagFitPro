@@ -27,6 +27,9 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            angular/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -75,6 +78,9 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            angular/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -183,6 +189,9 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            angular/package-lock.json
 
       - name: Install dependencies
         run: npm ci

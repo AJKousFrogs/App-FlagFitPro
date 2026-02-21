@@ -15,12 +15,20 @@ const __dirname = path.dirname(__filename);
 const envPath = path.join(__dirname, "../.env");
 const envExamplePath = path.join(__dirname, "../.env.example");
 
-// New Supabase credentials
-const NEW_SUPABASE_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co";
+const DEFAULT_SUPABASE_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co";
+const PLACEHOLDER_ANON = "your_supabase_anon_key_here";
+const PLACEHOLDER_SERVICE = "your_supabase_service_role_key_here";
+
+// Prefer shell-provided values; fall back to safe placeholders.
+const NEW_SUPABASE_URL = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
 const NEW_SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0";
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  PLACEHOLDER_ANON;
 const NEW_SUPABASE_SERVICE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw";
+  process.env.SUPABASE_SERVICE_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  PLACEHOLDER_SERVICE;
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -116,7 +124,7 @@ async function updateEnvFile() {
     `  SUPABASE_ANON_KEY=${NEW_SUPABASE_ANON_KEY.substring(0, 50)}...`,
   );
   console.log(
-    `  SUPABASE_SERVICE_KEY=${NEW_SUPABASE_SERVICE_KEY.substring(0, 50)}...`,
+    `  SUPABASE_SERVICE_KEY=${NEW_SUPABASE_SERVICE_KEY === PLACEHOLDER_SERVICE ? PLACEHOLDER_SERVICE : `${NEW_SUPABASE_SERVICE_KEY.substring(0, 12)}...`}`,
   );
 
   rl.close();

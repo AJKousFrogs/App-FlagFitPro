@@ -190,6 +190,7 @@ export default [
       "no-unused-vars": "off",
       "prefer-const": "off",
       "prefer-destructuring": "off",
+      "no-useless-concat": "off",
       "require-await": "off",
       "no-await-in-loop": "off",
       "no-promise-executor-return": "off",
@@ -207,22 +208,6 @@ export default [
       "no-promise-executor-return": "off",
     },
   },
-
-  // ============================================
-  // RELAXED RULES FOR NETLIFY FUNCTIONS
-  // ============================================
-  {
-    files: ["netlify/functions/**/*.js", "netlify/functions/**/*.cjs"],
-    rules: {
-      "no-console": "off",
-      "no-unused-vars": "off",
-      "prefer-const": "off",
-      "no-useless-concat": "off",
-      "require-await": "off",
-      "no-await-in-loop": "off",
-    },
-  },
-
   // ============================================
   // RELAXED RULES FOR TEST FILES
   // ============================================

@@ -75,7 +75,7 @@ jobs:
 
       - name: Enforce no encapsulation hacks
         run: |
-          if rg -n "::ng-deep" angular/src; then
+          if rg -n "::ng-deep" src; then
             echo "::ng-deep usage detected. Use global overrides or CSS variables instead."
             exit 1
           fi
