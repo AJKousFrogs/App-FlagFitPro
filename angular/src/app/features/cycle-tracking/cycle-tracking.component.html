@@ -24,6 +24,7 @@
         <p-card class="cycle-status-card">
           <div class="cycle-status-content">
             <div class="cycle-day-display">
+              <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
               <div
                 class="day-circle"
                 [style.borderColor]="getCurrentPhase().color"
@@ -34,6 +35,7 @@
             </div>
 
             <div class="phase-display">
+              <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
               <div
                 class="phase-badge"
                 [style.backgroundColor]="getCurrentPhase().color"
@@ -54,6 +56,7 @@
 
             <div class="cycle-phases-timeline">
               @for (phase of cyclePhases; track phase.name) {
+                <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
                 <div
                   class="phase-segment"
                   [class.active]="phase.name === getCurrentPhase().name"

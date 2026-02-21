@@ -463,6 +463,7 @@
               } @else {
                 <!-- STEP 3: Session rows as card-like items -->
                 @for (session of filteredSessions(); track session.id) {
+                  <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
                   <div
                     class="session-item"
                     [style.border-left-color]="
@@ -488,6 +489,7 @@
                   >
                     <div class="session-info">
                       <!-- Session type color indicator -->
+                      <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
                       <span
                         class="session-type-indicator"
                         [style.background-color]="

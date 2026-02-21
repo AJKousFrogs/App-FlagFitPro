@@ -204,11 +204,13 @@
                 );
                 track trackByWorkoutTitle($index, workout)
               ) {
+                <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
                 <div
                   class="workout-card-compact"
                   [style.border-left-color]="workout.iconBg"
                   (click)="startWorkout(workout)"
                 >
+                  <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
                   <div
                     class="workout-icon-small"
                     [style.background]="workout.iconBg"

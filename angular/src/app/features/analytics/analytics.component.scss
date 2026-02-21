@@ -1395,6 +1395,7 @@
 
 .benchmark-marker {
   position: absolute;
+  left: 100%;
   top: calc(-1 * var(--space-1));
   bottom: calc(-1 * var(--space-1));
   width: var(--indicator-size-xs); // var(--space-1)

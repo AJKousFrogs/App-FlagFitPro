@@ -5,16 +5,45 @@ import { LoggerService, toLogContext } from "../../../core/services/logger.servi
 import { PlatformService } from "../../../core/services/platform.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
-import { ThemeService } from "../../../core/services/theme.service";
+import { ThemeMode, ThemeService } from "../../../core/services/theme.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { SettingsDataService } from "./settings-data.service";
 
 export interface SaveSettingsInput {
-  profile: Record<string, any>;
-  notifications: Record<string, any>;
-  privacy: Record<string, any>;
-  preferences: Record<string, any>;
+  profile: SettingsProfileInput;
+  notifications: SettingsNotificationInput;
+  privacy: SettingsPrivacyInput;
+  preferences: SettingsPreferenceInput;
+}
+
+interface SettingsProfileInput {
+  displayName: string;
+  email: string;
+  dateOfBirth: Date | string | null;
+  position: string;
+  jerseyNumber: string;
+  heightCm: number | null;
+  weightKg: number | null;
+  teamId: string | null;
+  phone: string;
+  country: string;
+}
+
+interface SettingsNotificationInput {
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  trainingReminders: boolean;
+}
+
+interface SettingsPrivacyInput {
+  profileVisibility: string;
+  showStats: boolean;
+}
+
+interface SettingsPreferenceInput {
+  theme: ThemeMode;
+  language: string;
 }
 
 @Injectable({
