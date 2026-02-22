@@ -22,7 +22,6 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
 
 @Component({
   selector: "app-readiness-widget",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

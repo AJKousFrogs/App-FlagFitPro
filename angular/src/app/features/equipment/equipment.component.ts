@@ -9,7 +9,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Badge } from "primeng/badge";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -49,14 +48,23 @@ type ItemType =
   | "cones"
   | "other";
 type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
+type EquipmentFormItem = {
+  name: string;
+  item_type: ItemType;
+  condition: Condition;
+  size: string;
+  color: string;
+  quantity_total: number;
+  description: string;
+};
+type CheckoutData = { player_id: string; quantity: number; notes: string };
+type ReturnData = { condition: Condition; notes: string };
 
 @Component({
   selector: "app-equipment",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     TableModule,
     StatusTagComponent,
@@ -156,10 +164,9 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <div class="filter-actions">
                   <p-select
                     [options]="typeOptions"
-                    [(ngModel)]="selectedType"
+                    (onChange)="onSelectedTypeChange($event.value)"
                     placeholder="All Types"
                     [showClear]="true"
-                    (onValueChange)="filterEquipment()"
                   ></p-select>
                 </div>
               </div>
@@ -339,7 +346,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               <label>Name *</label>
               <input
                 pInputText
-                [(ngModel)]="newItem.name"
+                [value]="newItem.name"
+                (input)="updateNewItemName(getInputValue($event))"
                 placeholder="e.g., Home Jersey"
               />
             </div>
@@ -349,7 +357,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Type *</label>
                 <p-select
                   [options]="typeOptions"
-                  [(ngModel)]="newItem.item_type"
+                  (onChange)="updateNewItemType($event.value)"
                   placeholder="Select type"
                   class="w-full"
                 ></p-select>
@@ -359,7 +367,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Condition</label>
                 <p-select
                   [options]="conditionOptions"
-                  [(ngModel)]="newItem.condition"
+                  (onChange)="updateNewItemCondition($event.value)"
                   class="w-full"
                 ></p-select>
               </div>
@@ -370,7 +378,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Size</label>
                 <input
                   pInputText
-                  [(ngModel)]="newItem.size"
+                  [value]="newItem.size"
+                  (input)="updateNewItemSize(getInputValue($event))"
                   placeholder="e.g., Large, 42"
                 />
               </div>
@@ -379,7 +388,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Color</label>
                 <input
                   pInputText
-                  [(ngModel)]="newItem.color"
+                  [value]="newItem.color"
+                  (input)="updateNewItemColor(getInputValue($event))"
                   placeholder="e.g., Red"
                 />
               </div>
@@ -388,7 +398,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
             <div class="form-field">
               <label>Total Quantity *</label>
               <p-inputNumber
-                [(ngModel)]="newItem.quantity_total"
+                (onInput)="updateNewItemQuantity($event.value)"
                 [min]="1"
               ></p-inputNumber>
             </div>
@@ -397,7 +407,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               <label>Description</label>
               <input
                 pInputText
-                [(ngModel)]="newItem.description"
+                [value]="newItem.description"
+                (input)="updateNewItemDescription(getInputValue($event))"
                 placeholder="Optional notes..."
               />
             </div>
@@ -436,7 +447,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Player *</label>
                 <p-select
                   [options]="teamPlayers()"
-                  [(ngModel)]="checkoutData.player_id"
+                  (onChange)="updateCheckoutPlayerId($event.value)"
                   optionLabel="name"
                   optionValue="id"
                   placeholder="Select player"
@@ -448,7 +459,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               <div class="form-field">
                 <label>Quantity</label>
                 <p-inputNumber
-                  [(ngModel)]="checkoutData.quantity"
+                  (onInput)="updateCheckoutQuantity($event.value)"
                   [min]="1"
                   [max]="checkoutItem()!.quantity_available"
                 ></p-inputNumber>
@@ -458,7 +469,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Notes</label>
                 <input
                   pInputText
-                  [(ngModel)]="checkoutData.notes"
+                  [value]="checkoutData.notes"
+                  (input)="updateCheckoutNotes(getInputValue($event))"
                   placeholder="Optional..."
                 />
               </div>
@@ -497,7 +509,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Condition at Return *</label>
                 <p-select
                   [options]="conditionOptions"
-                  [(ngModel)]="returnData.condition"
+                  (onChange)="updateReturnCondition($event.value)"
                   class="w-full"
                 ></p-select>
               </div>
@@ -506,7 +518,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <label>Notes</label>
                 <input
                   pInputText
-                  [(ngModel)]="returnData.notes"
+                  [value]="returnData.notes"
+                  (input)="updateReturnNotes(getInputValue($event))"
                   placeholder="Any damage or issues..."
                 />
               </div>
@@ -553,9 +566,9 @@ export class EquipmentComponent implements OnInit {
   returnAssignment = signal<EquipmentAssignment | null>(null);
 
   // Form data
-  newItem = this.getEmptyItem();
-  checkoutData = { player_id: "", quantity: 1, notes: "" };
-  returnData = { condition: "good" as Condition, notes: "" };
+  newItem: EquipmentFormItem = this.getEmptyItem();
+  checkoutData: CheckoutData = { player_id: "", quantity: 1, notes: "" };
+  returnData: ReturnData = { condition: "good", notes: "" };
 
   // Options
   typeOptions = this.equipmentService.EQUIPMENT_TYPES.map((t) => ({
@@ -611,7 +624,7 @@ export class EquipmentComponent implements OnInit {
     return this.teamMembershipService.canManageRoster();
   }
 
-  getEmptyItem() {
+  getEmptyItem(): EquipmentFormItem {
     return {
       name: "",
       item_type: "jersey" as ItemType,
@@ -664,6 +677,63 @@ export class EquipmentComponent implements OnInit {
 
   filterEquipment(): void {
     // Computed handles filtering
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | null)?.value ?? "";
+  }
+
+  onSelectedTypeChange(value: ItemType | null): void {
+    this.selectedType = value;
+    this.filterEquipment();
+  }
+
+  updateNewItemName(value: string | null | undefined): void {
+    this.newItem = { ...this.newItem, name: value ?? "" };
+  }
+
+  updateNewItemType(value: ItemType | null | undefined): void {
+    this.newItem = { ...this.newItem, item_type: value ?? "jersey" };
+  }
+
+  updateNewItemCondition(value: Condition | null | undefined): void {
+    this.newItem = { ...this.newItem, condition: value ?? "good" };
+  }
+
+  updateNewItemSize(value: string | null | undefined): void {
+    this.newItem = { ...this.newItem, size: value ?? "" };
+  }
+
+  updateNewItemColor(value: string | null | undefined): void {
+    this.newItem = { ...this.newItem, color: value ?? "" };
+  }
+
+  updateNewItemQuantity(value: number | null | undefined): void {
+    this.newItem = { ...this.newItem, quantity_total: value ?? 1 };
+  }
+
+  updateNewItemDescription(value: string | null | undefined): void {
+    this.newItem = { ...this.newItem, description: value ?? "" };
+  }
+
+  updateCheckoutPlayerId(value: string | null | undefined): void {
+    this.checkoutData = { ...this.checkoutData, player_id: value ?? "" };
+  }
+
+  updateCheckoutQuantity(value: number | null | undefined): void {
+    this.checkoutData = { ...this.checkoutData, quantity: value ?? 1 };
+  }
+
+  updateCheckoutNotes(value: string | null | undefined): void {
+    this.checkoutData = { ...this.checkoutData, notes: value ?? "" };
+  }
+
+  updateReturnCondition(value: Condition | null | undefined): void {
+    this.returnData = { ...this.returnData, condition: value ?? "good" };
+  }
+
+  updateReturnNotes(value: string | null | undefined): void {
+    this.returnData = { ...this.returnData, notes: value ?? "" };
   }
 
   getTypeIcon(type: string): string {

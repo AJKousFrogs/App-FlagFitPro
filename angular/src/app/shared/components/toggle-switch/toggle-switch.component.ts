@@ -21,7 +21,6 @@ import { CommonModule } from "@angular/common";
  */
 @Component({
   selector: "app-toggle-switch",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
   providers: [

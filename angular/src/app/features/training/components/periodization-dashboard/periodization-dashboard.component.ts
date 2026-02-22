@@ -75,7 +75,6 @@ interface TimelineEvent {
 
 @Component({
   selector: "app-periodization-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

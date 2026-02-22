@@ -9,7 +9,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { Slider } from "primeng/slider";
 import { Tag } from "primeng/tag";
@@ -41,12 +40,10 @@ export interface ReadinessResult {
 
 @Component({
   selector: "app-wellness-checkin",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     Slider,
-    Checkbox,
     Dialog,
     
     
@@ -130,7 +127,7 @@ export interface ReadinessResult {
             <span class="slider-label">Poor</span>
             <p-slider
               [ngModel]="formData().sleepQuality"
-              (ngModelChange)="updateFormField('sleepQuality', $event)"
+              (ngModelChange)="onSliderChange('sleepQuality', $event)"
               [min]="1"
               [max]="5"
               [step]="1"
@@ -160,7 +157,7 @@ export interface ReadinessResult {
             <span class="slider-label">4h</span>
             <p-slider
               [ngModel]="formData().sleepHours"
-              (ngModelChange)="updateFormField('sleepHours', $event)"
+              (ngModelChange)="onSliderChange('sleepHours', $event)"
               [min]="4"
               [max]="12"
               [step]="0.5"
@@ -199,7 +196,7 @@ export interface ReadinessResult {
             <span class="slider-label">Exhausted</span>
             <p-slider
               [ngModel]="formData().energyLevel"
-              (ngModelChange)="updateFormField('energyLevel', $event)"
+              (ngModelChange)="onSliderChange('energyLevel', $event)"
               [min]="1"
               [max]="5"
               [step]="1"
@@ -231,7 +228,7 @@ export interface ReadinessResult {
             <span class="slider-label">Very Sore</span>
             <p-slider
               [ngModel]="formData().muscleSoreness"
-              (ngModelChange)="updateFormField('muscleSoreness', $event)"
+              (ngModelChange)="onSliderChange('muscleSoreness', $event)"
               [min]="1"
               [max]="5"
               [step]="1"
@@ -280,11 +277,11 @@ export interface ReadinessResult {
             <div class="body-area-grid">
               @for (area of bodyAreas; track area) {
                 <label class="area-checkbox">
-                  <p-checkbox
-                    [ngModel]="formData().sorenessAreas.includes(area)"
-                    (ngModelChange)="toggleArea(area, $event)"
-                    [binary]="true"
-                    variant="filled"
+                  <input
+                    type="checkbox"
+                    class="area-checkbox-input"
+                    [checked]="formData().sorenessAreas.includes(area)"
+                    (change)="toggleArea(area, isChecked($event))"
                   />
                   <span>{{ area }}</span>
                 </label>
@@ -318,7 +315,7 @@ export interface ReadinessResult {
             <span class="slider-label">Very High</span>
             <p-slider
               [ngModel]="formData().stressLevel"
-              (ngModelChange)="updateFormField('stressLevel', $event)"
+              (ngModelChange)="onSliderChange('stressLevel', $event)"
               [min]="1"
               [max]="5"
               [step]="1"
@@ -345,8 +342,8 @@ export interface ReadinessResult {
           </label>
           <textarea
             p-textarea
-            [ngModel]="formData().notes || ''"
-            (ngModelChange)="updateFormField('notes', $event)"
+            [value]="formData().notes || ''"
+            (input)="updateFormField('notes', getInputValue($event))"
             rows="2"
             placeholder="Any additional notes..."
           ></textarea>
@@ -572,6 +569,38 @@ export class WellnessCheckinComponent implements OnInit {
       ...this.formData(),
       [field]: value,
     });
+  }
+
+  onSliderChange(
+    field:
+      | "sleepQuality"
+      | "sleepHours"
+      | "energyLevel"
+      | "muscleSoreness"
+      | "stressLevel",
+    value: number | number[] | null | undefined,
+  ): void {
+    const nextValue = Array.isArray(value) ? value[0] : value;
+    if (typeof nextValue !== "number") {
+      return;
+    }
+    this.updateFormField(field, nextValue);
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   getSleepLabel(value: number): string {

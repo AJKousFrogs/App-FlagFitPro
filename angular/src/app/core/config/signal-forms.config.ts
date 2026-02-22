@@ -86,7 +86,7 @@ export interface SignalFormGroup<T extends Record<string, unknown>> {
  * ]);
  *
  * // In template:
- * <input [(ngModel)]="emailField.value" (blur)="emailField.markTouched()" />
+ * <input [value]="emailField.value()" (input)="onEmailInput($event)" (blur)="emailField.markTouched()" />
  * @if (emailField.showError()) {
  *   <span class="error">{{ emailField.error() }}</span>
  * }
@@ -549,7 +549,7 @@ export const SignalFormsMigrationGuide = {
    * Validators.pattern → SignalValidators.pattern()
    *
    * Template changes:
-   * formControlName="name" → [(ngModel)]="form.fields.name.value"
+   * formControlName="name" → [value]="form.fields.name.value()" + (input)="onNameInput($event)"
    * form.get('name')?.invalid → !form.fields.name.valid()
    * form.get('name')?.touched → form.fields.name.touched()
    * form.get('name')?.errors?.['required'] → form.fields.name.error()

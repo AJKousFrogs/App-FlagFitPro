@@ -93,7 +93,8 @@
                       <p-select
                         inputId="clearance-filter"
                         [options]="clearanceFilterOptions"
-                        [(ngModel)]="clearanceFilter"
+                        [ngModel]="clearanceFilter"
+                        (onChange)="onClearanceFilterChange($event.value)"
                         placeholder="Filter by status"
                         [showClear]="true"
                         [attr.aria-label]="
@@ -526,9 +527,9 @@
                     <p-select
                       inputId="history-athlete-select"
                       [options]="athleteSelectOptions()"
-                      [(ngModel)]="selectedHistoryAthlete"
+                      [ngModel]="selectedHistoryAthlete"
+                      (onChange)="onHistoryAthleteChange($event.value)"
                       placeholder="Select athlete"
-                      (onValueChange)="loadInjuryHistory()"
                       [attr.aria-label]="
                         'Select athlete to view injury history'
                       "
@@ -858,7 +859,8 @@
               <p-select
                 inputId="report-type-select"
                 [options]="reportTypes"
-                [(ngModel)]="selectedReportType"
+                [ngModel]="selectedReportType"
+                (onChange)="onReportTypeChange($event.value)"
                 placeholder="Select report type"
                 class="w-full"
                 [attr.aria-label]="'Select report type'"
@@ -869,7 +871,8 @@
               <p-select
                 inputId="report-athlete-select"
                 [options]="athleteSelectOptions()"
-                [(ngModel)]="reportAthleteId"
+                [ngModel]="reportAthleteId"
+                (onChange)="onReportAthleteChange($event.value)"
                 placeholder="Select athlete"
                 class="w-full"
                 [attr.aria-label]="'Select athlete for report'"

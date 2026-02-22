@@ -16,7 +16,6 @@ import { ProgressBar } from "primeng/progressbar";
 
 @Component({
   selector: "app-acwr-baseline",
-  standalone: true,
   imports: [CommonModule, ProgressBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./acwr-baseline.component.html",

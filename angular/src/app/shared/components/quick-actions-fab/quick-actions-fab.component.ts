@@ -25,7 +25,6 @@ interface QuickActionItem {
 
 @Component({
   selector: "app-quick-actions-fab",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

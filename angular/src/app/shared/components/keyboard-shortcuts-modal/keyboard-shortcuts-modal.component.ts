@@ -22,7 +22,6 @@ import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortc
 
 @Component({
   selector: "app-keyboard-shortcuts-modal",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, AppDialogComponent, Divider, ButtonComponent],
   template: `

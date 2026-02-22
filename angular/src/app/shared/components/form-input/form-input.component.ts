@@ -27,7 +27,6 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 
 @Component({
   selector: "app-form-input",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   providers: [
@@ -74,7 +73,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
           [readonly]="readonly()"
           [autocomplete]="autocomplete()"
           [value]="value()"
-          (input)="onInput($any($event.target).value)"
+          (input)="onInput(getInputValue($event))"
           (blur)="onBlur()"
           (focus)="onFocus()"
           [class.has-prefix]="prefixIcon()"
@@ -238,6 +237,10 @@ export class FormInputComponent implements ControlValueAccessor {
     this.value.set(newValue);
     this.onChange(newValue);
     this.valueChange.emit(newValue);
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement).value;
   }
 
   /**

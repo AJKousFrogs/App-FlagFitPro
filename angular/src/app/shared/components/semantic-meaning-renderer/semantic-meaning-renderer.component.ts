@@ -47,7 +47,6 @@ import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-overr
 
 @Component({
   selector: "app-semantic-meaning-renderer",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: ` <ng-container #renderTarget></ng-container> `,

@@ -47,7 +47,6 @@ export interface ScheduleItem {
 
 @Component({
   selector: "app-todays-schedule",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

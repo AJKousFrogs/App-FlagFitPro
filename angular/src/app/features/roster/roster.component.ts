@@ -37,7 +37,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Dialog } from "primeng/dialog";
@@ -99,7 +98,6 @@ import {
 
 @Component({
   selector: "app-roster",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     StatusTagComponent,
@@ -108,7 +106,6 @@ import {
     Tooltip,
     ConfirmDialog,
     Select,
-    FormsModule,
     DatePipe,
     DecimalPipe,
     TitleCasePipe,
@@ -566,6 +563,20 @@ export class RosterComponent implements OnInit {
     }
 
     this.isSaving.set(false);
+  }
+
+  onInviteEmailInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.inviteEmail = input?.value ?? "";
+  }
+
+  onInviteRoleChange(value: string | null | undefined): void {
+    this.inviteRole = value ?? "player";
+  }
+
+  onInviteMessageInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.inviteMessage = input?.value ?? "";
   }
 
   openInvitationsDialog(): void {

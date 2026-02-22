@@ -8,7 +8,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -39,12 +38,10 @@ interface Team {
 
 @Component({
   selector: "app-superadmin-teams",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterLink,
-    FormsModule,
     Card,
     StatusTagComponent,
     TableModule,
@@ -81,9 +78,9 @@ interface Team {
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="searchQuery"
+                [value]="searchQuery"
+                (input)="onSearchInput($event)"
                 placeholder="Search teams..."
-                (input)="filterTeams()"
               />
             </span>
             <div class="filter-buttons">
@@ -280,6 +277,11 @@ export class SuperadminTeamsComponent implements OnInit {
         this.statusFilter === "all" || team.status === this.statusFilter;
       return matchesSearch && matchesStatus;
     });
+  }
+
+  onSearchInput(event: Event): void {
+    this.searchQuery = (event.target as HTMLInputElement | null)?.value ?? "";
+    this.filterTeams();
   }
 
   setStatusFilter(status: "all" | "active" | "pending" | "suspended"): void {

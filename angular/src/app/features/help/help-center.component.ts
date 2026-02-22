@@ -21,7 +21,6 @@ interface HelpTopic {
 
 @Component({
   selector: "app-help-center",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

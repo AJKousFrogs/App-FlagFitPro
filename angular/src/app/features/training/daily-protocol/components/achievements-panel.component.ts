@@ -56,7 +56,6 @@ interface Stats {
 
 @Component({
   selector: "app-achievements-panel",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Tag,

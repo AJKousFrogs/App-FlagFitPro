@@ -4,7 +4,6 @@ import {
   computed,
   DestroyRef,
   effect,
-  HostListener,
   inject,
   isDevMode,
   model,
@@ -49,7 +48,6 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
 
 @Component({
   selector: "app-header",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
@@ -70,6 +68,10 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
   ],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
+  host: {
+    "(document:keydown.escape)": "onEscapePress()",
+    "(document:keydown)": "onKeyDown($event)",
+  },
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
@@ -91,7 +93,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userMenu = viewChild<import("primeng/menu").Menu>("userMenu");
 
   // Close user menu on Escape
-  @HostListener("document:keydown.escape")
   onEscapePress(): void {
     if (this.isUserMenuOpen()) {
       this.closeUserMenu();
@@ -102,7 +103,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   // Show shortcuts dialog on "?"
-  @HostListener("document:keydown", ["$event"])
   onKeyDown(event: KeyboardEvent): void {
     // Show shortcuts on "?" (Shift + /)
     if (event.key === "?" && !this.isInputFocused()) {
@@ -114,7 +114,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Angular 21: Use output() signal instead of @Output() EventEmitter
   toggleSidebar = output<void>();
 
-  // Angular 21: Use model() for two-way binding (replaces ngModel)
+  // Angular 21: Use model() for two-way binding
   searchQuery = model("");
 
   notificationCount = signal(0);

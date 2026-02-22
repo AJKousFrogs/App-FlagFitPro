@@ -21,7 +21,6 @@ import { CommonModule } from "@angular/common";
  */
 @Component({
   selector: "app-time-picker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
   providers: [

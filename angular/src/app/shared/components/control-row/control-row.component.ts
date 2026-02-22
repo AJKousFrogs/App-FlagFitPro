@@ -23,7 +23,6 @@ import { CommonModule } from "@angular/common";
  */
 @Component({
   selector: "app-control-row",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

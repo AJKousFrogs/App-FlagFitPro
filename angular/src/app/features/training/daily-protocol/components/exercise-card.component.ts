@@ -34,7 +34,6 @@ import {
 
 @Component({
   selector: "app-exercise-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonComponent, CountdownTimerComponent],
   template: `

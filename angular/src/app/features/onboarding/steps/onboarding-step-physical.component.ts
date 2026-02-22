@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { InputText } from "primeng/inputtext";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-physical",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, InputText],
+  imports: [CommonModule, InputText],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -92,7 +90,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
               name="height"
               type="number"
               pInputText
-              [(ngModel)]="state.formData.heightCm"
+              [value]="state.formData.heightCm"
+              (input)="onHeightCmInput($event)"
               placeholder="e.g. 180"
               min="100"
               max="250"
@@ -109,7 +108,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
               name="weight"
               type="number"
               pInputText
-              [(ngModel)]="state.formData.weightKg"
+              [value]="state.formData.weightKg"
+              (input)="onWeightKgInput($event)"
               placeholder="e.g. 75"
               min="30"
               max="200"
@@ -127,7 +127,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
               name="heightFt"
               type="number"
               pInputText
-              [(ngModel)]="state.formData.heightFt"
+              [value]="state.formData.heightFt"
+              (input)="onHeightFtInput($event)"
               placeholder="5"
               min="3"
               max="8"
@@ -142,7 +143,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
               name="heightIn"
               type="number"
               pInputText
-              [(ngModel)]="state.formData.heightIn"
+              [value]="state.formData.heightIn"
+              (input)="onHeightInInput($event)"
               placeholder="10"
               min="0"
               max="11"
@@ -159,7 +161,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
               name="weightLbs"
               type="number"
               pInputText
-              [(ngModel)]="state.formData.weightLbs"
+              [value]="state.formData.weightLbs"
+              (input)="onWeightLbsInput($event)"
               placeholder="e.g. 165"
               min="66"
               max="440"
@@ -182,4 +185,32 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 })
 export class OnboardingStepPhysicalComponent {
   readonly state = inject(OnboardingStateService);
+
+  onHeightCmInput(event: Event): void {
+    this.state.formData.heightCm = this.parseNumberInput(event);
+  }
+
+  onWeightKgInput(event: Event): void {
+    this.state.formData.weightKg = this.parseNumberInput(event);
+  }
+
+  onHeightFtInput(event: Event): void {
+    this.state.formData.heightFt = this.parseNumberInput(event);
+  }
+
+  onHeightInInput(event: Event): void {
+    this.state.formData.heightIn = this.parseNumberInput(event);
+  }
+
+  onWeightLbsInput(event: Event): void {
+    this.state.formData.weightLbs = this.parseNumberInput(event);
+  }
+
+  private parseNumberInput(event: Event): number | null {
+    const input = event.target as HTMLInputElement | null;
+    const raw = input?.value ?? "";
+    if (raw === "") return null;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
 }

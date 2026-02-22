@@ -6,7 +6,6 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 
 @Component({
   selector: "app-staff-hub",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,

@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,7 +9,6 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Slider } from "primeng/slider";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
@@ -16,13 +16,12 @@ import { AppDialogComponent } from "../dialog/dialog.component";
 
 @Component({
   selector: "app-rest-timer",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     AppDialogComponent,
     Slider,
-    FormsModule,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -131,11 +130,11 @@ import { AppDialogComponent } from "../dialog/dialog.component";
           <div class="custom-duration">
             <label>Custom: {{ selectedDuration() }}s</label>
             <p-slider
-              [(ngModel)]="customDuration"
+              [ngModel]="customDuration"
               [min]="10"
               [max]="300"
               [step]="5"
-              (onValueChange)="onCustomDurationChange()"
+              (ngModelChange)="onCustomDurationChange($event)"
             ></p-slider>
           </div>
         }
@@ -238,9 +237,11 @@ export class RestTimerComponent implements OnDestroy {
     this.customDuration = seconds;
   }
 
-  onCustomDurationChange(): void {
-    this.selectedDuration.set(this.customDuration);
-    this.remainingSeconds.set(this.customDuration);
+  onCustomDurationChange(value: number | null | undefined): void {
+    const next = value ?? this.customDuration;
+    this.customDuration = next;
+    this.selectedDuration.set(next);
+    this.remainingSeconds.set(next);
   }
 
   formatPreset(seconds: number): string {

@@ -34,7 +34,6 @@ import type {
 
 @Component({
   selector: "app-review-decision-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -94,10 +93,10 @@ import type {
           <p-select
             inputId="review-outcome-select"
             [options]="reviewOutcomeOptions"
-            [(ngModel)]="formData.reviewOutcome"
+            [ngModel]="formData.reviewOutcome"
+            (onChange)="onReviewOutcomeChange($event.value)"
             placeholder="Select review outcome"
             class="w-full"
-            (onValueChange)="onOutcomeChange()"
             [attr.aria-label]="'Select review outcome'"
           ></p-select>
 
@@ -106,7 +105,8 @@ import type {
               <label for="new-review-date">New Review Date</label>
               <p-datepicker
                 inputId="new-review-date"
-                [(ngModel)]="formData.newReviewDate"
+                [ngModel]="formData.newReviewDate"
+                (onSelect)="onNewReviewDateChange($event)"
                 [minDate]="minDate"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
@@ -122,7 +122,8 @@ import type {
           <h3>Review Notes</h3>
           <textarea
             pInputTextarea
-            [(ngModel)]="formData.reviewNotes"
+            [value]="formData.reviewNotes"
+            (input)="onReviewNotesInput($event)"
             placeholder="Add notes about this review..."
             rows="4"
             class="w-full"
@@ -134,7 +135,8 @@ import type {
           <h3>Outcome Tracking</h3>
           <div class="outcome-item">
             <p-checkbox
-              [(ngModel)]="formData.outcomeData.goalAchieved"
+              [ngModel]="formData.outcomeData.goalAchieved"
+              (onChange)="onGoalAchievedChange($event.checked)"
               [binary]="true"
               variant="filled"
               inputId="goal-achieved"
@@ -152,9 +154,8 @@ import type {
                 <input
                   type="text"
                   pInputText
-                  [(ngModel)]="
-                    formData.outcomeData.unintendedConsequences[$index]
-                  "
+                  [value]="formData.outcomeData.unintendedConsequences[$index]"
+                  (input)="onConsequenceInput($index, $event)"
                   placeholder="Describe any unintended consequences"
                   class="w-full"
                 />
@@ -177,7 +178,8 @@ import type {
             <label>Lessons Learned</label>
             <textarea
               pInputTextarea
-              [(ngModel)]="formData.outcomeData.lessonsLearned"
+              [value]="formData.outcomeData.lessonsLearned"
+              (input)="onLessonsLearnedInput($event)"
               placeholder="What did we learn from this decision?"
               rows="3"
               class="w-full"
@@ -331,6 +333,35 @@ export class ReviewDecisionDialogComponent {
 
   removeConsequence(index: number): void {
     this.formData.outcomeData.unintendedConsequences.splice(index, 1);
+  }
+
+  onReviewOutcomeChange(value: ReviewOutcome | null | undefined): void {
+    this.formData.reviewOutcome = value ?? ("maintained" as ReviewOutcome);
+    this.onOutcomeChange();
+  }
+
+  onNewReviewDateChange(value: Date | null): void {
+    this.formData.newReviewDate = value ?? undefined;
+  }
+
+  onReviewNotesInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.formData.reviewNotes = input?.value ?? "";
+  }
+
+  onGoalAchievedChange(checked: boolean | undefined): void {
+    this.formData.outcomeData.goalAchieved = !!checked;
+  }
+
+  onConsequenceInput(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.formData.outcomeData.unintendedConsequences[index] =
+      input?.value ?? "";
+  }
+
+  onLessonsLearnedInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.formData.outcomeData.lessonsLearned = input?.value ?? "";
   }
 
   canSubmit(): boolean {

@@ -19,7 +19,6 @@ import {
   input,
   ChangeDetectionStrategy,
   DestroyRef,
-  HostBinding,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -214,6 +213,9 @@ import { getInitials } from "../../shared/utils/format.utils";
     </div>
   `,
   styleUrl: "./coach-activity-feed.component.scss",
+  host: {
+    "[style.--activity-feed-height]": "activityFeedHeight",
+  },
 })
 export class CoachActivityFeedComponent implements OnDestroy {
   private readonly notificationService = inject(TeamNotificationService);
@@ -239,7 +241,6 @@ export class CoachActivityFeedComponent implements OnDestroy {
   readonly loadingMore = computed(() => this._loadingMore());
   readonly hasMore = computed(() => this._hasMore());
 
-  @HostBinding("style.--activity-feed-height")
   get activityFeedHeight(): string {
     return this.maxHeight();
   }

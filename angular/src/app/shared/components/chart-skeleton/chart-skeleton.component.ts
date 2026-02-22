@@ -10,7 +10,6 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-chart-skeleton",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

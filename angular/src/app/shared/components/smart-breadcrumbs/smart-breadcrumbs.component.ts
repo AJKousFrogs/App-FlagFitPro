@@ -13,7 +13,6 @@ import { ContextService } from "../../../core/services/context.service";
 
 @Component({
   selector: "app-smart-breadcrumbs",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, Breadcrumb, StatusTagComponent],
   template: `

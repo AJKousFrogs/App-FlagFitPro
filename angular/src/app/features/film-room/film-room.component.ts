@@ -18,7 +18,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
@@ -74,11 +73,9 @@ interface DiscussionMessage {
 
 @Component({
   selector: "app-film-room",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     DatePipe,
     Card,
     Dialog,
@@ -147,13 +144,14 @@ interface DiscussionMessage {
               type="text"
               pInputText
               placeholder="Search film sessions..."
-              [(ngModel)]="searchQuery"
+              [value]="searchQuery()"
+              (input)="onSearchInput($event)"
             />
           </span>
 
           <p-select
             [options]="statusOptions"
-            [(ngModel)]="selectedStatus"
+            (onChange)="onStatusChange($event.value)"
             optionLabel="label"
             optionValue="value"
             placeholder="Status"
@@ -326,13 +324,14 @@ interface DiscussionMessage {
                             <div class="reply-form">
                               <textarea
                                 pTextarea
-                                [(ngModel)]="replyMessage"
+                                [value]="replyMessage()"
+                                (input)="onReplyInput($event)"
                                 placeholder="Add a comment..."
                                 rows="2"
                               ></textarea>
                               <app-button
                                 iconLeft="pi-send"
-                                [disabled]="!replyMessage.trim()"
+                                [disabled]="!replyMessage().trim()"
                                 (clicked)="sendReply(moment.id)"
                                 >Send</app-button
                               >
@@ -348,11 +347,11 @@ interface DiscussionMessage {
                         "
                       >
                         <i
-                          class="pi"
-                          [ngClass]="
-                            expandedMoment() === moment.id
+                          [class]="
+                            'pi ' +
+                            (expandedMoment() === moment.id
                               ? 'pi-chevron-up'
-                              : 'pi-chevron-down'
+                              : 'pi-chevron-down')
                           "
                         ></i>
                         {{
@@ -391,12 +390,12 @@ export class FilmRoomComponent implements OnInit {
   readonly isLoading = signal(true);
 
   // Filter state
-  searchQuery = "";
-  selectedStatus: "watched" | "unwatched" | null = null;
+  readonly searchQuery = signal("");
+  readonly selectedStatus = signal<"watched" | "unwatched" | null>(null);
 
   // Dialog state
   showFilmDetail = false;
-  replyMessage = "";
+  readonly replyMessage = signal("");
 
   // Options
   readonly statusOptions = [
@@ -409,8 +408,8 @@ export class FilmRoomComponent implements OnInit {
     let result = this.films();
 
     // Search filter
-    if (this.searchQuery) {
-      const query = this.searchQuery.toLowerCase();
+    if (this.searchQuery()) {
+      const query = this.searchQuery().toLowerCase();
       result = result.filter(
         (f) =>
           f.title.toLowerCase().includes(query) ||
@@ -419,9 +418,9 @@ export class FilmRoomComponent implements OnInit {
     }
 
     // Status filter
-    if (this.selectedStatus) {
+    if (this.selectedStatus()) {
       result = result.filter((f) =>
-        this.selectedStatus === "watched" ? f.isWatched : !f.isWatched,
+        this.selectedStatus() === "watched" ? f.isWatched : !f.isWatched,
       );
     }
 
@@ -445,9 +444,23 @@ export class FilmRoomComponent implements OnInit {
   });
 
   getEmptyDescription(): string {
-    return this.searchQuery || this.selectedStatus
+    return this.searchQuery() || this.selectedStatus()
       ? "Try adjusting your filters"
       : "Your coach hasn't assigned any film yet";
+  }
+
+  onSearchInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.searchQuery.set(input?.value ?? "");
+  }
+
+  onStatusChange(value: "watched" | "unwatched" | null | undefined): void {
+    this.selectedStatus.set(value ?? null);
+  }
+
+  onReplyInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.replyMessage.set(input?.value ?? "");
   }
 
   ngOnInit(): void {
@@ -547,13 +560,13 @@ export class FilmRoomComponent implements OnInit {
 
   sendReply(momentId: string): void {
     const film = this.selectedFilm();
-    if (!film || !this.replyMessage.trim()) return;
+    if (!film || !this.replyMessage().trim()) return;
 
     const newMessage: DiscussionMessage = {
       id: `msg-${Date.now()}`,
       author: "You",
       authorRole: "player",
-      message: this.replyMessage.trim(),
+      message: this.replyMessage().trim(),
       timestamp: new Date().toISOString(),
     };
 
@@ -597,7 +610,7 @@ export class FilmRoomComponent implements OnInit {
       .post(API_ENDPOINTS.filmRoom.reply, {
         filmId: film.id,
         momentId,
-        message: this.replyMessage,
+        message: this.replyMessage(),
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
@@ -606,7 +619,7 @@ export class FilmRoomComponent implements OnInit {
         error: (err) => this.logger.error("Failed to send reply", err),
       });
 
-    this.replyMessage = "";
+    this.replyMessage.set("");
   }
 
   formatDuration(seconds: number): string {

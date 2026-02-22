@@ -27,7 +27,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
 // PrimeNG Components
@@ -97,11 +96,9 @@ interface HydrationLog {
 
 @Component({
   selector: "app-tournament-nutrition",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     Checkbox,
     StatusTagComponent,
@@ -401,6 +398,28 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
   removeGame(index: number): void {
     this.editGames.splice(index, 1);
+  }
+
+  onEditTournamentNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.editTournamentName = input?.value ?? "";
+  }
+
+  onEditGameTimeInput(game: GameSchedule, event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    game.time = input?.value ?? "";
+  }
+
+  onEditGameOpponentInput(game: GameSchedule, event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    game.opponent = input?.value ?? "";
+  }
+
+  onEditGameRefereeChange(
+    game: GameSchedule,
+    checked: boolean | undefined,
+  ): void {
+    game.isReferee = !!checked;
   }
 
   generateNutritionPlan(): void {

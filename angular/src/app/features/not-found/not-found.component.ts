@@ -4,7 +4,6 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 
 @Component({
   selector: "app-not-found",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, ButtonComponent],
   template: `

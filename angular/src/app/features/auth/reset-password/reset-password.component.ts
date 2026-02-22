@@ -6,7 +6,7 @@ import {
 } from "@angular/core";
 
 import {
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -22,7 +22,6 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 @Component({
   selector: "app-reset-password",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
@@ -90,7 +89,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   styleUrl: "./reset-password.component.scss",
 })
 export class ResetPasswordComponent {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
   private authFlowDataService = inject(AuthFlowDataService);

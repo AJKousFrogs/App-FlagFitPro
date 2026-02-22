@@ -14,7 +14,8 @@
             <input
               pInputText
               id="pollQuestion"
-              [(ngModel)]="pollQuestion"
+              [value]="pollQuestion"
+              (input)="setPollQuestion(getInputValue($event))"
               placeholder="What would you like to ask?"
               class="poll-input"
             />
@@ -25,15 +26,18 @@
               <div class="option-row">
                 <input
                   pInputText
-                  [(ngModel)]="pollOptions[i]"
+                  [value]="pollOptions[i]"
+                  (input)="setPollOption(i, getInputValue($event))"
                   [placeholder]="'Option ' + (i + 1)"
                   class="poll-input"
+                  [attr.aria-label]="'Poll option ' + (i + 1)"
                 />
                 @if (pollOptions.length > 2) {
                   <button
                     type="button"
                     class="remove-option-btn"
                     (click)="removeOption(i)"
+                    aria-label="Remove poll option"
                     pTooltip="Remove option"
                   >
                     <i class="pi pi-times"></i>
@@ -43,7 +47,7 @@
             }
             @if (pollOptions.length < 4) {
               <button
-                type="button"
+                  type="button"
                 class="add-option-btn"
                 (click)="addOption()"
               >
@@ -81,7 +85,8 @@
             <input
               pInputText
               id="locationInput"
-              [(ngModel)]="locationInput"
+              [value]="locationInput"
+              (input)="setLocationInput(getInputValue($event))"
               placeholder="e.g., Training Field, Stadium, Gym..."
               class="location-input"
             />
@@ -166,18 +171,20 @@
               <div class="create-post-body">
                 <textarea
                   pInputTextarea
-                  [(ngModel)]="newPostContent"
+                  [value]="newPostContent"
+                  (input)="setNewPostContent(getInputValue($event))"
                   placeholder="Share your training progress, game highlights, or tips with the community..."
                   rows="3"
                   [autoResize]="true"
                   class="post-textarea"
+                  aria-label="Create post content"
                 ></textarea>
               </div>
 
               <div class="create-post-footer">
                 <div class="media-options">
                   <button
-                    type="button"
+                  type="button"
                     class="media-btn"
                     (click)="attachPhoto()"
                     pTooltip="Add Photo"
@@ -186,7 +193,7 @@
                     <span>Photo</span>
                   </button>
                   <button
-                    type="button"
+                  type="button"
                     class="media-btn"
                     (click)="attachVideo()"
                     pTooltip="Add Video"
@@ -195,7 +202,7 @@
                     <span>Video</span>
                   </button>
                   <button
-                    type="button"
+                  type="button"
                     class="media-btn"
                     (click)="createPoll()"
                     pTooltip="Create Poll"
@@ -204,7 +211,7 @@
                     <span>Poll</span>
                   </button>
                   <button
-                    type="button"
+                  type="button"
                     class="media-btn"
                     (click)="addLocation()"
                     pTooltip="Add Location"
@@ -232,7 +239,7 @@
                     <strong>#{{ selectedTopic() }}</strong></span
                   >
                 </div>
-                <button class="clear-btn" (click)="clearTopicFilter()">
+                <button type="button" class="clear-btn" (click)="clearTopicFilter()">
                   <i class="pi pi-times"></i>
                   Clear
                 </button>
@@ -277,7 +284,12 @@
                         </div>
                       </div>
                     </div>
-                    <button class="more-btn" pTooltip="More options">
+                    <button
+                  type="button"
+                      class="more-btn"
+                      pTooltip="More options"
+                      aria-label="More post options"
+                    >
                       <i class="pi pi-ellipsis-h"></i>
                     </button>
                   </div>
@@ -298,7 +310,7 @@
                         <div class="poll-options">
                           @for (option of post.poll.options; track option.id) {
                             <button
-                              type="button"
+                  type="button"
                               class="poll-option"
                               [class.voted]="post.poll.userVote === option.id"
                               [class.has-votes]="post.poll.userVote"
@@ -377,6 +389,11 @@
                     <div
                       class="stat-item clickable"
                       (click)="toggleComments(post)"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Toggle comments"
+                      (keydown.enter)="toggleComments(post)"
+                      (keydown.space)="toggleComments(post); $event.preventDefault()"
                     >
                       <span>{{ post.comments }} comments</span>
                     </div>
@@ -387,10 +404,11 @@
 
                   <!-- Action Buttons -->
                   <div class="post-actions">
-                    <button
+                    <button type="button"
                       class="action-btn"
                       [class.active]="post.isLiked"
                       (click)="toggleLike(post)"
+                      aria-label="Like post"
                     >
                       <i
                         [class]="
@@ -399,7 +417,7 @@
                       ></i>
                       <span>{{ post.isLiked ? "Liked" : "Like" }}</span>
                     </button>
-                    <button
+                    <button type="button"
                       class="action-btn"
                       [class.active]="post.showComments"
                       (click)="toggleComments(post)"
@@ -407,14 +425,17 @@
                       <i class="pi pi-comment"></i>
                       <span>Comment</span>
                     </button>
-                    <button class="action-btn" (click)="sharePost(post)">
+                    <button type="button" class="action-btn" (click)="sharePost(post)">
                       <i class="pi pi-share-alt"></i>
                       <span>Share</span>
                     </button>
-                    <button
+                    <button type="button"
                       class="action-btn bookmark"
                       [class.active]="post.isBookmarked"
                       (click)="toggleBookmark(post)"
+                      [attr.aria-label]="
+                        post.isBookmarked ? 'Remove bookmark' : 'Bookmark post'
+                      "
                     >
                       <i
                         [class]="
@@ -455,7 +476,7 @@
                                   </p>
                                 </div>
                                 <div class="comment-meta">
-                                  <button
+                                  <button type="button"
                                     class="comment-action"
                                     [class.liked]="comment.isLiked"
                                     (click)="toggleCommentLike(post, comment)"
@@ -465,7 +486,7 @@
                                       ({{ comment.likes }})
                                     }
                                   </button>
-                                  <button class="comment-action">Reply</button>
+                                  <button type="button" class="comment-action">Reply</button>
                                   <span class="comment-time">{{
                                     comment.timeAgo
                                   }}</span>
@@ -490,14 +511,17 @@
                           <input
                             pInputText
                             type="text"
-                            [(ngModel)]="post.newComment"
+                            [value]="post.newComment ?? ''"
+                            (input)="setPostComment(post.id, getInputValue($event))"
                             placeholder="Write a comment..."
                             class="comment-input"
+                            aria-label="Write a comment"
                             (keyup.enter)="addComment(post)"
                           />
-                          <button
+                          <button type="button"
                             class="send-comment-btn"
                             (click)="addComment(post)"
+                            aria-label="Send comment"
                             [disabled]="!post.newComment?.trim()"
                           >
                             <i class="pi pi-send"></i>
@@ -615,6 +639,11 @@
                     (click)="selectTopic(topic.name)"
                     pTooltip="View posts about #{{ topic.name }}"
                     tooltipPosition="left"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="'Filter posts by topic ' + topic.name"
+                    (keydown.enter)="selectTopic(topic.name)"
+                    (keydown.space)="selectTopic(topic.name); $event.preventDefault()"
                   >
                     <div class="topic-info">
                       <span class="topic-hashtag">#{{ topic.name }}</span>
@@ -626,7 +655,7 @@
                   </div>
                 }
                 @if (selectedTopic()) {
-                  <button class="clear-filter-btn" (click)="clearTopicFilter()">
+                  <button type="button" class="clear-filter-btn" (click)="clearTopicFilter()">
                     <i class="pi pi-times"></i>
                     Clear filter
                   </button>

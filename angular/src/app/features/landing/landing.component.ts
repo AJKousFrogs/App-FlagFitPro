@@ -16,7 +16,6 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 
 @Component({
   selector: "app-landing",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, CardShellComponent, ButtonComponent],
   template: `
@@ -113,7 +112,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 
           <div class="hero-stats animate-item animate-delay-5">
             @for (stat of heroStats; track stat.label) {
-              <div class="hero-stat" [ngClass]="'stat-delay-' + $index">
+              <div [class]="'hero-stat stat-delay-' + $index">
                 <div class="hero-stat-number">{{ stat.value }}</div>
                 <div class="hero-stat-label">{{ stat.label }}</div>
               </div>

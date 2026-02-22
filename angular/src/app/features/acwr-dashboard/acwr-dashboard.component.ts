@@ -73,7 +73,6 @@ import { LazyPdfService } from "../../core/services/lazy-pdf.service";
 
 @Component({
   selector: "app-acwr-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

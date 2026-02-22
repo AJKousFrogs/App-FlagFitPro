@@ -28,7 +28,6 @@ import {
 
 @Component({
   selector: "app-video-curation-suggestions",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

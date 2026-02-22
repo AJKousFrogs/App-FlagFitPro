@@ -4,14 +4,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  HostListener,
   viewChildren,
   inject,
   DestroyRef,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -114,7 +112,6 @@ type AnalyticsChartType =
     DatePipe,
     DecimalPipe,
     TitleCasePipe,
-    FormsModule,
     RouterModule,
     Card,
 
@@ -139,6 +136,9 @@ type AnalyticsChartType =
   templateUrl: "./analytics.component.html",
 
   styleUrl: "./analytics.component.scss",
+  host: {
+    "(window:resize)": "onWindowResize()",
+  },
 })
 export class AnalyticsComponent implements AfterViewInit {
   // Angular 21: Use viewChildren() signal instead of @ViewChildren()
@@ -277,6 +277,44 @@ export class AnalyticsComponent implements AfterViewInit {
     this.shareMessage.set(value);
   }
 
+  onSelectedTimePeriodChange(value: string): void {
+    this.selectedTimePeriod = value;
+  }
+
+  onSelectedMetricChange(value: string): void {
+    this.selectedMetric = value;
+  }
+
+  onShareOptionChange(
+    key: "includeCharts" | "includeGoals" | "includeStats" | "includeComments",
+    value: boolean,
+  ): void {
+    this.shareOptions = {
+      ...this.shareOptions,
+      [key]: value,
+    };
+  }
+
+  onShareMessageValueChange(value: string): void {
+    this.shareMessageValue = value;
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
+  }
+
   // Enhanced chart options with zoom, pan, custom tooltips
   readonly lineChartOptions = ENHANCED_LINE_CHART_OPTIONS;
   readonly BAR_CHART_OPTIONS = ENHANCED_BAR_CHART_OPTIONS;
@@ -298,7 +336,7 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   // Chart instances map for export/zoom functionality
-  private chartInstances = new Map<string, UIChart>();
+  private chartInstances = new Map<string, Chart>();
 
   constructor() {
     // Initialize on construction (Angular 21 pattern)
@@ -317,9 +355,8 @@ export class AnalyticsComponent implements AfterViewInit {
       this.chartRefs().forEach((chartRef, index) => {
         // Defensive guard: ensure chart ref and internal Chart.js instance exist
         // This prevents "t.clear is not a function" errors
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const chartInstance = (chartRef as any)?.chart;
-        if (chartInstance && typeof chartInstance.update === "function") {
+        const chartInstance = this.extractChartFromRef(chartRef);
+        if (chartInstance) {
           // Map chart instances by type
           const chartTypes = [
             "performance",
@@ -336,15 +373,10 @@ export class AnalyticsComponent implements AfterViewInit {
     }, TIMEOUTS.UI_TRANSITION_DELAY);
   }
 
-  @HostListener("window:resize")
   onWindowResize(): void {
     this.chartInstances.forEach((chart) => {
-      // Defensive guard: ensure chart exists and has the internal Chart.js instance
-      // This prevents "t.clear is not a function" when PrimeNG chart isn't fully initialized
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const instance = (chart as any)?.chart;
-      if (instance && typeof instance.update === "function") {
-        updateChartFontSizes(instance);
+      if (typeof chart.update === "function") {
+        updateChartFontSizes(chart);
       }
     });
   }
@@ -779,6 +811,14 @@ export class AnalyticsComponent implements AfterViewInit {
     return metric.label;
   }
 
+  private extractChartFromRef(chartRef: UIChart): Chart | null {
+    const candidate = (chartRef as { chart?: unknown }).chart;
+    if (candidate && typeof (candidate as Chart).update === "function") {
+      return candidate as Chart;
+    }
+    return null;
+  }
+
   // Chart action methods
   private getChartInstance(chartType: string): Chart | null {
     const chart = this.chartInstances.get(chartType);
@@ -786,7 +826,7 @@ export class AnalyticsComponent implements AfterViewInit {
       this.logger.error(`Chart instance not found: ${chartType}`);
       return null;
     }
-    return chart.chart ?? null;
+    return chart;
   }
 
   exportChart(chartType: string): void {

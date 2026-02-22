@@ -25,7 +25,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -111,11 +110,9 @@ const PAYMENT_METHOD_CONFIG: Record<
 
 @Component({
   selector: "app-payments",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     CurrencyPipe,
     DatePipe,
     Card,
@@ -242,11 +239,11 @@ const PAYMENT_METHOD_CONFIG: Record<
                         (click)="toggleBreakdown(fee.id)"
                       >
                         <i
-                          class="pi"
-                          [ngClass]="
-                            expandedFee() === fee.id
+                          [class]="
+                            'pi ' +
+                            (expandedFee() === fee.id
                               ? 'pi-chevron-up'
-                              : 'pi-chevron-down'
+                              : 'pi-chevron-down')
                           "
                         ></i>
                         View breakdown

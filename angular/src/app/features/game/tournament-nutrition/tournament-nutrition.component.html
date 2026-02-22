@@ -76,7 +76,7 @@
             </div>
             <div class="hydration-buttons">
               @for (option of hydrationOptions; track option.type) {
-                <button
+                <button type="button"
                   class="hydration-btn"
                   [class.selected]="selectedHydration === option.type"
                   (click)="logHydration(option.type, option.amount)"
@@ -113,8 +113,10 @@
                 <input
                   type="text"
                   pInputText
-                  [(ngModel)]="editTournamentName"
+                  [value]="editTournamentName"
+                  (input)="onEditTournamentNameInput($event)"
                   placeholder="e.g., Regional Championship"
+                  aria-label="Tournament name"
                 />
               </div>
 
@@ -124,19 +126,24 @@
                     <span class="game-number">Game {{ i + 1 }}</span>
                     <input
                       type="time"
-                      [(ngModel)]="game.time"
+                      [value]="game.time"
+                      (input)="onEditGameTimeInput(game, $event)"
                       class="time-input"
+                      aria-label="Game time"
                     />
                     <input
                       type="text"
                       pInputText
-                      [(ngModel)]="game.opponent"
+                      [value]="game.opponent"
+                      (input)="onEditGameOpponentInput(game, $event)"
                       placeholder="Opponent (optional)"
                       class="opponent-input"
+                      aria-label="Game opponent"
                     />
                     <label class="referee-label">
                       <p-checkbox
-                        [(ngModel)]="game.isReferee"
+                        [value]="!!game.isReferee"
+                        (onChange)="onEditGameRefereeChange(game, $event.checked)"
                         [binary]="true"
                         variant="filled"
                       ></p-checkbox>
@@ -211,6 +218,11 @@
                   <div
                     class="window-header"
                     (click)="toggleWindowExpanded(window.id)"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="'Toggle details for ' + window.title"
+                    (keydown.enter)="toggleWindowExpanded(window.id)"
+                    (keydown.space)="toggleWindowExpanded(window.id); $event.preventDefault()"
                   >
                     <div class="window-time">
                       <span class="item-time"
@@ -232,10 +244,10 @@
                     <div class="header-row">
                       <h4>{{ window.title }}</h4>
                       @if (window.completed) {
-                        <button
+                        <button type="button"
                           class="expand-toggle"
                           [class.expanded]="isWindowExpanded(window.id)"
-                          type="button"
+                          aria-label="Toggle nutrition window details"
                         >
                           <i
                             class="pi"
@@ -321,8 +333,10 @@
                     <div class="supp-meta">
                       <span class="supp-name">{{ supp.name }}</span>
                       <span
-                        class="supp-evidence"
-                        [ngClass]="'evidence-' + supp.evidence.toLowerCase()"
+                        [class]="
+                          'supp-evidence evidence-' +
+                          supp.evidence.toLowerCase()
+                        "
                       >
                         {{ supp.evidence }} Evidence
                       </span>

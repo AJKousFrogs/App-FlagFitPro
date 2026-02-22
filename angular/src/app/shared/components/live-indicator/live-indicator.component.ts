@@ -10,7 +10,6 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-live-indicator",
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

@@ -17,6 +17,7 @@
  */
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +25,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 
@@ -37,7 +37,6 @@ import {
 } from "primeng/accordion";
 import { Badge } from "primeng/badge";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { Chip } from "primeng/chip";
 import { DatePicker } from "primeng/datepicker";
 
@@ -74,9 +73,26 @@ interface TimezoneOption {
   offset: number;
 }
 
+interface CarTripForm {
+  tripName: string;
+  duration: number;
+  isDriver: boolean;
+  competitionDate: Date | null;
+}
+
+interface FlightTripForm {
+  tripName: string;
+  departureTimezone: string;
+  arrivalTimezone: string;
+  departureDate: Date | null;
+  arrivalDate: Date | null;
+  competitionDate: Date | null;
+  flightDuration: number;
+  layovers: number;
+}
+
 @Component({
   selector: "app-travel-recovery",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -92,7 +108,6 @@ interface TimezoneOption {
     AccordionPanel,
     AccordionHeader,
     AccordionContent,
-    Checkbox,
     Badge,
     ButtonComponent,
     MainLayoutComponent,
@@ -154,7 +169,7 @@ export class TravelRecoveryComponent implements OnInit {
   }> = [];
 
   // Car trip form
-  carTripForm = {
+  carTripForm: CarTripForm = {
     tripName: "",
     duration: 6,
     isDriver: false,
@@ -162,7 +177,7 @@ export class TravelRecoveryComponent implements OnInit {
   };
 
   // Form state
-  tripForm = {
+  tripForm: FlightTripForm = {
     tripName: "",
     departureTimezone: "",
     arrivalTimezone: "",
@@ -196,6 +211,100 @@ export class TravelRecoveryComponent implements OnInit {
   // Travel type management
   setTravelType(type: "flight" | "car"): void {
     this.travelType.set(type);
+  }
+
+  updateTripFormText(field: "tripName", value: string | null | undefined): void {
+    this.tripForm = { ...this.tripForm, [field]: value ?? "" };
+  }
+
+  updateTripFormTimezone(
+    field: "departureTimezone" | "arrivalTimezone",
+    value: string | null | undefined,
+  ): void {
+    this.tripForm = { ...this.tripForm, [field]: value ?? "" };
+
+    if (this.selectedOlympicVenue && this.tripForm.departureTimezone) {
+      this.olympicImpact.set(
+        this.travelService.calculateOlympicTravelImpact(
+          this.tripForm.departureTimezone,
+          this.selectedOlympicVenue,
+        ),
+      );
+    }
+  }
+
+  updateTripFormDate(
+    field: "departureDate" | "arrivalDate" | "competitionDate",
+    value: Date | null | undefined,
+  ): void {
+    this.tripForm = { ...this.tripForm, [field]: value ?? null };
+  }
+
+  updateTripFormNumber(
+    field: "flightDuration" | "layovers",
+    value: number | null | undefined,
+  ): void {
+    const fallback = field === "flightDuration" ? 1 : 0;
+    this.tripForm = { ...this.tripForm, [field]: value ?? fallback };
+  }
+
+  updateTravelChecklistPacked(
+    categoryName: string,
+    itemId: string,
+    packed: boolean | null | undefined,
+  ): void {
+    this.travelChecklist = this.travelChecklist.map((category) =>
+      category.category !== categoryName
+        ? category
+        : {
+            ...category,
+            items: category.items.map((item) =>
+              item.id === itemId ? { ...item, packed: packed ?? false } : item,
+            ),
+          },
+    );
+  }
+
+  updateCarTripText(field: "tripName", value: string | null | undefined): void {
+    this.carTripForm = { ...this.carTripForm, [field]: value ?? "" };
+  }
+
+  updateCarTripDuration(value: number | null | undefined): void {
+    this.carTripForm = { ...this.carTripForm, duration: value ?? 1 };
+  }
+
+  updateCarTripDriver(value: boolean | null | undefined): void {
+    this.carTripForm = { ...this.carTripForm, isDriver: value ?? false };
+  }
+
+  updateCarTripDate(value: Date | null | undefined): void {
+    this.carTripForm = { ...this.carTripForm, competitionDate: value ?? null };
+  }
+
+  updateCarChecklistPacked(
+    categoryName: string,
+    itemId: string,
+    packed: boolean | null | undefined,
+  ): void {
+    this.carTravelChecklist = this.carTravelChecklist.map((category) =>
+      category.category !== categoryName
+        ? category
+        : {
+            ...category,
+            items: category.items.map((item) =>
+              item.id === itemId ? { ...item, packed: packed ?? false } : item,
+            ),
+          },
+    );
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   hasActiveCarPlan(): boolean {

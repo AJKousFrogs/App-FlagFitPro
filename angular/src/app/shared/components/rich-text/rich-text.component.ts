@@ -27,7 +27,6 @@ import { DialogService } from "../../../core/ui/dialog.service";
  */
 @Component({
   selector: "app-rich-text",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule],
   providers: [

@@ -99,7 +99,6 @@ const CONTEXT_CONFIGS: Record<
  */
 @Component({
   selector: "app-empty-state",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, Card, ButtonComponent],
   template: `

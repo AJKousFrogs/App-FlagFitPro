@@ -151,7 +151,6 @@ describe("PageHeaderComponent - Composite View Pattern", () => {
    */
   @Component({
     selector: "app-test-composite-view",
-    standalone: true,
     imports: [PageHeaderComponent],
     template: `
       <div class="composite-view">
@@ -259,7 +258,6 @@ describe("PageHeaderComponent - QB Hub Pattern Simulation", () => {
    */
   @Component({
     selector: "app-mock-child-component",
-    standalone: true,
     imports: [PageHeaderComponent],
     template: `
       <div class="child-component">
@@ -281,7 +279,6 @@ describe("PageHeaderComponent - QB Hub Pattern Simulation", () => {
    */
   @Component({
     selector: "app-mock-qb-hub",
-    standalone: true,
     imports: [PageHeaderComponent, MockChildComponent],
     template: `
       <div class="qb-hub-page">

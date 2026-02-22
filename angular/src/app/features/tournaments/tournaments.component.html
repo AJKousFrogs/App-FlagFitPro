@@ -372,7 +372,7 @@
         [resizable]="false"
         class="tournament-dialog"
       >
-        <div class="tournament-form form-controls-full">
+        <form [formGroup]="tournamentForm" class="tournament-form form-controls-full">
           <!-- Visibility Info Banner -->
           @if (isPlayer() && !editingTournament) {
             <div class="visibility-info-banner personal">
@@ -431,7 +431,7 @@
                   pInputText
                   id="tournament-name"
                   name="tournamentName"
-                  [(ngModel)]="formData.name"
+                  formControlName="name"
                   placeholder="e.g., Adria Bowl 2026"
                   class="w-full"
                   autocomplete="off"
@@ -448,7 +448,7 @@
                   pInputText
                   id="tournament-shortName"
                   name="shortName"
-                  [(ngModel)]="formData.short_name"
+                  formControlName="short_name"
                   placeholder="e.g., Adria Bowl"
                   autocomplete="off"
                 />
@@ -460,7 +460,7 @@
                 </label>
                 <p-inputNumber
                   inputId="tournament-teams"
-                  [(ngModel)]="formData.expected_teams"
+                  formControlName="expected_teams"
                   [min]="2"
                   [max]="100"
                   placeholder="Number of teams"
@@ -486,7 +486,7 @@
                   pInputText
                   id="tournament-country"
                   name="country"
-                  [(ngModel)]="formData.country"
+                  formControlName="country"
                   placeholder="e.g., Croatia"
                   autocomplete="country-name"
                 />
@@ -500,7 +500,7 @@
                   pInputText
                   id="tournament-location"
                   name="location"
-                  [(ngModel)]="formData.location"
+                  formControlName="location"
                   placeholder="e.g., Zagreb"
                   autocomplete="address-level2"
                 />
@@ -516,7 +516,7 @@
                   pInputText
                   id="tournament-venue"
                   name="venue"
-                  [(ngModel)]="formData.venue"
+                  formControlName="venue"
                   placeholder="e.g., Stadium Name or Sports Complex"
                   autocomplete="off"
                 />
@@ -538,7 +538,7 @@
                 </label>
                 <p-datepicker
                   inputId="tournament-startDate"
-                  [(ngModel)]="formData.start_date_obj"
+                  formControlName="start_date_obj"
                   [showIcon]="true"
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
@@ -554,7 +554,7 @@
                 </label>
                 <p-datepicker
                   inputId="tournament-endDate"
-                  [(ngModel)]="formData.end_date_obj"
+                  formControlName="end_date_obj"
                   [showIcon]="true"
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
@@ -572,7 +572,7 @@
                 </label>
                 <p-datepicker
                   inputId="tournament-deadline"
-                  [(ngModel)]="formData.registration_deadline_obj"
+                  formControlName="registration_deadline_obj"
                   [showIcon]="true"
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
@@ -598,7 +598,7 @@
                 </label>
                 <p-select
                   inputId="tournament-type"
-                  [(ngModel)]="formData.tournament_type"
+                  formControlName="tournament_type"
                   [options]="tournamentTypes"
                   optionLabel="label"
                   optionValue="value"
@@ -614,7 +614,7 @@
                 </label>
                 <p-select
                   inputId="tournament-level"
-                  [(ngModel)]="formData.competition_level"
+                  formControlName="competition_level"
                   [options]="competitionLevels"
                   optionLabel="label"
                   optionValue="value"
@@ -627,7 +627,7 @@
             <div class="form-row">
               <div class="form-field full-width checkbox-field">
                 <p-checkbox
-                  [(ngModel)]="formData.is_home_tournament"
+                  formControlName="is_home_tournament"
                   [binary]="true"
                   variant="filled"
                   inputId="homeTournament"
@@ -656,7 +656,7 @@
                   pInputText
                   id="tournament-website"
                   name="website"
-                  [(ngModel)]="formData.website_url"
+                  formControlName="website_url"
                   placeholder="https://tournament-website.com"
                   autocomplete="url"
                 />
@@ -670,7 +670,7 @@
                   pInputText
                   id="tournament-instagram"
                   name="instagram"
-                  [(ngModel)]="formData.instagram_url"
+                  formControlName="instagram_url"
                   placeholder="https://instagram.com/tournament"
                   autocomplete="off"
                 />
@@ -686,7 +686,7 @@
                   pInputText
                   id="tournament-facebook"
                   name="facebook"
-                  [(ngModel)]="formData.facebook_url"
+                  formControlName="facebook_url"
                   placeholder="https://facebook.com/event/..."
                   autocomplete="off"
                 />
@@ -700,7 +700,7 @@
                   pInputText
                   id="tournament-registration"
                   name="registration"
-                  [(ngModel)]="formData.registration_url"
+                  formControlName="registration_url"
                   placeholder="https://registration-form.com"
                   autocomplete="off"
                 />
@@ -724,7 +724,7 @@
                   pInputText
                   id="tournament-venue-map"
                   name="venueMap"
-                  [(ngModel)]="formData.venue_maps_url"
+                  formControlName="venue_maps_url"
                   placeholder="https://maps.google.com/..."
                   autocomplete="off"
                 />
@@ -738,7 +738,7 @@
                   pInputText
                   id="tournament-hotel-map"
                   name="hotelMap"
-                  [(ngModel)]="formData.hotel_maps_url"
+                  formControlName="hotel_maps_url"
                   placeholder="https://maps.google.com/..."
                   autocomplete="off"
                 />
@@ -754,7 +754,7 @@
                   pInputText
                   id="tournament-hotel-name"
                   name="hotelName"
-                  [(ngModel)]="formData.hotel_name"
+                  formControlName="hotel_name"
                   placeholder="e.g., Hotel Ambassador"
                   autocomplete="off"
                 />
@@ -768,7 +768,7 @@
                   pInputText
                   id="tournament-hotel-booking"
                   name="hotelBooking"
-                  [(ngModel)]="formData.hotel_booking_url"
+                  formControlName="hotel_booking_url"
                   placeholder="https://booking.com/..."
                   autocomplete="off"
                 />
@@ -792,7 +792,7 @@
                   pInputText
                   id="tournament-contact-name"
                   name="contactName"
-                  [(ngModel)]="formData.contact_name"
+                  formControlName="contact_name"
                   placeholder="e.g., John Smith"
                   autocomplete="off"
                 />
@@ -806,7 +806,7 @@
                   pInputText
                   id="tournament-contact-email"
                   name="contactEmail"
-                  [(ngModel)]="formData.contact_email"
+                  formControlName="contact_email"
                   placeholder="contact@tournament.com"
                   autocomplete="email"
                 />
@@ -822,7 +822,7 @@
                   pTextarea
                   id="tournament-notes"
                   name="notes"
-                  [(ngModel)]="formData.notes"
+                  formControlName="notes"
                   rows="3"
                   placeholder="Travel tips, dress code, parking info, special requirements..."
                   class="w-full"
@@ -831,7 +831,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </form>
 
         <ng-template #footer>
           <div class="dialog-footer">
@@ -880,7 +880,7 @@
               </p>
             </div>
 
-            <div class="availability-form">
+            <form [formGroup]="availabilityFormGroup" class="availability-form">
               <div class="form-field">
                 <label>Will you be attending?</label>
                 <div class="availability-options">
@@ -888,10 +888,15 @@
                     <div
                       class="availability-option"
                       [class.selected]="
-                        availabilityForm.status === option.value
+                        currentAvailabilityStatus() === option.value
                       "
                       [class]="'option-' + option.value"
-                      (click)="availabilityForm.status = option.value"
+                      (click)="setAvailabilityStatus(option.value)"
+                      role="button"
+                      tabindex="0"
+                      [attr.aria-label]="'Set availability to ' + option.label"
+                      (keydown.enter)="setAvailabilityStatus(option.value)"
+                      (keydown.space)="setAvailabilityStatus(option.value); $event.preventDefault()"
                     >
                       <i [class]="option.icon"></i>
                       <span>{{ option.label }}</span>
@@ -901,27 +906,28 @@
               </div>
 
               @if (
-                availabilityForm.status === "declined" ||
-                availabilityForm.status === "tentative"
+                currentAvailabilityStatus() === "declined" ||
+                currentAvailabilityStatus() === "tentative"
               ) {
                 <div class="form-field">
                   <label>Reason (optional)</label>
                   <textarea
                     pTextarea
-                    [(ngModel)]="availabilityForm.reason"
+                    formControlName="reason"
                     rows="2"
                     placeholder="Let your coach know why..."
                     class="w-full"
+                    aria-label="Reason for unavailability"
                   ></textarea>
                 </div>
               }
 
-              @if (availabilityForm.status === "confirmed") {
+              @if (currentAvailabilityStatus() === "confirmed") {
                 <div class="form-grid-2">
                   <div class="form-field">
                     <label>Arrival Date</label>
                     <p-datepicker
-                      [(ngModel)]="availabilityForm.arrivalDate"
+                      formControlName="arrivalDate"
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       placeholder="When do you arrive?"
@@ -931,7 +937,7 @@
                   <div class="form-field">
                     <label>Departure Date</label>
                     <p-datepicker
-                      [(ngModel)]="availabilityForm.departureDate"
+                      formControlName="departureDate"
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       placeholder="When do you leave?"
@@ -942,7 +948,7 @@
 
                 <div class="form-field">
                   <p-checkbox
-                    [(ngModel)]="availabilityForm.accommodationNeeded"
+                    formControlName="accommodationNeeded"
                     [binary]="true"
                     variant="filled"
                     inputId="accommodation"
@@ -952,7 +958,7 @@
 
                 <div class="form-field">
                   <p-checkbox
-                    [(ngModel)]="availabilityForm.transportationNeeded"
+                    formControlName="transportationNeeded"
                     [binary]="true"
                     variant="filled"
                     inputId="transportation"
@@ -964,16 +970,17 @@
                   <label>Dietary Restrictions</label>
                   <input
                     pInputText
-                    [(ngModel)]="availabilityForm.dietaryRestrictions"
+                    formControlName="dietaryRestrictions"
                     placeholder="Any dietary needs..."
                     class="w-full"
+                    aria-label="Dietary restrictions"
                   />
                 </div>
               }
 
               <!-- Cost Information -->
               @if (
-                tournamentCost() > 0 && availabilityForm.status === "confirmed"
+                tournamentCost() > 0 && currentAvailabilityStatus() === "confirmed"
               ) {
                 <div class="cost-summary">
                   <h4><i class="pi pi-wallet"></i> Estimated Cost</h4>
@@ -984,12 +991,13 @@
                         >€{{ tournamentCost() | number: "1.2-2" }}</span
                       >
                     </div>
-                    @if (availabilityForm.amountPaid > 0) {
+                    @if (availabilityFormGroup.controls.amountPaid.value > 0) {
                       <div class="cost-item paid">
                         <span>Already paid:</span>
                         <span class="cost-value"
                           >€{{
-                            availabilityForm.amountPaid | number: "1.2-2"
+                            availabilityFormGroup.controls.amountPaid.value
+                              | number: "1.2-2"
                           }}</span
                         >
                       </div>
@@ -998,7 +1006,8 @@
                       <span>Remaining:</span>
                       <span class="cost-value"
                         >€{{
-                          tournamentCost() - availabilityForm.amountPaid
+                          tournamentCost() -
+                            availabilityFormGroup.controls.amountPaid.value
                             | number: "1.2-2"
                         }}</span
                       >
@@ -1006,7 +1015,7 @@
                   </div>
                 </div>
               }
-            </div>
+            </form>
           </div>
         }
 
@@ -1214,12 +1223,12 @@
         class="tournament-budget-dialog"
       >
         @if (selectedTournament) {
-          <div class="budget-dialog">
+          <form [formGroup]="budgetFormGroup" class="budget-dialog">
             <div class="form-grid">
               <div class="form-field">
                 <label>Registration Fee</label>
                 <p-inputNumber
-                  [(ngModel)]="budgetForm.registrationFee"
+                  formControlName="registrationFee"
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
@@ -1229,7 +1238,7 @@
               <div class="form-field">
                 <label>Entry Fee Per Player</label>
                 <p-inputNumber
-                  [(ngModel)]="budgetForm.entryFeePerPlayer"
+                  formControlName="entryFeePerPlayer"
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
@@ -1239,7 +1248,7 @@
               <div class="form-field">
                 <label>Travel Cost (Estimated)</label>
                 <p-inputNumber
-                  [(ngModel)]="budgetForm.travelCost"
+                  formControlName="travelCost"
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
@@ -1249,7 +1258,7 @@
               <div class="form-field">
                 <label>Accommodation Per Night</label>
                 <p-inputNumber
-                  [(ngModel)]="budgetForm.accommodationPerNight"
+                  formControlName="accommodationPerNight"
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
@@ -1259,7 +1268,7 @@
               <div class="form-field">
                 <label>Number of Nights</label>
                 <p-inputNumber
-                  [(ngModel)]="budgetForm.totalNights"
+                  formControlName="totalNights"
                   [min]="0"
                   class="w-full"
                 ></p-inputNumber>
@@ -1267,7 +1276,7 @@
               <div class="form-field">
                 <label>Per Diem Per Player</label>
                 <p-inputNumber
-                  [(ngModel)]="budgetForm.perDiem"
+                  formControlName="perDiem"
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
@@ -1277,7 +1286,7 @@
               <div class="form-field full-width">
                 <label>Other Costs</label>
                 <p-inputNumber
-                  [(ngModel)]="budgetForm.otherCosts"
+                  formControlName="otherCosts"
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
@@ -1288,9 +1297,10 @@
                 <label>Other Costs Description</label>
                 <input
                   pInputText
-                  [(ngModel)]="budgetForm.otherCostsDescription"
+                  formControlName="otherCostsDescription"
                   placeholder="Equipment, uniforms, etc."
                   class="w-full"
+                  aria-label="Other costs description"
                 />
               </div>
             </div>
@@ -1301,7 +1311,7 @@
                 <div class="form-field">
                   <label>Team Contribution</label>
                   <p-inputNumber
-                    [(ngModel)]="budgetForm.teamContribution"
+                    formControlName="teamContribution"
                     mode="currency"
                     currency="EUR"
                     locale="en-US"
@@ -1311,7 +1321,7 @@
                 <div class="form-field">
                   <label>Sponsor Contribution</label>
                   <p-inputNumber
-                    [(ngModel)]="budgetForm.sponsorContribution"
+                    formControlName="sponsorContribution"
                     mode="currency"
                     currency="EUR"
                     locale="en-US"
@@ -1333,7 +1343,8 @@
                 <span>Total Funding:</span>
                 <span class="calc-value"
                   >€{{
-                    budgetForm.teamContribution + budgetForm.sponsorContribution
+                    budgetFormGroup.controls.teamContribution.value +
+                      budgetFormGroup.controls.sponsorContribution.value
                       | number: "1.2-2"
                   }}</span
                 >
@@ -1350,7 +1361,7 @@
                 >
               </div>
             </div>
-          </div>
+          </form>
         }
 
         <ng-template #footer>

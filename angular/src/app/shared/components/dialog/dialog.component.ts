@@ -10,7 +10,6 @@ import { Dialog } from "primeng/dialog";
 
 @Component({
   selector: "app-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Dialog],
   template: `

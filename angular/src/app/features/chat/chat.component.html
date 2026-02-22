@@ -147,44 +147,23 @@
               }
             </div>
 
-            <!-- Coaches Only Section -->
-            @if (isCoach() && coachChannels().length > 0) {
+            @for (section of channelSections(); track section.title) {
               <div class="channel-section">
                 <h4 class="section-label">
-                  <i class="pi pi-lock"></i> Coaches Only
+                  <i [class]="section.sectionIcon"></i> {{ section.title }}
                 </h4>
-                @for (channel of coachChannels(); track channel.id) {
+                @for (channel of section.channels; track channel.id) {
                   <div
                     class="channel-item"
                     [class.active]="channel.id === currentChannel()?.id"
                     (click)="selectChannel(channel)"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="'Open channel ' + channel.name"
+                    (keydown.enter)="selectChannel(channel)"
+                    (keydown.space)="selectChannel(channel); $event.preventDefault()"
                   >
-                    <i class="pi pi-lock"></i>
-                    <span class="channel-name">{{ channel.name }}</span>
-                    @if (channel.unread_count) {
-                      <p-badge
-                        [value]="channel.unread_count"
-                        severity="danger"
-                      ></p-badge>
-                    }
-                  </div>
-                }
-              </div>
-            }
-
-            <!-- Direct Messages Section -->
-            @if (dmChannels().length > 0) {
-              <div class="channel-section">
-                <h4 class="section-label">
-                  <i class="pi pi-comments"></i> Direct Messages
-                </h4>
-                @for (channel of dmChannels(); track channel.id) {
-                  <div
-                    class="channel-item"
-                    [class.active]="channel.id === currentChannel()?.id"
-                    (click)="selectChannel(channel)"
-                  >
-                    <i class="pi pi-user"></i>
+                    <i [class]="section.itemIcon"></i>
                     <span class="channel-name">{{ channel.name }}</span>
                     @if (channel.unread_count) {
                       <p-badge
@@ -348,6 +327,11 @@
                         <div
                           class="mention-item"
                           (click)="insertMention(member)"
+                          role="button"
+                          tabindex="0"
+                          [attr.aria-label]="'Mention ' + member.full_name"
+                          (keydown.enter)="insertMention(member)"
+                          (keydown.space)="insertMention(member); $event.preventDefault()"
                         >
                           <p-avatar
                             [label]="getInitialsStr(member.full_name)"
@@ -363,7 +347,7 @@
                   @if (newMessage.trim().length === 0) {
                     <div class="quick-replies-row">
                       @for (reply of quickReplyOptions(); track reply) {
-                        <button
+                        <button type="button"
                           class="quick-reply-btn"
                           (click)="sendQuickReply(reply)"
                         >
@@ -388,9 +372,9 @@
                       id="chat-newMessage"
                       name="message"
                       pInputText
-                      [(ngModel)]="newMessage"
+                      [value]="newMessage"
+                      (input)="onMessageFieldInput($event)"
                       (keydown.enter)="sendMessage()"
-                      (input)="onMessageInput($event)"
                       [placeholder]="getInputPlaceholder()"
                       class="message-input"
                       autocomplete="off"
@@ -434,7 +418,8 @@
             id="chat-channelName"
             name="channelName"
             pInputText
-            [(ngModel)]="newChannelName"
+            [value]="newChannelName"
+            (input)="onNewChannelNameChange(getInputValue($event))"
             placeholder="e.g., qb-room"
             autocomplete="off"
           />
@@ -446,7 +431,8 @@
             id="chat-channelDescription"
             name="channelDescription"
             pInputTextarea
-            [(ngModel)]="newChannelDescription"
+            [value]="newChannelDescription"
+            (input)="onNewChannelDescriptionChange(getInputValue($event))"
             rows="2"
             placeholder="What's this channel about?"
             autocomplete="off"
@@ -457,7 +443,7 @@
           <label for="chat-channelType">Channel Type</label>
           <p-select
             inputId="chat-channelType"
-            [(ngModel)]="newChannelType"
+            (onChange)="onNewChannelTypeChange($event.value)"
             [options]="channelTypeOptions"
             optionLabel="label"
             optionValue="value"
@@ -470,7 +456,7 @@
           <div class="form-field">
             <label>Position</label>
             <p-select
-              [(ngModel)]="newChannelPosition"
+              (onChange)="onNewChannelPositionChange($event.value)"
               [options]="positionOptions"
               optionLabel="label"
               optionValue="value"
@@ -570,9 +556,11 @@
               <i class="pi pi-search"></i>
               <input
                 pInputText
-                [(ngModel)]="memberSearchQuery"
+                [value]="memberSearchQuery"
+                (input)="onMemberSearchQueryChange(getInputValue($event))"
                 placeholder="Search members..."
                 class="w-full"
+                aria-label="Search channel members"
               />
             </span>
           </div>

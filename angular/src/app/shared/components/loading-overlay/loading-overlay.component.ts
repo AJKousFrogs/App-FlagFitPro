@@ -4,7 +4,6 @@ import { LoadingService } from "../../../core/services/loading.service";
 
 @Component({
   selector: "app-loading-overlay",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

@@ -5,7 +5,6 @@ import {
   computed,
   DestroyRef,
   effect,
-  HostListener,
   inject,
   OnInit,
   PLATFORM_ID,
@@ -40,7 +39,6 @@ interface _CollapsibleGroup {
 
 @Component({
   selector: "app-sidebar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, NavItemComponent],
   template: `
@@ -199,6 +197,9 @@ interface _CollapsibleGroup {
     ></div>
   `,
   styleUrl: "./sidebar.component.scss",
+  host: {
+    "(document:keydown.escape)": "onEscapePress()",
+  },
 })
 export class SidebarComponent implements OnInit {
   private readonly router = inject(Router);
@@ -234,7 +235,6 @@ export class SidebarComponent implements OnInit {
   /**
    * Close sidebar on Escape key press
    */
-  @HostListener("document:keydown.escape")
   onEscapePress(): void {
     if (this.isOpen()) {
       this.closeSidebar();

@@ -56,7 +56,6 @@ interface DailyState {
 
 @Component({
   selector: "app-daily-readiness",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -156,11 +155,11 @@ interface DailyState {
               </span>
             </div>
             <p-slider
-              [(ngModel)]="state().pain_level"
+              [ngModel]="state().pain_level"
+              (ngModelChange)="onSliderChange('pain_level', $event)"
               [min]="0"
               [max]="10"
               [step]="1"
-              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>No pain</span>
@@ -183,11 +182,11 @@ interface DailyState {
               </span>
             </div>
             <p-slider
-              [(ngModel)]="state().fatigue_level"
+              [ngModel]="state().fatigue_level"
+              (ngModelChange)="onSliderChange('fatigue_level', $event)"
               [min]="0"
               [max]="10"
               [step]="1"
-              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>Energized</span>
@@ -210,11 +209,11 @@ interface DailyState {
               </span>
             </div>
             <p-slider
-              [(ngModel)]="state().sleep_quality"
+              [ngModel]="state().sleep_quality"
+              (ngModelChange)="onSliderChange('sleep_quality', $event)"
               [min]="0"
               [max]="10"
               [step]="1"
-              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>Poor</span>
@@ -237,11 +236,11 @@ interface DailyState {
               </span>
             </div>
             <p-slider
-              [(ngModel)]="state().motivation_level"
+              [ngModel]="state().motivation_level"
+              (ngModelChange)="onSliderChange('motivation_level', $event)"
               [min]="0"
               [max]="10"
               [step]="1"
-              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>Low</span>
@@ -259,7 +258,8 @@ interface DailyState {
               </label>
             </div>
             <p-inputNumber
-              [(ngModel)]="state().weight_kg"
+              [ngModel]="state().weight_kg"
+              (ngModelChange)="onWeightChange($event)"
               [suffix]="' kg'"
               [min]="30"
               [max]="200"
@@ -272,7 +272,6 @@ interface DailyState {
               incrementButtonIcon="pi pi-plus"
               decrementButtonIcon="pi pi-minus"
               placeholder="Enter weight"
-              (onInput)="updateState()"
             ></p-inputNumber>
             <p class="weight-hint">
               @if (lastWeight()) {
@@ -412,12 +411,20 @@ export class DailyReadinessComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  /**
-   * Update state signal (called on slider change)
-   */
-  updateState(): void {
-    // Trigger reactivity by creating new object
-    this.state.update((s) => ({ ...s }));
+  onStateChange<K extends keyof DailyState>(key: K, value: DailyState[K]): void {
+    this.state.update((s) => ({ ...s, [key]: value }));
+  }
+
+  onSliderChange(
+    key: Exclude<keyof DailyState, "weight_kg">,
+    value: number | number[] | null | undefined,
+  ): void {
+    const nextValue = Array.isArray(value) ? value[0] : value;
+    this.onStateChange(key, typeof nextValue === "number" ? nextValue : 0);
+  }
+
+  onWeightChange(value: number | null | undefined): void {
+    this.onStateChange("weight_kg", typeof value === "number" ? value : null);
   }
 
   /**

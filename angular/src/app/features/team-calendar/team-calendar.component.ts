@@ -8,6 +8,7 @@
  */
 
 import { CommonModule, DatePipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,15 +19,12 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -92,17 +90,14 @@ const EVENT_TYPE_CONFIG: Record<
 
 @Component({
   selector: "app-team-calendar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
     DatePipe,
     Card,
-    Checkbox,
     Dialog,
     InputNumber,
-    RadioButton,
     Select,
     StatusTagComponent,
     Textarea,
@@ -125,7 +120,8 @@ const EVENT_TYPE_CONFIG: Record<
         <div class="calendar-actions">
           <p-select
             [options]="typeFilterOptions"
-            [(ngModel)]="selectedType"
+            [ngModel]="selectedType"
+            (onChange)="onSelectedTypeChange($event.value)"
             optionLabel="label"
             optionValue="value"
             placeholder="All Events"
@@ -288,14 +284,16 @@ const EVENT_TYPE_CONFIG: Record<
                 <div
                   class="option-card"
                   [class.selected]="rsvpForm.status === 'going'"
-                  (click)="rsvpForm.status = 'going'"
+                  (click)="onRsvpStatusChange('going')"
                 >
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="rsvp"
                     value="going"
-                    [(ngModel)]="rsvpForm.status"
-                    inputId="going"
-                  ></p-radioButton>
+                    id="going"
+                    [checked]="rsvpForm.status === 'going'"
+                    (change)="onRsvpStatusChange('going')"
+                  />
                   <label for="going">
                     <i class="pi pi-check-circle"></i>
                     <span>Going</span>
@@ -305,14 +303,16 @@ const EVENT_TYPE_CONFIG: Record<
                 <div
                   class="option-card"
                   [class.selected]="rsvpForm.status === 'not-going'"
-                  (click)="rsvpForm.status = 'not-going'"
+                  (click)="onRsvpStatusChange('not-going')"
                 >
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="rsvp"
                     value="not-going"
-                    [(ngModel)]="rsvpForm.status"
-                    inputId="not-going"
-                  ></p-radioButton>
+                    id="not-going"
+                    [checked]="rsvpForm.status === 'not-going'"
+                    (change)="onRsvpStatusChange('not-going')"
+                  />
                   <label for="not-going">
                     <i class="pi pi-times-circle"></i>
                     <span>Can't Go</span>
@@ -322,14 +322,16 @@ const EVENT_TYPE_CONFIG: Record<
                 <div
                   class="option-card"
                   [class.selected]="rsvpForm.status === 'maybe'"
-                  (click)="rsvpForm.status = 'maybe'"
+                  (click)="onRsvpStatusChange('maybe')"
                 >
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="rsvp"
                     value="maybe"
-                    [(ngModel)]="rsvpForm.status"
-                    inputId="maybe"
-                  ></p-radioButton>
+                    id="maybe"
+                    [checked]="rsvpForm.status === 'maybe'"
+                    (change)="onRsvpStatusChange('maybe')"
+                  />
                   <label for="maybe">
                     <i class="pi pi-question-circle"></i>
                     <span>Maybe</span>
@@ -346,7 +348,8 @@ const EVENT_TYPE_CONFIG: Record<
                   <div class="option-row">
                     <label>Bringing guests?</label>
                     <p-inputNumber
-                      [(ngModel)]="rsvpForm.guests"
+                      [ngModel]="rsvpForm.guests"
+                      (ngModelChange)="onRsvpGuestsChange($event)"
                       [min]="0"
                       [max]="5"
                       [showButtons]="true"
@@ -360,22 +363,22 @@ const EVENT_TYPE_CONFIG: Record<
 
                 <!-- Ride Options -->
                 <div class="option-row checkbox-row">
-                  <p-checkbox
-                    [(ngModel)]="rsvpForm.needsRide"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="needsRide"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    id="needsRide"
+                    [checked]="rsvpForm.needsRide"
+                    (change)="onRsvpNeedsRideChange(isChecked($event))"
+                  />
                   <label for="needsRide">I need a ride</label>
                 </div>
 
                 <div class="option-row checkbox-row">
-                  <p-checkbox
-                    [(ngModel)]="rsvpForm.canProvideRide"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="canProvideRide"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    id="canProvideRide"
+                    [checked]="rsvpForm.canProvideRide"
+                    (change)="onRsvpCanProvideRideChange(isChecked($event))"
+                  />
                   <label for="canProvideRide"
                     >I can provide a ride ({{
                       rsvpForm.rideSeats
@@ -384,7 +387,8 @@ const EVENT_TYPE_CONFIG: Record<
                   >
                   @if (rsvpForm.canProvideRide) {
                     <p-inputNumber
-                      [(ngModel)]="rsvpForm.rideSeats"
+                      [ngModel]="rsvpForm.rideSeats"
+                      (ngModelChange)="onRsvpRideSeatsChange($event)"
                       [min]="1"
                       [max]="6"
                       [showButtons]="true"
@@ -401,7 +405,8 @@ const EVENT_TYPE_CONFIG: Record<
               <textarea
                 pTextarea
                 id="notes"
-                [(ngModel)]="rsvpForm.notes"
+                [value]="rsvpForm.notes"
+                (input)="onRsvpNotesChange(getInputValue($event))"
                 placeholder="Any notes for the coach..."
                 rows="2"
               ></textarea>
@@ -505,6 +510,10 @@ export class TeamCalendarComponent implements OnInit {
     this.loadData();
   }
 
+  onSelectedTypeChange(value: EventType | null): void {
+    this.selectedType = value;
+  }
+
   async loadData(): Promise<void> {
     this.isLoading.set(true);
 
@@ -536,6 +545,46 @@ export class TeamCalendarComponent implements OnInit {
       notes: "",
     };
     this.showRsvpDialog = true;
+  }
+
+  onRsvpStatusChange(value: RsvpStatus | null): void {
+    this.rsvpForm = { ...this.rsvpForm, status: value };
+  }
+
+  onRsvpGuestsChange(value: number | null): void {
+    this.rsvpForm = { ...this.rsvpForm, guests: value ?? 0 };
+  }
+
+  onRsvpNeedsRideChange(value: boolean): void {
+    this.rsvpForm = { ...this.rsvpForm, needsRide: value };
+  }
+
+  onRsvpCanProvideRideChange(value: boolean): void {
+    this.rsvpForm = { ...this.rsvpForm, canProvideRide: value };
+  }
+
+  onRsvpRideSeatsChange(value: number | null): void {
+    this.rsvpForm = { ...this.rsvpForm, rideSeats: value ?? 1 };
+  }
+
+  onRsvpNotesChange(value: string): void {
+    this.rsvpForm = { ...this.rsvpForm, notes: value };
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   submitRsvp(): void {

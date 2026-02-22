@@ -28,7 +28,6 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
  */
 @Component({
   selector: "app-verify-email",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, Card, ButtonComponent, Message,],
 

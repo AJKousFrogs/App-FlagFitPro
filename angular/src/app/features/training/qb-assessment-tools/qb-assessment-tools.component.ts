@@ -6,7 +6,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
 @Component({
   selector: "app-qb-assessment-tools",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Card, PageHeaderComponent, ButtonComponent],
   template: `

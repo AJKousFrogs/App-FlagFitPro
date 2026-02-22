@@ -17,7 +17,6 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
 
 @Component({
   selector: "app-offline-banner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonComponent, IconButtonComponent],
   template: `

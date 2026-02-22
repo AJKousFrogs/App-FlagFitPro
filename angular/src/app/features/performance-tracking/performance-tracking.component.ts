@@ -7,7 +7,6 @@ import {
 } from "@angular/core";
 
 import { DatePipe } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
@@ -99,6 +98,23 @@ interface PositionBenchmark {
   gapFromElite: string;
 }
 
+interface NewPerformanceForm {
+  sprint10: number | null;
+  sprint20: number | null;
+  dash40: number | null;
+  proAgility: number | null;
+  lDrill: number | null;
+  reactiveAgility: number | null;
+  vertical: number | null;
+  broad: number | null;
+  rsi: number | null;
+  bench: number | null;
+  squat: number | null;
+  deadlift: number | null;
+  bodyWeight: number | null;
+  notes: string;
+}
+
 const POSITION_BENCHMARKS: Record<
   string,
   Record<string, { elite: number; good: number; average: number }>
@@ -156,7 +172,6 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   selector: "app-performance-tracking",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     Card,
     LazyChartComponent,
     TableModule,
@@ -270,7 +285,7 @@ export class PerformanceTrackingComponent {
   // Dialog state
   showLogDialog = false;
   readonly isSaving = signal(false);
-  newPerformance = {
+  newPerformance: NewPerformanceForm = {
     sprint10: null as number | null,
     sprint20: null as number | null,
     dash40: null as number | null,
@@ -600,6 +615,12 @@ export class PerformanceTrackingComponent {
     this.updatePositionBenchmarks();
   }
 
+  onPositionSelectionChange(value: string | null | undefined): void {
+    const nextValue = value ?? "WR";
+    this.selectedPositionValue = nextValue;
+    this.onPositionChange({ value: nextValue });
+  }
+
   /**
    * Update position benchmarks using REAL data from latest record
    * NO mock data - if no data exists, shows empty state
@@ -731,6 +752,21 @@ export class PerformanceTrackingComponent {
       notes: "",
     };
     this.showLogDialog = true;
+  }
+
+  updatePerformanceMetric(
+    field: Exclude<keyof NewPerformanceForm, "notes">,
+    value: number | null | undefined,
+  ): void {
+    this.newPerformance = { ...this.newPerformance, [field]: value ?? null };
+  }
+
+  updatePerformanceNotes(value: string | null | undefined): void {
+    this.newPerformance = { ...this.newPerformance, notes: value ?? "" };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
   async savePerformance(): Promise<void> {

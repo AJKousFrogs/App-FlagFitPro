@@ -8,7 +8,10 @@ import {
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  FormBuilder,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+  NonNullableFormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -35,7 +38,6 @@ import {
 
 @Component({
   selector: "app-register",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
@@ -241,7 +243,7 @@ import {
 })
 export class RegisterComponent {
   private readonly http = new HttpClient(inject(HttpBackend));
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private authFlowDataService = inject(AuthFlowDataService);
   private router = inject(Router);
@@ -276,20 +278,13 @@ export class RegisterComponent {
     );
   }
 
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get("password");
-    const confirmPassword = form.get("confirmPassword");
-
-    if (
-      password &&
-      confirmPassword &&
-      password.value !== confirmPassword.value
-    ) {
-      confirmPassword.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true };
-    }
-    return null;
-  }
+  passwordMatchValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    const password = control.get("password")?.value;
+    const confirmPassword = control.get("confirmPassword")?.value;
+    return password !== confirmPassword ? { passwordMismatch: true } : null;
+  };
 
   isFieldInvalid(fieldName: string): boolean {
     const control = this.registerForm.get(fieldName);

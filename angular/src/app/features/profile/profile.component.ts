@@ -59,7 +59,6 @@ interface PendingInvitation {
 
 @Component({
   selector: "app-profile",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

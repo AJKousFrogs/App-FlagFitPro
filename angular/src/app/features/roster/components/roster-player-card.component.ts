@@ -16,7 +16,6 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { TitleCasePipe, DecimalPipe } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 
 import { Checkbox } from "primeng/checkbox";
@@ -42,14 +41,12 @@ import { TRAINING } from "../../../core/constants/app.constants";
 
 @Component({
   selector: "app-roster-player-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Card,
     Checkbox,
     Tooltip,
     ProgressBar,
-    FormsModule,
     TitleCasePipe,
     DecimalPipe,
     SemanticMeaningRendererComponent,
@@ -68,8 +65,8 @@ import { TRAINING } from "../../../core/constants/app.constants";
           <p-checkbox
             [binary]="true"
             variant="filled"
-            [ngModel]="isSelected()"
-            (ngModelChange)="selectionChange.emit(player().id)"
+            [value]="isSelected()"
+            (onChange)="onSelectionToggle($event.checked)"
           ></p-checkbox>
         </div>
       }
@@ -417,5 +414,9 @@ export class RosterPlayerCardComponent {
     if (level === "high") return "high";
     if (level === "moderate") return "medium";
     return "low";
+  }
+
+  onSelectionToggle(_checked: boolean | undefined): void {
+    this.selectionChange.emit(this.player().id);
   }
 }

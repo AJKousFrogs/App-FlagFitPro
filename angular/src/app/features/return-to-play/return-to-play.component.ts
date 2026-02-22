@@ -17,15 +17,12 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../core/services/toast.service";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 
 import { ProgressBar } from "primeng/progressbar";
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
 import { TableModule } from "primeng/table";
@@ -86,6 +83,25 @@ interface DailyCheckin {
   confidenceLevel: number;
   activitiesCompleted: string[];
   notes?: string;
+}
+
+interface NewProtocolForm {
+  injuryType: string | null;
+  injuryLocation: string | null;
+  severity: string | null;
+  injuryDate: Date | null;
+  targetReturnDate: Date | null;
+  medicalNotes: string;
+  understandProtocol: boolean;
+  notifyCoach: boolean;
+}
+
+interface TodayCheckinForm {
+  painLevel: number;
+  functionScore: number;
+  confidenceLevel: number;
+  activitiesCompleted: string[];
+  notes: string;
 }
 
 // ===== Constants =====
@@ -277,19 +293,15 @@ const SEVERITY_LEVELS = [
 
 @Component({
   selector: "app-return-to-play",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
-    Checkbox,
     LazyChartComponent,
     DatePicker,
     Dialog,
     
     ProgressBar,
-    RadioButton,
     Select,
     Slider,
     TableModule,
@@ -335,8 +347,8 @@ export class ReturnToPlayComponent implements OnInit {
   readonly today = new Date();
 
   // Form data
-  newProtocol = this.getEmptyProtocolForm();
-  todayCheckin = this.getEmptyCheckinForm();
+  newProtocol: NewProtocolForm = this.getEmptyProtocolForm();
+  todayCheckin: TodayCheckinForm = this.getEmptyCheckinForm();
 
   // Chart options
   readonly chartOptions = {
@@ -574,8 +586,88 @@ export class ReturnToPlayComponent implements OnInit {
     if (severity && this.newProtocol.injuryDate) {
       const targetDate = new Date(this.newProtocol.injuryDate);
       targetDate.setDate(targetDate.getDate() + severity.days);
-      this.newProtocol.targetReturnDate = targetDate;
+      this.newProtocol = { ...this.newProtocol, targetReturnDate: targetDate };
     }
+  }
+
+  updateTodayCheckinMetric(
+    field: "painLevel" | "functionScore" | "confidenceLevel",
+    value: number | null | undefined,
+  ): void {
+    const fallback: Record<typeof field, number> = {
+      painLevel: 0,
+      functionScore: 0,
+      confidenceLevel: 1,
+    };
+    this.todayCheckin = {
+      ...this.todayCheckin,
+      [field]: value ?? fallback[field],
+    };
+  }
+
+  updateTodayCheckinActivities(value: string[] | null | undefined): void {
+    this.todayCheckin = {
+      ...this.todayCheckin,
+      activitiesCompleted: value ?? [],
+    };
+  }
+
+  updateTodayCheckinNotes(value: string | null | undefined): void {
+    this.todayCheckin = { ...this.todayCheckin, notes: value ?? "" };
+  }
+
+  updateNewProtocolField(
+    field: "injuryType" | "injuryLocation",
+    value: string | null | undefined,
+  ): void {
+    this.newProtocol = { ...this.newProtocol, [field]: value ?? null };
+  }
+
+  updateProtocolSeverity(value: string | null | undefined): void {
+    this.newProtocol = { ...this.newProtocol, severity: value ?? null };
+    this.onSeverityChange();
+  }
+
+  updateProtocolDate(
+    field: "injuryDate" | "targetReturnDate",
+    value: Date | null | undefined,
+  ): void {
+    this.newProtocol = { ...this.newProtocol, [field]: value ?? null };
+    if (field === "injuryDate") {
+      this.onSeverityChange();
+    }
+  }
+
+  updateProtocolMedicalNotes(value: string | null | undefined): void {
+    this.newProtocol = { ...this.newProtocol, medicalNotes: value ?? "" };
+  }
+
+  updateProtocolToggle(
+    field: "understandProtocol" | "notifyCoach",
+    value: boolean | null | undefined,
+  ): void {
+    this.newProtocol = { ...this.newProtocol, [field]: value ?? false };
+  }
+
+  toggleTodayCheckinActivity(activity: string, checked: boolean): void {
+    const current = this.todayCheckin.activitiesCompleted;
+    const next = checked
+      ? Array.from(new Set([...current, activity]))
+      : current.filter((item) => item !== activity);
+    this.updateTodayCheckinActivities(next);
+  }
+
+  isActivitySelected(activity: string): boolean {
+    return this.todayCheckin.activitiesCompleted.includes(activity);
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   isStartFormValid(): boolean {
@@ -677,7 +769,7 @@ export class ReturnToPlayComponent implements OnInit {
     return "pain-bad";
   }
 
-  private getEmptyProtocolForm() {
+  private getEmptyProtocolForm(): NewProtocolForm {
     return {
       injuryType: null as string | null,
       injuryLocation: null as string | null,
@@ -690,7 +782,7 @@ export class ReturnToPlayComponent implements OnInit {
     };
   }
 
-  private getEmptyCheckinForm() {
+  private getEmptyCheckinForm(): TodayCheckinForm {
     return {
       painLevel: 3,
       functionScore: 50,

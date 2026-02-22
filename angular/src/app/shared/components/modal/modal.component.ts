@@ -25,7 +25,6 @@ import { ButtonComponent } from "../button/button.component";
  */
 @Component({
   selector: "app-modal",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [CommonModule, Dialog, ButtonComponent],

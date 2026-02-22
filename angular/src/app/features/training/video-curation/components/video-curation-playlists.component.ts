@@ -26,7 +26,6 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
 
 @Component({
   selector: "app-video-curation-playlists",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

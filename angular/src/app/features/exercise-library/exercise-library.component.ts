@@ -11,7 +11,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
-import { FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { ToastService } from "../../core/services/toast.service";
 
@@ -60,10 +60,9 @@ interface Category {
 
 @Component({
   selector: "app-exercise-library",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     Paginator,
     Tooltip,
     Dialog,
@@ -114,8 +113,7 @@ interface Category {
           <!-- Search Bar with Icon -->
           <app-search-input
             class="search-container"
-            [(ngModel)]="searchQuery"
-            (ngModelChange)="onSearchChange()"
+            [formControl]="searchControl"
             placeholder="Search exercises by name, muscle group, or equipment..."
             ariaLabel="Search exercises by name, muscle group, or equipment"
           />
@@ -478,6 +476,7 @@ export class ExerciseLibraryComponent implements OnInit {
   private readonly exercisesGrid =
     viewChild<ElementRef<HTMLElement>>("exercisesGrid");
 
+  readonly searchControl = new FormControl("", { nonNullable: true });
   searchQuery = "";
   selectedCategory = signal<string>("all");
   showDetailsDialog = signal(false);
@@ -532,6 +531,12 @@ export class ExerciseLibraryComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.searchControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((query) => {
+        this.searchQuery = query;
+        this.onSearchChange();
+      });
     this.loadExercises();
   }
 
@@ -754,7 +759,7 @@ export class ExerciseLibraryComponent implements OnInit {
   readonly resetFiltersHandler = (): void => this.resetFilters();
 
   resetFilters(): void {
-    this.searchQuery = "";
+    this.searchControl.setValue("");
     this.selectedCategory.set("all");
     this.currentPage = 0;
     this.applyFilters();

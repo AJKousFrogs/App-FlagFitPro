@@ -35,7 +35,6 @@ import { ExerciseCardComponent } from "./exercise-card.component";
 
 @Component({
   selector: "app-protocol-block",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

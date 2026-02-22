@@ -7,7 +7,6 @@ import {
   input,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import { TrainingMetricsService } from "../../core/services/training-metrics.service";
 import { TrainingPlanService } from "../../core/services/training-plan.service";
@@ -31,7 +30,6 @@ interface DayPlan {
   selector: "app-microcycle-planner",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     TrafficLightRiskComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -258,17 +256,21 @@ export class MicrocyclePlannerComponent {
 
   constructor() {
     // Use effect to react to athleteId changes (Angular 21 pattern)
-    effect(async () => {
+    effect(() => {
       const athleteId = this.athleteId();
-      if (athleteId) {
-        const games = await this.trainingPlanService.getUpcomingGames(
-          athleteId,
-          14,
-        );
-        this.gameDays.set(games);
-      }
-      this.generateWeeklyPlan();
+      void this.syncGameDaysAndPlan(athleteId);
     });
+  }
+
+  private async syncGameDaysAndPlan(athleteId: string | null): Promise<void> {
+    if (athleteId) {
+      const games = await this.trainingPlanService.getUpcomingGames(athleteId, 14);
+      if (this.athleteId() !== athleteId) return;
+      this.gameDays.set(games);
+    } else {
+      this.gameDays.set([]);
+    }
+    this.generateWeeklyPlan();
   }
 
   generateWeeklyPlan() {

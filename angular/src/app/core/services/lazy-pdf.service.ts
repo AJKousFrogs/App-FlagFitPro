@@ -30,8 +30,29 @@ export interface PDFExportOptions {
 // Dynamic import types - these libraries are loaded lazily
 type JsPDFOrientation = "p" | "l" | "portrait" | "landscape";
 type JsPDFUnit = "in" | "em" | "ex" | "cm" | "pt" | "px" | "mm" | "pc";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type JsPDFConstructor = new (options: any) => any;
+interface JsPDFInitOptions {
+  orientation: JsPDFOrientation;
+  unit: JsPDFUnit;
+  format: "a4" | "letter" | "legal";
+}
+interface JsPDFTextOptions {
+  align?: "left" | "center" | "right" | "justify";
+}
+interface JsPDFInstance {
+  setFontSize(size: number): void;
+  text(text: string, x: number, y: number, options?: JsPDFTextOptions): void;
+  addImage(
+    imageData: string,
+    format: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+  ): void;
+  addPage(): void;
+  save(filename: string): void;
+}
+type JsPDFConstructor = new (options: JsPDFInitOptions) => JsPDFInstance;
 type Html2CanvasFunction = (
   element: HTMLElement,
   options: Record<string, unknown>,

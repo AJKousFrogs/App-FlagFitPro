@@ -32,7 +32,6 @@ export interface WeekStats {
 
 @Component({
   selector: "app-week-progress-strip",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tooltip],
   template: `

@@ -27,7 +27,6 @@ export interface PasswordStrength {
 
 @Component({
   selector: "app-password-strength",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

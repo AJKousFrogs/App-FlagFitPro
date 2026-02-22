@@ -7,8 +7,9 @@ import {
 
 import { Router, RouterModule } from "@angular/router";
 import {
-  FormBuilder,
+  FormControl,
   FormGroup,
+  NonNullableFormBuilder,
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
@@ -23,9 +24,16 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { TeamCreateDataService } from "../services/team-create-data.service";
 
+type TeamCreateForm = FormGroup<{
+  name: FormControl<string>;
+  description: FormControl<string>;
+  location: FormControl<string>;
+  sport: FormControl<string>;
+  visibility: FormControl<string>;
+}>;
+
 @Component({
   selector: "app-team-create",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
@@ -137,7 +145,7 @@ import { TeamCreateDataService } from "../services/team-create-data.service";
 })
 export class TeamCreateComponent {
   private router = inject(Router);
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
   private teamCreateDataService = inject(TeamCreateDataService);
@@ -158,7 +166,7 @@ export class TeamCreateComponent {
     { label: "Private - Invite only", value: "private" },
   ];
 
-  teamForm: FormGroup = this.fb.group({
+  teamForm: TeamCreateForm = this.fb.group({
     name: ["", [Validators.required, Validators.minLength(3)]],
     description: [""],
     location: [""],
@@ -191,7 +199,7 @@ export class TeamCreateComponent {
     this.isSubmitting.set(true);
 
     try {
-      const formData = this.teamForm.value;
+      const formData = this.teamForm.getRawValue();
       const currentUser = this.authService.getUser();
 
       if (!currentUser?.id) {

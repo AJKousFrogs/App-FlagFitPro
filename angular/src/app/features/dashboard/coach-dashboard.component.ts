@@ -7,7 +7,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
@@ -104,7 +103,6 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
   selector: "app-coach-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     RouterModule,
     TableModule,
     StatusTagComponent,
@@ -708,6 +706,33 @@ export class CoachDashboardComponent {
     this.showCreateSessionDialog = true;
   }
 
+  onNewSessionTitleChange(value: string): void {
+    this.newSession = { ...this.newSession, title: value };
+  }
+
+  onNewSessionTypeChange(value: string | null): void {
+    this.newSession = { ...this.newSession, type: value ?? "practice" };
+  }
+
+  onNewSessionDateChange(value: Date | null): void {
+    this.newSession = { ...this.newSession, date: value ?? new Date() };
+  }
+
+  onNewSessionDurationChange(value: number | string): void {
+    const parsedValue =
+      typeof value === "number" ? value : Number.parseInt(value, 10);
+    this.newSession = {
+      ...this.newSession,
+      duration: Number.isFinite(parsedValue)
+        ? parsedValue
+        : this.newSession.duration,
+    };
+  }
+
+  onNewSessionNotesChange(value: string): void {
+    this.newSession = { ...this.newSession, notes: value };
+  }
+
   createSession(): void {
     if (!this.newSession.title) {
       this.toastService.warn(TOAST.WARN.ENTER_SESSION_TITLE);
@@ -724,6 +749,10 @@ export class CoachDashboardComponent {
   openTeamMessage(): void {
     this.teamMessageContent = "";
     this.showTeamMessageDialog = true;
+  }
+
+  onTeamMessageContentChange(value: string): void {
+    this.teamMessageContent = value;
   }
 
   sendTeamMessage(): void {
@@ -762,6 +791,18 @@ export class CoachDashboardComponent {
     this.showRequestAccessDialog = false;
     this.requestAccessPlayerId = null;
     this.requestAccessMessage = "";
+  }
+
+  onRequestAccessMessageChange(value: string): void {
+    this.requestAccessMessage = value;
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
   }
 
   // Helper methods

@@ -10,7 +10,6 @@ import { getYears } from "../roster-utils";
 
 @Component({
   selector: "app-roster-staff-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Card],
   template: `

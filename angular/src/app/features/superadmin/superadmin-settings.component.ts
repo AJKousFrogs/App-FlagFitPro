@@ -7,7 +7,6 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TableModule } from "primeng/table";
@@ -30,12 +29,10 @@ interface SuperadminUser {
 
 @Component({
   selector: "app-superadmin-settings",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterLink,
-    FormsModule,
     Card,
     TableModule,
     MainLayoutComponent,
@@ -278,7 +275,8 @@ interface SuperadminUser {
                 <input
                   type="email"
                   id="adminEmail"
-                  [(ngModel)]="newAdminEmail"
+                  [value]="newAdminEmail"
+                  (input)="onNewAdminEmailInput($event)"
                   placeholder="Enter user email..."
                 />
               </div>
@@ -286,7 +284,8 @@ interface SuperadminUser {
                 <label for="adminNotes">Notes (Optional)</label>
                 <textarea
                   id="adminNotes"
-                  [(ngModel)]="newAdminNotes"
+                  [value]="newAdminNotes"
+                  (input)="onNewAdminNotesInput($event)"
                   placeholder="Add notes about this superadmin..."
                   rows="3"
                 ></textarea>
@@ -378,6 +377,15 @@ export class SuperadminSettingsComponent implements OnInit {
     this.showAddModal = false;
     this.newAdminEmail = "";
     this.newAdminNotes = "";
+  }
+
+  onNewAdminEmailInput(event: Event): void {
+    this.newAdminEmail = (event.target as HTMLInputElement | null)?.value ?? "";
+  }
+
+  onNewAdminNotesInput(event: Event): void {
+    this.newAdminNotes =
+      (event.target as HTMLTextAreaElement | null)?.value ?? "";
   }
 
   async removeSuperadmin(userId: string): Promise<void> {

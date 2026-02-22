@@ -18,7 +18,6 @@ import { By } from "@angular/platform-browser";
 
 @Component({
   selector: "app-test-host",
-  standalone: true,
   template: `
     <main role="main" aria-label="Test content">
       <h1>Test Page</h1>

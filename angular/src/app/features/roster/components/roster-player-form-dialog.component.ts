@@ -47,7 +47,6 @@ export interface PlayerFormData {
 
 @Component({
   selector: "app-roster-player-form-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

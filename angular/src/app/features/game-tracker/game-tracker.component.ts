@@ -11,9 +11,8 @@ import {
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
@@ -119,11 +118,9 @@ interface Play {
 
 @Component({
   selector: "app-game-tracker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    FormsModule,
     CardComponent,
     InputText,
     Textarea,
@@ -145,7 +142,7 @@ interface Play {
   styleUrl: "./game-tracker.component.scss",
 })
 export class GameTrackerComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
   private teamMembershipService = inject(TeamMembershipService);
@@ -1040,6 +1037,16 @@ export class GameTrackerComponent implements OnInit {
     return this.plays().filter(
       (p) => p.playType === "flag_pull" && p.isSuccessful === true,
     ).length;
+  }
+
+  onTeamScoreChange(score: number | null | undefined): void {
+    this.teamScore.set(score ?? 0);
+    this.updateScore();
+  }
+
+  onOpponentScoreChange(score: number | null | undefined): void {
+    this.opponentScore.set(score ?? 0);
+    this.updateScore();
   }
 
   updateScore(): void {

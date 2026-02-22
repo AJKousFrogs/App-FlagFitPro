@@ -32,7 +32,7 @@
 
           <div class="header-actions">
             @if (todayReadinessScore()) {
-              <button
+              <button type="button"
                 class="readiness-pill"
                 [pTooltip]="'Your readiness score today'"
                 aria-label="Readiness score"
@@ -43,7 +43,7 @@
             }
 
             <!-- Search conversations -->
-            <button
+            <button type="button"
               class="icon-btn"
               (click)="toggleSearchMode()"
               [pTooltip]="searchMode() ? 'Close search' : 'Search messages'"
@@ -58,7 +58,7 @@
             </button>
 
             <!-- Bookmarks -->
-            <button
+            <button type="button"
               class="icon-btn"
               (click)="toggleBookmarksView()"
               [pTooltip]="showBookmarks() ? 'Show all' : 'View bookmarks'"
@@ -74,7 +74,7 @@
               }
             </button>
 
-            <button
+            <button type="button"
               class="icon-btn"
               (click)="startNewConversation()"
               pTooltip="New chat"
@@ -99,13 +99,12 @@
           <div class="search-bar" @slideDown>
             <app-search-input
               class="search-bar-input"
-              [(ngModel)]="searchQuery"
-              (ngModelChange)="onSearchInput()"
+              [formControl]="searchControl"
               placeholder="Search in conversation..."
               ariaLabel="Search in conversation"
               #searchInput
             />
-            @if (searchQuery) {
+            @if (searchQuery()) {
               <span class="search-count"
                 >{{ filteredMessages().length }} found</span
               >
@@ -152,7 +151,7 @@
                     suggestion of quickSuggestions();
                     track suggestion.query
                   ) {
-                    <button
+                    <button type="button"
                       class="suggestion-card"
                       (click)="askQuestion(suggestion.query)"
                       [attr.aria-label]="'Ask about ' + suggestion.label"
@@ -297,7 +296,7 @@
                   <!-- Citations / Sources -->
                   @if (message.citations && message.citations.length > 0) {
                     <div class="citations-section">
-                      <button
+                      <button type="button"
                         class="citations-toggle"
                         (click)="toggleCitations(message)"
                         [attr.aria-expanded]="message.isExpanded"
@@ -377,7 +376,7 @@
                         track action.type
                       ) {
                         @if (action.isMicroSession && action.microSession) {
-                          <button
+                          <button type="button"
                             class="action-btn primary micro-session"
                             (click)="startMicroSession(action, message.id)"
                             [pTooltip]="action.reason"
@@ -391,7 +390,7 @@
                             >
                           </button>
                         } @else {
-                          <button
+                          <button type="button"
                             class="action-btn secondary"
                             (click)="executeAction(action)"
                             [pTooltip]="action.reason"
@@ -411,7 +410,7 @@
                       }}</span>
 
                       <div class="message-actions">
-                        <button
+                        <button type="button"
                           class="mini-btn"
                           (click)="copyMessage(message)"
                           pTooltip="Copy"
@@ -421,7 +420,7 @@
                         </button>
 
                         <!-- Bookmark button -->
-                        <button
+                        <button type="button"
                           class="mini-btn bookmark"
                           [class.active]="message.isBookmarked"
                           (click)="toggleBookmark(message)"
@@ -440,7 +439,7 @@
                         </button>
 
                         <!-- Share button -->
-                        <button
+                        <button type="button"
                           class="mini-btn"
                           (click)="shareMessage(message)"
                           pTooltip="Share"
@@ -454,7 +453,7 @@
                           role="group"
                           aria-label="Rate this response"
                         >
-                          <button
+                          <button type="button"
                             class="mini-btn feedback"
                             [class.active]="message.feedbackGiven === 'helpful'"
                             (click)="giveFeedback(message, true)"
@@ -463,7 +462,7 @@
                           >
                             <i class="pi pi-thumbs-up"></i>
                           </button>
-                          <button
+                          <button type="button"
                             class="mini-btn feedback"
                             [class.active]="
                               message.feedbackGiven === 'not_helpful'
@@ -499,7 +498,7 @@
 
           <!-- Scroll to bottom button -->
           @if (showScrollButton()) {
-            <button
+            <button type="button"
               class="scroll-to-bottom"
               (click)="scrollToBottom()"
               aria-label="Scroll to latest message"
@@ -515,7 +514,7 @@
           @if (contextChips().length > 0 && messages().length > 0) {
             <div class="context-chips">
               @for (chip of contextChips(); track chip) {
-                <button
+                <button type="button"
                   class="context-chip"
                   (click)="askQuestion(chip)"
                 >
@@ -536,7 +535,7 @@
                 suggestion of autocompleteSuggestions();
                 track suggestion.text
               ) {
-                <button
+                <button type="button"
                   class="autocomplete-item"
                   (click)="selectAutocomplete(suggestion)"
                 >
@@ -553,10 +552,10 @@
             <div class="input-container">
               <textarea
                 #messageInput
-                [(ngModel)]="currentMessage"
+                [value]="currentMessage"
                 placeholder="Ask Merlin anything..."
                 (keydown)="onKeyDown($event)"
-                (input)="onInputChange()"
+                (input)="onCurrentMessageInput($event)"
                 [disabled]="isLoading() || isRecording()"
                 rows="1"
                 class="message-textarea"
@@ -567,7 +566,7 @@
               <div class="input-actions">
                 @if (!currentMessage.trim()) {
                   <!-- Voice input button -->
-                  <button
+                  <button type="button"
                     class="input-icon-btn voice-btn"
                     [class.recording]="isRecording()"
                     (click)="toggleVoiceInput()"
@@ -590,7 +589,7 @@
               </div>
             </div>
 
-            <button
+            <button type="button"
               class="send-btn"
               (click)="sendMessage()"
               [disabled]="!currentMessage.trim() || isLoading()"

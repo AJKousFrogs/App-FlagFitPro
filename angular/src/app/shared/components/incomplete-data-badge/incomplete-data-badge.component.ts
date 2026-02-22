@@ -34,7 +34,6 @@ export type IncompleteDataPlacement =
 
 @Component({
   selector: "app-incomplete-data-badge",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, Tooltip, StatusTagComponent],
   template: `

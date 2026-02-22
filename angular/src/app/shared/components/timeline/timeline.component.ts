@@ -16,7 +16,6 @@ export interface TimelineItem {
  */
 @Component({
   selector: "app-timeline",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

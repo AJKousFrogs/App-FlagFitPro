@@ -16,15 +16,12 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
@@ -45,7 +42,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 interface TeamEvent {
   id: string;
   title: string;
-  type: "practice" | "game" | "tournament" | "meeting" | "social";
+  type: EventType;
   date: string;
   endDate?: string;
   startTime: string;
@@ -77,6 +74,30 @@ interface CalendarDay {
   isCurrentMonth: boolean;
 }
 
+interface EventForm {
+  type: EventType;
+  title: string;
+  date: Date | null;
+  startTime: string;
+  endTime: string;
+  isMultiDay: boolean;
+  location: string;
+  description: string;
+  requireRsvp: boolean;
+  sendReminder: boolean;
+  recurring: string;
+  notifyPlayers: boolean;
+  notifyParents: boolean;
+}
+
+type EventType =
+  | "practice"
+  | "game"
+  | "tournament"
+  | "meeting"
+  | "social"
+  | "debrief";
+
 // ===== Constants =====
 const EVENT_TYPES = [
   { label: "Practice", value: "practice" },
@@ -103,18 +124,14 @@ const RECURRING_OPTIONS = [
 
 @Component({
   selector: "app-calendar-coach",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
-    Checkbox,
     DatePicker,
     Dialog,
     
     InputText,
-    RadioButton,
     Select,
     Textarea,
 
@@ -372,12 +389,14 @@ const RECURRING_OPTIONS = [
             <div class="radio-group">
               @for (type of eventTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="eventType"
                     [value]="type.value"
-                    [(ngModel)]="eventForm.type"
-                    [inputId]="'type-' + type.value"
-                  ></p-radioButton>
+                    [id]="'type-' + type.value"
+                    [checked]="eventForm.type === type.value"
+                    (change)="onEventTypeOptionChange(type.value)"
+                  />
                   <label [for]="'type-' + type.value">{{ type.label }}</label>
                 </div>
               }
@@ -389,7 +408,8 @@ const RECURRING_OPTIONS = [
             <input
               type="text"
               pInputText
-              [(ngModel)]="eventForm.title"
+              [value]="eventForm.title"
+              (input)="onEventTextFieldChange('title', getInputValue($event))"
               placeholder="Tuesday Practice"
             />
           </div>
@@ -398,7 +418,7 @@ const RECURRING_OPTIONS = [
             <div class="form-field">
               <label>Date</label>
               <p-datepicker
-                [(ngModel)]="eventForm.date"
+                (onSelect)="onEventDateChange($event)"
                 [showIcon]="true"
                 class="w-full"
               ></p-datepicker>
@@ -407,7 +427,7 @@ const RECURRING_OPTIONS = [
               <label>Start Time</label>
               <p-select
                 [options]="timeOptions"
-                [(ngModel)]="eventForm.startTime"
+                (onChange)="onEventTextFieldChange('startTime', $event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
@@ -418,7 +438,7 @@ const RECURRING_OPTIONS = [
               <label>End Time</label>
               <p-select
                 [options]="timeOptions"
-                [(ngModel)]="eventForm.endTime"
+                (onChange)="onEventTextFieldChange('endTime', $event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
@@ -428,12 +448,12 @@ const RECURRING_OPTIONS = [
           </div>
 
           <div class="checkbox-option">
-            <p-checkbox
-              [(ngModel)]="eventForm.isMultiDay"
-              [binary]="true"
-              variant="filled"
-              inputId="multiDay"
-            ></p-checkbox>
+            <input
+              id="multiDay"
+              type="checkbox"
+              [checked]="eventForm.isMultiDay"
+              (change)="onEventToggleChange('isMultiDay', isChecked($event))"
+            />
             <label for="multiDay">Multi-day event (e.g., tournament)</label>
           </div>
 
@@ -441,7 +461,7 @@ const RECURRING_OPTIONS = [
             <label>Location</label>
             <p-select
               [options]="locations"
-              [(ngModel)]="eventForm.location"
+              (onChange)="onEventTextFieldChange('location', $event.value)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select location"
@@ -453,7 +473,8 @@ const RECURRING_OPTIONS = [
             <label>Description / Notes</label>
             <textarea
               pTextarea
-              [(ngModel)]="eventForm.description"
+              [value]="eventForm.description"
+              (input)="onEventTextFieldChange('description', getInputValue($event))"
               rows="3"
               placeholder="Regular practice. Focus on red zone offense..."
             ></textarea>
@@ -462,21 +483,21 @@ const RECURRING_OPTIONS = [
           <div class="form-section">
             <h5>RSVP Settings</h5>
             <div class="checkbox-option">
-              <p-checkbox
-                [(ngModel)]="eventForm.requireRsvp"
-                [binary]="true"
-                variant="filled"
-                inputId="requireRsvp"
-              ></p-checkbox>
+              <input
+                id="requireRsvp"
+                type="checkbox"
+                [checked]="eventForm.requireRsvp"
+                (change)="onEventToggleChange('requireRsvp', isChecked($event))"
+              />
               <label for="requireRsvp">Require RSVP</label>
             </div>
             <div class="checkbox-option">
-              <p-checkbox
-                [(ngModel)]="eventForm.sendReminder"
-                [binary]="true"
-                variant="filled"
-                inputId="sendReminder"
-              ></p-checkbox>
+              <input
+                id="sendReminder"
+                type="checkbox"
+                [checked]="eventForm.sendReminder"
+                (change)="onEventToggleChange('sendReminder', isChecked($event))"
+              />
               <label for="sendReminder"
                 >Send automatic reminder 24h before</label
               >
@@ -488,12 +509,14 @@ const RECURRING_OPTIONS = [
             <div class="radio-group">
               @for (opt of recurringOptions; track opt.value) {
                 <div class="radio-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="recurring"
                     [value]="opt.value"
-                    [(ngModel)]="eventForm.recurring"
-                    [inputId]="'rec-' + opt.value"
-                  ></p-radioButton>
+                    [id]="'rec-' + opt.value"
+                    [checked]="eventForm.recurring === opt.value"
+                    (change)="onEventRecurringChange(opt.value)"
+                  />
                   <label [for]="'rec-' + opt.value">{{ opt.label }}</label>
                 </div>
               }
@@ -503,23 +526,23 @@ const RECURRING_OPTIONS = [
           <div class="form-section">
             <h5>Notify</h5>
             <div class="checkbox-option">
-              <p-checkbox
-                [(ngModel)]="eventForm.notifyPlayers"
-                [binary]="true"
-                variant="filled"
-                inputId="notifyPlayers"
-              ></p-checkbox>
+              <input
+                id="notifyPlayers"
+                type="checkbox"
+                [checked]="eventForm.notifyPlayers"
+                (change)="onEventToggleChange('notifyPlayers', isChecked($event))"
+              />
               <label for="notifyPlayers"
                 >Send notification to all players</label
               >
             </div>
             <div class="checkbox-option">
-              <p-checkbox
-                [(ngModel)]="eventForm.notifyParents"
-                [binary]="true"
-                variant="filled"
-                inputId="notifyParents"
-              ></p-checkbox>
+              <input
+                id="notifyParents"
+                type="checkbox"
+                [checked]="eventForm.notifyParents"
+                (change)="onEventToggleChange('notifyParents', isChecked($event))"
+              />
               <label for="notifyParents">Include parents/guardians</label>
             </div>
           </div>
@@ -664,7 +687,7 @@ export class CalendarCoachComponent implements OnInit {
   showRsvpDialog = false;
 
   // Form
-  eventForm = this.getEmptyEventForm();
+  eventForm: EventForm = this.getEmptyEventForm();
 
   // Options
   readonly eventTypes = EVENT_TYPES;
@@ -784,14 +807,9 @@ export class CalendarCoachComponent implements OnInit {
     }
   }
 
-  private getEmptyEventForm() {
+  private getEmptyEventForm(): EventForm {
     return {
-      type: "practice" as
-        | "practice"
-        | "game"
-        | "tournament"
-        | "meeting"
-        | "social",
+      type: "practice",
       title: "",
       date: null as Date | null,
       startTime: "6:00 PM",
@@ -805,6 +823,50 @@ export class CalendarCoachComponent implements OnInit {
       notifyPlayers: true,
       notifyParents: false,
     };
+  }
+
+  onEventTypeChange(value: EventForm["type"] | null | undefined): void {
+    this.eventForm = { ...this.eventForm, type: value ?? "practice" };
+  }
+
+  onEventTypeOptionChange(value: string): void {
+    this.onEventTypeChange(value as EventForm["type"]);
+  }
+
+  onEventDateChange(value: Date | null | undefined): void {
+    this.eventForm = { ...this.eventForm, date: value ?? null };
+  }
+
+  onEventTextFieldChange(
+    field: "title" | "startTime" | "endTime" | "location" | "description",
+    value: string | null | undefined,
+  ): void {
+    this.eventForm = { ...this.eventForm, [field]: value ?? "" };
+  }
+
+  onEventToggleChange(
+    field:
+      | "isMultiDay"
+      | "requireRsvp"
+      | "sendReminder"
+      | "notifyPlayers"
+      | "notifyParents",
+    value: boolean | null | undefined,
+  ): void {
+    this.eventForm = { ...this.eventForm, [field]: value ?? false };
+  }
+
+  onEventRecurringChange(value: string | null | undefined): void {
+    this.eventForm = { ...this.eventForm, recurring: value ?? "none" };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   private generateTimeOptions(): { label: string; value: string }[] {

@@ -12,7 +12,6 @@ import {
 
 @Component({
   selector: "app-security-settings-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardComponent, ButtonComponent, Divider],
   templateUrl: "./security-settings-card.component.html",

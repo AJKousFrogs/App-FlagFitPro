@@ -43,7 +43,6 @@ interface InvitationData {
  */
 @Component({
   selector: "app-accept-invitation",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,

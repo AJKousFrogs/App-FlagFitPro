@@ -19,7 +19,7 @@
         <h4>Export Format</h4>
         <div class="format-options">
           <button
-            type="button"
+                  type="button"
             class="format-option"
             [class.active]="exportFormat() === 'json'"
             (click)="setFormat('json')"
@@ -29,7 +29,7 @@
             <small>Machine-readable</small>
           </button>
           <button
-            type="button"
+                  type="button"
             class="format-option"
             [class.active]="exportFormat() === 'csv'"
             (click)="setFormat('csv')"

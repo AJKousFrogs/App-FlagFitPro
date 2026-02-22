@@ -22,7 +22,6 @@ export interface BannerCta {
 
 @Component({
   selector: "app-banner",
-  standalone: true,
   imports: [CommonModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./app-banner.component.html",

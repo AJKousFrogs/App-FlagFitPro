@@ -11,7 +11,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start:ssr": "ng serve-ssr",
-    "build": "npx ng build --progress=false --verbose",
+    "build": "ng build --progress=false",
     "build:analyze": "ng build && node scripts/check-bundle-size.js",
     "build:ssr": "ng build && ng run flagfit-pro:server",
     "build:prerender": "ng build && ng run flagfit-pro:prerender",
@@ -48,7 +48,8 @@
     "build-storybook": "ng run flagfit-pro:build-storybook",
     "serve:ssr:flagfit-pro": "node dist/flagfit-pro/server/server.mjs",
     "type-check": "tsc --noEmit",
-    "audit:a11y": "npx tsx src/scripts/accessibility-audit.ts"
+    "audit:a11y": "npx tsx src/scripts/accessibility-audit.ts",
+    "audit:primeng-bindings": "node scripts/audit-primeng-bindings.js"
   },
   "private": true,
   "dependencies": {

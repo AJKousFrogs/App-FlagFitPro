@@ -25,7 +25,6 @@ import { WellnessService } from "../../core/services/wellness.service";
 import { BodyCompositionCardComponent } from "../../shared/components/body-composition-card/body-composition-card.component";
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -75,7 +74,6 @@ interface WellnessMetric {
     AppLoadingComponent,
     ButtonComponent,
     CardComponent,
-    MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
@@ -85,7 +83,7 @@ interface WellnessMetric {
     ConfidenceIndicatorComponent,
   ],
   template: `
-    <app-main-layout>
+    <div class="wellness-root">
       <!-- Loading State -->
       <app-loading
         [visible]="isPageLoading()"
@@ -94,16 +92,16 @@ interface WellnessMetric {
       ></app-loading>
 
       <!-- Error State -->
-      <ng-container *ngIf="hasPageError()">
+      @if (hasPageError()) {
         <app-page-error-state
           title="Unable to load wellness data"
           [message]="pageErrorMessage()"
           (retry)="retryLoad()"
         ></app-page-error-state>
-      </ng-container>
+      }
 
       <!-- Content -->
-      <div *ngIf="!hasPageError()" class="wellness-page">
+        <div class="wellness-page">
           <app-page-header
             title="Wellness & Recovery"
             subtitle="Track your health, recovery, and wellness metrics"
@@ -329,7 +327,8 @@ interface WellnessMetric {
                     <label for="sleepHours">Sleep Hours</label>
                     <p-inputNumber
                       inputId="sleepHours"
-                      [(ngModel)]="checkInData.sleepHours"
+                      [ngModel]="checkInData.sleepHours"
+                      (ngModelChange)="onCheckInFieldChange('sleepHours', $event ?? null)"
                       [min]="0"
                       [max]="24"
                       [showButtons]="true"
@@ -343,7 +342,8 @@ interface WellnessMetric {
                     <label for="sleepQuality">Sleep Quality (1-10)</label>
                     <p-inputNumber
                       inputId="sleepQuality"
-                      [(ngModel)]="checkInData.sleepQuality"
+                      [ngModel]="checkInData.sleepQuality"
+                      (ngModelChange)="onCheckInFieldChange('sleepQuality', $event ?? null)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -364,7 +364,8 @@ interface WellnessMetric {
                     <label for="energyLevel">Energy Level (1-10)</label>
                     <p-inputNumber
                       inputId="energyLevel"
-                      [(ngModel)]="checkInData.energyLevel"
+                      [ngModel]="checkInData.energyLevel"
+                      (ngModelChange)="onCheckInFieldChange('energyLevel', $event ?? null)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -376,7 +377,8 @@ interface WellnessMetric {
                     <label for="soreness">Muscle Soreness (1-10)</label>
                     <p-inputNumber
                       inputId="soreness"
-                      [(ngModel)]="checkInData.soreness"
+                      [ngModel]="checkInData.soreness"
+                      (ngModelChange)="onCheckInFieldChange('soreness', $event ?? null)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -397,7 +399,8 @@ interface WellnessMetric {
                     >
                     <p-inputNumber
                       inputId="hydrationGlasses"
-                      [(ngModel)]="checkInData.hydration"
+                      [ngModel]="checkInData.hydration"
+                      (ngModelChange)="onCheckInFieldChange('hydration', $event ?? null)"
                       [min]="0"
                       [max]="20"
                       [showButtons]="true"
@@ -410,7 +413,8 @@ interface WellnessMetric {
                     <label for="restingHR">Resting Heart Rate (BPM)</label>
                     <p-inputNumber
                       inputId="restingHR"
-                      [(ngModel)]="checkInData.restingHR"
+                      [ngModel]="checkInData.restingHR"
+                      (ngModelChange)="onCheckInFieldChange('restingHR', $event ?? null)"
                       [min]="40"
                       [max]="120"
                       [showButtons]="true"
@@ -436,7 +440,8 @@ interface WellnessMetric {
                     <label for="mood">Mood (1-10)</label>
                     <p-inputNumber
                       inputId="mood"
-                      [(ngModel)]="checkInData.mood"
+                      [ngModel]="checkInData.mood"
+                      (ngModelChange)="onCheckInFieldChange('mood', $event ?? null)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -448,7 +453,8 @@ interface WellnessMetric {
                     <label for="stress">Stress Level (1-10)</label>
                     <p-inputNumber
                       inputId="stress"
-                      [(ngModel)]="checkInData.stress"
+                      [ngModel]="checkInData.stress"
+                      (ngModelChange)="onCheckInFieldChange('stress', $event ?? null)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -467,7 +473,8 @@ interface WellnessMetric {
                     <label for="motivation">Training Motivation (1-10)</label>
                     <p-inputNumber
                       inputId="motivation"
-                      [(ngModel)]="checkInData.motivation"
+                      [ngModel]="checkInData.motivation"
+                      (ngModelChange)="onCheckInFieldChange('motivation', $event ?? null)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -481,7 +488,8 @@ interface WellnessMetric {
                     <label for="readiness">Readiness to Train (1-10)</label>
                     <p-inputNumber
                       inputId="readiness"
-                      [(ngModel)]="checkInData.readiness"
+                      [ngModel]="checkInData.readiness"
+                      (ngModelChange)="onCheckInFieldChange('readiness', $event ?? null)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -509,9 +517,8 @@ interface WellnessMetric {
             </div>
           </app-card>
         </div>
-      </div>
       <!-- End of content -->
-    </app-main-layout>
+    </div>
   `,
   styleUrl: "./wellness.component.scss",
 })
@@ -827,6 +834,26 @@ export class WellnessComponent {
       behavior: "smooth",
       block: "start",
     });
+  }
+
+  onCheckInFieldChange(
+    key:
+      | "sleepHours"
+      | "sleepQuality"
+      | "energyLevel"
+      | "soreness"
+      | "hydration"
+      | "restingHR"
+      | "mood"
+      | "stress"
+      | "motivation"
+      | "readiness",
+    value: number | null,
+  ): void {
+    this.checkInData = {
+      ...this.checkInData,
+      [key]: value,
+    };
   }
 
   submitCheckIn(): void {

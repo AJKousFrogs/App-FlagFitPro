@@ -67,11 +67,10 @@ interface MonthlyStats {
 
 @Component({
   selector: "app-training-schedule",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     CommonModule,
+    FormsModule,
     DatePicker,
     Skeleton,
     Checkbox,
@@ -493,8 +492,8 @@ export class TrainingScheduleComponent implements OnInit {
     }
   }
 
-  onShowWeekToggle(checked: boolean): void {
-    this.showWeekNumbers.set(checked);
+  onShowWeekToggle(checked: boolean | undefined): void {
+    this.showWeekNumbers.set(!!checked);
   }
 
   primaryAction(): void {

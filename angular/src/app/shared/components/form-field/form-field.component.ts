@@ -31,7 +31,6 @@ export interface FormFieldConfig {
 
 @Component({
   selector: "app-form-field",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   providers: [
@@ -59,7 +58,7 @@ export interface FormFieldConfig {
           [disabled]="config().disabled || disabled()"
           [autocomplete]="config().autocomplete || 'off'"
           [value]="value()"
-          (input)="onInput($any($event.target).value)"
+          (input)="onInput(getInputValue($event))"
           (blur)="onBlur()"
           [class.error]="hasError()"
           [attr.aria-invalid]="hasError()"
@@ -76,7 +75,7 @@ export interface FormFieldConfig {
           [disabled]="config().disabled || disabled()"
           [autocomplete]="config().autocomplete || 'off'"
           [value]="value()"
-          (input)="onInput($any($event.target).value)"
+          (input)="onInput(getInputValue($event))"
           (blur)="onBlur()"
           [class.error]="hasError()"
           [attr.aria-invalid]="hasError()"
@@ -152,6 +151,10 @@ export class FormFieldComponent implements ControlValueAccessor {
   onInput(value: string): void {
     this.value.set(value);
     this.onChange(value);
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement).value;
   }
 
   onBlur(): void {

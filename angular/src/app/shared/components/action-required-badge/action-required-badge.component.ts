@@ -33,7 +33,6 @@ export type ActionType =
 
 @Component({
   selector: "app-action-required-badge",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

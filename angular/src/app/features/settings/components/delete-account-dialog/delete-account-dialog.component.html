@@ -41,8 +41,8 @@
           name="deleteConfirm"
           type="text"
           pInputText
-          [ngModel]="confirmText()"
-          (ngModelChange)="confirmTextChange.emit($event)"
+          [value]="confirmText()"
+          (input)="onConfirmTextInput($event)"
           placeholder="Type DELETE"
           class="delete-input"
           autocomplete="off"

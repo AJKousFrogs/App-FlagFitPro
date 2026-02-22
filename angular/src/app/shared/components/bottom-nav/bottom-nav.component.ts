@@ -25,7 +25,6 @@ interface NavItem {
 
 @Component({
   selector: "app-bottom-nav",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, NavItemComponent],
   template: `

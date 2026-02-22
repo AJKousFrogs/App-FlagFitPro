@@ -136,8 +136,8 @@
                   <h3>Mental Wellness Trends</h3>
                   <p-select
                     [options]="timePeriods"
-                    [(ngModel)]="selectedPeriod"
-                    (onValueChange)="loadWellnessData()"
+                    [ngModel]="selectedPeriod"
+                    (onChange)="updateSelectedPeriod($event.value)"
                   ></p-select>
                 </div>
 
@@ -536,20 +536,20 @@
                                     }}/10</span
                                   >
                                   <i
-                                    [ngClass]="[
+                                    [class]="
                                       getTrendIcon(
                                         report.leadUpPeriod.confidenceTrend
-                                      ),
-                                      'trend-icon',
-                                      report.leadUpPeriod.confidenceTrend ===
+                                      ) +
+                                      ' trend-icon' +
+                                      (report.leadUpPeriod.confidenceTrend ===
                                       'rising'
-                                        ? 'positive'
-                                        : '',
-                                      report.leadUpPeriod.confidenceTrend ===
+                                        ? ' positive'
+                                        : '') +
+                                      (report.leadUpPeriod.confidenceTrend ===
                                       'falling'
-                                        ? 'negative'
-                                        : '',
-                                    ]"
+                                        ? ' negative'
+                                        : '')
+                                    "
                                   ></i>
                                 </div>
                               </div>
@@ -562,21 +562,21 @@
                                     }}/10</span
                                   >
                                   <i
-                                    [ngClass]="[
+                                    [class]="
                                       getTrendIcon(
                                         report.leadUpPeriod.anxietyTrend,
                                         true
-                                      ),
-                                      'trend-icon',
-                                      report.leadUpPeriod.anxietyTrend ===
+                                      ) +
+                                      ' trend-icon' +
+                                      (report.leadUpPeriod.anxietyTrend ===
                                       'falling'
-                                        ? 'positive'
-                                        : '',
-                                      report.leadUpPeriod.anxietyTrend ===
+                                        ? ' positive'
+                                        : '') +
+                                      (report.leadUpPeriod.anxietyTrend ===
                                       'rising'
-                                        ? 'negative'
-                                        : '',
-                                    ]"
+                                        ? ' negative'
+                                        : '')
+                                    "
                                   ></i>
                                 </div>
                               </div>
@@ -762,7 +762,8 @@
               <label>Report Type</label>
               <p-select
                 [options]="reportTypeOptions"
-                [(ngModel)]="newReport.type"
+                [ngModel]="newReport.type"
+                (onChange)="updateNewReportType($event.value)"
                 placeholder="Select report type"
                 class="w-full"
               ></p-select>
@@ -772,7 +773,8 @@
               <label>Time Period</label>
               <p-select
                 [options]="timePeriods"
-                [(ngModel)]="newReport.period"
+                [ngModel]="newReport.period"
+                (onChange)="updateNewReportPeriod($event.value)"
                 placeholder="Select period"
                 class="w-full"
               ></p-select>
@@ -786,66 +788,66 @@
 
               <div class="checkbox-grid">
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.includeWellnessScores"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="wellness"
-                  ></p-checkbox>
+                  <input
+                    id="wellness"
+                    type="checkbox"
+                    [checked]="privacySettings.includeWellnessScores"
+                    (change)="updatePrivacySetting('includeWellnessScores', isChecked($event))"
+                  />
                   <label for="wellness">Wellness scores</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.includeSleepData"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="sleep"
-                  ></p-checkbox>
+                  <input
+                    id="sleep"
+                    type="checkbox"
+                    [checked]="privacySettings.includeSleepData"
+                    (change)="updatePrivacySetting('includeSleepData', isChecked($event))"
+                  />
                   <label for="sleep">Sleep data</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.includeTrainingLoad"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="training"
-                  ></p-checkbox>
+                  <input
+                    id="training"
+                    type="checkbox"
+                    [checked]="privacySettings.includeTrainingLoad"
+                    (change)="updatePrivacySetting('includeTrainingLoad', isChecked($event))"
+                  />
                   <label for="training">Training load</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.includePerformanceData"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="performance"
-                  ></p-checkbox>
+                  <input
+                    id="performance"
+                    type="checkbox"
+                    [checked]="privacySettings.includePerformanceData"
+                    (change)="updatePrivacySetting('includePerformanceData', isChecked($event))"
+                  />
                   <label for="performance">Performance data</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.includeInjuryHistory"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="injuries"
-                  ></p-checkbox>
+                  <input
+                    id="injuries"
+                    type="checkbox"
+                    [checked]="privacySettings.includeInjuryHistory"
+                    (change)="updatePrivacySetting('includeInjuryHistory', isChecked($event))"
+                  />
                   <label for="injuries">Injury history</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.includeAINotes"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="ai"
-                  ></p-checkbox>
+                  <input
+                    id="ai"
+                    type="checkbox"
+                    [checked]="privacySettings.includeAINotes"
+                    (change)="updatePrivacySetting('includeAINotes', isChecked($event))"
+                  />
                   <label for="ai">AI-generated patterns</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.includePersonalNotes"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="personal"
-                  ></p-checkbox>
+                  <input
+                    id="personal"
+                    type="checkbox"
+                    [checked]="privacySettings.includePersonalNotes"
+                    (change)="updatePrivacySetting('includePersonalNotes', isChecked($event))"
+                  />
                   <label for="personal">Personal notes</label>
                 </div>
               </div>
@@ -853,30 +855,30 @@
               <div class="anonymization-options">
                 <h5>Anonymization Options</h5>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.anonymizeTeamName"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="anonTeam"
-                  ></p-checkbox>
+                  <input
+                    id="anonTeam"
+                    type="checkbox"
+                    [checked]="privacySettings.anonymizeTeamName"
+                    (change)="updatePrivacySetting('anonymizeTeamName', isChecked($event))"
+                  />
                   <label for="anonTeam">Hide team name</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.anonymizeCoachNames"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="anonCoach"
-                  ></p-checkbox>
+                  <input
+                    id="anonCoach"
+                    type="checkbox"
+                    [checked]="privacySettings.anonymizeCoachNames"
+                    (change)="updatePrivacySetting('anonymizeCoachNames', isChecked($event))"
+                  />
                   <label for="anonCoach">Hide coach names</label>
                 </div>
                 <div class="checkbox-item">
-                  <p-checkbox
-                    [(ngModel)]="privacySettings.removeDates"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="removeDates"
-                  ></p-checkbox>
+                  <input
+                    id="removeDates"
+                    type="checkbox"
+                    [checked]="privacySettings.removeDates"
+                    (change)="updatePrivacySetting('removeDates', isChecked($event))"
+                  />
                   <label for="removeDates">Show relative dates only</label>
                 </div>
               </div>
@@ -887,7 +889,8 @@
               <textarea
                 id="notes"
                 pInputTextarea
-                [(ngModel)]="newReport.notes"
+                [value]="newReport.notes"
+                (input)="updateNewReportNotes(getInputValue($event))"
                 rows="3"
                 placeholder="Add any context or notes for your psychologist..."
                 class="w-full"
@@ -918,16 +921,19 @@
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="newPreComp.name"
+                [value]="newPreComp.name"
+                (input)="updateNewPreCompText('name', getInputValue($event))"
                 placeholder="e.g., Regional Championships"
                 class="w-full"
+                aria-label="Competition name"
               />
             </div>
             <div class="form-group">
               <label>Significance</label>
               <p-select
                 [options]="significanceOptions"
-                [(ngModel)]="newPreComp.significance"
+                [ngModel]="newPreComp.significance"
+                (onChange)="updateNewPreCompSignificance($event.value)"
                 placeholder="Select importance"
                 class="w-full"
               ></p-select>
@@ -937,10 +943,12 @@
               <input
                 type="number"
                 pInputText
-                [(ngModel)]="newPreComp.readiness"
+                [value]="newPreComp.readiness"
+                (input)="updateNewPreCompReadiness(getInputValue($event))"
                 min="1"
                 max="10"
                 class="w-full"
+                aria-label="Readiness rating from one to ten"
               />
             </div>
             <div class="form-group">
@@ -948,9 +956,11 @@
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="newPreComp.concern"
+                [value]="newPreComp.concern"
+                (input)="updateNewPreCompText('concern', getInputValue($event))"
                 placeholder="What's on your mind?"
                 class="w-full"
+                aria-label="Biggest concern"
               />
             </div>
           </div>

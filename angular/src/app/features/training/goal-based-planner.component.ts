@@ -26,7 +26,6 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 
 @Component({
   selector: "app-goal-based-planner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -56,13 +55,13 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
               >Select Training Goal</label
             >
             <p-select
-              [(ngModel)]="selectedGoal"
+              [ngModel]="selectedGoal()"
               [options]="goalOptions"
               optionLabel="label"
               optionValue="value"
               placeholder="Choose your primary goal"
               class="w-full"
-              (onValueChange)="onGoalChange()"
+              (onChange)="onGoalValueChange($event.value)"
             >
             </p-select>
             <p class="text-xs text-text-secondary mt-2">
@@ -359,6 +358,11 @@ export class GoalBasedPlannerComponent implements OnInit {
     if (this.selectedGoal()) {
       this.generatePlan();
     }
+  }
+
+  onGoalValueChange(value: TrainingGoal | null | undefined): void {
+    this.selectedGoal.set(value ?? null);
+    this.onGoalChange();
   }
 
   async generatePlan() {

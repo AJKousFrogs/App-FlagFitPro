@@ -16,16 +16,13 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 
-import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
@@ -89,17 +86,13 @@ const TAG_TYPES = [
 
 @Component({
   selector: "app-film-room-coach",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
-    Checkbox,
     Dialog,
     
     InputText,
     ProgressBar,
-    RadioButton,
     Select,
     Textarea,
 
@@ -309,21 +302,25 @@ const TAG_TYPES = [
             <label>Source</label>
             <div class="radio-group">
               <div class="radio-option">
-                <p-radioButton
+                <input
+                  type="radio"
                   name="source"
                   value="url"
-                  [(ngModel)]="uploadForm.source"
-                  inputId="sourceUrl"
-                ></p-radioButton>
+                  id="sourceUrl"
+                  [checked]="uploadForm.source === 'url'"
+                  (change)="onUploadSourceChange('url')"
+                />
                 <label for="sourceUrl">YouTube / Vimeo URL</label>
               </div>
               <div class="radio-option">
-                <p-radioButton
+                <input
+                  type="radio"
                   name="source"
                   value="file"
-                  [(ngModel)]="uploadForm.source"
-                  inputId="sourceFile"
-                ></p-radioButton>
+                  id="sourceFile"
+                  [checked]="uploadForm.source === 'file'"
+                  (change)="onUploadSourceChange('file')"
+                />
                 <label for="sourceFile">Upload File</label>
               </div>
             </div>
@@ -335,7 +332,8 @@ const TAG_TYPES = [
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="uploadForm.url"
+                [value]="uploadForm.url"
+                (input)="onUploadUrlChange(getInputValue($event))"
                 placeholder="https://youtube.com/watch?v=..."
               />
             </div>
@@ -346,7 +344,8 @@ const TAG_TYPES = [
             <input
               type="text"
               pInputText
-              [(ngModel)]="uploadForm.title"
+              [value]="uploadForm.title"
+              (input)="onUploadTitleChange(getInputValue($event))"
               placeholder="Week 3 vs Panthers - Offense"
             />
           </div>
@@ -356,12 +355,14 @@ const TAG_TYPES = [
             <div class="radio-group">
               @for (type of filmTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="filmType"
                     [value]="type.value"
-                    [(ngModel)]="uploadForm.type"
-                    [inputId]="'filmType-' + type.value"
-                  ></p-radioButton>
+                    [id]="'filmType-' + type.value"
+                    [checked]="uploadForm.type === type.value"
+                    (change)="onUploadTypeChange(type.value)"
+                  />
                   <label [for]="'filmType-' + type.value">{{
                     type.label
                   }}</label>
@@ -374,7 +375,8 @@ const TAG_TYPES = [
             <label>Description</label>
             <textarea
               pTextarea
-              [(ngModel)]="uploadForm.description"
+              [value]="uploadForm.description"
+              (input)="onUploadDescriptionChange(getInputValue($event))"
               rows="3"
               placeholder="Brief description of the film..."
             ></textarea>
@@ -408,12 +410,14 @@ const TAG_TYPES = [
             <div class="radio-group">
               @for (type of tagTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="tagType"
                     [value]="type.value"
-                    [(ngModel)]="tagForm.type"
-                    [inputId]="'tagType-' + type.value"
-                  ></p-radioButton>
+                    [id]="'tagType-' + type.value"
+                    [checked]="tagForm.type === type.value"
+                    (change)="onTagTypeChange(type.value)"
+                  />
                   <label [for]="'tagType-' + type.value">{{
                     type.label
                   }}</label>
@@ -426,21 +430,25 @@ const TAG_TYPES = [
             <label>Tag Player(s)</label>
             <div class="radio-group">
               <div class="radio-option">
-                <p-radioButton
+                <input
+                  type="radio"
                   name="tagTarget"
                   value="everyone"
-                  [(ngModel)]="tagForm.target"
-                  inputId="tagEveryone"
-                ></p-radioButton>
+                  id="tagEveryone"
+                  [checked]="tagForm.target === 'everyone'"
+                  (change)="onTagTargetChange('everyone')"
+                />
                 <label for="tagEveryone">Everyone (team)</label>
               </div>
               <div class="radio-option">
-                <p-radioButton
+                <input
+                  type="radio"
                   name="tagTarget"
                   value="specific"
-                  [(ngModel)]="tagForm.target"
-                  inputId="tagSpecific"
-                ></p-radioButton>
+                  id="tagSpecific"
+                  [checked]="tagForm.target === 'specific'"
+                  (change)="onTagTargetChange('specific')"
+                />
                 <label for="tagSpecific">Specific player(s):</label>
               </div>
             </div>
@@ -448,12 +456,12 @@ const TAG_TYPES = [
               <div class="player-checkboxes">
                 @for (player of players(); track player.id) {
                   <div class="checkbox-option">
-                    <p-checkbox
-                      [value]="player.id"
-                      [(ngModel)]="tagForm.playerIds"
-                      variant="filled"
-                      [inputId]="'player-' + player.id"
-                    ></p-checkbox>
+                    <input
+                      type="checkbox"
+                      [id]="'player-' + player.id"
+                      [checked]="tagForm.playerIds.includes(player.id)"
+                      (change)="onTagPlayerToggle(player.id, isChecked($event))"
+                    />
                     <label [for]="'player-' + player.id"
                       >{{ player.name }} (#{{ player.number }})</label
                     >
@@ -467,7 +475,7 @@ const TAG_TYPES = [
             <label>Link to Play (optional)</label>
             <p-select
               [options]="plays()"
-              [(ngModel)]="tagForm.playId"
+              (onChange)="onTagPlayIdChange($event.value)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select play"
@@ -480,7 +488,8 @@ const TAG_TYPES = [
             <label>Comment</label>
             <textarea
               pTextarea
-              [(ngModel)]="tagForm.comment"
+              [value]="tagForm.comment"
+              (input)="onTagCommentChange(getInputValue($event))"
               rows="4"
               placeholder="What should the player learn from this moment?"
             ></textarea>
@@ -568,6 +577,67 @@ export class FilmRoomCoachComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  onUploadSourceChange(value: "url" | "file"): void {
+    this.uploadForm = { ...this.uploadForm, source: value };
+  }
+
+  onUploadUrlChange(value: string): void {
+    this.uploadForm = { ...this.uploadForm, url: value };
+  }
+
+  onUploadTitleChange(value: string): void {
+    this.uploadForm = { ...this.uploadForm, title: value };
+  }
+
+  onUploadTypeChange(value: string): void {
+    if (
+      value === "game" ||
+      value === "practice" ||
+      value === "scouting" ||
+      value === "training"
+    ) {
+      this.uploadForm = { ...this.uploadForm, type: value };
+    }
+  }
+
+  onUploadDescriptionChange(value: string): void {
+    this.uploadForm = { ...this.uploadForm, description: value };
+  }
+
+  onTagTypeChange(value: string): void {
+    if (
+      value === "positive" ||
+      value === "correction" ||
+      value === "teaching" ||
+      value === "opponent"
+    ) {
+      this.tagForm = { ...this.tagForm, type: value };
+    }
+  }
+
+  onTagTargetChange(value: "everyone" | "specific"): void {
+    this.tagForm = { ...this.tagForm, target: value };
+  }
+
+  onTagPlayerIdsChange(value: string[] | null): void {
+    this.tagForm = { ...this.tagForm, playerIds: value ?? [] };
+  }
+
+  onTagPlayerToggle(playerId: string, checked: boolean): void {
+    const nextPlayerIds = checked
+      ? Array.from(new Set([...this.tagForm.playerIds, playerId]))
+      : this.tagForm.playerIds.filter((id) => id !== playerId);
+    this.tagForm = { ...this.tagForm, playerIds: nextPlayerIds };
+  }
+
+  onTagPlayIdChange(value: string | null): void {
+    this.tagForm = { ...this.tagForm, playId: value ?? "" };
+  }
+
+  onTagCommentChange(value: string): void {
+    this.tagForm = { ...this.tagForm, comment: value };
   }
 
   async loadData(): Promise<void> {
@@ -673,6 +743,15 @@ export class FilmRoomCoachComponent implements OnInit {
       "Tag Saved",
     );
     this.showTagDialog = false;
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   // Helpers

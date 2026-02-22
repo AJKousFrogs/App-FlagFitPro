@@ -33,7 +33,6 @@ import { getTimeAgo } from "../../utils/date.utils";
 
 @Component({
   selector: "app-coach-override-notification",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

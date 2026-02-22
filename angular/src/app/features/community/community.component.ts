@@ -6,7 +6,6 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  HostListener,
   OnInit,
   computed,
   inject,
@@ -14,7 +13,6 @@ import {
   viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 
@@ -140,13 +138,13 @@ interface ApiPollVoteResponse {
   totalVotes: number;
 }
 
+type PostMedia = Post["media"];
+
 @Component({
   selector: "app-community",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     RouterModule,
     ScrollingModule,
     Dialog,
@@ -166,6 +164,9 @@ interface ApiPollVoteResponse {
   templateUrl: "./community.component.html",
 
   styleUrl: "./community.component.scss",
+  host: {
+    "(window:scroll)": "onScroll()",
+  },
 })
 export class CommunityComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -284,7 +285,6 @@ export class CommunityComponent implements OnInit {
   }
 
   // Infinite scroll - load more posts when near bottom
-  @HostListener("window:scroll")
   onScroll(): void {
     if (this.isLoadingMore() || !this.hasMorePosts()) return;
 
@@ -312,28 +312,7 @@ export class CommunityComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response?.data?.posts) {
-            const newPosts = response.data.posts.map((p: ApiPostData) => ({
-              id: p.id,
-              author: p.authorName || p.author || "Unknown",
-              authorInitials: this.getInitialsStr(
-                p.authorName || p.author || "??",
-              ),
-              authorRole: p.postType === "announcement" ? "Coach" : undefined,
-              timeAgo: this.getRelativeTime(new Date(p.timestamp)),
-              location: p.location,
-              content: p.content,
-              likes: p.likes || 0,
-              comments: p.comments || 0,
-              shares: p.shares || 0,
-              isLiked: p.isLiked || false,
-              isBookmarked: p.isBookmarked || false,
-              showComments: false,
-              commentsList: [],
-              newComment: "",
-              media: p.mediaUrl
-                ? { type: p.mediaType || "image", url: p.mediaUrl }
-                : undefined,
-            }));
+            const newPosts = this.mapApiPosts(response.data.posts);
 
             if (newPosts.length > 0) {
               this.posts.update((posts) => [...posts, ...newPosts]);
@@ -381,29 +360,7 @@ export class CommunityComponent implements OnInit {
           this.isPageLoading.set(false);
           this.hasPageError.set(false);
           if (response?.data?.posts) {
-            const mappedPosts = response.data.posts.map((p: ApiPostData) => ({
-              id: p.id,
-              author: p.authorName || p.author || "Unknown",
-              authorInitials: this.getInitialsStr(
-                p.authorName || p.author || "??",
-              ),
-              authorRole: p.postType === "announcement" ? "Coach" : undefined,
-              timeAgo: this.getRelativeTime(new Date(p.timestamp)),
-              location: p.location,
-              content: p.content,
-              likes: p.likes || 0,
-              comments: p.comments || 0,
-              shares: p.shares || 0,
-              isLiked: p.isLiked || false,
-              isBookmarked: p.isBookmarked || false,
-              showComments: false,
-              commentsList: [],
-              newComment: "",
-              media: p.mediaUrl
-                ? { type: p.mediaType || "image", url: p.mediaUrl }
-                : undefined,
-            }));
-            this.posts.set(mappedPosts);
+            this.posts.set(this.mapApiPosts(response.data.posts));
           } else {
             this.posts.set([]);
           }
@@ -978,6 +935,16 @@ export class CommunityComponent implements OnInit {
     this.showPollDialog = true;
   }
 
+  setPollQuestion(value: string): void {
+    this.pollQuestion = value;
+  }
+
+  setPollOption(index: number, value: string): void {
+    this.pollOptions = this.pollOptions.map((option, i) =>
+      i === index ? value : option,
+    );
+  }
+
   addOption(): void {
     if (this.pollOptions.length < 4) {
       this.pollOptions = [...this.pollOptions, ""];
@@ -1131,6 +1098,65 @@ export class CommunityComponent implements OnInit {
   addLocation(): void {
     this.locationInput = "";
     this.showLocationDialog = true;
+  }
+
+  setLocationInput(value: string): void {
+    this.locationInput = value;
+  }
+
+  setNewPostContent(value: string): void {
+    this.newPostContent = value;
+  }
+
+  setPostComment(postId: string, value: string): void {
+    this.posts.update((posts) =>
+      posts.map((p) => (p.id === postId ? { ...p, newComment: value } : p)),
+    );
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  private mapApiPosts(apiPosts: ApiPostData[]): Post[] {
+    return apiPosts.map((post) => this.mapApiPost(post));
+  }
+
+  private mapApiPost(post: ApiPostData): Post {
+    const authorName = post.authorName || post.author || "Unknown";
+    const media = this.getApiPostMedia(post);
+
+    return {
+      id: post.id,
+      author: authorName,
+      authorInitials: this.getInitialsStr(post.authorName || post.author || "??"),
+      authorRole: post.postType === "announcement" ? "Coach" : undefined,
+      timeAgo: this.getRelativeTime(new Date(post.timestamp)),
+      location: post.location,
+      content: post.content,
+      likes: post.likes || 0,
+      comments: post.comments || 0,
+      shares: post.shares || 0,
+      isLiked: post.isLiked || false,
+      isBookmarked: post.isBookmarked || false,
+      showComments: false,
+      commentsList: [],
+      newComment: "",
+      media,
+    };
+  }
+
+  private getApiPostMedia(post: ApiPostData): PostMedia {
+    if (!post.mediaUrl) {
+      return undefined;
+    }
+
+    const mediaType = post.mediaType === "video" ? "video" : "image";
+    return { type: mediaType, url: post.mediaUrl };
   }
 
   cancelLocation(): void {

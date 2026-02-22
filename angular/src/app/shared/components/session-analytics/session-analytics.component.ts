@@ -62,7 +62,6 @@ interface AnalyticsData {
 
 @Component({
   selector: "app-session-analytics",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

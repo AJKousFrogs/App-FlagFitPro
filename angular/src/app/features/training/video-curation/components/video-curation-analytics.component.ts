@@ -17,7 +17,6 @@ import { formatFocus } from "../video-curation-utils";
 
 @Component({
   selector: "app-video-curation-analytics",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Card, ProgressBar, Avatar],
   template: `

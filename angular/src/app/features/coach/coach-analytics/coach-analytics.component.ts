@@ -15,7 +15,6 @@
 
 import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { ChartOptions } from "chart.js";
 import { Card } from "primeng/card";
 import { Divider } from "primeng/divider";
@@ -92,11 +91,9 @@ interface TeamOption {
 
 @Component({
   selector: "app-coach-analytics",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DecimalPipe,
-    FormsModule,
     Card,
 
     LazyChartComponent,
@@ -126,15 +123,13 @@ interface TeamOption {
           <div class="header-filters">
             <p-select
               [options]="teamOptions"
-              [(ngModel)]="selectedTeam"
+              (onChange)="onTeamChange($event.value)"
               placeholder="Select Team"
-              (onValueChange)="loadAnalytics()"
             ></p-select>
             <p-select
               [options]="timeRangeOptions"
-              [(ngModel)]="selectedTimeRange"
+              (onChange)="onTimeRangeChange($event.value)"
               placeholder="Select Period"
-              (onValueChange)="loadAnalytics()"
             ></p-select>
             <app-icon-button
               icon="pi-refresh"
@@ -527,6 +522,16 @@ export class CoachAnalyticsComponent {
       this.updateCharts();
       this.loading.set(false);
     }, 500);
+  }
+
+  onTeamChange(value: string | null | undefined): void {
+    this.selectedTeam = value ?? "all";
+    this.loadAnalytics();
+  }
+
+  onTimeRangeChange(value: string | null | undefined): void {
+    this.selectedTimeRange = value ?? "30d";
+    this.loadAnalytics();
   }
 
   private initChartOptions(): void {

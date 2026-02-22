@@ -38,7 +38,6 @@ export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 
 @Component({
   selector: "app-achievement-badge",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tooltip],
   template: `

@@ -9,7 +9,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -54,11 +53,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
 @Component({
   selector: "app-officials",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     TableModule,
     StatusTagComponent,
@@ -101,10 +98,9 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <div class="filter-actions">
                   <p-select
                     [options]="certificationOptions"
-                    [(ngModel)]="selectedCertification"
+                    (onChange)="onSelectedCertificationChange($event.value)"
                     placeholder="All Levels"
                     [showClear]="true"
-                    (onValueChange)="filterOfficials()"
                   ></p-select>
                 </div>
               </div>
@@ -343,7 +339,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <label>Name *</label>
               <input
                 pInputText
-                [(ngModel)]="officialForm.name"
+                [value]="officialForm.name"
+                (input)="onOfficialNameChange(getInputValue($event))"
                 placeholder="Full name"
               />
             </div>
@@ -353,7 +350,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Email</label>
                 <input
                   pInputText
-                  [(ngModel)]="officialForm.email"
+                  [value]="officialForm.email"
+                  (input)="onOfficialEmailChange(getInputValue($event))"
                   type="email"
                   placeholder="email@example.com"
                 />
@@ -363,7 +361,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Phone</label>
                 <input
                   pInputText
-                  [(ngModel)]="officialForm.phone"
+                  [value]="officialForm.phone"
+                  (input)="onOfficialPhoneChange(getInputValue($event))"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -374,7 +373,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Certification Level</label>
                 <p-select
                   [options]="certificationOptions"
-                  [(ngModel)]="officialForm.certification_level"
+                  (onChange)="onOfficialCertificationChange($event.value)"
                   placeholder="Select level"
                   class="w-full"
                 ></p-select>
@@ -383,7 +382,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <div class="form-field">
                 <label>Years Experience</label>
                 <p-inputNumber
-                  [(ngModel)]="officialForm.years_experience"
+                  (onInput)="onOfficialYearsExperienceChange($event.value)"
                   [min]="0"
                 ></p-inputNumber>
               </div>
@@ -393,7 +392,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <label>Notes</label>
               <input
                 pInputText
-                [(ngModel)]="officialForm.notes"
+                [value]="officialForm.notes"
+                (input)="onOfficialNotesChange(getInputValue($event))"
                 placeholder="Additional notes..."
               />
             </div>
@@ -430,7 +430,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Game *</label>
                 <p-select
                   [options]="upcomingGames()"
-                  [(ngModel)]="scheduleForm.game_id"
+                  (onChange)="onScheduleGameIdChange($event.value)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select game"
@@ -442,7 +442,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Role *</label>
                 <p-select
                   [options]="roleOptions"
-                  [(ngModel)]="scheduleForm.role"
+                  (onChange)="onScheduleRoleChange($event.value)"
                   placeholder="Select role"
                   class="w-full"
                 ></p-select>
@@ -451,7 +451,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <div class="form-field">
                 <label>Payment Amount</label>
                 <p-inputNumber
-                  [(ngModel)]="scheduleForm.payment_amount"
+                  (onInput)="onSchedulePaymentAmountChange($event.value)"
                   mode="currency"
                   currency="USD"
                   [min]="0"
@@ -614,6 +614,61 @@ export class OfficialsComponent implements OnInit {
 
   filterOfficials(): void {
     // Computed handles filtering
+  }
+
+  onSelectedCertificationChange(value: CertificationLevel | null): void {
+    this.selectedCertification = value;
+    this.filterOfficials();
+  }
+
+  onOfficialNameChange(value: string): void {
+    this.officialForm = { ...this.officialForm, name: value };
+  }
+
+  onOfficialEmailChange(value: string): void {
+    this.officialForm = { ...this.officialForm, email: value };
+  }
+
+  onOfficialPhoneChange(value: string): void {
+    this.officialForm = { ...this.officialForm, phone: value };
+  }
+
+  onOfficialCertificationChange(value: CertificationLevel | null): void {
+    this.officialForm = {
+      ...this.officialForm,
+      certification_level: value ?? undefined,
+    };
+  }
+
+  onOfficialYearsExperienceChange(value: number | null): void {
+    this.officialForm = {
+      ...this.officialForm,
+      years_experience: value ?? undefined,
+    };
+  }
+
+  onOfficialNotesChange(value: string): void {
+    this.officialForm = { ...this.officialForm, notes: value };
+  }
+
+  onScheduleGameIdChange(value: string | null): void {
+    this.scheduleForm = { ...this.scheduleForm, game_id: value ?? "" };
+  }
+
+  onScheduleRoleChange(value: OfficialRole | null): void {
+    this.scheduleForm = { ...this.scheduleForm, role: value ?? ("" as OfficialRole) };
+  }
+
+  onSchedulePaymentAmountChange(value: number | null): void {
+    this.scheduleForm = { ...this.scheduleForm, payment_amount: value ?? 0 };
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
   }
 
   /**

@@ -45,7 +45,6 @@ export type StatusTagSeverity =
 
 @Component({
   selector: "app-status-tag",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

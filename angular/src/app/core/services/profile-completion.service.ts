@@ -195,8 +195,7 @@ export class ProfileCompletionService {
         .maybeSingle();
 
       // Extract team name from joined data
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const teamsData = teamMember?.teams as any;
+      const teamsData = teamMember?.teams as { name?: string } | null | undefined;
       const teamName = teamsData?.name || null;
 
       // Build profile data with team_members taking priority for position/jersey

@@ -308,6 +308,11 @@
             <p-card
               class="stat-card stat-readiness stat-card--clickable"
               (click)="navigateToWellness()"
+              role="button"
+              tabindex="0"
+              aria-label="Open wellness details"
+              (keydown.enter)="navigateToWellness()"
+              (keydown.space)="navigateToWellness(); $event.preventDefault()"
               pTooltip="Your overall readiness to train today based on sleep, soreness, stress, and energy levels. Checked daily via wellness survey."
               tooltipPosition="bottom"
               [showDelay]="500"
@@ -389,6 +394,11 @@
             <p-card
               class="stat-card stat-acwr cursor-pointer"
               (click)="navigateToACWR()"
+              role="button"
+              tabindex="0"
+              aria-label="Open ACWR details"
+              (keydown.enter)="navigateToACWR()"
+              (keydown.space)="navigateToACWR(); $event.preventDefault()"
               [pTooltip]="
                 acwrDataSufficient()
                   ? '📊 Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' +
@@ -873,10 +883,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                   );
                   track event.id
                 ) {
-                  <p-card
-                    class="event-card"
-                    [ngClass]="'event-' + event.type"
-                  >
+                  <p-card [class]="'event-card event-' + event.type">
                     <div class="event-card-content">
                       <div class="event-date">
                         <span class="date-day">{{ event.day }}</span>

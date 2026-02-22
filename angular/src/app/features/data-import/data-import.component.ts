@@ -19,7 +19,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
@@ -184,11 +183,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 
 @Component({
   selector: "app-data-import",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     FileUpload,
     InputText,
@@ -297,7 +294,8 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     <input
                       type="text"
                       pInputText
-                      [(ngModel)]="importUrl"
+                      [value]="importUrl"
+                      (input)="onImportUrlInput($event)"
                       placeholder="https://example.com/data.json"
                     />
                     <app-button
@@ -380,7 +378,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                           @if (mapping.status === "unmapped") {
                             <p-select
                               [options]="availableMappings"
-                              [(ngModel)]="mapping.mapsTo"
+                              (onChange)="onMappingChange(mapping, $event.value)"
                               optionLabel="label"
                               optionValue="value"
                               placeholder="Select mapping"
@@ -703,6 +701,15 @@ export class DataImportComponent implements OnInit {
     this.importPreview.set(null);
     this.importResult.set(null);
     this.importUrl = "";
+  }
+
+  onImportUrlInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.importUrl = input?.value ?? "";
+  }
+
+  onMappingChange(mapping: FieldMapping, value: string | null): void {
+    mapping.mapsTo = value ?? "";
   }
 
   getAcceptedFormats(): string {

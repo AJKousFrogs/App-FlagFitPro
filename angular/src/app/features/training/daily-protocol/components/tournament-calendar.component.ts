@@ -15,14 +15,13 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
+import { firstValueFrom } from "rxjs";
 import { DatePipe } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
@@ -67,7 +66,6 @@ interface EventTypeOption {
 
 @Component({
   selector: "app-tournament-calendar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
@@ -77,7 +75,6 @@ interface EventTypeOption {
     InputNumber,
     DatePicker,
     Select,
-    Checkbox,
     Tag,
     StatusTagComponent,
     Tooltip,
@@ -260,7 +257,8 @@ interface EventTypeOption {
           <input
             pInputText
             id="name"
-            [(ngModel)]="formData.name"
+            [value]="formData.name ?? ''"
+            (input)="onFormNameChange(getInputValue($event))"
             placeholder="e.g., Adria Bowl 2026"
             class="w-full"
           />
@@ -271,7 +269,8 @@ interface EventTypeOption {
             <label for="startDate">Start Date *</label>
             <p-datepicker
               id="startDate"
-              [(ngModel)]="formData.startDate"
+              [ngModel]="formData.startDate"
+              (onSelect)="onFormStartDateChange($event)"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
               class="w-full"
@@ -281,7 +280,8 @@ interface EventTypeOption {
             <label for="endDate">End Date *</label>
             <p-datepicker
               id="endDate"
-              [(ngModel)]="formData.endDate"
+              [ngModel]="formData.endDate"
+              (onSelect)="onFormEndDateChange($event)"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
               class="w-full"
@@ -295,7 +295,8 @@ interface EventTypeOption {
             <input
               pInputText
               id="country"
-              [(ngModel)]="formData.country"
+              [value]="formData.country ?? ''"
+              (input)="onFormCountryChange(getInputValue($event))"
               placeholder="e.g., Croatia"
               class="w-full"
             />
@@ -305,7 +306,8 @@ interface EventTypeOption {
             <input
               pInputText
               id="city"
-              [(ngModel)]="formData.city"
+              [value]="formData.city ?? ''"
+              (input)="onFormCityChange(getInputValue($event))"
               placeholder="e.g., Zagreb"
               class="w-full"
             />
@@ -317,7 +319,8 @@ interface EventTypeOption {
           <p-select
             id="eventType"
             [options]="eventTypes"
-            [(ngModel)]="formData.eventType"
+            [ngModel]="formData.eventType"
+            (onChange)="onFormEventTypeChange($event.value)"
             optionLabel="label"
             optionValue="value"
             class="w-full"
@@ -329,7 +332,8 @@ interface EventTypeOption {
             <label for="gamesExpected">Expected Games</label>
             <p-inputNumber
               id="gamesExpected"
-              [(ngModel)]="formData.gamesExpected"
+              [ngModel]="formData.gamesExpected"
+              (ngModelChange)="onFormGamesExpectedChange($event ?? null)"
               [min]="1"
               [max]="20"
               [showButtons]="true"
@@ -340,7 +344,8 @@ interface EventTypeOption {
             <label for="taperWeeks">Taper Weeks Before</label>
             <p-inputNumber
               id="taperWeeks"
-              [(ngModel)]="formData.taperWeeksBefore"
+              [ngModel]="formData.taperWeeksBefore"
+              (ngModelChange)="onFormTaperWeeksBeforeChange($event ?? null)"
               [min]="0"
               [max]="4"
               [showButtons]="true"
@@ -350,12 +355,12 @@ interface EventTypeOption {
         </div>
 
         <div class="form-field checkbox-group">
-          <p-checkbox
-            [(ngModel)]="formData.isPeakEvent"
-            [binary]="true"
-            variant="filled"
-            inputId="isPeakEvent"
-          ></p-checkbox>
+          <input
+            id="isPeakEvent"
+            type="checkbox"
+            [checked]="!!formData.isPeakEvent"
+            (change)="onFormIsPeakEventChange(isChecked($event))"
+          />
           <label for="isPeakEvent">
             <strong>Peak Event</strong> - Maximum taper and preparation
           </label>
@@ -363,12 +368,12 @@ interface EventTypeOption {
 
         @if (isCoach()) {
           <div class="form-field checkbox-group">
-            <p-checkbox
-              [(ngModel)]="formData.isNationalTeamEvent"
-              [binary]="true"
-              variant="filled"
-              inputId="isNationalTeam"
-            ></p-checkbox>
+            <input
+              id="isNationalTeam"
+              type="checkbox"
+              [checked]="!!formData.isNationalTeamEvent"
+              (change)="onFormIsNationalTeamEventChange(isChecked($event))"
+            />
             <label for="isNationalTeam">
               <strong>National Team Event</strong> - Visible to all team members
             </label>
@@ -380,7 +385,8 @@ interface EventTypeOption {
           <input
             pInputText
             id="externalUrl"
-            [(ngModel)]="formData.externalUrl"
+            [value]="formData.externalUrl ?? ''"
+            (input)="onFormExternalUrlChange(getInputValue($event))"
             placeholder="https://..."
             class="w-full"
           />
@@ -391,7 +397,8 @@ interface EventTypeOption {
           <textarea
             pInputText
             id="notes"
-            [(ngModel)]="formData.notes"
+            [value]="formData.notes ?? ''"
+            (input)="onFormNotesChange(getInputValue($event))"
             rows="2"
             placeholder="Any additional notes..."
             class="w-full"
@@ -437,7 +444,10 @@ export class TournamentCalendarComponent {
   readonly editingId = signal<string | null>(null);
 
   // Form
-  formData: Partial<Tournament> = this.getEmptyForm();
+  formData: Omit<Partial<Tournament>, "startDate" | "endDate"> & {
+    startDate?: string | Date;
+    endDate?: string | Date;
+  } = this.getEmptyForm();
 
   readonly eventTypes: EventTypeOption[] = [
     { label: "Club Tournament", value: "club" },
@@ -449,6 +459,63 @@ export class TournamentCalendarComponent {
   constructor() {
     // Initialize on construction (Angular 21 pattern)
     this.loadTournaments();
+  }
+
+  onFormNameChange(value: string): void {
+    this.formData = { ...this.formData, name: value };
+  }
+
+  onFormStartDateChange(value: string | Date | null): void {
+    this.formData = { ...this.formData, startDate: value ?? undefined };
+  }
+
+  onFormEndDateChange(value: string | Date | null): void {
+    this.formData = { ...this.formData, endDate: value ?? undefined };
+  }
+
+  onFormCountryChange(value: string): void {
+    this.formData = { ...this.formData, country: value };
+  }
+
+  onFormCityChange(value: string): void {
+    this.formData = { ...this.formData, city: value };
+  }
+
+  onFormEventTypeChange(value: Tournament["eventType"] | null): void {
+    this.formData = { ...this.formData, eventType: value ?? "club" };
+  }
+
+  onFormGamesExpectedChange(value: number | null): void {
+    this.formData = { ...this.formData, gamesExpected: value ?? 1 };
+  }
+
+  onFormTaperWeeksBeforeChange(value: number | null): void {
+    this.formData = { ...this.formData, taperWeeksBefore: value ?? 0 };
+  }
+
+  onFormIsPeakEventChange(value: boolean): void {
+    this.formData = { ...this.formData, isPeakEvent: value };
+  }
+
+  onFormIsNationalTeamEventChange(value: boolean): void {
+    this.formData = { ...this.formData, isNationalTeamEvent: value };
+  }
+
+  onFormExternalUrlChange(value: string): void {
+    this.formData = { ...this.formData, externalUrl: value };
+  }
+
+  onFormNotesChange(value: string): void {
+    this.formData = { ...this.formData, notes: value };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   async loadTournaments(): Promise<void> {
@@ -545,7 +612,10 @@ export class TournamentCalendarComponent {
   }
 
   // Helpers
-  getEmptyForm(): Partial<Tournament> {
+  getEmptyForm(): Omit<Partial<Tournament>, "startDate" | "endDate"> & {
+    startDate?: string | Date;
+    endDate?: string | Date;
+  } {
     return {
       name: "",
       startDate: undefined,

@@ -16,7 +16,13 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
@@ -36,7 +42,7 @@ import {
   paymentStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, startWith } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { ContextService } from "../../../core/services/context.service";
@@ -93,6 +99,53 @@ interface Payment {
   reference?: string;
 }
 
+interface FeeForm {
+  name: string;
+  type: "dues" | "tournament" | "equipment" | "other";
+  amount: number;
+  guestFee: number;
+  dueDate: Date | null;
+  description: string;
+  applyTo: "all" | "select";
+  notifyOnCreate: boolean;
+  remind3Days: boolean;
+  remindOverdue: boolean;
+}
+
+interface PaymentForm {
+  playerId: string;
+  amount: number;
+  method: string;
+  date: Date;
+  reference: string;
+  sendConfirmation: boolean;
+}
+
+type BalanceFilter = "all" | "outstanding" | "overdue" | "paid";
+type FeeType = "dues" | "tournament" | "equipment" | "other";
+
+type FeeFormGroup = FormGroup<{
+  name: FormControl<string>;
+  type: FormControl<FeeType>;
+  amount: FormControl<number>;
+  guestFee: FormControl<number>;
+  dueDate: FormControl<Date | null>;
+  description: FormControl<string>;
+  applyTo: FormControl<"all" | "select">;
+  notifyOnCreate: FormControl<boolean>;
+  remind3Days: FormControl<boolean>;
+  remindOverdue: FormControl<boolean>;
+}>;
+
+type PaymentFormGroup = FormGroup<{
+  playerId: FormControl<string>;
+  amount: FormControl<number>;
+  method: FormControl<string>;
+  date: FormControl<Date>;
+  reference: FormControl<string>;
+  sendConfirmation: FormControl<boolean>;
+}>;
+
 // ===== Constants =====
 const FEE_TYPES = [
   { label: "Monthly Dues", value: "dues" },
@@ -118,11 +171,10 @@ const BALANCE_FILTERS = [
 
 @Component({
   selector: "app-payment-management",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     Card,
     Checkbox,
     DatePicker,
@@ -379,13 +431,13 @@ const BALANCE_FILTERS = [
                       <input
                         type="text"
                         pInputText
-                        [(ngModel)]="balanceSearch"
+                        [formControl]="balanceSearchControl"
                         placeholder="Search players..."
                       />
                     </span>
                     <p-select
                       [options]="balanceFilters"
-                      [(ngModel)]="balanceFilter"
+                      [formControl]="balanceFilterControl"
                       optionLabel="label"
                       optionValue="value"
                     ></p-select>
@@ -510,13 +562,13 @@ const BALANCE_FILTERS = [
         [modal]="true"
         class="payment-fee-dialog"
       >
-        <div class="fee-form">
+        <form class="fee-form" [formGroup]="feeFormGroup">
           <div class="form-field">
             <label>Fee Name</label>
             <input
               type="text"
               pInputText
-              [(ngModel)]="feeForm.name"
+              formControlName="name"
               placeholder="e.g., February Team Dues"
             />
           </div>
@@ -529,7 +581,7 @@ const BALANCE_FILTERS = [
                   <p-radioButton
                     name="feeType"
                     [value]="type.value"
-                    [(ngModel)]="feeForm.type"
+                    formControlName="type"
                     [inputId]="'feeType-' + type.value"
                   ></p-radioButton>
                   <label [for]="'feeType-' + type.value">{{
@@ -544,7 +596,7 @@ const BALANCE_FILTERS = [
             <div class="form-field">
               <label>Amount per Player</label>
               <p-inputNumber
-                [(ngModel)]="feeForm.amount"
+                formControlName="amount"
                 mode="currency"
                 currency="USD"
                 locale="en-US"
@@ -553,7 +605,7 @@ const BALANCE_FILTERS = [
             <div class="form-field">
               <label>Guest Fee (optional)</label>
               <p-inputNumber
-                [(ngModel)]="feeForm.guestFee"
+                formControlName="guestFee"
                 mode="currency"
                 currency="USD"
                 locale="en-US"
@@ -564,7 +616,7 @@ const BALANCE_FILTERS = [
           <div class="form-field">
             <label>Due Date</label>
             <p-datepicker
-              [(ngModel)]="feeForm.dueDate"
+              formControlName="dueDate"
               [showIcon]="true"
               class="w-full"
             ></p-datepicker>
@@ -574,7 +626,7 @@ const BALANCE_FILTERS = [
             <label>Description / Breakdown</label>
             <textarea
               pTextarea
-              [(ngModel)]="feeForm.description"
+              formControlName="description"
               rows="4"
               placeholder="What this fee covers..."
             ></textarea>
@@ -587,7 +639,7 @@ const BALANCE_FILTERS = [
                 <p-radioButton
                   name="applyTo"
                   value="all"
-                  [(ngModel)]="feeForm.applyTo"
+                  formControlName="applyTo"
                   inputId="applyAll"
                 ></p-radioButton>
                 <label for="applyAll"
@@ -598,7 +650,7 @@ const BALANCE_FILTERS = [
                 <p-radioButton
                   name="applyTo"
                   value="select"
-                  [(ngModel)]="feeForm.applyTo"
+                  formControlName="applyTo"
                   inputId="applySelect"
                 ></p-radioButton>
                 <label for="applySelect">Select specific players...</label>
@@ -611,7 +663,7 @@ const BALANCE_FILTERS = [
             <div class="checkbox-group">
               <div class="checkbox-option">
                 <p-checkbox
-                  [(ngModel)]="feeForm.notifyOnCreate"
+                  formControlName="notifyOnCreate"
                   [binary]="true"
                   variant="filled"
                   inputId="notifyCreate"
@@ -620,7 +672,7 @@ const BALANCE_FILTERS = [
               </div>
               <div class="checkbox-option">
                 <p-checkbox
-                  [(ngModel)]="feeForm.remind3Days"
+                  formControlName="remind3Days"
                   [binary]="true"
                   variant="filled"
                   inputId="remind3"
@@ -629,7 +681,7 @@ const BALANCE_FILTERS = [
               </div>
               <div class="checkbox-option">
                 <p-checkbox
-                  [(ngModel)]="feeForm.remindOverdue"
+                  formControlName="remindOverdue"
                   [binary]="true"
                   variant="filled"
                   inputId="remindOverdue"
@@ -638,7 +690,7 @@ const BALANCE_FILTERS = [
               </div>
             </div>
           </div>
-        </div>
+        </form>
 
         <ng-template #footer>
           <app-button variant="secondary" (clicked)="showFeeDialog = false"
@@ -657,12 +709,12 @@ const BALANCE_FILTERS = [
         [modal]="true"
         class="payment-record-dialog"
       >
-        <div class="payment-form">
+        <form class="payment-form" [formGroup]="paymentFormGroup">
           <div class="form-field">
             <label>Player</label>
             <p-select
               [options]="playerOptions()"
-              [(ngModel)]="paymentForm.playerId"
+              formControlName="playerId"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
@@ -670,11 +722,11 @@ const BALANCE_FILTERS = [
             ></p-select>
           </div>
 
-          @if (paymentForm.playerId) {
+          @if (selectedPaymentPlayerId()) {
             <div class="current-balance">
               Current Balance:
               <strong
-                >\${{ getPlayerBalance(paymentForm.playerId) }} owed</strong
+                >\${{ getPlayerBalance(selectedPaymentPlayerId()) }} owed</strong
               >
             </div>
           }
@@ -683,7 +735,7 @@ const BALANCE_FILTERS = [
             <div class="form-field">
               <label>Amount Received</label>
               <p-inputNumber
-                [(ngModel)]="paymentForm.amount"
+                formControlName="amount"
                 mode="currency"
                 currency="USD"
                 locale="en-US"
@@ -693,7 +745,7 @@ const BALANCE_FILTERS = [
               <label>Payment Method</label>
               <p-select
                 [options]="paymentMethods"
-                [(ngModel)]="paymentForm.method"
+                formControlName="method"
                 optionLabel="label"
                 optionValue="value"
                 class="w-full"
@@ -704,7 +756,7 @@ const BALANCE_FILTERS = [
           <div class="form-field">
             <label>Date Received</label>
             <p-datepicker
-              [(ngModel)]="paymentForm.date"
+              formControlName="date"
               [showIcon]="true"
               class="w-full"
             ></p-datepicker>
@@ -715,21 +767,21 @@ const BALANCE_FILTERS = [
             <input
               type="text"
               pInputText
-              [(ngModel)]="paymentForm.reference"
+              formControlName="reference"
               placeholder="e.g., Venmo txn #12345"
             />
           </div>
 
           <div class="checkbox-option">
             <p-checkbox
-              [(ngModel)]="paymentForm.sendConfirmation"
+              formControlName="sendConfirmation"
               [binary]="true"
               variant="filled"
               inputId="sendConfirm"
             ></p-checkbox>
             <label for="sendConfirm">Send confirmation to player</label>
           </div>
-        </div>
+        </form>
 
         <ng-template #footer>
           <app-button variant="secondary" (clicked)="showPaymentDialog = false"
@@ -760,17 +812,31 @@ export class PaymentManagementComponent implements OnInit {
   );
   readonly isLoading = signal(true);
 
-  // Filter state
-  balanceSearch = "";
-  balanceFilter = "all";
+  // Filter controls
+  readonly balanceSearchControl = new FormControl("", { nonNullable: true });
+  readonly balanceFilterControl = new FormControl<BalanceFilter>("all", {
+    nonNullable: true,
+  });
+  readonly balanceSearch = toSignal(
+    this.balanceSearchControl.valueChanges.pipe(
+      startWith(this.balanceSearchControl.value),
+    ),
+    { initialValue: this.balanceSearchControl.value },
+  );
+  readonly balanceFilter = toSignal(
+    this.balanceFilterControl.valueChanges.pipe(
+      startWith(this.balanceFilterControl.value),
+    ),
+    { initialValue: this.balanceFilterControl.value },
+  );
 
   // Dialog state
   showFeeDialog = false;
   showPaymentDialog = false;
 
   // Forms
-  feeForm = this.getEmptyFeeForm();
-  paymentForm = this.getEmptyPaymentForm();
+  readonly feeFormGroup: FeeFormGroup = this.createFeeForm();
+  readonly paymentFormGroup: PaymentFormGroup = this.createPaymentForm();
 
   // Options
   readonly feeTypes = FEE_TYPES;
@@ -812,21 +878,23 @@ export class PaymentManagementComponent implements OnInit {
 
   readonly filteredBalances = computed(() => {
     let result = this.balances();
+    const searchValue = this.balanceSearch();
+    const filterValue = this.balanceFilter();
 
     // Search filter
-    if (this.balanceSearch) {
-      const search = this.balanceSearch.toLowerCase();
+    if (searchValue) {
+      const search = searchValue.toLowerCase();
       result = result.filter((b) =>
         b.playerName.toLowerCase().includes(search),
       );
     }
 
     // Status filter
-    if (this.balanceFilter === "outstanding") {
+    if (filterValue === "outstanding") {
       result = result.filter((b) => b.balance > 0);
-    } else if (this.balanceFilter === "overdue") {
+    } else if (filterValue === "overdue") {
       result = result.filter((b) => b.status === "overdue");
-    } else if (this.balanceFilter === "paid") {
+    } else if (filterValue === "paid") {
       result = result.filter((b) => b.balance === 0);
     }
 
@@ -840,6 +908,9 @@ export class PaymentManagementComponent implements OnInit {
   );
 
   readonly totalPlayers = computed(() => this.balances().length);
+  readonly selectedPaymentPlayerId = computed(
+    () => this.paymentFormGroup.controls.playerId.value,
+  );
 
   ngOnInit(): void {
     this.loadData();
@@ -875,7 +946,7 @@ export class PaymentManagementComponent implements OnInit {
     }
   }
 
-  private getEmptyFeeForm() {
+  private getEmptyFeeForm(): FeeForm {
     return {
       name: "",
       type: "dues" as "dues" | "tournament" | "equipment" | "other",
@@ -890,7 +961,7 @@ export class PaymentManagementComponent implements OnInit {
     };
   }
 
-  private getEmptyPaymentForm() {
+  private getEmptyPaymentForm(): PaymentForm {
     return {
       playerId: "",
       amount: 0,
@@ -901,14 +972,63 @@ export class PaymentManagementComponent implements OnInit {
     };
   }
 
+  private createFeeForm(): FeeFormGroup {
+    const defaults = this.getEmptyFeeForm();
+    return new FormGroup({
+      name: new FormControl(defaults.name, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      type: new FormControl(defaults.type, { nonNullable: true }),
+      amount: new FormControl(defaults.amount, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0)],
+      }),
+      guestFee: new FormControl(defaults.guestFee, { nonNullable: true }),
+      dueDate: new FormControl(defaults.dueDate),
+      description: new FormControl(defaults.description, { nonNullable: true }),
+      applyTo: new FormControl(defaults.applyTo, { nonNullable: true }),
+      notifyOnCreate: new FormControl(defaults.notifyOnCreate, {
+        nonNullable: true,
+      }),
+      remind3Days: new FormControl(defaults.remind3Days, { nonNullable: true }),
+      remindOverdue: new FormControl(defaults.remindOverdue, {
+        nonNullable: true,
+      }),
+    });
+  }
+
+  private createPaymentForm(): PaymentFormGroup {
+    const defaults = this.getEmptyPaymentForm();
+    return new FormGroup({
+      playerId: new FormControl(defaults.playerId, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      amount: new FormControl(defaults.amount, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0.01)],
+      }),
+      method: new FormControl(defaults.method, { nonNullable: true }),
+      date: new FormControl(defaults.date, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      reference: new FormControl(defaults.reference, { nonNullable: true }),
+      sendConfirmation: new FormControl(defaults.sendConfirmation, {
+        nonNullable: true,
+      }),
+    });
+  }
+
   // Dialog methods
   openCreateFeeDialog(): void {
-    this.feeForm = this.getEmptyFeeForm();
+    this.feeFormGroup.reset(this.getEmptyFeeForm());
     this.showFeeDialog = true;
   }
 
   openRecordPaymentDialog(_fee?: TeamFee): void {
-    this.paymentForm = this.getEmptyPaymentForm();
+    this.paymentFormGroup.reset(this.getEmptyPaymentForm());
     this.showPaymentDialog = true;
   }
 
@@ -919,24 +1039,30 @@ export class PaymentManagementComponent implements OnInit {
         this.toastService.error("No team selected");
         return;
       }
+      if (this.feeFormGroup.invalid) {
+        this.feeFormGroup.markAllAsTouched();
+        this.toastService.error("Please complete required fee fields.");
+        return;
+      }
+      const feeForm = this.feeFormGroup.getRawValue();
 
       const response = await firstValueFrom(
         this.api.post<{ success: boolean }>(API_ENDPOINTS.coach.paymentFees, {
           team_id: teamId,
-          name: this.feeForm.name,
-          type: this.feeForm.type,
-          amount: this.feeForm.amount,
-          guestFee: this.feeForm.guestFee || null,
-          dueDate: this.feeForm.dueDate,
-          description: this.feeForm.description,
-          applyTo: this.feeForm.applyTo,
-          playerIds: this.feeForm.applyTo === "select" ? [] : undefined,
+          name: feeForm.name,
+          type: feeForm.type,
+          amount: feeForm.amount,
+          guestFee: feeForm.guestFee || null,
+          dueDate: feeForm.dueDate,
+          description: feeForm.description,
+          applyTo: feeForm.applyTo,
+          playerIds: feeForm.applyTo === "select" ? [] : undefined,
         }),
       );
 
       if (response?.success) {
         this.toastService.success(
-          `${this.feeForm.name} has been created`,
+          `${feeForm.name} has been created`,
           "Fee Created",
         );
         this.showFeeDialog = false;
@@ -955,21 +1081,27 @@ export class PaymentManagementComponent implements OnInit {
         this.toastService.error("No team selected");
         return;
       }
+      if (this.paymentFormGroup.invalid) {
+        this.paymentFormGroup.markAllAsTouched();
+        this.toastService.error("Please complete required payment fields.");
+        return;
+      }
+      const paymentForm = this.paymentFormGroup.getRawValue();
 
       const response = await firstValueFrom(
         this.api.post<{ success: boolean }>(API_ENDPOINTS.coach.paymentRecord, {
           team_id: teamId,
-          player_id: this.paymentForm.playerId,
-          amount: this.paymentForm.amount,
-          method: this.paymentForm.method,
-          date: this.paymentForm.date,
-          reference: this.paymentForm.reference,
+          player_id: paymentForm.playerId,
+          amount: paymentForm.amount,
+          method: paymentForm.method,
+          date: paymentForm.date,
+          reference: paymentForm.reference,
         }),
       );
 
       if (response?.success) {
         this.toastService.success(
-          `Payment of $${this.paymentForm.amount} has been recorded`,
+          `Payment of $${paymentForm.amount} has been recorded`,
           "Payment Recorded",
         );
         this.showPaymentDialog = false;
@@ -1001,9 +1133,11 @@ export class PaymentManagementComponent implements OnInit {
   }
 
   markPlayerPaid(balance: PlayerBalance): void {
-    this.paymentForm = this.getEmptyPaymentForm();
-    this.paymentForm.playerId = balance.id;
-    this.paymentForm.amount = balance.balance;
+    this.paymentFormGroup.reset({
+      ...this.getEmptyPaymentForm(),
+      playerId: balance.id,
+      amount: balance.balance,
+    });
     this.showPaymentDialog = true;
   }
 

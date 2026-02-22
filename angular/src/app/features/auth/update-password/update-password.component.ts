@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import {
   AbstractControl,
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
@@ -34,7 +34,6 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
  */
 @Component({
   selector: "app-update-password",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
@@ -149,7 +148,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   styleUrl: "./update-password.component.scss",
 })
 export class UpdatePasswordComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
   private authFlowDataService = inject(AuthFlowDataService);

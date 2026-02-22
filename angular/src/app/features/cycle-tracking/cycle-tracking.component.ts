@@ -18,16 +18,13 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { Message } from "primeng/message";
 
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
@@ -288,18 +285,14 @@ const RETENTION_OPTIONS = [
 
 @Component({
   selector: "app-cycle-tracking",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
-    Checkbox,
     DatePicker,
     Dialog,
     
     Message,
-    RadioButton,
     Select,
     TableModule,
     Textarea,
@@ -492,6 +485,75 @@ export class CycleTrackingComponent implements OnInit {
     return tips[phase] || "Stay hydrated and eat balanced meals.";
   }
 
+  onTodaySymptomsChange(value: string[] | null): void {
+    this.todaySymptoms = { ...this.todaySymptoms, symptoms: value ?? [] };
+  }
+
+  onTodaySymptomToggle(value: string, checked: boolean): void {
+    if (checked) {
+      if (this.todaySymptoms.symptoms.includes(value)) return;
+      this.todaySymptoms = {
+        ...this.todaySymptoms,
+        symptoms: [...this.todaySymptoms.symptoms, value],
+      };
+      return;
+    }
+    this.todaySymptoms = {
+      ...this.todaySymptoms,
+      symptoms: this.todaySymptoms.symptoms.filter((s) => s !== value),
+    };
+  }
+
+  onTodaySeverityChange(value: string): void {
+    this.todaySymptoms = { ...this.todaySymptoms, severity: value };
+  }
+
+  onPrivacyVisibilityChange(value: string): void {
+    this.privacySettings = { ...this.privacySettings, visibility: value };
+  }
+
+  onPrivacyRetentionChange(value: string | null): void {
+    this.privacySettings = {
+      ...this.privacySettings,
+      retention: value ?? this.privacySettings.retention,
+    };
+  }
+
+  onNewPeriodStartDateChange(value: Date | null): void {
+    this.newPeriod = { ...this.newPeriod, startDate: value };
+  }
+
+  onNewPeriodEndDateChange(value: Date | null): void {
+    this.newPeriod = { ...this.newPeriod, endDate: value };
+  }
+
+  onNewPeriodFlowIntensityChange(value: string): void {
+    this.newPeriod = { ...this.newPeriod, flowIntensity: value };
+  }
+
+  onNewPeriodSymptomsChange(value: string[] | null): void {
+    this.newPeriod = { ...this.newPeriod, symptoms: value ?? [] };
+  }
+
+  onNewPeriodSymptomToggle(value: string, checked: boolean): void {
+    if (checked) {
+      if (this.newPeriod.symptoms.includes(value)) return;
+      this.newPeriod = {
+        ...this.newPeriod,
+        symptoms: [...this.newPeriod.symptoms, value],
+      };
+      return;
+    }
+    this.newPeriod = {
+      ...this.newPeriod,
+      symptoms: this.newPeriod.symptoms.filter((s) => s !== value),
+    };
+  }
+
+  onNewPeriodNotesChange(value: string): void {
+    this.newPeriod = { ...this.newPeriod, notes: value };
+  }
+
   openLogDialog(): void {
     this.newPeriod = this.getEmptyPeriodForm();
     this.showLogDialog.set(true);
@@ -635,6 +697,22 @@ export class CycleTrackingComponent implements OnInit {
   getMonthName(dateStr: string): string {
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-US", { month: "long" });
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   private getEmptyPeriodForm() {

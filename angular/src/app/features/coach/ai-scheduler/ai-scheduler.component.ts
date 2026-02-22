@@ -17,13 +17,10 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 
 import { ProgressBar } from "primeng/progressbar";
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 
 import { firstValueFrom } from "rxjs";
@@ -105,15 +102,11 @@ const PRACTICE_DURATIONS = [
 
 @Component({
   selector: "app-ai-scheduler",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
-    Checkbox,
     ProgressBar,
-    RadioButton,
     Select,
 
     MainLayoutComponent,
@@ -152,12 +145,14 @@ const PRACTICE_DURATIONS = [
               <div class="radio-group">
                 @for (type of targetTypes; track type.value) {
                   <div class="radio-option">
-                    <p-radioButton
+                    <input
+                      type="radio"
                       name="targetType"
+                      [id]="'target-' + type.value"
                       [value]="type.value"
-                      [(ngModel)]="formData.targetType"
-                      [inputId]="'target-' + type.value"
-                    ></p-radioButton>
+                      [checked]="formData.targetType === type.value"
+                      (change)="onTargetTypeChange(type.value)"
+                    />
                     <label [for]="'target-' + type.value">{{
                       type.label
                     }}</label>
@@ -174,7 +169,7 @@ const PRACTICE_DURATIONS = [
                   <p-select
                     inputId="event-select"
                     [options]="upcomingEvents()"
-                    [(ngModel)]="formData.eventId"
+                    (onChange)="onEventIdChange($event.value)"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select upcoming event"
@@ -201,16 +196,16 @@ const PRACTICE_DURATIONS = [
               <div class="checkbox-grid">
                 @for (area of focusAreas; track area.value) {
                   <div class="checkbox-option">
-                    <p-checkbox
-                      [value]="area.value"
-                      [(ngModel)]="formData.focusAreas"
-                      variant="filled"
-                      [inputId]="'focus-' + area.value"
+                    <input
+                      type="checkbox"
+                      [id]="'focus-' + area.value"
+                      [checked]="formData.focusAreas.includes(area.value)"
+                      (change)="onFocusAreaToggle(area.value, isChecked($event))"
                       [disabled]="
                         formData.focusAreas.length >= 3 &&
                         !formData.focusAreas.includes(area.value)
                       "
-                    ></p-checkbox>
+                    />
                     <label [for]="'focus-' + area.value"
                       >{{ area.icon }} {{ area.label }}</label
                     >
@@ -227,12 +222,12 @@ const PRACTICE_DURATIONS = [
               <div class="days-grid">
                 @for (day of weekDays; track day.value) {
                   <div class="day-checkbox">
-                    <p-checkbox
-                      [value]="day.value"
-                      [(ngModel)]="formData.availableDays"
-                      variant="filled"
-                      [inputId]="'day-' + day.value"
-                    ></p-checkbox>
+                    <input
+                      type="checkbox"
+                      [id]="'day-' + day.value"
+                      [checked]="formData.availableDays.includes(day.value)"
+                      (change)="onAvailableDayToggle(day.value, isChecked($event))"
+                    />
                     <label [for]="'day-' + day.value">{{ day.label }}</label>
                   </div>
                 }
@@ -244,7 +239,7 @@ const PRACTICE_DURATIONS = [
                   <p-select
                     inputId="practice-duration"
                     [options]="practiceDurations"
-                    [(ngModel)]="formData.duration"
+                    (onChange)="onDurationChange($event.value)"
                     optionLabel="label"
                     optionValue="value"
                     [attr.aria-label]="'Select practice duration'"
@@ -255,7 +250,7 @@ const PRACTICE_DURATIONS = [
                   <p-select
                     inputId="facility-select"
                     [options]="facilities()"
-                    [(ngModel)]="formData.facility"
+                    (onChange)="onFacilityChange($event.value)"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select facility"
@@ -267,12 +262,12 @@ const PRACTICE_DURATIONS = [
               <div class="special-considerations">
                 <p class="step-description">Special considerations:</p>
                 <div class="checkbox-option">
-                  <p-checkbox
-                    [(ngModel)]="formData.considerRtp"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="considerRtp"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    id="considerRtp"
+                    [checked]="formData.considerRtp"
+                    (change)="onConsiderRtpChange(isChecked($event))"
+                  />
                   <label for="considerRtp"
                     >🏥 {{ rtpPlayerCount() }} players in RTP ({{
                       rtpPlayerNames()
@@ -280,24 +275,24 @@ const PRACTICE_DURATIONS = [
                   >
                 </div>
                 <div class="checkbox-option">
-                  <p-checkbox
-                    [(ngModel)]="formData.considerAcwr"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="considerAcwr"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    id="considerAcwr"
+                    [checked]="formData.considerAcwr"
+                    (change)="onConsiderAcwrChange(isChecked($event))"
+                  />
                   <label for="considerAcwr"
                     >⚠️ {{ highAcwrCount() }} players with elevated ACWR (reduce
                     their load)</label
                   >
                 </div>
                 <div class="checkbox-option">
-                  <p-checkbox
-                    [(ngModel)]="formData.weatherAdjust"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="weatherAdjust"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    id="weatherAdjust"
+                    [checked]="formData.weatherAdjust"
+                    (change)="onWeatherAdjustChange(isChecked($event))"
+                  />
                   <label for="weatherAdjust"
                     >🌧️ Weather-adjusted (indoor alternatives)</label
                   >
@@ -621,6 +616,88 @@ export class AiSchedulerComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  onTargetTypeChange(value: string): void {
+    this.formData = {
+      ...this.formData,
+      targetType: value,
+      eventId: value === "tournament" || value === "game" ? this.formData.eventId : "",
+    };
+  }
+
+  onEventIdChange(value: string | null): void {
+    this.formData = { ...this.formData, eventId: value ?? "" };
+  }
+
+  onFocusAreasChange(value: string[] | null): void {
+    this.formData = { ...this.formData, focusAreas: value ?? [] };
+  }
+
+  onFocusAreaToggle(value: string, checked: boolean): void {
+    if (checked) {
+      if (this.formData.focusAreas.includes(value) || this.formData.focusAreas.length >= 3) {
+        return;
+      }
+      this.formData = {
+        ...this.formData,
+        focusAreas: [...this.formData.focusAreas, value],
+      };
+      return;
+    }
+    this.formData = {
+      ...this.formData,
+      focusAreas: this.formData.focusAreas.filter((v) => v !== value),
+    };
+  }
+
+  onAvailableDaysChange(value: string[] | null): void {
+    this.formData = { ...this.formData, availableDays: value ?? [] };
+  }
+
+  onAvailableDayToggle(value: string, checked: boolean): void {
+    if (checked) {
+      if (this.formData.availableDays.includes(value)) {
+        return;
+      }
+      this.formData = {
+        ...this.formData,
+        availableDays: [...this.formData.availableDays, value],
+      };
+      return;
+    }
+    this.formData = {
+      ...this.formData,
+      availableDays: this.formData.availableDays.filter((v) => v !== value),
+    };
+  }
+
+  onDurationChange(value: string | null): void {
+    this.formData = { ...this.formData, duration: value ?? this.formData.duration };
+  }
+
+  onFacilityChange(value: string | null): void {
+    this.formData = { ...this.formData, facility: value ?? "" };
+  }
+
+  onConsiderRtpChange(value: boolean): void {
+    this.formData = { ...this.formData, considerRtp: value };
+  }
+
+  onConsiderAcwrChange(value: boolean): void {
+    this.formData = { ...this.formData, considerAcwr: value };
+  }
+
+  onWeatherAdjustChange(value: boolean): void {
+    this.formData = { ...this.formData, weatherAdjust: value };
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   async loadData(): Promise<void> {

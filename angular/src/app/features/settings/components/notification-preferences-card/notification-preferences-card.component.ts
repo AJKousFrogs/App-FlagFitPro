@@ -9,7 +9,6 @@ import {
 
 @Component({
   selector: "app-notification-preferences-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

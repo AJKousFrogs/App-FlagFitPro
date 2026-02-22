@@ -14,7 +14,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -49,11 +48,9 @@ interface PositionGroup {
 
 @Component({
   selector: "app-depth-chart",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     DragDropModule,
     Card,
     Tabs,
@@ -262,7 +259,7 @@ interface PositionGroup {
             </p>
             <p-select
               [options]="availablePlayersForAssign()"
-              [(ngModel)]="selectedPlayerId"
+              (onChange)="onSelectedPlayerChange({ value: $event.value })"
               optionLabel="name"
               optionValue="id"
               placeholder="Select a player"
@@ -478,6 +475,10 @@ export class DepthChartComponent implements OnInit {
     this.selectedEntry.set(entry);
     this.selectedPlayerId = null;
     this.showAssignDialog = true;
+  }
+
+  onSelectedPlayerChange(event: { value: string | null }): void {
+    this.selectedPlayerId = event.value;
   }
 
   assignPlayer(): void {

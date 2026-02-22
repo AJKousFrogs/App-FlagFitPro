@@ -18,12 +18,10 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
@@ -76,6 +74,20 @@ interface EquipmentItem {
   checked: boolean;
 }
 
+interface PracticeFormData {
+  id: string;
+  title: string;
+  date: Date;
+  startTime: string;
+  endTime: string;
+  durationMinutes: number;
+  location: string;
+  focus: string;
+  equipment: EquipmentItem[];
+  activities: ActivityBlock[];
+  coachNotes: string;
+}
+
 type ActivityType =
   | "warmup"
   | "position"
@@ -110,14 +122,11 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
 
 @Component({
   selector: "app-practice-planner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     DatePipe,
     Card,
-    Checkbox,
     DatePicker,
     Dialog,
     
@@ -303,7 +312,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 id="practiceTitle"
                 type="text"
                 pInputText
-                [(ngModel)]="formData.title"
+                [value]="formData.title"
+                (input)="updateFormDataTextField('title', getInputValue($event))"
                 placeholder="e.g., Tuesday Practice - Red Zone Focus"
                 class="w-full"
               />
@@ -314,7 +324,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <label for="practiceDate">Date</label>
                 <p-datepicker
                   inputId="practiceDate"
-                  [(ngModel)]="formData.date"
+                  (onSelect)="updatePracticeDate($event)"
                   [showIcon]="true"
                   dateFormat="M d, yy"
                 ></p-datepicker>
@@ -324,7 +334,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <p-select
                   inputId="startTime"
                   [options]="timeOptions"
-                  [(ngModel)]="formData.startTime"
+                  (onChange)="updateFormDataTextField('startTime', $event.value)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -334,7 +344,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <p-select
                   inputId="endTime"
                   [options]="timeOptions"
-                  [(ngModel)]="formData.endTime"
+                  (onChange)="updateFormDataTextField('endTime', $event.value)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -346,7 +356,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
               <p-select
                 inputId="location"
                 [options]="locationOptions"
-                [(ngModel)]="formData.location"
+                (onChange)="updateFormDataTextField('location', $event.value)"
                 optionLabel="label"
                 optionValue="value"
                 [editable]="true"
@@ -359,7 +369,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 id="focus"
                 type="text"
                 pInputText
-                [(ngModel)]="formData.focus"
+                [value]="formData.focus"
+                (input)="updateFormDataTextField('focus', getInputValue($event))"
                 placeholder="e.g., Red zone offense, Defensive rotations"
                 class="w-full"
               />
@@ -392,16 +403,16 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                     <input
                       type="text"
                       pInputText
-                      [(ngModel)]="activity.title"
+                      [value]="activity.title"
+                      (input)="updateActivityTitle(i, getInputValue($event))"
                       class="activity-title-input"
                     />
                     <p-inputNumber
-                      [(ngModel)]="activity.durationMinutes"
+                      (onInput)="updateActivityDuration(i, $event.value)"
                       suffix=" min"
                       [min]="5"
                       [max]="60"
                       class="activity-duration-input"
-                      (ngModelChange)="updateActivityTimes()"
                     ></p-inputNumber>
                     <app-button
                       variant="text"
@@ -443,12 +454,12 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             <div class="equipment-grid">
               @for (item of formData.equipment; track item.name) {
                 <div class="equipment-item">
-                  <p-checkbox
-                    [(ngModel)]="item.checked"
-                    [binary]="true"
-                    variant="filled"
-                    [inputId]="'eq-' + item.name"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    [id]="'eq-' + item.name"
+                    [checked]="item.checked"
+                    (change)="updateEquipmentChecked(item.name, isChecked($event))"
+                  />
                   <label [for]="'eq-' + item.name"
                     >{{ item.name }} ({{ item.quantity }})</label
                   >
@@ -462,7 +473,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             <h4>Notes for Coaches</h4>
             <textarea
               pTextarea
-              [(ngModel)]="formData.coachNotes"
+              [value]="formData.coachNotes"
+              (input)="updateFormDataTextField('coachNotes', getInputValue($event))"
               placeholder="• Player-specific instructions&#10;• Key coaching points&#10;• Modifications needed"
               rows="4"
             ></textarea>
@@ -503,7 +515,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <p-select
                   inputId="actType"
                   [options]="activityTypeOptions"
-                  [(ngModel)]="editingActivity.type"
+                  (onChange)="updateEditingActivityType($event.value)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -512,7 +524,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <label for="actDuration">Duration (min)</label>
                 <p-inputNumber
                   inputId="actDuration"
-                  [(ngModel)]="editingActivity.durationMinutes"
+                  (onInput)="updateEditingActivityDuration($event.value)"
                   [min]="5"
                   [max]="60"
                 ></p-inputNumber>
@@ -531,7 +543,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                     <input
                       type="text"
                       pInputText
-                      [(ngModel)]="editingActivity.details[i]"
+                      [value]="editingActivity.details[i]"
+                      (input)="updateEditingActivityDetail(i, getInputValue($event))"
                       class="w-full"
                     />
                     <app-button
@@ -557,13 +570,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <label>Plays to Run</label>
                 <textarea
                   pTextarea
-                  [ngModel]="
-                    editingActivity.plays?.join(
-                      '
-'
-                    )
-                  "
-                  (ngModelChange)="updatePlays($event)"
+                  [value]="editingActivity.plays?.join('\n') ?? ''"
+                  (input)="updatePlays(getInputValue($event))"
                   placeholder="One play per line"
                   rows="4"
                 ></textarea>
@@ -573,13 +581,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <label>Key Coaching Points</label>
                 <textarea
                   pTextarea
-                  [ngModel]="
-                    editingActivity.keyPoints?.join(
-                      '
-'
-                    )
-                  "
-                  (ngModelChange)="updateKeyPoints($event)"
+                  [value]="editingActivity.keyPoints?.join('\n') ?? ''"
+                  (input)="updateKeyPoints(getInputValue($event))"
                   placeholder="One point per line"
                   rows="3"
                 ></textarea>
@@ -621,7 +624,7 @@ export class PracticePlannerComponent implements OnInit {
   editingActivity: ActivityBlock | null = null;
 
   // Form data
-  formData = this.getEmptyFormData();
+  formData: PracticeFormData = this.getEmptyFormData();
 
   // Options
   readonly activityTypeOptions = ACTIVITY_TYPES;
@@ -680,7 +683,7 @@ export class PracticePlannerComponent implements OnInit {
     }
   }
 
-  private getEmptyFormData() {
+  private getEmptyFormData(): PracticeFormData {
     return {
       id: "",
       title: "",
@@ -782,11 +785,18 @@ export class PracticePlannerComponent implements OnInit {
       durationMinutes: 15,
       details: [],
     };
-    this.formData.activities.push(newActivity);
+    this.formData = {
+      ...this.formData,
+      activities: [...this.formData.activities, newActivity],
+    };
+    this.updateActivityTimes();
   }
 
   removeActivity(index: number): void {
-    this.formData.activities.splice(index, 1);
+    this.formData = {
+      ...this.formData,
+      activities: this.formData.activities.filter((_, i) => i !== index),
+    };
     this.updateActivityTimes();
   }
 
@@ -797,12 +807,18 @@ export class PracticePlannerComponent implements OnInit {
 
   saveActivity(): void {
     if (!this.editingActivity) return;
+    const editingActivity = this.editingActivity;
 
     const index = this.formData.activities.findIndex(
-      (a) => a.id === this.editingActivity?.id,
+      (a) => a.id === editingActivity.id,
     );
     if (index >= 0) {
-      this.formData.activities[index] = { ...this.editingActivity };
+      this.formData = {
+        ...this.formData,
+        activities: this.formData.activities.map((activity, activityIndex) =>
+          activityIndex === index ? { ...editingActivity } : activity,
+        ),
+      };
     }
     this.showActivityDialog = false;
     this.updateActivityTimes();
@@ -835,14 +851,100 @@ export class PracticePlannerComponent implements OnInit {
   }
 
   updateActivityTimes(): void {
+    const updatedActivities = [...this.formData.activities];
     let currentTime = this.formData.startTime;
-    for (const activity of this.formData.activities) {
+    for (const activity of updatedActivities) {
       activity.startTime = currentTime;
       currentTime = this.addMinutesToTime(
         currentTime,
         activity.durationMinutes,
       );
     }
+    this.formData = { ...this.formData, activities: updatedActivities };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
+  }
+
+  updateFormDataTextField(
+    field: "title" | "startTime" | "endTime" | "location" | "focus" | "coachNotes",
+    value: string | null | undefined,
+  ): void {
+    this.formData = { ...this.formData, [field]: value ?? "" };
+    if (field === "startTime") {
+      this.updateActivityTimes();
+    }
+  }
+
+  updatePracticeDate(value: Date | null | undefined): void {
+    this.formData = { ...this.formData, date: value ?? new Date() };
+  }
+
+  updateActivityTitle(index: number, value: string | null | undefined): void {
+    this.formData = {
+      ...this.formData,
+      activities: this.formData.activities.map((activity, activityIndex) =>
+        activityIndex === index
+          ? { ...activity, title: value ?? "" }
+          : activity,
+      ),
+    };
+  }
+
+  updateActivityDuration(index: number, value: number | null | undefined): void {
+    this.formData = {
+      ...this.formData,
+      activities: this.formData.activities.map((activity, activityIndex) =>
+        activityIndex === index
+          ? { ...activity, durationMinutes: value ?? activity.durationMinutes }
+          : activity,
+      ),
+    };
+    this.updateActivityTimes();
+  }
+
+  updateEquipmentChecked(
+    equipmentName: string,
+    checked: boolean | null | undefined,
+  ): void {
+    this.formData = {
+      ...this.formData,
+      equipment: this.formData.equipment.map((item) =>
+        item.name === equipmentName ? { ...item, checked: checked ?? false } : item,
+      ),
+    };
+  }
+
+  updateEditingActivityType(value: ActivityType | null | undefined): void {
+    if (!this.editingActivity) return;
+    this.editingActivity = { ...this.editingActivity, type: value ?? "position" };
+  }
+
+  updateEditingActivityDuration(value: number | null | undefined): void {
+    if (!this.editingActivity) return;
+    this.editingActivity = {
+      ...this.editingActivity,
+      durationMinutes: value ?? this.editingActivity.durationMinutes,
+    };
+  }
+
+  updateEditingActivityDetail(
+    index: number,
+    value: string | null | undefined,
+  ): void {
+    if (!this.editingActivity) return;
+    this.editingActivity = {
+      ...this.editingActivity,
+      details: this.editingActivity.details.map((detail, detailIndex) =>
+        detailIndex === index ? value ?? "" : detail,
+      ),
+    };
   }
 
   private calculateNextTime(activity: ActivityBlock): string {

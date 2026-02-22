@@ -21,7 +21,6 @@ import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-missing-data-explanation",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

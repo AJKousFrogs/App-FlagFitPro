@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -25,7 +24,6 @@ import { SearchInputComponent } from "../../../shared/components/search-input/se
 
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
@@ -128,15 +126,12 @@ const VISIBILITY_OPTIONS = [
 
 @Component({
   selector: "app-knowledge-base",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Dialog,
     
     InputText,
-    RadioButton,
     Select,
     Textarea,
 
@@ -162,8 +157,7 @@ const VISIBILITY_OPTIONS = [
         <!-- Search -->
         <app-search-input
           class="search-bar"
-          [(ngModel)]="searchQuery"
-          (ngModelChange)="onSearch()"
+          (valueChange)="onSearchQueryChange($event)"
           placeholder="Search knowledge base..."
           ariaLabel="Search knowledge base"
         />
@@ -637,12 +631,14 @@ const VISIBILITY_OPTIONS = [
             <div class="radio-group">
               @for (type of resourceTypes; track type.value) {
                 <div class="radio-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="resourceType"
                     [value]="type.value"
-                    [(ngModel)]="resourceForm.type"
-                    [inputId]="'type-' + type.value"
-                  ></p-radioButton>
+                    [id]="'type-' + type.value"
+                    [checked]="resourceForm.type === type.value"
+                    (change)="onResourceTypeOptionChange(type.value)"
+                  />
                   <label [for]="'type-' + type.value">{{ type.label }}</label>
                 </div>
               }
@@ -654,7 +650,8 @@ const VISIBILITY_OPTIONS = [
             <input
               type="text"
               pInputText
-              [(ngModel)]="resourceForm.title"
+              [value]="resourceForm.title"
+              (input)="onResourceTitleChange(getInputValue($event))"
               placeholder="Resource title"
             />
           </div>
@@ -663,7 +660,7 @@ const VISIBILITY_OPTIONS = [
             <label>Category</label>
             <p-select
               [options]="categoryOptions"
-              [(ngModel)]="resourceForm.category"
+              (onChange)="onResourceCategoryChange($event.value)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select category"
@@ -677,7 +674,8 @@ const VISIBILITY_OPTIONS = [
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="resourceForm.url"
+                [value]="resourceForm.url"
+                (input)="onResourceUrlChange(getInputValue($event))"
                 placeholder="https://..."
               />
             </div>
@@ -687,7 +685,8 @@ const VISIBILITY_OPTIONS = [
             <label>Content / Description</label>
             <textarea
               pTextarea
-              [(ngModel)]="resourceForm.content"
+              [value]="resourceForm.content"
+              (input)="onResourceContentChange(getInputValue($event))"
               rows="6"
               placeholder="Describe the resource or enter content (Markdown supported)..."
             ></textarea>
@@ -698,12 +697,14 @@ const VISIBILITY_OPTIONS = [
             <div class="radio-group">
               @for (opt of visibilityOptions; track opt.value) {
                 <div class="radio-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="visibility"
                     [value]="opt.value"
-                    [(ngModel)]="resourceForm.visibility"
-                    [inputId]="'vis-' + opt.value"
-                  ></p-radioButton>
+                    [id]="'vis-' + opt.value"
+                    [checked]="resourceForm.visibility === opt.value"
+                    (change)="onResourceVisibilityChange(opt.value)"
+                  />
                   <label [for]="'vis-' + opt.value">{{ opt.label }}</label>
                 </div>
               }
@@ -715,7 +716,8 @@ const VISIBILITY_OPTIONS = [
             <input
               type="text"
               pInputText
-              [(ngModel)]="resourceForm.tags"
+              [value]="resourceForm.tags"
+              (input)="onResourceTagsChange(getInputValue($event))"
               placeholder="playbook, strategy, defense"
             />
           </div>
@@ -759,7 +761,8 @@ const VISIBILITY_OPTIONS = [
                 <label class="override-row">
                   <input
                     type="checkbox"
-                    [(ngModel)]="reviewForm.overrideQualityGate"
+                    [checked]="reviewForm.overrideQualityGate"
+                    (change)="onReviewOverrideQualityGateChange(isChecked($event))"
                   />
                   Override quality gate (requires notes)
                 </label>
@@ -772,7 +775,8 @@ const VISIBILITY_OPTIONS = [
               <textarea
                 pTextarea
                 rows="4"
-                [(ngModel)]="reviewForm.notes"
+                [value]="reviewForm.notes"
+                (input)="onReviewNotesChange(getInputValue($event))"
                 placeholder="Optional notes (required for override)"
               ></textarea>
             </div>
@@ -897,6 +901,67 @@ export class KnowledgeBaseComponent implements OnInit {
 
   ngOnInit(): void {
     void this.bootstrap();
+  }
+
+  onSearchQueryChange(value: string): void {
+    this.searchQuery = value;
+    this.onSearch();
+  }
+
+  onResourceTypeChange(value: "article" | "video" | "link" | "pdf"): void {
+    this.resourceForm = { ...this.resourceForm, type: value };
+  }
+
+  onResourceTypeOptionChange(value: string): void {
+    this.onResourceTypeChange(value as "article" | "video" | "link" | "pdf");
+  }
+
+  onResourceTitleChange(value: string): void {
+    this.resourceForm = { ...this.resourceForm, title: value };
+  }
+
+  onResourceCategoryChange(value: string | null): void {
+    this.resourceForm = { ...this.resourceForm, category: value ?? "" };
+  }
+
+  onResourceUrlChange(value: string): void {
+    this.resourceForm = { ...this.resourceForm, url: value };
+  }
+
+  onResourceContentChange(value: string): void {
+    this.resourceForm = { ...this.resourceForm, content: value };
+  }
+
+  onResourceVisibilityChange(value: string): void {
+    this.resourceForm = { ...this.resourceForm, visibility: value };
+  }
+
+  onResourceTagsChange(value: string): void {
+    this.resourceForm = { ...this.resourceForm, tags: value };
+  }
+
+  onReviewOverrideQualityGateChange(value: boolean): void {
+    this.reviewForm = { ...this.reviewForm, overrideQualityGate: value };
+  }
+
+  onReviewNotesChange(value: string): void {
+    this.reviewForm = { ...this.reviewForm, notes: value };
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   private async bootstrap(): Promise<void> {

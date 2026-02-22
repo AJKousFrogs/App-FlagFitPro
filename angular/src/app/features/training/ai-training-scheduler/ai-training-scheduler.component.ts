@@ -1,14 +1,16 @@
 import {
   Component,
+  DestroyRef,
   inject,
   signal,
   computed,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
 
-import { FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -91,10 +93,9 @@ interface AthleteMetrics {
 
 @Component({
   selector: "app-ai-training-scheduler",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     CommonModule,
     Card,
     DatePicker,
@@ -321,10 +322,9 @@ interface AthleteMetrics {
                 <h3><i class="pi pi-calendar"></i> Optimized Schedule</h3>
               </ng-template>
               <p-datepicker
-                [(ngModel)]="selectedDate"
+                [formControl]="selectedDateControl"
                 [inline]="true"
                 [showWeek]="true"
-                (onSelect)="onDateSelect($event)"
               ></p-datepicker>
             </p-card>
 
@@ -380,10 +380,14 @@ export class AiTrainingSchedulerComponent implements OnInit {
   private logger = inject(LoggerService);
   private privacyService = inject(PrivacySettingsService);
   private api = inject(ApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // AI consent check - shows banner when disabled
   readonly aiEnabled = this.privacyService.aiProcessingEnabled;
 
+  readonly selectedDateControl = new FormControl(new Date(), {
+    nonNullable: true,
+  });
   selectedDate = signal<Date>(new Date());
   suggestions = signal<AISuggestion[]>([]);
   scheduledSessions = signal<ScheduledSession[]>([]);
@@ -402,6 +406,14 @@ export class AiTrainingSchedulerComponent implements OnInit {
     const dateStr = selected.toISOString().split("T")[0];
     return this.scheduledSessions().filter((s) => s.date.startsWith(dateStr));
   });
+
+  constructor() {
+    this.selectedDateControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((date) => {
+        this.selectedDate.set(date);
+      });
+  }
 
   ngOnInit(): void {
     this.loadData();
@@ -740,7 +752,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   }
 
   onDateSelect(date: Date): void {
-    this.selectedDate.set(date);
+    this.selectedDateControl.setValue(date);
   }
 
   getReadinessClass(): string {

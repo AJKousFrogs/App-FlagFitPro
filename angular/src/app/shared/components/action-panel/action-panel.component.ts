@@ -47,7 +47,6 @@ export type ActionPanelType =
 
 @Component({
   selector: "app-action-panel",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, ButtonComponent],
   template: `

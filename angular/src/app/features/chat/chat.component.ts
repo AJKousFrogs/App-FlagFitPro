@@ -24,7 +24,6 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 
@@ -58,11 +57,9 @@ import { getInitials } from "../../shared/utils/format.utils";
 
 @Component({
   selector: "app-chat",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     InputText,
     Avatar,
     Badge,
@@ -103,6 +100,34 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly teamChannels = this.channelService.teamChannels;
   readonly coachChannels = this.channelService.coachChannels;
   readonly dmChannels = this.channelService.dmChannels;
+  readonly channelSections = computed(() => {
+    const sections: Array<{
+      title: string;
+      sectionIcon: string;
+      itemIcon: string;
+      channels: Channel[];
+    }> = [];
+
+    if (this.isCoach() && this.coachChannels().length > 0) {
+      sections.push({
+        title: "Coaches Only",
+        sectionIcon: "pi pi-lock",
+        itemIcon: "pi pi-lock",
+        channels: this.coachChannels(),
+      });
+    }
+
+    if (this.dmChannels().length > 0) {
+      sections.push({
+        title: "Direct Messages",
+        sectionIcon: "pi pi-comments",
+        itemIcon: "pi pi-user",
+        channels: this.dmChannels(),
+      });
+    }
+
+    return sections;
+  });
 
   // Local state
   newMessage = "";
@@ -375,6 +400,40 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.newChannelPosition = "";
   }
 
+  onMessageFieldInput(event: Event): void {
+    const inputValue = this.getInputValue(event);
+    this.newMessage = inputValue;
+    this.updateMentionSuggestions(inputValue);
+  }
+
+  onNewChannelNameChange(value: string): void {
+    this.newChannelName = value;
+  }
+
+  onNewChannelDescriptionChange(value: string): void {
+    this.newChannelDescription = value;
+  }
+
+  onNewChannelTypeChange(value: ChannelType | null): void {
+    this.newChannelType = value ?? "team_general";
+  }
+
+  onNewChannelPositionChange(value: string | null): void {
+    this.newChannelPosition = value ?? "";
+  }
+
+  onMemberSearchQueryChange(value: string): void {
+    this.memberSearchQuery = value;
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
   // ============================================================================
   // MESSAGE OPERATIONS
   // ============================================================================
@@ -455,8 +514,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   // MENTION HANDLING
   // ============================================================================
 
-  onMessageInput(event: Event): void {
-    const input = (event.target as HTMLInputElement).value;
+  private updateMentionSuggestions(input: string): void {
     const lastWord = input.split(/\s/).pop() || "";
 
     if (lastWord.startsWith("@") && lastWord.length > 1) {

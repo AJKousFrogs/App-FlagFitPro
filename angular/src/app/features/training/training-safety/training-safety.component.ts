@@ -52,7 +52,6 @@ import { calculateAge } from "../../../shared/utils/date.utils";
 
 @Component({
   selector: "app-training-safety",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

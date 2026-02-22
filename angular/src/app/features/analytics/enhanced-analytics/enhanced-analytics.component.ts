@@ -29,7 +29,6 @@ import {
 
 @Component({
   selector: "app-enhanced-analytics",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,

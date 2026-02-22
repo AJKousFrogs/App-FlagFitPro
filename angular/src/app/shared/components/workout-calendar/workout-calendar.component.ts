@@ -32,7 +32,6 @@ export interface WorkoutEntry {
 
 @Component({
   selector: "app-workout-calendar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tooltip, Badge, ButtonComponent, IconButtonComponent],
   template: `

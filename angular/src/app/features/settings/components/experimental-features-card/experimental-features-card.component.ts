@@ -10,7 +10,6 @@ import { CardComponent } from "../../../../shared/components/ui-components";
 
 @Component({
   selector: "app-experimental-features-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, ToggleSwitch, CardComponent],
   templateUrl: "./experimental-features-card.component.html",
@@ -19,4 +18,8 @@ import { CardComponent } from "../../../../shared/components/ui-components";
 export class ExperimentalFeaturesCardComponent {
   nextGenMetricsPreview = input(false);
   nextGenMetricsPreviewChange = output<boolean>();
+
+  onNextGenToggle(value: boolean): void {
+    this.nextGenMetricsPreviewChange.emit(value);
+  }
 }

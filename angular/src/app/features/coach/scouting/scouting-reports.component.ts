@@ -7,7 +7,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -107,13 +106,33 @@ interface ScoutingReport {
   createdAt: Date;
 }
 
+interface NewReportForm {
+  opponentId: string;
+  gameDate: string;
+  executiveSummary: string;
+  attackPoints: string;
+  playsToRun: string;
+  coverageAdjustments: string;
+  blitzPlan: string;
+  sharedWith: "team" | "coaches_only";
+  requiredReading: boolean;
+}
+
+interface NewOpponentForm {
+  teamName: string;
+  conference: string;
+  wins: number;
+  losses: number;
+  headCoach: string;
+  offensiveStyle: string;
+  defensiveStyle: string;
+}
+
 @Component({
   selector: "app-scouting-reports",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     RouterModule,
     Card,
     Dialog,
@@ -161,7 +180,7 @@ export class ScoutingReportsComponent implements OnInit {
   viewingReport = signal<ScoutingReport | null>(null);
 
   // Form data
-  newReport = {
+  newReport: NewReportForm = {
     opponentId: "",
     gameDate: "",
     executiveSummary: "",
@@ -173,7 +192,7 @@ export class ScoutingReportsComponent implements OnInit {
     requiredReading: false,
   };
 
-  newOpponent = {
+  newOpponent: NewOpponentForm = {
     teamName: "",
     conference: "",
     wins: 0,
@@ -432,6 +451,77 @@ export class ScoutingReportsComponent implements OnInit {
     }
   }
 
+  updateSelectedOpponentFilter(value: string | null | undefined): void {
+    this.selectedOpponentFilter = value ?? null;
+  }
+
+  updateSelectedTendencyOpponent(value: string | null | undefined): void {
+    this.selectedTendencyOpponent = value ?? null;
+    this.onTendencyOpponentChange();
+  }
+
+  updateNewReportOpponent(value: string | null | undefined): void {
+    this.newReport = { ...this.newReport, opponentId: value ?? "" };
+  }
+
+  updateNewReportGameDate(value: string | null | undefined): void {
+    this.newReport = { ...this.newReport, gameDate: value ?? "" };
+  }
+
+  updateNewReportText(
+    field:
+      | "executiveSummary"
+      | "attackPoints"
+      | "playsToRun"
+      | "coverageAdjustments"
+      | "blitzPlan",
+    value: string | null | undefined,
+  ): void {
+    this.newReport = { ...this.newReport, [field]: value ?? "" };
+  }
+
+  updateNewReportSharedWith(
+    value: "team" | "coaches_only" | null | undefined,
+  ): void {
+    this.newReport = { ...this.newReport, sharedWith: value ?? "team" };
+  }
+
+  updateNewReportRequiredReading(value: boolean | null | undefined): void {
+    this.newReport = { ...this.newReport, requiredReading: value ?? false };
+  }
+
+  updateNewOpponentText(
+    field:
+      | "teamName"
+      | "conference"
+      | "headCoach"
+      | "offensiveStyle"
+      | "defensiveStyle",
+    value: string | null | undefined,
+  ): void {
+    this.newOpponent = { ...this.newOpponent, [field]: value ?? "" };
+  }
+
+  updateNewOpponentRecord(
+    field: "wins" | "losses",
+    value: string | number | null | undefined,
+  ): void {
+    const parsed = typeof value === "number" ? value : Number(value ?? 0);
+    this.newOpponent = {
+      ...this.newOpponent,
+      [field]: Number.isFinite(parsed) ? parsed : 0,
+    };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
+  }
+
   viewReport(report: ScoutingReport): void {
     this.viewingReport.set(report);
     this.showViewReportDialog.set(true);
@@ -463,7 +553,7 @@ export class ScoutingReportsComponent implements OnInit {
   }
 
   createReportForOpponent(opponent: OpponentProfile): void {
-    this.newReport.opponentId = opponent.id;
+    this.newReport = { ...this.newReport, opponentId: opponent.id };
     this.showNewReportDialog.set(true);
   }
 

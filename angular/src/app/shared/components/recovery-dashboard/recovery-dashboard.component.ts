@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,7 +10,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { UIChart } from "primeng/chart";
 import { Dialog } from "primeng/dialog";
@@ -86,7 +86,6 @@ interface ChartOptions {
 
 @Component({
   selector: "app-recovery-dashboard",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -112,7 +111,7 @@ interface ChartOptions {
         <div class="status-overview">
           <div class="recovery-score">
             <p-knob
-              [(ngModel)]="recoveryScoreValue"
+              [value]="recoveryScoreValue"
               [min]="0"
               [max]="100"
               [size]="150"
@@ -132,7 +131,7 @@ interface ChartOptions {
             @for (metric of recoveryMetrics(); track metric.name) {
               <div class="metric">
                 <div class="metric-header">
-                  <i [class]="metric.icon" [ngClass]="'tone-' + metric.tone"></i>
+                  <i [class]="metric.icon + ' tone-' + metric.tone"></i>
                   <span class="metric-name">{{ metric.name }}</span>
                 </div>
                 <div class="metric-value">
@@ -157,8 +156,8 @@ interface ChartOptions {
         <div class="category-filter">
           <p-selectButton
             [options]="categoryOptions"
-            [(ngModel)]="selectedCategory"
-            (onValueChange)="onCategoryChange($event)"
+            [ngModel]="selectedCategory"
+            (onChange)="onCategoryChange($event.value)"
             optionLabel="label"
             optionValue="value"
           >
@@ -689,8 +688,11 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     return severityMap[category] || "info";
   }
 
-  onCategoryChange(event: { value: string }) {
-    this.filterProtocols(event.value);
+  onCategoryChange(event: { value: string } | string | null): void {
+    const category =
+      typeof event === "string" ? event : (event?.value ?? "all");
+    this.selectedCategory = category;
+    this.filterProtocols(category);
   }
 
   private filterProtocols(category: string) {

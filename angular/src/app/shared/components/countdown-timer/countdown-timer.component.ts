@@ -37,7 +37,6 @@ import { IconButtonComponent } from "../button/icon-button.component";
 
 @Component({
   selector: "app-countdown-timer",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, IconButtonComponent],
   template: `

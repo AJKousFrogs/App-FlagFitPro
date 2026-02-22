@@ -13,7 +13,6 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
 
 @Component({
   selector: "app-roster-skeleton",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, SkeletonComponent],
   template: `

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { Select } from "primeng/select";
 import {
   SCHEDULE_TYPES,
@@ -11,9 +10,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-schedule",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, Select],
+  imports: [CommonModule, Select],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -34,7 +32,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <p-select
             inputId="scheduleType"
             [options]="scheduleTypes"
-            [(ngModel)]="state.formData.scheduleType"
+            (onChange)="onScheduleTypeChange($event.value)"
             placeholder="Select your schedule type"
             class="w-full"
             [attr.aria-label]="'Select work schedule type'"
@@ -48,7 +46,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <p-select
             inputId="practicesPerWeek"
             [options]="practiceFrequencies"
-            [(ngModel)]="state.formData.practicesPerWeek"
+            (onChange)="onPracticesPerWeekChange($event.value)"
             placeholder="How many team practices?"
             class="w-full"
             [attr.aria-label]="
@@ -101,4 +99,12 @@ export class OnboardingStepScheduleComponent {
   readonly scheduleTypes = SCHEDULE_TYPES;
   readonly practiceFrequencies = PRACTICE_FREQUENCIES;
   readonly weekDays = WEEK_DAYS;
+
+  onScheduleTypeChange(value: string | null | undefined): void {
+    this.state.formData.scheduleType = value ?? "";
+  }
+
+  onPracticesPerWeekChange(value: number | null | undefined): void {
+    this.state.formData.practicesPerWeek = value ?? 0;
+  }
 }

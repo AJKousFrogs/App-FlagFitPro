@@ -26,7 +26,6 @@ import { ButtonComponent } from "../button/button.component";
  */
 @Component({
   selector: "app-cookie-consent-banner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterLink, ButtonComponent],
   template: `

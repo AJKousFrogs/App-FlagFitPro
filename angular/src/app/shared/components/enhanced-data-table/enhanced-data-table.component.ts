@@ -8,11 +8,9 @@ import {
   ChangeDetectionStrategy,
   viewChild,
   ElementRef,
-  HostListener,
   inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import {
   TableModule,
   TableColumnReorderEvent,
@@ -20,7 +18,6 @@ import {
 } from "primeng/table";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { Checkbox } from "primeng/checkbox";
 import { MultiSelect } from "primeng/multiselect";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -74,13 +71,10 @@ export interface TablePreferences {
  */
 @Component({
   selector: "app-enhanced-data-table",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     TableModule,
-    Checkbox,
     MultiSelect,
 
     ButtonComponent,
@@ -94,13 +88,13 @@ export interface TablePreferences {
           <!-- Bulk selection -->
           @if (selectable()) {
             <div class="checkbox-with-label">
-              <p-checkbox
-                [(ngModel)]="selectAll"
-                [binary]="true"
-                variant="filled"
-                (onValueChange)="toggleSelectAll()"
-                inputId="select-all-rows"
-                ariaLabel="Select all rows"
+              <input
+                type="checkbox"
+                class="table-checkbox"
+                [checked]="selectAll()"
+                (change)="onSelectAllChange(isChecked($event))"
+                id="select-all-rows"
+                aria-label="Select all rows"
               />
               <label for="select-all-rows" class="checkbox-label"
                 >{{ selectedRows().length }} selected</label
@@ -111,8 +105,8 @@ export interface TablePreferences {
           <!-- Column visibility -->
           <p-multiSelect
             [options]="columnOptions()"
-            [(ngModel)]="visibleColumnFields"
-            (onValueChange)="onColumnVisibilityChange()"
+            [value]="visibleColumnFields()"
+            (onChange)="onVisibleColumnFieldsChange($event.value)"
             placeholder="Show Columns"
             optionLabel="label"
             optionValue="value"
@@ -189,12 +183,12 @@ export interface TablePreferences {
             <tr>
               @if (selectable()) {
                 <th class="enhanced-table__select-col" scope="col">
-                  <p-checkbox
-                    [(ngModel)]="selectAll"
-                    [binary]="true"
-                    variant="filled"
-                    (onValueChange)="toggleSelectAll()"
-                    ariaLabel="Select all rows in table"
+                  <input
+                    type="checkbox"
+                    class="table-checkbox"
+                    [checked]="selectAll()"
+                    (change)="onSelectAllChange(isChecked($event))"
+                    aria-label="Select all rows in table"
                   />
                 </th>
               }
@@ -231,12 +225,12 @@ export interface TablePreferences {
             <tr [class.selected]="isRowSelected(rowData)">
               @if (selectable()) {
                 <td>
-                  <p-checkbox
-                    [(ngModel)]="rowData._selected"
-                    [binary]="true"
-                    variant="filled"
-                    (onValueChange)="onRowSelect(rowData)"
-                    [ariaLabel]="'Select row ' + (rowIndex + 1)"
+                  <input
+                    type="checkbox"
+                    class="table-checkbox"
+                    [checked]="rowData._selected === true"
+                    (change)="onRowSelectedChange(rowData, isChecked($event))"
+                    [attr.aria-label]="'Select row ' + (rowIndex + 1)"
                   />
                 </td>
               }
@@ -246,7 +240,8 @@ export interface TablePreferences {
                     <input
                       type="text"
                       class="inline-edit-input"
-                      [(ngModel)]="editingValue"
+                      [value]="editingValueAsString()"
+                      (input)="onEditingValueChange(getInputValue($event))"
                       (blur)="saveEdit(rowData, col.field)"
                       (keyup.enter)="saveEdit(rowData, col.field)"
                       (keyup.escape)="cancelEdit()"
@@ -310,12 +305,12 @@ export interface TablePreferences {
             <div class="mobile-card" [class.selected]="isRowSelected(row)">
               @if (selectable()) {
                 <div class="card-select">
-                  <p-checkbox
-                    [(ngModel)]="row._selected"
-                    [binary]="true"
-                    variant="filled"
-                    (onValueChange)="onRowSelect(row)"
-                    [ariaLabel]="'Select card ' + ($index + 1)"
+                  <input
+                    type="checkbox"
+                    class="table-checkbox"
+                    [checked]="row._selected === true"
+                    (change)="onRowSelectedChange(row, isChecked($event))"
+                    [attr.aria-label]="'Select card ' + ($index + 1)"
                   />
                 </div>
               }
@@ -361,6 +356,9 @@ export interface TablePreferences {
     </div>
   `,
   styleUrl: "./enhanced-data-table.component.scss",
+  host: {
+    "(window:resize)": "onResize()",
+  },
 })
 export class EnhancedDataTableComponent {
   private readonly logger = inject(LoggerService);
@@ -455,7 +453,6 @@ export class EnhancedDataTableComponent {
     this.checkMobileView();
   }
 
-  @HostListener("window:resize")
   onResize(): void {
     this.checkMobileView();
   }
@@ -488,6 +485,46 @@ export class EnhancedDataTableComponent {
     const selected = this.data().filter((r) => r._selected);
     this.selectedRows.set(selected);
     this.selectAll.set(selected.length === this.data().length);
+  }
+
+  onSelectAllChange(value: boolean): void {
+    this.selectAll.set(value);
+    this.toggleSelectAll();
+  }
+
+  onVisibleColumnFieldsChange(value: string[] | null): void {
+    this.visibleColumnFields.set(value ?? []);
+    this.onColumnVisibilityChange();
+  }
+
+  onRowSelectedChange(row: TableRow, value: boolean): void {
+    row._selected = value;
+    this.onRowSelect(row);
+  }
+
+  onEditingValueChange(value: unknown): void {
+    this.editingValue.set(value);
+  }
+
+  editingValueAsString(): string {
+    const value = this.editingValue();
+    return typeof value === "string" ? value : String(value ?? "");
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   isRowSelected(row: TableRow): boolean {

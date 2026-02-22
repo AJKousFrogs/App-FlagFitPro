@@ -27,7 +27,6 @@ export interface AIModeStatus {
 
 @Component({
   selector: "app-ai-mode-explanation",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, Tooltip],
   template: `

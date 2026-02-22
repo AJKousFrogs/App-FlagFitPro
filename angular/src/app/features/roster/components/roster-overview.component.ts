@@ -8,7 +8,6 @@ import { TeamStat } from "../roster.models";
 
 @Component({
   selector: "app-roster-overview",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Card],
   template: `

@@ -559,6 +559,11 @@
                   class="status-option"
                   [class.selected]="newStatus() === option.value"
                   (click)="newStatus.set(option.value)"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="'Set status to ' + option.label"
+                  (keydown.enter)="newStatus.set(option.value)"
+                  (keydown.space)="newStatus.set(option.value); $event.preventDefault()"
                 >
                   <div
                     class="status-indicator"
@@ -603,6 +608,11 @@
                   class="status-option"
                   [class.selected]="bulkStatus() === option.value"
                   (click)="bulkStatus.set(option.value)"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="'Set bulk status to ' + option.label"
+                  (keydown.enter)="bulkStatus.set(option.value)"
+                  (keydown.space)="bulkStatus.set(option.value); $event.preventDefault()"
                 >
                   <div
                     class="status-indicator"
@@ -644,7 +654,8 @@
               <input
                 pInputText
                 id="inviteEmail"
-                [(ngModel)]="inviteEmail"
+                [value]="inviteEmail"
+                (input)="onInviteEmailInput($event)"
                 placeholder="player@email.com"
                 class="w-full"
               />
@@ -654,7 +665,7 @@
               <label for="inviteRole">Role</label>
               <p-select
                 id="inviteRole"
-                [(ngModel)]="inviteRole"
+                (onChange)="onInviteRoleChange($event.value)"
                 [options]="roleOptions"
                 optionLabel="label"
                 optionValue="value"
@@ -668,7 +679,8 @@
               <textarea
                 pInputText
                 id="inviteMessage"
-                [(ngModel)]="inviteMessage"
+                [value]="inviteMessage"
+                (input)="onInviteMessageInput($event)"
                 placeholder="Add a personal message to the invitation..."
                 rows="3"
                 class="w-full"

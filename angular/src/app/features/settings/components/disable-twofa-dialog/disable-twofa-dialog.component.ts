@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Dialog } from "primeng/dialog";
 import {
   DialogFooterComponent,
@@ -8,9 +7,8 @@ import {
 
 @Component({
   selector: "app-disable-twofa-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, Dialog, DialogHeaderComponent, DialogFooterComponent],
+  imports: [Dialog, DialogHeaderComponent, DialogFooterComponent],
   templateUrl: "./disable-twofa-dialog.component.html",
   styleUrl: "./disable-twofa-dialog.component.scss",
 })
@@ -25,5 +23,10 @@ export class DisableTwofaDialogComponent {
 
   closeDialog(): void {
     this.visibleChange.emit(false);
+  }
+
+  onDisableCodeInput(event: Event): void {
+    const value = (event.target as HTMLInputElement | null)?.value ?? "";
+    this.disableCodeChange.emit(value);
   }
 }

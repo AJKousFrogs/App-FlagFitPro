@@ -12,6 +12,7 @@
  */
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,7 +20,6 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { InputNumber } from "primeng/inputnumber";
 import { Slider } from "primeng/slider";
 import { Textarea } from "primeng/textarea";
@@ -34,7 +34,6 @@ export interface SessionLogData {
 
 @Component({
   selector: "app-session-log-form",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -71,12 +70,12 @@ export interface SessionLogData {
           <div class="rpe-slider-container">
             <span class="rpe-emoji">😌</span>
             <p-slider
-              [(ngModel)]="rpeValue"
+              [ngModel]="rpeValue()"
               [min]="1"
               [max]="10"
               [step]="1"
               class="rpe-slider"
-              (onValueChange)="onRpeChange($event)"
+              (ngModelChange)="onRpeChange($event)"
             ></p-slider>
             <span class="rpe-emoji">🔥</span>
           </div>
@@ -88,13 +87,13 @@ export interface SessionLogData {
           <label for="duration">Actual Duration (minutes)</label>
           <div class="duration-input-row">
             <p-inputNumber
-              [(ngModel)]="durationValue"
+              [ngModel]="durationValue()"
               [min]="1"
               [max]="300"
               [showButtons]="true"
               suffix=" min"
               class="duration-input"
-              (onInput)="onDurationChange($event)"
+              (ngModelChange)="onDurationChange($event)"
             ></p-inputNumber>
             @if (expectedDuration()) {
               <span class="expected-duration">
@@ -115,7 +114,8 @@ export interface SessionLogData {
           <label for="notes">Session Notes (optional)</label>
           <textarea
             pTextarea
-            [(ngModel)]="notesValue"
+            [value]="notesValue()"
+            (input)="onNotesInput($event)"
             [rows]="3"
             placeholder="How did you feel? Any issues or highlights?"
             class="notes-textarea"
@@ -195,18 +195,23 @@ export class SessionLogFormComponent {
     return descriptions[rpe] || "";
   }
 
-  onRpeChange(event: { value?: number | number[] }): void {
-    const val = Array.isArray(event.value) ? event.value[0] : event.value;
-    if (val !== undefined) {
+  onRpeChange(value: number | number[] | null | undefined): void {
+    const val = Array.isArray(value) ? value[0] : value;
+    if (typeof val === "number") {
       this.rpeValue.set(val);
     }
   }
 
-  onDurationChange(event: { value: number | null | string }): void {
-    const val = typeof event.value === "number" ? event.value : null;
+  onDurationChange(value: number | null | string | undefined): void {
+    const val = typeof value === "number" ? value : null;
     if (val !== null) {
       this.durationValue.set(val);
     }
+  }
+
+  onNotesInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.notesValue.set(input?.value ?? "");
   }
 
   onSubmit(): void {

@@ -39,7 +39,6 @@ const LEGAL_DOCS: Record<
 
 @Component({
   selector: "app-legal-doc",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterLink, PageHeaderComponent, ButtonComponent],
   template: `

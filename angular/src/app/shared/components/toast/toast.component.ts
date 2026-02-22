@@ -22,7 +22,6 @@ import { Toast } from "primeng/toast";
  */
 @Component({
   selector: "app-toast",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Toast],
   providers: [MessageService],

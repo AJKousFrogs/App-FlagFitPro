@@ -47,7 +47,6 @@ interface Workout {
 
 @Component({
   selector: "app-workout",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
@@ -108,7 +107,8 @@ interface Workout {
                   </div>
                   <div class="exercise-actions">
                     <p-checkbox
-                      [(ngModel)]="exercise.completed"
+                      [ngModel]="exercise.completed"
+                      (onChange)="onExerciseCompletedChange(exercise, $event.checked)"
                       [binary]="true"
                       variant="filled"
                       inputId="exercise-{{ exercise.id }}"
@@ -414,6 +414,13 @@ export class WorkoutComponent implements OnInit {
 
   trackByExerciseId(index: number, exercise: WorkoutExercise): string {
     return exercise.id;
+  }
+
+  onExerciseCompletedChange(
+    exercise: WorkoutExercise,
+    checked: boolean | undefined,
+  ): void {
+    exercise.completed = !!checked;
   }
 
   trackByWorkoutId(index: number, workout: Workout): string {

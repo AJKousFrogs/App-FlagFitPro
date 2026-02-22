@@ -379,31 +379,3 @@ small:not(.p-error) {
     color: CanvasText;
   }
 }
-
-// ============================================================================
-// UTILITY CLASSES FOR ACCESSIBLE COLORS
-// ============================================================================
-
-.a11y-text-secondary {
-  color: var(--color-text-secondary-accessible);
-}
-
-.a11y-text-muted {
-  color: var(--color-text-muted-accessible);
-}
-
-.a11y-warning {
-  color: var(--color-warning-text-accessible);
-}
-
-.a11y-info {
-  color: var(--color-info-text-accessible);
-}
-
-.a11y-success {
-  color: var(--color-success-text-accessible);
-}
-
-.a11y-error {
-  color: var(--color-error-text-accessible);
-}

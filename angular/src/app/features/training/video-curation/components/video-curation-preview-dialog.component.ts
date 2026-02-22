@@ -19,7 +19,6 @@ import { InstagramVideo } from "../video-curation.models";
 
 @Component({
   selector: "app-video-curation-preview-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Dialog],
   template: `

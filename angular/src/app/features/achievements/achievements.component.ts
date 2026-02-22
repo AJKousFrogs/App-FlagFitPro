@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -257,11 +256,9 @@ const CATEGORY_LABELS: Record<
 
 @Component({
   selector: "app-achievements",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     DatePipe,
     DecimalPipe,
     Card,
@@ -472,7 +469,7 @@ const CATEGORY_LABELS: Record<
               <div class="header-filters">
                 <p-select
                   [options]="timeRanges"
-                  [(ngModel)]="selectedTimeRange"
+                  (onChange)="onTimeRangeChange($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Time Range"
@@ -553,7 +550,7 @@ export class AchievementsComponent implements OnInit {
   readonly selectedCategory = signal<AchievementCategory | "all">("all");
   readonly isLoading = signal(true);
 
-  selectedTimeRange = "week";
+  readonly selectedTimeRange = signal<"week" | "month" | "all">("week");
 
   // Constants
   readonly categories = [
@@ -619,6 +616,10 @@ export class AchievementsComponent implements OnInit {
     if (total === 0 || rank === 0) return 50;
     return Math.round((1 - rank / total) * 100);
   });
+
+  onTimeRangeChange(event: { value: "week" | "month" | "all" }): void {
+    this.selectedTimeRange.set(event.value);
+  }
 
   ngOnInit(): void {
     this.loadData();

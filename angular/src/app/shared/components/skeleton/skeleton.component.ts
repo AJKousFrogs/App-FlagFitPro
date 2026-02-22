@@ -13,7 +13,6 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-skeleton",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

@@ -14,7 +14,6 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
 
 @Component({
   selector: "app-import-dataset",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule,],
 
@@ -106,7 +105,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
               id="athleteId"
               type="text"
               [value]="athleteId()"
-              (input)="athleteId.set($any($event.target).value)"
+              (input)="onAthleteIdInput($event)"
               placeholder="Enter athlete UUID"
               class="form-input"
             />
@@ -121,7 +120,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
             <textarea
               id="jsonText"
               [value]="jsonText()"
-              (input)="jsonText.set($any($event.target).value)"
+              (input)="onJsonTextInput($event)"
               placeholder='Paste your dataset JSON here, e.g.:
 [
   { "speed_m_s": 6.1, "distance_m": 3.2 },
@@ -195,7 +194,7 @@ export class ImportDatasetComponent {
   private wearableParser = inject(WearableParserService);
   private toastService = inject(ToastService);
 
-  // Angular 21: Use model() signals for two-way binding instead of ngModel
+  // Angular 21: Use signals for two-way binding in templates
   athleteId = signal("");
   jsonText = signal("");
   activeTab = signal<"upload" | "paste" | "generate">("upload");
@@ -217,6 +216,14 @@ export class ImportDatasetComponent {
     if (input.files && input.files.length > 0) {
       this.selectedFile.set(input.files[0]);
     }
+  }
+
+  onAthleteIdInput(event: Event): void {
+    this.athleteId.set((event.target as HTMLInputElement).value);
+  }
+
+  onJsonTextInput(event: Event): void {
+    this.jsonText.set((event.target as HTMLTextAreaElement).value);
   }
 
   async parseAndImport() {

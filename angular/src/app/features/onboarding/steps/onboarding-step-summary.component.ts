@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Checkbox } from "primeng/checkbox";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-summary",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, RouterLink, Checkbox],
+  imports: [CommonModule, RouterLink, Checkbox],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -176,9 +174,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         <div class="consent-list">
           <div class="consent-item required">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [(ngModel)]="state.formData.consentTermsOfService" [binary]="true" variant="filled"
+              <p-checkbox [value]="state.formData.consentTermsOfService" [binary]="true" variant="filled"
                 inputId="consent-terms" name="consentTermsOfService"
-                (ngModelChange)="consentChange.emit({ type: 'Terms of Service', checked: $event })" />
+                (onChange)="onConsentTermsChange($event.checked)" />
               <label for="consent-terms" class="consent-label">
                 I accept the <a [routerLink]="['/terms']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Terms of Service</a>
                 <span class="required-indicator">*</span>
@@ -188,9 +186,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
           <div class="consent-item required">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [(ngModel)]="state.formData.consentPrivacyPolicy" [binary]="true" variant="filled"
+              <p-checkbox [value]="state.formData.consentPrivacyPolicy" [binary]="true" variant="filled"
                 inputId="consent-privacy" name="consentPrivacyPolicy"
-                (ngModelChange)="consentChange.emit({ type: 'Privacy Policy', checked: $event })" />
+                (onChange)="onConsentPrivacyChange($event.checked)" />
               <label for="consent-privacy" class="consent-label">
                 I accept the <a [routerLink]="['/privacy']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Privacy Policy</a>
                 <span class="required-indicator">*</span>
@@ -200,9 +198,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
           <div class="consent-item required">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [(ngModel)]="state.formData.consentDataUsage" [binary]="true" variant="filled"
+              <p-checkbox [value]="state.formData.consentDataUsage" [binary]="true" variant="filled"
                 inputId="consent-data" name="consentDataUsage"
-                (ngModelChange)="consentChange.emit({ type: 'Data Usage', checked: $event })" />
+                (onChange)="onConsentDataUsageChange($event.checked)" />
               <label for="consent-data" class="consent-label">
                 I consent to my data being used to personalize my training experience
                 <span class="consent-hint">(required for app functionality)</span>
@@ -213,9 +211,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
           <div class="consent-item optional">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [(ngModel)]="state.formData.consentAICoach" [binary]="true" variant="filled"
+              <p-checkbox [value]="state.formData.consentAICoach" [binary]="true" variant="filled"
                 inputId="consent-ai" name="consentAICoach"
-                (ngModelChange)="consentChange.emit({ type: 'Merlin AI', checked: $event })" />
+                (onChange)="onConsentAiCoachChange($event.checked)" />
               <label for="consent-ai" class="consent-label">
                 I consent to Merlin AI providing personalized advice based on my training and wellness data
                 <span class="consent-hint">(optional)</span>
@@ -225,9 +223,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
           <div class="consent-item optional">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [(ngModel)]="state.formData.consentEmailUpdates" [binary]="true" variant="filled"
+              <p-checkbox [value]="state.formData.consentEmailUpdates" [binary]="true" variant="filled"
                 inputId="consent-email" name="consentEmailUpdates"
-                (ngModelChange)="consentChange.emit({ type: 'Email Updates', checked: $event })" />
+                (onChange)="onConsentEmailUpdatesChange($event.checked)" />
               <label for="consent-email" class="consent-label">
                 I want to receive email updates about new features and tips
                 <span class="consent-hint">(optional)</span>
@@ -258,4 +256,34 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 export class OnboardingStepSummaryComponent {
   readonly state = inject(OnboardingStateService);
   readonly consentChange = output<{ type: string; checked: boolean }>();
+
+  onConsentTermsChange(checked: boolean | undefined): void {
+    const nextValue = !!checked;
+    this.state.formData.consentTermsOfService = nextValue;
+    this.consentChange.emit({ type: "Terms of Service", checked: nextValue });
+  }
+
+  onConsentPrivacyChange(checked: boolean | undefined): void {
+    const nextValue = !!checked;
+    this.state.formData.consentPrivacyPolicy = nextValue;
+    this.consentChange.emit({ type: "Privacy Policy", checked: nextValue });
+  }
+
+  onConsentDataUsageChange(checked: boolean | undefined): void {
+    const nextValue = !!checked;
+    this.state.formData.consentDataUsage = nextValue;
+    this.consentChange.emit({ type: "Data Usage", checked: nextValue });
+  }
+
+  onConsentAiCoachChange(checked: boolean | undefined): void {
+    const nextValue = !!checked;
+    this.state.formData.consentAICoach = nextValue;
+    this.consentChange.emit({ type: "Merlin AI", checked: nextValue });
+  }
+
+  onConsentEmailUpdatesChange(checked: boolean | undefined): void {
+    const nextValue = !!checked;
+    this.state.formData.consentEmailUpdates = nextValue;
+    this.consentChange.emit({ type: "Email Updates", checked: nextValue });
+  }
 }

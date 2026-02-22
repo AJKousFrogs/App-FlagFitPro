@@ -36,7 +36,6 @@ import { ButtonComponent } from "../button/button.component";
  */
 @Component({
   selector: "app-dialog-header",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonComponent],
   template: `

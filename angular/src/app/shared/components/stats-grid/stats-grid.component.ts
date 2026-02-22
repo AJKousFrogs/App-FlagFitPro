@@ -27,7 +27,6 @@ export interface StatItem {
 
 @Component({
   selector: "app-stats-grid",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Card, StatusTagComponent],
   template: `
@@ -36,7 +35,7 @@ export interface StatItem {
         <p-card class="stat-card">
           <div class="stat-card-content">
             @if (stat.icon) {
-              <div class="stat-icon" [ngClass]="getIconClass(stat.iconType)">
+              <div [class]="'stat-icon ' + getIconClass(stat.iconType)">
                 <i [class]="'pi ' + stat.icon"></i>
               </div>
             }

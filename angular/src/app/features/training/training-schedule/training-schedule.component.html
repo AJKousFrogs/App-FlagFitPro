@@ -53,7 +53,7 @@
           <app-card-shell title="Training Calendar" headerIcon="pi-calendar">
             <p-datepicker
               [ngModel]="selectedDate()"
-              (ngModelChange)="onDateSelect($event)"
+              (onSelect)="onDateSelect($event)"
               [inline]="true"
               [showWeek]="showWeekNumbers()"
               [touchUI]="false"
@@ -102,7 +102,7 @@
               <div class="show-week-toggle">
                 <p-checkbox
                   [ngModel]="showWeekNumbers()"
-                  (ngModelChange)="onShowWeekToggle($event)"
+                  (onChange)="onShowWeekToggle($event.checked)"
                   [binary]="true"
                   variant="filled"
                   inputId="showWeekNumbers"

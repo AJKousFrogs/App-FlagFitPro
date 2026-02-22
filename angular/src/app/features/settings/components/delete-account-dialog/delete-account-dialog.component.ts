@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import {
@@ -9,10 +8,8 @@ import {
 
 @Component({
   selector: "app-delete-account-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     Dialog,
     InputText,
     DialogHeaderComponent,
@@ -32,5 +29,10 @@ export class DeleteAccountDialogComponent {
 
   closeDialog(): void {
     this.visibleChange.emit(false);
+  }
+
+  onConfirmTextInput(event: Event): void {
+    const value = (event.target as HTMLInputElement | null)?.value ?? "";
+    this.confirmTextChange.emit(value);
   }
 }

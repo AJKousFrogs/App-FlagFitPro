@@ -12,7 +12,6 @@ import { Directive, ElementRef, input, OnInit, inject } from "@angular/core";
 
 @Directive({
   selector: "img[appMobileOptimized]",
-  standalone: true,
 })
 export class MobileOptimizedImageDirective implements OnInit {
   private el = inject(ElementRef<HTMLImageElement>);

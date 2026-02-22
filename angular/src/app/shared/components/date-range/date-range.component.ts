@@ -23,7 +23,6 @@ export interface DateRange {
  */
 @Component({
   selector: "app-date-range",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, DatePicker, ButtonComponent],
   template: `
@@ -53,14 +52,14 @@ export interface DateRange {
           </label>
           <p-datepicker
             [id]="id() + '-start'"
-            [(ngModel)]="startDate"
+            [ngModel]="startDate()"
             [showIcon]="true"
             [disabled]="disabled()"
             [minDate]="minDate()"
             [maxDate]="endDate() || maxDate()"
             dateFormat="mm/dd/yy"
             [showButtonBar]="true"
-            (onSelect)="onStartDateChange()"
+            (onSelect)="onStartDateChange($event)"
             [class.is-invalid]="invalid()"
             [attr.aria-invalid]="invalid() ? 'true' : null"
             [attr.aria-describedby]="errorMessage() ? id() + '-error' : null"
@@ -78,14 +77,14 @@ export interface DateRange {
           </label>
           <p-datepicker
             [id]="id() + '-end'"
-            [(ngModel)]="endDate"
+            [ngModel]="endDate()"
             [showIcon]="true"
             [disabled]="disabled()"
             [minDate]="startDate() || minDate()"
             [maxDate]="maxDate()"
             dateFormat="mm/dd/yy"
             [showButtonBar]="true"
-            (onSelect)="onEndDateChange()"
+            (onSelect)="onEndDateChange($event)"
             [class.is-invalid]="invalid()"
             [attr.aria-invalid]="invalid() ? 'true' : null"
           >
@@ -137,12 +136,14 @@ export class DateRangeComponent {
   // Outputs
   rangeChange = output<DateRange>();
 
-  onStartDateChange(): void {
+  onStartDateChange(date: Date | null): void {
+    this.startDate.set(date);
     this.validateRange();
     this.emitChange();
   }
 
-  onEndDateChange(): void {
+  onEndDateChange(date: Date | null): void {
+    this.endDate.set(date);
     this.validateRange();
     this.emitChange();
   }

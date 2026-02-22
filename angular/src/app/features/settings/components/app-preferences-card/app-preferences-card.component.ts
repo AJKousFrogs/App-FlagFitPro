@@ -23,7 +23,6 @@ type LanguageOption = {
 
 @Component({
   selector: "app-app-preferences-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, Select, CardComponent],
   templateUrl: "./app-preferences-card.component.html",

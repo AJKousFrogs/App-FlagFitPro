@@ -140,7 +140,7 @@
                     >°C</span
                   >
                   <button
-                    type="button"
+                  type="button"
                     class="toggle-track"
                     [class.fahrenheit]="temperatureUnit === 'F'"
                     (click)="
@@ -197,8 +197,7 @@
           <div class="score-group">
             <label>Our Score:</label>
             <p-inputNumber
-              [ngModel]="teamScore()"
-              (ngModelChange)="teamScore.set($event ?? 0); updateScore()"
+              (onInput)="onTeamScoreChange($event.value ?? null)"
               [min]="0"
               [showButtons]="true"
               class="score-input"
@@ -209,8 +208,7 @@
           <div class="score-group">
             <label>Opponent:</label>
             <p-inputNumber
-              [ngModel]="opponentScore()"
-              (ngModelChange)="opponentScore.set($event ?? 0); updateScore()"
+              (onInput)="onOpponentScoreChange($event.value ?? null)"
               [min]="0"
               [showButtons]="true"
               class="score-input"
@@ -467,7 +465,7 @@
                 <div class="outcome-buttons">
                   @for (outcome of passOutcomeOptions; track outcome) {
                     <button
-                      type="button"
+                  type="button"
                       class="outcome-btn outcome-{{ outcome.severity }}"
                       [class.active]="
                         playForm.get('outcome')?.value === outcome.value

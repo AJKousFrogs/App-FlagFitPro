@@ -1,11 +1,10 @@
 import {
   Component,
-  signal,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
 
-import { FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
@@ -14,10 +13,9 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
 @Component({
   selector: "app-qb-training-schedule",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     Card,
     DatePicker,
     PageHeaderComponent,
@@ -51,7 +49,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
           <h3>Weekly Schedule</h3>
         </ng-template>
         <p-datepicker
-          [(ngModel)]="selectedDate"
+          [formControl]="selectedDateControl"
           [inline]="true"
           [showWeek]="true"
         ></p-datepicker>
@@ -61,7 +59,9 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   styleUrl: "./qb-training-schedule.component.scss",
 })
 export class QbTrainingScheduleComponent implements OnInit {
-  selectedDate = signal<Date>(new Date());
+  readonly selectedDateControl = new FormControl(new Date(), {
+    nonNullable: true,
+  });
 
   ngOnInit(): void {
     // Load QB training schedule

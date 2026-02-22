@@ -6,7 +6,6 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -38,12 +37,10 @@ interface User {
 
 @Component({
   selector: "app-superadmin-users",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterLink,
-    FormsModule,
     Card,
     StatusTagComponent,
     TableModule,
@@ -80,9 +77,9 @@ interface User {
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="searchQuery"
+                [value]="searchQuery"
+                (input)="onSearchInput($event)"
                 placeholder="Search users..."
-                (input)="filterUsers()"
               />
             </span>
             <div class="filter-buttons">
@@ -360,6 +357,11 @@ export class SuperadminUsersComponent implements OnInit {
         this.roleFilter === "all" || user.role === this.roleFilter;
       return matchesSearch && matchesRole;
     });
+  }
+
+  onSearchInput(event: Event): void {
+    this.searchQuery = (event.target as HTMLInputElement | null)?.value ?? "";
+    this.filterUsers();
   }
 
   setRoleFilter(

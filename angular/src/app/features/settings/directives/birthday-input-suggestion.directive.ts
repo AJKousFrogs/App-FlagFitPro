@@ -5,7 +5,6 @@ import { TIMEOUTS } from "../../../core/constants";
 
 @Directive({
   selector: "[appBirthdayInputSuggestion]",
-  standalone: true,
 })
 export class BirthdayInputSuggestionDirective implements OnInit {
   inputTyped = output<string>();

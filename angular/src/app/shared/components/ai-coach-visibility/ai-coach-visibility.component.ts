@@ -8,7 +8,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { Skeleton } from "primeng/skeleton";
@@ -90,7 +89,6 @@ interface CoachVisibilityRecord {
  */
 @Component({
   selector: "app-ai-coach-visibility",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -101,7 +99,6 @@ interface CoachVisibilityRecord {
     Dialog,
     
     Textarea,
-    FormsModule,
     Tooltip,
     Skeleton,
 
@@ -337,7 +334,8 @@ interface CoachVisibilityRecord {
           </p>
           <textarea
             pInputTextarea
-            [(ngModel)]="coachNote"
+            [value]="coachNote"
+            (input)="onCoachNoteInput($event)"
             placeholder="Enter your note..."
             [rows]="4"
             class="w-full"
@@ -379,7 +377,8 @@ interface CoachVisibilityRecord {
           <label class="field-label">Override Reason</label>
           <textarea
             pInputTextarea
-            [(ngModel)]="overrideReason"
+            [value]="overrideReason"
+            (input)="onOverrideReasonInput($event)"
             placeholder="Explain why you're overriding this recommendation..."
             [rows]="4"
             class="w-full"
@@ -434,6 +433,16 @@ export class AiCoachVisibilityComponent implements OnInit {
   overrideDialogVisible = false;
   coachNote = "";
   overrideReason = "";
+
+  onCoachNoteInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.coachNote = input?.value ?? "";
+  }
+
+  onOverrideReasonInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.overrideReason = input?.value ?? "";
+  }
 
   ngOnInit(): void {
     this.loadData();

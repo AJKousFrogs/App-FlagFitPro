@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -24,7 +23,6 @@ import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
@@ -101,17 +99,14 @@ const ROUTES = [
 
 @Component({
   selector: "app-playbook-manager",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     Dialog,
     
     InputText,
     ProgressBar,
-    RadioButton,
     Select,
     TableModule,
     Textarea,
@@ -183,19 +178,20 @@ const ROUTES = [
               type="text"
               pInputText
               placeholder="Search plays..."
-              [(ngModel)]="searchQuery"
+              [value]="searchQuery"
+              (input)="onSearchQueryChange(getInputValue($event))"
             />
           </span>
           <p-select
             [options]="formationOptions"
-            [(ngModel)]="formationFilter"
+            (onChange)="onFormationFilterChange($event.value)"
             placeholder="Formation"
             [showClear]="true"
             class="playbook-filter-select"
           ></p-select>
           <p-select
             [options]="situationOptions"
-            [(ngModel)]="situationFilter"
+            (onChange)="onSituationFilterChange($event.value)"
             placeholder="Situation"
             [showClear]="true"
             class="playbook-filter-select"
@@ -393,7 +389,8 @@ const ROUTES = [
                   id="playName"
                   type="text"
                   pInputText
-                  [(ngModel)]="playForm.name"
+                  [value]="playForm.name"
+                  (input)="onPlayNameChange(getInputValue($event))"
                   placeholder="e.g., Mesh Right"
                   class="w-full"
                 />
@@ -404,7 +401,7 @@ const ROUTES = [
                 <p-select
                   inputId="formation"
                   [options]="formationOptions"
-                  [(ngModel)]="playForm.formation"
+                  (onChange)="onPlayFormationChange($event.value)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select formation"
@@ -417,7 +414,7 @@ const ROUTES = [
                 <p-select
                   inputId="situation"
                   [options]="situationOptions"
-                  [(ngModel)]="playForm.situation"
+                  (onChange)="onPlaySituationChange($event.value)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select situation"
@@ -429,21 +426,25 @@ const ROUTES = [
                 <label>Type</label>
                 <div class="radio-group">
                   <div class="radio-option">
-                    <p-radioButton
+                    <input
+                      type="radio"
                       name="type"
                       value="offense"
-                      [(ngModel)]="playForm.type"
-                      inputId="typeOff"
-                    ></p-radioButton>
+                      id="typeOff"
+                      [checked]="playForm.type === 'offense'"
+                      (change)="onPlayTypeChange('offense')"
+                    />
                     <label for="typeOff">Offense</label>
                   </div>
                   <div class="radio-option">
-                    <p-radioButton
+                    <input
+                      type="radio"
                       name="type"
                       value="defense"
-                      [(ngModel)]="playForm.type"
-                      inputId="typeDef"
-                    ></p-radioButton>
+                      id="typeDef"
+                      [checked]="playForm.type === 'defense'"
+                      (change)="onPlayTypeChange('defense')"
+                    />
                     <label for="typeDef">Defense</label>
                   </div>
                 </div>
@@ -453,7 +454,8 @@ const ROUTES = [
               <div class="assignments-section">
                 @for (
                   assignment of playForm.assignments;
-                  track assignment.position
+                  track assignment.position;
+                  let i = $index
                 ) {
                   <div
                     class="assignment-item"
@@ -471,7 +473,8 @@ const ROUTES = [
                     </div>
                     <textarea
                       pTextarea
-                      [(ngModel)]="assignment.instructions[0]"
+                      [value]="assignment.instructions[0]"
+                      (input)="onAssignmentInstructionChange(i, getInputValue($event))"
                       placeholder="Instructions for this position..."
                       rows="2"
                     ></textarea>
@@ -482,7 +485,8 @@ const ROUTES = [
               <h4>Coach Notes</h4>
               <textarea
                 pTextarea
-                [(ngModel)]="playForm.coachNotes"
+                [value]="playForm.coachNotes"
+                (input)="onPlayCoachNotesChange(getInputValue($event))"
                 placeholder="When to call this play, key coaching points..."
                 rows="4"
               ></textarea>
@@ -683,6 +687,18 @@ export class PlaybookManagerComponent implements OnInit {
     this.loadData();
   }
 
+  onSearchQueryChange(value: string): void {
+    this.searchQuery = value;
+  }
+
+  onFormationFilterChange(value: string | null): void {
+    this.formationFilter = value;
+  }
+
+  onSituationFilterChange(value: string | null): void {
+    this.situationFilter = value;
+  }
+
   async loadData(): Promise<void> {
     this.isLoading.set(true);
 
@@ -718,6 +734,48 @@ export class PlaybookManagerComponent implements OnInit {
       ],
       coachNotes: "",
     };
+  }
+
+  onPlayNameChange(value: string): void {
+    this.playForm = { ...this.playForm, name: value };
+  }
+
+  onPlayFormationChange(value: string | null): void {
+    this.playForm = { ...this.playForm, formation: value ?? "trips-right" };
+  }
+
+  onPlaySituationChange(value: string | null): void {
+    this.playForm = { ...this.playForm, situation: value ?? "base" };
+  }
+
+  onPlayTypeChange(value: "offense" | "defense" | "special"): void {
+    this.playForm = { ...this.playForm, type: value };
+  }
+
+  onAssignmentInstructionChange(index: number, value: string): void {
+    this.playForm = {
+      ...this.playForm,
+      assignments: this.playForm.assignments.map((assignment, i) =>
+        i === index
+          ? {
+              ...assignment,
+              instructions: [value],
+            }
+          : assignment,
+      ),
+    };
+  }
+
+  onPlayCoachNotesChange(value: string): void {
+    this.playForm = { ...this.playForm, coachNotes: value };
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
   }
 
   // Dialog methods

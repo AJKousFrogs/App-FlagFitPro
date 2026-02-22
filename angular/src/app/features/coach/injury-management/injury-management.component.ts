@@ -16,7 +16,12 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -102,6 +107,54 @@ interface RtpStage {
 }
 
 type InjuryStatus = "new" | "evaluating" | "rtp" | "cleared";
+
+interface ReportForm {
+  playerId: string;
+  injuryDate: Date;
+  injuryTime: string;
+  bodyPart: string;
+  injuryType: string;
+  side: "left" | "right";
+  severity: "mild" | "moderate" | "severe";
+  howHappened: string;
+  description: string;
+  actions: {
+    iceApplied: boolean;
+    removedFromActivity: boolean;
+    medicalContacted: boolean;
+    sentForImaging: boolean;
+  };
+}
+
+interface CheckinForm {
+  painLevel: number;
+  functionLevel: number;
+  confidenceLevel: number;
+  notes: string;
+}
+
+type ReportFormGroup = FormGroup<{
+  playerId: FormControl<string>;
+  injuryDate: FormControl<Date>;
+  injuryTime: FormControl<string>;
+  bodyPart: FormControl<string>;
+  injuryType: FormControl<string>;
+  side: FormControl<"left" | "right">;
+  severity: FormControl<"mild" | "moderate" | "severe">;
+  howHappened: FormControl<string>;
+  description: FormControl<string>;
+  actionIceApplied: FormControl<boolean>;
+  actionRemovedFromActivity: FormControl<boolean>;
+  actionMedicalContacted: FormControl<boolean>;
+  actionSentForImaging: FormControl<boolean>;
+}>;
+
+type CheckinFormGroup = FormGroup<{
+  painLevel: FormControl<number>;
+  functionLevel: FormControl<number>;
+  confidenceLevel: FormControl<number>;
+  notes: FormControl<string>;
+}>;
 
 // ===== Constants =====
 const BODY_PARTS = [
@@ -202,11 +255,10 @@ const RTP_STAGES: RtpStage[] = [
 
 @Component({
   selector: "app-injury-management",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     DatePipe,
     Avatar,
     Card,
@@ -247,15 +299,10 @@ export class InjuryManagementComponent implements OnInit {
   selectedInjury: InjuryRecord | null = null;
 
   // Report form
-  reportForm = this.getEmptyReportForm();
+  readonly reportFormGroup: ReportFormGroup = this.createReportForm();
 
   // Check-in form
-  checkinForm = {
-    painLevel: 0,
-    functionLevel: 5,
-    confidenceLevel: 5,
-    notes: "",
-  };
+  readonly checkinFormGroup: CheckinFormGroup = this.createCheckinForm();
 
   // Options
   readonly bodyPartOptions = BODY_PARTS;
@@ -408,7 +455,7 @@ export class InjuryManagementComponent implements OnInit {
     return "moderate";
   }
 
-  private getEmptyReportForm() {
+  private getEmptyReportForm(): ReportForm {
     return {
       playerId: "",
       injuryDate: new Date(),
@@ -428,6 +475,49 @@ export class InjuryManagementComponent implements OnInit {
     };
   }
 
+  private createReportForm(): ReportFormGroup {
+    const defaults = this.getEmptyReportForm();
+    return new FormGroup({
+      playerId: new FormControl(defaults.playerId, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      injuryDate: new FormControl(defaults.injuryDate, { nonNullable: true }),
+      injuryTime: new FormControl(defaults.injuryTime, { nonNullable: true }),
+      bodyPart: new FormControl(defaults.bodyPart, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      injuryType: new FormControl(defaults.injuryType, { nonNullable: true }),
+      side: new FormControl(defaults.side, { nonNullable: true }),
+      severity: new FormControl(defaults.severity, { nonNullable: true }),
+      howHappened: new FormControl(defaults.howHappened, { nonNullable: true }),
+      description: new FormControl(defaults.description, { nonNullable: true }),
+      actionIceApplied: new FormControl(defaults.actions.iceApplied, {
+        nonNullable: true,
+      }),
+      actionRemovedFromActivity: new FormControl(
+        defaults.actions.removedFromActivity,
+        { nonNullable: true },
+      ),
+      actionMedicalContacted: new FormControl(defaults.actions.medicalContacted, {
+        nonNullable: true,
+      }),
+      actionSentForImaging: new FormControl(defaults.actions.sentForImaging, {
+        nonNullable: true,
+      }),
+    });
+  }
+
+  private createCheckinForm(): CheckinFormGroup {
+    return new FormGroup({
+      painLevel: new FormControl(0, { nonNullable: true }),
+      functionLevel: new FormControl(5, { nonNullable: true }),
+      confidenceLevel: new FormControl(5, { nonNullable: true }),
+      notes: new FormControl("", { nonNullable: true }),
+    });
+  }
+
   private generateTimeOptions() {
     const options = [];
     for (let h = 6; h <= 21; h++) {
@@ -445,11 +535,30 @@ export class InjuryManagementComponent implements OnInit {
 
   // Dialog methods
   openReportDialog(): void {
-    this.reportForm = this.getEmptyReportForm();
+    const defaults = this.getEmptyReportForm();
+    this.reportFormGroup.reset({
+      playerId: defaults.playerId,
+      injuryDate: defaults.injuryDate,
+      injuryTime: defaults.injuryTime,
+      bodyPart: defaults.bodyPart,
+      injuryType: defaults.injuryType,
+      side: defaults.side,
+      severity: defaults.severity,
+      howHappened: defaults.howHappened,
+      description: defaults.description,
+      actionIceApplied: defaults.actions.iceApplied,
+      actionRemovedFromActivity: defaults.actions.removedFromActivity,
+      actionMedicalContacted: defaults.actions.medicalContacted,
+      actionSentForImaging: defaults.actions.sentForImaging,
+    });
     this.showReportDialog = true;
   }
 
   submitReport(): void {
+    if (this.reportFormGroup.invalid) {
+      this.reportFormGroup.markAllAsTouched();
+      return;
+    }
     this.toastService.success("RTP protocol has been initiated", "Injury Reported");
     this.showReportDialog = false;
     // Would submit to API
@@ -457,9 +566,10 @@ export class InjuryManagementComponent implements OnInit {
 
   openCheckinDialog(injury: InjuryRecord): void {
     this.selectedInjury = injury;
-    this.checkinForm = injury.todayCheckin
+    const defaults: CheckinForm = injury.todayCheckin
       ? { ...injury.todayCheckin }
       : { painLevel: 0, functionLevel: 5, confidenceLevel: 5, notes: "" };
+    this.checkinFormGroup.reset(defaults);
     this.showCheckinDialog = true;
   }
 

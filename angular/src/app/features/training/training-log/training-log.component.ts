@@ -26,7 +26,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
 import {
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
@@ -112,7 +112,7 @@ interface SessionType {
                   "
                   (click)="selectSessionType(type.value)"
                 >
-                  <i class="type-icon pi" [ngClass]="type.icon"></i>
+                  <i [class]="'type-icon pi ' + type.icon"></i>
                   <span class="type-label">{{ type.label }}</span>
                   <span class="type-description">{{ type.description }}</span>
                 </div>
@@ -150,7 +150,7 @@ interface SessionType {
                 formControlName="sessionDate"
                 class="date-input"
                 [max]="today"
-                (change)="onSessionDateChange($any($event.target).value)"
+                (change)="onSessionDateChangeFromEvent($event)"
               />
               <small>Select the date when this session actually occurred</small>
             </div>
@@ -553,7 +553,7 @@ interface SessionType {
   styleUrl: "./training-log.component.scss",
 })
 export class TrainingLogComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
+  private readonly fb = inject(NonNullableFormBuilder);
   private destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -720,6 +720,10 @@ export class TrainingLogComponent implements OnInit {
   onSessionDateChange(date: string): void {
     this.sessionForm.patchValue({ sessionDate: date });
     void this.updateOverrideMessage();
+  }
+
+  onSessionDateChangeFromEvent(event: Event): void {
+    this.onSessionDateChange((event.target as HTMLInputElement).value);
   }
 
   private async loadExistingSession(sessionId: string): Promise<void> {

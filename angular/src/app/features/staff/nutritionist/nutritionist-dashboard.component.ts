@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,7 +8,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -119,7 +119,6 @@ interface TournamentNutritionBrief {
 
 @Component({
   selector: "app-nutritionist-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -306,6 +305,70 @@ export class NutritionistDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  onSearchQueryChange(value: string): void {
+    this.searchQuery = value;
+  }
+
+  onSelectedAthleteIdChange(value: string | null): void {
+    this.selectedAthleteId = value;
+    this.loadAthleteComposition();
+  }
+
+  onSelectedReportTypeChange(value: string | null): void {
+    this.selectedReportType = value ?? "weekly";
+  }
+
+  onReportAthleteIdChange(value: string | null): void {
+    this.reportAthleteId = value;
+  }
+
+  onSelectedTimePeriodChange(value: string | null): void {
+    this.selectedTimePeriod = value ?? "7days";
+  }
+
+  onNewTournamentNameChange(value: string): void {
+    this.newTournament = { ...this.newTournament, name: value };
+  }
+
+  onNewTournamentLocationChange(value: string): void {
+    this.newTournament = { ...this.newTournament, location: value };
+  }
+
+  onNewTournamentExpectedGamesChange(value: number | string | null): void {
+    const parsed =
+      typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
+    this.newTournament = {
+      ...this.newTournament,
+      expectedGames: Number.isFinite(parsed) ? parsed : this.newTournament.expectedGames,
+    };
+  }
+
+  onNewTournamentTemperatureChange(value: number | string | null): void {
+    const parsed =
+      typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
+    this.newTournament = {
+      ...this.newTournament,
+      temperature: Number.isFinite(parsed) ? parsed : this.newTournament.temperature,
+    };
+  }
+
+  onNewTournamentHumidityChange(value: number | string | null): void {
+    const parsed =
+      typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
+    this.newTournament = {
+      ...this.newTournament,
+      humidity: Number.isFinite(parsed) ? parsed : this.newTournament.humidity,
+    };
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
   }
 
   private async loadData(): Promise<void> {

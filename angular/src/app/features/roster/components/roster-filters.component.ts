@@ -8,8 +8,11 @@ import {
   output,
   model,
   ChangeDetectionStrategy,
+  DestroyRef,
+  inject,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -18,10 +21,9 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
 
 @Component({
   selector: "app-roster-filters",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     Select,
     ButtonComponent,
     IconButtonComponent,
@@ -32,8 +34,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
       <app-search-input
         class="search-box"
         placeholder="Search players by name..."
-        [ngModel]="searchQuery()"
-        (ngModelChange)="searchQuery.set($event)"
+        [formControl]="searchControl"
         ariaLabel="Search players by name"
         [clearable]="true"
       />
@@ -41,20 +42,18 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
       <div class="filter-group">
         <p-select
           [options]="positionOptions"
-          [(ngModel)]="positionFilter"
           placeholder="All Positions"
           [showClear]="true"
           class="filter-select"
-          (ngModelChange)="positionFilterChange.emit($event)"
+          (onChange)="onPositionFilterChange($event.value)"
         ></p-select>
 
         <p-select
           [options]="statusOptions"
-          [(ngModel)]="statusFilter"
           placeholder="All Status"
           [showClear]="true"
           class="filter-select"
-          (ngModelChange)="statusFilterChange.emit($event)"
+          (onChange)="onStatusFilterChange($event.value)"
         ></p-select>
       </div>
 
@@ -93,8 +92,11 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
   styleUrl: "./roster-filters.component.scss",
 })
 export class RosterFiltersComponent {
+  private readonly destroyRef = inject(DestroyRef);
+
   // Two-way bindings
   searchQuery = model<string>("");
+  searchControl = new FormControl("", { nonNullable: true });
   positionFilter: string | null = null;
   statusFilter: string | null = null;
 
@@ -113,4 +115,24 @@ export class RosterFiltersComponent {
   // Options
   positionOptions = POSITION_FILTER_OPTIONS;
   statusOptions = STATUS_OPTIONS;
+
+  constructor() {
+    this.searchControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.searchQuery.set(value ?? "");
+      });
+  }
+
+  onPositionFilterChange(value: string | null | undefined): void {
+    const nextValue = value ?? null;
+    this.positionFilter = nextValue;
+    this.positionFilterChange.emit(nextValue);
+  }
+
+  onStatusFilterChange(value: string | null | undefined): void {
+    const nextValue = value ?? null;
+    this.statusFilter = nextValue;
+    this.statusFilterChange.emit(nextValue);
+  }
 }

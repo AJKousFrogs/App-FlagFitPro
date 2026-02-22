@@ -76,7 +76,6 @@ interface InboxStats {
 
 @Component({
   selector: "app-coach-inbox",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,

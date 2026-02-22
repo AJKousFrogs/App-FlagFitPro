@@ -18,14 +18,13 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  HostListener,
   viewChild,
   computed,
   inject,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 
 import { Dialog } from "primeng/dialog";
@@ -143,7 +142,7 @@ interface AutocompleteSuggestion {
     ]),
   ],
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     Tooltip,
     Dialog,
     MainLayoutComponent,
@@ -155,6 +154,9 @@ interface AutocompleteSuggestion {
   templateUrl: "./ai-coach-chat.component.html",
 
   styleUrl: "./ai-coach-chat.component.scss",
+  host: {
+    "(window:keydown)": "handleKeyboardShortcut($event)",
+  },
 })
 export class AiCoachChatComponent implements AfterViewChecked {
   private readonly apiService = inject(ApiService);
@@ -201,7 +203,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
   // New UX features
   searchMode = signal(false);
-  searchQuery = "";
+  searchQuery = signal("");
+  searchControl = new FormControl("", { nonNullable: true });
   showBookmarks = signal(false);
   loadingStage = signal<"thinking" | "searching" | "generating">("thinking");
 
@@ -232,7 +235,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
   // Computed: filtered messages for search
   filteredMessages = computed(() => {
-    const query = this.searchQuery.toLowerCase().trim();
+    const query = this.searchQuery().toLowerCase().trim();
     if (!query) return this.messages();
     return this.messages().filter((m) =>
       m.content.toLowerCase().includes(query),
@@ -252,8 +255,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
       msgs = msgs.filter((m) => m.isBookmarked);
     }
 
-    if (this.searchMode() && this.searchQuery.trim()) {
-      const query = this.searchQuery.toLowerCase();
+    if (this.searchMode() && this.searchQuery().trim()) {
+      const query = this.searchQuery().toLowerCase();
       msgs = msgs.filter((m) => m.content.toLowerCase().includes(query));
     }
 
@@ -460,6 +463,13 @@ export class AiCoachChatComponent implements AfterViewChecked {
   }
 
   constructor() {
+    this.searchControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.searchQuery.set(value ?? "");
+        this.onSearchInput();
+      });
+
     // Initialize on construction (Angular 21 pattern)
     this.loadTodayReadiness();
     this.loadAIModeStatus();
@@ -546,7 +556,6 @@ export class AiCoachChatComponent implements AfterViewChecked {
     this.checkScrollPosition();
   }
 
-  @HostListener("window:keydown", ["$event"])
   handleKeyboardShortcut(event: KeyboardEvent): void {
     // Cmd/Ctrl + Enter to send
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
@@ -1097,7 +1106,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
   toggleSearchMode(): void {
     this.searchMode.update((v) => !v);
-    this.searchQuery = "";
+    this.searchControl.setValue("");
+    this.searchQuery.set("");
 
     if (this.searchMode()) {
       // Focus search input after render using viewChild reference
@@ -1110,6 +1120,12 @@ export class AiCoachChatComponent implements AfterViewChecked {
   onSearchInput(): void {
     // Search is computed, nothing needed here
     // Could add debounce for performance with large histories
+  }
+
+  onCurrentMessageInput(event: Event): void {
+    const target = event.target as HTMLTextAreaElement | null;
+    this.currentMessage = target?.value ?? "";
+    this.onInputChange();
   }
 
   toggleBookmarksView(): void {

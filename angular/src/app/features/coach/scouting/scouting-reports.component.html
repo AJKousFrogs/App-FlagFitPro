@@ -44,7 +44,7 @@
                     <div class="filter-group">
                       <p-select
                         [options]="opponentFilterOptions()"
-                        [(ngModel)]="selectedOpponentFilter"
+                        (onChange)="updateSelectedOpponentFilter($event.value)"
                         placeholder="Filter by opponent"
                         [showClear]="true"
                       ></p-select>
@@ -271,9 +271,8 @@
                     <h3>Team Tendencies Analysis</h3>
                     <p-select
                       [options]="opponentFilterOptions()"
-                      [(ngModel)]="selectedTendencyOpponent"
+                      (onChange)="updateSelectedTendencyOpponent($event.value)"
                       placeholder="Select opponent"
-                      (onValueChange)="onTendencyOpponentChange()"
                     ></p-select>
                   </div>
 
@@ -553,7 +552,7 @@
               <label>Opponent</label>
               <p-select
                 [options]="opponentFilterOptions()"
-                [(ngModel)]="newReport.opponentId"
+                (onChange)="updateNewReportOpponent($event.value)"
                 placeholder="Select opponent"
                 class="w-full"
               ></p-select>
@@ -564,8 +563,10 @@
               <input
                 type="date"
                 pInputText
-                [(ngModel)]="newReport.gameDate"
+                [value]="newReport.gameDate"
+                (input)="updateNewReportGameDate(getInputValue($event))"
                 class="w-full"
+                aria-label="Game date"
               />
             </div>
 
@@ -573,10 +574,12 @@
               <label>Executive Summary</label>
               <textarea
                 pInputTextarea
-                [(ngModel)]="newReport.executiveSummary"
+                [value]="newReport.executiveSummary"
+                (input)="updateNewReportText('executiveSummary', getInputValue($event))"
                 rows="4"
                 placeholder="2-3 paragraph overview of the opponent..."
                 class="w-full"
+                aria-label="Executive summary"
               ></textarea>
             </div>
 
@@ -586,20 +589,24 @@
                 <label>Attack Points</label>
                 <textarea
                   pInputTextarea
-                  [(ngModel)]="newReport.attackPoints"
+                  [value]="newReport.attackPoints"
+                  (input)="updateNewReportText('attackPoints', getInputValue($event))"
                   rows="2"
                   placeholder="Where to attack their defense (one per line)"
                   class="w-full"
+                  aria-label="Attack points"
                 ></textarea>
               </div>
               <div class="form-group">
                 <label>Plays to Run</label>
                 <textarea
                   pInputTextarea
-                  [(ngModel)]="newReport.playsToRun"
+                  [value]="newReport.playsToRun"
+                  (input)="updateNewReportText('playsToRun', getInputValue($event))"
                   rows="2"
                   placeholder="Specific plays from playbook (one per line)"
                   class="w-full"
+                  aria-label="Plays to run"
                 ></textarea>
               </div>
             </div>
@@ -610,20 +617,24 @@
                 <label>Coverage Adjustments</label>
                 <textarea
                   pInputTextarea
-                  [(ngModel)]="newReport.coverageAdjustments"
+                  [value]="newReport.coverageAdjustments"
+                  (input)="updateNewReportText('coverageAdjustments', getInputValue($event))"
                   rows="2"
                   placeholder="Coverage changes needed (one per line)"
                   class="w-full"
+                  aria-label="Coverage adjustments"
                 ></textarea>
               </div>
               <div class="form-group">
                 <label>Blitz Plan</label>
                 <textarea
                   pInputTextarea
-                  [(ngModel)]="newReport.blitzPlan"
+                  [value]="newReport.blitzPlan"
+                  (input)="updateNewReportText('blitzPlan', getInputValue($event))"
                   rows="2"
                   placeholder="When and how to blitz (one per line)"
                   class="w-full"
+                  aria-label="Blitz plan"
                 ></textarea>
               </div>
             </div>
@@ -633,7 +644,7 @@
                 <label>Share With</label>
                 <p-select
                   [options]="shareOptions"
-                  [(ngModel)]="newReport.sharedWith"
+                  (onChange)="updateNewReportSharedWith($event.value)"
                   class="w-full"
                 ></p-select>
               </div>
@@ -641,7 +652,9 @@
                 <label>
                   <input
                     type="checkbox"
-                    [(ngModel)]="newReport.requiredReading"
+                    [checked]="newReport.requiredReading"
+                    (change)="updateNewReportRequiredReading(isChecked($event))"
+                    aria-label="Mark report as required reading"
                   />
                   Mark as required reading
                 </label>
@@ -807,9 +820,11 @@
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="newOpponent.teamName"
+                [value]="newOpponent.teamName"
+                (input)="updateNewOpponentText('teamName', getInputValue($event))"
                 placeholder="e.g., Phoenix Flames"
                 class="w-full"
+                aria-label="Opponent team name"
               />
             </div>
             <div class="form-group">
@@ -817,9 +832,11 @@
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="newOpponent.conference"
+                [value]="newOpponent.conference"
+                (input)="updateNewOpponentText('conference', getInputValue($event))"
                 placeholder="e.g., Western Division"
                 class="w-full"
+                aria-label="Conference or league"
               />
             </div>
             <div class="form-row">
@@ -828,9 +845,11 @@
                 <input
                   type="number"
                   pInputText
-                  [(ngModel)]="newOpponent.wins"
+                  [value]="newOpponent.wins"
+                  (input)="updateNewOpponentRecord('wins', getInputValue($event))"
                   min="0"
                   class="w-full"
+                  aria-label="Opponent wins"
                 />
               </div>
               <div class="form-group">
@@ -838,9 +857,11 @@
                 <input
                   type="number"
                   pInputText
-                  [(ngModel)]="newOpponent.losses"
+                  [value]="newOpponent.losses"
+                  (input)="updateNewOpponentRecord('losses', getInputValue($event))"
                   min="0"
                   class="w-full"
+                  aria-label="Opponent losses"
                 />
               </div>
             </div>
@@ -849,15 +870,17 @@
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="newOpponent.headCoach"
+                [value]="newOpponent.headCoach"
+                (input)="updateNewOpponentText('headCoach', getInputValue($event))"
                 class="w-full"
+                aria-label="Head coach"
               />
             </div>
             <div class="form-group">
               <label>Offensive Style</label>
               <p-select
                 [options]="offensiveStyles"
-                [(ngModel)]="newOpponent.offensiveStyle"
+                (onChange)="updateNewOpponentText('offensiveStyle', $event.value)"
                 placeholder="Select style"
                 class="w-full"
               ></p-select>
@@ -866,7 +889,7 @@
               <label>Defensive Style</label>
               <p-select
                 [options]="defensiveStyles"
-                [(ngModel)]="newOpponent.defensiveStyle"
+                (onChange)="updateNewOpponentText('defensiveStyle', $event.value)"
                 placeholder="Select style"
                 class="w-full"
               ></p-select>

@@ -7,11 +7,9 @@ import {
   inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
 import { Dialog } from "primeng/dialog";
 import { Textarea } from "primeng/textarea";
-import { RadioButton } from "primeng/radiobutton";
 import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
@@ -48,16 +46,13 @@ interface FeedbackData {
  */
 @Component({
   selector: "app-ai-feedback",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Dialog,
     
     
     Textarea,
-    RadioButton,
     Tooltip,
     ButtonComponent,
   ],
@@ -127,17 +122,17 @@ interface FeedbackData {
             <label class="section-label">What's the issue?</label>
             <div class="type-options">
               @for (type of feedbackTypes; track type.value) {
-                <div class="type-option">
-                  <p-radioButton
-                    [inputId]="type.value"
-                    [value]="type.value"
-                    [(ngModel)]="detailedFeedbackType"
-                  ></p-radioButton>
-                  <label [for]="type.value" class="type-label">
+                <button
+                  type="button"
+                  class="type-option"
+                  [class.selected]="detailedFeedbackType === type.value"
+                  (click)="onDetailedFeedbackTypeChange(type.value)"
+                >
+                  <span class="type-label">
                     <i [class]="type.icon"></i>
                     <span>{{ type.label }}</span>
-                  </label>
-                </div>
+                  </span>
+                </button>
               }
             </div>
           </div>
@@ -147,7 +142,8 @@ interface FeedbackData {
             <label class="section-label">Additional details (optional)</label>
             <textarea
               pInputTextarea
-              [(ngModel)]="feedbackComment"
+              [value]="feedbackComment"
+              (input)="onFeedbackCommentInput($event)"
               placeholder="Tell us more about your experience..."
               [rows]="3"
               class="w-full"
@@ -311,5 +307,14 @@ export class AiFeedbackComponent {
       this.submitted.set(true);
       this.feedbackSubmitted.emit(feedbackData);
     }
+  }
+
+  onDetailedFeedbackTypeChange(type: FeedbackType): void {
+    this.detailedFeedbackType = type;
+  }
+
+  onFeedbackCommentInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.feedbackComment = input?.value ?? "";
   }
 }

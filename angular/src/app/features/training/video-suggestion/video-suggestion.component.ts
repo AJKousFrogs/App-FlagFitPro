@@ -32,7 +32,7 @@ import {
 } from "@angular/core";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import {
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -94,7 +94,6 @@ interface VideoSuggestion {
 
 @Component({
   selector: "app-video-suggestion",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -607,7 +606,7 @@ interface VideoSuggestion {
   styleUrl: "./video-suggestion.component.scss",
 })
 export class VideoSuggestionComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private instagramService = inject(InstagramVideoService);
   private toastService = inject(ToastService);
   private hapticService = inject(HapticFeedbackService);

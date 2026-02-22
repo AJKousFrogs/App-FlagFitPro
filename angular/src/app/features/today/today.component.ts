@@ -125,7 +125,6 @@ interface QuickFormData {
 
 @Component({
   selector: "app-today",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -191,7 +190,7 @@ interface QuickFormData {
     ]),
   ],
   templateUrl: "./today.component.html",
-  styleUrls: ["./today.component.scss"],
+  styleUrl: "./today.component.scss",
 })
 export class TodayComponent {
   // Dependency Injection (Angular 21 pattern)

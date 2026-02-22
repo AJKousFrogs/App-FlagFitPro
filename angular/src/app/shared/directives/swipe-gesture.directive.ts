@@ -1,7 +1,6 @@
 import {
   Directive,
   ElementRef,
-  HostListener,
   OnInit,
   OnDestroy,
   inject,
@@ -16,7 +15,11 @@ export interface SwipeEvent {
 
 @Directive({
   selector: "[appSwipeGesture]",
-  standalone: true,
+  host: {
+    "(touchstart)": "onTouchStart($event)",
+    "(touchmove)": "onTouchMove($event)",
+    "(touchend)": "onTouchEnd($event)",
+  },
 })
 export class SwipeGestureDirective implements OnInit, OnDestroy {
   // Angular 21: Using signal inputs for better performance
@@ -52,7 +55,6 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     // Cleanup
   }
 
-  @HostListener("touchstart", ["$event"])
   onTouchStart(event: TouchEvent): void {
     if (event.touches.length !== 1) return;
 
@@ -68,7 +70,6 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener("touchmove", ["$event"])
   onTouchMove(event: TouchEvent): void {
     if (!this.isDragging || event.touches.length !== 1) return;
 
@@ -96,7 +97,6 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener("touchend", ["$event"])
   onTouchEnd(event: TouchEvent): void {
     if (!this.isDragging) return;
 

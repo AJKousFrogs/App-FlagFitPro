@@ -22,7 +22,6 @@ import { InstagramVideo } from "../video-curation.models";
 
 @Component({
   selector: "app-video-curation-pending",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

@@ -14,7 +14,6 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
 
 @Component({
   selector: "app-dashboard-skeleton",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, SkeletonComponent],
   template: `

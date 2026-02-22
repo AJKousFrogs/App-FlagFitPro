@@ -10,7 +10,6 @@ export type TrafficLightStatus = "green" | "yellow" | "red" | "orange" | "gray";
 
 @Component({
   selector: "app-traffic-light-indicator",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

@@ -66,14 +66,15 @@
               "
             >
               <div class="item-checkbox">
-                <p-checkbox
-                  [ngModel]="supp.taken"
-                  [binary]="true"
-                  variant="filled"
+                <input
+                  type="checkbox"
+                  class="supplement-checkbox"
+                  [checked]="supp.taken"
                   (click)="$event.stopPropagation()"
-                  (ngModelChange)="toggleSupplement(supp)"
-                  [inputId]="group.key + '-' + supp.id"
-                ></p-checkbox>
+                  (change)="toggleSupplement(supp)"
+                  [id]="group.key + '-' + supp.id"
+                  [attr.aria-label]="supp.name"
+                />
               </div>
               <div class="item-info">
                 <span class="item-name">{{ supp.name }}</span>
@@ -111,15 +112,14 @@
   [closable]="true"
   class="supplement-dialog"
 >
-  <div class="dialog-form">
+  <form class="dialog-form" [formGroup]="newSupplementFormGroup">
     <div class="form-field">
       <label for="suppName">Supplement Name *</label>
       <input
         id="suppName"
         type="text"
         pInputText
-        [ngModel]="newSupplementForm.name"
-        (ngModelChange)="updateName($event)"
+        formControlName="name"
         placeholder="e.g., Vitamin B12"
       />
     </div>
@@ -130,8 +130,7 @@
         id="suppDosage"
         type="text"
         pInputText
-        [ngModel]="newSupplementForm.dosage"
-        (ngModelChange)="updateDosage($event)"
+        formControlName="dosage"
         placeholder="e.g., 500mg"
       />
     </div>
@@ -142,8 +141,7 @@
         <p-select
           id="suppTiming"
           [options]="timingOptions"
-          [ngModel]="newSupplementForm.timing"
-          (ngModelChange)="updateTiming($event)"
+          formControlName="timing"
           placeholder="Select timing"
         ></p-select>
       </div>
@@ -153,13 +151,12 @@
         <p-select
           id="suppCategory"
           [options]="categoryOptions"
-          [ngModel]="newSupplementForm.category"
-          (ngModelChange)="updateCategory($event)"
+          formControlName="category"
           placeholder="Select category"
         ></p-select>
       </div>
     </div>
-  </div>
+  </form>
 
   <ng-template #footer>
     <app-button variant="text" (clicked)="closeAddDialog()">Cancel</app-button>

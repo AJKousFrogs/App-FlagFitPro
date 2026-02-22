@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { DatePicker } from "primeng/datepicker";
@@ -11,11 +10,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-personal",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     InputText,
     Select,
     DatePicker,
@@ -41,7 +38,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             name="name"
             type="text"
             pInputText
-            [(ngModel)]="state.formData.name"
+            [value]="state.formData.name"
+            (input)="onNameInput($event)"
             placeholder="Enter your full name"
             class="w-full"
             autocomplete="name"
@@ -54,7 +52,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           >
           <p-datepicker
             inputId="onboarding-dob"
-            [(ngModel)]="state.formData.dateOfBirth"
+            (onSelect)="onDateOfBirthChange($event)"
             [maxDate]="maxDate()"
             [minDate]="minDate()"
             dateFormat="dd/mm/yy"
@@ -76,7 +74,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <p-select
             inputId="onboarding-gender"
             [options]="genderOptions"
-            [(ngModel)]="state.formData.gender"
+            (onChange)="onGenderChange($event.value)"
             placeholder="Select gender"
             class="w-full"
             [attr.aria-label]="'Select gender'"
@@ -90,7 +88,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <p-select
             inputId="onboarding-country"
             [options]="countryOptions"
-            [(ngModel)]="state.formData.country"
+            (onChange)="onCountryChange($event.value)"
             placeholder="Select your country"
             [filter]="true"
             filterPlaceholder="Search countries..."
@@ -108,7 +106,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             name="phone"
             type="tel"
             pInputText
-            [(ngModel)]="state.formData.phone"
+            [value]="state.formData.phone"
+            (input)="onPhoneInput($event)"
             placeholder="+1 234 567 8900"
             class="w-full"
             autocomplete="tel"
@@ -171,4 +170,26 @@ export class OnboardingStepPersonalComponent {
 
   readonly genderOptions = GENDER_OPTIONS;
   readonly countryOptions = COUNTRY_OPTIONS;
+
+  onNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.state.formData.name = input?.value ?? "";
+  }
+
+  onDateOfBirthChange(value: Date | null): void {
+    this.state.formData.dateOfBirth = value ?? null;
+  }
+
+  onGenderChange(value: string | null | undefined): void {
+    this.state.formData.gender = value ?? null;
+  }
+
+  onCountryChange(value: string | null | undefined): void {
+    this.state.formData.country = value ?? null;
+  }
+
+  onPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.state.formData.phone = input?.value ?? "";
+  }
 }

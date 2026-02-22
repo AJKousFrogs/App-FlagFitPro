@@ -1,6 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AutoComplete } from "primeng/autocomplete";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -16,9 +22,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-role",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, AutoComplete, InputText, Select],
+  imports: [CommonModule, ReactiveFormsModule, AutoComplete, InputText, Select],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -78,7 +83,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-staffRole"
               [options]="staffRoleOptions"
-              [(ngModel)]="state.formData.staffRole"
+              (onChange)="onStaffRoleChange($event.value)"
               placeholder="Select your role"
               class="w-full"
               [attr.aria-label]="'Select your staff role'"
@@ -134,11 +139,10 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           >
           <p-autoComplete
             inputId="onboarding-team"
-            [(ngModel)]="state.formData.team"
+            [formControl]="teamControl"
             [suggestions]="state.teamSuggestions()"
             (completeMethod)="onCompleteMethod($event)"
-            (ngModelChange)="state.onTeamSelect($event)"
-            (onClear)="state.formData.team = null"
+            (onClear)="teamControl.setValue(null)"
             placeholder="Search for your team or enter name..."
             [minQueryLength]="0"
             [forceSelection]="false"
@@ -167,7 +171,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
               name="jerseyNumber"
               type="number"
               pInputText
-              [(ngModel)]="state.formData.jerseyNumber"
+              [value]="state.formData.jerseyNumber"
+              (input)="onJerseyNumberInput($event)"
               placeholder="#"
               min="0"
               max="99"
@@ -183,7 +188,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-position"
               [options]="positions"
-              [(ngModel)]="state.formData.position"
+              (onChange)="onPositionChange($event.value)"
               placeholder="Select position"
               class="w-full"
               [attr.aria-label]="'Select primary position'"
@@ -197,7 +202,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-secondaryPosition"
               [options]="positions"
-              [(ngModel)]="state.formData.secondaryPosition"
+              (onChange)="onSecondaryPositionChange($event.value)"
               placeholder="Optional"
               [showClear]="true"
               class="w-full"
@@ -251,7 +256,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-experience"
               [options]="experienceLevels"
-              [(ngModel)]="state.formData.experience"
+              (onChange)="onExperienceChange($event.value)"
               placeholder="Select your experience"
               class="w-full"
               [attr.aria-label]="'Select your experience level'"
@@ -264,6 +269,10 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 })
 export class OnboardingStepRoleComponent {
   readonly state = inject(OnboardingStateService);
+  private readonly destroyRef = inject(DestroyRef);
+  readonly teamControl = new FormControl<
+    string | { value: string; label?: string } | null
+  >(this.state.formData.team);
 
   readonly userTypeOptions = USER_TYPE_OPTIONS;
   readonly staffRoleOptions = STAFF_ROLE_OPTIONS;
@@ -272,8 +281,43 @@ export class OnboardingStepRoleComponent {
   readonly throwingArmOptions = THROWING_ARM_OPTIONS;
   readonly experienceLevels = EXPERIENCE_LEVELS;
 
+  constructor() {
+    this.teamControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        if (!value) {
+          this.state.formData.team = null;
+          return;
+        }
+        this.state.onTeamSelect(value);
+      });
+  }
+
   onCompleteMethod(event: { query?: string } | Event): void {
     const query = "query" in event ? (event.query ?? "") : "";
     this.state.searchTeams(query);
+  }
+
+  onStaffRoleChange(value: string | null | undefined): void {
+    this.state.formData.staffRole = value ?? null;
+  }
+
+  onJerseyNumberInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const raw = input?.value ?? "";
+    this.state.formData.jerseyNumber =
+      raw === "" ? null : Number.isFinite(Number(raw)) ? Number(raw) : null;
+  }
+
+  onPositionChange(value: string | null | undefined): void {
+    this.state.formData.position = value ?? null;
+  }
+
+  onSecondaryPositionChange(value: string | null | undefined): void {
+    this.state.formData.secondaryPosition = value ?? null;
+  }
+
+  onExperienceChange(value: string | null | undefined): void {
+    this.state.formData.experience = value ?? null;
   }
 }

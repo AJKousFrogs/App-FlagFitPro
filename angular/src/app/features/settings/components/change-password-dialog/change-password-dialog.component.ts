@@ -9,7 +9,6 @@ import {
 
 @Component({
   selector: "app-change-password-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

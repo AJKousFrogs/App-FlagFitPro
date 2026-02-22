@@ -15,11 +15,9 @@ import {
   signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
+import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-
-import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
@@ -87,12 +85,10 @@ interface SessionTypeOption {
 
 @Component({
   selector: "app-qb-throwing-tracker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
-    Checkbox,
     Dialog,
     
     InputNumber,
@@ -351,7 +347,8 @@ interface SessionTypeOption {
           <label>Session Type *</label>
           <p-select
             [options]="sessionTypes"
-            [(ngModel)]="formData.sessionType"
+            [ngModel]="formData.sessionType"
+            (onChange)="onSessionTypeChange($event.value)"
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
@@ -363,7 +360,8 @@ interface SessionTypeOption {
         <div class="form-field">
           <label>Total Throws *</label>
           <p-inputNumber
-            [(ngModel)]="formData.totalThrows"
+            [ngModel]="formData.totalThrows"
+            (ngModelChange)="onTotalThrowsChange($event)"
             [min]="0"
             [max]="500"
             [showButtons]="true"
@@ -382,7 +380,8 @@ interface SessionTypeOption {
           <div class="form-field">
             <label>Short (0-10y)</label>
             <p-inputNumber
-              [(ngModel)]="formData.shortThrows"
+              [ngModel]="formData.shortThrows"
+              (ngModelChange)="onShortThrowsChange($event)"
               [min]="0"
               [max]="300"
               class="w-full"
@@ -391,7 +390,8 @@ interface SessionTypeOption {
           <div class="form-field">
             <label>Medium (10-20y)</label>
             <p-inputNumber
-              [(ngModel)]="formData.mediumThrows"
+              [ngModel]="formData.mediumThrows"
+              (ngModelChange)="onMediumThrowsChange($event)"
               [min]="0"
               [max]="300"
               class="w-full"
@@ -400,7 +400,8 @@ interface SessionTypeOption {
           <div class="form-field">
             <label>Long (20y+)</label>
             <p-inputNumber
-              [(ngModel)]="formData.longThrows"
+              [ngModel]="formData.longThrows"
+              (ngModelChange)="onLongThrowsChange($event)"
               [min]="0"
               [max]="200"
               class="w-full"
@@ -412,7 +413,8 @@ interface SessionTypeOption {
         <div class="form-field">
           <label>Arm Feeling After (1=fresh, 10=fatigued)</label>
           <p-slider
-            [(ngModel)]="formData.armFeelingAfter"
+            [ngModel]="formData.armFeelingAfter"
+            (ngModelChange)="onArmFeelingAfterSliderChange($event)"
             [min]="1"
             [max]="10"
             [step]="1"
@@ -429,33 +431,33 @@ interface SessionTypeOption {
         <!-- Compliance Checkboxes -->
         <div class="compliance-section">
           <div class="form-field checkbox-group">
-            <p-checkbox
-              [(ngModel)]="formData.preThrowingWarmupDone"
-              [binary]="true"
-              variant="filled"
-              inputId="warmup"
-            ></p-checkbox>
+            <input
+              type="checkbox"
+              id="warmup"
+              [checked]="!!formData.preThrowingWarmupDone"
+              (change)="onPreThrowingWarmupDoneChange(isChecked($event))"
+            />
             <label for="warmup">Pre-throwing warm-up completed (30 min)</label>
           </div>
 
           <div class="form-field checkbox-group">
-            <p-checkbox
-              [(ngModel)]="formData.postThrowingArmCareDone"
-              [binary]="true"
-              variant="filled"
-              inputId="armcare"
-            ></p-checkbox>
+            <input
+              type="checkbox"
+              id="armcare"
+              [checked]="!!formData.postThrowingArmCareDone"
+              (change)="onPostThrowingArmCareDoneChange(isChecked($event))"
+            />
             <label for="armcare">Post-throwing arm care completed</label>
           </div>
 
           @if ((formData.totalThrows || 0) >= 100) {
             <div class="form-field checkbox-group">
-              <p-checkbox
-                [(ngModel)]="formData.iceApplied"
-                [binary]="true"
-                variant="filled"
-                inputId="ice"
-              ></p-checkbox>
+              <input
+                type="checkbox"
+                id="ice"
+                [checked]="!!formData.iceApplied"
+                (change)="onIceAppliedChange(isChecked($event))"
+              />
               <label for="ice">Ice applied (recommended for 100+ throws)</label>
             </div>
           }
@@ -466,7 +468,8 @@ interface SessionTypeOption {
           <label>Notes / Mechanics Focus</label>
           <textarea
             pInputText
-            [(ngModel)]="formData.notes"
+            [value]="formData.notes"
+            (input)="onNotesChange(getInputValue($event))"
             rows="2"
             placeholder="What did you work on?"
             class="w-full"
@@ -570,6 +573,71 @@ export class QbThrowingTrackerComponent {
   openLogDialog(): void {
     this.formData = this.getEmptyForm();
     this.showLogDialog.set(true);
+  }
+
+  private updateFormData(patch: Partial<ThrowingSession>): void {
+    this.formData = { ...this.formData, ...patch };
+  }
+
+  onSessionTypeChange(value: string | null): void {
+    this.updateFormData({ sessionType: value ?? "practice" });
+  }
+
+  onTotalThrowsChange(value: number | null): void {
+    this.updateFormData({ totalThrows: value ?? 0 });
+  }
+
+  onShortThrowsChange(value: number | null): void {
+    this.updateFormData({ shortThrows: value ?? 0 });
+  }
+
+  onMediumThrowsChange(value: number | null): void {
+    this.updateFormData({ mediumThrows: value ?? 0 });
+  }
+
+  onLongThrowsChange(value: number | null): void {
+    this.updateFormData({ longThrows: value ?? 0 });
+  }
+
+  onArmFeelingAfterChange(value: number | null): void {
+    this.updateFormData({ armFeelingAfter: value ?? 5 });
+  }
+
+  onArmFeelingAfterSliderChange(value: number | number[] | null | undefined): void {
+    const normalized = Array.isArray(value) ? value[0] : value;
+    this.onArmFeelingAfterChange(typeof normalized === "number" ? normalized : null);
+  }
+
+  onPreThrowingWarmupDoneChange(value: boolean): void {
+    this.updateFormData({ preThrowingWarmupDone: value });
+  }
+
+  onPostThrowingArmCareDoneChange(value: boolean): void {
+    this.updateFormData({ postThrowingArmCareDone: value });
+  }
+
+  onIceAppliedChange(value: boolean): void {
+    this.updateFormData({ iceApplied: value });
+  }
+
+  onNotesChange(value: string): void {
+    this.updateFormData({ notes: value });
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   closeLogDialog(): void {

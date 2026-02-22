@@ -18,7 +18,6 @@ import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-confidence-indicator",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, StatusTagComponent, ButtonComponent],
   template: `

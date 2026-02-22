@@ -27,8 +27,12 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
-import { Checkbox } from "primeng/checkbox";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -47,6 +51,12 @@ import { SupplementDisplay } from "../../../core/models/supplement.models";
 
 // Use SupplementDisplay for component display logic
 type Supplement = SupplementDisplay;
+type SupplementFormGroup = FormGroup<{
+  name: FormControl<string>;
+  dosage: FormControl<string>;
+  timing: FormControl<Supplement["timing"]>;
+  category: FormControl<Supplement["category"]>;
+}>;
 
 // Default supplements for athletes
 const DEFAULT_SUPPLEMENTS: Supplement[] = [
@@ -174,13 +184,10 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
 
 @Component({
   selector: "app-supplement-tracker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
-    
-    Checkbox,
+    ReactiveFormsModule,
     Tag,
     SkeletonLoaderComponent,
     Dialog,
@@ -209,12 +216,8 @@ export class SupplementTrackerComponent implements OnInit {
   isSaving = signal(false);
 
   // New supplement form
-  newSupplement = signal<Partial<Supplement>>({
-    name: "",
-    dosage: "",
-    timing: "anytime",
-    category: "other",
-  });
+  readonly newSupplementFormGroup: SupplementFormGroup =
+    this.createSupplementForm();
 
   // Dropdown options
   timingOptions = [
@@ -385,12 +388,7 @@ export class SupplementTrackerComponent implements OnInit {
   }
 
   openAddDialog(): void {
-    this.newSupplement.set({
-      name: "",
-      dosage: "",
-      timing: "anytime",
-      category: "other",
-    });
+    this.newSupplementFormGroup.reset(this.emptySupplementFormValue());
     this.showAddDialog.set(true);
   }
 
@@ -399,18 +397,19 @@ export class SupplementTrackerComponent implements OnInit {
   }
 
   addSupplement(): void {
-    const newSupp = this.newSupplement();
-    if (!newSupp.name) {
+    if (this.newSupplementFormGroup.invalid) {
+      this.newSupplementFormGroup.markAllAsTouched();
       this.toastService.warn(TOAST.WARN.MISSING_SUPPLEMENT_NAME);
       return;
     }
+    const newSupp = this.newSupplementFormGroup.getRawValue();
 
     const supplement: Supplement = {
       id: this.generateId(newSupp.name),
       name: newSupp.name,
       dosage: newSupp.dosage,
-      timing: newSupp.timing as Supplement["timing"],
-      category: newSupp.category as Supplement["category"],
+      timing: newSupp.timing,
+      category: newSupp.category,
       taken: false,
     };
 
@@ -454,21 +453,31 @@ export class SupplementTrackerComponent implements OnInit {
     return icons[timing] || "pi-clock";
   }
 
-  // Form update methods (Angular templates don't support spread operator)
-  updateName(value: string): void {
-    this.newSupplement.update((s) => ({ ...s, name: value }));
+  private createSupplementForm(): SupplementFormGroup {
+    const defaults = this.emptySupplementFormValue();
+    return new FormGroup({
+      name: new FormControl(defaults.name, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      dosage: new FormControl(defaults.dosage, { nonNullable: true }),
+      timing: new FormControl(defaults.timing, { nonNullable: true }),
+      category: new FormControl(defaults.category, { nonNullable: true }),
+    });
   }
 
-  updateDosage(value: string): void {
-    this.newSupplement.update((s) => ({ ...s, dosage: value }));
-  }
-
-  updateTiming(value: Supplement["timing"]): void {
-    this.newSupplement.update((s) => ({ ...s, timing: value }));
-  }
-
-  updateCategory(value: Supplement["category"]): void {
-    this.newSupplement.update((s) => ({ ...s, category: value }));
+  private emptySupplementFormValue(): {
+    name: string;
+    dosage: string;
+    timing: Supplement["timing"];
+    category: Supplement["category"];
+  } {
+    return {
+      name: "",
+      dosage: "",
+      timing: "anytime",
+      category: "other",
+    };
   }
 
   /** Template bindings to satisfy no-call-expression */
@@ -490,9 +499,5 @@ export class SupplementTrackerComponent implements OnInit {
 
   get timingGroupsDisplay(): ReturnType<typeof this.timingGroups> {
     return this.timingGroups();
-  }
-
-  get newSupplementForm(): Partial<Supplement> {
-    return this.newSupplement();
   }
 }

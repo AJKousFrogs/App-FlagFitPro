@@ -245,8 +245,7 @@ export class TeamMembershipService {
       }
 
       // Extract team name from joined data
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const teamsData = teamMember.teams as any;
+      const teamsData = teamMember.teams as { name?: string } | null | undefined;
       const teamName = teamsData?.name || null;
 
       const membership: TeamMembership = {
@@ -318,8 +317,10 @@ export class TeamMembershipService {
         return null;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const userData = coach.users as any;
+      const userData = coach.users as
+        | { first_name?: string; last_name?: string; full_name?: string }
+        | null
+        | undefined;
       const firstName = userData?.first_name || null;
       const lastName = userData?.last_name || null;
       const fullName = normalizePlayerName(
@@ -373,8 +374,10 @@ export class TeamMembershipService {
       if (error || !coaches) return [];
 
       return coaches.map((coach) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const userData = coach.users as any;
+        const userData = coach.users as
+          | { first_name?: string; last_name?: string; full_name?: string }
+          | null
+          | undefined;
         const firstName = userData?.first_name || null;
         const lastName = userData?.last_name || null;
         const fullName = normalizePlayerName(

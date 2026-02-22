@@ -18,7 +18,7 @@
     <p-card class="settings-nav-card">
       <div class="settings-nav">
         <button
-          type="button"
+                  type="button"
           (click)="scrollToSection('account-settings', $event)"
           class="settings-nav-item"
         >
@@ -26,7 +26,7 @@
           <span>Account</span>
         </button>
         <button
-          type="button"
+                  type="button"
           (click)="scrollToSection('notifications-settings', $event)"
           class="settings-nav-item"
         >
@@ -34,7 +34,7 @@
           <span>Notifications</span>
         </button>
         <button
-          type="button"
+                  type="button"
           (click)="scrollToSection('privacy-settings', $event)"
           class="settings-nav-item"
         >
@@ -42,7 +42,7 @@
           <span>Privacy & Security</span>
         </button>
         <button
-          type="button"
+                  type="button"
           (click)="scrollToSection('preferences-settings', $event)"
           class="settings-nav-item"
         >
@@ -130,7 +130,7 @@
                       </div>
                     </div>
                     <button
-                      type="button"
+                  type="button"
                       class="suggestion-apply-btn"
                       (click)="applyBirthdaySuggestion()"
                       aria-label="Apply suggested date"
@@ -217,7 +217,7 @@
                 optionValue="value"
                 placeholder="Select your team"
                 appendTo="body"
-                (ngModelChange)="onTeamChange({ value: $event })"
+                (onChange)="onTeamChange($event.value)"
                 [attr.aria-label]="'Select your team'"
               ></p-select>
               <small class="field-hint">

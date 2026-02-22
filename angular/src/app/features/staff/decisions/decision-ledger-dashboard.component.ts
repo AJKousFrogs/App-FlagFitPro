@@ -5,6 +5,7 @@
  */
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,7 +14,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 import type {
@@ -38,7 +38,6 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 
 @Component({
   selector: "app-decision-ledger-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -118,9 +117,9 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
               <label>Status</label>
               <p-select
                 [options]="statusOptions"
-                [(ngModel)]="filters().status"
+                [ngModel]="filters().status"
+                (onChange)="onStatusFilterChange($event.value)"
                 placeholder="All Statuses"
-                (onValueChange)="applyFilters()"
               ></p-select>
             </div>
 
@@ -128,9 +127,9 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
               <label>Category</label>
               <p-select
                 [options]="categoryOptions"
-                [(ngModel)]="filters().decisionCategory"
+                [ngModel]="filters().decisionCategory"
+                (onChange)="onCategoryFilterChange($event.value)"
                 placeholder="All Categories"
-                (onValueChange)="applyFilters()"
               ></p-select>
             </div>
 
@@ -138,9 +137,9 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
               <label>Priority</label>
               <p-select
                 [options]="priorityOptions"
-                [(ngModel)]="filters().reviewPriority"
+                [ngModel]="filters().reviewPriority"
+                (onChange)="onPriorityFilterChange($event.value)"
                 placeholder="All Priorities"
-                (onValueChange)="applyFilters()"
               ></p-select>
             </div>
 
@@ -409,6 +408,25 @@ export class DecisionLedgerDashboardComponent implements OnInit {
   async applyFilters(): Promise<void> {
     const currentFilters = this.filters();
     await this.decisionService.getDecisions(currentFilters);
+  }
+
+  onStatusFilterChange(value: DecisionFilters["status"] | undefined): void {
+    this.filters.update((current) => ({ ...current, status: value }));
+    this.applyFilters();
+  }
+
+  onCategoryFilterChange(
+    value: DecisionFilters["decisionCategory"] | undefined,
+  ): void {
+    this.filters.update((current) => ({ ...current, decisionCategory: value }));
+    this.applyFilters();
+  }
+
+  onPriorityFilterChange(
+    value: DecisionFilters["reviewPriority"] | undefined,
+  ): void {
+    this.filters.update((current) => ({ ...current, reviewPriority: value }));
+    this.applyFilters();
   }
 
   clearFilters(): void {

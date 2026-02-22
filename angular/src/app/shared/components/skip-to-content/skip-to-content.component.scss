@@ -1,144 +1,20 @@
-// ============================================================================
-// skip-to-content.component Styles
-// Design System Compliant
-// ============================================================================
-
-@use "styles/mixins" as *;
-
 .skip-link {
-  /* Hidden off-screen by default */
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(-100%);
-  z-index: var(--z-toast);
-
-  /* Premium pill design matching FlagFit buttons */
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-6);
-  border-radius: 0 0 var(--radius-full) var(--radius-full);
-
-  /* Brand gradient background */
-  background: linear-gradient(
-    180deg,
-    var(--ds-primary-green-light) 0%,
-    var(--ds-primary-green) 100%
-  );
-  border: var(--border-2) solid var(--ds-primary-green);
-  border-top: none;
-  box-shadow:
-    0 var(--space-1) var(--space-5) rgba(var(--primitive-primary-700-rgb), 0.35),
-    var(--shadow-lg);
-
-  /* Typography */
-  color: var(--color-text-on-primary);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  letter-spacing: var(--ds-letter-spacing-label);
+  position: absolute;
+  top: -9999px;
+  left: 0;
+  z-index: 2000;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--ds-primary-green, #2d6a4f);
+  border-radius: 0 0 0.5rem 0;
+  background: var(--surface-primary, #ffffff);
+  color: var(--color-text-primary, #111827);
+  font: 600 0.875rem/1.2 var(--font-family-sans, system-ui, sans-serif);
   text-decoration: none;
-  white-space: nowrap;
-
-  /* Smooth slide-in animation */
-  transition:
-    transform var(--transition-slow) var(--ease-micro-bounce),
-    box-shadow var(--transition-base) var(--ease-standard),
-    background var(--transition-base) var(--ease-standard);
-
-  /* Remove default outline, we'll add a custom one */
-  outline: none;
 }
 
-/* Visible state when focused */
 .skip-link:focus-visible {
-  transform: translateX(-50%) translateY(0);
-  box-shadow:
-    0 var(--space-2) var(--space-8) rgba(var(--ds-primary-green-rgb), 0.4),
-    var(--shadow-xl),
-    0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.5); /* Yellow focus ring */
-}
-
-/* Hover state (while focused) */
-.skip-link:hover {
-  background: linear-gradient(
-    180deg,
-    var(--ds-primary-green) 0%,
-    var(--ds-primary-green-hover) 100%
-  );
-  box-shadow:
-    0 calc(var(--space-2) + var(--space-0-5)) var(--space-10) rgba(var(--primitive-primary-700-rgb), 0.5),
-    var(--shadow-xl),
-    0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.6);
-}
-
-/* Active/pressed state */
-.skip-link:active {
-  transform: translateX(-50%) translateY(var(--border-2));
-  transition-duration: var(--transition-fast);
-}
-
-/* Icon styling */
-.skip-link__icon {
-  font-size: var(--ds-font-size-md);
-  line-height: var(--ds-line-height-1);
-  filter: drop-shadow(0 var(--border-1) var(--border-1) var(--surface-overlay-light));
-}
-
-/* Main text */
-.skip-link__text {
-  color: var(--color-text-on-primary);
-}
-
-/* Keyboard hint badge */
-.skip-link__hint {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-1) var(--space-2); /* var(--space-1) 0.5rem for breathing room */
-  background: var(--overlay-white-20);
-  border-radius: var(--radius-sm);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--overlay-white-90);
-  text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-wide);
-}
-
-/* Dark mode adjustments */
-:host-context([data-theme="dark"]) .skip-link,
-:host-context(.dark-theme) .skip-link {
-  box-shadow:
-    0 var(--space-1) var(--space-5) rgba(var(--primitive-primary-600-rgb), 0.3),
-    var(--shadow-lg);
-}
-
-:host-context([data-theme="dark"]) .skip-link:focus-visible,
-:host-context(.dark-theme) .skip-link:focus-visible {
-  box-shadow:
-    var(--shadow-3),
-    0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.6);
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .skip-link {
-    transition: none;
-  }
-
-  .skip-link:focus-visible {
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* Mobile adjustments */
-@include respond-to(sm) {
-  .skip-link {
-    padding: var(--space-3) var(--space-4);
-    gap: var(--space-2);
-    font-size: var(--ds-font-size-md);
-  }
-
-  .skip-link__hint {
-    display: none; /* Hide hint on mobile - less relevant for touch */
-  }
+  top: 0;
+  left: 0;
+  outline: 2px solid var(--ds-primary-green, #2d6a4f);
+  outline-offset: 2px;
 }

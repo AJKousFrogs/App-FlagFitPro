@@ -10,7 +10,7 @@
     <div class="toggle-wrapper">
       <p-toggleswitch
         [ngModel]="nextGenMetricsPreview()"
-        (ngModelChange)="nextGenMetricsPreviewChange.emit($event)"
+        (ngModelChange)="onNextGenToggle($event)"
         ariaLabelledBy="settings-nextgen-label"
       ></p-toggleswitch>
     </div>

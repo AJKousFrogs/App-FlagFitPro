@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,7 +9,6 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { UIChart } from "primeng/chart";
@@ -33,7 +33,6 @@ interface StatComparison {
 
 @Component({
   selector: "app-player-comparison",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -57,13 +56,13 @@ interface StatComparison {
           <label>Player 1</label>
           <p-select
             [options]="availablePlayers()"
-            [(ngModel)]="selectedPlayer1"
+            [ngModel]="selectedPlayer1"
+            (onChange)="onPlayer1Change($event.value)"
             optionLabel="name"
             optionValue="id"
             placeholder="Select player"
             [filter]="true"
             filterPlaceholder="Search players..."
-            (onValueChange)="onPlayerChange()"
             class="w-full"
           >
             <ng-template #selectedItem let-selected>
@@ -109,13 +108,13 @@ interface StatComparison {
           <label>Player 2</label>
           <p-select
             [options]="availablePlayers()"
-            [(ngModel)]="selectedPlayer2"
+            [ngModel]="selectedPlayer2"
+            (onChange)="onPlayer2Change($event.value)"
             optionLabel="name"
             optionValue="id"
             placeholder="Select player"
             [filter]="true"
             filterPlaceholder="Search players..."
-            (onValueChange)="onPlayerChange()"
             class="w-full"
           >
             <ng-template #selectedItem let-selected>
@@ -562,6 +561,16 @@ export class PlayerComparisonComponent {
         player2Id: this.selectedPlayer2,
       });
     }
+  }
+
+  onPlayer1Change(playerId: string | null | undefined): void {
+    this.selectedPlayer1 = playerId ?? null;
+    this.onPlayerChange();
+  }
+
+  onPlayer2Change(playerId: string | null | undefined): void {
+    this.selectedPlayer2 = playerId ?? null;
+    this.onPlayerChange();
   }
 
   private updatePlayer1(): void {

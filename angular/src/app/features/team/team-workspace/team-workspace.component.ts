@@ -7,7 +7,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
 @Component({
   selector: "app-team-workspace",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

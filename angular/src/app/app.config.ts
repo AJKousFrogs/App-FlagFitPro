@@ -1,15 +1,13 @@
 import {
   ApplicationConfig,
   ErrorHandler,
-  isDevMode,
-  provideZonelessChangeDetection,
   LOCALE_ID,
 } from "@angular/core";
+import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import {
   provideRouter,
   withComponentInputBinding,
-  withDebugTracing,
   withPreloading,
 } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
@@ -27,19 +25,12 @@ import { providePrimeNG } from "primeng/config";
 import { FlagFitPreset } from "./theme/flagfit-preset";
 import { PRIMENG_PT_CONFIG } from "./primeng.config";
 import { routes } from "./app.routes";
+import { environment } from "../environments/environment";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
 import { cacheInterceptor } from "./core/interceptors/cache.interceptor";
 import { errorInterceptor } from "./core/interceptors/error.interceptor";
 import { retryInterceptor } from "./core/interceptors/retry.interceptor";
-import { debugInterceptor } from "./core/interceptors/debug.interceptor";
-import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
-import { AcwrService } from "./core/services/acwr.service";
-import {
-  ErrorTrackingService,
-  GlobalErrorHandler,
-} from "./core/services/error-tracking.service";
-import { LoadMonitoringService } from "./core/services/load-monitoring.service";
-import { ResourceService } from "./core/services/resource.service";
+import { AngularGlobalErrorHandler } from "./core/services/angular-global-error-handler.service";
 import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
 import { LOGGER } from "./core/logging/logger.token";
 import { ConsoleLoggerAdapter } from "./core/logging/console-logger.adapter";
@@ -49,11 +40,9 @@ export const appConfig: ApplicationConfig = {
     // Locale configuration for i18n (date/number formatting)
     { provide: LOCALE_ID, useValue: "en-US" },
 
-    // - No Zone.js overhead (smaller bundle, faster change detection)
-    // - Better DevTools integration with real-time change detection tracing
-    // - Automatic change detection on signal updates and DOM events
-    // Note: zone.js is available as optional peer dependency for third-party libraries if needed
-    provideZonelessChangeDetection(),
+    // Angular 21+: Zoneless is the default change-detection mode.
+    // Keep provideZoneChangeDetection() out unless explicit Zone.js compatibility is required.
+    provideClientHydration(),
 
     // Angular 21: Enhanced routing with component input binding and smart preloading
     // View transitions DISABLED: was causing UI lag; re-add withViewTransitions() if smooth transitions needed
@@ -61,7 +50,6 @@ export const appConfig: ApplicationConfig = {
       routes,
       withComponentInputBinding(), // Enables route params as component inputs
       withPreloading(AuthAwarePreloadStrategy), // Custom preloading strategy for authenticated routes
-      ...(isDevMode() ? [withDebugTracing()] : []), // Router event inspector - only in development
     ),
 
     // PERFORMANCE: Use async animations to reduce initial bundle
@@ -75,7 +63,6 @@ export const appConfig: ApplicationConfig = {
         retryInterceptor, // Retry transient network errors with exponential backoff
         cacheInterceptor,
         errorInterceptor,
-        ...(isDevMode() ? [debugInterceptor] : []), // Debug interceptor - only in development
       ]),
     ),
     MessageService,
@@ -201,21 +188,13 @@ export const appConfig: ApplicationConfig = {
     // CRITICAL SERVICES: Only register services needed at startup
     AuthAwarePreloadStrategy, // Register the preloading strategy
 
-    // DEFERRED SERVICES: These are initialized lazily when needed
-    // They are tree-shakeable and won't add to initial bundle if not used
-    AcwrService,
-    LoadMonitoringService,
-    AcwrAlertsService,
-    ResourceService,
-
     // Error tracking and monitoring (Sentry integration)
-    ErrorTrackingService,
-    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    { provide: ErrorHandler, useClass: AngularGlobalErrorHandler },
 
     // Service Worker for PWA support (offline caching, push notifications)
     // PERFORMANCE: Delay registration to not block initial render
     provideServiceWorker("ngsw-worker.js", {
-      enabled: !isDevMode(),
+      enabled: environment.production,
       registrationStrategy: "registerWhenStable:30000", // Register after app is stable or 30s
     }),
     { provide: LOGGER, useClass: ConsoleLoggerAdapter },

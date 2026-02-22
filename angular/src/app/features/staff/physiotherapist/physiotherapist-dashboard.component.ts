@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,7 +8,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 import { Card } from "primeng/card";
@@ -193,7 +193,6 @@ const RTP_PHASES = [
 
 @Component({
   selector: "app-physiotherapist-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -696,6 +695,23 @@ export class PhysiotherapistDashboardComponent implements OnInit {
       const history = this.injuryHistoryMap().get(this.selectedHistoryAthlete);
       this.currentInjuryHistory.set(history || null);
     }
+  }
+
+  onClearanceFilterChange(value: string | null): void {
+    this.clearanceFilter = value;
+  }
+
+  onHistoryAthleteChange(value: string | null): void {
+    this.selectedHistoryAthlete = value;
+    this.loadInjuryHistory();
+  }
+
+  onReportTypeChange(value: string): void {
+    this.selectedReportType = value;
+  }
+
+  onReportAthleteChange(value: string | null): void {
+    this.reportAthleteId = value;
   }
 
   generateReport(): void {

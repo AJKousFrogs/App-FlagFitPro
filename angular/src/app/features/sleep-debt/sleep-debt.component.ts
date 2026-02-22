@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 
 import { ProgressBar } from "primeng/progressbar";
@@ -74,11 +73,9 @@ const DEBT_THRESHOLDS = {
 
 @Component({
   selector: "app-sleep-debt",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     DecimalPipe,
     Card,
     LazyChartComponent,

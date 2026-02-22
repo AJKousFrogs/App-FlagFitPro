@@ -17,7 +17,6 @@ type ActiveSession = {
 
 @Component({
   selector: "app-active-sessions-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Dialog, IconButtonComponent, DialogHeaderComponent, DialogFooterComponent],
   templateUrl: "./active-sessions-dialog.component.html",

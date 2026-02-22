@@ -32,7 +32,6 @@ import {
 
 @Component({
   selector: "app-data-source-banner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tooltip, StatusTagComponent],
   template: `

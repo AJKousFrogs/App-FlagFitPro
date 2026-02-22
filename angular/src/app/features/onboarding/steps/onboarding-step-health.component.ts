@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -16,9 +15,8 @@ const SEVERITY_OPTIONS = [
 
 @Component({
   selector: "app-onboarding-step-health",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, InputText, Select, IconButtonComponent],
+  imports: [CommonModule, InputText, Select, IconButtonComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -33,8 +31,8 @@ const SEVERITY_OPTIONS = [
         <label>Current Injuries or Pain Areas</label>
         <p class="field-hint">Add any areas where you're currently experiencing pain or recovering from injury</p>
         <div class="injury-input-row">
-          <p-select [options]="injuryAreas" [(ngModel)]="newInjury().area" placeholder="Select area" class="injury-area-select"></p-select>
-          <p-select [options]="severityOptions" [(ngModel)]="newInjury().severity" placeholder="Severity" class="injury-severity-select"></p-select>
+          <p-select [options]="injuryAreas" (onChange)="onInjuryAreaChange($event.value)" placeholder="Select area" class="injury-area-select"></p-select>
+          <p-select [options]="severityOptions" (onChange)="onInjurySeverityChange($event.value)" placeholder="Severity" class="injury-severity-select"></p-select>
           <app-icon-button icon="pi-plus" [disabled]="!newInjury().area" (clicked)="addCurrentInjury()" ariaLabel="Add injury" tooltip="Add" />
         </div>
         @if (state.formData.currentInjuries.length > 0) {
@@ -74,7 +72,7 @@ const SEVERITY_OPTIONS = [
 
       <div class="form-group">
         <label for="medicalNotes">Additional Medical Notes <small>(optional)</small></label>
-        <textarea id="medicalNotes" pInputText [(ngModel)]="state.formData.medicalNotes"
+        <textarea id="medicalNotes" pInputText [value]="state.formData.medicalNotes" (input)="onMedicalNotesInput($event)"
           placeholder="Any other health conditions, allergies, or notes..." rows="3" class="w-full"></textarea>
       </div>
     </div>
@@ -97,5 +95,19 @@ export class OnboardingStepHealthComponent {
 
   removeCurrentInjury(index: number): void {
     this.state.formData.currentInjuries.splice(index, 1);
+  }
+
+  onInjuryAreaChange(value: string | null | undefined): void {
+    this.newInjury.update((injury) => ({ ...injury, area: value ?? "" }));
+  }
+
+  onInjurySeverityChange(value: string | null | undefined): void {
+    const severity = value === "moderate" || value === "severe" ? value : "minor";
+    this.newInjury.update((injury) => ({ ...injury, severity }));
+  }
+
+  onMedicalNotesInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.state.formData.medicalNotes = input?.value ?? "";
   }
 }

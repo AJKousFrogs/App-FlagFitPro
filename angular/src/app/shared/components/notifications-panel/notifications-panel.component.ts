@@ -18,7 +18,6 @@ import {
   computed,
   inject,
   signal,
-  HostListener,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 
@@ -36,7 +35,6 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
 
 @Component({
   selector: "app-notifications-panel",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, Tooltip, EmptyStateComponent],
   template: `
@@ -281,6 +279,9 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
     </div>
   `,
   styleUrl: "./notifications-panel.component.scss",
+  host: {
+    "(document:keydown.escape)": "onEscapePress()",
+  },
 })
 export class NotificationsPanelComponent {
   notificationService = inject(NotificationStateService);
@@ -305,7 +306,6 @@ export class NotificationsPanelComponent {
     ];
 
   // Close on Escape key
-  @HostListener("document:keydown.escape")
   onEscapePress(): void {
     if (this.visible) {
       this.close();

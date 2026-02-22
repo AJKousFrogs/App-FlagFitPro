@@ -11,7 +11,6 @@ import {
 } from "@angular/core";
 import {
   ControlValueAccessor,
-  FormsModule,
   NG_VALUE_ACCESSOR,
 } from "@angular/forms";
 import { InputText } from "primeng/inputtext";
@@ -21,13 +20,12 @@ import { IconButtonComponent } from "../button/icon-button.component";
  * Search Input Component
  *
  * Shared search input with icon + optional clear action.
- * Uses ControlValueAccessor for ngModel support.
+ * Uses ControlValueAccessor for template-driven and reactive forms support.
  */
 @Component({
   selector: "app-search-input",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, InputText, IconButtonComponent],
+  imports: [CommonModule, InputText, IconButtonComponent],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -81,6 +79,7 @@ export class SearchInputComponent implements ControlValueAccessor {
   clearable = input<boolean>(false);
 
   cleared = output<void>();
+  valueChange = output<string>();
 
   // Angular 21: viewChild signal for DOM element reference
   private readonly inputField =
@@ -94,6 +93,7 @@ export class SearchInputComponent implements ControlValueAccessor {
     const target = event.target as HTMLInputElement;
     const nextValue = target.value ?? "";
     this.value.set(nextValue);
+    this.valueChange.emit(nextValue);
     this.onChangeFn(nextValue);
   }
 
@@ -103,6 +103,7 @@ export class SearchInputComponent implements ControlValueAccessor {
 
   clear(): void {
     this.value.set("");
+    this.valueChange.emit("");
     this.onChangeFn("");
     this.cleared.emit();
   }

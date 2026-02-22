@@ -4,7 +4,8 @@
  * Provides error handling utilities for component-level error boundaries.
  * Used by ErrorBoundaryComponent to display user-friendly error messages.
  *
- * Note: This is NOT Angular's global ErrorHandler (that's GlobalErrorHandler in error-tracking.service.ts).
+ * Note: This is NOT Angular's global ErrorHandler
+ * (see AngularGlobalErrorHandler in angular-global-error-handler.service.ts).
  * This service provides utility methods for error processing and display.
  *
  * Features:

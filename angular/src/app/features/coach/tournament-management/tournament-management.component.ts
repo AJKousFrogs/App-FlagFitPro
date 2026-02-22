@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -120,11 +119,9 @@ const POSITIONS = [
 
 @Component({
   selector: "app-tournament-management",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     ProgressBar,
     Select,
@@ -503,7 +500,7 @@ const POSITIONS = [
                       <span class="slot-position">{{ slot.position }}</span>
                       <p-select
                         [options]="availablePlayers()"
-                        [(ngModel)]="slot.playerId"
+                        (onChange)="onLineupSlotChange(slot, $event.value)"
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
@@ -523,7 +520,7 @@ const POSITIONS = [
                       <span class="slot-position">{{ slot.position }}</span>
                       <p-select
                         [options]="availablePlayers()"
-                        [(ngModel)]="slot.playerId"
+                        (onChange)="onLineupSlotChange(slot, $event.value)"
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
@@ -544,7 +541,8 @@ const POSITIONS = [
                   <h5>💡 Lineup Notes</h5>
                   <textarea
                     pTextarea
-                    [(ngModel)]="lineupNotes"
+                    [value]="lineupNotes"
+                    (input)="onLineupNotesInput($event)"
                     rows="3"
                     placeholder="Add lineup notes..."
                   ></textarea>
@@ -761,6 +759,15 @@ export class TournamentManagementComponent implements OnInit {
   }
 
   readonly browseTournamentsHandler = (): void => this.browseTournaments();
+
+  onLineupSlotChange(slot: LineupSlot, playerId: string | null | undefined): void {
+    slot.playerId = playerId ?? null;
+  }
+
+  onLineupNotesInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.lineupNotes = input?.value ?? "";
+  }
 
   getGamesForDay(day: number): TournamentGame[] {
     return this.selectedTournament()?.games?.filter((g) => g.day === day) || [];

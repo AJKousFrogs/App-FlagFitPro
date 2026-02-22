@@ -8,7 +8,6 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
@@ -115,11 +114,9 @@ declare global {
 
 @Component({
   selector: "app-ai-training-companion",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     RouterModule,
     Card,
     Carousel,
@@ -305,7 +302,7 @@ declare global {
                     <div class="meter">
                       <label>{{ metric.name }}</label>
                       <p-knob
-                        [(ngModel)]="metric.value"
+                        [value]="metric.value"
                         [min]="0"
                         [max]="100"
                         [readonly]="true"

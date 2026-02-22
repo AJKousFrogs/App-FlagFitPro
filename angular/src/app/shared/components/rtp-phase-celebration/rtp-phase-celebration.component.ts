@@ -34,7 +34,6 @@ export interface RTPPhaseInfo {
 
 @Component({
   selector: "app-rtp-phase-celebration",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, Card, ButtonComponent],
   template: `

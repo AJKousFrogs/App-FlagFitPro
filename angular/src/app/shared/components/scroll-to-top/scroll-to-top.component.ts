@@ -9,7 +9,6 @@
 
 import {
   Component,
-  HostListener,
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -18,7 +17,6 @@ import { Tooltip } from "primeng/tooltip";
 
 @Component({
   selector: "app-scroll-to-top",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tooltip],
   template: `
@@ -36,11 +34,13 @@ import { Tooltip } from "primeng/tooltip";
     }
   `,
   styleUrl: "./scroll-to-top.component.scss",
+  host: {
+    "(window:scroll)": "onWindowScroll()",
+  },
 })
 export class ScrollToTopComponent {
   isVisible = signal(false);
 
-  @HostListener("window:scroll")
   onWindowScroll(): void {
     // Show button after scrolling down 300px
     const scrollPosition =

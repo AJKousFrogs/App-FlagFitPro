@@ -13,12 +13,11 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
  */
 @Component({
   selector: "app-loading",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ProgressSpinner, SkeletonLoaderComponent],
   template: `
     @if (visible()) {
-      <div [ngClass]="['loading-container', variant()]">
+      <div [class]="'loading-container ' + variant()">
         <!-- Overlay Variant -->
         @if (variant() === "overlay") {
           <div class="loading-overlay">

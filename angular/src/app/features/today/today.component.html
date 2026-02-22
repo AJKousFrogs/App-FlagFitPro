@@ -7,13 +7,17 @@
       class="celebration-overlay"
       @celebrationFade
       (click)="dismissCelebration()"
+      role="button"
+      tabindex="0"
+      aria-label="Dismiss celebration"
+      (keydown.enter)="dismissCelebration()"
+      (keydown.space)="dismissCelebration(); $event.preventDefault()"
     >
       <div class="celebration-content" @celebrationBounce>
         <div class="celebration-confetti">
           @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track i) {
             <span
-              class="confetti-piece"
-              [ngClass]="'confetti-piece--' + i"
+              [class]="'confetti-piece confetti-piece--' + i"
             ></span>
           }
         </div>
@@ -356,7 +360,7 @@
         >
           @for (mood of quickMoods; track mood.value) {
             <button
-              type="button"
+                  type="button"
               class="mood-btn"
               [class.selected]="quickFormData().overallFeeling === mood.value"
               (click)="setQuickField('overallFeeling', mood.value)"
@@ -385,7 +389,7 @@
         >
           @for (level of quickEnergyLevels; track level.value) {
             <button
-              type="button"
+                  type="button"
               class="energy-btn"
               [class.selected]="quickFormData().energyLevel === level.value"
               (click)="setQuickField('energyLevel', level.value)"
@@ -395,8 +399,7 @@
               [attr.aria-checked]="quickFormData().energyLevel === level.value"
             >
               <i
-                class="pi pi-bolt"
-                [ngClass]="'energy-icon--' + level.value"
+                [class]="'pi pi-bolt energy-icon--' + level.value"
                 aria-hidden="true"
               ></i>
               <span>{{ level.label }}</span>
@@ -414,7 +417,7 @@
           aria-labelledby="soreness-label"
         >
           <button
-            type="button"
+                  type="button"
             class="soreness-btn"
             [class.selected]="quickFormData().hasSoreness === false"
             (click)="setQuickField('hasSoreness', false)"
@@ -426,7 +429,7 @@
             <span>Feeling Good</span>
           </button>
           <button
-            type="button"
+                  type="button"
             class="soreness-btn soreness-yes"
             [class.selected]="quickFormData().hasSoreness === true"
             (click)="setQuickField('hasSoreness', true)"

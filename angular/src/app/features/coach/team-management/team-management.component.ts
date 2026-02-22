@@ -15,11 +15,8 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
-import { ColorPicker } from "primeng/colorpicker";
 import { InputText } from "primeng/inputtext";
 import { firstValueFrom } from "rxjs";
 
@@ -48,14 +45,10 @@ interface TeamSettings {
 
 @Component({
   selector: "app-team-management",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
-    Checkbox,
-    ColorPicker,
     InputText,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -89,7 +82,8 @@ interface TeamSettings {
                   id="teamName"
                   type="text"
                   pInputText
-                  [(ngModel)]="teamSettings().name"
+                  [value]="teamSettings().name"
+                  (input)="onTeamNameChange(getInputValue($event))"
                   class="w-full"
                 />
               </div>
@@ -97,18 +91,24 @@ interface TeamSettings {
               <div class="form-row">
                 <div class="form-field">
                   <label>Primary Color</label>
-                  <p-colorPicker
-                    [(ngModel)]="teamSettings().primaryColor"
-                  ></p-colorPicker>
+                  <input
+                    type="color"
+                    class="color-input"
+                    [value]="toHexColor(teamSettings().primaryColor, '#16a34a')"
+                    (input)="onPrimaryColorChange(getInputValue($event))"
+                  />
                   <span class="color-code">{{
                     teamSettings().primaryColor
                   }}</span>
                 </div>
                 <div class="form-field">
                   <label>Secondary Color</label>
-                  <p-colorPicker
-                    [(ngModel)]="teamSettings().secondaryColor"
-                  ></p-colorPicker>
+                  <input
+                    type="color"
+                    class="color-input"
+                    [value]="toHexColor(teamSettings().secondaryColor, '#0f172a')"
+                    (input)="onSecondaryColorChange(getInputValue($event))"
+                  />
                   <span class="color-code">{{
                     teamSettings().secondaryColor
                   }}</span>
@@ -121,7 +121,8 @@ interface TeamSettings {
                   id="league"
                   type="text"
                   pInputText
-                  [(ngModel)]="teamSettings().league"
+                  [value]="teamSettings().league"
+                  (input)="onLeagueChange(getInputValue($event))"
                   class="w-full"
                 />
               </div>
@@ -132,7 +133,8 @@ interface TeamSettings {
                   id="homeField"
                   type="text"
                   pInputText
-                  [(ngModel)]="teamSettings().homeField"
+                  [value]="teamSettings().homeField"
+                  (input)="onHomeFieldChange(getInputValue($event))"
                   class="w-full"
                 />
               </div>
@@ -143,48 +145,48 @@ interface TeamSettings {
               <h4><i class="pi pi-cog"></i> Team Preferences</h4>
 
               <div class="preference-item">
-                <p-checkbox
-                  [(ngModel)]="teamSettings().preferences.requireWellnessCheckin"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="reqWellness"
-                ></p-checkbox>
+                <input
+                  type="checkbox"
+                  id="reqWellness"
+                  [checked]="teamSettings().preferences.requireWellnessCheckin"
+                  (change)="onPreferenceChange('requireWellnessCheckin', isChecked($event))"
+                />
                 <label for="reqWellness"
                   >Require wellness check-in before practice</label
                 >
               </div>
 
               <div class="preference-item">
-                <p-checkbox
-                  [(ngModel)]="teamSettings().preferences.autoSendRsvpReminders"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="autoRsvp"
-                ></p-checkbox>
+                <input
+                  type="checkbox"
+                  id="autoRsvp"
+                  [checked]="teamSettings().preferences.autoSendRsvpReminders"
+                  (change)="onPreferenceChange('autoSendRsvpReminders', isChecked($event))"
+                />
                 <label for="autoRsvp"
                   >Auto-send RSVP reminders 24 hours before events</label
                 >
               </div>
 
               <div class="preference-item">
-                <p-checkbox
-                  [(ngModel)]="teamSettings().preferences.allowPlayersViewAnalytics"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="allowAnalytics"
-                ></p-checkbox>
+                <input
+                  type="checkbox"
+                  id="allowAnalytics"
+                  [checked]="teamSettings().preferences.allowPlayersViewAnalytics"
+                  (change)="onPreferenceChange('allowPlayersViewAnalytics', isChecked($event))"
+                />
                 <label for="allowAnalytics"
                   >Allow players to see team analytics</label
                 >
               </div>
 
               <div class="preference-item">
-                <p-checkbox
-                  [(ngModel)]="teamSettings().preferences.requireCoachApprovalPosts"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="reqApproval"
-                ></p-checkbox>
+                <input
+                  type="checkbox"
+                  id="reqApproval"
+                  [checked]="teamSettings().preferences.requireCoachApprovalPosts"
+                  (change)="onPreferenceChange('requireCoachApprovalPosts', isChecked($event))"
+                />
                 <label for="reqApproval"
                   >Require coach approval for community posts</label
                 >
@@ -226,6 +228,64 @@ export class TeamManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadSettings();
+  }
+
+  onTeamNameChange(value: string): void {
+    this.teamSettings.update((settings) => ({ ...settings, name: value }));
+  }
+
+  onPrimaryColorChange(value: string): void {
+    this.teamSettings.update((settings) => ({ ...settings, primaryColor: value }));
+  }
+
+  onSecondaryColorChange(value: string): void {
+    this.teamSettings.update((settings) => ({ ...settings, secondaryColor: value }));
+  }
+
+  onLeagueChange(value: string): void {
+    this.teamSettings.update((settings) => ({ ...settings, league: value }));
+  }
+
+  onHomeFieldChange(value: string): void {
+    this.teamSettings.update((settings) => ({ ...settings, homeField: value }));
+  }
+
+  onPreferenceChange(
+    key:
+      | "requireWellnessCheckin"
+      | "autoSendRsvpReminders"
+      | "allowPlayersViewAnalytics"
+      | "requireCoachApprovalPosts",
+    value: boolean,
+  ): void {
+    this.teamSettings.update((settings) => ({
+      ...settings,
+      preferences: {
+        ...settings.preferences,
+        [key]: value,
+      },
+    }));
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
+  }
+
+  toHexColor(value: string, fallback: string): string {
+    const color = (value ?? "").trim();
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback;
   }
 
   async loadSettings(): Promise<void> {

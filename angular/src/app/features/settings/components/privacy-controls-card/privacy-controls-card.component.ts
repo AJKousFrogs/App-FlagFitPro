@@ -22,7 +22,6 @@ type VisibilityOption = {
 
 @Component({
   selector: "app-privacy-controls-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

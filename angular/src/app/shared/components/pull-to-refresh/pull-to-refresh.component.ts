@@ -17,7 +17,6 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-pull-to-refresh",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

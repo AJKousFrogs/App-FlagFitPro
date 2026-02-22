@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import {
@@ -9,10 +8,8 @@ import {
 
 @Component({
   selector: "app-new-team-request-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     Dialog,
     InputText,
     DialogHeaderComponent,
@@ -34,5 +31,15 @@ export class NewTeamRequestDialogComponent {
 
   closeDialog(): void {
     this.visibleChange.emit(false);
+  }
+
+  onTeamNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.teamNameChange.emit(input?.value ?? "");
+  }
+
+  onTeamNotesInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.teamNotesChange.emit(input?.value ?? "");
   }
 }

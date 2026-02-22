@@ -2,7 +2,6 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
-  HostListener,
   OnInit,
 } from "@angular/core";
 
@@ -19,7 +18,6 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
 
 @Component({
   selector: "app-main-layout",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     SidebarComponent,
@@ -61,6 +59,10 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
     <app-keyboard-shortcuts-modal></app-keyboard-shortcuts-modal>
   `,
   styleUrl: "./main-layout.component.scss",
+  host: {
+    "(window:toggle-sidebar)": "onToggleSidebar()",
+    "(window:toggle-theme)": "onToggleTheme()",
+  },
 })
 export class MainLayoutComponent implements OnInit {
   private themeService = inject(ThemeService);
@@ -75,7 +77,6 @@ export class MainLayoutComponent implements OnInit {
   /**
    * Listen for custom events from keyboard shortcuts service
    */
-  @HostListener("window:toggle-sidebar")
   onToggleSidebar(): void {
     // This will be handled by the sidebar component
     // We dispatch a custom event that the sidebar listens to
@@ -84,7 +85,6 @@ export class MainLayoutComponent implements OnInit {
     }
   }
 
-  @HostListener("window:toggle-theme")
   onToggleTheme(): void {
     this.themeService.toggle();
   }

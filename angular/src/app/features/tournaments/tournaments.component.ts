@@ -7,7 +7,12 @@ import {
     inject,
     signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 
 import { ToastService } from "../../core/services/toast.service";
 import { Card } from "primeng/card";
@@ -99,6 +104,83 @@ interface TournamentBudget {
   perPlayer: number;
 }
 
+type TournamentFormData = CreateTournamentDto & {
+  start_date_obj?: Date;
+  end_date_obj?: Date;
+  registration_deadline_obj?: Date;
+  instagram_url?: string;
+  facebook_url?: string;
+  registration_url?: string;
+  venue_maps_url?: string;
+  hotel_maps_url?: string;
+  hotel_name?: string;
+  hotel_booking_url?: string;
+  contact_name?: string;
+  contact_email?: string;
+};
+
+interface AvailabilityForm {
+  status: "confirmed" | "declined" | "tentative" | "pending";
+  reason: string;
+  arrivalDate: Date | null;
+  departureDate: Date | null;
+  accommodationNeeded: boolean;
+  transportationNeeded: boolean;
+  dietaryRestrictions: string;
+  amountPaid: number;
+}
+
+type TournamentFormGroup = FormGroup<{
+  name: FormControl<string>;
+  short_name: FormControl<string>;
+  expected_teams: FormControl<number | null>;
+  country: FormControl<string>;
+  location: FormControl<string>;
+  venue: FormControl<string>;
+  start_date_obj: FormControl<Date | null>;
+  end_date_obj: FormControl<Date | null>;
+  registration_deadline_obj: FormControl<Date | null>;
+  tournament_type: FormControl<string>;
+  competition_level: FormControl<string>;
+  is_home_tournament: FormControl<boolean>;
+  website_url: FormControl<string>;
+  instagram_url: FormControl<string>;
+  facebook_url: FormControl<string>;
+  registration_url: FormControl<string>;
+  venue_maps_url: FormControl<string>;
+  hotel_maps_url: FormControl<string>;
+  hotel_name: FormControl<string>;
+  hotel_booking_url: FormControl<string>;
+  contact_name: FormControl<string>;
+  contact_email: FormControl<string>;
+  notes: FormControl<string>;
+  visibility_scope: FormControl<TournamentVisibilityScope>;
+}>;
+
+type AvailabilityFormGroup = FormGroup<{
+  status: FormControl<AvailabilityStatus>;
+  reason: FormControl<string>;
+  arrivalDate: FormControl<Date | null>;
+  departureDate: FormControl<Date | null>;
+  accommodationNeeded: FormControl<boolean>;
+  transportationNeeded: FormControl<boolean>;
+  dietaryRestrictions: FormControl<string>;
+  amountPaid: FormControl<number>;
+}>;
+
+type BudgetFormGroup = FormGroup<{
+  registrationFee: FormControl<number>;
+  entryFeePerPlayer: FormControl<number>;
+  travelCost: FormControl<number>;
+  accommodationPerNight: FormControl<number>;
+  totalNights: FormControl<number>;
+  perDiem: FormControl<number>;
+  otherCosts: FormControl<number>;
+  otherCostsDescription: FormControl<string>;
+  teamContribution: FormControl<number>;
+  sponsorContribution: FormControl<number>;
+}>;
+
 const availabilityStatuses: AvailabilityStatus[] = [
   "pending",
   "declined",
@@ -148,11 +230,10 @@ const toDateOrNull = (value: unknown): Date | null => {
 
 @Component({
   selector: "app-tournaments",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     Card,
     Tabs,
     TabPanel,
@@ -222,32 +303,6 @@ export class TournamentsComponent implements OnInit {
   tournamentBudget = signal<TournamentBudget | null>(null);
   tournamentCost = signal(0);
 
-  // Availability form
-  availabilityForm = {
-    status: "pending" as "confirmed" | "declined" | "tentative" | "pending",
-    reason: "",
-    arrivalDate: null as Date | null,
-    departureDate: null as Date | null,
-    accommodationNeeded: true,
-    transportationNeeded: false,
-    dietaryRestrictions: "",
-    amountPaid: 0,
-  };
-
-  // Budget form
-  budgetForm = {
-    registrationFee: 0,
-    entryFeePerPlayer: 0,
-    travelCost: 0,
-    accommodationPerNight: 0,
-    totalNights: 0,
-    perDiem: 0,
-    otherCosts: 0,
-    otherCostsDescription: "",
-    teamContribution: 0,
-    sponsorContribution: 0,
-  };
-
   // Options
   availabilityOptions: Array<{
     value: "pending" | "confirmed" | "declined" | "tentative";
@@ -260,21 +315,11 @@ export class TournamentsComponent implements OnInit {
     { value: "pending", label: "Undecided", icon: "pi pi-clock" },
   ];
 
-  // Form data
-  formData: CreateTournamentDto & {
-    start_date_obj?: Date;
-    end_date_obj?: Date;
-    registration_deadline_obj?: Date;
-    instagram_url?: string;
-    facebook_url?: string;
-    registration_url?: string;
-    venue_maps_url?: string;
-    hotel_maps_url?: string;
-    hotel_name?: string;
-    hotel_booking_url?: string;
-    contact_name?: string;
-    contact_email?: string;
-  } = this.getEmptyFormData();
+  // Reactive forms
+  readonly tournamentForm: TournamentFormGroup = this.createTournamentForm();
+  readonly availabilityFormGroup: AvailabilityFormGroup =
+    this.createAvailabilityForm();
+  readonly budgetFormGroup: BudgetFormGroup = this.createBudgetForm();
 
   // Dropdown options
   tournamentTypes = [
@@ -362,20 +407,7 @@ export class TournamentsComponent implements OnInit {
     return this.authService.isAuthenticated();
   }
 
-  getEmptyFormData(): CreateTournamentDto & {
-    start_date_obj?: Date;
-    end_date_obj?: Date;
-    registration_deadline_obj?: Date;
-    instagram_url?: string;
-    facebook_url?: string;
-    registration_url?: string;
-    venue_maps_url?: string;
-    hotel_maps_url?: string;
-    hotel_name?: string;
-    hotel_booking_url?: string;
-    contact_name?: string;
-    contact_email?: string;
-  } {
+  getEmptyFormData(): TournamentFormData {
     // Default visibility based on user role
     const defaultVisibility: TournamentVisibilityScope = this.isCoachOrAdmin()
       ? "team"
@@ -413,52 +445,178 @@ export class TournamentsComponent implements OnInit {
     };
   }
 
+  private createTournamentForm(): TournamentFormGroup {
+    const defaults = this.getEmptyFormData();
+    return new FormGroup({
+      name: new FormControl(defaults.name, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      short_name: new FormControl(defaults.short_name ?? "", {
+        nonNullable: true,
+      }),
+      expected_teams: new FormControl(defaults.expected_teams ?? null),
+      country: new FormControl(defaults.country ?? "", { nonNullable: true }),
+      location: new FormControl(defaults.location ?? "", { nonNullable: true }),
+      venue: new FormControl(defaults.venue ?? "", { nonNullable: true }),
+      start_date_obj: new FormControl(defaults.start_date_obj ?? null, {
+        validators: [Validators.required],
+      }),
+      end_date_obj: new FormControl(defaults.end_date_obj ?? null),
+      registration_deadline_obj: new FormControl(
+        defaults.registration_deadline_obj ?? null,
+      ),
+      tournament_type: new FormControl(defaults.tournament_type ?? "", {
+        nonNullable: true,
+      }),
+      competition_level: new FormControl(defaults.competition_level ?? "", {
+        nonNullable: true,
+      }),
+      is_home_tournament: new FormControl(
+        defaults.is_home_tournament ?? false,
+        { nonNullable: true },
+      ),
+      website_url: new FormControl(defaults.website_url ?? "", {
+        nonNullable: true,
+      }),
+      instagram_url: new FormControl(defaults.instagram_url ?? "", {
+        nonNullable: true,
+      }),
+      facebook_url: new FormControl(defaults.facebook_url ?? "", {
+        nonNullable: true,
+      }),
+      registration_url: new FormControl(defaults.registration_url ?? "", {
+        nonNullable: true,
+      }),
+      venue_maps_url: new FormControl(defaults.venue_maps_url ?? "", {
+        nonNullable: true,
+      }),
+      hotel_maps_url: new FormControl(defaults.hotel_maps_url ?? "", {
+        nonNullable: true,
+      }),
+      hotel_name: new FormControl(defaults.hotel_name ?? "", {
+        nonNullable: true,
+      }),
+      hotel_booking_url: new FormControl(defaults.hotel_booking_url ?? "", {
+        nonNullable: true,
+      }),
+      contact_name: new FormControl(defaults.contact_name ?? "", {
+        nonNullable: true,
+      }),
+      contact_email: new FormControl(defaults.contact_email ?? "", {
+        nonNullable: true,
+      }),
+      notes: new FormControl(defaults.notes ?? "", { nonNullable: true }),
+      visibility_scope: new FormControl(defaults.visibility_scope ?? "team", {
+        nonNullable: true,
+      }),
+    });
+  }
+
+  private createAvailabilityForm(): AvailabilityFormGroup {
+    return new FormGroup({
+      status: new FormControl<AvailabilityStatus>("pending", {
+        nonNullable: true,
+      }),
+      reason: new FormControl("", { nonNullable: true }),
+      arrivalDate: new FormControl<Date | null>(null),
+      departureDate: new FormControl<Date | null>(null),
+      accommodationNeeded: new FormControl(true, { nonNullable: true }),
+      transportationNeeded: new FormControl(false, { nonNullable: true }),
+      dietaryRestrictions: new FormControl("", { nonNullable: true }),
+      amountPaid: new FormControl(0, { nonNullable: true }),
+    });
+  }
+
+  private createBudgetForm(): BudgetFormGroup {
+    return new FormGroup({
+      registrationFee: new FormControl(0, { nonNullable: true }),
+      entryFeePerPlayer: new FormControl(0, { nonNullable: true }),
+      travelCost: new FormControl(0, { nonNullable: true }),
+      accommodationPerNight: new FormControl(0, { nonNullable: true }),
+      totalNights: new FormControl(0, { nonNullable: true }),
+      perDiem: new FormControl(0, { nonNullable: true }),
+      otherCosts: new FormControl(0, { nonNullable: true }),
+      otherCostsDescription: new FormControl("", { nonNullable: true }),
+      teamContribution: new FormControl(0, { nonNullable: true }),
+      sponsorContribution: new FormControl(0, { nonNullable: true }),
+    });
+  }
+
+  currentAvailabilityStatus(): AvailabilityStatus {
+    return this.availabilityFormGroup.controls.status.value;
+  }
+
+  setAvailabilityStatus(status: AvailabilityStatus): void {
+    this.availabilityFormGroup.patchValue({ status });
+  }
+
   openCreateDialog(): void {
     this.editingTournament = null;
-    this.formData = this.getEmptyFormData();
+    const defaults = this.getEmptyFormData();
+    this.tournamentForm.reset({
+      ...defaults,
+      expected_teams: defaults.expected_teams ?? null,
+      start_date_obj: defaults.start_date_obj ?? null,
+      end_date_obj: defaults.end_date_obj ?? null,
+      registration_deadline_obj: defaults.registration_deadline_obj ?? null,
+    });
     this.showDialog = true;
   }
 
   openEditDialog(tournament: Tournament): void {
     this.editingTournament = tournament;
-    this.formData = {
+    this.tournamentForm.reset({
       name: tournament.name,
       short_name: tournament.short_name || "",
       location: tournament.location || "",
       country: tournament.country || "",
       venue: tournament.venue || "",
-      start_date: tournament.start_date,
-      end_date: tournament.end_date || "",
       tournament_type: tournament.tournament_type || "championship",
       competition_level: tournament.competition_level || "regional",
-      expected_teams: tournament.expected_teams,
-      registration_deadline: tournament.registration_deadline || "",
+      expected_teams: tournament.expected_teams ?? null,
       website_url: tournament.website_url || "",
       notes: tournament.notes || "",
       is_home_tournament: tournament.is_home_tournament || false,
       visibility_scope: tournament.visibility_scope || "team",
       start_date_obj: tournament.start_date
         ? new Date(tournament.start_date)
-        : undefined,
+        : null,
       end_date_obj: tournament.end_date
         ? new Date(tournament.end_date)
-        : undefined,
+        : null,
       registration_deadline_obj: tournament.registration_deadline
         ? new Date(tournament.registration_deadline)
-        : undefined,
-    };
+        : null,
+      instagram_url: "",
+      facebook_url: "",
+      registration_url: "",
+      venue_maps_url: "",
+      hotel_maps_url: "",
+      hotel_name: "",
+      hotel_booking_url: "",
+      contact_name: "",
+      contact_email: "",
+    });
     this.showDialog = true;
   }
 
   closeDialog(): void {
     this.showDialog = false;
     this.editingTournament = null;
-    this.formData = this.getEmptyFormData();
+    const defaults = this.getEmptyFormData();
+    this.tournamentForm.reset({
+      ...defaults,
+      expected_teams: defaults.expected_teams ?? null,
+      start_date_obj: defaults.start_date_obj ?? null,
+      end_date_obj: defaults.end_date_obj ?? null,
+      registration_deadline_obj: defaults.registration_deadline_obj ?? null,
+    });
   }
 
   async saveTournament(): Promise<void> {
-    // Validate required fields
-    if (!this.formData.name || !this.formData.start_date_obj) {
+    const formValue = this.tournamentForm.getRawValue();
+    if (this.tournamentForm.invalid || !formValue.start_date_obj) {
       this.toastService.error(
         "Tournament name and start date are required",
         "Validation Error",
@@ -467,24 +625,25 @@ export class TournamentsComponent implements OnInit {
     }
 
     // Convert date objects to strings
-    const startDate = this.formatDate(this.formData.start_date_obj);
+    const startDate = this.formatDate(formValue.start_date_obj);
     if (!startDate) {
       this.toastService.error("Start date is required");
       return;
     }
 
     const data: CreateTournamentDto = {
-      ...this.formData,
+      ...formValue,
       start_date: startDate,
-      end_date: this.formData.end_date_obj
-        ? this.formatDate(this.formData.end_date_obj)
+      end_date: formValue.end_date_obj
+        ? this.formatDate(formValue.end_date_obj)
         : undefined,
-      registration_deadline: this.formData.registration_deadline_obj
-        ? this.formatDate(this.formData.registration_deadline_obj)
+      registration_deadline: formValue.registration_deadline_obj
+        ? this.formatDate(formValue.registration_deadline_obj)
         : undefined,
-      flag: this.formData.country
-        ? getCountryFlag(this.formData.country)
+      flag: formValue.country
+        ? getCountryFlag(formValue.country)
         : undefined,
+      expected_teams: formValue.expected_teams ?? undefined,
     };
 
     // Remove date objects before sending (they're only used for form binding)
@@ -596,7 +755,7 @@ export class TournamentsComponent implements OnInit {
 
       if (data) {
         const availability = data as Record<string, unknown>;
-        this.availabilityForm = {
+        this.availabilityFormGroup.reset({
           status: isAvailabilityStatus(availability["status"])
             ? availability["status"]
             : "pending",
@@ -616,19 +775,9 @@ export class TournamentsComponent implements OnInit {
             "",
           ),
           amountPaid: toNumberValue(availability["amount_paid"], 0),
-        };
+        });
       } else {
-        // Reset form
-        this.availabilityForm = {
-          status: "pending",
-          reason: "",
-          arrivalDate: null,
-          departureDate: null,
-          accommodationNeeded: true,
-          transportationNeeded: false,
-          dietaryRestrictions: "",
-          amountPaid: 0,
-        };
+        this.availabilityFormGroup.reset(this.getEmptyAvailabilityForm());
       }
     } catch (error) {
       this.logger.error("Error loading availability:", error);
@@ -676,22 +825,23 @@ export class TournamentsComponent implements OnInit {
         });
 
       if (!memberId) throw new Error("Not a team member");
+      const availability = this.availabilityFormGroup.getRawValue();
 
       const availabilityData = {
         player_id: memberId,
         tournament_id: this.selectedTournament.id,
         team_id: teamId,
-        status: this.availabilityForm.status,
-        reason: this.availabilityForm.reason || null,
-        arrival_date: this.availabilityForm.arrivalDate
-          ? this.formatDate(this.availabilityForm.arrivalDate)
+        status: availability.status,
+        reason: availability.reason || null,
+        arrival_date: availability.arrivalDate
+          ? this.formatDate(availability.arrivalDate)
           : null,
-        departure_date: this.availabilityForm.departureDate
-          ? this.formatDate(this.availabilityForm.departureDate)
+        departure_date: availability.departureDate
+          ? this.formatDate(availability.departureDate)
           : null,
-        accommodation_needed: this.availabilityForm.accommodationNeeded,
-        transportation_needed: this.availabilityForm.transportationNeeded,
-        dietary_restrictions: this.availabilityForm.dietaryRestrictions || null,
+        accommodation_needed: availability.accommodationNeeded,
+        transportation_needed: availability.transportationNeeded,
+        dietary_restrictions: availability.dietaryRestrictions || null,
         responded_at: new Date().toISOString(),
       };
 
@@ -713,6 +863,19 @@ export class TournamentsComponent implements OnInit {
     } finally {
       this.savingAvailability.set(false);
     }
+  }
+
+  private getEmptyAvailabilityForm(): AvailabilityForm {
+    return {
+      status: "pending",
+      reason: "",
+      arrivalDate: null,
+      departureDate: null,
+      accommodationNeeded: true,
+      transportationNeeded: false,
+      dietaryRestrictions: "",
+      amountPaid: 0,
+    };
   }
 
   // ============================================================================
@@ -809,8 +972,7 @@ export class TournamentsComponent implements OnInit {
           perPlayer: toNumberValue(budget.player_share_per_person, 0),
         });
 
-        // Populate budget form
-        this.budgetForm = {
+        this.budgetFormGroup.reset({
           registrationFee: toNumberValue(budget.registration_fee, 0),
           entryFeePerPlayer: toNumberValue(budget.entry_fee_per_player, 0),
           travelCost: toNumberValue(budget.estimated_travel_cost, 0),
@@ -827,7 +989,7 @@ export class TournamentsComponent implements OnInit {
           ),
           teamContribution: toNumberValue(budget.team_contribution, 0),
           sponsorContribution: toNumberValue(budget.sponsor_contribution, 0),
-        };
+        });
       } else {
         this.tournamentBudget.set(null);
       }
@@ -908,16 +1070,17 @@ export class TournamentsComponent implements OnInit {
   }
 
   calculateTotalBudget(): number {
+    const budget = this.budgetFormGroup.getRawValue();
     const confirmedPlayers = this.teamAvailabilitySummary().confirmed;
     return (
-      this.budgetForm.registrationFee +
-      this.budgetForm.entryFeePerPlayer * confirmedPlayers +
-      this.budgetForm.travelCost +
-      this.budgetForm.accommodationPerNight * this.budgetForm.totalNights +
-      this.budgetForm.perDiem *
+      budget.registrationFee +
+      budget.entryFeePerPlayer * confirmedPlayers +
+      budget.travelCost +
+      budget.accommodationPerNight * budget.totalNights +
+      budget.perDiem *
         confirmedPlayers *
-        (this.budgetForm.totalNights + 1) +
-      this.budgetForm.otherCosts
+        (budget.totalNights + 1) +
+      budget.otherCosts
     );
   }
 
@@ -926,8 +1089,8 @@ export class TournamentsComponent implements OnInit {
     if (confirmedPlayers === 0) return 0;
 
     const total = this.calculateTotalBudget();
-    const funding =
-      this.budgetForm.teamContribution + this.budgetForm.sponsorContribution;
+    const budget = this.budgetFormGroup.getRawValue();
+    const funding = budget.teamContribution + budget.sponsorContribution;
     return Math.max(0, (total - funding) / confirmedPlayers);
   }
 
@@ -941,26 +1104,27 @@ export class TournamentsComponent implements OnInit {
       if (!teamId) throw new Error("No team found");
 
       const confirmedPlayers = this.teamAvailabilitySummary().confirmed;
+      const budget = this.budgetFormGroup.getRawValue();
 
       const budgetData = {
         tournament_id: this.selectedTournament.id,
         team_id: teamId,
-        registration_fee: this.budgetForm.registrationFee,
-        entry_fee_per_player: this.budgetForm.entryFeePerPlayer,
-        estimated_travel_cost: this.budgetForm.travelCost,
-        accommodation_cost_per_night: this.budgetForm.accommodationPerNight,
-        total_nights: this.budgetForm.totalNights,
+        registration_fee: budget.registrationFee,
+        entry_fee_per_player: budget.entryFeePerPlayer,
+        estimated_travel_cost: budget.travelCost,
+        accommodation_cost_per_night: budget.accommodationPerNight,
+        total_nights: budget.totalNights,
         estimated_accommodation_total:
-          this.budgetForm.accommodationPerNight * this.budgetForm.totalNights,
-        per_diem_per_player: this.budgetForm.perDiem,
+          budget.accommodationPerNight * budget.totalNights,
+        per_diem_per_player: budget.perDiem,
         estimated_meals_total:
-          this.budgetForm.perDiem *
+          budget.perDiem *
           confirmedPlayers *
-          (this.budgetForm.totalNights + 1),
-        other_costs: this.budgetForm.otherCosts,
-        other_costs_description: this.budgetForm.otherCostsDescription,
-        team_contribution: this.budgetForm.teamContribution,
-        sponsor_contribution: this.budgetForm.sponsorContribution,
+          (budget.totalNights + 1),
+        other_costs: budget.otherCosts,
+        other_costs_description: budget.otherCostsDescription,
+        team_contribution: budget.teamContribution,
+        sponsor_contribution: budget.sponsorContribution,
         player_share_per_person: this.calculatePlayerShare(),
         budget_status: "draft",
         created_by: this.authService.currentUser()?.id,

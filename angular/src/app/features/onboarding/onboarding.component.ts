@@ -46,7 +46,6 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
 
 @Component({
   selector: "app-onboarding",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

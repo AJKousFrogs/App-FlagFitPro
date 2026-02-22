@@ -19,7 +19,6 @@ import {
   signal,
 } from "@angular/core";
 
-import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
 // PrimeNG Components
@@ -56,11 +55,9 @@ interface ReadinessMetric {
 
 @Component({
   selector: "app-game-day-readiness",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     RouterModule,
     Slider,
     Textarea,
@@ -95,11 +92,10 @@ interface ReadinessMetric {
                 >
               </div>
               <p-slider
-                [(ngModel)]="metric.value"
                 [min]="1"
                 [max]="10"
                 [step]="1"
-                (ngModelChange)="updateMetric(metric.key, $event || 1)"
+                (onChange)="updateMetric(metric.key, $event.value || 1)"
               ></p-slider>
               <p class="metric-description">{{ metric.description }}</p>
               @if (metric.value < 5) {
@@ -116,7 +112,8 @@ interface ReadinessMetric {
             <label>Any concerns or notes for today?</label>
             <textarea
               pInputTextarea
-              [(ngModel)]="notes"
+              [value]="notes"
+              (input)="onNotesInput($event)"
               [rows]="3"
               placeholder="E.g., slight tightness in hamstring, nervous about opponent..."
             ></textarea>
@@ -504,6 +501,11 @@ export class GameDayReadinessComponent implements OnInit {
     const current = this.metrics();
     const updated = current.map((m) => (m.key === key ? { ...m, value } : m));
     this.metrics.set(updated);
+  }
+
+  onNotesInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.notes = input?.value ?? "";
   }
 
   async submitReadiness(): Promise<void> {

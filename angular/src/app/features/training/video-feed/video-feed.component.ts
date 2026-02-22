@@ -22,12 +22,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   afterNextRender,
   computed,
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
 // PrimeNG Components
@@ -73,10 +75,9 @@ interface FilterChip {
 
 @Component({
   selector: "app-video-feed",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     Skeleton,
     Tooltip,
 
@@ -144,8 +145,7 @@ interface FilterChip {
           <!-- Search Bar -->
           <app-search-input
             class="search-container"
-            [(ngModel)]="searchQuery"
-            (ngModelChange)="onSearchChange()"
+            [formControl]="searchControl"
             placeholder="Search videos, creators, or tags..."
             ariaLabel="Search videos, creators, or tags"
             [clearable]="true"
@@ -520,8 +520,10 @@ export class VideoFeedComponent {
   private videoBookmarkDataService = inject(VideoBookmarkDataService);
   private router = inject(Router);
   private logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State
+  readonly searchControl = new FormControl("", { nonNullable: true });
   searchQuery = signal("");
   isLoading = signal(true);
   showVideoDialog = signal(false);
@@ -658,6 +660,13 @@ export class VideoFeedComponent {
   ]);
 
   constructor() {
+    this.searchControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.searchQuery.set(value);
+        this.onSearchChange();
+      });
+
     afterNextRender(() => {
       this.loadBookmarks();
       // Simulate loading completion
@@ -724,11 +733,11 @@ export class VideoFeedComponent {
   }
 
   clearSearch(): void {
-    this.searchQuery.set("");
+    this.searchControl.setValue("");
   }
 
   clearAllFilters(): void {
-    this.searchQuery.set("");
+    this.searchControl.setValue("");
     this.activePositionFilters.set(new Set());
     this.activeFocusFilters.set(new Set());
     this.updateChipStates();
@@ -841,7 +850,7 @@ export class VideoFeedComponent {
   }
 
   filterByCreator(creator: InstagramCreator): void {
-    this.searchQuery.set(creator.displayName);
+    this.searchControl.setValue(creator.displayName);
     this.toastService.info(`Showing videos from ${creator.displayName}`);
   }
 

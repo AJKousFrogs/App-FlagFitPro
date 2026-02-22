@@ -12,6 +12,7 @@
  */
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -23,7 +24,6 @@ import {
   input,
   output,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
@@ -72,7 +72,6 @@ type SessionStatus =
 
 @Component({
   selector: "app-micro-session",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -194,7 +193,8 @@ type SessionStatus =
               ) {
                 <div class="checklist-item">
                   <p-checkbox
-                    [(ngModel)]="equipmentChecked[i]"
+                    [ngModel]="equipmentChecked[i]"
+                    (onChange)="onEquipmentCheckChange(i, $event.checked)"
                     [binary]="true"
                     variant="filled"
                     [inputId]="'equipment-' + i"
@@ -334,7 +334,8 @@ type SessionStatus =
                 <h4>{{ session().follow_up_prompt }}</h4>
                 <div class="follow-up-slider">
                   <p-slider
-                    [(ngModel)]="followUpRating"
+                    [ngModel]="followUpRating"
+                    (ngModelChange)="onFollowUpRatingChange($event)"
                     [min]="0"
                     [max]="10"
                     [step]="1"
@@ -343,7 +344,8 @@ type SessionStatus =
                 </div>
                 <textarea
                   pInputTextarea
-                  [(ngModel)]="followUpNotes"
+                  [value]="followUpNotes"
+                  (input)="onFollowUpNotesInput($event)"
                   placeholder="Any additional notes? (optional)"
                   [rows]="2"
                   class="follow-up-notes"
@@ -501,6 +503,19 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
 
   skipEquipmentCheck(): void {
     this.beginSession();
+  }
+
+  onEquipmentCheckChange(index: number, checked: boolean | undefined): void {
+    this.equipmentChecked[index] = !!checked;
+  }
+
+  onFollowUpRatingChange(value: number | null | undefined): void {
+    this.followUpRating = value ?? 0;
+  }
+
+  onFollowUpNotesInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.followUpNotes = input?.value ?? "";
   }
 
   private async beginSession(): Promise<void> {

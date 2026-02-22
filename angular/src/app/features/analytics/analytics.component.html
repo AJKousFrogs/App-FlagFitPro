@@ -606,13 +606,13 @@
                 <div class="chart-controls">
                   <p-select
                     [options]="timePeriods"
-                    [(ngModel)]="selectedTimePeriod"
+                    (onChange)="onSelectedTimePeriodChange($event.value)"
                     placeholder="Time Period"
                     class="w-full md:w-14rem"
                   ></p-select>
                   <p-select
                     [options]="metricOptions"
-                    [(ngModel)]="selectedMetric"
+                    (onChange)="onSelectedMetricChange($event.value)"
                     placeholder="Metrics"
                     class="w-full md:w-14rem"
                   ></p-select>
@@ -1046,7 +1046,9 @@
                 <label>
                   <input
                     type="checkbox"
-                    [(ngModel)]="shareOptions.includeCharts"
+                    [checked]="shareOptions.includeCharts"
+                    (change)="onShareOptionChange('includeCharts', isChecked($event))"
+                    aria-label="Include performance charts"
                   />
                   <span>Performance Charts</span>
                 </label>
@@ -1055,7 +1057,9 @@
                 <label>
                   <input
                     type="checkbox"
-                    [(ngModel)]="shareOptions.includeGoals"
+                    [checked]="shareOptions.includeGoals"
+                    (change)="onShareOptionChange('includeGoals', isChecked($event))"
+                    aria-label="Include development goals"
                   />
                   <span>Development Goals</span>
                 </label>
@@ -1064,7 +1068,9 @@
                 <label>
                   <input
                     type="checkbox"
-                    [(ngModel)]="shareOptions.includeStats"
+                    [checked]="shareOptions.includeStats"
+                    (change)="onShareOptionChange('includeStats', isChecked($event))"
+                    aria-label="Include player statistics"
                   />
                   <span>Player Statistics</span>
                 </label>
@@ -1073,7 +1079,9 @@
                 <label>
                   <input
                     type="checkbox"
-                    [(ngModel)]="shareOptions.includeComments"
+                    [checked]="shareOptions.includeComments"
+                    (change)="onShareOptionChange('includeComments', isChecked($event))"
+                    aria-label="Include personal notes"
                   />
                   <span>Include My Notes</span>
                 </label>
@@ -1085,7 +1093,8 @@
                 <label for="shareMessage">Add a message (optional)</label>
                 <textarea
                   id="shareMessage"
-                  [(ngModel)]="shareMessageValue"
+                  [value]="shareMessageValue"
+                  (input)="onShareMessageValueChange(getInputValue($event))"
                   placeholder="Any comments or questions for your coach..."
                   rows="3"
                 ></textarea>

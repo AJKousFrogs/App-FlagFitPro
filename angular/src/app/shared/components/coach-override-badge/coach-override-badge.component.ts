@@ -33,7 +33,6 @@ export type CoachOverridePlacement =
 
 @Component({
   selector: "app-coach-override-badge",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tooltip, StatusTagComponent],
   template: `

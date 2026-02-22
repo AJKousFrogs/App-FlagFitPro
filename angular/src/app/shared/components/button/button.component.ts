@@ -6,7 +6,6 @@ import {
   input,
   output,
   booleanAttribute,
-  HostBinding,
   inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
@@ -64,7 +63,6 @@ export type ButtonSize = "sm" | "md" | "lg";
 
 @Component({
   selector: "app-button",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, Tooltip],
   template: `
@@ -144,6 +142,10 @@ export type ButtonSize = "sm" | "md" | "lg";
     </ng-template>
   `,
   styleUrl: "./button.component.scss",
+  host: {
+    "[class.btn-full-width]": "isFullWidth",
+    "[style.display]": "hostDisplay",
+  },
 })
 export class ButtonComponent {
   private readonly logger = inject(LoggerService);
@@ -244,12 +246,10 @@ export class ButtonComponent {
   // HOST BINDINGS
   // ============================================
 
-  @HostBinding("class.btn-full-width")
   get isFullWidth(): boolean {
     return this.fullWidth();
   }
 
-  @HostBinding("style.display")
   get hostDisplay(): string {
     return this.fullWidth() ? "block" : "inline-block";
   }

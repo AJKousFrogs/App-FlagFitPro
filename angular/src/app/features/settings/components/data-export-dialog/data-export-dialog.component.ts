@@ -18,7 +18,6 @@ type ExportOptions = {
 
 @Component({
   selector: "app-data-export-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
@@ -52,10 +51,13 @@ export class DataExportDialogComponent {
     this.exportFormatChange.emit(format);
   }
 
-  updateOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]): void {
+  updateOption<K extends keyof ExportOptions>(
+    key: K,
+    value: ExportOptions[K] | undefined,
+  ): void {
     this.exportOptionsChange.emit({
       ...this.exportOptions(),
-      [key]: value,
+      [key]: (value ?? false) as ExportOptions[K],
     });
   }
 }

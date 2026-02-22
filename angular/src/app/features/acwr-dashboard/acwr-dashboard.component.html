@@ -146,7 +146,7 @@
                 } @else {
                   <span>{{ riskZone().recommendation }}</span>
                   <div class="action-buttons">
-                    <button class="action-btn" (click)="logSession()">
+                    <button type="button" class="action-btn" (click)="logSession()">
                       Go to Today's Practice
                     </button>
                   </div>
@@ -154,7 +154,7 @@
               </div>
             </div>
           </div>
-          <button class="alert-dismiss" (click)="dismissTopAlert()" aria-label="Dismiss alert">
+          <button type="button" class="alert-dismiss" (click)="dismissTopAlert()" aria-label="Dismiss alert">
             <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </div>
@@ -472,19 +472,19 @@
 
       <!-- Quick Actions -->
       <div class="quick-actions">
-        <button class="action-btn primary" (click)="logSession()">
+        <button type="button" class="action-btn primary" (click)="logSession()">
           <i class="pi pi-plus" aria-hidden="true"></i>
           Go to Today's Practice
         </button>
-        <button class="action-btn" (click)="viewHistory()">
+        <button type="button" class="action-btn" (click)="viewHistory()">
           <i class="pi pi-chart-bar" aria-hidden="true"></i>
           View Training Schedule
         </button>
-        <button class="action-btn" (click)="downloadReport()">
+        <button type="button" class="action-btn" (click)="downloadReport()">
           <i class="pi pi-download" aria-hidden="true"></i>
           Export JSON
         </button>
-        <button class="action-btn" (click)="exportPDF()">
+        <button type="button" class="action-btn" (click)="exportPDF()">
           <i class="pi pi-file-pdf" aria-hidden="true"></i>
           Export PDF
         </button>

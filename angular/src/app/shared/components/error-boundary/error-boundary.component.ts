@@ -29,7 +29,6 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
 
 @Component({
   selector: "app-error-boundary",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Card, ButtonComponent],
   template: `

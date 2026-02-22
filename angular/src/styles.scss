@@ -37,8 +37,8 @@
    ALL @IMPORT RULES (Must come after @use)
    ============================================ */
 
-/* PrimeIcons - imported from node_modules */
-@import "primeicons/primeicons.css";
+/* PrimeIcons (optimized local copy: woff2/woff only) */
+@import "./assets/styles/vendor/primeicons/primeicons.css";
 
 /* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library
  * This saves ~50-80KB in bundle size

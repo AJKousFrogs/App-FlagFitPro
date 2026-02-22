@@ -12,7 +12,6 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
 
 @Component({
   selector: "app-nav-item",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, Badge],
   template: `
@@ -22,11 +21,7 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
         routerLinkActive="active"
         #rla="routerLinkActive"
         [routerLinkActiveOptions]="{ exact: exact() }"
-        class="nav-item"
-        [class.nav-item--sidebar]="variant() === 'sidebar'"
-        [class.nav-item--bottom]="variant() === 'bottom'"
-        [class.nav-item--menu]="variant() === 'menu'"
-        [ngClass]="itemClass()"
+        [class]="resolveClass('nav-item ' + variantClass(), itemClass())"
         [attr.aria-label]="ariaLabel() || label()"
         [attr.aria-current]="rla.isActive ? 'page' : null"
         [attr.id]="itemId() || null"
@@ -49,11 +44,7 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
     } @else {
       <button
         type="button"
-        class="nav-item"
-        [class.nav-item--sidebar]="variant() === 'sidebar'"
-        [class.nav-item--bottom]="variant() === 'bottom'"
-        [class.nav-item--menu]="variant() === 'menu'"
-        [ngClass]="itemClass()"
+        [class]="resolveClass('nav-item ' + variantClass(), itemClass())"
         [attr.aria-label]="ariaLabel() || label()"
         [attr.aria-disabled]="disabled() || null"
         [attr.id]="itemId() || null"
@@ -88,7 +79,6 @@ export class NavItemComponent {
     | "success"
     | "info"
     | "warning"
-    | "warning"
     | "danger"
     | "secondary"
     | "contrast"
@@ -121,5 +111,27 @@ export class NavItemComponent {
     const severity = this.badgeSeverity();
     // Map "warning" to "warn" for PrimeNG Badge compatibility
     return severity === "warning" ? "warn" : severity;
+  }
+
+  resolveClass(
+    baseClass: string,
+    classValue: string | string[] | Record<string, boolean> | null
+  ): string {
+    if (!classValue) return baseClass;
+    if (typeof classValue === "string") return `${baseClass} ${classValue}`.trim();
+    if (Array.isArray(classValue))
+      return `${baseClass} ${classValue.filter(Boolean).join(" ")}`.trim();
+    const fromRecord = Object.entries(classValue)
+      .filter(([, enabled]) => enabled)
+      .map(([className]) => className)
+      .join(" ");
+    return `${baseClass} ${fromRecord}`.trim();
+  }
+
+  variantClass(): string {
+    const variant = this.variant();
+    if (variant === "sidebar") return "nav-item--sidebar";
+    if (variant === "bottom") return "nav-item--bottom";
+    return "nav-item--menu";
   }
 }

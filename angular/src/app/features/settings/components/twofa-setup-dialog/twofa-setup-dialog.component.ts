@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -8,10 +7,8 @@ import { MobileOptimizedImageDirective } from "../../../../shared/directives/mob
 
 @Component({
   selector: "app-twofa-setup-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     Dialog,
     ButtonComponent,
     IconButtonComponent,
@@ -40,5 +37,10 @@ export class TwofaSetupDialogComponent {
 
   closeDialog(): void {
     this.visibleChange.emit(false);
+  }
+
+  onVerificationCodeInput(event: Event): void {
+    const value = (event.target as HTMLInputElement | null)?.value ?? "";
+    this.verificationCodeChange.emit(value);
   }
 }

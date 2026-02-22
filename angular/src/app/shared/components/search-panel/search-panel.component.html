@@ -19,8 +19,8 @@
         #searchInput
         type="text"
         pInputText
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="onSearchChange($event)"
+        [value]="searchQuery"
+        (input)="onSearchInput($event)"
         (keydown.enter)="onEnter()"
         (keydown.escape)="close()"
         (keydown.arrowdown)="onArrowDown($event)"
@@ -29,6 +29,7 @@
         (keydown.arrowright)="onArrowRight($event)"
         placeholder="Search exercises, programs, players..."
         class="search-input"
+        aria-label="Search commands and content"
         autocomplete="off"
         role="combobox"
         aria-autocomplete="list"
@@ -55,9 +56,10 @@
         <div class="suggestions-label">Suggestions</div>
         @for (suggestion of searchService.suggestions(); track suggestion) {
           <button
-            type="button"
+                  type="button"
             class="suggestion-item"
             (click)="selectSuggestion(suggestion)"
+            [attr.aria-label]="'Search for ' + suggestion"
           >
             <i class="pi pi-search"></i>
             <span [innerHTML]="highlightSuggestion(suggestion)"></span>
@@ -104,6 +106,8 @@
               class="search-result-item"
               [class.selected]="selectedIndex() === i"
               (click)="selectResult(result)"
+              (keydown.enter)="selectResult(result)"
+              (keydown.space)="selectResult(result); $event.preventDefault()"
               (mouseenter)="selectedIndex.set(i)"
               role="option"
               [attr.aria-selected]="selectedIndex() === i"
@@ -172,7 +176,7 @@
             <span>Try searching for:</span>
             <div class="suggestion-chips">
               <button
-                type="button"
+                  type="button"
                 class="suggestion-chip"
                 (click)="searchFor('Sprint Training')"
               >
@@ -180,7 +184,7 @@
                 Sprint Training
               </button>
               <button
-                type="button"
+                  type="button"
                 class="suggestion-chip"
                 (click)="searchFor('Quarterback Drills')"
               >
@@ -188,7 +192,7 @@
                 Quarterback Drills
               </button>
               <button
-                type="button"
+                  type="button"
                 class="suggestion-chip"
                 (click)="searchFor('Conditioning')"
               >
@@ -196,7 +200,7 @@
                 Conditioning
               </button>
               <button
-                type="button"
+                  type="button"
                 class="suggestion-chip"
                 (click)="searchFor('Recovery')"
               >
@@ -217,7 +221,7 @@
               <span>Recent Searches</span>
             </div>
             <button
-              type="button"
+                  type="button"
               class="clear-recent-link"
               (click)="clearRecentSearches()"
             >
@@ -227,7 +231,7 @@
           <div class="recent-grid">
             @for (recent of searchService.recentSearches(); track recent) {
               <button
-                type="button"
+                  type="button"
                 class="recent-tag"
                 (click)="searchFor(recent)"
               >
@@ -251,7 +255,7 @@
           <div class="popular-grid">
             @for (popular of popularSearches; track popular) {
               <button
-                type="button"
+                  type="button"
                 class="popular-tag"
                 (click)="searchFor(popular)"
               >
@@ -274,7 +278,7 @@
           </div>
           <div class="quick-links-grid">
             <button
-              type="button"
+                  type="button"
               class="quick-link-card"
               [class.selected]="quickActionIndex() === 0"
               (click)="navigateTo('/training')"
@@ -291,7 +295,7 @@
               </div>
             </button>
             <button
-              type="button"
+                  type="button"
               class="quick-link-card"
               [class.selected]="quickActionIndex() === 1"
               (click)="navigateTo('/exercise-library')"
@@ -308,7 +312,7 @@
               </div>
             </button>
             <button
-              type="button"
+                  type="button"
               class="quick-link-card"
               [class.selected]="quickActionIndex() === 2"
               (click)="navigateTo('/analytics')"
@@ -325,7 +329,7 @@
               </div>
             </button>
             <button
-              type="button"
+                  type="button"
               class="quick-link-card"
               [class.selected]="quickActionIndex() === 3"
               (click)="navigateTo('/roster')"

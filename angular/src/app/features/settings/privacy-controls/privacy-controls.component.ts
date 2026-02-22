@@ -1,4 +1,5 @@
 import { CommonModule, DatePipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +7,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
@@ -14,7 +14,6 @@ import { Dialog } from "primeng/dialog";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -51,13 +50,11 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
 @Component({
   selector: "app-privacy-controls",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
     Card,
-    ToggleSwitch,
     Select,
     InputText,
 
@@ -140,10 +137,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   </div>
                 </div>
                 <div class="setting-control">
-                  <p-toggleswitch
-                    [(ngModel)]="aiProcessingEnabled"
-                    (ngModelChange)="onAiProcessingChange($event)"
-                  ></p-toggleswitch>
+                  <input
+                    type="checkbox"
+                    [checked]="aiProcessingEnabled"
+                    (change)="onAiProcessingChange(isChecked($event))"
+                    aria-label="Enable AI-powered recommendations"
+                  />
                 </div>
               </div>
 
@@ -250,16 +249,18 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                                 progress
                               </p>
                             </div>
-                            <p-toggleswitch
-                              [(ngModel)]="team.performanceSharingEnabled"
-                              (ngModelChange)="
+                            <input
+                              type="checkbox"
+                              [checked]="team.performanceSharingEnabled"
+                              (change)="
                                 onTeamSharingChange(
                                   team.teamId,
                                   'performance',
-                                  $event
+                                  isChecked($event)
                                 )
                               "
-                            ></p-toggleswitch>
+                              [attr.aria-label]="'Share performance data for ' + team.teamName"
+                            />
                           </div>
 
                           <div class="team-toggle">
@@ -267,16 +268,18 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                               <h5>Health Data</h5>
                               <p>Wellness scores, readiness, recovery status</p>
                             </div>
-                            <p-toggleswitch
-                              [(ngModel)]="team.healthSharingEnabled"
-                              (ngModelChange)="
+                            <input
+                              type="checkbox"
+                              [checked]="team.healthSharingEnabled"
+                              (change)="
                                 onTeamSharingChange(
                                   team.teamId,
                                   'health',
-                                  $event
+                                  isChecked($event)
                                 )
                               "
-                            ></p-toggleswitch>
+                              [attr.aria-label]="'Share health data for ' + team.teamName"
+                            />
                           </div>
 
                           @if (
@@ -338,12 +341,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                 </div>
                 <div class="setting-control wide">
                   <p-select
-                    [(ngModel)]="emergencyLevel"
+                    [ngModel]="emergencyLevel"
                     [options]="emergencyLevelOptions"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select level"
-                    (ngModelChange)="onEmergencyLevelChange($event)"
+                    (onChange)="onEmergencyLevelChange($event.value)"
                   ></p-select>
                 </div>
               </div>
@@ -410,10 +413,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   </p>
                 </div>
                 <div class="setting-control">
-                  <p-toggleswitch
-                    [(ngModel)]="researchOptIn"
-                    (ngModelChange)="onResearchOptInChange($event)"
-                  ></p-toggleswitch>
+                  <input
+                    type="checkbox"
+                    [checked]="researchOptIn"
+                    (change)="onResearchOptInChange(isChecked($event))"
+                    aria-label="Opt in to research participation"
+                  />
                 </div>
               </div>
 
@@ -428,10 +433,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   </p>
                 </div>
                 <div class="setting-control">
-                  <p-toggleswitch
-                    [(ngModel)]="marketingOptIn"
-                    (ngModelChange)="onMarketingOptInChange($event)"
-                  ></p-toggleswitch>
+                  <input
+                    type="checkbox"
+                    [checked]="marketingOptIn"
+                    (change)="onMarketingOptInChange(isChecked($event))"
+                    aria-label="Opt in to marketing communications"
+                  />
                 </div>
               </div>
             </p-card>
@@ -540,7 +547,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               id="contactName"
               type="text"
               pInputText
-              [(ngModel)]="newContact.name"
+              [value]="newContact.name ?? ''"
+              (input)="onNewContactNameChange(getInputValue($event))"
               placeholder="Contact name"
             />
           </div>
@@ -550,7 +558,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               id="contactPhone"
               type="tel"
               pInputText
-              [(ngModel)]="newContact.phone"
+              [value]="newContact.phone ?? ''"
+              (input)="onNewContactPhoneChange(getInputValue($event))"
               placeholder="+1 234 567 8900"
             />
           </div>
@@ -558,7 +567,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <label for="contactRelationship">Relationship</label>
             <p-select
               id="contactRelationship"
-              [(ngModel)]="newContact.relationship"
+              [ngModel]="newContact.relationship"
+              (onChange)="onNewContactRelationshipChange($event.value)"
               [options]="relationshipOptions"
               placeholder="Select relationship"
             ></p-select>
@@ -613,7 +623,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               id="deletionReason"
               type="text"
               pInputText
-              [(ngModel)]="deletionReason"
+              [value]="deletionReason"
+              (input)="onDeletionReasonChange(getInputValue($event))"
               placeholder="Help us improve..."
             />
           </div>
@@ -622,7 +633,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <input
               type="text"
               pInputText
-              [(ngModel)]="deleteConfirmText"
+              [value]="deleteConfirmText"
+              (input)="onDeleteConfirmTextChange(getInputValue($event))"
               placeholder="DELETE"
             />
           </div>
@@ -769,6 +781,34 @@ export class PrivacyControlsComponent implements OnInit {
       this.emergencyLevel = settings.emergencySharingLevel;
       this.emergencyContacts.set(settings.emergencyContacts);
     }
+  }
+
+  onNewContactNameChange(value: string): void {
+    this.newContact = { ...this.newContact, name: value };
+  }
+
+  onNewContactPhoneChange(value: string): void {
+    this.newContact = { ...this.newContact, phone: value };
+  }
+
+  onNewContactRelationshipChange(value: string): void {
+    this.newContact = { ...this.newContact, relationship: value };
+  }
+
+  onDeletionReasonChange(value: string): void {
+    this.deletionReason = value;
+  }
+
+  onDeleteConfirmTextChange(value: string): void {
+    this.deleteConfirmText = value;
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | null)?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   // ============================================================================

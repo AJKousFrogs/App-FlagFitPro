@@ -7,14 +7,13 @@ import {
   signal,
 } from "@angular/core";
 import {
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
 import { Card } from "primeng/card";
@@ -59,11 +58,9 @@ interface Goal {
 
 @Component({
   selector: "app-training-builder",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    FormsModule,
     Card,
     Stepper,
     StepList,
@@ -309,7 +306,7 @@ interface Goal {
   styleUrl: "./training-builder.component.scss",
 })
 export class TrainingBuilderComponent {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);

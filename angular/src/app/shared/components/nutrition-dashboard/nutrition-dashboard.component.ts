@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { UIChart } from "primeng/chart";
 import { AutoComplete } from "primeng/autocomplete";
@@ -47,10 +47,9 @@ interface Meal {
 
 @Component({
   selector: "app-nutrition-dashboard",
-  standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     Card,
     UIChart,
     AutoComplete,
@@ -69,7 +68,7 @@ interface Meal {
       <p-card header="Food Logger" class="food-search-card">
         <div class="food-search-container">
           <p-autoComplete
-            [(ngModel)]="selectedFood"
+            [formControl]="selectedFoodControl"
             [suggestions]="foodSuggestions()"
             (completeMethod)="searchFoods($event)"
             field="description"
@@ -94,7 +93,7 @@ interface Meal {
 
           <app-button
             iconLeft="pi-plus"
-            [disabled]="!selectedFood"
+            [disabled]="!selectedFoodControl.value"
             (clicked)="addFoodToMeal()"
             >Add Food</app-button
           >
@@ -262,7 +261,7 @@ export class NutritionDashboardComponent {
   private nutritionService = inject(NutritionService);
   private logger = inject(LoggerService);
 
-  selectedFood: USDAFood | null = null;
+  readonly selectedFoodControl = new FormControl<USDAFood | string | null>(null);
   foodSuggestions = signal<USDAFood[]>([]);
   nutritionGoals = signal<NutritionGoal[]>([]);
   todaysMeals = signal<Meal[]>([]);
@@ -294,11 +293,12 @@ export class NutritionDashboardComponent {
   }
 
   addFoodToMeal() {
-    if (this.selectedFood) {
+    const selectedFood = this.selectedFoodControl.value;
+    if (selectedFood && typeof selectedFood === "object") {
       firstValueFrom(
-        this.nutritionService.addFoodToCurrentMeal(this.selectedFood),
+        this.nutritionService.addFoodToCurrentMeal(selectedFood as USDAFood),
       ).then(() => {
-        this.selectedFood = null;
+        this.selectedFoodControl.setValue(null);
         this.loadTodaysMeals(); // Refresh meals
         this.loadNutritionGoals(); // Update progress
       });

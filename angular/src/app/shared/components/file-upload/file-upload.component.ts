@@ -33,7 +33,6 @@ export interface UploadedFile {
  */
 @Component({
   selector: "app-file-upload",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

@@ -12,28 +12,28 @@
 
         <!-- Tab Navigation -->
         <div class="tab-navigation">
-          <button
+          <button type="button"
             class="tab-btn"
             [class.active]="activeTab() === 'active'"
             (click)="activeTab.set('active')"
           >
             Active Injuries
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
             [class.active]="activeTab() === 'rtp'"
             (click)="activeTab.set('rtp')"
           >
             In Recovery
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
             [class.active]="activeTab() === 'cleared'"
             (click)="activeTab.set('cleared')"
           >
             Cleared
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
             [class.active]="activeTab() === 'history'"
             (click)="activeTab.set('history')"
@@ -398,13 +398,13 @@
         [modal]="true"
         class="injury-report-dialog"
       >
-        <div class="report-form">
+        <form [formGroup]="reportFormGroup" class="report-form">
           <div class="form-field">
             <label for="player">Player</label>
             <p-select
               inputId="player"
               [options]="playerOptions()"
-              [(ngModel)]="reportForm.playerId"
+              formControlName="playerId"
               optionLabel="label"
               optionValue="value"
               placeholder="Select player"
@@ -419,7 +419,7 @@
               <label for="injuryDate">Injury Date</label>
               <p-datepicker
                 inputId="injuryDate"
-                [(ngModel)]="reportForm.injuryDate"
+                formControlName="injuryDate"
                 [showIcon]="true"
                 dateFormat="M d, yy"
                 [attr.aria-label]="'Select injury date'"
@@ -430,7 +430,7 @@
               <p-select
                 inputId="injuryTime"
                 [options]="timeOptions"
-                [(ngModel)]="reportForm.injuryTime"
+                formControlName="injuryTime"
                 optionLabel="label"
                 optionValue="value"
                 [attr.aria-label]="'Select time of injury'"
@@ -444,7 +444,7 @@
               <p-select
                 inputId="bodyPart"
                 [options]="bodyPartOptions"
-                [(ngModel)]="reportForm.bodyPart"
+                formControlName="bodyPart"
                 optionLabel="label"
                 optionValue="value"
                 [attr.aria-label]="'Select body part'"
@@ -455,7 +455,7 @@
               <p-select
                 inputId="injuryType"
                 [options]="injuryTypeOptions"
-                [(ngModel)]="reportForm.injuryType"
+                formControlName="injuryType"
                 optionLabel="label"
                 optionValue="value"
                 [attr.aria-label]="'Select injury type'"
@@ -471,7 +471,7 @@
                   <p-radioButton
                     name="side"
                     value="left"
-                    [(ngModel)]="reportForm.side"
+                    formControlName="side"
                     inputId="sideLeft"
                   ></p-radioButton>
                   <label for="sideLeft">Left</label>
@@ -480,7 +480,7 @@
                   <p-radioButton
                     name="side"
                     value="right"
-                    [(ngModel)]="reportForm.side"
+                    formControlName="side"
                     inputId="sideRight"
                   ></p-radioButton>
                   <label for="sideRight">Right</label>
@@ -494,7 +494,7 @@
                   <p-radioButton
                     name="severity"
                     value="mild"
-                    [(ngModel)]="reportForm.severity"
+                    formControlName="severity"
                     inputId="sevMild"
                   ></p-radioButton>
                   <label for="sevMild">Mild</label>
@@ -503,7 +503,7 @@
                   <p-radioButton
                     name="severity"
                     value="moderate"
-                    [(ngModel)]="reportForm.severity"
+                    formControlName="severity"
                     inputId="sevMod"
                   ></p-radioButton>
                   <label for="sevMod">Moderate</label>
@@ -512,7 +512,7 @@
                   <p-radioButton
                     name="severity"
                     value="severe"
-                    [(ngModel)]="reportForm.severity"
+                    formControlName="severity"
                     inputId="sevSev"
                   ></p-radioButton>
                   <label for="sevSev">Severe</label>
@@ -526,7 +526,7 @@
             <p-select
               inputId="howHappened"
               [options]="howHappenedOptions"
-              [(ngModel)]="reportForm.howHappened"
+              formControlName="howHappened"
               optionLabel="label"
               optionValue="value"
               [attr.aria-label]="'Select how injury happened'"
@@ -538,7 +538,7 @@
             <textarea
               pTextarea
               id="description"
-              [(ngModel)]="reportForm.description"
+              formControlName="description"
               placeholder="Describe what happened..."
               rows="3"
             ></textarea>
@@ -549,7 +549,7 @@
             <div class="checkbox-group">
               <div class="checkbox-option">
                 <p-checkbox
-                  [(ngModel)]="reportForm.actions.iceApplied"
+                  formControlName="actionIceApplied"
                   [binary]="true"
                   variant="filled"
                   inputId="actIce"
@@ -558,7 +558,7 @@
               </div>
               <div class="checkbox-option">
                 <p-checkbox
-                  [(ngModel)]="reportForm.actions.removedFromActivity"
+                  formControlName="actionRemovedFromActivity"
                   [binary]="true"
                   variant="filled"
                   inputId="actRemoved"
@@ -567,7 +567,7 @@
               </div>
               <div class="checkbox-option">
                 <p-checkbox
-                  [(ngModel)]="reportForm.actions.medicalContacted"
+                  formControlName="actionMedicalContacted"
                   [binary]="true"
                   variant="filled"
                   inputId="actMedical"
@@ -576,7 +576,7 @@
               </div>
               <div class="checkbox-option">
                 <p-checkbox
-                  [(ngModel)]="reportForm.actions.sentForImaging"
+                  formControlName="actionSentForImaging"
                   [binary]="true"
                   variant="filled"
                   inputId="actImaging"
@@ -585,7 +585,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </form>
 
         <ng-template #footer>
           <app-button variant="secondary" (clicked)="showReportDialog = false"
@@ -593,7 +593,7 @@
           >
           <app-button
             iconLeft="pi-check"
-            [disabled]="!reportForm.playerId || !reportForm.bodyPart"
+            [disabled]="reportFormGroup.invalid"
             (clicked)="submitReport()"
             >Report & Start RTP</app-button
           >
@@ -607,11 +607,11 @@
         [modal]="true"
         class="injury-checkin-dialog"
       >
-        <div class="checkin-form">
+        <form [formGroup]="checkinFormGroup" class="checkin-form">
           <div class="form-field">
             <label>Pain Level (0 = no pain, 10 = severe)</label>
             <p-inputNumber
-              [(ngModel)]="checkinForm.painLevel"
+              formControlName="painLevel"
               [min]="0"
               [max]="10"
               [showButtons]="true"
@@ -620,7 +620,7 @@
           <div class="form-field">
             <label>Function Level (0 = none, 10 = full)</label>
             <p-inputNumber
-              [(ngModel)]="checkinForm.functionLevel"
+              formControlName="functionLevel"
               [min]="0"
               [max]="10"
               [showButtons]="true"
@@ -629,7 +629,7 @@
           <div class="form-field">
             <label>Confidence Level (0 = none, 10 = full)</label>
             <p-inputNumber
-              [(ngModel)]="checkinForm.confidenceLevel"
+              formControlName="confidenceLevel"
               [min]="0"
               [max]="10"
               [showButtons]="true"
@@ -640,12 +640,12 @@
             <textarea
               pTextarea
               id="checkinNotes"
-              [(ngModel)]="checkinForm.notes"
+              formControlName="notes"
               placeholder="How did today go?"
               rows="3"
             ></textarea>
           </div>
-        </div>
+        </form>
 
         <ng-template #footer>
           <app-button variant="secondary" (clicked)="showCheckinDialog = false"

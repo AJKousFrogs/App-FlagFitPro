@@ -22,7 +22,6 @@ import { formatDate } from "../../shared/utils/date.utils";
 
 @Component({
   selector: "app-flag-load",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

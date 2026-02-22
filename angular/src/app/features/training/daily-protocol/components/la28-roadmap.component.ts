@@ -57,7 +57,6 @@ interface Milestone {
 
 @Component({
   selector: "app-la28-roadmap",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Tag,

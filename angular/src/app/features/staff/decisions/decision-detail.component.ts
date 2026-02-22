@@ -42,7 +42,6 @@ import type {
 
 @Component({
   selector: "app-decision-detail",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

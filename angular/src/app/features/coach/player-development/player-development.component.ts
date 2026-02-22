@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -25,7 +24,6 @@ import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 
@@ -113,11 +111,9 @@ const COMPARE_OPTIONS = [
 
 @Component({
   selector: "app-player-development",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     LazyChartComponent,
     DatePicker,
@@ -125,7 +121,6 @@ const COMPARE_OPTIONS = [
     
     InputText,
     ProgressBar,
-    RadioButton,
     Select,
     TableModule,
     StatusTagComponent,
@@ -159,11 +154,10 @@ const COMPARE_OPTIONS = [
             <p-select
               inputId="player-select"
               [options]="playerOptions()"
-              [(ngModel)]="selectedPlayerId"
+              (onChange)="onSelectedPlayerIdChange($event.value)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
-              (onValueChange)="onPlayerChange()"
               class="w-full"
               [attr.aria-label]="'Select player'"
             ></p-select>
@@ -173,7 +167,7 @@ const COMPARE_OPTIONS = [
             <p-select
               inputId="compare-select"
               [options]="compareOptions"
-              [(ngModel)]="compareToValue"
+              (onChange)="onCompareToValueChange($event.value)"
               optionLabel="label"
               optionValue="value"
               placeholder="Position Avg"
@@ -357,21 +351,19 @@ const COMPARE_OPTIONS = [
               <p-select
                 inputId="metric-filter"
                 [options]="physicalMetrics"
-                [(ngModel)]="selectedMetric"
+                (onChange)="onSelectedMetricChange($event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
-                (onValueChange)="onMetricChange()"
                 [attr.aria-label]="'Select performance metric'"
               ></p-select>
               <p-select
                 inputId="period-filter"
                 [options]="periodOptions"
-                [(ngModel)]="selectedPeriod"
+                (onChange)="onSelectedPeriodChange($event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Period"
-                (onValueChange)="onMetricChange()"
                 [attr.aria-label]="'Select time period'"
               ></p-select>
             </div>
@@ -481,7 +473,7 @@ const COMPARE_OPTIONS = [
             <p-select
               inputId="goal-player-select"
               [options]="playerOptions()"
-              [(ngModel)]="goalForm.playerId"
+              (onChange)="onGoalPlayerIdChange($event.value)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
@@ -495,12 +487,14 @@ const COMPARE_OPTIONS = [
             <div class="radio-group">
               @for (cat of goalCategories; track cat.value) {
                 <div class="radio-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
                     name="category"
                     [value]="cat.value"
-                    [(ngModel)]="goalForm.category"
-                    [inputId]="'cat-' + cat.value"
-                  ></p-radioButton>
+                    [id]="'cat-' + cat.value"
+                    [checked]="goalForm.category === cat.value"
+                    (change)="onGoalCategoryOptionChange(cat.value)"
+                  />
                   <label [for]="'cat-' + cat.value">{{ cat.label }}</label>
                 </div>
               }
@@ -513,7 +507,7 @@ const COMPARE_OPTIONS = [
               <p-select
                 inputId="goal-metric-select"
                 [options]="physicalMetrics"
-                [(ngModel)]="goalForm.metric"
+                (onChange)="onGoalMetricChange($event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
@@ -526,7 +520,8 @@ const COMPARE_OPTIONS = [
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="goalForm.currentValue"
+                [value]="goalForm.currentValue"
+                (input)="onGoalCurrentValueChange(getInputValue($event))"
                 placeholder="e.g., 4.52s"
               />
             </div>
@@ -538,7 +533,8 @@ const COMPARE_OPTIONS = [
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="goalForm.targetValue"
+                [value]="goalForm.targetValue"
+                (input)="onGoalTargetValueChange(getInputValue($event))"
                 placeholder="e.g., 4.45s"
               />
             </div>
@@ -546,7 +542,7 @@ const COMPARE_OPTIONS = [
               <label for="goal-due-date">Target Date</label>
               <p-datepicker
                 inputId="goal-due-date"
-                [(ngModel)]="goalForm.dueDate"
+                (onSelect)="onGoalDueDateChange($event)"
                 [showIcon]="true"
                 class="w-full"
                 [attr.aria-label]="'Select target date for goal'"
@@ -558,7 +554,8 @@ const COMPARE_OPTIONS = [
             <label>Notes (optional)</label>
             <textarea
               pTextarea
-              [(ngModel)]="goalForm.notes"
+              [value]="goalForm.notes"
+              (input)="onGoalNotesChange(getInputValue($event))"
               rows="3"
               placeholder="Additional notes..."
             ></textarea>
@@ -587,7 +584,8 @@ const COMPARE_OPTIONS = [
             <label>Note</label>
             <textarea
               pTextarea
-              [(ngModel)]="noteContent"
+              [value]="noteContent"
+              (input)="onNoteContentChange(getInputValue($event))"
               rows="5"
               placeholder="Enter your development notes..."
             ></textarea>
@@ -760,6 +758,25 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.loadData();
   }
 
+  onSelectedPlayerIdChange(value: string | null): void {
+    this.selectedPlayerId = value;
+    this.onPlayerChange();
+  }
+
+  onCompareToValueChange(value: string | null): void {
+    this.compareToValue = value ?? "position-avg";
+  }
+
+  onSelectedMetricChange(value: string | null): void {
+    this.selectedMetric = value ?? "40-yard";
+    this.onMetricChange();
+  }
+
+  onSelectedPeriodChange(value: string | null): void {
+    this.selectedPeriod = value ?? "6-months";
+    this.onMetricChange();
+  }
+
   async loadData(): Promise<void> {
     this.isLoading.set(true);
 
@@ -792,6 +809,49 @@ export class PlayerDevelopmentComponent implements OnInit {
       dueDate: null as Date | null,
       notes: "",
     };
+  }
+
+  onGoalPlayerIdChange(value: string | null): void {
+    this.goalForm = { ...this.goalForm, playerId: value ?? "" };
+  }
+
+  onGoalCategoryChange(value: "physical" | "skill" | "stats" | "compliance"): void {
+    this.goalForm = { ...this.goalForm, category: value };
+  }
+
+  onGoalCategoryOptionChange(value: string): void {
+    this.onGoalCategoryChange(
+      value as "physical" | "skill" | "stats" | "compliance",
+    );
+  }
+
+  onGoalMetricChange(value: string | null): void {
+    this.goalForm = { ...this.goalForm, metric: value ?? "" };
+  }
+
+  onGoalCurrentValueChange(value: string): void {
+    this.goalForm = { ...this.goalForm, currentValue: value };
+  }
+
+  onGoalTargetValueChange(value: string): void {
+    this.goalForm = { ...this.goalForm, targetValue: value };
+  }
+
+  onGoalDueDateChange(value: Date | null): void {
+    this.goalForm = { ...this.goalForm, dueDate: value };
+  }
+
+  onGoalNotesChange(value: string): void {
+    this.goalForm = { ...this.goalForm, notes: value };
+  }
+
+  onNoteContentChange(value: string): void {
+    this.noteContent = value;
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
   }
 
   onPlayerChange(): void {

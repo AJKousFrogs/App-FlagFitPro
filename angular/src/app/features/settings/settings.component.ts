@@ -72,7 +72,6 @@ import { NewTeamRequestDialogComponent } from "./components/new-team-request-dia
 
 @Component({
   selector: "app-settings",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -487,8 +486,8 @@ export class SettingsComponent implements OnInit {
   /**
    * Handle team selection change
    */
-  onTeamChange(event: { value: string | null }): void {
-    if (event.value === "__new_team__") {
+  onTeamChange(value: string | null): void {
+    if (value === "__new_team__") {
       // Reset the dropdown selection and show new team dialog
       this.profileForm.get("teamId")?.setValue(null);
       this.showNewTeamDialog = true;

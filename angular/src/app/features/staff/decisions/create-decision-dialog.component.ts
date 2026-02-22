@@ -5,6 +5,7 @@
  */
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +15,6 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { TIME } from "@core/constants";
 import type {
   CreateDecisionRequest,
@@ -39,7 +39,6 @@ import { Textarea } from "primeng/textarea";
 
 @Component({
   selector: "app-create-decision-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -82,7 +81,8 @@ import { Textarea } from "primeng/textarea";
               <p-select
                 inputId="athlete-select"
                 [options]="athletes()"
-                [(ngModel)]="formData.athleteId"
+                [ngModel]="formData.athleteId"
+                (onChange)="onAthleteChange($event.value)"
                 optionLabel="name"
                 optionValue="id"
                 placeholder="Select an athlete"
@@ -111,10 +111,10 @@ import { Textarea } from "primeng/textarea";
               <p-select
                 inputId="decision-type-select"
                 [options]="decisionTypeOptions"
-                [(ngModel)]="formData.decisionType"
+                [ngModel]="formData.decisionType"
+                (onChange)="onDecisionTypeValueChange($event.value)"
                 placeholder="Select decision type"
                 class="w-full"
-                (onValueChange)="onDecisionTypeChange()"
                 [attr.aria-label]="'Select decision type'"
               ></p-select>
             </div>
@@ -140,10 +140,11 @@ import { Textarea } from "primeng/textarea";
               <textarea
                 pInputTextarea
                 id="decision-summary"
-                [(ngModel)]="formData.decisionSummary"
+                [value]="formData.decisionSummary"
+                (input)="onDecisionSummaryInput($event)"
                 placeholder="e.g., Reduced sprint volume by 50% due to elevated ACWR"
                 rows="3"
-                [maxlength]="500"
+                maxlength="500"
                 class="w-full"
                 [attr.aria-label]="'Decision summary'"
                 [attr.aria-describedby]="'decision-summary-hint'"
@@ -167,7 +168,8 @@ import { Textarea } from "primeng/textarea";
               @for (point of availableDataPoints(); track point) {
                 <div class="data-point-item">
                   <p-checkbox
-                    [(ngModel)]="point.selected"
+                    [ngModel]="point.selected"
+                    (onChange)="onDataPointToggle(point.label, $event.checked)"
                     [binary]="true"
                     variant="filled"
                     [inputId]="point.id"
@@ -202,7 +204,8 @@ import { Textarea } from "primeng/textarea";
                   <input
                     type="text"
                     pInputText
-                    [(ngModel)]="formData.decisionBasis.constraints[$index]"
+                    [value]="formData.decisionBasis.constraints[$index]"
+                    (input)="onConstraintInput($index, $event)"
                     placeholder="e.g., RTP Phase 2, No sprinting >80%"
                     class="w-full"
                   />
@@ -237,10 +240,10 @@ import { Textarea } from "primeng/textarea";
               <p-select
                 inputId="review-trigger-select"
                 [options]="reviewTriggerOptions"
-                [(ngModel)]="formData.reviewTrigger"
+                [ngModel]="formData.reviewTrigger"
+                (onChange)="onReviewTriggerValueChange($event.value)"
                 placeholder="Select review trigger"
                 class="w-full"
-                (onValueChange)="onReviewTriggerChange()"
                 [attr.aria-label]="'Select review trigger'"
               ></p-select>
             </div>
@@ -690,6 +693,43 @@ export class CreateDecisionDialogComponent {
 
   addConstraint(): void {
     this.formData.decisionBasis.constraints.push("");
+  }
+
+  onAthleteChange(value: string | null | undefined): void {
+    this.formData.athleteId = value ?? "";
+  }
+
+  onDecisionTypeValueChange(value: DecisionType | null | undefined): void {
+    this.formData.decisionType = value ?? ("other" as DecisionType);
+    this.onDecisionTypeChange();
+  }
+
+  onDecisionSummaryInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.formData.decisionSummary = input?.value ?? "";
+  }
+
+  onDataPointToggle(label: string, checked: boolean | undefined): void {
+    const isChecked = !!checked;
+    const current = this.formData.decisionBasis.dataPoints;
+
+    if (isChecked && !current.includes(label)) {
+      this.formData.decisionBasis.dataPoints = [...current, label];
+    } else if (!isChecked && current.includes(label)) {
+      this.formData.decisionBasis.dataPoints = current.filter(
+        (point) => point !== label,
+      );
+    }
+  }
+
+  onConstraintInput(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.formData.decisionBasis.constraints[index] = input?.value ?? "";
+  }
+
+  onReviewTriggerValueChange(value: ReviewTrigger | null | undefined): void {
+    this.formData.reviewTrigger = value ?? ("in_7d" as ReviewTrigger);
+    this.onReviewTriggerChange();
   }
 
   removeConstraint(index: number): void {

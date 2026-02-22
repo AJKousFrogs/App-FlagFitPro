@@ -31,7 +31,6 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 @Component({
   selector: "app-announcements-banner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

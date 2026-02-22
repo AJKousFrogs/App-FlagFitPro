@@ -51,7 +51,10 @@ import { ChannelService } from "../../core/services/channel.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
-import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
+import {
+  ContinuityIndicatorsService,
+  type ContinuityEvent,
+} from "../../core/services/continuity-indicators.service";
 import { AcwrSpikeDetectionService } from "../../core/services/acwr-spike-detection.service";
 import {
   PrivacySettingsService,
@@ -121,7 +124,6 @@ interface AnnouncementBanner {
 
 @Component({
   selector: "app-player-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -462,8 +464,7 @@ export class PlayerDashboardComponent {
   });
 
   // Continuity Events
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  continuityEvents = signal<any[]>([]);
+  continuityEvents = signal<ContinuityEvent[]>([]);
 
   constructor() {
     this.headerService.setDashboardHeader();
@@ -560,9 +561,10 @@ export class PlayerDashboardComponent {
         this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
 
         // Training days logged: use when backend provides it; fallback to null
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const statsAny = stats as any;
-        this.trainingDaysLogged.set(statsAny?.trainingDaysLogged ?? null);
+        const statsWithDays = stats as
+          | (typeof stats & { trainingDaysLogged?: number | null })
+          | null;
+        this.trainingDaysLogged.set(statsWithDays?.trainingDaysLogged ?? null);
 
         // Load readiness score from wellness service
         this.loadReadinessScore();

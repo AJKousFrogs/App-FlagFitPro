@@ -39,7 +39,6 @@ export type SkeletonVariant =
  */
 @Component({
   selector: "app-skeleton-loader",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
@@ -305,7 +304,6 @@ export class SkeletonLoaderComponent {
  */
 @Component({
   selector: "app-skeleton-repeat",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, SkeletonLoaderComponent],
   template: `

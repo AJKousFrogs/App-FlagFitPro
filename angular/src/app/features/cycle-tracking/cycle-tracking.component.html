@@ -294,12 +294,13 @@
             <div class="symptoms-grid">
               @for (symptom of symptomOptions; track symptom.value) {
                 <div class="symptom-option">
-                  <p-checkbox
-                    [value]="symptom.value"
-                    [(ngModel)]="todaySymptoms.symptoms"
-                    variant="filled"
-                    [inputId]="'symptom-' + symptom.value"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    [id]="'symptom-' + symptom.value"
+                    [checked]="todaySymptoms.symptoms.includes(symptom.value)"
+                    (change)="onTodaySymptomToggle(symptom.value, isChecked($event))"
+                    [attr.aria-label]="symptom.label"
+                  />
                   <label [for]="'symptom-' + symptom.value">{{
                     symptom.label
                   }}</label>
@@ -312,11 +313,15 @@
               <div class="severity-options">
                 @for (sev of severityOptions; track sev.value) {
                   <div class="severity-option">
-                    <p-radioButton
+                    <input
+                      type="radio"
+                      name="today-severity"
                       [value]="sev.value"
-                      [(ngModel)]="todaySymptoms.severity"
-                      [inputId]="'severity-' + sev.value"
-                    ></p-radioButton>
+                      [id]="'severity-' + sev.value"
+                      [checked]="todaySymptoms.severity === sev.value"
+                      (change)="onTodaySeverityChange(sev.value)"
+                      [attr.aria-label]="sev.label"
+                    />
                     <label [for]="'severity-' + sev.value">{{
                       sev.label
                     }}</label>
@@ -398,11 +403,15 @@
               <div class="privacy-radios">
                 @for (option of privacyOptions; track option.value) {
                   <div class="privacy-radio">
-                    <p-radioButton
+                    <input
+                      type="radio"
+                      name="privacy-visibility"
                       [value]="option.value"
-                      [(ngModel)]="privacySettings.visibility"
-                      [inputId]="'privacy-' + option.value"
-                    ></p-radioButton>
+                      [id]="'privacy-' + option.value"
+                      [checked]="privacySettings.visibility === option.value"
+                      (change)="onPrivacyVisibilityChange(option.value)"
+                      [attr.aria-label]="option.label"
+                    />
                     <label [for]="'privacy-' + option.value">{{
                       option.label
                     }}</label>
@@ -416,7 +425,7 @@
               <p-select
                 id="retention"
                 [options]="retentionOptions"
-                [(ngModel)]="privacySettings.retention"
+                (onChange)="onPrivacyRetentionChange($event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Auto-delete data older than..."
@@ -459,7 +468,7 @@
               <label for="start-date">Period Start Date *</label>
               <p-datepicker
                 id="start-date"
-                [(ngModel)]="newPeriod.startDate"
+                (onSelect)="onNewPeriodStartDateChange($event)"
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
@@ -470,7 +479,7 @@
               <label for="end-date">Period End Date (optional)</label>
               <p-datepicker
                 id="end-date"
-                [(ngModel)]="newPeriod.endDate"
+                (onSelect)="onNewPeriodEndDateChange($event)"
                 [minDate]="newPeriod.startDate"
                 [maxDate]="today"
                 dateFormat="M dd, yy"
@@ -487,11 +496,15 @@
             <div class="flow-options">
               @for (flow of flowIntensityOptions; track flow.value) {
                 <div class="flow-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
+                    name="period-flow-intensity"
                     [value]="flow.value"
-                    [(ngModel)]="newPeriod.flowIntensity"
-                    [inputId]="'flow-' + flow.value"
-                  ></p-radioButton>
+                    [id]="'flow-' + flow.value"
+                    [checked]="newPeriod.flowIntensity === flow.value"
+                    (change)="onNewPeriodFlowIntensityChange(flow.value)"
+                    [attr.aria-label]="flow.label"
+                  />
                   <label [for]="'flow-' + flow.value">{{ flow.label }}</label>
                 </div>
               }
@@ -504,12 +517,13 @@
             <div class="symptoms-checkboxes">
               @for (symptom of symptomOptions; track symptom.value) {
                 <div class="symptom-checkbox">
-                  <p-checkbox
-                    [value]="symptom.value"
-                    [(ngModel)]="newPeriod.symptoms"
-                    variant="filled"
-                    [inputId]="'log-symptom-' + symptom.value"
-                  ></p-checkbox>
+                  <input
+                    type="checkbox"
+                    [id]="'log-symptom-' + symptom.value"
+                    [checked]="newPeriod.symptoms.includes(symptom.value)"
+                    (change)="onNewPeriodSymptomToggle(symptom.value, isChecked($event))"
+                    [attr.aria-label]="symptom.label"
+                  />
                   <label [for]="'log-symptom-' + symptom.value">{{
                     symptom.label
                   }}</label>
@@ -524,7 +538,8 @@
             <textarea
               pInputTextarea
               id="period-notes"
-              [(ngModel)]="newPeriod.notes"
+              [value]="newPeriod.notes"
+              (input)="onNewPeriodNotesChange(getInputValue($event))"
               rows="2"
               placeholder="Any additional notes..."
             ></textarea>

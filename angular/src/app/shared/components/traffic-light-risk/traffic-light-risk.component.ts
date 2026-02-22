@@ -27,7 +27,6 @@ import { RiskZone } from "../../../core/models/acwr.models";
 
 @Component({
   selector: "app-traffic-light-risk",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   templateUrl: "./traffic-light-risk.component.html",

@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,10 +8,8 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -129,16 +128,27 @@ interface ReportPrivacySettings {
   removeDates: boolean;
 }
 
+interface PsychologyReportForm {
+  type: string;
+  period: string;
+  notes: string;
+}
+
+interface PreCompForm {
+  name: string;
+  significance: "regular" | "important" | "championship";
+  readiness: number;
+  concern: string;
+}
+
 @Component({
   selector: "app-psychology-reports",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
     RouterModule,
     Card,
-    Checkbox,
     LazyChartComponent,
     Dialog,
     InputText,
@@ -193,7 +203,7 @@ export class PsychologyReportsComponent implements OnInit {
     this.showPreCompDialog.set(true);
 
   // Form data
-  newReport = {
+  newReport: PsychologyReportForm = {
     type: "weekly",
     period: "7days",
     notes: "",
@@ -212,7 +222,7 @@ export class PsychologyReportsComponent implements OnInit {
     removeDates: false,
   };
 
-  newPreComp = {
+  newPreComp: PreCompForm = {
     name: "",
     significance: "regular" as "regular" | "important" | "championship",
     readiness: 7,
@@ -299,6 +309,66 @@ export class PsychologyReportsComponent implements OnInit {
 
   loadWellnessData(): void {
     this.loadData();
+  }
+
+  updateSelectedPeriod(value: string | null | undefined): void {
+    this.selectedPeriod = value ?? "30days";
+    this.loadWellnessData();
+  }
+
+  updateNewReportType(value: string | null | undefined): void {
+    this.newReport = { ...this.newReport, type: value ?? "weekly" };
+  }
+
+  updateNewReportPeriod(value: string | null | undefined): void {
+    this.newReport = { ...this.newReport, period: value ?? "7days" };
+  }
+
+  updateNewReportNotes(value: string | null | undefined): void {
+    this.newReport = { ...this.newReport, notes: value ?? "" };
+  }
+
+  updatePrivacySetting(
+    field: keyof ReportPrivacySettings,
+    value: boolean | null | undefined,
+  ): void {
+    this.privacySettings = {
+      ...this.privacySettings,
+      [field]: value ?? false,
+    };
+  }
+
+  updateNewPreCompText(
+    field: "name" | "concern",
+    value: string | null | undefined,
+  ): void {
+    this.newPreComp = { ...this.newPreComp, [field]: value ?? "" };
+  }
+
+  updateNewPreCompSignificance(
+    value: "regular" | "important" | "championship" | null | undefined,
+  ): void {
+    this.newPreComp = {
+      ...this.newPreComp,
+      significance: value ?? "regular",
+    };
+  }
+
+  updateNewPreCompReadiness(value: string | number | null | undefined): void {
+    const parsed = typeof value === "number" ? value : Number(value ?? 7);
+    this.newPreComp = {
+      ...this.newPreComp,
+      readiness: Number.isFinite(parsed) ? parsed : 7,
+    };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   private async loadData(): Promise<void> {

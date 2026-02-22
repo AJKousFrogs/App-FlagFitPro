@@ -12,7 +12,6 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
  */
 @Component({
   selector: "app-page-header",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `

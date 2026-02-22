@@ -28,7 +28,6 @@ export interface SkillData {
 
 @Component({
   selector: "app-interactive-skills-radar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Card, UIChart, ProgressBar, ButtonComponent],
   template: `

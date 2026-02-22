@@ -9,10 +9,8 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
@@ -50,11 +48,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
 
 @Component({
   selector: "app-attendance",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     TableModule,
     StatusTagComponent,
@@ -64,7 +60,6 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     Textarea,
     Select,
     DatePicker,
-    Checkbox,
     ProgressBar,
     Avatar,
     MainLayoutComponent,
@@ -138,10 +133,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 <div class="filter-actions">
                   <p-select
                     [options]="eventTypeOptions"
-                    [(ngModel)]="selectedEventType"
+                    (onChange)="onSelectedEventTypeChange($event.value)"
                     placeholder="All Types"
                     [showClear]="true"
-                    (onValueChange)="filterEvents()"
                   ></p-select>
                 </div>
               </div>
@@ -310,7 +304,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 id="eventTitle"
                 type="text"
                 pInputText
-                [(ngModel)]="newEvent.title"
+                [value]="newEvent.title"
+                (input)="onNewEventTitleChange(getInputValue($event))"
                 placeholder="e.g., Team Practice"
               />
             </div>
@@ -320,7 +315,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <p-select
                 id="eventType"
                 [options]="eventTypeOptions"
-                [(ngModel)]="newEvent.event_type"
+                (onChange)="onNewEventTypeChange($event.value)"
                 placeholder="Select type"
                 class="w-full"
               ></p-select>
@@ -331,7 +326,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 <label for="startTime">Start Time *</label>
                 <p-datepicker
                   id="startTime"
-                  [(ngModel)]="newEvent.start_time"
+                  (onSelect)="onNewEventStartTimeChange($event)"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
                   class="w-full"
@@ -342,7 +337,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 <label for="endTime">End Time</label>
                 <p-datepicker
                   id="endTime"
-                  [(ngModel)]="newEvent.end_time"
+                  (onSelect)="onNewEventEndTimeChange($event)"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
                   class="w-full"
@@ -356,7 +351,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 id="location"
                 type="text"
                 pInputText
-                [(ngModel)]="newEvent.location"
+                [value]="newEvent.location"
+                (input)="onNewEventLocationChange(getInputValue($event))"
                 placeholder="e.g., Main Field"
               />
             </div>
@@ -366,19 +362,20 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <textarea
                 id="description"
                 pInputTextarea
-                [(ngModel)]="newEvent.description"
+                [value]="newEvent.description"
+                (input)="onNewEventDescriptionChange(getInputValue($event))"
                 rows="3"
                 placeholder="Optional details..."
               ></textarea>
             </div>
 
             <div class="form-field checkbox-field">
-              <p-checkbox
-                [(ngModel)]="newEvent.is_mandatory"
-                [binary]="true"
-                variant="filled"
-                inputId="mandatory"
-              ></p-checkbox>
+              <input
+                type="checkbox"
+                id="mandatory"
+                [checked]="newEvent.is_mandatory"
+                (change)="onNewEventMandatoryChange(isChecked($event))"
+              />
               <label for="mandatory">Mandatory attendance</label>
             </div>
           </div>
@@ -572,6 +569,11 @@ export class AttendanceComponent implements OnInit {
     // Computed signal handles filtering
   }
 
+  onSelectedEventTypeChange(value: EventType | null): void {
+    this.selectedEventType = value;
+    this.filterEvents();
+  }
+
   selectEvent(event: TeamEvent): void {
     this.selectedEvent.set(event);
   }
@@ -606,6 +608,50 @@ export class AttendanceComponent implements OnInit {
       is_mandatory: true,
     };
     this.showCreateEventDialog = true;
+  }
+
+  onNewEventTitleChange(value: string): void {
+    this.newEvent = { ...this.newEvent, title: value };
+  }
+
+  onNewEventTypeChange(value: EventType | null): void {
+    this.newEvent = { ...this.newEvent, event_type: value ?? "practice" };
+  }
+
+  onNewEventStartTimeChange(value: Date | null): void {
+    this.newEvent = { ...this.newEvent, start_time: value };
+  }
+
+  onNewEventEndTimeChange(value: Date | null): void {
+    this.newEvent = { ...this.newEvent, end_time: value };
+  }
+
+  onNewEventLocationChange(value: string): void {
+    this.newEvent = { ...this.newEvent, location: value };
+  }
+
+  onNewEventDescriptionChange(value: string): void {
+    this.newEvent = { ...this.newEvent, description: value };
+  }
+
+  onNewEventMandatoryChange(value: boolean): void {
+    this.newEvent = { ...this.newEvent, is_mandatory: value };
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      return target.value;
+    }
+    return "";
+  }
+
+  isChecked(event: Event): boolean {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      return target.checked;
+    }
+    return false;
   }
 
   canCreateEvent(): boolean {

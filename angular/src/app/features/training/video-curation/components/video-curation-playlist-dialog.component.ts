@@ -27,7 +27,6 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
 
 @Component({
   selector: "app-video-curation-playlist-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -55,7 +54,8 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
             id="playlistName"
             type="text"
             pInputText
-            [(ngModel)]="form.name"
+            [value]="form.name"
+            (input)="onNameInput($event)"
             placeholder="e.g., QB Pre-Game Drills"
           />
         </div>
@@ -65,7 +65,8 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
           <textarea
             id="playlistDescription"
             pTextarea
-            [(ngModel)]="form.description"
+            [value]="form.description"
+            (input)="onDescriptionInput($event)"
             [rows]="3"
             placeholder="Describe this playlist..."
           ></textarea>
@@ -75,7 +76,8 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
           <label for="playlistPosition">Target Position</label>
           <p-select
             inputId="playlistPosition"
-            [(ngModel)]="form.position"
+            [ngModel]="form.position"
+            (onChange)="onPositionChange($event.value)"
             [options]="positionOptions"
             placeholder="Select position (optional)"
             [showClear]="true"
@@ -87,7 +89,8 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
           <label for="playlistFocus">Training Focus</label>
           <p-multiselect
             inputId="playlistFocus"
-            [(ngModel)]="form.focus"
+            [ngModel]="form.focus"
+            (onChange)="onFocusChange($event.value)"
             [options]="focusOptions"
             placeholder="Select focus areas"
             [maxSelectedLabels]="3"
@@ -99,7 +102,8 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
           <label for="playlistVideos">Select Videos</label>
           <p-multiselect
             inputId="playlistVideos"
-            [(ngModel)]="form.videoIds"
+            [ngModel]="form.videoIds"
+            (onChange)="onVideoIdsChange($event.value)"
             [options]="videoOptions()"
             optionLabel="label"
             optionValue="value"
@@ -173,5 +177,27 @@ export class VideoCurationPlaylistDialogComponent {
     this.visible.set(false);
     this.cancel.emit();
     this.resetForm();
+  }
+
+  onNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.form.name = input?.value ?? "";
+  }
+
+  onDescriptionInput(event: Event): void {
+    const input = event.target as HTMLTextAreaElement | null;
+    this.form.description = input?.value ?? "";
+  }
+
+  onPositionChange(value: PlaylistForm["position"] | undefined): void {
+    this.form.position = value ?? null;
+  }
+
+  onFocusChange(value: PlaylistForm["focus"] | undefined): void {
+    this.form.focus = value ?? [];
+  }
+
+  onVideoIdsChange(value: string[] | null | undefined): void {
+    this.form.videoIds = value ?? [];
   }
 }

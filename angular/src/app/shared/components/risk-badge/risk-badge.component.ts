@@ -24,7 +24,6 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
 
 @Component({
   selector: "app-risk-badge",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Tooltip, StatusTagComponent],
   template: `

@@ -5,6 +5,7 @@
  */
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,7 +13,6 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 
 // PrimeNG
 import { Avatar } from "primeng/avatar";
@@ -37,7 +37,6 @@ import {
 
 @Component({
   selector: "app-video-curation-video-table",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -58,8 +57,8 @@ import {
           <input
             type="text"
             pInputText
-            [ngModel]="searchValue()"
-            (ngModelChange)="searchValue.set($event); onFilterChange()"
+            [value]="searchValue()"
+            (input)="onSearchInput($event)"
             placeholder="Search videos..."
             aria-label="Search videos by title or description"
             class="filter-input"
@@ -68,7 +67,7 @@ import {
         <p-select
           inputId="position-filter"
           [ngModel]="positionValue()"
-          (ngModelChange)="positionValue.set($event); onFilterChange()"
+          (onChange)="onPositionFilterChange($event.value)"
           [options]="positionOptions"
           placeholder="All Positions"
           [showClear]="true"
@@ -78,7 +77,7 @@ import {
         <p-select
           inputId="status-filter"
           [ngModel]="statusValue()"
-          (ngModelChange)="statusValue.set($event); onFilterChange()"
+          (onChange)="onStatusFilterChange($event.value)"
           [options]="statusOptions"
           placeholder="All Statuses"
           [showClear]="true"
@@ -275,5 +274,21 @@ export class VideoCurationVideoTableComponent {
       position: this.positionValue(),
       status: this.statusValue(),
     });
+  }
+
+  onSearchInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.searchValue.set(input?.value ?? "");
+    this.onFilterChange();
+  }
+
+  onPositionFilterChange(value: FlagPosition | null | undefined): void {
+    this.positionValue.set(value ?? null);
+    this.onFilterChange();
+  }
+
+  onStatusFilterChange(value: string | null | undefined): void {
+    this.statusValue.set(value ?? null);
+    this.onFilterChange();
   }
 }

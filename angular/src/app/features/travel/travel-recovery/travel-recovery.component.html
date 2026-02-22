@@ -17,7 +17,7 @@
 
         <!-- Travel Type Selector -->
         <div class="travel-type-selector">
-          <button
+          <button type="button"
             class="type-btn"
             [class.active]="travelType() === 'flight'"
             (click)="setTravelType('flight')"
@@ -28,7 +28,7 @@
               <small>Jet lag protocols</small>
             </div>
           </button>
-          <button
+          <button type="button"
             class="type-btn"
             [class.active]="travelType() === 'car'"
             (click)="setTravelType('car')"
@@ -57,7 +57,7 @@
               </ng-template>
 
               <div class="olympic-buttons">
-                <button
+                <button type="button"
                   class="olympic-btn la28"
                   (click)="selectOlympicVenue('LA28')"
                   [class.selected]="selectedOlympicVenue === 'LA28'"
@@ -68,7 +68,7 @@
                     <span class="venue-tz">UTC-8</span>
                   </div>
                 </button>
-                <button
+                <button type="button"
                   class="olympic-btn brisbane"
                   (click)="selectOlympicVenue('BRISBANE32')"
                   [class.selected]="selectedOlympicVenue === 'BRISBANE32'"
@@ -125,8 +125,10 @@
                   <label>Trip Name</label>
                   <input
                     pInputText
-                    [(ngModel)]="tripForm.tripName"
+                    [value]="tripForm.tripName"
+                    (input)="updateTripFormText('tripName', getInputValue($event))"
                     placeholder="e.g., World Championships 2025"
+                    aria-label="Trip name"
                   />
                 </div>
 
@@ -134,7 +136,8 @@
                   <label for="departure-timezone">Home Timezone</label>
                   <p-select
                     inputId="departure-timezone"
-                    [(ngModel)]="tripForm.departureTimezone"
+                    [ngModel]="tripForm.departureTimezone"
+                    (onChange)="updateTripFormTimezone('departureTimezone', $event.value)"
                     [options]="timezones"
                     optionLabel="label"
                     optionValue="value"
@@ -150,7 +153,8 @@
                   <label for="arrival-timezone">Destination Timezone</label>
                   <p-select
                     inputId="arrival-timezone"
-                    [(ngModel)]="tripForm.arrivalTimezone"
+                    [ngModel]="tripForm.arrivalTimezone"
+                    (onChange)="updateTripFormTimezone('arrivalTimezone', $event.value)"
                     [options]="timezones"
                     optionLabel="label"
                     optionValue="value"
@@ -166,7 +170,8 @@
                   <label for="departure-date">Departure Date</label>
                   <p-datepicker
                     inputId="departure-date"
-                    [(ngModel)]="tripForm.departureDate"
+                    [ngModel]="tripForm.departureDate"
+                    (onSelect)="updateTripFormDate('departureDate', $event)"
                     [showIcon]="true"
                     [minDate]="minDate"
                     dateFormat="dd/mm/yy"
@@ -179,7 +184,8 @@
                   <label for="arrival-date">Arrival Date</label>
                   <p-datepicker
                     inputId="arrival-date"
-                    [(ngModel)]="tripForm.arrivalDate"
+                    [ngModel]="tripForm.arrivalDate"
+                    (onSelect)="updateTripFormDate('arrivalDate', $event)"
                     [showIcon]="true"
                     [minDate]="tripForm.departureDate || minDate"
                     dateFormat="dd/mm/yy"
@@ -194,7 +200,8 @@
                   >
                   <p-datepicker
                     inputId="competition-date"
-                    [(ngModel)]="tripForm.competitionDate"
+                    [ngModel]="tripForm.competitionDate"
+                    (onSelect)="updateTripFormDate('competitionDate', $event)"
                     [showIcon]="true"
                     [minDate]="tripForm.arrivalDate || minDate"
                     dateFormat="dd/mm/yy"
@@ -207,7 +214,8 @@
                   <label for="flight-duration">Flight Duration (hours)</label>
                   <p-inputNumber
                     inputId="flight-duration"
-                    [(ngModel)]="tripForm.flightDuration"
+                    [ngModel]="tripForm.flightDuration"
+                    (ngModelChange)="updateTripFormNumber('flightDuration', $event ?? null)"
                     [min]="1"
                     [max]="30"
                     [showButtons]="true"
@@ -220,7 +228,8 @@
                   <label for="layovers">Number of Layovers</label>
                   <p-inputNumber
                     inputId="layovers"
-                    [(ngModel)]="tripForm.layovers"
+                    [ngModel]="tripForm.layovers"
+                    (ngModelChange)="updateTripFormNumber('layovers', $event ?? null)"
                     [min]="0"
                     [max]="5"
                     [showButtons]="true"
@@ -245,8 +254,7 @@
             <!-- Severity Overview -->
             <div class="severity-section">
               <p-card
-                class="severity-card"
-                [ngClass]="'severity-' + jetLagSeverity().level"
+                [class]="'severity-card severity-' + jetLagSeverity().level"
               >
                 <div class="severity-content">
                   <div class="severity-gauge">
@@ -654,13 +662,14 @@
                             class="checklist-item"
                             [class.essential]="item.essential"
                           >
-                            <p-checkbox
-                              [(ngModel)]="item.packed"
-                              [binary]="true"
-                              variant="filled"
-                              [inputId]="item.id"
-                            ></p-checkbox>
-                            <label [for]="item.id" [class.packed]="item.packed">
+                            <input
+                              type="checkbox"
+                              [id]="'travel-' + category.category + '-' + item.id"
+                              [checked]="item.packed"
+                              (change)="updateTravelChecklistPacked(category.category, item.id, isChecked($event))"
+                              [attr.aria-label]="item.item"
+                            />
+                            <label [for]="'travel-' + category.category + '-' + item.id" [class.packed]="item.packed">
                               {{ item.item }}
                               @if (item.essential) {
                                 <span class="essential-badge">Essential</span>
@@ -702,8 +711,10 @@
                     <label>Trip Name</label>
                     <input
                       pInputText
-                      [(ngModel)]="carTripForm.tripName"
+                      [value]="carTripForm.tripName"
+                      (input)="updateCarTripText('tripName', getInputValue($event))"
                       placeholder="e.g., Regional Tournament Drive"
+                      aria-label="Car trip name"
                     />
                   </div>
 
@@ -713,7 +724,8 @@
                     >
                     <p-inputNumber
                       inputId="car-duration"
-                      [(ngModel)]="carTripForm.duration"
+                      [ngModel]="carTripForm.duration"
+                      (ngModelChange)="updateCarTripDuration($event ?? null)"
                       [min]="1"
                       [max]="18"
                       [showButtons]="true"
@@ -727,14 +739,14 @@
                   <div class="form-field">
                     <label>Are you driving?</label>
                     <div class="driver-toggle">
-                      <p-checkbox
-                        inputId="car-is-driver"
-                        [(ngModel)]="carTripForm.isDriver"
-                        [binary]="true"
-                        variant="filled"
-                        label="Yes, I'm driving"
+                      <input
+                        id="car-is-driver"
+                        type="checkbox"
+                        [checked]="carTripForm.isDriver"
+                        (change)="updateCarTripDriver(isChecked($event))"
                         [attr.aria-label]="'Are you driving this trip'"
-                      ></p-checkbox>
+                      />
+                      <label for="car-is-driver">Yes, I'm driving</label>
                     </div>
                   </div>
 
@@ -744,7 +756,8 @@
                     >
                     <p-datepicker
                       inputId="car-competition-date"
-                      [(ngModel)]="carTripForm.competitionDate"
+                      [ngModel]="carTripForm.competitionDate"
+                      (onSelect)="updateCarTripDate($event)"
                       [showIcon]="true"
                       [minDate]="minDate"
                       dateFormat="dd/mm/yy"
@@ -828,8 +841,7 @@
               <div class="car-protocol-dashboard">
                 <!-- Risk Overview -->
                 <p-card
-                  class="car-risk-card"
-                  [ngClass]="'risk-' + carTravelRisk().riskLevel"
+                  [class]="'car-risk-card risk-' + carTravelRisk().riskLevel"
                 >
                   <div class="car-risk-content">
                     <div class="risk-header">
@@ -1109,8 +1121,7 @@
                                   [class]="'importance-' + rec.importance"
                                 >
                                   <i
-                                    class="pi"
-                                    [ngClass]="getCategoryIcon(rec.category)"
+                                    [class]="'pi ' + getCategoryIcon(rec.category)"
                                   ></i>
                                   <span>{{ rec.action }}</span>
                                   @if (rec.duration) {
@@ -1160,6 +1171,7 @@
                                     research.pubmedId
                                   "
                                   target="_blank"
+                                  rel="noopener noreferrer"
                                   class="pubmed-link"
                                 >
                                   PubMed: {{ research.pubmedId }}
@@ -1202,14 +1214,15 @@
                                 class="checklist-item"
                                 [class.essential]="item.essential"
                               >
-                                <p-checkbox
-                                  [(ngModel)]="item.packed"
-                                  [binary]="true"
-                                  variant="filled"
-                                  [inputId]="item.id"
-                                ></p-checkbox>
+                                  <input
+                                    type="checkbox"
+                                    [id]="'car-' + category.category + '-' + item.id"
+                                    [checked]="item.packed"
+                                    (change)="updateCarChecklistPacked(category.category, item.id, isChecked($event))"
+                                    [attr.aria-label]="item.item"
+                                  />
                                 <label
-                                  [for]="item.id"
+                                  [for]="'car-' + category.category + '-' + item.id"
                                   [class.packed]="item.packed"
                                 >
                                   {{ item.item }}

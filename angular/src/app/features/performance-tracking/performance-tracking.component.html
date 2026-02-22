@@ -298,8 +298,7 @@
                 </div>
                 <p-select
                   [options]="positionOptions"
-                  [(ngModel)]="selectedPositionValue"
-                  (ngModelChange)="onPositionChange({ value: $event })"
+                  (onChange)="onPositionSelectionChange($event.value)"
                   placeholder="Change Position"
                   class="position-selector"
                 ></p-select>
@@ -496,7 +495,7 @@
                 <label for="sprint10">10m Sprint (sec)</label>
                 <p-inputNumber
                   id="sprint10"
-                  [(ngModel)]="newPerformance.sprint10"
+                  (onInput)="updatePerformanceMetric('sprint10', $event.value ?? null)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   mode="decimal"
@@ -508,7 +507,7 @@
                 <label for="sprint20">20m Sprint (sec)</label>
                 <p-inputNumber
                   id="sprint20"
-                  [(ngModel)]="newPerformance.sprint20"
+                  (onInput)="updatePerformanceMetric('sprint20', $event.value ?? null)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   mode="decimal"
@@ -520,7 +519,7 @@
                 <label for="dash40">40-Yard Dash (sec)</label>
                 <p-inputNumber
                   id="dash40"
-                  [(ngModel)]="newPerformance.dash40"
+                  (onInput)="updatePerformanceMetric('dash40', $event.value ?? null)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   mode="decimal"
@@ -537,7 +536,7 @@
                 <label for="proAgility">Pro Agility 5-10-5 (sec)</label>
                 <p-inputNumber
                   id="proAgility"
-                  [(ngModel)]="newPerformance.proAgility"
+                  (onInput)="updatePerformanceMetric('proAgility', $event.value ?? null)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   mode="decimal"
@@ -549,7 +548,7 @@
                 <label for="lDrill">L-Drill (sec)</label>
                 <p-inputNumber
                   id="lDrill"
-                  [(ngModel)]="newPerformance.lDrill"
+                  (onInput)="updatePerformanceMetric('lDrill', $event.value ?? null)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   mode="decimal"
@@ -561,7 +560,7 @@
                 <label for="reactiveAgility">Reactive Agility (sec)</label>
                 <p-inputNumber
                   id="reactiveAgility"
-                  [(ngModel)]="newPerformance.reactiveAgility"
+                  (onInput)="updatePerformanceMetric('reactiveAgility', $event.value ?? null)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   mode="decimal"
@@ -578,7 +577,7 @@
                 <label for="vertical">Vertical Jump (in)</label>
                 <p-inputNumber
                   id="vertical"
-                  [(ngModel)]="newPerformance.vertical"
+                  (onInput)="updatePerformanceMetric('vertical', $event.value ?? null)"
                   mode="decimal"
                   placeholder="e.g., 38"
                   class="w-full"
@@ -588,7 +587,7 @@
                 <label for="broad">Broad Jump (in)</label>
                 <p-inputNumber
                   id="broad"
-                  [(ngModel)]="newPerformance.broad"
+                  (onInput)="updatePerformanceMetric('broad', $event.value ?? null)"
                   mode="decimal"
                   placeholder="e.g., 122"
                   class="w-full"
@@ -598,7 +597,7 @@
                 <label for="rsi">RSI (ratio)</label>
                 <p-inputNumber
                   id="rsi"
-                  [(ngModel)]="newPerformance.rsi"
+                  (onInput)="updatePerformanceMetric('rsi', $event.value ?? null)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   mode="decimal"
@@ -615,7 +614,7 @@
                 <label for="bench">Bench Press 1RM (lbs)</label>
                 <p-inputNumber
                   id="bench"
-                  [(ngModel)]="newPerformance.bench"
+                  (onInput)="updatePerformanceMetric('bench', $event.value ?? null)"
                   mode="decimal"
                   placeholder="e.g., 225"
                   class="w-full"
@@ -625,7 +624,7 @@
                 <label for="squat">Back Squat 1RM (lbs)</label>
                 <p-inputNumber
                   id="squat"
-                  [(ngModel)]="newPerformance.squat"
+                  (onInput)="updatePerformanceMetric('squat', $event.value ?? null)"
                   mode="decimal"
                   placeholder="e.g., 315"
                   class="w-full"
@@ -635,7 +634,7 @@
                 <label for="deadlift">Deadlift 1RM (lbs)</label>
                 <p-inputNumber
                   id="deadlift"
-                  [(ngModel)]="newPerformance.deadlift"
+                  (onInput)="updatePerformanceMetric('deadlift', $event.value ?? null)"
                   mode="decimal"
                   placeholder="e.g., 365"
                   class="w-full"
@@ -650,7 +649,7 @@
                 <label for="bodyWeight">Body Weight (lbs)</label>
                 <p-inputNumber
                   id="bodyWeight"
-                  [(ngModel)]="newPerformance.bodyWeight"
+                  (onInput)="updatePerformanceMetric('bodyWeight', $event.value ?? null)"
                   mode="decimal"
                   placeholder="For relative strength"
                   class="w-full"
@@ -668,7 +667,8 @@
                 id="notes"
                 type="text"
                 pInputText
-                [(ngModel)]="newPerformance.notes"
+                [value]="newPerformance.notes"
+                (input)="updatePerformanceNotes(getInputValue($event))"
                 placeholder="Any notes about this session"
                 class="w-full"
               />

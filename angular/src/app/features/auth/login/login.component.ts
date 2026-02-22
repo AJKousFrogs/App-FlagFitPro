@@ -10,9 +10,10 @@ import {
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
+  NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
@@ -32,9 +33,14 @@ import {
   markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
+type LoginForm = FormGroup<{
+  email: FormControl<string>;
+  password: FormControl<string>;
+  remember: FormControl<boolean>;
+}>;
+
 @Component({
   selector: "app-login",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
@@ -165,7 +171,7 @@ import {
   styleUrl: "./login.component.scss",
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private authFlowDataService = inject(AuthFlowDataService);
   private router = inject(Router);
@@ -173,7 +179,7 @@ export class LoginComponent {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
-  loginForm: FormGroup;
+  loginForm: LoginForm;
   isLoading = signal(false);
   csrfToken = signal("");
   isDemoMode = signal(false);
@@ -254,7 +260,7 @@ export class LoginComponent {
     }
 
     this.isLoading.set(true);
-    const credentials = this.loginForm.value;
+    const credentials = this.loginForm.getRawValue();
 
     this.authService
       .login(credentials)

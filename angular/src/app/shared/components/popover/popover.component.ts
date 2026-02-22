@@ -7,7 +7,6 @@ import {
   ElementRef,
   ChangeDetectionStrategy,
   effect,
-  HostListener,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -21,7 +20,6 @@ export type PopoverPosition = "top" | "right" | "bottom" | "left";
  */
 @Component({
   selector: "app-popover",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
@@ -159,6 +157,9 @@ export type PopoverPosition = "top" | "right" | "bottom" | "left";
       }
     `,
   ],
+  host: {
+    "(document:click)": "onDocumentClick($event)",
+  },
 })
 export class PopoverComponent {
   wrapper = viewChild<ElementRef>("wrapper");
@@ -184,7 +185,6 @@ export class PopoverComponent {
     });
   }
 
-  @HostListener("document:click", ["$event"])
   onDocumentClick(event: MouseEvent): void {
     if (this.trigger() === "click" && this.isOpen()) {
       const wrapperEl = this.wrapper()?.nativeElement;

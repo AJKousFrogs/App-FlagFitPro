@@ -18,10 +18,8 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
@@ -151,14 +149,11 @@ const PHASE_PRESETS = [
 
 @Component({
   selector: "app-program-builder",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     DatePipe,
     Card,
-    Checkbox,
     DatePicker,
     InputNumber,
     InputText,
@@ -423,7 +418,8 @@ const PHASE_PRESETS = [
                 id="programName"
                 type="text"
                 pInputText
-                [(ngModel)]="formData.name"
+                [value]="formData.name"
+                (input)="onProgramNameChange(getInputValue($event))"
                 placeholder="e.g., Spring Championship Prep"
                 class="w-full"
               />
@@ -434,7 +430,8 @@ const PHASE_PRESETS = [
               <textarea
                 pTextarea
                 id="programDesc"
-                [(ngModel)]="formData.description"
+                [value]="formData.description"
+                (input)="onProgramDescriptionChange(getInputValue($event))"
                 placeholder="Program goals and focus areas..."
                 rows="3"
               ></textarea>
@@ -445,7 +442,7 @@ const PHASE_PRESETS = [
                 <label for="startDate">Start Date</label>
                 <p-datepicker
                   inputId="startDate"
-                  [(ngModel)]="formData.startDate"
+                  (onSelect)="onProgramStartDateChange($event)"
                   [showIcon]="true"
                   dateFormat="M d, yy"
                 ></p-datepicker>
@@ -455,7 +452,7 @@ const PHASE_PRESETS = [
                 <p-select
                   inputId="duration"
                   [options]="durationOptions"
-                  [(ngModel)]="formData.durationWeeks"
+                  (onChange)="onProgramDurationWeeksChange($event.value)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -469,7 +466,8 @@ const PHASE_PRESETS = [
                   id="goalEvent"
                   type="text"
                   pInputText
-                  [(ngModel)]="formData.goalEvent"
+                  [value]="formData.goalEvent"
+                  (input)="onProgramGoalEventChange(getInputValue($event))"
                   placeholder="e.g., Spring Championship"
                 />
               </div>
@@ -478,7 +476,7 @@ const PHASE_PRESETS = [
                 <p-select
                   inputId="programType"
                   [options]="programTypeOptions"
-                  [(ngModel)]="formData.type"
+                  (onChange)="onProgramTypeChange($event.value)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -526,14 +524,14 @@ const PHASE_PRESETS = [
                   <span class="day-label">{{ day }}</span>
                   <p-select
                     [options]="sessionTypeOptions"
-                    [(ngModel)]="formData.weekTemplate[day].sessionType"
+                    (onChange)="onWeekTemplateSessionTypeChange(day, $event.value)"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Session type"
                     class="week-session-select"
                   ></p-select>
                   <p-inputNumber
-                    [(ngModel)]="formData.weekTemplate[day].duration"
+                    (onInput)="onWeekTemplateDurationChange(day, $event.value ?? null)"
                     suffix=" min"
                     [min]="0"
                     [max]="180"
@@ -541,7 +539,7 @@ const PHASE_PRESETS = [
                   ></p-inputNumber>
                   <span class="rpe-label">RPE:</span>
                   <p-inputNumber
-                    [(ngModel)]="formData.weekTemplate[day].targetRpe"
+                    (onInput)="onWeekTemplateTargetRpeChange(day, $event.value ?? null)"
                     [min]="1"
                     [max]="10"
                     class="week-rpe-input"
@@ -556,13 +554,12 @@ const PHASE_PRESETS = [
             <h4>Assign to Players</h4>
             <div class="player-selection">
               <div class="select-all">
-                <p-checkbox
-                  [(ngModel)]="selectAllPlayers"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="selectAll"
-                  (onValueChange)="toggleSelectAll()"
-                ></p-checkbox>
+                <input
+                  type="checkbox"
+                  [checked]="selectAllPlayers"
+                  (change)="onSelectAllPlayersChange(isChecked($event))"
+                  id="selectAll"
+                />
                 <label for="selectAll"
                   >Select All Active Players ({{ activePlayerCount() }})</label
                 >
@@ -574,13 +571,13 @@ const PHASE_PRESETS = [
                     class="player-option"
                     [class.disabled]="player.status === 'rtp'"
                   >
-                    <p-checkbox
-                      [(ngModel)]="player.selected"
-                      [binary]="true"
-                      variant="filled"
-                      [inputId]="'player-' + player.id"
+                    <input
+                      type="checkbox"
+                      [checked]="player.selected"
+                      (change)="onTeamMemberSelectedChange(player.id, isChecked($event))"
+                      [id]="'player-' + player.id"
                       [disabled]="player.status === 'rtp'"
-                    ></p-checkbox>
+                    />
                     <label [for]="'player-' + player.id">
                       {{ player.name }} ({{ player.position }})
                       @if (player.status !== "active") {
@@ -686,6 +683,93 @@ export class ProgramBuilderComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  onProgramNameChange(value: string): void {
+    this.formData = { ...this.formData, name: value };
+  }
+
+  onProgramDescriptionChange(value: string): void {
+    this.formData = { ...this.formData, description: value };
+  }
+
+  onProgramStartDateChange(value: Date | null): void {
+    this.formData = {
+      ...this.formData,
+      startDate: value ?? this.formData.startDate,
+    };
+  }
+
+  onProgramDurationWeeksChange(value: number | null): void {
+    this.formData = {
+      ...this.formData,
+      durationWeeks: value ?? this.formData.durationWeeks,
+    };
+  }
+
+  onProgramGoalEventChange(value: string): void {
+    this.formData = { ...this.formData, goalEvent: value };
+  }
+
+  onProgramTypeChange(value: ProgramType | null): void {
+    this.formData = {
+      ...this.formData,
+      type: value ?? this.formData.type,
+    };
+  }
+
+  onWeekTemplateSessionTypeChange(day: DayOfWeek, value: SessionType): void {
+    this.formData = {
+      ...this.formData,
+      weekTemplate: {
+        ...this.formData.weekTemplate,
+        [day]: { ...this.formData.weekTemplate[day], sessionType: value },
+      },
+    };
+  }
+
+  onWeekTemplateDurationChange(day: DayOfWeek, value: number | null): void {
+    this.formData = {
+      ...this.formData,
+      weekTemplate: {
+        ...this.formData.weekTemplate,
+        [day]: {
+          ...this.formData.weekTemplate[day],
+          duration: value ?? this.formData.weekTemplate[day].duration,
+        },
+      },
+    };
+  }
+
+  onWeekTemplateTargetRpeChange(day: DayOfWeek, value: number | null): void {
+    this.formData = {
+      ...this.formData,
+      weekTemplate: {
+        ...this.formData.weekTemplate,
+        [day]: {
+          ...this.formData.weekTemplate[day],
+          targetRpe: value ?? this.formData.weekTemplate[day].targetRpe,
+        },
+      },
+    };
+  }
+
+  onSelectAllPlayersChange(value: boolean): void {
+    this.selectAllPlayers = value;
+    this.toggleSelectAll();
+  }
+
+  onTeamMemberSelectedChange(memberId: string, value: boolean): void {
+    this.teamMembers.update((members) =>
+      members.map((member) =>
+        member.id === memberId ? { ...member, selected: value } : member,
+      ),
+    );
+    this.selectAllPlayers =
+      this.teamMembers().filter((m) => m.status === "active").length > 0 &&
+      this.teamMembers()
+        .filter((m) => m.status === "active")
+        .every((m) => m.selected);
   }
 
   async loadData(): Promise<void> {
@@ -899,6 +983,15 @@ export class ProgramBuilderComponent implements OnInit {
 
   openProgramMenu(_event: Event, _program: TrainingProgram): void {
     // Menu would open here
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
+      ?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   // Helper methods

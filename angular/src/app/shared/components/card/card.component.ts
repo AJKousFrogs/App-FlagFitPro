@@ -26,7 +26,6 @@ import { COLORS } from "../../../core/constants/app.constants";
  */
 @Component({
   selector: "app-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
@@ -42,8 +41,8 @@ import { COLORS } from "../../../core/constants/app.constants";
       (mousedown)="onMouseDown()"
       (mouseup)="onMouseUp()"
       (click)="handleClick($event)"
-      (keydown.enter)="handleKeyPress($any($event))"
-      (keydown.space)="handleKeyPress($any($event))"
+      (keydown.enter)="handleKeyPress($event)"
+      (keydown.space)="handleKeyPress($event)"
     >
       <!-- Accent bar for session/feature cards -->
       @if (showAccent()) {
@@ -194,8 +193,8 @@ export class CardComponent {
     }
   }
 
-  handleKeyPress(event: KeyboardEvent): void {
-    if (this.clickable()) {
+  handleKeyPress(event: Event): void {
+    if (this.clickable() && event instanceof KeyboardEvent) {
       event.preventDefault();
       this.cardClick.emit(event as unknown as MouseEvent);
     }

@@ -23,7 +23,6 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 
 @Component({
   selector: "app-decision-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -57,7 +57,6 @@ interface EquipmentOption {
 
 @Component({
   selector: "app-smart-training-form",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -108,7 +107,7 @@ interface EquipmentOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Select session type"
-              (ngModelChange)="onSessionTypeChange({ value: $event })"
+              (onChange)="onSessionTypeChange($event.value)"
             >
               <ng-template let-option #item>
                 <div class="session-type-option">
@@ -201,7 +200,7 @@ interface EquipmentOption {
   styleUrl: "./smart-training-form.component.scss",
 })
 export class SmartTrainingFormComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);
@@ -453,9 +452,8 @@ export class SmartTrainingFormComponent implements OnInit {
     }
   }
 
-  onSessionTypeChange(event: { value: string }) {
+  onSessionTypeChange(selectedType: string) {
     // Additional logic when session type changes
-    const selectedType = event.value;
     this.logger.debug("Session type changed to:", toLogContext(selectedType));
   }
 

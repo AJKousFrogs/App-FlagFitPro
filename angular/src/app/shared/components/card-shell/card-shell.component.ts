@@ -49,7 +49,6 @@ import { CommonModule } from "@angular/common";
  */
 @Component({
   selector: "app-card-shell",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

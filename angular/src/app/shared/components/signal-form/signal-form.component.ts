@@ -16,7 +16,6 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { InputText } from "primeng/inputtext";
@@ -31,11 +30,9 @@ import { toLogContext } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-signal-form",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     InputText,
     Message,
@@ -56,7 +53,8 @@ import { toLogContext } from "../../../core/services/logger.service";
             id="name"
             type="text"
             pInputText
-            [(ngModel)]="name"
+            [value]="name()"
+            (input)="onNameInput($event)"
             (blur)="nameField.touched.set(true)"
             [class.ng-invalid]="nameField.showError()"
             [attr.aria-invalid]="nameField.showError()"
@@ -91,7 +89,8 @@ import { toLogContext } from "../../../core/services/logger.service";
             id="email"
             type="email"
             pInputText
-            [(ngModel)]="email"
+            [value]="email()"
+            (input)="onEmailInput($event)"
             (blur)="emailField.touched.set(true)"
             [class.ng-invalid]="emailField.showError()"
             [attr.aria-invalid]="emailField.showError()"
@@ -126,7 +125,8 @@ import { toLogContext } from "../../../core/services/logger.service";
             id="password"
             type="password"
             pInputText
-            [(ngModel)]="password"
+            [value]="password()"
+            (input)="onPasswordInput($event)"
             (blur)="passwordField.touched.set(true)"
             [class.ng-invalid]="passwordField.showError()"
             [attr.aria-invalid]="passwordField.showError()"
@@ -253,5 +253,20 @@ export class SignalFormComponent {
     } else if (this.passwordField.showError()) {
       this.passwordInput()?.nativeElement.focus();
     }
+  }
+
+  onNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.name.set(input?.value ?? "");
+  }
+
+  onEmailInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.email.set(input?.value ?? "");
+  }
+
+  onPasswordInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.password.set(input?.value ?? "");
   }
 }

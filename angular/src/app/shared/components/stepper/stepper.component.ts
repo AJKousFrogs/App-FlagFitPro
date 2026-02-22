@@ -16,7 +16,6 @@ export interface StepperStep {
 
 @Component({
   selector: "app-stepper",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

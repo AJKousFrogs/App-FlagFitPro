@@ -14,7 +14,6 @@ import { CommonModule } from "@angular/common";
  */
 @Component({
   selector: "app-badge",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

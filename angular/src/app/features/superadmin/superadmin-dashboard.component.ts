@@ -9,7 +9,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -27,12 +26,10 @@ import {
 
 @Component({
   selector: "app-superadmin-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterLink,
-    FormsModule,
     Card,
     StatusTagComponent,
     TableModule,
@@ -272,7 +269,8 @@ import {
             <div class="modal-body">
               <p>Please provide a reason for rejection:</p>
               <textarea
-                [(ngModel)]="rejectReason"
+                [value]="rejectReason"
+                (input)="onRejectReasonInput($event)"
                 placeholder="Enter rejection reason..."
                 rows="4"
               ></textarea>
@@ -358,6 +356,10 @@ export class SuperadminDashboardComponent implements OnInit {
     this.showRejectModal = false;
     this.selectedApproval.set(null);
     this.rejectReason = "";
+  }
+
+  onRejectReasonInput(event: Event): void {
+    this.rejectReason = (event.target as HTMLTextAreaElement | null)?.value ?? "";
   }
 
   confirmReject(): void {

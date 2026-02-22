@@ -33,7 +33,6 @@ import {
 
 @Component({
   selector: "app-ai-consent-required",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterLink, ButtonComponent, IconButtonComponent],
   template: `

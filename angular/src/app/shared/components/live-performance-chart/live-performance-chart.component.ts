@@ -47,7 +47,6 @@ interface LivePerformanceApiResponse {
 
 @Component({
   selector: "app-live-performance-chart",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Card, Tag, StatusTagComponent, ProgressBar],
   template: `

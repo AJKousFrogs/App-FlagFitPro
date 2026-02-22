@@ -24,7 +24,6 @@ import { DashboardRoleService } from "./services/dashboard-role.service";
  */
 @Component({
   selector: "app-dashboard",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AppLoadingComponent, CommonModule],
   template: `

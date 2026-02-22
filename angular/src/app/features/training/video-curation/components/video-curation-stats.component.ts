@@ -9,7 +9,6 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-video-curation-stats",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

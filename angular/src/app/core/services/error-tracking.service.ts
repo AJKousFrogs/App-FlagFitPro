@@ -11,7 +11,7 @@
  * @version 1.0.0
  */
 
-import { ErrorHandler, inject, Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { NavigationError, Router } from "@angular/router";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
@@ -43,6 +43,43 @@ export interface Breadcrumb {
   data?: Record<string, unknown>;
 }
 
+interface SentryEvent {
+  breadcrumbs?: Array<Record<string, unknown>>;
+  [key: string]: unknown;
+}
+
+interface SentryScope {
+  setLevel(level: ErrorSeverity): void;
+  setTag(key: string, value: string): void;
+  setExtras(extras: Record<string, unknown>): void;
+  setUser(user: { id?: string; email?: string; role?: string } | null): void;
+}
+
+interface SentryInitOptions {
+  dsn: string;
+  environment: "production" | "development";
+  tracesSampleRate: number;
+  replaysSessionSampleRate: number;
+  replaysOnErrorSampleRate: number;
+  ignoreErrors: string[];
+  beforeSend?: (event: SentryEvent) => SentryEvent | null;
+}
+
+interface SentryApi {
+  init(options: SentryInitOptions): void;
+  withScope(callback: (scope: SentryScope) => void): void;
+  captureException(error: Error): void;
+  captureMessage(message: string): void;
+  addBreadcrumb(breadcrumb: {
+    type: string;
+    category: string;
+    message: string;
+    data?: Record<string, unknown>;
+    level: "fatal" | "error" | "warning" | "info" | "debug";
+  }): void;
+  setUser(user: { id?: string; email?: string; role?: string } | null): void;
+}
+
 /**
  * Error Tracking Service
  *
@@ -65,8 +102,7 @@ export class ErrorTrackingService {
   private isInitialized = false;
 
   // Sentry SDK (loaded dynamically if enabled)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private Sentry: any = null;
+  private Sentry: SentryApi | null = null;
 
   constructor() {
     this.init();
@@ -92,7 +128,7 @@ export class ErrorTrackingService {
         }
 
         const sentryGlobal = (window as unknown as { Sentry?: unknown }).Sentry;
-        if (!sentryGlobal) {
+        if (!this.isSentryApi(sentryGlobal)) {
           this.logger.debug(
             "[ErrorTracking] Sentry global not available, skipping",
           );
@@ -123,8 +159,7 @@ export class ErrorTrackingService {
             ],
 
             // Before sending error, add context
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            beforeSend: (event: any) => {
+            beforeSend: (event: SentryEvent) => {
               // Add breadcrumbs
               event.breadcrumbs = [
                 ...(event.breadcrumbs || []),
@@ -197,8 +232,7 @@ export class ErrorTrackingService {
 
     // Send to Sentry if available
     if (this.Sentry && this.isInitialized) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.Sentry.withScope((scope: any) => {
+      this.Sentry.withScope((scope: SentryScope) => {
         // Set severity
         scope.setLevel(this.mapSeverity(severity));
 
@@ -232,8 +266,7 @@ export class ErrorTrackingService {
 
     // Send to Sentry if available
     if (this.Sentry && this.isInitialized) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.Sentry.withScope((scope: any) => {
+      this.Sentry.withScope((scope: SentryScope) => {
         scope.setLevel(this.mapSeverity(severity));
 
         if (context) {
@@ -345,6 +378,19 @@ export class ErrorTrackingService {
     return severity;
   }
 
+  private isSentryApi(value: unknown): value is SentryApi {
+    if (!value || typeof value !== "object") return false;
+    const candidate = value as Record<string, unknown>;
+    return (
+      typeof candidate["init"] === "function" &&
+      typeof candidate["withScope"] === "function" &&
+      typeof candidate["captureException"] === "function" &&
+      typeof candidate["captureMessage"] === "function" &&
+      typeof candidate["addBreadcrumb"] === "function" &&
+      typeof candidate["setUser"] === "function"
+    );
+  }
+
   /**
    * Get current breadcrumbs (for debugging)
    */
@@ -357,29 +403,5 @@ export class ErrorTrackingService {
    */
   isSentryEnabled(): boolean {
     return this.isInitialized && this.Sentry !== null;
-  }
-}
-
-/**
- * Global Error Handler
- *
- * Replaces Angular's default error handler to capture all unhandled errors.
- */
-@Injectable()
-export class GlobalErrorHandler implements ErrorHandler {
-  private errorTracking = inject(ErrorTrackingService);
-  private logger = inject(LoggerService);
-
-  handleError(error: unknown): void {
-    // Capture the error
-    this.errorTracking.captureError(error, {
-      component: "GlobalErrorHandler",
-      action: "unhandled-error",
-    });
-
-    // Re-throw in development for debugging
-    if (!environment.production) {
-      this.logger.error("Unhandled error:", error);
-    }
   }
 }

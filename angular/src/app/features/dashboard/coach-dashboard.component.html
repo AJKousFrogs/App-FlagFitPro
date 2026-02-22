@@ -61,6 +61,11 @@
                     <div
                       class="priority-athlete-card"
                       (click)="viewPlayer(alert.playerId)"
+                      role="button"
+                      tabindex="0"
+                      [attr.aria-label]="'View player ' + alert.playerName"
+                      (keydown.enter)="viewPlayer(alert.playerId)"
+                      (keydown.space)="viewPlayer(alert.playerId); $event.preventDefault()"
                     >
                       <p-avatar
                         [label]="getPlayerInitials(alert.playerName)"
@@ -137,6 +142,11 @@
                     <div
                       class="priority-athlete-card"
                       (click)="viewPlayer(player.playerId)"
+                      role="button"
+                      tabindex="0"
+                      [attr.aria-label]="'View player ' + player.playerName"
+                      (keydown.enter)="viewPlayer(player.playerId)"
+                      (keydown.space)="viewPlayer(player.playerId); $event.preventDefault()"
                     >
                       <p-avatar
                         [label]="getPlayerInitials(player.playerName)"
@@ -200,6 +210,11 @@
                       <div
                         class="protocol-player-item"
                         (click)="viewPlayer(player.playerId)"
+                        role="button"
+                        tabindex="0"
+                        [attr.aria-label]="'View player ' + player.playerName"
+                        (keydown.enter)="viewPlayer(player.playerId)"
+                        (keydown.space)="viewPlayer(player.playerId); $event.preventDefault()"
                       >
                         <span class="player-name">{{ player.playerName }}</span>
                         <app-status-tag
@@ -233,6 +248,11 @@
                       <div
                         class="protocol-player-item"
                         (click)="viewPlayer(player.playerId)"
+                        role="button"
+                        tabindex="0"
+                        [attr.aria-label]="'View player ' + player.playerName"
+                        (keydown.enter)="viewPlayer(player.playerId)"
+                        (keydown.space)="viewPlayer(player.playerId); $event.preventDefault()"
                       >
                         <span class="player-name">{{ player.playerName }}</span>
                         <app-status-tag
@@ -268,6 +288,11 @@
                       <div
                         class="protocol-player-item"
                         (click)="viewPlayer(player.playerId)"
+                        role="button"
+                        tabindex="0"
+                        [attr.aria-label]="'View player ' + player.playerName"
+                        (keydown.enter)="viewPlayer(player.playerId)"
+                        (keydown.space)="viewPlayer(player.playerId); $event.preventDefault()"
                       >
                         <span class="player-name">{{ player.playerName }}</span>
                         <app-status-tag
@@ -499,14 +524,14 @@
               <app-card [flush]="true">
                 <div class="workspace-tabs-header">
                   <div class="tab-triggers">
-                    <button
+                    <button type="button"
                       class="tab-trigger"
                       [class.active]="activeTab === 'roster'"
                       (click)="activeTab = 'roster'"
                     >
                       <i class="pi pi-users"></i> Team Roster
                     </button>
-                    <button
+                    <button type="button"
                       class="tab-trigger"
                       [class.active]="activeTab === 'analytics'"
                       (click)="activeTab = 'analytics'"
@@ -720,6 +745,18 @@
                                   (click)="
                                     viewOverrideHistory(player.playerId, $event)
                                   "
+                                  role="button"
+                                  tabindex="0"
+                                  [attr.aria-label]="
+                                    'View override history for ' + player.playerName
+                                  "
+                                  (keydown.enter)="
+                                    viewOverrideHistory(player.playerId, $event)
+                                  "
+                                  (keydown.space)="
+                                    viewOverrideHistory(player.playerId, $event);
+                                    $event.preventDefault()
+                                  "
                                   class="override-badge"
                                 ></p-badge>
                               } @else {
@@ -898,7 +935,8 @@
                 name="sessionTitle"
                 type="text"
                 pInputText
-                [(ngModel)]="newSession.title"
+                [value]="newSession.title"
+                (input)="onNewSessionTitleChange(getInputValue($event))"
                 placeholder="e.g., Offensive Drills"
                 class="w-full"
                 autocomplete="off"
@@ -908,7 +946,7 @@
               <label for="coach-sessionType">Type</label>
               <p-select
                 inputId="coach-sessionType"
-                [(ngModel)]="newSession.type"
+                (onChange)="onNewSessionTypeChange($event.value)"
                 [options]="sessionTypes"
                 optionLabel="label"
                 optionValue="value"
@@ -920,7 +958,7 @@
               <label for="coach-sessionDate">Date & Time</label>
               <p-datepicker
                 inputId="coach-sessionDate"
-                [(ngModel)]="newSession.date"
+                (onSelect)="onNewSessionDateChange($event)"
                 [showTime]="true"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
@@ -934,7 +972,8 @@
                 name="sessionDuration"
                 type="number"
                 pInputText
-                [(ngModel)]="newSession.duration"
+                [value]="newSession.duration"
+                (input)="onNewSessionDurationChange(getInputValue($event))"
                 placeholder="90"
                 class="w-full"
                 autocomplete="off"
@@ -946,7 +985,8 @@
                 pTextarea
                 id="coach-sessionNotes"
                 name="sessionNotes"
-                [(ngModel)]="newSession.notes"
+                [value]="newSession.notes"
+                (input)="onNewSessionNotesChange(getInputValue($event))"
                 placeholder="Session notes..."
                 rows="3"
                 class="w-full"
@@ -980,7 +1020,8 @@
               <textarea
                 pTextarea
                 id="messageContent"
-                [(ngModel)]="teamMessageContent"
+                [value]="teamMessageContent"
+                (input)="onTeamMessageContentChange(getInputValue($event))"
                 placeholder="Type your message to the team..."
                 rows="5"
                 class="w-full"
@@ -1015,7 +1056,8 @@
               <textarea
                 pTextarea
                 id="accessMessage"
-                [(ngModel)]="requestAccessMessage"
+                [value]="requestAccessMessage"
+                (input)="onRequestAccessMessageChange(getInputValue($event))"
                 placeholder="Type your request message..."
                 rows="4"
                 class="w-full"

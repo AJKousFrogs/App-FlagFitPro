@@ -81,7 +81,6 @@ interface ChartInstance {
 
 @Component({
   selector: "app-lazy-chart",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ChartSkeletonComponent],
   template: `

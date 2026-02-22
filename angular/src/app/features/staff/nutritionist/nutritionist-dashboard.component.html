@@ -89,8 +89,10 @@
                       <input
                         type="text"
                         pInputText
-                        [(ngModel)]="searchQuery"
+                        [value]="searchQuery"
+                        (input)="onSearchQueryChange(getInputValue($event))"
                         placeholder="Search athletes..."
+                        aria-label="Search athletes"
                       />
                     </div>
                   </div>
@@ -204,9 +206,9 @@
                     <h3>Body Composition Trends</h3>
                     <p-select
                       [options]="athleteSelectOptions()"
-                      [(ngModel)]="selectedAthleteId"
+                      [ngModel]="selectedAthleteId"
+                      (onChange)="onSelectedAthleteIdChange($event.value)"
                       placeholder="Select athlete"
-                      (onValueChange)="loadAthleteComposition()"
                     ></p-select>
                   </div>
 
@@ -538,7 +540,8 @@
               <label>Report Type</label>
               <p-select
                 [options]="reportTypes"
-                [(ngModel)]="selectedReportType"
+                [ngModel]="selectedReportType"
+                (onChange)="onSelectedReportTypeChange($event.value)"
                 placeholder="Select report type"
                 class="w-full"
               ></p-select>
@@ -547,7 +550,8 @@
               <label>Athlete</label>
               <p-select
                 [options]="athleteSelectOptions()"
-                [(ngModel)]="reportAthleteId"
+                [ngModel]="reportAthleteId"
+                (onChange)="onReportAthleteIdChange($event.value)"
                 placeholder="Select athlete"
                 class="w-full"
               ></p-select>
@@ -556,7 +560,8 @@
               <label>Time Period</label>
               <p-select
                 [options]="timePeriods"
-                [(ngModel)]="selectedTimePeriod"
+                [ngModel]="selectedTimePeriod"
+                (onChange)="onSelectedTimePeriodChange($event.value)"
                 placeholder="Select period"
                 class="w-full"
               ></p-select>
@@ -586,9 +591,11 @@
               <input
                 type="text"
                 pInputText
-                [(ngModel)]="newTournament.name"
+                [value]="newTournament.name"
+                (input)="onNewTournamentNameChange(getInputValue($event))"
                 placeholder="e.g., National Championships"
                 class="w-full"
+                aria-label="Tournament name"
               />
             </div>
             <div class="form-row">
@@ -597,9 +604,11 @@
                 <input
                   type="text"
                   pInputText
-                  [(ngModel)]="newTournament.location"
+                  [value]="newTournament.location"
+                  (input)="onNewTournamentLocationChange(getInputValue($event))"
                   placeholder="City, Country"
                   class="w-full"
+                  aria-label="Tournament location"
                 />
               </div>
               <div class="form-group">
@@ -607,9 +616,11 @@
                 <input
                   type="number"
                   pInputText
-                  [(ngModel)]="newTournament.expectedGames"
+                  [value]="newTournament.expectedGames"
+                  (input)="onNewTournamentExpectedGamesChange(getInputValue($event))"
                   min="1"
                   class="w-full"
+                  aria-label="Expected number of games"
                 />
               </div>
             </div>
@@ -619,8 +630,10 @@
                 <input
                   type="number"
                   pInputText
-                  [(ngModel)]="newTournament.temperature"
+                  [value]="newTournament.temperature"
+                  (input)="onNewTournamentTemperatureChange(getInputValue($event))"
                   class="w-full"
+                  aria-label="Expected temperature in Celsius"
                 />
               </div>
               <div class="form-group">
@@ -628,10 +641,12 @@
                 <input
                   type="number"
                   pInputText
-                  [(ngModel)]="newTournament.humidity"
+                  [value]="newTournament.humidity"
+                  (input)="onNewTournamentHumidityChange(getInputValue($event))"
                   min="0"
                   max="100"
                   class="w-full"
+                  aria-label="Expected humidity percentage"
                 />
               </div>
             </div>

@@ -24,7 +24,6 @@ export type AutosaveStatus = "idle" | "saving" | "saved" | "error";
 
 @Component({
   selector: "app-autosave-indicator",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

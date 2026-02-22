@@ -21,7 +21,6 @@ import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-page-error-state",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonComponent],
   template: `

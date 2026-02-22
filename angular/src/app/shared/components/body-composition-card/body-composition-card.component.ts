@@ -11,6 +11,7 @@
  */
 
 import { CommonModule, DecimalPipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +21,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
@@ -48,12 +48,11 @@ interface BodyCompositionData {
 
 @Component({
   selector: "app-body-composition-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    RouterModule,
     FormsModule,
+    RouterModule,
     ButtonComponent,
     CardComponent,
     Tooltip,
@@ -226,7 +225,8 @@ interface BodyCompositionData {
           <label for="weight">Weight (kg) *</label>
           <p-inputNumber
             id="weight"
-            [(ngModel)]="measurementForm.weight"
+            [ngModel]="measurementForm.weight"
+            (ngModelChange)="onMeasurementInput('weight', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
             mode="decimal"
@@ -240,7 +240,8 @@ interface BodyCompositionData {
           <label for="bodyFat">Body Fat (%)</label>
           <p-inputNumber
             id="bodyFat"
-            [(ngModel)]="measurementForm.bodyFat"
+            [ngModel]="measurementForm.bodyFat"
+            (ngModelChange)="onMeasurementInput('bodyFat', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
             mode="decimal"
@@ -256,7 +257,8 @@ interface BodyCompositionData {
           <label for="muscleMass">Muscle Mass (kg)</label>
           <p-inputNumber
             id="muscleMass"
-            [(ngModel)]="measurementForm.muscleMass"
+            [ngModel]="measurementForm.muscleMass"
+            (ngModelChange)="onMeasurementInput('muscleMass', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
             mode="decimal"
@@ -270,7 +272,8 @@ interface BodyCompositionData {
           <label for="bodyWater">Body Water (%)</label>
           <p-inputNumber
             id="bodyWater"
-            [(ngModel)]="measurementForm.bodyWater"
+            [ngModel]="measurementForm.bodyWater"
+            (ngModelChange)="onMeasurementInput('bodyWater', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
             mode="decimal"
@@ -286,7 +289,8 @@ interface BodyCompositionData {
           <label for="bmr">Basal Metabolic Rate (kcal)</label>
           <p-inputNumber
             id="bmr"
-            [(ngModel)]="measurementForm.basalMetabolicRate"
+            [ngModel]="measurementForm.basalMetabolicRate"
+            (ngModelChange)="onMeasurementInput('basalMetabolicRate', $event)"
             mode="decimal"
             [min]="800"
             [max]="4000"
@@ -394,6 +398,13 @@ export class BodyCompositionCardComponent implements OnInit {
       basalMetabolicRate: null,
     };
     this.showLogDialog = true;
+  }
+
+  onMeasurementInput(
+    field: keyof typeof this.measurementForm,
+    value: number | null | undefined,
+  ): void {
+    this.measurementForm[field] = value ?? null;
   }
 
   async saveMeasurement(): Promise<void> {

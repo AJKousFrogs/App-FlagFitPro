@@ -45,7 +45,6 @@ const isBoolean = (value: unknown): value is boolean =>
 
 @Component({
   selector: "app-training-session-detail",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

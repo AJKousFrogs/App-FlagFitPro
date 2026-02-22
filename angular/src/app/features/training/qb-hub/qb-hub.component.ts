@@ -9,7 +9,6 @@ import { QbTrainingScheduleComponent } from "../qb-training-schedule/qb-training
 
 @Component({
   selector: "app-qb-hub",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

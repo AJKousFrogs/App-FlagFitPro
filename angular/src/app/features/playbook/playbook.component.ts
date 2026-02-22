@@ -18,7 +18,6 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { ToastService } from "../../core/services/toast.service";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -82,11 +81,9 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
 
 @Component({
   selector: "app-playbook",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     DatePipe,
     Card,
     Dialog,
@@ -160,13 +157,14 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
               type="text"
               pInputText
               placeholder="Search plays..."
-              [(ngModel)]="searchQuery"
+              [value]="searchQuery()"
+              (input)="onSearchInput($event)"
             />
           </span>
 
           <p-select
             [options]="categoryOptions"
-            [(ngModel)]="selectedCategory"
+            (onChange)="onCategoryChange($event.value)"
             optionLabel="label"
             optionValue="value"
             placeholder="Category"
@@ -176,7 +174,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
 
           <p-select
             [options]="statusOptions"
-            [(ngModel)]="selectedStatus"
+            (onChange)="onStatusChange($event.value)"
             optionLabel="label"
             optionValue="value"
             placeholder="Status"
@@ -503,9 +501,9 @@ export class PlaybookComponent implements OnInit {
   readonly isLoading = signal(true);
 
   // Filter state
-  searchQuery = "";
-  selectedCategory: PlayCategory | null = null;
-  selectedStatus: "memorized" | "learning" | null = null;
+  readonly searchQuery = signal("");
+  readonly selectedCategory = signal<PlayCategory | null>(null);
+  readonly selectedStatus = signal<"memorized" | "learning" | null>(null);
 
   // Dialog state
   showPlayDetail = false;
@@ -531,8 +529,8 @@ export class PlaybookComponent implements OnInit {
     let result = this.plays();
 
     // Search filter
-    if (this.searchQuery) {
-      const query = this.searchQuery.toLowerCase();
+    if (this.searchQuery()) {
+      const query = this.searchQuery().toLowerCase();
       result = result.filter(
         (p) =>
           p.name.toLowerCase().includes(query) ||
@@ -542,14 +540,14 @@ export class PlaybookComponent implements OnInit {
     }
 
     // Category filter
-    if (this.selectedCategory) {
-      result = result.filter((p) => p.category === this.selectedCategory);
+    if (this.selectedCategory()) {
+      result = result.filter((p) => p.category === this.selectedCategory());
     }
 
     // Status filter
-    if (this.selectedStatus) {
+    if (this.selectedStatus()) {
       result = result.filter((p) =>
-        this.selectedStatus === "memorized" ? p.isMemorized : !p.isMemorized,
+        this.selectedStatus() === "memorized" ? p.isMemorized : !p.isMemorized,
       );
     }
 
@@ -585,9 +583,22 @@ export class PlaybookComponent implements OnInit {
   });
 
   getEmptyDescription(): string {
-    return this.searchQuery || this.selectedCategory || this.selectedStatus
+    return this.searchQuery() || this.selectedCategory() || this.selectedStatus()
       ? "Try adjusting your filters"
       : "Your coach hasn't added any plays yet";
+  }
+
+  onSearchInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.searchQuery.set(input?.value ?? "");
+  }
+
+  onCategoryChange(value: PlayCategory | null | undefined): void {
+    this.selectedCategory.set(value ?? null);
+  }
+
+  onStatusChange(value: "memorized" | "learning" | null | undefined): void {
+    this.selectedStatus.set(value ?? null);
   }
 
   ngOnInit(): void {

@@ -59,7 +59,6 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 
 @Component({
   selector: "app-video-curation",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

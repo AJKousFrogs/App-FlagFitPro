@@ -6,12 +6,11 @@ import {
   signal,
   ChangeDetectionStrategy,
   DestroyRef,
-  HostListener,
   effect,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
-  FormBuilder,
+  NonNullableFormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
@@ -66,7 +65,6 @@ interface Play {
 
 @Component({
   selector: "app-live-game-tracker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -268,9 +266,14 @@ interface Play {
     </div>
   `,
   styleUrl: "./live-game-tracker.component.scss",
+  host: {
+    "(window:orientationchange)": "onOrientationChange()",
+    "(document:keydown.space)": "pauseGame($event)",
+    "(document:keydown.escape)": "showGameMenu($event)",
+  },
 })
 export class LiveGameTrackerComponent implements OnInit, OnDestroy {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private hapticService = inject(HapticFeedbackService);
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
@@ -364,18 +367,15 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener("window:orientationchange")
   onOrientationChange(): void {
     this.checkOrientation();
   }
 
-  @HostListener("document:keydown.space", ["$event"])
   pauseGame(event: Event): void {
     event.preventDefault();
     // Toggle pause/resume
   }
 
-  @HostListener("document:keydown.escape", ["$event"])
   showGameMenu(event: Event): void {
     event.preventDefault();
     // Show game menu

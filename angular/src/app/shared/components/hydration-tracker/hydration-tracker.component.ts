@@ -37,7 +37,6 @@ interface HydrationLog {
 
 @Component({
   selector: "app-hydration-tracker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ButtonComponent, CardComponent, ProgressBar, Tooltip],
   template: `

@@ -41,7 +41,6 @@ export interface FormError {
 
 @Component({
   selector: "app-form-error-summary",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `

@@ -68,7 +68,7 @@
               (clicked)="goToWellnessCheckin()"
               >Update</app-button
             >
-            <button class="alert-dismiss" (click)="dismissWellnessAlert()" aria-label="Dismiss alert">
+            <button type="button" class="alert-dismiss" (click)="dismissWellnessAlert()" aria-label="Dismiss alert">
               <i class="pi pi-times" aria-hidden="true"></i>
             </button>
           </div>
@@ -209,6 +209,11 @@
                   class="workout-card-compact"
                   [style.border-left-color]="workout.iconBg"
                   (click)="startWorkout(workout)"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="'Start workout ' + workout.title"
+                  (keydown.enter)="startWorkout(workout)"
+                  (keydown.space)="startWorkout(workout); $event.preventDefault()"
                 >
                   <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
                   <div

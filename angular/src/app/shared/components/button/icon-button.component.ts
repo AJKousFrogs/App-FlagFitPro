@@ -52,7 +52,6 @@ export type IconButtonSize = "sm" | "md" | "lg";
 
 @Component({
   selector: "app-icon-button",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, Tooltip],
   template: `

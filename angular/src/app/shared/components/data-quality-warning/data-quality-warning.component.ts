@@ -33,7 +33,6 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
 
 @Component({
   selector: "app-data-quality-warning",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Message, Tooltip, ButtonComponent],
   template: `

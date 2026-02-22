@@ -20,7 +20,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
@@ -82,7 +81,6 @@ interface DayOption {
 
 @Component({
   selector: "app-player-settings-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
@@ -90,7 +88,6 @@ interface DayOption {
     
     Select,
     DatePicker,
-    Checkbox,
     InputText,
     MultiSelect,
 
@@ -117,12 +114,12 @@ interface DayOption {
             <p-select
               id="position"
               [options]="positions"
-              [(ngModel)]="settings.primaryPosition"
+              [ngModel]="settings.primaryPosition"
+              (onChange)="onPrimaryPositionChange($event.value)"
               optionLabel="label"
               optionValue="value"
               placeholder="Select position"
               class="w-full"
-              (onValueChange)="updatePositionDescription()"
             ></p-select>
             @if (selectedPositionDescription()) {
               <small class="field-hint">{{
@@ -136,7 +133,8 @@ interface DayOption {
             <p-select
               id="secondaryPosition"
               [options]="positions"
-              [(ngModel)]="settings.secondaryPosition"
+              [ngModel]="settings.secondaryPosition"
+              (onChange)="onSecondaryPositionChange($event.value)"
               optionLabel="label"
               optionValue="value"
               placeholder="Optional"
@@ -153,13 +151,13 @@ interface DayOption {
             <label for="birthDate">Birth Date</label>
             <p-datepicker
               id="birthDate"
-              [(ngModel)]="settings.birthDate"
+              [ngModel]="settings.birthDate"
+              (onSelect)="onBirthDateChange($event)"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
               [maxDate]="maxBirthDate"
               class="full-width"
               placeholder="Select birth date"
-              (onSelect)="updateAge()"
             ></p-datepicker>
             <small class="field-hint">
               Used to calculate age-based recovery recommendations.
@@ -205,8 +203,8 @@ interface DayOption {
                   <input
                     pInputText
                     type="time"
-                    [(ngModel)]="slot.startTime"
-                    (change)="updateSlotDuration(slot)"
+                    [value]="slot.startTime"
+                    (input)="onSlotStartTimeChange(slot.day, getInputValue($event))"
                   />
                 </div>
                 <div class="time-field">
@@ -214,8 +212,8 @@ interface DayOption {
                   <input
                     pInputText
                     type="time"
-                    [(ngModel)]="slot.endTime"
-                    (change)="updateSlotDuration(slot)"
+                    [value]="slot.endTime"
+                    (input)="onSlotEndTimeChange(slot.day, getInputValue($event))"
                   />
                 </div>
                 @if (settings.primaryPosition === "quarterback") {
@@ -224,7 +222,8 @@ interface DayOption {
                     <input
                       pInputText
                       type="number"
-                      [(ngModel)]="slot.expectedThrows"
+                      [value]="slot.expectedThrows ?? ''"
+                      (input)="onSlotExpectedThrowsChange(slot.day, getInputValue($event))"
                       placeholder="40-50"
                       min="0"
                       max="200"
@@ -240,7 +239,8 @@ interface DayOption {
             <div class="add-practice">
               <p-select
                 [options]="availableDays"
-                [(ngModel)]="selectedNewDay"
+                [ngModel]="selectedNewDay"
+                (onChange)="onSelectedNewDayChange($event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Add practice day..."
@@ -273,7 +273,8 @@ interface DayOption {
                 <input
                   pInputText
                   type="time"
-                  [(ngModel)]="slot.time"
+                  [value]="slot.time"
+                  (input)="onRoutineTimeChange(slot.id, getInputValue($event))"
                   class="routine-time-input"
                 />
               </div>
@@ -289,7 +290,8 @@ interface DayOption {
             <label>Preferred Training Days</label>
             <p-multiselect
               [options]="allDays"
-              [(ngModel)]="settings.preferredTrainingDays"
+              [value]="settings.preferredTrainingDays"
+              (onChange)="onPreferredTrainingDaysChange($event.value)"
               optionLabel="label"
               optionValue="value"
               placeholder="Select days"
@@ -298,22 +300,22 @@ interface DayOption {
           </div>
 
           <div class="form-field checkbox-group">
-            <p-checkbox
-              [(ngModel)]="settings.hasGymAccess"
-              [binary]="true"
-              variant="filled"
-              inputId="gymAccess"
-            ></p-checkbox>
+            <input
+              id="gymAccess"
+              type="checkbox"
+              [checked]="settings.hasGymAccess"
+              (change)="onHasGymAccessChange(isChecked($event))"
+            />
             <label for="gymAccess">I have gym access</label>
           </div>
 
           <div class="form-field checkbox-group">
-            <p-checkbox
-              [(ngModel)]="settings.hasFieldAccess"
-              [binary]="true"
-              variant="filled"
-              inputId="fieldAccess"
-            ></p-checkbox>
+            <input
+              id="fieldAccess"
+              type="checkbox"
+              [checked]="settings.hasFieldAccess"
+              (change)="onHasFieldAccessChange(isChecked($event))"
+            />
             <label for="fieldAccess">I have field access</label>
           </div>
 
@@ -322,7 +324,8 @@ interface DayOption {
             <p-select
               id="warmupFocus"
               [options]="warmupFocusOptions"
-              [(ngModel)]="settings.warmupFocus"
+              [ngModel]="settings.warmupFocus"
+              (onChange)="onWarmupFocusChange($event.value)"
               optionLabel="label"
               optionValue="value"
               placeholder="Auto (use position)"
@@ -510,6 +513,106 @@ export class PlayerSettingsDialogComponent {
 
   onVisibleChange(newVisible: boolean): void {
     this.visible.set(newVisible);
+  }
+
+  onPrimaryPositionChange(value: string): void {
+    this.settings = { ...this.settings, primaryPosition: value };
+    this.updatePositionDescription();
+  }
+
+  onSecondaryPositionChange(value: string | null): void {
+    this.settings = {
+      ...this.settings,
+      secondaryPosition: value ?? undefined,
+    };
+  }
+
+  onBirthDateChange(value: Date | null): void {
+    this.settings = {
+      ...this.settings,
+      birthDate: value ?? undefined,
+    };
+    this.updateAge();
+  }
+
+  onSlotStartTimeChange(day: number, value: string): void {
+    this.settings = {
+      ...this.settings,
+      flagPracticeSchedule: this.settings.flagPracticeSchedule.map((slot) =>
+        slot.day === day ? { ...slot, startTime: value } : slot,
+      ),
+    };
+    const slot = this.settings.flagPracticeSchedule.find((s) => s.day === day);
+    if (slot) this.updateSlotDuration(slot);
+  }
+
+  onSlotEndTimeChange(day: number, value: string): void {
+    this.settings = {
+      ...this.settings,
+      flagPracticeSchedule: this.settings.flagPracticeSchedule.map((slot) =>
+        slot.day === day ? { ...slot, endTime: value } : slot,
+      ),
+    };
+    const slot = this.settings.flagPracticeSchedule.find((s) => s.day === day);
+    if (slot) this.updateSlotDuration(slot);
+  }
+
+  onSlotExpectedThrowsChange(day: number, value: number | string | null): void {
+    const parsed =
+      typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
+    this.settings = {
+      ...this.settings,
+      flagPracticeSchedule: this.settings.flagPracticeSchedule.map((slot) =>
+        slot.day === day
+          ? {
+              ...slot,
+              expectedThrows: Number.isFinite(parsed)
+                ? parsed
+                : slot.expectedThrows,
+            }
+          : slot,
+      ),
+    };
+  }
+
+  onSelectedNewDayChange(value: number | null): void {
+    this.selectedNewDay = value;
+  }
+
+  onRoutineTimeChange(slotId: string, value: string): void {
+    this.settings = {
+      ...this.settings,
+      dailyRoutine: this.settings.dailyRoutine.map((slot) =>
+        slot.id === slotId ? { ...slot, time: value } : slot,
+      ),
+    };
+  }
+
+  onPreferredTrainingDaysChange(value: number[] | null): void {
+    this.settings = {
+      ...this.settings,
+      preferredTrainingDays: value ?? [],
+    };
+  }
+
+  onHasGymAccessChange(value: boolean): void {
+    this.settings = { ...this.settings, hasGymAccess: value };
+  }
+
+  onHasFieldAccessChange(value: boolean): void {
+    this.settings = { ...this.settings, hasFieldAccess: value };
+  }
+
+  onWarmupFocusChange(value: string | null): void {
+    this.settings = { ...this.settings, warmupFocus: value };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | null)?.value ?? "";
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   updatePositionDescription(): void {

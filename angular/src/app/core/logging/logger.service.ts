@@ -7,9 +7,9 @@
  * @version 2.0.0
  */
 
-import { Inject, Injectable, Optional, isDevMode } from "@angular/core";
+import { Injectable, inject, isDevMode } from "@angular/core";
 
-import type { LogLevel, Logger } from "@core/logging/logger";
+import type { LogLevel } from "@core/logging/logger";
 import { LOGGER } from "@core/logging/logger.token";
 
 export interface LogContext {
@@ -57,6 +57,7 @@ export interface StructuredLog {
   providedIn: "root",
 })
 export class LoggerService {
+  private readonly adapter = inject(LOGGER, { optional: true });
   private isDevelopment = isDevMode();
   private logLevel: "debug" | "info" | "warning" | "error" | "silent" = this
     .isDevelopment
@@ -69,8 +70,6 @@ export class LoggerService {
 
   // Global context that applies to all logs
   private globalContext: LogContext = {};
-
-  constructor(@Optional() @Inject(LOGGER) private readonly adapter?: Logger) {}
 
   /**
    * Set log level: 'debug', 'info', 'warn', 'error', 'silent'

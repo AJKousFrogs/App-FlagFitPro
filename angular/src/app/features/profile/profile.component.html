@@ -67,8 +67,10 @@
                   </div>
                 }
                 <button
+                  type="button"
                   class="avatar-upload-btn"
                   (click)="triggerFileUpload()"
+                  aria-label="Upload profile picture"
                   [disabled]="isUploadingAvatar()"
                 >
                   @if (isUploadingAvatar()) {
@@ -82,6 +84,7 @@
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   class="hidden-file-input"
+                  aria-label="Upload profile image file"
                   (change)="onFileSelected($event)"
                 />
               </div>
@@ -239,7 +242,7 @@
                           ) {
                             <div class="activity-item">
                               <div class="activity-icon">
-                                <i class="pi" [ngClass]="activity.icon"></i>
+                                <i [class]="'pi ' + activity.icon"></i>
                               </div>
                               <div class="activity-content">
                                 <div class="activity-title">
@@ -279,7 +282,7 @@
                         <app-card-shell>
                           <div class="achievement-content">
                             <div class="achievement-icon">
-                              <i class="pi" [ngClass]="achievement.icon"></i>
+                              <i [class]="'pi ' + achievement.icon"></i>
                             </div>
                             <h4 class="achievement-title">
                               {{ achievement.title }}

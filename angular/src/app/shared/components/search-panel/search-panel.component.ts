@@ -16,14 +16,12 @@ import {
   DestroyRef,
   effect,
   ElementRef,
-  HostListener,
   inject,
   OnDestroy,
   signal,
   viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { Dialog } from "primeng/dialog";
@@ -44,11 +42,14 @@ const SUGGESTION_DEBOUNCE_MS = 150;
 
 @Component({
   selector: "app-search-panel",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, FormsModule, InputText, Dialog, IconButtonComponent],
+  imports: [RouterModule, InputText, Dialog, IconButtonComponent],
   templateUrl: "./search-panel.component.html",
   styleUrl: "./search-panel.component.scss",
+  host: {
+    "(document:keydown.meta.k)": "onKeyboardShortcut($event)",
+    "(document:keydown.control.k)": "onKeyboardShortcut($event)",
+  },
 })
 export class SearchPanelComponent implements OnDestroy {
   // Angular 21: Use viewChild() signal instead of @ViewChild()
@@ -167,8 +168,6 @@ export class SearchPanelComponent implements OnDestroy {
     this.suggestionSubject.complete();
   }
 
-  @HostListener("document:keydown.meta.k", ["$event"])
-  @HostListener("document:keydown.control.k", ["$event"])
   onKeyboardShortcut(event: Event): void {
     event.preventDefault();
     this.open();
@@ -202,6 +201,12 @@ export class SearchPanelComponent implements OnDestroy {
 
     // Emit to search stream for actual search
     this.searchSubject.next(query);
+  }
+
+  onSearchInput(event: Event): void {
+    const query = (event.target as HTMLInputElement | null)?.value ?? "";
+    this.searchQuery = query;
+    this.onSearchChange(query);
   }
 
   clearSearch(): void {

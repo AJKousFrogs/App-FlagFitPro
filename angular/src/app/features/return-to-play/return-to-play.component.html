@@ -192,13 +192,13 @@
                   let i = $index
                 ) {
                   <div class="criterion-item">
-                    <p-checkbox
-                      [(ngModel)]="protocol.criteriaCompleted[i]"
-                      [binary]="true"
-                      variant="filled"
-                      [inputId]="'criterion-' + i"
-                      (ngModelChange)="updateCriterion(i, { checked: $event })"
-                    ></p-checkbox>
+                    <input
+                      type="checkbox"
+                      [id]="'criterion-' + i"
+                      [checked]="protocol.criteriaCompleted[i]"
+                      (change)="updateCriterion(i, { checked: isChecked($event) })"
+                      [attr.aria-label]="criterion"
+                    />
                     <label [for]="'criterion-' + i">{{ criterion }}</label>
                   </div>
                 }
@@ -231,7 +231,7 @@
                   <label>Pain Level (0-10)</label>
                   <small>0 = No pain, 10 = Severe</small>
                   <p-slider
-                    [(ngModel)]="todayCheckin.painLevel"
+                    (onChange)="updateTodayCheckinMetric('painLevel', $event.value)"
                     [min]="0"
                     [max]="10"
                     [step]="1"
@@ -252,7 +252,7 @@
                   <label>Function Score (%)</label>
                   <small>Compared to pre-injury baseline</small>
                   <p-slider
-                    [(ngModel)]="todayCheckin.functionScore"
+                    (onChange)="updateTodayCheckinMetric('functionScore', $event.value)"
                     [min]="0"
                     [max]="100"
                     [step]="5"
@@ -268,7 +268,7 @@
                   <label>Confidence Level (1-10)</label>
                   <small>Trust in injured area</small>
                   <p-slider
-                    [(ngModel)]="todayCheckin.confidenceLevel"
+                    (onChange)="updateTodayCheckinMetric('confidenceLevel', $event.value)"
                     [min]="1"
                     [max]="10"
                     [step]="1"
@@ -289,12 +289,13 @@
                     let i = $index
                   ) {
                     <div class="activity-check">
-                      <p-checkbox
-                        [value]="activity"
-                        [(ngModel)]="todayCheckin.activitiesCompleted"
-                        variant="filled"
-                        [inputId]="'activity-' + i"
-                      ></p-checkbox>
+                      <input
+                        type="checkbox"
+                        [id]="'activity-' + i"
+                        [checked]="isActivitySelected(activity)"
+                        (change)="toggleTodayCheckinActivity(activity, isChecked($event))"
+                        [attr.aria-label]="activity"
+                      />
                       <label [for]="'activity-' + i">{{ activity }}</label>
                     </div>
                   }
@@ -306,7 +307,8 @@
                 <textarea
                   pInputTextarea
                   id="checkin-notes"
-                  [(ngModel)]="todayCheckin.notes"
+                  [value]="todayCheckin.notes"
+                  (input)="updateTodayCheckinNotes(getInputValue($event))"
                   rows="2"
                   placeholder="Any observations, tightness, or concerns..."
                 ></textarea>
@@ -391,11 +393,15 @@
             <div class="injury-type-options">
               @for (type of injuryTypes; track type.value) {
                 <div class="type-option">
-                  <p-radioButton
+                  <input
+                    type="radio"
+                    [id]="'type-' + type.value"
+                    name="injuryType"
                     [value]="type.value"
-                    [(ngModel)]="newProtocol.injuryType"
-                    [inputId]="'type-' + type.value"
-                  ></p-radioButton>
+                    [checked]="newProtocol.injuryType === type.value"
+                    (change)="updateNewProtocolField('injuryType', type.value)"
+                    [attr.aria-label]="type.label"
+                  />
                   <label [for]="'type-' + type.value">{{ type.label }}</label>
                 </div>
               }
@@ -409,7 +415,7 @@
               <p-select
                 id="injury-location"
                 [options]="injuryLocations"
-                [(ngModel)]="newProtocol.injuryLocation"
+                (onChange)="updateNewProtocolField('injuryLocation', $event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select location"
@@ -421,12 +427,11 @@
               <p-select
                 id="severity"
                 [options]="severityLevels"
-                [(ngModel)]="newProtocol.severity"
+                (onChange)="updateProtocolSeverity($event.value)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select severity"
                 class="w-full"
-                (onValueChange)="onSeverityChange()"
               ></p-select>
             </div>
           </div>
@@ -437,7 +442,7 @@
               <label for="injury-date">Injury Date *</label>
               <p-datepicker
                 id="injury-date"
-                [(ngModel)]="newProtocol.injuryDate"
+                (onSelect)="updateProtocolDate('injuryDate', $event)"
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
@@ -448,7 +453,7 @@
               <label for="return-date">Expected Return Date</label>
               <p-datepicker
                 id="return-date"
-                [(ngModel)]="newProtocol.targetReturnDate"
+                (onSelect)="updateProtocolDate('targetReturnDate', $event)"
                 [minDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
@@ -466,7 +471,8 @@
             <textarea
               pInputTextarea
               id="medical-notes"
-              [(ngModel)]="newProtocol.medicalNotes"
+              [value]="newProtocol.medicalNotes"
+              (input)="updateProtocolMedicalNotes(getInputValue($event))"
               rows="2"
               placeholder="Diagnosed by team physio. MRI confirmed..."
             ></textarea>
@@ -475,24 +481,24 @@
           <!-- Acknowledgments -->
           <div class="acknowledgments">
             <div class="ack-item">
-              <p-checkbox
-                [(ngModel)]="newProtocol.understandProtocol"
-                [binary]="true"
-                variant="filled"
-                inputId="understand"
-              ></p-checkbox>
+              <input
+                id="understand"
+                type="checkbox"
+                [checked]="newProtocol.understandProtocol"
+                (change)="updateProtocolToggle('understandProtocol', isChecked($event))"
+              />
               <label for="understand"
                 >I understand this protocol and will follow it
                 responsibly</label
               >
             </div>
             <div class="ack-item">
-              <p-checkbox
-                [(ngModel)]="newProtocol.notifyCoach"
-                [binary]="true"
-                variant="filled"
-                inputId="notify"
-              ></p-checkbox>
+              <input
+                id="notify"
+                type="checkbox"
+                [checked]="newProtocol.notifyCoach"
+                (change)="updateProtocolToggle('notifyCoach', isChecked($event))"
+              />
               <label for="notify"
                 >Coach will be notified of my recovery status</label
               >

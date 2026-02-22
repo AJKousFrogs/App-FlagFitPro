@@ -31,7 +31,6 @@ export interface ImageUploadResult {
  */
 @Component({
   selector: "app-image-upload",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -132,7 +131,7 @@ export interface ImageUploadResult {
               <input
                 type="number"
                 [value]="resizeWidth()"
-                (input)="resizeWidth.set(+$any($event.target).value)"
+                (input)="resizeWidth.set(getNumberInputValue($event))"
                 [min]="minWidth()"
                 [max]="maxWidth()"
               />
@@ -140,7 +139,7 @@ export interface ImageUploadResult {
               <input
                 type="number"
                 [value]="resizeHeight()"
-                (input)="resizeHeight.set(+$any($event.target).value)"
+                (input)="resizeHeight.set(getNumberInputValue($event))"
                 [min]="minHeight()"
                 [max]="maxHeight()"
               />
@@ -240,6 +239,11 @@ export class ImageUploadComponent {
     if (file) {
       this.processImage(file);
     }
+  }
+
+  getNumberInputValue(event: Event): number {
+    const value = Number((event.target as HTMLInputElement).value);
+    return Number.isFinite(value) ? value : 0;
   }
 
   triggerFileInput(): void {

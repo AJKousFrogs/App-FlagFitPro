@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function readIfExists(filePath) {
   if (!fs.existsSync(filePath)) return null;

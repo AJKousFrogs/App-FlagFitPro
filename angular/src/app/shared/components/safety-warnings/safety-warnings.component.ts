@@ -33,7 +33,6 @@ import { AuthService } from "../../../core/services/auth.service";
 
 @Component({
   selector: "app-safety-warnings",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, StatusTagComponent, RouterModule, ButtonComponent],
   template: `

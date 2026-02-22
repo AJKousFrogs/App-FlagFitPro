@@ -5,14 +5,19 @@ import {
   forwardRef,
   signal,
   ChangeDetectionStrategy,
+  DestroyRef,
+  effect,
+  inject,
 } from "@angular/core";
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
-  FormsModule,
+  FormControl,
+  ReactiveFormsModule,
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { DatePicker } from "primeng/datepicker";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
  * Date Picker Component - Angular 21
@@ -22,9 +27,8 @@ import { DatePicker } from "primeng/datepicker";
  */
 @Component({
   selector: "app-date-picker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, DatePicker],
+  imports: [CommonModule, ReactiveFormsModule, DatePicker],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -39,9 +43,8 @@ import { DatePicker } from "primeng/datepicker";
       }
       <p-datepicker
         [id]="id()"
-        [(ngModel)]="dateValue"
+        [formControl]="dateControl"
         [showIcon]="true"
-        [disabled]="disabled()"
         [minDate]="minDate()"
         [maxDate]="maxDate()"
         [dateFormat]="dateFormat()"
@@ -50,8 +53,6 @@ import { DatePicker } from "primeng/datepicker";
         [showTime]="showTime()"
         [hourFormat]="hourFormat()"
         [class.is-invalid]="invalid()"
-        (onSelect)="onDateChange()"
-        (onClear)="onDateChange()"
         (onBlur)="onBlur()"
         [attr.aria-invalid]="invalid() ? 'true' : null"
         [attr.aria-describedby]="
@@ -72,6 +73,8 @@ import { DatePicker } from "primeng/datepicker";
   styleUrl: "./date-picker.component.scss",
 })
 export class DatePickerComponent implements ControlValueAccessor {
+  private readonly destroyRef = inject(DestroyRef);
+
   // Configuration
   id = input<string>(`date-picker-${Math.random().toString(36).substr(2, 9)}`);
   label = input<string>();
@@ -89,16 +92,31 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   // Value signal
   dateValue = signal<Date | null>(null);
+  dateControl = new FormControl<Date | null>(null);
+  private cvaDisabled = signal(false);
   private onChangeFn = (_value: Date | null) => {};
   private onTouchedFn = () => {};
 
   // Events
   changed = output<Date | null>();
 
-  onDateChange(): void {
-    const value = this.dateValue();
-    this.onChangeFn(value);
-    this.changed.emit(value);
+  constructor() {
+    this.dateControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.dateValue.set(value);
+        this.onChangeFn(value);
+        this.changed.emit(value);
+      });
+
+    effect(() => {
+      const shouldDisable = this.disabled() || this.cvaDisabled();
+      if (shouldDisable) {
+        this.dateControl.disable({ emitEvent: false });
+      } else {
+        this.dateControl.enable({ emitEvent: false });
+      }
+    });
   }
 
   onBlur(): void {
@@ -107,7 +125,9 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   // ControlValueAccessor implementation
   writeValue(value: Date | null): void {
-    this.dateValue.set(value || null);
+    const normalizedValue = value || null;
+    this.dateValue.set(normalizedValue);
+    this.dateControl.setValue(normalizedValue, { emitEvent: false });
   }
 
   registerOnChange(fn: (value: Date | null) => void): void {
@@ -118,7 +138,7 @@ export class DatePickerComponent implements ControlValueAccessor {
     this.onTouchedFn = fn;
   }
 
-  setDisabledState(_isDisabled: boolean): void {
-    // Handled via disabled input
+  setDisabledState(isDisabled: boolean): void {
+    this.cvaDisabled.set(isDisabled);
   }
 }

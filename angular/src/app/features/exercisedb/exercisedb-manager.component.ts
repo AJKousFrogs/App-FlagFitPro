@@ -10,7 +10,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
@@ -22,7 +21,6 @@ import { MultiSelect } from "primeng/multiselect";
 import { Dialog } from "primeng/dialog";
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { Slider } from "primeng/slider";
 import { Chip } from "primeng/chip";
 import { Skeleton } from "primeng/skeleton";
 import { Badge } from "primeng/badge";
@@ -46,11 +44,9 @@ import { capitalize } from "../../shared/utils/format.utils";
 
 @Component({
   selector: "app-exercisedb-manager",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     Card,
     InputText,
     Select,
@@ -64,7 +60,6 @@ import { capitalize } from "../../shared/utils/format.utils";
     Tab,
     TabPanels,
     TabPanel,
-    Slider,
     Chip,
     Skeleton,
     Badge,
@@ -144,8 +139,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <label>Search</label>
                       <app-search-input
                         class="filter-search"
-                        [(ngModel)]="searchQuery"
-                        (ngModelChange)="onSearchChange()"
+                        (valueChange)="updateSearchQuery($event)"
                         placeholder="Search exercises..."
                         ariaLabel="Search exercises"
                       />
@@ -155,10 +149,9 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="body-part-filter"
                         [options]="bodyPartOptions()"
-                        [(ngModel)]="selectedBodyPart"
+                        (onChange)="updateSelectedBodyPart($event.value)"
                         placeholder="All Body Parts"
                         [showClear]="true"
-                        (onValueChange)="applyFilters()"
                         [attr.aria-label]="'Filter by body part'"
                       ></p-select>
                     </div>
@@ -167,10 +160,9 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="equipment-filter"
                         [options]="equipmentOptions()"
-                        [(ngModel)]="selectedEquipment"
+                        (onChange)="updateSelectedEquipment($event.value)"
                         placeholder="All Equipment"
                         [showClear]="true"
-                        (onValueChange)="applyFilters()"
                         [attr.aria-label]="'Filter by equipment'"
                       ></p-select>
                     </div>
@@ -179,10 +171,9 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="position-filter"
                         [options]="positionOptions"
-                        [(ngModel)]="selectedPosition"
+                        (onChange)="updateSelectedPosition($event.value)"
                         placeholder="All Positions"
                         [showClear]="true"
-                        (onValueChange)="applyFilters()"
                         [attr.aria-label]="'Filter by position'"
                       ></p-select>
                     </div>
@@ -191,10 +182,9 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="category-filter"
                         [options]="categoryOptions()"
-                        [(ngModel)]="selectedCategory"
+                        (onChange)="updateSelectedCategory($event.value)"
                         placeholder="All Categories"
                         [showClear]="true"
-                        (onValueChange)="applyFilters()"
                         [attr.aria-label]="'Filter by category'"
                       ></p-select>
                     </div>
@@ -203,8 +193,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="status-filter"
                         [options]="statusOptions"
-                        [(ngModel)]="selectedStatus"
-                        (onValueChange)="applyFilters()"
+                        (onChange)="updateSelectedStatus($event.value)"
                         [attr.aria-label]="'Filter by status'"
                       ></p-select>
                     </div>
@@ -361,7 +350,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <label>Body Parts to Import</label>
                       <p-multiSelect
                         [options]="importBodyPartOptions"
-                        [(ngModel)]="importBodyParts"
+                        (onChange)="updateImportBodyParts($event.value)"
                         placeholder="Select body parts (leave empty for all)"
                         display="chip"
                         class="import-multiselect"
@@ -374,7 +363,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="import-equipment-filter"
                         [options]="importEquipmentOptions"
-                        [(ngModel)]="importEquipment"
+                        (onChange)="updateImportEquipment($event.value)"
                         placeholder="All equipment"
                         [showClear]="true"
                         [attr.aria-label]="'Filter import by equipment'"
@@ -382,7 +371,11 @@ import { capitalize } from "../../shared/utils/format.utils";
                     </div>
                     <div class="option-group checkbox-group">
                       <label>
-                        <input type="checkbox" [(ngModel)]="autoApprove" />
+                        <input
+                          type="checkbox"
+                          [checked]="autoApprove"
+                          (change)="updateAutoApprove(isChecked($event))"
+                        />
                         Auto-approve high relevance exercises (8+)
                       </label>
                     </div>
@@ -755,12 +748,15 @@ import { capitalize } from "../../shared/utils/format.utils";
 
               <div class="form-group">
                 <label>Flag Football Relevance (1-10)</label>
-                <p-slider
-                  [(ngModel)]="approvalData.flag_football_relevance"
+                <input
+                  type="range"
+                  class="relevance-slider"
+                  [value]="approvalData.flag_football_relevance"
+                  (input)="updateApprovalRelevance(getInputNumberValue($event))"
                   [min]="1"
                   [max]="10"
                   [step]="1"
-                ></p-slider>
+                />
                 <span class="slider-value"
                   >{{ approvalData.flag_football_relevance }}/10</span
                 >
@@ -771,7 +767,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-select
                   inputId="approval-category"
                   [options]="ffCategoryOptions"
-                  [(ngModel)]="approvalData.ff_category"
+                  (onChange)="updateApprovalCategory($event.value)"
                   placeholder="Select category"
                   [attr.aria-label]="'Select flag football category'"
                 ></p-select>
@@ -782,7 +778,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-multiSelect
                   inputId="approval-focus"
                   [options]="trainingFocusOptions"
-                  [(ngModel)]="approvalData.ff_training_focus"
+                  (onChange)="updateApprovalTrainingFocus($event.value)"
                   placeholder="Select training focuses"
                   display="chip"
                   [attr.aria-label]="'Select training focus areas'"
@@ -794,7 +790,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-multiSelect
                   inputId="approval-positions"
                   [options]="positionOptions"
-                  [(ngModel)]="approvalData.applicable_positions"
+                  (onChange)="updateApprovalApplicablePositions($event.value)"
                   placeholder="Select positions"
                   display="chip"
                   [attr.aria-label]="'Select applicable positions'"
@@ -806,7 +802,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-select
                   inputId="approval-difficulty"
                   [options]="difficultyOptions"
-                  [(ngModel)]="approvalData.difficulty_level"
+                  (onChange)="updateApprovalDifficulty($event.value)"
                   placeholder="Select difficulty"
                   [attr.aria-label]="'Select difficulty level'"
                 ></p-select>
@@ -818,7 +814,8 @@ import { capitalize } from "../../shared/utils/format.utils";
                   <input
                     pInputText
                     type="number"
-                    [(ngModel)]="approvalData.recommended_sets"
+                    [value]="approvalData.recommended_sets"
+                    (input)="updateApprovalRecommendedSets(getInputValue($event))"
                     placeholder="e.g., 3"
                   />
                 </div>
@@ -826,7 +823,8 @@ import { capitalize } from "../../shared/utils/format.utils";
                   <label>Recommended Reps</label>
                   <input
                     pInputText
-                    [(ngModel)]="approvalData.recommended_reps"
+                    [value]="approvalData.recommended_reps"
+                    (input)="updateApprovalRecommendedReps(getInputValue($event))"
                     placeholder="e.g., 8-12"
                   />
                 </div>
@@ -1038,6 +1036,110 @@ export class ExerciseDBManagerComponent implements OnInit {
 
   onSearchChange(): void {
     this.applyFilters();
+  }
+
+  updateSearchQuery(value: string | null | undefined): void {
+    this.searchQuery = value ?? "";
+    this.onSearchChange();
+  }
+
+  updateSelectedBodyPart(value: string | null | undefined): void {
+    this.selectedBodyPart = value ?? null;
+    this.applyFilters();
+  }
+
+  updateSelectedEquipment(value: string | null | undefined): void {
+    this.selectedEquipment = value ?? null;
+    this.applyFilters();
+  }
+
+  updateSelectedPosition(value: string | null | undefined): void {
+    this.selectedPosition = value ?? null;
+    this.applyFilters();
+  }
+
+  updateSelectedCategory(value: string | null | undefined): void {
+    this.selectedCategory = value ?? null;
+    this.applyFilters();
+  }
+
+  updateSelectedStatus(value: string | null | undefined): void {
+    this.selectedStatus = value ?? "all";
+    this.applyFilters();
+  }
+
+  updateImportBodyParts(value: string[] | null | undefined): void {
+    this.importBodyParts = value ?? [];
+  }
+
+  updateImportEquipment(value: string | null | undefined): void {
+    this.importEquipment = value ?? null;
+  }
+
+  updateAutoApprove(value: boolean | null | undefined): void {
+    this.autoApprove = value ?? false;
+  }
+
+  updateApprovalRelevance(value: number | null | undefined): void {
+    this.approvalData = {
+      ...this.approvalData,
+      flag_football_relevance: value ?? 1,
+    };
+  }
+
+  updateApprovalCategory(value: string | null | undefined): void {
+    this.approvalData = { ...this.approvalData, ff_category: value ?? "" };
+  }
+
+  updateApprovalTrainingFocus(value: string[] | null | undefined): void {
+    this.approvalData = {
+      ...this.approvalData,
+      ff_training_focus: value ?? [],
+    };
+  }
+
+  updateApprovalApplicablePositions(
+    value: string[] | null | undefined,
+  ): void {
+    this.approvalData = {
+      ...this.approvalData,
+      applicable_positions: value ?? [],
+    };
+  }
+
+  updateApprovalDifficulty(value: string | null | undefined): void {
+    this.approvalData = {
+      ...this.approvalData,
+      difficulty_level: value ?? "Intermediate",
+    };
+  }
+
+  updateApprovalRecommendedSets(value: string | null | undefined): void {
+    const parsed = Number(value);
+    this.approvalData = {
+      ...this.approvalData,
+      recommended_sets: Number.isFinite(parsed) ? parsed : 3,
+    };
+  }
+
+  updateApprovalRecommendedReps(value: string | null | undefined): void {
+    this.approvalData = {
+      ...this.approvalData,
+      recommended_reps: value ?? "",
+    };
+  }
+
+  getInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | null)?.value ?? "";
+  }
+
+  getInputNumberValue(event: Event): number | null {
+    const value = Number(this.getInputValue(event));
+    return Number.isFinite(value) ? value : null;
+  }
+
+  isChecked(event: Event): boolean {
+    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   applyFilters(): void {
