@@ -90,6 +90,20 @@ export class UnifiedTrainingService {
   private supabase = inject(SupabaseService);
   private _destroyRef = inject(DestroyRef);
 
+  private isExpectedApiClientError(error: unknown): boolean {
+    if (!error || typeof error !== "object") return false;
+    const e = error as {
+      status?: unknown;
+      url?: unknown;
+      isExpectedApiFailure?: unknown;
+    };
+    if (e.isExpectedApiFailure === true) return true;
+    const status = typeof e.status === "number" ? e.status : undefined;
+    if (!status || ![400, 401, 403, 404].includes(status)) return false;
+    const url = typeof e.url === "string" ? e.url : "";
+    return url.includes("/api/") || url === "";
+  }
+
   // Program assignment state
   private _programAssignment = signal<ProgramAssignment | null>(null);
   private _hasProgramAssignment = signal<boolean | null>(null); // null = not checked yet
@@ -454,7 +468,14 @@ export class UnifiedTrainingService {
     // Use direct Supabase queries instead of API calls for better reliability
     return combineLatest({
       protocol: from(this.loadDailyProtocolDirect(id, targetDate)),
-      readiness: this.readinessService.calculateToday(id),
+      readiness: this.readinessService.calculateToday(id).pipe(
+        catchError((err) => {
+          if (!this.isExpectedApiClientError(err)) {
+            this.logger.warn("[UnifiedTraining] Readiness unavailable", err);
+          }
+          return of(null);
+        }),
+      ),
       recommendations: from(this.loadRecommendationsDirect(id)),
       trainingData: from(this.loadAllTrainingData()),
     }).pipe(
@@ -1103,10 +1124,12 @@ export class UnifiedTrainingService {
         readinessStatus: status,
       };
     } catch (error) {
-      this.logger.error(
-        "[Training] Failed to get wellness for training:",
-        toLogContext(error),
-      );
+      if (!this.isExpectedApiClientError(error)) {
+        this.logger.error(
+          "[Training] Failed to get wellness for training:",
+          toLogContext(error),
+        );
+      }
       return {
         alert: null,
         readinessScore: null,

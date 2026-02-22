@@ -150,10 +150,10 @@ export class PlayerProgramService {
           return null;
         }),
         catchError((error) => {
-          // Don't log 401 errors as errors - they're expected when not authenticated
-          if (error.status === 401) {
+          // Don't log auth/client errors as hard failures for optional assignment lookup
+          if ([400, 401, 403, 404].includes(error.status)) {
             this.logger.info(
-              "[PlayerProgramService] User not authenticated or session expired",
+              "[PlayerProgramService] Program assignment unavailable for current session",
             );
           } else {
             this.logger.error(
