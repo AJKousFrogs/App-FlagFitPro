@@ -1020,6 +1020,7 @@
 
   .search-input.p-inputtext {
     flex: 1;
+    min-width: 0;
     border: none;
     background: transparent;
     font-size: var(--font-body-size);

@@ -277,7 +277,7 @@ jobs:
           cache-dependency-path: angular/package-lock.json
 
       - name: Restore build
-        uses: actions/download-artifact@v4.4.0
+        uses: actions/download-artifact@v4
         with:
           name: dist
 

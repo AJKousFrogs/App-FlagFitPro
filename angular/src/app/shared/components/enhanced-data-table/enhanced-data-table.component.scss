@@ -33,6 +33,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.toolbar-left {
+  flex: 1;
+}
+
+.column-selector {
+  max-width: min(100%, var(--grid-card-min-sm));
 }
 
 /* Column header */
@@ -180,6 +190,10 @@ tr.selected {
   .toolbar-left,
   .toolbar-right {
     flex-wrap: wrap;
+  }
+
+  .column-selector {
+    max-width: 100%;
   }
 
   // Force card view on narrow containers - DS-EXC-004 in _component-overrides.scss

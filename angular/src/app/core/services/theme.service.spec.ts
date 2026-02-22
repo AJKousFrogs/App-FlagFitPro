@@ -236,6 +236,20 @@ describe("ThemeService", () => {
       expect(document.body.classList.contains("light-theme")).toBe(true);
       expect(document.body.classList.contains("dark-theme")).toBe(false);
     });
+
+    it("should avoid runtime inline token mutations on html element", async () => {
+      service.setMode("dark");
+      await waitFor();
+      expect(
+        document.documentElement.style.getPropertyValue("--p-text-color").trim(),
+      ).toBe("");
+
+      service.setMode("light");
+      await waitFor();
+      expect(
+        document.documentElement.style.getPropertyValue("--p-text-color").trim(),
+      ).toBe("");
+    });
   });
 
   describe("Meta Theme Color", () => {
@@ -308,26 +322,16 @@ describe("ThemeService", () => {
   });
 
   describe("PrimeNG Theme Updates", () => {
-    it("should update PrimeNG surface variables for dark mode", async () => {
+    it("should avoid inline PrimeNG surface token mutations", async () => {
       service.setMode("dark");
       await waitFor();
 
       const root = document.documentElement;
-      const surfaceValue = root.style.getPropertyValue("--p-surface-0");
+      expect(root.style.getPropertyValue("--p-surface-0").trim()).toBe("");
 
-      // Should have set dark surface colors
-      expect(surfaceValue).toBeTruthy();
-    });
-
-    it("should update PrimeNG surface variables for light mode", async () => {
       service.setMode("light");
       await waitFor();
-
-      const root = document.documentElement;
-      const surfaceValue = root.style.getPropertyValue("--p-surface-0");
-
-      // Should have set light surface colors
-      expect(surfaceValue).toBeTruthy();
+      expect(root.style.getPropertyValue("--p-surface-0").trim()).toBe("");
     });
   });
 

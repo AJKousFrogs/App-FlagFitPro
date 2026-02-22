@@ -41,8 +41,8 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  max-width: calc(var(--grid-card-min-xl) + var(--space-5));
-  min-width: var(--grid-card-min-md);
+  max-width: min(100%, calc(var(--grid-card-min-xl) + var(--space-5)));
+  min-width: clamp(12rem, 28vw, var(--grid-card-min-md));
   height: var(--header-height, 4rem);
   cursor: pointer;
   padding: 0 var(--space-2);
@@ -284,7 +284,7 @@
 
 .search-input {
   cursor: pointer;
-  min-width: var(--input-min-width-md);
+  min-width: 0;
   width: 100%;
 }
 
@@ -444,12 +444,16 @@
   }
 
   .header-center {
-    min-width: var(--input-min-width-lg);
-    max-width: var(--grid-card-min-lg);
+    min-width: clamp(10rem, 34vw, var(--input-min-width-lg));
+    max-width: min(100%, var(--grid-card-min-lg));
   }
 
   .search-input {
-    min-width: var(--card-min-height-lg);
+    min-width: 0;
+  }
+
+  .search-shortcut-addon {
+    display: none;
   }
 
   .theme-label {

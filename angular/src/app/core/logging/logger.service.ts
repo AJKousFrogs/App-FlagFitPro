@@ -57,7 +57,7 @@ export interface StructuredLog {
   providedIn: "root",
 })
 export class LoggerService {
-  private readonly adapter = inject(LOGGER, { optional: true });
+  private readonly adapter = this.resolveAdapter();
   private isDevelopment = isDevMode();
   private logLevel: "debug" | "info" | "warning" | "error" | "silent" = this
     .isDevelopment
@@ -70,6 +70,15 @@ export class LoggerService {
 
   // Global context that applies to all logs
   private globalContext: LogContext = {};
+
+  private resolveAdapter() {
+    try {
+      return inject(LOGGER, { optional: true });
+    } catch {
+      // Allow LoggerService usage in non-Angular contexts (plain module imports/tests).
+      return null;
+    }
+  }
 
   /**
    * Set log level: 'debug', 'info', 'warn', 'error', 'silent'

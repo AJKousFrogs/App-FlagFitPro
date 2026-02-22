@@ -8,6 +8,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ConfirmationService } from "primeng/api";
 import { provideRouter } from "@angular/router";
 
@@ -48,6 +49,24 @@ const mockConfirmDialogService = {
   confirm: vi.fn(async () => false),
 };
 
+const mockSupabaseService = {
+  currentUser: vi.fn(() => null),
+  session: vi.fn(() => null),
+  userId: vi.fn(() => null),
+  signIn: vi.fn(),
+  signUp: vi.fn(),
+  signOut: vi.fn(),
+  client: {
+    auth: {
+      getSession: vi.fn(async () => ({ data: { session: null }, error: null })),
+      refreshSession: vi.fn(async () => ({
+        data: { session: null },
+        error: null,
+      })),
+    },
+  },
+};
+
 describe("KnowledgeBaseComponent", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -78,6 +97,7 @@ describe("KnowledgeBaseComponent", () => {
         { provide: AuthService, useValue: mockAuthService },
         { provide: TeamMembershipService, useValue: mockTeamMembershipService },
         { provide: ConfirmDialogService, useValue: mockConfirmDialogService },
+        { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: ConfirmationService, useValue: { confirm: vi.fn() } },
       ],
     }).compileComponents();

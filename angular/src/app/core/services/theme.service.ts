@@ -31,8 +31,8 @@ const THEME_STORAGE_KEY = "flagfit_theme";
  * Theme-color meta tag values for mobile browser chrome
  * Maps to design system but hardcoded for SSR compatibility
  */
-const THEME_META_COLOR_LIGHT = "var(--p-highlight-text-color)"; // --ds-primary-green
-const THEME_META_COLOR_DARK = "var(--p-surface-0)"; // --primitive-neutral-900
+const THEME_META_COLOR_LIGHT = "#089949"; // --ds-primary-green
+const THEME_META_COLOR_DARK = "#171717"; // --primitive-neutral-900
 
 @Injectable({
   providedIn: "root",
@@ -303,9 +303,6 @@ export class ThemeService implements OnDestroy {
     // Update meta theme-color for mobile browsers
     this.updateMetaThemeColor(theme);
 
-    // Update PrimeNG theme
-    this.updatePrimeNGTheme(theme);
-
     this.logger.debug(`[ThemeService] Applied theme: ${theme}`);
   }
 
@@ -319,26 +316,6 @@ export class ThemeService implements OnDestroy {
         "content",
         theme === "dark" ? THEME_META_COLOR_DARK : THEME_META_COLOR_LIGHT,
       );
-    }
-  }
-
-  /**
-   * Update PrimeNG theme dynamically.
-   * design-system-tokens.scss [data-theme] block defines dark/light vars.
-   * We only override vars that need runtime updates; CSS handles the rest.
-   */
-  private updatePrimeNGTheme(theme: "light" | "dark"): void {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.style.setProperty("--p-surface-200", "var(--primitive-neutral-800)");
-      root.style.setProperty("--p-surface-600", "var(--p-text-color-secondary)");
-      root.style.setProperty("--p-text-color", "var(--color-text-on-primary)");
-    } else {
-      root.style.setProperty("--p-surface-0", "var(--surface-primary)");
-      root.style.setProperty("--p-surface-50", "var(--p-surface-50)");
-      root.style.setProperty("--p-surface-200", "var(--p-surface-border)");
-      root.style.setProperty("--p-surface-500", "var(--p-text-color-secondary)");
-      root.style.setProperty("--p-surface-900", "var(--p-text-color)");
     }
   }
 

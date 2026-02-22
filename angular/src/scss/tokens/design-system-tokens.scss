@@ -1331,6 +1331,8 @@ $ds-font-weight-extrabold: 800;
 [data-theme="dark"],
 .dark-theme,
 body.dark-theme {
+  color-scheme: dark;
+
   /* Surface Colors - Dark Mode */
   --surface-primary: var(--primitive-neutral-900);
   --surface-primary-rgb: 23, 23, 23; /* #171717 for rgba() compositions */
@@ -1410,6 +1412,8 @@ body.dark-theme {
 [data-theme="light"],
 .light-theme,
 body.light-theme {
+  color-scheme: light;
+
   /* Surface Colors - Light Mode (matches :root) */
   --surface-primary: #fff;
   --surface-primary-rgb: 255, 255, 255;

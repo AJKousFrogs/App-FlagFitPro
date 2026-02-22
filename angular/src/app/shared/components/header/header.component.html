@@ -91,15 +91,14 @@
             type="text"
             pInputText
             id="global-search-input"
-            [placeholder]="
-              config().searchPlaceholder ||
-              'Search players, exercises, videos...'
-            "
+            [placeholder]="searchPlaceholder()"
             readonly
             class="search-input"
           />
           <p-inputgroup-addon class="search-shortcut-addon">
-            <span class="search-shortcut"> <kbd>⌘</kbd><kbd>K</kbd> </span>
+            <span class="search-shortcut">
+              <kbd>{{ searchShortcutModifier() }}</kbd><kbd>K</kbd>
+            </span>
           </p-inputgroup-addon>
         </p-inputgroup>
       </div>

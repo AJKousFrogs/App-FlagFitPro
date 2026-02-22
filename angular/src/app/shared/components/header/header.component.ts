@@ -145,6 +145,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return `Current theme: ${this.themeLabel()}. Click to change.`;
   });
 
+  // Keep search placeholder compact to avoid clipping in the header shell
+  searchPlaceholder = computed(() => {
+    const configured = this.config().searchPlaceholder?.trim();
+    if (!configured) {
+      return "Search workouts, exercises...";
+    }
+    return configured.length > 32
+      ? "Search workouts, exercises..."
+      : configured;
+  });
+
+  searchShortcutModifier = computed(() =>
+    this.isApplePlatform() ? "Cmd" : "Ctrl",
+  );
+
   // User menu state
   isUserMenuOpen = signal(false);
   userInitials = signal("JD");
@@ -240,6 +255,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       return "pi-bolt";
     return "pi-cloud";
   });
+
+  private isApplePlatform(): boolean {
+    if (typeof navigator === "undefined") return false;
+    return /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+  }
 
   // Weather tooltip with more details
   weatherTooltip = computed(() => {

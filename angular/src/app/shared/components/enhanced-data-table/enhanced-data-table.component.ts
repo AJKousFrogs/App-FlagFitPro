@@ -11,6 +11,7 @@ import {
   inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   TableModule,
   TableColumnReorderEvent,
@@ -74,6 +75,7 @@ export interface TablePreferences {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     TableModule,
     MultiSelect,
 
@@ -105,8 +107,8 @@ export interface TablePreferences {
           <!-- Column visibility -->
           <p-multiSelect
             [options]="columnOptions()"
-            [value]="visibleColumnFields()"
-            (onChange)="onVisibleColumnFieldsChange($event.value)"
+            [ngModel]="visibleColumnFields()"
+            (ngModelChange)="onVisibleColumnFieldsChange($event)"
             placeholder="Show Columns"
             optionLabel="label"
             optionValue="value"
