@@ -4,6 +4,7 @@ import {
   Injector,
   inject,
 } from "@angular/core";
+import { HttpErrorResponse } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 
@@ -12,7 +13,51 @@ export class AngularGlobalErrorHandler implements ErrorHandler {
   private readonly injector = inject(Injector);
   private readonly logger = inject(LoggerService);
 
+  private isExpectedApiClientError(error: unknown): boolean {
+    if (!error || typeof error !== "object") return false;
+    const e = error as {
+      status?: unknown;
+      url?: unknown;
+      isExpectedApiFailure?: unknown;
+    };
+    if (e.isExpectedApiFailure === true) return true;
+    const status = typeof e.status === "number" ? e.status : undefined;
+    if (!status || ![400, 401, 403, 404].includes(status)) return false;
+    const url = typeof e.url === "string" ? e.url : "";
+    return url.includes("/api/") || url === "";
+  }
+
+  private isExpectedHttpAuthError(error: unknown): boolean {
+    if (!(error instanceof HttpErrorResponse)) return false;
+    if (![400, 401, 403, 404].includes(error.status)) return false;
+    return (error.url ?? "").includes("/api/");
+  }
+
   handleError(error: unknown): void {
+    if (error === null || error === undefined) {
+      return;
+    }
+
+    // Avoid noisy "unhandled" telemetry for expected auth/client HTTP failures.
+    if (
+      this.isExpectedHttpAuthError(error) ||
+      this.isExpectedApiClientError(error)
+    ) {
+      if (!environment.production) {
+        this.logger.debug("[GlobalErrorHandler] Ignored expected HTTP error", {
+          status:
+            error instanceof HttpErrorResponse
+              ? error.status
+              : (error as { status?: unknown }).status,
+          url:
+            error instanceof HttpErrorResponse
+              ? error.url
+              : (error as { url?: unknown }).url,
+        });
+      }
+      return;
+    }
+
     if (!environment.production) {
       this.logger.error("Unhandled error:", error);
     }

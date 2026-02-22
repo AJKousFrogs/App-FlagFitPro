@@ -213,11 +213,23 @@ export class LoggerService {
     message: string,
     context?: LogContext,
     data?: unknown,
+    error?: Error,
   ): void {
     const logger = this.adapter;
     if (!logger) return;
 
-    const meta = { context, data };
+    const meta = {
+      context,
+      data,
+      error: error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            ...(error as unknown as { code?: string | number; details?: unknown }),
+          }
+        : undefined,
+    };
     const logLevel: LogLevel = level === "warning" ? "warn" : level;
     logger[logLevel](message, meta);
   }
@@ -281,6 +293,16 @@ export class LoggerService {
             .details;
         }
         return err;
+      }
+
+      // When non-Error objects are thrown, preserve useful shape for diagnostics.
+      try {
+        const serialized = JSON.stringify(error);
+        if (serialized && serialized !== "{}") {
+          return new Error(serialized);
+        }
+      } catch {
+        // Fall through to String(error)
       }
     }
 
@@ -365,7 +387,13 @@ export class LoggerService {
     if (!this.isDevelopment) {
       this.sendToErrorTracking(log);
     }
-    this.emitToAdapter("error", message, normalizedContext, sanitizedData);
+    this.emitToAdapter(
+      "error",
+      message,
+      normalizedContext,
+      sanitizedData,
+      normalizedError,
+    );
   }
 
   /**

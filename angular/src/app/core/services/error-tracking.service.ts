@@ -103,6 +103,37 @@ export class ErrorTrackingService {
   private readonly dedupeWindowMs = 10_000;
   private readonly recentErrorSignatures = new Map<string, number>();
 
+  private shouldIgnoreError(error: Error | unknown): boolean {
+    if (!error || typeof error !== "object") return false;
+    const e = error as {
+      status?: unknown;
+      url?: unknown;
+      isExpectedApiFailure?: unknown;
+    };
+
+    if (e.isExpectedApiFailure === true) return true;
+
+    const status = typeof e.status === "number" ? e.status : undefined;
+    if (!status || ![400, 401, 403, 404].includes(status)) return false;
+
+    const url = typeof e.url === "string" ? e.url : "";
+    return url.includes("/api/") || url === "";
+  }
+
+  private toError(error: Error | unknown): Error {
+    if (error instanceof Error) return error;
+    if (typeof error === "string") return new Error(error);
+    try {
+      const serialized = JSON.stringify(error);
+      if (serialized && serialized !== "{}") {
+        return new Error(serialized);
+      }
+    } catch {
+      // ignore JSON serialization errors
+    }
+    return new Error(String(error));
+  }
+
   // Sentry SDK (loaded dynamically if enabled)
   private Sentry: SentryApi | null = null;
 
@@ -218,7 +249,11 @@ export class ErrorTrackingService {
     context?: ErrorContext,
     severity: ErrorSeverity = "error",
   ): void {
-    const errorObj = error instanceof Error ? error : new Error(String(error));
+    if (this.shouldIgnoreError(error)) {
+      return;
+    }
+
+    const errorObj = this.toError(error);
     const signature = `${severity}:${errorObj.message}:${context?.component ?? ""}:${context?.action ?? ""}`;
     const now = Date.now();
     const previous = this.recentErrorSignatures.get(signature) ?? 0;

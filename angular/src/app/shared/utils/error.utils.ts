@@ -266,10 +266,23 @@ export function extractApiErrorDetails(
       message?: string;
     };
 
-    errorMessage =
-      httpError.error?.error ||
-      httpError.error?.message ||
-      `Error Code: ${httpError.status}\nMessage: ${httpError.message}`;
+    const nestedError = httpError.error?.error;
+    const nestedMessage = httpError.error?.message;
+
+    if (typeof nestedError === "string" && nestedError.trim()) {
+      errorMessage = nestedError;
+    } else if (typeof nestedMessage === "string" && nestedMessage.trim()) {
+      errorMessage = nestedMessage;
+    } else if (nestedError !== undefined && nestedError !== null) {
+      const parsedNested = stringifyErrorValue(nestedError);
+      if (parsedNested) {
+        errorMessage = parsedNested;
+      } else {
+        errorMessage = `Error Code: ${httpError.status}\nMessage: ${httpError.message}`;
+      }
+    } else {
+      errorMessage = `Error Code: ${httpError.status}\nMessage: ${httpError.message}`;
+    }
 
     errorType = httpError.error?.errorType;
     requestId = httpError.error?.requestId;

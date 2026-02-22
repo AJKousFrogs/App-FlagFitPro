@@ -231,21 +231,43 @@ export class ApiService {
 
   private handleError = (error: unknown): Observable<never> => {
     const { message, errorType, requestId } = extractApiErrorDetails(error);
+    const errorLike = error as { status?: unknown; url?: unknown };
+    const status =
+      typeof errorLike?.status === "number" ? errorLike.status : undefined;
+    const url = typeof errorLike?.url === "string" ? errorLike.url : undefined;
+    const isExpectedApiFailure = Boolean(
+      status && [400, 401, 403, 404].includes(status) &&
+        (url?.includes("/api/") ?? true),
+    );
+    const normalizedMessage =
+      !message || message === "[object Object]"
+        ? "Request failed with an unexpected error payload"
+        : message;
 
     // Log with requestId if available
     const logContext = requestId ? `[${requestId}]` : "";
-    this.logger.error(
-      `[ApiService]${logContext} API request failed: ${message}`,
-      { errorType, requestId },
-    );
+    const logMessage =
+      `[ApiService]${logContext} API request failed: ${normalizedMessage}`;
+    const logPayload = { errorType, requestId, status, url };
+    if (isExpectedApiFailure) {
+      this.logger.debug(logMessage, logPayload);
+    } else {
+      this.logger.error(logMessage, logPayload);
+    }
 
     // Create error with additional context
-    const apiError = new Error(message) as Error & {
+    const apiError = new Error(normalizedMessage) as Error & {
       errorType?: string;
       requestId?: string;
+      status?: number;
+      url?: string;
+      isExpectedApiFailure?: boolean;
     };
     apiError.errorType = errorType;
     apiError.requestId = requestId;
+    apiError.status = status;
+    apiError.url = url;
+    apiError.isExpectedApiFailure = isExpectedApiFailure;
 
     return throwError(() => apiError);
   };
