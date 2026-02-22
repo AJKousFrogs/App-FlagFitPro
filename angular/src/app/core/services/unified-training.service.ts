@@ -5,7 +5,7 @@ import {
     inject,
     signal,
 } from "@angular/core";
-import { Observable, catchError, combineLatest, firstValueFrom, from, map, of, shareReplay, tap } from "rxjs";
+import { Observable, catchError, combineLatest, finalize, firstValueFrom, from, map, of, shareReplay } from "rxjs";
 
 import { COLORS } from "../constants/app.constants";
 import { WELLNESS } from "../constants/wellness.constants";
@@ -89,6 +89,9 @@ export class UnifiedTrainingService {
   private playerProgramService = inject(PlayerProgramService);
   private supabase = inject(SupabaseService);
   private _destroyRef = inject(DestroyRef);
+  private overviewRequest$: Observable<unknown> | null = null;
+  private lastOverviewRequestKey: string | null = null;
+  private authFailureCooldownUntil = 0;
 
   private isExpectedApiClientError(error: unknown): boolean {
     if (!error || typeof error !== "object") return false;
@@ -457,16 +460,32 @@ export class UnifiedTrainingService {
    * Uses direct Supabase for protocol data when API is not available
    */
   getTodayOverview(date?: string) {
+    const now = Date.now();
+    if (now < this.authFailureCooldownUntil) {
+      return of(null);
+    }
+
     if (!this.authService.isAuthenticated()) return of(null);
+
+    const session = this.supabase.session();
+    if (!session?.access_token) {
+      return of(null);
+    }
 
     const id = this.userId();
     if (!id) return of(null);
 
-    this._isRefreshing.set(true);
     const targetDate = date || new Date().toISOString().split("T")[0];
+    const requestKey = `${id}:${targetDate}`;
+
+    if (this.overviewRequest$ && this.lastOverviewRequestKey === requestKey) {
+      return this.overviewRequest$;
+    }
+
+    this._isRefreshing.set(true);
 
     // Use direct Supabase queries instead of API calls for better reliability
-    return combineLatest({
+    const request$ = combineLatest({
       protocol: from(this.loadDailyProtocolDirect(id, targetDate)),
       readiness: this.readinessService.calculateToday(id).pipe(
         catchError((err) => {
@@ -489,14 +508,26 @@ export class UnifiedTrainingService {
           aiInsight: insight,
         };
       }),
-      tap(() => this._isRefreshing.set(false)),
       catchError((err) => {
-        this.logger.error("Error in getTodayOverview", err);
-        this._isRefreshing.set(false);
+        if (this.isExpectedApiClientError(err)) {
+          // Avoid request storms during unauthenticated/expired sessions.
+          this.authFailureCooldownUntil = Date.now() + 15_000;
+        } else {
+          this.logger.error("Error in getTodayOverview", err);
+        }
         return of(null);
+      }),
+      finalize(() => {
+        this._isRefreshing.set(false);
+        this.overviewRequest$ = null;
+        this.lastOverviewRequestKey = null;
       }),
       shareReplay(1),
     );
+
+    this.overviewRequest$ = request$;
+    this.lastOverviewRequestKey = requestKey;
+    return request$;
   }
 
   /**

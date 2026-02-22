@@ -193,6 +193,7 @@ export class PlayerDashboardComponent {
   userName = signal("Athlete");
   // Per audit: use currentUser() signal for reactivity, not getUser() method
   currentUserId = computed(() => this.authService.currentUser()?.id ?? "");
+  private overviewLoadedForUser = signal<string | null>(null);
 
   // Announcement
   announcement = signal<AnnouncementBanner | null>(null);
@@ -502,19 +503,31 @@ export class PlayerDashboardComponent {
       this.unifiedTrainingService.loadProgramAssignment();
     }
 
-    // Trigger data loading in UnifiedTrainingService to populate schedule
-    // This ensures today's schedule is available
-    this.unifiedTrainingService
-      .getTodayOverview()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.logger.info("[Dashboard] Today's overview data loaded");
-        },
-        error: (error) => {
-          this.logger.error("[Dashboard] Error loading today's overview:", error);
-        },
-      });
+    // Load overview once per authenticated user to avoid auth-transition request loops.
+    effect(() => {
+      const userId = this.currentUserId();
+      if (!userId) {
+        this.overviewLoadedForUser.set(null);
+        return;
+      }
+      if (this.overviewLoadedForUser() === userId) return;
+
+      this.overviewLoadedForUser.set(userId);
+      this.unifiedTrainingService
+        .getTodayOverview()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.logger.info("[Dashboard] Today's overview data loaded");
+          },
+          error: (error) => {
+            this.logger.error(
+              "[Dashboard] Error loading today's overview:",
+              error,
+            );
+          },
+        });
+    });
   }
 
   loadData(): void {
