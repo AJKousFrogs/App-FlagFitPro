@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
@@ -621,6 +622,16 @@ export class PerformanceDataService {
           .order("date", { ascending: false });
 
         if (error) {
+          if (isBenignSupabaseQueryError(error)) {
+            this.logger.warn(
+              "[Performance] Supplements unavailable in current environment",
+              error,
+            );
+            return {
+              data: [] as Supplement[],
+              compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
+            };
+          }
           this.logger.error("[Performance] Error fetching supplements:", error);
           throw error;
         }
@@ -656,7 +667,9 @@ export class PerformanceDataService {
       })(),
     ).pipe(
       catchError((error) => {
-        this.logger.error("[Performance] Failed to fetch supplements:", error);
+        if (!isBenignSupabaseQueryError(error)) {
+          this.logger.error("[Performance] Failed to fetch supplements:", error);
+        }
         return of({
           data: [],
           compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
@@ -818,6 +831,18 @@ export class PerformanceDataService {
         });
 
         if (error) {
+          if (isBenignSupabaseQueryError(error)) {
+            this.logger.warn(
+              "[Performance] Performance tests unavailable in current environment",
+              error,
+            );
+            return {
+              data: [] as PerformanceTest[],
+              trends: {} as Record<string, TrendValue>,
+              summary: { totalTests: 0 } as TestSummary,
+              pagination: { total: 0 },
+            };
+          }
           this.logger.error("[Performance] Error fetching tests:", error);
           throw error;
         }
@@ -847,7 +872,9 @@ export class PerformanceDataService {
       })(),
     ).pipe(
       catchError((error) => {
-        this.logger.error("[Performance] Failed to fetch tests:", error);
+        if (!isBenignSupabaseQueryError(error)) {
+          this.logger.error("[Performance] Failed to fetch tests:", error);
+        }
         return of({
           data: [] as PerformanceTest[],
           trends: {} as Record<string, TrendValue>,

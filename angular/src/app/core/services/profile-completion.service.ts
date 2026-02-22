@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -125,6 +126,11 @@ export class ProfileCompletionService {
    * Deduplicates concurrent calls and returns cached data if fresh (< 30s)
    */
   async loadProfileData(forceRefresh = false): Promise<UserProfileData | null> {
+    if (!this.authService.isAuthenticated()) {
+      this._profileData.set(null);
+      return null;
+    }
+
     const user = this.authService.getUser();
     if (!user?.id) {
       this.logger.warn("[ProfileCompletion] No authenticated user");
@@ -173,6 +179,10 @@ export class ProfileCompletionService {
           .maybeSingle();
 
       if (userError) {
+        if (isBenignSupabaseQueryError(userError)) {
+          this._profileData.set(null);
+          return null;
+        }
         this.logger.error("[ProfileCompletion] Error loading user:", userError);
         return null;
       }
@@ -228,7 +238,9 @@ export class ProfileCompletionService {
 
       return profileData;
     } catch (error) {
-      this.logger.error("[ProfileCompletion] Unexpected error:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[ProfileCompletion] Unexpected error:", error);
+      }
       return null;
     } finally {
       this._isLoading.set(false);

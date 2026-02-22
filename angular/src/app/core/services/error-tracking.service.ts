@@ -100,6 +100,8 @@ export class ErrorTrackingService {
   private maxBreadcrumbs = 50;
   private userContext: { id?: string; email?: string; role?: string } = {};
   private isInitialized = false;
+  private readonly dedupeWindowMs = 10_000;
+  private readonly recentErrorSignatures = new Map<string, number>();
 
   // Sentry SDK (loaded dynamically if enabled)
   private Sentry: SentryApi | null = null;
@@ -217,6 +219,13 @@ export class ErrorTrackingService {
     severity: ErrorSeverity = "error",
   ): void {
     const errorObj = error instanceof Error ? error : new Error(String(error));
+    const signature = `${severity}:${errorObj.message}:${context?.component ?? ""}:${context?.action ?? ""}`;
+    const now = Date.now();
+    const previous = this.recentErrorSignatures.get(signature) ?? 0;
+    if (now - previous < this.dedupeWindowMs) {
+      return;
+    }
+    this.recentErrorSignatures.set(signature, now);
 
     // Log locally
     this.logger.error(`[${severity.toUpperCase()}]`, errorObj, context);

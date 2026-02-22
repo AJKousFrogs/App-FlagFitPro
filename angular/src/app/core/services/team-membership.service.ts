@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { normalizePlayerName } from "../../shared/utils/format.utils";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -185,6 +186,11 @@ export class TeamMembershipService {
    * Deduplicates concurrent calls and returns cached data if fresh (< 30s)
    */
   async loadMembership(forceRefresh = false): Promise<TeamMembership | null> {
+    if (!this.authService.isAuthenticated()) {
+      this._membership.set(null);
+      return null;
+    }
+
     const user = this.authService.getUser();
     if (!user?.id) {
       this.logger.warn("[TeamMembership] No authenticated user");
@@ -234,6 +240,10 @@ export class TeamMembershipService {
         .maybeSingle();
 
       if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this._membership.set(null);
+          return null;
+        }
         this.logger.error("[TeamMembership] Error loading membership:", error);
         return null;
       }
@@ -269,7 +279,9 @@ export class TeamMembershipService {
 
       return membership;
     } catch (error) {
-      this.logger.error("[TeamMembership] Unexpected error:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[TeamMembership] Unexpected error:", error);
+      }
       return null;
     } finally {
       this._isLoading.set(false);

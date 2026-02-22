@@ -10,6 +10,7 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { GameDayRecoveryService } from "./game-day-recovery.service";
 import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface ContinuityEvent {
   type:
@@ -137,7 +138,7 @@ export class ContinuityIndicatorsService {
         .limit(1)
         .maybeSingle();
 
-      if (error && error.code !== "PGRST116") {
+      if (error && !isBenignSupabaseQueryError(error)) {
         // Log only if it's not a "no rows" error
         this.logger.warn(
           "[Continuity] Travel recovery query failed (table may not have data):",
@@ -193,7 +194,7 @@ export class ContinuityIndicatorsService {
         .limit(1)
         .maybeSingle();
 
-      if (error && error.code !== "PGRST116") {
+      if (error && !isBenignSupabaseQueryError(error)) {
         this.logger.error("[Continuity] Error fetching RTP:", error);
         return null;
       }
@@ -210,7 +211,9 @@ export class ContinuityIndicatorsService {
           : new Date(),
       };
     } catch (error) {
-      this.logger.error("[Continuity] Error fetching RTP:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[Continuity] Error fetching RTP:", error);
+      }
       return null;
     }
   }

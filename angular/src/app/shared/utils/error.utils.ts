@@ -28,6 +28,15 @@ export interface ApiErrorResponse {
   errors?: string[];
 }
 
+interface ErrorLikeRecord {
+  status?: number | string;
+  code?: string;
+  message?: string;
+  details?: string;
+  hint?: string;
+  error?: unknown;
+}
+
 const fallbackLogger = new LoggerService();
 
 /**
@@ -211,6 +220,34 @@ export function extractApiErrorDetails(
   errorType?: string;
   requestId?: string;
 } {
+  const stringifyErrorValue = (value: unknown): string | null => {
+    if (value === null || value === undefined) return null;
+    if (typeof value === "string") return value;
+    if (typeof value === "number" || typeof value === "boolean") {
+      return String(value);
+    }
+    if (value instanceof Error) return value.message || value.name;
+    if (typeof value === "object") {
+      const candidate = value as ErrorLikeRecord;
+      if (typeof candidate.message === "string" && candidate.message.trim()) {
+        return candidate.message;
+      }
+      if (typeof candidate.error === "string" && candidate.error.trim()) {
+        return candidate.error;
+      }
+      if (candidate.error && typeof candidate.error === "object") {
+        const nested = stringifyErrorValue(candidate.error);
+        if (nested) return nested;
+      }
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return String(value);
+      }
+    }
+    return String(value);
+  };
+
   let errorMessage = fallbackMessage;
   let errorType: string | undefined;
   let requestId: string | undefined;
@@ -236,9 +273,48 @@ export function extractApiErrorDetails(
 
     errorType = httpError.error?.errorType;
     requestId = httpError.error?.requestId;
+  } else {
+    const parsed = stringifyErrorValue(error);
+    if (parsed) {
+      errorMessage = parsed;
+    }
+  }
+
+  if (errorMessage === "[object Object]") {
+    const parsed = stringifyErrorValue(error);
+    if (parsed) {
+      errorMessage = parsed;
+    }
   }
 
   return { message: errorMessage, errorType, requestId };
+}
+
+/**
+ * Identify Supabase/PostgREST errors that are expected in partially provisioned
+ * environments (missing optional tables/views) or unauthenticated sessions.
+ */
+export function isBenignSupabaseQueryError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const e = error as ErrorLikeRecord;
+  const status = Number(e.status);
+  const code = e.code;
+
+  // No rows, missing relation, or schema cache misses for optional resources
+  const benignCodes = new Set([
+    "PGRST116",
+    "PGRST106",
+    "PGRST204",
+    "42P01",
+    "42703",
+  ]);
+
+  if (code && benignCodes.has(code)) return true;
+
+  // Unauthenticated/forbidden/not-found in optional feature probes
+  if ([401, 403, 404].includes(status)) return true;
+
+  return false;
 }
 
 /**

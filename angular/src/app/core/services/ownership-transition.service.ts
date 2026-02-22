@@ -8,6 +8,7 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface OwnershipTransition {
   id?: string;
@@ -52,6 +53,13 @@ export class OwnershipTransitionService {
         .single();
 
       if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this.logger.warn(
+            "[OwnershipTransition] Transition log unavailable in current environment",
+            error,
+          );
+          return null;
+        }
         this.logger.error(
           "[OwnershipTransition] Error logging transition:",
           error,
@@ -64,10 +72,12 @@ export class OwnershipTransitionService {
       );
       return data.id;
     } catch (error) {
-      this.logger.error(
-        "[OwnershipTransition] Error logging transition:",
-        error,
-      );
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error(
+          "[OwnershipTransition] Error logging transition:",
+          error,
+        );
+      }
       return null;
     }
   }
@@ -101,6 +111,9 @@ export class OwnershipTransitionService {
         .eq("id", transitionId);
 
       if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          return false;
+        }
         this.logger.error(
           "[OwnershipTransition] Error updating status:",
           error,
@@ -110,7 +123,9 @@ export class OwnershipTransitionService {
 
       return true;
     } catch (error) {
-      this.logger.error("[OwnershipTransition] Error updating status:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[OwnershipTransition] Error updating status:", error);
+      }
       return false;
     }
   }
@@ -132,6 +147,9 @@ export class OwnershipTransitionService {
         .limit(limit);
 
       if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          return [];
+        }
         this.logger.error(
           "[OwnershipTransition] Error fetching transitions:",
           error,
@@ -157,10 +175,12 @@ export class OwnershipTransitionService {
         })) || []
       );
     } catch (error) {
-      this.logger.error(
-        "[OwnershipTransition] Error fetching transitions:",
-        error,
-      );
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error(
+          "[OwnershipTransition] Error fetching transitions:",
+          error,
+        );
+      }
       return [];
     }
   }
@@ -182,6 +202,9 @@ export class OwnershipTransitionService {
         .lt("created_at", cutoff.toISOString());
 
       if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          return;
+        }
         this.logger.error(
           "[OwnershipTransition] Error checking overdue:",
           error,
@@ -205,7 +228,9 @@ export class OwnershipTransitionService {
         );
       }
     } catch (error) {
-      this.logger.error("[OwnershipTransition] Error checking overdue:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[OwnershipTransition] Error checking overdue:", error);
+      }
     }
   }
 
@@ -225,6 +250,9 @@ export class OwnershipTransitionService {
         .limit(limit);
 
       if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          return [];
+        }
         this.logger.error(
           "[OwnershipTransition] Error fetching player transitions:",
           error,
@@ -250,10 +278,12 @@ export class OwnershipTransitionService {
         })) || []
       );
     } catch (error) {
-      this.logger.error(
-        "[OwnershipTransition] Error fetching player transitions:",
-        error,
-      );
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error(
+          "[OwnershipTransition] Error fetching player transitions:",
+          error,
+        );
+      }
       return [];
     }
   }

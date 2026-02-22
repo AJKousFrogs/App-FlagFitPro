@@ -37,6 +37,7 @@ import {
     PerformanceDataService,
     PhysicalMeasurement,
 } from "./performance-data.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 import {
     PlayerProgramService,
     ProgramAssignment,
@@ -442,6 +443,8 @@ export class UnifiedTrainingService {
    * Uses direct Supabase for protocol data when API is not available
    */
   getTodayOverview(date?: string) {
+    if (!this.authService.isAuthenticated()) return of(null);
+
     const id = this.userId();
     if (!id) return of(null);
 
@@ -496,19 +499,23 @@ export class UnifiedTrainingService {
         .maybeSingle();
 
       if (error) {
-        this.logger.warn(
-          "[UnifiedTraining] Error loading daily protocol:",
-          error,
-        );
+        if (!isBenignSupabaseQueryError(error)) {
+          this.logger.warn(
+            "[UnifiedTraining] Error loading daily protocol:",
+            error,
+          );
+        }
         return { data: null };
       }
 
       return { data: data as DailyProtocolResponse };
     } catch (err) {
-      this.logger.warn(
-        "[UnifiedTraining] Failed to load daily protocol:",
-        toLogContext(err),
-      );
+      if (!isBenignSupabaseQueryError(err)) {
+        this.logger.warn(
+          "[UnifiedTraining] Failed to load daily protocol:",
+          toLogContext(err),
+        );
+      }
       return { data: null };
     }
   }
@@ -529,10 +536,12 @@ export class UnifiedTrainingService {
         .limit(5);
 
       if (error) {
-        this.logger.warn(
-          "[UnifiedTraining] Error loading recommendations:",
-          error,
-        );
+        if (!isBenignSupabaseQueryError(error)) {
+          this.logger.warn(
+            "[UnifiedTraining] Error loading recommendations:",
+            error,
+          );
+        }
         return { data: null };
       }
 
@@ -567,10 +576,12 @@ export class UnifiedTrainingService {
 
       return { data: recommendations };
     } catch (err) {
-      this.logger.warn(
-        "[UnifiedTraining] Failed to load recommendations:",
-        err,
-      );
+      if (!isBenignSupabaseQueryError(err)) {
+        this.logger.warn(
+          "[UnifiedTraining] Failed to load recommendations:",
+          err,
+        );
+      }
       return { data: null };
     }
   }

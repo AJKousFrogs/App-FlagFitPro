@@ -7,6 +7,7 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface LoadCap {
   id?: string;
@@ -77,11 +78,17 @@ export class AcwrSpikeDetectionService {
         });
 
       if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this.logger.warn("[AcwrSpike] Skipping load cap creation:", error);
+          return;
+        }
         this.logger.error("[AcwrSpike] Error creating load cap:", error);
         throw error;
       }
     } catch (error) {
-      this.logger.error("[AcwrSpike] Error creating load cap:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[AcwrSpike] Error creating load cap:", error);
+      }
       throw error;
     }
   }
@@ -100,7 +107,7 @@ export class AcwrSpikeDetectionService {
         .limit(1)
         .maybeSingle();
 
-      if (error && error.code !== "PGRST116") {
+      if (error && !isBenignSupabaseQueryError(error)) {
         this.logger.error("[AcwrSpike] Error fetching load cap:", error);
         return null;
       }
@@ -119,7 +126,9 @@ export class AcwrSpikeDetectionService {
         createdAt: new Date(data.created_at),
       };
     } catch (error) {
-      this.logger.error("[AcwrSpike] Error fetching load cap:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[AcwrSpike] Error fetching load cap:", error);
+      }
       return null;
     }
   }
@@ -146,7 +155,7 @@ export class AcwrSpikeDetectionService {
           })
           .eq("id", cap.id);
 
-        if (error) {
+        if (error && !isBenignSupabaseQueryError(error)) {
           this.logger.error("[AcwrSpike] Error deactivating load cap:", error);
         } else {
           this.logger.info(
@@ -163,12 +172,14 @@ export class AcwrSpikeDetectionService {
           })
           .eq("id", cap.id);
 
-        if (error) {
+        if (error && !isBenignSupabaseQueryError(error)) {
           this.logger.error("[AcwrSpike] Error updating load cap:", error);
         }
       }
     } catch (error) {
-      this.logger.error("[AcwrSpike] Error updating load cap:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[AcwrSpike] Error updating load cap:", error);
+      }
     }
   }
 
@@ -197,7 +208,7 @@ export class AcwrSpikeDetectionService {
         })
         .eq("id", cap.id);
 
-      if (error) {
+      if (error && !isBenignSupabaseQueryError(error)) {
         this.logger.error("[AcwrSpike] Error overriding load cap:", error);
       } else {
         this.logger.info(
@@ -205,7 +216,9 @@ export class AcwrSpikeDetectionService {
         );
       }
     } catch (error) {
-      this.logger.error("[AcwrSpike] Error overriding load cap:", error);
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error("[AcwrSpike] Error overriding load cap:", error);
+      }
     }
   }
 }

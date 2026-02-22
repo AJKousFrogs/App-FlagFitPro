@@ -7,6 +7,7 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface RecoveryBlock {
   playerId: string;
@@ -177,17 +178,19 @@ export class GameDayRecoveryService {
           created_at: new Date().toISOString(),
         });
 
-      if (error) {
+      if (error && !isBenignSupabaseQueryError(error)) {
         this.logger.error(
           "[GameDayRecovery] Error creating recovery block:",
           error,
         );
       }
     } catch (error) {
-      this.logger.error(
-        "[GameDayRecovery] Error creating recovery block:",
-        error,
-      );
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error(
+          "[GameDayRecovery] Error creating recovery block:",
+          error,
+        );
+      }
     }
   }
 
@@ -206,7 +209,7 @@ export class GameDayRecoveryService {
         .eq("protocol_type", "game_day_recovery")
         .maybeSingle();
 
-      if (error && error.code !== "PGRST116") {
+      if (error && !isBenignSupabaseQueryError(error)) {
         this.logger.error(
           "[GameDayRecovery] Error fetching active recovery:",
           error,
@@ -227,10 +230,12 @@ export class GameDayRecoveryService {
         protocolType: "game_day_recovery",
       };
     } catch (error) {
-      this.logger.error(
-        "[GameDayRecovery] Error fetching active recovery:",
-        error,
-      );
+      if (!isBenignSupabaseQueryError(error)) {
+        this.logger.error(
+          "[GameDayRecovery] Error fetching active recovery:",
+          error,
+        );
+      }
       return null;
     }
   }
