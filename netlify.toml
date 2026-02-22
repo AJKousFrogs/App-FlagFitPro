@@ -827,6 +827,23 @@
   force = true
 
 # API Routes for Wellness
+#
+# IMPORTANT:
+# /api/wellness/checkin is the canonical endpoint used by frontend services and
+# must be handled by the dedicated wellness-checkin function (daily_wellness_checkin table).
+# Keep these specific routes BEFORE the generic /api/wellness/* mapping.
+[[redirects]]
+  from = "/api/wellness/checkin"
+  to = "/.netlify/functions/wellness-checkin"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/wellness/checkin/*"
+  to = "/.netlify/functions/wellness-checkin"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/wellness/*"
   to = "/.netlify/functions/wellness"
