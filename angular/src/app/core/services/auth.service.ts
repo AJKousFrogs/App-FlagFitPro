@@ -117,13 +117,14 @@ export class AuthService {
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     this.isLoading.set(true);
+    const normalizedEmail = credentials.email.trim().toLowerCase();
 
     return from(
-      this.supabaseService.signIn(credentials.email, credentials.password),
+      this.supabaseService.signIn(normalizedEmail, credentials.password),
     ).pipe(
       map((response) => {
         if (response.error) {
-          throw new Error(response.error.message);
+          throw new Error(this.mapSupabaseAuthError(response.error.message));
         }
         return {
           success: true,
@@ -146,13 +147,29 @@ export class AuthService {
 
     // Extract metadata (everything except email/password)
     const { email: _email, password: _password, ...metadata } = data;
+    const normalizedEmail = data.email.trim().toLowerCase();
+    const normalizedMetadata = {
+      ...metadata,
+      name:
+        typeof metadata["name"] === "string"
+          ? metadata["name"].trim()
+          : metadata["name"],
+      full_name:
+        typeof metadata["name"] === "string"
+          ? metadata["name"].trim()
+          : metadata["full_name"],
+    };
 
     return from(
-      this.supabaseService.signUp(data.email, data.password, metadata),
+      this.supabaseService.signUp(
+        normalizedEmail,
+        data.password,
+        normalizedMetadata,
+      ),
     ).pipe(
       map((response) => {
         if (response.error) {
-          throw new Error(response.error.message);
+          throw new Error(this.mapSupabaseAuthError(response.error.message));
         }
         return {
           success: true,
@@ -336,5 +353,22 @@ export class AuthService {
     } catch (error) {
       this.logger.error("[Auth] Failed to refresh user:", error);
     }
+  }
+
+  private mapSupabaseAuthError(message: string): string {
+    const normalized = (message || "").toLowerCase();
+    if (normalized.includes("invalid login credentials")) {
+      return "Invalid email or password.";
+    }
+    if (normalized.includes("email not confirmed")) {
+      return "Please verify your email before signing in.";
+    }
+    if (normalized.includes("user already registered")) {
+      return "This email is already registered. Try signing in instead.";
+    }
+    if (normalized.includes("password should be at least")) {
+      return "Password is too weak. Use at least 8 characters.";
+    }
+    return message || "Authentication failed. Please try again.";
   }
 }

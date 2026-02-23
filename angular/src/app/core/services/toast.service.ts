@@ -29,15 +29,17 @@
  */
 
 import { Injectable, inject } from "@angular/core";
+import type { ToastMessageOptions } from "primeng/api";
 import { MessageService } from "primeng/api";
 
 export interface ToastOptions {
-  severity?: "success" | "info" | "warning" | "error";
+  severity?: "success" | "info" | "warn" | "warning" | "error";
   summary?: string;
   detail?: string;
   life?: number;
   sticky?: boolean;
   closable?: boolean;
+  key?: string;
 }
 
 /**
@@ -47,6 +49,7 @@ export interface ToastMethodOptions {
   life?: number;
   sticky?: boolean;
   summary?: string;
+  key?: string;
 }
 
 /**
@@ -60,6 +63,7 @@ const MAX_VISIBLE_TOASTS = 5;
  * Same message within this window will be ignored
  */
 const DEDUP_WINDOW_MS = 2000;
+const DEFAULT_TOAST_KEY = "app-toast";
 
 @Injectable({
   providedIn: "root",
@@ -78,8 +82,6 @@ export class ToastService {
    */
   private visibleCount = 0;
 
-  constructor() {}
-
   /**
    * Show a success notification
    * @param detail - The message to display
@@ -91,7 +93,7 @@ export class ToastService {
     summaryOrOptions?: string | ToastMethodOptions,
     life = 3000,
   ): void {
-    const { summary, lifeMs, sticky } = this.parseArgs(
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
       summaryOrOptions,
       "Success",
       life,
@@ -102,6 +104,7 @@ export class ToastService {
       detail,
       life: lifeMs,
       sticky,
+      key,
     });
   }
 
@@ -116,7 +119,7 @@ export class ToastService {
     summaryOrOptions?: string | ToastMethodOptions,
     life = 5000,
   ): void {
-    const { summary, lifeMs, sticky } = this.parseArgs(
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
       summaryOrOptions,
       "Error",
       life,
@@ -127,6 +130,7 @@ export class ToastService {
       detail,
       life: lifeMs,
       sticky,
+      key,
     });
   }
 
@@ -141,17 +145,18 @@ export class ToastService {
     summaryOrOptions?: string | ToastMethodOptions,
     life = 4000,
   ): void {
-    const { summary, lifeMs, sticky } = this.parseArgs(
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
       summaryOrOptions,
       "Warning",
       life,
     );
     this.addWithDedup({
-      severity: "warning",
+      severity: "warn",
       summary,
       detail,
       life: lifeMs,
       sticky,
+      key,
     });
   }
 
@@ -166,7 +171,7 @@ export class ToastService {
     summaryOrOptions?: string | ToastMethodOptions,
     life = 3000,
   ): void {
-    const { summary, lifeMs, sticky } = this.parseArgs(
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
       summaryOrOptions,
       "Info",
       life,
@@ -177,6 +182,7 @@ export class ToastService {
       detail,
       life: lifeMs,
       sticky,
+      key,
     });
   }
 
@@ -187,15 +193,16 @@ export class ToastService {
     summaryOrOptions: string | ToastMethodOptions | undefined,
     defaultSummary: string,
     defaultLife: number,
-  ): { summary: string; lifeMs: number; sticky?: boolean } {
+  ): { summary: string; lifeMs: number; sticky?: boolean; key?: string } {
     if (typeof summaryOrOptions === "string") {
       return { summary: summaryOrOptions, lifeMs: defaultLife };
     }
     if (typeof summaryOrOptions === "object") {
       return {
-        summary: defaultSummary,
+        summary: summaryOrOptions.summary || defaultSummary,
         lifeMs: summaryOrOptions.life ?? defaultLife,
         sticky: summaryOrOptions.sticky,
+        key: summaryOrOptions.key,
       };
     }
     return { summary: defaultSummary, lifeMs: defaultLife };
@@ -207,12 +214,13 @@ export class ToastService {
    */
   show(options: ToastOptions): void {
     this.addWithDedup({
-      severity: options.severity || "info",
-      summary: options.summary || "",
-      detail: options.detail,
+      severity: this.normalizeSeverity(options.severity || "info"),
+      summary: this.normalizeText(options.summary || ""),
+      detail: this.normalizeText(options.detail),
       life: options.life || 3000,
       sticky: options.sticky,
       closable: options.closable,
+      key: options.key || DEFAULT_TOAST_KEY,
     });
   }
 
@@ -221,16 +229,28 @@ export class ToastService {
    * Prevents duplicate messages within DEDUP_WINDOW_MS
    * Limits max visible toasts to MAX_VISIBLE_TOASTS
    */
-  private addWithDedup(message: {
-    severity: string;
-    summary: string;
-    detail?: string;
-    life?: number;
-    sticky?: boolean;
-    closable?: boolean;
-  }): void {
+  private addWithDedup(message: ToastMessageOptions): void {
+    const normalizedMessage: ToastMessageOptions = {
+      ...message,
+      severity: this.normalizeSeverity(message.severity || "info"),
+      summary: this.normalizeText(message.summary || ""),
+      detail: this.normalizeText(message.detail),
+      key: message.key || DEFAULT_TOAST_KEY,
+    };
+
+    if (!normalizedMessage.summary && !normalizedMessage.detail) {
+      return;
+    }
+
+    if (normalizedMessage.summary && !normalizedMessage.detail) {
+      normalizedMessage.detail = normalizedMessage.summary;
+      normalizedMessage.summary = this.defaultSummaryForSeverity(
+        normalizedMessage.severity || "info",
+      );
+    }
+
     // Create a unique key for this message
-    const key = `${message.severity}:${message.summary}:${message.detail || ""}`;
+    const key = `${normalizedMessage.severity}:${normalizedMessage.summary}:${normalizedMessage.detail || ""}`;
     const now = Date.now();
 
     // Check for duplicate within dedup window
@@ -242,8 +262,8 @@ export class ToastService {
 
     // Check max visible limit
     if (this.visibleCount >= MAX_VISIBLE_TOASTS) {
-      // Clear oldest messages to make room
-      this.messageService.clear();
+      // Keep the UI responsive under toast floods.
+      this.messageService.clear(normalizedMessage.key);
       this.visibleCount = 0;
     }
 
@@ -252,16 +272,50 @@ export class ToastService {
     this.visibleCount++;
 
     // Schedule cleanup
-    const lifeMs = message.life || 3000;
-    setTimeout(() => {
-      this.visibleCount = Math.max(0, this.visibleCount - 1);
-    }, lifeMs);
+    const lifeMs = normalizedMessage.life || 3000;
+    if (!normalizedMessage.sticky) {
+      setTimeout(() => {
+        this.visibleCount = Math.max(0, this.visibleCount - 1);
+      }, lifeMs);
+    }
 
     // Clean up old entries from recentMessages map
     this.cleanupOldEntries(now);
 
     // Add the message
-    this.messageService.add(message);
+    this.messageService.add(normalizedMessage);
+  }
+
+  private normalizeText(value?: string): string | undefined {
+    if (value === undefined) {
+      return undefined;
+    }
+    return value.trim().replace(/\s+/g, " ");
+  }
+
+  private normalizeSeverity(
+    severity: string,
+  ): "success" | "info" | "warn" | "error" {
+    if (severity === "warning") {
+      return "warn";
+    }
+    if (severity === "success" || severity === "info" || severity === "warn" || severity === "error") {
+      return severity;
+    }
+    return "info";
+  }
+
+  private defaultSummaryForSeverity(severity: string): string {
+    switch (severity) {
+      case "success":
+        return "Success";
+      case "warn":
+        return "Warning";
+      case "error":
+        return "Error";
+      default:
+        return "Info";
+    }
   }
 
   /**
@@ -285,7 +339,8 @@ export class ToastService {
     ) {
       return;
     }
-    this.messageService.clear();
+    this.messageService.clear(DEFAULT_TOAST_KEY);
+    this.visibleCount = 0;
   }
 
   /**
@@ -300,5 +355,6 @@ export class ToastService {
       return;
     }
     this.messageService.clear(key);
+    this.visibleCount = 0;
   }
 }

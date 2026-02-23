@@ -69,6 +69,7 @@ import {
               formControlName="name"
               placeholder="Enter your full name"
               autocomplete="name"
+              maxlength="80"
               data-testid="name-input"
               [class.ng-invalid]="isFieldInvalid('name')"
               [attr.aria-invalid]="isFieldInvalid('name') ? 'true' : null"
@@ -222,7 +223,7 @@ import {
             type="submit"
             iconLeft="pi-user-plus"
             [loading]="isLoading()"
-            [disabled]="registerForm.invalid"
+            [disabled]="registerForm.invalid || isLoading()"
             [fullWidth]="true"
             testId="register-submit"
             >Create Account</app-button
@@ -258,7 +259,7 @@ export class RegisterComponent {
   constructor() {
     this.registerForm = this.fb.group(
       {
-        name: ["", [Validators.required]],
+        name: ["", [Validators.required, Validators.maxLength(80)]],
         email: ["", [Validators.required, Validators.email]],
         password: [
           "",
@@ -292,11 +293,25 @@ export class RegisterComponent {
   }
 
   getFieldError(fieldName: string): string {
+    if (
+      fieldName === "confirmPassword" &&
+      this.registerForm.hasError("passwordMismatch")
+    ) {
+      const confirmControl = this.registerForm.get("confirmPassword");
+      if (confirmControl && (confirmControl.touched || confirmControl.dirty)) {
+        return "Passwords do not match";
+      }
+    }
+
     const control = this.registerForm.get(fieldName);
     return control ? getFormControlError(control) || "" : "";
   }
 
   async onSubmit(): Promise<void> {
+    if (this.isLoading()) {
+      return;
+    }
+
     if (this.registerForm.invalid) {
       markFormGroupTouched(this.registerForm);
       return;
@@ -365,9 +380,13 @@ export class RegisterComponent {
     }
 
     this.isLoading.set(true);
+    const rawName = String(this.registerForm.value.name || "").trim();
+    const rawEmail = String(this.registerForm.value.email || "")
+      .trim()
+      .toLowerCase();
     const registerData = {
-      name: this.registerForm.value.name,
-      email: this.registerForm.value.email,
+      name: rawName,
+      email: rawEmail,
       password: this.registerForm.value.password,
     };
 

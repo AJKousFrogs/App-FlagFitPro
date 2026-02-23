@@ -221,7 +221,7 @@ describe("AuthService", () => {
       expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
         validRegistration.email,
         validRegistration.password,
-        { name: validRegistration.name },
+        { name: validRegistration.name, full_name: validRegistration.name },
       );
     });
 
@@ -263,7 +263,12 @@ describe("AuthService", () => {
       expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
         registrationWithMetadata.email,
         registrationWithMetadata.password,
-        { name: "New User", role: "coach", teamId: "team-123" },
+        {
+          name: "New User",
+          full_name: "New User",
+          role: "coach",
+          teamId: "team-123",
+        },
       );
     });
   });

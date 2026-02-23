@@ -1,13 +1,9 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  inject,
   input,
-  OnInit,
-  OnDestroy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MessageService } from "primeng/api";
 import { Toast } from "primeng/toast";
 
 /**
@@ -24,7 +20,6 @@ import { Toast } from "primeng/toast";
   selector: "app-toast",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, Toast],
-  providers: [MessageService],
   template: `
     <p-toast
       [position]="position()"
@@ -54,9 +49,7 @@ import { Toast } from "primeng/toast";
   `,
   styleUrl: "./toast.component.scss",
 })
-export class ToastComponent implements OnInit, OnDestroy {
-  private messageService = inject(MessageService);
-
+export class ToastComponent {
   position = input<
     | "top-left"
     | "top-center"
@@ -71,14 +64,6 @@ export class ToastComponent implements OnInit, OnDestroy {
   autoZIndex = input<boolean>(true);
   key = input<string>("app-toast");
   preventDuplicates = input<boolean>(true);
-
-  ngOnInit(): void {
-    // Component initialized
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup if needed
-  }
 
   getIcon(severity: string): string {
     const icons: Record<string, string> = {

@@ -27,15 +27,39 @@
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    flex-shrink: 0;
   }
 
   .progress-text {
     font-size: var(--ds-font-size-sm);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-primary-green);
-    white-space: nowrap;
-    letter-spacing: var(--ds-letter-spacing-0-02em);
+  }
+
+  .progress-meta {
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .completion-checklist {
+    margin: 0 0 var(--space-5) 0;
+    padding: var(--space-2) var(--space-3);
+    border-left: var(--border-1) solid var(--color-status-warning);
+  }
+
+  .checklist-header {
+    display: flex;
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  .checklist-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .checklist-item {
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
   }
 
   .auto-save-indicator {
@@ -175,7 +199,6 @@
         font-size: var(--ds-font-size-sm);
       }
     }
-
   }
 
   .required {

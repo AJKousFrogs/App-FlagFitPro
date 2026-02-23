@@ -6,69 +6,47 @@ import {
 
 // Netlify Function: Weather Data
 // Provides current weather information for training planning
+const DEFAULT_LATITUDE = 37.7749;
+const DEFAULT_LONGITUDE = -122.4194;
+const DEFAULT_LOCATION_NAME = "Training Ground";
+const REQUEST_TIMEOUT_MS = 6000;
+const GEO_USER_AGENT = "FlagFitPro/1.0 (weather-geocoding)";
 
-/**
- * Get weather data from OpenWeatherMap API or Open-Meteo (free fallback)
- */
-async function getWeatherData(latitude, longitude, city) {
-  const apiKey = process.env.OPENWEATHER_API_KEY;
+function createSafetyFallback(location, description) {
+  return {
+    temp: null,
+    condition: "Unknown",
+    description:
+      description ||
+      "Weather data temporarily unavailable. Check local weather before outdoor training.",
+    humidity: null,
+    windSpeed: null,
+    visibility: null,
+    suitable: false,
+    suitability: "poor",
+    icon: "⚠️",
+    location: location || "Unknown",
+    safetyWarning: true,
+  };
+}
 
-  // Try OpenWeatherMap first if API key is configured
-  if (apiKey) {
-    try {
-      const data = await getOpenWeatherData(latitude, longitude, city, apiKey);
-      if (data) {
-        return data;
-      }
-    } catch (error) {
-      console.warn(
-        "OpenWeatherMap failed, falling back to Open-Meteo:",
-        error.message,
-      );
-    }
+async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  // Fallback to Open-Meteo (FREE, no API key required)
-  console.log("Using Open-Meteo (free) for weather data");
-  return await getOpenMeteoData(latitude, longitude, city);
 }
 
 /**
- * Get weather from OpenWeatherMap API
+ * Get weather data from Open-Meteo API (free, no API key required)
  */
-async function getOpenWeatherData(latitude, longitude, city, apiKey) {
-  let apiUrl = "https://api.openweathermap.org/data/2.5/weather?";
-
-  if (latitude && longitude) {
-    apiUrl += `lat=${latitude}&lon=${longitude}`;
-  } else if (city) {
-    apiUrl += `q=${encodeURIComponent(city)}`;
-  } else {
-    apiUrl += "q=San Francisco,US";
-  }
-
-  apiUrl += `&appid=${apiKey}&units=imperial`;
-
-  const response = await fetch(apiUrl);
-
-  if (!response.ok) {
-    throw new Error(`Weather API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  return {
-    temp: Math.round(data.main.temp),
-    condition: data.weather[0].main,
-    description: data.weather[0].description,
-    humidity: data.main.humidity,
-    windSpeed: data.wind?.speed || 0,
-    visibility: data.visibility ? (data.visibility / 1000).toFixed(1) : null,
-    suitable: isWeatherSuitable(data),
-    suitability: getSuitabilityLevel(data),
-    icon: getWeatherIcon(data.weather[0].main),
-    location: data.name || city || "Unknown",
-  };
+async function getWeatherData(latitude, longitude, city) {
+  console.log("Using Open-Meteo for weather data");
+  return await getOpenMeteoData(latitude, longitude, city);
 }
 
 /**
@@ -77,40 +55,54 @@ async function getOpenWeatherData(latitude, longitude, city, apiKey) {
  */
 async function getOpenMeteoData(latitude, longitude, city) {
   try {
-    let lat = latitude || 37.7749;
-    let lon = longitude || -122.4194;
-    let locationName = city || "Training Ground";
+    let lat = latitude || DEFAULT_LATITUDE;
+    let lon = longitude || DEFAULT_LONGITUDE;
+    let locationName = city || DEFAULT_LOCATION_NAME;
 
     // If city provided but no coordinates, geocode the city
     if (city && !latitude && !longitude) {
       try {
-        const geoResponse = await fetch(
+        const geoResponse = await fetchWithTimeout(
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`,
           {
-            headers: { "User-Agent": "FlagFitPro/1.0" },
+            headers: { "User-Agent": GEO_USER_AGENT },
           },
         );
 
-        if (geoResponse.ok) {
-          const geoData = await geoResponse.json();
-          if (geoData.length > 0) {
-            lat = parseFloat(geoData[0].lat);
-            lon = parseFloat(geoData[0].lon);
-            locationName = geoData[0].display_name?.split(",")[0] || city;
-          }
+        if (!geoResponse.ok) {
+          throw new Error(`Geocoding service returned ${geoResponse.status}`);
         }
+
+        const geoData = await geoResponse.json();
+        if (!Array.isArray(geoData) || geoData.length === 0) {
+          return createSafetyFallback(
+            city,
+            "Location could not be resolved. Check spelling or use coordinates for weather lookup.",
+          );
+        }
+
+        lat = parseFloat(geoData[0].lat);
+        lon = parseFloat(geoData[0].lon);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+          return createSafetyFallback(
+            city,
+            "Location coordinates were invalid. Please retry with a specific location.",
+          );
+        }
+        locationName = geoData[0].display_name?.split(",")[0] || city;
       } catch (geoError) {
-        console.warn(
-          "Geocoding failed, using default location:",
-          geoError.message,
+        console.warn("Geocoding failed:", geoError.message);
+        return createSafetyFallback(
+          city,
+          "Location lookup failed. Check local weather before outdoor training.",
         );
       }
     }
 
     // Call Open-Meteo API
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,precipitation,cloud_cover&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto`;
 
-    const weatherResponse = await fetch(weatherUrl);
+    const weatherResponse = await fetchWithTimeout(weatherUrl);
 
     if (!weatherResponse.ok) {
       throw new Error(`Open-Meteo API error: ${weatherResponse.status}`);
@@ -118,13 +110,19 @@ async function getOpenMeteoData(latitude, longitude, city) {
 
     const weatherData = await weatherResponse.json();
     const { current } = weatherData;
+    if (!current) {
+      throw new Error("Open-Meteo response missing current weather data");
+    }
 
     const weatherCondition = getOpenMeteoCondition(current.weather_code);
-    const suitability = calculateOpenMeteoSuitability(
-      current.temperature_2m,
-      current.wind_speed_10m,
-      current.weather_code,
-    );
+    const suitability = calculateOpenMeteoSuitability({
+      temp: current.temperature_2m,
+      apparentTemp: current.apparent_temperature,
+      humidity: current.relative_humidity_2m,
+      windSpeed: current.wind_speed_10m,
+      weatherCode: current.weather_code,
+      precipitation: current.precipitation || 0,
+    });
 
     return {
       temp: Math.round(current.temperature_2m),
@@ -137,24 +135,12 @@ async function getOpenMeteoData(latitude, longitude, city) {
       suitability: suitability.level,
       icon: weatherCondition.icon,
       location: locationName,
+      safetyWarning: suitability.level === "poor" && !suitability.suitable,
     };
   } catch (error) {
     console.error("Open-Meteo error:", error);
     // Return conservative safety-first data on error (never optimistic).
-    return {
-      temp: null,
-      condition: "Unknown",
-      description:
-        "Weather data temporarily unavailable. Check local weather before outdoor training.",
-      humidity: null,
-      windSpeed: null,
-      visibility: null,
-      suitable: false,
-      suitability: "poor",
-      icon: "⚠️",
-      location: city || "Unknown",
-      safetyWarning: true,
-    };
+    return createSafetyFallback(city);
   }
 }
 
@@ -203,37 +189,96 @@ function getOpenMeteoCondition(code) {
       description: "Perfect weather for training",
       icon: "☀️",
     };
-  } else if (code <= 3) {
+  }
+
+  if (code >= 1 && code <= 3) {
     return {
       condition: "Partly Cloudy",
       description: "Good conditions for outdoor activity",
       icon: "⛅",
     };
-  } else if (code <= 48) {
+  }
+
+  if (code === 45 || code === 48) {
     return {
       condition: "Foggy",
       description: "Reduced visibility, be cautious",
       icon: "🌫️",
     };
-  } else if (code <= 67) {
+  }
+
+  if (code === 51 || code === 53 || code === 55) {
     return {
-      condition: "Rainy",
-      description: "Consider indoor training",
+      condition: "Drizzle",
+      description: "Light precipitation; consider caution for field traction",
+      icon: "🌦️",
+    };
+  }
+
+  if (code === 61) {
+    return {
+      condition: "Light Rain",
+      description: "Wet conditions; indoor alternative may be safer",
       icon: "🌧️",
     };
-  } else if (code <= 77) {
+  }
+
+  if (code === 63 || code === 80 || code === 81) {
     return {
-      condition: "Snowy",
+      condition: "Rain",
+      description: "Outdoor training quality reduced",
+      icon: "🌧️",
+    };
+  }
+
+  if (code === 65 || code === 82) {
+    return {
+      condition: "Heavy Rain",
+      description: "Unsafe wet-field conditions. Indoor training recommended",
+      icon: "🌧️",
+    };
+  }
+
+  if (code === 66 || code === 67) {
+    return {
+      condition: "Freezing Rain",
+      description: "Dangerous surface conditions. Indoor training only",
+      icon: "🌨️",
+    };
+  }
+
+  if (code === 71 || code === 73 || code === 75 || code === 77) {
+    return {
+      condition: "Snow",
       description: "Indoor training recommended",
       icon: "❄️",
     };
-  } else if (code <= 99) {
+  }
+
+  if (code === 85 || code === 86) {
     return {
-      condition: "Stormy",
-      description: "Stay indoors, unsafe for training",
+      condition: "Snow Showers",
+      description: "Slippery conditions likely. Indoor training recommended",
+      icon: "❄️",
+    };
+  }
+
+  if (code === 95) {
+    return {
+      condition: "Thunderstorm",
+      description: "Unsafe for outdoor training. Stay indoors",
       icon: "⛈️",
     };
   }
+
+  if (code === 96 || code === 99) {
+    return {
+      condition: "Thunderstorm with Hail",
+      description: "Severe weather danger. Do not train outdoors",
+      icon: "⛈️",
+    };
+  }
+
   return {
     condition: "Unknown",
     description: "Weather data unavailable",
@@ -244,95 +289,57 @@ function getOpenMeteoCondition(code) {
 /**
  * Calculate training suitability for Open-Meteo data
  */
-function calculateOpenMeteoSuitability(temp, windSpeed, weatherCode) {
-  if (weatherCode >= 80 || windSpeed > 25) {
+function calculateOpenMeteoSuitability({
+  temp,
+  apparentTemp,
+  windSpeed,
+  weatherCode,
+  precipitation,
+}) {
+  const effectiveTemp = Number.isFinite(apparentTemp) ? apparentTemp : temp;
+
+  // Dangerous conditions (hard stop)
+  if (weatherCode === 95 || weatherCode === 96 || weatherCode === 99) {
     return { suitable: false, level: "poor" };
   }
-  if (weatherCode >= 60 || temp < 32 || temp > 95) {
+  if (weatherCode === 65 || weatherCode === 82 || weatherCode === 66 || weatherCode === 67) {
     return { suitable: false, level: "poor" };
   }
-  if (weatherCode >= 45 || temp < 40 || temp > 85 || windSpeed > 15) {
+  if ((precipitation || 0) >= 0.12) {
+    return { suitable: false, level: "poor" };
+  }
+  if (effectiveTemp < 32 || effectiveTemp > 95) {
+    return { suitable: false, level: "poor" };
+  }
+  if (windSpeed >= 30) {
+    return { suitable: false, level: "poor" };
+  }
+
+  // Cautionary but potentially trainable conditions
+  if (weatherCode === 63 || weatherCode === 80 || weatherCode === 81) {
     return { suitable: true, level: "fair" };
   }
-  if (weatherCode >= 3 || temp < 50 || temp > 78 || windSpeed > 10) {
+  if ((precipitation || 0) >= 0.03) {
+    return { suitable: true, level: "fair" };
+  }
+  if (weatherCode === 45 || weatherCode === 48 || weatherCode === 51 || weatherCode === 53 || weatherCode === 55) {
+    return { suitable: true, level: "fair" };
+  }
+  if (effectiveTemp < 40 || effectiveTemp > 85 || windSpeed >= 20) {
+    return { suitable: true, level: "fair" };
+  }
+
+  // Good conditions, minor constraints
+  if (weatherCode >= 1 && weatherCode <= 3) {
     return { suitable: true, level: "good" };
   }
+  if (effectiveTemp < 50 || effectiveTemp > 78 || windSpeed >= 10) {
+    return { suitable: true, level: "good" };
+  }
+
   return { suitable: true, level: "excellent" };
 }
 
-/**
- * Determine if weather is suitable for outdoor training
- */
-function isWeatherSuitable(weatherData) {
-  const { temp } = weatherData.main;
-  const condition = weatherData.weather[0].main.toLowerCase();
-  const windSpeed = weatherData.wind?.speed || 0;
-
-  // Too hot or too cold
-  if (temp > 95 || temp < 32) {
-    return false;
-  }
-
-  // Dangerous conditions
-  const dangerousConditions = ["thunderstorm", "extreme", "snow", "sleet"];
-  if (dangerousConditions.some((c) => condition.includes(c))) {
-    return false;
-  }
-
-  // Too windy
-  if (windSpeed > 25) {
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Get suitability level for training
- */
-function getSuitabilityLevel(weatherData) {
-  const { temp } = weatherData.main;
-  const condition = weatherData.weather[0].main.toLowerCase();
-  const windSpeed = weatherData.wind?.speed || 0;
-
-  if (!isWeatherSuitable(weatherData)) {
-    return "poor";
-  }
-
-  // Ideal conditions
-  if (
-    temp >= 60 &&
-    temp <= 80 &&
-    (condition === "clear" || condition === "clouds") &&
-    windSpeed < 10
-  ) {
-    return "excellent";
-  }
-
-  // Good conditions
-  if (temp >= 50 && temp <= 85 && windSpeed < 15) {
-    return "good";
-  }
-
-  return "fair";
-}
-
-/**
- * Get weather icon based on condition
- */
-function getWeatherIcon(condition) {
-  const icons = {
-    Clear: "☀️",
-    Clouds: "☁️",
-    Rain: "🌧️",
-    Drizzle: "🌦️",
-    Thunderstorm: "⛈️",
-    Snow: "❄️",
-    Mist: "🌫️",
-    Fog: "🌫️",
-  };
-  return icons[condition] || "🌤️";
-}
 
 /**
  * Main handler function

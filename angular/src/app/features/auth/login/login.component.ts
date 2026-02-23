@@ -151,7 +151,7 @@ type LoginForm = FormGroup<{
             type="submit"
             iconLeft="pi-lock"
             [loading]="isLoading()"
-            [disabled]="!isFormValid()"
+            [disabled]="!isFormValid() || isLoading()"
             [fullWidth]="true"
             testId="login-submit"
             >Sign in</app-button
@@ -252,6 +252,10 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
+    if (this.isLoading()) {
+      return;
+    }
+
     this.submitted.set(true);
 
     if (this.loginForm.invalid) {
@@ -261,9 +265,13 @@ export class LoginComponent {
 
     this.isLoading.set(true);
     const credentials = this.loginForm.getRawValue();
+    const normalizedCredentials = {
+      ...credentials,
+      email: credentials.email.trim().toLowerCase(),
+    };
 
     this.authService
-      .login(credentials)
+      .login(normalizedCredentials)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (response: { success?: boolean; error?: string }) => {

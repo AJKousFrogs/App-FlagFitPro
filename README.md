@@ -163,6 +163,7 @@ npm run dev
 
 # ❌ WRONG - Angular only (no Functions/API)
 npm run dev:angular-only
+```
 
 ## 🧱 CSS Build Pipeline
 
@@ -177,7 +178,6 @@ npm run dev:angular-only
 - **Script dependencies**
   - Because `build:css` reads the files output by `sass:compile`, always run `npm run sass:compile && npm run build:css` from the repo root when validating or regenerating CSS bundles; skipping the compilation step leaves `dist/css/` stale and may break deployments.
   - For local iteration, run `npm run sass:watch`: the wrapper automatically enables polling on macOS while compiling the same five entrypoints before bundling.
-```
 
 The app will be available at `http://localhost:8888`
 
@@ -185,23 +185,26 @@ The app will be available at `http://localhost:8888`
 
 Set in Netlify UI (Site Settings → Environment Variables):
 
-| Variable               | Description               | Required | Status        |
-| ---------------------- | ------------------------- | -------- | ------------- |
-| `SUPABASE_URL`         | Supabase project URL      | ✅ Yes   | ✅ Configured |
-| `SUPABASE_SERVICE_KEY` | Supabase service role key | ✅ Yes   | ✅ Configured |
-| `SUPABASE_ANON_KEY`    | Supabase anon key         | ✅ Yes   | ✅ Configured |
-| `JWT_SECRET`           | JWT signing secret        | ✅ Yes   | ✅ Configured |
-| `GROQ_API_KEY`         | Groq API key for AI       | ✅ Yes   | ✅ Configured |
-| `USDA_API_KEY`         | USDA food database        | ✅ Yes   | ✅ Configured |
+| Variable                    | Description                                                   | Required | Status        |
+| --------------------------- | ------------------------------------------------------------- | -------- | ------------- |
+| `SUPABASE_URL`              | Supabase project URL                                          | ✅ Yes   | ✅ Configured |
+| `SUPABASE_ANON_KEY`         | Supabase anon/publishable key (frontend + some functions)     | ✅ Yes   | ✅ Configured |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (backend only, never expose client) | ✅ Yes   | ✅ Configured |
+| `GROQ_API_KEY`              | Groq API key for AI                                           | ✅ Yes   | ✅ Configured |
+| `USDA_API_KEY`              | USDA food database                                            | ✅ Yes   | ✅ Configured |
+
+Legacy compatibility:
+- `SUPABASE_SERVICE_KEY` is still accepted by some scripts/functions as an alias for `SUPABASE_SERVICE_ROLE_KEY`.
+- `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are legacy fallback inputs; canonical values are the `SUPABASE_*` keys above.
 
 ### External APIs
 
-| Service                  | API Key Required | Status     | Notes                          |
-| ------------------------ | ---------------- | ---------- | ------------------------------ |
-| **Groq AI**              | Yes              | ✅ Working | FREE tier: 14,400 requests/day |
-| **USDA Food Database**   | Yes              | ✅ Working | FREE key from fdc.nal.usda.gov |
-| **Weather (Open-Meteo)** | No               | ✅ Working | Completely free, no key needed |
-| **Angular/PrimeNG**      | No               | ✅ Working | Frameworks, not API services   |
+| Service                          | API Key Required | Status     | Notes                                          |
+| -------------------------------- | ---------------- | ---------- | ---------------------------------------------- |
+| **Groq AI**                      | Yes              | ✅ Working | FREE tier: 14,400 requests/day                 |
+| **USDA Food Database**           | Yes              | ✅ Working | FREE key from fdc.nal.usda.gov                 |
+| **Weather (Open-Meteo)**         | No               | ✅ Working | Default weather provider, free/no key required |
+| **Angular/PrimeNG**              | No               | ✅ Working | Frameworks, not API services                   |
 
 ---
 

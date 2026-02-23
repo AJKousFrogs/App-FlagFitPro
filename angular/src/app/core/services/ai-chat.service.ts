@@ -77,12 +77,13 @@ export interface ChatRequest {
  */
 interface ChatApiResponse {
   answer_markdown: string;
-  citations: Citation[];
-  risk_level: RiskLevel;
+  citations?: Citation[] | null;
+  risk_level?: RiskLevel | string | null;
   disclaimer?: string;
-  suggested_actions: SuggestedAction[];
-  chat_session_id: string;
-  message_id: string;
+  suggested_actions?: SuggestedAction[] | null;
+  chat_session_id?: string;
+  session_id?: string;
+  message_id?: string | null;
   metadata?: {
     source?: string;
     model?: string;
@@ -144,23 +145,29 @@ export class AiChatService {
           }
 
           const data = response.data;
+          const riskLevel = this.normalizeRiskLevel(data.risk_level);
+          const sessionId = data.chat_session_id || data.session_id || "";
 
           // Create assistant message
           const assistantMessage: ChatMessage = {
-            id: data.message_id,
+            id: data.message_id || `assistant-${Date.now()}`,
             role: "assistant",
-            content: data.answer_markdown,
+            content:
+              data.answer_markdown ||
+              "I couldn't generate a response right now. Please try again.",
             timestamp: new Date(),
-            riskLevel: data.risk_level,
+            riskLevel,
             disclaimer: data.disclaimer,
-            citations: data.citations,
-            suggestedActions: data.suggested_actions,
+            citations: Array.isArray(data.citations) ? data.citations : [],
+            suggestedActions: Array.isArray(data.suggested_actions)
+              ? data.suggested_actions
+              : [],
             metadata: data.metadata,
           };
 
           // Update session
           this.addMessageToSession(assistantMessage);
-          this.updateSessionId(data.chat_session_id);
+          this.updateSessionId(sessionId);
 
           return assistantMessage;
         }),
@@ -273,8 +280,9 @@ export class AiChatService {
    * Update session ID (after first message)
    */
   private updateSessionId(sessionId: string): void {
+    if (!sessionId) return;
     const session = this.currentSession();
-    if (session && !session.id) {
+    if (session && session.id !== sessionId) {
       this.currentSession.update((current) => {
         if (!current) return current;
         return {
@@ -283,5 +291,12 @@ export class AiChatService {
         };
       });
     }
+  }
+
+  private normalizeRiskLevel(value: string | null | undefined): RiskLevel {
+    if (value === "high" || value === "medium" || value === "low") {
+      return value;
+    }
+    return "low";
   }
 }

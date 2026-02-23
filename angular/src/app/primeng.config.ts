@@ -8,7 +8,7 @@
 
 /** PrimeNG Button Props */
 interface ButtonPTProps {
-  props: {
+  props?: {
     size?: "small" | "large";
     severity?: "primary" | "secondary" | "success" | "danger" | "warning";
     disabled?: boolean;
@@ -17,14 +17,14 @@ interface ButtonPTProps {
 
 /** PrimeNG Input Props */
 interface InputPTProps {
-  props: {
+  props?: {
     disabled?: boolean;
   };
 }
 
 /** PrimeNG DataTable Row Context */
 interface DataTableRowContext {
-  context: {
+  context?: {
     selected?: boolean;
   };
 }
@@ -46,13 +46,13 @@ const DS = {
 
 export const PRIMENG_PT_CONFIG = {
   button: {
-    root: ({ props }: ButtonPTProps) => ({
+    root: ({ props }: ButtonPTProps = {}) => ({
       class: [
         DS.button.root,
-        props.size === "small" && DS.button.sm,
-        props.size === "large" && DS.button.lg,
-        !props.size && DS.button.md,
-        props.disabled && DS.button.disabled,
+        props?.size === "small" && DS.button.sm,
+        props?.size === "large" && DS.button.lg,
+        !props?.size && DS.button.md,
+        props?.disabled && DS.button.disabled,
       ].filter(Boolean),
     }),
   },
@@ -73,11 +73,11 @@ export const PRIMENG_PT_CONFIG = {
   },
 
   inputtext: {
-    root: ({ props }: InputPTProps) => ({
+    root: ({ props }: InputPTProps = {}) => ({
       class: [
         DS.input,
         "border-primary",
-        props.disabled && DS.button.disabled,
+        props?.disabled && DS.button.disabled,
       ].filter(Boolean),
     }),
   },
@@ -110,10 +110,10 @@ export const PRIMENG_PT_CONFIG = {
     tbody: {
       class: "bg-primary",
     },
-    row: ({ context }: DataTableRowContext) => ({
+    row: ({ context }: DataTableRowContext = {}) => ({
       class: [
         "transition-colors",
-        context.selected ? "bg-selected" : "",
+        context?.selected ? "bg-selected" : "",
       ].filter(Boolean),
     }),
   },

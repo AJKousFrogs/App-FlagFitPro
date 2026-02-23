@@ -75,6 +75,15 @@ export class SupabaseService {
       );
     }
 
+    if (this.isClearlyInvalidPublicKey(environment.supabase.anonKey)) {
+      this.logger.error(
+        "[SupabaseService] Invalid Supabase public key format in client configuration.",
+      );
+      throw new Error(
+        "Supabase anon/publishable key is invalid. Check SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY.",
+      );
+    }
+
     this.supabase = createClient(
       environment.supabase.url,
       environment.supabase.anonKey,
@@ -181,6 +190,24 @@ export class SupabaseService {
     } catch {
       return false;
     }
+  }
+
+  private isClearlyInvalidPublicKey(key: string): boolean {
+    const normalized = key.trim();
+    if (!normalized) return true;
+
+    // Catch common placeholder values from template env files.
+    if (/your_supabase|placeholder|changeme/i.test(normalized)) {
+      return true;
+    }
+
+    // Modern publishable keys.
+    if (normalized.startsWith("sb_publishable_")) {
+      return false;
+    }
+
+    // Legacy JWT anon key format.
+    return normalized.split(".").length !== 3;
   }
 
   /**

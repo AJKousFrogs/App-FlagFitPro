@@ -96,6 +96,85 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     return this.state.currentStep() === this.state.steps().length - 1;
   }
 
+  getStepPosition(): string {
+    return `${this.state.currentStep() + 1} of ${this.state.steps().length}`;
+  }
+
+  getCurrentStepLabel(): string {
+    return this.state.steps()[this.state.currentStep()]?.label || "Setup";
+  }
+
+  getCompletionStats(): {
+    completed: number;
+    total: number;
+    percent: number;
+    remaining: number;
+  } {
+    const requirements = this.getCompletionRequirements();
+    const total = requirements.length;
+    const completed = requirements.filter((item) => item.done).length;
+    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    return {
+      completed,
+      total,
+      percent,
+      remaining: Math.max(0, total - completed),
+    };
+  }
+
+  getPendingRequirementLabels(limit = 4): string[] {
+    return this.getCompletionRequirements()
+      .filter((item) => !item.done)
+      .slice(0, limit)
+      .map((item) => item.label);
+  }
+
+  hasPendingRequirements(): boolean {
+    return this.getCompletionStats().remaining > 0;
+  }
+
+  private getCompletionRequirements(): Array<{ label: string; done: boolean }> {
+    const f = this.state.formData;
+    const isPlayer = this.state.isPlayer();
+    const hasMetricPhysical = !!(f.heightCm && f.weightKg);
+    const hasImperialPhysical = !!(
+      (f.heightFt || f.heightIn) &&
+      f.weightLbs
+    );
+    const hasPhysical =
+      f.unitSystem === "metric" ? hasMetricPhysical : hasImperialPhysical;
+    const isQB = this.state.isQBSelected();
+
+    const shared = [
+      { label: "Add full name", done: !!f.name?.trim() },
+      { label: "Add date of birth", done: !!f.dateOfBirth },
+      { label: "Select country", done: !!f.country },
+      { label: "Verify email", done: this.isEmailVerified() },
+      { label: "Choose team", done: !!f.team },
+      { label: "Accept Terms", done: !!f.consentTermsOfService },
+      { label: "Accept Privacy Policy", done: !!f.consentPrivacyPolicy },
+      { label: "Accept data use consent", done: !!f.consentDataUsage },
+    ];
+
+    if (!isPlayer) {
+      return [
+        ...shared,
+        { label: "Choose staff role", done: !!f.staffRole },
+      ];
+    }
+
+    const playerOnly = [
+      { label: "Choose primary position", done: !!f.position },
+      { label: "Choose experience level", done: !!f.experience },
+      { label: "Set throwing arm (QB)", done: !isQB || !!f.throwingArm },
+      { label: "Add height and weight", done: hasPhysical },
+      { label: "Pick at least one goal", done: f.goals.length > 0 },
+      { label: "Choose schedule type", done: !!f.scheduleType },
+    ];
+
+    return [...shared, ...playerOnly];
+  }
+
   async ngOnInit(): Promise<void> {
     // Load saved draft first
     if (this.state.loadDraft()) {

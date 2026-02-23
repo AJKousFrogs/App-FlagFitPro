@@ -3348,7 +3348,7 @@ export const handler = async (event, context) => {
           );
 
           // Save the blocked interaction
-          const savedMessage = await saveChatMessage(
+          const savedMessageId = await saveChatMessage(
             session.id,
             userId,
             normalizedMessage,
@@ -3363,17 +3363,19 @@ export const handler = async (event, context) => {
               "blocked_topic",
               `Blocked query: ${normalizedMessage.substring(0, 50)}...`,
               enhancedClassification.youthRestrictions.blockedReason,
-              savedMessage?.id,
+              savedMessageId,
             );
           }
 
           return createSuccessResponse(
             {
-              session_id: session.id,
+              chat_session_id: session.id,
               answer_markdown: blockedResponse.answer,
               risk_level: RISK_LEVELS.HIGH,
               citations: [],
-              suggested_actions: blockedResponse.suggestedActions,
+              suggested_actions: blockedResponse.suggestedActions || [],
+              disclaimer: blockedResponse.disclaimer || null,
+              message_id: savedMessageId,
               is_blocked: true,
               blocked_reason:
                 enhancedClassification.youthRestrictions.blockedReason,

@@ -3,10 +3,11 @@
 // This allows deployment-time configuration without rebuilding
 
 // Note: Window._env type is declared in environment.ts
-// We use a local helper to handle both key naming conventions
+// Canonical runtime keys are SUPABASE_URL and SUPABASE_ANON_KEY.
+// VITE_* keys are supported as legacy fallback only.
 
 // Helper to safely get environment value from window._env
-// Supports both SUPABASE_* and VITE_SUPABASE_* naming conventions
+// Supports canonical SUPABASE_* keys with VITE_* fallback
 const getEnvValue = (keys: string[], fallback: string = ""): string => {
   if (typeof window === "undefined") return fallback;
   const env = (window as { _env?: Record<string, string | undefined> })._env;
@@ -23,7 +24,7 @@ export const environment = {
   production: true,
   apiUrl: undefined as string | undefined, // Will auto-detect based on hostname
   supabase: {
-    // Runtime injection with fallback support for both naming conventions
+    // Runtime injection with canonical keys + legacy fallback
     url: getEnvValue(["SUPABASE_URL", "VITE_SUPABASE_URL"]),
     anonKey: getEnvValue(["SUPABASE_ANON_KEY", "VITE_SUPABASE_ANON_KEY"]),
   },

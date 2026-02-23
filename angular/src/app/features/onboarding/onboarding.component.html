@@ -1,8 +1,8 @@
 <app-main-layout>
       <div class="onboarding-page">
         <app-page-header
-          title="Welcome to FlagFit Pro"
-          subtitle="Let's set up your profile and training preferences"
+          title="Set Up Your FlagFit Profile"
+          subtitle="Takes about 3-5 minutes. We'll personalize your training and team access."
           icon="pi-user-plus"
         ></app-page-header>
 
@@ -10,12 +10,19 @@
           <!-- Progress bar -->
           <div class="progress-section">
             <p-progressBar
-              [value]="state.progress()"
+              [value]="getCompletionStats().percent"
               [showValue]="false"
               class="onboarding-progress"
             ></p-progressBar>
             <div class="progress-info">
-              <span class="progress-text">{{ state.progress() }}% complete</span>
+              <span class="progress-text"
+                >{{ getCompletionStats().percent }}% complete</span
+              >
+              <span class="progress-meta">
+                {{ getCompletionStats().completed }} / {{ getCompletionStats().total }}
+                required tasks done
+              </span>
+              <span class="progress-meta">Now: Step {{ getStepPosition() }} - {{ getCurrentStepLabel() }}</span>
               @if (state.lastSaved()) {
                 <span class="auto-save-indicator" [class.saving]="state.isSaving()">
                   @if (state.isSaving()) {
@@ -27,6 +34,25 @@
               }
             </div>
           </div>
+
+          @if (hasPendingRequirements()) {
+            <div class="completion-checklist">
+              <div class="checklist-header">
+                <i class="pi pi-exclamation-circle"></i>
+                <span>Next tasks to finish</span>
+              </div>
+              <div class="checklist-items">
+                @for (item of getPendingRequirementLabels(); track item) {
+                  <span class="checklist-item">{{ item }}</span>
+                }
+                @if (getCompletionStats().remaining > 4) {
+                  <span class="checklist-item more"
+                    >+{{ getCompletionStats().remaining - 4 }} more</span
+                  >
+                }
+              </div>
+            </div>
+          }
 
           <p-stepper
             [value]="state.currentStep()"
@@ -81,12 +107,12 @@
                   variant="outlined"
                   iconLeft="pi-arrow-left"
                   (clicked)="state.previousStep()"
-                  >Back</app-button
+                  >Previous</app-button
                 >
               }
               @if (state.currentStep() < state.steps().length - 1) {
                 <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()"
-                  >Next</app-button
+                  >Save & Continue</app-button
                 >
               } @else {
                 <app-button
@@ -94,7 +120,7 @@
                   [loading]="isCompleting()"
                   [disabled]="!canCompleteOnboarding()"
                   (clicked)="completeOnboarding()"
-                  >Complete Setup</app-button
+                  >Finish Onboarding</app-button
                 >
               }
             </div>

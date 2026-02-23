@@ -15,14 +15,27 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, "..");
 
 // Path to Angular build output
-const angularDistPath = path.join(rootDir, "angular/dist/flagfit-pro/browser");
-const indexHtmlPath = path.join(angularDistPath, "index.html");
+// Angular may output either:
+// - angular/dist/flagfit-pro (default browser build)
+// - angular/dist/flagfit-pro/browser (SSR/prerender layouts)
+const distCandidates = [
+  path.join(rootDir, "angular/dist/flagfit-pro"),
+  path.join(rootDir, "angular/dist/flagfit-pro/browser"),
+];
+const angularDistPath = distCandidates.find((candidate) =>
+  fs.existsSync(path.join(candidate, "index.html")),
+);
+const indexHtmlPath = angularDistPath
+  ? path.join(angularDistPath, "index.html")
+  : path.join(distCandidates[0], "index.html");
 
 // Get Supabase credentials from environment (Netlify injects these during build)
+// Canonical source of truth: SUPABASE_URL + SUPABASE_ANON_KEY
+// Legacy fallback: VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY
 const supabaseUrl =
-  process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
 const supabaseAnonKey =
-  process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+  process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
 
 // Get Sentry configuration from environment
 const sentryDsn = process.env.VITE_SENTRY_DSN || "";
@@ -51,7 +64,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
   console.warn("   The app will not be able to connect to the database.");
   console.warn(
-    "   Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in Netlify.",
+    "   Make sure SUPABASE_URL and SUPABASE_ANON_KEY are set in Netlify.",
   );
 }
 
@@ -66,6 +79,9 @@ if (sentryEnabled === "true" && !sentryDsn) {
 // Check if the build output exists
 if (!fs.existsSync(indexHtmlPath)) {
   console.error(`❌ Error: index.html not found at ${indexHtmlPath}`);
+  console.error(
+    `   Checked: ${distCandidates.map((candidate) => path.join(candidate, "index.html")).join(", ")}`,
+  );
   console.error("   Make sure the Angular build completed successfully.");
   process.exit(1);
 }
@@ -88,6 +104,7 @@ const envScript = `
       window._env = window._env || {};
       window._env.SUPABASE_URL = '${escapeJs(supabaseUrl)}';
       window._env.SUPABASE_ANON_KEY = '${escapeJs(supabaseAnonKey)}';
+      // Legacy mirror keys for backward compatibility only.
       window._env.VITE_SUPABASE_URL = '${escapeJs(supabaseUrl)}';
       window._env.VITE_SUPABASE_ANON_KEY = '${escapeJs(supabaseAnonKey)}';
       window._env.VITE_SENTRY_DSN = '${escapeJs(sentryDsn)}';

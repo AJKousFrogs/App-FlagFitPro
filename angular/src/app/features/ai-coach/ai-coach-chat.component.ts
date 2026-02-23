@@ -207,6 +207,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
   searchControl = new FormControl("", { nonNullable: true });
   showBookmarks = signal(false);
   loadingStage = signal<"thinking" | "searching" | "generating">("thinking");
+  private loadingStageRunId = 0;
+  private loadingStageTimeouts: ReturnType<typeof setTimeout>[] = [];
 
   // Voice input
   isRecording = signal(false);
@@ -756,6 +758,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+          this.clearLoadingStageTimers();
           if (response.success && response.data) {
             this.sessionId = response.data.chat_session_id;
 
@@ -798,6 +801,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
           this.shouldScrollToBottom = true;
         },
         error: (error) => {
+          this.clearLoadingStageTimers();
           this.logger.error("AI Chat error:", error);
           this.handleError(error.message || "Failed to connect to Merlin AI");
           this.isLoading.set(false);
@@ -821,6 +825,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
   }
 
   startNewConversation(): void {
+    this.clearLoadingStageTimers();
     this.messages.set([]);
     this.sessionId = null;
     this.currentMessage = "";
@@ -1220,21 +1225,35 @@ export class AiCoachChatComponent implements AfterViewChecked {
   // ========================================
 
   private simulateLoadingStages(): void {
+    this.clearLoadingStageTimers();
+    const runId = ++this.loadingStageRunId;
+
     // Stage 1: Thinking
     this.loadingStage.set("thinking");
 
     // Stage 2: Searching (after 800ms)
-    setTimeout(() => {
-      if (this.isLoading()) {
+    const searchingTimeout = setTimeout(() => {
+      if (this.isLoading() && runId === this.loadingStageRunId) {
         this.loadingStage.set("searching");
       }
     }, 800);
+    this.loadingStageTimeouts.push(searchingTimeout);
 
     // Stage 3: Generating (after 2s)
-    setTimeout(() => {
-      if (this.isLoading()) {
+    const generatingTimeout = setTimeout(() => {
+      if (this.isLoading() && runId === this.loadingStageRunId) {
         this.loadingStage.set("generating");
       }
     }, 2000);
+    this.loadingStageTimeouts.push(generatingTimeout);
+  }
+
+  private clearLoadingStageTimers(): void {
+    this.loadingStageRunId++;
+    for (const timeoutId of this.loadingStageTimeouts) {
+      clearTimeout(timeoutId);
+    }
+    this.loadingStageTimeouts = [];
+    this.loadingStage.set("thinking");
   }
 }

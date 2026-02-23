@@ -28,14 +28,16 @@
   # Supabase Configuration
   # IMPORTANT: These should be set in Netlify UI (Site Settings → Environment Variables)
   # Hardcoded values below are for reference only - Netlify UI takes precedence
-  # Required variables:
-  #   - VITE_SUPABASE_URL (or SUPABASE_URL)
-  #   - VITE_SUPABASE_ANON_KEY (or SUPABASE_ANON_KEY)
+  # Required variables (single source of truth):
+  #   - SUPABASE_URL
+  #   - SUPABASE_ANON_KEY
   #   - SUPABASE_SERVICE_ROLE_KEY (backend only, NEVER expose to frontend)
+  # Optional legacy compatibility:
+  #   - VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY (not required)
   # 
   # For production, set these in Netlify UI to avoid committing secrets
-  # VITE_SUPABASE_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co"
-  # VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0"
+  # SUPABASE_URL = "https://your-project-ref.supabase.co"
+  # SUPABASE_ANON_KEY = "sb_publishable_..."
   VITE_ENABLE_ANALYTICS = "false"
   # Sentry Error Monitoring - Set VITE_SENTRY_DSN in Netlify UI for production
   # To enable: Set VITE_SENTRY_DSN to your Sentry DSN in Netlify Environment Variables
@@ -1656,7 +1658,7 @@
   force = false
 
 # Environment variables for Netlify Functions
-# NOTE: Sensitive values (SUPABASE_URL, SUPABASE_SERVICE_KEY, SUPABASE_ANON_KEY, JWT_SECRET)
+# NOTE: Sensitive values (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY)
 # should be set in the Netlify UI, NOT in this file, to keep them out of source control.
 
 # Production context: all deploys from the Production branch

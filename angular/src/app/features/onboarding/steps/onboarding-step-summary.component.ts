@@ -13,12 +13,12 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       <div class="step-header">
         <i class="pi pi-check-circle step-icon success"></i>
         <div>
-          <h3>You're All Set!</h3>
+          <h3>Final Review</h3>
           <p class="step-description">
             @if (state.isStaff()) {
-              Review your profile and get started with your team
+              Confirm your details, then finish setup to start managing your team
             } @else {
-              Review your profile and start training
+              Confirm your details, then finish setup to start your training plan
             }
           </p>
         </div>
@@ -168,8 +168,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       </div>
 
       <div class="consent-section">
-        <h4 class="consent-title"><i class="pi pi-shield"></i> Review & Consent</h4>
-        <p class="consent-description">Please review and accept the following to complete your setup:</p>
+        <h4 class="consent-title"><i class="pi pi-shield"></i> Required Consents</h4>
+        <p class="consent-description">To finish onboarding, accept the required policies. Optional choices can be changed anytime.</p>
 
         <div class="consent-list">
           <div class="consent-item required">
@@ -237,7 +237,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         @if (!state.formData.consentTermsOfService || !state.formData.consentPrivacyPolicy || !state.formData.consentDataUsage) {
           <div class="consent-error">
             <i class="pi pi-exclamation-triangle"></i>
-            <span>Please accept all required consents to continue</span>
+            <span>Please accept all 3 required consents to finish onboarding.</span>
           </div>
         }
       </div>
@@ -245,9 +245,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       <div class="summary-note success">
         <i class="pi pi-check-circle"></i>
         @if (state.isStaff()) {
-          <span>You're ready to manage your team! You can update your settings anytime in your profile.</span>
+          <span>You're ready to manage your team. You can update these settings anytime in your profile.</span>
         } @else {
-          <span>Your personalized training plan is ready! You can update these settings anytime in your profile.</span>
+          <span>Your personalized training plan is ready. You can update these settings anytime in your profile.</span>
         }
       </div>
     </div>
