@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Tournament Calendar API
  *
@@ -7,7 +9,7 @@
  * - POST /api/tournament-calendar/delete - Delete tournament
  */
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
@@ -33,7 +35,7 @@ async function getUserRole(userId) {
   return data?.role || "player";
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "tournament-calendar",
     allowedMethods: ["GET", "POST"],
@@ -334,3 +336,6 @@ async function deleteTournament(supabase, userId, payload) {
     }),
   };
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

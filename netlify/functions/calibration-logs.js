@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 
 /**
@@ -490,7 +491,7 @@ async function getPresetStats(presetId) {
   }
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Extract sub-path
   const path = event.path.replace("/.netlify/functions/calibration-logs", "");
 
@@ -647,3 +648,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Netlify Function: Parent Dashboard
  *
@@ -16,7 +18,7 @@
  * - PATCH /api/parent-dashboard/settings/:childId - Update child's youth settings
  */
 
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin, checkEnvVars } from "./utils/supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -609,7 +611,7 @@ async function updateYouthSettings(childId, parentId, updates) {
 // MAIN HANDLER
 // =====================================================
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "parent-dashboard",
@@ -1118,3 +1120,6 @@ rateLimitType: rateLimitType,
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

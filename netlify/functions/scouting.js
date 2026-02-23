@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 // Netlify Function: Scouting Reports API
 // Handles opponent scouting, game plans, and tendency analysis
@@ -580,7 +581,7 @@ async function handleRequest(event, _context, { userId }) {
     }
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   if (event.httpMethod === "GET") {
     return baseHandler(event, context, {
       functionName: "scouting",
@@ -599,3 +600,6 @@ export const handler = async (event, context) => {
     handler: handleRequest,
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

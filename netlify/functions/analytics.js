@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { validateQueryParams } from "./validation.js";
 import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -738,7 +739,7 @@ function getFallbackAnalyticsSummary() {
 }
 
 // Main handler
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "analytics",
     allowedMethods: ["GET"],
@@ -854,3 +855,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

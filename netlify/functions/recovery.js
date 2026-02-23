@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 // Netlify Function: Recovery Protocol API
 // Handles recovery recommendations, protocols, and athlete recovery profiles
@@ -1051,7 +1052,7 @@ async function handleRequest(event, _context, { userId }) {
 // EXPORTS
 // =============================================================================
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const isPublicPath = event.path.includes("/protocols");
   if (!isPublicPath) {
     return baseHandler(event, context, {
@@ -1073,3 +1074,6 @@ export const handler = async (event, context) => {
 
 // ESM exports for use in other modules
 export { RECOVERY_PROTOCOLS, generateRecoveryRecommendations };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

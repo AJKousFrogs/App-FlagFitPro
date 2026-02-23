@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Coach Alerts API
  *
@@ -10,7 +12,7 @@
  * - Backend Truthfulness Contract
  */
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -172,7 +174,7 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
 /**
  * Main handler
  */
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "coach-alerts",
@@ -254,3 +256,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

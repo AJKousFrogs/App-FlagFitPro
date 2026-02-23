@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../supabase-client.js";
+import { supabaseAdmin } from "../utils/supabase-client.js";
 import { generateEmbedding, generateEmbeddings as _generateEmbeddings, cosineSimilarity as _cosineSimilarity, isEmbeddingServiceAvailable } from "./embedding-service.js";
 import { generateCoachingResponse as _generateCoachingResponse, generateClarifyingQuestion } from "./groq-client.js";
 

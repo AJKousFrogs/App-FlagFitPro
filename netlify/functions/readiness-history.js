@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Readiness History
 // Retrieves historical readiness scores for an athlete
 // Endpoint: /api/readiness-history
@@ -5,7 +7,7 @@
 // REFACTORED: Uses base-handler, db-query-helper, and response-helper utilities
 // Reduced from 97 lines to 48 lines (51% reduction)
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -19,7 +21,7 @@ const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"])
 /**
  * Get readiness history for an athlete
  */
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "readiness-history",
     allowedMethods: ["GET"],
@@ -112,3 +114,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

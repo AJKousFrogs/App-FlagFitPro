@@ -1,4 +1,5 @@
-import { supabaseAdmin, checkEnvVars as _checkEnvVars } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin, checkEnvVars as _checkEnvVars } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, handleNotFoundError } from "./utils/error-handler.js";
 
@@ -722,7 +723,7 @@ function getDaysUntil(startDate) {
 // MAIN HANDLER
 // =====================================================
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Route to appropriate handler based on HTTP method
   const method = event.httpMethod;
 
@@ -770,3 +771,6 @@ export const handler = async (event, context) => {
 
   return createErrorResponse("Method not allowed", 405, "method_not_allowed");
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,4 +1,5 @@
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin, checkEnvVars } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 
@@ -511,7 +512,7 @@ function camelCase(str) {
 // MAIN HANDLER
 // =====================================================
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "response-feedback",
     allowedMethods: ["GET", "POST"],
@@ -742,3 +743,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

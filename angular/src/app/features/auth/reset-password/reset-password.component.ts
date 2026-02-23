@@ -32,18 +32,18 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
   ],
   template: `
-<div class="reset-password-page">
-      <p-card class="reset-password-card">
+<div class="reset-password-page elite-auth-shell">
+      <p-card class="reset-password-card elite-auth-card elite-auth-card--reset">
         <ng-template #header>
-          <div class="reset-password-logo">
+          <div class="reset-password-logo elite-auth-logo">
             <i class="pi pi-key"></i>
           </div>
-          <h1 class="reset-password-title">Reset Password</h1>
+          <h1 class="reset-password-title elite-auth-title">Reset Password</h1>
         </ng-template>
 
         <form [formGroup]="resetForm" (ngSubmit)="onSubmit()">
-          <div class="p-field mb-4">
-            <label for="reset-email" class="p-label required">Email</label>
+          <div class="p-field mb-4 elite-auth-field">
+            <label for="reset-email" class="p-label elite-auth-label required">Email</label>
             <input
               id="reset-email"
               name="email"
@@ -71,16 +71,17 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             iconLeft="pi-send"
             [loading]="isLoading()"
             [disabled]="resetForm.invalid"
+            class="elite-auth-sticky-cta"
             [fullWidth]="true"
             >Send Reset Link</app-button
           >
         </form>
 
-        <div class="reset-password-divider my-4">
+        <div class="reset-password-divider my-4 elite-auth-divider">
           <span>Or</span>
         </div>
 
-        <a [routerLink]="['/login']" class="reset-password-login-link"
+        <a [routerLink]="['/login']" class="reset-password-login-link elite-auth-link elite-auth-link--centered"
           >Back to Sign In</a
         >
       </p-card>

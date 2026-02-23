@@ -17,6 +17,9 @@
 
 /* TIER 1: Tokens + design-system typography/states/utilities (single source) */
 @use "./styles/design-system/index" as *;
+@use "./styles/design-system/elite-command-center.tokens";
+@use "./styles/design-system/elite-phase2-layout";
+@use "./styles/design-system/elite-phase2-auth";
 /* TIER 2: Utilities - mixins, responsive, layout, typography-system */
 @use "./scss/utilities" as *;
 @use "./assets/fonts/poppins";
@@ -78,6 +81,33 @@ body {
 /* Ensure all direct children of body also respect viewport width */
 body > * {
   max-width: 100vw;
+}
+
+/* Reserve vertical space when cookie banner is visible so form CTAs remain tappable on phones/tablets */
+@include respond-to(lg) {
+  body.cookie-banner-visible {
+    padding-bottom: clamp(14rem, 34vh, 22rem);
+  }
+}
+
+@include respond-to(sm) {
+  body.cookie-banner-visible {
+    padding-bottom: clamp(15rem, 38vh, 24rem);
+  }
+}
+
+@supports selector(body:has(app-cookie-consent-banner .cookie-banner)) {
+  @include respond-to(lg) {
+    body:has(app-cookie-consent-banner .cookie-banner) {
+      padding-bottom: clamp(14rem, 34vh, 22rem);
+    }
+  }
+
+  @include respond-to(sm) {
+    body:has(app-cookie-consent-banner .cookie-banner) {
+      padding-bottom: clamp(15rem, 38vh, 24rem);
+    }
+  }
 }
 
 /* ================================================================

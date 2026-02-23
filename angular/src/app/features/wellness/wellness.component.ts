@@ -101,7 +101,7 @@ interface WellnessMetric {
       }
 
       <!-- Content -->
-        <div class="wellness-page">
+        <div class="wellness-page elite-phase2-shell">
           <app-page-header
             title="Wellness & Recovery"
             subtitle="Track your health, recovery, and wellness metrics"

@@ -1,8 +1,10 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Knowledge Base Search
 // Searches the evidence-based knowledge database
 // Updated to work with actual knowledge_base_entries schema
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -116,7 +118,7 @@ const normalizeKnowledgeEntry = (entry) => {
   };
 };
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "CREATE";
   return baseHandler(event, context, {
     functionName: "knowledge-search",
@@ -400,3 +402,6 @@ rateLimitType: rateLimitType,
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

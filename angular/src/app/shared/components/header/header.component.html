@@ -83,24 +83,27 @@
         aria-haspopup="dialog"
         aria-label="Open search"
       >
-        <p-inputgroup class="search-input-group">
-          <p-inputgroup-addon>
-            <i class="pi pi-search" aria-hidden="true"></i>
-          </p-inputgroup-addon>
-          <input
-            type="text"
-            pInputText
-            id="global-search-input"
-            [placeholder]="searchPlaceholder()"
-            readonly
-            class="search-input"
-          />
-          <p-inputgroup-addon class="search-shortcut-addon">
-            <span class="search-shortcut">
-              <kbd>{{ searchShortcutModifier() }}</kbd><kbd>K</kbd>
-            </span>
-          </p-inputgroup-addon>
-        </p-inputgroup>
+        <div class="search-launcher-shell">
+          <span class="search-label">Quick Search</span>
+          <p-inputgroup class="search-input-group">
+            <p-inputgroup-addon class="search-icon-addon">
+              <i class="pi pi-search" aria-hidden="true"></i>
+            </p-inputgroup-addon>
+            <input
+              type="text"
+              pInputText
+              id="global-search-input"
+              [placeholder]="searchPlaceholder()"
+              readonly
+              class="search-input"
+            />
+            <p-inputgroup-addon class="search-shortcut-addon">
+              <span class="search-shortcut">
+                <kbd>{{ searchShortcutModifier() }}</kbd><kbd>K</kbd>
+              </span>
+            </p-inputgroup-addon>
+          </p-inputgroup>
+        </div>
       </div>
     </ng-template>
 

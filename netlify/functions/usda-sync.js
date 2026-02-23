@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
@@ -557,7 +558,7 @@ async function handleSearch(event) {
 /**
  * Main handler
  */
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   event.httpMethod === "POST"
     ? baseHandler(event, context, {
         functionName: "usda-sync",
@@ -655,3 +656,6 @@ export const handler = async (event, context) =>
       }
         },
       });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

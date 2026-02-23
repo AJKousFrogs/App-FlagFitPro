@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Send Email
 // Handles sending emails (verification, password reset, etc.)
 
@@ -610,7 +612,7 @@ const sendEmailRequest = async (event, _context, { userId }) => {
   );
 };
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const internalEmailKey = process.env.INTERNAL_EMAIL_API_KEY;
   const providedKey =
     event.headers?.["x-internal-email-key"] ||
@@ -626,3 +628,6 @@ export const handler = async (event, context) => {
     handler: sendEmailRequest,
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

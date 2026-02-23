@@ -143,8 +143,33 @@ const pagesToTest = [
  * Login helper for authenticated pages
  */
 async function loginUser(page: Page): Promise<void> {
+  // Seed cookie consent to avoid banner intercepting auth actions in mobile viewports.
+  await page.goto("/");
+  await page.evaluate(() => {
+    const key = "flagfit_cookie_consent";
+    if (!localStorage.getItem(key)) {
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          necessary: true,
+          analytics: false,
+          functional: true,
+          consentDate: new Date().toISOString(),
+          consentVersion: "1.0",
+        }),
+      );
+    }
+  });
+
   await page.goto("/login");
   await page.waitForLoadState("networkidle");
+
+  // Fallback for existing sessions where banner may still be rendered.
+  const acceptAll = page.getByRole("button", { name: /accept all/i });
+  if (await acceptAll.isVisible().catch(() => false)) {
+    await acceptAll.click();
+    await page.waitForTimeout(150);
+  }
 
   // Fill login form
   await page.fill(

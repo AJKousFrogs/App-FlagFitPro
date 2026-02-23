@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
   createErrorResponse,
@@ -46,7 +47,7 @@ function buildRates(total, numerator) {
   return Number(((numerator / total) * 100).toFixed(2));
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "ai-telemetry",
     allowedMethods: ["GET"],
@@ -285,3 +286,6 @@ export const handler = async (event, context) =>
       );
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

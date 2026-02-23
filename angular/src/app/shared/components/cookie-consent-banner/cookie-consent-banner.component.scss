@@ -19,6 +19,7 @@
   box-shadow: var(--shadow-lg), var(--shadow-sm);
   animation: slide-up var(--motion-slow) var(--ease-decelerate);
   backdrop-filter: blur(calc(var(--size-200) * 0.375));
+  overflow-y: auto;
 }
 
 @keyframes slide-up {
@@ -230,6 +231,12 @@
  RESPONSIVE
  ================================ */
 @include respond-to(md) {
+  .cookie-banner {
+    max-height: 62vh;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .cookie-content {
     padding: var(--space-5) var(--space-4);
     gap: var(--space-4);
@@ -271,6 +278,10 @@
 }
 
 @include respond-to(sm) {
+  .cookie-banner {
+    max-height: 68vh;
+  }
+
   .cookie-content {
     padding: var(--space-4) var(--space-3);
   }

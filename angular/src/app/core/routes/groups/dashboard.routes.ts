@@ -22,6 +22,15 @@ export const dashboardRoutes: Routes = [
     data: { preload: true, priority: "high", entry: "internal" },
   },
   {
+    path: "elite-command-center",
+    loadComponent: () =>
+      import("../../../features/elite-command-center/elite-command-center.component").then(
+        (m) => m.EliteCommandCenterComponent,
+      ),
+    canActivate: [authGuard, headerConfigGuard],
+    data: { preload: true, priority: "high", entry: "internal" },
+  },
+  {
     path: "player-dashboard",
     loadComponent: () =>
       import("../../../features/dashboard/player-dashboard.component").then(

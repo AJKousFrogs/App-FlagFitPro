@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import https from "https";
 import http from "http";
 import { baseHandler } from "./utils/base-handler.js";
@@ -82,7 +83,7 @@ async function fetchImageAsBase64(imageUrl) {
   });
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "sponsor-logo",
     allowedMethods: ["GET"],
@@ -175,3 +176,6 @@ export const handler = async (event, context) =>
       }
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

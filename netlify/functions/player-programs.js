@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Player Programs API
  *
@@ -640,7 +642,7 @@ async function handlePut(event, context, { userId }) {
 /**
  * Main handler - routes requests to appropriate handler
  */
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "player-programs",
     allowedMethods: ["GET", "POST", "PUT"],
@@ -680,3 +682,6 @@ export { PROGRAM_IDS };
 export { POSITION_TO_MODIFIER_KEY };
 export { getProgramIdForPosition };
 export { normalizePositionForModifiers };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

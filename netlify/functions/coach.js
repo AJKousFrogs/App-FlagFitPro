@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin, db } from "./supabase-client.js";
+import { supabaseAdmin, db } from "./utils/supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { DataState } from "./utils/data-state.js";
 import { getUserRole, requireRole, logViolation } from "./utils/authorization-guard.js";
@@ -1056,7 +1057,7 @@ async function handleRequest(event, context, { userId }) {
   }
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET"
     ? "READ"
     : event.httpMethod === "DELETE"
@@ -1070,3 +1071,6 @@ rateLimitType: rateLimitType,
     handler: handleRequest,
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

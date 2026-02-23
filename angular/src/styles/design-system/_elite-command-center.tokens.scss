@@ -1,0 +1,107 @@
+/*
+ * Elite Command Center Token Aliases
+ * Single source of truth: src/scss/tokens/design-system-tokens.scss
+ * This file intentionally defines only semantic aliases for the command-center domain.
+ */
+
+:root {
+  /* 8-point rhythm aliases (mapped to canonical tokens) */
+  --ecc-space-0: var(--space-0);
+  --ecc-space-1: var(--space-1);
+  --ecc-space-2: var(--space-2);
+  --ecc-space-3: var(--space-4);
+  --ecc-space-4: var(--space-6);
+  --ecc-space-5: var(--space-8);
+  --ecc-space-6: var(--space-12);
+  --ecc-space-7: var(--space-16);
+  --ecc-space-8: var(--space-24);
+
+  /* Elevation aliases from canonical shadows */
+  --ecc-elevation-0: none;
+  --ecc-elevation-1: var(--shadow-sm);
+  --ecc-elevation-2: var(--shadow-md);
+  --ecc-elevation-3: var(--shadow-lg);
+
+  /* Layout aliases */
+  --ecc-layout-max-width: 1320px;
+  --ecc-layout-page-padding: var(--ecc-space-4);
+  --ecc-layout-gutter-sm: var(--ecc-space-2);
+  --ecc-layout-gutter-md: var(--ecc-space-3);
+  --ecc-layout-gutter-lg: var(--ecc-space-4);
+
+  /* Type aliases */
+  --ecc-type-display-xl-size: clamp(2.25rem, 2.2vw + 1.6rem, 3.5rem);
+  --ecc-type-display-xl-line: 1.08;
+  --ecc-type-display-l-size: clamp(1.75rem, 1.4vw + 1.2rem, 2.5rem);
+  --ecc-type-display-l-line: 1.12;
+  --ecc-type-h2-size: var(--ds-font-size-2xl);
+  --ecc-type-h2-line: var(--ds-line-height-h2);
+  --ecc-type-h3-size: var(--ds-font-size-lg);
+  --ecc-type-h3-line: var(--ds-line-height-h3);
+  --ecc-type-body-l-size: var(--ds-font-size-md);
+  --ecc-type-body-l-line: var(--ds-line-height-body);
+  --ecc-type-body-m-size: var(--ds-font-size-sm);
+  --ecc-type-body-m-line: var(--ds-line-height-body-sm);
+  --ecc-type-caption-size: var(--ds-font-size-xs);
+  --ecc-type-caption-line: var(--ds-line-height-caption);
+
+  /* Semantic color aliases */
+  --ecc-color-primary: var(--color-brand-primary);
+  --ecc-color-success: var(--color-status-success);
+  --ecc-color-warning: var(--color-status-warning);
+  --ecc-color-critical: var(--color-status-error);
+  --ecc-color-info: var(--color-status-info);
+  --ecc-color-neutral-bg: var(--surface-ground);
+  --ecc-color-surface: var(--surface-card);
+  --ecc-color-text-primary: var(--color-text-primary);
+  --ecc-color-text-secondary: var(--color-text-secondary);
+  --ecc-color-border-subtle: var(--surface-border);
+
+  /* Interaction aliases */
+  --ecc-color-state-hover: var(--state-layer-hover);
+  --ecc-color-state-pressed: var(--state-layer-active);
+  --ecc-color-focus-ring: var(--ds-primary-green);
+  --ecc-opacity-disabled: var(--opacity-disabled);
+}
+
+/* Component interaction contract */
+.interactive-surface {
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard);
+
+  &:hover {
+    background: var(--ecc-color-state-hover);
+  }
+
+  &:active {
+    background: var(--ecc-color-state-pressed);
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ecc-color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  &[aria-selected="true"],
+  &.is-selected {
+    border-color: var(--ecc-color-primary);
+    box-shadow: inset 0 0 0 1px var(--ecc-color-primary);
+  }
+
+  &:disabled,
+  &[aria-disabled="true"],
+  &.is-disabled {
+    opacity: var(--ecc-opacity-disabled);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &.is-loading {
+    cursor: progress;
+    pointer-events: none;
+  }
+}

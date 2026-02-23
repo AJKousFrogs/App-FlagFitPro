@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: API Documentation
 // Provides interactive API documentation for the Flag Football app
 // Endpoint: /api/api-docs
@@ -436,7 +438,7 @@ const AUTH_INFO = {
   refreshToken: "Available via Supabase client",
 };
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "api-docs",
     allowedMethods: ["GET"],
@@ -542,3 +544,6 @@ function generateHtmlDocs(docs) {
 </html>
   `;
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,0 +1,437 @@
+<app-main-layout>
+  <section
+    class="elite-shell"
+    role="application"
+    aria-label="Elite Athletic Command Center"
+    [attr.data-mode]="activeMode()"
+  >
+    <app-toast key="app-toast" position="top-right"></app-toast>
+
+    <header class="elite-topbar" aria-label="Global navigation">
+      <p-menubar [model]="menuItems" styleClass="interactive-surface elite-menubar">
+        <ng-template #start>
+          <div class="brand-block" aria-label="product identity">
+            <span class="brand-eyebrow">FlagFit Pro</span>
+            <strong class="brand-title">Elite Athletic Command Center</strong>
+          </div>
+        </ng-template>
+
+        <ng-template #end>
+          <button
+            type="button"
+            class="theme-btn interactive-surface"
+            (click)="toggleTheme()"
+            [attr.aria-label]="'Switch to ' + (theme() === 'dark' ? 'light' : 'dark') + ' mode'"
+          >
+            <i [class]="theme() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"></i>
+            <span>{{ theme() === "dark" ? "Light" : "Dark" }}</span>
+          </button>
+        </ng-template>
+      </p-menubar>
+
+      <p-breadcrumb
+        [model]="breadcrumbItems"
+        [home]="homeCrumb"
+        styleClass="elite-breadcrumb"
+      ></p-breadcrumb>
+    </header>
+
+    <p-message
+      severity="error"
+      icon="pi pi-bell"
+      closable="false"
+      styleClass="critical-banner"
+      role="alert"
+      aria-live="assertive"
+    >
+      <ng-template #container>
+        <div class="critical-banner-content">
+          <strong>Critical Alert:</strong>
+          <span>
+            Two athletes are inside critical injury risk bands. Immediate protocol
+            adaptation required.
+          </span>
+          <button
+            type="button"
+            class="interactive-surface collapse-btn"
+            (click)="alertCollapsed.set(!alertCollapsed())"
+            aria-label="Toggle alert details"
+          >
+            <i [class]="alertCollapsed() ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"></i>
+          </button>
+        </div>
+      </ng-template>
+    </p-message>
+
+    @if (!alertCollapsed()) {
+      <p-message
+        severity="warn"
+        icon="pi pi-exclamation-triangle"
+        styleClass="warning-banner"
+        role="status"
+      >
+        Team load variance is increasing in U18-A. Monitor protocol compliance in
+        the next 60 minutes.
+      </p-message>
+    }
+
+    <section class="hero" aria-label="Performance headline">
+      <h1 class="type-display-xl">Command the Day. Protect Every Athlete.</h1>
+      <p class="type-body-l">
+        Desktop-first intelligence center for readiness, risk, and rapid coaching
+        action.
+      </p>
+    </section>
+
+    <section class="kpi-strip" aria-label="Global KPI strip">
+      @for (kpi of kpis(); track kpi.id) {
+        <article
+          class="kpi-card interactive-surface"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="kpi.label + ' ' + kpi.value"
+        >
+          <header>
+            <span class="type-caption">{{ kpi.label }}</span>
+            <p-tag
+              [severity]="kpi.status"
+              [value]="kpi.status === 'danger' ? 'Critical' : (kpi.status | titlecase)"
+            ></p-tag>
+          </header>
+
+          <div class="kpi-value-row">
+            <strong class="type-display-l">{{ kpi.value }}</strong>
+            <span [class]="'delta delta-' + (kpi.delta >= 0 ? 'up' : 'down')">
+              <i [class]="getDeltaIcon(kpi.delta)" aria-hidden="true"></i>
+              {{ kpi.delta > 0 ? "+" : "" }}{{ kpi.delta }}
+            </span>
+          </div>
+
+          <p-progressbar
+            [value]="kpi.completion"
+            [showValue]="false"
+            aria-label="KPI completion"
+          ></p-progressbar>
+
+          <div class="sparkline" aria-hidden="true">
+            <p-chart
+              type="line"
+              [data]="getSparkData(kpi.sparkline)"
+              [options]="sparkOptions"
+              height="44"
+            ></p-chart>
+          </div>
+        </article>
+      }
+    </section>
+
+    <section class="center-grid" aria-label="Dashboard shell grid">
+      <article
+        class="panel panel-context"
+        appResponsiveGridSpan
+        [desktop]="'span 3'"
+        [tablet]="'span 12'"
+        [mobile]="'span 12'"
+      >
+        <p-card header="Contextual Nav" styleClass="elite-card">
+          <ul class="context-list" role="list">
+            <li><i class="pi pi-flag"></i> Session Objective: Speed Capacity</li>
+            <li><i class="pi pi-users"></i> Active Roster: 46 athletes</li>
+            <li><i class="pi pi-shield"></i> Medical Holds: 3</li>
+          </ul>
+        </p-card>
+
+        <p-card header="Roster Status" styleClass="elite-card mt-4">
+          <p-dataView [value]="queue()" layout="list" [paginator]="false">
+            <ng-template #listItem let-item>
+              <div class="roster-item">
+                <div>
+                  <strong>{{ item.athlete }}</strong>
+                  <small>{{ item.unit }}</small>
+                </div>
+                <p-tag [severity]="getSeverityTag(item.severity)" [value]="item.severity"></p-tag>
+              </div>
+            </ng-template>
+          </p-dataView>
+        </p-card>
+      </article>
+
+      <article
+        class="panel panel-core"
+        appResponsiveGridSpan
+        [desktop]="'span 6'"
+        [tablet]="'span 12'"
+        [mobile]="'span 12'"
+      >
+        <p-card header="Priority Queue" styleClass="elite-card">
+          <div class="table-filters" role="group" aria-label="Queue filters">
+            <p-multiSelect
+              [options]="rosterOptions"
+              optionLabel="label"
+              optionValue="value"
+              [ngModel]="selectedRosters()"
+              (ngModelChange)="selectedRosters.set($event)"
+              placeholder="Filter roster"
+              [style]="{ width: '15rem' }"
+              ariaLabel="Filter by roster"
+            ></p-multiSelect>
+
+            <input
+              pInputText
+              type="text"
+              [ngModel]="tableFilter()"
+              (ngModelChange)="tableFilter.set($event)"
+              placeholder="Search athlete or issue"
+              aria-label="Search queue"
+            />
+          </div>
+
+          <p-table
+            [value]="filteredQueue()"
+            [paginator]="true"
+            [rows]="3"
+            [first]="tableFirst()"
+            (onPage)="onTablePageChange($event)"
+            sortMode="multiple"
+            responsiveLayout="scroll"
+            role="grid"
+            ariaLabel="Priority queue table"
+          >
+            <ng-template #header>
+              <tr>
+                <th pSortableColumn="athlete">Athlete <p-sortIcon field="athlete"></p-sortIcon></th>
+                <th pSortableColumn="severity">Severity <p-sortIcon field="severity"></p-sortIcon></th>
+                <th>Issue</th>
+                <th pSortableColumn="eta">Time <p-sortIcon field="eta"></p-sortIcon></th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <ng-template #body let-row>
+              <tr
+                tabindex="0"
+                class="interactive-surface queue-row"
+                (click)="openDetails(row)"
+                (keydown.enter)="openDetails(row)"
+                [attr.aria-label]="'Open details for ' + row.athlete"
+              >
+                <td>{{ row.athlete }}</td>
+                <td>
+                  <p-tag [severity]="getSeverityTag(row.severity)" [value]="row.severity"></p-tag>
+                </td>
+                <td>{{ row.issue }}</td>
+                <td>{{ row.eta }}</td>
+                <td>
+                  <button type="button" class="interactive-surface view-btn">Review</button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <p-paginator
+            [first]="tableFirst()"
+            [rows]="3"
+            [totalRecords]="filteredQueue().length"
+            (onPageChange)="onTablePageChange($event)"
+          ></p-paginator>
+        </p-card>
+
+        <p-card header="Training & Event Timeline" styleClass="elite-card mt-4">
+          <p-timeline [value]="timeline()" align="left" styleClass="elite-timeline">
+            <ng-template #content let-event>
+              <div
+                pTooltip="Click for drill-down"
+                tooltipPosition="top"
+                class="timeline-card interactive-surface"
+                role="button"
+                tabindex="0"
+                aria-label="Timeline event"
+              >
+                <strong>{{ event.title }}</strong>
+                <p>{{ event.detail }}</p>
+                <small>{{ event.ts }}</small>
+              </div>
+            </ng-template>
+          </p-timeline>
+        </p-card>
+
+        <p-card header="Daily Protocol Checklist" styleClass="elite-card mt-4">
+          <p-stepper [value]="1" [linear]="false" aria-label="Daily protocol progress">
+            <p-step-list>
+              @for (step of protocolSteps(); track step.label; let i = $index) {
+                <p-step [value]="i">
+                  <ng-template #content>
+                    <div class="protocol-step-head">
+                      <span>{{ step.label }}</span>
+                    </div>
+                  </ng-template>
+                </p-step>
+              }
+            </p-step-list>
+          </p-stepper>
+
+          <div class="protocol-list">
+            @for (step of protocolSteps(); track step.label) {
+              <div class="protocol-row" [class.locked]="step.locked">
+                <p-toggleSwitch
+                  [ngModel]="step.complete"
+                  [disabled]="step.locked ?? false"
+                  ariaLabel="Toggle protocol step"
+                ></p-toggleSwitch>
+                <div>
+                  <strong>{{ step.label }}</strong>
+                  <p-message
+                    [severity]="step.complete ? 'success' : (step.locked ? 'warn' : 'info')"
+                    [text]="step.note"
+                    size="small"
+                  ></p-message>
+                </div>
+              </div>
+            }
+          </div>
+        </p-card>
+      </article>
+
+      <article
+        class="panel panel-insights"
+        appResponsiveGridSpan
+        [desktop]="'span 3'"
+        [tablet]="'span 12'"
+        [mobile]="'span 12'"
+      >
+        <p-card header="Pinned Insights" styleClass="elite-card">
+          <ul class="insight-list" role="list">
+            <li><i class="pi pi-check-circle"></i> Recovery score +5% in last 72h.</li>
+            <li><i class="pi pi-exclamation-circle"></i> Sprint load limit at 82% for two units.</li>
+            <li><i class="pi pi-info-circle"></i> Sleep consistency improved on travel week.</li>
+          </ul>
+        </p-card>
+
+        <p-card header="Action Console" styleClass="elite-card mt-4">
+          <div class="action-stack" role="group" aria-label="Quick actions">
+            <button type="button" class="interactive-surface action-btn">Adjust Session Intensity</button>
+            <button type="button" class="interactive-surface action-btn">Dispatch Recovery Alert</button>
+            <button type="button" class="interactive-surface action-btn">Open Medical Review</button>
+          </div>
+        </p-card>
+
+        <p-card header="Interaction Spec" styleClass="elite-card mt-4">
+          <ul class="caption-list" role="list">
+            @for (rule of interactionBehaviorSpecs; track rule.component) {
+              <li>
+                <strong>{{ rule.component }}</strong>
+                <span>{{ rule.states.join(", ") }}</span>
+              </li>
+            }
+          </ul>
+        </p-card>
+      </article>
+    </section>
+
+    <section class="mode-tabs" aria-label="Screen templates by role">
+      <p-tabs [value]="activeMode()" (valueChange)="onModeChange($event)" class="elite-tabs">
+        <p-tabpanel value="dashboard" header="Dashboard Shell">
+          <div class="mode-template">
+            <h2 class="type-h2">Desktop Shell: Left Context, Center Intelligence, Right Actions</h2>
+            <p class="type-body-m">
+              12-column layout with 3/6/3 distribution and section rhythm at
+              <code>var(--space-6)</code>.
+            </p>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="athlete" header="Athlete View">
+          <div class="mode-template athlete-template">
+            <h2 class="type-h2">Athlete Hero: Readiness, Load, Recovery, Compliance</h2>
+            <div class="template-grid">
+              <div class="template-block">Training Plan</div>
+              <div class="template-block">Next Session CTA</div>
+              <div class="template-block">Trend Chart</div>
+              <div class="template-block">Checklist</div>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="coach" header="Coach View">
+          <div class="mode-template coach-template">
+            <h2 class="type-h2">Coach Console</h2>
+            <div class="template-grid template-grid-coach">
+              <div class="template-block">Roster Status</div>
+              <div class="template-block">Priority Queue</div>
+              <div class="template-block">Action Console + Pinned Insights</div>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="analytics" header="Analytics">
+          <div class="mode-template">
+            <h2 class="type-h2">Chart-First Metric Suites</h2>
+            <p class="type-body-m">Tabbed metrics with period switching and semantic status overlays.</p>
+            <p-chart type="line" [data]="getSparkData([41, 49, 51, 63, 66, 72, 78])" [options]="sparkOptions" height="160"></p-chart>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="settings" header="Settings">
+          <div class="mode-template settings-template">
+            <h2 class="type-h2">Settings Hierarchy</h2>
+            <div class="settings-row">
+              <label class="setting-toggle" aria-label="Enable medical auto escalation">
+                <p-toggleSwitch [ngModel]="true"></p-toggleSwitch>
+                <span>Medical auto-escalation</span>
+              </label>
+              <label class="setting-toggle" aria-label="Enable smart protocol lock">
+                <p-toggleSwitch [ngModel]="false"></p-toggleSwitch>
+                <span>Smart protocol lock</span>
+              </label>
+            </div>
+
+            <p-pickList
+              [source]="assignmentSource()"
+              [target]="assignmentTarget()"
+              sourceHeader="Available Protocol Bundles"
+              targetHeader="Assigned Bundles"
+              [dragdrop]="true"
+              [responsive]="true"
+              [breakpoint]="'767px'"
+              aria-label="Assignment pick list"
+            >
+              <ng-template let-item #item>
+                <div class="pick-item">{{ item }}</div>
+              </ng-template>
+            </p-pickList>
+          </div>
+        </p-tabpanel>
+      </p-tabs>
+    </section>
+
+    <p-dock [model]="dockItems" position="bottom" ariaLabel="Global quick actions dock"></p-dock>
+
+    <p-drawer
+      [(visible)]="drawerVisible"
+      position="right"
+      styleClass="details-drawer"
+      [modal]="true"
+      [dismissible]="true"
+      [blockScroll]="true"
+      (onHide)="closeDrawer()"
+      ariaLabel="Priority queue detail panel"
+    >
+      <ng-template #header>
+        <h3 class="type-h3">Athlete Detail Panel</h3>
+      </ng-template>
+
+      @if (selectedQueueItem(); as item) {
+        <div class="drawer-content">
+          <p-tag [severity]="getSeverityTag(item.severity)" [value]="item.severity"></p-tag>
+          <h4>{{ item.athlete }}</h4>
+          <p>{{ item.issue }}</p>
+          <div class="drawer-meta">
+            <span><strong>Unit:</strong> {{ item.unit }}</span>
+            <span><strong>Time:</strong> {{ item.eta }}</span>
+          </div>
+          <button type="button" class="interactive-surface action-btn">Open Full Athlete Profile</button>
+        </div>
+      }
+    </p-drawer>
+  </section>
+</app-main-layout>

@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Plyometrics Exercises API
  * Provides plyometric exercises from the database for training plans
@@ -28,7 +30,7 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   return parsed;
 };
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "plyometrics",
     allowedMethods: ["GET"],
@@ -86,3 +88,6 @@ export const handler = async (event, context) =>
       }
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { getWeekStart } from "./utils/date-utils.js";
 import { DataState, MINIMUM_DATA_REQUIREMENTS, wrapWithDataState, getDataStateFromRiskZone, evaluateDataState } from "./utils/data-state.js";
@@ -1067,7 +1068,7 @@ async function handleTrainingLoads(method, requesterId, query) {
 /**
  * Main handler
  */
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "load-management",
     allowedMethods: ["GET"],
@@ -1193,3 +1194,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

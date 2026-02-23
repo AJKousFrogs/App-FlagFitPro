@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Netlify Function: Micro-Sessions
  *
@@ -20,7 +22,7 @@
  * - Follow-up prompt
  */
 
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin, checkEnvVars } from "./utils/supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -381,7 +383,7 @@ async function getCompletionAnalytics(userId, options = {}) {
 // MAIN HANDLER
 // =====================================================
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "micro-sessions",
@@ -677,3 +679,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

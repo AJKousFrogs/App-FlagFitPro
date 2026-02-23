@@ -1,8 +1,10 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Import Open Data
 // Imports open-source sport-science datasets and computes flag-football metrics
 // Endpoint: /api/import-open-data
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -140,7 +142,7 @@ function computeMetrics(raw) {
 /**
  * Import open dataset and compute metrics
  */
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "import-open-data",
     allowedMethods: ["POST"],
@@ -220,3 +222,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

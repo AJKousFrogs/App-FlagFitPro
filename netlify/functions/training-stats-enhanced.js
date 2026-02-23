@@ -1,9 +1,11 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Enhanced Training Statistics API
 // Centralized endpoint for aggregating training statistics with ACWR, REP, volume, intensity
 // Always filters data up to and including today's date
 // This is the single source of truth for training stats calculations
 
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -323,7 +325,7 @@ async function getTrainingStats(userId, options = {}) {
   }
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "training-stats-enhanced",
     allowedMethods: ["GET"],
@@ -351,3 +353,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { getSupabaseClient } from "./utils/auth-helper.js";
 import { createSuccessResponse, createErrorResponse, handleNotFoundError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -5,7 +6,7 @@ import { baseHandler } from "./utils/base-handler.js";
 // Netlify Function: Validate Invitation Token
 // Checks if an invitation token is valid and returns invitation details
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "validate-invitation",
     allowedMethods: ["GET"],
@@ -108,3 +109,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

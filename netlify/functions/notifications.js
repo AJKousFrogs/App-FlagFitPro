@@ -1,11 +1,12 @@
-import { db } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { db } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
 // Netlify Function: Notifications
 // Returns user notifications using Supabase
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "notifications",
@@ -248,3 +249,6 @@ rateLimitType: rateLimitType,
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

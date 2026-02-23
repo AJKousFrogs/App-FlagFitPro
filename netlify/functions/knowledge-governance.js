@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
@@ -90,7 +91,7 @@ function getQualityIssues(entry) {
   return issues;
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "knowledge-governance",
     allowedMethods: ["GET", "POST", "PATCH"],
@@ -431,3 +432,6 @@ export const handler = async (event, context) =>
       return createErrorResponse("Not found", 404, "not_found", requestId);
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
   createSuccessResponse,
@@ -390,7 +391,7 @@ async function handleRequest(event, _context, { userId: _userId }) {
   }
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "Weather",
     allowedMethods: ["GET"],
@@ -399,3 +400,6 @@ export const handler = async (event, context) => {
     handler: handleRequest,
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

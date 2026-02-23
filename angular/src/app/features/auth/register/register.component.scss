@@ -1,100 +1,51 @@
-// ============================================================================
-// Register Component Styles
-// Design System Compliant
-// ============================================================================
-
 @use "styles/mixins" as *;
 
 .register-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: var(--space-6);
-  background: var(--surface-secondary);
-}
-
-.register-card {
-  width: 100%;
-  max-width: var(--dialog-max-width-md);
-}
-
-.register-logo {
-  text-align: center;
-  margin-bottom: var(--space-4);
-  color: var(--ds-primary-green-dark);
-  font-size: var(--ds-font-size-3xl);
-}
-
-.register-title {
-  text-align: center;
-  font-size: var(--ds-font-size-3xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--ds-primary-green-dark);
-  margin-bottom: var(--space-6);
-}
-
-.register-divider {
-  text-align: center;
-  position: relative;
-  color: var(--color-text-secondary);
-
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 45%;
-    height: var(--border-1);
-    background: var(--color-border-secondary);
+  .register-card {
+    width: 100%;
+    max-width: var(--dialog-max-width-md);
   }
 
-  &::before {
-    left: 0;
+  .register-title {
+    max-width: 24ch;
+    margin-inline: auto;
   }
 
-  &::after {
-    right: 0;
-  }
-}
-
-.register-login-link {
-  display: block;
-  text-align: center;
-  color: var(--ds-primary-green-dark);
-  font-weight: var(--ds-font-weight-semibold);
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
+  .register-login-link {
+    font-size: var(--font-size-sm);
   }
 
-  @include ds-focus-ring(var(--ds-primary-green-dark));
-}
+  .age-verification,
+  .terms-agreement {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: var(--space-3);
+  }
 
-.required::after {
-  content: " *";
-  color: var(--color-status-warning);
-}
+  .age-label,
+  .terms-label {
+    margin-top: 2px;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
 
-.age-verification,
-.terms-agreement {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
+  .age-label strong {
+    color: var(--color-text-primary);
+  }
 
-.age-label,
-.terms-label {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  line-height: var(--ds-line-height-normal);
-  cursor: pointer;
-}
+  .terms-label a {
+    color: var(--color-brand-primary);
+    font-weight: 600;
+    text-decoration: none;
 
-.age-label strong {
-  color: var(--color-text-primary);
+    &:hover {
+      text-decoration: underline;
+    }
+
+    @include ds-focus-ring(var(--color-brand-primary));
+  }
 }
 
 .mb-4 {
@@ -108,16 +59,4 @@
 .my-4 {
   margin-top: var(--space-4);
   margin-bottom: var(--space-4);
-}
-
-.terms-label a {
-  color: var(--ds-primary-green-dark);
-  text-decoration: none;
-  font-weight: var(--ds-font-weight-medium);
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  @include ds-focus-ring(var(--ds-primary-green-dark));
 }

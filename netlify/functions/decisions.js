@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 
 // Netlify Function: Decision Ledger API
@@ -697,7 +698,7 @@ async function handleRequest(event, _context, { userId }) {
   }
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Apply Merlin guard for mutation endpoints
   if (event.httpMethod !== "GET" && event.httpMethod !== "OPTIONS") {
     const req = {
@@ -724,3 +725,6 @@ export const handler = async (event, context) => {
     handler: handleRequest,
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

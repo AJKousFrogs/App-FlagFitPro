@@ -1,11 +1,12 @@
-import { db } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { db } from "./utils/supabase-client.js";
 import { createSuccessResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 // Netlify Function: Sponsors
 // Returns active sponsors with logos for display on login and other pages
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "sponsors",
     allowedMethods: ["GET"],
@@ -58,3 +59,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,4 +1,5 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
 import { sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -823,7 +824,7 @@ const getPollForPost = async (postId, userId = null) => {
   }
 };
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Community has special auth handling: optional for GET, required for POST
   const rateLimitType = event.httpMethod === "POST" ? "CREATE" : "READ";
 
@@ -1092,3 +1093,6 @@ async function handleCommunityRequest(event, requestId) {
         requestId,
       );
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

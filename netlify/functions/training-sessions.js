@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { validateInput } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { requireAuthorization, getUserRole, logViolation } from "./utils/authorization-guard.js";
@@ -635,7 +636,7 @@ async function updateTrainingSession(
   return session;
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Apply Merlin guard for mutation endpoints
   if (
     event.httpMethod === "POST" ||
@@ -889,3 +890,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

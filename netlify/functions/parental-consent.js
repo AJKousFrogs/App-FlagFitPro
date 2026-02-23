@@ -1,7 +1,8 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import crypto from "node:crypto";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -480,7 +481,7 @@ async function handlePublicVerification(event) {
   });
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   if (event.httpMethod === "PUT") {
     return baseHandler(event, context, {
       functionName: "parental-consent",
@@ -499,3 +500,6 @@ export const handler = async (event, context) => {
     handler: handleAuthenticatedRequest,
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { getSupabaseClient } from "./supabase-client.js";
+import { getSupabaseClient } from "./utils/supabase-client.js";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -28,7 +29,7 @@ function isUuid(value) {
  * Generates summary reports for players, coach, and team
  */
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "season-reports",
     allowedMethods: ["POST"],
@@ -323,3 +324,6 @@ async function generatePlayerReport(
     },
   };
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

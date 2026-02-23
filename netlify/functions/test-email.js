@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import nodemailer from "nodemailer";
 import { baseHandler } from "./utils/base-handler.js";
 import {
@@ -73,7 +74,7 @@ function resolveTransport(provider = "auto") {
 }
 
 // Test email endpoint
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "test-email",
     allowedMethods: ["POST"],
@@ -226,3 +227,6 @@ Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
       }
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { getSupabaseClient } from "./utils/auth-helper.js";
 import { validateRequestBody } from "./validation.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -6,7 +7,7 @@ import { baseHandler } from "./utils/base-handler.js";
 // Netlify Function: Login
 // Authenticates user with email and password via Supabase
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "auth-login",
     allowedMethods: ["POST"],
@@ -72,3 +73,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

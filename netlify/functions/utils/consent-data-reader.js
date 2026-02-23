@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../supabase-client.js";
+import { supabaseAdmin } from "../utils/supabase-client.js";
 import { DataState, wrapWithDataState as _wrapWithDataState, MINIMUM_DATA_REQUIREMENTS } from "./data-state.js";
 
 /**

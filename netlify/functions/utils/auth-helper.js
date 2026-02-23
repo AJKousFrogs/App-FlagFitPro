@@ -1,4 +1,4 @@
-import { supabaseAdmin, setAuthContextToken } from "../supabase-client.js";
+import { supabaseAdmin, setAuthContextToken } from "../utils/supabase-client.js";
 import {
   handleAuthenticationError,
   handleAuthorizationError,

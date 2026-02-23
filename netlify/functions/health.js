@@ -1,10 +1,12 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Health Check
 // Provides system health status for monitoring and debugging
 // Endpoint: /api/health
 //
 // This endpoint does NOT require authentication and is rate-limited separately
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { lookup } from "node:dns/promises";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -89,7 +91,7 @@ function getSystemInfo() {
   };
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "health",
     allowedMethods: ["GET"],
@@ -141,3 +143,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

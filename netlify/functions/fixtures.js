@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Fixtures
 // Retrieves upcoming game fixtures for an athlete
 // Endpoint: /api/fixtures
@@ -5,7 +7,7 @@
 // REFACTORED: Uses base-handler, db-query-helper, and response-helper utilities
 // Reduced from 94 lines to 45 lines (52% reduction)
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -83,7 +85,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
 /**
  * Get upcoming fixtures for an athlete
  */
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "fixtures",
     allowedMethods: ["GET"],
@@ -156,3 +158,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

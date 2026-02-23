@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 
 // Netlify Function: Staff Nutritionist API
@@ -549,7 +550,7 @@ async function handleRequest(event, _context, { userId }) {
     return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   if (event.httpMethod === "GET") {
     return baseHandler(event, context, {
       functionName: "staff-nutritionist",
@@ -568,3 +569,6 @@ export const handler = async (event, context) => {
     handler: handleRequest,
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -52,17 +52,17 @@ type LoginForm = FormGroup<{
 
   ],
   template: `
-<div class="login-page">
-      <p-card class="login-card">
+<div class="login-page elite-auth-shell">
+      <p-card class="login-card elite-auth-card elite-auth-card--login">
         <ng-template #header>
-          <div class="login-logo">
+          <div class="login-logo elite-auth-logo">
             <i class="pi pi-activity"></i>
           </div>
-          <h1 class="login-title">Sign in to FlagFit Pro</h1>
+          <h1 class="login-title elite-auth-title">Sign in to FlagFit Pro</h1>
         </ng-template>
 
         @if (isDemoMode()) {
-          <div class="alert alert-info">
+          <div class="alert alert-info elite-auth-note">
             <strong>Demo Mode:</strong> This login accepts any email and
             password for testing purposes.
           </div>
@@ -71,8 +71,8 @@ type LoginForm = FormGroup<{
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <input type="hidden" [value]="csrfToken()" />
 
-          <div class="form-field">
-            <label for="email" class="form-label required">Email</label>
+          <div class="form-field elite-auth-field">
+            <label for="email" class="form-label elite-auth-label required">Email</label>
             <input
               id="email"
               type="email"
@@ -93,8 +93,8 @@ type LoginForm = FormGroup<{
             }
           </div>
 
-          <div class="form-field">
-            <label for="password" class="form-label required">Password</label>
+          <div class="form-field elite-auth-field">
+            <label for="password" class="form-label elite-auth-label required">Password</label>
             <div class="password-input-wrapper">
               <input
                 id="password"
@@ -153,16 +153,17 @@ type LoginForm = FormGroup<{
             [loading]="isLoading()"
             [disabled]="!isFormValid() || isLoading()"
             [fullWidth]="true"
+            class="elite-auth-sticky-cta"
             testId="login-submit"
             >Sign in</app-button
           >
         </form>
 
-        <div class="login-divider">
+        <div class="login-divider elite-auth-divider">
           <span>Or</span>
         </div>
 
-        <a [routerLink]="['/register']" class="login-create-link">
+        <a [routerLink]="['/register']" class="login-create-link elite-auth-link elite-auth-link--centered">
           create a new account
         </a>
       </p-card>

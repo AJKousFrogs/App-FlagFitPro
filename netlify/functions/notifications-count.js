@@ -1,9 +1,11 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Notifications Count
 // Returns unread notification count for the current user using Supabase authentication
 //
 // REFACTORED: Uses base-handler for standardized authentication and error handling
 
-import { db } from "./supabase-client.js";
+import { db } from "./utils/supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -30,7 +32,7 @@ function normalizeLastOpenedAt(value) {
   return value;
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "notifications-count",
     allowedMethods: ["GET"],
@@ -68,3 +70,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

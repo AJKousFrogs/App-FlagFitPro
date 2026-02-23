@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../supabase-client.js";
+import { supabaseAdmin } from "../utils/supabase-client.js";
 
 /**
  * Consent Guard - Enforces Data Consent & Visibility Contract v1

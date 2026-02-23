@@ -1,145 +1,32 @@
-/**
- * Login Component Styles
- * Migrated from inline styles to SCSS using design system
- * Design System Compliant
- */
-
-@use "styles/variables" as *;
 @use "styles/mixins" as *;
 
-// ============================================================================
-// PAGE LAYOUT
-// ============================================================================
-
 .login-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  min-height: 100dvh; // Dynamic viewport height for mobile
-  width: 100%;
-  padding: var(--space-6);
-  box-sizing: border-box;
-  position: relative;
-  background: linear-gradient(
-    135deg,
-    var(--surface-primary) 0%,
-    var(--surface-secondary) 100%
-  );
-
-  // Subtle pattern overlay
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      circle at 25% 25%,
-      rgba(var(--ds-primary-green-rgb), 0.03) 0%,
-      transparent 50%
-    );
-    pointer-events: none;
-  }
-
-  // ============================================================================
-  // CARD STYLING
-  // ============================================================================
-
   .login-card {
     width: 100%;
     max-width: var(--dialog-max-width-md);
-    margin: 0 auto;
-    background: var(--surface-card);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-
-    // Gradient top border
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: var(--indicator-size-xs);
-      background: linear-gradient(
-        90deg,
-        var(--ds-primary-green) 0%,
-        var(--primitive-gold-500) 100%
-      );
-    }
   }
 
-  // PrimeNG card overrides - moved to @layer overrides
-
-  // ============================================================================
-  // LOGO & HEADER
-  // ============================================================================
-
-  .login-logo {
-    width: var(--avatar-size-3xl);
-    height: var(--avatar-size-3xl);
-    margin: 0 auto var(--space-5); // 1.25rem
+  .login-form-options {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: var(--ds-primary-green-subtle);
-    border-radius: var(--radius-xl);
-    color: var(--ds-primary-green-dark);
-    font-size: var(--ds-font-size-2xl);
-    transition: transform var(--transition-base) var(--ease-micro-bounce);
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: var(--space-2) 0 var(--space-5);
+  }
+
+  .forgot-link {
+    color: var(--color-brand-primary);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-decoration: none;
 
     &:hover {
-      transform: scale(1.05);
+      text-decoration: underline;
     }
 
-    i {
-      animation: pulse-subtle 2s ease-in-out infinite;
-    }
+    @include ds-focus-ring(var(--color-brand-primary));
   }
 
-  @keyframes pulse-subtle {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: var(--opacity-subtle);
-    }
-  }
-
-  .login-title {
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-bold);
-    color: var(--color-text-primary);
-    margin: 0;
-    text-align: center;
-    letter-spacing: var(--ds-letter-spacing-tight);
-  }
-
-  // ============================================================================
-  // FORM ELEMENTS
-  // ============================================================================
-
-  .form-field {
-    margin-bottom: var(--space-4);
-  }
-
-  .form-label {
-    display: block;
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-medium);
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
-
-    &.required::after {
-      content: " *";
-      color: var(--color-status-error);
-    }
-  }
-
-  // Password input with toggle
   .password-input-wrapper {
     position: relative;
     display: flex;
@@ -152,299 +39,111 @@
 
   .password-toggle-btn {
     position: absolute;
-    right: var(--space-3);
+    right: var(--space-2);
     top: 50%;
     transform: translateY(-50%);
-    background: none;
-    border: none;
-    padding: var(--space-2);
-    cursor: pointer;
-    color: var(--color-text-muted);
-    border-radius: var(--radius-sm);
-    transition:
-      transform var(--transition-fast),
-      opacity var(--transition-fast);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    @include ds-hover-state(var(--surface-secondary), $color: var(--color-text-primary));
-    @include ds-focus-ring;
-
-    i {
-      font-size: var(--ds-font-size-md);
-    }
-  }
-
-  // Input field styling - moved to @layer overrides
-
-  // PrimeNG error override moved to _component-overrides.scss (DS-EXC-049)
-
-  @keyframes shake {
-    0%,
-    100% {
-      transform: translateX(0);
-    }
-    25% {
-      transform: translateX(-var(--space-1));
-    }
-    75% {
-      transform: translateX(var(--space-1));
-    }
-  }
-
-  // ============================================================================
-  // FORM OPTIONS ROW
-  // ============================================================================
-
-  .login-form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-bottom: var(--space-6);
-    margin-top: var(--space-2);
-  }
-
-  .forgot-link {
-    font-size: var(--ds-font-size-md);
-    color: var(--ds-primary-green-dark);
-    text-decoration: none;
-    transition: color var(--transition-fast);
+    width: var(--touch-target-sm);
+    height: var(--touch-target-sm);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
 
     &:hover {
-      color: var(--ds-primary-green);
-      text-decoration: underline;
+      background: color-mix(in srgb, var(--color-brand-primary) 10%, transparent);
+      color: var(--color-brand-primary);
     }
 
-    @include ds-focus-ring(var(--ds-primary-green-dark), null, var(--radius-sm));
+    @include ds-focus-ring(var(--color-brand-primary));
   }
 
-  // Custom Checkbox styling
   .checkbox-wrapper {
-    display: flex;
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
     cursor: pointer;
     user-select: none;
-    position: relative;
 
     input[type="checkbox"] {
       position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
 
       &:checked + .checkmark {
-        background: var(--ds-primary-green);
-        border-color: var(--ds-primary-green);
+        border-color: var(--color-brand-primary);
+        background: var(--color-brand-primary);
+      }
 
-        &::after {
-          display: block;
-        }
+      &:checked + .checkmark::after {
+        opacity: 1;
       }
 
       @include ds-focus-visible-sibling(
         ".checkmark",
-        0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2)
+        0 0 0 var(--space-1) color-mix(in srgb, var(--color-brand-primary) 20%, transparent)
       );
     }
 
     .checkmark {
-      width: var(--avatar-size-xs);
-      height: var(--avatar-size-xs);
-      min-width: var(--avatar-size-xs);
-      border: var(--border-2) solid var(--color-border-primary);
+      position: relative;
+      width: 1.125rem;
+      height: 1.125rem;
       border-radius: var(--radius-sm);
+      border: var(--border-1) solid var(--color-border-primary);
       background: var(--surface-primary);
       transition:
-        transform var(--transition-fast),
-        opacity var(--transition-fast);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        border-color var(--transition-fast),
+        background-color var(--transition-fast);
 
       &::after {
         content: "";
-        display: none;
-        width: var(--indicator-size-xs);
-        height: var(--indicator-size-md);
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 0.3125rem;
+        height: 0.5625rem;
         border: solid var(--color-text-on-primary);
-  border-width: 0 var(--border-2) var(--border-2) 0;
-        transform: rotate(45deg);
-        margin-bottom: var(--space-1);
-      }
-
-      &:hover {
-        border-color: var(--ds-primary-green);
+        border-width: 0 var(--border-2) var(--border-2) 0;
+        transform: rotate(45deg) translate(-1px, -1px);
+        opacity: 0;
       }
     }
 
     .checkbox-label {
-      font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
     }
   }
-
-  // ============================================================================
-  // SUBMIT BUTTON
-  // ============================================================================
-
-  // Submit button styling - moved to @layer overrides
-
-  // ============================================================================
-  // DIVIDER
-  // ============================================================================
-
-  .login-divider {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    margin: var(--space-6) 0;
-    color: var(--color-text-muted);
-    font-size: var(--ds-font-size-md);
-
-    &::before,
-    &::after {
-      content: "";
-      flex: 1;
-      height: var(--border-1);
-      background: var(--color-border-secondary);
-    }
-  }
-
-  // ============================================================================
-  // CREATE ACCOUNT LINK
-  // ============================================================================
-
-  .login-create-link {
-    display: block;
-    text-align: center;
-    font-size: var(--ds-font-size-md);
-    color: var(--ds-primary-green-dark);
-    text-decoration: none;
-    padding: var(--space-3);
-    border-radius: var(--radius-lg);
-    transition:
-      transform var(--transition-fast),
-      opacity var(--transition-fast);
-
-    @include ds-hover-state(var(--ds-primary-green-subtle));
-    @include ds-focus-ring;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-
-  // ============================================================================
-  // ALERT STYLES
-  // ============================================================================
 
   .alert {
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    font-size: var(--ds-font-size-md);
-    margin-bottom: var(--space-6);
-
     strong {
-      font-weight: var(--ds-font-weight-semibold);
-      margin-right: var(--space-2);
-    }
-
-    &.alert-info {
-      background: var(--color-status-info-light);
-      color: var(--primitive-info-700);
-      border: var(--border-1) solid var(--primitive-info-200);
+      margin-right: var(--space-1);
     }
   }
 
-  // ============================================================================
-  // RESPONSIVE DESIGN
-  // ============================================================================
+  .login-create-link {
+    font-size: var(--font-size-sm);
+    text-transform: lowercase;
+  }
+}
 
-  @include respond-to(sm) {
-    .login-page {
-      padding: var(--space-4);
-      align-items: flex-start;
-      padding-top: var(--space-8); // 2rem
-    }
-
-    .login-logo {
-      width: var(--avatar-size-xl);
-      height: var(--avatar-size-xl);
-      font-size: var(--ds-font-size-2xl);
-    }
-
-    .login-title {
-      font-size: var(--ds-font-size-2xl);
-    }
-
+@media (max-width: 767px) {
+  .login-page {
     .login-form-options {
       flex-direction: column;
       align-items: flex-start;
     }
   }
-
-  // Mobile PrimeNG overrides - moved to @layer overrides
-
-  // ============================================================================
-  // DARK MODE
-  // ============================================================================
-
-  [data-theme="dark"],
-  .dark-theme {
-    .login-page {
-      background: linear-gradient(
-        135deg,
-        var(--primitive-neutral-900) 0%,
-        var(--primitive-neutral-950) 100%
-      );
-    }
-
-    .login-card {
-      background: var(--primitive-neutral-800);
-      border: var(--border-1) solid var(--primitive-neutral-700);
-    }
-
-    .login-logo {
-      background: rgba(var(--ds-primary-green-rgb), 0.15);
-    }
-  }
-
-  // ============================================================================
-  // REDUCED MOTION
-  // ============================================================================
-
-  @media (prefers-reduced-motion: reduce) {
-    .login-logo i {
-      animation: none;
-    }
-
-    // PrimeNG error reduced motion override moved to _component-overrides.scss (DS-EXC-049)
-  }
-} // End @layer features
-
-// ============================================================================
-// @layer overrides - PrimeNG Component Overrides
-
-// @see docs/CARD_SHELL_CONTRACT.md Section 11 Exceptions
-
-// Reduced motion - transition override
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition-duration: var(--transition-instant);
-  }
 }
-
-// All PrimeNG overrides must be documented here (no encapsulation hacks - use CSS custom properties)
-// ============================================================================
-
-/*
- * EXCEPTION: PrimeNG Card Layout Overrides
- * Reason: Custom padding and text alignment for login card
- * Scope: login component only
- */
-// PrimeNG card/input/button: _component-overrides.scss (DS-EXC-049)

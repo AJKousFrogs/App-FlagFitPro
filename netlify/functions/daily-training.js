@@ -1,4 +1,5 @@
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin, checkEnvVars } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
@@ -929,7 +930,7 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
 // MAIN HANDLER
 // =====================================================
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Apply Merlin guard for POST (mutation)
   if (event.httpMethod === "POST") {
     const req = {
@@ -1030,3 +1031,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

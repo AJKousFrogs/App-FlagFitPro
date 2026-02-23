@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { checkEnvVars, getSupabaseClient, runWithAuthContext } from "../supabase-client.js";
+import { checkEnvVars, getSupabaseClient, runWithAuthContext } from "../utils/supabase-client.js";
 import { createErrorResponse, handleServerError, logFunctionCall, CORS_HEADERS } from "./error-handler.js";
 import { authenticateRequest } from "./auth-helper.js";
 import { applyRateLimit, getRateLimitHeaders } from "./rate-limiter.js";

@@ -1,17 +1,19 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Account Pause Function
  * Handles account pause and resume
  */
 
 import { baseHandler } from "./utils/base-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import {
   createErrorResponse,
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "account-pause",
     allowedMethods: ["POST"],
@@ -113,3 +115,6 @@ export const handler = async (event, context) =>
     return createErrorResponse("Method not allowed", 405, "method_not_allowed");
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

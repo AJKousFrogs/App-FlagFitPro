@@ -1,8 +1,10 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Training Plan Generator
 // Generates evidence-based training plans using real data up to and including today
 // Respects periodization phases, ACWR, and domestic vs international schedules
 
-import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -862,7 +864,7 @@ function generateTomorrowGuidance({
 }
 
 // Main handler
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "training-plan",
     allowedMethods: ["GET"],
@@ -920,3 +922,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

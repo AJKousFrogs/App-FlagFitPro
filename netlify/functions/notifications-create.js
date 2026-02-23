@@ -1,7 +1,9 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Create Notification
 // Creates a notification in the database (for push notifications to sync with in-app)
 
-import { db } from "./supabase-client.js";
+import { db } from "./utils/supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -9,7 +11,7 @@ import { baseHandler } from "./utils/base-handler.js";
 const VALID_PRIORITIES = new Set(["low", "medium", "high", "critical"]);
 const MAX_MESSAGE_LENGTH = 2000;
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "notifications-create",
     allowedMethods: ["POST"],
@@ -116,3 +118,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

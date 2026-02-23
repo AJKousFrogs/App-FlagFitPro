@@ -1,4 +1,5 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseAthleteId } from "./utils/db-query-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -413,7 +414,7 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
 };
 
 // Main handler
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "player-stats",
     allowedMethods: ["GET"],
@@ -529,3 +530,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

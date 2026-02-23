@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Nutrition API
 // Handles nutrition calculations, meal planning, and athlete nutrition profiles
 //
@@ -12,7 +14,7 @@
 import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 // =============================================================================
 // NUTRITION CALCULATION CONSTANTS
@@ -917,7 +919,7 @@ async function handleRequest(event, _context, { userId }) {
 // EXPORTS
 // =============================================================================
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const isPublicPath =
     event.path.includes("/calculate") ||
     event.path.includes("/macros/reference");
@@ -945,3 +947,6 @@ export { calculateBMR };
 export { calculateTDEE };
 export { calculateMacros };
 export { calculateNutritionProfile };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

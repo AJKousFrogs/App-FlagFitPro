@@ -1,8 +1,9 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "achievements",
     allowedMethods: ["GET", "POST"],
@@ -412,3 +413,6 @@ function checkCriteria(criteria, streakMap, stats) {
       return false;
   }
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

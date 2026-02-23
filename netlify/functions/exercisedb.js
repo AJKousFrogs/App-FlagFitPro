@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
@@ -454,7 +455,7 @@ async function approveExercise(exerciseId, userId, approvalData) {
 /**
  * Main handler
  */
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "exercisedb",
     allowedMethods: ["GET", "POST"],
@@ -568,3 +569,6 @@ export const handler = async (event, context) =>
       }
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

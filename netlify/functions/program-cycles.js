@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
   createErrorResponse,
@@ -20,7 +21,7 @@ function isUuid(value) {
   );
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "program-cycles",
     allowedMethods: ["GET", "POST"],
@@ -177,3 +178,6 @@ async function updateCycleStatus(supabase, userId, payload) {
 
   return createSuccessResponse(data);
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { getSupabaseClient } from "./utils/auth-helper.js";
 import { createSuccessResponse, createErrorResponse, handleNotFoundError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -5,7 +6,7 @@ import { baseHandler } from "./utils/base-handler.js";
 // Netlify Function: Accept Team Invitation
 // Handles accepting a team invitation and adding user to team
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "accept-invitation",
     allowedMethods: ["POST"],
@@ -182,3 +183,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

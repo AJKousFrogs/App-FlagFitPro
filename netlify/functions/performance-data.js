@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
@@ -219,7 +220,7 @@ async function getSharedTeamIdForCoachAndAthlete(coachUserId, athleteUserId) {
   return athleteMembership?.team_id || null;
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   // Apply Merlin guard for mutation endpoints
   if (event.httpMethod !== "GET" && event.httpMethod !== "OPTIONS") {
     const req = {
@@ -2076,3 +2077,6 @@ function calculateWellnessTrends(wellness) {
     },
   };
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

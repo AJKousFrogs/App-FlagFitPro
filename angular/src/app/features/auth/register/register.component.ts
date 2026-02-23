@@ -49,18 +49,18 @@ import {
     Checkbox,
   ],
   template: `
-<div class="register-page">
-      <p-card class="register-card">
+<div class="register-page elite-auth-shell">
+      <p-card class="register-card elite-auth-card elite-auth-card--register">
         <ng-template #header>
-          <div class="register-logo">
+          <div class="register-logo elite-auth-logo">
             <i class="pi pi-activity"></i>
           </div>
-          <h1 class="register-title">Create Your Account</h1>
+          <h1 class="register-title elite-auth-title">Create Your Account</h1>
         </ng-template>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-          <div class="p-field mb-4">
-            <label for="register-name" class="p-label">Full Name</label>
+          <div class="p-field mb-4 elite-auth-field">
+            <label for="register-name" class="p-label elite-auth-label">Full Name</label>
             <input
               id="register-name"
               name="name"
@@ -84,8 +84,8 @@ import {
             }
           </div>
 
-          <div class="p-field mb-4">
-            <label for="register-email" class="p-label required">Email</label>
+          <div class="p-field mb-4 elite-auth-field">
+            <label for="register-email" class="p-label elite-auth-label required">Email</label>
             <input
               id="register-email"
               name="email"
@@ -109,8 +109,8 @@ import {
             }
           </div>
 
-          <div class="p-field mb-4">
-            <label for="register-password" class="p-label required"
+          <div class="p-field mb-4 elite-auth-field">
+            <label for="register-password" class="p-label elite-auth-label required"
               >Password</label
             >
             <input
@@ -142,8 +142,8 @@ import {
             </small>
           </div>
 
-          <div class="p-field mb-4">
-            <label for="register-confirmPassword" class="p-label required"
+          <div class="p-field mb-4 elite-auth-field">
+            <label for="register-confirmPassword" class="p-label elite-auth-label required"
               >Confirm Password</label
             >
             <input
@@ -225,16 +225,17 @@ import {
             [loading]="isLoading()"
             [disabled]="registerForm.invalid || isLoading()"
             [fullWidth]="true"
+            class="elite-auth-sticky-cta"
             testId="register-submit"
             >Create Account</app-button
           >
         </form>
 
-        <div class="register-divider my-4">
+        <div class="register-divider my-4 elite-auth-divider">
           <span>Or</span>
         </div>
 
-        <a [routerLink]="['/login']" class="register-login-link"
+        <a [routerLink]="['/login']" class="register-login-link elite-auth-link elite-auth-link--centered"
           >Already have an account? Sign in</a
         >
       </p-card>

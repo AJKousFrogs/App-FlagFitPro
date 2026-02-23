@@ -1,7 +1,11 @@
 import { CommonModule } from "@angular/common";
+import { DOCUMENT } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
+  RendererFactory2,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -159,12 +163,37 @@ import { ButtonComponent } from "../button/button.component";
   styleUrl: "./cookie-consent-banner.component.scss",
 })
 export class CookieConsentBannerComponent {
+  private readonly document = inject(DOCUMENT);
+  private readonly renderer = inject(RendererFactory2).createRenderer(null, null);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly cookieService = inject(CookieConsentService);
 
   // Local state for detailed preferences
   protected readonly showDetails = signal(false);
   protected readonly analyticsEnabled = signal(false);
   protected readonly functionalEnabled = signal(true);
+
+  constructor() {
+    effect(() => {
+      const body = this.document?.body;
+      if (!body) {
+        return;
+      }
+
+      if (this.cookieService.showBanner()) {
+        this.renderer.addClass(body, "cookie-banner-visible");
+      } else {
+        this.renderer.removeClass(body, "cookie-banner-visible");
+      }
+    });
+
+    this.destroyRef.onDestroy(() => {
+      const body = this.document?.body;
+      if (body) {
+        this.renderer.removeClass(body, "cookie-banner-visible");
+      }
+    });
+  }
 
   toggleDetails(): void {
     this.showDetails.set(!this.showDetails());

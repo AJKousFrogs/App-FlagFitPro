@@ -1,6 +1,7 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { getSupabaseClient } from "./supabase-client.js";
+import { getSupabaseClient } from "./utils/supabase-client.js";
 
 /**
  * Privacy Settings API
@@ -165,7 +166,7 @@ function validateTeamSettingsPayload(teamSettings) {
   return null;
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "UPDATE";
   return baseHandler(event, context, {
     functionName: "privacy-settings",
@@ -513,3 +514,6 @@ function mapDbToParentalConsent(db) {
     expiresAt: db.expires_at,
   };
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

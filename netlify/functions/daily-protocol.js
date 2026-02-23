@@ -1,4 +1,5 @@
-import { supabaseAdmin, getSupabaseClient } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin, getSupabaseClient } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
@@ -2005,7 +2006,7 @@ const legacyDailyProtocolHandler = async (event) => {
   }
 };
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "daily-protocol",
     allowedMethods: ["GET", "POST"],
@@ -5497,3 +5498,6 @@ function transformExercise(protocolExercise) {
     loadContributionAu: protocolExercise.load_contribution_au,
   };
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

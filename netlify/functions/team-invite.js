@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { getSupabaseClient } from "./utils/auth-helper.js";
@@ -167,7 +168,7 @@ function getTeamInvitationTemplate(
 </html>`;
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "team-invite",
     allowedMethods: ["POST"],
@@ -411,3 +412,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
@@ -93,7 +94,7 @@ function validateSettingsPayload(payload) {
  * - POST /api/player-settings - Save/update player settings
  */
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "player-settings",
     allowedMethods: ["GET", "POST"],
@@ -323,3 +324,6 @@ function calculateAge(birthDateStr) {
   }
   return age;
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

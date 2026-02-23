@@ -3,7 +3,7 @@
  * Contract: Data Consent & Visibility Contract v1, Section 4
  */
 
-import { supabaseAdmin } from "../supabase-client.js";
+import { supabaseAdmin } from "../utils/supabase-client.js";
 
 /**
  * Check if safety override applies for athlete data

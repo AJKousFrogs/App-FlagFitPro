@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { Pool } from "pg";
 import { baseHandler } from "./utils/base-handler.js";
 import {
@@ -18,7 +19,7 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "update-chatbot-stats",
     allowedMethods: ["POST"],
@@ -72,3 +73,6 @@ export const handler = async (event, context) =>
       }
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

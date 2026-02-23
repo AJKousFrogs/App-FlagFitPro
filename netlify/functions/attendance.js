@@ -1,4 +1,5 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
@@ -647,7 +648,7 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
 };
 
 // Main handler
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "attendance",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
@@ -786,3 +787,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

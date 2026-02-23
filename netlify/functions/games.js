@@ -1,4 +1,5 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
 import { validate, validateRequestBody, VALIDATION_RULES } from "./validation.js";
 import { sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError, handleNotFoundError, handleAuthorizationError } from "./utils/error-handler.js";
@@ -862,7 +863,7 @@ const manageConsent = async (playerId, coachId, action, options = {}) => {
 };
 
 // Main handler
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "games",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
@@ -988,3 +989,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

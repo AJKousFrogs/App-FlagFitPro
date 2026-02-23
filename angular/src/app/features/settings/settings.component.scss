@@ -7,6 +7,9 @@
 
 .settings-page {
   padding: var(--space-6);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 /* Settings Navigation */
@@ -42,6 +45,7 @@
     transform var(--transition-fast);
   cursor: pointer;
   width: auto;
+  min-height: var(--touch-target-md);
 
   @include ds-focus-ring;
   @include ds-hover-state(
@@ -105,8 +109,14 @@
 /* Two Column Form Row */
 .form-row {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
+}
+
+.form-row .form-field {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* ================================================================
@@ -114,28 +124,38 @@
    Target devices: iPhone 11-17 (414-26.875rem), Samsung S23-S25 (412-26.875rem)
    ================================================================ */
 
-/* iPhone 15-17 Pro Max, Samsung S25 Ultra (26.875rem viewport) */
-@include respond-to(xs) {
-  .form-row.two-columns {
-    flex-direction: column;
-    gap: var(--space-4);
-
-    .form-field {
-      width: 100%;
-      flex: 1 1 100%;
-    }
-  }
-}
-
-/* iPhone 11-14, Samsung S23/S24 (412-25.875rem viewport) */
-@include respond-to(xs) {
+/* Tablet and below */
+@include respond-to(lg) {
   .settings-nav {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-2);
   }
 
   .settings-nav-item {
     width: 100%;
+    justify-content: center;
+    min-height: var(--touch-target-md);
+  }
+}
+
+/* Mobile */
+@include respond-to(md) {
+  .settings-page {
+    padding: var(--space-4);
+  }
+
+  .settings-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+
+  .settings-nav {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-nav-item {
     justify-content: flex-start;
   }
 
@@ -149,6 +169,43 @@
     }
   }
 
+  .settings-section-title {
+    font-size: var(--ds-font-size-xl);
+  }
+
+  .settings-section-title i {
+    font-size: var(--ds-font-size-xl);
+  }
+
+  .settings-section-description {
+    font-size: var(--ds-font-size-sm);
+  }
+
+  // Prevent iOS zoom on form focus
+  input,
+  textarea,
+  select,
+  .p-inputtext,
+  .p-select-label {
+    font-size: 16px;
+  }
+
+  .p-toggleswitch,
+  p-toggleswitch {
+    min-width: var(--touch-target-md);
+    min-height: var(--space-6);
+  }
+}
+
+/* Small mobile */
+@include respond-to(sm) {
+  .settings-page {
+    padding: var(--space-3);
+  }
+
+  .settings-nav-item {
+    padding: var(--space-3);
+  }
 }
 
 /* Dialog Container */
@@ -263,7 +320,6 @@
   .settings-section {
     margin-bottom: var(--space-6);
   }
-
 }
 
 /* ================================================================

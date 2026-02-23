@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getSupabaseClient } from "./utils/auth-helper.js";
 import { createSuccessResponse } from "./utils/error-handler.js";
@@ -5,7 +6,7 @@ import { createSuccessResponse } from "./utils/error-handler.js";
 // Netlify Function: Get Current User
 // Returns current user information from Supabase JWT token
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "auth-me",
     allowedMethods: ["GET"],
@@ -45,3 +46,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

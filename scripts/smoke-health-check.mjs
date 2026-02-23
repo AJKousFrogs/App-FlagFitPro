@@ -4,7 +4,7 @@
  * Used by scripts/smoke-check.sh
  */
 import "dotenv/config";
-import { handler as healthHandler } from "../netlify/functions/health.js";
+import { testHandler as healthHandler } from "../netlify/functions/health.js";
 
 async function runHealthCheck() {
   const result = await healthHandler(

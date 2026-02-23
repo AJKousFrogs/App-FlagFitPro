@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: User Context API
 // Returns comprehensive user context for AI coaching system
 // Aggregates: users, injuries, training_sessions, wellness_checkins, supplements_logs
@@ -5,7 +7,7 @@
 import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 /**
  * Get comprehensive user context
@@ -225,7 +227,7 @@ async function getUserContext(userId) {
   }
 }
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "user-context",
     allowedMethods: ["GET"],
@@ -250,3 +252,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

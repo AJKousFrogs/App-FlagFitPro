@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
@@ -141,7 +142,7 @@ function validatePayload(payload) {
   return null;
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "exercise-progression",
     allowedMethods: ["POST"],
@@ -412,3 +413,6 @@ function getAdjustmentFactor(acwr, readiness) {
   }
   return 1.0; // No data, no adjustment
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

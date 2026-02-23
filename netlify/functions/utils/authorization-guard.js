@@ -1,4 +1,4 @@
-import { supabaseAdmin, supabaseService } from "../supabase-client.js";
+import { supabaseAdmin, supabaseService } from "../utils/supabase-client.js";
 import { createErrorResponse } from "./error-handler.js";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 

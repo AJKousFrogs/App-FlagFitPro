@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * QB Throwing Tracker API
  *
@@ -7,7 +9,7 @@
  * - POST /api/qb-throwing/arm-care - Mark arm care as complete for a session
  */
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
@@ -23,7 +25,7 @@ function isNonNegativeInteger(value) {
   return Number.isInteger(value) && value >= 0;
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "qb-throwing",
     allowedMethods: ["GET", "POST"],
@@ -423,3 +425,6 @@ async function markArmCareDone(supabase, userId, payload) {
     }),
   };
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

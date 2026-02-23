@@ -1,3 +1,4 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 
@@ -258,7 +259,7 @@ async function getExercises(supabase, params) {
 /**
  * Main handler
  */
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "exercises",
     allowedMethods: ["GET"],
@@ -293,3 +294,6 @@ export const handler = async (event, context) =>
       }
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

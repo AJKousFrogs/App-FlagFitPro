@@ -1,11 +1,12 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consent-guard.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "wellness-checkin",
     allowedMethods: ["GET", "POST"],
@@ -715,3 +716,6 @@ function calculateReadiness(data) {
 
   return Math.round(Math.max(0, Math.min(100, score)));
 }
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

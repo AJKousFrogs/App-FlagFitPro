@@ -1,0 +1,224 @@
+/*
+ * Phase-2 Auth Migration Layer
+ * Shared premium auth shell for login/register/reset flows.
+ */
+
+.elite-auth-shell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--ecc-space-6);
+  background:
+    radial-gradient(
+      120% 90% at 12% 0%,
+      color-mix(in srgb, var(--ecc-color-primary) 18%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      95% 70% at 88% 100%,
+      color-mix(in srgb, var(--ecc-color-info) 12%, transparent) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--ecc-color-neutral-bg) 86%, white 14%) 0%,
+      var(--ecc-color-neutral-bg) 100%
+    );
+}
+
+.elite-auth-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--ecc-color-text-secondary) 7%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ecc-color-text-secondary) 6%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 64px 64px;
+  opacity: 0.22;
+}
+
+.elite-auth-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 34rem);
+  border-radius: var(--radius-xl);
+  border: var(--border-1) solid color-mix(in srgb, var(--ecc-color-text-secondary) 15%, transparent);
+  box-shadow: var(--ecc-elevation-2);
+  overflow: hidden;
+}
+
+.elite-auth-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--ecc-color-success) 0%,
+    var(--ecc-color-primary) 55%,
+    var(--ecc-color-warning) 100%
+  );
+}
+
+.elite-auth-card .p-card-header {
+  padding: var(--ecc-space-6) var(--ecc-space-6) var(--ecc-space-3);
+}
+
+.elite-auth-card .p-card-body {
+  padding: 0 var(--ecc-space-6) var(--ecc-space-6);
+}
+
+.elite-auth-logo {
+  display: grid;
+  place-items: center;
+  width: var(--avatar-size-3xl);
+  height: var(--avatar-size-3xl);
+  margin: 0 auto var(--ecc-space-3);
+  border-radius: var(--radius-lg);
+  color: var(--ecc-color-primary);
+  background: color-mix(in srgb, var(--ecc-color-primary) 16%, transparent);
+  font-size: var(--font-size-2xl);
+}
+
+.elite-auth-title {
+  margin: 0;
+  text-align: center;
+  color: var(--ecc-color-text-primary);
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
+}
+
+.elite-auth-field {
+  margin-bottom: var(--ecc-space-4);
+}
+
+.elite-auth-label {
+  display: block;
+  margin-bottom: var(--ecc-space-2);
+  color: var(--ecc-color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.elite-auth-label.required::after {
+  content: " *";
+  color: var(--ecc-color-critical);
+}
+
+.elite-auth-note {
+  margin-bottom: var(--ecc-space-4);
+  padding: var(--ecc-space-3) var(--ecc-space-4);
+  border-radius: var(--radius-md);
+  border: var(--border-1) solid color-mix(in srgb, var(--ecc-color-info) 25%, transparent);
+  background: color-mix(in srgb, var(--ecc-color-info) 14%, transparent);
+  color: color-mix(in srgb, var(--ecc-color-info) 82%, var(--ecc-color-text-primary) 18%);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.elite-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--ecc-space-3);
+  margin: var(--ecc-space-5) 0;
+  color: var(--ecc-color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.elite-auth-divider::before,
+.elite-auth-divider::after {
+  content: "";
+  flex: 1;
+  height: var(--border-1);
+  background: color-mix(in srgb, var(--ecc-color-text-secondary) 24%, transparent);
+}
+
+.elite-auth-link {
+  display: inline-flex;
+  color: var(--ecc-color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.elite-auth-link:hover {
+  text-decoration: underline;
+}
+
+.elite-auth-link:focus-visible {
+  outline: var(--border-2) solid color-mix(in srgb, var(--ecc-color-primary) 55%, transparent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.elite-auth-link--centered {
+  display: block;
+  text-align: center;
+}
+
+@media (max-width: 1023px) {
+  .elite-auth-shell {
+    place-items: start;
+    padding: var(--ecc-space-4);
+    padding-bottom: calc(var(--ecc-space-7) + var(--safe-area-bottom));
+  }
+
+  .elite-auth-card {
+    width: 100%;
+  }
+
+  .elite-auth-card .p-card-header {
+    padding: var(--ecc-space-5) var(--ecc-space-5) var(--ecc-space-3);
+  }
+
+  .elite-auth-card .p-card-body {
+    padding: 0 var(--ecc-space-5) var(--ecc-space-5);
+  }
+}
+
+@media (max-width: 767px) {
+  .elite-auth-shell {
+    padding: var(--ecc-space-3);
+    padding-top: calc(var(--ecc-space-4) + var(--safe-area-top));
+    padding-bottom: calc(var(--ecc-space-6) + var(--safe-area-bottom));
+  }
+
+  .elite-auth-card .p-card-header {
+    padding: var(--ecc-space-4) var(--ecc-space-4) var(--ecc-space-2);
+  }
+
+  .elite-auth-card .p-card-body {
+    padding: 0 var(--ecc-space-4) var(--ecc-space-4);
+  }
+
+  .elite-auth-logo {
+    width: var(--avatar-size-2xl);
+    height: var(--avatar-size-2xl);
+    font-size: var(--font-size-xl);
+  }
+
+  .elite-auth-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .elite-auth-sticky-cta {
+    position: sticky;
+    bottom: calc(var(--ecc-space-3) + var(--safe-area-bottom));
+    z-index: var(--z-index-sticky);
+    padding: var(--ecc-space-2);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--ecc-color-surface) 94%, transparent);
+    box-shadow: var(--ecc-elevation-2);
+  }
+}

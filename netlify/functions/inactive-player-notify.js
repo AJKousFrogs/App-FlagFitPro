@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Inactive Player Notification Function
  * Sends notifications to inactive players
@@ -5,7 +7,7 @@
 
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -60,7 +62,7 @@ async function verifyCoachCanNotify(userId, targetUserId) {
   return { authorized: true };
 }
 
-export const handler = async (event, context) =>
+const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "inactive-player-notify",
     allowedMethods: ["POST"],
@@ -174,3 +176,6 @@ export const handler = async (event, context) =>
       return createErrorResponse("Method not allowed", 405, "method_not_allowed");
     },
   });
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 /**
  * Account Deletion API
  *
@@ -12,9 +14,9 @@
 import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { getSupabaseClient, supabaseAdmin } from "./supabase-client.js";
+import { getSupabaseClient, supabaseAdmin } from "./utils/supabase-client.js";
 
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "account-deletion",
     allowedMethods: ["GET", "POST", "DELETE"],
@@ -230,3 +232,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);

@@ -1,3 +1,5 @@
+import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+
 // Netlify Function: Training Metrics
 // Retrieves flag-football metrics for an athlete
 // Endpoint: /api/training-metrics
@@ -5,7 +7,7 @@
 // REFACTORED: Uses base-handler, db-query-helper, and response-helper utilities
 // Reduced from 98 lines to 50 lines (49% reduction)
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -18,7 +20,7 @@ const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"])
 /**
  * Get training metrics for an athlete
  */
-export const handler = async (event, context) => {
+const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "training-metrics",
     allowedMethods: ["GET"],
@@ -136,3 +138,6 @@ export const handler = async (event, context) => {
     },
   });
 };
+
+export const testHandler = handler;
+export default createRuntimeV2Handler(handler);
