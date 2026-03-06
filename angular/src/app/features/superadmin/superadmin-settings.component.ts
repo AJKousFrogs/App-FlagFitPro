@@ -9,16 +9,21 @@ import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
-import { DialogService } from "../../core/ui/dialog.service";
+import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 
 interface SuperadminUser {
   user_id: string;
@@ -38,8 +43,13 @@ interface SuperadminUser {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardHeaderComponent,
     AppLoadingComponent,
     EmptyStateComponent,
+    AlertComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
@@ -59,12 +69,11 @@ interface SuperadminUser {
         <!-- Your Status Card -->
         <p-card class="status-card">
           <ng-template #header>
-            <div class="card-header">
-              <h3>
-                <i class="pi pi-shield"></i>
-                Your Superadmin Status
-              </h3>
-            </div>
+            <app-card-header
+              title="Your Superadmin Status"
+              icon="pi-shield"
+            >
+            </app-card-header>
           </ng-template>
 
           <div class="status-grid">
@@ -85,27 +94,22 @@ interface SuperadminUser {
             </div>
           </div>
 
-          <div class="info-notice">
-            <i class="pi pi-info-circle"></i>
-            <p>
-              As the founding superadmin, you have full control over the
-              platform. Only you can add additional superadmins.
-            </p>
-          </div>
+          <app-alert
+            variant="info"
+            title="Founding superadmin access"
+            message="As the founding superadmin, you have full control over the platform. Only you can add additional superadmins."
+            [styleClass]="'info-notice'"
+          />
         </p-card>
 
         <!-- Manage Superadmins -->
         <p-card>
           <ng-template #header>
-            <div class="card-header">
-              <h3>
-                <i class="pi pi-users"></i>
-                Manage Superadmins
-              </h3>
-              <app-button iconLeft="pi-plus" (clicked)="showAddModal = true"
+            <app-card-header title="Manage Superadmins" icon="pi-users">
+              <app-button header-actions iconLeft="pi-plus" (clicked)="showAddModal = true"
                 >Add Superadmin</app-button
               >
-            </div>
+            </app-card-header>
           </ng-template>
 
           @if (isLoading()) {
@@ -154,12 +158,8 @@ interface SuperadminUser {
         <!-- Platform Settings -->
         <p-card>
           <ng-template #header>
-            <div class="card-header">
-              <h3>
-                <i class="pi pi-cog"></i>
-                Platform Settings
-              </h3>
-            </div>
+            <app-card-header title="Platform Settings" icon="pi-cog">
+            </app-card-header>
           </ng-template>
 
           <div class="settings-list">
@@ -216,24 +216,19 @@ interface SuperadminUser {
             </div>
           </div>
 
-          <div class="info-notice info">
-            <i class="pi pi-info-circle"></i>
-            <p>
-              Platform settings are currently managed at the database level.
-              Contact the development team for configuration changes.
-            </p>
-          </div>
+          <app-alert
+            variant="info"
+            title="Database-managed settings"
+            message="Platform settings are currently managed at the database level. Contact the development team for configuration changes."
+            [styleClass]="'info-notice info'"
+          />
         </p-card>
 
         <!-- Olympic Program -->
         <p-card class="olympic-card">
           <ng-template #header>
-            <div class="card-header">
-              <h3>
-                <span class="olympic-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
-                Olympic Program
-              </h3>
-            </div>
+            <app-card-header title="Olympic Program" icon="pi-trophy">
+            </app-card-header>
           </ng-template>
 
           <div class="olympic-tracks">
@@ -260,60 +255,64 @@ interface SuperadminUser {
       </div>
 
       <!-- Add Superadmin Modal -->
-      @if (showAddModal) {
-        <div class="modal-overlay" (click)="showAddModal = false">
-          <div class="modal-dialog" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-              <h3>Add New Superadmin</h3>
-              <button class="modal-close" (click)="showAddModal = false">
-                <i class="pi pi-times"></i>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="form-group">
-                <label for="adminEmail">User Email</label>
-                <input
-                  type="email"
-                  id="adminEmail"
-                  [value]="newAdminEmail"
-                  (input)="onNewAdminEmailInput($event)"
-                  placeholder="Enter user email..."
-                />
-              </div>
-              <div class="form-group">
-                <label for="adminNotes">Notes (Optional)</label>
-                <textarea
-                  id="adminNotes"
-                  [value]="newAdminNotes"
-                  (input)="onNewAdminNotesInput($event)"
-                  placeholder="Add notes about this superadmin..."
-                  rows="3"
-                ></textarea>
-              </div>
+      <app-dialog
+        [visible]="showAddModal"
+        (visibleChange)="showAddModal = $event"
+        (hide)="closeAddModal()"
+        [modal]="true"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [blockScroll]="true"
+        [styleClass]="'dialog-md superadmin-settings-dialog'"
+      >
+        <app-dialog-header
+          icon="shield"
+          title="Add New Superadmin"
+          subtitle="Grant full platform access to a trusted account."
+          (close)="closeAddModal()"
+        />
 
-              <div class="warning-notice">
-                <i class="pi pi-exclamation-triangle"></i>
-                <p>
-                  Superadmins have full control over the platform including
-                  approving teams and managing other superadmins. Only grant
-                  this access to trusted individuals.
-                </p>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <app-button variant="text" (clicked)="showAddModal = false"
-                >Cancel</app-button
-              >
-              <app-button
-                iconLeft="pi-plus"
-                [disabled]="!newAdminEmail.trim()"
-                (clicked)="addNewSuperadmin()"
-                >Add Superadmin</app-button
-              >
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="adminEmail">User Email</label>
+          <input
+            type="email"
+            id="adminEmail"
+            [value]="newAdminEmail"
+            (input)="onNewAdminEmailInput($event)"
+            placeholder="Enter user email..."
+          />
         </div>
-      }
+
+        <div class="form-group">
+          <label for="adminNotes">Notes (Optional)</label>
+          <textarea
+            id="adminNotes"
+            [value]="newAdminNotes"
+            (input)="onNewAdminNotesInput($event)"
+            placeholder="Add notes about this superadmin..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <app-alert
+          variant="warning"
+          density="compact"
+          title="Full platform access"
+          message="Superadmins can approve teams, manage other superadmins, and access platform-critical settings. Only grant this role to trusted operators."
+          [styleClass]="'warning-notice'"
+        />
+
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Add Superadmin"
+          primaryIcon="plus"
+          [disabled]="!newAdminEmail.trim()"
+          (cancel)="closeAddModal()"
+          (primary)="addNewSuperadmin()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./superadmin-settings.component.scss",
@@ -323,7 +322,7 @@ export class SuperadminSettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);
-  private dialogService = inject(DialogService);
+  private confirmDialog = inject(ConfirmDialogService);
 
   // State
   superadmins = signal<SuperadminUser[]>([]);
@@ -374,9 +373,7 @@ export class SuperadminSettingsComponent implements OnInit {
       "To add a superadmin, you need to find their user ID first. This feature requires looking up the user by email in the database.",
       "Superadmin Access",
     );
-    this.showAddModal = false;
-    this.newAdminEmail = "";
-    this.newAdminNotes = "";
+    this.closeAddModal();
   }
 
   onNewAdminEmailInput(event: Event): void {
@@ -388,11 +385,22 @@ export class SuperadminSettingsComponent implements OnInit {
       (event.target as HTMLTextAreaElement | null)?.value ?? "";
   }
 
+  closeAddModal(): void {
+    this.showAddModal = false;
+    this.newAdminEmail = "";
+    this.newAdminNotes = "";
+  }
+
   async removeSuperadmin(userId: string): Promise<void> {
-    const confirmed = await this.dialogService.confirm(
-      "Are you sure you want to remove this superadmin?",
-      "Remove Superadmin",
-    );
+    const confirmed = await this.confirmDialog.confirm({
+      title: "Remove Superadmin",
+      message: "Are you sure you want to remove this superadmin?",
+      icon: "pi pi-exclamation-triangle",
+      acceptLabel: "Remove",
+      rejectLabel: "Cancel",
+      acceptSeverity: "danger",
+      defaultFocus: "reject",
+    });
     if (!confirmed) return;
 
     const success = await this.superadminService.removeSuperadmin(userId);

@@ -233,11 +233,11 @@ interface Meal {
         <p-card header="Performance Impact" class="performance-insights-card">
           <div class="insights-list">
             @for (insight of performanceInsights(); track insight.title) {
-              <div class="insight-item" [class]="insight.type">
-                <div class="insight-icon">
+              <div class="nutrition-insight-card" [class]="insight.type">
+                <div class="nutrition-insight-icon">
                   <i [class]="insight.icon"></i>
                 </div>
-                <div class="insight-content">
+                <div class="nutrition-insight-content">
                   <h5>{{ insight.title }}</h5>
                   <p>{{ insight.description }}</p>
                   @if (insight.actionLabel) {

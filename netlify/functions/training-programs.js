@@ -6,7 +6,8 @@ import { supabaseAdmin } from "./utils/supabase-client.js";
 function isUuid(value) {
   return (
     typeof value === "string" &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    // Accept seeded UUID-like identifiers even when they don't encode RFC version bits.
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
       value,
     )
   );
@@ -110,9 +111,7 @@ async function getProgram(programId) {
         start_date,
         end_date,
         phase_order,
-        focus_areas,
-        load_progression,
-        goals
+        focus_areas
       )
     `,
     )

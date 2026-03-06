@@ -28,6 +28,7 @@ import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
 import { ToastService } from "../../core/services/toast.service";
@@ -77,6 +78,7 @@ interface AchievementStreak {
     TrainingBuilderComponent,
     SwipeGestureDirective,
     ButtonComponent,
+    AlertComponent,
     CardShellComponent,
   ],
   templateUrl: "./training.component.html",
@@ -108,6 +110,14 @@ export class TrainingComponent {
   readonly hasWorkouts = computed(() => this.workouts().length > 0);
   readonly shouldShowWellnessAlert = computed(
     () => this.wellnessAlert() !== null,
+  );
+  readonly wellnessAlertVariant = computed(() =>
+    this.wellnessAlert()?.severity === "critical" ? "error" : "warning",
+  );
+  readonly wellnessAlertTitle = computed(() =>
+    this.wellnessAlert()?.severity === "critical"
+      ? "Recovery check-in required"
+      : "Recovery update recommended",
   );
 
   // New signals for achievements/streaks integration

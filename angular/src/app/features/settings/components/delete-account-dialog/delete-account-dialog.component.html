@@ -16,21 +16,20 @@
     />
 
     <div class="delete-content">
-      <div class="warning-box">
-        <div class="warning-icon-large">
-          <i class="pi pi-exclamation-triangle"></i>
-        </div>
-        <div class="warning-text">
-          <h4>Are you absolutely sure?</h4>
-          <p>All your data will be permanently deleted, including:</p>
-          <ul class="delete-list">
-            <li><i class="pi pi-chart-line"></i> Training history & progress</li>
-            <li><i class="pi pi-chart-bar"></i> Performance metrics & analytics</li>
-            <li><i class="pi pi-cog"></i> Settings & preferences</li>
-            <li><i class="pi pi-user"></i> Profile information</li>
-          </ul>
-        </div>
-      </div>
+      <app-alert
+        variant="error"
+        icon="pi pi-exclamation-triangle"
+        title="Are you absolutely sure?"
+        message="All your data will be permanently deleted, including:"
+        styleClass="settings-dialog-alert"
+      >
+        <ul class="delete-list">
+          <li><i class="pi pi-chart-line"></i> Training history & progress</li>
+          <li><i class="pi pi-chart-bar"></i> Performance metrics & analytics</li>
+          <li><i class="pi pi-cog"></i> Settings & preferences</li>
+          <li><i class="pi pi-user"></i> Profile information</li>
+        </ul>
+      </app-alert>
 
       <div class="confirm-field">
         <label for="settings-deleteConfirm">

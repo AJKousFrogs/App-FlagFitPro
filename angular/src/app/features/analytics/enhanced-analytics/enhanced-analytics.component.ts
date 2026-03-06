@@ -9,11 +9,11 @@ import {
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -42,7 +42,7 @@ import {
     AiConsentRequiredComponent,
 
     ButtonComponent,
-    IconButtonComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -67,18 +67,15 @@ import {
                 <h3>7-Week Performance Trend</h3>
               </ng-template>
               @if (hasNoData()) {
-                <!-- No data state with actionable CTA -->
-                <div class="no-data-state">
-                  <i class="pi {{ noDataMessage.icon }}"></i>
-                  <h4>{{ noDataMessage.title }}</h4>
-                  <p>{{ noDataMessage.reason }}</p>
-                  <app-icon-button
-                    icon="pi-plus"
-                    routerLink="noDataMessage.helpLink"
-                    ariaLabel="Add performance data"
-                    tooltip="Add data"
-                  />
-                </div>
+                <app-empty-state
+                  [useCard]="false"
+                  [icon]="noDataMessage.icon || null"
+                  [heading]="noDataMessage.title"
+                  [description]="noDataMessage.reason"
+                  [actionLabel]="noDataMessage.actionLabel || 'Log Training'"
+                  [actionLink]="noDataMessage.helpLink || null"
+                  actionIcon="pi-plus"
+                />
               } @else if (performanceChartData()) {
                 <app-lazy-chart
                   type="line"
@@ -95,19 +92,18 @@ import {
                 <h3>Injury Risk Analysis</h3>
               </ng-template>
               @if (hasInsufficientDataForInjuryRisk()) {
-                <!-- Insufficient data state with actionable CTA -->
-                <div class="insufficient-data-state">
-                  <i class="pi {{ injuryRiskInsufficientMessage.icon }}"></i>
-                  <h4>{{ injuryRiskInsufficientMessage.title }}</h4>
-                  <p>{{ injuryRiskInsufficientMessage.reason }}</p>
-                  <app-icon-button
-                    icon="pi-info-circle"
-                    variant="outlined"
-                    routerLink="injuryRiskInsufficientMessage.helpLink"
-                    ariaLabel="Learn more about injury risk analysis"
-                    tooltip="Learn more"
-                  />
-                </div>
+                <app-empty-state
+                  [useCard]="false"
+                  [icon]="injuryRiskInsufficientMessage.icon || null"
+                  [heading]="injuryRiskInsufficientMessage.title"
+                  [description]="injuryRiskInsufficientMessage.reason"
+                  [actionLabel]="
+                    injuryRiskInsufficientMessage.actionLabel ||
+                    'Learn More'
+                  "
+                  [actionLink]="injuryRiskInsufficientMessage.helpLink || null"
+                  actionIcon="pi-info-circle"
+                />
               } @else {
                 <div class="risk-analysis">
                   <p>

@@ -220,18 +220,6 @@
   border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
-.summary-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
-
-.summary-item i {
-  color: var(--color-brand-primary);
-}
-
 /* Compact mode adjustments */
 .compact .feed-header {
   padding: var(--space-3);

@@ -94,7 +94,7 @@ function getSystemInfo() {
 const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "health",
-    allowedMethods: ["GET"],
+    allowedMethods: ["GET", "HEAD"],
     rateLimitType: "READ",
     requireAuth: false, // Health checks should be public
     handler: async (_event, _context, { requestId }) => {

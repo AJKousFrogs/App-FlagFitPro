@@ -121,8 +121,7 @@ body > * {
 /* Overlay backdrop blur - KEPT for accessibility (indicates modal state) */
 @supports (-webkit-backdrop-filter: blur(var(--blur-md))) or
   (backdrop-filter: blur(var(--blur-md))) {
-  .modal-backdrop,
-  .sidebar-overlay {
+  .modal-backdrop {
     -webkit-backdrop-filter: blur(var(--blur-sm));
     backdrop-filter: blur(var(--blur-sm));
   }
@@ -194,16 +193,18 @@ textarea {
   line-height: var(--font-body-line-height);
 
   /* Colors */
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--color-border-primary);
+  background: var(--component-input-background);
+  border: var(--border-1) solid var(--component-input-border-color);
   color: var(--color-text-primary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--component-input-radius);
+  box-shadow: var(--component-input-shadow-rest);
 
   /* Transitions */
   transition:
     border-color var(--transition-fast) ease,
     box-shadow var(--transition-fast) ease,
-    background-color var(--transition-fast) ease;
+    background-color var(--transition-fast) ease,
+    color var(--transition-fast) ease;
 }
 
 /* Single-line inputs: 2.75rem height */
@@ -213,20 +214,20 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
 select {
   height: var(--input-height-md);
   min-height: var(--input-height-md);
-  padding: var(--space-3) var(--space-4);
+  padding: 0 var(--component-input-padding-x);
 }
 
 /* Textarea: flexible height, consistent horizontal padding */
 textarea {
   min-height: var(--input-height-lg);
-  padding: var(--space-3) var(--space-4);
+  padding: var(--component-input-padding-y) var(--component-input-padding-x);
   resize: vertical;
 }
 
 /* Placeholder styling */
 input::placeholder,
 textarea::placeholder {
-  color: var(--color-text-muted);
+  color: var(--component-input-placeholder);
   font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-normal);
 }
@@ -237,7 +238,7 @@ input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
   ):hover:not(:disabled):not(:focus-visible):not(.ng-invalid.ng-touched),
 select:hover:not(:disabled):not(:focus-visible),
 textarea:hover:not(:disabled):not(:focus-visible):not(.ng-invalid.ng-touched) {
-  border-color: var(--primitive-neutral-400);
+  border-color: var(--component-input-border-hover);
 }
 
 /* Focus state - green border + green ring */
@@ -246,8 +247,8 @@ input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
   ):focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  border-color: var(--ds-primary-green);
-  box-shadow: var(--shadow-focus);
+  border-color: var(--component-input-border-focus);
+  box-shadow: var(--component-input-shadow-focus);
   outline: none;
 }
 
@@ -261,15 +262,15 @@ input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
   ):invalid,
 select:invalid,
 textarea:invalid {
-  border-color: var(--color-status-error);
+  border-color: var(--component-input-error);
 }
 
 input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
     .p-radiobutton-input
   ).ng-invalid.ng-touched:focus-visible,
 textarea.ng-invalid.ng-touched:focus-visible {
-  border-color: var(--color-status-error);
-  box-shadow: var(--shadow-error-focus);
+  border-color: var(--component-input-error);
+  box-shadow: var(--component-input-error-shadow);
 }
 
 /* Disabled state */
@@ -278,7 +279,7 @@ input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
   ):disabled,
 select:disabled,
 textarea:disabled {
-  background: var(--surface-secondary);
+  background: var(--ui-surface-subtle);
   border-color: var(--color-border-primary);
   opacity: var(--opacity-muted);
   cursor: not-allowed;
@@ -389,7 +390,7 @@ button {
   font-size: var(--font-body-size);
   line-height: var(--font-body-line-height);
   color: var(--color-text-primary);
-  background-color: var(--surface-primary);
+  background-color: var(--surface-ground);
   color-scheme: light dark;
 }
 
@@ -405,7 +406,7 @@ body {
   padding: 0;
   min-height: 100vh; /* Fallback for older browsers */
   min-height: 100dvh; /* Modern: accounts for mobile browser chrome */
-  background-color: var(--surface-primary);
+  background-color: var(--surface-ground);
   color: var(--color-text-primary);
   /* Base Typography - Unified System */
   font-family: var(--font-family-sans);

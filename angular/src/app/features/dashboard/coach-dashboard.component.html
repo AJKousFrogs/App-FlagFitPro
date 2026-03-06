@@ -495,26 +495,27 @@
 
           <!-- Main Content Grid - Streamlined for Phase 2 -->
           @if (hasBlockedPlayers()) {
-            <div class="partial-data-notice">
-              <div class="notice-icon">
-                <i class="pi pi-info-circle"></i>
-              </div>
-              <div class="notice-content">
-                <h4>Limited Data Available</h4>
-                <p>{{ partialDataMessage().reason }}</p>
-                <p class="notice-detail">
+            <app-alert
+              class="partial-data-notice"
+              variant="info"
+              [title]="partialDataMessage().title"
+              [message]="partialDataMessage().reason"
+              [icon]="partialDataMessage().icon || null"
+            >
+              <div class="partial-data-notice__body">
+                <p class="partial-data-notice__detail">
                   Some players have not enabled data sharing. You can request
                   access from individual players in the roster table.
                 </p>
                 <a
                   [routerLink]="partialDataMessage().helpLink"
-                  class="notice-link"
+                  class="partial-data-notice__link"
                 >
                   <i class="pi pi-external-link"></i>
                   {{ partialDataMessage().actionLabel }}
                 </a>
               </div>
-            </div>
+            </app-alert>
           }
 
           <!-- Main Content Grid - Streamlined for Phase 2 -->

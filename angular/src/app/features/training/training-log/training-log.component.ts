@@ -33,13 +33,12 @@ import {
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
 import { InputNumber } from "primeng/inputnumber";
 
 import { Textarea } from "primeng/textarea";
-
-import { Message } from "primeng/message";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -69,10 +68,10 @@ interface SessionType {
     InputNumber,
     Textarea,
 
-    Message,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    AlertComponent,
     CardShellComponent,
   ],
   template: `
@@ -353,121 +352,109 @@ interface SessionType {
             >
               <div class="late-log-notice">
                 @if (logStatus() === "retroactive") {
-                  <div class="notice-content notice-retroactive">
-                    <div class="notice-header">
-                      <i class="pi pi-calendar-clock"></i>
-                      <div class="notice-title-section">
-                        <strong
-                          >Logged {{ hoursDelayed() }} hours after
-                          session</strong
-                        >
-                        <span class="notice-subtitle"
-                          >Flagged for accuracy review</span
-                        >
-                      </div>
-                    </div>
-
-                    <!-- Phase 2.2: ACWR Impact Display -->
-                    <div class="acwr-impact-section">
-                      <strong>ACWR Impact:</strong>
-                      <div class="impact-comparison">
-                        <div class="impact-item">
-                          <span class="impact-label">Before this log:</span>
-                          <span class="impact-value">{{
-                            getAcwrBefore() | number: "1.2-2"
-                          }}</span>
+                  <app-alert
+                    class="late-log-alert"
+                    variant="info"
+                    title="Logged {{ hoursDelayed() }} hours after session"
+                    message="Flagged for accuracy review"
+                  >
+                    <div class="late-log-details">
+                      <!-- Phase 2.2: ACWR Impact Display -->
+                      <div class="acwr-impact-section">
+                        <strong>ACWR Impact:</strong>
+                        <div class="impact-comparison">
+                          <div class="impact-item">
+                            <span class="impact-label">Before this log:</span>
+                            <span class="impact-value">{{
+                              getAcwrBefore() | number: "1.2-2"
+                            }}</span>
+                          </div>
+                          <div class="impact-arrow">→</div>
+                          <div class="impact-item">
+                            <span class="impact-label">After this log:</span>
+                            <span class="impact-value">{{
+                              getAcwrAfter() | number: "1.2-2"
+                            }}</span>
+                          </div>
                         </div>
-                        <div class="impact-arrow">→</div>
-                        <div class="impact-item">
-                          <span class="impact-label">After this log:</span>
-                          <span class="impact-value">{{
-                            getAcwrAfter() | number: "1.2-2"
-                          }}</span>
-                        </div>
+                        <p class="impact-note">
+                          ACWR will update once this session is approved.
+                        </p>
                       </div>
-                      <p class="impact-note">
-                        ACWR will update once this session is approved.
-                      </p>
-                    </div>
-                    <small class="state-narration">
-                      <strong>What changed:</strong> Logging
-                      {{ hoursDelayed() }} hours after session completion.
-                      <strong>Why:</strong> You're entering this session
-                      retroactively (more than 24 hours late).
-                      <strong>What it means:</strong> ACWR will change from
-                      {{ getAcwrBefore() | number: "1.2-2" }} to approximately
-                      {{ getAcwrAfter() | number: "1.2-2" }} after approval.
-                      Retroactive logs require coach review for accuracy.
-                      <strong>Who:</strong> Your coach will review and approve
-                      this entry. <strong>What next:</strong> Coach has been
-                      notified. You'll be notified when approved. ACWR updates
-                      after approval.
-                    </small>
+                      <small class="state-narration">
+                        <strong>What changed:</strong> Logging
+                        {{ hoursDelayed() }} hours after session completion.
+                        <strong>Why:</strong> You're entering this session
+                        retroactively (more than 24 hours late).
+                        <strong>What it means:</strong> ACWR will change from
+                        {{ getAcwrBefore() | number: "1.2-2" }} to approximately
+                        {{ getAcwrAfter() | number: "1.2-2" }} after approval.
+                        Retroactive logs require coach review for accuracy.
+                        <strong>Who:</strong> Your coach will review and approve
+                        this entry. <strong>What next:</strong> Coach has been
+                        notified. You'll be notified when approved. ACWR updates
+                        after approval.
+                      </small>
 
-                    <!-- Phase 2.2: Approval Status Visibility -->
-                    <div class="approval-status-section">
-                      <div class="status-badge pending">
-                        <i class="pi pi-clock"></i>
-                        <span>Status: Pending coach review</span>
+                      <!-- Phase 2.2: Approval Status Visibility -->
+                      <div class="approval-status-section">
+                        <div class="status-badge pending">
+                          <i class="pi pi-clock"></i>
+                          <span>Status: Pending coach review</span>
+                        </div>
+                        <p class="status-note">
+                          Your coach has been notified and will review this entry.
+                          You'll be notified when it's approved.
+                        </p>
                       </div>
-                      <p class="status-note">
-                        Your coach has been notified and will review this entry.
-                        You'll be notified when it's approved.
-                      </p>
                     </div>
-                  </div>
+                  </app-alert>
                 } @else if (logStatus() === "late") {
-                  <div class="notice-content notice-late">
-                    <div class="notice-header">
-                      <i class="pi pi-clock"></i>
-                      <div class="notice-title-section">
-                        <strong
-                          >Logged {{ hoursDelayed() }} hours after
-                          session</strong
-                        >
-                        <span class="notice-subtitle"
-                          >Flagged for accuracy</span
-                        >
-                      </div>
-                    </div>
-
-                    <!-- Phase 2.2: ACWR Impact Display -->
-                    <div class="acwr-impact-section">
-                      <strong>ACWR Impact:</strong>
-                      <div class="impact-comparison">
-                        <div class="impact-item">
-                          <span class="impact-label">Before this log:</span>
-                          <span class="impact-value">{{
-                            getAcwrBefore() | number: "1.2-2"
-                          }}</span>
+                  <app-alert
+                    class="late-log-alert"
+                    variant="warning"
+                    title="Logged {{ hoursDelayed() }} hours after session"
+                    message="Flagged for accuracy"
+                  >
+                    <div class="late-log-details">
+                      <!-- Phase 2.2: ACWR Impact Display -->
+                      <div class="acwr-impact-section">
+                        <strong>ACWR Impact:</strong>
+                        <div class="impact-comparison">
+                          <div class="impact-item">
+                            <span class="impact-label">Before this log:</span>
+                            <span class="impact-value">{{
+                              getAcwrBefore() | number: "1.2-2"
+                            }}</span>
+                          </div>
+                          <div class="impact-arrow">→</div>
+                          <div class="impact-item">
+                            <span class="impact-label">After this log:</span>
+                            <span class="impact-value">{{
+                              getAcwrAfter() | number: "1.2-2"
+                            }}</span>
+                          </div>
                         </div>
-                        <div class="impact-arrow">→</div>
-                        <div class="impact-item">
-                          <span class="impact-label">After this log:</span>
-                          <span class="impact-value">{{
-                            getAcwrAfter() | number: "1.2-2"
-                          }}</span>
-                        </div>
+                        <p class="impact-note">
+                          ACWR updated automatically. No approval needed.
+                        </p>
                       </div>
-                      <p class="impact-note">
-                        ACWR updated automatically. No approval needed.
-                      </p>
+                      <small class="state-narration">
+                        <strong>What changed:</strong> Logging
+                        {{ hoursDelayed() }} hours after session completion.
+                        <strong>Why:</strong> You're entering this session late
+                        (within 24 hours but after completion).
+                        <strong>What it means:</strong> ACWR will update
+                        automatically from
+                        {{ getAcwrBefore() | number: "1.2-2" }} to approximately
+                        {{ getAcwrAfter() | number: "1.2-2" }}. No coach approval
+                        needed. <strong>Who:</strong> System will update ACWR
+                        automatically when you submit.
+                        <strong>What next:</strong> Submit your log to update ACWR
+                        immediately.
+                      </small>
                     </div>
-                    <small class="state-narration">
-                      <strong>What changed:</strong> Logging
-                      {{ hoursDelayed() }} hours after session completion.
-                      <strong>Why:</strong> You're entering this session late
-                      (within 24 hours but after completion).
-                      <strong>What it means:</strong> ACWR will update
-                      automatically from
-                      {{ getAcwrBefore() | number: "1.2-2" }} to approximately
-                      {{ getAcwrAfter() | number: "1.2-2" }}. No coach approval
-                      needed. <strong>Who:</strong> System will update ACWR
-                      automatically when you submit.
-                      <strong>What next:</strong> Submit your log to update ACWR
-                      immediately.
-                    </small>
-                  </div>
+                  </app-alert>
                 }
               </div>
             </app-card-shell>
@@ -481,19 +468,18 @@ interface SessionType {
             >
               <div class="conflict-warning">
                 @for (conflict of conflicts(); track conflict.type) {
-                  <p-message severity="warn" class="status-message">
-                    <div class="warning-content">
-                      <i class="pi pi-info-circle"></i>
-                      <div>
-                        <strong>Conflict: {{ conflict.type }}</strong>
-                        <p>{{ conflict.message }}</p>
-                        <p class="conflict-detail">
-                          RPE: {{ conflict.playerValue }} vs Session Type:
-                          {{ conflict.coachValue }}
-                        </p>
-                      </div>
-                    </div>
-                  </p-message>
+                  <app-alert
+                    class="conflict-alert"
+                    variant="warning"
+                    density="compact"
+                    [title]="'Conflict: ' + conflict.type"
+                    [message]="conflict.message"
+                  >
+                    <p class="conflict-detail">
+                      RPE: {{ conflict.playerValue }} vs Session Type:
+                      {{ conflict.coachValue }}
+                    </p>
+                  </app-alert>
                 }
                 <small class="state-narration state-narration--spaced">
                   <strong>What changed:</strong> Conflict detected between your

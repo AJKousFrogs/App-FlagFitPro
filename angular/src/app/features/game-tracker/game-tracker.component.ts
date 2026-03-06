@@ -39,6 +39,7 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { EmptyStateComponent } from "../../shared/components/ui-components";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -133,6 +134,7 @@ interface Play {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    AlertComponent,
     EmptyStateComponent,
     StatusTagComponent,
     AppLoadingComponent,

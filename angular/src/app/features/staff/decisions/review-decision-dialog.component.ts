@@ -23,7 +23,9 @@ import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
-import { ModalComponent } from "@shared/components/modal/modal.component";
+import { AppDialogComponent } from "@shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "@shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "@shared/components/dialog-header/dialog-header.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
 import type {
@@ -44,18 +46,28 @@ import type {
     Checkbox,
     DatePicker,
     StatusTagComponent,
-    ModalComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
-    <app-modal
+    <app-dialog
       [visible]="visible()"
       (visibleChange)="onVisibleChange($event)"
-      [header]="'Review Decision'"
-      [size]="'lg'"
-      [closable]="true"
-      [showFooter]="true"
-      [showDefaultButtons]="false"
+      [modal]="true"
+      [closable]="false"
+      [draggable]="false"
+      [resizable]="false"
+      [blockScroll]="true"
+      [styleClass]="'dialog-lg decision-dialog decision-dialog--review'"
     >
+      <app-dialog-header
+        icon="check-circle"
+        title="Review Decision"
+        subtitle="Document the outcome, any consequences, and the next review point."
+        (close)="onCancel()"
+      />
+
       @if (decision()) {
         <!-- Decision Context -->
         <div class="review-context">
@@ -189,18 +201,15 @@ import type {
       }
 
       <!-- Footer -->
-      <ng-container footer>
-        <app-button variant="outlined" (clicked)="onCancel()"
-          >Cancel</app-button
-        >
-        <app-button
-          (clicked)="onConfirm()"
-          [disabled]="!canSubmit()"
-          [loading]="isSubmitting()"
-          >Submit Review</app-button
-        >
-      </ng-container>
-    </app-modal>
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Submit Review"
+        [disabled]="!canSubmit()"
+        [loading]="isSubmitting()"
+        (cancel)="onCancel()"
+        (primary)="onConfirm()"
+      />
+    </app-dialog>
   `,
   styles: [
     `
@@ -385,6 +394,7 @@ export class ReviewDecisionDialogComponent {
 
   onCancel(): void {
     this.reset();
+    this.visibleChange.emit(false);
   }
 
   reset(): void {

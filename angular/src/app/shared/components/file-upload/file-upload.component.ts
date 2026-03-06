@@ -8,9 +8,9 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { AlertComponent } from "../alert/alert.component";
 import { ButtonComponent } from "../button/button.component";
 import { ProgressBar } from "primeng/progressbar";
-import { Message } from "primeng/message";
 import { FileUpload } from "primeng/fileupload";
 import { HttpClient } from "@angular/common/http";
 import { timer } from "rxjs";
@@ -37,7 +37,7 @@ export interface UploadedFile {
   imports: [
     CommonModule,
     ProgressBar,
-    Message,
+    AlertComponent,
     FileUpload,
     MobileOptimizedImageDirective,
     ButtonComponent,
@@ -114,9 +114,11 @@ export interface UploadedFile {
 
       <!-- Error Message -->
       @if (errorMessage()) {
-        <p-message severity="error" class="status-message">
-          {{ errorMessage() }}
-        </p-message>
+        <app-alert
+          variant="error"
+          [message]="errorMessage() || ''"
+          styleClass="status-message"
+        />
       }
 
       <!-- File Preview -->

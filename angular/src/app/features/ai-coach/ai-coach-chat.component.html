@@ -248,13 +248,13 @@
                 } @else {
                   <!-- ACWR Warning Banner -->
                   @if (message.acwrSafety?.blocked) {
-                    <div class="safety-banner" role="alert">
-                      <i class="pi pi-exclamation-triangle"></i>
-                      <div class="banner-content">
-                        <strong>Training Load Alert</strong>
-                        <span>{{ message.acwrSafety?.reason }}</span>
-                      </div>
-                    </div>
+                    <app-alert
+                      variant="warning"
+                      density="compact"
+                      title="Training Load Alert"
+                      [message]="message.acwrSafety?.reason || ''"
+                      styleClass="safety-alert"
+                    />
                   }
 
                   <!-- Message Content -->

@@ -1,20 +1,25 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 
 @Component({
   selector: "app-not-found",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, ButtonComponent],
+  imports: [RouterModule, ButtonComponent, PageErrorStateComponent],
   template: `
     <div class="not-found-page">
       <div class="not-found-content">
-        <div class="error-code">404</div>
-        <h1 class="error-title">Page Not Found</h1>
-        <p class="error-message">
-          Oops! The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div class="error-actions">
+        <div class="not-found-code">404</div>
+        <app-page-error-state
+          class="not-found-state"
+          titleTag="h1"
+          title="Page Not Found"
+          message="Oops! The page you're looking for doesn't exist or has been moved."
+          icon="pi-compass"
+          [showRetry]="false"
+        ></app-page-error-state>
+        <div class="not-found-actions">
           <app-button size="lg" iconLeft="pi-home" routerLink="/dashboard"
             >Go to Dashboard</app-button
           >
@@ -26,7 +31,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
             >Go Back</app-button
           >
         </div>
-        <div class="helpful-links">
+        <div class="not-found-links">
           <p>Here are some helpful links:</p>
           <ul>
             <li><a routerLink="/dashboard">Dashboard</a></li>

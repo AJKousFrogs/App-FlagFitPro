@@ -46,6 +46,7 @@ import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader
 
 import { from, type Observable } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
 
 // Layout & Components
@@ -131,16 +132,15 @@ interface QuickFormData {
     RouterModule,
     Card,
     Dialog,
-    
     ProgressBar,
     SkeletonLoaderComponent,
-
-    MainLayoutComponent,
-    ProtocolBlockComponent,
     ButtonComponent,
+    CardHeaderComponent,
     EmptyStateComponent,
     AppBannerComponent,
     AcwrBaselineComponent,
+    MainLayoutComponent,
+    ProtocolBlockComponent,
   ],
   animations: [
     trigger("fadeSlideIn", [
@@ -425,16 +425,57 @@ export class TodayComponent {
   });
 
   // Computed signals for template use
-  readonly hasAlertBanner = computed(() => {
-    const banners = this.todayViewModel()?.banners ?? [];
-    return banners.some(
-      (b) => b.type === "alert" && b.text.includes("Acknowledgment required"),
+  readonly blockingCoachAlertBanner = computed<
+    TodayViewModel["banners"][number] | null
+  >(() => {
+    const vm = this.todayViewModel();
+    if (!vm || vm.trainingAllowed) {
+      return null;
+    }
+
+    return (
+      vm.banners.find(
+        (b) =>
+          b.type === "alert" && b.text.includes("Acknowledgment required"),
+      ) ?? null
     );
   });
 
-  readonly alertBannerText = computed(() => {
+  readonly blockingCoachAlertPrimaryCta = computed(() => {
+    const vm = this.todayViewModel();
+    const banner = this.blockingCoachAlertBanner();
+
+    if (vm?.primaryCta) {
+      return {
+        label: vm.primaryCta.label,
+        action: vm.primaryCta.action,
+        variant: "primary" as const,
+      };
+    }
+
+    return banner?.ctas?.[0] ?? null;
+  });
+
+  readonly blockingCoachAlertSecondaryCta = computed(() => {
+    const vm = this.todayViewModel();
+    const banner = this.blockingCoachAlertBanner();
+
+    if (vm?.primaryCta && banner?.ctas?.[0]) {
+      return {
+        label: banner.ctas[0].label,
+        action: banner.ctas[0].action,
+        variant: "secondary" as const,
+      };
+    }
+
+    return banner?.ctas?.[1] ?? null;
+  });
+
+  readonly visibleBanners = computed(() => {
     const banners = this.todayViewModel()?.banners ?? [];
-    return banners.find((b) => b.type === "alert")?.text ?? "";
+    const blockingBanner = this.blockingCoachAlertBanner();
+
+    return banners.filter((banner) => banner !== blockingBanner);
   });
 
   readonly tomorrowDate = computed(() => {

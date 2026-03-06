@@ -25,8 +25,8 @@ import {
   input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Message } from "primeng/message";
 import { Tooltip } from "primeng/tooltip";
+import { AlertComponent, AlertVariant } from "../alert/alert.component";
 import { ButtonComponent } from "../button/button.component";
 
 export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
@@ -34,35 +34,33 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
 @Component({
   selector: "app-data-quality-warning",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Message, Tooltip, ButtonComponent],
+  imports: [CommonModule, Tooltip, AlertComponent, ButtonComponent],
   template: `
     @if (shouldShow()) {
-      <div
-        class="data-quality-warning"
-        [class]="'quality-' + qualityLevel()"
-        role="alert"
-        [attr.aria-label]="ariaLabel()"
+      <app-alert
+        [variant]="alertVariant()"
+        [icon]="alertIcon()"
+        [title]="title()"
+        [message]="mainMessage()"
+        [styleClass]="'data-quality-warning'"
+        density="compact"
       >
-        <div class="warning-header">
-          <i [class]="iconClass()"></i>
-          <span class="warning-title">{{ title() }}</span>
-          @if (confidence() !== null) {
-            <span
-              class="confidence-badge"
-              [pTooltip]="'Data confidence: ' + confidence() + '%'"
-            >
-              {{ confidence() }}% confidence
-            </span>
-          }
-        </div>
+        @if (hasSupplementalContent()) {
+          <div class="data-quality-warning__content" [attr.aria-label]="ariaLabel()">
+            @if (confidence() !== null) {
+              <div class="data-quality-warning__meta">
+                <span
+                  class="data-quality-warning__confidence"
+                  [pTooltip]="'Data confidence: ' + confidence() + '%'"
+                >
+                  {{ confidence() }}% confidence
+                </span>
+              </div>
+            }
 
-        @if (issues().length > 0 && showDetails()) {
-          <div class="warning-details">
-            <p class="warning-message">{{ mainMessage() }}</p>
-
-            @if (recommendations().length > 0) {
-              <div class="recommendations">
-                <span class="rec-label">To improve accuracy:</span>
+            @if (showDetails() && recommendations().length > 0) {
+              <div class="data-quality-warning__recommendations">
+                <span class="data-quality-warning__label">To improve accuracy:</span>
                 <ul>
                   @for (rec of recommendations().slice(0, 2); track rec) {
                     <li>{{ rec }}</li>
@@ -70,124 +68,20 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
                 </ul>
               </div>
             }
-          </div>
-        }
 
-        @if (actionLabel() && actionRoute()) {
-          <div class="warning-action">
-            <app-button variant="text" size="sm" [routerLink]="actionRoute()">{{
-              actionLabel()
-            }}</app-button>
+            @if (actionLabel() && actionRoute()) {
+              <div class="data-quality-warning__action">
+                <app-button variant="text" size="sm" [routerLink]="actionRoute()">{{
+                  actionLabel()
+                }}</app-button>
+              </div>
+            }
           </div>
         }
-      </div>
+      </app-alert>
     }
   `,
-  styles: [
-    `
-      .data-quality-warning {
-        padding: var(--space-2) var(--space-3);
-        border-radius: var(--radius-md);
-        margin-bottom: var(--space-2);
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-      }
-
-      .quality-insufficient {
-        background: rgba(var(--color-status-danger-rgb), 0.1);
-        border-left: var(--space-1) solid var(--color-status-danger);
-      }
-
-      .quality-low {
-        background: rgba(var(--color-status-warning-rgb), 0.1);
-        border-left: var(--space-1) solid var(--color-status-warning);
-      }
-
-      .quality-medium {
-        background: rgba(var(--color-status-info-rgb), 0.08);
-        border-left: var(--space-1) solid var(--color-status-info);
-      }
-
-      .quality-high {
-        display: none; /* Don't show warning for high quality data */
-      }
-
-      .warning-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .warning-header i {
-        font-size: var(--ds-font-size-1-1rem);
-      }
-
-      .quality-insufficient .warning-header i {
-        color: var(--color-status-danger);
-      }
-
-      .quality-low .warning-header i {
-        color: var(--color-status-warning);
-      }
-
-      .quality-medium .warning-header i {
-        color: var(--color-status-info);
-      }
-
-      .warning-title {
-        font-weight: var(--ds-font-weight-semibold);
-        font-size: var(--ds-font-size-0-9rem);
-      }
-
-      .confidence-badge {
-        margin-left: auto;
-        padding: calc(var(--space-1) / 2) var(--space-2);
-        border-radius: var(--radius-full);
-        font-size: var(--ds-font-size-xs);
-        font-weight: var(--ds-font-weight-medium);
-        background: var(--surface-secondary);
-      }
-
-      .warning-details {
-        padding-left: calc(
-          var(--ds-font-size-1-1rem) + var(--space-2)
-        );
-      }
-
-      .warning-message {
-        margin: 0;
-        font-size: var(--ds-font-size-0-85rem);
-        color: var(--color-text-secondary);
-      }
-
-      .recommendations {
-        margin-top: var(--space-1);
-        font-size: var(--ds-font-size-0-8rem);
-      }
-
-      .rec-label {
-        font-weight: var(--ds-font-weight-medium);
-        color: var(--color-text-secondary);
-      }
-
-      .recommendations ul {
-        margin: var(--space-1) 0 0;
-        padding-left: var(--space-3);
-      }
-
-      .recommendations li {
-        color: var(--color-text-secondary);
-        margin-bottom: calc(var(--space-1) / 2);
-      }
-
-      .warning-action {
-        padding-left: calc(
-          var(--ds-font-size-1-1rem) + var(--space-2)
-        );
-      }
-    `,
-  ],
+  styleUrl: "./data-quality-warning.component.scss",
 })
 export class DataQualityWarningComponent {
   // Inputs
@@ -206,17 +100,31 @@ export class DataQualityWarningComponent {
     return level === "insufficient" || level === "low" || level === "medium";
   });
 
-  iconClass = computed(() => {
+  alertVariant = computed<AlertVariant>(() => {
     const level = this.qualityLevel();
     switch (level) {
       case "insufficient":
-        return "pi pi-exclamation-circle";
+        return "error";
       case "low":
-        return "pi pi-exclamation-triangle";
+        return "warning";
       case "medium":
-        return "pi pi-info-circle";
+        return "info";
       default:
-        return "pi pi-check-circle";
+        return "success";
+    }
+  });
+
+  alertIcon = computed(() => {
+    const level = this.qualityLevel();
+    switch (level) {
+      case "insufficient":
+        return "pi-exclamation-circle";
+      case "low":
+        return "pi-exclamation-triangle";
+      case "medium":
+        return "pi-info-circle";
+      default:
+        return "pi-check-circle";
     }
   });
 
@@ -254,6 +162,13 @@ export class DataQualityWarningComponent {
         return "";
     }
   });
+
+  hasSupplementalContent = computed(
+    () =>
+      this.confidence() !== null ||
+      (this.showDetails() && this.recommendations().length > 0) ||
+      (!!this.actionLabel() && !!this.actionRoute()),
+  );
 
   ariaLabel = computed(() => {
     const level = this.qualityLevel();

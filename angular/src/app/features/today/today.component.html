@@ -53,7 +53,7 @@
        ======================================================================== -->
   @if (isLoading() || isGeneratingProtocol()) {
     <div
-      class="today-page elite-phase2-shell"
+      class="today-page elite-phase2-shell ui-page-stack"
       aria-busy="true"
       aria-label="Loading today's practice"
     >
@@ -72,7 +72,7 @@
        ======================================================================== -->
   @if (!isLoading() && !isGeneratingProtocol()) {
     @if (todayViewModel(); as vm) {
-      <div class="today-page elite-phase2-shell">
+      <div class="today-page elite-phase2-shell ui-page-stack">
         <!-- ====================================================================
              HEADER: 5-Second Comprehension
              ==================================================================== -->
@@ -138,25 +138,16 @@
         <!-- ====================================================================
              COACH ALERT ACKNOWLEDGMENT GATE (blocking)
              ==================================================================== -->
-        @if (hasAlertBanner()) {
+        @if (blockingCoachAlertBanner(); as coachAlertBanner) {
           <section class="coach-alert-gate">
-            <p-card class="alert-gate-card">
-              <div class="alert-gate-content">
-                <i class="pi pi-bell alert-gate-icon"></i>
-                <div class="alert-gate-text">
-                  <h3>Coach Alert</h3>
-                  <p>{{ alertBannerText() }}</p>
-                </div>
-                @if (vm.primaryCta) {
-                  <app-button
-                    variant="primary"
-                    (clicked)="handleCta(vm.primaryCta!.action)"
-                  >
-                    {{ vm.primaryCta.label }}
-                  </app-button>
-                }
-              </div>
-            </p-card>
+            <app-banner
+              type="alert"
+              [message]="coachAlertBanner.text"
+              [primaryCta]="blockingCoachAlertPrimaryCta()"
+              [secondaryCta]="blockingCoachAlertSecondaryCta()"
+              icon="pi-bell"
+              (ctaClick)="handleCta($event)"
+            />
           </section>
         }
 
@@ -182,9 +173,9 @@
         <!-- ====================================================================
              BANNERS (ordered by priority, above first block)
              ==================================================================== -->
-        @if (vm.banners.length > 0) {
+        @if (visibleBanners().length > 0) {
           <section class="banners-section">
-            @for (banner of vm.banners; track trackByBanner($index, banner)) {
+            @for (banner of visibleBanners(); track trackByBanner($index, banner)) {
               <app-banner
                 [type]="banner.type"
                 [message]="banner.text"
@@ -216,12 +207,13 @@
           <main class="content-section">
             <section aria-labelledby="protocol-heading">
               <p-card class="content-card">
-                <div class="card-header">
-                  <i class="pi pi-list card-header-icon" aria-hidden="true"></i>
-                  <span id="protocol-heading" class="card-header-title">
-                    Today's Protocol
-                  </span>
-                </div>
+                <app-card-header
+                  title="Today's Protocol"
+                  icon="pi-list"
+                  titleId="protocol-heading"
+                  [divider]="true"
+                >
+                </app-card-header>
 
                 @if (protocol(); as p) {
                   <!-- Progress Bar -->

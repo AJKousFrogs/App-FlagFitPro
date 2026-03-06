@@ -19,11 +19,11 @@ import {
   signal,
 } from "@angular/core";
 import { ToastService } from "../../core/services/toast.service";
+import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
-import { Message } from "primeng/message";
 
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -291,8 +291,7 @@ const RETENTION_OPTIONS = [
     Card,
     DatePicker,
     Dialog,
-    
-    Message,
+    AlertComponent,
     Select,
     TableModule,
     Textarea,
@@ -466,6 +465,12 @@ export class CycleTrackingComponent implements OnInit {
         message: "Consider reducing intensity during this phase.",
       };
     }
+  }
+
+  getAlertVariant(
+    severity: "success" | "warn" | "error" | "info",
+  ): AlertVariant {
+    return severity === "warn" ? "warning" : severity;
   }
 
   getNutritionTip(): string {

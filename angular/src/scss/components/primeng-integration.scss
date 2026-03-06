@@ -252,27 +252,27 @@
 }
 
 .p-card .p-card-header {
-  padding: var(--space-5) var(--space-5) 0;
+  padding: var(--space-4) var(--component-card-padding) 0;
 }
 
 .p-card .p-card-footer {
-  padding: var(--space-4) var(--space-5) var(--space-5);
+  padding: var(--space-4) var(--component-card-padding) var(--component-card-padding);
 }
 
 /* Dialog Padding - content padding from ui-standardization (--p-dialog-content-padding) */
 .p-dialog .p-dialog-header {
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-4) var(--component-dialog-padding);
   border-bottom: var(--border-1) solid var(--surface-border, var(--color-border-muted));
 }
 
 .p-dialog .p-dialog-footer {
-  padding: var(--space-4) var(--space-6) var(--space-5);
+  padding: var(--space-4) var(--component-dialog-padding);
   border-top: var(--border-1) solid var(--surface-border, var(--color-border-muted));
 }
 
 /* ================================================================
    FORM CONTROL NORMALIZATION - SINGLE SOURCE OF TRUTH
-   All form controls: 2.75rem height, 0.5rem radius, consistent padding
+   All form controls: 3rem height, modern radius, consistent padding
    ================================================================ */
 
 /* Base Form Control Styles */
@@ -286,16 +286,17 @@
 .p-autocomplete .p-inputtext {
   height: var(--p-form-control-height, var(--touch-target-md));
   min-height: var(--p-form-control-min-height, var(--touch-target-md));
-  border-radius: var(--p-form-control-border-radius, var(--radius-lg));
-  padding: var(--p-form-control-padding-y, calc(var(--space-2) + var(--space-0-5)))
-    var(--p-form-control-padding-x, var(--space-4)); /* 0.625rem/1rem */
+  border-radius: var(--p-form-control-border-radius, var(--component-input-radius));
+  padding: var(--p-form-control-padding-y, var(--component-input-padding-y))
+    var(--p-form-control-padding-x, var(--component-input-padding-x));
   font-size: var(--p-form-control-font-size, var(--font-body-size));
   font-weight: var(--p-form-control-font-weight, var(--font-weight-regular));
   line-height: var(--p-form-control-line-height, 1.5);
-  background: var(--p-input-background, var(--surface-primary));
+  background: var(--p-input-background, var(--component-input-background));
   border: var(--p-input-border-width, var(--border-1)) solid
     var(--p-input-border-color);
   color: var(--p-input-text-color, var(--color-text-primary));
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease,
@@ -308,7 +309,7 @@
 }
 
 .p-password .p-password-toggle-mask-icon {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 /* Placeholder styling */
@@ -1016,21 +1017,21 @@
   --p-avatar-font-weight: var(--font-weight-semibold);
 
   /* Dialog/Modal - Typography aligned to unified system */
-  --p-dialog-border-radius: var(--radius-lg);
-  --p-dialog-header-padding: var(--space-4);
+  --p-dialog-border-radius: var(--component-dialog-radius);
+  --p-dialog-header-padding: var(--space-4) var(--component-dialog-padding);
   --p-dialog-header-font-size: var(--font-h2-size);
   --p-dialog-header-font-weight: var(--font-weight-semibold);
   --p-dialog-header-line-height: var(--font-h2-line-height);
-  --p-dialog-content-padding: var(--space-4);
-  --p-dialog-footer-padding: var(--space-4);
+  --p-dialog-content-padding: var(--component-dialog-padding);
+  --p-dialog-footer-padding: var(--space-4) var(--component-dialog-padding);
   --p-dialog-footer-gap: var(--space-3);
 
   /* Toast */
   --p-toast-blur: var(--blur-md);
-  --p-toast-border-radius: var(--radius-xl);
-  --p-toast-shadow: var(--shadow-toast);
-  --p-toast-content-padding: var(--space-4) var(--space-5);
-  --p-toast-content-gap: var(--space-3);
+  --p-toast-border-radius: var(--component-toast-radius);
+  --p-toast-shadow: var(--component-toast-shadow);
+  --p-toast-content-padding: var(--component-toast-padding);
+  --p-toast-content-gap: var(--component-toast-gap);
   --p-toast-close-button-width: var(--touch-target-sm);
   --p-toast-close-button-height: var(--touch-target-sm);
   --p-toast-close-button-border-radius: var(--radius-md);

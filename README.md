@@ -165,6 +165,11 @@ npm run dev
 npm run dev:angular-only
 ```
 
+`npm run dev` intentionally adds Netlify's `--skip-wait-port` flag because this
+Angular workspace can take longer than Netlify CLI's default framework-port
+probe during the first compile. If you run `netlify dev` manually, include
+`--skip-wait-port` or Netlify may give up before the Angular server is ready.
+
 ## 🧱 CSS Build Pipeline
 
 - **SCSS entrypoints**

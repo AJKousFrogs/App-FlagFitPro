@@ -27,11 +27,25 @@ import {
   WeatherCancellationService,
   WeatherSensitiveSession,
 } from "../../../core/services/weather-cancellation.service";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
+import { getTemplateSessionDateFromWeekRange } from "../../../shared/utils/training-template.utils";
+
+function toLocalDateKey(date: Date | null | undefined): string {
+  if (!date) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 interface TrainingSession {
   id: string;
@@ -76,8 +90,10 @@ interface MonthlyStats {
     Checkbox,
     MainLayoutComponent,
     PageHeaderComponent,
+    AlertComponent,
     ButtonComponent,
     CardShellComponent,
+    EmptyStateComponent,
     RouterModule,
   ],
   templateUrl: "./training-schedule.component.html",
@@ -148,12 +164,12 @@ export class TrainingScheduleComponent implements OnInit {
     }
 
     // Get selected date string (YYYY-MM-DD)
-    const selectedDateStr = selected.toISOString().split("T")[0];
+    const selectedDateStr = toLocalDateKey(selected);
 
     // Filter sessions for the selected date
     const dateSessions = allSessions
       .filter((session) => {
-        const sessionDateStr = session.date.toISOString().split("T")[0];
+        const sessionDateStr = toLocalDateKey(session.date);
         return sessionDateStr === selectedDateStr;
       })
       .sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -162,7 +178,7 @@ export class TrainingScheduleComponent implements OnInit {
     if (dateSessions.length === 0) {
       const upcomingSessions = allSessions
         .filter((session) => {
-          const sessionDateStr = session.date.toISOString().split("T")[0];
+          const sessionDateStr = toLocalDateKey(session.date);
           return sessionDateStr >= selectedDateStr;
         })
         .sort((a, b) => a.date.getTime() - b.date.getTime())
@@ -195,9 +211,9 @@ export class TrainingScheduleComponent implements OnInit {
 
   // Check if a date has sessions (for calendar highlighting)
   getDateMarker(date: Date): CalendarDateMarker | undefined {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = toLocalDateKey(date);
     return this.dateMarkers().find(
-      (m) => m.date.toISOString().split("T")[0] === dateStr,
+      (m) => toLocalDateKey(m.date) === dateStr,
     );
   }
 
@@ -319,8 +335,8 @@ export class TrainingScheduleComponent implements OnInit {
       const { sessions: actualSessions, error: sessionsError } =
         await this.trainingScheduleDataService.fetchActualSessions({
           userId: user.id,
-          startDate: startOfWeek.toISOString().split("T")[0],
-          endDate: endOfWeek.toISOString().split("T")[0],
+          startDate: toLocalDateKey(startOfWeek),
+          endDate: toLocalDateKey(endOfWeek),
         });
 
       if (sessionsError) {
@@ -331,8 +347,9 @@ export class TrainingScheduleComponent implements OnInit {
       // Find weeks that contain any day in our selected week range
       const { templates: scheduledTemplates, error: templatesError } =
         await this.trainingScheduleDataService.fetchScheduledTemplates({
-          startDate: startOfWeek.toISOString().split("T")[0],
-          endDate: endOfWeek.toISOString().split("T")[0],
+          userId: user.id,
+          startDate: toLocalDateKey(startOfWeek),
+          endDate: toLocalDateKey(endOfWeek),
         });
 
       // Map actual sessions
@@ -355,9 +372,7 @@ export class TrainingScheduleComponent implements OnInit {
         });
 
         const actualDates = new Set(
-          mappedActualSessions.map(
-            (session) => session.date.toISOString().split("T")[0],
-          ),
+          mappedActualSessions.map((session) => toLocalDateKey(session.date)),
         );
 
         mappedScheduledSessions = scheduledTemplates
@@ -374,18 +389,13 @@ export class TrainingScheduleComponent implements OnInit {
             // Handle both array and single object response from Supabase
             const weeks = template.training_weeks;
             const weekData = Array.isArray(weeks)
-              ? (weeks[0] as { start_date: string; week_number: number })
-              : (weeks as { start_date: string; week_number: number });
-
-            // Parse date string as local date to avoid timezone issues
-            const dateStr = weekData.start_date.split("T")[0]; // Get just YYYY-MM-DD
-            const [year, month, day] = dateStr.split("-").map(Number);
-            const weekStart = new Date(year, month - 1, day, 0, 0, 0, 0);
-
-            const sessionDate = new Date(weekStart);
-            sessionDate.setDate(
-              weekStart.getDate() + (template.day_of_week || 0),
-            );
+              ? (weeks[0] as { start_date: string; end_date: string })
+              : (weeks as { start_date: string; end_date: string });
+            const sessionDate = getTemplateSessionDateFromWeekRange({
+              weekStart: weekData.start_date,
+              weekEnd: weekData.end_date,
+              dayOfWeek: template.day_of_week,
+            });
 
             const templateRecord =
               template as unknown as Record<string, unknown>;
@@ -396,7 +406,7 @@ export class TrainingScheduleComponent implements OnInit {
               type:
                 template.session_name || template.session_type || "Training",
               duration: template.duration_minutes || 60,
-              status: actualDates.has(sessionDate.toISOString().split("T")[0])
+              status: actualDates.has(toLocalDateKey(sessionDate))
                 ? "replaced"
                 : ("scheduled" as const),
               isTemplate: true,
@@ -468,8 +478,8 @@ export class TrainingScheduleComponent implements OnInit {
 
     const previousDate = this.selectedDate();
     this.logger.debug("Date selected", {
-      date: date.toISOString().split("T")[0],
-      previousDate: previousDate?.toISOString().split("T")[0],
+      date: toLocalDateKey(date),
+      previousDate: toLocalDateKey(previousDate),
     });
 
     // Update the selected date
@@ -501,7 +511,7 @@ export class TrainingScheduleComponent implements OnInit {
       this.router.navigate(["/todays-practice"]);
       return;
     }
-    const selectedDateStr = this.selectedDate()?.toISOString().split("T")[0];
+    const selectedDateStr = toLocalDateKey(this.selectedDate());
     this.router.navigate(["/training/smart-form"], {
       queryParams: selectedDateStr ? { date: selectedDateStr } : {},
     });
@@ -568,7 +578,7 @@ export class TrainingScheduleComponent implements OnInit {
       const { sessionId, error } =
         await this.trainingScheduleDataService.startTemplateSession({
           userId: user.id,
-          sessionDate: session.date.toISOString().split("T")[0],
+          sessionDate: toLocalDateKey(session.date),
           sessionType: session.type,
           durationMinutes: session.duration,
         });
@@ -706,8 +716,8 @@ export class TrainingScheduleComponent implements OnInit {
       const { sessions, error } =
         await this.trainingScheduleDataService.fetchDateMarkers({
           userId: user.id,
-          startDate: startOfMonth.toISOString().split("T")[0],
-          endDate: endOfMonth.toISOString().split("T")[0],
+          startDate: toLocalDateKey(startOfMonth),
+          endDate: toLocalDateKey(endOfMonth),
         });
 
       if (error) {
@@ -751,8 +761,8 @@ export class TrainingScheduleComponent implements OnInit {
       const { sessions, error } =
         await this.trainingScheduleDataService.fetchMonthlyStats({
           userId: user.id,
-          startDate: startOfMonth.toISOString().split("T")[0],
-          endDate: endOfMonth.toISOString().split("T")[0],
+          startDate: toLocalDateKey(startOfMonth),
+          endDate: toLocalDateKey(endOfMonth),
         });
 
       if (error) {

@@ -45,13 +45,14 @@
             }
           </div>
           @if (nextGenEnabled()) {
-            <div class="performance-preview-banner">
-              <i class="pi pi-sparkles"></i>
-              <span>
-                Next-gen performance signals are in preview. Keep using legacy
-                metrics until validation completes.
-              </span>
-            </div>
+            <app-alert
+              variant="info"
+              density="compact"
+              icon="pi-sparkles"
+              title="Preview"
+              message="Next-gen performance signals are in preview. Keep using legacy metrics until validation completes."
+              styleClass="performance-preview-banner"
+            />
           }
 
           <!-- Performance Metrics -->
@@ -181,11 +182,16 @@
               <!-- Strongest/Weakest Summary -->
               <div class="performance-summary">
                 @if (teamRankings()!.strongestMetric) {
-                  <div class="summary-item strongest">
-                    <i class="pi pi-arrow-up"></i>
-                    <div class="summary-content">
-                      <span class="summary-label">Your Strongest</span>
-                      <span class="summary-value">
+                  <div class="metric-summary-row metric-summary-row--success">
+                    <i
+                      class="pi pi-arrow-up metric-summary-row__icon"
+                      aria-hidden="true"
+                    ></i>
+                    <div class="metric-summary-row__content">
+                      <span class="metric-summary-row__label"
+                        >Your Strongest</span
+                      >
+                      <span class="metric-summary-row__value">
                         {{ teamRankings()!.strongestMetric!.metricLabel }}
                         (Top
                         {{
@@ -200,11 +206,16 @@
                   teamRankings()!.weakestMetric !==
                     teamRankings()!.strongestMetric
                 ) {
-                  <div class="summary-item weakest">
-                    <i class="pi pi-arrow-down"></i>
-                    <div class="summary-content">
-                      <span class="summary-label">Room to Improve</span>
-                      <span class="summary-value">
+                  <div class="metric-summary-row metric-summary-row--muted">
+                    <i
+                      class="pi pi-arrow-down metric-summary-row__icon"
+                      aria-hidden="true"
+                    ></i>
+                    <div class="metric-summary-row__content">
+                      <span class="metric-summary-row__label"
+                        >Room to Improve</span
+                      >
+                      <span class="metric-summary-row__value">
                         {{ teamRankings()!.weakestMetric!.metricLabel }}
                         ({{ teamRankings()!.weakestMetric!.gapFormatted }})
                       </span>
@@ -228,12 +239,13 @@
             @defer (on viewport) {
               <p-card class="chart-card">
                 <ng-template #header>
-                  <div class="chart-header-row">
-                    <h3>Performance Over Time</h3>
+                  <app-card-header title="Performance Over Time">
                     @if (nextGenEnabled()) {
-                      <span class="chart-preview-badge">Preview</span>
+                      <span header-actions class="chart-preview-badge"
+                        >Preview</span
+                      >
                     }
-                  </div>
+                  </app-card-header>
                 </ng-template>
                 @if (performanceChartData()) {
                   <app-lazy-chart
@@ -251,21 +263,23 @@
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">
-                  Loading performance chart...
-                </div>
+                <app-loading
+                  variant="inline"
+                  message="Loading performance chart..."
+                />
               </p-card>
             }
 
             @defer (on viewport) {
               <p-card class="chart-card">
                 <ng-template #header>
-                  <div class="chart-header-row">
-                    <h3>Speed Metrics (10yd, 20yd, 40yd)</h3>
+                  <app-card-header title="Speed Metrics (10yd, 20yd, 40yd)">
                     @if (nextGenEnabled()) {
-                      <span class="chart-preview-badge">Preview</span>
+                      <span header-actions class="chart-preview-badge"
+                        >Preview</span
+                      >
                     }
-                  </div>
+                  </app-card-header>
                 </ng-template>
                 @if (speedChartData()) {
                   <app-lazy-chart
@@ -283,7 +297,7 @@
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">Loading speed metrics...</div>
+                <app-loading variant="inline" message="Loading speed metrics..." />
               </p-card>
             }
           </div>
@@ -291,18 +305,18 @@
           <!-- Position Benchmark Comparison -->
           <p-card class="benchmark-card">
             <ng-template #header>
-              <div class="benchmark-header">
-                <div class="benchmark-title">
-                  <i class="pi pi-bullseye"></i>
-                  <h3>{{ selectedPosition() }} Position Benchmarks</h3>
-                </div>
+              <app-card-header
+                [title]="selectedPosition() + ' Position Benchmarks'"
+                icon="pi-bullseye"
+              >
                 <p-select
+                  header-actions
                   [options]="positionOptions"
                   (onChange)="onPositionSelectionChange($event.value)"
                   placeholder="Change Position"
                   class="position-selector"
                 ></p-select>
-              </div>
+              </app-card-header>
             </ng-template>
             @if (nextGenEnabled()) {
               <p class="benchmark-preview-note">

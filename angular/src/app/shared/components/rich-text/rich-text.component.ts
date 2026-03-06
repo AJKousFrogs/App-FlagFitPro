@@ -37,9 +37,9 @@ import { DialogService } from "../../../core/ui/dialog.service";
     },
   ],
   template: `
-    <div class="rich-text-group">
+    <div class="form-field rich-text-group">
       @if (label()) {
-        <label class="form-label">{{ label() }}</label>
+        <label class="form-label" [attr.id]="id() + '-label'">{{ label() }}</label>
       }
       <div class="rich-text-editor">
         <div
@@ -113,10 +113,16 @@ import { DialogService } from "../../../core/ui/dialog.service";
         </div>
         <div
           #contentEditable
+          [id]="id()"
           class="rich-text-content"
           contenteditable="true"
-          [attr.aria-label]="label() || 'Rich text editor'"
+          [attr.aria-labelledby]="label() ? id() + '-label' : null"
+          [attr.aria-label]="label() ? null : 'Rich text editor'"
           [attr.aria-multiline]="true"
+          [attr.aria-invalid]="errorMessage() ? 'true' : null"
+          [attr.aria-describedby]="
+            errorMessage() ? id() + '-error' : helpText() ? id() + '-help' : null
+          "
           [attr.spellcheck]="spellcheck()"
           (input)="onInput()"
           (blur)="onBlur()"
@@ -124,10 +130,12 @@ import { DialogService } from "../../../core/ui/dialog.service";
         ></div>
       </div>
       @if (helpText() && !errorMessage()) {
-        <div class="form-help">{{ helpText() }}</div>
+        <small [id]="id() + '-help'" class="form-help">{{ helpText() }}</small>
       }
       @if (errorMessage()) {
-        <div class="form-error" role="alert">{{ errorMessage() }}</div>
+        <small [id]="id() + '-error'" class="form-error" role="alert">
+          {{ errorMessage() }}
+        </small>
       }
     </div>
   `,

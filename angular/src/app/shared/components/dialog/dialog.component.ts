@@ -30,11 +30,11 @@ import { Dialog } from "primeng/dialog";
       [dismissableMask]="dismissableMask()"
       [appendTo]="appendTo()"
     >
-      <ng-content select="app-dialog-header"></ng-content>
+      <ng-content select="app-dialog-header, [dialogHeader]"></ng-content>
       <div class="dialog-body">
         <ng-content></ng-content>
       </div>
-      <ng-content select="app-dialog-footer"></ng-content>
+      <ng-content select="app-dialog-footer, [dialogFooter]"></ng-content>
     </p-dialog>
   `,
   styles: [

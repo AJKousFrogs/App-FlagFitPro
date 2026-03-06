@@ -72,7 +72,7 @@ export class WellnessRecoveryService {
         user_id: playerId,
         notification_type: "wellness",
         message: `Your wellness was low yesterday (${yesterdayWellness.score}%). Today's training is focused on recovery - prioritize sleep, hydration, and light movement.`,
-        priority: "medium",
+        priority: "normal",
       });
 
       this.logger.info(

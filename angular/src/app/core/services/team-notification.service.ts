@@ -273,6 +273,7 @@ export class TeamNotificationService {
     const toastMessage = notification.message || "New notification";
 
     switch (notification.priority) {
+      case "urgent":
       case "high":
         this.toastService.error(toastMessage, {
           life: 10000,
@@ -281,7 +282,7 @@ export class TeamNotificationService {
         // Also show browser notification if permitted
         this.showBrowserNotification(notification);
         break;
-      case "medium":
+      case "normal":
         this.toastService.warn(toastMessage, { life: 5000 });
         break;
       default:

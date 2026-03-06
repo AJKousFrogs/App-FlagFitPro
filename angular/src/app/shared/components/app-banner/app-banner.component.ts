@@ -71,4 +71,8 @@ export class AppBannerComponent {
     };
     return `pi ${iconMap[this.typeDisplay] || "pi-info-circle"}`;
   }
+
+  get liveRole(): "status" | "alert" {
+    return this.typeDisplay === "info" ? "status" : "alert";
+  }
 }

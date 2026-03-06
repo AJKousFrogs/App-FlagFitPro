@@ -7,27 +7,6 @@
   max-width: var(--chart-min-height-lg); /* var(--chart-min-height-lg) */
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4);
-}
-
-.card-header h3 {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.card-header h3 i {
-  color: var(--ds-primary-green);
-}
-
 .readiness-badge {
   padding: var(--space-2) var(--space-4); /* 0.5rem 1rem for breathing room */
   border-radius: var(--radius-lg);

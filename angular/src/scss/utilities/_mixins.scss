@@ -484,16 +484,7 @@
   $duration: var(--motion-duration-normal),
   $easing: var(--ease-standard)
 ) {
-  animation: fade-in $duration $easing;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  animation: ui-motion-fade-in $duration $easing;
 }
 
 // Slide up animation
@@ -502,18 +493,8 @@
   $distance: var(--motion-offset-slide),
   $easing: var(--ease-standard)
 ) {
-  animation: slide-up $duration $easing;
-
-  @keyframes slide-up {
-    from {
-      opacity: 0;
-      transform: translateY($distance);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  --ui-motion-enter-from-y: #{$distance};
+  animation: ui-motion-enter-y $duration $easing;
 }
 
 // Scale in animation
@@ -521,18 +502,9 @@
   $duration: var(--motion-duration-normal),
   $easing: var(--ease-micro-bounce)
 ) {
-  animation: scale-in $duration $easing;
-}
-
-@keyframes scale-in {
-  from {
-    opacity: 0;
-    transform: scale(var(--motion-scale-press));
-  }
-  to {
-    opacity: 1;
-    transform: scale(var(--motion-scale-base));
-  }
+  --ui-motion-scale-in-start: var(--motion-scale-press);
+  --ui-motion-scale-in-end: var(--motion-scale-base);
+  animation: ui-motion-scale-in $duration $easing;
 }
 
 // Shimmer loading effect
@@ -559,17 +531,8 @@
 
 // Pulse animation
 @mixin pulse($duration: var(--motion-duration-pulse)) {
-  animation: pulse $duration var(--ease-standard) infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: var(--opacity-half);
-  }
+  --ui-motion-fade-pulse-opacity-mid: var(--opacity-half);
+  animation: ui-motion-fade-pulse $duration var(--ease-standard) infinite;
 }
 
 // Shared transition for interactive cards (onboarding, preference toggles, etc.)

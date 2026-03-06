@@ -34,17 +34,8 @@
 
 .floating-timer.warning {
   background: var(--color-status-warning);
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
+  --ui-motion-scale-pulse-mid: 1.05;
+  animation: ui-motion-scale-pulse 1s infinite;
 }
 
 .floating-content {

@@ -11,6 +11,7 @@ import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -19,6 +20,9 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import {
   SuperadminService,
   ApprovalRequest,
@@ -36,9 +40,13 @@ import {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
     AppLoadingComponent,
     EmptyStateComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
@@ -120,18 +128,15 @@ import {
         <!-- Pending Approvals Section -->
         <p-card>
           <ng-template #header>
-            <div class="card-header">
-              <h3>
-                <i class="pi pi-inbox"></i>
-                Pending Approvals
-              </h3>
+            <app-card-header title="Pending Approvals" icon="pi-inbox">
               <app-icon-button
+                header-actions
                 icon="pi-refresh"
                 variant="text"
                 (clicked)="refreshData()"
                 ariaLabel="Refresh"
               />
-            </div>
+            </app-card-header>
           </ng-template>
 
           @if (isLoading()) {
@@ -256,39 +261,45 @@ import {
         </div>
       </div>
 
-      <!-- Reject Modal -->
-      @if (showRejectModal) {
-        <div class="modal-overlay" (click)="closeRejectModal()">
-          <div class="modal-content" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-              <h3>Reject Request</h3>
-              <button class="modal-close" (click)="closeRejectModal()">
-                <i class="pi pi-times"></i>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>Please provide a reason for rejection:</p>
-              <textarea
-                [value]="rejectReason"
-                (input)="onRejectReasonInput($event)"
-                placeholder="Enter rejection reason..."
-                rows="4"
-              ></textarea>
-            </div>
-            <div class="modal-footer">
-              <app-button variant="text" (clicked)="closeRejectModal()"
-                >Cancel</app-button
-              >
-              <app-button
-                variant="danger"
-                [disabled]="!rejectReason.trim()"
-                (clicked)="confirmReject()"
-                >Confirm Rejection</app-button
-              >
-            </div>
-          </div>
+      <app-dialog
+        [visible]="showRejectModal"
+        (visibleChange)="showRejectModal = $event"
+        (hide)="closeRejectModal()"
+        [modal]="true"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [blockScroll]="true"
+        [styleClass]="'dialog-md superadmin-reject-dialog'"
+      >
+        <app-dialog-header
+          icon="times-circle"
+          title="Reject Request"
+          subtitle="Provide a clear reason so the requester understands what needs to change."
+          [danger]="true"
+          (close)="closeRejectModal()"
+        />
+
+        <div class="modal-body">
+          <p>Please provide a reason for rejection:</p>
+          <textarea
+            [value]="rejectReason"
+            (input)="onRejectReasonInput($event)"
+            placeholder="Enter rejection reason..."
+            rows="4"
+          ></textarea>
         </div>
-      }
+
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Confirm Rejection"
+          primaryVariant="danger"
+          [disabled]="!rejectReason.trim()"
+          (cancel)="closeRejectModal()"
+          (primary)="confirmReject()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./superadmin-dashboard.component.scss",

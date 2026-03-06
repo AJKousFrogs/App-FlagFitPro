@@ -18,6 +18,7 @@ import {
 } from "@angular/core";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -129,6 +130,7 @@ const COMPARE_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardHeaderComponent,
     EmptyStateComponent,
   ],
   template: `
@@ -236,9 +238,7 @@ const COMPARE_OPTIONS = [
           <!-- Spider Chart Section -->
           <p-card class="chart-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Position Benchmark Spider Chart</h3>
-              </div>
+              <app-card-header title="Position Benchmark Spider Chart" />
             </ng-template>
             <div class="spider-chart-container">
               <app-lazy-chart
@@ -267,15 +267,15 @@ const COMPARE_OPTIONS = [
           <!-- Development Goals -->
           <p-card class="goals-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Development Goals</h3>
+              <app-card-header title="Development Goals">
                 <app-button
+                  header-actions
                   size="sm"
                   iconLeft="pi-plus"
                   (clicked)="openGoalDialog()"
                   >Add Goal</app-button
                 >
-              </div>
+              </app-card-header>
             </ng-template>
 
             @if (playerGoals().length > 0) {
@@ -343,9 +343,7 @@ const COMPARE_OPTIONS = [
           <!-- Performance History -->
           <p-card class="history-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Performance History</h3>
-              </div>
+              <app-card-header title="Performance History" />
             </ng-template>
             <div class="history-filters">
               <p-select
@@ -384,9 +382,10 @@ const COMPARE_OPTIONS = [
           <!-- Skill Assessments -->
           <p-card class="assessments-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>{{ selectedPlayer()?.position }}-Specific Skills</h3>
-                <div class="assessment-actions">
+              <app-card-header
+                [title]="selectedPlayer()?.position + '-Specific Skills'"
+              >
+                <div header-actions class="assessment-actions">
                   <span class="last-assessment"
                     >Last Assessment: Dec 28, 2025</span
                   >
@@ -397,7 +396,7 @@ const COMPARE_OPTIONS = [
                     >New Assessment</app-button
                   >
                 </div>
-              </div>
+              </app-card-header>
             </ng-template>
             <div class="skills-list">
               @for (skill of skillAssessments(); track skill.skill) {
@@ -427,15 +426,15 @@ const COMPARE_OPTIONS = [
           <!-- Coach Notes -->
           <p-card class="notes-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Coach Development Notes</h3>
+              <app-card-header title="Coach Development Notes">
                 <app-button
+                  header-actions
                   size="sm"
                   iconLeft="pi-plus"
                   (clicked)="openNoteDialog()"
                   >Add Note</app-button
                 >
-              </div>
+              </app-card-header>
             </ng-template>
             <div class="notes-list">
               @for (note of coachNotes(); track note.id) {
@@ -450,13 +449,12 @@ const COMPARE_OPTIONS = [
             </div>
           </p-card>
         } @else {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-users"
-              heading="Select a Player"
-              description="Choose a player to view their development progress"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-users"
+            heading="Select a Player"
+            description="Choose a player to view their development progress"
+          />
         }
       </div>
 

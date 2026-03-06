@@ -32,6 +32,27 @@ export function toISOString(date) {
   return dateObj.toISOString();
 }
 
+export function getIsoDateString(date = new Date()) {
+  return date.toISOString().split("T")[0];
+}
+
+export function parseIsoDateString(dateString) {
+  if (typeof dateString !== "string") {
+    return new Date(dateString);
+  }
+  return new Date(`${dateString}T00:00:00.000Z`);
+}
+
+export function getIsoDayOfWeek(dateString) {
+  return parseIsoDateString(dateString).getUTCDay();
+}
+
+export function getIsoDayOfYear(dateString) {
+  const date = parseIsoDateString(dateString);
+  const yearStart = Date.UTC(date.getUTCFullYear(), 0, 0);
+  return Math.floor((date.getTime() - yearStart) / 86400000);
+}
+
 export function getWeekStart(date) {
   const d = new Date(date);
   const day = d.getDay();

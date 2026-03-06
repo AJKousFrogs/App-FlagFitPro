@@ -5,6 +5,7 @@ import {
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
+import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 
 @Component({
   selector: "app-delete-account-dialog",
@@ -14,6 +15,7 @@ import {
     InputText,
     DialogHeaderComponent,
     DialogFooterComponent,
+    AlertComponent,
   ],
   templateUrl: "./delete-account-dialog.component.html",
   styleUrl: "./delete-account-dialog.component.scss",

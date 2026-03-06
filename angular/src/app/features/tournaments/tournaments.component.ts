@@ -29,6 +29,7 @@ import { Textarea } from "primeng/textarea";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 
 import { AuthService } from "../../core/services/auth.service";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
@@ -252,6 +253,7 @@ const toDateOrNull = (value: unknown): Date | null => {
     DecimalPipe,
     ButtonComponent,
     IconButtonComponent,
+    AlertComponent,
     StatusTagComponent,
     EmptyStateComponent,
     AppLoadingComponent,

@@ -3,51 +3,17 @@
 // Design System Compliant
 // ============================================================================
 
-@use "styles/mixins" as *;
-
 :host {
   display: block;
-}
-
-.time-picker-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
 }
 
 .time-picker-input {
   width: 100%;
   max-width: var(--grid-card-min-sm);
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--ds-font-size-md);
-  border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--radius-md);
-  background-color: var(--surface-primary);
-  color: var(--color-text-primary);
-  transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast),
-    background var(--transition-fast);
-
-  @include ds-focus-ring($border-color: var(--ds-primary-green));
-}
-
-.time-picker-input.is-invalid {
-  border-color: var(--color-status-error);
 }
 
 .time-picker-input:disabled {
   opacity: var(--opacity-muted);
   cursor: not-allowed;
   background-color: var(--surface-tertiary);
-}
-
-.form-help {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.form-error {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-status-error);
 }

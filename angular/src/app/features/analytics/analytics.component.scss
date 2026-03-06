@@ -15,16 +15,7 @@
 }
 
 .analytics-preview-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
   margin: var(--space-3) 0 var(--space-4);
-
-  @include preview-callout;
-
-  i {
-    color: var(--ds-primary-green);
-  }
 }
 
 .analytics-hub-grid {
@@ -139,16 +130,8 @@
   // CHART HEADER - MOBILE STACK
   // ================================================================
 
-  .chart-header {
-    gap: var(--space-3);
-  }
-
   .chart-title {
     font-size: var(--ds-font-size-xl);
-  }
-
-  .chart-subtitle {
-    font-size: var(--ds-font-size-xs);
   }
 
   .chart-actions {
@@ -197,17 +180,17 @@
     margin-top: var(--space-3);
   }
 
-  .insight-item {
+  .chart-insights .metric-insight {
     padding: var(--space-2);
     background: var(--surface-ground);
     border-radius: var(--radius-md);
   }
 
-  .insight-value {
+  .chart-insights .metric-insight__value {
     font-size: var(--ds-font-size-2xl);
   }
 
-  .insight-label {
+  .chart-insights .metric-insight__label {
     font-size: var(--ds-font-size-xs);
   }
 
@@ -221,29 +204,9 @@
   // LOADING & EMPTY STATES - MOBILE
   // ================================================================
 
-  .loading-placeholder {
-    padding: var(--space-6);
-    font-size: var(--ds-font-size-xs);
-  }
-
   .empty-chart-state {
     padding: var(--space-6);
     min-height: var(--chart-min-height-sm);
-
-    .empty-icon {
-      font-size: var(--ds-font-size-3xl);
-      margin-bottom: var(--space-3);
-    }
-
-    h4 {
-      font-size: var(--ds-font-size-md);
-    }
-
-    p {
-      font-size: var(--ds-font-size-xs);
-      max-width: var(--grid-card-min-md);
-      margin-bottom: var(--space-4);
-    }
   }
 
   // ================================================================
@@ -260,7 +223,7 @@
     padding: var(--space-3);
   }
 
-  .stat-summary-item {
+  .stats-summary .metric-tile {
     padding: var(--space-2);
   }
 
@@ -316,24 +279,6 @@
 
   .view-all-link {
     font-size: var(--ds-font-size-xs);
-  }
-
-  .goals-empty-state {
-    padding: var(--space-6);
-
-    .empty-icon {
-      font-size: var(--ds-font-size-3xl);
-      margin-bottom: var(--space-3);
-    }
-
-    h4 {
-      font-size: var(--ds-font-size-md);
-    }
-
-    p {
-      font-size: var(--ds-font-size-xs);
-      max-width: var(--grid-card-min-md);
-    }
   }
 
   // Horizontal scroll for goal cards
@@ -553,15 +498,15 @@
     padding-top: var(--space-4);
   }
 
-  .gap-summary .summary-item {
+  .gap-summary .metric-tile {
     padding: var(--space-3);
   }
 
-  .gap-summary .summary-value {
+  .gap-summary .metric-tile__value {
     font-size: var(--ds-font-size-xl);
   }
 
-  .gap-summary .summary-label {
+  .gap-summary .metric-tile__label {
     font-size: var(--ds-font-size-xs); // calc(var(--space-2) + var(--space-0-5))
   }
 }
@@ -641,37 +586,10 @@
   }
 }
 
-/* loading-placeholder: use primitive from _skeleton.scss */
-
 .empty-chart-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-10);
   text-align: center;
+  padding: var(--space-10);
   min-height: var(--chart-min-height-md);
-}
-
-.empty-chart-state .empty-icon {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--color-border-secondary);
-  margin-bottom: var(--space-4);
-}
-
-.empty-chart-state h4 {
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
-}
-
-.empty-chart-state p {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  max-width: var(--grid-card-min-md);
-  margin: 0 0 var(--space-6) 0;
-  line-height: var(--ds-line-height-normal);
 }
 
 .trend-neutral {
@@ -795,30 +713,11 @@
   grid-column: 1 / -1;
 }
 
-.chart-header {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: var(--space-2);
-}
-
-.title-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
 .chart-title {
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-bold);
   margin: 0;
   color: var(--color-text-primary);
-}
-
-.chart-subtitle {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-  margin: 0;
 }
 
 .chart-actions {
@@ -853,14 +752,14 @@
   }
 }
 
-.insight-value {
+.chart-insights .metric-insight__value {
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
   margin-bottom: var(--space-1);
 }
 
-.insight-label {
+.chart-insights .metric-insight__label {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
@@ -873,18 +772,7 @@
   margin-top: var(--space-4);
 }
 
-.insight-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1;
-}
-
 @include respond-to(md) {
-  .chart-header {
-    gap: var(--space-2);
-  }
-
   .chart-actions {
     width: 100%;
     justify-content: flex-start;
@@ -914,10 +802,6 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-}
-
-.stat-summary-item {
-  text-align: center;
 }
 
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
@@ -1016,38 +900,6 @@
 
   &:hover {
     text-decoration: underline;
-  }
-}
-
-.goals-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-10);
-  text-align: center;
-
-  .empty-icon {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--color-border-secondary);
-    margin-bottom: var(--space-4);
-  }
-
-  h4 {
-    margin: 0 0 var(--space-2) 0;
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-semibold);
-    color: var(--color-text-primary);
-  }
-
-  p {
-    margin: 0 0 var(--space-4) 0;
-    font-size: var(--ds-font-size-md);
-    color: var(--color-text-secondary);
-    max-width: var(--element-max-width-md);
-  }
-
-  .empty-state-cta {
-    margin-top: var(--space-2);
   }
 }
 
@@ -1454,41 +1306,6 @@
   margin-top: var(--space-6);
   padding-top: var(--space-6);
   border-top: var(--border-1) solid var(--color-border-secondary);
-}
-
-.gap-summary .summary-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-}
-
-.gap-summary .summary-item.overall {
-  background: var(--ds-primary-green-ultra-subtle);
-  border: var(--border-1) solid var(--ds-primary-green);
-}
-
-.gap-summary .summary-value {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.gap-summary .summary-label {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-  margin-top: var(--space-1);
-}
-
-.gap-summary .summary-item.overall {
-  // WHITE TEXT ONLY on green backgrounds - design system rule
-  .summary-value,
-  .summary-label {
-    color: var(--color-text-on-primary);
-  }
 }
 
 // Responsive adjustments for gap analysis

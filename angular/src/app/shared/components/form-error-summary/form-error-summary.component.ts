@@ -24,6 +24,7 @@ import {
   inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 
 export interface FormError {
   /** Field identifier (matches form control name or ID) */
@@ -42,7 +43,7 @@ export interface FormError {
 @Component({
   selector: "app-form-error-summary",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, CloseButtonComponent],
   template: `
     @if (errors().length > 0) {
       <div
@@ -84,14 +85,12 @@ export interface FormError {
           }
         </ul>
 
-        <button
-          type="button"
-          class="error-summary-dismiss"
-          (click)="dismissSummary.emit()"
-          aria-label="Dismiss error summary"
-        >
-          <i class="pi pi-times"></i>
-        </button>
+        <app-close-button
+          ariaLabel="Dismiss error summary"
+          tone="danger"
+          [styleClass]="'error-summary-dismiss'"
+          (clicked)="dismissSummary.emit()"
+        />
       </div>
     }
   `,

@@ -17,7 +17,7 @@
 
       <!-- Content -->
       @else {
-        <div class="roster-page section-stack elite-phase2-shell">
+        <div class="roster-page section-stack elite-phase2-shell ui-page-shell ui-page-stack">
           <!-- Page Header -->
           <app-page-header
             title="Team Roster"
@@ -61,17 +61,19 @@
           </app-page-header>
 
           <!-- Search and Filter Bar -->
-          <app-roster-filters
-            [(searchQuery)]="searchQuery"
-            [selectedCount]="selectedPlayerIds().size"
-            [canManage]="rosterService.canManageRoster()"
-            [canDelete]="rosterService.canDeletePlayers()"
-            (positionFilterChange)="positionFilter = $event"
-            (statusFilterChange)="statusFilter = $event"
-            (bulkStatusChange)="openBulkStatusDialog()"
-            (bulkRemove)="confirmBulkRemove()"
-            (clearSelection)="clearSelection()"
-          ></app-roster-filters>
+          <div class="roster-toolbar ui-section-card ui-section-card--compact">
+            <app-roster-filters
+              [(searchQuery)]="searchQuery"
+              [selectedCount]="selectedPlayerIds().size"
+              [canManage]="rosterService.canManageRoster()"
+              [canDelete]="rosterService.canDeletePlayers()"
+              (positionFilterChange)="positionFilter = $event"
+              (statusFilterChange)="statusFilter = $event"
+              (bulkStatusChange)="openBulkStatusDialog()"
+              (bulkRemove)="confirmBulkRemove()"
+              (clearSelection)="clearSelection()"
+            ></app-roster-filters>
+          </div>
 
           <!-- UX AUDIT FIX: Removed duplicate loading state - page-level app-loading handles initial load -->
           <!-- rosterService.isLoading() is used for refresh/filter operations, not displayed separately -->
@@ -129,16 +131,20 @@
 
             <!-- Coaching Staff -->
             @if (rosterService.coachingStaffByCategory().coaching.length > 0) {
-              <div class="position-section">
-                <h2 class="section-title">
-                  <i class="pi pi-users" aria-hidden="true"></i>
-                  Coaching Staff
-                  <span class="position-count"
-                    >({{
-                      rosterService.coachingStaffByCategory().coaching.length
-                    }})</span
-                  >
-                </h2>
+              <div class="position-section ui-stack-md">
+                <div class="ui-section-heading">
+                  <div class="ui-section-heading__content">
+                    <h2 class="ui-section-heading__title">
+                      <span class="ui-section-heading__icon">
+                        <i class="pi pi-users" aria-hidden="true"></i>
+                      </span>
+                      Coaching Staff
+                    </h2>
+                  </div>
+                  <span class="ui-section-count">
+                    {{ rosterService.coachingStaffByCategory().coaching.length }}
+                  </span>
+                </div>
                 <div class="roster-grid">
                   @for (
                     member of rosterService.coachingStaffByCategory().coaching;
@@ -155,16 +161,20 @@
 
             <!-- Medical Staff -->
             @if (rosterService.coachingStaffByCategory().medical.length > 0) {
-              <div class="position-section">
-                <h2 class="section-title">
-                  <i class="pi pi-heart" aria-hidden="true"></i>
-                  Medical Staff
-                  <span class="position-count"
-                    >({{
-                      rosterService.coachingStaffByCategory().medical.length
-                    }})</span
-                  >
-                </h2>
+              <div class="position-section ui-stack-md">
+                <div class="ui-section-heading">
+                  <div class="ui-section-heading__content">
+                    <h2 class="ui-section-heading__title">
+                      <span class="ui-section-heading__icon">
+                        <i class="pi pi-heart" aria-hidden="true"></i>
+                      </span>
+                      Medical Staff
+                    </h2>
+                  </div>
+                  <span class="ui-section-count">
+                    {{ rosterService.coachingStaffByCategory().medical.length }}
+                  </span>
+                </div>
                 <div class="roster-grid">
                   @for (
                     member of rosterService.coachingStaffByCategory().medical;
@@ -183,17 +193,22 @@
             @if (
               rosterService.coachingStaffByCategory().performance.length > 0
             ) {
-              <div class="position-section">
-                <h2 class="section-title">
-                  <i class="pi pi-chart-line" aria-hidden="true"></i>
-                  Performance Staff
-                  <span class="position-count"
-                    >({{
-                      rosterService.coachingStaffByCategory().performance
-                        .length
-                    }})</span
-                  >
-                </h2>
+              <div class="position-section ui-stack-md">
+                <div class="ui-section-heading">
+                  <div class="ui-section-heading__content">
+                    <h2 class="ui-section-heading__title">
+                      <span class="ui-section-heading__icon">
+                        <i class="pi pi-chart-line" aria-hidden="true"></i>
+                      </span>
+                      Performance Staff
+                    </h2>
+                  </div>
+                  <span class="ui-section-count">
+                    {{
+                      rosterService.coachingStaffByCategory().performance.length
+                    }}
+                  </span>
+                </div>
                 <div class="roster-grid">
                   @for (
                     member of rosterService.coachingStaffByCategory()
@@ -214,14 +229,20 @@
               positionGroup of filteredPlayersByPosition();
               track positionGroup.position
             ) {
-              <div class="position-section">
-                <h2 class="section-title">
-                  <i [class]="getPositionIcon(positionGroup.position)"></i>
-                  {{ positionGroup.position }}
-                  <span class="position-count"
-                    >({{ positionGroup.players.length }})</span
-                  >
-                </h2>
+              <div class="position-section ui-stack-md">
+                <div class="ui-section-heading">
+                  <div class="ui-section-heading__content">
+                    <h2 class="ui-section-heading__title">
+                      <span class="ui-section-heading__icon">
+                        <i [class]="getPositionIcon(positionGroup.position)"></i>
+                      </span>
+                      {{ positionGroup.position }}
+                    </h2>
+                  </div>
+                  <span class="ui-section-count">
+                    {{ positionGroup.players.length }}
+                  </span>
+                </div>
                 <div class="roster-grid">
                   @for (player of positionGroup.players; track player.id) {
                     <app-roster-player-card
@@ -404,8 +425,8 @@
 
               <!-- Position Benchmarks Section -->
               @if (enrichedSelectedPlayer()?.benchmarkComparison?.length) {
-                <div class="details-benchmarks">
-                  <h3>
+                <div class="details-panel details-benchmarks">
+                  <h3 class="details-section-title">
                     <i class="pi pi-chart-bar" aria-hidden="true"></i> Position
                     Benchmarks
                   </h3>
@@ -416,17 +437,20 @@
                       track benchmark.metric
                     ) {
                       <div class="benchmark-item">
-                        <div class="benchmark-header">
-                          <span class="benchmark-name">{{
-                            benchmark.metric
-                          }}</span>
+                        <app-card-header
+                          class="benchmark-header"
+                          [title]="benchmark.metric"
+                          [headingLevel]="4"
+                          [compact]="true"
+                        >
                           <span
+                            header-actions
                             class="benchmark-rating"
                             [class]="'rating-' + benchmark.rating"
                           >
                             {{ benchmark.rating | titlecase }}
                           </span>
-                        </div>
+                        </app-card-header>
                         @if (benchmark.value !== null) {
                           <div class="benchmark-value">
                             {{ benchmark.value }}{{ benchmark.unit }}
@@ -448,8 +472,8 @@
 
               <!-- Training Priorities -->
               @if (trainingPriorities().length > 0) {
-                <div class="details-priorities">
-                  <h3>
+                <div class="details-panel details-priorities">
+                  <h3 class="details-section-title">
                     <i class="pi pi-list-check" aria-hidden="true"></i> Training
                     Priorities
                   </h3>
@@ -467,10 +491,10 @@
                 riskAssessment()?.factors?.length
               ) {
                 <div
-                  class="details-risk"
+                  class="details-panel details-risk"
                   [class]="'risk-level-' + riskAssessment()!.level"
                 >
-                  <h3>
+                  <h3 class="details-section-title">
                     <i
                       class="pi pi-exclamation-triangle"
                       aria-hidden="true"
@@ -505,8 +529,8 @@
                 selectedPlayer()!.stats &&
                 getPlayerStats(selectedPlayer()!).length > 0
               ) {
-                <div class="details-stats">
-                  <h3>Performance Stats</h3>
+                <div class="details-panel details-stats">
+                  <h3 class="details-section-title">Performance Stats</h3>
                   <div class="stats-chips">
                     @for (
                       stat of getPlayerStats(selectedPlayer()!);

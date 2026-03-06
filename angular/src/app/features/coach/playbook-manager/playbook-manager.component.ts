@@ -19,7 +19,6 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -102,7 +101,6 @@ const ROUTES = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     Dialog,
     
     InputText,
@@ -310,16 +308,15 @@ const ROUTES = [
             }
           </div>
         } @else {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-book"
-              heading="No Plays Found"
-              description="Create your first play to get started"
-              actionLabel="Create Play"
-              actionIcon="pi-plus"
-              [actionHandler]="openCreateDialogHandler"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-book"
+            heading="No Plays Found"
+            description="Create your first play to get started"
+            actionLabel="Create Play"
+            actionIcon="pi-plus"
+            [actionHandler]="openCreateDialogHandler"
+          />
         }
       </div>
 

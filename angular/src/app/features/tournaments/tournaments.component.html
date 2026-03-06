@@ -222,8 +222,18 @@
                     </div>
                   </p-card>
                 } @empty {
-                  <div class="empty-season">
-                    <p>No tournaments scheduled for 2026 yet.</p>
+                  <app-empty-state
+                    class="empty-season"
+                    [useCard]="false"
+                    [compact]="true"
+                    icon="pi-calendar"
+                    heading="No tournaments scheduled for 2026 yet"
+                    [description]="
+                      isAuthenticated()
+                        ? 'Add the first tournament to start planning travel and availability.'
+                        : 'Check back later for season events.'
+                    "
+                  >
                     @if (isAuthenticated()) {
                       <app-button
                         variant="outlined"
@@ -232,7 +242,7 @@
                         >Add Tournament</app-button
                       >
                     }
-                  </div>
+                  </app-empty-state>
                 }
               </div>
             </p-tabpanel>
@@ -345,8 +355,18 @@
                     </div>
                   </p-card>
                 } @empty {
-                  <div class="empty-season">
-                    <p>No tournaments scheduled for 2027 yet.</p>
+                  <app-empty-state
+                    class="empty-season"
+                    [useCard]="false"
+                    [compact]="true"
+                    icon="pi-calendar"
+                    heading="No tournaments scheduled for 2027 yet"
+                    [description]="
+                      isAuthenticated()
+                        ? 'Add the first tournament to start planning travel and availability.'
+                        : 'Check back later for season events.'
+                    "
+                  >
                     @if (isAuthenticated()) {
                       <app-button
                         variant="outlined"
@@ -355,7 +375,7 @@
                         >Add Tournament</app-button
                       >
                     }
-                  </div>
+                  </app-empty-state>
                 }
               </div>
             </p-tabpanel>
@@ -375,42 +395,36 @@
         <form [formGroup]="tournamentForm" class="tournament-form form-controls-full">
           <!-- Visibility Info Banner -->
           @if (isPlayer() && !editingTournament) {
-            <div class="visibility-info-banner personal">
-              <div class="banner-icon">
-                <i class="pi pi-user"></i>
-              </div>
-              <div class="banner-content">
-                <strong>Personal Game Day</strong>
-                <p>
-                  This will only be visible to you and your coaches. It won't
-                  affect other players' schedules or workload calculations.
-                </p>
-              </div>
+            <div class="visibility-info-banner">
+              <app-alert
+                variant="warning"
+                icon="pi pi-user"
+                title="Personal Game Day"
+                message="This will only be visible to you and your coaches. It won't affect other players' schedules or workload calculations."
+                density="compact"
+              />
             </div>
           }
           @if (isCoachOrAdmin() && !editingTournament) {
-            <div class="visibility-info-banner team">
-              <div class="banner-icon">
-                <i class="pi pi-users"></i>
-              </div>
-              <div class="banner-content">
-                <strong>Team Tournament</strong>
-                <p>
-                  This will be visible to all team members and will affect
-                  everyone's training schedule and workload calculations.
-                </p>
-              </div>
+            <div class="visibility-info-banner">
+              <app-alert
+                variant="info"
+                icon="pi pi-users"
+                title="Team Tournament"
+                message="This will be visible to all team members and will affect everyone's training schedule and workload calculations."
+                density="compact"
+              />
             </div>
           }
           @if (editingTournament && isPersonalTournament(editingTournament)) {
-            <div class="visibility-info-banner personal">
-              <div class="banner-icon">
-                <i class="pi pi-user"></i>
-              </div>
-              <div class="banner-content">
-                <strong>Personal Game Day</strong>
-                <p>Only visible to the player who created it and coaches.</p>
-              </div>
+            <div class="visibility-info-banner">
+              <app-alert
+                variant="warning"
+                icon="pi pi-user"
+                title="Personal Game Day"
+                message="Only visible to the player who created it and coaches."
+                density="compact"
+              />
             </div>
           }
 

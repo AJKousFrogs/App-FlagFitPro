@@ -74,17 +74,23 @@ export interface ReadinessResult {
           <span class="readiness-label">Readiness</span>
         </div>
         <div class="wellness-summary">
-          <div class="summary-item" pTooltip="Sleep Quality">
-            <span>😴</span>
-            <span>{{ getSleepLabel(wellnessData().sleepQuality) }}</span>
+          <div class="meta-row" pTooltip="Sleep Quality">
+            <span class="meta-row__icon" aria-hidden="true">😴</span>
+            <span class="meta-row__text">{{
+              getSleepLabel(wellnessData().sleepQuality)
+            }}</span>
           </div>
-          <div class="summary-item" pTooltip="Energy Level">
-            <span>⚡</span>
-            <span>{{ getEnergyLabel(wellnessData().energyLevel) }}</span>
+          <div class="meta-row" pTooltip="Energy Level">
+            <span class="meta-row__icon" aria-hidden="true">⚡</span>
+            <span class="meta-row__text">{{
+              getEnergyLabel(wellnessData().energyLevel)
+            }}</span>
           </div>
-          <div class="summary-item" pTooltip="Muscle Soreness">
-            <span>💪</span>
-            <span>{{ getSorenessLabel(wellnessData().muscleSoreness) }}</span>
+          <div class="meta-row" pTooltip="Muscle Soreness">
+            <span class="meta-row__icon" aria-hidden="true">💪</span>
+            <span class="meta-row__text">{{
+              getSorenessLabel(wellnessData().muscleSoreness)
+            }}</span>
           </div>
         </div>
         <app-icon-button

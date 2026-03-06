@@ -37,7 +37,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     },
   ],
   template: `
-    <div class="date-picker-group">
+    <div class="form-field date-picker-group">
       @if (label()) {
         <label [for]="id()" class="form-label">{{ label() }}</label>
       }
@@ -61,12 +61,12 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
       >
       </p-datepicker>
       @if (helpText() && !errorMessage()) {
-        <div [id]="id() + '-help'" class="form-help">{{ helpText() }}</div>
+        <small [id]="id() + '-help'" class="form-help">{{ helpText() }}</small>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error" role="alert">
+        <small [id]="id() + '-error'" class="form-error" role="alert">
           {{ errorMessage() }}
-        </div>
+        </small>
       }
     </div>
   `,

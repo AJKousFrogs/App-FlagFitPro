@@ -130,7 +130,7 @@ export class MissingDataDetectionService {
           user_id: coach.user_id,
           notification_type: "wellness",
           message: `${player.playerName} has been missing wellness data for ${player.daysMissing} day(s). Follow-up recommended.`,
-          priority: player.severity === "critical" ? "high" : "medium",
+          priority: player.severity === "critical" ? "high" : "normal",
           metadata: {
             playerId: player.playerId,
             playerName: player.playerName,

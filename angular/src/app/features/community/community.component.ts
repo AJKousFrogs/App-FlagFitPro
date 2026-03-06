@@ -31,7 +31,9 @@ import { toLogContext } from "../../core/services/logger.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { AnnouncementsBannerComponent } from "../../shared/components/announcements-banner/announcements-banner.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
@@ -154,9 +156,11 @@ type PostMedia = Post["media"];
     InputText,
     Tooltip,
     MainLayoutComponent,
+    AlertComponent,
     AnnouncementsBannerComponent,
     ButtonComponent,
     CardShellComponent,
+    EmptyStateComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
   ],

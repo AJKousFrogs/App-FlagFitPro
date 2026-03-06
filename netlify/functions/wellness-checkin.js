@@ -194,7 +194,7 @@ async function saveCheckin(supabase, userId, payload, requestId) {
           user_id: userId,
           notification_type: "wellness",
           message: `Your wellness is low today (${calculatedReadiness}%). Tomorrow's training will focus on recovery - prioritize sleep, hydration, and light movement.`,
-          priority: "medium",
+          priority: "normal",
         });
       }
     } catch (recoveryError) {
@@ -275,7 +275,6 @@ async function saveCheckin(supabase, userId, payload, requestId) {
         motivation_level: motivationLevel,
         mood,
         hydration_level: hydrationLevel,
-        overall_readiness_score: calculatedReadiness,
       },
       {
         onConflict: "user_id,checkin_date",
@@ -426,7 +425,7 @@ async function saveCheckin(supabase, userId, payload, requestId) {
             user_id: psychologists[0].user_id,
             notification_type: "wellness",
             message: `${playerName} showing mental fatigue indicators - review recommended`,
-            priority: stressLevel >= 8 ? "high" : "medium",
+            priority: stressLevel >= 8 ? "high" : "normal",
             metadata: { playerId: userId, indicators: mentalFatigueIndicators },
           });
         }
@@ -558,7 +557,7 @@ async function saveCheckin(supabase, userId, payload, requestId) {
                   notification_type: "nutrition",
                   message: `${playerName} deviating from tournament nutrition plan - review recommended`,
                   priority:
-                    loggedMeals < expectedMeals * 0.5 ? "high" : "medium",
+                    loggedMeals < expectedMeals * 0.5 ? "high" : "normal",
                   metadata: {
                     playerId: userId,
                     tournamentId: tournament.id,

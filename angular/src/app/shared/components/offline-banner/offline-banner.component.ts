@@ -10,7 +10,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../button/button.component";
-import { IconButtonComponent } from "../button/icon-button.component";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 import { ApiService } from "../../../core/services/api.service";
 
 export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
@@ -18,7 +18,7 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
 @Component({
   selector: "app-offline-banner",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent, IconButtonComponent],
+  imports: [CommonModule, ButtonComponent, CloseButtonComponent],
   template: `
     @if (showBanner()) {
       <div
@@ -60,9 +60,7 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
             >
           }
           @if (connectionStatus() === "online" && showBanner()) {
-            <app-icon-button
-              icon="pi-times"
-              variant="text"
+            <app-close-button
               size="sm"
               (clicked)="dismiss()"
               ariaLabel="Dismiss offline notification"

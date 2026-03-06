@@ -27,9 +27,11 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../button/button.component";
+import { CardHeaderComponent } from "../card-header/card-header.component";
 import { EmptyStateComponent } from "../empty-state/empty-state.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { getInitials } from "../../utils/format.utils";
+import { AlertComponent } from "../alert/alert.component";
 
 /**
  * AI Recommendation from the backend
@@ -103,8 +105,10 @@ interface CoachVisibilityRecord {
     Skeleton,
 
     ButtonComponent,
+    CardHeaderComponent,
     EmptyStateComponent,
     IconButtonComponent,
+    AlertComponent,
   ],
   template: `
     <div class="ai-coach-visibility">
@@ -145,22 +149,23 @@ interface CoachVisibilityRecord {
       @if (highRiskAlerts().length > 0) {
         <p-card class="alerts-card">
           <ng-template #header>
-            <div class="card-header">
-              <h3>
-                <i class="pi pi-exclamation-triangle"></i>
-                High Risk Alerts
-              </h3>
-              <span class="alert-count">{{ highRiskAlerts().length }}</span>
-            </div>
+            <app-card-header
+              icon="pi-exclamation-triangle"
+              title="High Risk Alerts"
+            >
+              <span header-actions class="risk-alert-count">{{
+                highRiskAlerts().length
+              }}</span>
+            </app-card-header>
           </ng-template>
-          <div class="alerts-list">
+          <div class="risk-alerts-list">
             @for (alert of highRiskAlerts(); track alert.id) {
-              <div class="alert-item" [class.unviewed]="!alert.viewed_at">
-                <div class="alert-icon">
+              <div class="risk-alert-item" [class.unviewed]="!alert.viewed_at">
+                <div class="risk-alert-icon">
                   <i class="pi pi-user"></i>
                 </div>
-                <div class="alert-content">
-                  <div class="alert-header">
+                <div class="risk-alert-content">
+                  <div class="risk-alert-header">
                     <span class="player-name">{{
                       alert.player_name || "Player"
                     }}</span>
@@ -170,27 +175,27 @@ interface CoachVisibilityRecord {
                       size="sm"
                     />
                   </div>
-                  <p class="alert-message">
+                  <p class="risk-alert-message">
                     {{
                       alert.message?.content ||
                         alert.recommendation?.reason ||
                         "AI interaction flagged for review"
                     }}
                   </p>
-                  <div class="alert-meta">
-                    <span class="alert-time">
+                  <div class="risk-alert-meta">
+                    <span class="risk-alert-time">
                       <i class="pi pi-clock"></i>
                       {{ formatDate(alert.created_at) }}
                     </span>
                     @if (alert.message?.intent) {
-                      <span class="alert-intent">
+                      <span class="risk-alert-intent">
                         <i class="pi pi-tag"></i>
                         {{ alert.message?.intent }}
                       </span>
                     }
                   </div>
                 </div>
-                <div class="alert-actions">
+                <div class="risk-alert-actions">
                   <app-icon-button
                     icon="pi-eye"
                     variant="text"
@@ -215,12 +220,10 @@ interface CoachVisibilityRecord {
       <!-- Recommendations Table -->
       <p-card class="recommendations-card">
         <ng-template #header>
-          <div class="card-header">
-            <h3>
-              <i class="pi pi-lightbulb"></i>
-              AI Recommendations to Players
-            </h3>
-          </div>
+          <app-card-header
+            icon="pi-lightbulb"
+            title="AI Recommendations to Players"
+          />
         </ng-template>
 
         @if (loading()) {
@@ -363,13 +366,12 @@ interface CoachVisibilityRecord {
         [closable]="true"
       >
         <div class="dialog-content">
-          <div class="override-warning">
-            <i class="pi pi-exclamation-triangle"></i>
-            <p>
-              You are about to override an AI recommendation. The player will be
-              notified that their coach has reviewed this suggestion.
-            </p>
-          </div>
+          <app-alert
+            variant="warning"
+            density="compact"
+            title="Coach override"
+            message="You are about to override an AI recommendation. The player will be notified that their coach has reviewed this suggestion."
+          />
           <p class="dialog-context">
             Recommendation:
             <strong>{{ selectedRecommendation()?.reason }}</strong>

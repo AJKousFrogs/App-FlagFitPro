@@ -177,12 +177,14 @@ describe("AuthService", () => {
 
     it("should handle network error during login", async () => {
       (mockSupabaseService as any).signIn.mockRejectedValue(
-        new Error("Network error"),
+        new Error("Failed to fetch"),
       );
 
       await expect(
         firstValueFrom(service.login(validCredentials)),
-      ).rejects.toThrow("Network error");
+      ).rejects.toThrow(
+        "Authentication service unreachable. Check your network connection and Supabase configuration.",
+      );
       expect(service.isLoading()).toBe(false);
     });
   });

@@ -34,6 +34,7 @@ import { TeamMembershipService } from "../../core/services/team-membership.servi
 import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -70,6 +71,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     DatePipe,
     CurrencyPipe,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
   ],
@@ -93,9 +95,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           <!-- Officials Directory -->
           <p-card class="directory-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Officials Directory</h3>
-                <div class="filter-actions">
+              <app-card-header title="Officials Directory">
+                <div header-actions class="filter-actions">
                   <p-select
                     [options]="certificationOptions"
                     (onChange)="onSelectedCertificationChange($event.value)"
@@ -103,7 +104,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                     [showClear]="true"
                   ></p-select>
                 </div>
-              </div>
+              </app-card-header>
             </ng-template>
 
             <p-table
@@ -214,9 +215,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           <!-- Upcoming Game Assignments -->
           <p-card class="assignments-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Upcoming Game Assignments</h3>
-              </div>
+              <app-card-header title="Upcoming Game Assignments" />
             </ng-template>
 
             @if (upcomingAssignments().length === 0) {
@@ -298,9 +297,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           @if (isCoach() && paymentSummary().length > 0) {
             <p-card class="payment-card">
               <ng-template #header>
-                <div class="card-header">
-                  <h3>Payment Summary</h3>
-                </div>
+                <app-card-header title="Payment Summary" />
               </ng-template>
 
               <p-table [value]="paymentSummary()" class="p-datatable-sm">

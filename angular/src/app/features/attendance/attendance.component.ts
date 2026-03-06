@@ -31,6 +31,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -66,6 +67,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     PageHeaderComponent,
     DatePipe,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
   ],
@@ -128,9 +130,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           <!-- Upcoming Events -->
           <p-card class="events-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Upcoming Events</h3>
-                <div class="filter-actions">
+              <app-card-header title="Upcoming Events">
+                <div header-actions class="filter-actions">
                   <p-select
                     [options]="eventTypeOptions"
                     (onChange)="onSelectedEventTypeChange($event.value)"
@@ -138,7 +139,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                     [showClear]="true"
                   ></p-select>
                 </div>
-              </div>
+              </app-card-header>
             </ng-template>
 
             @if (filteredEvents().length === 0) {
@@ -208,9 +209,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           @if (isCoach()) {
             <p-card class="stats-card">
               <ng-template #header>
-                <div class="card-header">
-                  <h3>Player Attendance Statistics</h3>
-                </div>
+                <app-card-header title="Player Attendance Statistics" />
               </ng-template>
 
               <p-table

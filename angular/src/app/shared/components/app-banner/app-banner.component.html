@@ -4,6 +4,9 @@
   [class.banner-warning]="typeDisplay === 'warning'"
   [class.banner-alert]="typeDisplay === 'alert'"
   [class.banner-error]="typeDisplay === 'error'"
+  [attr.role]="liveRole"
+  [attr.aria-live]="typeDisplay === 'error' ? 'assertive' : 'polite'"
+  aria-atomic="true"
 >
   <div class="banner-content">
     <i [class]="iconClass" class="banner-icon" aria-hidden="true"></i>

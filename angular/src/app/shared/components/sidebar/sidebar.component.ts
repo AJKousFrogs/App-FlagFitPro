@@ -17,6 +17,8 @@ import { filter } from "rxjs";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { BackdropComponent } from "../backdrop/backdrop.component";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 import { NavItemComponent } from "../nav-item.component";
 
 interface NavItem {
@@ -40,7 +42,12 @@ interface _CollapsibleGroup {
 @Component({
   selector: "app-sidebar",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, NavItemComponent],
+  imports: [
+    RouterModule,
+    NavItemComponent,
+    CloseButtonComponent,
+    BackdropComponent,
+  ],
   template: `
     <div
       class="sidebar"
@@ -49,14 +56,12 @@ interface _CollapsibleGroup {
       aria-label="Main navigation"
     >
       <!-- Close button for mobile -->
-      <button
+      <app-close-button
         class="sidebar-close-btn"
-        (click)="closeSidebar()"
-        aria-label="Close navigation"
-        type="button"
-      >
-        <i class="pi pi-times"></i>
-      </button>
+        ariaLabel="Close navigation"
+        size="lg"
+        (clicked)="closeSidebar()"
+      />
 
       <a
         class="sidebar-logo"
@@ -189,12 +194,13 @@ interface _CollapsibleGroup {
         />
       </div>
     </div>
-    <div
-      class="sidebar-overlay"
-      [class.active]="isOpen()"
-      (click)="closeSidebar()"
-      aria-hidden="true"
-    ></div>
+    <app-backdrop
+      [visible]="isOpen()"
+      [blur]="true"
+      [dismissible]="true"
+      [styleClass]="'sidebar-backdrop'"
+      (backdropClick)="closeSidebar()"
+    />
   `,
   styleUrl: "./sidebar.component.scss",
   host: {

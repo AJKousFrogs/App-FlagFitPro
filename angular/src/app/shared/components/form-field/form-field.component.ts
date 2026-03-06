@@ -45,9 +45,13 @@ export interface FormFieldConfig {
       <label
         [for]="fieldId()"
         [class.required]="config().required"
+        class="form-label"
         [attr.aria-label]="config().ariaLabel || config().label"
       >
         {{ config().label }}
+        @if (config().required) {
+          <span class="form-required" aria-hidden="true">*</span>
+        }
       </label>
 
       @if (config().type === "textarea") {
@@ -88,7 +92,7 @@ export interface FormFieldConfig {
       @if (config().hint && !hasError()) {
         <small
           [id]="fieldId() + '-hint'"
-          class="hint"
+          class="form-help"
           [attr.aria-live]="'polite'"
         >
           {{ config().hint }}
@@ -98,7 +102,7 @@ export interface FormFieldConfig {
       @if (hasError()) {
         <small
           [id]="fieldId() + '-error'"
-          class="error-message"
+          class="form-error"
           role="alert"
           [attr.aria-live]="'polite'"
         >

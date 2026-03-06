@@ -24,6 +24,8 @@ import { Router, RouterModule } from "@angular/router";
 import { Tooltip } from "primeng/tooltip";
 
 import { EmptyStateComponent } from "../empty-state/empty-state.component";
+import { BackdropComponent } from "../backdrop/backdrop.component";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 import {
   Notification,
   NotificationCategory,
@@ -36,18 +38,26 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
 @Component({
   selector: "app-notifications-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Tooltip, EmptyStateComponent],
+  imports: [
+    RouterModule,
+    Tooltip,
+    EmptyStateComponent,
+    BackdropComponent,
+    CloseButtonComponent,
+  ],
   template: `
-    <!-- Backdrop -->
-    @if (visible) {
-      <div class="notifications-backdrop" (click)="close()"></div>
-    }
+    <app-backdrop
+      [visible]="visible"
+      [styleClass]="'notifications-backdrop'"
+      (backdropClick)="close()"
+    />
 
     <!-- Panel -->
     <div
       class="notifications-panel"
       [class.open]="visible"
       role="dialog"
+      aria-modal="true"
       aria-label="Notifications panel"
       [attr.aria-hidden]="!visible"
     >
@@ -95,9 +105,11 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
               <i class="pi pi-trash"></i>
             </button>
           }
-          <button class="close-btn" (click)="close()" aria-label="Close">
-            <i class="pi pi-times"></i>
-          </button>
+          <app-close-button
+            ariaLabel="Close notifications panel"
+            [styleClass]="'panel-close-btn'"
+            (clicked)="close()"
+          />
         </div>
       </div>
 
@@ -179,7 +191,10 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
                   <div
                     class="notification-item"
                     [class.unread]="!notification.read"
-                    [class.high-priority]="notification.priority === 'high'"
+                    [class.high-priority]="
+                      notification.priority === 'high' ||
+                      notification.priority === 'urgent'
+                    "
                     [class.dismissing]="dismissingIds().has(notification.id)"
                     [attr.data-category]="notification.category || 'general'"
                     [attr.data-severity]="notification.severity || 'info'"
@@ -238,7 +253,10 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
                       @if (!notification.read) {
                         <div class="unread-indicator" aria-label="Unread"></div>
                       }
-                      @if (notification.priority === "high") {
+                      @if (
+                        notification.priority === "high" ||
+                        notification.priority === "urgent"
+                      ) {
                         <i
                           class="pi pi-exclamation-circle priority-indicator"
                           pTooltip="High priority"
@@ -248,15 +266,14 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
                     </div>
 
                     <!-- Dismiss Button -->
-                    <button
-                      class="dismiss-btn"
-                      (click)="dismissNotification($event, notification)"
-                      aria-label="Dismiss notification"
-                      pTooltip="Dismiss"
+                    <app-close-button
+                      ariaLabel="Dismiss notification"
+                      tooltip="Dismiss"
                       tooltipPosition="left"
-                    >
-                      <i class="pi pi-times"></i>
-                    </button>
+                      size="sm"
+                      [styleClass]="'dismiss-btn'"
+                      (clicked)="dismissNotification($event, notification)"
+                    />
                   </div>
                 }
               </div>

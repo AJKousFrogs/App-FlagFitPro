@@ -26,9 +26,10 @@ import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
 import { RosterService } from "@features/roster/roster.service";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
-import { ModalComponent } from "@shared/components/modal/modal.component";
 import { StepperComponent } from "@shared/components/stepper/stepper.component";
 import { ButtonComponent } from "@shared/components/button/button.component";
+import { AppDialogComponent } from "@shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "@shared/components/dialog-header/dialog-header.component";
 import { Checkbox } from "primeng/checkbox";
 
 import { InputText } from "primeng/inputtext";
@@ -49,20 +50,29 @@ import { Textarea } from "primeng/textarea";
     Textarea,
     Checkbox,
     StatusTagComponent,
-    ModalComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
     StepperComponent,
     ConfidenceIndicatorComponent,
   ],
   template: `
-    <app-modal
+    <app-dialog
       [visible]="visible()"
       (visibleChange)="onVisibleChange($event)"
-      [header]="'Create Decision'"
-      [size]="'lg'"
-      [closable]="true"
-      [showFooter]="true"
-      [showDefaultButtons]="false"
+      [modal]="true"
+      [closable]="false"
+      [draggable]="false"
+      [resizable]="false"
+      [blockScroll]="true"
+      [styleClass]="'dialog-lg decision-dialog decision-dialog--create'"
     >
+      <app-dialog-header
+        icon="file"
+        title="Create Decision"
+        subtitle="Capture the athlete, rationale, and review timing in one documented workflow."
+        (close)="onCancel()"
+      />
+
       <!-- Stepper -->
       <app-stepper
         [steps]="steps()"
@@ -263,19 +273,19 @@ import { Textarea } from "primeng/textarea";
           <div class="step-panel">
             <h3>Review & Confirm</h3>
             <div class="review-summary">
-              <div class="summary-item">
+              <div class="review-summary-row">
                 <label>Athlete:</label>
                 <p>{{ getAthleteName(formData.athleteId) }}</p>
               </div>
-              <div class="summary-item">
+              <div class="review-summary-row">
                 <label>Decision Type:</label>
                 <p>{{ getDecisionTypeLabel(formData.decisionType) }}</p>
               </div>
-              <div class="summary-item">
+              <div class="review-summary-row">
                 <label>Summary:</label>
                 <p>{{ formData.decisionSummary }}</p>
               </div>
-              <div class="summary-item">
+              <div class="review-summary-row">
                 <label>Review Date:</label>
                 <p>{{ calculateReviewDate() | date: "short" }}</p>
               </div>
@@ -304,7 +314,7 @@ import { Textarea } from "primeng/textarea";
       </div>
 
       <!-- Footer -->
-      <ng-container footer>
+      <div dialogFooter class="dialog-actions decision-dialog__actions">
         <app-button variant="outlined" (clicked)="onCancel()"
           >Cancel</app-button
         >
@@ -325,8 +335,8 @@ import { Textarea } from "primeng/textarea";
             >Create Decision</app-button
           >
         }
-      </ng-container>
-    </app-modal>
+      </div>
+    </app-dialog>
   `,
   styles: [
     `
@@ -398,12 +408,12 @@ import { Textarea } from "primeng/textarea";
         border-radius: var(--radius-md);
       }
 
-      .summary-item {
+      .review-summary-row {
         display: flex;
         gap: var(--space-2);
       }
 
-      .summary-item label {
+      .review-summary-row label {
         font-weight: var(--ds-font-weight-semibold);
         min-width: var(--size-120);
       }
@@ -783,6 +793,7 @@ export class CreateDecisionDialogComponent {
 
   onCancel(): void {
     this.reset();
+    this.visibleChange.emit(false);
   }
 
   reset(): void {

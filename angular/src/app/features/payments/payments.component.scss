@@ -232,25 +232,6 @@
   }
 }
 
-.empty-fees {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-6);
-  text-align: center;
-
-  i {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--color-brand-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
-}
-
 // History Card
 .payment-method {
   display: flex;
@@ -280,25 +261,6 @@
   text-align: center;
   padding: var(--space-4);
   color: var(--color-text-tertiary);
-}
-
-.empty-history {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--space-6);
-  text-align: center;
-
-  i {
-    font-size: var(--ds-font-size-3xl);
-    color: var(--color-text-tertiary);
-    margin-bottom: var(--space-2);
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
 }
 
 // Instructions Dialog

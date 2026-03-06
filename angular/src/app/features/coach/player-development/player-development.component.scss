@@ -14,22 +14,6 @@
   gap: var(--space-4);
 }
 
-// Card headers: align icons and text consistently.
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-
-  h3,
-  h4 {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-}
-
 // Selection Row
 .selection-row {
   display: flex;
@@ -72,9 +56,6 @@
     color: var(--ds-text-tertiary);
   }
 }
-
-// Migration: Replace <div class="card-header"> with <app-card-shell title="...">
-// .card-header styles deleted per Card Shell Contract v1
 
 // Spider Chart
 .spider-chart-container {

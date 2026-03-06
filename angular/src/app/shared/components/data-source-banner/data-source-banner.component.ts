@@ -5,8 +5,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 import { DataState } from "../../../core/services/data-source.service";
 import {
   DATA_STATE_MESSAGES,
@@ -33,10 +33,16 @@ import {
 @Component({
   selector: "app-data-source-banner",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip, StatusTagComponent],
+  imports: [CommonModule, StatusTagComponent, CloseButtonComponent],
   template: `
     @if (shouldShow()) {
-      <div class="data-source-banner" [class]="bannerClass()">
+      <div
+        class="data-source-banner"
+        [class]="bannerClass()"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         <div class="banner-content">
           <div class="banner-icon">
             <i [class]="'pi ' + icon()"></i>
@@ -67,13 +73,13 @@ import {
             }
           </div>
           @if (showDismiss()) {
-            <button
-              class="dismiss-btn"
-              (click)="onDismiss()"
-              pTooltip="Dismiss this notice"
-            >
-              <i class="pi pi-times"></i>
-            </button>
+            <app-close-button
+              ariaLabel="Dismiss data source notice"
+              tone="inverse"
+              tooltip="Dismiss this notice"
+              [styleClass]="'dismiss-btn'"
+              (clicked)="onDismiss()"
+            />
           }
         </div>
         @if (warnings().length > 0) {

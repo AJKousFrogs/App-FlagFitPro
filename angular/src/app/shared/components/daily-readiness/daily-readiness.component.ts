@@ -26,6 +26,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
+import { CardHeaderComponent } from "../card-header/card-header.component";
 import { Card } from "primeng/card";
 import { Slider } from "primeng/slider";
 import { Dialog } from "primeng/dialog";
@@ -67,6 +68,7 @@ interface DailyState {
     
     InputNumber,
     ButtonComponent,
+    CardHeaderComponent,
   ],
   template: `
     @if (mode() === "modal") {
@@ -99,15 +101,11 @@ interface DailyState {
     } @else {
       <p-card class="readiness-card">
         <ng-template #header>
-          <div class="card-header">
-            <h3>
-              <i class="pi pi-heart-fill"></i>
-              Daily Check-in
-            </h3>
-            <span class="readiness-badge" [class]="readinessClass()">
+          <app-card-header icon="pi-heart-fill" title="Daily Check-in">
+            <span header-actions class="readiness-badge" [class]="readinessClass()">
               {{ readinessLabel() }}
             </span>
-          </div>
+          </app-card-header>
         </ng-template>
 
         <ng-container *ngTemplateOutlet="formContent"></ng-container>

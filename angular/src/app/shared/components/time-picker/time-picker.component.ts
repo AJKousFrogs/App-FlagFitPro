@@ -31,7 +31,7 @@ import { CommonModule } from "@angular/common";
     },
   ],
   template: `
-    <div class="time-picker-group">
+    <div class="form-field time-picker-group">
       @if (label()) {
         <label [for]="id()" class="form-label">{{ label() }}</label>
       }
@@ -47,19 +47,19 @@ import { CommonModule } from "@angular/common";
         [class.is-invalid]="invalid()"
         (input)="onChange($event)"
         (blur)="onBlur()"
-        class="time-picker-input"
+        class="time-picker-input p-inputtext"
         [attr.aria-invalid]="invalid() ? 'true' : null"
         [attr.aria-describedby]="
           errorMessage() ? id() + '-error' : helpText() ? id() + '-help' : null
         "
       />
       @if (helpText() && !errorMessage()) {
-        <div [id]="id() + '-help'" class="form-help">{{ helpText() }}</div>
+        <small [id]="id() + '-help'" class="form-help">{{ helpText() }}</small>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error" role="alert">
+        <small [id]="id() + '-error'" class="form-error" role="alert">
           {{ errorMessage() }}
-        </div>
+        </small>
       }
     </div>
   `,

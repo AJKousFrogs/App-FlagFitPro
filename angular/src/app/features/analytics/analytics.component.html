@@ -56,13 +56,14 @@
             }
           </div>
           @if (nextGenEnabled()) {
-            <div class="analytics-preview-banner">
-              <i class="pi pi-sparkles"></i>
-              <span>
-                Next-gen analytics are in preview. Legacy charts remain the
-                source of truth until validation completes.
-              </span>
-            </div>
+            <app-alert
+              variant="info"
+              density="compact"
+              icon="pi-sparkles"
+              title="Preview"
+              message="Next-gen analytics are in preview. Legacy charts remain the source of truth until validation completes."
+              styleClass="analytics-preview-banner"
+            />
           }
 
           <p-card class="analytics-hub-card">
@@ -113,21 +114,16 @@
             </ng-template>
 
             @if (developmentGoals().length === 0) {
-              <div class="goals-empty-state">
-                <i class="pi pi-bullseye empty-icon"></i>
-                <h4>No goals assigned yet</h4>
-                <p>
-                  Your coach will assign development goals here. Check back soon
-                  or ask your coach to set goals for you.
-                </p>
-                <app-button
-                  variant="outlined"
-                  iconLeft="pi-envelope"
-                  routerLink="/team-chat"
-                  class="empty-state-cta"
-                  >Request Goals from Coach</app-button
-                >
-              </div>
+              <app-empty-state
+                [showBenefits]="false"
+                [showSafetyNote]="false"
+                icon="pi-bullseye"
+                [customTitle]="'No goals assigned yet'"
+                [customMessage]="'Your coach will assign development goals here. Check back soon or ask your coach to set goals for you.'"
+                actionLabel="Request Goals from Coach"
+                actionIcon="pi-envelope"
+                actionLink="/team-chat"
+              />
             } @else {
               <div class="goals-grid">
                 @for (
@@ -289,15 +285,12 @@
             @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Load vs Performance</h3>
-                      <p class="chart-subtitle">
-                        Acute/Chronic Workload vs Subjective Wellness
-                      </p>
-                    </div>
+                  <app-card-header
+                    title="Load vs Performance"
+                    subtitle="Acute/Chronic Workload vs Subjective Wellness"
+                  >
                     @if (performanceChartData()) {
-                      <div class="chart-actions">
+                      <div header-actions class="chart-actions">
                         <app-button
                           variant="text"
                           size="sm"
@@ -315,7 +308,7 @@
                         />
                       </div>
                     }
-                  </div>
+                  </app-card-header>
                 </ng-template>
                 @if (performanceChartData()) {
                   <div class="chart-container">
@@ -326,38 +319,41 @@
                     ></app-lazy-chart>
                   </div>
                   <div class="chart-insights">
-                    <div class="insight-item">
-                      <div class="insight-value">
+                    <div class="metric-insight">
+                      <div class="metric-insight__value">
                         {{ acwrData()?.acwr || "0.00" }}
                       </div>
-                      <div class="insight-label">Current ACWR</div>
+                      <div class="metric-insight__label">Current ACWR</div>
                     </div>
-                    <div class="insight-item">
-                      <div class="insight-value" [class]="acwrData()?.riskZone">
+                    <div class="metric-insight">
+                      <div
+                        class="metric-insight__value"
+                        [class]="acwrData()?.riskZone"
+                      >
                         {{ acwrData()?.riskZone || "N/A" | titlecase }}
                       </div>
-                      <div class="insight-label">Safety Zone</div>
+                      <div class="metric-insight__label">Safety Zone</div>
                     </div>
                   </div>
                 } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
-                    <h4>{{ noDataMessage.title }}</h4>
-                    <p>{{ noDataMessage.reason }}</p>
-                    <app-icon-button
-                      icon="pi-bolt"
-                      routerLink="noDataMessage.helpLink"
-                      ariaLabel="Start logging workouts"
-                      tooltip="Get started"
-                    />
-                  </div>
+                  <app-empty-state
+                    class="empty-chart-state"
+                    [useCard]="false"
+                    [icon]="noDataMessage.icon || null"
+                    [heading]="noDataMessage.title"
+                    [description]="noDataMessage.reason"
+                    [actionLabel]="noDataMessage.actionLabel || 'Log Training'"
+                    [actionLink]="noDataMessage.helpLink || null"
+                    actionIcon="pi-bolt"
+                  />
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">
-                  Loading performance trends...
-                </div>
+                <app-loading
+                  variant="inline"
+                  message="Loading performance trends..."
+                />
               </p-card>
             }
 
@@ -365,14 +361,11 @@
             @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Skill Proficiency Radar</h3>
-                      <p class="chart-subtitle">
-                        Comparative assessment across core competencies
-                      </p>
-                    </div>
-                  </div>
+                  <app-card-header
+                    title="Skill Proficiency Radar"
+                    subtitle="Comparative assessment across core competencies"
+                  >
+                  </app-card-header>
                 </ng-template>
                 @if (chemistryChartData()) {
                   <div class="chart-container radar">
@@ -383,21 +376,23 @@
                     ></app-lazy-chart>
                   </div>
                 } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi pi-users empty-icon"></i>
-                    <h4>Proficiency Data Coming Soon</h4>
-                    <p>
-                      Log more varied training sessions to populate your skill
-                      proficiency radar.
-                    </p>
-                  </div>
+                  <app-empty-state
+                    class="empty-chart-state"
+                    [useCard]="false"
+                    icon="pi-users"
+                    heading="Proficiency Data Coming Soon"
+                    [description]="
+                      'Log more varied training sessions to populate your skill proficiency radar.'
+                    "
+                  />
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">
-                  Loading skill proficiency...
-                </div>
+                <app-loading
+                  variant="inline"
+                  message="Loading skill proficiency..."
+                />
               </p-card>
             }
 
@@ -405,14 +400,11 @@
             @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Training Mix</h3>
-                      <p class="chart-subtitle">
-                        Distribution of focus areas over 30 days
-                      </p>
-                    </div>
-                  </div>
+                  <app-card-header
+                    title="Training Mix"
+                    subtitle="Distribution of focus areas over 30 days"
+                  >
+                  </app-card-header>
                 </ng-template>
                 @if (distributionChartData()) {
                   <div class="chart-container doughnut">
@@ -423,19 +415,20 @@
                     ></app-lazy-chart>
                   </div>
                 } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi {{ noDataMessage.icon }} empty-icon"></i>
-                    <h4>Mix Data Coming Soon</h4>
-                    <p>
-                      Log your training sessions to see how your time is
-                      distributed.
-                    </p>
-                  </div>
+                  <app-empty-state
+                    class="empty-chart-state"
+                    [useCard]="false"
+                    [icon]="noDataMessage.icon || null"
+                    heading="Mix Data Coming Soon"
+                    [description]="
+                      'Log your training sessions to see how your time is distributed.'
+                    "
+                  />
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">Loading training mix...</div>
+                <app-loading variant="inline" message="Loading training mix..." />
               </p-card>
             }
 
@@ -443,14 +436,11 @@
             @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template #header>
-                  <div class="chart-header">
-                    <div class="title-group">
-                      <h3 class="chart-title">Benchmark Comparison</h3>
-                      <p class="chart-subtitle">
-                        Your metrics vs Olympic standard benchmarks
-                      </p>
-                    </div>
-                  </div>
+                  <app-card-header
+                    title="Benchmark Comparison"
+                    subtitle="Your metrics vs Olympic standard benchmarks"
+                  >
+                  </app-card-header>
                 </ng-template>
                 @if (positionChartData()) {
                   <div class="chart-container">
@@ -461,19 +451,20 @@
                     ></app-lazy-chart>
                   </div>
                 } @else {
-                  <div class="empty-chart-state">
-                    <i class="pi pi-chart-bar empty-icon"></i>
-                    <h4>Benchmarks Coming Soon</h4>
-                    <p>
-                      Complete your profile and log tests to see comparative
-                      analytics.
-                    </p>
-                  </div>
+                  <app-empty-state
+                    class="empty-chart-state"
+                    [useCard]="false"
+                    icon="pi-chart-bar"
+                    heading="Benchmarks Coming Soon"
+                    [description]="
+                      'Complete your profile and log tests to see comparative analytics.'
+                    "
+                  />
                 }
               </p-card>
             } @placeholder {
               <p-card class="chart-card">
-                <div class="loading-placeholder">Loading benchmarks...</div>
+                <app-loading variant="inline" message="Loading benchmarks..." />
               </p-card>
             }
           </div>
@@ -482,14 +473,11 @@
           @defer (on idle) {
             <p-card class="chart-card full-width gap-analysis-card">
               <ng-template #header>
-                <div class="chart-header">
-                  <div class="title-group">
-                    <h3 class="chart-title">Gap Analysis</h3>
-                    <p class="chart-subtitle">
-                      Your performance vs Olympic benchmarks
-                    </p>
-                  </div>
-                </div>
+                <app-card-header
+                  title="Gap Analysis"
+                  subtitle="Your performance vs Olympic benchmarks"
+                >
+                </app-card-header>
               </ng-template>
               @if (gapAnalysisData().length > 0) {
                 <div class="gap-analysis-content">
@@ -555,55 +543,55 @@
                     }
                   </div>
                   <div class="gap-summary">
-                    <div class="summary-item">
-                      <span class="summary-value">{{
+                    <div class="metric-tile">
+                      <span class="metric-tile__value">{{
                         gapAnalysisSummary().achieved
                       }}</span>
-                      <span class="summary-label">Benchmarks Met</span>
+                      <span class="metric-tile__label">Benchmarks Met</span>
                     </div>
-                    <div class="summary-item">
-                      <span class="summary-value">{{
+                    <div class="metric-tile">
+                      <span class="metric-tile__value">{{
                         gapAnalysisSummary().close
                       }}</span>
-                      <span class="summary-label">Almost There</span>
+                      <span class="metric-tile__label">Almost There</span>
                     </div>
-                    <div class="summary-item">
-                      <span class="summary-value">{{
+                    <div class="metric-tile">
+                      <span class="metric-tile__value">{{
                         gapAnalysisSummary().needsWork
                       }}</span>
-                      <span class="summary-label">Needs Improvement</span>
+                      <span class="metric-tile__label">Needs Improvement</span>
                     </div>
-                    <div class="summary-item overall">
-                      <span class="summary-value"
+                    <div class="metric-tile metric-tile--accent">
+                      <span class="metric-tile__value"
                         >{{ gapAnalysisSummary().overallScore }}%</span
                       >
-                      <span class="summary-label">Overall Score</span>
+                      <span class="metric-tile__label">Overall Score</span>
                     </div>
                   </div>
                 </div>
               } @else {
-                <div class="empty-chart-state">
-                  <i class="pi pi-chart-bar empty-icon"></i>
-                  <h4>Gap Analysis Coming Soon</h4>
-                  <p>
-                    Complete fitness tests and log training to see how you
-                    compare to Olympic benchmarks.
-                  </p>
-                </div>
+                <app-empty-state
+                  class="empty-chart-state"
+                  [useCard]="false"
+                  icon="pi-chart-bar"
+                  heading="Gap Analysis Coming Soon"
+                  [description]="
+                    'Complete fitness tests and log training to see how you compare to Olympic benchmarks.'
+                  "
+                />
               }
             </p-card>
           } @placeholder {
             <p-card class="chart-card full-width">
-              <div class="loading-placeholder">Loading gap analysis...</div>
+              <app-loading variant="inline" message="Loading gap analysis..." />
             </p-card>
           }
 
           <!-- Full Width Charts -->
           <p-card class="chart-card full-width">
             <ng-template #header>
-              <div class="chart-header">
-                <h3 class="chart-title">Speed Development Progress</h3>
-                <div class="chart-controls">
+              <app-card-header title="Speed Development Progress">
+                <div header-actions class="chart-controls">
                   <p-select
                     [options]="timePeriods"
                     (onChange)="onSelectedTimePeriodChange($event.value)"
@@ -617,7 +605,7 @@
                     class="w-full md:w-14rem"
                   ></p-select>
                 </div>
-              </div>
+              </app-card-header>
             </ng-template>
             @if (speedChartData()) {
               <app-lazy-chart
@@ -627,47 +615,48 @@
               ></app-lazy-chart>
               <div class="chart-insights">
                 @if (speedInsights()) {
-                  <div class="insight-item">
-                    <div class="insight-value">
+                  <div class="metric-insight">
+                    <div class="metric-insight__value">
                       {{ speedInsights()!.best40 || "N/A" }}
                     </div>
-                    <div class="insight-label">Best 40-Yard</div>
+                    <div class="metric-insight__label">Best 40-Yard</div>
                   </div>
-                  <div class="insight-item">
-                    <div class="insight-value">
+                  <div class="metric-insight">
+                    <div class="metric-insight__value">
                       {{ speedInsights()!.best10 || "N/A" }}
                     </div>
-                    <div class="insight-label">Best 10-Yard</div>
+                    <div class="metric-insight__label">Best 10-Yard</div>
                   </div>
-                  <div class="insight-item">
-                    <div class="insight-value">
+                  <div class="metric-insight">
+                    <div class="metric-insight__value">
                       {{ speedInsights()!.improvement || "N/A" }}
                     </div>
-                    <div class="insight-label">Total Improvement</div>
+                    <div class="metric-insight__label">Total Improvement</div>
                   </div>
-                  <div class="insight-item">
-                    <div class="insight-value">4.40s</div>
-                    <div class="insight-label">Olympic Target</div>
+                  <div class="metric-insight">
+                    <div class="metric-insight__value">4.40s</div>
+                    <div class="metric-insight__label">Olympic Target</div>
                   </div>
                 } @else {
-                  <div class="insight-item">
-                    <div class="insight-value">-</div>
-                    <div class="insight-label">No data yet</div>
+                  <div class="metric-insight">
+                    <div class="metric-insight__value">-</div>
+                    <div class="metric-insight__label">No data yet</div>
                   </div>
                 }
               </div>
             } @else {
-              <div class="empty-chart-state">
-                <i class="pi pi-bolt empty-icon"></i>
-                <h4>No Speed Data Yet</h4>
-                <p>
-                  Log your sprint times in Performance Tracking to see speed
-                  development progress.
-                </p>
-                <a routerLink="/performance-tracking" class="empty-state-link">
-                  <i class="pi pi-arrow-right"></i> Go to Performance Tracking
-                </a>
-              </div>
+              <app-empty-state
+                class="empty-chart-state"
+                [useCard]="false"
+                icon="pi-bolt"
+                heading="No Speed Data Yet"
+                [description]="
+                  'Log your sprint times in Performance Tracking to see speed development progress.'
+                "
+                actionLabel="Go to Performance Tracking"
+                actionIcon="pi-arrow-right"
+                actionLink="/performance-tracking"
+              />
             }
           </p-card>
 
@@ -679,19 +668,19 @@
             <p-tabs>
               <p-tabpanel header="Per Game Stats">
                 <div class="stats-summary">
-                  <div class="stat-summary-item">
+                  <div class="metric-tile stat-block--stat-item">
                     <div class="stat-block__label">Games Played</div>
                     <div class="stat-block__value">
                       {{ playerGameStats().length }}
                     </div>
                   </div>
-                  <div class="stat-summary-item">
+                  <div class="metric-tile stat-block--stat-item">
                     <div class="stat-block__label">Games Missed</div>
                     <div class="stat-block__value error">
                       {{ gamesMissed() }}
                     </div>
                   </div>
-                  <div class="stat-summary-item">
+                  <div class="metric-tile stat-block--stat-item">
                     <div class="stat-block__label">Attendance Rate</div>
                     <div class="stat-block__value">{{ attendanceRate() }}%</div>
                   </div>
@@ -743,25 +732,25 @@
                 @if (playerSeasonStats()) {
                   <div class="season-stats">
                     <div class="stats-summary">
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Season</div>
                         <div class="stat-block__value">
                           {{ playerSeasonStats()?.season }}
                         </div>
                       </div>
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Games Played</div>
                         <div class="stat-block__value">
                           {{ playerSeasonStats()?.gamesPlayed }}
                         </div>
                       </div>
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Games Missed</div>
                         <div class="stat-block__value error">
                           {{ playerSeasonStats()?.gamesMissed }}
                         </div>
                       </div>
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Attendance Rate</div>
                         <div class="stat-block__value">
                           {{
@@ -888,25 +877,25 @@
                 @if (playerMultiSeasonStats()) {
                   <div class="multi-season-stats">
                     <div class="stats-summary">
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Total Seasons</div>
                         <div class="stat-block__value">
                           {{ playerMultiSeasonStats()?.totalSeasons }}
                         </div>
                       </div>
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Total Games Played</div>
                         <div class="stat-block__value">
                           {{ playerMultiSeasonStats()?.totalGamesPlayed }}
                         </div>
                       </div>
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Total Games Missed</div>
                         <div class="stat-block__value error">
                           {{ playerMultiSeasonStats()?.totalGamesMissed }}
                         </div>
                       </div>
-                      <div class="stat-summary-item">
+                      <div class="metric-tile stat-block--stat-item">
                         <div class="stat-block__label">Overall Attendance</div>
                         <div class="stat-block__value">
                           {{

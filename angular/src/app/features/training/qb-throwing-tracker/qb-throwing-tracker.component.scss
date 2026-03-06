@@ -19,16 +19,9 @@
   box-shadow: var(--shadow-sm);
 }
 
-.preview-alert {
+app-alert.preview-alert {
+  display: block;
   margin-top: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
-  background: var(--surface-secondary);
-  color: var(--color-status-warning);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-sm);
 }
 
 .status-header {

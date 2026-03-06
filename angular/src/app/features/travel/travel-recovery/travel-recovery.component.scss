@@ -23,6 +23,7 @@
   align-items: center;
   gap: var(--space-3);
   margin-left: auto;
+  flex-wrap: wrap;
 }
 
 .supp-purpose {
@@ -63,18 +64,10 @@
 // but still needs migration to app-card-shell for consistency
 
 // ===== Olympic Card (Dashboard-consistent) =====
-.olympic-header {
-  background: var(--surface-secondary);
-  border-bottom: var(--border-1) solid var(--surface-border);
-
-  h3,
-  p {
-    color: inherit;
-  }
-}
-
-.olympic-rings {
-  font-size: var(--ds-font-size-3xl); /* 2rem - feature icon */
+app-card-header.olympic-header {
+  --app-card-header-bg: var(--surface-secondary);
+  --app-card-header-border-bottom: var(--border-1) solid var(--surface-border);
+  --app-card-header-icon-size: var(--ds-font-size-3xl);
 }
 
 .olympic-buttons {
@@ -335,18 +328,6 @@
 // ===== Today's Protocol =====
 .today-card {
   margin-bottom: var(--space-6);
-}
-
-.today-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
 }
 
 .day-badge {
@@ -655,18 +636,6 @@
   margin-bottom: var(--space-3);
 }
 
-.summary-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-
-  i {
-    color: var(--color-brand-primary);
-  }
-}
-
 .timeline-recommendations {
   display: flex;
   flex-direction: column;
@@ -828,18 +797,15 @@
   gap: var(--space-6);
 }
 
-.car-header {
-  background: linear-gradient(
+app-card-header.car-header {
+  --app-card-header-bg: linear-gradient(
     135deg,
     var(--ds-primary-green) 0%,
     var(--primitive-teal-500) 100%
   );
-  color: var(--color-text-on-primary);
-
-  h3,
-  p {
-    color: var(--color-text-on-primary);
-  }
+  --app-card-header-title-color: var(--color-text-on-primary);
+  --app-card-header-subtitle-color: var(--color-text-on-primary);
+  --app-card-header-icon-color: var(--color-text-on-primary);
 }
 
 // ===== Risk Assessment =====
@@ -999,24 +965,15 @@
 }
 
 // ===== Compression Card =====
-.compression-header {
-  background: linear-gradient(
+app-card-header.compression-header {
+  --app-card-header-bg: linear-gradient(
     135deg,
     var(--primitive-blue-400) 0%,
     var(--color-status-success) 100%
   );
-  color: var(--color-text-on-primary);
-
-  h3,
-  p {
-    color: var(--color-text-on-primary);
-  }
-}
-
-.compression-icon,
-.massage-icon,
-.exercises-icon {
-  font-size: var(--ds-font-size-3xl);
+  --app-card-header-title-color: var(--color-text-on-primary);
+  --app-card-header-subtitle-color: var(--color-text-on-primary);
+  --app-card-header-icon-color: var(--color-text-on-primary);
 }
 
 .compression-content {
@@ -1101,18 +1058,15 @@
 }
 
 // ===== Massage Gun Card =====
-.massage-header {
-  background: linear-gradient(
+app-card-header.massage-header {
+  --app-card-header-bg: linear-gradient(
     135deg,
     var(--primitive-error-400) 0%,
     var(--primitive-orange-500) 100%
   );
-  color: var(--color-text-on-primary);
-
-  h3,
-  p {
-    color: var(--color-text-on-primary);
-  }
+  --app-card-header-title-color: var(--color-text-on-primary);
+  --app-card-header-subtitle-color: var(--color-text-on-primary);
+  --app-card-header-icon-color: var(--color-text-on-primary);
 }
 
 .massage-protocol {
@@ -1189,18 +1143,15 @@
 }
 
 // ===== Exercises Card =====
-.exercises-header {
-  background: linear-gradient(
+app-card-header.exercises-header {
+  --app-card-header-bg: linear-gradient(
     135deg,
     var(--primitive-teal-500) 0%,
     var(--color-status-success) 100%
   );
-  color: var(--color-text-on-primary);
-
-  h3,
-  p {
-    color: var(--color-text-on-primary);
-  }
+  --app-card-header-title-color: var(--color-text-on-primary);
+  --app-card-header-subtitle-color: var(--color-text-on-primary);
+  --app-card-header-icon-color: var(--color-text-on-primary);
 }
 
 .exercises-grid {
@@ -1252,18 +1203,15 @@
 }
 
 // ===== Rest Stop Card =====
-.rest-header {
-  background: linear-gradient(
+app-card-header.rest-header {
+  --app-card-header-bg: linear-gradient(
     135deg,
     var(--primitive-indigo-500) 0%,
     var(--primitive-purple-500) 100%
   );
-  color: var(--color-text-on-primary);
-
-  h3,
-  p {
-    color: var(--color-text-on-primary);
-  }
+  --app-card-header-title-color: var(--color-text-on-primary);
+  --app-card-header-subtitle-color: var(--color-text-on-primary);
+  --app-card-header-icon-color: var(--color-text-on-primary);
 }
 
 .rest-stop-content {
@@ -1327,18 +1275,15 @@
 }
 
 // ===== Research Card =====
-.research-header {
-  background: linear-gradient(
+app-card-header.research-header {
+  --app-card-header-bg: linear-gradient(
     135deg,
     var(--primitive-slate-700) 0%,
     var(--primitive-cyan-500) 100%
   );
-  color: var(--color-text-on-primary);
-
-  h3,
-  p {
-    color: var(--color-text-on-primary);
-  }
+  --app-card-header-title-color: var(--color-text-on-primary);
+  --app-card-header-subtitle-color: var(--color-text-on-primary);
+  --app-card-header-icon-color: var(--color-text-on-primary);
 }
 
 .research-item {
@@ -1481,14 +1426,9 @@
     gap: var(--space-3);
   }
 
-  .today-header {
-    flex-direction: column;
-    gap: var(--space-3);
-    text-align: center;
-  }
-
-  .header-left {
-    flex-direction: column;
+  .header-right {
+    margin-left: 0;
+    justify-content: flex-start;
   }
 }
 

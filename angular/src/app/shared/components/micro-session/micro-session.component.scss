@@ -7,7 +7,7 @@
   max-width: var(--dialog-max-width-lg);
 }
 
-.card-header {
+.session-card-header {
   padding: var(--space-4);
 }
 
@@ -26,7 +26,7 @@
   color: var(--color-text-secondary);
 }
 
-.card-header h3 {
+.session-card-header h3 {
   margin: 0 0 var(--space-1) 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
@@ -220,17 +220,8 @@
 
 .timer-circle.urgent {
   border-color: var(--color-status-error);
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
+  --ui-motion-scale-pulse-mid: 1.05;
+  animation: ui-motion-scale-pulse 1s infinite;
 }
 
 .timer-value {

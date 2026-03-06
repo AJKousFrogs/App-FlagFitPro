@@ -5,6 +5,7 @@ import {
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
+import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 
 @Component({
   selector: "app-new-team-request-dialog",
@@ -14,6 +15,7 @@ import {
     InputText,
     DialogHeaderComponent,
     DialogFooterComponent,
+    AlertComponent,
   ],
   templateUrl: "./new-team-request-dialog.component.html",
   styleUrl: "./new-team-request-dialog.component.scss",

@@ -209,23 +209,6 @@
   letter-spacing: var(--ds-letter-spacing-0-5em);
 }
 
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-lg);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  background: var(--color-status-error-subtle);
-  color: var(--color-status-error);
-}
-
-.error-message i {
-  font-size: var(--ds-font-size-md);
-}
-
 .success-section {
   padding-top: var(--space-4);
 }

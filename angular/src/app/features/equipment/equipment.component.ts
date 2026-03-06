@@ -33,6 +33,7 @@ import { TeamStatisticsService } from "../../core/services/team-statistics.servi
 import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -78,6 +79,7 @@ type ReturnData = { condition: Condition; notes: string };
     PageHeaderComponent,
     DatePipe,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
   ],
@@ -159,9 +161,8 @@ type ReturnData = { condition: Condition; notes: string };
           <!-- Equipment Inventory -->
           <p-card class="inventory-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3>Equipment Inventory</h3>
-                <div class="filter-actions">
+              <app-card-header title="Equipment Inventory">
+                <div header-actions class="filter-actions">
                   <p-select
                     [options]="typeOptions"
                     (onChange)="onSelectedTypeChange($event.value)"
@@ -169,7 +170,7 @@ type ReturnData = { condition: Condition; notes: string };
                     [showClear]="true"
                   ></p-select>
                 </div>
-              </div>
+              </app-card-header>
             </ng-template>
 
             <p-table
@@ -281,12 +282,12 @@ type ReturnData = { condition: Condition; notes: string };
           @if (isCoach()) {
             <p-card class="assignments-card">
               <ng-template #header>
-                <div class="card-header">
-                  <h3>Active Assignments</h3>
+                <app-card-header title="Active Assignments">
                   <p-badge
+                    header-actions
                     [value]="activeAssignments().length.toString()"
                   ></p-badge>
-                </div>
+                </app-card-header>
               </ng-template>
 
               @if (activeAssignments().length === 0) {

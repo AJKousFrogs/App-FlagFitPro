@@ -46,6 +46,7 @@ import {
 } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
@@ -121,6 +122,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     AppLoadingComponent,
     ButtonComponent,
     CardComponent,
+    AlertComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
     DatePipe,

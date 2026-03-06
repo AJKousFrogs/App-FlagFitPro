@@ -73,22 +73,22 @@ import {
 import { getDateKey } from "../../shared/utils/date.utils";
 
 interface LoadMonitoringRecord {
-  daily_load?: number;
+  monitoring_date?: string;
   acute_load?: number;
   chronic_load?: number;
   acwr?: number;
-  injury_risk_level?: string;
+  risk_level?: string;
 }
 
 interface WorkoutLog {
   id?: string;
   player_id: string;
-  session_id?: string;
+  source_session_id?: string;
+  workout_type?: string;
   completed_at: string;
   rpe?: number;
   duration_minutes?: number;
   notes?: string;
-  load_monitoring?: LoadMonitoringRecord[];
 }
 
 /**
@@ -1095,84 +1095,104 @@ export class AcwrService {
       const daysToLoad = cfg.chronicWindowDays + 7; // Extra buffer
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - daysToLoad);
+      const cutoffDateKey = cutoffDate.toISOString().slice(0, 10);
 
       this.logger.debug(
         `[ACWR] Loading ${daysToLoad} days of training data...`,
       );
 
-      const { data: workoutLogs, error } = await this.supabaseService.client
-        .from("workout_logs")
-        .select(
-          `
-          id,
-          player_id,
-          session_id,
-          completed_at,
-          rpe,
-          duration_minutes,
-          notes,
-          load_monitoring (
-            daily_load,
-            acute_load,
-            chronic_load,
-            acwr,
-            injury_risk_level
+      const [workoutLogsResult, loadMonitoringResult] = await Promise.all([
+        this.supabaseService.client
+          .from("workout_logs")
+          .select(
+            `
+            id,
+            player_id,
+            source_session_id,
+            workout_type,
+            completed_at,
+            rpe,
+            duration_minutes
+          `,
           )
-        `,
-        )
-        .eq("player_id", userId)
-        .gte("completed_at", cutoffDate.toISOString())
-        .order("completed_at", { ascending: false });
+          .eq("player_id", userId)
+          .gte("completed_at", cutoffDate.toISOString())
+          .order("completed_at", { ascending: false }),
+        this.supabaseService.client
+          .from("load_monitoring")
+          .select("monitoring_date, acute_load, chronic_load, acwr, risk_level")
+          .eq("player_id", userId)
+          .gte("monitoring_date", cutoffDateKey)
+          .order("monitoring_date", { ascending: false }),
+      ]);
+      const { data: workoutLogs, error } = workoutLogsResult;
+      const { data: loadMonitoring, error: loadMonitoringError } =
+        loadMonitoringResult;
 
       if (error) {
         this.logger.error("[ACWR] Error loading workout logs:", error);
         return;
       }
 
+      if (loadMonitoringError) {
+        this.logger.warn(
+          "[ACWR] Error loading load monitoring history:",
+          loadMonitoringError,
+        );
+      }
+
+      const loadMonitoringByDate = new Map(
+        ((loadMonitoring as LoadMonitoringRecord[] | null) ?? [])
+          .filter((row) => row.monitoring_date)
+          .map((row) => [row.monitoring_date as string, row]),
+      );
+      const acwrHistory =
+        ((loadMonitoring as LoadMonitoringRecord[] | null) ?? [])
+          .filter((row) => row.monitoring_date && row.acwr !== null)
+          .map((row) => ({
+            date: new Date(`${row.monitoring_date}T00:00:00`),
+            ratio: Number(row.acwr ?? 0),
+            chronic: Number(row.chronic_load ?? 0),
+          })) ?? [];
+      this.historicalACWR.set(acwrHistory);
+
       if (!workoutLogs || workoutLogs.length === 0) {
+        this.trainingSessions.set([]);
         this.logger.info("[ACWR] No workout logs found for player");
         return;
       }
 
       // Convert workout logs to TrainingSession format
       const sessions: TrainingSession[] = workoutLogs.map(
-        (log: WorkoutLog) => ({
-          playerId: log.player_id,
-          date: new Date(log.completed_at),
-          sessionType: this.inferSessionType(log),
-          metrics: {
-            type: "internal",
-            internal: {
-              sessionRPE: log.rpe || 5,
-              duration: log.duration_minutes || 60,
-              workload: (log.rpe || 5) * (log.duration_minutes || 60),
+        (log: WorkoutLog) => {
+          const monitoringDateKey = log.completed_at?.slice(0, 10) ||
+            getDateKey(log.completed_at);
+          const monitoring = loadMonitoringByDate.get(monitoringDateKey);
+          const calculatedLoad = (log.rpe || 5) * (log.duration_minutes || 60);
+
+          return {
+            playerId: log.player_id,
+            date: new Date(log.completed_at),
+            sessionType: this.inferSessionType(log),
+            metrics: {
+              type: "internal",
+              internal: {
+                sessionRPE: log.rpe || 5,
+                duration: log.duration_minutes || 60,
+                workload: calculatedLoad,
+              },
+              calculatedLoad: Number(monitoring?.acute_load ?? calculatedLoad),
             },
-            calculatedLoad: (log.rpe || 5) * (log.duration_minutes || 60),
-          },
-          load: (log.rpe || 5) * (log.duration_minutes || 60),
-          notes: log.notes,
-          completed: true,
-          modifiedFromPlan: false,
-        }),
+            load: Number(monitoring?.acute_load ?? calculatedLoad),
+            notes: log.notes,
+            completed: true,
+            modifiedFromPlan: false,
+          };
+        },
       );
 
       this.addSessions(sessions);
       this.logger.success(`[ACWR] Loaded ${sessions.length} training sessions`);
-
-      // Load historical ACWR for tolerance detection
-      if (workoutLogs[0]?.load_monitoring?.length) {
-        const history = workoutLogs
-          .filter((log: WorkoutLog) => log.load_monitoring?.[0]?.acwr)
-          .map((log: WorkoutLog) => {
-            const monitoring = log.load_monitoring?.[0];
-            return {
-              date: new Date(log.completed_at),
-              ratio: monitoring?.acwr ?? 0,
-              chronic: monitoring?.chronic_load ?? 0,
-            };
-          });
-        this.historicalACWR.set(history);
-      }
     } catch (error) {
       this.logger.error("[ACWR] Failed to load player sessions:", error);
     }
@@ -1292,8 +1312,31 @@ export class AcwrService {
     | "conditioning"
     | "strength"
     | "recovery" {
-    // Try to infer from notes or session_id
-    // For now, default to technical
+    const workoutType = (log.workout_type || "").toLowerCase();
+    if (workoutType.includes("game") || workoutType.includes("match")) {
+      return "game";
+    } else if (workoutType.includes("sprint") || workoutType.includes("speed")) {
+      return "sprint";
+    } else if (
+      workoutType.includes("strength") ||
+      workoutType.includes("gym") ||
+      workoutType.includes("weight")
+    ) {
+      return "strength";
+    } else if (
+      workoutType.includes("conditioning") ||
+      workoutType.includes("cardio")
+    ) {
+      return "conditioning";
+    } else if (
+      workoutType.includes("recovery") ||
+      workoutType.includes("mobility") ||
+      workoutType.includes("activation")
+    ) {
+      return "recovery";
+    }
+
+    // Fall back to notes for legacy rows, then default to technical.
     const notes = (log.notes || "").toLowerCase();
 
     if (notes.includes("game") || notes.includes("match")) {

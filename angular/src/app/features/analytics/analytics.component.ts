@@ -47,6 +47,7 @@ import {
   type TrainingStatsData,
 } from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -64,7 +65,9 @@ import {
 } from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { formatDate } from "../../shared/utils/date.utils";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { DataState } from "../../core/services/data-source.service";
 
 interface Metric {
@@ -130,8 +133,11 @@ type AnalyticsChartType =
     PageErrorStateComponent,
     AppLoadingComponent,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
+    AlertComponent,
     DataSourceBannerComponent,
+    EmptyStateComponent,
   ],
   templateUrl: "./analytics.component.html",
 

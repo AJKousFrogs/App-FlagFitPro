@@ -166,8 +166,8 @@ interface Category {
         <div class="exercises-grid" #exercisesGrid>
           @for (exercise of paginatedExercises(); track exercise.id) {
             <div class="exercise-card ds-card-surface">
-              <div class="card-header">
-                <div class="header-left">
+              <div class="exercise-card-header">
+                <div class="exercise-card-header__main">
                   <i
                     [class]="
                       'pi ' +

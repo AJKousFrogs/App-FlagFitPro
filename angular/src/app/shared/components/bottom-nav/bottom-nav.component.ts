@@ -14,6 +14,8 @@ import { filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
 import { NavItemComponent } from "../nav-item.component";
+import { BackdropComponent } from "../backdrop/backdrop.component";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 
 interface NavItem {
   label: string;
@@ -26,7 +28,12 @@ interface NavItem {
 @Component({
   selector: "app-bottom-nav",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, NavItemComponent],
+  imports: [
+    CommonModule,
+    NavItemComponent,
+    BackdropComponent,
+    CloseButtonComponent,
+  ],
   template: `
     <nav
       class="bottom-nav"
@@ -58,31 +65,36 @@ interface NavItem {
 
     <!-- More menu overlay -->
     @if (showMoreMenu()) {
-      <div class="more-menu-overlay" (click)="toggleMoreMenu()">
-        <div class="more-menu" (click)="$event.stopPropagation()">
-          <div class="more-menu-header">
-            <span>More</span>
-            <button
-              class="close-btn"
-              (click)="toggleMoreMenu()"
-              aria-label="Close more menu"
-              type="button"
-            >
-              <i class="pi pi-times"></i>
-            </button>
-          </div>
-          <div class="more-menu-items">
-            @for (item of moreNavItems(); track item.route) {
-              <app-nav-item
-                [route]="item.route"
-                [label]="item.label"
-                [icon]="item.icon"
-                [badge]="item.badge && item.badge > 0 ? item.badge : null"
-                variant="menu"
-                (clicked)="toggleMoreMenu()"
-              />
-            }
-          </div>
+      <app-backdrop
+        [visible]="showMoreMenu()"
+        [styleClass]="'more-menu-overlay'"
+        (backdropClick)="toggleMoreMenu()"
+      />
+      <div
+        class="more-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="More navigation items"
+      >
+        <div class="more-menu-header">
+          <span>More</span>
+          <app-close-button
+            ariaLabel="Close more menu"
+            [styleClass]="'close-btn'"
+            (clicked)="toggleMoreMenu()"
+          />
+        </div>
+        <div class="more-menu-items">
+          @for (item of moreNavItems(); track item.route) {
+            <app-nav-item
+              [route]="item.route"
+              [label]="item.label"
+              [icon]="item.icon"
+              [badge]="item.badge && item.badge > 0 ? item.badge : null"
+              variant="menu"
+              (clicked)="toggleMoreMenu()"
+            />
+          }
         </div>
       </div>
     }

@@ -34,6 +34,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -66,6 +67,7 @@ interface PositionGroup {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
   ],
@@ -219,14 +221,14 @@ interface PositionGroup {
             @if (isCoach() && unassignedPlayers().length > 0) {
               <p-card class="unassigned-card">
                 <ng-template #header>
-                  <div class="card-header">
-                    <h3>Unassigned Players</h3>
+                  <app-card-header title="Unassigned Players">
                     <app-status-tag
+                      header-actions
                       [value]="unassignedPlayers().length + ' players'"
                       severity="warning"
                       size="sm"
                     />
-                  </div>
+                  </app-card-header>
                 </ng-template>
                 <div class="unassigned-list">
                   @for (player of unassignedPlayers(); track player.id) {

@@ -20,7 +20,6 @@ import { HttpBackend, HttpClient, HttpHeaders } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
 import { InputText } from "primeng/inputtext";
 
 import { AuthService } from "../../../core/services/auth.service";
@@ -45,8 +44,6 @@ import {
     Card,
     ButtonComponent,
     InputText,
-
-    Checkbox,
   ],
   template: `
 <div class="register-page elite-auth-shell">
@@ -55,11 +52,16 @@ import {
           <div class="register-logo elite-auth-logo">
             <i class="pi pi-activity"></i>
           </div>
+          <span class="elite-auth-kicker">Get Started</span>
           <h1 class="register-title elite-auth-title">Create Your Account</h1>
+          <p class="elite-auth-subtitle">
+            Set up your athlete profile and unlock training, readiness, and
+            daily practice in one account.
+          </p>
         </ng-template>
 
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-          <div class="p-field mb-4 elite-auth-field">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
+          <div class="form-field elite-auth-field">
             <label for="register-name" class="p-label elite-auth-label">Full Name</label>
             <input
               id="register-name"
@@ -78,13 +80,13 @@ import {
               "
             />
             @if (isFieldInvalid("name")) {
-              <small id="name-error" class="p-error" role="alert">
+              <small id="name-error" class="form-error" role="alert">
                 {{ getFieldError("name") }}
               </small>
             }
           </div>
 
-          <div class="p-field mb-4 elite-auth-field">
+          <div class="form-field elite-auth-field">
             <label for="register-email" class="p-label elite-auth-label required">Email</label>
             <input
               id="register-email"
@@ -103,13 +105,13 @@ import {
               "
             />
             @if (isFieldInvalid("email")) {
-              <small id="register-email-error" class="p-error" role="alert">
+              <small id="register-email-error" class="form-error" role="alert">
                 {{ getFieldError("email") }}
               </small>
             }
           </div>
 
-          <div class="p-field mb-4 elite-auth-field">
+          <div class="form-field elite-auth-field">
             <label for="register-password" class="p-label elite-auth-label required"
               >Password</label
             >
@@ -132,17 +134,17 @@ import {
               "
             />
             @if (isFieldInvalid("password")) {
-              <small id="register-password-error" class="p-error" role="alert">
+              <small id="register-password-error" class="form-error" role="alert">
                 {{ getFieldError("password") }}
               </small>
             }
-            <small id="register-password-hint" class="p-text-secondary mt-2">
+            <small id="register-password-hint" class="form-help">
               Password must be at least 8 characters and include uppercase,
               lowercase, number, and special character.
             </small>
           </div>
 
-          <div class="p-field mb-4 elite-auth-field">
+          <div class="form-field elite-auth-field">
             <label for="register-confirmPassword" class="p-label elite-auth-label required"
               >Confirm Password</label
             >
@@ -169,7 +171,7 @@ import {
             @if (isFieldInvalid("confirmPassword")) {
               <small
                 id="register-confirmPassword-error"
-                class="p-error"
+                class="form-error"
                 role="alert"
               >
                 {{ getFieldError("confirmPassword") }}
@@ -177,43 +179,45 @@ import {
             }
           </div>
 
-          <div class="p-field mb-4">
-            <div class="age-verification">
-              <p-checkbox
+          <div class="form-field elite-auth-field">
+            <label class="form-check age-verification" for="ageVerification">
+              <input
+                id="ageVerification"
+                type="checkbox"
                 formControlName="ageVerification"
-                [binary]="true"
-                variant="filled"
-                inputId="ageVerification"
+                class="form-check__input"
                 data-testid="age-checkbox"
-              ></p-checkbox>
-              <label for="ageVerification" class="age-label">
+              />
+              <span class="form-check__box" aria-hidden="true"></span>
+              <span class="form-check__label age-label">
                 I confirm that I am <strong>16 years of age or older</strong>
-              </label>
-            </div>
+              </span>
+            </label>
             @if (isFieldInvalid("ageVerification")) {
-              <small class="p-error">
+              <small class="form-error">
                 You must be 16 or older to use this app
               </small>
             }
           </div>
 
-          <div class="p-field mb-4">
-            <div class="terms-agreement">
-              <p-checkbox
+          <div class="form-field elite-auth-field">
+            <label class="form-check terms-agreement" for="termsAccepted">
+              <input
+                id="termsAccepted"
+                type="checkbox"
                 formControlName="termsAccepted"
-                [binary]="true"
-                variant="filled"
-                inputId="termsAccepted"
+                class="form-check__input"
                 data-testid="terms-checkbox"
-              ></p-checkbox>
-              <label for="termsAccepted" class="terms-label">
+              />
+              <span class="form-check__box" aria-hidden="true"></span>
+              <span class="form-check__label terms-label">
                 I agree to the
                 <a href="/terms" target="_blank">Terms of Service</a> and
                 <a href="/privacy-policy" target="_blank">Privacy Policy</a>
-              </label>
-            </div>
+              </span>
+            </label>
             @if (isFieldInvalid("termsAccepted")) {
-              <small class="p-error">
+              <small class="form-error">
                 You must accept the Terms and Privacy Policy
               </small>
             }
@@ -231,7 +235,7 @@ import {
           >
         </form>
 
-        <div class="register-divider my-4 elite-auth-divider">
+        <div class="register-divider elite-auth-divider">
           <span>Or</span>
         </div>
 

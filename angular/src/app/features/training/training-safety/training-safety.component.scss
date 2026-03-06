@@ -9,22 +9,6 @@
   padding: var(--space-6);
 }
 
-// Card headers: align icons and text consistently.
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-
-  h3,
-  h4 {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-}
-
 .safety-overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
@@ -224,47 +208,14 @@
   gap: var(--space-4);
 }
 
-.summary-item {
-  text-align: center;
-  padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-}
-
-.summary-value {
+app-alert.insufficient-data-alert {
   display: block;
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-brand-primary);
 }
 
-.summary-label {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
-
-.insufficient-data-notice {
-  text-align: center;
-  padding: var(--space-6);
-}
-
-.insufficient-data-notice i {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-3);
-}
-
-.insufficient-data-notice h4 {
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  margin: 0 0 var(--space-2) 0;
-  color: var(--color-text-primary);
-}
-
-.insufficient-data-notice p {
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4) 0;
-  font-size: var(--ds-font-size-md);
+.insufficient-data-alert__action {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-3);
 }
 
 @include respond-to(md) {

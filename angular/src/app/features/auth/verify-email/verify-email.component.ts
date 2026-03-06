@@ -8,8 +8,8 @@ import {
 
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
-import { Message } from "primeng/message";
 import { ToastService } from "../../../core/services/toast.service";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
@@ -29,7 +29,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
 @Component({
   selector: "app-verify-email",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Card, ButtonComponent, Message,],
+  imports: [RouterModule, Card, ButtonComponent, AlertComponent],
 
   template: `
 <div class="verify-email-page">
@@ -43,19 +43,19 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
         @if (isVerifying()) {
           <div class="verifying-state">
-            <p-message
-              severity="info"
-              [text]="'Verifying your email address...'"
-              class="status-message"
-            ></p-message>
+            <app-alert
+              variant="info"
+              message="Verifying your email address..."
+              styleClass="status-message"
+            />
           </div>
         } @else if (isVerified()) {
           <div class="verified-state">
-            <p-message
-              severity="success"
-              [text]="'Email verified successfully!'"
-              class="status-message status-message--success"
-            ></p-message>
+            <app-alert
+              variant="success"
+              message="Email verified successfully!"
+              styleClass="status-message status-message--success"
+            />
             <p class="verified-message">
               Your email has been verified. You can now access all features.
             </p>
@@ -68,11 +68,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
-            <p-message
-              severity="error"
-              [text]="verificationError()"
-              class="status-message"
-            ></p-message>
+            <app-alert
+              variant="error"
+              [message]="verificationError() || ''"
+              styleClass="status-message"
+            />
             <app-button
               iconLeft="pi-send"
               variant="outlined"
@@ -87,11 +87,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           </div>
         } @else {
           <div class="pending-state">
-            <p-message
-              severity="warn"
-              [text]="'Please check your email'"
-              class="status-message"
-            ></p-message>
+            <app-alert
+              variant="warning"
+              message="Please check your email"
+              styleClass="status-message"
+            />
             <p class="pending-message">
               We've sent a verification link to your email address. Please click
               the link to verify your account.

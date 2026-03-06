@@ -971,7 +971,19 @@ const db = {
     async createNotification(userId, notificationData) {
       requireSupabaseAdmin("createNotification");
 
-      const { type, message, priority = "medium" } = notificationData;
+      const normalizePriority = (value) => {
+        const normalized = String(value || "normal").trim().toLowerCase();
+        if (normalized === "medium") {
+          return "normal";
+        }
+        if (normalized === "critical") {
+          return "urgent";
+        }
+        return normalized;
+      };
+
+      const { type, message, priority = "normal" } = notificationData;
+      const normalizedPriority = normalizePriority(priority);
 
       // Validate notification type
       const validTypes = [
@@ -990,6 +1002,11 @@ const db = {
           `Invalid notification type: ${type}. Must be one of: ${validTypes.join(", ")}`,
         );
       }
+      if (!["low", "normal", "high", "urgent"].includes(normalizedPriority)) {
+        throw new Error(
+          "Invalid notification priority. Must be one of: low, normal, high, urgent",
+        );
+      }
 
       try {
         const { data, error } = await supabaseAdmin
@@ -998,7 +1015,7 @@ const db = {
             user_id: userId,
             notification_type: type,
             message,
-            priority,
+            priority: normalizedPriority,
             is_read: false,
           })
           .select(

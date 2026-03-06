@@ -9,9 +9,9 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { AlertComponent } from "../alert/alert.component";
 import { ButtonComponent } from "../button/button.component";
 import { ProgressBar } from "primeng/progressbar";
-import { Message } from "primeng/message";
 import { LoggerService } from "../../../core/services/logger.service";
 import { timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -35,7 +35,7 @@ export interface ImageUploadResult {
   imports: [
     CommonModule,
     ProgressBar,
-    Message,
+    AlertComponent,
     ButtonComponent,
     MobileOptimizedImageDirective,
   ],
@@ -161,9 +161,11 @@ export interface ImageUploadResult {
 
       <!-- Error Message -->
       @if (errorMessage()) {
-        <p-message severity="error" class="status-message">
-          {{ errorMessage() }}
-        </p-message>
+        <app-alert
+          variant="error"
+          [message]="errorMessage() || ''"
+          styleClass="status-message"
+        />
       }
     </div>
   `,

@@ -15,7 +15,6 @@ import { Dock } from "primeng/dock";
 import { Drawer } from "primeng/drawer";
 import { InputText } from "primeng/inputtext";
 import { Menubar } from "primeng/menubar";
-import { Message } from "primeng/message";
 import { MultiSelect } from "primeng/multiselect";
 import { Paginator } from "primeng/paginator";
 import { PickList } from "primeng/picklist";
@@ -28,8 +27,8 @@ import { Timeline } from "primeng/timeline";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { Tooltip } from "primeng/tooltip";
 import { UIChart } from "primeng/chart";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { ToastComponent } from "../../shared/components/toast/toast.component";
 import { ResponsiveGridSpanDirective } from "../../shared/directives/responsive-grid-span.directive";
 import { PlatformService } from "../../core/services/platform.service";
 import { ELITE_INTERACTION_BEHAVIORS } from "./elite-interaction.behaviors";
@@ -73,7 +72,7 @@ interface ProtocolStep {
     CommonModule,
     FormsModule,
     MainLayoutComponent,
-    ToastComponent,
+    AlertComponent,
     ResponsiveGridSpanDirective,
     Menubar,
     Breadcrumb,
@@ -90,7 +89,6 @@ interface ProtocolStep {
     StepList,
     Step,
     ToggleSwitch,
-    Message,
     Tabs,
     TabPanel,
     MultiSelect,

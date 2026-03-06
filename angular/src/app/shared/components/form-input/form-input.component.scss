@@ -5,26 +5,8 @@
 
 @use "styles/mixins" as *;
 
-.form-input-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2); /* 0.5rem label-to-input gap */
-  margin-bottom: var(--space-4); /* 1rem between form fields */
-}
-
-.input-label {
-  font-weight: var(--ds-font-weight-semibold);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-primary);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.input-label.required::after {
-  content: "*";
-  color: var(--red-600);
-  font-weight: var(--ds-font-weight-bold);
+.form-input {
+  margin-bottom: var(--space-4);
 }
 
 .optional-badge {
@@ -34,12 +16,6 @@
   background: var(--surface-100);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-lg);
-}
-
-.input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
 }
 
 /* Native input styling defers to global form control system (2.calc(var(--size-200) * 6) height, 0.5rem radius) */
@@ -56,11 +32,11 @@ input.has-suffix {
 }
 
 /* Validation States - uses global error/success state styling */
-.form-input-wrapper.has-error input {
+.form-input.has-error input {
   border-color: var(--color-status-error);
 }
 
-.form-input-wrapper.has-success input {
+.form-input.has-success input {
   border-color: var(--color-status-success);
 }
 
@@ -80,7 +56,7 @@ input.has-suffix {
   right: var(--space-3);
 }
 
-.validation-icon {
+.form-input__validation-icon {
   position: absolute;
   right: var(--space-3);
   display: flex;
@@ -89,56 +65,8 @@ input.has-suffix {
   font-size: var(--ds-font-size-md);
 }
 
-.password-toggle {
-  position: absolute;
-  right: var(--space-3);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-1);
-  color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast),
-    background var(--transition-fast);
-
-  @include ds-focus-ring(var(--color-brand-primary));
-  @include ds-hover-state(
-    var(--surface-100),
-    $color: var(--color-text-primary)
-  );
-}
-
-/* Messages */
-.hint-text,
-.success-message,
-.error-message {
-  font-size: var(--ds-font-size-xs);
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-}
-
-.hint-text {
-  color: var(--color-text-secondary);
-}
-
-.hint-text i {
-  font-size: var(--ds-font-size-md);
-}
-
-.success-message {
-  color: var(--green-700);
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.error-message {
-  color: var(--red-700);
+.form-success,
+.form-error {
   font-weight: var(--ds-font-weight-medium);
 }
 
@@ -156,7 +84,7 @@ input.has-suffix {
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .password-toggle {
+  .form-field__toggle {
     transition: none;
   }
 }

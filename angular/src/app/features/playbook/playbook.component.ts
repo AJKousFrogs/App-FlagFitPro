@@ -21,10 +21,10 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
-import { Message } from "primeng/message";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { firstValueFrom } from "rxjs";
@@ -86,9 +86,9 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     CommonModule,
     DatePipe,
     Card,
+    AlertComponent,
     Dialog,
     InputText,
-    Message,
     ProgressBar,
     Select,
 
@@ -220,13 +220,12 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             }
           </div>
         } @else {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-book"
-              heading="No plays found"
-              [description]="getEmptyDescription()"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-book"
+            heading="No plays found"
+            [description]="getEmptyDescription()"
+          />
         }
       </div>
 
@@ -394,19 +393,19 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
                 </div>
 
                 @if (answerSubmitted()) {
-                  <p-message
-                    [severity]="
+                  <app-alert
+                    [variant]="
                       selectedAnswer() === q.correctIndex ? 'success' : 'error'
                     "
-                    class="status-message"
-                  >
-                    {{
+                    [message]="
                       selectedAnswer() === q.correctIndex
-                        ? "Correct!"
-                        : "Incorrect. The correct answer is: " +
+                        ? 'Correct!'
+                        : 'Incorrect. The correct answer is: ' +
                           q.options[q.correctIndex]
-                    }}
-                  </p-message>
+                    "
+                    density="compact"
+                    styleClass="status-message"
+                  />
                 }
               </div>
             }
@@ -453,20 +452,26 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             </p>
 
             @if (quizScore() >= 80) {
-              <p-message
-                severity="success"
-                class="status-message status-message--success"
-              >
-                Great job! You know your plays well.
-              </p-message>
+              <app-alert
+                variant="success"
+                message="Great job! You know your plays well."
+                density="compact"
+                styleClass="status-message status-message--success"
+              />
             } @else if (quizScore() >= 60) {
-              <p-message severity="warn" class="status-message">
-                Good effort! Keep studying to improve.
-              </p-message>
+              <app-alert
+                variant="warning"
+                message="Good effort! Keep studying to improve."
+                density="compact"
+                styleClass="status-message"
+              />
             } @else {
-              <p-message severity="info" class="status-message">
-                Keep studying! Review the plays you missed.
-              </p-message>
+              <app-alert
+                variant="info"
+                message="Keep studying! Review the plays you missed."
+                density="compact"
+                styleClass="status-message"
+              />
             }
 
             <div class="results-actions">

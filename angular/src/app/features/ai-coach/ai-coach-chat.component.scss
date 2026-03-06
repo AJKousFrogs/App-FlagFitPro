@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-@use "app/shared/styles/animations" as *;
 
 /* ================================================================
    AI COACH CHAT COMPONENT STYLES
@@ -231,7 +230,8 @@
   flex-direction: column;
   align-items: center;
   padding: var(--space-8) var(--space-4);
-  animation: fadeInUp 0.6s ease-out;
+  --ui-motion-enter-from-y: var(--space-5);
+  animation: ui-motion-enter-y 0.6s ease-out;
 }
 
 .welcome-hero {
@@ -271,28 +271,17 @@
 }
 
 .ring-1 {
-  animation: ring-expand 3s ease-out infinite;
+  animation: ui-motion-ring-expand 3s ease-out infinite;
 }
 
 .ring-2 {
-  animation: ring-expand 3s ease-out infinite;
+  animation: ui-motion-ring-expand 3s ease-out infinite;
   animation-delay: 1s;
 }
 
 .ring-3 {
-  animation: ring-expand 3s ease-out infinite;
+  animation: ui-motion-ring-expand 3s ease-out infinite;
   animation-delay: 2s;
-}
-
-@keyframes ring-expand {
-  0% {
-    transform: scale(0.8);
-    opacity: var(--opacity-quarter);
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
 }
 
 .welcome-hero h2 {
@@ -575,16 +564,7 @@
 .stage-text {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  animation: ui-motion-fade-in 0.3s ease-out;
 }
 
 .typing-dots {
@@ -624,37 +604,8 @@
 }
 
 /* Safety banner */
-.safety-banner {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-warning-bg);
-  border: var(--border-1) solid rgba(var(--primitive-warning-500-rgb), 0.3);
-  border-radius: var(--radius-lg);
+.safety-alert {
   margin-bottom: var(--space-3);
-}
-
-.safety-banner i {
-  color: var(--color-status-warning);
-  font-size: var(--ds-font-size-md);
-  margin-top: var(--space-1);
-}
-
-.banner-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.banner-content strong {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-warning-text);
-}
-
-.banner-content span {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-status-warning);
 }
 
 /* Risk indicator */

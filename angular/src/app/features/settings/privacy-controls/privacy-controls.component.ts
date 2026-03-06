@@ -29,6 +29,7 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -70,6 +71,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     DatePipe,
     ButtonComponent,
     IconButtonComponent,
+    AlertComponent,
     StatusTagComponent,
     AppLoadingComponent,
     EmptyStateComponent,
@@ -147,15 +149,13 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               </div>
 
               @if (!aiProcessingEnabled) {
-                <div class="warning-banner" role="alert">
-                  <i class="pi pi-info-circle" aria-hidden="true"></i>
-                  <span>
-                    With AI processing disabled, you won't receive personalized
-                    training recommendations or automated injury risk
-                    assessments. All AI features will show generic guidance
-                    instead.
-                  </span>
-                </div>
+                <app-alert
+                  variant="warning"
+                  density="compact"
+                  icon="pi pi-info-circle"
+                  message="With AI processing disabled, you won't receive personalized training recommendations or automated injury risk assessments. All AI features will show generic guidance instead."
+                  styleClass="privacy-alert"
+                />
               }
 
               <div class="consent-info">
@@ -488,15 +488,18 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <i class="pi pi-trash" aria-hidden="true"></i>
                   <h5>Delete Account</h5>
                   @if (hasPendingDeletion()) {
-                    <div class="pending-deletion-warning">
-                      <p class="warning-text">
-                        <i
-                          class="pi pi-exclamation-triangle"
-                          aria-hidden="true"
-                        ></i>
-                        Deletion scheduled in
-                        {{ deletionStatus()?.daysUntilDeletion }} days
-                      </p>
+                    <div class="pending-deletion-state">
+                      <app-alert
+                        variant="warning"
+                        density="compact"
+                        icon="pi pi-exclamation-triangle"
+                        [message]="
+                          'Deletion scheduled in ' +
+                          deletionStatus()?.daysUntilDeletion +
+                          ' days'
+                        "
+                        styleClass="privacy-alert"
+                      />
                       <app-button
                         variant="outlined"
                         size="sm"
@@ -596,26 +599,28 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         [modal]="true"
         class="privacy-delete-dialog"
       >
-        <div class="delete-warning" role="alert">
-          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-          <h4>This action cannot be undone</h4>
-          <p>
-            Your account will be immediately deactivated. All personal data will
-            be permanently deleted within 30 days as required by our privacy
-            policy.
-          </p>
-          <div class="retention-note">
-            <i class="pi pi-info-circle" aria-hidden="true"></i>
-            <small>
-              Emergency medical records are retained for 7 years as required by
-              law.
-            </small>
-          </div>
-          <div class="cancellation-note">
-            <i class="pi pi-clock" aria-hidden="true"></i>
-            <small>
-              You can cancel this request within 30 days by logging back in.
-            </small>
+        <div class="delete-warning-content">
+          <app-alert
+            variant="error"
+            icon="pi pi-exclamation-triangle"
+            title="This action cannot be undone"
+            message="Your account will be immediately deactivated. All personal data will be permanently deleted within 30 days as required by our privacy policy."
+            styleClass="privacy-alert"
+          />
+          <div class="delete-warning-notes">
+            <div class="retention-note">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              <small>
+                Emergency medical records are retained for 7 years as required
+                by law.
+              </small>
+            </div>
+            <div class="cancellation-note">
+              <i class="pi pi-clock" aria-hidden="true"></i>
+              <small>
+                You can cancel this request within 30 days by logging back in.
+              </small>
+            </div>
           </div>
           <div class="form-field">
             <label for="deletionReason">Reason for leaving (optional):</label>

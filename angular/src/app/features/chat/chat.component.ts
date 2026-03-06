@@ -48,6 +48,7 @@ import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -70,6 +71,7 @@ import { getInitials } from "../../shared/utils/format.utils";
     Textarea,
     Tooltip,
     MainLayoutComponent,
+    AlertComponent,
     ButtonComponent,
     IconButtonComponent,
     StatusTagComponent,

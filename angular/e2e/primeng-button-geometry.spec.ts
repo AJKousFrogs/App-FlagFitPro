@@ -9,8 +9,21 @@ import { test, expect, Page } from "@playwright/test";
 const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 const TEST_USER = {
   email: process.env["TEST_USER_EMAIL"] || "aljkous@gmail.com",
-  password: process.env["TEST_USER_PASSWORD"] || "",
+  password: process.env["TEST_USER_PASSWORD"] || "Futsal12!!!!",
 };
+
+async function primeCookieConsent(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const consent = {
+      necessary: true,
+      analytics: true,
+      functional: true,
+      consentDate: new Date().toISOString(),
+      consentVersion: "1.0",
+    };
+    localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
+  });
+}
 
 async function dismissCookieBanner(page: Page): Promise<void> {
   await page.evaluate(() => {
@@ -40,6 +53,7 @@ async function dismissCookieBanner(page: Page): Promise<void> {
 }
 
 async function login(page: Page): Promise<void> {
+  await primeCookieConsent(page);
   await page.goto(`${BASE_URL}/login`);
   await dismissCookieBanner(page);
 

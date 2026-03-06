@@ -1,6 +1,6 @@
 
 <app-main-layout>
-  <div class="settings-page section-stack elite-phase2-shell">
+  <div class="settings-page section-stack elite-phase2-shell ui-page-shell ui-page-stack">
     <app-page-header
       title="Settings"
       subtitle="Manage your account and application preferences"
@@ -15,53 +15,57 @@
     </app-page-header>
 
     <!-- Settings Navigation / Quick Links -->
-    <p-card class="settings-nav-card">
-      <div class="settings-nav">
+      <div class="settings-nav-card ui-page-nav">
         <button
-                  type="button"
+          type="button"
           (click)="scrollToSection('account-settings', $event)"
-          class="settings-nav-item"
+          class="settings-nav-item ui-page-nav__item"
         >
           <i class="pi pi-user"></i>
           <span>Account</span>
         </button>
         <button
-                  type="button"
+          type="button"
           (click)="scrollToSection('notifications-settings', $event)"
-          class="settings-nav-item"
+          class="settings-nav-item ui-page-nav__item"
         >
           <i class="pi pi-bell"></i>
           <span>Notifications</span>
         </button>
         <button
-                  type="button"
+          type="button"
           (click)="scrollToSection('privacy-settings', $event)"
-          class="settings-nav-item"
+          class="settings-nav-item ui-page-nav__item"
         >
           <i class="pi pi-lock"></i>
           <span>Privacy & Security</span>
         </button>
         <button
-                  type="button"
+          type="button"
           (click)="scrollToSection('preferences-settings', $event)"
-          class="settings-nav-item"
+          class="settings-nav-item ui-page-nav__item"
         >
           <i class="pi pi-sliders-h"></i>
           <span>Preferences</span>
         </button>
       </div>
-    </p-card>
 
     <!-- Settings Grid -->
     <div class="settings-grid form-controls-full">
       <!-- Section 1: Account Settings -->
-      <div id="account-settings" class="settings-section">
-        <h2 class="settings-section-title">
-          <i class="pi pi-user"></i>
-          Account Settings
-        </h2>
-        <div class="settings-section-description">
-          Manage your personal information and account details
+      <div id="account-settings" class="settings-section ui-stack-md">
+        <div class="ui-section-heading">
+          <div class="ui-section-heading__content">
+            <h2 class="ui-section-heading__title">
+              <span class="ui-section-heading__icon">
+                <i class="pi pi-user"></i>
+              </span>
+              Account Settings
+            </h2>
+            <p class="ui-section-heading__description">
+              Manage your personal information and account details
+            </p>
+          </div>
         </div>
 
         <!-- Profile Settings -->
@@ -70,9 +74,9 @@
           headerIcon="pi-user"
           headerIconColor="primary"
         >
-          <form [formGroup]="profileForm">
-            <div class="p-field mb-4">
-              <label for="settings-displayName" class="p-label"
+          <form [formGroup]="profileForm" class="settings-profile-form ui-stack-md">
+            <div class="form-field">
+              <label for="settings-displayName" class="form-label"
                 >Display Name</label
               >
               <input
@@ -85,8 +89,8 @@
                 autocomplete="name"
               />
             </div>
-            <div class="p-field mb-4">
-              <label for="settings-email" class="p-label">Email</label>
+            <div class="form-field">
+              <label for="settings-email" class="form-label">Email</label>
               <input
                 id="settings-email"
                 name="email"
@@ -97,8 +101,8 @@
                 autocomplete="email"
               />
             </div>
-            <div class="p-field mb-4">
-              <label for="settings-dob" class="p-label">Date of Birth</label>
+            <div class="form-field">
+              <label for="settings-dob" class="form-label">Date of Birth</label>
               <div class="datepicker-with-suggestion">
                 <p-datepicker
                   appBirthdayInputSuggestion
@@ -129,27 +133,27 @@
                         }
                       </div>
                     </div>
-                    <button
-                  type="button"
-                      class="suggestion-apply-btn"
-                      (click)="applyBirthdaySuggestion()"
-                      aria-label="Apply suggested date"
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      iconLeft="check"
+                      (clicked)="applyBirthdaySuggestion()"
+                      ariaLabel="Apply suggested date"
                     >
-                      <i class="pi pi-check"></i>
                       Apply
-                    </button>
+                    </app-button>
                   </div>
                 }
               </div>
               @if (calculateAge() !== null) {
-                <small class="age-display"
+                <small class="form-help age-display"
                   >Age: {{ calculateAge() }} years</small
                 >
               }
             </div>
             <div class="form-row two-columns">
               <div class="form-field">
-                <label for="settings-position" class="p-label">Position</label>
+                <label for="settings-position" class="form-label">Position</label>
                 <p-select
                   inputId="settings-position"
                   formControlName="position"
@@ -162,7 +166,7 @@
                 ></p-select>
               </div>
               <div class="form-field">
-                <label for="settings-jerseyNumber" class="p-label"
+                <label for="settings-jerseyNumber" class="form-label"
                   >Jersey Number</label
                 >
                 <input
@@ -179,7 +183,7 @@
             </div>
             <div class="form-row two-columns">
               <div class="form-field">
-                <label for="settings-height" class="p-label">Height (cm)</label>
+                <label for="settings-height" class="form-label">Height (cm)</label>
                 <input
                   id="settings-height"
                   name="height"
@@ -193,7 +197,7 @@
                 />
               </div>
               <div class="form-field">
-                <label for="settings-weight" class="p-label">Weight (kg)</label>
+                <label for="settings-weight" class="form-label">Weight (kg)</label>
                 <input
                   id="settings-weight"
                   name="weight"
@@ -207,8 +211,8 @@
                 />
               </div>
             </div>
-            <div class="p-field mb-4">
-              <label for="settings-team" class="p-label">Team</label>
+            <div class="form-field">
+              <label for="settings-team" class="form-label">Team</label>
               <p-select
                 inputId="settings-team"
                 formControlName="teamId"
@@ -220,13 +224,13 @@
                 (onChange)="onTeamChange($event.value)"
                 [attr.aria-label]="'Select your team'"
               ></p-select>
-              <small class="field-hint">
+              <small class="form-help field-hint">
                 <i class="pi pi-info-circle"></i>
                 Select your team or request to create a new one
               </small>
             </div>
-            <div class="p-field mb-4">
-              <label for="settings-phone" class="p-label">Phone Number</label>
+            <div class="form-field">
+              <label for="settings-phone" class="form-label">Phone Number</label>
               <input
                 id="settings-phone"
                 name="phone"
@@ -237,8 +241,8 @@
                 autocomplete="tel"
               />
             </div>
-            <div class="p-field mb-4">
-              <label for="settings-country" class="p-label">Country</label>
+            <div class="form-field">
+              <label for="settings-country" class="form-label">Country</label>
               <p-select
                 inputId="settings-country"
                 formControlName="country"
@@ -256,13 +260,19 @@
       </div>
 
       <!-- Section 2: Notifications -->
-      <div id="notifications-settings" class="settings-section">
-        <h2 class="settings-section-title">
-          <i class="pi pi-bell"></i>
-          Notifications
-        </h2>
-        <div class="settings-section-description">
-          Control how and when you receive notifications
+      <div id="notifications-settings" class="settings-section ui-stack-md">
+        <div class="ui-section-heading">
+          <div class="ui-section-heading__content">
+            <h2 class="ui-section-heading__title">
+              <span class="ui-section-heading__icon">
+                <i class="pi pi-bell"></i>
+              </span>
+              Notifications
+            </h2>
+            <p class="ui-section-heading__description">
+              Control how and when you receive notifications
+            </p>
+          </div>
         </div>
 
         <app-notification-preferences-card
@@ -271,13 +281,19 @@
       </div>
 
       <!-- Section 3: Privacy & Security -->
-      <div id="privacy-settings" class="settings-section">
-        <h2 class="settings-section-title">
-          <i class="pi pi-lock"></i>
-          Privacy & Security
-        </h2>
-        <div class="settings-section-description">
-          Manage your privacy settings and account security
+      <div id="privacy-settings" class="settings-section ui-stack-md">
+        <div class="ui-section-heading">
+          <div class="ui-section-heading__content">
+            <h2 class="ui-section-heading__title">
+              <span class="ui-section-heading__icon">
+                <i class="pi pi-lock"></i>
+              </span>
+              Privacy & Security
+            </h2>
+            <p class="ui-section-heading__description">
+              Manage your privacy settings and account security
+            </p>
+          </div>
         </div>
 
         <app-privacy-controls-card
@@ -288,13 +304,19 @@
       </div>
 
       <!-- Section 4: Preferences -->
-      <div id="preferences-settings" class="settings-section">
-        <h2 class="settings-section-title">
-          <i class="pi pi-sliders-h"></i>
-          Preferences
-        </h2>
-        <div class="settings-section-description">
-          Customize your app experience and display options
+      <div id="preferences-settings" class="settings-section ui-stack-md">
+        <div class="ui-section-heading">
+          <div class="ui-section-heading__content">
+            <h2 class="ui-section-heading__title">
+              <span class="ui-section-heading__icon">
+                <i class="pi pi-sliders-h"></i>
+              </span>
+              Preferences
+            </h2>
+            <p class="ui-section-heading__description">
+              Customize your app experience and display options
+            </p>
+          </div>
         </div>
 
         <app-app-preferences-card

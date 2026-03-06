@@ -26,27 +26,30 @@ import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
 import { Card } from "primeng/card";
 import { GlobalErrorHandlerService } from "../../../core/services/global-error-handler.service";
+import { PageErrorStateComponent } from "../page-error-state/page-error-state.component";
 
 @Component({
   selector: "app-error-boundary",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Card, ButtonComponent],
+  imports: [Card, ButtonComponent, PageErrorStateComponent],
   template: `
     @if (hasError()) {
       <div class="error-boundary-container">
-        <p-card class="error-card">
-          <div class="error-content">
-            <div class="error-icon">
-              <i class="pi pi-exclamation-triangle"></i>
-            </div>
-            <h2 class="error-title">Something went wrong</h2>
-            <p class="error-message">
-              {{ errorMessage() }}
-            </p>
+        <p-card class="error-boundary-card">
+          <div class="error-boundary-layout">
+            <app-page-error-state
+              class="error-boundary-state"
+              titleTag="h2"
+              title="Something went wrong"
+              [message]="errorMessage()"
+              icon="pi-exclamation-triangle"
+              [showRetry]="false"
+              helpText="If this problem persists, please contact support."
+            ></app-page-error-state>
             @if (componentName()) {
-              <p class="error-component">Component: {{ componentName() }}</p>
+              <p class="error-boundary-meta">Component: {{ componentName() }}</p>
             }
-            <div class="error-actions">
+            <div class="error-boundary-actions">
               <app-button iconLeft="pi-refresh" (clicked)="retry()"
                 >Try Again</app-button
               >
@@ -57,9 +60,6 @@ import { GlobalErrorHandlerService } from "../../../core/services/global-error-h
                 >Go to Dashboard</app-button
               >
             </div>
-            <p class="error-help">
-              If this problem persists, please contact support.
-            </p>
           </div>
         </p-card>
       </div>

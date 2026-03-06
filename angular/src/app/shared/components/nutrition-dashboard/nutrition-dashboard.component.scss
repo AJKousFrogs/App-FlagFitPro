@@ -233,40 +233,40 @@
   gap: var(--space-4);
 }
 
-.insight-item {
+.nutrition-insight-card {
   display: flex;
   gap: var(--space-4);
   padding: var(--space-4);
   border-radius: var(--radius-md);
 }
 
-.insight-item.positive {
+.nutrition-insight-card.positive {
   background: var(--color-status-success-subtle);
   border-left: var(--border-4) solid var(--ds-primary-green);
 }
 
-.insight-item.warning {
+.nutrition-insight-card.warning {
   background: var(--primitive-warning-50);
   border-left: var(--border-4) solid var(--color-status-warning);
 }
 
-.insight-item.negative {
+.nutrition-insight-card.negative {
   background: var(--primitive-error-50);
   border-left: var(--border-4) solid var(--color-status-error);
 }
 
-.insight-icon {
+.nutrition-insight-icon {
   display: flex;
   align-items: center;
   font-size: var(--ds-font-size-2xl);
 }
 
-.insight-content h5 {
+.nutrition-insight-content h5 {
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text-primary);
 }
 
-.insight-content p {
+.nutrition-insight-content p {
   margin: 0 0 var(--space-3) 0;
   color: var(--color-text-secondary);
 }

@@ -188,21 +188,14 @@
             } @else {
               <!-- Important/Pinned Banner -->
               @if (currentImportantMessage()) {
-                <div class="important-banner">
-                  <i class="pi pi-exclamation-circle"></i>
-                  <span class="banner-content">
-                    <strong>Important:</strong>
-                    {{ currentImportantMessage()?.message }}
-                  </span>
-                  <app-icon-button
-                    icon="pi-times"
-                    variant="text"
-                    size="sm"
-                    (clicked)="dismissImportantBanner()"
-                    ariaLabel="Dismiss important message"
-                    tooltip="Dismiss"
-                  />
-                </div>
+                <app-alert
+                  variant="warning"
+                  title="Important"
+                  [message]="currentImportantMessage()?.message || ''"
+                  [dismissible]="true"
+                  styleClass="important-banner-alert"
+                  (dismissed)="dismissImportantBanner()"
+                />
               }
 
               <!-- Messages List -->
@@ -315,10 +308,13 @@
               <!-- Message Input -->
               <div class="message-input-container">
                 @if (!canPostInChannel()) {
-                  <div class="cannot-post-notice">
-                    <i class="pi pi-lock"></i>
-                    Only coaches can post in this channel
-                  </div>
+                  <app-alert
+                    variant="info"
+                    density="compact"
+                    icon="pi-lock"
+                    message="Only coaches can post in this channel."
+                    styleClass="cannot-post-alert"
+                  />
                 } @else {
                   <!-- Mention suggestions -->
                   @if (showMentionSuggestions()) {

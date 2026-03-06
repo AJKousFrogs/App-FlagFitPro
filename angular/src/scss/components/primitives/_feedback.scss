@@ -24,10 +24,11 @@
     align-items: flex-start;
     gap: var(--space-3);
     padding: var(--space-4);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     border: var(--border-1) solid;
     font-size: var(--font-body-sm-size);
     line-height: var(--line-height-normal);
+    box-shadow: var(--shadow-sm);
   }
 
   .alert__icon {
@@ -122,6 +123,12 @@
   // Compact alert (no icon)
   .alert--compact {
     padding: var(--space-3);
+  }
+
+  .toast-surface {
+    border-radius: var(--component-toast-radius);
+    padding: var(--component-toast-padding);
+    box-shadow: var(--component-toast-shadow);
   }
 
   // ============================================

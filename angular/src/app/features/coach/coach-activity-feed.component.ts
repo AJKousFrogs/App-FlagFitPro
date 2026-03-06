@@ -200,13 +200,20 @@ import { getInitials } from "../../shared/utils/format.utils";
       <!-- Quick Stats Summary -->
       @if (showSummary() && activities().length > 0) {
         <div class="activity-summary">
-          <div class="summary-item">
-            <i class="pi pi-chart-bar"></i>
-            <span>{{ todayStatsCount() }} stats logged today</span>
+          <div class="meta-row">
+            <i class="pi pi-chart-bar meta-row__icon" aria-hidden="true"></i>
+            <span class="meta-row__text"
+              >{{ todayStatsCount() }} stats logged today</span
+            >
           </div>
-          <div class="summary-item">
-            <i class="pi pi-check-circle"></i>
-            <span>{{ todayTrainingCount() }} training sessions</span>
+          <div class="meta-row">
+            <i
+              class="pi pi-check-circle meta-row__icon"
+              aria-hidden="true"
+            ></i>
+            <span class="meta-row__text"
+              >{{ todayTrainingCount() }} training sessions</span
+            >
           </div>
         </div>
       }

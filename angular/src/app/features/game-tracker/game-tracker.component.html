@@ -41,16 +41,14 @@
     @if (showGameForm()) {
       <app-card [title]="getFormTitle()" class="game-form-card">
         <!-- Visibility Info Banner -->
-        <div
-          class="visibility-info-banner"
-          [class.personal]="!isCoachOrAdmin()"
-        >
-          <i
-            class="pi"
-            [class.pi-users]="isCoachOrAdmin()"
-            [class.pi-user]="!isCoachOrAdmin()"
-          ></i>
-          <span>{{ getFormDescription() }}</span>
+        <div class="visibility-info-banner">
+          <app-alert
+            [variant]="isCoachOrAdmin() ? 'info' : 'warning'"
+            [icon]="isCoachOrAdmin() ? 'pi pi-users' : 'pi pi-user'"
+            [title]="isCoachOrAdmin() ? 'Team Game' : 'Personal Game'"
+            [message]="getFormDescription()"
+            density="compact"
+          />
         </div>
         <form [formGroup]="gameForm" (ngSubmit)="submitGame()">
           <!-- Row 1: Date, Time, Opponent, Location -->

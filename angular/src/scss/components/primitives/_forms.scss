@@ -31,8 +31,8 @@
   .form-field {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    margin-bottom: var(--space-5);
+    gap: var(--layout-gap-xs);
+    margin-bottom: var(--space-4);
   }
 
   // Full-width field (spans row in grid layouts)
@@ -45,11 +45,11 @@
   .form-field.checkbox-field,
   .form-field.form-field--checkbox {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
+    background: var(--ui-surface-card-alt);
+    border-radius: var(--radius-lg);
     border: var(--border-1) solid var(--color-border-default);
   }
 
@@ -95,11 +95,11 @@
   .form-label,
   .form-field > label:not(.checkbox-label) {
     display: block;
-    font-size: var(--font-body-sm-size);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-normal);
+    font-size: var(--font-label-size);
+    font-weight: var(--font-label-weight);
+    line-height: var(--font-label-line-height);
     color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
+    margin-bottom: 0;
   }
 
   // Label with icon (common pattern)
@@ -147,12 +147,31 @@
   // HELP TEXT
   // ============================================
 
-  .form-help {
-    display: block;
+  .form-feedback,
+  .form-help,
+  .form-error,
+  .form-success,
+  .form-field .p-error {
     font-size: var(--font-caption-size);
     line-height: var(--line-height-normal);
-    color: var(--color-text-muted);
     margin-top: var(--space-1);
+  }
+
+  .form-feedback {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .form-feedback i {
+    font-size: var(--font-body-sm-size);
+    line-height: 1.1;
+    flex-shrink: 0;
+  }
+
+  .form-help {
+    display: block;
+    color: var(--color-text-secondary);
   }
 
   // ============================================
@@ -161,10 +180,166 @@
 
   .form-error {
     display: block;
-    font-size: var(--font-caption-size);
-    line-height: var(--line-height-normal);
     color: var(--color-status-error);
-    margin-top: var(--space-1);
+  }
+
+  .form-success {
+    display: block;
+    color: var(--color-status-success);
+  }
+
+  .form-field .p-error {
+    display: block;
+    color: var(--color-status-error);
+  }
+
+  .form-field :where(input, textarea, select, .p-inputtext, .p-select) {
+    width: 100%;
+  }
+
+  .form-field :where(input, textarea, select, .p-inputtext) {
+    background: var(--component-input-background);
+    border-radius: var(--component-input-radius);
+  }
+
+  .form-field :where(input, textarea, select, .p-inputtext):focus-visible {
+    border-color: var(--component-input-border-focus);
+    box-shadow: var(--component-input-shadow-focus);
+  }
+
+  .form-field :where(input, textarea, select, .p-inputtext).ng-invalid.ng-touched,
+  .form-field :where(input, textarea, select, .p-inputtext)[aria-invalid="true"] {
+    border-color: var(--component-input-error);
+  }
+
+  .form-field
+    :where(input, textarea, select, .p-inputtext).ng-invalid.ng-touched:focus-visible,
+  .form-field
+    :where(input, textarea, select, .p-inputtext)[aria-invalid="true"]:focus-visible {
+    box-shadow: var(--component-input-error-shadow);
+  }
+
+  .form-field__control,
+  .password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-field__control :where(input, .p-inputtext, .p-password-input) {
+    width: 100%;
+    padding-right: calc(var(--component-input-padding-x) + var(--touch-target-sm));
+  }
+
+  .form-field__action,
+  .form-field__toggle {
+    position: absolute;
+    right: var(--space-2);
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-target-sm);
+    height: var(--touch-target-sm);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .form-field__action:hover,
+  .form-field__toggle:hover {
+    background: var(--state-layer-primary);
+    color: var(--color-brand-primary);
+  }
+
+  .form-field__action:focus-visible,
+  .form-field__toggle:focus-visible {
+    outline: var(--focus-outline-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-outline-offset);
+  }
+
+  .form-inline-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .form-check {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    min-height: var(--input-height-md);
+    cursor: pointer;
+    user-select: none;
+    color: var(--color-text-secondary);
+  }
+
+  .form-check__input {
+    @include visually-hidden;
+  }
+
+  .form-check__box {
+    position: relative;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    margin-top: calc((var(--input-height-md) - 1.125rem) / 2);
+    border-radius: var(--radius-sm);
+    border: var(--border-1) solid var(--color-border-default);
+    background: var(--surface-primary);
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .form-check__box::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.3125rem;
+    height: 0.625rem;
+    border: solid var(--color-text-on-primary);
+    border-width: 0 var(--border-2) var(--border-2) 0;
+    transform: translate(-50%, -58%) rotate(45deg);
+    opacity: 0;
+  }
+
+  .form-check__input:checked + .form-check__box {
+    background: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+  }
+
+  .form-check__input:checked + .form-check__box::after {
+    opacity: 1;
+  }
+
+  .form-check__input:focus-visible + .form-check__box {
+    box-shadow: var(--shadow-focus);
+    border-color: var(--color-brand-primary);
+  }
+
+  .form-check__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    color: var(--color-text-secondary);
+    font-size: var(--font-body-sm-size);
+    line-height: var(--line-height-normal);
+  }
+
+  .form-check__label strong,
+  .form-check__label a {
+    color: var(--color-text-primary);
   }
 
   // Animated entrance
@@ -403,12 +578,14 @@
 
   .form-input-addon--start {
     border-right: none;
-    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    border-radius: var(--component-input-radius) 0 0
+      var(--component-input-radius);
   }
 
   .form-input-addon--end {
     border-left: none;
-    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    border-radius: 0 var(--component-input-radius)
+      var(--component-input-radius) 0;
   }
 
   .form-input-group .p-inputtext {
@@ -416,11 +593,13 @@
     border-radius: 0;
 
     &:first-child {
-      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      border-radius: var(--component-input-radius) 0 0
+        var(--component-input-radius);
     }
 
     &:last-child {
-      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      border-radius: 0 var(--component-input-radius)
+        var(--component-input-radius) 0;
     }
   }
 
@@ -468,7 +647,7 @@
   // INPUT HEIGHT UTILITIES
   // ============================================
   // Standardized heights for all form inputs
-  // Default: 2.75rem (meets iOS touch target requirement)
+  // Default: 3rem / 48px
 
   .form-input--sm {
     min-height: var(--input-height-sm);

@@ -1,32 +1,8 @@
-// ============================================================================
-// Button Component Styles - Unified Design System
-// ============================================================================
-// THE SINGLE SOURCE OF TRUTH FOR BUTTON STYLING IN THE APP
-// All buttons use <app-button> or <app-icon-button> which use these styles.
-//
-// NORMALIZED DESIGN CONTRACT (STRICTLY ENFORCED):
-// ============================================================================
-//
-// ARCHITECTURE:
-// - Base .btn: ALL geometry is LOCKED and IDENTICAL across variants
-// - Variants: ONLY control color, background, border, shadow
-// - NO variant may override height, padding, radius, or font
-// ============================================================================
-
-// NOTE: No @layer here - component styles are scoped by Angular's ViewEncapsulation
-// and should have highest specificity within the component
-
 @use "styles/mixins" as *;
 
 :host {
   display: inline-block;
 }
-
-// ============================================
-// FULL WIDTH MODE
-// Activated via [fullWidth]="true" input or
-// when placed inside a button-grid container
-// ============================================
 
 :host(.btn-full-width) {
   display: block;
@@ -37,8 +13,6 @@
   }
 }
 
-// Auto full-width when inside grid containers
-// These global classes force all buttons to equal width
 :host-context(.button-grid),
 :host-context(.quick-actions-grid),
 :host-context(.actions-grid) {
@@ -50,359 +24,206 @@
   }
 }
 
-// ============================================
-// BASE BUTTON STYLES
-// ALL GEOMETRY IS LOCKED - VARIANTS CANNOT OVERRIDE
-// ============================================
-
 .btn,
 button.btn,
 a.btn {
-  // ─────────────────────────────────────────
-  // LOCKED GEOMETRY - IDENTICAL FOR ALL VARIANTS
-  // ─────────────────────────────────────────
+  --btn-background: var(--ui-primary);
+  --btn-background-hover: var(--ui-primary-hover);
+  --btn-background-active: var(--ui-primary-active);
+  --btn-color: var(--color-text-on-primary);
+  --btn-border: transparent;
+  --btn-shadow: var(--shadow-sm);
+  --btn-shadow-hover: var(--shadow-md);
+
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-
-  // FIXED HEIGHT - exactly 2.calc(var(--size-200) * 6), not min-height
+  gap: var(--component-button-gap);
+  width: auto;
+  min-width: 0;
   height: var(--button-height-md);
-
-  // FIXED PADDING - identical for all variants
-  padding: 0 var(--space-6);
-
-  // FIXED TYPOGRAPHY - identical for all variants
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  line-height: var(--ds-line-height-1);
-  text-decoration: none;
-  text-align: center;
-
-  // FIXED SHAPE - identical for all variants (default: --radius-lg per DESIGN_SYSTEM_RULES.md)
-  border-radius: var(--radius-lg);
-
-  // FIXED INTERACTION PROPERTIES
+  padding: 0 var(--component-button-padding-x-md);
+  border: var(--border-1) solid var(--btn-border);
+  border-radius: var(--button-radius);
+  background: var(--btn-background);
+  box-shadow: var(--btn-shadow);
+  color: var(--btn-color);
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
+  text-decoration: none;
+  text-align: center;
   vertical-align: middle;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
-
-  // ─────────────────────────────────────────
-  // DEFAULT APPEARANCE
-  // Darker green for WCAG AA (white text 4.5:1)
-  // ─────────────────────────────────────────
-  background-color: var(--ds-primary-green-dark);
-  color: var(--color-text-on-primary);
-  border: var(--border-2) solid transparent;
-  box-shadow: var(--shadow-md);
-
-  // Transition
+  font-size: var(--font-body-sm-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--ds-line-height-1);
+  letter-spacing: var(--letter-spacing-normal);
   transition:
-    transform var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard),
-    background-color var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard),
-    color var(--motion-fast) var(--ease-standard),
-    opacity var(--motion-fast) var(--ease-standard);
-  will-change: transform, box-shadow;
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
+  -webkit-tap-highlight-color: transparent;
 
-  // Ensure icons inherit color
   i,
   .pi,
   svg,
-  .btn-icon {
+  .btn-icon,
+  .btn-content {
     color: inherit;
   }
 }
 
-// ============================================
-// HOVER STATE
-// White background + green text/icons + visible border
-// ============================================
-
 @media (hover: hover) and (pointer: fine) {
   .btn:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary);
-    color: var(--ds-primary-green-dark);
-    border-color: var(--ds-primary-green-dark);
-    transform: translateY(-var(--border-2));
-    box-shadow:
-      0 var(--space-2) var(--space-5) rgba(var(--ds-primary-green-rgb), 0.3),
-      var(--shadow-sm);
+    background: var(--btn-background-hover);
+    box-shadow: var(--btn-shadow-hover);
+    transform: translateY(calc(var(--border-1) * -1));
   }
 }
 
-// ============================================
-// ACTIVE/PRESSED STATE
-// ============================================
-
 .btn:active:not(:disabled):not(.btn-disabled) {
-  transform: translateY(0) scale(0.98);
-  box-shadow: var(--shadow-sm);
+  background: var(--btn-background-active);
+  transform: translateY(0);
+  box-shadow: var(--btn-shadow);
 }
 
-// ============================================
-// FOCUS STYLES (Accessibility)
-// ============================================
-
-.btn {
-  @include ds-focus-ring(
-    rgba(var(--ds-primary-green-rgb), 0.5),
-    $outline-width: var(--border-3),
-    $box-shadow: (
-      var(--shadow-md),
-      0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.25)
-    )
-  );
+.btn:focus-visible {
+  outline: var(--focus-outline-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: var(--shadow-focus);
 }
-
-// ============================================
-// DISABLED STYLES
-// ============================================
 
 .btn:disabled,
 .btn.btn-disabled {
   opacity: var(--opacity-dimmed);
   cursor: not-allowed;
-  transform: none;
-  box-shadow: var(--shadow-1);
   pointer-events: none;
+  transform: none;
+  box-shadow: none;
 }
-
-// ============================================
-// LOADING STATE
-// ============================================
 
 .btn.btn-loading {
   cursor: wait;
   pointer-events: none;
 }
 
-// ============================================
-// BUTTON VARIANTS
-// ONLY control: color, background, border, shadow
-// CANNOT change: height, padding, radius, font
-// Using .btn.btn-variant for higher specificity
-// ============================================
-
-// PRIMARY - Default (green bg + white text)
-// Explicitly defined for clarity; WCAG AA: darker green for white-on-green
-.btn.btn-primary {
-  background-color: var(--ds-primary-green-dark);
-  color: var(--color-text-on-primary);
-  border-color: transparent;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .btn.btn-primary:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary);
-    color: var(--ds-primary-green-dark);
-    border-color: var(--ds-primary-green-dark);
-  }
-}
-
-// SECONDARY - Light background with border
-// Using to ensure these override base .btn styles
-.btn.btn-secondary {
-  background-color: var(--surface-secondary);
-  color: var(--color-text-primary);
-  border-color: var(--color-border-muted);
-  box-shadow: var(--shadow-1);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .btn.btn-secondary:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--surface-tertiary);
-    color: var(--ds-primary-green-dark);
-    border-color: var(--ds-primary-green-dark);
-    box-shadow: var(--shadow-2);
-  }
-}
-
-// OUTLINED - Transparent with green border and green text (WCAG AA)
-.btn.btn-outlined {
-  background-color: transparent;
-  color: var(--ds-primary-green-dark);
-  border-color: var(--ds-primary-green-dark);
-  box-shadow: none;
-
-  .btn-content,
-  .btn-icon,
-  i {
-    color: var(--ds-primary-green-dark);
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .btn.btn-outlined:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--ds-primary-green-dark);
-    color: var(--color-text-on-primary);
-    border-color: var(--ds-primary-green-dark);
-    box-shadow: var(--shadow-1);
-
-    .btn-content,
-    .btn-icon,
-    i {
-      color: var(--color-text-on-primary);
-    }
-  }
-}
-
-// TEXT - Transparent, minimal style (WCAG AA)
-.btn.btn-text {
-  background-color: transparent;
-  color: var(--ds-primary-green-dark);
-  border-color: transparent;
-  box-shadow: none;
-
-  .btn-content,
-  .btn-icon,
-  i {
-    color: var(--ds-primary-green-dark);
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .btn.btn-text:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--ds-primary-green-subtle);
-    color: var(--ds-primary-green-hover);
-
-    .btn-content,
-    .btn-icon,
-    i {
-      color: var(--ds-primary-green-hover);
-    }
-  }
-}
-
-// DANGER - Red for destructive actions
-.btn.btn-danger {
-  background-color: var(--color-status-error);
-  color: var(--color-text-on-primary);
-  border-color: transparent;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .btn.btn-danger:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary);
-    color: var(--color-status-error);
-    border-color: var(--color-status-error);
-  }
-}
-
-.btn.btn-danger {
-  @include ds-focus-ring(
-    var(--color-status-error),
-    $outline-width: var(--border-3),
-    $box-shadow: (
-      var(--shadow-md),
-      0 0 0 var(--space-1) rgba(var(--primitive-error-500-rgb), 0.25)
-    )
-  );
-}
-
-// SUCCESS - Same as primary (WCAG AA)
+.btn.btn-primary,
 .btn.btn-success {
-  background-color: var(--ds-primary-green-dark);
-  color: var(--color-text-on-primary);
-  border-color: transparent;
+  --btn-background: var(--ui-primary);
+  --btn-background-hover: var(--ui-primary-hover);
+  --btn-background-active: var(--ui-primary-active);
+  --btn-color: var(--color-text-on-primary);
+  --btn-border: transparent;
+  --btn-shadow: var(--shadow-sm);
+  --btn-shadow-hover: var(--shadow-md);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .btn.btn-success:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary);
-    color: var(--ds-primary-green-dark);
-    border-color: var(--ds-primary-green-dark);
-  }
+.btn.btn-secondary {
+  --btn-background: var(--surface-card);
+  --btn-background-hover: var(--surface-secondary);
+  --btn-background-active: var(--ui-surface-subtle);
+  --btn-color: var(--color-text-primary);
+  --btn-border: var(--color-border-default);
+  --btn-shadow: none;
+  --btn-shadow-hover: var(--shadow-sm);
 }
 
-// ============================================
-// SIZE VARIANTS
-// Only sm and lg change geometry
-// ============================================
+.btn.btn-tertiary,
+.btn.btn-text {
+  --btn-background: transparent;
+  --btn-background-hover: rgba(var(--ds-primary-green-rgb), 0.08);
+  --btn-background-active: rgba(var(--ds-primary-green-rgb), 0.14);
+  --btn-color: var(--color-brand-primary);
+  --btn-border: transparent;
+  --btn-shadow: none;
+  --btn-shadow-hover: none;
+}
+
+.btn.btn-outlined {
+  --btn-background: transparent;
+  --btn-background-hover: rgba(var(--ds-primary-green-rgb), 0.06);
+  --btn-background-active: rgba(var(--ds-primary-green-rgb), 0.12);
+  --btn-color: var(--color-brand-primary);
+  --btn-border: rgba(var(--ds-primary-green-rgb), 0.22);
+  --btn-shadow: none;
+  --btn-shadow-hover: none;
+}
+
+.btn.btn-danger {
+  --btn-background: var(--ui-danger);
+  --btn-background-hover: var(--ui-danger-hover);
+  --btn-background-active: var(--primitive-error-700);
+  --btn-color: var(--color-text-on-primary);
+  --btn-border: transparent;
+  --btn-shadow: var(--shadow-sm);
+  --btn-shadow-hover: var(--shadow-md);
+}
 
 .btn.btn-sm {
-  height: var(--button-height-sm); /* 2.25rem */
-  padding: 0 var(--space-4);
-  font-size: var(--ds-font-size-sm);
-  gap: var(--space-1);
+  height: var(--button-height-sm);
+  padding: 0 var(--component-button-padding-x-sm);
+  font-size: var(--font-caption-size);
+  gap: var(--space-2);
 }
 
 .btn.btn-lg {
-  height: var(--button-height-lg); /* 3.25rem */
-  padding: 0 var(--space-8);
-  font-size: var(--ds-font-size-xl);
+  height: var(--button-height-lg);
+  padding: 0 var(--component-button-padding-x-lg);
+  font-size: var(--font-body-size);
   gap: var(--space-3);
 }
-
-// ============================================
-// FULL WIDTH
-// ============================================
 
 .btn-full-width {
   width: 100%;
 }
 
-// ============================================
-// ICON-ONLY BUTTONS
-// Square, same height as standard
-// ============================================
-
 .btn.btn-icon-only {
   width: var(--button-height-md);
-  height: var(--button-height-md);
   padding: 0;
   flex-shrink: 0;
 }
 
 .btn.btn-icon-only.btn-sm {
-  width: var(--button-height-sm); /* 2.25rem */
-  height: var(--button-height-sm);
+  width: var(--button-height-sm);
 }
 
 .btn.btn-icon-only.btn-lg {
-  width: var(--button-height-lg); /* 3.25rem */
-  height: var(--button-height-lg);
+  width: var(--button-height-lg);
 }
-
-// ============================================
-// ICON STYLES
-// ============================================
 
 .btn-icon {
-  font-size: var(--ds-icon-size-button);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--icon-base);
   line-height: var(--ds-line-height-1);
   flex-shrink: 0;
-  color: inherit;
 }
 
-.btn.btn-sm .btn-icon {
-  font-size: var(--ds-icon-size-button-sm);
+.btn.btn-sm .btn-icon,
+.btn.btn-sm .btn-spinner .pi {
+  font-size: var(--icon-md);
 }
 
-.btn.btn-lg .btn-icon {
-  font-size: var(--ds-icon-size-button-lg);
+.btn.btn-lg .btn-icon,
+.btn.btn-lg .btn-spinner .pi {
+  font-size: var(--icon-lg);
 }
-
-// ============================================
-// CONTENT STYLES
-// ============================================
 
 .btn-content {
   display: inline-flex;
   align-items: center;
+  min-width: 0;
   color: inherit;
-  transition: opacity var(--motion-fast) var(--ease-standard);
-  /* Ensure sufficient contrast - inherits from parent button which uses --color-text-on-primary on green bg */
 }
 
 .btn-content-loading {
-  opacity: var(--opacity-subtle);
+  opacity: var(--opacity-strong);
 }
 
 .btn-content.visually-hidden {
@@ -417,47 +238,21 @@ a.btn {
   border: 0;
 }
 
-// ============================================
-// SPINNER
-// ============================================
-
 .btn-spinner {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .btn-spinner .pi {
-  font-size: var(--ds-icon-size-button);
+  font-size: var(--icon-base);
 }
-
-.btn.btn-sm .btn-spinner .pi {
-  font-size: var(--ds-icon-size-button-sm);
-}
-
-.btn.btn-lg .btn-spinner .pi {
-  font-size: var(--ds-icon-size-button-lg);
-}
-
-// ============================================
-// TOUCH DEVICE OPTIMIZATIONS
-// ============================================
 
 @media (hover: none) and (pointer: coarse) {
   .btn:active:not(:disabled):not(.btn-disabled) {
-    transform: scale(0.97);
-  }
-
-  .btn-primary:active:not(:disabled):not(.btn-disabled),
-  .btn-danger:active:not(:disabled):not(.btn-disabled),
-  .btn-success:active:not(:disabled):not(.btn-disabled) {
-    opacity: var(--opacity-strong);
+    transform: scale(var(--motion-scale-press));
   }
 }
-
-// ============================================
-// REDUCED MOTION
-// ============================================
 
 @media (prefers-reduced-motion: reduce) {
   .btn {
@@ -470,39 +265,8 @@ a.btn {
   }
 }
 
-// ============================================
-// HIGH CONTRAST MODE
-// ============================================
-
 @media (prefers-contrast: high) {
   .btn {
-  border-width: var(--border-2);
-  }
-
-  .btn-text {
-    border-color: currentColor;
-  }
-
-  .btn:focus-visible {
-    outline-width: var(--space-0-75);
-  }
-}
-
-// ============================================
-// DARK MODE ADJUSTMENTS
-// Only color changes, no geometry changes
-// ============================================
-
-:host-context(.dark-theme),
-:host-context([data-theme="dark"]) {
-  .btn-secondary {
-    background-color: var(--surface-secondary);
-    border-color: var(--color-border-default);
-    color: var(--color-text-primary);
-  }
-
-  .btn-outlined {
-    border-color: var(--ds-primary-green);
-    color: var(--ds-primary-green);
+    border-width: var(--border-2);
   }
 }

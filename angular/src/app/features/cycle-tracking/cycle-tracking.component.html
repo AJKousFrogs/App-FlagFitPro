@@ -7,18 +7,17 @@
         ></app-page-header>
 
         <!-- Privacy Notice -->
-        <p-message severity="info" class="privacy-notice status-message">
-          <div class="privacy-content">
-            <i class="pi pi-lock"></i>
-            <div>
-              <strong>Privacy First:</strong> This data is private by default.
-              Coaches only see "recovery day recommended" - never cycle details.
-              <a routerLink="/settings/privacy" class="privacy-link"
-                >Manage settings</a
-              >
-            </div>
-          </div>
-        </p-message>
+        <app-alert
+          variant="info"
+          icon="pi-lock"
+          title="Privacy First"
+          message="This data is private by default. Coaches only see 'recovery day recommended' - never cycle details."
+          styleClass="privacy-notice status-message"
+        >
+          <a routerLink="/settings/privacy" class="privacy-link"
+            >Manage settings</a
+          >
+        </app-alert>
 
         <!-- Current Cycle Status -->
         <p-card class="cycle-status-card">
@@ -139,7 +138,7 @@
               <h4><i class="pi pi-lightbulb"></i> KEY INSIGHTS</h4>
               <div class="insights-list">
                 @for (insight of getCurrentPhase().keyInsights; track insight) {
-                  <div class="insight-item">{{ insight }}</div>
+                  <div class="phase-insight-item">{{ insight }}</div>
                 }
               </div>
             </div>
@@ -223,12 +222,12 @@
               </div>
             </div>
 
-            <p-message
-              severity="info"
-              class="nutrition-tip status-message"
-            >
-              <span>💡 {{ getNutritionTip() }}</span>
-            </p-message>
+            <app-alert
+              variant="info"
+              density="compact"
+              [message]="'💡 ' + getNutritionTip()"
+              styleClass="nutrition-tip status-message"
+            />
           </p-card>
         </div>
 
@@ -256,12 +255,12 @@
                 <span class="vs-standard">(vs standard 0.8 - 1.3)</span>
               </div>
 
-              <p-message
-                [severity]="getAcwrStatus().severity"
-                class="acwr-status status-message"
-              >
-                <span>{{ getAcwrStatus().message }}</span>
-              </p-message>
+              <app-alert
+                [variant]="getAlertVariant(getAcwrStatus().severity)"
+                [message]="getAcwrStatus().message"
+                density="compact"
+                styleClass="acwr-status status-message"
+              />
             </div>
           } @else {
             <app-empty-state

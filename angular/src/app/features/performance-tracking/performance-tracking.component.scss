@@ -21,29 +21,13 @@
 }
 
 .performance-preview-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
   margin: var(--space-3) 0 var(--space-4);
-
-  @include preview-callout;
-
-  i {
-    color: var(--ds-primary-green);
-  }
 }
 
 // .charts-grid: Use primitives/_charts.scss
 
 .chart-card {
   min-height: var(--chart-min-height-md);
-}
-
-.chart-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
 }
 
 .chart-preview-badge {
@@ -63,32 +47,6 @@
   margin: var(--space-3) var(--space-4) 0;
 
   @include preview-callout;
-}
-
-.benchmark-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--color-border-secondary);
-}
-
-.benchmark-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-
-  i {
-    color: var(--ds-primary-green);
-    font-size: var(--ds-font-size-md);
-  }
-
-  h3 {
-    margin: 0;
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-semibold);
-    color: var(--color-text-primary);
-  }
 }
 
 .position-selector {
@@ -267,8 +225,6 @@
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }
-
-/* loading-placeholder: use primitive from _skeleton.scss */
 
 // ===== Team Rankings Section =====
 .team-rankings-card {
@@ -468,58 +424,9 @@
   border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
-.summary-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-
-  i {
-    font-size: var(--ds-font-size-lg);
-  }
-
-  &.strongest {
-    i {
-      color: var(--ds-primary-green);
-    }
-  }
-
-  &.weakest {
-    i {
-      color: var(--color-text-secondary);
-    }
-  }
-}
-
-.summary-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.summary-label {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
-}
-
-.summary-value {
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
 @include respond-to(md) {
   .form-grid {
     grid-template-columns: 1fr;
-  }
-
-  .benchmark-header {
-    flex-direction: column;
-    gap: var(--space-3);
-    align-items: flex-start;
   }
 
   .gap-stats {

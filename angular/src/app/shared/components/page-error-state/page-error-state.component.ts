@@ -28,7 +28,17 @@ import { ButtonComponent } from "../button/button.component";
       <div class="error-state__icon">
         <i [class]="'pi ' + icon()"></i>
       </div>
-      <h3 class="error-state__title">{{ title() }}</h3>
+      @switch (titleTag()) {
+        @case ("h1") {
+          <h1 class="error-state__title">{{ title() }}</h1>
+        }
+        @case ("h2") {
+          <h2 class="error-state__title">{{ title() }}</h2>
+        }
+        @default {
+          <h3 class="error-state__title">{{ title() }}</h3>
+        }
+      }
       <p class="error-state__description">{{ message() }}</p>
       @if (showRetry()) {
         <app-button iconLeft="pi-refresh" (clicked)="onRetry()"
@@ -49,6 +59,7 @@ export class PageErrorStateComponent {
     "Something went wrong while loading this page. Please try again.",
   );
   icon = input<string>("pi-exclamation-circle");
+  titleTag = input<"h1" | "h2" | "h3">("h3");
   showRetry = input<boolean>(true);
   helpText = input<string | null>(null);
 

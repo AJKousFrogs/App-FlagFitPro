@@ -38,7 +38,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
   ],
   template: `
     <div
-      class="form-input-wrapper"
+      class="form-field form-input"
       [class.has-error]="showError()"
       [class.has-success]="showSuccess()"
     >
@@ -47,9 +47,12 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
         <label
           [for]="inputId()"
           [class.required]="required()"
-          class="input-label"
+          class="form-label input-label"
         >
           {{ label() }}
+          @if (required()) {
+            <span class="form-required" aria-hidden="true">*</span>
+          }
           @if (optional() && !required()) {
             <span class="optional-badge">Optional</span>
           }
@@ -57,7 +60,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
       }
 
       <!-- Input Container -->
-      <div class="input-container">
+      <div class="form-field__control form-input__control">
         <!-- Prefix Icon -->
         @if (prefixIcon()) {
           <i [class]="'prefix-icon pi ' + prefixIcon()"></i>
@@ -91,7 +94,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
         @if (type() === "password") {
           <button
             type="button"
-            class="password-toggle"
+            class="form-field__toggle"
             (click)="togglePassword()"
             [attr.aria-label]="
               showPassword() ? 'Hide password' : 'Show password'
@@ -104,7 +107,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 
         <!-- Validation Icon -->
         @if (validationState() !== "idle" && type() !== "password") {
-          <div class="validation-icon">
+          <div class="form-input__validation-icon">
             @if (validationState() === "validating") {
               <i class="pi pi-spin pi-spinner"></i>
             } @else if (validationState() === "valid") {
@@ -125,7 +128,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 
       <!-- Hint Text -->
       @if (hint() && !showError()) {
-        <small [id]="inputId() + '-hint'" class="hint-text">
+        <small [id]="inputId() + '-hint'" class="form-feedback form-help">
           <i class="pi pi-info-circle"></i>
           {{ hint() }}
         </small>
@@ -133,7 +136,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 
       <!-- Success Message -->
       @if (showSuccess() && successMessage()) {
-        <small [id]="inputId() + '-success'" class="success-message">
+        <small [id]="inputId() + '-success'" class="form-feedback form-success">
           <i class="pi pi-check-circle"></i>
           {{ successMessage() }}
         </small>
@@ -141,7 +144,11 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 
       <!-- Error Message -->
       @if (showError()) {
-        <small [id]="inputId() + '-error'" class="error-message" role="alert">
+        <small
+          [id]="inputId() + '-error'"
+          class="form-feedback form-error"
+          role="alert"
+        >
           <i class="pi pi-exclamation-circle"></i>
           {{ errorMessage() }}
         </small>

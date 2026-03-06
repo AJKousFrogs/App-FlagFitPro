@@ -7,18 +7,15 @@
 
 .bottom-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: auto 0 0;
   height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
   background: var(--surface-primary);
   border-top: var(--border-1) solid var(--color-border-secondary);
   display: none;
   justify-content: space-around;
   align-items: center;
-  padding: 0 var(--space-2);
+  padding: 0 var(--space-2) var(--safe-area-bottom);
   z-index: var(--z-modal);
-  padding-bottom: var(--safe-area-bottom);
   box-sizing: border-box;
 }
 
@@ -32,41 +29,21 @@
   }
 }
 
-/* More menu overlay */
 .more-menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--surface-overlay);
-  z-index: var(--z-index-modal);
-  display: flex;
-  align-items: flex-end;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  z-index: var(--z-index-modal-backdrop);
 }
 
 .more-menu {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: calc(var(--z-index-modal-backdrop) + 1);
   width: 100%;
   background: var(--surface-primary);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  box-shadow: var(--shadow-xl);
   padding-bottom: env(safe-area-inset-bottom, var(--space-4));
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+  animation: feedback-slide-up var(--motion-feedback-duration)
+    var(--ease-standard);
 }
 
 .more-menu-header {
@@ -77,22 +54,6 @@
   border-bottom: var(--border-1) solid var(--color-border-secondary);
   font-weight: var(--ds-font-weight-semibold);
   font-size: var(--ds-font-size-md);
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  padding: var(--space-2);
-  min-width: var(--touch-target-md);
-  min-height: var(--touch-target-md);
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  border-radius: var(--radius-circle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  @include ds-hover-state(var(--surface-tertiary));
 }
 
 .more-menu-items {

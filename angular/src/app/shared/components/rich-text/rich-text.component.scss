@@ -9,12 +9,6 @@
   display: block;
 }
 
-.rich-text-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
 .rich-text-editor {
   border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
@@ -94,14 +88,4 @@
 .rich-text-content a {
   color: var(--ds-primary-green);
   text-decoration: underline;
-}
-
-.form-help {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.form-error {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-status-error);
 }

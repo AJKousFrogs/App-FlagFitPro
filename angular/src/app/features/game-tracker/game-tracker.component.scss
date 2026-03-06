@@ -39,36 +39,7 @@
    ================================================================ */
 
 .visibility-info-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
   margin-bottom: var(--space-6);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.08),
-    rgba(var(--ds-primary-green-rgb), 0.04)
-  );
-  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
-  border-radius: var(--radius-lg);
-  color: var(--ds-primary-green);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.visibility-info-banner .pi {
-  font-size: var(--ds-font-size-2xl);
-  flex-shrink: 0;
-}
-
-.visibility-info-banner.personal {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--primitive-warning-500-rgb), 0.08),
-    rgba(var(--primitive-warning-500-rgb), 0.04)
-  );
-  border-color: rgba(var(--primitive-warning-500-rgb), 0.2);
-  color: var(--color-status-warning);
 }
 
 /* Game type badges in table */

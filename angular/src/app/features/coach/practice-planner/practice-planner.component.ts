@@ -281,16 +281,15 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             }
           </div>
         } @else {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-calendar"
-              heading="No Practices Found"
-              description="Create your first practice plan"
-              actionLabel="Create Practice"
-              actionIcon="pi-plus"
-              [actionHandler]="openCreateDialogHandler"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-calendar"
+            heading="No Practices Found"
+            description="Create your first practice plan"
+            actionLabel="Create Practice"
+            actionIcon="pi-plus"
+            [actionHandler]="openCreateDialogHandler"
+          />
         }
       </div>
 

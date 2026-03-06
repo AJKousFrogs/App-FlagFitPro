@@ -176,7 +176,7 @@ async function getUserContext(userId) {
 
     const { data: sessions, error: sessionsError } = await supabaseAdmin
       .from("workout_logs")
-      .select("completed_at, rpe, duration_minutes, session_id")
+      .select("completed_at, rpe, duration_minutes, source_session_id")
       .eq("player_id", userId)
       .gte("completed_at", thirtyDaysAgo.toISOString())
       .order("completed_at", { ascending: false });

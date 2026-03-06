@@ -8,11 +8,11 @@ import {
 
 import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
-import { Message } from "primeng/message";
 import { ProgressSpinner } from "primeng/progressspinner";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
@@ -37,8 +37,8 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   imports: [
     RouterModule,
     Card,
+    AlertComponent,
     ButtonComponent,
-    Message,
     ProgressSpinner,
 
   ],
@@ -60,9 +60,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
               <i class="pi pi-times-circle"></i>
             </div>
             <h2>Authentication Failed</h2>
-            <p-message severity="error" class="status-message">
-              {{ error() }}
-            </p-message>
+            <app-alert
+              variant="error"
+              [message]="error() || ''"
+              styleClass="status-message"
+            />
             <div class="error-actions">
               <app-button
                 iconLeft="pi-refresh"

@@ -25,6 +25,7 @@ import {
 import { toSignal } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -192,6 +193,7 @@ const BALANCE_FILTERS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -283,12 +285,14 @@ const BALANCE_FILTERS = [
             <!-- Active Fees Preview -->
             <p-card>
               <ng-template #header>
-                <div class="card-header">
-                  <h3>Active Fees</h3>
-                  <app-button variant="text" (clicked)="activeTab.set('fees')"
+                <app-card-header title="Active Fees">
+                  <app-button
+                    header-actions
+                    variant="text"
+                    (clicked)="activeTab.set('fees')"
                     >View All</app-button
                   >
-                </div>
+                </app-card-header>
               </ng-template>
               <div class="fees-preview">
                 @for (fee of fees().slice(0, 2); track fee.id) {
@@ -423,9 +427,8 @@ const BALANCE_FILTERS = [
             <!-- Player Balances -->
             <p-card>
               <ng-template #header>
-                <div class="card-header">
-                  <h3>Player Balances</h3>
-                  <div class="balance-filters">
+                <app-card-header title="Player Balances">
+                  <div header-actions class="balance-filters">
                     <span class="p-input-icon-left">
                       <i class="pi pi-search"></i>
                       <input
@@ -439,10 +442,10 @@ const BALANCE_FILTERS = [
                       [options]="balanceFilters"
                       [formControl]="balanceFilterControl"
                       optionLabel="label"
-                      optionValue="value"
-                    ></p-select>
-                  </div>
-                </div>
+                        optionValue="value"
+                      ></p-select>
+                    </div>
+                </app-card-header>
               </ng-template>
 
               <p-table [value]="filteredBalances()" class="p-datatable-sm">
@@ -523,9 +526,7 @@ const BALANCE_FILTERS = [
             <!-- Payment History -->
             <p-card>
               <ng-template #header>
-                <div class="card-header">
-                  <h3>Payment History</h3>
-                </div>
+                <app-card-header title="Payment History" />
               </ng-template>
 
               <p-table [value]="payments()" class="p-datatable-sm">

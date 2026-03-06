@@ -24,7 +24,9 @@ import { LoggerService } from "../../core/services/logger.service";
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { PerformanceTrackingDataService } from "./services/performance-tracking-data.service";
 import { DataState } from "../../core/services/data-source.service";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -190,6 +192,8 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     AppLoadingComponent,
     RouterModule,
     ButtonComponent,
+    CardHeaderComponent,
+    AlertComponent,
     StatusTagComponent,
     AchievementBadgeComponent,
     DataSourceBannerComponent,

@@ -21,9 +21,9 @@
       .player-dashboard {
         display: flex;
         flex-direction: column;
-        gap: var(--space-6);
-        padding: var(--space-5) var(--space-4);
-        max-width: var(--container-max);
+        gap: var(--layout-page-section-gap-tight);
+        padding: 0;
+        max-width: 100%;
         margin: 0 auto;
       }
 
@@ -36,8 +36,9 @@
 
       .no-program-card {
         background: var(--surface-card);
-        border: var(--border-2) dashed var(--surface-border);
-        border-radius: var(--radius-lg);
+        border: var(--border-2) dashed var(--ui-border-default);
+        border-radius: var(--component-card-radius);
+        box-shadow: var(--component-card-shadow);
       }
 
       .no-program-content {
@@ -45,7 +46,7 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: var(--space-6);
+        padding: var(--component-card-padding);
         gap: var(--space-4);
       }
 
@@ -53,11 +54,12 @@
         width: var(--space-16);
         height: var(--space-16);
         border-radius: var(--radius-full);
-        background: var(--surface-ground);
+        background: var(--ui-surface-subtle);
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--color-text-secondary);
+        box-shadow: inset 0 0 0 var(--border-1) var(--color-border-subtle);
       }
 
       .no-program-icon i {
@@ -103,8 +105,8 @@
         align-items: center;
         gap: var(--space-3);
         padding: var(--space-3);
-        background: var(--surface-ground);
-        border-radius: var(--radius-md);
+        background: var(--surface-secondary);
+        border-radius: var(--radius-lg);
         border-left: var(--border-4) solid var(--color-border-primary);
       }
 
@@ -160,9 +162,9 @@
         width: 100%;
         max-width: var(--content-max-width-sm);
         text-align: left;
-        background: var(--surface-ground);
+        background: var(--surface-secondary);
         padding: var(--space-4);
-        border-radius: var(--radius-md);
+        border-radius: var(--radius-lg);
         margin: var(--space-2) 0;
       }
 
@@ -208,8 +210,8 @@
         align-items: center;
         gap: var(--space-2);
         padding: var(--space-3);
-        background: var(--surface-ground);
-        border-radius: var(--radius-md);
+        background: var(--surface-secondary);
+        border-radius: var(--radius-lg);
         font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
         margin-top: var(--space-4);
@@ -228,33 +230,25 @@
       }
 
       .announcement-banner {
-        background: var(--ds-primary-green);
-        border: none;
-        border-radius: var(--radius-lg);
-        padding: var(--space-3) var(--space-4);
+        background: linear-gradient(
+          135deg,
+          var(--ui-primary) 0%,
+          var(--ui-primary-hover) 100%
+        );
+        border: var(--border-1) solid rgba(255, 255, 255, 0.12);
+        border-radius: var(--component-card-radius);
+        padding: var(--space-4) var(--space-5);
         color: var(--color-text-on-primary);
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: var(--space-3);
+        box-shadow: var(--shadow-md);
       }
 
-      .announcement-close-btn {
-        background: transparent;
-        border: none;
-        color: var(--color-text-on-primary);
-        opacity: 0.9;
-        cursor: pointer;
-        padding: var(--space-2);
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .announcement-close-btn:hover {
-        background: var(--overlay-white-15);
-        opacity: 1;
+      app-close-button.announcement-close-btn {
+        flex-shrink: 0;
+        align-self: flex-start;
       }
 
       .announcement-content {
@@ -295,7 +289,7 @@
       .announcement-meta {
         font-size: var(--ds-font-size-sm);
         color: var(--color-text-on-primary);
-        opacity: 0.9;
+        opacity: var(--opacity-strong);
         margin-left: 0;
         white-space: nowrap;
       }
@@ -309,22 +303,27 @@
 
       .welcome-wrapper {
         display: flex;
-        gap: var(--space-4);
-        align-items: flex-start;
+        gap: var(--space-5);
+        align-items: center;
       }
 
       .merlin-avatar {
         width: var(--space-12);
         height: var(--space-12);
         min-width: var(--space-12);
-        border-radius: var(--radius-full);
-        background: var(--color-brand-primary);
+        border-radius: var(--radius-xl);
+        background: linear-gradient(
+          135deg,
+          rgba(var(--ds-primary-green-rgb), 0.92) 0%,
+          var(--ui-primary-hover) 100%
+        );
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: var(--ds-font-size-2xl);
         color: var(--color-text-on-primary);
         flex-shrink: 0;
+        box-shadow: var(--shadow-sm);
       }
 
       .welcome-content {
@@ -334,7 +333,7 @@
 
       .welcome-greeting {
         margin: 0 0 var(--space-1);
-        font-size: var(--ds-font-size-3xl);
+        font-size: clamp(var(--ds-font-size-2xl), 4vw, var(--ds-font-size-3xl));
         font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
         line-height: var(--ds-line-height-h1);
@@ -342,7 +341,7 @@
 
       .merlin-insight {
         margin: 0 0 var(--space-3);
-        color: var(--color-text-muted);
+        color: var(--color-text-secondary);
         font-size: var(--ds-font-size-sm);
         line-height: var(--ds-line-height-body-sm);
         display: -webkit-box;
@@ -364,7 +363,7 @@
       .stats-overview {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-4); /* 16px gap for breathing room */
+        gap: var(--layout-gap-md);
       }
 
       .stat-card-content {
@@ -505,28 +504,12 @@
       .dashboard-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-5);
+        gap: var(--layout-gap-lg);
       }
 
-      .card-header-custom {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-3) var(--space-4);
-      }
-
-      .card-header-icon {
-        font-size: var(--ds-font-size-md);
-        color: var(--color-brand-primary);
-        opacity: 0.9;
-      }
-
-      .card-header-title {
-        font-size: var(--ds-font-size-xl);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-text-primary);
-        line-height: var(--ds-line-height-tight);
-        margin: 0;
+      .dashboard-card-header {
+        --app-card-header-title-size: var(--ds-font-size-xl);
+        --app-card-header-title-weight: var(--ds-font-weight-semibold);
       }
 
       /* ==========================================
@@ -575,7 +558,7 @@
       }
 
       .day-indicator.future {
-        opacity: 0.4;
+        opacity: var(--opacity-minimal);
       }
 
       .day-name {
@@ -583,7 +566,7 @@
         color: var(--color-text-secondary);
         text-transform: var(--ds-text-transform-uppercase);
         font-weight: var(--ds-font-weight-medium);
-        opacity: 0.75;
+        opacity: var(--opacity-three-quarters);
       }
 
       .progress-summary {
@@ -596,7 +579,7 @@
         font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
         text-align: center;
-        opacity: 0.75;
+        opacity: var(--opacity-three-quarters);
       }
 
       /* ==========================================
@@ -627,7 +610,7 @@
       }
 
       .schedule-item.completed {
-        opacity: 0.6;
+        opacity: var(--opacity-muted);
       }
 
       .item-time {
@@ -654,7 +637,7 @@
       .item-duration {
         font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
-        opacity: 0.7;
+        opacity: var(--opacity-subtle);
       }
 
       .more-items {
@@ -662,7 +645,7 @@
         color: var(--color-text-muted);
         text-align: center;
         margin: var(--space-1) 0;
-        opacity: 0.7;
+        opacity: var(--opacity-subtle);
       }
 
       .card-footer-action {
@@ -691,7 +674,7 @@
 
       .empty-icon {
         font-size: var(--ds-font-size-2xl);
-        opacity: 0.7;
+        opacity: var(--opacity-subtle);
       }
 
       /* ==========================================
@@ -728,7 +711,7 @@
       }
 
       .section-title i {
-        opacity: 0.7;
+        opacity: var(--opacity-subtle);
       }
 
       /* ==========================================

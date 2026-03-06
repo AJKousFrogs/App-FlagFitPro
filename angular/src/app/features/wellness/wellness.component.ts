@@ -28,6 +28,7 @@ import { HydrationTrackerComponent } from "../../shared/components/hydration-tra
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
 import {
   StatItem,
   StatsGridComponent,
@@ -81,6 +82,7 @@ interface WellnessMetric {
     SupplementTrackerComponent,
     HydrationTrackerComponent,
     ConfidenceIndicatorComponent,
+    AlertComponent,
   ],
   template: `
     <div class="wellness-root">
@@ -203,19 +205,18 @@ interface WellnessMetric {
             >
               <div class="alerts-section">
                 @for (alert of wellnessAlerts(); track alert.id) {
-                  <div
-                    class="wellness-alert"
-                    [class]="'alert-' + alert.severity"
+                  <app-alert
+                    class="wellness-route-alert"
+                    [variant]="getAlertVariant(alert.severity)"
+                    [title]="alert.title"
+                    [message]="alert.message"
+                    [dismissible]="true"
+                    (dismissed)="dismissAlert(alert.id)"
                   >
-                    <div class="alert-header">
-                      <i [class]="getAlertIcon(alert.severity)"></i>
-                      <span class="alert-title">{{ alert.title }}</span>
-                    </div>
-                    <p class="alert-message">{{ alert.message }}</p>
                     @if (
                       alert.recommendations && alert.recommendations.length > 0
                     ) {
-                      <div class="alert-recommendations">
+                      <div class="wellness-alert-recommendations">
                         <span class="rec-label">Possible causes:</span>
                         <ul>
                           @for (rec of alert.recommendations; track rec) {
@@ -224,13 +225,7 @@ interface WellnessMetric {
                         </ul>
                       </div>
                     }
-                    <div class="alert-actions">
-                      <app-button
-                        variant="text"
-                        size="sm"
-                        (clicked)="dismissAlert(alert.id)"
-                        >Dismiss</app-button
-                      >
+                    <div class="wellness-alert-actions">
                       @if (alert.actionLabel && alert.actionRoute) {
                         <app-button
                           variant="outlined"
@@ -240,7 +235,7 @@ interface WellnessMetric {
                         >
                       }
                     </div>
-                  </div>
+                  </app-alert>
                 }
               </div>
             </app-card>
@@ -1020,19 +1015,16 @@ export class WellnessComponent {
     this.wellnessAlerts.set(alerts);
   }
 
-  /**
-   * Get icon class for alert severity
-   */
-  getAlertIcon(severity: "danger" | "warning" | "info"): string {
+  getAlertVariant(severity: "danger" | "warning" | "info"): AlertVariant {
     switch (severity) {
       case "danger":
-        return "pi pi-exclamation-circle";
+        return "error";
       case "warning":
-        return "pi pi-exclamation-triangle";
+        return "warning";
       case "info":
-        return "pi pi-lightbulb";
+        return "info";
       default:
-        return "pi pi-info-circle";
+        return "info";
     }
   }
 

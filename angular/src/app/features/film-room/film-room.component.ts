@@ -227,13 +227,12 @@ interface DiscussionMessage {
             }
           </div>
         } @else {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-video"
-              heading="No film assigned"
-              [description]="getEmptyDescription()"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-video"
+            heading="No film assigned"
+            [description]="getEmptyDescription()"
+          />
         }
       </div>
 

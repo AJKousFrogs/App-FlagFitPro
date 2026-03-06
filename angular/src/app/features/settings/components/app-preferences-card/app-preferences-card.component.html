@@ -1,7 +1,7 @@
 <app-card title="App Preferences" headerIcon="pi-cog" headerIconColor="info">
   <form [formGroup]="preferencesForm()">
-    <div class="p-field mb-4">
-      <span id="settings-theme-label" class="p-label">Theme</span>
+    <div class="form-field">
+      <span id="settings-theme-label" class="form-label">Theme</span>
       <div
         class="theme-selector"
         role="radiogroup"
@@ -19,7 +19,7 @@
           </button>
         }
       </div>
-      <small class="theme-hint">
+      <small class="form-help theme-hint">
         @switch (preferencesForm().get("theme")?.value) {
           @case ("light") {
             Always use light theme
@@ -33,8 +33,8 @@
         }
       </small>
     </div>
-    <div class="p-field language-field">
-      <label for="language" class="p-label">Language</label>
+    <div class="form-field language-field">
+      <label for="language" class="form-label">Language</label>
       <p-select
         id="language"
         formControlName="language"

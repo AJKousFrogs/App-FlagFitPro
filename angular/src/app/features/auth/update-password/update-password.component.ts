@@ -16,11 +16,11 @@ import {
 import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 
-import { Message } from "primeng/message";
 import { Password } from "primeng/password";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
@@ -39,9 +39,9 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     RouterModule,
     ReactiveFormsModule,
     Card,
+    AlertComponent,
     ButtonComponent,
     Password,
-    Message,
 
   ],
   template: `
@@ -125,9 +125,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           </div>
         } @else {
           <div class="invalid-session">
-            <p-message severity="error" class="status-message">
-              This password reset link is invalid or has expired.
-            </p-message>
+            <app-alert
+              variant="error"
+              message="This password reset link is invalid or has expired."
+              styleClass="status-message"
+            />
             <p class="mb-4 mt-4">Please request a new password reset link.</p>
             <a [routerLink]="['/reset-password']" class="update-password-link">
               Request New Reset Link

@@ -151,26 +151,8 @@
   min-width: var(--input-min-width-lg);
 }
 
-.warning-banner {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  background: var(--primitive-warning-50);
-  border: var(--border-1) solid var(--primitive-warning-200);
-  border-radius: var(--radius-md);
+.privacy-alert {
   margin-top: var(--space-4);
-}
-
-.warning-banner i {
-  color: var(--primitive-warning-600);
-  font-size: var(--ds-font-size-2xl);
-  flex-shrink: 0;
-}
-
-.warning-banner span {
-  font-size: var(--ds-font-size-md);
-  color: var(--primitive-warning-800);
 }
 
 .consent-info {
@@ -409,26 +391,16 @@
 
 // PrimeNG field overrides moved to _component-overrides.scss (DS-EXC-047)
 
-/* Delete Warning */
-.delete-warning {
-  text-align: center;
-  padding: var(--space-4);
+.delete-warning-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.delete-warning > i {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--color-status-error);
-  margin-bottom: var(--space-4);
-}
-
-.delete-warning h4 {
-  color: var(--primitive-error-600);
-  margin: 0 0 var(--space-3) 0;
-}
-
-.delete-warning > p {
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
+.delete-warning-notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .retention-note,
@@ -455,23 +427,10 @@
   color: var(--color-status-success);
 }
 
-.pending-deletion-warning {
+.pending-deletion-state {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-.pending-deletion-warning .warning-text {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--primitive-warning-700);
-  font-weight: var(--ds-font-weight-semibold);
-  margin: 0;
-}
-
-.pending-deletion-warning .warning-text i {
-  color: var(--primitive-warning-600);
 }
 
 @include respond-to(md) {

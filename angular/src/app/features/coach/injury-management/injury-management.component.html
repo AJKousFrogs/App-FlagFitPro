@@ -326,13 +326,12 @@
 
         <!-- Empty State -->
         @if (filteredInjuries().length === 0) {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-heart"
-              heading="No Injuries"
-              description="Great news! No injuries in this category."
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-heart"
+            heading="No Injuries"
+            description="Great news! No injuries in this category."
+          />
         }
 
         <!-- Analytics Section -->

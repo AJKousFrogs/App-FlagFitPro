@@ -1,4 +1,5 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
+import { ConfirmDialogService } from "../services/confirm-dialog.service";
 
 function formatMessage(message: string, title?: string): string {
   if (title) {
@@ -11,12 +12,22 @@ function formatMessage(message: string, title?: string): string {
   providedIn: "root",
 })
 export class DialogService {
+  private readonly confirmDialog = inject(ConfirmDialogService);
+
   confirm(message: string, title?: string): Promise<boolean> {
     if (typeof window === "undefined") {
       return Promise.resolve(true);
     }
-    const response = window.confirm(formatMessage(message, title));
-    return Promise.resolve(response);
+    return this.confirmDialog.confirm({
+      title: title || "Confirm",
+      message,
+      icon: "pi pi-exclamation-triangle",
+      acceptLabel: "Confirm",
+      rejectLabel: "Cancel",
+      acceptSeverity: "primary",
+      rejectSeverity: "secondary",
+      defaultFocus: "reject",
+    });
   }
 
   prompt(

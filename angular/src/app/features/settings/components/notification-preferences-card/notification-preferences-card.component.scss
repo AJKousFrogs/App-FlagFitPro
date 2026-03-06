@@ -3,7 +3,7 @@
 .notification-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .notification-section-header {
@@ -28,8 +28,9 @@
 
 .quiet-hours-config {
   padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
+  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--radius-xl);
   margin: var(--space-2) 0;
 }
 
@@ -44,9 +45,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  margin-bottom: 0;
 
-  label {
-    font-size: var(--ds-font-size-xs);
+  .form-label {
+    font-size: var(--font-caption-size);
     font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-secondary);
     text-transform: var(--ds-text-transform-uppercase);
@@ -55,16 +57,15 @@
 }
 
 .time-picker {
-  padding: var(--space-2) var(--space-3);
-  border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--radius-md);
-  background: var(--surface-primary);
+  min-height: var(--component-input-height-md);
+  padding: 0 var(--component-input-padding-x);
+  border: var(--border-1) solid var(--component-input-border-color);
+  border-radius: var(--component-input-radius);
+  background: var(--component-input-background);
   color: var(--color-text-primary);
-  font-size: var(--ds-font-size-md);
+  font-size: var(--font-body-size);
 
-  @include ds-input-focus(
-    $shadow: 0 0 0 var(--border-2) var(--ds-primary-green-ultra-subtle)
-  );
+  @include ds-input-focus($shadow: var(--component-input-shadow-focus));
 }
 
 .time-separator {
@@ -75,8 +76,8 @@
 
 .quiet-hours-note {
   margin-top: var(--space-3);
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
+  font-size: var(--font-body-sm-size);
+  color: var(--ui-text-secondary);
   display: flex;
   align-items: center;
   gap: var(--space-2);

@@ -30,6 +30,10 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { getSupabaseClient } from "./utils/auth-helper.js";
+import {
+  getTrainingProgramById,
+  toProgramSummary,
+} from "./utils/training-programs.js";
 
 import {
   createSuccessResponse,
@@ -48,6 +52,22 @@ const PROGRAM_IDS = {
 
 const VALID_STATUSES = new Set(["active", "paused", "completed", "inactive"]);
 
+const ASSIGNMENT_SELECT_COLUMNS = `
+  id,
+  player_id,
+  program_id,
+  status,
+  start_date,
+  end_date,
+  current_week,
+  current_phase_id,
+  completion_percentage,
+  modifications,
+  notes,
+  created_at,
+  updated_at
+`;
+
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
@@ -55,7 +75,8 @@ function isPlainObject(value) {
 function isUuid(value) {
   return (
     typeof value === "string" &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    // Accept seeded UUID-like identifiers even when they don't encode RFC version bits.
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
       value,
     )
   );
@@ -67,6 +88,29 @@ function isValidDateString(value) {
   }
   const parsed = new Date(value);
   return !Number.isNaN(parsed.getTime());
+}
+
+function mapAssignmentRecord(assignmentRecord, program) {
+  if (!assignmentRecord) {
+    return null;
+  }
+
+  return {
+    id: assignmentRecord.id,
+    player_id: assignmentRecord.player_id,
+    program_id: assignmentRecord.program_id,
+    status: assignmentRecord.status,
+    start_date: assignmentRecord.start_date,
+    end_date: assignmentRecord.end_date,
+    current_week: assignmentRecord.current_week,
+    current_phase_id: assignmentRecord.current_phase_id,
+    completion_percentage: assignmentRecord.completion_percentage,
+    modifications: assignmentRecord.modifications,
+    notes: assignmentRecord.notes,
+    created_at: assignmentRecord.created_at,
+    updated_at: assignmentRecord.updated_at,
+    program: toProgramSummary(assignmentRecord.program_id, program),
+  };
 }
 
 /**
@@ -114,27 +158,7 @@ function getProgramIdForPosition(position) {
 async function getActiveAssignment(supabase, userId) {
   const { data, error } = await supabase
     .from("player_programs")
-    .select(
-      `
-      id,
-      player_id,
-      program_id,
-      status,
-      start_date,
-      end_date,
-      current_week,
-      current_phase_id,
-      completion_percentage,
-      modifications,
-      notes,
-      created_at,
-      updated_at,
-      training_programs!inner (
-        id,
-        name
-      )
-    `,
-    )
+    .select(ASSIGNMENT_SELECT_COLUMNS)
     .eq("player_id", userId)
     .eq("status", "active")
     .maybeSingle();
@@ -148,26 +172,13 @@ async function getActiveAssignment(supabase, userId) {
     return null;
   }
 
-  // Transform to expected shape
-  return {
-    id: data.id,
-    player_id: data.player_id,
-    program_id: data.program_id,
-    status: data.status,
-    start_date: data.start_date,
-    end_date: data.end_date,
-    current_week: data.current_week,
-    current_phase_id: data.current_phase_id,
-    completion_percentage: data.completion_percentage,
-    modifications: data.modifications,
-    notes: data.notes,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-    program: {
-      id: data.training_programs.id,
-      name: data.training_programs.name,
-    },
-  };
+  const program = await getTrainingProgramById(
+    supabase,
+    data.program_id,
+    "id, name",
+  );
+
+  return mapAssignmentRecord(data, program);
 }
 
 /**
@@ -280,8 +291,11 @@ async function handlePost(event, context, { userId }) {
     program_id,
     status,
     start_date: start_date || new Date().toISOString().split("T")[0],
+    end_date: null,
     current_week: 1,
+    current_phase_id: null,
     completion_percentage: 0,
+    modifications: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -289,27 +303,7 @@ async function handlePost(event, context, { userId }) {
   const { data: created, error: createError } = await supabase
     .from("player_programs")
     .insert(newAssignment)
-    .select(
-      `
-      id,
-      player_id,
-      program_id,
-      status,
-      start_date,
-      end_date,
-      current_week,
-      current_phase_id,
-      completion_percentage,
-      modifications,
-      notes,
-      created_at,
-      updated_at,
-      training_programs!inner (
-        id,
-        name
-      )
-    `,
-    )
+    .select(ASSIGNMENT_SELECT_COLUMNS)
     .single();
 
   if (createError) {
@@ -317,26 +311,12 @@ async function handlePost(event, context, { userId }) {
     throw createError;
   }
 
-  // Transform response
-  const assignment = {
-    id: created.id,
-    player_id: created.player_id,
-    program_id: created.program_id,
-    status: created.status,
-    start_date: created.start_date,
-    end_date: created.end_date,
-    current_week: created.current_week,
-    current_phase_id: created.current_phase_id,
-    completion_percentage: created.completion_percentage,
-    modifications: created.modifications,
-    notes: created.notes,
-    created_at: created.created_at,
-    updated_at: created.updated_at,
-    program: {
-      id: created.training_programs.id,
-      name: created.training_programs.name,
-    },
-  };
+  const program = await getTrainingProgramById(
+    supabase,
+    created.program_id,
+    "id, name",
+  );
+  const assignment = mapAssignmentRecord(created, program);
 
   console.log(
     `[player-programs] Created assignment ${assignment.id} for user ${userId} -> program ${program_id}`,
@@ -433,7 +413,7 @@ async function handlePut(event, context, { userId }) {
   // Fetch existing assignment
   const { data: existing, error: fetchError } = await supabase
     .from("player_programs")
-    .select("*")
+    .select(ASSIGNMENT_SELECT_COLUMNS)
     .eq("id", assignmentId)
     .eq("player_id", userId) // Security: user can only update own assignments
     .single();
@@ -481,7 +461,9 @@ async function handlePut(event, context, { userId }) {
       program_id,
       status: "active",
       start_date: today,
+      end_date: null,
       current_week: 1,
+      current_phase_id: null,
       completion_percentage: 0,
       notes: notes || null,
       modifications: modifications || null,
@@ -492,27 +474,7 @@ async function handlePut(event, context, { userId }) {
     const { data: created, error: createError } = await supabase
       .from("player_programs")
       .insert(newAssignment)
-      .select(
-        `
-        id,
-        player_id,
-        program_id,
-        status,
-        start_date,
-        end_date,
-        current_week,
-        current_phase_id,
-        completion_percentage,
-        modifications,
-        notes,
-        created_at,
-        updated_at,
-        training_programs!inner (
-          id,
-          name
-        )
-      `,
-      )
+      .select(ASSIGNMENT_SELECT_COLUMNS)
       .single();
 
     if (createError) {
@@ -523,25 +485,12 @@ async function handlePut(event, context, { userId }) {
       throw createError;
     }
 
-    const assignment = {
-      id: created.id,
-      player_id: created.player_id,
-      program_id: created.program_id,
-      status: created.status,
-      start_date: created.start_date,
-      end_date: created.end_date,
-      current_week: created.current_week,
-      current_phase_id: created.current_phase_id,
-      completion_percentage: created.completion_percentage,
-      modifications: created.modifications,
-      notes: created.notes,
-      created_at: created.created_at,
-      updated_at: created.updated_at,
-      program: {
-        id: created.training_programs.id,
-        name: created.training_programs.name,
-      },
-    };
+    const program = await getTrainingProgramById(
+      supabase,
+      created.program_id,
+      "id, name",
+    );
+    const assignment = mapAssignmentRecord(created, program);
 
     console.log(
       `[player-programs] Switched user ${userId} from ${existing.program_id} to ${program_id}`,
@@ -566,6 +515,9 @@ async function handlePut(event, context, { userId }) {
       );
     }
     updates.status = status;
+    if (status === "active" && end_date === undefined) {
+      updates.end_date = null;
+    }
   }
 
   if (end_date !== undefined) {
@@ -584,27 +536,7 @@ async function handlePut(event, context, { userId }) {
     .from("player_programs")
     .update(updates)
     .eq("id", assignmentId)
-    .select(
-      `
-      id,
-      player_id,
-      program_id,
-      status,
-      start_date,
-      end_date,
-      current_week,
-      current_phase_id,
-      completion_percentage,
-      modifications,
-      notes,
-      created_at,
-      updated_at,
-      training_programs!inner (
-        id,
-        name
-      )
-    `,
-    )
+    .select(ASSIGNMENT_SELECT_COLUMNS)
     .single();
 
   if (updateError) {
@@ -612,25 +544,12 @@ async function handlePut(event, context, { userId }) {
     throw updateError;
   }
 
-  const assignment = {
-    id: updated.id,
-    player_id: updated.player_id,
-    program_id: updated.program_id,
-    status: updated.status,
-    start_date: updated.start_date,
-    end_date: updated.end_date,
-    current_week: updated.current_week,
-    current_phase_id: updated.current_phase_id,
-    completion_percentage: updated.completion_percentage,
-    modifications: updated.modifications,
-    notes: updated.notes,
-    created_at: updated.created_at,
-    updated_at: updated.updated_at,
-    program: {
-      id: updated.training_programs.id,
-      name: updated.training_programs.name,
-    },
-  };
+  const program = await getTrainingProgramById(
+    supabase,
+    updated.program_id,
+    "id, name",
+  );
+  const assignment = mapAssignmentRecord(updated, program);
 
   return createSuccessResponse(
     { assignment },
@@ -677,11 +596,9 @@ const handler = async (event, context) => {
 };
 
 // Export for testing and reuse
-export { PROGRAM_IDS };
-
+export { handler, PROGRAM_IDS };
 export { POSITION_TO_MODIFIER_KEY };
 export { getProgramIdForPosition };
 export { normalizePositionForModifiers };
-
 export const testHandler = handler;
 export default createRuntimeV2Handler(handler);

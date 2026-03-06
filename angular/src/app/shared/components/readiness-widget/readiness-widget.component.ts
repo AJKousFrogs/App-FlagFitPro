@@ -19,6 +19,15 @@ import { PerformanceDataService } from "../../../core/services/performance-data.
 import { BodyCompositionService } from "../../../core/services/body-composition.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
 import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
+import { AlertComponent, type AlertVariant } from "../alert/alert.component";
+import { EmptyStateComponent } from "../empty-state/empty-state.component";
+
+interface ReadinessWidgetAlert {
+  key: string;
+  icon: string;
+  message: string;
+  variant: AlertVariant;
+}
 
 @Component({
   selector: "app-readiness-widget",
@@ -29,6 +38,8 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
     StatusTagComponent,
     SkeletonLoaderComponent,
     ButtonComponent,
+    AlertComponent,
+    EmptyStateComponent,
   ],
   template: `
     <app-card title="Readiness Today">
@@ -49,18 +60,23 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
           <app-skeleton-loader variant="block" width="60%" height="var(--space-8)" />
         </div>
       } @else if (error()) {
-        <div class="error-state p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p class="text-red-800 font-semibold mb-2">Error</p>
-          <p class="text-red-700 text-sm">{{ error() }}</p>
-          <app-button
-            variant="outlined"
-            size="sm"
-            iconLeft="pi-refresh"
-            (clicked)="refresh()"
-            class="mt-3"
-            >Retry</app-button
-          >
-        </div>
+        <app-alert
+          variant="error"
+          title="Unable to load readiness"
+          [message]="error() || ''"
+          styleClass="widget-alert"
+        >
+          <div class="widget-alert-actions">
+            <app-button
+              variant="secondary"
+              size="sm"
+              iconLeft="pi-refresh"
+              (clicked)="refresh()"
+            >
+              Retry
+            </app-button>
+          </div>
+        </app-alert>
       } @else if (readiness()) {
         <div class="readiness-content">
           <!-- Main Score Display -->
@@ -97,7 +113,10 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
             <div class="grid grid-cols-3 gap-4">
               <div class="metric-item">
                 <div class="metric-label text-xs text-text-secondary">ACWR</div>
-                <div class="metric-value font-bold" [class]="getACWRColor()">
+                <div
+                  class="metric-value font-bold"
+                  [class]="getACWRValueClass()"
+                >
                   {{ readiness()?.acwr | number: "1.2-2" }}
                 </div>
               </div>
@@ -131,9 +150,12 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
               @if (nextGenLoading()) {
                 <p class="text-xs text-text-secondary">Loading preview…</p>
               } @else if (nextGenError()) {
-                <p class="text-xs text-red-600">
-                  {{ nextGenError() }}
-                </p>
+                <app-alert
+                  variant="error"
+                  density="compact"
+                  [message]="nextGenError() || ''"
+                  styleClass="widget-alert widget-alert--compact"
+                />
               } @else if (nextGenPreview()) {
                 <div class="grid grid-cols-2 gap-3">
                   <div class="metric-item">
@@ -148,12 +170,12 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
                     <div class="metric-label text-xs text-text-secondary">
                       Spike Risk
                     </div>
-                    <div
-                      class="metric-value font-bold"
-                      [class]="getNextGenRiskClass()"
-                    >
-                      {{ nextGenPreview()?.workload?.riskLevel | titlecase }}
-                    </div>
+                  <div
+                    class="metric-value font-bold"
+                    [class]="getNextGenRiskValueClass()"
+                  >
+                    {{ nextGenPreview()?.workload?.riskLevel | titlecase }}
+                  </div>
                   </div>
                   <div class="metric-item">
                     <div class="metric-label text-xs text-text-secondary">
@@ -184,57 +206,30 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
           }
 
           <!-- Next-Gen Alerts -->
-          @if (nextGenEnabled() && (loadSpikeAlert() || hydrationAlert() || lbmAlert())) {
-            <div class="next-gen-alerts bg-surface-secondary rounded-lg p-4 mb-4">
-              <div class="text-xs text-text-secondary mb-2 font-semibold">
-                Next-Gen Alerts
-              </div>
-              <div class="alert-list">
-                @if (loadSpikeAlert()) {
-                  <div class="alert-item text-red-600">
-                    <i class="pi pi-exclamation-triangle"></i>
-                    <span>{{ loadSpikeAlert() }}</span>
-                  </div>
-                }
-                @if (hydrationAlert()) {
-                  <div class="alert-item text-yellow-600">
-                    <i class="pi pi-info-circle"></i>
-                    <span>{{ hydrationAlert() }}</span>
-                  </div>
-                }
-                @if (lbmAlert()) {
-                  <div class="alert-item text-orange-500">
-                    <i class="pi pi-info-circle"></i>
-                    <span>{{ lbmAlert() }}</span>
-                  </div>
-                }
-              </div>
+          @if (nextGenEnabled() && nextGenAlerts().length > 0) {
+            <div class="widget-alert-stack">
+              @for (alert of nextGenAlerts(); track alert.key) {
+                <app-alert
+                  [variant]="alert.variant"
+                  [icon]="alert.icon"
+                  [message]="alert.message"
+                  density="compact"
+                  styleClass="widget-alert widget-alert--compact"
+                />
+              }
             </div>
           }
 
           <!-- Data Mode Indicator -->
           @if (readiness()?.dataMode === "reduced") {
-            <div
-              class="data-mode-indicator bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-4"
-            >
-              <div class="flex items-center gap-2">
-                <i
-                  class="pi pi-info-circle text-yellow-600 dark:text-yellow-400"
-                ></i>
-                <div class="flex-1">
-                  <div
-                    class="text-xs font-semibold text-yellow-800 dark:text-yellow-200 mb-1"
-                  >
-                    Reduced Data Mode
-                  </div>
-                  <div class="text-xs text-yellow-700 dark:text-yellow-300">
-                    Wellness questionnaire completion is low. Sleep metrics are
-                    weighted more heavily as a proxy. Completeness:
-                    {{ readiness()?.wellnessIndex?.completeness }}%
-                  </div>
-                </div>
-              </div>
-            </div>
+            <app-alert
+              variant="warning"
+              icon="pi pi-info-circle"
+              title="Reduced Data Mode"
+              [message]="reducedDataModeMessage()"
+              density="compact"
+              styleClass="widget-alert"
+            />
           }
 
           <!-- Wellness Index Details -->
@@ -334,12 +329,17 @@ import { nextGen_computeLbmTrend } from "../../../core/utils/next-gen-metrics";
           }
         </div>
       } @else {
-        <div class="no-data-state p-4 text-center">
-          <p class="text-text-secondary mb-4">No readiness data available</p>
-          <app-button iconLeft="pi-calculator" (clicked)="refresh()"
-            >Calculate Readiness</app-button
-          >
-        </div>
+        <app-empty-state
+          icon="pi-calculator"
+          heading="No readiness data available"
+          description="Calculate readiness to see today’s score, workload, and recovery guidance."
+          [compact]="true"
+          [inline]="true"
+        >
+          <app-button iconLeft="pi-calculator" (clicked)="refresh()">
+            Calculate Readiness
+          </app-button>
+        </app-empty-state>
       }
     </app-card>
   `,
@@ -365,6 +365,46 @@ export class ReadinessWidgetComponent {
   nextGenError = this.nextGenMetricsService.error;
   nextGenPreview = this.nextGenMetricsService.loadPreview;
   latestWellness = this.wellnessService.latestWellnessEntry;
+  nextGenAlerts = computed<ReadinessWidgetAlert[]>(() => {
+    const alerts: ReadinessWidgetAlert[] = [];
+    const loadAlert = this.loadSpikeAlert();
+    const hydrationAlert = this.hydrationAlert();
+    const lbmAlert = this.lbmAlert();
+
+    if (loadAlert) {
+      alerts.push({
+        key: "load-spike",
+        icon: "pi pi-exclamation-triangle",
+        message: loadAlert,
+        variant: "error",
+      });
+    }
+
+    if (hydrationAlert) {
+      alerts.push({
+        key: "hydration",
+        icon: "pi pi-info-circle",
+        message: hydrationAlert,
+        variant: "warning",
+      });
+    }
+
+    if (lbmAlert) {
+      alerts.push({
+        key: "lbm",
+        icon: "pi pi-info-circle",
+        message: lbmAlert,
+        variant: "warning",
+      });
+    }
+
+    return alerts;
+  });
+  reducedDataModeMessage = computed(() => {
+    const completeness = this.readiness()?.wellnessIndex?.completeness;
+
+    return `Wellness questionnaire completion is low. Sleep metrics are weighted more heavily as a proxy.${typeof completeness === "number" ? ` Completeness: ${completeness}%.` : ""}`;
+  });
 
   loadSpikeAlert = computed(() => {
     if (!this.nextGenEnabled()) return null;
@@ -457,25 +497,25 @@ export class ReadinessWidgetComponent {
     return this.readinessService.getScoreColor(score);
   }
 
-  getACWRColor(): string {
+  getACWRValueClass(): string {
     const acwr = this.readiness()?.acwr || 0;
-    if (acwr > 1.5) return "text-red-600";
-    if (acwr > 1.3) return "text-yellow-600";
-    if (acwr < 0.8) return "text-orange-500";
-    return "text-green-600";
+    if (acwr > 1.5) return "metric-value--danger";
+    if (acwr > 1.3) return "metric-value--warning";
+    if (acwr < 0.8) return "metric-value--caution";
+    return "metric-value--success";
   }
 
-  getNextGenRiskClass(): string {
+  getNextGenRiskValueClass(): string {
     const risk = this.nextGenPreview()?.workload?.riskLevel;
     switch (risk) {
       case "critical":
-        return "text-red-600";
+        return "metric-value--danger";
       case "high":
-        return "text-orange-500";
+        return "metric-value--caution";
       case "moderate":
-        return "text-yellow-600";
+        return "metric-value--warning";
       default:
-        return "text-green-600";
+        return "metric-value--success";
     }
   }
 }

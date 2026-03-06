@@ -5,8 +5,6 @@
     aria-label="Elite Athletic Command Center"
     [attr.data-mode]="activeMode()"
   >
-    <app-toast key="app-toast" position="top-right"></app-toast>
-
     <header class="elite-topbar" aria-label="Global navigation">
       <p-menubar [model]="menuItems" styleClass="interactive-surface elite-menubar">
         <ng-template #start>
@@ -36,43 +34,31 @@
       ></p-breadcrumb>
     </header>
 
-    <p-message
-      severity="error"
-      icon="pi pi-bell"
-      closable="false"
-      styleClass="critical-banner"
-      role="alert"
-      aria-live="assertive"
+    <app-alert
+      class="critical-banner"
+      variant="error"
+      title="Critical Alert"
+      message="Two athletes are inside critical injury risk bands. Immediate protocol adaptation required."
     >
-      <ng-template #container>
-        <div class="critical-banner-content">
-          <strong>Critical Alert:</strong>
-          <span>
-            Two athletes are inside critical injury risk bands. Immediate protocol
-            adaptation required.
-          </span>
-          <button
-            type="button"
-            class="interactive-surface collapse-btn"
-            (click)="alertCollapsed.set(!alertCollapsed())"
-            aria-label="Toggle alert details"
-          >
-            <i [class]="alertCollapsed() ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"></i>
-          </button>
-        </div>
-      </ng-template>
-    </p-message>
+      <div class="critical-banner-actions">
+        <button
+          type="button"
+          class="interactive-surface collapse-btn"
+          (click)="alertCollapsed.set(!alertCollapsed())"
+          aria-label="Toggle alert details"
+        >
+          <i [class]="alertCollapsed() ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"></i>
+        </button>
+      </div>
+    </app-alert>
 
     @if (!alertCollapsed()) {
-      <p-message
-        severity="warn"
-        icon="pi pi-exclamation-triangle"
-        styleClass="warning-banner"
-        role="status"
-      >
-        Team load variance is increasing in U18-A. Monitor protocol compliance in
-        the next 60 minutes.
-      </p-message>
+      <app-alert
+        class="warning-banner"
+        variant="warning"
+        density="compact"
+        message="Team load variance is increasing in U18-A. Monitor protocol compliance in the next 60 minutes."
+      />
     }
 
     <section class="hero" aria-label="Performance headline">
@@ -278,13 +264,14 @@
                   [disabled]="step.locked ?? false"
                   ariaLabel="Toggle protocol step"
                 ></p-toggleSwitch>
-                <div>
+                <div class="protocol-copy">
                   <strong>{{ step.label }}</strong>
-                  <p-message
-                    [severity]="step.complete ? 'success' : (step.locked ? 'warn' : 'info')"
-                    [text]="step.note"
-                    size="small"
-                  ></p-message>
+                  <app-alert
+                    [variant]="step.complete ? 'success' : (step.locked ? 'warning' : 'info')"
+                    [message]="step.note"
+                    density="compact"
+                    styleClass="protocol-note"
+                  />
                 </div>
               </div>
             }

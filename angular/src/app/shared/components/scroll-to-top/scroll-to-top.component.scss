@@ -33,7 +33,8 @@
     background-color var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard);
 
-  animation: slideInUp 0.3s var(--ease-spring);
+  --ui-motion-enter-from-y: var(--space-5);
+  animation: ui-motion-enter-y 0.3s var(--ease-spring);
 
   &:hover {
     background: var(--ds-primary-green-hover);
@@ -57,16 +58,5 @@
     right: var(--space-4);
     width: var(--touch-target-md); // WCAG touch target minimum
     height: var(--touch-target-md);
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(var(--space-5));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }

@@ -15,7 +15,7 @@
 
       <!-- Dashboard Content -->
       @if (!isLoading() && !hasError()) {
-        <div class="player-dashboard section-stack elite-phase2-shell">
+        <div class="player-dashboard section-stack elite-phase2-shell ui-page-stack">
           <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
           @if (needsProgramAssignment()) {
             <section class="no-program-section">
@@ -191,14 +191,12 @@
                     {{ getTimeAgoStr(announcement()?.postedAt) }}
                   </span>
                 </div>
-                <button
-                  type="button"
+                <app-close-button
                   class="announcement-close-btn"
-                  (click)="dismissAnnouncement()"
-                  aria-label="Dismiss announcement"
-                >
-                  <i class="pi pi-times"></i>
-                </button>
+                  tone="inverse"
+                  ariaLabel="Dismiss announcement"
+                  (clicked)="dismissAnnouncement()"
+                />
               </div>
             </section>
           }
@@ -581,10 +579,11 @@ Keep logging sessions to unlock this injury prevention metric!'
             <!-- SECTION 4: Weekly Progress -->
             <p-card class="progress-card">
               <ng-template #header>
-                <div class="card-header-custom">
-                  <i class="pi pi-chart-bar card-header-icon"></i>
-                  <span class="card-header-title">Weekly Progress</span>
-                </div>
+                <app-card-header
+                  class="dashboard-card-header"
+                  icon="pi-chart-bar"
+                  title="Weekly Progress"
+                />
               </ng-template>
               <div class="week-progress">
                 @for (day of weekDays(); track day.name) {
@@ -628,10 +627,11 @@ Keep logging sessions to unlock this injury prevention metric!'
             <!-- SECTION 5: Today's Schedule Preview (using p-timeline) -->
             <p-card class="schedule-card">
               <ng-template #header>
-                <div class="card-header-custom">
-                  <i class="pi pi-clock card-header-icon"></i>
-                  <span class="card-header-title">Today's Schedule</span>
-                </div>
+                <app-card-header
+                  class="dashboard-card-header"
+                  icon="pi-clock"
+                  title="Today's Schedule"
+                />
               </ng-template>
               @if (todaySchedule().length > 0) {
                 <p-timeline
@@ -683,12 +683,16 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-schedule">
-                  <p-message severity="info" class="status-message">
+                  <app-alert
+                    variant="info"
+                    density="compact"
+                    styleClass="status-message"
+                  >
                     <div class="empty-content">
                       <i class="pi pi-calendar empty-icon"></i>
                       <span>No training scheduled for today</span>
                     </div>
-                  </p-message>
+                  </app-alert>
                   <app-button variant="text" routerLink="/training"
                     >View Full Schedule</app-button
                   >
@@ -699,10 +703,11 @@ Keep logging sessions to unlock this injury prevention metric!'
             <!-- SECTION 6: Quick Actions Grid -->
             <p-card class="actions-card">
               <ng-template #header>
-                <div class="card-header-custom">
-                  <i class="pi pi-bolt card-header-icon"></i>
-                  <span class="card-header-title">Quick Actions</span>
-                </div>
+                <app-card-header
+                  class="dashboard-card-header"
+                  icon="pi-bolt"
+                  title="Quick Actions"
+                />
               </ng-template>
               <div class="quick-actions-grid">
                 @for (action of quickActions; track action.route) {
@@ -721,10 +726,11 @@ Keep logging sessions to unlock this injury prevention metric!'
             <!-- SECTION 7: Performance Trend -->
             <p-card class="trend-card">
               <ng-template #header>
-                <div class="card-header-custom">
-                  <i class="pi pi-trending-up card-header-icon"></i>
-                  <span class="card-header-title">Performance Trend</span>
-                </div>
+                <app-card-header
+                  class="dashboard-card-header"
+                  icon="pi-trending-up"
+                  title="Performance Trend"
+                />
               </ng-template>
               @if (performanceChartData()) {
                 <div class="chart-container">
@@ -757,12 +763,16 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-chart">
-                  <p-message severity="info" class="status-message">
+                  <app-alert
+                    variant="info"
+                    density="compact"
+                    styleClass="status-message"
+                  >
                     <div class="empty-content">
                       <i class="pi pi-chart-line empty-icon"></i>
                       <span>Complete more sessions to see your trend</span>
                     </div>
-                  </p-message>
+                  </app-alert>
                 </div>
               }
             </p-card>

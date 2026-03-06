@@ -135,37 +135,19 @@
 
           <!-- Weather Alert Card -->
           @if (weatherAlert()) {
-            <div
+            <app-alert
               class="weather-alert"
-              [class.weather-alert--danger]="
+              [variant]="
+                weatherAlert()?.severity === 'danger' ? 'error' : 'warning'
+              "
+              [title]="
                 weatherAlert()?.severity === 'danger'
+                  ? 'Weather Advisory'
+                  : 'Weather Notice'
               "
-              [class.weather-alert--warning]="
-                weatherAlert()?.severity === 'warning'
-              "
+              [message]="weatherAlert()?.reason || ''"
             >
-              <div class="weather-alert__icon">
-                <i
-                  class="pi"
-                  [class.pi-exclamation-triangle]="
-                    weatherAlert()?.severity === 'danger'
-                  "
-                  [class.pi-info-circle]="
-                    weatherAlert()?.severity === 'warning'
-                  "
-                ></i>
-              </div>
-              <div class="weather-alert__content">
-                <h4 class="weather-alert__title">
-                  @if (weatherAlert()?.severity === "danger") {
-                    Weather Advisory
-                  } @else {
-                    Weather Notice
-                  }
-                </h4>
-                <p class="weather-alert__reason">
-                  {{ weatherAlert()?.reason }}
-                </p>
+              <div class="weather-alert__details">
                 <p class="weather-alert__recommendation">
                   {{ weatherAlert()?.recommendation }}
                 </p>
@@ -182,28 +164,28 @@
                     }
                   </p>
                 }
-              </div>
-              <div class="weather-alert__actions">
-                @if (!weatherAlert()?.canProceed) {
+                <div class="weather-alert__actions">
+                  @if (!weatherAlert()?.canProceed) {
+                    <app-button
+                      variant="primary"
+                      size="sm"
+                      iconLeft="pi-home"
+                      (clicked)="generateSubstituteWorkout()"
+                      [loading]="isGeneratingSubstitute()"
+                    >
+                      Get Indoor Alternative
+                    </app-button>
+                  }
                   <app-button
-                    variant="primary"
+                    variant="text"
                     size="sm"
-                    iconLeft="pi-home"
-                    (clicked)="generateSubstituteWorkout()"
-                    [loading]="isGeneratingSubstitute()"
+                    (clicked)="dismissWeatherAlert()"
                   >
-                    Get Indoor Alternative
+                    Dismiss
                   </app-button>
-                }
-                <app-button
-                  variant="text"
-                  size="sm"
-                  (clicked)="dismissWeatherAlert()"
-                >
-                  Dismiss
-                </app-button>
+                </div>
               </div>
-            </div>
+            </app-alert>
           }
 
           <!-- Substitute Workout Card -->
@@ -448,18 +430,15 @@
                   </div>
                 }
               } @else if (filteredSessions().length === 0) {
-                <!-- STEP 4: Empty State - Icon + message centered -->
-                <div class="card-empty-state">
-                  <div class="card-empty-state__icon">
-                    <i class="pi pi-calendar" aria-hidden="true"></i>
-                  </div>
-                  <div class="card-empty-state__content">
-                    <p class="card-empty-state__title">No sessions scheduled</p>
-                    <p class="card-empty-state__text">
-                      Click "New Session" to add one.
-                    </p>
-                  </div>
-                </div>
+                <app-empty-state
+                  [inline]="true"
+                  [compact]="true"
+                  [showBenefits]="false"
+                  [showSafetyNote]="false"
+                  icon="pi-calendar"
+                  [customTitle]="'No sessions scheduled'"
+                  [customMessage]="'Use New Session to add one.'"
+                ></app-empty-state>
               } @else {
                 <!-- STEP 3: Session rows as card-like items -->
                 @for (session of filteredSessions(); track session.id) {

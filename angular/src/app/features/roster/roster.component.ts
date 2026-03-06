@@ -43,6 +43,7 @@ import { Dialog } from "primeng/dialog";
 import { Select } from "primeng/select";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
@@ -120,6 +121,7 @@ import {
     RosterFiltersComponent,
     RosterPlayerFormDialogComponent,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
   ],
   templateUrl: "./roster.component.html",

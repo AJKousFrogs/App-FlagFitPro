@@ -5,6 +5,7 @@ import { Select } from "primeng/select";
 import { DatePicker } from "primeng/datepicker";
 import { COUNTRY_OPTIONS } from "../../../core/constants";
 import { GENDER_OPTIONS } from "../constants/onboarding-options";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
@@ -16,6 +17,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
     InputText,
     Select,
     DatePicker,
+    AlertComponent,
     ButtonComponent,
   ],
   template: `
@@ -117,40 +119,37 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         <!-- Email Verification Status -->
         <div class="form-group span-2">
           @if (isEmailVerified()) {
-            <div class="email-verification-banner verified">
-              <i class="pi pi-check-circle"></i>
-              <span
-                >Email verified! You can proceed to the next
-                step.</span
-              >
-            </div>
+            <app-alert
+              variant="success"
+              density="compact"
+              title="Email verified"
+              message="You can proceed to the next step."
+            />
           } @else {
-            <div class="email-verification-banner pending">
-              <i class="pi pi-envelope"></i>
-              <div class="verification-content">
-                <span class="verification-message">
-                  Please verify your email to continue. Check your
-                  inbox for a verification link.
-                </span>
-                <div class="verification-actions">
-                  <app-button
-                    variant="outlined"
-                    size="sm"
-                    iconLeft="pi-refresh"
-                    [loading]="isResendingVerification()"
-                    (clicked)="resendVerification.emit()"
-                    >Resend Email</app-button
-                  >
-                  <app-button
-                    variant="text"
-                    size="sm"
-                    iconLeft="pi-sync"
-                    (clicked)="refreshVerification.emit()"
-                    >I've Verified</app-button
-                  >
-                </div>
+            <app-alert
+              variant="warning"
+              density="compact"
+              title="Email verification required"
+              message="Please verify your email to continue. Check your inbox for a verification link."
+            >
+              <div class="form-inline-split">
+                <app-button
+                  variant="outlined"
+                  size="sm"
+                  iconLeft="pi-refresh"
+                  [loading]="isResendingVerification()"
+                  (clicked)="resendVerification.emit()"
+                  >Resend Email</app-button
+                >
+                <app-button
+                  variant="text"
+                  size="sm"
+                  iconLeft="pi-sync"
+                  (clicked)="refreshVerification.emit()"
+                  >I've Verified</app-button
+                >
               </div>
-            </div>
+            </app-alert>
           }
         </div>
       </div>

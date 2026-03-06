@@ -127,6 +127,10 @@ const CONTEXT_CONFIGS: Record<
         <p class="empty-message">{{ resolvedMessage() }}</p>
       }
 
+      <div class="empty-body">
+        <ng-content select="[emptyStateBody]"></ng-content>
+      </div>
+
       <!-- Benefits list (optional) - from context or explicit -->
       @if (showBenefits() && resolvedBenefits().length > 0) {
         @if (resolvedBenefitsTitle()) {

@@ -14,6 +14,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { DatePicker } from "primeng/datepicker";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -107,6 +108,7 @@ interface AthleteMetrics {
     PageHeaderComponent,
     AiConsentRequiredComponent,
     ButtonComponent,
+    CardHeaderComponent,
     EmptyStateComponent,
   ],
   template: `
@@ -216,16 +218,16 @@ interface AthleteMetrics {
           <!-- AI Suggestions -->
           <p-card class="suggestions-card">
             <ng-template #header>
-              <div class="card-header">
-                <h3><i class="pi pi-sparkles"></i> AI Suggestions</h3>
+              <app-card-header icon="pi-sparkles" title="AI Suggestions">
                 @if (pendingSuggestions().length > 0) {
                   <app-status-tag
+                    header-actions
                     [value]="pendingSuggestions().length + ' pending'"
                     severity="info"
                     size="sm"
                   />
                 }
-              </div>
+              </app-card-header>
             </ng-template>
 
             @if (isLoading()) {

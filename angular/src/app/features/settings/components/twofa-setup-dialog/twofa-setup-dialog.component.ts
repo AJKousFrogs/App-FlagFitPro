@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { Dialog } from "primeng/dialog";
+import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { DialogHeaderComponent } from "../../../../shared/components/ui-components";
@@ -10,6 +11,7 @@ import { MobileOptimizedImageDirective } from "../../../../shared/directives/mob
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Dialog,
+    AlertComponent,
     ButtonComponent,
     IconButtonComponent,
     DialogHeaderComponent,

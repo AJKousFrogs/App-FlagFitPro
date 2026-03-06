@@ -34,6 +34,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -104,6 +105,7 @@ const EVENT_TYPE_CONFIG: Record<
 
     MainLayoutComponent,
     PageHeaderComponent,
+    AlertComponent,
     ButtonComponent,
     EmptyStateComponent,
   ],
@@ -139,16 +141,18 @@ const EVENT_TYPE_CONFIG: Record<
 
         <!-- Pending RSVPs Alert -->
         @if (pendingCount() > 0) {
-          <p-card class="pending-alert">
-            <div class="alert-content">
-              <i class="pi pi-exclamation-circle"></i>
-              <span>
-                You have <strong>{{ pendingCount() }}</strong> pending RSVP{{
-                  pendingCount() > 1 ? "s" : ""
-                }}
-              </span>
-            </div>
-          </p-card>
+          <app-alert
+            variant="warning"
+            density="compact"
+            title="Pending RSVPs"
+            [message]="
+              'You have ' +
+              pendingCount() +
+              ' pending RSVP' +
+              (pendingCount() > 1 ? 's' : '')
+            "
+            styleClass="pending-alert"
+          />
         }
 
         <!-- Events List by Date -->
@@ -244,13 +248,12 @@ const EVENT_TYPE_CONFIG: Record<
         }
 
         @if (groupedEvents().length === 0) {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-calendar"
-              heading="No upcoming events"
-              [description]="selectedType ? 'No ' + getEventTypeConfig(selectedType).label.toLowerCase() + ' events scheduled' : 'Check back later for team events'"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-calendar"
+            heading="No upcoming events"
+            [description]="selectedType ? 'No ' + getEventTypeConfig(selectedType).label.toLowerCase() + ' events scheduled' : 'Check back later for team events'"
+          />
         }
       </div>
 

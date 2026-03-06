@@ -18,6 +18,7 @@ import { TrainingSessionDetailDataService } from "../services/training-session-d
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { getTemplateSessionDateFromWeekRange } from "../../../shared/utils/training-template.utils";
 
 interface SessionDetails {
   id: string;
@@ -313,14 +314,11 @@ export class TrainingSessionDetailComponent implements OnInit {
       // Calculate the actual date for this template
       const weeks = template.training_weeks;
       const weekData = Array.isArray(weeks) ? weeks[0] : weeks;
-      const dateStr = weekData.start_date.split("T")[0];
-      const [year, month, day] = dateStr.split("-").map(Number);
-      const weekStart = new Date(year, month - 1, day, 0, 0, 0, 0);
-      const dayOfWeek = isNumber(template.day_of_week)
-        ? template.day_of_week
-        : 0;
-      const sessionDate = new Date(weekStart);
-      sessionDate.setDate(weekStart.getDate() + dayOfWeek);
+      const sessionDate = getTemplateSessionDateFromWeekRange({
+        weekStart: weekData.start_date,
+        weekEnd: weekData.end_date,
+        dayOfWeek: isNumber(template.day_of_week) ? template.day_of_week : null,
+      });
 
       // Parse equipment if it's stored as JSON or array
       let equipment: string[] = [];

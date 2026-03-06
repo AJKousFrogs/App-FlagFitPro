@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, from, of } from "rxjs";
+import { Observable, firstValueFrom, from, of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs";
 import { WeatherData, WeatherService } from "./weather.service";
 import { SupabaseService } from "./supabase.service";
@@ -31,6 +31,42 @@ export interface WeatherSensitiveSession {
   durationMinutes: number;
   description?: string;
   equipmentNeeded?: string[];
+}
+
+interface PlayerProgramAssignmentResponse {
+  assignment?: {
+    program_id?: string | null;
+  } | null;
+}
+
+interface ProgramTemplateSessionResponse {
+  id: string;
+  session_name?: string | null;
+  session_type?: string | null;
+  day_of_week?: number | null;
+  session_order?: number | null;
+  duration_minutes?: number | null;
+  description?: string | null;
+  equipment_needed?: string[] | null;
+  is_team_practice?: boolean | null;
+  is_outdoor?: boolean | null;
+  weather_sensitive?: boolean | null;
+}
+
+interface ProgramTemplateWeekResponse {
+  start_date: string;
+  end_date: string;
+  sessions?: ProgramTemplateSessionResponse[] | null;
+}
+
+interface ProgramTemplatePhaseResponse {
+  weeks?: ProgramTemplateWeekResponse[] | null;
+}
+
+interface TrainingProgramDetailsResponse {
+  data?: {
+    training_phases?: ProgramTemplatePhaseResponse[] | null;
+  } | null;
 }
 
 /**
@@ -980,35 +1016,83 @@ The exercises are selected to maintain your training goals while adapting to ind
    * Get today's weather-sensitive sessions
    */
   getTodaysWeatherSensitiveSessions(): Observable<WeatherSensitiveSession[]> {
-    return from(
-      this.supabaseService.client
-        .from("todays_training_with_weather")
-        .select("*")
-        .eq("is_today", true)
-        .eq("weather_sensitive", true),
-    ).pipe(
-      map(({ data, error }) => {
-        if (error) {
-          this.logger.warn(
-            "Failed to load today's sessions:",
-            toLogContext(error),
-          );
-          return [];
-        }
-        return (data || []).map((row) => ({
-          id: row.template_id,
-          sessionName: row.session_name,
-          sessionType: row.session_type,
-          isOutdoor: row.is_outdoor,
-          isTeamPractice: row.is_team_practice,
-          weatherSensitive: row.weather_sensitive,
-          durationMinutes: row.duration_minutes,
-          description: row.description,
-          equipmentNeeded: row.equipment_needed,
-        }));
+    return from(this.loadTodaysWeatherSensitiveSessions()).pipe(
+      catchError((error) => {
+        this.logger.warn(
+          "Failed to load today's weather-sensitive sessions:",
+          toLogContext(error),
+        );
+        return of([]);
       }),
-      catchError(() => of([])),
     );
+  }
+
+  private async loadTodaysWeatherSensitiveSessions(): Promise<
+    WeatherSensitiveSession[]
+  > {
+    const user = this.authService.getUser();
+    if (!user?.id) {
+      return [];
+    }
+
+    const today = new Date();
+    const todayKey = this.toLocalDateKey(today);
+    const todayDayOfWeek = today.getDay();
+
+    const assignmentResponse = await firstValueFrom(
+      this.apiService.get<PlayerProgramAssignmentResponse>(
+        "/api/player-programs/me",
+      ),
+    );
+    const activeProgramId = assignmentResponse.data?.assignment?.program_id;
+
+    if (!activeProgramId) {
+      return [];
+    }
+
+    const programResponse = await firstValueFrom(
+      this.apiService.get<TrainingProgramDetailsResponse>(
+        "/api/training-programs",
+        {
+          id: activeProgramId,
+          full: true,
+        },
+      ),
+    );
+    const program = programResponse.data?.data;
+
+    return (
+      program?.training_phases
+        ?.flatMap((phase) => phase.weeks ?? [])
+        .filter(
+          (week) => week.start_date <= todayKey && week.end_date >= todayKey,
+        )
+        .flatMap((week) => week.sessions ?? [])
+        .filter(
+          (session) =>
+            session.weather_sensitive === true &&
+            session.day_of_week === todayDayOfWeek,
+        )
+        .sort((a, b) => (a.session_order ?? 0) - (b.session_order ?? 0))
+        .map((session) => ({
+          id: session.id,
+          sessionName: session.session_name || "Training Session",
+          sessionType: session.session_type || "training",
+          isOutdoor: session.is_outdoor === true,
+          isTeamPractice: session.is_team_practice === true,
+          weatherSensitive: session.weather_sensitive === true,
+          durationMinutes: session.duration_minutes ?? 0,
+          description: session.description || undefined,
+          equipmentNeeded: session.equipment_needed ?? undefined,
+        })) ?? []
+    );
+  }
+
+  private toLocalDateKey(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   /**

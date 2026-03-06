@@ -1,7 +1,7 @@
 <app-card title="Privacy Controls" headerIcon="pi-lock" headerIconColor="error">
   <form [formGroup]="privacyForm()">
-    <div class="p-field mb-4">
-      <label for="profileVisibility" class="p-label">Profile Visibility</label>
+    <div class="form-field">
+      <label for="profileVisibility" class="form-label">Profile Visibility</label>
       <p-select
         id="profileVisibility"
         formControlName="profileVisibility"
@@ -19,8 +19,8 @@
         </ng-template>
       </p-select>
     </div>
-    <div class="p-field-checkbox mb-4">
-      <label id="settings-showStats-label" class="p-label"
+    <div class="settings-toggle-row">
+      <label id="settings-showStats-label" class="form-label"
         >Show Statistics Publicly</label
       >
       <div class="toggle-wrapper">

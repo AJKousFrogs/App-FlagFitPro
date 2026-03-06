@@ -69,17 +69,9 @@ import { CommonModule } from "@angular/common";
         padding: var(--space-3);
         background: var(--surface-card);
         border-radius: var(--radius-md);
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.7;
-        }
+        --ui-motion-fade-pulse-opacity-mid: 0.7;
+        animation: ui-motion-fade-pulse 2s cubic-bezier(0.4, 0, 0.6, 1)
+          infinite;
       }
 
       /* Header */

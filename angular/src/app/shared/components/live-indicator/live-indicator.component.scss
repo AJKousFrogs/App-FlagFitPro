@@ -27,19 +27,9 @@
 }
 
 .live-indicator.live-active .live-dot {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: var(--opacity-dimmed);
-    transform: scale(1.2);
-  }
+  --ui-motion-scale-pulse-mid: 1.2;
+  --ui-motion-scale-pulse-opacity-mid: var(--opacity-dimmed);
+  animation: ui-motion-scale-pulse 2s infinite;
 }
 
 .live-indicator.live-active .live-dot::after {
@@ -51,19 +41,10 @@
   bottom: -var(--space-1);
   border-radius: var(--radius-full);
   background: var(--color-status-error);
-  opacity: var(--opacity-quarter);
-  animation: ripple 2s infinite;
-}
-
-@keyframes ripple {
-  0% {
-    transform: scale(0.8);
-    opacity: var(--opacity-muted);
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
+  --ui-motion-ring-start-scale: 0.8;
+  --ui-motion-ring-end-scale: 1.5;
+  --ui-motion-ring-start-opacity: var(--opacity-muted);
+  animation: ui-motion-ring-expand 2s infinite;
 }
 
 .live-text {

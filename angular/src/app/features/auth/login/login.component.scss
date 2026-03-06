@@ -1,149 +1,36 @@
-@use "styles/mixins" as *;
-
 .login-page {
   .login-card {
     width: 100%;
-    max-width: var(--dialog-max-width-md);
+  }
+
+  .form-error-summary--auth {
+    margin-bottom: 0;
+  }
+
+  .form-error-summary__body {
+    margin: var(--space-2) 0 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-body-sm-size);
+    line-height: var(--line-height-normal);
   }
 
   .login-form-options {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    margin: var(--space-2) 0 var(--space-5);
+    margin-top: var(--space-1);
   }
 
   .forgot-link {
-    color: var(--color-brand-primary);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    @include ds-focus-ring(var(--color-brand-primary));
-  }
-
-  .password-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-    input {
-      padding-right: var(--space-12);
-    }
-  }
-
-  .password-toggle-btn {
-    position: absolute;
-    right: var(--space-2);
-    top: 50%;
-    transform: translateY(-50%);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--touch-target-sm);
-    height: var(--touch-target-sm);
-    border: 0;
-    border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    transition:
-      background-color var(--transition-fast),
-      color var(--transition-fast);
-
-    &:hover {
-      background: color-mix(in srgb, var(--color-brand-primary) 10%, transparent);
-      color: var(--color-brand-primary);
-    }
-
-    @include ds-focus-ring(var(--color-brand-primary));
-  }
-
-  .checkbox-wrapper {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    cursor: pointer;
-    user-select: none;
-
-    input[type="checkbox"] {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
-
-      &:checked + .checkmark {
-        border-color: var(--color-brand-primary);
-        background: var(--color-brand-primary);
-      }
-
-      &:checked + .checkmark::after {
-        opacity: 1;
-      }
-
-      @include ds-focus-visible-sibling(
-        ".checkmark",
-        0 0 0 var(--space-1) color-mix(in srgb, var(--color-brand-primary) 20%, transparent)
-      );
-    }
-
-    .checkmark {
-      position: relative;
-      width: 1.125rem;
-      height: 1.125rem;
-      border-radius: var(--radius-sm);
-      border: var(--border-1) solid var(--color-border-primary);
-      background: var(--surface-primary);
-      transition:
-        border-color var(--transition-fast),
-        background-color var(--transition-fast);
-
-      &::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        margin: auto;
-        width: 0.3125rem;
-        height: 0.5625rem;
-        border: solid var(--color-text-on-primary);
-        border-width: 0 var(--border-2) var(--border-2) 0;
-        transform: rotate(45deg) translate(-1px, -1px);
-        opacity: 0;
-      }
-    }
-
-    .checkbox-label {
-      color: var(--color-text-secondary);
-      font-size: var(--font-size-sm);
-    }
-  }
-
-  .alert {
-    strong {
-      margin-right: var(--space-1);
-    }
+    margin-left: auto;
   }
 
   .login-create-link {
-    font-size: var(--font-size-sm);
-    text-transform: lowercase;
+    font-size: var(--font-body-sm-size);
   }
 }
 
 @media (max-width: 767px) {
   .login-page {
-    .login-form-options {
-      flex-direction: column;
-      align-items: flex-start;
+    .forgot-link {
+      margin-left: 0;
     }
   }
 }

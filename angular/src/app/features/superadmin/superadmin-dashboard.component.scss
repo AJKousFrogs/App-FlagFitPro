@@ -1,6 +1,6 @@
 // ============================================================================
 // superadmin-dashboard.component Styles
-// Design System Compliant
+// Layout/page-specific styles only. Dialog visuals are shared.
 // ============================================================================
 
 @use "styles/mixins" as *;
@@ -59,7 +59,6 @@
   color: var(--color-status-info);
 }
 
-/* Approvals List */
 .approvals-list {
   display: flex;
   flex-direction: column;
@@ -168,7 +167,6 @@
   border-top: var(--border-1) solid var(--color-border-primary);
 }
 
-/* Quick Actions */
 .quick-actions {
   margin-top: var(--space-6);
 }
@@ -211,53 +209,8 @@
   font-weight: var(--ds-font-weight-semibold);
 }
 
-/* Reject Modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--surface-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--z-modal);
-}
-
-.modal-content {
-  background: var(--surface-elevated);
-  border-radius: var(--radius-lg);
-  width: var(--modal-width-responsive);
-  max-width: var(--dialog-max-width-md);
-  box-shadow: var(--shadow-3);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--color-border-primary);
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-2);
-  color: var(--color-text-muted);
-  transition: color var(--transition-base) var(--ease-standard);
-
-  @include ds-hover-state(transparent, $color: var(--color-text-primary));
-}
-
 .modal-body {
-  padding: var(--space-4);
+  padding-top: var(--space-2);
 }
 
 .modal-body p {
@@ -272,21 +225,10 @@
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
   resize: vertical;
-}
 
-.modal-body textarea {
   @include ds-focus-ring($border-color: var(--ds-primary-green));
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border-top: var(--border-1) solid var(--color-border-primary);
-}
-
-/* Responsive */
 @include respond-to(md) {
   .dashboard-content {
     padding: var(--space-4);

@@ -24,7 +24,9 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import {} from "@angular/core/rxjs-interop";
 import { Card } from "primeng/card";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabPanel } from "primeng/tabs";
@@ -64,8 +66,10 @@ import { calculateAge } from "../../../shared/utils/date.utils";
     PageHeaderComponent,
     SafetyWarningsComponent,
     TrafficLightRiskComponent,
+    AlertComponent,
 
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
     StatusTagComponent,
   ],
@@ -93,29 +97,34 @@ import { calculateAge } from "../../../shared/utils/date.utils";
           <!-- ACWR Status -->
           <p-card class="safety-card">
             <div class="card-content">
-              <div class="card-header">
-                <h3>ACWR Status</h3>
+              <app-card-header title="ACWR Status">
                 @if (!hasInsufficientAcwrData()) {
                   <app-traffic-light-risk
+                    header-actions
                     [riskZone]="acwrRiskZone()"
                     [acwrValue]="acwrValue()"
                   ></app-traffic-light-risk>
                 }
-              </div>
+              </app-card-header>
               @if (hasInsufficientAcwrData()) {
                 <!-- Insufficient ACWR data - use centralized message -->
-                <div class="insufficient-data-notice">
-                  <i class="pi {{ acwrInsufficientMessage.icon }}"></i>
-                  <h4>{{ acwrInsufficientMessage.title }}</h4>
-                  <p>{{ acwrInsufficientMessage.reason }}</p>
-                  <app-icon-button
-                    icon="pi-plus"
-                    variant="outlined"
-                    routerLink="/todays-practice"
-                    ariaLabel="Go to today's practice"
-                    tooltip="Go to today's practice"
-                  />
-                </div>
+                <app-alert
+                  class="insufficient-data-alert"
+                  variant="info"
+                  [title]="acwrInsufficientMessage.title"
+                  [message]="acwrInsufficientMessage.reason"
+                  [icon]="acwrInsufficientMessage.icon || null"
+                >
+                  <div class="insufficient-data-alert__action">
+                    <app-icon-button
+                      icon="pi-plus"
+                      variant="outlined"
+                      routerLink="/todays-practice"
+                      ariaLabel="Go to today's practice"
+                      tooltip="Go to today's practice"
+                    />
+                  </div>
+                </app-alert>
               } @else {
                 <div class="metric-display">
                   <span class="metric-value">{{
@@ -144,14 +153,14 @@ import { calculateAge } from "../../../shared/utils/date.utils";
           <!-- Age-Adjusted Recovery -->
           <p-card class="safety-card">
             <div class="card-content">
-              <div class="card-header">
-                <h3>Recovery Status</h3>
+              <app-card-header title="Recovery Status">
                 <app-status-tag
+                  header-actions
                   [value]="ageGroup()"
                   [severity]="getAgeGroupSeverity()"
                   size="sm"
                 />
-              </div>
+              </app-card-header>
               <div class="metric-display">
                 <span class="metric-value"
                   >{{ recoveryMultiplier() | number: "1.1-1" }}x</span
@@ -176,14 +185,14 @@ import { calculateAge } from "../../../shared/utils/date.utils";
           <!-- Sleep Debt -->
           <p-card class="safety-card">
             <div class="card-content">
-              <div class="card-header">
-                <h3>Sleep Debt</h3>
+              <app-card-header title="Sleep Debt">
                 <app-status-tag
+                  header-actions
                   [value]="sleepDebtLevel()"
                   [severity]="getSleepDebtSeverity()"
                   size="sm"
                 />
-              </div>
+              </app-card-header>
               <div class="metric-display">
                 <span class="metric-value"
                   >{{ sleepDebtHours() | number: "1.1-1" }}h</span
@@ -205,14 +214,14 @@ import { calculateAge } from "../../../shared/utils/date.utils";
           <!-- Weekly Movement Limits -->
           <p-card class="safety-card">
             <div class="card-content">
-              <div class="card-header">
-                <h3>Movement Limits</h3>
+              <app-card-header title="Movement Limits">
                 <app-status-tag
+                  header-actions
                   [value]="movementLimitStatus()"
                   [severity]="getMovementLimitSeverity()"
                   size="sm"
                 />
-              </div>
+              </app-card-header>
               <div class="movement-limits">
                 @for (limit of movementLimits(); track limit.type) {
                   <div class="limit-item">
@@ -333,29 +342,29 @@ import { calculateAge } from "../../../shared/utils/date.utils";
           <p-tabpanel header="Training History">
             <div class="training-history">
               <div class="history-summary">
-                <div class="summary-item">
-                  <span class="summary-value">{{
+                <div class="metric-tile">
+                  <span class="metric-tile__value">{{
                     totalSessionsThisWeek()
                   }}</span>
-                  <span class="summary-label">Sessions This Week</span>
+                  <span class="metric-tile__label">Sessions This Week</span>
                 </div>
-                <div class="summary-item">
-                  <span class="summary-value">{{
+                <div class="metric-tile">
+                  <span class="metric-tile__value">{{
                     totalLoadThisWeek() | number: "1.0-0"
                   }}</span>
-                  <span class="summary-label">Total Load (AU)</span>
+                  <span class="metric-tile__label">Total Load (AU)</span>
                 </div>
-                <div class="summary-item">
-                  <span class="summary-value">{{
+                <div class="metric-tile">
+                  <span class="metric-tile__value">{{
                     consecutiveTrainingDays()
                   }}</span>
-                  <span class="summary-label">Consecutive Days</span>
+                  <span class="metric-tile__label">Consecutive Days</span>
                 </div>
-                <div class="summary-item">
-                  <span class="summary-value"
+                <div class="metric-tile">
+                  <span class="metric-tile__value"
                     >{{ weeklyLoadChange() | number: "1.0-0" }}%</span
                   >
-                  <span class="summary-label">Week-over-Week Change</span>
+                  <span class="metric-tile__label">Week-over-Week Change</span>
                 </div>
               </div>
             </div>

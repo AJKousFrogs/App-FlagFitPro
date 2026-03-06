@@ -21,7 +21,6 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { Card } from "primeng/card";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -122,7 +121,6 @@ const POSITIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     ProgressBar,
     Select,
     TableModule,
@@ -331,16 +329,15 @@ const POSITIONS = [
             }
           </div>
         } @else {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-trophy"
-              [heading]="'No ' + activeTab() + ' Tournaments'"
-              [description]="getEmptyMessage()"
-              [actionLabel]="(activeTab() === 'available' || activeTab() === 'upcoming') ? 'Browse Available' : null"
-              [actionIcon]="(activeTab() === 'available' || activeTab() === 'upcoming') ? 'pi-search' : null"
-              [actionHandler]="(activeTab() === 'available' || activeTab() === 'upcoming') ? browseTournamentsHandler : null"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-trophy"
+            [heading]="'No ' + activeTab() + ' Tournaments'"
+            [description]="getEmptyMessage()"
+            [actionLabel]="(activeTab() === 'available' || activeTab() === 'upcoming') ? 'Browse Available' : null"
+            [actionIcon]="(activeTab() === 'available' || activeTab() === 'upcoming') ? 'pi-search' : null"
+            [actionHandler]="(activeTab() === 'available' || activeTab() === 'upcoming') ? browseTournamentsHandler : null"
+          />
         }
       </div>
 

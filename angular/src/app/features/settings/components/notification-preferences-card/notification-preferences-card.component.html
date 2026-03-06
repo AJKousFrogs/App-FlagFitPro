@@ -131,8 +131,8 @@
     @if (notificationForm().get("quietHoursEnabled")?.value) {
       <div class="quiet-hours-config">
         <div class="time-range">
-          <div class="time-input">
-            <label>Start Time</label>
+          <div class="time-input form-field">
+            <label class="form-label">Start Time</label>
             <input
               type="time"
               formControlName="quietHoursStart"
@@ -141,8 +141,8 @@
             />
           </div>
           <span class="time-separator">to</span>
-          <div class="time-input">
-            <label>End Time</label>
+          <div class="time-input form-field">
+            <label class="form-label">End Time</label>
             <input
               type="time"
               formControlName="quietHoursEnd"

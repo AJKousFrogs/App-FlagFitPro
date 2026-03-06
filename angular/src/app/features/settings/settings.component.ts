@@ -13,7 +13,6 @@ import {
     FormsModule,
     ReactiveFormsModule,
 } from "@angular/forms";
-import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -76,7 +75,6 @@ import { NewTeamRequestDialogComponent } from "./components/new-team-request-dia
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    Card,
     DatePicker,
     InputText,
     Select,

@@ -129,20 +129,9 @@
 }
 
 /* Taper Banners */
-.taper-banner {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
+app-alert.taper-banner {
+  display: block;
   margin-top: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  background: var(--primitive-warning-100);
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-sm);
-  color: var(--primitive-warning-800);
-}
-
-.taper-banner i {
-  margin-top: var(--space-1);
 }
 
 .taper-info {

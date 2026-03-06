@@ -1,14 +1,18 @@
 <!-- UX AUDIT FIX: Removed duplicate p-toast - using global toast in app.component.ts -->
     <app-main-layout>
       <div
-        class="training-page elite-phase2-shell"
+        class="training-page elite-phase2-shell ui-page-shell ui-page-stack"
         [class.refreshing]="isRefreshing()"
         appSwipeGesture
         [enablePullToRefresh]="true"
         (pullToRefresh)="refreshTrainingData()"
       >
         <!-- Back to Daily Protocol Banner -->
-        <app-card-shell state="interactive" (cardClick)="goToDailyProtocol()">
+        <app-card-shell
+          class="training-page__protocol-banner"
+          state="interactive"
+          (cardClick)="goToDailyProtocol()"
+        >
           <div class="protocol-banner-content">
             <div class="banner-icon"><i class="pi pi-list" aria-hidden="true"></i></div>
             <div class="banner-content">
@@ -26,52 +30,50 @@
         </app-card-shell>
 
         <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <div class="position-indicator">
+        <div class="page-header ui-page-hero">
+          <div class="header-content ui-page-hero__content">
+            <div class="position-indicator ui-page-hero__eyebrow">
               <span class="position-icon">{{ positionIcon() }}</span>
               <span class="position-label">{{ positionLabel() }}</span>
             </div>
             <h1 class="page-title">Custom Session Builder</h1>
-            <p class="page-subtitle">
+            <p class="page-subtitle ui-page-hero__subtitle">
               Build additional {{ positionLabel().toLowerCase() }}-specific
               training sessions
             </p>
           </div>
           @if (readinessScore() !== null && readinessScore()! > 0) {
-            <div class="readiness-badge-compact" [class]="readinessStatus()">
-              <span class="readiness-value">{{ readinessScore() }}</span>
-              <span class="readiness-label">Readiness</span>
+            <div class="ui-page-hero__aside">
+              <div class="readiness-badge-compact" [class]="readinessStatus()">
+                <span class="readiness-value">{{ readinessScore() }}</span>
+                <span class="readiness-label">Readiness</span>
+              </div>
             </div>
           }
         </div>
 
         <!-- Wellness Alert Banner (compact) -->
         @if (wellnessAlert()) {
-          <div
-            class="wellness-alert-banner compact"
-            [class]="'alert-' + wellnessAlert()!.severity"
+          <app-alert
+            class="wellness-alert-banner"
+            density="compact"
+            [variant]="wellnessAlertVariant()"
+            [title]="wellnessAlertTitle()"
+            [message]="wellnessAlert()!.message"
+            [icon]="
+              wellnessAlert()!.severity === 'critical'
+                ? 'pi-exclamation-triangle'
+                : 'pi-exclamation-circle'
+            "
+            [dismissible]="true"
+            (dismissed)="dismissWellnessAlert()"
           >
-            <div class="alert-icon">
-              @if (wellnessAlert()!.severity === "critical") {
-                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-              } @else {
-                <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
-              }
+            <div class="wellness-alert-actions">
+              <app-button variant="outlined" size="sm" (clicked)="goToWellnessCheckin()"
+                >Update</app-button
+              >
             </div>
-            <div class="alert-content">
-              <span>{{ wellnessAlert()!.message }}</span>
-            </div>
-            <app-button
-              variant="outlined"
-              size="sm"
-              (clicked)="goToWellnessCheckin()"
-              >Update</app-button
-            >
-            <button type="button" class="alert-dismiss" (click)="dismissWellnessAlert()" aria-label="Dismiss alert">
-              <i class="pi pi-times" aria-hidden="true"></i>
-            </button>
-          </div>
+          </app-alert>
         }
 
         <!-- Position-Specific Quick Actions -->

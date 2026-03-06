@@ -1,0 +1,149 @@
+/**
+ * Metric / Summary Primitives
+ * ===========================
+ *
+ * Reusable visual patterns for numeric insights, summary tiles, and compact
+ * meta rows. These are display primitives only; feature components remain
+ * responsible for data semantics and layout.
+ */
+
+@layer primitives {
+  .metric-insight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .metric-insight__value {
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--ds-line-height-tight);
+  }
+
+  .metric-insight__label {
+    font-size: var(--font-body-sm-size);
+    color: var(--color-text-secondary);
+    line-height: var(--ds-line-height-normal);
+  }
+
+  .metric-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    text-align: center;
+    padding: var(--space-4);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+  }
+
+  .metric-tile--accent {
+    background: var(--ds-primary-green-ultra-subtle);
+    border: var(--border-1) solid var(--ds-primary-green);
+  }
+
+  .metric-tile__value {
+    display: block;
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--ds-line-height-tight);
+  }
+
+  .metric-tile__label {
+    display: block;
+    font-size: var(--font-body-sm-size);
+    color: var(--color-text-secondary);
+    line-height: var(--ds-line-height-normal);
+  }
+
+  .metric-tile--accent .metric-tile__value,
+  .metric-tile--accent .metric-tile__label {
+    color: var(--color-text-on-primary);
+  }
+
+  .metric-summary-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+  }
+
+  .metric-summary-row__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--ds-font-size-lg);
+    color: var(--color-brand-primary);
+    flex-shrink: 0;
+  }
+
+  .metric-summary-row--success .metric-summary-row__icon {
+    color: var(--color-status-success);
+  }
+
+  .metric-summary-row--muted .metric-summary-row__icon {
+    color: var(--color-text-secondary);
+  }
+
+  .metric-summary-row__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  .metric-summary-row__label {
+    font-size: var(--font-caption-size);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .metric-summary-row__value {
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: var(--ds-line-height-normal);
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-body-sm-size);
+    color: var(--color-text-secondary);
+  }
+
+  .meta-row__icon {
+    color: var(--color-brand-primary);
+    flex-shrink: 0;
+  }
+
+  .meta-row__text {
+    min-width: 0;
+  }
+
+  @media (max-width: 640px) {
+    .metric-insight__value,
+    .metric-tile__value {
+      font-size: var(--ds-font-size-xl);
+    }
+
+    .metric-insight__label,
+    .metric-tile__label,
+    .meta-row {
+      font-size: var(--font-caption-size);
+    }
+
+    .metric-tile {
+      padding: var(--space-3);
+    }
+  }
+}

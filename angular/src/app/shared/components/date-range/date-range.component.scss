@@ -31,14 +31,7 @@
 .date-range-field {
   flex: 1;
   min-width: var(--grid-card-min-sm);
-}
-
-.date-range-label {
-  display: block;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
+  margin-bottom: 0;
 }
 
 .date-range-separator {
@@ -46,16 +39,6 @@
   align-items: center;
   padding-bottom: var(--space-2);
   color: var(--color-text-secondary);
-}
-
-.form-help {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.form-error {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-status-error);
 }
 
 @include respond-to(sm) {

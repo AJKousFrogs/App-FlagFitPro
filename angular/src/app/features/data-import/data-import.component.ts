@@ -20,12 +20,12 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 
 import { FileUpload } from "primeng/fileupload";
 import { InputText } from "primeng/inputtext";
-import { Message } from "primeng/message";
 
 import { Select } from "primeng/select";
 import { Stepper, StepList, Step } from "primeng/stepper";
@@ -186,10 +186,10 @@ const WEARABLE_DEVICES: WearableDevice[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    AlertComponent,
     Card,
     FileUpload,
     InputText,
-    Message,
     Select,
     Stepper,
     StepList,
@@ -307,13 +307,12 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   </div>
                 </div>
 
-                <p-message
-                  severity="info"
-                  class="tip-message status-message"
-                >
-                  💡 Tip: Ask your coach for an export file in the supported
-                  format
-                </p-message>
+                <app-alert
+                  variant="info"
+                  density="compact"
+                  message="💡 Tip: Ask your coach for an export file in the supported format"
+                  styleClass="tip-message status-message"
+                />
               </p-card>
             }
 

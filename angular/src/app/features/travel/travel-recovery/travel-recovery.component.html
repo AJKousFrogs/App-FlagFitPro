@@ -47,13 +47,12 @@
             <!-- Olympic Quick Select -->
             <p-card class="olympic-card">
               <ng-template #header>
-                <div class="card-header olympic-header">
-                  <span class="olympic-rings"><i class="pi pi-trophy" aria-hidden="true"></i></span>
-                  <div>
-                    <h3>Olympic Travel Planner</h3>
-                    <p>Quick setup for LA28 or Brisbane 2032</p>
-                  </div>
-                </div>
+                <app-card-header
+                  class="olympic-header"
+                  icon="pi-trophy"
+                  title="Olympic Travel Planner"
+                  subtitle="Quick setup for LA28 or Brisbane 2032"
+                />
               </ng-template>
 
               <div class="olympic-buttons">
@@ -114,10 +113,7 @@
             <!-- Manual Trip Setup -->
             <p-card class="setup-card">
               <ng-template #header>
-                <div class="card-header">
-                  <i class="pi pi-map"></i>
-                  <h3>Trip Details</h3>
-                </div>
+                <app-card-header icon="pi-map" title="Trip Details" />
               </ng-template>
 
               <div class="form-grid form-controls-full">
@@ -341,24 +337,22 @@
             @if (todayProtocol()) {
               <p-card class="today-card">
                 <ng-template #header>
-                  <div class="card-header today-header">
-                    <div class="header-left">
-                      <i class="pi pi-sun"></i>
-                      <div>
-                        <h3>Today's Protocol</h3>
-                        <app-status-tag
-                          [value]="todayProtocol()!.phase | titlecase"
-                          [severity]="getPhaseColor(todayProtocol()!.phase)"
-                          size="sm"
-                        />
-                      </div>
-                    </div>
-                    <div class="header-right">
+                  <app-card-header
+                    class="today-header"
+                    icon="pi-sun"
+                    title="Today's Protocol"
+                  >
+                    <div header-actions class="header-right">
+                      <app-status-tag
+                        [value]="todayProtocol()!.phase | titlecase"
+                        [severity]="getPhaseColor(todayProtocol()!.phase)"
+                        size="sm"
+                      />
                       <span class="day-badge"
                         >Day {{ todayProtocol()!.day }}</span
                       >
                     </div>
-                  </div>
+                  </app-card-header>
                 </ng-template>
 
                 <div class="protocol-grid">
@@ -548,10 +542,10 @@
             <!-- Full Protocol Timeline -->
             <p-card class="timeline-card">
               <ng-template #header>
-                <div class="card-header">
-                  <i class="pi pi-calendar"></i>
-                  <h3>Full Recovery Timeline</h3>
-                </div>
+                <app-card-header
+                  icon="pi-calendar"
+                  title="Full Recovery Timeline"
+                />
               </ng-template>
 
               <p-accordion [multiple]="true">
@@ -584,16 +578,22 @@
                     <p-accordion-content>
                       <div class="timeline-content">
                         <div class="timeline-summary">
-                          <div class="summary-item">
-                            <i class="pi pi-moon"></i>
-                            <span
+                          <div class="meta-row">
+                            <i
+                              class="pi pi-moon meta-row__icon"
+                              aria-hidden="true"
+                            ></i>
+                            <span class="meta-row__text"
                               >Sleep: {{ protocol.sleepWindow.bedTime }} -
                               {{ protocol.sleepWindow.wakeTime }}</span
                             >
                           </div>
-                          <div class="summary-item">
-                            <i class="pi pi-bolt"></i>
-                            <span
+                          <div class="meta-row">
+                            <i
+                              class="pi pi-bolt meta-row__icon"
+                              aria-hidden="true"
+                            ></i>
+                            <span class="meta-row__text"
                               >Training:
                               {{
                                 protocol.trainingGuidelines.allowedIntensity
@@ -603,9 +603,12 @@
                               max)</span
                             >
                           </div>
-                          <div class="summary-item">
-                            <i class="pi pi-tint"></i>
-                            <span
+                          <div class="meta-row">
+                            <i
+                              class="pi pi-tint meta-row__icon"
+                              aria-hidden="true"
+                            ></i>
+                            <span class="meta-row__text"
                               >Hydration:
                               {{
                                 protocol.hydrationTarget / 1000
@@ -643,10 +646,10 @@
             <!-- Travel Checklist -->
             <p-card class="checklist-card">
               <ng-template #header>
-                <div class="card-header">
-                  <i class="pi pi-check-square"></i>
-                  <h3>Travel Checklist</h3>
-                </div>
+                <app-card-header
+                  icon="pi-check-square"
+                  title="Travel Checklist"
+                />
               </ng-template>
 
               <p-accordion>
@@ -694,16 +697,12 @@
             @if (!hasActiveCarPlan()) {
               <p-card class="car-setup-card">
                 <ng-template #header>
-                  <div class="card-header car-header">
-                    <i class="pi pi-car"></i>
-                    <div>
-                      <h3>Long Car Travel Protocol</h3>
-                      <p>
-                        Evidence-based blood circulation management for 6-12+
-                        hour drives
-                      </p>
-                    </div>
-                  </div>
+                  <app-card-header
+                    class="car-header"
+                    icon="pi-car"
+                    title="Long Car Travel Protocol"
+                    subtitle="Evidence-based blood circulation management for 6-12+ hour drives"
+                  />
                 </ng-template>
 
                 <div class="form-grid form-controls-full">
@@ -783,13 +782,11 @@
               @if (carTripForm.duration >= 4) {
                 <p-card class="risk-preview-card">
                   <ng-template #header>
-                    <div
-                      class="card-header"
+                    <app-card-header
                       [class]="'risk-' + carTravelRisk().riskLevel"
-                    >
-                      <i class="pi pi-exclamation-triangle"></i>
-                      <h3>Circulation Risk Assessment</h3>
-                    </div>
+                      icon="pi-exclamation-triangle"
+                      title="Circulation Risk Assessment"
+                    />
                   </ng-template>
 
                   <div class="risk-content">
@@ -899,13 +896,12 @@
                 <!-- Compression Guidelines -->
                 <p-card class="compression-card">
                   <ng-template #header>
-                    <div class="card-header compression-header">
-                      <span class="compression-icon">🦵</span>
-                      <div>
-                        <h3>Compression Garments</h3>
-                        <p>Evidence-based blood flow enhancement</p>
-                      </div>
-                    </div>
+                    <app-card-header
+                      class="compression-header"
+                      icon="pi-heart"
+                      title="Compression Garments"
+                      subtitle="Evidence-based blood flow enhancement"
+                    />
                   </ng-template>
 
                   <div class="compression-content">
@@ -962,13 +958,12 @@
                 <!-- Massage Gun Protocol -->
                 <p-card class="massage-gun-card">
                   <ng-template #header>
-                    <div class="card-header massage-header">
-                      <span class="massage-icon">💆</span>
-                      <div>
-                        <h3>Massage Gun Protocol</h3>
-                        <p>Percussion therapy for circulation</p>
-                      </div>
-                    </div>
+                    <app-card-header
+                      class="massage-header"
+                      icon="pi-bolt"
+                      title="Massage Gun Protocol"
+                      subtitle="Percussion therapy for circulation"
+                    />
                   </ng-template>
 
                   <p-accordion>
@@ -1041,13 +1036,12 @@
                 <!-- Seated Exercises -->
                 <p-card class="exercises-card">
                   <ng-template #header>
-                    <div class="card-header exercises-header">
-                      <span class="exercises-icon">🏃</span>
-                      <div>
-                        <h3>Circulation Exercises</h3>
-                        <p>Do these every 30 minutes while seated</p>
-                      </div>
-                    </div>
+                    <app-card-header
+                      class="exercises-header"
+                      icon="pi-directions"
+                      title="Circulation Exercises"
+                      subtitle="Do these every 30 minutes while seated"
+                    />
                   </ng-template>
 
                   <div class="exercises-grid">
@@ -1086,13 +1080,12 @@
                 <!-- Rest Stop Protocol -->
                 <p-card class="rest-stop-card">
                   <ng-template #header>
-                    <div class="card-header rest-header">
-                      <i class="pi pi-map-marker"></i>
-                      <div>
-                        <h3>Rest Stop Protocol</h3>
-                        <p>Every 2 hours - take 10-15 minutes</p>
-                      </div>
-                    </div>
+                    <app-card-header
+                      class="rest-header"
+                      icon="pi-map-marker"
+                      title="Rest Stop Protocol"
+                      subtitle="Every 2 hours - take 10-15 minutes"
+                    />
                   </ng-template>
 
                   <div class="rest-stop-content">
@@ -1144,13 +1137,12 @@
                 <!-- Research Evidence -->
                 <p-card class="research-card">
                   <ng-template #header>
-                    <div class="card-header research-header">
-                      <i class="pi pi-book"></i>
-                      <div>
-                        <h3>Evidence-Based Research</h3>
-                        <p>Scientific backing for these protocols</p>
-                      </div>
-                    </div>
+                    <app-card-header
+                      class="research-header"
+                      icon="pi-book"
+                      title="Evidence-Based Research"
+                      subtitle="Scientific backing for these protocols"
+                    />
                   </ng-template>
 
                   <p-accordion>
@@ -1192,10 +1184,10 @@
                 <!-- Car Travel Checklist -->
                 <p-card class="checklist-card">
                   <ng-template #header>
-                    <div class="card-header">
-                      <i class="pi pi-check-square"></i>
-                      <h3>Car Travel Checklist</h3>
-                    </div>
+                    <app-card-header
+                      icon="pi-check-square"
+                      title="Car Travel Checklist"
+                    />
                   </ng-template>
 
                   <p-accordion>

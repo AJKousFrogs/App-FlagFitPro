@@ -26,6 +26,7 @@ import { RouterModule } from "@angular/router";
 import { TeamNotificationService } from "../../../core/services/team-notification.service";
 import { getTimeAgo } from "../../utils/date.utils";
 import { ButtonComponent } from "../button/button.component";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 
@@ -36,6 +37,7 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
     CommonModule,
     RouterModule,
     ButtonComponent,
+    CloseButtonComponent,
     IconButtonComponent,
     StatusTagComponent,
   ],
@@ -44,6 +46,9 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
       <div
         class="announcements-banner"
         [class.important]="announcement.is_important"
+        [attr.role]="liveRole()"
+        [attr.aria-live]="livePoliteness()"
+        aria-atomic="true"
       >
         <div class="banner-icon">
           @if (announcement.is_important) {
@@ -91,12 +96,12 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
             ariaLabel="Acknowledge announcement"
             tooltip="Acknowledge"
           />
-          <app-icon-button
-            icon="pi-times"
-            variant="text"
-            (clicked)="dismiss()"
+          <app-close-button
+            class="banner-dismiss-button"
+            tone="inverse"
+            size="sm"
             ariaLabel="Dismiss announcement"
-            tooltip="Dismiss"
+            (clicked)="dismiss()"
           />
         </div>
       </div>
@@ -125,6 +130,12 @@ export class AnnouncementsBannerComponent implements OnInit {
   // Computed
   readonly visible = computed(() => this._visible() && this.hasAnnouncements());
   readonly unreadCount = computed(() => this.announcements().length);
+  readonly liveRole = computed<"status" | "alert">(() =>
+    this.currentAnnouncement()?.is_important ? "alert" : "status",
+  );
+  readonly livePoliteness = computed<"polite" | "assertive">(() =>
+    this.currentAnnouncement()?.is_important ? "assertive" : "polite",
+  );
 
   readonly currentAnnouncement = computed(() => {
     const all = this.announcements();

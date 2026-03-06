@@ -19,7 +19,6 @@ import { CommonModule } from "@angular/common";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { InputText } from "primeng/inputtext";
-import { Message } from "primeng/message";
 import {
   combineValidators,
   createSignalFormField,
@@ -35,8 +34,6 @@ import { toLogContext } from "../../../core/services/logger.service";
     CommonModule,
     Card,
     InputText,
-    Message,
-
     ButtonComponent,
   ],
   template: `

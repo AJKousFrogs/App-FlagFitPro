@@ -135,72 +135,11 @@
   gap: var(--space-4);
 }
 
-.wellness-alert {
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--color-border-secondary);
-
-  &.alert-danger {
-    background: var(
-      --color-status-danger-bg,
-      rgba(var(--primitive-error-500-rgb), 0.1)
-    );
-    border-color: var(--color-status-danger);
-  }
-
-  &.alert-warn {
-    background: var(
-      --color-status-warning-bg,
-      rgba(var(--primitive-warning-500-rgb), 0.1)
-    );
-    border-color: var(--color-status-warning);
-  }
-
-  &.alert-info {
-    background: var(
-      --color-status-info-bg,
-      rgba(var(--primitive-info-500-rgb), 0.1)
-    );
-    border-color: var(--color-status-info);
-  }
+app-alert.wellness-route-alert {
+  display: block;
 }
 
-.alert-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
-
-  i {
-    font-size: var(--ds-font-size-md);
-  }
-
-  .alert-danger & i {
-    color: var(--color-status-danger);
-  }
-
-  .alert-warn & i {
-    color: var(--color-status-warning);
-  }
-
-  .alert-info & i {
-    color: var(--color-status-info);
-  }
-}
-
-.alert-title {
-  font-weight: var(--ds-font-weight-semibold);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-primary);
-}
-
-.alert-message {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-3) 0;
-}
-
-.alert-recommendations {
+.wellness-alert-recommendations {
   margin-bottom: var(--space-3);
 
   .rec-label {
@@ -218,8 +157,9 @@
   }
 }
 
-.alert-actions {
+.wellness-alert-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   justify-content: flex-end;
 }

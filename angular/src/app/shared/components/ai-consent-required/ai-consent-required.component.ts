@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   input,
   output,
   ChangeDetectionStrategy,
@@ -7,12 +8,11 @@ import {
 import { CommonModule } from "@angular/common";
 
 import { ButtonComponent } from "../button/button.component";
-import { IconButtonComponent } from "../button/icon-button.component";
-import { RouterLink } from "@angular/router";
 import {
   AI_PROCESSING_MESSAGES,
   PrivacyMessage,
 } from "../../utils/privacy-ux-copy";
+import { AlertComponent, type AlertVariant } from "../alert/alert.component";
 
 /**
  * AI Consent Required Component
@@ -34,48 +34,37 @@ import {
 @Component({
   selector: "app-ai-consent-required",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, ButtonComponent, IconButtonComponent],
+  imports: [CommonModule, ButtonComponent, AlertComponent],
   template: `
-    <div class="ai-consent-required" [class]="variant()">
-      <div class="consent-icon">
-        <i [class]="'pi ' + getIcon()"></i>
-      </div>
-      <div class="consent-content">
-        <h4 class="consent-title">{{ getTitle() }}</h4>
-        <p class="consent-message">
-          @if (featureName()) {
-            <strong>{{ featureName() }}</strong> requires AI processing to work.
-          } @else {
-            This feature requires AI processing to work.
-          }
-          {{ getReason() }}
-        </p>
-        <p class="consent-explanation">
-          <small>
-            When AI processing is enabled, we analyze your training data to
-            provide personalized recommendations, injury risk assessments, and
-            performance insights. You can disable it anytime in your privacy
-            settings.
-          </small>
-        </p>
-        @if (showSettingsLink()) {
+    <div [class]="wrapperClasses()">
+      <app-alert
+        [variant]="alertVariant()"
+        [icon]="iconClass()"
+        [title]="titleText()"
+        [message]="messageText()"
+        [density]="variant() === 'banner' ? 'compact' : 'default'"
+      >
+        @if (showSettingsLink() || showDismiss()) {
           <div class="consent-actions">
-            <app-icon-button
-              icon="pi-cog"
-              variant="outlined"
-              size="sm"
-              routerLink="getHelpLink()"
-              ariaLabel="Go to AI settings"
-              tooltip="AI Settings"
-            />
-            @if (showDismiss()) {
-              <app-button variant="text" size="sm" (clicked)="onDismiss.emit()"
-                >Continue Without AI</app-button
+            @if (showSettingsLink()) {
+              <app-button
+                variant="secondary"
+                size="sm"
+                iconLeft="pi-cog"
+                [routerLink]="settingsRoute()"
+                [fragment]="settingsFragment()"
               >
+                {{ actionLabel() }}
+              </app-button>
+            }
+            @if (showDismiss()) {
+              <app-button variant="text" size="sm" (clicked)="onDismiss.emit()">
+                Continue Without AI
+              </app-button>
             }
           </div>
         }
-      </div>
+      </app-alert>
     </div>
   `,
   styleUrl: "./ai-consent-required.component.scss",
@@ -102,23 +91,47 @@ export class AiConsentRequiredComponent {
     return AI_PROCESSING_MESSAGES[key];
   }
 
-  getTitle(): string {
-    return this.getPrivacyMessage().title;
-  }
+  readonly privacyMessage = computed(() => this.getPrivacyMessage());
+  readonly titleText = computed(() => this.privacyMessage().title);
+  readonly reasonText = computed(() => this.privacyMessage().reason);
+  readonly actionLabel = computed(
+    () => this.privacyMessage().actionLabel || "Privacy Settings",
+  );
+  readonly helpLink = computed(
+    () => this.privacyMessage().helpLink || "/settings/privacy#ai",
+  );
+  readonly iconClass = computed(
+    () => this.privacyMessage().icon || "pi-sparkles",
+  );
+  readonly messageText = computed(() => {
+    const prefix = this.featureName()
+      ? `${this.featureName()} requires AI processing to work.`
+      : "This feature requires AI processing to work.";
 
-  getReason(): string {
-    return this.getPrivacyMessage().reason;
-  }
+    return `${prefix} ${this.reasonText()}`;
+  });
+  readonly alertVariant = computed<AlertVariant>(() => {
+    const severity = this.privacyMessage().severity;
 
-  getActionLabel(): string {
-    return this.getPrivacyMessage().actionLabel || "Privacy Settings";
-  }
-
-  getHelpLink(): string {
-    return this.getPrivacyMessage().helpLink || "/settings/privacy#ai";
-  }
-
-  getIcon(): string {
-    return this.getPrivacyMessage().icon || "pi-sparkles";
-  }
+    switch (severity) {
+      case "success":
+        return "success";
+      case "error":
+        return "error";
+      case "warning":
+        return "warning";
+      default:
+        return "info";
+    }
+  });
+  readonly settingsRoute = computed(() => this.helpLink().split("#")[0]);
+  readonly settingsFragment = computed(() => this.helpLink().split("#")[1] ?? "");
+  readonly wrapperClasses = computed(() =>
+    [
+      "ai-consent-required-shell",
+      `ai-consent-required-shell--${this.variant()}`,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
 }

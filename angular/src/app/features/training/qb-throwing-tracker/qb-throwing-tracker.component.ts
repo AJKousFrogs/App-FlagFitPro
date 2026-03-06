@@ -17,6 +17,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { firstValueFrom } from "rxjs";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
@@ -99,6 +100,7 @@ interface SessionTypeOption {
     StatusTagComponent,
 
     Tooltip,
+    AlertComponent,
     ButtonComponent,
     EmptyStateComponent,
   ],
@@ -165,10 +167,13 @@ interface SessionTypeOption {
           </div>
 
           @if (nextGenEnabled() && throwingSpikeAlert()) {
-            <div class="preview-alert">
-              <i class="pi pi-exclamation-triangle"></i>
-              <span>{{ throwingSpikeAlert() }}</span>
-            </div>
+            <app-alert
+              class="preview-alert"
+              variant="warning"
+              density="compact"
+              icon="pi-exclamation-triangle"
+              [message]="throwingSpikeAlert()!"
+            />
           }
         </div>
       }

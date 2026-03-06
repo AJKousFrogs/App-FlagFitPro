@@ -167,7 +167,7 @@ async function createCompletionNotification(userId, sessionType, points) {
       user_id: userId,
       notification_type: "training",
       message,
-      priority: "medium",
+      priority: "normal",
     });
   } catch (error) {
     console.warn(
@@ -183,17 +183,18 @@ async function createCompletionNotification(userId, sessionType, points) {
 async function syncWorkoutLog(
   userId,
   sessionId,
+  workoutType,
+  plannedDate,
   completedAt,
   rpe,
   durationMinutes,
-  notes,
 ) {
   try {
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from("workout_logs")
       .select("id")
       .eq("player_id", userId)
-      .eq("session_id", sessionId)
+      .eq("source_session_id", sessionId)
       .maybeSingle();
 
     if (fetchError) {
@@ -212,11 +213,12 @@ async function syncWorkoutLog(
       .from("workout_logs")
       .insert({
         player_id: userId,
-        session_id: sessionId,
+        source_session_id: sessionId,
+        workout_type: workoutType || "scheduled",
+        planned_date: plannedDate || completedAt.slice(0, 10),
         completed_at: completedAt,
         rpe: rpe ?? null,
         duration_minutes: durationMinutes,
-        notes: notes || null,
       });
 
     if (insertError) {
@@ -330,10 +332,11 @@ async function completeTrainingSession(userId, sessionId, completionData) {
     await syncWorkoutLog(
       userId,
       sessionId,
+      session.session_type,
+      session.session_date,
       completedAt,
       rpe,
       duration,
-      completionData.notes,
     );
 
     // Award points for completing the session

@@ -61,165 +61,153 @@
 
       <!-- Alert Banner - Phase 2.1 Enhanced with 5-Question Contract (Fallback for non-risk alerts) -->
       @if (alerts().length > 0 && topAlert() && !alertRiskMeaning()) {
-        <div class="alert-banner" [class]="'alert-' + topAlert()!.severity">
-          <div class="alert-icon">
-            @if (topAlert()!.severity === "critical") {
-              <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-            } @else if (topAlert()!.severity === "warning") {
-              <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
-            } @else {
-              <i class="pi pi-info-circle" aria-hidden="true"></i>
+        <app-alert
+          class="acwr-top-alert"
+          [variant]="getTopAlertVariant(topAlert()!.severity)"
+          [icon]="getTopAlertIcon(topAlert()!.severity)"
+          [title]="topAlert()!.message"
+          [message]="topAlert()!.recommendation || ''"
+          [dismissible]="true"
+          (dismissed)="dismissTopAlert()"
+        >
+          <div class="acwr-alert-contract">
+            <!-- 1. What changed - Show trend -->
+            @if (acwrTrend().length > 1) {
+              <div class="acwr-alert-contract__section">
+                <strong>What changed:</strong>
+                <span class="acwr-alert-contract__trend">
+                  ACWR rose from {{ acwrTrend()[0] | number: "1.2-2" }}
+                  @for (value of acwrTrend().slice(1); track $index) {
+                    → {{ value | number: "1.2-2" }}
+                  }
+                  over {{ acwrTrend().length - 1 }} day(s)
+                </span>
+              </div>
             }
-          </div>
-          <div class="alert-content">
-            <h3>{{ topAlert()!.message }}</h3>
-            <p>{{ topAlert()!.recommendation }}</p>
 
-            <!-- Phase 2.1: 5-Question Contract Display -->
-            <div class="alert-contract">
-              <!-- 1. What changed - Show trend -->
-              @if (acwrTrend().length > 1) {
-                <div class="contract-section">
-                  <strong>What changed:</strong>
-                  <span class="trend-display">
-                    ACWR rose from {{ acwrTrend()[0] | number: "1.2-2" }}
-                    @for (value of acwrTrend().slice(1); track $index) {
-                      → {{ value | number: "1.2-2" }}
-                    }
-                    over {{ acwrTrend().length - 1 }} day(s)
-                  </span>
-                </div>
-              }
+            <!-- 2. Why it changed - Cause attribution -->
+            @if (acwrCauseAttribution().length > 0) {
+              <div class="acwr-alert-contract__section">
+                <strong>Why it changed:</strong>
+                <ul class="acwr-alert-contract__list">
+                  @for (cause of acwrCauseAttribution(); track cause.sessionId) {
+                    <li>
+                      {{ cause.sessionType }} session on
+                      {{ cause.date | date: "MMM d" }} (Load:
+                      {{ cause.load | number: "1.0-0" }} AU)
+                    </li>
+                  }
+                </ul>
+              </div>
+            } @else {
+              <div class="acwr-alert-contract__section">
+                <strong>Why it changed:</strong>
+                <span
+                  >Recent high-intensity training sessions increased your acute
+                  load.</span
+                >
+              </div>
+            }
 
-              <!-- 2. Why it changed - Cause attribution -->
-              @if (acwrCauseAttribution().length > 0) {
-                <div class="contract-section">
-                  <strong>Why it changed:</strong>
-                  <ul class="cause-list">
-                    @for (
-                      cause of acwrCauseAttribution();
-                      track cause.sessionId
-                    ) {
-                      <li>
-                        {{ cause.sessionType }} session on
-                        {{ cause.date | date: "MMM d" }} (Load:
-                        {{ cause.load | number: "1.0-0" }} AU)
-                      </li>
-                    }
-                  </ul>
-                </div>
+            <!-- 3. What this means -->
+            <div class="acwr-alert-contract__section">
+              <strong>What this means:</strong>
+              <span>{{ riskZone().description }}</span>
+            </div>
+
+            <!-- 4. Who is responsible now - Ownership transition -->
+            @if (ownershipTransition()) {
+              <div class="acwr-alert-contract__section">
+                <strong>Who is responsible now:</strong>
+                <app-ownership-transition-badge
+                  [transition]="ownershipTransition()!"
+                  [showDetails]="true"
+                ></app-ownership-transition-badge>
+              </div>
+            }
+
+            <!-- 5. What happens next -->
+            <div class="acwr-alert-contract__section">
+              <strong>What happens next:</strong>
+              @if (ownershipTransition()?.toRole === "coach") {
+                <span
+                  >Coach is reviewing — no action needed now. You'll be
+                  notified when your plan is adjusted.</span
+                >
               } @else {
-                <div class="contract-section">
-                  <strong>Why it changed:</strong>
-                  <span
-                    >Recent high-intensity training sessions increased your
-                    acute load.</span
+                <span>{{ riskZone().recommendation }}</span>
+                <div class="acwr-alert-contract__actions">
+                  <app-button
+                    variant="outlined"
+                    size="sm"
+                    iconLeft="pi-play"
+                    (clicked)="logSession()"
                   >
+                    Go to Today's Practice
+                  </app-button>
                 </div>
               }
-
-              <!-- 3. What this means -->
-              <div class="contract-section">
-                <strong>What this means:</strong>
-                <span>{{ riskZone().description }}</span>
-              </div>
-
-              <!-- 4. Who is responsible now - Ownership transition -->
-              @if (ownershipTransition()) {
-                <div class="contract-section">
-                  <strong>Who is responsible now:</strong>
-                  <app-ownership-transition-badge
-                    [transition]="ownershipTransition()!"
-                    [showDetails]="true"
-                  ></app-ownership-transition-badge>
-                </div>
-              }
-
-              <!-- 5. What happens next -->
-              <div class="contract-section">
-                <strong>What happens next:</strong>
-                @if (ownershipTransition()?.toRole === "coach") {
-                  <span
-                    >Coach is reviewing — no action needed now. You'll be
-                    notified when your plan is adjusted.</span
-                  >
-                } @else {
-                  <span>{{ riskZone().recommendation }}</span>
-                  <div class="action-buttons">
-                    <button type="button" class="action-btn" (click)="logSession()">
-                      Go to Today's Practice
-                    </button>
-                  </div>
-                }
-              </div>
             </div>
           </div>
-          <button type="button" class="alert-dismiss" (click)="dismissTopAlert()" aria-label="Dismiss alert">
-            <i class="pi pi-times" aria-hidden="true"></i>
-          </button>
-        </div>
+        </app-alert>
       }
 
       <!-- Main ACWR Display -->
       <div class="acwr-main-card">
         @if (hasInsufficientData()) {
-          <!-- Empty State for New Athletes - Using Centralized UX Copy -->
-          <div class="acwr-empty-state">
-            <div class="empty-icon">
-              <i [class]="'pi ' + insufficientDataMessage.icon"></i>
-            </div>
-            <h3>{{ insufficientDataMessage.title }}</h3>
-            <p>{{ insufficientDataMessage.reason }}</p>
-
-            <div class="data-progress">
-              <div class="progress-item">
-                <span class="progress-label">Days with data</span>
-                <div class="progress-bar">
-                  <!-- Dynamic progress width requires CSS custom property; no static class alternative -->
-                  <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
-                  <div
-                    class="progress-fill"
-                    [style.--progress-pct]="
-                      ((dataQuality().daysWithData || 0) / 21) * 100 + '%'
-                    "
-                  ></div>
+          <app-empty-state
+            [showBenefits]="false"
+            [showSafetyNote]="false"
+            [icon]="insufficientDataMessage.icon"
+            [customTitle]="insufficientDataMessage.title"
+            [customMessage]="insufficientDataMessage.reason"
+            [actionLabel]="insufficientDataMessage.actionLabel"
+            [actionLink]="insufficientDataMessage.helpLink"
+            actionIcon="pi-plus"
+          >
+            <div emptyStateBody class="acwr-empty-state-body">
+              <div class="data-progress">
+                <div class="progress-item">
+                  <span class="progress-label">Days with data</span>
+                  <div class="progress-bar">
+                    <!-- Dynamic progress width requires CSS custom property; no static class alternative -->
+                    <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                    <div
+                      class="progress-fill"
+                      [style.--progress-pct]="
+                        ((dataQuality().daysWithData || 0) / 21) * 100 + '%'
+                      "
+                    ></div>
+                  </div>
+                  <span class="progress-value"
+                    >{{ dataQuality().daysWithData || 0 }} / 21</span
+                  >
                 </div>
-                <span class="progress-value"
-                  >{{ dataQuality().daysWithData || 0 }} / 21</span
-                >
-              </div>
-              <div class="progress-item">
-                <span class="progress-label">Sessions logged</span>
-                <div class="progress-bar">
-                  <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
-                  <div
-                    class="progress-fill"
-                    [style.--progress-pct]="
-                      ((dataQuality().sessionsInChronicWindow || 0) / 10) * 100 + '%'
-                    "
-                  ></div>
+                <div class="progress-item">
+                  <span class="progress-label">Sessions logged</span>
+                  <div class="progress-bar">
+                    <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                    <div
+                      class="progress-fill"
+                      [style.--progress-pct]="
+                        ((dataQuality().sessionsInChronicWindow || 0) / 10) * 100 + '%'
+                      "
+                    ></div>
+                  </div>
+                  <span class="progress-value"
+                    >{{ dataQuality().sessionsInChronicWindow || 0 }} /
+                    10</span
+                  >
                 </div>
-                <span class="progress-value"
-                  >{{ dataQuality().sessionsInChronicWindow || 0 }} /
-                  10</span
-                >
               </div>
+
+              <p class="acwr-empty-tip">
+                <i class="pi pi-lightbulb" aria-hidden="true"></i>
+                <strong>Olympic Tip:</strong> Consistent training logging helps
+                prevent overtraining injuries during your LA28 preparation.
+              </p>
             </div>
-
-            <p class="empty-tip">
-              <i class="pi pi-lightbulb" aria-hidden="true"></i> <strong>Olympic Tip:</strong> Consistent training logging
-              helps prevent overtraining injuries during your LA28
-              preparation.
-            </p>
-
-            <a
-              [routerLink]="insufficientDataMessage.helpLink"
-              class="action-btn primary"
-            >
-              <i class="pi pi-plus" aria-hidden="true"></i>
-              {{ insufficientDataMessage.actionLabel }}
-            </a>
-          </div>
+          </app-empty-state>
         } @else {
           <!-- Full ACWR Display -->
           <div class="acwr-ratio-display">

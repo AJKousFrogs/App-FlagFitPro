@@ -103,7 +103,7 @@ type SessionStatus =
     } @else {
       <p-card class="micro-session-card">
         <ng-template #header>
-          <div class="card-header">
+          <div class="session-card-header">
             <div class="header-info">
               <app-status-tag
                 [value]="getSessionTypeLabel(session().session_type)"

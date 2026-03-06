@@ -7,34 +7,7 @@
 
 // Privacy Notice
 .privacy-notice {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--ds-spacing-md);
-  padding: var(--ds-spacing-md);
-  background: var(--blue-50);
-  border: var(--border-1) solid var(--blue-200);
-  border-radius: var(--ds-radius-md);
   margin-bottom: var(--ds-spacing-xl);
-
-  i {
-    font-size: var(--ds-font-size-2xl);
-    color: var(--blue-600);
-    margin-top: var(--space-1);
-  }
-
-  .notice-content {
-    strong {
-      display: block;
-      color: var(--blue-800);
-      margin-bottom: var(--ds-spacing-xs);
-    }
-
-    p {
-      margin: 0;
-      font-size: var(--ds-font-size-md);
-      color: var(--blue-700);
-    }
-  }
 }
 
 // Section styles

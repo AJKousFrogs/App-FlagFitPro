@@ -1,6 +1,7 @@
 // ============================================================================
 // superadmin-settings.component Styles
-// Design System Compliant
+// Layout/page-specific styles only. Feedback visuals live in
+// src/scss/components/notifications.scss.
 // ============================================================================
 
 @use "styles/mixins" as *;
@@ -12,11 +13,6 @@
   gap: var(--space-6);
 }
 
-.olympic-icon {
-  font-size: var(--ds-font-size-2xl);
-}
-
-/* Status Card */
 .status-card {
   border-left: var(--space-1) solid var(--ds-primary-green);
 }
@@ -59,66 +55,15 @@
   height: var(--indicator-size-sm);
   border-radius: var(--radius-circle);
   background: var(--ds-primary-green);
-  animation: pulse 2s infinite;
+  --ui-motion-fade-pulse-opacity-mid: var(--opacity-dimmed);
+  animation: ui-motion-fade-pulse 2s infinite;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: var(--opacity-dimmed);
-  }
-}
-
-/* Notices */
 .info-notice,
 .warning-notice {
-  display: flex;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
   margin-top: var(--space-4);
 }
 
-.info-notice {
-  background: var(--ds-primary-green-ultra-subtle);
-  border: var(--border-1) solid var(--ds-primary-green-subtle);
-}
-
-.info-notice i {
-  color: var(--ds-primary-green);
-  flex-shrink: 0;
-}
-
-.info-notice.info {
-  background: rgba(var(--primitive-info-500-rgb), 0.05);
-  border-color: rgba(var(--primitive-info-500-rgb), 0.2);
-}
-
-.info-notice.info i {
-  color: var(--color-status-info);
-}
-
-.warning-notice {
-  background: rgba(var(--primitive-warning-500-rgb), 0.05);
-  border: var(--border-1) solid rgba(var(--primitive-warning-500-rgb), 0.2);
-}
-
-.warning-notice i {
-  color: var(--color-status-warning);
-  flex-shrink: 0;
-}
-
-.info-notice p,
-.warning-notice p {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-}
-
-/* Table Styles */
 .admin-email {
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
@@ -138,7 +83,6 @@
   font-weight: var(--ds-font-weight-semibold);
 }
 
-/* Settings List */
 .settings-list {
   display: flex;
   flex-direction: column;
@@ -167,7 +111,6 @@
   color: var(--color-text-secondary);
 }
 
-/* Olympic Card */
 .olympic-card {
   background: linear-gradient(
     135deg,
@@ -217,7 +160,6 @@
   line-height: var(--ds-line-height-1-6);
 }
 
-/* Toggle Switch */
 .toggle {
   position: relative;
   display: inline-block;
@@ -234,10 +176,7 @@
 .toggle-slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: var(--color-border-primary);
   transition: var(--transition-slow) var(--ease-standard);
   border-radius: var(--radius-full);
@@ -268,65 +207,6 @@
   cursor: not-allowed;
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--surface-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--z-modal);
-}
-
-.modal-dialog {
-  background: var(--surface-elevated);
-  border-radius: var(--radius-lg);
-  width: var(--modal-width-responsive);
-  max-width: var(--dialog-max-width-md);
-  box-shadow: var(--shadow-3);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--color-border-primary);
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-2);
-  color: var(--color-text-muted);
-  transition: color var(--transition-base) var(--ease-standard);
-}
-
-.modal-close:hover {
-  color: var(--color-text-primary);
-}
-
-.modal-body {
-  padding: var(--space-4);
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border-top: var(--border-1) solid var(--color-border-primary);
-}
-
 .form-group {
   margin-bottom: var(--space-4);
 }
@@ -354,7 +234,6 @@
   resize: vertical;
 }
 
-/* Responsive */
 @include respond-to(md) {
   .settings-content {
     padding: var(--space-4);
@@ -365,5 +244,4 @@
     align-items: flex-start;
     gap: var(--space-3);
   }
-
 }

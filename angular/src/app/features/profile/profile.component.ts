@@ -32,10 +32,12 @@ import { ProfileCompletionService } from "../../core/services/profile-completion
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
@@ -72,8 +74,10 @@ interface PendingInvitation {
     ProgressBar,
     ProgressSpinner,
     MainLayoutComponent,
+    EmptyStateComponent,
     PageErrorStateComponent,
     MobileOptimizedImageDirective,
+    AlertComponent,
     DatePipe,
     TitleCasePipe,
     ButtonComponent,

@@ -5,7 +5,7 @@
 
 [dev]
   framework = "#custom"
-  command = "cd angular && npx ng serve --port 4200 --host 0.0.0.0 --live-reload --poll 2000"
+  command = "node scripts/netlify-angular-dev.mjs"
   targetPort = 4200
   port = 8888
   publish = "angular/dist/flagfit-pro/browser"

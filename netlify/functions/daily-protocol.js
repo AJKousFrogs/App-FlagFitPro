@@ -1,10 +1,17 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { supabaseAdmin, getSupabaseClient } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  getIsoDateString,
+  getIsoDayOfWeek,
+  getIsoDayOfYear,
+  parseIsoDateString,
+} from "./utils/date-utils.js";
 import { resolveTodaySession } from "./utils/session-resolver.js";
 import { resolveTeamActivityForAthleteDay } from "./utils/team-activity-resolver.js";
+import { getTrainingProgramById } from "./utils/training-programs.js";
 import crypto from "crypto";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
@@ -20,17 +27,6 @@ const TRAINING_SESSIONS_TABLE = "training_sessions";
  * - POST /api/daily-protocol/skip-block - Mark all exercises in a block as skipped
  * - POST /api/daily-protocol/log-session - Log session RPE and duration
  */
-
-// Get appropriate Supabase client based on operation
-// Use user JWT client for user-scoped operations, admin for cross-user operations
-const getSupabase = (token = null) => {
-  // For user-scoped reads/writes, use JWT client with RLS
-  if (token) {
-    return getSupabaseClient(token);
-  }
-  // Fallback to admin for operations that truly need it
-  return supabaseAdmin;
-};
 
 /**
  * Compute session override using deterministic priority rules.
@@ -1128,9 +1124,11 @@ async function generateFallbackProtocolExercises(
   const seed = dayOfYear + weekNumber * 7;
 
   // 1. Morning Mobility - day-specific video
-  const dayOfWeek = new Date().getDay(); // 0 = Sunday
+  const dayOfWeek = context?.dayOfWeek ?? new Date().getDay(); // 0 = Sunday
   const mobilityIdx = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Map to 0-6
-  const mobilityExercise = FALLBACK_EXERCISES.morning_mobility[mobilityIdx];
+  const mobilityExercise =
+    FALLBACK_EXERCISES.morning_mobility[mobilityIdx] ||
+    FALLBACK_EXERCISES.morning_mobility[0];
   sequenceOrder++;
   exercises.push({
     protocol_id: protocolId,
@@ -1144,10 +1142,9 @@ async function generateFallbackProtocolExercises(
   });
 
   // 2. Foam Rolling (select 4-5 based on day)
-  const foamRolls = seededShuffle(FALLBACK_EXERCISES.foam_roll, seed).slice(
-    0,
-    5,
-  );
+  const foamRolls = seededShuffle(FALLBACK_EXERCISES.foam_roll, seed)
+    .slice(0, 5)
+    .filter(Boolean);
   foamRolls.forEach((ex) => {
     sequenceOrder++;
     exercises.push({
@@ -1217,7 +1214,9 @@ async function generateFallbackProtocolExercises(
     const isometrics = seededShuffle(
       FALLBACK_EXERCISES.isometrics,
       seed + 2,
-    ).slice(0, 5);
+    )
+      .slice(0, 5)
+      .filter(Boolean);
     isometrics.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
@@ -1233,10 +1232,9 @@ async function generateFallbackProtocolExercises(
 
     // 5. Plyometrics (select 4 based on readiness)
     const plyoCount = readinessForLogic >= 70 ? 4 : 3;
-    const plyos = seededShuffle(FALLBACK_EXERCISES.plyometrics, seed + 3).slice(
-      0,
-      plyoCount,
-    );
+    const plyos = seededShuffle(FALLBACK_EXERCISES.plyometrics, seed + 3)
+      .slice(0, plyoCount)
+      .filter(Boolean);
     plyos.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
@@ -1251,10 +1249,9 @@ async function generateFallbackProtocolExercises(
     });
 
     // 6. Strength (select 4-5)
-    const strengths = seededShuffle(
-      FALLBACK_EXERCISES.strength,
-      seed + 4,
-    ).slice(0, 5);
+    const strengths = seededShuffle(FALLBACK_EXERCISES.strength, seed + 4)
+      .slice(0, 5)
+      .filter(Boolean);
     strengths.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
@@ -1272,7 +1269,9 @@ async function generateFallbackProtocolExercises(
     const conditionings = seededShuffle(
       FALLBACK_EXERCISES.conditioning,
       seed + 5,
-    ).slice(0, 4);
+    )
+      .slice(0, 4)
+      .filter(Boolean);
     conditionings.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
@@ -1288,10 +1287,9 @@ async function generateFallbackProtocolExercises(
     });
 
     // 8. Skill drills (select 3)
-    const skills = seededShuffle(FALLBACK_EXERCISES.skill, seed + 6).slice(
-      0,
-      3,
-    );
+    const skills = seededShuffle(FALLBACK_EXERCISES.skill, seed + 6)
+      .slice(0, 3)
+      .filter(Boolean);
     skills.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
@@ -1308,10 +1306,9 @@ async function generateFallbackProtocolExercises(
   }
 
   // 9. Cool down (select 4-5)
-  const coolDowns = seededShuffle(FALLBACK_EXERCISES.cool_down, seed + 7).slice(
-    0,
-    5,
-  );
+  const coolDowns = seededShuffle(FALLBACK_EXERCISES.cool_down, seed + 7)
+    .slice(0, 5)
+    .filter(Boolean);
   coolDowns.forEach((ex) => {
     sequenceOrder++;
     exercises.push({
@@ -1328,10 +1325,9 @@ async function generateFallbackProtocolExercises(
 
   // 10. Evening Recovery (select 2-3)
   const recoveryCount = trainingFocus === "recovery" ? 4 : 2;
-  const recoveries = seededShuffle(FALLBACK_EXERCISES.recovery, seed + 8).slice(
-    0,
-    recoveryCount,
-  );
+  const recoveries = seededShuffle(FALLBACK_EXERCISES.recovery, seed + 8)
+    .slice(0, recoveryCount)
+    .filter(Boolean);
   recoveries.forEach((ex) => {
     sequenceOrder++;
     exercises.push({
@@ -1564,7 +1560,7 @@ function normalizePosition(position) {
  * Get user's training context - position, age modifiers, practice schedule, current program
  */
 async function getUserTrainingContext(supabase, userId, date) {
-  const dayOfWeek = new Date(date).getDay();
+  const dayOfWeek = getIsoDayOfWeek(date);
   const dayName = DAY_NAMES[dayOfWeek];
 
   // 1. Get user config (position, age, practice schedule) - may not exist yet
@@ -1613,17 +1609,22 @@ async function getUserTrainingContext(supabase, userId, date) {
   // 4. Get assigned program and current phase/week - may not have one yet
   const { data: playerProgram } = await supabase
     .from("player_programs")
-    .select(
-      `
-      *,
-      training_programs (
-        id, name, program_type, program_structure
-      )
-    `,
-    )
+    .select("*")
     .eq("player_id", userId)
     .eq("status", "active")
     .maybeSingle();
+
+  const trainingProgram = playerProgram?.program_id
+    ? await getTrainingProgramById(
+        supabase,
+        playerProgram.program_id,
+        "id, name, program_type",
+      )
+    : null;
+
+  if (playerProgram) {
+    playerProgram.training_programs = trainingProgram;
+  }
 
   // 5. Get current week based on date
   let currentWeek = null;
@@ -1816,8 +1817,8 @@ async function getUserTrainingContext(supabase, userId, date) {
   let taperContext = null;
   if (upcomingTournaments && upcomingTournaments.length > 0) {
     for (const tournament of upcomingTournaments) {
-      const tournamentDate = new Date(tournament.start_date);
-      const currentDate = new Date(date);
+      const tournamentDate = parseIsoDateString(tournament.start_date);
+      const currentDate = parseIsoDateString(date);
       const daysUntil = Math.ceil(
         (tournamentDate - currentDate) / (1000 * 60 * 60 * 24),
       );
@@ -1937,9 +1938,10 @@ const legacyDailyProtocolHandler = async (event) => {
   if (!auth.success) {
     return withHeaders(auth.error);
   }
-  const { user, token } = auth;
-  // Use user JWT client for user-scoped operations
-  const supabase = getSupabase(token);
+  const { user } = auth;
+  // Use the authenticated user ID for scoping, but run protocol queries with
+  // the admin client because several supporting tables do not have complete RLS.
+  const supabase = supabaseAdmin;
 
   try {
     // Route to appropriate handler
@@ -2020,7 +2022,7 @@ const handler = async (event, context) =>
  * Fetch today's (or specified date's) protocol for the user
  */
 async function getProtocol(supabase, userId, params, headers) {
-  const date = params?.date || new Date().toISOString().split("T")[0];
+  const date = params?.date || getIsoDateString();
 
   // Get the protocol
   const { data: protocol, error: protocolError } = await supabase
@@ -2176,10 +2178,7 @@ async function getProtocol(supabase, userId, params, headers) {
 
     if (!exerciseCount || exerciseCount < 10) {
       // Use inline fallback
-      const dayOfYear = Math.floor(
-        (new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) /
-          (24 * 60 * 60 * 1000),
-      );
+      const dayOfYear = getIsoDayOfYear(date);
       const weekNumber = Math.ceil(dayOfYear / 7);
 
       // Get basic context for fallback generation
@@ -2197,7 +2196,7 @@ async function getProtocol(supabase, userId, params, headers) {
           position: null,
           isQB: false,
           isCenter: false,
-          dayOfWeek: new Date(date).getDay(),
+          dayOfWeek: getIsoDayOfWeek(date),
         },
         isPracticeDay,
         isFilmRoomDay,
@@ -2376,7 +2375,7 @@ async function generateReturnToPlayProtocol(
   // 1. MORNING MOBILITY - Always included, gentle version
   // ============================================================================
   // Get the day-specific morning mobility video first
-  const rtpDayOfWeek = new Date(date).getDay();
+  const rtpDayOfWeek = getIsoDayOfWeek(date);
   const rtpMobilitySlug = `morning-mobility-day-${rtpDayOfWeek === 0 ? 7 : rtpDayOfWeek}`;
   const { data: dayMobility } = await supabase
     .from("exercises")
@@ -2563,12 +2562,188 @@ async function generateReturnToPlayProtocol(
   };
 }
 
+async function updateProtocolGenerationRequestStatus(
+  supabase,
+  requestRecord,
+  updates,
+) {
+  if (!requestRecord) {
+    return;
+  }
+
+  await supabase
+    .from("protocol_generation_requests")
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", requestRecord.id);
+}
+
+function serializeProtocolExercises(protocolExercises) {
+  return protocolExercises.map((ex) => ({
+    exercise_id: ex.exercise_id,
+    block_type: ex.block_type,
+    sequence_order: ex.sequence_order,
+    prescribed_sets: ex.prescribed_sets ?? null,
+    prescribed_reps: ex.prescribed_reps ?? null,
+    prescribed_hold_seconds: ex.prescribed_hold_seconds ?? null,
+    prescribed_duration_seconds: ex.prescribed_duration_seconds ?? null,
+    load_contribution_au: ex.load_contribution_au || 0,
+    ai_note: ex.ai_note || null,
+  }));
+}
+
+async function createProtocolWithoutRpc({
+  supabase,
+  userId,
+  date,
+  readinessScore,
+  acwrValue,
+  trainingFocus,
+  aiRationale,
+  adjustedLoadTarget,
+  confidenceMetadata,
+  exercisesJson,
+}) {
+  const persistedExercises = exercisesJson.filter((exercise) => exercise.exercise_id);
+
+  if (persistedExercises.length === 0) {
+    throw new Error("Cannot persist a protocol without exercise IDs");
+  }
+
+  const timestamp = new Date().toISOString();
+  const { data: protocol, error: protocolError } = await supabase
+    .from("daily_protocols")
+    .insert({
+      user_id: userId,
+      protocol_date: date,
+      readiness_score: readinessScore,
+      acwr_value: acwrValue,
+      training_focus: trainingFocus,
+      ai_rationale: aiRationale,
+      total_load_target_au: adjustedLoadTarget,
+      confidence_metadata: confidenceMetadata,
+      total_exercises: persistedExercises.length,
+      completed_exercises: 0,
+      overall_progress: 0,
+      generated_at: timestamp,
+      updated_at: timestamp,
+    })
+    .select("id")
+    .single();
+
+  if (protocolError) {
+    throw protocolError;
+  }
+
+  const { error: exercisesError } = await supabase
+    .from("protocol_exercises")
+    .insert(
+      persistedExercises.map((exercise) => ({
+        protocol_id: protocol.id,
+        exercise_id: exercise.exercise_id,
+        block_type: exercise.block_type,
+        sequence_order: exercise.sequence_order,
+        prescribed_sets: exercise.prescribed_sets,
+        prescribed_reps: exercise.prescribed_reps,
+        prescribed_hold_seconds: exercise.prescribed_hold_seconds,
+        prescribed_duration_seconds: exercise.prescribed_duration_seconds,
+        load_contribution_au: exercise.load_contribution_au,
+        ai_note: exercise.ai_note,
+        status: "pending",
+        created_at: timestamp,
+        updated_at: timestamp,
+      })),
+    );
+
+  if (exercisesError) {
+    await supabase.from("daily_protocols").delete().eq("id", protocol.id);
+    throw exercisesError;
+  }
+
+  return protocol.id;
+}
+
+async function persistGeneratedProtocol({
+  supabase,
+  userId,
+  date,
+  readinessScore,
+  acwrValue,
+  trainingFocus,
+  aiRationale,
+  adjustedLoadTarget,
+  confidenceMetadata,
+  protocolExercises,
+  requestRecord,
+  headers,
+}) {
+  if (protocolExercises.length === 0) {
+    await updateProtocolGenerationRequestStatus(supabase, requestRecord, {
+      status: "failed",
+      error: "No exercises generated",
+    });
+    throw new Error("Cannot create protocol without exercises");
+  }
+
+  const exercisesJson = serializeProtocolExercises(protocolExercises);
+
+  let protocolId = null;
+  const { data: rpcProtocolId, error: rpcError } = await supabase.rpc(
+    "generate_protocol_transactional",
+    {
+      p_user_id: userId,
+      p_protocol_date: date,
+      p_readiness_score: readinessScore,
+      p_acwr_value: acwrValue,
+      p_training_focus: trainingFocus,
+      p_ai_rationale: aiRationale,
+      p_total_load_target_au: adjustedLoadTarget,
+      p_confidence_metadata: confidenceMetadata,
+      p_exercises: exercisesJson,
+    },
+  );
+
+  if (rpcError) {
+    if (rpcError.code !== "PGRST202") {
+      await updateProtocolGenerationRequestStatus(supabase, requestRecord, {
+        status: "failed",
+        error: rpcError.message,
+      });
+      throw rpcError;
+    }
+
+    protocolId = await createProtocolWithoutRpc({
+      supabase,
+      userId,
+      date,
+      readinessScore,
+      acwrValue,
+      trainingFocus,
+      aiRationale,
+      adjustedLoadTarget,
+      confidenceMetadata,
+      exercisesJson,
+    });
+  } else {
+    protocolId = rpcProtocolId;
+  }
+
+  await updateProtocolGenerationRequestStatus(supabase, requestRecord, {
+    status: "completed",
+    protocol_id: protocolId,
+  });
+
+  return getProtocol(supabase, userId, { date }, headers);
+}
+
 /**
  * POST /api/daily-protocol/generate
  * Generate a new protocol for a given date using structured training data
  */
 async function generateProtocol(supabase, userId, payload, headers) {
-  const date = payload.date || new Date().toISOString().split("T")[0];
+  const date = payload.date || getIsoDateString();
 
   // ============================================================================
   // IDEMPOTENCY SUPPORT
@@ -2858,7 +3033,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   // Add evidence-based periodization info
-  const periodizationPhase = getCurrentPeriodizationPhase(new Date(date));
+  const periodizationPhase = getCurrentPeriodizationPhase(
+    parseIsoDateString(date),
+  );
   const phaseNames = {
     off_season_rest: "Active Recovery",
     foundation: "Foundation Building",
@@ -2910,10 +3087,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       "[daily-protocol] No exercises found in DB - using inline fallback",
     );
     // Use inline fallback exercises - each day gets different ones based on day of year
-    const dayOfYear = Math.floor(
-      (new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) /
-        (24 * 60 * 60 * 1000),
-    );
+    const dayOfYear = getIsoDayOfYear(date);
     const weekNumber = Math.ceil(dayOfYear / 7);
 
     // Generate fallback exercises (protocol_id will be assigned by RPC)
@@ -2942,45 +3116,20 @@ async function generateProtocol(supabase, userId, payload, headers) {
         ai_note: ex.ai_note || null,
       }));
 
-      const { data: protocolId, error: rpcError } = await supabase.rpc(
-        "generate_protocol_transactional",
-        {
-          p_user_id: userId,
-          p_protocol_date: date,
-          p_readiness_score: readinessScore,
-          p_acwr_value: acwrValue,
-          p_training_focus: trainingFocus,
-          p_ai_rationale: aiRationale,
-          p_total_load_target_au: adjustedLoadTarget,
-          p_confidence_metadata: confidenceMetadata,
-          p_exercises: exercisesJson,
-        },
-      );
-
-      if (rpcError) {
-        if (requestRecord) {
-          await supabase
-            .from("protocol_generation_requests")
-            .update({ status: "failed", error: rpcError.message })
-            .eq("id", requestRecord.id);
-        }
-        throw rpcError;
-      }
-
-      // Update request status
-      if (requestRecord) {
-        await supabase
-          .from("protocol_generation_requests")
-          .update({
-            status: "completed",
-            protocol_id: protocolId,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", requestRecord.id);
-      }
-
-      // Return the completed protocol
-      return await getProtocol(supabase, userId, { date }, headers);
+      return await persistGeneratedProtocol({
+        supabase,
+        userId,
+        date,
+        readinessScore,
+        acwrValue,
+        trainingFocus,
+        aiRationale,
+        adjustedLoadTarget,
+        confidenceMetadata,
+        protocolExercises: exercisesJson,
+        requestRecord,
+        headers,
+      });
     }
   }
 
@@ -3270,7 +3419,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // ============================================================================
 
   // Get current periodization phase for evidence-based programming
-  const currentPhase = getCurrentPeriodizationPhase(new Date(date));
+  const currentPhase = getCurrentPeriodizationPhase(parseIsoDateString(date));
   const plyoIntensity = getPlyometricIntensity(currentPhase, readinessForLogic);
   const safeConditioning = getSafeConditioningIntensity(
     acwrForLogic,
@@ -4341,82 +4490,20 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // This ensures we never leave a protocol with 0 exercises
   // ============================================================================
 
-  if (protocolExercises.length === 0) {
-    // Update request status to failed
-    if (requestRecord) {
-      await supabase
-        .from("protocol_generation_requests")
-        .update({ status: "failed", error: "No exercises generated" })
-        .eq("id", requestRecord.id);
-    }
-    throw new Error("Cannot create protocol without exercises");
-  }
-
-  // Prepare exercises JSON for RPC
-  const exercisesJson = protocolExercises.map((ex) => ({
-    exercise_id: ex.exercise_id,
-    block_type: ex.block_type,
-    sequence_order: ex.sequence_order,
-    prescribed_sets: ex.prescribed_sets,
-    prescribed_reps: ex.prescribed_reps || null,
-    prescribed_hold_seconds: ex.prescribed_hold_seconds || null,
-    prescribed_duration_seconds: ex.prescribed_duration_seconds || null,
-    load_contribution_au: ex.load_contribution_au || 0,
-    ai_note: ex.ai_note || null,
-  }));
-
-  try {
-    // Call transactional RPC function
-    const { data: protocolId, error: rpcError } = await supabase.rpc(
-      "generate_protocol_transactional",
-      {
-        p_user_id: userId,
-        p_protocol_date: date,
-        p_readiness_score: readinessScore,
-        p_acwr_value: acwrValue,
-        p_training_focus: trainingFocus,
-        p_ai_rationale: aiRationale,
-        p_total_load_target_au: adjustedLoadTarget,
-        p_confidence_metadata: confidenceMetadata,
-        p_exercises: exercisesJson,
-      },
-    );
-
-    if (rpcError) {
-      // Update request status to failed
-      if (requestRecord) {
-        await supabase
-          .from("protocol_generation_requests")
-          .update({ status: "failed", error: rpcError.message })
-          .eq("id", requestRecord.id);
-      }
-      throw rpcError;
-    }
-
-    // Update request status to completed
-    if (requestRecord) {
-      await supabase
-        .from("protocol_generation_requests")
-        .update({
-          status: "completed",
-          protocol_id: protocolId,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", requestRecord.id);
-    }
-
-    // Fetch the complete protocol
-    return await getProtocol(supabase, userId, { date }, headers);
-  } catch (error) {
-    // Update request status to failed
-    if (requestRecord) {
-      await supabase
-        .from("protocol_generation_requests")
-        .update({ status: "failed", error: error.message })
-        .eq("id", requestRecord.id);
-    }
-    throw error;
-  }
+  return await persistGeneratedProtocol({
+    supabase,
+    userId,
+    date,
+    readinessScore,
+    acwrValue,
+    trainingFocus,
+    aiRationale,
+    adjustedLoadTarget,
+    confidenceMetadata,
+    protocolExercises,
+    requestRecord,
+    headers,
+  });
 }
 
 /**
@@ -5123,12 +5210,10 @@ async function computeDynamicConfidenceMetadata(
   protocol,
 ) {
   // Check for today's wellness check-in
-  // Note: daily_wellness_checkin uses calculated_readiness and overall_readiness_score columns
+  // Note: the live daily_wellness_checkin schema stores calculated_readiness.
   const { data: todayWellness, error: wellnessError } = await supabase
     .from("daily_wellness_checkin")
-    .select(
-      "id, calculated_readiness, overall_readiness_score, created_at, checkin_date",
-    )
+    .select("id, calculated_readiness, created_at, checkin_date")
     .eq("user_id", userId)
     .eq("checkin_date", date)
     .maybeSingle();
@@ -5138,11 +5223,8 @@ async function computeDynamicConfidenceMetadata(
   }
 
   const hasCheckinToday = !!todayWellness;
-  // Prefer calculated_readiness, fallback to overall_readiness_score, then protocol value
   const readinessScore =
-    todayWellness?.calculated_readiness ??
-    todayWellness?.overall_readiness_score ??
-    protocol.readiness_score;
+    todayWellness?.calculated_readiness ?? protocol.readiness_score;
 
   const daysStale = await computeReadinessDaysStale(supabase, userId, date, {
     hasCheckinToday,

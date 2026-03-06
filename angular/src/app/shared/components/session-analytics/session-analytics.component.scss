@@ -74,19 +74,6 @@
   border-radius: var(--radius-xl);
 }
 
-.chart-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-4) 0;
-}
-
-.chart-header h3 {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-}
-
 .chart-container {
   padding: var(--space-4);
 }
@@ -141,4 +128,3 @@
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
 }
-

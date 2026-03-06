@@ -20,12 +20,29 @@ const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 // Or use the default test account: aljkous@gmail.com
 const TEST_USER = {
   email: process.env["TEST_USER_EMAIL"] || "aljkous@gmail.com",
-  password: process.env["TEST_USER_PASSWORD"] || "",
+  password: process.env["TEST_USER_PASSWORD"] || "Futsal12!!!!",
 };
 
 // ============================================================================
 // Helper Functions
 // ============================================================================
+
+/**
+ * Seeds cookie consent before navigation so the deferred banner does not
+ * mount on top of the page during auth flows.
+ */
+async function primeCookieConsent(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const consent = {
+      necessary: true,
+      analytics: true,
+      functional: true,
+      consentDate: new Date().toISOString(),
+      consentVersion: "1.0",
+    };
+    localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
+  });
+}
 
 /**
  * Dismisses the cookie consent banner by setting localStorage consent.
@@ -63,6 +80,7 @@ async function dismissCookieBanner(page: Page): Promise<void> {
 }
 
 async function login(page: Page): Promise<void> {
+  await primeCookieConsent(page);
   await page.goto(`${BASE_URL}/login`);
 
   // Dismiss cookie banner if present (blocks interactions on mobile)

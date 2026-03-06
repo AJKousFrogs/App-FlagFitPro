@@ -15,13 +15,13 @@
     />
 
     <div class="new-team-content">
-      <div class="info-banner">
-        <i class="pi pi-info-circle"></i>
-        <p>
-          New team requests require approval from a superadmin. You will be
-          notified via email once your request has been reviewed.
-        </p>
-      </div>
+      <app-alert
+        variant="info"
+        density="compact"
+        icon="pi pi-info-circle"
+        message="New team requests require approval from a superadmin. You will be notified via email once your request has been reviewed."
+        styleClass="settings-dialog-alert"
+      />
 
       <div class="form-field">
         <label for="new-team-name">

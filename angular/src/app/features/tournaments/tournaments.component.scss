@@ -62,68 +62,7 @@
 
 /* Visibility Info Banner */
 .visibility-info-banner {
-  display: flex;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
   margin-bottom: var(--space-5);
-  align-items: flex-start;
-}
-
-.visibility-info-banner.personal {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--primitive-warning-500-rgb), 0.1) 0%,
-    rgba(var(--primitive-warning-500-rgb), 0.05) 100%
-  );
-  border: var(--border-1) solid rgba(var(--primitive-warning-500-rgb), 0.2);
-}
-
-.visibility-info-banner.team {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.1) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.05) 100%
-  );
-  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.2);
-}
-
-.visibility-info-banner .banner-icon {
-  width: var(--space-10);
-  height: var(--space-10);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.visibility-info-banner.personal .banner-icon {
-  background: rgba(var(--primitive-warning-500-rgb), 0.15);
-  color: var(--color-status-warning);
-}
-
-.visibility-info-banner.team .banner-icon {
-  background: rgba(var(--ds-primary-green-rgb), 0.15);
-  color: var(--ds-primary-green);
-}
-
-.visibility-info-banner .banner-icon i {
-  font-size: var(--ds-font-size-2xl);
-}
-
-.visibility-info-banner .banner-content strong {
-  display: block;
-  font-size: var(--ds-font-size-md);
-  margin-bottom: var(--space-1);
-  color: var(--color-text-primary);
-}
-
-.visibility-info-banner .banner-content p {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  line-height: var(--ds-line-height-normal);
 }
 
 .tournament-title {

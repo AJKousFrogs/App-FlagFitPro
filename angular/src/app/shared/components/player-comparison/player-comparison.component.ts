@@ -214,7 +214,7 @@ interface StatComparison {
         <!-- Radar Chart -->
         <p-card class="chart-card">
           <ng-template #header>
-            <div class="card-header">
+            <div class="comparison-card-header">
               <h4>Performance Overview</h4>
             </div>
           </ng-template>
@@ -234,7 +234,7 @@ interface StatComparison {
           @for (category of statCategories; track category.key) {
             <p-card class="category-card">
               <ng-template #header>
-                <div class="card-header">
+                <div class="comparison-card-header">
                   <i [class]="'pi ' + category.icon"></i>
                   <h4>{{ category.label }}</h4>
                 </div>
@@ -293,10 +293,10 @@ interface StatComparison {
 
         <!-- Summary -->
         <div class="comparison-summary">
-          <div class="summary-item">
-            <span class="summary-label">Overall Winner</span>
+          <div class="metric-insight">
+            <span class="metric-insight__label">Overall Winner</span>
             <span
-              class="summary-value"
+              class="metric-insight__value"
               [class.player1]="overallWinner() === 'player1'"
               [class.player2]="overallWinner() === 'player2'"
             >

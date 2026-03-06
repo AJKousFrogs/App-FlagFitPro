@@ -36,7 +36,9 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
+import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 // ===== Interfaces =====
@@ -120,7 +122,9 @@ const PAYMENT_METHOD_CONFIG: Record<
     
     TableModule,
 
+    CardHeaderComponent,
     MainLayoutComponent,
+    EmptyStateComponent,
     PageHeaderComponent,
 
     ButtonComponent,
@@ -192,16 +196,16 @@ const PAYMENT_METHOD_CONFIG: Record<
         <!-- Outstanding Fees -->
         <p-card class="fees-card">
           <ng-template #header>
-            <div class="card-header">
-              <h3><i class="pi pi-list"></i> Outstanding Fees</h3>
+            <app-card-header title="Outstanding Fees" icon="pi-list">
               <app-button
+                header-actions
                 variant="secondary"
                 size="sm"
                 iconLeft="pi-info-circle"
                 (clicked)="showInstructions = true"
                 >Payment Instructions</app-button
               >
-            </div>
+            </app-card-header>
           </ng-template>
 
           @if (outstandingFees().length > 0) {
@@ -265,19 +269,22 @@ const PAYMENT_METHOD_CONFIG: Record<
               }
             </div>
           } @else {
-            <div class="empty-fees">
-              <i class="pi pi-check-circle"></i>
-              <p>No outstanding fees. You're all caught up!</p>
-            </div>
+            <app-empty-state
+              [useCard]="false"
+              [compact]="true"
+              icon="pi-check-circle"
+              [iconColor]="'var(--ui-success)'"
+              heading="No outstanding fees"
+              [description]="'You are all caught up.'"
+            />
           }
         </p-card>
 
         <!-- Payment History -->
         <p-card class="history-card">
           <ng-template #header>
-            <div class="card-header">
-              <h3><i class="pi pi-history"></i> Payment History</h3>
-            </div>
+            <app-card-header title="Payment History" icon="pi-history">
+            </app-card-header>
           </ng-template>
 
           @if (paymentHistory().length > 0) {
@@ -335,10 +342,13 @@ const PAYMENT_METHOD_CONFIG: Record<
               </ng-template>
             </p-table>
           } @else {
-            <div class="empty-history">
-              <i class="pi pi-inbox"></i>
-              <p>No payment history yet</p>
-            </div>
+            <app-empty-state
+              [useCard]="false"
+              [compact]="true"
+              icon="pi-history"
+              heading="No payment history yet"
+              [description]="'Payments you record with your coach will appear here.'"
+            />
           }
         </p-card>
       </div>

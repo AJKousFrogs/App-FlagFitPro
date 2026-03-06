@@ -6,7 +6,6 @@
    ================================================================ */
 
 .settings-page {
-  padding: var(--space-6);
   width: 100%;
   max-width: 100%;
   overflow-x: clip;
@@ -14,89 +13,31 @@
 
 /* Settings Navigation */
 .settings-nav-card {
-  margin-bottom: var(--space-4);
-}
-
-.settings-nav {
-  display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  margin-bottom: 0;
 }
 
 .settings-nav-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-  text-decoration: none;
-  color: var(--color-text-primary);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  /* HOVER FIX: Keep border-width constant to prevent layout shift */
-  border: var(--border-2) solid transparent;
-  /* HOVER FIX: Transition only safe properties (no layout-affecting props) */
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-  cursor: pointer;
-  width: auto;
-  min-height: var(--touch-target-md);
-
-  @include ds-focus-ring;
-  @include ds-hover-state(
-    var(--surface-tertiary),
-    $color: var(--ds-primary-green),
-    $border-color: var(--ds-primary-green)
-  );
-
-  &:active {
-    transform: scale(0.98);
-  }
+  justify-content: flex-start;
 }
 
 .settings-nav-item i {
-  font-size: var(--ds-font-size-md);
-  color: var(--ds-primary-green);
-  /* ALIGNMENT FIX: Icon font metrics stabilization */
+  font-size: var(--font-body-size);
+  color: inherit;
   line-height: var(--ds-line-height-1);
   flex-shrink: 0;
 }
 
-/* Settings Section Headers */
+.settings-grid {
+  display: grid;
+  gap: var(--layout-page-section-gap);
+}
+
 .settings-section {
-  margin-bottom: var(--space-8);
   scroll-margin-top: var(--space-20);
   display: flex;
   flex-direction: column;
+  gap: var(--layout-gap-md);
   height: 100%;
-}
-
-.settings-section-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: var(--space-6) 0 var(--space-2);
-  padding-bottom: var(--space-3);
-  border-bottom: var(--border-2) solid var(--surface-border);
-}
-
-.settings-section-title i {
-  color: var(--ds-primary-green);
-  font-size: var(--ds-font-size-2xl);
-}
-
-.settings-section-description {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-5);
 }
 
 /* Ensure cards have consistent minimum heights */
@@ -110,13 +51,17 @@
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
+  gap: var(--layout-gap-md);
 }
 
 .form-row .form-field {
   flex: 1 1 0;
   min-width: 0;
+  margin-bottom: 0;
+}
+
+.settings-profile-form .form-field {
+  margin-bottom: 0;
 }
 
 /* ================================================================
@@ -126,33 +71,17 @@
 
 /* Tablet and below */
 @include respond-to(lg) {
-  .settings-nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-2);
-  }
-
   .settings-nav-item {
     width: 100%;
-    justify-content: center;
     min-height: var(--touch-target-md);
   }
 }
 
 /* Mobile */
 @include respond-to(md) {
-  .settings-page {
-    padding: var(--space-4);
-  }
-
   .settings-grid {
-    display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-5);
-  }
-
-  .settings-nav {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .settings-nav-item {
@@ -167,18 +96,6 @@
       width: 100%;
       flex: 1 1 100%;
     }
-  }
-
-  .settings-section-title {
-    font-size: var(--ds-font-size-xl);
-  }
-
-  .settings-section-title i {
-    font-size: var(--ds-font-size-xl);
-  }
-
-  .settings-section-description {
-    font-size: var(--ds-font-size-sm);
   }
 
   // Prevent iOS zoom on form focus
@@ -199,117 +116,9 @@
 
 /* Small mobile */
 @include respond-to(sm) {
-  .settings-page {
-    padding: var(--space-3);
-  }
-
   .settings-nav-item {
     padding: var(--space-3);
   }
-}
-
-/* Dialog Container */
-.dialog-container {
-  padding: 0;
-}
-
-/* Password Form */
-.password-form {
-  padding: var(--space-5) var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5); /* Balanced space between form fields */
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.form-field label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-sm); /* 0.875rem */
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.form-field label i {
-  font-size: var(--ds-font-size-md);
-  color: var(--ds-primary-green);
-  opacity: var(--opacity-strong);
-}
-
-.input-wrapper {
-  position: relative;
-  margin-top: var(--space-1);
-}
-
-/* Password Requirements */
-.password-requirements {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-2) var(--space-4);
-  margin-top: var(--space-3);
-  padding: 0;
-  background: transparent;
-  border-radius: 0;
-  border: none;
-}
-
-.requirement {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-compact-lg); /* 0.8125rem */
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
-}
-
-.requirement i {
-  font-size: var(--ds-font-size-sm);
-  transition: color var(--transition-fast);
-  flex-shrink: 0;
-  opacity: var(--opacity-dimmed);
-}
-
-.requirement.met {
-  color: var(--ds-primary-green);
-}
-
-.requirement.met i {
-  color: var(--ds-primary-green);
-  opacity: 1;
-}
-
-/* Error & Success Messages */
-.error-message,
-.success-message {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-lg);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.error-message {
-  background: var(--color-status-error-subtle);
-  color: var(--color-status-error);
-}
-
-.success-message {
-  background: var(--color-success-bg);
-  color: var(--ds-primary-green);
-}
-
-.error-message i,
-.success-message i {
-  font-size: var(--ds-font-size-md);
 }
 
 @include respond-to(md) {
@@ -343,10 +152,7 @@
    ================================================================ */
 
 .age-display {
-  display: block;
-  margin-top: var(--space-2);
-  color: var(--color-text-secondary);
-  font-size: var(--ds-font-size-sm);
+  margin-top: 0;
 }
 
 /* Birthday Suggestion Styles */
@@ -363,23 +169,13 @@
   padding: var(--space-3) var(--space-4);
   background: linear-gradient(
     135deg,
-    rgba(var(--ds-primary-green-rgb), 0.08) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.04) 100%
+    var(--color-status-success-subtle) 0%,
+    var(--ui-surface-card-alt) 100%
   );
-  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.2);
-  border-radius: var(--radius-lg);
-  animation: slideIn 0.2s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-var(--space-1));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.18);
+  border-radius: var(--radius-xl);
+  --ui-motion-enter-from-y: calc(-1 * var(--space-1));
+  animation: ui-motion-enter-y 0.2s ease-out;
 }
 
 .suggestion-content {
@@ -403,7 +199,7 @@
 }
 
 .suggestion-label {
-  font-size: var(--ds-font-size-xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
   text-transform: var(--ds-text-transform-uppercase);
@@ -411,102 +207,22 @@
 }
 
 .suggestion-date {
-  font-size: var(--ds-font-size-md);
+  font-size: var(--font-body-size);
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .suggestion-age {
-  font-size: var(--ds-font-size-sm);
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
 }
 
-.suggestion-apply-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-semibold);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    transform var(--transition-fast);
+.birthday-suggestion app-button {
   flex-shrink: 0;
 }
 
-.suggestion-apply-btn:hover {
-  background: var(--ds-primary-green-dark);
-  transform: translateY(-var(--border-1));
-}
-
-.suggestion-apply-btn:active {
-  transform: translateY(0);
-}
-
-.suggestion-apply-btn i {
-  font-size: var(--ds-font-size-xs);
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.form-field label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-}
-
-.form-field label i {
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.form-field .required {
-  color: var(--color-error);
-}
-
-.form-field input,
-.form-field textarea {
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: var(--border-1) solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  background: var(--surface-primary);
-  color: var(--color-text-primary);
-  font-size: var(--ds-font-size-md);
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.form-field input,
-.form-field textarea {
-  @include ds-input-focus($color: var(--color-primary));
-}
-
-.form-field textarea {
-  resize: vertical;
-  min-height: var(--card-min-height-md);
-}
-
 .field-hint {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-muted);
-  margin-top: var(--space-1);
+  margin-top: 0;
 }
 
 .field-hint i {

@@ -136,7 +136,7 @@ export class AuthService {
       }),
       catchError((error) => {
         this.isLoading.set(false);
-        return throwError(() => error);
+        return throwError(() => this.normalizeAuthError(error));
       }),
       tap(() => this.isLoading.set(false)),
     );
@@ -182,7 +182,7 @@ export class AuthService {
       }),
       catchError((error) => {
         this.isLoading.set(false);
-        return throwError(() => error);
+        return throwError(() => this.normalizeAuthError(error));
       }),
       tap(() => this.isLoading.set(false)),
     );
@@ -360,6 +360,13 @@ export class AuthService {
     if (normalized.includes("invalid login credentials")) {
       return "Invalid email or password.";
     }
+    if (
+      normalized.includes("failed to fetch") ||
+      normalized.includes("network error") ||
+      normalized.includes("network request failed")
+    ) {
+      return "Authentication service unreachable. Check your network connection and Supabase configuration.";
+    }
     if (normalized.includes("email not confirmed")) {
       return "Please verify your email before signing in.";
     }
@@ -370,5 +377,17 @@ export class AuthService {
       return "Password is too weak. Use at least 8 characters.";
     }
     return message || "Authentication failed. Please try again.";
+  }
+
+  private normalizeAuthError(error: unknown): Error {
+    if (error instanceof Error) {
+      return new Error(this.mapSupabaseAuthError(error.message));
+    }
+
+    return new Error(
+      this.mapSupabaseAuthError(
+        typeof error === "string" ? error : "Authentication failed. Please try again.",
+      ),
+    );
   }
 }

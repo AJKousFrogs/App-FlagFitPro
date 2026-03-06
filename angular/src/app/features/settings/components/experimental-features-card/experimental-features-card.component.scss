@@ -1,6 +1,25 @@
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+}
+
 .toggle-wrapper {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   flex-shrink: 0;
+}
+
+.experimental-features-help {
+  margin-top: 0;
+}
+
+@media (width <= 768px) {
+  .settings-toggle-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }

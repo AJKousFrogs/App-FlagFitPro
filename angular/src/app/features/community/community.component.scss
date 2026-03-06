@@ -5,17 +5,6 @@
    Design System Compliant - January 4, 2026
    ================================================================ */
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @keyframes heartPop {
   0% {
     transform: scale(1);
@@ -28,36 +17,6 @@
   }
   100% {
     transform: scale(1);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(var(--space-5));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
   }
 }
 
@@ -841,7 +800,7 @@
   margin-top: var(--space-4);
   padding-top: var(--space-4);
   border-top: var(--border-1) solid var(--color-border-primary);
-  animation: fadeIn 0.3s ease-out;
+  animation: ui-motion-fade-in 0.3s ease-out;
 }
 
 .comments-list {
@@ -854,7 +813,8 @@
 .comment-item {
   display: flex;
   gap: var(--space-3);
-  animation: slideUp 0.3s ease-out both;
+  --ui-motion-enter-from-y: var(--space-5);
+  animation: ui-motion-enter-y 0.3s ease-out both;
 }
 
 .comment-item:nth-child(1) {
@@ -937,7 +897,7 @@
   display: flex;
   gap: var(--space-3);
   align-items: center;
-  animation: fadeIn 0.3s ease-out 0.2s both;
+  animation: ui-motion-fade-in 0.3s ease-out 0.2s both;
 }
 
 .comment-input-wrapper {
@@ -1215,54 +1175,12 @@
 }
 
 /* Filter Banner */
-.filter-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3) var(--space-4);
+.filter-banner-alert {
   margin-bottom: var(--space-4);
-  background: var(--ds-primary-green-ultra-subtle);
-  border-radius: var(--radius-lg);
-  border: var(--border-1) solid var(--color-brand-primary);
 }
 
-.filter-info {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--ds-primary-green);
-  font-size: var(--ds-font-size-md);
-}
-
-.filter-info i {
-  font-size: var(--ds-font-size-md);
-}
-
-.filter-info strong {
-  font-weight: var(--ds-font-weight-semibold);
-}
-
-.clear-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-3);
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--ds-primary-green);
-  border-radius: var(--radius-full);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--ds-primary-green);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    color var(--transition-fast);
-
-  @include ds-hover-state(var(--ds-primary-green), $color: var(--color-text-on-primary));
-}
-
-.clear-btn i {
-  font-size: var(--ds-font-size-xs);
+.filter-banner-actions {
+  margin-top: var(--space-3);
 }
 
 /* Quick Stats */

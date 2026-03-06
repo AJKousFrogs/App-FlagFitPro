@@ -90,14 +90,12 @@
 .critical-banner,
 .warning-banner {
   margin-bottom: var(--space-3);
-  box-shadow: var(--ecc-elevation-1);
 }
 
-.critical-banner-content {
+.critical-banner-actions {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
 }
 
 .collapse-btn {
@@ -250,6 +248,12 @@
 
 .protocol-row.locked {
   opacity: var(--ecc-opacity-disabled);
+}
+
+.protocol-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .action-stack {

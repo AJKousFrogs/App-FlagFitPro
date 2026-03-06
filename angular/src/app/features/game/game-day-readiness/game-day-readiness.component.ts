@@ -28,6 +28,7 @@ import { Slider } from "primeng/slider";
 import { Textarea } from "primeng/textarea";
 
 import { DataConfidenceService } from "../../../core/services/data-confidence.service";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
 
@@ -61,6 +62,7 @@ interface ReadinessMetric {
     RouterModule,
     Slider,
     Textarea,
+    AlertComponent,
     ButtonComponent,
     ConfidenceIndicatorComponent,
   ],
@@ -148,16 +150,13 @@ interface ReadinessMetric {
             </div>
 
             @if (readinessScore() !== null && readinessScore()! < 70) {
-              <div class="coach-alert-warning">
-                <i class="pi pi-bell"></i>
-                <div>
-                  <strong>Coach will be notified</strong>
-                  <p>
-                    Your readiness score is below 70%. Your coach will receive
-                    an alert to discuss modifications.
-                  </p>
-                </div>
-              </div>
+              <app-alert
+                class="coach-alert-warning"
+                variant="warning"
+                title="Coach will be notified"
+                message="Your readiness score is below 70%. Your coach will receive an alert to discuss modifications."
+                icon="pi-bell"
+              />
             }
           </div>
 

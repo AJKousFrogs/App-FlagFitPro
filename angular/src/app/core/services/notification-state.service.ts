@@ -60,7 +60,7 @@ export interface Notification {
   read: boolean;
   created_at: string;
   updated_at?: string;
-  priority?: "low" | "medium" | "high";
+  priority?: "low" | "normal" | "high" | "urgent";
   action_url?: string;
   dismissed?: boolean;
   expires_at?: string;
@@ -91,7 +91,7 @@ export interface CreateNotificationOptions {
   message: string;
   category?: NotificationCategory;
   severity?: NotificationSeverity;
-  priority?: "low" | "medium" | "high";
+  priority?: "low" | "normal" | "high" | "urgent";
   action_url?: string;
   data?: Record<string, unknown>;
   related_entity_type?: string;
@@ -179,7 +179,9 @@ export class NotificationStateService implements OnDestroy {
 
   // High priority notifications (for badges/alerts)
   readonly highPriorityUnread = computed(() =>
-    this.unreadNotifications().filter((n) => n.priority === "high"),
+    this.unreadNotifications().filter(
+      (n) => n.priority === "high" || n.priority === "urgent",
+    ),
   );
 
   readonly state = computed<NotificationState>(() => ({
@@ -358,6 +360,7 @@ export class NotificationStateService implements OnDestroy {
     // Show toast for high priority or certain categories
     if (
       newNotification.priority === "high" ||
+      newNotification.priority === "urgent" ||
       newNotification.category === "game" ||
       newNotification.category === "coach"
     ) {
@@ -424,7 +427,7 @@ export class NotificationStateService implements OnDestroy {
       read: Boolean(data["is_read"] ?? data["read"] ?? false),
       created_at: String(data["created_at"] || new Date().toISOString()),
       updated_at: data["updated_at"] as string | undefined,
-      priority: data["priority"] as "low" | "medium" | "high" | undefined,
+      priority: this.mapNotificationPriority(data["priority"]),
       action_url: data["action_url"] as string | undefined,
       dismissed: Boolean(data["dismissed"] ?? false),
       expires_at: data["expires_at"] as string | undefined,
@@ -435,6 +438,27 @@ export class NotificationStateService implements OnDestroy {
       related_entity_type: data["related_entity_type"] as string | undefined,
       related_entity_id: data["related_entity_id"] as string | undefined,
     };
+  }
+
+  private mapNotificationPriority(
+    priority: unknown,
+  ): Notification["priority"] {
+    switch (priority) {
+      case "urgent":
+        return "urgent";
+      case "critical":
+        return "urgent";
+      case "high":
+        return "high";
+      case "normal":
+        return "normal";
+      case "medium":
+        return "normal";
+      case "low":
+        return "low";
+      default:
+        return undefined;
+    }
   }
 
   /**

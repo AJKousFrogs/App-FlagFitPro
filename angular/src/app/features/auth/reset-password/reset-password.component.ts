@@ -38,11 +38,16 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           <div class="reset-password-logo elite-auth-logo">
             <i class="pi pi-key"></i>
           </div>
+          <span class="elite-auth-kicker">Account Recovery</span>
           <h1 class="reset-password-title elite-auth-title">Reset Password</h1>
+          <p class="elite-auth-subtitle">
+            Enter the email tied to your account and we’ll send you a secure
+            reset link.
+          </p>
         </ng-template>
 
-        <form [formGroup]="resetForm" (ngSubmit)="onSubmit()">
-          <div class="p-field mb-4 elite-auth-field">
+        <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
+          <div class="form-field elite-auth-field">
             <label for="reset-email" class="p-label elite-auth-label required">Email</label>
             <input
               id="reset-email"
@@ -60,7 +65,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
               "
             />
             @if (isFieldInvalid("email")) {
-              <small id="reset-email-error" class="p-error" role="alert">
+              <small id="reset-email-error" class="form-error" role="alert">
                 {{ getFieldError("email") }}
               </small>
             }
@@ -77,7 +82,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           >
         </form>
 
-        <div class="reset-password-divider my-4 elite-auth-divider">
+        <div class="reset-password-divider elite-auth-divider">
           <span>Or</span>
         </div>
 

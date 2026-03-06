@@ -269,7 +269,7 @@ export class AcwrAlertsService {
           type: "player_alert",
           title: `Critical Alert: ${alert.playerName}`,
           message: alert.message,
-          priority: alert.severity === "critical" ? "high" : "medium",
+          priority: alert.severity === "critical" ? "high" : "normal",
           data: {
             alertId: alert.id,
             playerId: alert.playerId,

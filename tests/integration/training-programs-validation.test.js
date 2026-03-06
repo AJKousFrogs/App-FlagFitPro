@@ -9,7 +9,7 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
     options.handler(event, context, { userId: null, requestId: "req-test" }),
 }));
 
-vi.mock("../../netlify/functions/supabase-client.js", () => ({
+vi.mock("../../netlify/functions/utils/supabase-client.js", () => ({
   supabaseAdmin: {
     from: (table) => {
       if (table === "training_programs") {
@@ -89,7 +89,7 @@ describe("training-programs validation hardening", () => {
     vi.resetModules();
     dbState.listError = null;
     const mod = await import("../../netlify/functions/training-programs.js");
-    handler = mod.handler;
+    handler = mod.testHandler;
   });
 
   it("returns 422 for invalid program id format", async () => {
@@ -103,6 +103,19 @@ describe("training-programs validation hardening", () => {
     );
 
     expect(response.statusCode).toBe(422);
+  });
+
+  it("accepts seeded program ids and proceeds past format validation", async () => {
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/training-programs",
+        queryStringParameters: { id: "11111111-1111-1111-1111-111111111111" },
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(404);
   });
 
   it("returns 422 for invalid current-week date format", async () => {

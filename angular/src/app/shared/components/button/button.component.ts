@@ -55,6 +55,7 @@ import { LoggerService } from "@core/services/logger.service";
 export type ButtonVariant =
   | "primary"
   | "secondary"
+  | "tertiary"
   | "outlined"
   | "text"
   | "danger"

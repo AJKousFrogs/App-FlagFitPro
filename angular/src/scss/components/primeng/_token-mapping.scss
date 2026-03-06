@@ -129,26 +129,23 @@
     // Overlays: surface-elevated, surface-border, shadow-lg
     // ============================================
 
-    --p-dialog-border-radius: var(
-      --radius-lg
-    ); /* 0.5rem - Design System standard */
-
+    --p-dialog-border-radius: var(--component-dialog-radius);
     --p-dialog-shadow: var(--shadow-lg, var(--shadow-3));
     --p-dialog-background: var(--surface-elevated, var(--color-surface-primary));
     --p-dialog-border-color: var(--surface-border, var(--color-border-muted));
 
     // Dialog header
-    --p-dialog-header-padding: var(--space-5);
+    --p-dialog-header-padding: var(--component-dialog-padding);
     --p-dialog-header-border-bottom: var(--border-1) solid
       var(--color-border-muted);
     --p-dialog-header-font-size: var(--font-h3-size);
     --p-dialog-header-font-weight: var(--font-weight-semibold);
 
     // Dialog content
-    --p-dialog-content-padding: var(--space-5);
+    --p-dialog-content-padding: var(--component-dialog-padding);
 
     // Dialog footer (secondary left, primary right)
-    --p-dialog-footer-padding: var(--space-4) var(--space-5);
+    --p-dialog-footer-padding: var(--space-4) var(--component-dialog-padding);
     --p-dialog-footer-border-top: var(--border-1) solid
       var(--color-border-muted);
     --p-dialog-footer-gap: var(--space-3);
@@ -163,21 +160,21 @@
     // INPUTS (Decision 23)
     // ============================================
 
-    --p-inputtext-border-radius: var(--radius-lg);
-    --p-inputtext-padding-x: var(--space-4);
-    --p-inputtext-padding-y: var(--space-3);
+    --p-inputtext-border-radius: var(--component-input-radius);
+    --p-inputtext-padding-x: var(--component-input-padding-x);
+    --p-inputtext-padding-y: var(--component-input-padding-y);
     --p-inputtext-font-size: var(--font-body-size);
     --p-inputtext-font-family: var(--font-family-sans);
-    --p-inputtext-min-height: var(--button-height-md); // Standard touch target
+    --p-inputtext-min-height: var(--input-height-md);
     --p-inputtext-height-sm: var(--button-height-sm);
     --p-inputtext-height-lg: var(--button-height-lg);
 
     // Input borders
-    --p-inputtext-border-color: var(--color-border-default);
+    --p-inputtext-border-color: var(--component-input-border-color);
     --p-inputtext-border-width: var(--border-1);
 
     // Input focus state
-    --p-inputtext-focus-border-color: var(--color-border-focus);
+    --p-inputtext-focus-border-color: var(--component-input-border-focus);
     --p-inputtext-focus-ring-color: var(--color-focus-ring);
     --p-inputtext-focus-ring-width: var(--focus-ring-width);
     --p-inputtext-focus-ring-offset: 0;
@@ -187,24 +184,24 @@
     --p-inputtext-invalid-border-color: var(--color-border-danger);
 
     // Input disabled state (Decision 46)
-    --p-inputtext-disabled-background: var(--color-surface-secondary);
+    --p-inputtext-disabled-background: var(--ui-surface-subtle);
     --p-inputtext-disabled-opacity: var(--opacity-dimmed);
 
     // Input placeholder
-    --p-inputtext-placeholder-color: var(--color-text-muted);
+    --p-inputtext-placeholder-color: var(--component-input-placeholder);
 
     // InputNumber (inherits input)
-    --p-inputnumber-border-radius: var(--radius-lg);
+    --p-inputnumber-border-radius: var(--component-input-radius);
 
     // ============================================
     // SELECT / DROPDOWN (Decision 41)
     // ============================================
 
-    --p-select-border-radius: var(--radius-lg);
-    --p-select-padding-x: var(--space-4);
-    --p-select-padding-y: var(--space-3);
-    --p-select-border-color: var(--color-border-default);
-    --p-select-focus-border-color: var(--color-border-focus);
+    --p-select-border-radius: var(--component-input-radius);
+    --p-select-padding-x: var(--component-input-padding-x);
+    --p-select-padding-y: var(--component-input-padding-y);
+    --p-select-border-color: var(--component-input-border-color);
+    --p-select-focus-border-color: var(--component-input-border-focus);
 
     // Dropdown panel (overlay consistency)
     --p-select-panel-background: var(--surface-elevated, var(--color-surface-primary));

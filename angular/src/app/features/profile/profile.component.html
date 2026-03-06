@@ -1,31 +1,29 @@
 <app-main-layout>
-      <div class="profile-page elite-phase2-shell">
+        <div class="profile-page elite-phase2-shell">
         <!-- Deletion Pending Banner - Using Centralized UX Copy -->
         @if (deletionPending()) {
-          <div class="deletion-pending-banner">
-            <div class="deletion-banner-content">
-              <i class="pi {{ deletionMessage.icon }}"></i>
-              <div class="deletion-banner-text">
-                <h4>{{ deletionMessage.title }}</h4>
-                <p>{{ getDeletionReason() }}</p>
-              </div>
-              <div class="deletion-banner-actions">
-                <app-icon-button
-                  icon="pi-times"
-                  [loading]="cancellingDeletion()"
-                  (clicked)="cancelDeletion()"
-                  ariaLabel="Cancel account deletion"
-                  tooltip="Cancel deletion"
-                />
-                <a
-                  [routerLink]="deletionMessage.helpLink"
-                  class="deletion-help-link"
-                >
-                  Learn More
-                </a>
-              </div>
+          <app-alert
+            variant="warning"
+            [icon]="deletionMessage.icon || null"
+            [title]="deletionMessage.title"
+            [message]="getDeletionReason()"
+            styleClass="profile-deletion-alert"
+          >
+            <div class="deletion-alert-actions">
+              <app-button
+                variant="secondary"
+                size="sm"
+                iconLeft="pi-times"
+                [loading]="cancellingDeletion()"
+                (clicked)="cancelDeletion()"
+              >
+                Cancel Deletion
+              </app-button>
+              <a [href]="deletionMessage.helpLink" class="deletion-help-link">
+                Learn More
+              </a>
             </div>
-          </div>
+          </app-alert>
         }
 
         <!-- Loading State -->
@@ -222,18 +220,15 @@
                       headerIcon="pi-clock"
                     >
                       @if (activities().length === 0) {
-                        <div class="card-empty-state card-empty-state--compact">
-                          <i class="pi pi-clock card-empty-state__icon"></i>
-                          <div class="card-empty-state__content">
-                            <p class="card-empty-state__title">
-                              No Recent Activity
-                            </p>
-                            <p class="card-empty-state__text">
-                              Your activity will appear here once you start
-                              training.
-                            </p>
-                          </div>
-                        </div>
+                        <app-empty-state
+                          [inline]="true"
+                          [compact]="true"
+                          [showBenefits]="false"
+                          [showSafetyNote]="false"
+                          icon="pi-clock"
+                          [customTitle]="'No Recent Activity'"
+                          [customMessage]="'Your activity will appear here once you start training.'"
+                        />
                       } @else {
                         <div class="activity-list">
                           @for (
@@ -261,18 +256,13 @@
                 </p-tabpanel>
                 <p-tabpanel value="achievements">
                   @if (achievements().length === 0) {
-                    <div class="card-empty-state">
-                      <i class="pi pi-trophy card-empty-state__icon"></i>
-                      <div class="card-empty-state__content">
-                        <p class="card-empty-state__title">
-                          No Achievements Yet
-                        </p>
-                        <p class="card-empty-state__text">
-                          Complete training sessions and reach milestones to
-                          earn achievements.
-                        </p>
-                      </div>
-                    </div>
+                    <app-empty-state
+                      [showBenefits]="false"
+                      [showSafetyNote]="false"
+                      icon="pi-trophy"
+                      [customTitle]="'No Achievements Yet'"
+                      [customMessage]="'Complete training sessions and reach milestones to earn achievements.'"
+                    />
                   } @else {
                     <div class="achievements-grid">
                       @for (
@@ -339,17 +329,13 @@
                         <span>Loading invitations...</span>
                       </div>
                     } @else if (pendingInvitations().length === 0) {
-                      <div class="card-empty-state">
-                        <i class="pi pi-envelope card-empty-state__icon"></i>
-                        <div class="card-empty-state__content">
-                          <p class="card-empty-state__title">
-                            No Pending Invitations
-                          </p>
-                          <p class="card-empty-state__text">
-                            You don't have any team invitations at the moment.
-                          </p>
-                        </div>
-                      </div>
+                      <app-empty-state
+                        [showBenefits]="false"
+                        [showSafetyNote]="false"
+                        icon="pi-envelope"
+                        [customTitle]="'No Pending Invitations'"
+                        [customMessage]="'You do not have any team invitations at the moment.'"
+                      />
                     } @else {
                       <div class="invitations-list">
                         @for (

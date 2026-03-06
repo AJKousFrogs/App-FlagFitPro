@@ -430,11 +430,12 @@ async function createTrainingLogSession(
         : new Date().toISOString();
       const { error: logError } = await supabase.from("workout_logs").insert({
         player_id: userId,
-        session_id: session.id,
+        source_session_id: session.id,
+        workout_type: payload.sessionType || "scheduled",
+        planned_date: payload.sessionDate || completedAt.slice(0, 10),
         completed_at: completedAt,
         rpe: payload.rpe ?? null,
         duration_minutes: payload.durationMinutes,
-        notes: payload.notes ?? null,
       });
       if (!logError) {
         workoutLogSynced = true;

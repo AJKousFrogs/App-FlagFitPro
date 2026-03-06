@@ -47,6 +47,7 @@ import {
   AIModeExplanationComponent,
   AIModeStatus,
 } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
@@ -146,6 +147,7 @@ interface AutocompleteSuggestion {
     Tooltip,
     Dialog,
     MainLayoutComponent,
+    AlertComponent,
     DailyReadinessComponent,
     MicroSessionComponent,
     AIModeExplanationComponent,

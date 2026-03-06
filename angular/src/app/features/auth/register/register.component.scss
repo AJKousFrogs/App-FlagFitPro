@@ -1,33 +1,20 @@
-@use "styles/mixins" as *;
-
 .register-page {
   .register-card {
     width: 100%;
-    max-width: var(--dialog-max-width-md);
   }
 
   .register-title {
-    max-width: 24ch;
+    max-width: 22ch;
     margin-inline: auto;
   }
 
   .register-login-link {
-    font-size: var(--font-size-sm);
-  }
-
-  .age-verification,
-  .terms-agreement {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: start;
-    gap: var(--space-3);
+    font-size: var(--font-body-sm-size);
   }
 
   .age-label,
   .terms-label {
-    margin-top: 2px;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-body-sm-size);
     line-height: var(--line-height-relaxed);
   }
 
@@ -37,26 +24,17 @@
 
   .terms-label a {
     color: var(--color-brand-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    @include ds-focus-ring(var(--color-brand-primary));
   }
-}
 
-.mb-4 {
-  margin-bottom: var(--space-4);
-}
+  .terms-label a:hover {
+    text-decoration: underline;
+  }
 
-.mt-2 {
-  margin-top: var(--space-2);
-}
-
-.my-4 {
-  margin-top: var(--space-4);
-  margin-bottom: var(--space-4);
+  .terms-label a:focus-visible {
+    outline: var(--focus-outline-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-outline-offset);
+    border-radius: var(--radius-sm);
+  }
 }

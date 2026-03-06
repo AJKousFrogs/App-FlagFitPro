@@ -126,14 +126,6 @@
     display: flex;
     gap: var(--space-4);
     flex-wrap: wrap;
-
-    .summary-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-      font-size: var(--ds-font-size-md);
-      color: var(--color-text-secondary);
-    }
   }
 }
 

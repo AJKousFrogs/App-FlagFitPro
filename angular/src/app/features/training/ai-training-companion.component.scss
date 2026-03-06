@@ -53,22 +53,12 @@
   height: 100%;
   border-radius: var(--radius-full);
   border: var(--border-2) solid rgba(var(--ds-primary-green-rgb), 0.6);
-  animation: pulse-ring 2s ease-out infinite;
+  --ui-motion-ring-end-scale: 1.5;
+  animation: ui-motion-ring-expand 2s ease-out infinite;
 }
 
 .pulse-ring.animate {
-  animation: pulse-ring 1s ease-out infinite;
-}
-
-@keyframes pulse-ring {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
+  animation: ui-motion-ring-expand 1s ease-out infinite;
 }
 
 .status-indicator {
@@ -311,58 +301,11 @@
   }
 }
 
-/* AI Disabled Banner Styles */
-.ai-disabled-banner {
+/* AI Disabled Banner Layout */
+.ai-disabled-shell {
   position: fixed;
   bottom: calc(env(safe-area-inset-bottom, 0rem) + var(--space-4));
   right: var(--space-4);
   z-index: var(--z-index-dropdown);
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--color-border-secondary);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
-  max-width: var(--element-max-width-md);
-}
-
-.ai-disabled-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: var(--space-4);
-  gap: var(--space-3);
-}
-
-.ai-disabled-content i {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--color-text-secondary);
-}
-
-.ai-disabled-text h4 {
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  margin: 0;
-  color: var(--color-text-primary);
-}
-
-.ai-disabled-text p {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-.ai-enable-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-brand-primary);
-  color: var(--color-text-on-primary);
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  transition: background var(--transition-base);
-
-  @include ds-hover-state(var(--color-brand-primary-hover));
+  width: min(var(--element-max-width-md), calc(100vw - var(--space-8)));
 }

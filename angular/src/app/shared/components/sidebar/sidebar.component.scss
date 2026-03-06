@@ -38,37 +38,15 @@
   content: none;
 }
 
-.sidebar-close-btn {
+app-close-button.sidebar-close-btn {
   display: none;
   position: absolute;
   top: var(--space-3);
   right: var(--space-3);
-  width: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
-  height: var(--touch-target-md);
-  border: none;
-  background: var(--surface-tertiary);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  color: var(--color-text-secondary);
   -webkit-tap-highlight-color: transparent;
   z-index: var(--z-dropdown);
-
-  // Centralized transition
-  transition:
-    background-color var(--ds-state-transition),
-    color var(--ds-state-transition),
-    transform var(--ds-state-transition);
-
-  @include ds-focus-ring;
-  @include ds-hover-state(
-    var(--color-border-secondary),
-    $color: var(--color-text-primary)
-  );
-}
-
-// Active state for touch
-.sidebar-close-btn:active {
-  transform: scale(0.95);
+  --close-button-bg: var(--surface-tertiary);
+  --close-button-bg-hover: var(--surface-secondary);
 }
 
 .sidebar-logo {
@@ -268,20 +246,9 @@
   margin-top: auto;
 }
 
-.sidebar-overlay {
+.sidebar-backdrop {
   display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh; /* Use dynamic viewport height for mobile browsers */
-  background: var(--surface-overlay);
   z-index: calc(var(--z-modal) + 5); /* Below sidebar but above content */
-  -webkit-backdrop-filter: blur(var(--overlay-blur));
-  backdrop-filter: blur(var(--overlay-blur));
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
@@ -334,7 +301,7 @@
   }
 
   // Close button NOT shown at tablet width
-  .sidebar-close-btn {
+  app-close-button.sidebar-close-btn {
     display: none;
   }
 }
@@ -360,25 +327,15 @@
     transform: translateX(0);
   }
 
-  .sidebar-close-btn {
+  app-close-button.sidebar-close-btn {
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .sidebar-overlay.active {
+  .sidebar-backdrop {
     display: block;
-    animation: fadeIn 0.25s ease-out;
     will-change: opacity;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
   }
 }
 
@@ -394,11 +351,10 @@
     max-height: 100dvh;
   }
 
-  .sidebar-overlay {
+  .sidebar-backdrop {
     /* Prevent any overflow or scroll on overlay */
     overflow: hidden;
     touch-action: none;
-    position: fixed; /* Ensure it stays in place */
     overscroll-behavior: contain;
   }
 }

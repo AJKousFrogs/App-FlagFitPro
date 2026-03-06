@@ -13,12 +13,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--surface-primary);
-
-  // BORDERLESS per user preference
-  border-radius: var(--radius-lg);
-  border: none;
-  box-shadow: var(--shadow-sm);
+  background: var(--surface-card);
+  border-radius: var(--component-card-radius);
+  border: var(--component-card-border);
+  box-shadow: var(--component-card-shadow);
 
   overflow: hidden;
 
@@ -51,7 +49,8 @@
 @media (hover: hover) and (pointer: fine) {
   .card-shell--interactive:hover {
     transform: translateY(-var(--border-1));
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--component-card-shadow-hover);
+    border-color: var(--ui-border-default);
   }
 }
 
@@ -86,7 +85,7 @@
   gap: var(--space-4);
 
   // CANONICAL: tighter header padding (top/sides/bottom)
-  padding: var(--space-3) var(--space-4) var(--space-2);
+  padding: var(--space-4) var(--component-card-padding) var(--space-2);
 
   // NO background - transparent
   background: transparent;
@@ -96,7 +95,7 @@
 }
 
 .card-shell__header--compact {
-  padding: var(--space-2) var(--space-3) var(--space-1);
+  padding: var(--space-3) var(--component-card-padding-compact) var(--space-1);
   gap: var(--space-3);
 }
 
@@ -138,19 +137,18 @@
 }
 
 .card-shell__title {
-  // CANONICAL: Player Dashboard title style
   margin: 0;
-  font-size: var(--ds-font-size-2xl); // var(--icon-base)
-  font-weight: var(--ds-font-weight-semibold); // 600
+  font-size: var(--font-h3-size);
+  font-weight: var(--font-h2-weight);
   color: var(--color-text-primary);
-  line-height: var(--ds-line-height-tight); // 1.2
+  line-height: var(--font-h3-line-height);
 }
 
 .card-shell__subtitle {
   margin: var(--space-1) 0 0 0;
-  font-size: var(--ds-font-size-sm);
+  font-size: var(--font-body-sm-size);
   font-weight: var(--ds-font-weight-regular);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   line-height: var(--ds-line-height-normal);
 }
 
@@ -170,12 +168,13 @@
 // ============================================
 
 .card-shell__body {
-  padding: var(--space-4);
+  padding: 0 var(--component-card-padding) var(--component-card-padding);
   flex: 1;
 }
 
 .card-shell__body--compact {
-  padding: var(--space-3);
+  padding: 0 var(--component-card-padding-compact)
+    var(--component-card-padding-compact);
 }
 
 .card-shell__body--flush {
@@ -187,13 +186,13 @@
 // ============================================
 
 .card-shell__footer {
-  padding: var(--space-3) var(--space-4);
-  border-top: var(--border-1) solid var(--color-border-default);
+  padding: var(--space-4) var(--component-card-padding);
+  border-top: var(--border-1) solid var(--color-border-subtle);
   background: var(--surface-secondary);
 }
 
 .card-shell__footer--compact {
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--component-card-padding-compact);
 }
 
 // card-empty-state: see primitives/_feedback.scss (global)

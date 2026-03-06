@@ -1,4 +1,10 @@
 import { createClient as _createClient } from "@supabase/supabase-js";
+import { getTrainingProgramById } from "./training-programs.js";
+import {
+  getIsoDateString,
+  getIsoDayOfWeek,
+  parseIsoDateString,
+} from "./date-utils.js";
 
 /**
  * Deterministic Session Resolver
@@ -36,19 +42,19 @@ import { createClient as _createClient } from "@supabase/supabase-js";
  * @returns {Promise<SessionResolutionResult>}
  */
 async function resolveTodaySession(supabase, userId, date) {
-  const targetDate = new Date(date);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const targetDate = parseIsoDateString(date);
+  const todayIso = getIsoDateString();
+  const dayOfWeek = getIsoDayOfWeek(date);
 
   const metadata = {
     userId,
     date,
-    dayOfWeek: targetDate.getDay(),
+    dayOfWeek,
     resolvedAt: new Date().toISOString(),
   };
 
-  // Rule 0: Don't resolve future dates (can't have a "today" that hasn't happened)
-  if (targetDate > today) {
+  // Compare ISO calendar dates to avoid local-timezone drift.
+  if (date > todayIso) {
     return {
       success: false,
       status: "future_date",
@@ -71,13 +77,7 @@ async function resolveTodaySession(supabase, userId, date) {
       status,
       start_date,
       end_date,
-      current_week,
-      training_programs!inner (
-        id,
-        name,
-        program_type,
-        program_structure
-      )
+      current_week
     `,
     )
     .eq("player_id", userId)
@@ -107,8 +107,29 @@ async function resolveTodaySession(supabase, userId, date) {
     };
   }
 
+  const trainingProgram = await getTrainingProgramById(
+    supabase,
+    playerProgram.program_id,
+    "id, name, program_type",
+  );
+
+  if (!trainingProgram) {
+    return {
+      success: false,
+      status: "no_program",
+      session: null,
+      override: null,
+      reason:
+        "Active training assignment references a missing program. Contact your coach.",
+      metadata: {
+        ...metadata,
+        programCheckCompleted: true,
+      },
+    };
+  }
+
   metadata.programId = playerProgram.program_id;
-  metadata.programName = playerProgram.training_programs.name;
+  metadata.programName = trainingProgram.name;
   metadata.programStartDate = playerProgram.start_date;
 
   // Step 2: Get the current phase for this date
@@ -174,7 +195,6 @@ async function resolveTodaySession(supabase, userId, date) {
   metadata.weekName = currentWeek.name;
 
   // Step 4: Get session template for this day of week
-  const dayOfWeek = targetDate.getDay();
   const { data: sessionTemplate, error: templateError } = await supabase
     .from("training_session_templates")
     .select("*")
@@ -307,8 +327,8 @@ async function checkSportLayerOverrides(supabase, userId, date, dayOfWeek) {
 
   if (upcomingTournaments && upcomingTournaments.length > 0) {
     for (const tournament of upcomingTournaments) {
-      const tournamentDate = new Date(tournament.start_date);
-      const currentDate = new Date(date);
+      const tournamentDate = parseIsoDateString(tournament.start_date);
+      const currentDate = targetDate;
       const daysUntil = Math.ceil(
         (tournamentDate - currentDate) / (1000 * 60 * 60 * 24),
       );

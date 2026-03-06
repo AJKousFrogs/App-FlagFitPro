@@ -58,21 +58,47 @@ type LoginForm = FormGroup<{
           <div class="login-logo elite-auth-logo">
             <i class="pi pi-activity"></i>
           </div>
+          <span class="elite-auth-kicker">Welcome Back</span>
           <h1 class="login-title elite-auth-title">Sign in to FlagFit Pro</h1>
+          <p class="elite-auth-subtitle">
+            Access your training plan, readiness, and daily protocol from one
+            place.
+          </p>
         </ng-template>
 
         @if (isDemoMode()) {
-          <div class="alert alert-info elite-auth-note">
-            <strong>Demo Mode:</strong> This login accepts any email and
-            password for testing purposes.
+          <div class="alert alert--info elite-auth-note">
+            <strong>Local Development:</strong> You're running on localhost.
+            Sign in still requires a reachable auth backend and valid test
+            credentials.
           </div>
         }
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()"
+          class="elite-auth-form"
+        >
           <input type="hidden" [value]="csrfToken()" />
 
+          @if (submitError()) {
+            <div
+              class="form-error-summary form-error-summary--auth"
+              role="alert"
+              aria-live="polite"
+            >
+              <p class="form-error-summary__title">
+                <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+                Unable to sign in
+              </p>
+              <p class="form-error-summary__body">{{ submitError() }}</p>
+            </div>
+          }
+
           <div class="form-field elite-auth-field">
-            <label for="email" class="form-label elite-auth-label required">Email</label>
+            <label for="email" class="form-label elite-auth-label required"
+              >Email</label
+            >
             <input
               id="email"
               type="email"
@@ -87,15 +113,17 @@ type LoginForm = FormGroup<{
               [attr.aria-describedby]="emailError() ? 'email-error' : null"
             />
             @if (emailError()) {
-              <small id="email-error" class="p-error" role="alert">
+              <small id="email-error" class="form-error" role="alert">
                 {{ emailError() }}
               </small>
             }
           </div>
 
           <div class="form-field elite-auth-field">
-            <label for="password" class="form-label elite-auth-label required">Password</label>
-            <div class="password-input-wrapper">
+            <label for="password" class="form-label elite-auth-label required"
+              >Password</label
+            >
+            <div class="password-field form-field__control">
               <input
                 id="password"
                 [type]="showPassword() ? 'text' : 'password'"
@@ -113,7 +141,7 @@ type LoginForm = FormGroup<{
               />
               <button
                 type="button"
-                class="password-toggle-btn"
+                class="form-field__toggle"
                 (click)="togglePasswordVisibility()"
                 [attr.aria-label]="
                   showPassword() ? 'Hide password' : 'Show password'
@@ -125,24 +153,25 @@ type LoginForm = FormGroup<{
               </button>
             </div>
             @if (passwordError()) {
-              <small id="password-error" class="p-error" role="alert">
+              <small id="password-error" class="form-error" role="alert">
                 {{ passwordError() }}
               </small>
             }
           </div>
 
-          <div class="login-form-options">
-            <label class="checkbox-wrapper" for="remember">
+          <div class="form-inline-split login-form-options">
+            <label class="form-check" for="remember">
               <input
                 type="checkbox"
                 formControlName="remember"
                 id="remember"
+                class="form-check__input"
                 [attr.aria-label]="'Remember me on this device'"
               />
-              <span class="checkmark" aria-hidden="true"></span>
-              <span class="checkbox-label">Remember me</span>
+              <span class="form-check__box" aria-hidden="true"></span>
+              <span class="form-check__label">Remember me</span>
             </label>
-            <a [routerLink]="['/reset-password']" class="forgot-link">
+            <a [routerLink]="['/reset-password']" class="forgot-link ui-inline-link">
               Forgot your password?
             </a>
           </div>
@@ -160,11 +189,14 @@ type LoginForm = FormGroup<{
         </form>
 
         <div class="login-divider elite-auth-divider">
-          <span>Or</span>
+          <span>New to FlagFit Pro?</span>
         </div>
 
-        <a [routerLink]="['/register']" class="login-create-link elite-auth-link elite-auth-link--centered">
-          create a new account
+        <a
+          [routerLink]="['/register']"
+          class="login-create-link elite-auth-link elite-auth-link--centered"
+        >
+          Create a new account
         </a>
       </p-card>
     </div>
@@ -186,6 +218,7 @@ export class LoginComponent {
   isDemoMode = signal(false);
   submitted = signal(false);
   showPassword = signal(false);
+  submitError = signal<string | null>(null);
 
   // Track form validity as a signal (updated on statusChanges)
   formValid = signal(false);
@@ -217,6 +250,14 @@ export class LoginComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.formValid.set(this.loginForm.valid);
+      });
+
+    this.loginForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.submitError()) {
+          this.submitError.set(null);
+        }
       });
 
     // Don't auto-fill demo credentials - let user enter real credentials
@@ -258,9 +299,11 @@ export class LoginComponent {
     }
 
     this.submitted.set(true);
+    this.submitError.set(null);
 
     if (this.loginForm.invalid) {
       markFormGroupTouched(this.loginForm);
+      this.submitError.set("Check the highlighted fields and try again.");
       return;
     }
 
@@ -278,6 +321,7 @@ export class LoginComponent {
         next: async (response: { success?: boolean; error?: string }) => {
           if (response.success) {
             this.toastService.success(TOAST.SUCCESS.LOGIN_SUCCESS);
+            this.submitError.set(null);
             // Check onboarding status before redirecting
             const user = this.authService.currentUser();
             if (user) {
@@ -298,15 +342,19 @@ export class LoginComponent {
               this.router.navigateByUrl(returnUrl || "/dashboard");
             }
           } else {
-            this.toastService.error(
-              response.error || "Invalid email or password",
+            this.submitError.set(
+              response.error ||
+                "Your email or password was not accepted. Check your details and try again.",
             );
           }
           this.isLoading.set(false);
         },
         error: (error: Error) => {
-          this.toastService.error(
-            getErrorMessage(error, "Login failed. Please try again."),
+          this.submitError.set(
+            getErrorMessage(
+              error,
+              "Login failed. Check your connection and try again.",
+            ),
           );
           this.isLoading.set(false);
         },

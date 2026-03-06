@@ -6,17 +6,26 @@
    ================================================================ */
 
 .roster-page {
-  padding: var(--space-6);
+  width: 100%;
+}
+
+.roster-toolbar {
+  padding: 0;
 }
 
 .header-actions {
   display: flex;
-  gap: var(--space-3);
+  align-items: stretch;
+  gap: var(--layout-gap-sm);
   flex-wrap: wrap;
 }
 
+.header-actions app-button {
+  flex: 0 1 auto;
+}
+
 .position-section {
-  margin-bottom: var(--space-8);
+  margin-bottom: 0;
 }
 
 .section-title {
@@ -46,7 +55,7 @@
     auto-fill,
     minmax(var(--grid-card-min-lg), 1fr)
   );
-  gap: var(--space-6);
+  gap: var(--layout-gap-lg);
 }
 
 /* Player Details Modal */
@@ -59,8 +68,10 @@
   align-items: center;
   gap: var(--space-6);
   margin-bottom: var(--space-6);
-  padding-bottom: var(--space-6);
-  border-bottom: var(--border-1) solid var(--color-border-secondary);
+  padding: var(--space-5);
+  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--component-card-radius);
 }
 
 .details-jersey {
@@ -82,14 +93,14 @@
 }
 
 .details-position {
-  color: var(--color-text-secondary);
+  color: var(--ui-text-secondary);
   margin: 0 0 var(--space-2);
 }
 
 .details-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--layout-gap-md);
   margin-bottom: var(--space-6);
 }
 
@@ -97,6 +108,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--radius-xl);
 }
 
 .details-label {
@@ -119,7 +134,6 @@
 }
 
 .details-stats h3 {
-  font-size: var(--ds-font-size-md);
   margin: 0 0 var(--space-3);
 }
 
@@ -132,11 +146,12 @@
 /* Phase 1: Details Metrics Summary */
 .details-metrics-summary {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
   gap: var(--space-4);
   padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
+  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--component-card-radius);
   margin-bottom: var(--space-6);
 }
 
@@ -145,6 +160,10 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  border: var(--border-1) solid rgba(15, 23, 42, 0.04);
 }
 
 .metric-card .metric-label {
@@ -199,47 +218,50 @@
 }
 
 /* Phase 1: Position Benchmarks */
+.details-panel {
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
+  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--component-card-radius);
+  box-shadow: inset 0 0 0 var(--border-1) rgba(var(--ds-primary-green-rgb), 0.02);
+}
+
+.details-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.details-section-title i {
+  color: var(--ds-primary-green);
+}
+
 .details-benchmarks {
   margin-bottom: var(--space-6);
-
-  h3 {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--ds-font-size-md);
-    margin: 0 0 var(--space-4);
-    color: var(--color-text-primary);
-
-    i {
-      color: var(--ds-primary-green);
-    }
-  }
 }
 
 .benchmarks-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
   gap: var(--space-3);
 }
 
 .benchmark-item {
   padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--color-border-secondary);
+  background: var(--ui-surface-card-alt);
+  border-radius: var(--radius-xl);
+  border: var(--border-1) solid var(--ui-border-subtle);
 }
 
 .benchmark-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: var(--space-1);
-}
-
-.benchmark-name {
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
+  --app-card-header-title-size: var(--ds-font-size-md);
+  --app-card-header-title-weight: var(--ds-font-weight-medium);
 }
 
 .benchmark-rating {
@@ -294,19 +316,6 @@
 /* Phase 1: Training Priorities */
 .details-priorities {
   margin-bottom: var(--space-6);
-
-  h3 {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--ds-font-size-md);
-    margin: 0 0 var(--space-3);
-    color: var(--color-text-primary);
-
-    i {
-      color: var(--ds-primary-green);
-    }
-  }
 }
 
 .priorities-list {
@@ -322,8 +331,6 @@
 
 /* Phase 1: Risk Assessment */
 .details-risk {
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
   margin-bottom: var(--space-6);
 
   &.risk-level-moderate {
@@ -342,10 +349,6 @@
   }
 
   h3 {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--ds-font-size-md);
     margin: 0 0 var(--space-3);
 
     i {
@@ -407,8 +410,9 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border: var(--border-1) solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--ui-surface-card-alt);
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
@@ -505,9 +509,9 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  border: var(--border-1) solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  background: var(--surface-secondary);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--ui-surface-card-alt);
   transition:
     border-color var(--transition-fast),
     background-color var(--transition-fast);
@@ -578,10 +582,6 @@
 }
 
 @include respond-to(md) {
-  .roster-page {
-    padding: var(--space-4);
-  }
-
   .roster-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
@@ -589,11 +589,11 @@
 
   .header-actions {
     width: 100%;
-    justify-content: stretch;
+    justify-content: flex-start;
   }
 
-  .header-actions p-button {
-    flex: 1;
+  .header-actions app-button {
+    flex: 1 1 calc(50% - var(--layout-gap-sm));
   }
 
   .details-header {
@@ -622,10 +622,6 @@
 }
 
 @include respond-to(sm) {
-  .roster-page {
-    padding: var(--space-3);
-  }
-
   .details-jersey {
     width: var(--avatar-size-xl);
     height: var(--avatar-size-xl);
@@ -652,12 +648,12 @@
 }
 
 @include respond-to(xs) {
-  .roster-page {
-    padding: var(--space-2);
-  }
-
   .header-actions {
     flex-direction: column;
+  }
+
+  .header-actions app-button {
+    flex: 1 1 100%;
   }
 
   .section-title {

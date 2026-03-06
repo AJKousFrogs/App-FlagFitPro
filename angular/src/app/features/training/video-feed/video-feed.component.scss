@@ -5,8 +5,6 @@
    Design System Compliant - January 2, 2026
    ================================================================ */
 
-@use "app/shared/styles/animations" as *;
-
 /* ============================================
    VIDEO FEED PAGE - PREMIUM UX
    ============================================ */
@@ -26,7 +24,8 @@
   margin-bottom: var(--space-8);
   position: relative;
   overflow: hidden;
-  animation: fadeInDown 600ms ease-out;
+  --ui-motion-enter-from-y: calc(-1 * var(--space-5));
+  animation: ui-motion-enter-y 600ms ease-out;
 }
 
 .feed-header::before {
@@ -198,7 +197,9 @@
 
 .stat-pill-interactive:hover i {
   color: var(--color-text-on-primary);
-  animation: pulse 1s ease-in-out infinite;
+  --ui-motion-scale-pulse-mid: 0.95;
+  --ui-motion-scale-pulse-opacity-mid: var(--opacity-subtle);
+  animation: ui-motion-scale-pulse 1s ease-in-out infinite;
 }
 
 .stat-pill-interactive:hover .stat-action-icon {
@@ -445,7 +446,7 @@
     transform var(--transition-slower) var(--ease-micro-bounce),
     box-shadow var(--transition-slower) var(--ease-micro-bounce);
   position: relative;
-  animation: scaleIn 400ms ease-out backwards;
+  animation: ui-motion-scale-in 400ms ease-out backwards;
 }
 
 @for $i from 1 through 24 {
@@ -486,7 +487,7 @@
   position: absolute;
   inset: 0;
   background: var(--color-bg-dark);
-  animation: fadeIn 0.3s ease-in-out;
+  animation: ui-motion-fade-in 0.3s ease-in-out;
 }
 
 .video-preview-iframe {
@@ -494,15 +495,6 @@
   height: 100%;
   border: none;
   display: block;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .thumbnail-overlay {
@@ -528,7 +520,9 @@
     transform var(--transition-fast),
     opacity var(--transition-fast);
   filter: drop-shadow(var(--shadow-overlay-md));
-  animation: pulse 2s ease-in-out infinite;
+  --ui-motion-scale-pulse-mid: 0.95;
+  --ui-motion-scale-pulse-opacity-mid: var(--opacity-subtle);
+  animation: ui-motion-scale-pulse 2s ease-in-out infinite;
 }
 
 .video-card:hover .play-icon {
@@ -612,7 +606,9 @@
 }
 
 .rating-badge i {
-  animation: pulse 2s ease-in-out infinite;
+  --ui-motion-scale-pulse-mid: 0.95;
+  --ui-motion-scale-pulse-opacity-mid: var(--opacity-subtle);
+  animation: ui-motion-scale-pulse 2s ease-in-out infinite;
 }
 
 /* Video Info */

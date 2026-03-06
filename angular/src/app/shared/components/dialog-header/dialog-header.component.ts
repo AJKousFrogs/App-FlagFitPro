@@ -5,7 +5,7 @@ import {
   input,
   output,
 } from "@angular/core";
-import { ButtonComponent } from "../button/button.component";
+import { CloseButtonComponent } from "../close-button/close-button.component";
 
 /**
  * Dialog Header Component
@@ -37,7 +37,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-dialog-header",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, CloseButtonComponent],
   template: `
     <div class="dialog-header" [class.danger-header]="danger()">
       <div class="dialog-icon" [class.danger-icon]="danger()">
@@ -49,13 +49,11 @@ import { ButtonComponent } from "../button/button.component";
           <p>{{ subtitle() }}</p>
         }
       </div>
-      <app-button
-        icon="times"
-        variant="text"
+      <app-close-button
         ariaLabel="Close dialog"
-        class="dialog-close-btn"
+        [styleClass]="'dialog-close-btn'"
         (clicked)="close.emit()"
-      ></app-button>
+      />
     </div>
   `,
   styles: [],

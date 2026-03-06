@@ -10,8 +10,8 @@ import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import { TitleCasePipe } from "@angular/common";
 import { Card } from "primeng/card";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { Message } from "primeng/message";
 import { ToastService } from "../../../core/services/toast.service";
 import { formatDate } from "../../../shared/utils/date.utils";
 import { TeamInvitationDataService } from "../services/team-invitation-data.service";
@@ -47,7 +47,7 @@ interface InvitationData {
   imports: [
     RouterModule,
     Card,
-    Message,
+    AlertComponent,
     TitleCasePipe,
     ButtonComponent,
     AppLoadingComponent,
@@ -66,9 +66,11 @@ interface InvitationData {
           <app-loading message="Loading invitation..." variant="inline" />
         } @else if (needsLogin()) {
           <div class="login-required-state">
-            <p-message severity="warn" class="status-message">
-              Please sign in to accept this invitation
-            </p-message>
+            <app-alert
+              variant="warning"
+              message="Please sign in to accept this invitation"
+              styleClass="status-message"
+            />
             <p class="login-message">
               You need to be signed in to accept team invitations.
               @if (invitationData()) {
@@ -89,20 +91,22 @@ interface InvitationData {
           </div>
         } @else if (invitationError()) {
           <div class="error-state">
-            <p-message severity="error" class="status-message">
-              {{ invitationError() }}
-            </p-message>
+            <app-alert
+              variant="error"
+              [message]="invitationError() || ''"
+              styleClass="status-message"
+            />
             <a [routerLink]="['/dashboard']" class="back-link mt-4"
               >Go to Dashboard</a
             >
           </div>
         } @else if (isAccepted()) {
           <div class="accepted-state">
-            <p-message
-              severity="success"
-              class="status-message status-message--success"
-              >Invitation accepted!</p-message
-            >
+            <app-alert
+              variant="success"
+              message="Invitation accepted!"
+              styleClass="status-message status-message--success"
+            />
             <p class="accepted-message">
               You've successfully joined {{ teamName() }}. Welcome to the team!
             </p>
@@ -112,9 +116,11 @@ interface InvitationData {
           </div>
         } @else if (isDeclined()) {
           <div class="declined-state">
-            <p-message severity="info" class="status-message">
-              Invitation declined
-            </p-message>
+            <app-alert
+              variant="info"
+              message="Invitation declined"
+              styleClass="status-message"
+            />
             <p class="declined-message">
               You have declined the invitation to join {{ teamName() }}.
             </p>

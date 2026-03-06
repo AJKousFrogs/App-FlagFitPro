@@ -15,6 +15,7 @@ import {
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
+import { AlertComponent, AlertVariant } from "../alert/alert.component";
 import { ButtonComponent } from "../button/button.component";
 import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
@@ -69,6 +70,7 @@ interface Goal {
     Slider,
     InputText,
     Timeline,
+    AlertComponent,
     ButtonComponent,
     StatusTagComponent,
   ],
@@ -173,12 +175,14 @@ interface Goal {
               </div>
               <!-- Weather-based recommendations -->
               @if (weatherData()) {
-                <div class="weather-notice">
-                  <i class="pi pi-sun"></i>
-                  <span
-                    >{{ weatherData()?.condition }},
-                    {{ weatherData()?.temperature }}°F</span
-                  >
+                <app-alert
+                  icon="pi-sun"
+                  [variant]="weatherAlertVariant()"
+                  title="Outdoor conditions"
+                  [message]="weatherSummary()"
+                  density="compact"
+                  styleClass="weather-notice"
+                >
                   <app-status-tag
                     [value]="
                       weatherData()?.recommendation ?? 'No recommendation'
@@ -186,7 +190,7 @@ interface Goal {
                     [severity]="getWeatherSeverity()"
                     size="sm"
                   />
-                </div>
+                </app-alert>
               }
             </form>
             <div class="step-actions">
@@ -385,6 +389,28 @@ export class TrainingBuilderComponent {
       0,
     ),
   );
+
+  readonly weatherSummary = computed(() => {
+    const weather = this.weatherData();
+    if (!weather) {
+      return "";
+    }
+
+    return `${weather.condition}, ${weather.temperature}°F`;
+  });
+
+  readonly weatherAlertVariant = computed<AlertVariant>(() => {
+    const temp = this.weatherData()?.temperature ?? 70;
+    if (temp < 40 || temp > 90) {
+      return "warning";
+    }
+
+    if (temp < 50 || temp > 85) {
+      return "info";
+    }
+
+    return "success";
+  });
 
   timelineEvents = computed(() => {
     interface TimelineEvent {

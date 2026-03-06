@@ -22,8 +22,8 @@ import { HapticFeedbackService } from "../../core/services/haptic-feedback.servi
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { PrivacySettingsService } from "../../core/services/privacy-settings.service";
-import { AI_PROCESSING_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { timer } from "rxjs";
+import { AiConsentRequiredComponent } from "../../shared/components/ai-consent-required/ai-consent-required.component";
 
 interface Insight {
   id: string;
@@ -123,22 +123,18 @@ declare global {
     Knob,
 
     ButtonComponent,
+    AiConsentRequiredComponent,
   ],
   animations: [scaleInOut],
   template: `
     <!-- AI Disabled Banner -->
     @if (!aiEnabled()) {
-      <div class="ai-disabled-banner">
-        <div class="ai-disabled-content">
-          <i class="pi {{ aiDisabledMessage.icon }}"></i>
-          <div class="ai-disabled-text">
-            <h4>{{ aiDisabledMessage.title }}</h4>
-            <p>{{ aiDisabledMessage.reason }}</p>
-          </div>
-          <a [routerLink]="aiDisabledMessage.helpLink" class="ai-enable-link">
-            {{ aiDisabledMessage.actionLabel }}
-          </a>
-        </div>
+      <div class="ai-disabled-shell">
+        <app-ai-consent-required
+          featureName="AI Training Companion"
+          [showSettingsLink]="true"
+          [status]="'disabled'"
+        />
       </div>
     }
 
@@ -339,7 +335,6 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
 
   // AI consent check - shows disabled banner when AI processing is off
   readonly aiEnabled = this.privacyService.aiProcessingEnabled;
-  readonly aiDisabledMessage = AI_PROCESSING_MESSAGES.disabled;
 
   isActive = signal(false);
   isMinimized = signal(false);

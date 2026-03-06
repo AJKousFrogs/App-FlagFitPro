@@ -155,7 +155,7 @@ export class ProfileNotificationService {
           notification_type: "profile_incomplete",
           title: "Complete Your Profile",
           message: `Your profile is ${percentage}% complete. Add your ${missingFields[0]?.toLowerCase() || "missing information"} to unlock all features.`,
-          priority: "medium",
+          priority: "normal",
           data: {
             percentage,
             missingFields,

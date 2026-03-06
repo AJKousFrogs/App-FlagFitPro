@@ -33,6 +33,7 @@ import { COLORS } from "../../../core/constants/app.constants";
 import { LazyChartComponent } from "../lazy-chart/lazy-chart.component";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { CardHeaderComponent } from "../card-header/card-header.component";
 
 interface WeeklyBreakdown {
   week_start: string;
@@ -72,6 +73,7 @@ interface AnalyticsData {
     EmptyStateComponent,
     LazyChartComponent,
     StatusTagComponent,
+    CardHeaderComponent,
   ],
   template: `
     <div class="session-analytics">
@@ -144,14 +146,14 @@ interface AnalyticsData {
       @if (!loading() && chartData()) {
         <p-card class="chart-card">
           <ng-template #header>
-            <div class="chart-header">
-              <h3>Weekly Progress</h3>
+            <app-card-header title="Weekly Progress">
               <app-status-tag
+                header-actions
                 value="Last 4 weeks"
                 severity="secondary"
                 size="sm"
               />
-            </div>
+            </app-card-header>
           </ng-template>
           <div class="chart-container">
             <app-lazy-chart

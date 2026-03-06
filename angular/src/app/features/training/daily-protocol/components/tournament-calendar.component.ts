@@ -18,6 +18,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { firstValueFrom } from "rxjs";
 import { DatePipe } from "@angular/common";
+import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
@@ -79,6 +80,7 @@ interface EventTypeOption {
     StatusTagComponent,
     Tooltip,
     DatePipe,
+    AlertComponent,
 
     ButtonComponent,
     IconButtonComponent,
@@ -182,14 +184,17 @@ interface EventTypeOption {
               </div>
 
               @if (tournament.isInTaperPeriod) {
-                <div class="taper-banner" role="alert">
-                  <i class="pi pi-info-circle" aria-hidden="true"></i>
-                  <span>
-                    <strong>Taper Period Active</strong> - Training volume
-                    reduced to peak for this event. Started
-                    {{ tournament.taperStartDate | date: "MMM d" }}.
-                  </span>
-                </div>
+                <app-alert
+                  class="taper-banner"
+                  variant="warning"
+                  density="compact"
+                  title="Taper Period Active"
+                  [message]="
+                    'Training volume reduced to peak for this event. Started ' +
+                    (tournament.taperStartDate | date: 'MMM d') +
+                    '.'
+                  "
+                />
               } @else if (
                 tournament.daysUntil !== undefined &&
                 tournament.daysUntil > 0 &&

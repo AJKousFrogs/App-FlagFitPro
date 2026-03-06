@@ -231,19 +231,24 @@
 
             <!-- Active Filter Banner -->
             @if (selectedTopic()) {
-              <div class="filter-banner">
-                <div class="filter-info">
-                  <i class="pi pi-filter"></i>
-                  <span
-                    >Showing posts about
-                    <strong>#{{ selectedTopic() }}</strong></span
+              <app-alert
+                variant="info"
+                density="compact"
+                title="Topic Filter"
+                [message]="'Showing posts about #' + selectedTopic()"
+                styleClass="filter-banner-alert"
+              >
+                <div class="filter-banner-actions">
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-times"
+                    (clicked)="clearTopicFilter()"
                   >
+                    Clear
+                  </app-button>
                 </div>
-                <button type="button" class="clear-btn" (click)="clearTopicFilter()">
-                  <i class="pi pi-times"></i>
-                  Clear
-                </button>
-              </div>
+              </app-alert>
             }
 
             <!-- Posts Feed -->
@@ -535,24 +540,24 @@
 
               <!-- Empty state when no posts match filter -->
               @if (filteredPosts().length === 0 && selectedTopic()) {
-                <div class="card-empty-state">
-                  <i class="pi pi-search card-empty-state__icon"></i>
-                  <div class="card-empty-state__content">
-                    <h3 class="card-empty-state__title">No posts found</h3>
-                    <p class="card-empty-state__text">
-                      No posts match the topic
-                      <strong>#{{ selectedTopic() }}</strong>
-                    </p>
-                  </div>
-                  <div class="card-empty-state__action">
-                    <app-button
-                      variant="outlined"
-                      iconLeft="pi-times"
-                      (clicked)="clearTopicFilter()"
-                      >Clear Filter</app-button
-                    >
-                  </div>
-                </div>
+                <app-empty-state
+                  [inline]="true"
+                  [compact]="true"
+                  [showBenefits]="false"
+                  [showSafetyNote]="false"
+                  icon="pi-search"
+                  [customTitle]="'No posts found'"
+                  [customMessage]="
+                    'No posts match the topic #' + selectedTopic()
+                  "
+                >
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-times"
+                    (clicked)="clearTopicFilter()"
+                    >Clear Filter</app-button
+                  >
+                </app-empty-state>
               }
 
               <!-- Loading more indicator -->

@@ -235,14 +235,20 @@ $ds-font-weight-extrabold: 800;
   --field-qb-marker: #fbbf24;
 
   /* Surface Colors - Neutrals: Whites, blacks, and grays for backgrounds, text, and fine details */
-  --surface-primary: #fff; /* White - main backgrounds */
+  --ui-surface-canvas: #f4f7f3; /* App/page background */
+  --ui-surface-subtle: #eef3ee; /* Secondary panels and control backgrounds */
+  --ui-surface-muted: #e3e9e4; /* Disabled or muted surfaces */
+  --ui-surface-card: #fff; /* Primary cards, forms, dialogs */
+  --ui-surface-card-alt: #f9fbfa; /* Nested cards and inset sections */
+  --ui-surface-overlay: rgba(15, 23, 42, 0.48); /* Modal and sheet backdrops */
+  --surface-primary: var(--ui-surface-card); /* White - main elevated surfaces */
   --surface-primary-rgb: 255, 255, 255; /* For rgba() compositions */
-  --surface-secondary: #f8faf9; /* Off-white - card backgrounds */
+  --surface-secondary: var(--ui-surface-card-alt); /* Soft neutral card surfaces */
   --color-surface-secondary: var(--surface-secondary); /* Alias for PrimeNG/component compatibility */
-  --surface-tertiary: #e9ecef; /* Light gray - subtle backgrounds */
-  --surface-elevated: #fff; /* White - elevated cards/modals */
-  --surface-card: var(--surface-secondary); /* Card/panel backgrounds - alias */
-  --surface-ground: var(--surface-primary); /* Page/ground backgrounds - alias */
+  --surface-tertiary: var(--ui-surface-subtle); /* Light neutral backgrounds */
+  --surface-elevated: var(--ui-surface-card); /* Elevated cards/modals */
+  --surface-card: var(--ui-surface-card); /* Card/panel backgrounds - alias */
+  --surface-ground: var(--ui-surface-canvas); /* Page/ground backgrounds - alias */
   --surface-overlay: rgba(0, 0, 0, 0.5);
   --surface-overlay-subtle: rgba(0, 0, 0, 0.1); /* Hover states on light surfaces */
   --surface-overlay-light: rgba(0, 0, 0, 0.3);
@@ -279,20 +285,28 @@ $ds-font-weight-extrabold: 800;
 
   /* Text Colors - STRICTLY ENFORCED (WCAG AA Compliant)
      All text colors meet WCAG AA contrast ratio (4.5:1 for normal text, 3:1 for large text) */
-  --color-text-primary: #1a1a1a; /* Black - for white backgrounds ONLY (contrast: 16.1:1) */
-  --color-text-secondary: #4a4a4a; /* Dark gray - secondary text on white (contrast: 8.6:1) */
-  --color-text-muted: #525252; /* Medium gray - muted text on white (contrast: 7.5:1) - FIXED from #6b7280 */
-  --color-text-tertiary: #6b7280; /* Lighter gray - for large text only (contrast: 5.0:1) */
+  --ui-text-primary: #0f1728;
+  --ui-text-secondary: #344054;
+  --ui-text-tertiary: #667085;
+  --ui-text-inverse: #f8fafc;
+  --color-text-primary: var(--ui-text-primary);
+  --color-text-secondary: var(--ui-text-secondary);
+  --color-text-muted: var(--ui-text-secondary);
+  --color-text-tertiary: var(--ui-text-tertiary);
   --color-text-disabled: #9ca3af; /* Light gray - disabled text (not required to meet contrast) */
-  --color-text-on-primary: #fff; /* White - for green backgrounds ONLY (contrast: 4.7:1 on #089949) */
+  --color-text-on-primary: var(--ui-text-inverse); /* White - for green backgrounds ONLY (contrast: 4.7:1 on #089949) */
   --on-primary: var(--color-text-on-primary); /* Alias for text on green */
   --green-bg-text: var(--color-text-on-primary); /* Alias for text on green */
   --color-text-on-white: var(--ds-primary-green); /* Green - for white backgrounds (contrast: 4.7:1) */
 
   /* Border Colors */
-  --color-border-primary: #e5e7eb;
-  --color-border-secondary: #e5e7eb;
-  --color-border-subtle: rgba(0, 0, 0, 0.05);
+  --ui-border-subtle: rgba(15, 23, 42, 0.08);
+  --ui-border-default: #d0d5dd;
+  --ui-border-strong: #98a2b3;
+  --ui-border-focus: rgba(var(--ds-primary-green-rgb), 0.28);
+  --color-border-primary: var(--ui-border-default);
+  --color-border-secondary: var(--ui-border-default);
+  --color-border-subtle: var(--ui-border-subtle);
   --color-border-focus: var(--ds-primary-green);
 
   /* Border Width Tokens - canonical, resolve before PrimeNG */
@@ -316,22 +330,33 @@ $ds-font-weight-extrabold: 800;
   --color-text-on-inverse: #fff; /* Light text on dark/inverse surfaces */
 
   /* Status Colors - Feedback Colors (Status & Alerts) */
+  --ui-primary: var(--ds-primary-green);
+  --ui-primary-hover: var(--ds-primary-green-hover);
+  --ui-primary-active: var(--primitive-primary-800);
+  --ui-success: var(--ds-color-success, var(--ds-primary-green));
+  --ui-success-hover: var(--primitive-primary-800);
+  --ui-warning: var(--ds-color-warning, var(--primitive-warning-500));
+  --ui-warning-hover: var(--primitive-warning-600);
+  --ui-danger: var(--ds-color-danger, var(--primitive-error-500));
+  --ui-danger-hover: var(--primitive-error-600);
+  --ui-info: var(--ds-color-info, var(--primitive-info-500));
+
   /* SUCCESS = GREEN (Decision: positive outcomes, confirmations, "go" state) */
-  --color-status-success: var(--ds-color-success, var(--ds-primary-green));
+  --color-status-success: var(--ui-success);
   --color-status-success-light: rgba(var(--ds-primary-green-rgb), 0.1);
   --color-status-success-subtle: rgba(var(--ds-primary-green-rgb), 0.05);
   --color-status-success-surface: rgba(var(--ds-primary-green-rgb), 0.1);
   --color-status-success-bg: var(--color-status-success-surface);
 
   /* Warning: Yellow/Orange for potential problems or non-critical alerts */
-  --color-status-warning: var(--ds-color-warning, var(--primitive-warning-500));
+  --color-status-warning: var(--ui-warning);
   --color-status-warning-light: rgba(var(--primitive-warning-500-rgb), 0.1);
   --color-warning-bg: var(--color-status-warning-light); /* Alias for component compatibility */
   --color-status-warning-subtle: rgba(var(--primitive-warning-500-rgb), 0.05);
   --color-status-warning-surface: rgba(var(--primitive-warning-500-rgb), 0.1);
 
   /* Error: Red for critical issues, deletions, or blocking actions */
-  --color-status-error: var(--ds-color-danger, var(--primitive-error-500));
+  --color-status-error: var(--ui-danger);
   --color-status-error-light: rgba(var(--primitive-error-500-rgb), 0.1);
   --color-status-error-subtle: rgba(var(--primitive-error-500-rgb), 0.05);
   --color-status-error-surface: rgba(var(--primitive-error-500-rgb), 0.1);
@@ -340,7 +365,7 @@ $ds-font-weight-extrabold: 800;
   --color-status-warning-text: var(--primitive-warning-800); /* #92400e - dark amber for light mode */
 
   /* Info: Blue for informational messages, tips, or default states */
-  --color-status-info: var(--ds-color-info, var(--primitive-info-500));
+  --color-status-info: var(--ui-info);
   --color-status-info-light: rgba(var(--primitive-info-500-rgb), 0.1);
   --color-status-info-subtle: rgba(var(--primitive-info-500-rgb), 0.05);
   --color-status-info-surface: rgba(var(--primitive-info-500-rgb), 0.1);
@@ -457,13 +482,15 @@ $ds-font-weight-extrabold: 800;
   --hover-transition-bounce: 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Focus Ring Tokens */
+  --ui-focus-ring-color: var(--ui-primary);
+  --ui-focus-ring: 0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.18);
   --focus-outline-width: 2px;
   --focus-outline-offset: 2px;
-  --focus-ring-color: var(--ds-primary-green);
-  --focus-ring-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+  --focus-ring-color: var(--ui-focus-ring-color);
+  --focus-ring-shadow: var(--ui-focus-ring);
   --focus-ring-width: 3px;
   --focus-ring-offset: 2px;
-  --color-focus-ring: var(--ds-primary-green);
+  --color-focus-ring: var(--ui-focus-ring-color);
 
   /* ================================
      SPACING SCALE (8-POINT GRID)
@@ -496,6 +523,15 @@ $ds-font-weight-extrabold: 800;
   --space-xl: var(--space-8);
   --space-2xl: var(--space-12);
   --space-3xl: var(--space-16);
+
+  /* Layout spacing contract */
+  --layout-gap-xs: var(--space-2); /* 8px */
+  --layout-gap-sm: var(--space-3); /* 12px */
+  --layout-gap-md: var(--space-4); /* 16px */
+  --layout-gap-lg: var(--space-6); /* 24px */
+  --layout-gap-xl: var(--space-8); /* 32px */
+  --layout-gap-2xl: var(--space-12); /* 48px */
+  --layout-gap-3xl: var(--space-16); /* 64px */
 
   /* PrimeNG Aura spacing aliases (--ds-spacing-*) - map to canonical --space-* */
   --ds-spacing-xs: var(--space-1);
@@ -697,9 +733,9 @@ $ds-font-weight-extrabold: 800;
      ================================ */
 
   --radius-none: var(--ds-radius-none, 0);
-  --radius-sm: var(--ds-radius-sm, 2px);
-  --radius-md: var(--ds-radius-md, 6px);
-  --radius-lg: var(--ds-radius-lg, 8px);
+  --radius-sm: var(--ds-radius-sm, 6px);
+  --radius-md: var(--ds-radius-md, 8px);
+  --radius-lg: var(--ds-radius-lg, 10px);
   --radius-xl: var(--ds-radius-xl, 12px);
   --radius-2xl: var(--ds-radius-2xl, 16px);
   --radius-3xl: var(--ds-radius-3xl, 24px);
@@ -709,7 +745,7 @@ $ds-font-weight-extrabold: 800;
   --radius-circle: 50%;
 
   /* BUTTON-SPECIFIC RADIUS - RAISED rectangular style, NOT pill */
-  --radius-button: var(--ds-radius-lg, 8px);
+  --radius-button: var(--radius-lg);
 
   /* Component Radius Aliases */
   --radius-component-sm: var(--radius-sm);
@@ -721,10 +757,22 @@ $ds-font-weight-extrabold: 800;
      SHADOWS & ELEVATION (fallbacks for Aura)
      ================================ */
 
-  --shadow-sm: var(--ds-shadow-1, 0 1px 3px rgba(0, 0, 0, 0.1));
-  --shadow-md: var(--ds-shadow-2, 0 4px 12px rgba(0, 0, 0, 0.15));
-  --shadow-lg: var(--ds-shadow-3, 0 8px 24px rgba(0, 0, 0, 0.12));
-  --shadow-xl: var(--ds-shadow-4, 0 12px 48px rgba(0, 0, 0, 0.15));
+  --shadow-sm: var(
+    --ds-shadow-1,
+    0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1)
+  );
+  --shadow-md: var(
+    --ds-shadow-2,
+    0 8px 24px rgba(16, 24, 40, 0.08), 0 2px 6px rgba(16, 24, 40, 0.04)
+  );
+  --shadow-lg: var(
+    --ds-shadow-3,
+    0 16px 40px rgba(16, 24, 40, 0.1), 0 6px 16px rgba(16, 24, 40, 0.05)
+  );
+  --shadow-xl: var(
+    --ds-shadow-4,
+    0 24px 56px rgba(16, 24, 40, 0.14), 0 8px 24px rgba(16, 24, 40, 0.08)
+  );
   --shadow-2xl: 0 1.5625rem 3.125rem -0.75rem rgba(0, 0, 0, 0.25);
   /* Shadow aliases (for token-mapping/component compatibility) */
   --shadow-1: var(--shadow-sm);
@@ -739,7 +787,7 @@ $ds-font-weight-extrabold: 800;
   --elevation-high: var(--shadow-lg);
 
   /* Focus Shadows */
-  --shadow-focus: var(--ds-state-focus-ring, 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3));
+  --shadow-focus: var(--ds-state-focus-ring, var(--ui-focus-ring));
   --shadow-error-focus: 0 0 0 var(--focus-ring-width) rgba(var(--primitive-error-500-rgb), 0.2);
   --shadow-success-focus: 0 0 0 var(--focus-ring-width) rgba(var(--ds-primary-green-rgb), 0.2);
   --shadow-warning-focus: 0 0 0 var(--focus-ring-width) rgba(var(--primitive-warning-500-rgb), 0.2);
@@ -760,6 +808,13 @@ $ds-font-weight-extrabold: 800;
   --container-lg: 1024px;
   --container-xl: 1280px;
   --container-max: 1440px;
+  --layout-page-max-width: 82rem;
+  --layout-page-max-width-narrow: 34rem;
+  --layout-page-max-width-wide: 90rem;
+  --layout-page-padding-x: clamp(var(--space-4), 3vw, var(--space-8));
+  --layout-page-padding-y: clamp(var(--space-5), 3vw, var(--space-8));
+  --layout-page-section-gap: var(--layout-gap-xl);
+  --layout-page-section-gap-tight: var(--layout-gap-lg);
 
   /* ================================
      LAYOUT-SPECIFIC TOKENS
@@ -767,7 +822,7 @@ $ds-font-weight-extrabold: 800;
      ================================ */
 
   /* Page Padding (responsive) */
-  --page-padding-desktop: var(--space-6); /* 24px */
+  --page-padding-desktop: var(--layout-page-padding-x);
   --page-padding-tablet: var(--space-4); /* 16px */
   --page-padding-mobile: var(--space-3); /* 12px */
   --keyboard-focus-scroll-margin: 120px;
@@ -878,12 +933,58 @@ $ds-font-weight-extrabold: 800;
      COMPONENT SPECIFIC TOKENS
      ================================ */
 
-  /* Button Style - Raised (8px border-radius, not pill-shaped) */
-  --button-radius: var(--radius-lg);
-  --button-height-sm: var(--ds-button-height-sm, 2rem);
-  --button-height-md: var(--ds-button-height-md, 2.75rem);
-  --button-height-lg: var(--ds-button-height-lg, 3rem);
+  /* Button Style */
+  --component-button-height-sm: 2.5rem;
+  --component-button-height-md: 3rem;
+  --component-button-height-lg: 3.5rem;
+  --component-button-radius: var(--radius-lg);
+  --component-button-padding-x-sm: var(--space-4);
+  --component-button-padding-x-md: var(--space-5);
+  --component-button-padding-x-lg: var(--space-6);
+  --component-button-gap: var(--space-2);
+  --button-radius: var(--component-button-radius);
+  --button-height-sm: var(--ds-button-height-sm, var(--component-button-height-sm));
+  --button-height-md: var(--ds-button-height-md, var(--component-button-height-md));
+  --button-height-lg: var(--ds-button-height-lg, var(--component-button-height-lg));
   --button-height-xl: 3.75rem; /* 60px - intentionally fixed for XL CTA */
+  --component-input-height-sm: 2.5rem;
+  --component-input-height-md: 3rem;
+  --component-input-height-lg: 3.5rem;
+  --component-input-radius: var(--radius-xl);
+  --component-input-padding-x: var(--space-4);
+  --component-input-padding-y: var(--space-3);
+  --component-input-background: var(--surface-primary);
+  --component-input-border-color: var(--color-border-primary);
+  --component-input-border-hover: var(--ui-border-strong);
+  --component-input-border-focus: var(--ui-primary);
+  --component-input-shadow-rest: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+  --component-input-shadow-focus: var(--shadow-focus);
+  --component-input-placeholder: var(--ui-text-tertiary);
+  --component-input-error: var(--ui-danger);
+  --component-input-error-shadow: var(--shadow-error-focus);
+  --component-card-padding: var(--space-6);
+  --component-card-padding-compact: var(--space-4);
+  --component-card-radius: var(--radius-2xl);
+  --component-card-border: var(--border-1) solid var(--color-border-subtle);
+  --component-card-shadow: var(--shadow-sm);
+  --component-card-shadow-hover: var(--shadow-md);
+  --component-dialog-padding: var(--space-6);
+  --component-dialog-radius: var(--radius-2xl);
+  --component-dialog-shadow: var(--shadow-lg);
+  --component-toast-padding: var(--space-4) var(--space-5);
+  --component-toast-height: 3.5rem;
+  --component-toast-radius: var(--radius-xl);
+  --component-toast-shadow: var(--shadow-toast);
+  --component-toast-gap: var(--space-3);
+  --component-alert-padding: var(--space-4);
+  --component-alert-accent-width: 0.25rem;
+  --component-banner-padding: var(--space-4);
+  --component-close-button-size-sm: var(--button-height-sm);
+  --component-close-button-size-md: var(--touch-target-md);
+  --component-close-button-size-lg: var(--button-height-lg);
+  --motion-feedback-duration-fast: 180ms;
+  --motion-feedback-duration: 220ms;
+  --motion-feedback-duration-slow: 280ms;
 
   /* Touch Target Minimum */
   --touch-target-min: 44px;
@@ -1035,9 +1136,9 @@ $ds-font-weight-extrabold: 800;
   --badge-lg: 1.75rem; /* 28px */
 
   /* Input/Button Heights */
-  --input-height-sm: var(--ds-input-height-sm, 2rem);
-  --input-height-md: var(--ds-input-height-md, 2.75rem);
-  --input-height-lg: var(--ds-input-height-lg, 3rem);
+  --input-height-sm: var(--ds-input-height-sm, var(--component-input-height-sm));
+  --input-height-md: var(--ds-input-height-md, var(--component-input-height-md));
+  --input-height-lg: var(--ds-input-height-lg, var(--component-input-height-lg));
 
   /* Slider/Track Heights - 6px intentional for touch affordance */
   --slider-track-height: 0.375rem;
@@ -1118,7 +1219,7 @@ $ds-font-weight-extrabold: 800;
   --content-max-width-lg: 56.25rem; /* 900px */
   --content-max-width-xl: 80rem; /* 1280px */
   --content-max-width-2xl: 90rem; /* 1440px */
-  --page-container-max-width: 87.5rem; /* 1400px */
+  --page-container-max-width: var(--layout-page-max-width);
 
   /* Font Aliases */
   --font-family: var(--font-family-sans);
@@ -1278,36 +1379,50 @@ $ds-font-weight-extrabold: 800;
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --ui-surface-canvas: #0c1210;
+    --ui-surface-subtle: #121b18;
+    --ui-surface-muted: #1b2723;
+    --ui-surface-card: #111a17;
+    --ui-surface-card-alt: #16211d;
+    --ui-surface-overlay: rgba(2, 6, 23, 0.72);
+    --ui-text-primary: #f5f7fa;
+    --ui-text-secondary: #c7d0d8;
+    --ui-text-tertiary: #98a6b3;
+    --ui-text-inverse: #f8fafc;
+    --ui-border-subtle: rgba(255, 255, 255, 0.08);
+    --ui-border-default: rgba(255, 255, 255, 0.12);
+    --ui-border-strong: rgba(255, 255, 255, 0.24);
+
     /* Surface Colors - Dark Mode */
-    --surface-primary: var(--primitive-neutral-900); /* #171717 */
+    --surface-primary: var(--ui-surface-card);
     --surface-primary-rgb: 23, 23, 23; /* #171717 for rgba() compositions */
-    --surface-secondary: var(--primitive-neutral-800); /* #262626 */
+    --surface-secondary: var(--ui-surface-card-alt);
     --color-surface-secondary: var(--surface-secondary);
-    --surface-tertiary: var(--primitive-neutral-700); /* #404040 */
-    --surface-elevated: var(--primitive-neutral-800); /* #262626 */
-    --surface-card: var(--primitive-neutral-800);
-    --surface-ground: var(--primitive-neutral-900);
-    --surface-overlay: rgba(0, 0, 0, 0.7);
+    --surface-tertiary: var(--ui-surface-subtle);
+    --surface-elevated: var(--ui-surface-card);
+    --surface-card: var(--ui-surface-card);
+    --surface-ground: var(--ui-surface-canvas);
+    --surface-overlay: var(--ui-surface-overlay);
 
     /* Text Colors - Dark Mode */
-    --color-text-primary: #fff;
-    --color-text-secondary: var(--primitive-neutral-400); /* #d4d4d4 */
-    --color-text-muted: var(--primitive-neutral-500); /* #a3a3a3 */
+    --color-text-primary: var(--ui-text-primary);
+    --color-text-secondary: var(--ui-text-secondary);
+    --color-text-muted: var(--ui-text-tertiary);
     --color-text-disabled: var(--primitive-neutral-600); /* #737373 */
     --color-text-on-white: #fff; /* White text on dark */
-    --text-primary: #fff;
-    --text-secondary: var(--primitive-neutral-400);
+    --text-primary: var(--ui-text-primary);
+    --text-secondary: var(--ui-text-secondary);
 
     /* Warning text color - lighter for dark mode */
     --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
 
     /* Border Colors - Dark Mode */
-    --color-border-primary: rgba(255, 255, 255, 0.1);
-    --color-border-secondary: rgba(255, 255, 255, 0.08);
-    --color-border-subtle: rgba(255, 255, 255, 0.05);
-    --surface-border: rgba(255, 255, 255, 0.1);
-    --color-border-default: rgba(255, 255, 255, 0.1);
-    --color-border-muted: rgba(255, 255, 255, 0.08);
+    --color-border-primary: var(--ui-border-default);
+    --color-border-secondary: var(--ui-border-default);
+    --color-border-subtle: var(--ui-border-subtle);
+    --surface-border: var(--ui-border-default);
+    --color-border-default: var(--ui-border-default);
+    --color-border-muted: var(--ui-border-subtle);
 
     /* Shadows - Dark Mode (lighter shadows) */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -1333,16 +1448,30 @@ $ds-font-weight-extrabold: 800;
 body.dark-theme {
   color-scheme: dark;
 
+  --ui-surface-canvas: #0c1210;
+  --ui-surface-subtle: #121b18;
+  --ui-surface-muted: #1b2723;
+  --ui-surface-card: #111a17;
+  --ui-surface-card-alt: #16211d;
+  --ui-surface-overlay: rgba(2, 6, 23, 0.72);
+  --ui-text-primary: #f5f7fa;
+  --ui-text-secondary: #c7d0d8;
+  --ui-text-tertiary: #98a6b3;
+  --ui-text-inverse: #f8fafc;
+  --ui-border-subtle: rgba(255, 255, 255, 0.08);
+  --ui-border-default: rgba(255, 255, 255, 0.12);
+  --ui-border-strong: rgba(255, 255, 255, 0.24);
+
   /* Surface Colors - Dark Mode */
-  --surface-primary: var(--primitive-neutral-900);
+  --surface-primary: var(--ui-surface-card);
   --surface-primary-rgb: 23, 23, 23; /* #171717 for rgba() compositions */
-  --surface-secondary: var(--primitive-neutral-800);
+  --surface-secondary: var(--ui-surface-card-alt);
   --color-surface-secondary: var(--surface-secondary);
-  --surface-tertiary: var(--primitive-neutral-700);
-  --surface-card: var(--primitive-neutral-800);
-  --surface-ground: var(--primitive-neutral-900);
-  --surface-elevated: var(--primitive-neutral-800);
-  --surface-overlay: rgba(0, 0, 0, 0.7);
+  --surface-tertiary: var(--ui-surface-subtle);
+  --surface-card: var(--ui-surface-card);
+  --surface-ground: var(--ui-surface-canvas);
+  --surface-elevated: var(--ui-surface-card);
+  --surface-overlay: var(--ui-surface-overlay);
 
   /* Hover Tokens - Dark Mode */
   --hover-bg-secondary: rgba(var(--primitive-primary-500-rgb), 0.15);
@@ -1355,24 +1484,24 @@ body.dark-theme {
   --hover-shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
 
   /* Text Colors - Dark Mode */
-  --color-text-primary: #fff;
-  --color-text-secondary: var(--primitive-neutral-400);
-  --color-text-muted: var(--primitive-neutral-500);
+  --color-text-primary: var(--ui-text-primary);
+  --color-text-secondary: var(--ui-text-secondary);
+  --color-text-muted: var(--ui-text-tertiary);
   --color-text-disabled: var(--primitive-neutral-600);
   --color-text-on-white: #fff;
-  --text-primary: #fff;
-  --text-secondary: var(--primitive-neutral-400);
+  --text-primary: var(--ui-text-primary);
+  --text-secondary: var(--ui-text-secondary);
 
   /* Warning text color - lighter for dark mode */
   --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
 
   /* Border Colors - Dark Mode */
-  --color-border-primary: rgba(255, 255, 255, 0.1);
-  --color-border-secondary: rgba(255, 255, 255, 0.08);
-  --color-border-subtle: rgba(255, 255, 255, 0.05);
-  --surface-border: rgba(255, 255, 255, 0.1);
-  --color-border-default: rgba(255, 255, 255, 0.1);
-  --color-border-muted: rgba(255, 255, 255, 0.08);
+  --color-border-primary: var(--ui-border-default);
+  --color-border-secondary: var(--ui-border-default);
+  --color-border-subtle: var(--ui-border-subtle);
+  --surface-border: var(--ui-border-default);
+  --color-border-default: var(--ui-border-default);
+  --color-border-muted: var(--ui-border-subtle);
 
   /* Shadows - Dark Mode */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -1414,32 +1543,46 @@ body.dark-theme {
 body.light-theme {
   color-scheme: light;
 
+  --ui-surface-canvas: #f4f7f3;
+  --ui-surface-subtle: #eef3ee;
+  --ui-surface-muted: #e3e9e4;
+  --ui-surface-card: #fff;
+  --ui-surface-card-alt: #f9fbfa;
+  --ui-surface-overlay: rgba(15, 23, 42, 0.48);
+  --ui-text-primary: #0f1728;
+  --ui-text-secondary: #344054;
+  --ui-text-tertiary: #667085;
+  --ui-text-inverse: #f8fafc;
+  --ui-border-subtle: rgba(15, 23, 42, 0.08);
+  --ui-border-default: #d0d5dd;
+  --ui-border-strong: #98a2b3;
+
   /* Surface Colors - Light Mode (matches :root) */
-  --surface-primary: #fff;
+  --surface-primary: var(--ui-surface-card);
   --surface-primary-rgb: 255, 255, 255;
-  --surface-secondary: #f8faf9;
+  --surface-secondary: var(--ui-surface-card-alt);
   --color-surface-secondary: var(--surface-secondary);
-  --surface-tertiary: #e9ecef;
-  --surface-elevated: #fff;
-  --surface-card: var(--surface-secondary);
-  --surface-ground: var(--surface-primary);
-  --surface-overlay: rgba(0, 0, 0, 0.5);
+  --surface-tertiary: var(--ui-surface-subtle);
+  --surface-elevated: var(--ui-surface-card);
+  --surface-card: var(--ui-surface-card);
+  --surface-ground: var(--ui-surface-canvas);
+  --surface-overlay: var(--ui-surface-overlay);
 
   /* Text Colors - Light Mode (matches :root WCAG values) */
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #4a4a4a;
-  --color-text-muted: #525252;
+  --color-text-primary: var(--ui-text-primary);
+  --color-text-secondary: var(--ui-text-secondary);
+  --color-text-muted: var(--ui-text-secondary);
   --color-text-disabled: #9ca3af;
   --color-text-on-white: var(--color-brand-primary);
-  --text-primary: #1a1a1a;
-  --text-secondary: #4a4a4a;
+  --text-primary: var(--ui-text-primary);
+  --text-secondary: var(--ui-text-secondary);
 
   /* Border Colors - Light Mode (matches :root) */
-  --color-border-primary: #e5e7eb;
-  --color-border-secondary: #e5e7eb;
-  --color-border-subtle: rgba(0, 0, 0, 0.05);
-  --surface-border: var(--color-border-primary);
-  --color-border-default: var(--color-border-primary);
+  --color-border-primary: var(--ui-border-default);
+  --color-border-secondary: var(--ui-border-default);
+  --color-border-subtle: var(--ui-border-subtle);
+  --surface-border: var(--ui-border-default);
+  --color-border-default: var(--ui-border-default);
   --color-border-muted: var(--primitive-neutral-300);
 
   /* Shadows - Light Mode */

@@ -382,16 +382,15 @@ const PHASE_PRESETS = [
 
         <!-- Empty State -->
         @if (programs().length === 0) {
-          <p-card class="empty-state-card">
-            <app-empty-state
-              icon="pi-list-check"
-              heading="No Programs Yet"
-              description="Create your first training program to get started"
-              actionLabel="Create Program"
-              actionIcon="pi-plus"
-              [actionHandler]="openCreateDialogHandler"
-            />
-          </p-card>
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-list-check"
+            heading="No Programs Yet"
+            description="Create your first training program to get started"
+            actionLabel="Create Program"
+            actionIcon="pi-plus"
+            [actionHandler]="openCreateDialogHandler"
+          />
         }
       </div>
 

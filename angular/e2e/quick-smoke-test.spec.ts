@@ -8,10 +8,23 @@ import { test, expect, Page } from "@playwright/test";
 const BASE_URL = "http://localhost:4200";
 const TEST_USER = {
   email: process.env["TEST_USER_EMAIL"] || "aljkous@gmail.com",
-  password: process.env["TEST_USER_PASSWORD"] || "",
+  password: process.env["TEST_USER_PASSWORD"] || "Futsal12!!!!",
 };
 
 // Run tests in parallel for faster execution
+
+async function primeCookieConsent(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const consent = {
+      necessary: true,
+      analytics: true,
+      functional: true,
+      consentDate: new Date().toISOString(),
+      consentVersion: "1.0",
+    };
+    localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
+  });
+}
 
 /**
  * Dismisses the cookie consent banner by setting localStorage consent.
@@ -50,6 +63,7 @@ async function dismissCookieBanner(page: Page): Promise<void> {
 
 test.describe("Quick Smoke Tests", () => {
   test("1. Login and verify session", async ({ page }) => {
+    await primeCookieConsent(page);
     await page.goto(`${BASE_URL}/login`);
     await dismissCookieBanner(page);
 
@@ -248,6 +262,7 @@ test.describe("Quick Smoke Tests", () => {
 
 // Helper to login and navigate
 async function loginAndNavigate(page: Page, path: string) {
+  await primeCookieConsent(page);
   await page.goto(`${BASE_URL}/login`);
   await dismissCookieBanner(page);
 

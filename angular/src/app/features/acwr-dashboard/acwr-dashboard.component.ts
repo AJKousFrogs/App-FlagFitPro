@@ -66,6 +66,9 @@ import {
   getRiskSeverityFromZone,
 } from "../../shared/utils/risk.utils";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
 import { DataState } from "../../core/services/data-source.service";
@@ -86,6 +89,9 @@ import { LazyPdfService } from "../../core/services/lazy-pdf.service";
     SemanticMeaningRendererComponent,
     MainLayoutComponent,
     DataSourceBannerComponent,
+    AlertComponent,
+    ButtonComponent,
+    EmptyStateComponent,
   ],
   templateUrl: "./acwr-dashboard.component.html",
   styleUrl: "./acwr-dashboard.component.scss",
@@ -364,6 +370,30 @@ export class AcwrDashboardComponent implements OnInit {
     const alert = this.topAlert();
     if (alert) {
       this.alertsService.acknowledgeAlert(alert.id, "current-user");
+    }
+  }
+
+  public getTopAlertVariant(
+    severity: "critical" | "warning" | "info",
+  ): AlertVariant {
+    switch (severity) {
+      case "critical":
+        return "error";
+      case "warning":
+        return "warning";
+      default:
+        return "info";
+    }
+  }
+
+  public getTopAlertIcon(severity: "critical" | "warning" | "info"): string {
+    switch (severity) {
+      case "critical":
+        return "pi-exclamation-triangle";
+      case "warning":
+        return "pi-exclamation-circle";
+      default:
+        return "pi-info-circle";
     }
   }
 

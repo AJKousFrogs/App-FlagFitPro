@@ -1,0 +1,106 @@
+@layer utilities {
+  @keyframes ui-motion-fade-in {
+    from {
+      opacity: var(--ui-motion-fade-opacity-start, 0);
+    }
+
+    to {
+      opacity: var(--ui-motion-fade-opacity-end, 1);
+    }
+  }
+
+  @keyframes ui-motion-enter-y {
+    from {
+      opacity: var(--ui-motion-enter-opacity-start, 0);
+      transform: translateY(var(--ui-motion-enter-from-y, var(--space-3)));
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes ui-motion-enter-x {
+    from {
+      opacity: var(--ui-motion-enter-opacity-start, 0);
+      transform: translateX(var(--ui-motion-enter-from-x, 100%));
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes ui-motion-modal-enter {
+    from {
+      opacity: var(--ui-motion-modal-opacity-start, 0);
+      transform: translate(
+          var(--ui-motion-modal-translate-x, -50%),
+          var(--ui-motion-modal-translate-y-start, -48%)
+        )
+        scale(var(--ui-motion-modal-scale-start, 1));
+    }
+
+    to {
+      opacity: 1;
+      transform: translate(
+          var(--ui-motion-modal-translate-x, -50%),
+          var(--ui-motion-modal-translate-y-end, -50%)
+        )
+        scale(var(--ui-motion-modal-scale-end, 1));
+    }
+  }
+
+  @keyframes ui-motion-scale-in {
+    from {
+      opacity: var(--ui-motion-scale-in-opacity-start, 0);
+      transform: scale(var(--ui-motion-scale-in-start, 0.96));
+    }
+
+    to {
+      opacity: var(--ui-motion-scale-in-opacity-end, 1);
+      transform: scale(var(--ui-motion-scale-in-end, 1));
+    }
+  }
+
+  @keyframes ui-motion-fade-pulse {
+    0%,
+    100% {
+      opacity: var(--ui-motion-fade-pulse-opacity-start, 1);
+    }
+
+    50% {
+      opacity: var(--ui-motion-fade-pulse-opacity-mid, var(--opacity-half));
+    }
+  }
+
+  @keyframes ui-motion-scale-pulse {
+    0%,
+    100% {
+      opacity: var(--ui-motion-scale-pulse-opacity-start, 1);
+      transform: scale(var(--ui-motion-scale-pulse-start, 1));
+    }
+
+    50% {
+      opacity: var(
+        --ui-motion-scale-pulse-opacity-mid,
+        var(--ui-motion-scale-pulse-opacity-start, 1)
+      );
+      transform: scale(var(--ui-motion-scale-pulse-mid, 1.05));
+    }
+  }
+
+  @keyframes ui-motion-ring-expand {
+    0% {
+      transform: scale(var(--ui-motion-ring-start-scale, 1));
+      opacity: var(--ui-motion-ring-start-opacity, 1);
+    }
+
+    100% {
+      transform: scale(var(--ui-motion-ring-end-scale, 1.5));
+      opacity: var(--ui-motion-ring-end-opacity, 0);
+    }
+  }
+}

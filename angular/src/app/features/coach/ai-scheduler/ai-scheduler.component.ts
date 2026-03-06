@@ -25,6 +25,7 @@ import { Select } from "primeng/select";
 
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -112,6 +113,7 @@ const PRACTICE_DURATIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -344,9 +346,7 @@ const PRACTICE_DURATIONS = [
           <!-- Periodization Overview -->
           <p-card>
             <ng-template #header>
-              <div class="card-header">
-                <h3>Periodization Overview</h3>
-              </div>
+              <app-card-header title="Periodization Overview" />
             </ng-template>
             <div class="periodization-timeline">
               @for (phase of periodizationPhases(); track phase.name) {
@@ -375,9 +375,7 @@ const PRACTICE_DURATIONS = [
           @for (week of scheduleWeeks(); track week.name) {
             <p-card>
               <ng-template #header>
-                <div class="card-header">
-                  <h3>{{ week.name }}</h3>
-                </div>
+                <app-card-header [title]="week.name" />
               </ng-template>
               <div class="sessions-list">
                 @for (session of week.sessions; track session.id) {
@@ -446,9 +444,10 @@ const PRACTICE_DURATIONS = [
           @if (playerModifications().length > 0) {
             <p-card class="modifications-card">
               <ng-template #header>
-                <div class="card-header">
-                  <h3>⚠️ Player-Specific Modifications</h3>
-                </div>
+                <app-card-header
+                  icon="pi-exclamation-triangle"
+                  title="Player-Specific Modifications"
+                />
               </ng-template>
 
               @if (highAcwrMods().length > 0) {

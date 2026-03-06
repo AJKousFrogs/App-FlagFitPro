@@ -8,8 +8,23 @@ import { db } from "./utils/supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
-const VALID_PRIORITIES = new Set(["low", "medium", "high", "critical"]);
+const VALID_PRIORITIES = new Set(["low", "normal", "high", "urgent"]);
 const MAX_MESSAGE_LENGTH = 2000;
+
+function normalizePriority(priority) {
+  if (typeof priority !== "string") {
+    return undefined;
+  }
+
+  const normalized = priority.trim().toLowerCase();
+  if (normalized === "medium") {
+    return "normal";
+  }
+  if (normalized === "critical") {
+    return "urgent";
+  }
+  return normalized;
+}
 
 const handler = async (event, context) => {
   return baseHandler(event, context, {
@@ -40,6 +55,7 @@ const handler = async (event, context) => {
       }
 
       const { type, message, priority } = body;
+      const normalizedPriority = normalizePriority(priority);
 
       if (
         typeof type !== "string" ||
@@ -62,7 +78,10 @@ const handler = async (event, context) => {
           requestId,
         );
       }
-      if (priority !== undefined && !VALID_PRIORITIES.has(priority)) {
+      if (
+        priority !== undefined &&
+        (!normalizedPriority || !VALID_PRIORITIES.has(normalizedPriority))
+      ) {
         return createErrorResponse(
           `priority must be one of: ${Array.from(VALID_PRIORITIES).join(", ")}`,
           422,
@@ -81,7 +100,7 @@ const handler = async (event, context) => {
           const notification = await db.notifications.createNotification(userId, {
             type,
             message,
-            priority: priority || "medium",
+            priority: normalizedPriority || "normal",
           });
 
           return createSuccessResponse(
@@ -97,7 +116,7 @@ const handler = async (event, context) => {
         const notification = await db.notifications.createNotification(userId, {
           type,
           message,
-          priority: priority || "medium",
+          priority: normalizedPriority || "normal",
         });
 
         return createSuccessResponse(notification, requestId);

@@ -26,7 +26,7 @@ export interface DateRange {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, DatePicker, ButtonComponent],
   template: `
-    <div class="date-range-group">
+    <div class="form-field date-range-group">
       @if (label()) {
         <label class="form-label">{{ label() }}</label>
       }
@@ -39,15 +39,17 @@ export interface DateRange {
               variant="text"
               size="sm"
               (clicked)="applyPreset(preset.value)"
-            ></app-button>
+            >
+              {{ preset.label }}
+            </app-button>
           }
         </div>
       }
 
       <!-- Date Range Inputs -->
       <div class="date-range-container">
-        <div class="date-range-field">
-          <label [for]="id() + '-start'" class="date-range-label">
+        <div class="date-range-field form-field form-field--compact">
+          <label [for]="id() + '-start'" class="form-label">
             {{ startLabel() }}
           </label>
           <p-datepicker
@@ -62,7 +64,9 @@ export interface DateRange {
             (onSelect)="onStartDateChange($event)"
             [class.is-invalid]="invalid()"
             [attr.aria-invalid]="invalid() ? 'true' : null"
-            [attr.aria-describedby]="errorMessage() ? id() + '-error' : null"
+            [attr.aria-describedby]="
+              errorMessage() ? id() + '-error' : helpText() ? id() + '-help' : null
+            "
           >
           </p-datepicker>
         </div>
@@ -71,8 +75,8 @@ export interface DateRange {
           <i class="pi pi-arrow-right"></i>
         </div>
 
-        <div class="date-range-field">
-          <label [for]="id() + '-end'" class="date-range-label">
+        <div class="date-range-field form-field form-field--compact">
+          <label [for]="id() + '-end'" class="form-label">
             {{ endLabel() }}
           </label>
           <p-datepicker
@@ -87,18 +91,21 @@ export interface DateRange {
             (onSelect)="onEndDateChange($event)"
             [class.is-invalid]="invalid()"
             [attr.aria-invalid]="invalid() ? 'true' : null"
+            [attr.aria-describedby]="
+              errorMessage() ? id() + '-error' : helpText() ? id() + '-help' : null
+            "
           >
           </p-datepicker>
         </div>
       </div>
 
       @if (helpText() && !errorMessage()) {
-        <div class="form-help">{{ helpText() }}</div>
+        <small [id]="id() + '-help'" class="form-help">{{ helpText() }}</small>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error" role="alert">
+        <small [id]="id() + '-error'" class="form-error" role="alert">
           {{ errorMessage() }}
-        </div>
+        </small>
       }
     </div>
   `,

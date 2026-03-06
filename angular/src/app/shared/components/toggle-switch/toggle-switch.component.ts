@@ -31,7 +31,7 @@ import { CommonModule } from "@angular/common";
     },
   ],
   template: `
-    <div class="toggle-switch-group">
+    <div class="form-field form-field--narrow-gap toggle-switch-group">
       <label
         [for]="id()"
         [class.disabled]="disabled()"
@@ -53,7 +53,9 @@ import { CommonModule } from "@angular/common";
           role="switch"
           [attr.aria-checked]="value()"
           [attr.aria-invalid]="invalid() ? 'true' : null"
-          [attr.aria-describedby]="errorMessage() ? id() + '-error' : null"
+          [attr.aria-describedby]="
+            errorMessage() ? id() + '-error' : helpText() ? id() + '-help' : null
+          "
         />
         <span class="toggle-slider"></span>
         @if (label()) {
@@ -62,12 +64,12 @@ import { CommonModule } from "@angular/common";
         <ng-content></ng-content>
       </label>
       @if (helpText() && !errorMessage()) {
-        <div class="form-help">{{ helpText() }}</div>
+        <small [id]="id() + '-help'" class="form-help">{{ helpText() }}</small>
       }
       @if (errorMessage()) {
-        <div [id]="id() + '-error'" class="form-error">
+        <small [id]="id() + '-error'" class="form-error" role="alert">
           {{ errorMessage() }}
-        </div>
+        </small>
       }
     </div>
   `,

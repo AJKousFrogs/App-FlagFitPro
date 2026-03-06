@@ -24,6 +24,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -163,6 +164,7 @@ interface PreCompForm {
     Textarea,
     MainLayoutComponent,
     PageHeaderComponent,
+    AlertComponent,
     ButtonComponent,
     IconButtonComponent,
     AppLoadingComponent,

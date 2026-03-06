@@ -38,6 +38,7 @@ import {
     PhysicalMeasurement,
 } from "./performance-data.service";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
+import { normalizeTemplateDayOfWeekToWeekIndex } from "../../shared/utils/training-template.utils";
 import {
     PlayerProgramService,
     ProgramAssignment,
@@ -897,7 +898,7 @@ export class UnifiedTrainingService {
       // Per audit: use maybeSingle() since new users may not have a program yet (avoids 406)
       const { data: playerProgram } = await this.supabase.client
         .from("player_programs")
-        .select("*, training_programs (id, name)")
+        .select("*")
         .eq("player_id", userId)
         .eq("status", "active")
         .maybeSingle();
@@ -949,9 +950,9 @@ export class UnifiedTrainingService {
         return this.getEmptyWeekSchedule();
       }
 
-      // 3. Get scheduled sessions for the week from training_sessions
+      // 3. Get scheduled sessions for the week from training_session_templates
       const { data: sessionTemplates } = await this.supabase.client
-        .from("training_sessions")
+        .from("training_session_templates")
         .select("*")
         .eq("week_id", currentWeek.id)
         .order("day_of_week", { ascending: true })
@@ -1027,15 +1028,15 @@ export class UnifiedTrainingService {
     return days.map((name, i) => {
       const d = new Date(weekStart);
       d.setDate(d.getDate() + i);
-      // day_of_week in DB: 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
-      // days array index: 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
-      const daySessions = templates.filter((t) => t.day_of_week === i);
+      const daySessions = templates.filter(
+        (t) => normalizeTemplateDayOfWeekToWeekIndex(t.day_of_week) === i,
+      );
 
       return {
         name,
         date: d,
         sessions: daySessions.map((s) => ({
-          time: "TBD", // training_sessions doesn't have scheduled_time, use TBD
+          time: "TBD",
           title: s.session_name || "Training Session",
           type: this.mapSessionTypeToScheduleType(s.session_type || "training"),
           duration: s.duration_minutes || 60,

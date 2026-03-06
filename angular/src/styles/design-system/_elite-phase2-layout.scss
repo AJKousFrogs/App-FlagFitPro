@@ -4,12 +4,12 @@
  */
 
 .elite-phase2-shell {
-  max-width: var(--ecc-layout-max-width);
+  max-width: var(--layout-page-max-width);
   margin-inline: auto;
-  padding-inline: var(--ecc-layout-page-padding);
+  padding-inline: var(--layout-page-padding-x);
   display: flex;
   flex-direction: column;
-  gap: var(--ecc-space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 /* Player Dashboard migration */
@@ -22,7 +22,7 @@
 }
 
 .elite-phase2-shell.player-dashboard .dashboard-grid {
-  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
   gap: var(--ecc-space-4);
 }
 
@@ -36,7 +36,7 @@
 }
 
 .elite-phase2-shell.dashboard-content .dashboard-workspace {
-  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
   gap: var(--ecc-space-4);
 }
 
@@ -112,7 +112,7 @@
 }
 
 .elite-phase2-shell.training-page .training-grid {
-  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
   gap: var(--ecc-space-4);
 }
 
@@ -152,15 +152,15 @@
 }
 
 .elite-phase2-shell.community-page .community-grid {
-  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
   gap: var(--ecc-space-4);
 }
 
 /* Tablet */
 @media (max-width: 1023px) {
   .elite-phase2-shell {
-    padding-inline: var(--ecc-space-3);
-    gap: var(--ecc-space-3);
+    padding-inline: var(--space-4);
+    gap: var(--layout-gap-md);
   }
 
   .elite-phase2-shell.player-dashboard .dashboard-grid,
@@ -194,8 +194,8 @@
 /* Mobile */
 @media (max-width: 767px) {
   .elite-phase2-shell {
-    padding-inline: var(--ecc-space-2);
-    gap: var(--ecc-space-3);
+    padding-inline: var(--space-3);
+    gap: var(--layout-gap-md);
   }
 
   .elite-phase2-shell.player-dashboard .stats-overview,

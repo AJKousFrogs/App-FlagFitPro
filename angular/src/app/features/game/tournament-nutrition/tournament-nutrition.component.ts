@@ -32,6 +32,7 @@ import { Router } from "@angular/router";
 // PrimeNG Components
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -107,6 +108,7 @@ interface HydrationLog {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
   ],

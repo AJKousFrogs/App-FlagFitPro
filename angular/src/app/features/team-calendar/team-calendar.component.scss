@@ -22,22 +22,8 @@
 }
 
 // Pending Alert
-// Use app-card-shell with density="compact" instead
-// @see docs/CARD_SHELL_CONTRACT.md
 .pending-alert {
-  background: var(--primitive-warning-50);
-  border: var(--border-1) solid var(--primitive-warning-500);
-
-  .alert-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    color: var(--primitive-warning-800);
-
-    i {
-      font-size: var(--ds-font-size-2xl);
-    }
-  }
+  margin-bottom: var(--space-4);
 }
 
 // Date Groups
