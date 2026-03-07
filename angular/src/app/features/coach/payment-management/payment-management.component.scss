@@ -10,12 +10,12 @@
 }
 
 .payment-management-page {
-  padding: var(--space-4);
-  max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  width: min(100%, var(--content-max-width-xl));
+  margin-inline: auto;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap);
 }
 
 // Tab Navigation
@@ -27,9 +27,10 @@
   overflow-x: auto;
 
   .tab-btn {
-    padding: var(--space-2) var(--space-4);
-    background: none;
-    border: none;
+    min-height: var(--component-button-height-sm);
+    padding: 0 var(--space-4);
+    background: var(--surface-secondary);
+    border: var(--border-1) solid transparent;
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
@@ -42,13 +43,19 @@
     white-space: nowrap;
 
     &:hover {
-      background: var(--ds-surface-base);
+      background: var(--surface-card);
+      border-color: var(--color-border-subtle);
       color: var(--color-text-primary);
     }
 
     &.active {
       background: var(--color-brand-primary-subtle);
       color: var(--color-brand-primary);
+      border-color: color-mix(
+        in srgb,
+        var(--color-brand-primary) 22%,
+        transparent
+      );
     }
   }
 }
@@ -57,7 +64,7 @@
 .financial-overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .stat-card {
@@ -171,7 +178,7 @@
 .fees-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .fee-card {
@@ -301,7 +308,7 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--layout-page-section-gap-tight);
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--color-border-subtle);
 }
@@ -395,11 +402,11 @@
 // Responsive
 @include respond-to(md) {
   .payment-management-page {
-    padding: var(--space-3);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .financial-overview {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   // Note: .balance-filters responsive styles moved here

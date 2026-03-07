@@ -17,7 +17,7 @@
 
       <!-- Content -->
       @else {
-        <div class="performance-page">
+        <div class="performance-page ui-page-stack">
           <app-page-header
             title="Performance Tracking"
             subtitle="Track and analyze your performance metrics over time"
@@ -71,13 +71,14 @@
           @if (teamRankings() && teamRankings()!.rankings.length > 0) {
             <p-card class="team-rankings-card">
               <ng-template #header>
-                <div class="rankings-header">
-                  <div class="rankings-title">
-                    <i class="pi pi-users"></i>
-                    <h3>Your Team Rankings</h3>
-                  </div>
+                <app-card-header
+                  class="rankings-card-header"
+                  icon="pi-users"
+                  title="Your Team Rankings"
+                  subtitle="See how your latest metrics compare across the team"
+                >
                   @if (performanceAchievements().length > 0) {
-                    <div class="badge-summary">
+                    <div header-actions class="badge-summary">
                       @if (goldBadgeCount() > 0) {
                         <span class="badge-count gold" pTooltip="Team Leader">
                           🥇 {{ goldBadgeCount() }}
@@ -95,7 +96,7 @@
                       }
                     </div>
                   }
-                </div>
+                </app-card-header>
               </ng-template>
 
               <!-- Achievement Badges Row -->
@@ -364,10 +365,12 @@
           <!-- Gap Analysis & Training Priorities -->
           <p-card class="gap-analysis-card">
             <ng-template #header>
-              <div class="gap-header">
-                <i class="pi pi-search"></i>
-                <h3>Your Training Priorities (Based on Gap Analysis)</h3>
-              </div>
+              <app-card-header
+                class="gap-analysis-card-header"
+                icon="pi-search"
+                title="Your Training Priorities"
+                subtitle="Recommended focus areas based on current performance gaps"
+              />
             </ng-template>
             @if (gapAnalysis().length === 0) {
               <app-empty-state
@@ -436,7 +439,12 @@
           <!-- Performance History Table -->
           <p-card class="table-card">
             <ng-template #header>
-              <h3>Performance History</h3>
+              <app-card-header
+                class="table-card-header"
+                icon="pi-history"
+                title="Performance History"
+                subtitle="Recent logged tests and overall scores"
+              />
             </ng-template>
             @if (performanceHistory().length === 0) {
               <app-empty-state

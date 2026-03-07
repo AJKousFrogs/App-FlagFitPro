@@ -73,7 +73,7 @@ interface PositionGroup {
   ],
   template: `
     <app-main-layout>
-      <div class="depth-chart-page">
+      <div class="depth-chart-page ui-page-stack">
         <app-page-header
           title="Depth Chart"
           subtitle="Manage team roster positions"
@@ -90,7 +90,7 @@ interface PositionGroup {
           </div>
         </app-page-header>
 
-        <div class="depth-chart-content">
+        <div class="depth-chart-content ui-page-stack">
           @if (depthCharts().length === 0) {
             <p-card class="empty-card">
               <app-empty-state

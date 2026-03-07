@@ -108,7 +108,7 @@ interface TeamOption {
   ],
   template: `
     <app-main-layout>
-      <div class="coach-analytics">
+      <div class="coach-analytics ui-page-stack">
         <!-- Header -->
         <div class="analytics-header">
           <div class="header-content">

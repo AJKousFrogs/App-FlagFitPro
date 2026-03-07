@@ -7,14 +7,19 @@
 @include stat-block;
 
 .coach-analytics {
-  padding: var(--space-6);
+  width: min(100%, var(--content-max-width-2xl));
+  margin-inline: auto;
+  padding: 0;
+  gap: var(--layout-page-section-gap);
 }
 
 .analytics-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-8);
+  margin-bottom: 0;
+  gap: var(--layout-page-section-gap-tight);
+  flex-wrap: wrap;
 }
 
 .header-content {
@@ -47,13 +52,14 @@
 .header-filters {
   display: flex;
   gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
+  gap: var(--layout-page-section-gap-tight);
+  margin-bottom: 0;
 }
 
 .metric-card {
@@ -124,19 +130,19 @@
 .analytics-grid {
   display: grid;
   grid-template-columns: 1fr var(--element-max-width-md);
-  gap: var(--space-6);
+  gap: var(--layout-page-section-gap);
 }
 
 .charts-column {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--layout-page-section-gap);
 }
 
 .side-column {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--layout-page-section-gap);
 }
 
 .analytics-card {
@@ -149,7 +155,7 @@
 .classification-stats {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--layout-page-section-gap);
 }
 
 .stat-group {
@@ -213,14 +219,42 @@
 .feedback-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--layout-page-section-gap);
 }
 
 @include respond-to(lg) {
+  .coach-analytics {
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  .analytics-header {
+    align-items: flex-start;
+  }
+
+  .header-filters {
+    width: 100%;
+  }
+
   .analytics-grid {
     grid-template-columns: 1fr;
   }
   .side-column {
     order: -1;
+  }
+}
+
+@include respond-to(md) {
+  .header-filters {
+    flex-direction: column;
+
+    p-select,
+    app-icon-button {
+      width: 100%;
+    }
+  }
+
+  .metrics-grid,
+  .stat-group {
+    grid-template-columns: 1fr;
   }
 }

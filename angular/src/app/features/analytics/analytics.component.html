@@ -17,7 +17,7 @@
 
       <!-- Content -->
       @else {
-        <div class="analytics-page elite-phase2-shell">
+        <div class="analytics-page elite-phase2-shell ui-page-stack">
           <app-page-header
             title="FlagFit Pro Analytics"
             subtitle="Advanced Performance Analytics & Team Insights"
@@ -68,7 +68,12 @@
 
           <p-card class="analytics-hub-card">
             <ng-template #header>
-              <h3>Analytics Hub</h3>
+              <app-card-header
+                class="analytics-hub-card-header"
+                icon="pi-compass"
+                title="Analytics Hub"
+                subtitle="Overview, deep analytics, and player performance trends"
+              />
             </ng-template>
             <div class="analytics-hub-grid">
               <a routerLink="/analytics" class="analytics-hub-link">
@@ -101,16 +106,16 @@
           <!-- My Development Goals (Coach Assigned) -->
           <p-card class="development-goals-card">
             <ng-template #header>
-              <div class="goals-header">
-                <div class="goals-title">
-                  <i class="pi pi-bullseye"></i>
-                  <h3>My Development Goals</h3>
-                  <span class="coach-label">(Coach Assigned)</span>
-                </div>
+              <app-card-header
+                class="goals-card-header"
+                icon="pi-bullseye"
+                title="My Development Goals"
+                subtitle="Coach assigned milestones and deadlines"
+              >
                 <a routerLink="/goals" class="view-all-link">
                   View All <i class="pi pi-arrow-right"></i>
                 </a>
-              </div>
+              </app-card-header>
             </ng-template>
 
             @if (developmentGoals().length === 0) {
@@ -214,18 +219,19 @@
           @if (teamPerformanceAchievements().length > 0) {
             <p-card class="team-badges-card">
               <ng-template #header>
-                <div class="badges-header">
-                  <div class="badges-title">
-                    <i class="pi pi-trophy"></i>
-                    <h3>Your Team Performance Badges</h3>
-                  </div>
+                <app-card-header
+                  class="badges-card-header"
+                  icon="pi-trophy"
+                  title="Your Team Performance Badges"
+                  subtitle="How you rank across team performance benchmarks"
+                >
                   <a
                     routerLink="/performance-tracking"
                     class="view-details-link"
                   >
                     View Details <i class="pi pi-arrow-right"></i>
                   </a>
-                </div>
+                </app-card-header>
               </ng-template>
               <div class="badges-content">
                 <div class="badges-summary">

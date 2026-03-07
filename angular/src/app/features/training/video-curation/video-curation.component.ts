@@ -84,7 +84,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
   template: `
 <p-confirmDialog></p-confirmDialog>
     <app-main-layout>
-      <div class="curation-page">
+      <div class="curation-page ui-page-stack">
         <!-- Header -->
         <header class="page-header">
           <div class="header-content">

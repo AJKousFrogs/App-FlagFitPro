@@ -1,30 +1,36 @@
 @use "styles/mixins" as *;
 
 .onboarding-page {
-  padding: var(--space-6);
-  max-width: var(--content-max-width-lg);
-  margin: 0 auto;
+  width: min(100%, var(--content-max-width-xl));
+  margin-inline: auto;
+  gap: var(--layout-page-section-gap);
 
   .onboarding-card {
-    margin-top: var(--space-6);
-    border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-md);
+    margin-top: 0;
+    border-radius: var(--component-card-radius);
+    box-shadow: var(--component-card-shadow);
     overflow: hidden;
   }
 
   .progress-section {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
-    padding: var(--space-5) var(--space-6);
-    background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.03),rgba(var(--ds-primary-green-rgb),.01));
-    border-bottom: var(--border-2) solid var(--color-border-muted);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    gap: var(--layout-page-section-gap-tight);
+    margin-bottom: 0;
+    padding: var(--component-card-padding);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--ds-primary-green-rgb), 0.04),
+      rgba(var(--ds-primary-green-rgb), 0.015)
+    );
+    border-bottom: var(--border-1) solid var(--color-border-muted);
+    border-radius: var(--component-card-radius) var(--component-card-radius) 0 0;
   }
 
   .progress-info {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--space-4);
   }
@@ -41,14 +47,12 @@
   }
 
   .completion-checklist {
-    margin: 0 0 var(--space-5) 0;
-    padding: var(--space-2) var(--space-3);
-    border-left: var(--border-1) solid var(--color-status-warning);
+    margin: 0 var(--component-card-padding) var(--space-5);
   }
 
-  .checklist-header {
-    display: flex;
-    font-weight: var(--ds-font-weight-semibold);
+  .checklist-body {
+    display: grid;
+    gap: var(--space-3);
   }
 
   .checklist-items {
@@ -58,7 +62,23 @@
   }
 
   .checklist-item {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-target-min);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-full);
+    background: color-mix(
+      in srgb,
+      var(--color-status-warning-surface) 70%,
+      var(--surface-primary) 30%
+    );
     font-size: var(--ds-font-size-xs);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .checklist-item.more {
+    background: var(--surface-secondary);
     color: var(--color-text-secondary);
   }
 
@@ -83,9 +103,13 @@
     }
   }
 
+  .onboarding-stepper {
+    padding: 0 var(--component-card-padding);
+  }
+
   .onboarding-content {
-    margin-top: var(--space-6);
-    padding: 0 var(--space-6);
+    margin-top: var(--layout-page-section-gap-tight);
+    padding: 0 var(--component-card-padding) var(--component-card-padding);
     min-height: var(--chart-min-height-lg);
   }
 
@@ -1425,17 +1449,14 @@
 .onboarding-actions {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  margin-top: var(--space-8);
-  padding: var(--space-6) var(--space-6);
-  border-top: var(--border-2) solid var(--color-border-muted);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.02) 0%,
-    transparent 100%
-  );
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-  gap: var(--space-4);
+  margin-top: var(--layout-page-section-gap);
+  padding: var(--component-card-padding) 0 0;
+  border-top: var(--border-1) solid var(--color-border-muted);
+  background: none;
+  border-radius: 0;
+  gap: var(--space-3);
 }
 
 .onboarding-page .checkbox-grid {
@@ -1575,6 +1596,30 @@
 }
 
 @include respond-to(md) {
+  .progress-section {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+    padding: var(--component-card-padding-compact);
+  }
+
+  .completion-checklist {
+    margin-inline: var(--component-card-padding-compact);
+  }
+
+  .onboarding-stepper,
+  .onboarding-content {
+    padding-inline: var(--component-card-padding-compact);
+  }
+
+  .onboarding-actions {
+    justify-content: stretch;
+    padding-top: var(--component-card-padding-compact);
+  }
+
+  .onboarding-actions app-button {
+    flex: 1 1 12rem;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
 
@@ -1606,7 +1651,6 @@
   .days-grid {
     flex-wrap: wrap;
   }
-
 }
 
 .onboarding-progress {

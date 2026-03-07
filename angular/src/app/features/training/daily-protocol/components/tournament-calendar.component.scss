@@ -6,18 +6,23 @@
 @use "styles/mixins" as *;
 
 .tournament-calendar {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--primitive-neutral-200);
-  border-radius: var(--radius-xl);
-  padding: var(--space-4);
-  margin-bottom: var(--space-4);
+  background: var(--surface-card);
+  border: var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  padding: var(--component-card-padding-compact);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  margin: 0;
+  flex-wrap: wrap;
 }
 
 .calendar-header h3 {
@@ -38,13 +43,16 @@
 .tournament-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .tournament-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   border: var(--border-1) solid var(--primitive-neutral-200);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3);
+  border-radius: var(--component-card-radius);
+  padding: var(--component-card-padding-compact);
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
@@ -69,6 +77,9 @@
 
 .tournament-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .tournament-name {
@@ -78,7 +89,7 @@
   align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
-  margin-bottom: var(--space-2);
+  margin: 0;
 }
 
 .tournament-details {
@@ -131,14 +142,14 @@
 /* Taper Banners */
 app-alert.taper-banner {
   display: block;
-  margin-top: var(--space-3);
+  margin: 0;
 }
 
 .taper-info {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-2);
+  margin: 0;
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
@@ -148,9 +159,9 @@ app-alert.taper-banner {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-1);
-  margin-top: var(--space-2);
+  margin: 0;
   border-top: var(--border-1) solid var(--primitive-neutral-100);
-  padding-top: var(--space-2);
+  padding-top: var(--space-3);
 }
 
 /* Form */

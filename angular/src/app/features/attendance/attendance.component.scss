@@ -6,7 +6,9 @@
 @use "styles/mixins" as *;
 
 .attendance-page {
-  padding: var(--space-6);
+  width: min(100%, var(--content-max-width-2xl));
+  margin-inline: auto;
+  gap: var(--layout-page-section-gap);
 }
 
 /* Uses shared .header-actions from _dashboard.scss */
@@ -14,7 +16,7 @@
 .attendance-content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--layout-page-section-gap);
 }
 
 .stat-content {
@@ -34,19 +36,20 @@
 
 .filter-actions {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
   align-items: center;
 }
 
 .events-list {
   display: flex;
   flex-direction: column;
+  gap: 0;
 }
 
 .event-item {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-5);
   padding: var(--space-4);
   border-bottom: var(--border-1) solid var(--surface-border);
   cursor: pointer;
@@ -228,4 +231,31 @@
 .status-buttons {
   display: flex;
   gap: var(--space-2);
+}
+
+@include respond-to(md) {
+  .attendance-page {
+    padding: 0;
+  }
+
+  .attendance-content {
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  .filter-actions {
+    width: 100%;
+  }
+
+  .event-item,
+  .attendance-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .event-actions,
+  .status-buttons {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
 }

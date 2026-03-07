@@ -1,0 +1,224 @@
+/*
+ * Phase-2 Migration Layer
+ * Applies unified command-center shell behavior to existing pages.
+ */
+
+.elite-phase2-shell {
+  max-width: var(--layout-page-max-width);
+  margin-inline: auto;
+  padding-inline: var(--layout-page-padding-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
+}
+
+/* Player Dashboard migration */
+.elite-phase2-shell.player-dashboard {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.player-dashboard .stats-overview {
+  gap: var(--ecc-layout-gutter-lg);
+}
+
+.elite-phase2-shell.player-dashboard .dashboard-grid {
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
+  gap: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.player-dashboard .quick-actions-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Coach Dashboard migration */
+.elite-phase2-shell.dashboard-content {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.dashboard-content .dashboard-workspace {
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
+  gap: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.dashboard-content .workspace-side {
+  position: sticky;
+  top: calc(var(--space-6) + var(--safe-area-top));
+}
+
+/* Settings migration */
+.elite-phase2-shell.settings-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.settings-page .settings-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.settings-page .settings-section {
+  grid-column: span 12;
+}
+
+/* Analytics migration */
+.elite-phase2-shell.analytics-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.analytics-page .metrics-grid,
+.elite-phase2-shell.analytics-page .charts-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.analytics-page .metrics-grid > * {
+  grid-column: span 3;
+}
+
+.elite-phase2-shell.analytics-page .charts-grid > * {
+  grid-column: span 6;
+}
+
+/* Today migration */
+.elite-phase2-shell.today-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.today-page .stats-grid,
+.elite-phase2-shell.today-page .skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ecc-space-3);
+}
+
+.elite-phase2-shell.today-page .stats-grid > *,
+.elite-phase2-shell.today-page .skeleton-grid > * {
+  grid-column: span 6;
+}
+
+/* Roster migration */
+.elite-phase2-shell.roster-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.roster-page .roster-grid {
+  gap: var(--ecc-space-4);
+}
+
+/* Training migration */
+.elite-phase2-shell.training-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.training-page .training-grid {
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
+  gap: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.training-page .quick-actions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ecc-space-3);
+}
+
+/* Wellness migration */
+.elite-phase2-shell.wellness-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.wellness-page .charts-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.wellness-page .charts-grid > * {
+  grid-column: span 6;
+}
+
+/* Profile migration */
+.elite-phase2-shell.profile-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.profile-page .profile-tabs-container {
+  box-shadow: var(--ecc-elevation-1);
+  border-radius: var(--radius-lg);
+}
+
+/* Community migration */
+.elite-phase2-shell.community-page {
+  padding-block: var(--ecc-space-4);
+}
+
+.elite-phase2-shell.community-page .community-grid {
+  grid-template-columns: minmax(0, 2fr) minmax(var(--panel-width-md), 1fr);
+  gap: var(--ecc-space-4);
+}
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .elite-phase2-shell {
+    padding-inline: var(--space-4);
+    gap: var(--layout-gap-md);
+  }
+
+  .elite-phase2-shell.player-dashboard .dashboard-grid,
+  .elite-phase2-shell.dashboard-content .dashboard-workspace,
+  .elite-phase2-shell.training-page .training-grid,
+  .elite-phase2-shell.community-page .community-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .elite-phase2-shell.dashboard-content .workspace-side {
+    position: static;
+  }
+
+  .elite-phase2-shell.player-dashboard .quick-actions-grid,
+  .elite-phase2-shell.training-page .quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .elite-phase2-shell.analytics-page .metrics-grid > * {
+    grid-column: span 6;
+  }
+
+  .elite-phase2-shell.analytics-page .charts-grid > *,
+  .elite-phase2-shell.today-page .stats-grid > *,
+  .elite-phase2-shell.today-page .skeleton-grid > *,
+  .elite-phase2-shell.wellness-page .charts-grid > * {
+    grid-column: span 12;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .elite-phase2-shell {
+    padding-inline: var(--space-3);
+    gap: var(--layout-gap-md);
+  }
+
+  .elite-phase2-shell.player-dashboard .stats-overview,
+  .elite-phase2-shell.player-dashboard .quick-actions-grid,
+  .elite-phase2-shell.analytics-page .metrics-grid,
+  .elite-phase2-shell.analytics-page .charts-grid,
+  .elite-phase2-shell.today-page .stats-grid,
+  .elite-phase2-shell.today-page .skeleton-grid,
+  .elite-phase2-shell.training-page .quick-actions,
+  .elite-phase2-shell.wellness-page .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .elite-phase2-shell.settings-page .settings-page-save-cta,
+  .elite-phase2-shell.settings-page app-page-header app-button,
+  .elite-phase2-shell.player-dashboard .welcome-actions,
+  .elite-phase2-shell.dashboard-content .merlin-actions {
+    position: sticky;
+    bottom: calc(var(--space-3) + var(--safe-area-bottom));
+    z-index: var(--z-index-sticky);
+    background: var(--ecc-color-surface);
+    border-radius: var(--radius-pill);
+    padding: var(--ecc-space-2);
+    box-shadow: var(--ecc-elevation-2);
+  }
+}

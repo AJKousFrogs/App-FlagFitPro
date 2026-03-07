@@ -53,6 +53,7 @@
   height: 100%;
   border-radius: var(--radius-full);
   border: var(--border-2) solid rgba(var(--ds-primary-green-rgb), 0.6);
+
   --ui-motion-ring-end-scale: 1.5;
   animation: ui-motion-ring-expand 2s ease-out infinite;
 }

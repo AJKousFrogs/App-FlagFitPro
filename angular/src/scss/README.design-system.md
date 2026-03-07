@@ -8,7 +8,7 @@
 |-------|------|
 | **Tokens** | `angular/src/scss/tokens/design-system-tokens.scss` |
 | **Global entry** | `angular/src/styles.scss` (only entrypoint in angular.json) |
-| **Import order** | tokens (design-system/index) → utilities → components (PrimeNG) → pages → overrides |
+| **Import order** | tokens (`scss/design-system/index`) → utilities → components (PrimeNG) → pages → overrides |
 | **Spacing utilities** | `.p-*`, `.m-*`, `.gap-*` in design-system-tokens.scss |
 | **Flex utilities** | `angular/src/scss/utilities/layout-system.scss` |
 | **Non-spacing utilities** | `angular/src/scss/utilities/_utilities.scss` |
@@ -24,7 +24,7 @@
 
 ## Adding Tokens
 
-1. Add primitive in `:root` (design-system-tokens.scss) if new raw value
+1. Add primitive in `:root` (`scss/tokens/design-system-tokens.scss`) if new raw value
 2. Add semantic alias if needed (e.g. `--color-*`, `--surface-*`)
 3. For PrimeNG: add to `_token-mapping.scss` first before creating exception
 
@@ -33,9 +33,8 @@
 ```bash
 cd angular && npm run build
 npm run lint
-npm run test
-# From repo root:
 npm run lint:css
+npm run test
 ```
 
 ## CSS Layer Order (app.config.ts)
@@ -56,3 +55,9 @@ reset, tokens, primeng-base, primeng-brand, primitives, features, overrides
 1. `:host` + layout; spacing via tokens
 2. Use canonical utilities (`.p-*`, `.m-*`, `.gap-*`)
 3. PrimeNG internals → _component-overrides.scss only
+
+## Current Style Root Boundary
+
+- **Canonical design-system modules:** `angular/src/scss/design-system/**`
+- **Compatibility shims only:** `angular/src/styles/design-system/**`
+- New imports should use `scss/design-system/...`

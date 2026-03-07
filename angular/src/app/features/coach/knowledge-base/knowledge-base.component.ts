@@ -143,7 +143,7 @@ const VISIBILITY_OPTIONS = [
   ],
   template: `
     <app-main-layout>
-<div class="knowledge-base-page">
+<div class="knowledge-base-page ui-page-stack">
         <app-page-header
           title="Knowledge Base"
           subtitle="Coaching resources and team knowledge"

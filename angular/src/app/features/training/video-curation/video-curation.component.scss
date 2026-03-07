@@ -9,13 +9,15 @@
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--surface-primary);
-
-  @include page-container(var(--content-max-width-2xl));
+  width: min(100%, var(--content-max-width-2xl));
+  margin-inline: auto;
+  padding: 0;
+  gap: var(--layout-page-section-gap);
 }
 
 /* Header */
 .page-header {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .header-content {
@@ -24,6 +26,13 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-4);
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .header-text h1 {
@@ -47,7 +56,7 @@
 /* Responsive */
 @include respond-to(md) {
   .curation-page {
-    padding: var(--space-4);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .header-content {
@@ -55,11 +64,15 @@
     align-items: flex-start;
     gap: var(--space-3);
   }
+
+  .header-actions {
+    width: 100%;
+  }
 }
 
 @include respond-to(sm) {
   .curation-page {
-    padding: var(--space-3);
+    gap: var(--space-3);
   }
 
   .header-content h1 {
@@ -74,6 +87,6 @@
 
 @include respond-to(xs) {
   .curation-page {
-    padding: var(--space-2);
+    gap: var(--space-2);
   }
 }

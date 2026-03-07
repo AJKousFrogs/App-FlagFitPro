@@ -6,13 +6,13 @@
 .settings-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--layout-page-section-gap);
 }
 
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .form-section h4 {
@@ -20,8 +20,8 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  padding-bottom: var(--space-2);
-  border-bottom: var(--border-1) solid var(--primitive-neutral-200);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-1) solid var(--ui-border-subtle);
 }
 
 .section-description {
@@ -37,10 +37,12 @@
 .full-width {
   width: 100%;
 }
+
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 .form-field label {
@@ -60,17 +62,21 @@
 
 /* Practice Slots */
 .practice-slot {
-  background: var(--primitive-neutral-50);
-  border: var(--border-1) solid var(--primitive-neutral-200);
-  border-radius: var(--radius-md);
-  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border: var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  padding: var(--component-card-padding-compact);
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .slot-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-2);
+  gap: var(--space-3);
+  margin: 0;
 }
 
 .day-name {
@@ -80,14 +86,14 @@
 
 .slot-times {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
   flex-wrap: wrap;
 }
 
 .time-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
   flex: 1;
   min-width: var(--input-min-width-sm);
 }
@@ -103,34 +109,38 @@
 
 .add-practice {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-3);
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .add-practice p-select {
   flex: 1;
+  min-width: 0;
 }
 
 /* Routine List */
 .routine-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .routine-field {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--component-card-padding-compact);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: var(--component-card-radius);
+  border: var(--component-card-border);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .routine-label {
   display: flex;
   align-items: center;
+  gap: var(--space-2);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 
@@ -156,4 +166,25 @@
 .checkbox-group label {
   font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-primary);
+}
+
+@media (width <= 768px) {
+  .settings-form {
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  .slot-times,
+  .add-practice,
+  .routine-field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .slot-header {
+    align-items: flex-start;
+  }
+
+  .routine-time-input {
+    width: 100%;
+  }
 }

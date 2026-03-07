@@ -14,6 +14,7 @@
   min-height: 100dvh;
   background: var(--surface-primary);
   padding-bottom: var(--space-12);
+  gap: var(--layout-page-section-gap);
 }
 
 /* Header */
@@ -26,7 +27,7 @@
   );
   padding: var(--space-10) var(--space-6);
   margin: calc(-1 * var(--space-6));
-  margin-bottom: var(--space-8);
+  margin-bottom: 0;
   color: var(--color-text-on-primary);
 }
 
@@ -98,9 +99,10 @@
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-8);
+  gap: var(--layout-page-section-gap);
   max-width: var(--content-max-width-xl);
   margin: 0 auto;
+  padding: 0 var(--space-6);
 }
 
 /* Submit Section */
@@ -273,7 +275,7 @@
 
 /* Submit Button */
 .form-actions {
-  margin-top: var(--space-8);
+  margin-top: var(--layout-page-section-gap);
   padding-top: var(--space-4);
 }
 
@@ -417,7 +419,7 @@
 /* Team Approved Section */
 .team-approved-section {
   max-width: var(--content-max-width-xl);
-  margin: var(--space-12) auto 0;
+  margin: 0 auto;
   padding: 0 var(--space-6);
 
   .section-header {
@@ -535,7 +537,7 @@
 /* Tips Section - Now using app-card-shell */
 .tips-section {
   max-width: var(--content-max-width-xl);
-  margin: var(--space-12) auto 0;
+  margin: 0 auto;
   padding: 0 var(--space-6);
 }
 
@@ -670,9 +672,12 @@
 
 /* Responsive */
 @include respond-to(md) {
+  .suggestion-page {
+    gap: var(--layout-page-section-gap-tight);
+  }
+
   .page-header {
     padding: var(--space-8) var(--space-4);
-    margin-bottom: var(--space-6);
   }
 
   .header-content {
@@ -683,7 +688,7 @@
 
   .content-grid {
     padding: 0 var(--space-4);
-    gap: var(--space-6);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .suggestion-card {
@@ -700,7 +705,6 @@
   .team-approved-section,
   .tips-section {
     padding: 0 var(--space-4);
-    margin-top: var(--space-10);
   }
 
   .form-step {

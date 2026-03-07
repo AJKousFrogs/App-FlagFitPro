@@ -6,22 +6,28 @@
 @use "styles/mixins" as *;
 
 .performance-page {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, var(--content-max-width-2xl));
+  margin-inline: auto;
+  gap: var(--layout-page-section-gap);
+
   .data-freshness {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3) var(--space-6);
-    margin: var(--space-2) 0 var(--space-4);
+    margin: 0;
     font-size: var(--ds-font-size-sm);
     color: var(--color-text-secondary);
 
     @include data-source-meta;
   }
 
-  @include page-container(var(--content-max-width-2xl));
+  padding: 0;
 }
 
 .performance-preview-banner {
-  margin: var(--space-3) 0 var(--space-4);
+  margin: 0;
 }
 
 // .charts-grid: Use primitives/_charts.scss
@@ -35,12 +41,12 @@
 }
 
 .table-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 // ===== Position Benchmark Section =====
 .benchmark-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .benchmark-preview-note {
@@ -103,27 +109,7 @@
 
 // ===== Gap Analysis Section =====
 .gap-analysis-card {
-  margin-bottom: var(--space-6);
-}
-
-.gap-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--color-border-secondary);
-
-  i {
-    color: var(--ds-primary-green);
-    font-size: var(--ds-font-size-md);
-  }
-
-  h3 {
-    margin: 0;
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-semibold);
-    color: var(--color-text-primary);
-  }
+  margin-bottom: 0;
 }
 
 .priority-header {
@@ -228,38 +214,22 @@
 
 // ===== Team Rankings Section =====
 .team-rankings-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
-.rankings-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--color-border-secondary);
-}
-
-.rankings-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-
-  i {
-    color: var(--ds-primary-green);
-    font-size: var(--ds-font-size-md);
-  }
-
-  h3 {
-    margin: 0;
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-semibold);
-    color: var(--color-text-primary);
-  }
+app-card-header.rankings-card-header,
+app-card-header.gap-analysis-card-header,
+app-card-header.table-card-header {
+  --app-card-header-padding: var(--space-4);
+  --app-card-header-border-bottom: var(--border-1) solid
+    var(--color-border-secondary);
+  --app-card-header-icon-color: var(--ds-primary-green);
 }
 
 .badge-summary {
   display: flex;
   gap: var(--space-2);
+  flex-wrap: wrap;
 }
 
 .badge-count {

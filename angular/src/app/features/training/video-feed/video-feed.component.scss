@@ -13,6 +13,7 @@
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--surface-secondary);
+  gap: var(--layout-page-section-gap);
 }
 
 /* Header - Theme Aware */
@@ -21,9 +22,10 @@
   border-bottom: var(--border-1) solid var(--color-border-secondary);
   padding: var(--space-10) var(--space-6);
   margin: calc(-1 * var(--space-6));
-  margin-bottom: var(--space-8);
+  margin-bottom: 0;
   position: relative;
   overflow: hidden;
+
   --ui-motion-enter-from-y: calc(-1 * var(--space-5));
   animation: ui-motion-enter-y 600ms ease-out;
 }
@@ -197,6 +199,7 @@
 
 .stat-pill-interactive:hover i {
   color: var(--color-text-on-primary);
+
   --ui-motion-scale-pulse-mid: 0.95;
   --ui-motion-scale-pulse-opacity-mid: var(--opacity-subtle);
   animation: ui-motion-scale-pulse 1s ease-in-out infinite;
@@ -244,7 +247,7 @@
 /* Filter Section */
 .filter-section {
   padding: 0 var(--space-6);
-  margin-bottom: var(--space-8);
+  margin-bottom: 0;
   max-width: var(--content-max-width-xl);
   margin-left: auto;
   margin-right: auto;
@@ -423,7 +426,7 @@
 .video-grid-section {
   padding: 0 var(--space-6);
   max-width: var(--content-max-width-xl);
-  margin: 0 auto var(--space-10);
+  margin: 0 auto;
 }
 
 .video-grid {
@@ -520,6 +523,7 @@
     transform var(--transition-fast),
     opacity var(--transition-fast);
   filter: drop-shadow(var(--shadow-overlay-md));
+
   --ui-motion-scale-pulse-mid: 0.95;
   --ui-motion-scale-pulse-opacity-mid: var(--opacity-subtle);
   animation: ui-motion-scale-pulse 2s ease-in-out infinite;
@@ -721,7 +725,7 @@
 .creators-section {
   padding: var(--space-8) var(--space-6);
   background: var(--surface-secondary);
-  margin-top: var(--space-8);
+  margin-top: 0;
 }
 
 .section-header {
@@ -908,6 +912,10 @@
 }
 
 @include respond-to(md) {
+  .video-feed-page {
+    gap: var(--layout-page-section-gap-tight);
+  }
+
   .feed-header {
     padding: var(--space-8) var(--space-4);
   }
@@ -1019,6 +1027,11 @@
 }
 
 @include respond-to(sm) {
+  .header-stats {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .feed-header {
     padding: var(--space-6) var(--space-4);
   }

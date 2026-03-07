@@ -6,12 +6,25 @@
 
 
 /* ================================================================
+   PAGE SHELL
+   ================================================================ */
+
+.game-tracker-page {
+  width: min(100%, var(--content-max-width-xl));
+  margin-inline: auto;
+  padding: 0;
+  gap: var(--layout-page-section-gap);
+}
+
+/* ================================================================
    HEADER
    ================================================================ */
 
 .header-actions {
   display: flex;
   gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 /* ================================================================
@@ -22,7 +35,7 @@
 .play-tracker-card,
 .plays-list-card,
 .games-list-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
   border-radius: var(--radius-xl);
   overflow: hidden;
 }
@@ -39,7 +52,7 @@
    ================================================================ */
 
 .visibility-info-banner {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 /* Game type badges in table */
@@ -85,8 +98,8 @@
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
-  gap: var(--space-5);
-  margin-bottom: var(--space-6);
+  gap: var(--layout-page-section-gap-tight);
+  margin-bottom: 0;
 }
 
 /* Form layout: use primitives _forms.scss (.form-row, .form-field, .four-col) */
@@ -181,7 +194,7 @@
   gap: var(--space-3);
   padding-top: var(--space-6);
   border-top: var(--border-1) solid var(--color-border-secondary);
-  margin-top: var(--space-6);
+  margin-top: var(--layout-page-section-gap-tight);
 }
 
 .score-display {
@@ -216,8 +229,8 @@
 .quick-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
+  gap: var(--layout-page-section-gap-tight);
+  margin-bottom: 0;
 }
 
 .stat-box {
@@ -443,7 +456,7 @@
 /* Mobile breakpoint - PRIMARY (Chrome & Safari) */
 @include respond-to(md) {
   .game-tracker-page {
-    padding: var(--space-3);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .header-actions {
@@ -666,7 +679,7 @@
 /* Small mobile - Extra compact */
 @include respond-to(sm) {
   .game-tracker-page {
-    padding: var(--space-2);
+    gap: var(--space-3);
   }
 
   .quick-stats-grid {
@@ -687,7 +700,7 @@
   .play-tracker-card,
   .plays-list-card,
   .games-list-card {
-    margin-bottom: var(--space-3);
+    margin-bottom: 0;
 
     // PrimeNG card body override moved to _component-overrides.scss (DS-EXC-003)
   }

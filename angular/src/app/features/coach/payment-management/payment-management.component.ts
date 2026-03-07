@@ -197,7 +197,7 @@ const BALANCE_FILTERS = [
   ],
   template: `
     <app-main-layout>
-<div class="payment-management-page">
+<div class="payment-management-page ui-page-stack">
         <app-page-header
           title="Payment Management"
           subtitle="Track team dues and payments"

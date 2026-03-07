@@ -6,7 +6,10 @@
 @use "styles/mixins" as *;
 
 .qb-throwing-tracker {
-  @include page-container(var(--content-max-width-lg));
+  width: min(100%, var(--content-max-width-lg));
+  margin-inline: auto;
+  padding: 0;
+  gap: var(--layout-page-section-gap-tight);
 }
 
 /* Status Card - Dashboard consistent */
@@ -15,7 +18,7 @@
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
   box-shadow: var(--shadow-sm);
 }
 
@@ -93,7 +96,7 @@ app-alert.preview-alert {
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
   box-shadow: var(--shadow-sm);
 }
 
@@ -277,7 +280,7 @@ app-alert.preview-alert {
   background: var(--primitive-warning-50);
   border: var(--border-1) solid var(--primitive-warning-300);
   border-radius: var(--radius-lg);
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
 }
 
 .reminder-icon {
@@ -360,6 +363,10 @@ app-alert.preview-alert {
 }
 
 @include respond-to(sm) {
+  .qb-throwing-tracker {
+    gap: var(--space-3);
+  }
+
   .tracker-header {
     flex-direction: column;
     gap: var(--space-3);
@@ -376,5 +383,14 @@ app-alert.preview-alert {
 
   .session-main {
     flex-direction: column;
+  }
+
+  .arm-care-reminder {
+    flex-direction: column;
+    align-items: flex-start;
+
+    app-button {
+      width: 100%;
+    }
   }
 }

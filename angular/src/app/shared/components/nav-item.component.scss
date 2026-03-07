@@ -1,5 +1,5 @@
 @use "styles/mixins" as *;
-@use "styles/design-system/states" as states;
+@use "scss/design-system/states" as states;
 
 :host {
   display: block;

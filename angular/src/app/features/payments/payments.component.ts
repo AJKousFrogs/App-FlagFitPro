@@ -36,6 +36,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
@@ -121,6 +122,7 @@ const PAYMENT_METHOD_CONFIG: Record<
     Dialog,
     
     TableModule,
+    AlertComponent,
 
     CardHeaderComponent,
     MainLayoutComponent,
@@ -132,7 +134,7 @@ const PAYMENT_METHOD_CONFIG: Record<
   ],
   template: `
     <app-main-layout>
-<div class="payments-page">
+<div class="payments-page ui-page-stack">
         <app-page-header
           title="My Payments"
           subtitle="View fees and payment history"
@@ -140,14 +142,13 @@ const PAYMENT_METHOD_CONFIG: Record<
         ></app-page-header>
 
         <!-- Tracking Only Disclaimer -->
-        <div class="payment-disclaimer">
-          <i class="pi pi-info-circle"></i>
-          <p>
-            <strong>Payment Tracking Only:</strong> FlagFit Pro does not process
-            payments. Pay your coach directly (cash, Venmo, Zelle, etc.) and
-            they'll mark it as received.
-          </p>
-        </div>
+        <app-alert
+          class="payment-disclaimer"
+          variant="info"
+          density="compact"
+          title="Payment tracking only"
+          message="FlagFit Pro does not process payments. Pay your coach directly by cash, Venmo, Zelle, or another agreed method, and they will mark it as received."
+        />
 
         <!-- Account Summary -->
         <div class="summary-grid">

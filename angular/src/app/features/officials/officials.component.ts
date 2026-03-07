@@ -77,7 +77,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
   ],
   template: `
     <app-main-layout>
-      <div class="officials-page">
+      <div class="officials-page ui-page-stack">
         <app-page-header
           title="Officials Management"
           subtitle="Schedule and manage referees"
@@ -91,7 +91,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           </div>
         </app-page-header>
 
-        <div class="officials-content">
+        <div class="officials-content ui-page-stack">
           <!-- Officials Directory -->
           <p-card class="directory-card">
             <ng-template #header>

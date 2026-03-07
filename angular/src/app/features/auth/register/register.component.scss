@@ -1,6 +1,8 @@
 .register-page {
   .register-card {
     width: 100%;
+    max-width: 38rem;
+    margin-inline: auto;
   }
 
   .register-title {
@@ -36,5 +38,13 @@
     outline: var(--focus-outline-width) solid var(--color-focus-ring);
     outline-offset: var(--focus-outline-offset);
     border-radius: var(--radius-sm);
+  }
+}
+
+@media (max-width: 767px) {
+  .register-page {
+    .register-card {
+      max-width: none;
+    }
   }
 }

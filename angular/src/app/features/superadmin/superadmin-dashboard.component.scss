@@ -6,13 +6,18 @@
 @use "styles/mixins" as *;
 
 .dashboard-content {
-  padding: var(--space-6);
+  width: min(100%, var(--content-max-width-xl));
+  margin-inline: auto;
+  padding: 0;
+  gap: var(--layout-page-section-gap);
 }
 
 .header-actions {
   display: flex;
   gap: var(--space-3);
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .header-actions a {
@@ -20,7 +25,8 @@
 }
 
 .stats-grid {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .stat-content {
@@ -62,7 +68,7 @@
 .approvals-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
   padding: var(--space-4);
 }
 
@@ -168,7 +174,7 @@
 }
 
 .quick-actions {
-  margin-top: var(--space-6);
+  margin-top: 0;
 }
 
 .quick-actions h3 {
@@ -181,7 +187,7 @@
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .action-card {
@@ -231,7 +237,7 @@
 
 @include respond-to(md) {
   .dashboard-content {
-    padding: var(--space-4);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .stats-grid {
@@ -245,5 +251,9 @@
   .header-actions {
     flex-direction: column;
     width: 100%;
+
+    app-button {
+      width: 100%;
+    }
   }
 }

@@ -6,19 +6,23 @@
    ================================================================ */
 
 .exercise-library-page {
-  @include page-container(var(--content-max-width-2xl));
+  width: min(100%, var(--content-max-width-2xl));
+  margin-inline: auto;
+  padding: 0;
+  gap: var(--layout-page-section-gap);
 }
 
 @include stat-block;
 
 /* ===== HERO SECTION ===== */
 .page-hero {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
   background: var(--surface-primary);
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   box-shadow: var(--shadow-3);
+
   --ui-motion-enter-from-y: calc(-1 * var(--space-5));
   animation: ui-motion-enter-y 400ms ease-out;
   position: relative;
@@ -92,7 +96,7 @@
 
 /* ===== SEARCH & FILTERS ===== */
 .search-filters-section {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 /* Uses .ds-search-bar--flush variant from design-system/utilities.scss */
@@ -176,7 +180,7 @@
 
 /* ===== RESULTS SUMMARY ===== */
 .results-summary {
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
   padding: var(--space-3) var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
@@ -197,7 +201,7 @@
     minmax(var(--grid-card-min-lg), 1fr)
   );
   gap: var(--space-5);
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .exercise-card {
@@ -626,7 +630,7 @@
 
 @include respond-to(md) {
   .exercise-library-page {
-    padding: var(--space-4);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .page-hero {

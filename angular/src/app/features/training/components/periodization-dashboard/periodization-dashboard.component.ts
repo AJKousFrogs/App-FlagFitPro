@@ -64,6 +64,7 @@ import { AcwrService } from "../../../../core/services/acwr.service";
 // Layout Components
 import { MainLayoutComponent } from "../../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../../shared/components/page-header/page-header.component";
+import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 
 interface TimelineEvent {
   phase: string;
@@ -95,10 +96,11 @@ interface TimelineEvent {
     Timeline,
     MainLayoutComponent,
     PageHeaderComponent,
+    AlertComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="periodization-dashboard-page">
+      <div class="periodization-dashboard-page ui-page-stack">
         <!-- Page Header -->
         <app-page-header
           title="Training Periodization"
@@ -107,18 +109,7 @@ interface TimelineEvent {
         >
         </app-page-header>
 
-        <div class="periodization-dashboard">
-          <!-- Header -->
-          <div class="dashboard-header">
-            <h1>
-              <i class="pi pi-calendar"></i>
-              Training Periodization
-            </h1>
-            <p class="subtitle">
-              Evidence-based annual training plan for flag football athletes
-            </p>
-          </div>
-
+        <div class="periodization-dashboard ui-page-stack">
           <!-- Current Phase Card -->
           <p-card class="phase-card">
             <ng-template #header>
@@ -566,10 +557,11 @@ interface TimelineEvent {
                 warning of loadRecommendation()?.warnings || [];
                 track warning
               ) {
-                <div class="warning-item">
-                  <i class="pi pi-exclamation-triangle"></i>
-                  {{ warning }}
-                </div>
+                <app-alert
+                  variant="warning"
+                  density="compact"
+                  [message]="warning"
+                />
               }
             </div>
           }

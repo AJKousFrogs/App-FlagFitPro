@@ -105,7 +105,7 @@ interface SessionTypeOption {
     EmptyStateComponent,
   ],
   template: `
-<div class="qb-throwing-tracker">
+<div class="qb-throwing-tracker ui-page-stack">
       <!-- Progression Status Card -->
       @if (progressionStatus()) {
         <div class="status-card">

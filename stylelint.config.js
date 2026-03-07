@@ -75,6 +75,7 @@ const _deprecatedTokenRegex = DEPRECATED_FONT_TOKENS.map(
 const config = {
   extends: ["stylelint-config-standard-scss"],
   plugins: ["stylelint-scss", "stylelint-order"],
+  ignoreFiles: ["**/src/assets/styles/vendor/**/*.css"],
   rules: {
     // -----------------------------
     // Decision 7: !important allowed only in overrides

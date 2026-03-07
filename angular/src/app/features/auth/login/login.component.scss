@@ -1,6 +1,8 @@
 .login-page {
   .login-card {
     width: 100%;
+    max-width: 32rem;
+    margin-inline: auto;
   }
 
   .form-error-summary--auth {
@@ -15,6 +17,8 @@
   }
 
   .login-form-options {
+    align-items: center;
+    gap: var(--space-3);
     margin-top: var(--space-1);
   }
 
@@ -29,6 +33,10 @@
 
 @media (max-width: 767px) {
   .login-page {
+    .login-card {
+      max-width: none;
+    }
+
     .forgot-link {
       margin-left: 0;
     }

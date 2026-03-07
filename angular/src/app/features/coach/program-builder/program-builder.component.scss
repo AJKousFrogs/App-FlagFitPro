@@ -1,12 +1,12 @@
 @use "styles/mixins" as *;
 
 .program-builder-page {
-  padding: var(--space-4);
-  max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  width: min(100%, var(--content-max-width-xl));
+  margin-inline: auto;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap);
 }
 
 // Tab Navigation
@@ -15,11 +15,13 @@
   gap: var(--space-2);
   border-bottom: var(--border-1) solid var(--ds-border-subtle);
   padding-bottom: var(--space-2);
+  overflow-x: auto;
 
   .tab-btn {
-    padding: var(--space-2) var(--space-4);
-    background: none;
-    border: none;
+    min-height: var(--component-button-height-sm);
+    padding: 0 var(--space-4);
+    background: var(--surface-secondary);
+    border: var(--border-1) solid transparent;
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
@@ -29,15 +31,22 @@
       background-color var(--motion-base) var(--ease-standard),
       border-color var(--motion-base) var(--ease-standard),
       box-shadow var(--motion-base) var(--ease-standard);
+    white-space: nowrap;
 
     &:hover {
-      background: var(--ds-surface-base);
-      color: var(--ds-text-primary);
+      background: var(--surface-card);
+      border-color: var(--color-border-subtle);
+      color: var(--color-text-primary);
     }
 
     &.active {
-      background: var(--ds-primary-green-subtle);
-      color: var(--ds-primary-green);
+      background: var(--color-brand-primary-subtle);
+      color: var(--color-brand-primary);
+      border-color: color-mix(
+        in srgb,
+        var(--color-brand-primary) 22%,
+        transparent
+      );
     }
   }
 }
@@ -55,7 +64,7 @@
 .programs-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 // Program Card
@@ -178,13 +187,13 @@
 .program-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
   max-height: 70vh;
   overflow-y: auto;
 }
 
 .form-section {
-  padding: var(--space-4);
+  padding: var(--component-card-padding-compact);
   background: var(--ds-surface-base);
   border-radius: var(--radius-lg);
 
@@ -218,7 +227,7 @@
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 // Phases Timeline
@@ -367,13 +376,23 @@
 // Responsive
 @include respond-to(md) {
   .program-builder-page {
-    padding: var(--space-3);
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  .program-header {
+    flex-direction: column;
+    gap: var(--space-3);
+
+    .program-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
   }
 
   .program-footer {
     flex-direction: column;
 
-    p-button {
+    app-button {
       width: 100%;
     }
   }

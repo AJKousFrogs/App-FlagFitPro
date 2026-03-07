@@ -2,12 +2,12 @@
 @include stat-block;
 
 .injury-management-page {
-  padding: var(--space-4);
-  max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  width: min(100%, var(--content-max-width-xl));
+  margin-inline: auto;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap);
 }
 
 // Tab Navigation
@@ -19,9 +19,10 @@
   overflow-x: auto;
 
   .tab-btn {
-    padding: var(--space-2) var(--space-4);
-    background: none;
-    border: none;
+    min-height: var(--component-button-height-sm);
+    padding: 0 var(--space-4);
+    background: var(--surface-secondary);
+    border: var(--border-1) solid transparent;
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
@@ -34,13 +35,19 @@
     white-space: nowrap;
 
     &:hover {
-      background: var(--ds-surface-base);
-      color: var(--ds-text-primary);
+      background: var(--surface-card);
+      border-color: var(--color-border-subtle);
+      color: var(--color-text-primary);
     }
 
     &.active {
-      background: var(--ds-primary-green-subtle);
-      color: var(--ds-primary-green);
+      background: var(--color-brand-primary-subtle);
+      color: var(--color-brand-primary);
+      border-color: color-mix(
+        in srgb,
+        var(--color-brand-primary) 22%,
+        transparent
+      );
     }
   }
 }
@@ -49,7 +56,7 @@
 .summary-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .stat-card {
@@ -106,8 +113,12 @@
 
 // Injuries Section
 .injuries-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
+
   h3 {
-    margin: 0 0 var(--space-3) 0;
+    margin: 0;
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
@@ -116,7 +127,7 @@
 
 // Injury Card
 .injury-card {
-  margin-bottom: var(--space-3);
+  margin-bottom: 0;
   border-left: var(--space-1) solid var(--ds-border-default);
 
   &.new {
@@ -414,7 +425,7 @@
 // Responsive
 @include respond-to(md) {
   .injury-management-page {
-    padding: var(--space-3);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .summary-stats {
@@ -423,8 +434,8 @@
 
   .injury-content {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .stage-indicators {
@@ -440,7 +451,7 @@
   .injury-actions {
     flex-direction: column;
 
-    p-button {
+    app-button {
       width: 100%;
     }
   }

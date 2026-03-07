@@ -534,8 +534,12 @@
   }
 
   .data-source-banner.no-data {
-    background: linear-gradient(135deg, #475569 0%, #334155 100%);
-    border-color: #64748b;
+    background: linear-gradient(
+      135deg,
+      var(--color-text-secondary-accessible) 0%,
+      var(--color-text-muted-accessible-hc) 100%
+    );
+    border-color: var(--color-border-accessible);
   }
 
   .data-source-banner.insufficient {
@@ -755,7 +759,7 @@
     pointer-events: none;
     transition:
       transform var(--motion-feedback-duration) var(--ease-standard),
-      visibility 0s linear var(--motion-feedback-duration);
+      visibility var(--transition-instant) linear var(--motion-feedback-duration);
   }
 
   .notifications-panel.open {
@@ -764,7 +768,7 @@
     pointer-events: auto;
     transition:
       transform var(--motion-feedback-duration) var(--ease-standard),
-      visibility 0s linear 0s;
+      visibility var(--transition-instant) linear var(--transition-instant);
   }
 
   .panel-header {

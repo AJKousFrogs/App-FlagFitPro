@@ -117,7 +117,7 @@ const PRACTICE_DURATIONS = [
   ],
   template: `
     <app-main-layout>
-<div class="ai-scheduler-page">
+<div class="ai-scheduler-page ui-page-stack">
         <app-page-header
           title="AI Training Scheduler"
           subtitle="Let Merlin optimize your training plan"

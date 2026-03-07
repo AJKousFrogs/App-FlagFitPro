@@ -103,7 +103,7 @@ const TAG_TYPES = [
   ],
   template: `
     <app-main-layout>
-<div class="film-room-page">
+<div class="film-room-page ui-page-stack">
         <app-page-header
           title="Film Room"
           subtitle="Manage game and practice film"

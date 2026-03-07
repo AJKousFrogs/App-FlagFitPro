@@ -7,15 +7,15 @@
 @include stat-block;
 
 .week-progress-strip {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--primitive-neutral-200);
-  border-radius: var(--radius-xl);
-  padding: var(--space-4) var(--space-5);
+  background: var(--surface-card);
+  border: var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  padding: var(--component-card-padding-compact);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
+  margin: 0;
 }
 
 /* Week Days */
@@ -112,9 +112,9 @@
 /* Week Stats */
 .week-stats {
   display: flex;
-  gap: var(--space-4);
-  padding-left: var(--space-4);
-  border-left: var(--border-1) solid var(--primitive-neutral-200);
+  gap: var(--space-3);
+  padding-left: var(--space-3);
+  border-left: var(--border-1) solid var(--ui-border-subtle);
 }
 
 .stat-item {
@@ -159,7 +159,7 @@
     padding-left: 0;
     padding-top: var(--space-3);
     border-left: none;
-    border-top: var(--border-1) solid var(--primitive-neutral-200);
+    border-top: var(--border-1) solid var(--ui-border-subtle);
     justify-content: center;
   }
 }

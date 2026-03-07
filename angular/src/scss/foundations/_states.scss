@@ -13,7 +13,7 @@
  * That alone kills tons of duplication (179 :hover, 67 :focus-visible in audit).
  *
  * @see scss/utilities/_mixins.scss - focus-visible, interactive-states, ds-focus-ring
- * @see styles/design-system/states.scss - ds-button-states, ds-hover-state, etc.
+ * @see scss/design-system/states.scss - ds-button-states, ds-hover-state, etc.
  */
 
 @use "../utilities/mixins" as mixins;

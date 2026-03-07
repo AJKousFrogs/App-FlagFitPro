@@ -1,10 +1,9 @@
 @use "styles/mixins" as *;
 
 .calendar-page {
-  @include page-container(var(--content-max-width-lg));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  width: min(100%, var(--content-max-width-lg));
+  margin-inline: auto;
+  gap: var(--layout-page-section-gap-tight);
 }
 
 // Calendar Actions
@@ -12,24 +11,29 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
   flex-wrap: wrap;
 }
 
 .calendar-filter-select {
-  width: var(--size-150);
+  width: min(100%, var(--input-min-width-lg));
+  flex: 1 1 var(--input-min-width-lg);
   max-width: 100%;
 }
 
 // Pending Alert
 .pending-alert {
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
 }
 
 // Date Groups
 .date-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
   .date-header {
-    margin: 0 0 var(--space-3) 0;
+    margin: 0;
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
@@ -39,9 +43,7 @@
 }
 
 .events-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 // Event Card
@@ -79,7 +81,7 @@
 
 .event-content {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-5);
   align-items: flex-start;
 }
 
@@ -181,7 +183,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: var(--space-2);
-  min-width: var(--input-min-width-sm);
+  min-width: var(--input-min-width-md);
 
   .current-rsvp {
     display: flex;
@@ -387,7 +389,7 @@
     align-items: stretch;
 
     p-select,
-    p-button {
+    app-button {
       width: 100%;
     }
   }

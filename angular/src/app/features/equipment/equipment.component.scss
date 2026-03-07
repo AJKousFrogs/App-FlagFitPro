@@ -1,10 +1,14 @@
+@use "styles/mixins" as *;
+
 // ============================================================================
 // equipment.component Styles
 // Design System Compliant
 // ============================================================================
 
 .equipment-page {
-  padding: var(--space-6);
+  width: min(100%, var(--content-max-width-2xl));
+  margin-inline: auto;
+  gap: var(--layout-page-section-gap);
 }
 
 /* Uses shared .header-actions from _dashboard.scss */
@@ -12,13 +16,13 @@
 .equipment-content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--layout-page-section-gap);
 }
 
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .summary-content {
@@ -32,13 +36,13 @@
   color: var(--color-brand-primary);
 
   &.success {
-    color: var(--green-500);
+    color: var(--color-status-success);
   }
   &.info {
-    color: var(--blue-500);
+    color: var(--color-status-info);
   }
   &.warning {
-    color: var(--orange-500);
+    color: var(--color-status-warning);
   }
 }
 
@@ -58,7 +62,7 @@
 }
 
 .summary-card.alert {
-  border-left: var(--space-1) solid var(--orange-500);
+  border-left: var(--space-1) solid var(--color-status-warning);
 }
 
 .item-cell {
@@ -102,7 +106,7 @@
 
   .available {
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--green-600);
+    color: var(--color-status-success);
   }
 
   .separator {
@@ -143,4 +147,18 @@
   background: var(--surface-100);
   border-radius: var(--radius-lg);
   margin: 0;
+}
+
+@include respond-to(md) {
+  .equipment-page {
+    padding: 0;
+  }
+
+  .equipment-content {
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
 }

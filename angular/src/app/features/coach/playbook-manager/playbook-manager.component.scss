@@ -2,12 +2,12 @@
 @include stat-block;
 
 .playbook-manager-page {
-  padding: var(--space-4);
-  max-width: var(--content-max-width-2xl);
-  margin: 0 auto;
+  width: min(100%, var(--content-max-width-2xl));
+  margin-inline: auto;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap);
 }
 
 // Tab Navigation
@@ -19,9 +19,10 @@
   overflow-x: auto;
 
   .tab-btn {
-    padding: var(--space-2) var(--space-4);
-    background: none;
-    border: none;
+    min-height: var(--component-button-height-sm);
+    padding: 0 var(--space-4);
+    background: var(--surface-secondary);
+    border: var(--border-1) solid transparent;
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
@@ -34,13 +35,19 @@
     white-space: nowrap;
 
     &:hover {
-      background: var(--ds-surface-base);
-      color: var(--ds-text-primary);
+      background: var(--surface-card);
+      border-color: var(--color-border-subtle);
+      color: var(--color-text-primary);
     }
 
     &.active {
-      background: var(--ds-primary-green-subtle);
-      color: var(--ds-primary-green);
+      background: var(--color-brand-primary-subtle);
+      color: var(--color-brand-primary);
+      border-color: color-mix(
+        in srgb,
+        var(--color-brand-primary) 22%,
+        transparent
+      );
     }
   }
 }
@@ -48,7 +55,7 @@
 // Filters Row
 .filters-row {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
   flex-wrap: wrap;
 
   .filter-search {
@@ -70,7 +77,7 @@
 .stats-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .stat-card {
@@ -109,7 +116,7 @@
     auto-fill,
     minmax(var(--grid-card-min-md), 1fr)
   );
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .play-card {
@@ -484,7 +491,7 @@
 // Responsive
 @include respond-to(md) {
   .playbook-manager-page {
-    padding: var(--space-3);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .filters-row {

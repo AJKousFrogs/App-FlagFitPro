@@ -7,7 +7,10 @@
 @include stat-block;
 
 .return-to-play-page {
-  padding: var(--space-6);
+  width: min(100%, var(--content-max-width-xl));
+  margin-inline: auto;
+  padding: 0;
+  gap: var(--layout-page-section-gap);
 }
 
 .empty-icon {
@@ -19,12 +22,12 @@
 
 // ===== Empty State =====
 .no-protocol-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 // ===== Protocol Overview Card =====
 .protocol-overview-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .protocol-header {
@@ -89,7 +92,7 @@
 
 // ===== Stages Visual =====
 .stages-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .stages-visual {
@@ -206,7 +209,7 @@
 
 // ===== Current Stage Card =====
 .current-stage-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .stage-detail-header {
@@ -341,7 +344,7 @@
 
 // ===== Daily Tracking =====
 .daily-tracking-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .checkin-form {
@@ -442,14 +445,14 @@
 
 // ===== Chart Card =====
 .chart-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 
   // PrimeNG chart override moved to _component-overrides.scss (DS-EXC-017)
 }
 
 // ===== Checkins Table =====
 .checkins-card {
-  margin-bottom: var(--space-6);
+  margin-bottom: 0;
 }
 
 .notes-cell {
@@ -537,7 +540,7 @@
 // ===== Responsive =====
 @include respond-to(md) {
   .return-to-play-page {
-    padding: var(--space-4);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .protocol-header {

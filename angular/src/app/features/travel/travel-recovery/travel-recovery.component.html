@@ -1,5 +1,5 @@
 <app-main-layout>
-      <div class="travel-recovery-page">
+      <div class="travel-recovery-page ui-page-stack">
         <app-page-header
           title="Travel Recovery Protocol"
           subtitle="Optimize your recovery for peak competition performance"
@@ -43,7 +43,7 @@
 
         @if (travelType() === "flight" && !hasActivePlan()) {
           <!-- Flight Trip Planning Form -->
-          <div class="planning-section">
+        <div class="planning-section">
             <!-- Olympic Quick Select -->
             <p-card class="olympic-card">
               <ng-template #header>

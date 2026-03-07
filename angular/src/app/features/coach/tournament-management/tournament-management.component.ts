@@ -136,7 +136,7 @@ const POSITIONS = [
   ],
   template: `
     <app-main-layout>
-<div class="tournament-management-page">
+<div class="tournament-management-page ui-page-stack">
         <app-page-header
           title="Tournament Management"
           subtitle="Manage registrations and lineups"

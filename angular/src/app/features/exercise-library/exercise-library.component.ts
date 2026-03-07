@@ -75,7 +75,7 @@ interface Category {
   ],
   template: `
     <app-main-layout>
-      <div class="exercise-library-page">
+      <div class="exercise-library-page ui-page-stack">
         <!-- Premium Header with Stats -->
         <div class="page-hero">
           <div class="hero-content">

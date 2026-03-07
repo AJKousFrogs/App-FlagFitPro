@@ -50,7 +50,7 @@ import {
   ],
   template: `
     <app-main-layout>
-      <div class="dashboard-content">
+      <div class="dashboard-content ui-page-stack">
         <app-page-header
           title="Superadmin Dashboard"
           subtitle="Platform management and approval workflow"

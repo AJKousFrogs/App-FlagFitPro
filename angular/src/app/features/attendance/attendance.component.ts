@@ -73,7 +73,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   ],
   template: `
     <app-main-layout>
-      <div class="attendance-page">
+      <div class="attendance-page ui-page-stack">
         <app-page-header
           title="Practice Attendance"
           subtitle="Track and manage team attendance"
@@ -87,7 +87,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           </div>
         </app-page-header>
 
-        <div class="attendance-content">
+        <div class="attendance-content ui-page-stack">
           <!-- Stats Overview -->
           <div class="stats-grid">
             <p-card class="stat-card">

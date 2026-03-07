@@ -55,6 +55,7 @@
   height: var(--indicator-size-sm);
   border-radius: var(--radius-circle);
   background: var(--ds-primary-green);
+
   --ui-motion-fade-pulse-opacity-mid: var(--opacity-dimmed);
   animation: ui-motion-fade-pulse 2s infinite;
 }

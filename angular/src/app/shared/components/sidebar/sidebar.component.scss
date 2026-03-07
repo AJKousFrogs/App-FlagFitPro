@@ -45,6 +45,7 @@ app-close-button.sidebar-close-btn {
   right: var(--space-3);
   -webkit-tap-highlight-color: transparent;
   z-index: var(--z-dropdown);
+
   --close-button-bg: var(--surface-tertiary);
   --close-button-bg-hover: var(--surface-secondary);
 }

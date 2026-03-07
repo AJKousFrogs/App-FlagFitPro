@@ -92,7 +92,7 @@ interface FilterChip {
   ],
   template: `
 <app-main-layout>
-      <div class="video-feed-page">
+      <div class="video-feed-page ui-page-stack">
         <!-- Hero Header -->
         <header class="feed-header">
           <div class="header-content">

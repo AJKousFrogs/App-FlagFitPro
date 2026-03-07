@@ -85,7 +85,7 @@ type ReturnData = { condition: Condition; notes: string };
   ],
   template: `
     <app-main-layout>
-      <div class="equipment-page">
+      <div class="equipment-page ui-page-stack">
         <app-page-header
           title="Equipment Management"
           subtitle="Track and manage team gear"
@@ -99,7 +99,7 @@ type ReturnData = { condition: Condition; notes: string };
           </div>
         </app-page-header>
 
-        <div class="equipment-content">
+        <div class="equipment-content ui-page-stack">
           <!-- Summary Cards -->
           @if (summary()) {
             <div class="summary-grid">

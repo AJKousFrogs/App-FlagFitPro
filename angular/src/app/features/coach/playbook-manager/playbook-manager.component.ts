@@ -118,7 +118,7 @@ const ROUTES = [
   ],
   template: `
     <app-main-layout>
-<div class="playbook-manager-page">
+<div class="playbook-manager-page ui-page-stack">
         <app-page-header
           title="Playbook Manager"
           subtitle="Create and manage team plays"

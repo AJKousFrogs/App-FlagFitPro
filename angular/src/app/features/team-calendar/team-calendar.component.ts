@@ -111,7 +111,7 @@ const EVENT_TYPE_CONFIG: Record<
   ],
   template: `
     <app-main-layout>
-<div class="calendar-page">
+<div class="calendar-page ui-page-stack">
         <app-page-header
           title="Team Calendar"
           subtitle="Upcoming events and your RSVPs"
@@ -119,7 +119,7 @@ const EVENT_TYPE_CONFIG: Record<
         ></app-page-header>
 
         <!-- Calendar Actions -->
-        <div class="calendar-actions">
+        <div class="calendar-actions ui-section-card ui-section-card--compact">
           <p-select
             [options]="typeFilterOptions"
             [ngModel]="selectedType"
@@ -157,12 +157,12 @@ const EVENT_TYPE_CONFIG: Record<
 
         <!-- Events List by Date -->
         @for (dateGroup of groupedEvents(); track dateGroup.date) {
-          <div class="date-group">
+          <div class="date-group ui-page-stack--tight">
             <h3 class="date-header">
               {{ formatDateHeader(dateGroup.date) }}
             </h3>
 
-            <div class="events-list">
+            <div class="events-list ui-page-stack--tight">
               @for (event of dateGroup.events; track event.id) {
                 <p-card class="event-card" [class]="'type-' + event.type">
                   <div class="event-content">
@@ -236,9 +236,12 @@ const EVENT_TYPE_CONFIG: Record<
                       </div>
 
                       <app-button
+                        variant="secondary"
                         size="sm"
+                        iconLeft="pi-user-edit"
                         (clicked)="openRsvpDialog(event)"
-                      ></app-button>
+                        >Manage RSVP</app-button
+                      >
                     </div>
                   </div>
                 </p-card>

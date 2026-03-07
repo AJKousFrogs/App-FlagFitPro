@@ -1,46 +1,21 @@
 @use "styles/mixins" as *;
 
 .payments-page {
-  @include page-container(var(--content-max-width-lg));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  width: min(100%, var(--content-max-width-lg));
+  margin-inline: auto;
+  gap: var(--layout-page-section-gap);
 }
 
 // Summary Grid
 // Payment Disclaimer
 .payment-disclaimer {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  background: var(--color-status-info-surface);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--color-status-info);
-
-  i {
-    color: var(--color-status-info);
-    font-size: var(--ds-font-size-xl);
-    flex-shrink: 0;
-    margin-top: var(--space-1);
-  }
-
-  p {
-    margin: 0;
-    font-size: var(--ds-font-size-md);
-    color: var(--color-text-primary);
-    line-height: var(--ds-line-height-normal);
-
-    strong {
-      font-weight: var(--ds-font-weight-semibold);
-    }
-  }
+  margin: 0;
 }
 
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .summary-card {
@@ -340,7 +315,7 @@
 // Responsive
 @include respond-to(md) {
   .payments-page {
-    padding: var(--space-3);
+    padding: 0;
   }
 
   .summary-grid {

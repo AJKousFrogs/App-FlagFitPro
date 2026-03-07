@@ -28,6 +28,7 @@ import {
     normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { ToastService } from "../../core/services/toast.service";
+import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -55,6 +56,7 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
     StepList,
     Step,
     ProgressBar,
+    AlertComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,

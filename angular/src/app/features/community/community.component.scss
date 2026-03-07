@@ -813,6 +813,7 @@
 .comment-item {
   display: flex;
   gap: var(--space-3);
+
   --ui-motion-enter-from-y: var(--space-5);
   animation: ui-motion-enter-y 0.3s ease-out both;
 }

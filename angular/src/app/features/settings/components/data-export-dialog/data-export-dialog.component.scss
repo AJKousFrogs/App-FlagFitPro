@@ -5,12 +5,18 @@
 }
 
 .export-content {
-  padding: var(--space-4) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
+  padding: 0 var(--component-card-padding) var(--component-card-padding);
 }
 
 .export-format-section,
 .export-data-section {
-  margin-bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
 }
 
 .export-format-section h4,
@@ -18,7 +24,7 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
+  margin: 0;
 }
 
 .format-options {
@@ -32,10 +38,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-4);
+  padding: var(--component-card-padding-compact);
   background: var(--surface-secondary);
   border: var(--border-2) solid var(--color-border-muted);
-  border-radius: var(--radius-lg);
+  border-radius: var(--component-card-radius);
   cursor: pointer;
   transition:
     background-color var(--motion-fast) var(--ease-standard),
@@ -86,9 +92,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--component-card-padding-compact);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  border-radius: var(--component-card-radius);
   transition: background var(--transition-fast);
 
   @include ds-hover-state(var(--surface-tertiary));
@@ -113,10 +119,10 @@
 }
 
 .export-progress-section {
-  margin-top: var(--space-4);
-  padding: var(--space-4);
+  margin: 0;
+  padding: var(--component-card-padding-compact);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  border-radius: var(--component-card-radius);
 }
 
 .export-progress-section .progress-label {
@@ -135,4 +141,15 @@
   font-size: var(--ds-font-size-sm);
   color: var(--ds-color-warning);
   text-align: center;
+}
+
+@include respond-to(md) {
+  .export-content {
+    padding: 0 var(--component-card-padding-compact)
+      var(--component-card-padding-compact);
+  }
+
+  .format-options {
+    grid-template-columns: 1fr;
+  }
 }

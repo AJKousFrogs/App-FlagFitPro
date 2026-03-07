@@ -172,7 +172,7 @@ const PHASE_PRESETS = [
   ],
   template: `
     <app-main-layout>
-<div class="program-builder-page">
+<div class="program-builder-page ui-page-stack">
         <app-page-header
           title="Training Programs"
           subtitle="Build and assign training plans"

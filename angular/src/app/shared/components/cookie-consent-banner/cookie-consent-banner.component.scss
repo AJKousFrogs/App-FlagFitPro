@@ -17,6 +17,7 @@
   background: var(--surface-primary);
   border-top: var(--border-1) solid var(--color-border-subtle);
   box-shadow: var(--shadow-lg), var(--shadow-sm);
+
   --ui-motion-enter-from-y: 100%;
   animation: ui-motion-enter-y var(--motion-slow) var(--ease-decelerate);
   backdrop-filter: blur(calc(var(--size-200) * 0.375));
@@ -84,6 +85,7 @@
   padding: var(--space-5);
   margin-top: var(--space-2);
   margin-bottom: var(--space-1);
+
   --ui-motion-enter-from-y: calc(var(--space-2) * -1);
   animation: ui-motion-enter-y var(--motion-base) var(--ease-standard);
   box-shadow: var(--shadow-sm);

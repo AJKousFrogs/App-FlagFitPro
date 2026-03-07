@@ -6,14 +6,14 @@
 @use "styles/mixins" as *;
 
 .stats-section {
-  margin-bottom: var(--space-6);
+  margin: 0;
 }
 
 .stat-card {
   background: var(--surface-primary);
   border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--radius-xl);
-  padding: var(--space-5);
+  border-radius: var(--component-card-radius);
+  padding: var(--component-card-padding-compact);
   display: flex;
   align-items: center;
   gap: var(--space-4);

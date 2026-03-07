@@ -1,0 +1,13 @@
+/**
+ * Design System Index - Layer 1 of 7-Layer Cascade
+ * Loaded first in styles.scss
+ *
+ * 1. Design tokens (absolute source of truth)
+ *    → tokens/design-system-tokens
+ * Then: typography mixins, states, ds-search-bar utilities
+ */
+
+@forward "../tokens/design-system-tokens";
+@forward "typography";
+@forward "states";
+@forward "utilities";

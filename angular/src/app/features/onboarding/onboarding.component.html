@@ -1,5 +1,5 @@
 <app-main-layout>
-      <div class="onboarding-page">
+      <div class="onboarding-page ui-page-stack">
         <app-page-header
           title="Set Up Your FlagFit Profile"
           subtitle="Takes about 3-5 minutes. We'll personalize your training and team access."
@@ -36,25 +36,29 @@
           </div>
 
           @if (hasPendingRequirements()) {
-            <div class="completion-checklist">
-              <div class="checklist-header">
-                <i class="pi pi-exclamation-circle"></i>
-                <span>Next tasks to finish</span>
+            <app-alert
+              class="completion-checklist"
+              variant="warning"
+              density="compact"
+              title="Next tasks to finish"
+            >
+              <div class="checklist-body">
+                <div class="checklist-items">
+                  @for (item of getPendingRequirementLabels(); track item) {
+                    <span class="checklist-item">{{ item }}</span>
+                  }
+                  @if (getCompletionStats().remaining > 4) {
+                    <span class="checklist-item more"
+                      >+{{ getCompletionStats().remaining - 4 }} more</span
+                    >
+                  }
+                </div>
               </div>
-              <div class="checklist-items">
-                @for (item of getPendingRequirementLabels(); track item) {
-                  <span class="checklist-item">{{ item }}</span>
-                }
-                @if (getCompletionStats().remaining > 4) {
-                  <span class="checklist-item more"
-                    >+{{ getCompletionStats().remaining - 4 }} more</span
-                  >
-                }
-              </div>
-            </div>
+            </app-alert>
           }
 
           <p-stepper
+            class="onboarding-stepper"
             [value]="state.currentStep()"
             (valueChange)="onStepperChange($event)"
             [linear]="false"

@@ -39,7 +39,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
   ],
   template: `
     <app-main-layout>
-      <div class="goal-planner-page">
+      <div class="goal-planner-page ui-page-stack">
         <!-- Page Header -->
         <app-page-header
           title="Goal-Based Training Planner"
@@ -48,10 +48,10 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
         >
         </app-page-header>
 
-        <div class="goal-planner-content">
+        <div class="goal-planner-content ui-page-stack">
           <!-- Goal Selection -->
-          <div class="goal-selection mb-6 p-4 bg-surface-secondary rounded-lg">
-            <label class="block text-sm font-semibold text-text-primary mb-3"
+          <div class="goal-selection">
+            <label class="goal-selection__label"
               >Select Training Goal</label
             >
             <p-select
@@ -60,37 +60,34 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
               optionLabel="label"
               optionValue="value"
               placeholder="Choose your primary goal"
-              class="w-full"
               (onChange)="onGoalValueChange($event.value)"
             >
             </p-select>
-            <p class="text-xs text-text-secondary mt-2">
+            <p class="goal-selection__hint">
               The plan will auto-adjust based on your ACWR and readiness scores
             </p>
           </div>
 
           <!-- Current Status -->
           @if (selectedGoal()) {
-            <div
-              class="status-section mb-6 p-4 bg-surface-secondary rounded-lg"
-            >
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="status-section">
+              <div class="status-grid">
                 <div class="stat-item stat-block stat-block--compact">
-                  <div class="stat-block__label text-xs text-text-secondary">
+                  <div class="stat-block__label">
                     Current ACWR
                   </div>
                   <div
-                    class="stat-block__value text-lg font-bold"
+                    class="stat-block__value"
                     [class]="getACWRColorClass()"
                   >
                     {{ currentACWR() | number: "1.2-2" }}
                   </div>
                 </div>
                 <div class="stat-item stat-block stat-block--compact">
-                  <div class="stat-block__label text-xs text-text-secondary">
+                  <div class="stat-block__label">
                     Readiness
                   </div>
-                  <div class="stat-block__value text-lg font-bold">
+                  <div class="stat-block__value">
                     <app-status-tag
                       [severity]="getReadinessSeverity()"
                       [value]="readinessLevel() ?? 'unknown' | titlecase"
@@ -99,10 +96,10 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                   </div>
                 </div>
                 <div class="stat-item stat-block stat-block--compact">
-                  <div class="stat-block__label text-xs text-text-secondary">
+                  <div class="stat-block__label">
                     Progression Rule
                   </div>
-                  <div class="stat-block__value text-sm font-semibold">
+                  <div class="stat-block__value stat-block__value--sm">
                     {{ getProgressionRule() }}
                   </div>
                 </div>
@@ -117,8 +114,8 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
             <!-- Weekly Plan -->
             @if (weeklyPlan()) {
               <div class="weekly-plan-section">
-                <div class="flex items-center justify-between mb-4">
-                  <h3 class="text-xl font-semibold text-text-primary">
+                <div class="plan-header">
+                  <h3 class="plan-header__title">
                     Weekly Training Plan - {{ getGoalLabel() }}
                   </h3>
                   <app-status-tag
@@ -128,12 +125,10 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                   />
                 </div>
 
-                <div
-                  class="sessions-grid grid grid-cols-1 md:grid-cols-7 gap-4"
-                >
+                <div class="sessions-grid">
                   @for (session of weeklyPlan()?.sessions; track session.day) {
                     <div
-                      class="session-card p-4 rounded-lg border-2 bg-white"
+                      class="session-card"
                       [class]="getSessionCardClass(session)"
                     >
                       <div class="session-header mb-3">
@@ -178,9 +173,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                           </ul>
                         </div>
 
-                        <div
-                          class="session-metrics grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-200"
-                        >
+                        <div class="session-metrics">
                           <div>
                             <div class="text-xs text-text-secondary">
                               Duration
@@ -219,7 +212,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                         </div>
 
                         @if (session.notes) {
-                          <div class="notes mt-2 pt-2 border-t border-gray-100">
+                          <div class="notes">
                             <div class="text-xs text-text-secondary italic">
                               {{ session.notes }}
                             </div>
@@ -231,13 +224,11 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                 </div>
 
                 <!-- Plan Summary -->
-                <div
-                  class="plan-summary mt-6 p-4 bg-surface-secondary rounded-lg"
-                >
-                  <h4 class="font-semibold text-text-primary mb-3">
+                <div class="plan-summary">
+                  <h4 class="plan-summary__title">
                     Plan Summary
                   </h4>
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div class="plan-summary-grid">
                     <div>
                       <div class="text-xs text-text-secondary">
                         Total Volume
@@ -294,7 +285,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 
           <!-- Generate Button -->
           @if (selectedGoal()) {
-            <div class="actions mt-6 flex justify-end gap-3">
+            <div class="actions">
               <app-button
                 variant="outlined"
                 iconLeft="pi-save"

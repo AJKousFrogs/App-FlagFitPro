@@ -13,16 +13,20 @@
       var(--ds-primary-green-ultra-subtle),
       var(--surface-card)
     );
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
+    border-radius: var(--component-card-radius);
+    padding: var(--component-card-padding-compact);
     border: var(--border-1) solid var(--ds-primary-green-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .summary-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--space-4);
+    gap: var(--space-3);
+    margin: 0;
 
     .header-content {
       display: flex;
@@ -45,8 +49,8 @@
   .progress-overview {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
+    gap: var(--layout-page-section-gap-tight);
+    margin: 0;
   }
 
   .progress-ring {
@@ -128,9 +132,9 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2);
+    padding: var(--component-card-padding-compact);
     background: var(--surface-card);
-    border-radius: var(--radius-lg);
+    border-radius: var(--component-card-radius);
     font-size: var(--ds-font-size-md);
 
     &.current {
@@ -165,17 +169,23 @@
 
 /* Dialog Styles */
 .roadmap-full {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap);
+
   .stats-header {
     display: flex;
     justify-content: space-around;
-    padding: var(--space-6);
+    padding: var(--component-card-padding);
     background: linear-gradient(
       135deg,
       var(--ds-primary-green-subtle),
       var(--ds-primary-green-ultra-subtle)
     );
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-6);
+    border-radius: var(--component-card-radius);
+    margin: 0;
+    gap: var(--layout-page-section-gap-tight);
+    flex-wrap: wrap;
 
     .stat-item {
       text-align: center;
@@ -198,10 +208,12 @@
   }
 
   .cycles-section {
-    margin-bottom: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-page-section-gap-tight);
 
     h4 {
-      margin: 0 0 var(--space-4) 0;
+      margin: 0;
       font-size: var(--ds-font-size-md);
     }
   }
@@ -212,13 +224,13 @@
       auto-fill,
       minmax(var(--grid-card-min-md), 1fr)
     );
-    gap: var(--space-4);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .cycle-card {
     background: var(--surface-ground);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
+    border-radius: var(--component-card-radius);
+    padding: var(--component-card-padding-compact);
     border: var(--border-2) solid var(--surface-border);
 
     &.active {
@@ -284,10 +296,12 @@
   }
 
   .timeline-section {
-    margin-bottom: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-page-section-gap-tight);
 
     h4 {
-      margin: 0 0 var(--space-4) 0;
+      margin: 0;
       font-size: var(--ds-font-size-md);
     }
   }
@@ -303,8 +317,8 @@
       var(--primitive-blue-600),
       var(--primitive-yellow-400)
     );
-    border-radius: var(--radius-lg);
-    padding: var(--space-8);
+    border-radius: var(--component-card-radius);
+    padding: var(--component-card-padding);
     text-align: center;
     color: var(--color-text-on-primary);
 
@@ -352,6 +366,24 @@
     .countdown-item .label {
       font-size: var(--ds-font-size-md);
       opacity: var(--opacity-strong);
+    }
+  }
+}
+
+@media (width <= 768px) {
+  .roadmap-panel {
+    .summary-header,
+    .progress-overview,
+    .milestone-item .milestone-info {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .roadmap-full {
+    .stats-header,
+    .olympic-countdown .countdown-numbers {
+      flex-direction: column;
     }
   }
 }

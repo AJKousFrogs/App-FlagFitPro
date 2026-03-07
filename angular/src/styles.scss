@@ -16,10 +16,10 @@
    ============================================ */
 
 /* TIER 1: Tokens + design-system typography/states/utilities (single source) */
-@use "./styles/design-system/index" as *;
-@use "./styles/design-system/elite-command-center.tokens";
-@use "./styles/design-system/elite-phase2-layout";
-@use "./styles/design-system/elite-phase2-auth";
+@use "./scss/design-system/index" as *;
+@use "./scss/design-system/elite-command-center.tokens";
+@use "./scss/design-system/elite-phase2-layout";
+@use "./scss/design-system/elite-phase2-auth";
 /* TIER 2: Utilities - mixins, responsive, layout, typography-system */
 @use "./scss/utilities" as *;
 @use "./assets/fonts/poppins";

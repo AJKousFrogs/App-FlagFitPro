@@ -88,7 +88,7 @@ const DEBT_THRESHOLDS = {
   ],
   template: `
     <app-main-layout>
-<div class="sleep-debt-page">
+<div class="sleep-debt-page ui-page-stack">
         <app-page-header
           title="Sleep Debt Tracker"
           subtitle="Understanding your sleep deficit and its impact on performance"

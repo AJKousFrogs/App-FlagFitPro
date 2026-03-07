@@ -143,7 +143,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
   ],
   template: `
     <app-main-layout>
-<div class="practice-planner-page">
+<div class="practice-planner-page ui-page-stack">
         <app-page-header
           title="Practice Planner"
           subtitle="Design detailed practice sessions"

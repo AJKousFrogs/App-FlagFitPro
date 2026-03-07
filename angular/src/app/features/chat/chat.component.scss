@@ -38,6 +38,7 @@
   background: var(--surface-primary);
   border-bottom: var(--border-1) solid var(--color-border-secondary);
   box-shadow: var(--shadow-2);
+
   --ui-motion-enter-from-y: calc(-1 * var(--space-5));
   animation: ui-motion-enter-y 400ms ease-out;
 }
@@ -137,6 +138,7 @@
   overflow-y: auto;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
+
   --ui-motion-enter-from-x: calc(-1 * var(--space-5));
   animation: ui-motion-enter-x 400ms ease-out;
 }
@@ -288,6 +290,7 @@
   font-size: var(--ds-font-size-3xl);
   color: var(--ds-primary-green);
   opacity: var(--opacity-quarter);
+
   --ui-motion-scale-pulse-mid: 0.95;
   --ui-motion-scale-pulse-opacity-mid: var(--opacity-subtle);
   animation: ui-motion-scale-pulse 2s ease-in-out infinite;
@@ -313,6 +316,7 @@
 .important-banner-alert {
   margin-inline: var(--space-4);
   margin-top: var(--space-4);
+
   --ui-motion-enter-from-y: calc(-1 * var(--space-5));
   animation: ui-motion-enter-y 400ms ease-out;
 }
@@ -337,6 +341,7 @@
 
 .message {
   position: relative;
+
   --ui-motion-enter-from-y: var(--space-4);
   animation: ui-motion-enter-y 300ms ease-out;
 }

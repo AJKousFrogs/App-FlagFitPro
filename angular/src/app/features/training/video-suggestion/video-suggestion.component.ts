@@ -117,7 +117,7 @@ interface VideoSuggestion {
   ],
   template: `
 <app-main-layout>
-      <div class="suggestion-page">
+      <div class="suggestion-page ui-page-stack">
         <!-- Hero Header -->
         <header class="page-header">
           <div class="header-content">

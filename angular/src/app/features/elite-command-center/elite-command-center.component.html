@@ -1,6 +1,6 @@
 <app-main-layout>
   <section
-    class="elite-shell"
+    class="elite-shell ui-page-stack"
     role="application"
     aria-label="Elite Athletic Command Center"
     [attr.data-mode]="activeMode()"
@@ -15,15 +15,16 @@
         </ng-template>
 
         <ng-template #end>
-          <button
-            type="button"
-            class="theme-btn interactive-surface"
-            (click)="toggleTheme()"
-            [attr.aria-label]="'Switch to ' + (theme() === 'dark' ? 'light' : 'dark') + ' mode'"
+          <app-button
+            variant="secondary"
+            size="sm"
+            [iconLeft]="theme() === 'dark' ? 'pi-sun' : 'pi-moon'"
+            class="theme-btn"
+            (clicked)="toggleTheme()"
+            [ariaLabel]="'Switch to ' + (theme() === 'dark' ? 'light' : 'dark') + ' mode'"
           >
-            <i [class]="theme() === 'dark' ? 'pi pi-sun' : 'pi pi-moon'"></i>
             <span>{{ theme() === "dark" ? "Light" : "Dark" }}</span>
-          </button>
+          </app-button>
         </ng-template>
       </p-menubar>
 
@@ -41,14 +42,14 @@
       message="Two athletes are inside critical injury risk bands. Immediate protocol adaptation required."
     >
       <div class="critical-banner-actions">
-        <button
-          type="button"
-          class="interactive-surface collapse-btn"
-          (click)="alertCollapsed.set(!alertCollapsed())"
-          aria-label="Toggle alert details"
-        >
-          <i [class]="alertCollapsed() ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"></i>
-        </button>
+        <app-icon-button
+          variant="text"
+          size="sm"
+          [icon]="alertCollapsed() ? 'pi-chevron-down' : 'pi-chevron-up'"
+          class="collapse-btn"
+          (clicked)="alertCollapsed.set(!alertCollapsed())"
+          ariaLabel="Toggle alert details"
+        />
       </div>
     </app-alert>
 
@@ -127,7 +128,7 @@
           </ul>
         </p-card>
 
-        <p-card header="Roster Status" styleClass="elite-card mt-4">
+        <p-card header="Roster Status" styleClass="elite-card">
           <p-dataView [value]="queue()" layout="list" [paginator]="false">
             <ng-template #listItem let-item>
               <div class="roster-item">
@@ -208,7 +209,13 @@
                 <td>{{ row.issue }}</td>
                 <td>{{ row.eta }}</td>
                 <td>
-                  <button type="button" class="interactive-surface view-btn">Review</button>
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    class="view-btn"
+                    (clicked)="openDetails(row); $event.stopPropagation()"
+                    >Review</app-button
+                  >
                 </td>
               </tr>
             </ng-template>
@@ -222,7 +229,7 @@
           ></p-paginator>
         </p-card>
 
-        <p-card header="Training & Event Timeline" styleClass="elite-card mt-4">
+        <p-card header="Training & Event Timeline" styleClass="elite-card">
           <p-timeline [value]="timeline()" align="left" styleClass="elite-timeline">
             <ng-template #content let-event>
               <div
@@ -241,7 +248,7 @@
           </p-timeline>
         </p-card>
 
-        <p-card header="Daily Protocol Checklist" styleClass="elite-card mt-4">
+        <p-card header="Daily Protocol Checklist" styleClass="elite-card">
           <p-stepper [value]="1" [linear]="false" aria-label="Daily protocol progress">
             <p-step-list>
               @for (step of protocolSteps(); track step.label; let i = $index) {
@@ -294,15 +301,21 @@
           </ul>
         </p-card>
 
-        <p-card header="Action Console" styleClass="elite-card mt-4">
+        <p-card header="Action Console" styleClass="elite-card">
           <div class="action-stack" role="group" aria-label="Quick actions">
-            <button type="button" class="interactive-surface action-btn">Adjust Session Intensity</button>
-            <button type="button" class="interactive-surface action-btn">Dispatch Recovery Alert</button>
-            <button type="button" class="interactive-surface action-btn">Open Medical Review</button>
+            <app-button variant="secondary" [fullWidth]="true"
+              >Adjust Session Intensity</app-button
+            >
+            <app-button variant="secondary" [fullWidth]="true"
+              >Dispatch Recovery Alert</app-button
+            >
+            <app-button variant="secondary" [fullWidth]="true"
+              >Open Medical Review</app-button
+            >
           </div>
         </p-card>
 
-        <p-card header="Interaction Spec" styleClass="elite-card mt-4">
+        <p-card header="Interaction Spec" styleClass="elite-card">
           <ul class="caption-list" role="list">
             @for (rule of interactionBehaviorSpecs; track rule.component) {
               <li>
@@ -416,7 +429,7 @@
             <span><strong>Unit:</strong> {{ item.unit }}</span>
             <span><strong>Time:</strong> {{ item.eta }}</span>
           </div>
-          <button type="button" class="interactive-surface action-btn">Open Full Athlete Profile</button>
+          <app-button [fullWidth]="true">Open Full Athlete Profile</app-button>
         </div>
       }
     </p-drawer>

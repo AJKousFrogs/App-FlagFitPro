@@ -904,6 +904,7 @@ background: linear-gradient(135deg,var(--color-status-error),var(--primitive-err
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
   box-shadow: var(--shadow-md), var(--shadow-sm);
+
   --ui-motion-enter-from-y: var(--space-5);
   animation: ui-motion-enter-y 400ms ease-out backwards;
   position: relative;

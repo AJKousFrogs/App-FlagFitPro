@@ -104,6 +104,7 @@
   inset: -calc(var(--space-2) + var(--space-0-5));
   border: var(--space-0-75) solid var(--color-status-error);
   border-radius: var(--radius-circle);
+
   --ui-motion-ring-end-scale: 1.15;
   --ui-motion-ring-start-opacity: var(--opacity-dimmed);
   animation: ui-motion-ring-expand 1s ease-out infinite;

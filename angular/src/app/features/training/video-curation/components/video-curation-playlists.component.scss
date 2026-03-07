@@ -6,14 +6,19 @@
 @use "styles/mixins" as *;
 
 .tab-content {
-  padding: var(--space-4) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
+  padding: 0;
 }
 
 .playlists-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  margin: 0;
+  flex-wrap: wrap;
 
   h3 {
     font-size: var(--ds-font-size-2xl);
@@ -28,14 +33,14 @@
     auto-fill,
     minmax(var(--grid-card-min-md), 1fr)
   );
-  gap: var(--space-4);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .playlist-card {
   background: var(--surface-primary);
   border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--radius-xl);
-  padding: var(--space-5);
+  border-radius: var(--component-card-radius);
+  padding: var(--component-card-padding-compact);
 }
 
 .playlist-header {
@@ -83,6 +88,7 @@
   display: flex;
   gap: var(--space-1);
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 @include respond-to(md) {
@@ -92,7 +98,7 @@
   }
 
   .playlist-card {
-    padding: var(--space-3);
+    padding: var(--component-card-padding-compact);
   }
 }
 

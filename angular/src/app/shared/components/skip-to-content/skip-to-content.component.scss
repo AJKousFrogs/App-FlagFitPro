@@ -1,20 +1,24 @@
 .skip-link {
   position: absolute;
-  top: -9999px;
+  top: 0;
   left: 0;
-  z-index: 2000;
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--ds-primary-green, #2d6a4f);
-  border-radius: 0 0 0.5rem 0;
-  background: var(--surface-primary, #ffffff);
-  color: var(--color-text-primary, #111827);
-  font: 600 0.875rem/1.2 var(--font-family-sans, system-ui, sans-serif);
+  z-index: var(--z-index-skiplink);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-2) solid var(--color-brand-primary);
+  border-radius: 0 0 var(--radius-md);
+  background: var(--surface-primary);
+  color: var(--color-text-primary);
+  font:
+    var(--font-weight-semibold)
+    var(--font-body-sm-size) / 1.2
+    var(--font-family-sans);
   text-decoration: none;
+  transform: translateY(calc(-100% - var(--space-3)));
+  transition: transform var(--transition-fast) var(--ease-standard);
 }
 
 .skip-link:focus-visible {
-  top: 0;
-  left: 0;
-  outline: 2px solid var(--ds-primary-green, #2d6a4f);
-  outline-offset: 2px;
+  transform: translateY(0);
+  outline: var(--focus-outline-width) solid var(--color-brand-primary);
+  outline-offset: var(--focus-outline-offset);
 }

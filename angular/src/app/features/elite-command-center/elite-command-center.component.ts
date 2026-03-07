@@ -28,6 +28,8 @@ import { ToggleSwitch } from "primeng/toggleswitch";
 import { Tooltip } from "primeng/tooltip";
 import { UIChart } from "primeng/chart";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { ResponsiveGridSpanDirective } from "../../shared/directives/responsive-grid-span.directive";
 import { PlatformService } from "../../core/services/platform.service";
@@ -73,6 +75,8 @@ interface ProtocolStep {
     FormsModule,
     MainLayoutComponent,
     AlertComponent,
+    ButtonComponent,
+    IconButtonComponent,
     ResponsiveGridSpanDirective,
     Menubar,
     Breadcrumb,

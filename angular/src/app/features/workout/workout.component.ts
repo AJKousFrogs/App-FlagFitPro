@@ -61,7 +61,7 @@ interface Workout {
   ],
   template: `
     <app-main-layout>
-      <div class="workout-page">
+      <div class="workout-page ui-page-stack">
         <app-page-header
           title="Workout Tracker"
           subtitle="Track your workouts and monitor your progress"

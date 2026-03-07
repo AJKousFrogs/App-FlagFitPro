@@ -220,6 +220,7 @@
 
 .timer-circle.urgent {
   border-color: var(--color-status-error);
+
   --ui-motion-scale-pulse-mid: 1.05;
   animation: ui-motion-scale-pulse 1s infinite;
 }

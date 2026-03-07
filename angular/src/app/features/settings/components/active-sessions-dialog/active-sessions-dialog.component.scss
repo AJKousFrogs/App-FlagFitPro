@@ -3,7 +3,7 @@
 }
 
 .sessions-content {
-  padding: 0 var(--space-6) var(--space-6);
+  padding: 0 var(--component-card-padding) var(--component-card-padding);
 }
 
 .sessions-loading {
@@ -11,8 +11,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
-  padding: var(--space-8) 0;
+  gap: var(--layout-page-section-gap-tight);
+  padding: var(--component-card-padding) 0;
   color: var(--color-text-secondary);
 }
 
@@ -24,16 +24,16 @@
 .sessions-list-new {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .session-card {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--component-card-padding-compact);
   border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--radius-xl);
+  border-radius: var(--component-card-radius);
   background: var(--surface-primary);
 }
 
@@ -96,6 +96,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  flex-wrap: wrap;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
