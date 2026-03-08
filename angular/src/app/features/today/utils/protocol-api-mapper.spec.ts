@@ -98,4 +98,45 @@ describe("protocol-api-mapper", () => {
     expect(result.totalExercises).toBe(5);
     expect(result.overallProgress).toBe(60); // 3/5 = 60%
   });
+
+  it("should preserve snake_case protocol metrics from backend responses", () => {
+    const result = mapToDailyProtocol({
+      id: "proto-snake",
+      protocol_date: "2026-03-07",
+      readiness_score: 78,
+      acwr_value: 1.12,
+      training_focus: "practice_day",
+    });
+
+    expect(result.protocolDate).toBe("2026-03-07");
+    expect(result.readinessScore).toBe(78);
+    expect(result.acwrValue).toBe(1.12);
+    expect(result.trainingFocus).toBe("practice_day");
+  });
+
+  it("derives youtube metadata when only a video URL is present", () => {
+    const block: ApiProtocolBlock = {
+      exercises: [
+        {
+          id: "ex-video",
+          name: "Hip Mobility Flow",
+          slug: "hip-mobility-flow",
+          videoUrl: "https://www.youtube.com/watch?v=IWNnTJFwi3s",
+          prescribedSets: 1,
+          prescribedDurationSeconds: 600,
+        } as ApiExercise,
+      ],
+    };
+
+    const result = mapToDailyProtocol({ morningMobility: block });
+    const exercise = result.morningMobility?.exercises[0].exercise;
+
+    expect(exercise?.videoId).toBe("IWNnTJFwi3s");
+    expect(exercise?.videoUrl).toBe(
+      "https://www.youtube.com/watch?v=IWNnTJFwi3s",
+    );
+    expect(exercise?.thumbnailUrl).toBe(
+      "https://img.youtube.com/vi/IWNnTJFwi3s/hqdefault.jpg",
+    );
+  });
 });

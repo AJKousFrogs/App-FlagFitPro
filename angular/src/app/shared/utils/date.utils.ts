@@ -364,7 +364,7 @@ export function isValidDate(value: unknown): boolean {
  * getTodayISO() // '2025-01-15'
  */
 export function getTodayISO(): string {
-  return new Date().toISOString().split("T")[0];
+  return dateFnsFormat(new Date(), "yyyy-MM-dd");
 }
 
 /**

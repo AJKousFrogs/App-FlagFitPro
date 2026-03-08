@@ -26,6 +26,11 @@ import { CountdownTimerComponent } from "../../../../shared/components/countdown
 
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { formatDate } from "../../../../shared/utils/date.utils";
+import {
+  buildYouTubeEmbedUrl,
+  buildYouTubeWatchUrl,
+  resolveYouTubeVideoMetadata,
+} from "../../../../shared/utils/youtube-video.utils";
 
 import {
   PrescribedExercise,
@@ -98,9 +103,9 @@ import {
                   <span>Video coming soon</span>
                 </div>
               }
-              @if (exercise().exercise.videoUrl) {
+              @if (videoWatchUrl()) {
                 <a
-                  [href]="exercise().exercise.videoUrl"
+                  [href]="videoWatchUrl()!"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="youtube-link"
@@ -286,12 +291,26 @@ export class ExerciseCardComponent {
   // Computed
   prescriptionText = computed(() => formatPrescription(this.exercise()));
 
-  videoEmbedUrl = computed((): SafeResourceUrl | null => {
-    const videoId = this.exercise().exercise.videoId;
-    if (!videoId) return null;
+  private readonly videoMetadata = computed(() =>
+    resolveYouTubeVideoMetadata({
+      videoId: this.exercise().exercise.videoId,
+      videoUrl: this.exercise().exercise.videoUrl,
+      thumbnailUrl: this.exercise().exercise.thumbnailUrl,
+    }),
+  );
 
-    const url = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+  videoEmbedUrl = computed((): SafeResourceUrl | null => {
+    const url = buildYouTubeEmbedUrl(this.videoMetadata().videoId);
+    if (!url) return null;
+
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  });
+
+  videoWatchUrl = computed(() => {
+    return (
+      this.videoMetadata().videoUrl ||
+      buildYouTubeWatchUrl(this.videoMetadata().videoId)
+    );
   });
 
   hasYesterdayData = computed(() => {

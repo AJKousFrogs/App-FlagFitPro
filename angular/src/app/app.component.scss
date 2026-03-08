@@ -12,5 +12,8 @@
 }
 
 main {
+  display: block;
+  min-height: 100%;
+
   @include ds-focus-ring($offset: calc(-1 * var(--focus-outline-offset)));
 }

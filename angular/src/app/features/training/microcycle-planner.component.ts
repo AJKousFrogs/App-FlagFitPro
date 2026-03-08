@@ -4,16 +4,20 @@ import {
   computed,
   effect,
   inject,
-  input,
   signal,
 } from "@angular/core";
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
-import { TrainingMetricsService } from "../../core/services/training-metrics.service";
 import { TrainingPlanService } from "../../core/services/training-plan.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { AuthService } from "../../core/services/auth.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+  getProtocolAcwrDisplay,
+  getProtocolRiskZone,
+} from "../../core/utils/protocol-metrics-presentation";
 
 interface DayPlan {
   day: string;
@@ -215,20 +219,38 @@ interface DayPlan {
   styleUrl: "./microcycle-planner.component.scss",
 })
 export class MicrocyclePlannerComponent {
-  // Angular 21: Use input() signal instead of @Input()
-  readonly athleteId = input.required<string>();
-
-  private readonly metricsService = inject(TrainingMetricsService);
+  private readonly authService = inject(AuthService);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly trainingPlanService = inject(TrainingPlanService);
+  private readonly logger = inject(LoggerService);
+
+  private lastLoadedAthleteId: string | null = null;
+  private lastOverviewAthleteId: string | null = null;
 
   readonly weeklyPlan = signal<DayPlan[]>([]);
   readonly gameDays = signal<Date[]>([]);
-  readonly currentACWR = this.trainingService.acwrRatio;
+  readonly currentUserId = computed(() => this.authService.currentUser()?.id ?? null);
+  readonly todayProtocol = this.trainingService.todayProtocol;
+  readonly acwrDisplay = computed(() =>
+    getProtocolAcwrDisplay(
+      this.todayProtocol(),
+      this.trainingService.acwrRatio(),
+      null,
+    ),
+  );
+  readonly currentACWR = computed(
+    () => this.acwrDisplay().value ?? this.trainingService.acwrRatio(),
+  );
   readonly acuteLoad = this.trainingService.acuteLoad;
   readonly chronicLoad = this.trainingService.chronicLoad;
-  readonly currentRiskZone = this.trainingService.acwrRiskZone;
-  readonly readinessLevel = this.trainingService.readinessLevel;
+  readonly currentRiskZone = computed(() =>
+    getProtocolRiskZone(
+      this.todayProtocol(),
+      this.trainingService.acwrRiskZone(),
+      this.trainingService.acwrRatio(),
+      null,
+    ),
+  );
   readonly lastUpdate = signal(new Date());
 
   readonly totalSprintLoad = computed(() =>
@@ -255,18 +277,49 @@ export class MicrocyclePlannerComponent {
   });
 
   constructor() {
-    // Use effect to react to athleteId changes (Angular 21 pattern)
     effect(() => {
-      const athleteId = this.athleteId();
+      const athleteId = this.currentUserId();
+      if (athleteId === this.lastLoadedAthleteId) {
+        return;
+      }
+
+      this.lastLoadedAthleteId = athleteId;
       void this.syncGameDaysAndPlan(athleteId);
+    });
+
+    effect(() => {
+      const athleteId = this.currentUserId();
+      if (!athleteId || athleteId === this.lastOverviewAthleteId) {
+        return;
+      }
+
+      this.lastOverviewAthleteId = athleteId;
+      this.trainingService.getTodayOverview().subscribe({
+        error: (error) =>
+          this.logger.warn(
+            "[MicrocyclePlanner] Failed to load protocol overview, using live metric fallback",
+            error,
+          ),
+      });
     });
   }
 
   private async syncGameDaysAndPlan(athleteId: string | null): Promise<void> {
     if (athleteId) {
-      const games = await this.trainingPlanService.getUpcomingGames(athleteId, 14);
-      if (this.athleteId() !== athleteId) return;
-      this.gameDays.set(games);
+      try {
+        const games = await this.trainingPlanService.getUpcomingGames(
+          athleteId,
+          14,
+        );
+        if (this.currentUserId() !== athleteId) return;
+        this.gameDays.set(games);
+      } catch (error) {
+        this.logger.warn(
+          "[MicrocyclePlanner] Failed to load upcoming games",
+          error,
+        );
+        this.gameDays.set([]);
+      }
     } else {
       this.gameDays.set([]);
     }

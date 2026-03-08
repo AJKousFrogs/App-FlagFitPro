@@ -200,6 +200,11 @@ const MOBILE_DEVICES = {
   ],
 };
 
+function toDeviceUseOptions(device) {
+  const { name, defaultBrowserType, ...useOptions } = device;
+  return useOptions;
+}
+
 // ============================================
 // TEST SUITE HELPERS
 // ============================================
@@ -263,7 +268,7 @@ for (const [brand, deviceList] of Object.entries(MOBILE_DEVICES)) {
   test.describe(`${brand.toUpperCase()} Devices - Responsive Tests`, () => {
     for (const device of deviceList) {
       test.describe(`${device.name}`, () => {
-        test.use(device);
+        test.use(toDeviceUseOptions(device));
 
         test("should have proper viewport configuration", async ({ page }) => {
           await page.goto("/");

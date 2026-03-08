@@ -153,13 +153,13 @@
         <p-card header="Priority Queue" styleClass="elite-card">
           <div class="table-filters" role="group" aria-label="Queue filters">
             <p-multiSelect
+              class="roster-filter"
               [options]="rosterOptions"
               optionLabel="label"
               optionValue="value"
               [ngModel]="selectedRosters()"
               (ngModelChange)="selectedRosters.set($event)"
               placeholder="Filter roster"
-              [style]="{ width: '15rem' }"
               ariaLabel="Filter by roster"
             ></p-multiSelect>
 

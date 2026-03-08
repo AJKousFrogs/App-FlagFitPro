@@ -7,6 +7,8 @@
 
 :host {
   display: block;
+  min-width: 0;
+  min-height: 0;
 }
 
 /* Reset any potential styling bleeding through */
@@ -17,17 +19,16 @@
 }
 
 .sidebar {
-  position: fixed;
-  left: 0;
+  position: sticky;
   top: 0;
-  height: 100vh;
-  height: 100dvh; /* Use dynamic viewport height for mobile browsers */
-  width: var(--sidebar-width);
+  height: calc(100vh - var(--app-shell-header-height));
+  height: calc(100dvh - var(--app-shell-header-height));
+  width: 100%;
   background: var(--surface-primary);
   border-right: var(--border-1) solid var(--color-border-primary);
-  z-index: calc(var(--z-modal) + 10); /* Higher than overlay to prevent blur */
+  z-index: var(--z-index-app-sidebar);
   transition: transform var(--transition-slow) var(--ease-standard);
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -154,6 +155,7 @@ app-close-button.sidebar-close-btn {
   padding: var(--space-2);
   flex: 1;
   overflow-y: auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -259,7 +261,7 @@ app-close-button.sidebar-close-btn {
 // ============================================
 @media (max-width: var(--breakpoint-lg)) and (min-width: var(--breakpoint-md-min)) {
   .sidebar {
-    width: var(--sidebar-collapsed-width, 4rem);
+    width: 100%;
   }
 
   .logo-text,
@@ -313,12 +315,13 @@ app-close-button.sidebar-close-btn {
 // ============================================
 @include respond-to(md) {
   .sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--app-shell-header-height-mobile);
+    height: calc(100dvh - var(--app-shell-header-height-mobile));
     transform: translateX(-100%);
-    width: min(
-      85vw,
-      var(--dialog-max-width-xs)
-    ); /* Responsive width, max 20rem */
-    max-width: var(--dialog-max-width-xs); /* var(--element-max-width-md) */
+    width: var(--app-shell-mobile-drawer-width);
+    max-width: var(--app-shell-mobile-drawer-width);
     box-shadow: var(--shadow-xl); /* Enhanced shadow for mobile */
     will-change: transform; /* Optimize animation performance */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
@@ -348,8 +351,8 @@ app-close-button.sidebar-close-btn {
 @media (max-width: var(--breakpoint-md)) and (min-height: var(--breakpoint-min-height-tablet)) {
   .sidebar {
     /* Ensure full height coverage on tall mobile screens */
-    height: 100dvh;
-    max-height: 100dvh;
+    height: calc(100dvh - var(--app-shell-header-height-mobile));
+    max-height: calc(100dvh - var(--app-shell-header-height-mobile));
   }
 
   .sidebar-backdrop {

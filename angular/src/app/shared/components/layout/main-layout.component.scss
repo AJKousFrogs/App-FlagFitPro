@@ -8,84 +8,80 @@
 
 :host {
   display: block;
-
-  --layout-shell-padding-inline: var(--space-6);
-  --layout-shell-padding-block: var(--space-5);
+  height: 100%;
+  min-height: 0;
 }
 
-.dashboard-container {
-  display: flex;
-  min-height: 100vh;
-  min-height: 100dvh;
+.app-shell {
+  display: grid;
+  grid-template-rows: var(--app-shell-header-height) minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   isolation: isolate;
   background: var(--surface-ground);
 
   --bottom-nav-height: var(--space-16);
+  --app-shell-sidebar-track: var(--app-shell-sidebar-width);
+  --page-shell-max-width: var(--app-shell-content-max-width);
 }
 
-.main-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
+.app-shell__header {
+  min-height: 0;
+}
+
+.app-shell__main {
+  display: grid;
+  grid-template-columns: var(--app-shell-sidebar-track) minmax(0, 1fr);
+  min-height: 0;
+  overflow: hidden;
   background:
     linear-gradient(
       180deg,
       color-mix(in srgb, var(--surface-ground) 84%, var(--surface-card) 16%) 0%,
       var(--surface-ground) 14rem
     );
-
-  --sidebar-offset: var(--sidebar-width);
-  margin-left: var(--sidebar-offset);
-  width: calc(100% - var(--sidebar-offset));
-  max-width: calc(100vw - var(--sidebar-offset));
-  overflow-x: hidden;
-
-  // Tablet landscape and below - remove sidebar margin
-  @include respond-to(lg) {
-    --sidebar-offset: var(--space-0);
-  }
-
-  // Tablet (collapsed sidebar) - preserve icon rail
-  @media (max-width: var(--breakpoint-lg)) and (min-width: var(--breakpoint-md-min)) {
-    --sidebar-offset: var(--sidebar-collapsed-width);
-  }
 }
 
-.content-wrapper {
-  flex: 1;
+.app-shell__sidebar {
+  min-width: 0;
+  min-height: 0;
+}
+
+.app-shell__content {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-main {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.page-container {
+  width: min(100%, var(--page-shell-max-width));
+  margin-inline: auto;
+  min-width: 0;
+}
+
+.content-wrapper,
+.page-content {
+  min-width: 0;
+}
+
+.page-content {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap-tight);
-  padding: var(--layout-shell-padding-block) var(--layout-shell-padding-inline);
-  overflow-y: auto;
-  overflow-x: hidden;
+  padding: 0 0 calc(var(--app-shell-gutter-block) * 2);
   width: 100%;
   max-width: 100%;
-  scrollbar-gutter: stable both-edges;
-
-  // Tablet
-  @include respond-to(lg) {
-    padding: var(--layout-shell-padding-block) var(--layout-shell-padding-inline);
-  }
-
-  // Mobile - add bottom padding for bottom nav
-  @include respond-to(md) {
-    padding: var(--layout-shell-padding-block) var(--layout-shell-padding-inline);
-    padding-bottom: calc(
-      var(--layout-shell-padding-block) + var(--bottom-nav-height) + var(--safe-area-bottom)
-    );
-  }
-
-  // Small mobile
-  @include respond-to(xs) {
-    padding: var(--layout-shell-padding-block) var(--layout-shell-padding-inline);
-    padding-bottom: calc(
-      var(--layout-shell-padding-block) + var(--bottom-nav-height) + var(--safe-area-bottom)
-    );
-  }
 }
 
 .app-footer {
@@ -103,28 +99,28 @@
 }
 
 @include respond-to(lg) {
-  :host {
-    --layout-shell-padding-inline: var(--space-5);
-    --layout-shell-padding-block: var(--space-4);
+  .app-shell {
+    --page-shell-max-width: 100%;
+    --app-shell-sidebar-track: var(--app-shell-sidebar-width-collapsed);
   }
 }
 
 @include respond-to(md) {
-  :host {
-    --layout-shell-padding-inline: var(--space-4);
-    --layout-shell-padding-block: var(--space-4);
-  }
-}
+  .app-shell {
+    grid-template-rows: var(--app-shell-header-height-mobile) minmax(0, 1fr);
 
-@include respond-to(xs) {
-  :host {
-    --layout-shell-padding-inline: var(--space-3);
-    --layout-shell-padding-block: var(--space-3);
+    --app-shell-sidebar-track: var(--space-0);
+  }
+
+  .page-content {
+    padding-bottom: calc(
+      var(--app-shell-gutter-block) + var(--bottom-nav-height) + var(--safe-area-bottom)
+    );
   }
 }
 
 // Animations
-.dashboard-container {
+.app-shell {
   @include fade-in;
   @include respect-motion-preference;
 }
@@ -134,13 +130,10 @@
   .dashboard-container {
     display: block;
     min-height: auto;
+    height: auto;
   }
 
-  .main-content {
-    margin-left: 0;
-  }
-
-  .content-wrapper {
+  .page-content {
     padding: 0;
   }
 

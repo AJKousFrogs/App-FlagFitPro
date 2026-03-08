@@ -1,9 +1,9 @@
 import {
   Component,
-  OnInit,
   inject,
   signal,
-  input,
+  computed,
+  effect,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -20,9 +20,16 @@ import {
 } from "../../core/services/training-plan.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { AuthService } from "../../core/services/auth.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+  getProtocolAcwrDisplay,
+  getProtocolReadinessPresentation,
+  getProtocolRiskZone,
+  getProtocolTrainingPlanReadinessLevel,
+} from "../../core/utils/protocol-metrics-presentation";
 
 @Component({
   selector: "app-goal-based-planner",
@@ -80,7 +87,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                     class="stat-block__value"
                     [class]="getACWRColorClass()"
                   >
-                    {{ currentACWR() | number: "1.2-2" }}
+                    {{ currentAcwrValue() | number: "1.2-2" }}
                   </div>
                 </div>
                 <div class="stat-item stat-block stat-block--compact">
@@ -90,7 +97,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                   <div class="stat-block__value">
                     <app-status-tag
                       [severity]="getReadinessSeverity()"
-                      [value]="readinessLevel() ?? 'unknown' | titlecase"
+                      [value]="readinessPresentation().label"
                       size="sm"
                     />
                   </div>
@@ -106,7 +113,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
               </div>
               <app-traffic-light-risk
                 [riskZone]="currentRiskZone()"
-                [acwrValue]="currentACWR()"
+                [acwrValue]="currentAcwrValue()"
               >
               </app-traffic-light-risk>
             </div>
@@ -307,12 +314,14 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
   `,
   styleUrl: "./goal-based-planner.component.scss",
 })
-export class GoalBasedPlannerComponent implements OnInit {
-  athleteId = input.required<string>();
+export class GoalBasedPlannerComponent {
+  private readonly authService = inject(AuthService);
+  private readonly trainingPlanService = inject(TrainingPlanService);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly logger = inject(LoggerService);
 
-  private trainingPlanService = inject(TrainingPlanService);
-  private trainingService = inject(UnifiedTrainingService);
-  private logger = inject(LoggerService);
+  private lastLoadedAthleteId: string | null = null;
+  private lastOverviewAthleteId: string | null = null;
 
   selectedGoal = signal<TrainingGoal | null>(null);
   weeklyPlan = signal<WeeklyTrainingPlan | null>(null);
@@ -320,9 +329,40 @@ export class GoalBasedPlannerComponent implements OnInit {
   saving = signal(false);
   gameDays = signal<Date[]>([]);
 
-  currentACWR = this.trainingService.acwrRatio;
-  currentRiskZone = this.trainingService.acwrRiskZone;
-  readinessLevel = this.trainingService.readinessLevel;
+  readonly currentUserId = computed(() => this.authService.currentUser()?.id ?? null);
+  readonly todayProtocol = this.trainingService.todayProtocol;
+  readonly fallbackReadinessLevel = this.trainingService.readinessLevel;
+  readonly acwrDisplay = computed(() =>
+    getProtocolAcwrDisplay(
+      this.todayProtocol(),
+      this.trainingService.acwrRatio(),
+      null,
+    ),
+  );
+  readonly currentAcwrValue = computed(
+    () => this.acwrDisplay().value ?? this.trainingService.acwrRatio(),
+  );
+  readonly currentRiskZone = computed(() =>
+    getProtocolRiskZone(
+      this.todayProtocol(),
+      this.trainingService.acwrRiskZone(),
+      this.trainingService.acwrRatio(),
+      null,
+    ),
+  );
+  readonly readinessPresentation = computed(() =>
+    getProtocolReadinessPresentation(
+      this.todayProtocol(),
+      this.trainingService.readinessScore(),
+    ),
+  );
+  readonly trainingPlanReadinessLevel = computed(() =>
+    getProtocolTrainingPlanReadinessLevel(
+      this.todayProtocol(),
+      this.fallbackReadinessLevel(),
+      this.trainingService.readinessScore(),
+    ),
+  );
 
   goalOptions = [
     { label: "Speed", value: "speed" },
@@ -334,14 +374,52 @@ export class GoalBasedPlannerComponent implements OnInit {
     { label: "Endurance", value: "endurance" },
   ];
 
-  async ngOnInit() {
-    const athleteIdValue = this.athleteId();
-    if (athleteIdValue) {
+  constructor() {
+    effect(() => {
+      const athleteId = this.currentUserId();
+      if (athleteId === this.lastLoadedAthleteId) {
+        return;
+      }
+
+      this.lastLoadedAthleteId = athleteId;
+      void this.syncGameDays(athleteId);
+    });
+
+    effect(() => {
+      const athleteId = this.currentUserId();
+      if (!athleteId || athleteId === this.lastOverviewAthleteId) {
+        return;
+      }
+
+      this.lastOverviewAthleteId = athleteId;
+      this.trainingService.getTodayOverview().subscribe({
+        error: (error) =>
+          this.logger.warn(
+            "[GoalPlanner] Failed to load protocol overview, using live metric fallback",
+            error,
+          ),
+      });
+    });
+  }
+
+  private async syncGameDays(athleteId: string | null): Promise<void> {
+    if (!athleteId) {
+      this.gameDays.set([]);
+      return;
+    }
+
+    try {
       const games = await this.trainingPlanService.getUpcomingGames(
-        athleteIdValue,
+        athleteId,
         14,
       );
+      if (this.currentUserId() !== athleteId) {
+        return;
+      }
       this.gameDays.set(games);
+    } catch (error) {
+      this.logger.warn("[GoalPlanner] Failed to load upcoming games", error);
+      this.gameDays.set([]);
     }
   }
 
@@ -358,16 +436,15 @@ export class GoalBasedPlannerComponent implements OnInit {
 
   async generatePlan() {
     const goal = this.selectedGoal();
-    if (!goal || !this.athleteId) return;
+    if (!goal || !this.currentUserId()) return;
 
     this.loading.set(true);
 
     try {
-      const level = this.readinessLevel();
       const plan = this.trainingPlanService.generateWeeklyPlan({
         goal: goal,
-        currentACWR: this.currentACWR(),
-        readinessLevel: level ?? "moderate", // Default to moderate if no data
+        currentACWR: this.currentAcwrValue(),
+        readinessLevel: this.trainingPlanReadinessLevel(),
         gameDays: this.gameDays(),
       });
 
@@ -391,22 +468,23 @@ export class GoalBasedPlannerComponent implements OnInit {
   }
 
   getACWRColorClass(): string {
-    const acwr = this.currentACWR();
+    const acwr = this.currentAcwrValue();
     if (acwr > 1.5) return "text-red-600";
     if (acwr > 1.3) return "text-yellow-600";
     if (acwr < 0.8) return "text-orange-500";
     return "text-green-600";
   }
 
-  getReadinessSeverity(): "success" | "warning" | "danger" {
-    const level = this.readinessLevel();
-    if (level === null) return "warning"; // No data = warning
-    const severity = this.trainingService.getReadinessSeverity(level);
-    return severity === "warning" ? "warning" : severity;
+  getReadinessSeverity(): "success" | "warning" | "danger" | "info" {
+    const severity = this.readinessPresentation().severity;
+    if (severity === "success" || severity === "warning" || severity === "danger") {
+      return severity;
+    }
+    return "info";
   }
 
   getProgressionRule(): string {
-    const acwr = this.currentACWR();
+    const acwr = this.currentAcwrValue();
     if (acwr > 1.5) return "Reduce volume 30%";
     if (acwr > 1.3) return "Reduce volume 15%";
     if (acwr < 0.8) return "Increase volume 10%";

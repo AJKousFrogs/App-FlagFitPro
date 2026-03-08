@@ -8,9 +8,11 @@
  */
 
 import {
+  afterNextRender,
   Component,
   signal,
   ChangeDetectionStrategy,
+  OnDestroy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Tooltip } from "primeng/tooltip";
@@ -34,27 +36,57 @@ import { Tooltip } from "primeng/tooltip";
     }
   `,
   styleUrl: "./scroll-to-top.component.scss",
-  host: {
-    "(window:scroll)": "onWindowScroll()",
-  },
 })
-export class ScrollToTopComponent {
+export class ScrollToTopComponent implements OnDestroy {
   isVisible = signal(false);
+  private scrollContainer: HTMLElement | Window | null = null;
+  private readonly onScroll = () => this.updateVisibility();
 
-  onWindowScroll(): void {
-    // Show button after scrolling down 300px
-    const scrollPosition =
-      window.pageYOffset ||
-      document.documentElement.scrollTop ||
-      document.body.scrollTop ||
-      0;
-    this.isVisible.set(scrollPosition > 300);
+  constructor() {
+    afterNextRender(() => {
+      if (typeof window === "undefined") return;
+      this.scrollContainer =
+        document.querySelector<HTMLElement>(".app-main") ?? window;
+      this.scrollContainer.addEventListener("scroll", this.onScroll, {
+        passive: true,
+      });
+      this.updateVisibility();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (typeof window === "undefined" || !this.scrollContainer) return;
+    this.scrollContainer.removeEventListener("scroll", this.onScroll);
   }
 
   scrollToTop(): void {
-    window.scrollTo({
+    const container = this.scrollContainer;
+    if (!container) return;
+
+    if (container instanceof Window) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return;
+    }
+
+    container.scrollTo({
       top: 0,
       behavior: "smooth",
     });
+  }
+
+  private updateVisibility(): void {
+    if (typeof window === "undefined" || !this.scrollContainer) return;
+
+    const scrollPosition = this.scrollContainer instanceof Window
+      ? window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+      : this.scrollContainer.scrollTop;
+
+    this.isVisible.set(scrollPosition > 300);
   }
 }

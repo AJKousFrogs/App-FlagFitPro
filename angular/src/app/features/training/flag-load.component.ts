@@ -1,7 +1,7 @@
 import {
   Component,
-  input,
-  OnInit,
+  computed,
+  effect,
   inject,
   signal,
   ChangeDetectionStrategy,
@@ -16,6 +16,7 @@ import {
   FlagMetrics,
 } from "../../core/services/training-metrics.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { AuthService } from "../../core/services/auth.service";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../shared/utils/date.utils";
@@ -158,17 +159,17 @@ import { formatDate } from "../../shared/utils/date.utils";
   `,
   styleUrl: "./flag-load.component.scss",
 })
-export class FlagLoadComponent implements OnInit {
-  // Angular 21: Use input() signal instead of @Input()
-  athleteId = input.required<string>();
-
-  private metricsService = inject(TrainingMetricsService);
-  private logger = inject(LoggerService);
+export class FlagLoadComponent {
+  private readonly authService = inject(AuthService);
+  private readonly metricsService = inject(TrainingMetricsService);
+  private readonly logger = inject(LoggerService);
+  private lastLoadedAthleteId: string | null = null;
 
   acwrData = signal<ACWRData[]>([]);
   flagMetrics = signal<FlagMetrics[]>([]);
   isLoading = signal(true);
   hasData = signal(false);
+  readonly athleteId = computed(() => this.authService.currentUser()?.id ?? null);
 
   chartData = signal<{
     labels: string[];
@@ -200,14 +201,22 @@ export class FlagLoadComponent implements OnInit {
     },
   };
 
-  async ngOnInit() {
-    const athleteId = this.athleteId();
-    if (!athleteId) {
-      this.logger.error("FlagLoadComponent: athleteId is required");
-      this.isLoading.set(false);
-      return;
-    }
+  constructor() {
+    effect(() => {
+      const athleteId = this.athleteId();
+      if (!athleteId || athleteId === this.lastLoadedAthleteId) {
+        if (!athleteId) {
+          this.isLoading.set(false);
+        }
+        return;
+      }
 
+      this.lastLoadedAthleteId = athleteId;
+      void this.loadMetrics(athleteId);
+    });
+  }
+
+  private async loadMetrics(athleteId: string): Promise<void> {
     try {
       this.isLoading.set(true);
       const acwr = await this.metricsService.getACWR(athleteId);

@@ -14,6 +14,7 @@ import type {
   PrescribedExercise,
   ProtocolBlock,
 } from "../../training/daily-protocol/daily-protocol.models";
+import { resolveYouTubeVideoMetadata } from "../../../shared/utils/youtube-video.utils";
 
 /** API exercise structure from backend (camelCase) */
 export interface ApiExercise {
@@ -26,27 +27,53 @@ export interface ApiExercise {
     category?: ExerciseCategory;
     videoUrl?: string;
     videoId?: string;
+    videoDurationSeconds?: number;
+    thumbnailUrl?: string;
+    video_url?: string;
+    video_id?: string;
+    video_duration_seconds?: number;
+    thumbnail_url?: string;
     howText?: string;
+    how_text?: string;
     defaultSets?: number;
+    default_sets?: number;
     difficultyLevel?: "beginner" | "intermediate" | "advanced";
+    difficulty_level?: "beginner" | "intermediate" | "advanced";
     loadContributionAu?: number;
+    load_contribution_au?: number;
     isHighIntensity?: boolean;
+    is_high_intensity?: boolean;
   };
   name?: string;
   slug?: string;
   category?: ExerciseCategory;
   videoUrl?: string;
   videoId?: string;
+  videoDurationSeconds?: number;
+  thumbnailUrl?: string;
+  video_url?: string;
+  video_id?: string;
+  video_duration_seconds?: number;
+  thumbnail_url?: string;
   howText?: string;
+  how_text?: string;
   aiNote?: string;
+  ai_note?: string;
   prescribedSets?: number;
   prescribedReps?: number;
   prescribedHoldSeconds?: number;
   prescribedDurationSeconds?: number;
+  prescribed_sets?: number;
+  prescribed_reps?: number;
+  prescribed_hold_seconds?: number;
+  prescribed_duration_seconds?: number;
   sequenceOrder?: number;
+  sequence_order?: number;
   status?: string;
   loadContributionAu?: number;
+  load_contribution_au?: number;
   isHighIntensity?: boolean;
+  is_high_intensity?: boolean;
 }
 
 /** API block structure from backend */
@@ -66,10 +93,26 @@ export interface ApiProtocolBlock {
 export interface ProtocolApiResponse {
   id?: string;
   date?: string;
+  protocol_date?: string;
   readinessScore?: number | null;
+  readiness_score?: number | null;
   acwrValue?: number | null;
+  acwr_value?: number | null;
+  acwr_presentation?: {
+    value?: number | null;
+    level?:
+      | "sweet-spot"
+      | "under-training"
+      | "elevated-risk"
+      | "danger-zone"
+      | "no-data";
+    label?: string | null;
+    text?: string | null;
+  };
   trainingFocus?: string;
+  training_focus?: string;
   confidenceMetadata?: unknown;
+  confidence_metadata?: unknown;
   morningMobility?: ApiProtocolBlock;
   foamRoll?: ApiProtocolBlock;
   warmUp?: ApiProtocolBlock;
@@ -111,6 +154,23 @@ function mapExerciseToPrescribed(
   const baseName = ex.name || "Exercise";
   const baseSlug = ex.slug || baseName.toLowerCase().replace(/\s+/g, "-");
   const nestedExercise = ex.exercise;
+  const video = resolveYouTubeVideoMetadata({
+    videoId:
+      nestedExercise?.videoId ||
+      nestedExercise?.video_id ||
+      ex.videoId ||
+      ex.video_id,
+    videoUrl:
+      nestedExercise?.videoUrl ||
+      nestedExercise?.video_url ||
+      ex.videoUrl ||
+      ex.video_url,
+    thumbnailUrl:
+      nestedExercise?.thumbnailUrl ||
+      nestedExercise?.thumbnail_url ||
+      ex.thumbnailUrl ||
+      ex.thumbnail_url,
+  });
 
   const exercise = nestedExercise
     ? {
@@ -119,26 +179,59 @@ function mapExerciseToPrescribed(
         name: nestedExercise.name || baseName,
         slug: nestedExercise.slug || baseSlug,
         category: (nestedExercise.category || blockType) as ExerciseCategory,
-        howText: nestedExercise.howText || ex.howText || ex.aiNote || "",
-        defaultSets: nestedExercise.defaultSets || ex.prescribedSets || 1,
-        difficultyLevel: nestedExercise.difficultyLevel || "intermediate",
+        videoUrl: video.videoUrl || undefined,
+        videoId: video.videoId || undefined,
+        thumbnailUrl: video.thumbnailUrl || undefined,
+        videoDurationSeconds:
+          nestedExercise.videoDurationSeconds ||
+          nestedExercise.video_duration_seconds ||
+          ex.videoDurationSeconds ||
+          ex.video_duration_seconds,
+        howText:
+          nestedExercise.howText ||
+          nestedExercise.how_text ||
+          ex.howText ||
+          ex.how_text ||
+          ex.aiNote ||
+          ex.ai_note ||
+          "",
+        defaultSets:
+          nestedExercise.defaultSets ||
+          nestedExercise.default_sets ||
+          ex.prescribedSets ||
+          ex.prescribed_sets ||
+          1,
+        difficultyLevel:
+          nestedExercise.difficultyLevel ||
+          nestedExercise.difficulty_level ||
+          "intermediate",
         loadContributionAu:
-          nestedExercise.loadContributionAu || ex.loadContributionAu || 0,
+          nestedExercise.loadContributionAu ||
+          nestedExercise.load_contribution_au ||
+          ex.loadContributionAu ||
+          ex.load_contribution_au ||
+          0,
         isHighIntensity:
-          nestedExercise.isHighIntensity ?? ex.isHighIntensity ?? false,
+          nestedExercise.isHighIntensity ??
+          nestedExercise.is_high_intensity ??
+          ex.isHighIntensity ??
+          ex.is_high_intensity ??
+          false,
       }
     : {
         id: baseId,
         name: baseName,
         slug: baseSlug,
         category: (ex.category || blockType) as ExerciseCategory,
-        videoUrl: ex.videoUrl,
-        videoId: ex.videoId,
-        howText: ex.howText || ex.aiNote || "",
-        defaultSets: ex.prescribedSets || 1,
+        videoUrl: video.videoUrl || undefined,
+        videoId: video.videoId || undefined,
+        thumbnailUrl: video.thumbnailUrl || undefined,
+        videoDurationSeconds: ex.videoDurationSeconds || ex.video_duration_seconds,
+        howText: ex.howText || ex.how_text || ex.aiNote || ex.ai_note || "",
+        defaultSets: ex.prescribedSets || ex.prescribed_sets || 1,
         difficultyLevel: "intermediate" as const,
-        loadContributionAu: ex.loadContributionAu || 0,
-        isHighIntensity: ex.isHighIntensity || false,
+        loadContributionAu: ex.loadContributionAu || ex.load_contribution_au || 0,
+        isHighIntensity: ex.isHighIntensity || ex.is_high_intensity || false,
       };
 
   return {
@@ -146,14 +239,16 @@ function mapExerciseToPrescribed(
     exerciseId: ex.exerciseId || baseId,
     exercise,
     blockType: blockType as BlockType,
-    sequenceOrder: ex.sequenceOrder ?? index + 1,
-    prescribedSets: ex.prescribedSets || 1,
-    prescribedReps: ex.prescribedReps,
-    prescribedHoldSeconds: ex.prescribedHoldSeconds,
-    prescribedDurationSeconds: ex.prescribedDurationSeconds,
-    aiNote: ex.aiNote,
+    sequenceOrder: ex.sequenceOrder ?? ex.sequence_order ?? index + 1,
+    prescribedSets: ex.prescribedSets || ex.prescribed_sets || 1,
+    prescribedReps: ex.prescribedReps || ex.prescribed_reps,
+    prescribedHoldSeconds:
+      ex.prescribedHoldSeconds || ex.prescribed_hold_seconds,
+    prescribedDurationSeconds:
+      ex.prescribedDurationSeconds || ex.prescribed_duration_seconds,
+    aiNote: ex.aiNote || ex.ai_note,
     status: ex.status === "complete" ? "complete" : "pending",
-    loadContributionAu: ex.loadContributionAu || 0,
+    loadContributionAu: ex.loadContributionAu || ex.load_contribution_au || 0,
   };
 }
 
@@ -248,11 +343,15 @@ export function mapToDailyProtocol(
 
   return {
     id: data.id,
-    protocolDate: data.date,
-    readinessScore: data.readinessScore ?? undefined,
-    acwrValue: data.acwrValue ?? undefined,
+    protocolDate: data.date || data.protocol_date,
+    readinessScore: data.readinessScore ?? data.readiness_score ?? undefined,
+    acwrValue: data.acwrValue ?? data.acwr_value ?? undefined,
     trainingFocus:
-      typeof data.trainingFocus === "string" ? data.trainingFocus : undefined,
+      typeof data.trainingFocus === "string"
+        ? data.trainingFocus
+        : typeof data.training_focus === "string"
+          ? data.training_focus
+          : undefined,
     ...allBlocks,
     overallProgress:
       totalExercises > 0

@@ -32,21 +32,17 @@ jobs:
             angular/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd angular && npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Build application
-        run: npm run build:production
-
-      - name: Start application
-        run: |
-          npm run start &
-          npx wait-on http://localhost:4200 --timeout 120000
-
       - name: Run responsive tests (shard ${{ matrix.shard }}/3)
-        run: npx playwright test tests/responsive/mobile-devices.test.js --shard=${{ matrix.shard }}/3 --reporter=html,json
+        run: npx playwright test tests/responsive/mobile-devices.test.js --project=chromium --shard=${{ matrix.shard }}/3 --reporter=html,json
+        env:
+          CI: true
 
       - name: Upload test results
         if: always()
@@ -83,21 +79,17 @@ jobs:
             angular/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd angular && npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Build application
-        run: npm run build:production
-
-      - name: Start application
-        run: |
-          npm run start &
-          npx wait-on http://localhost:4200 --timeout 120000
-
       - name: Run visual regression tests
-        run: npx playwright test tests/responsive/visual-regression.test.js --reporter=html
+        run: npx playwright test tests/responsive/visual-regression.test.js --project=chromium --reporter=html
+        env:
+          CI: true
 
       - name: Upload visual test results
         if: always()
@@ -194,18 +186,22 @@ jobs:
             angular/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd angular && npm ci --legacy-peer-deps
 
-      - name: Build application
-        run: npm run build:production
+      - name: Start application
+        run: |
+          node scripts/start-playwright-servers.js > mobile-performance.log 2>&1 &
+          timeout 180 bash -c 'until curl -fsS http://127.0.0.1:4200 >/dev/null; do sleep 2; done'
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v10
         with:
           urls: |
             http://localhost:4200
-            http://localhost:4200/dashboard
-            http://localhost:4200/training
+            http://localhost:4200/login
+            http://localhost:4200/register
           configPath: "./.lighthouserc.json"
           uploadArtifacts: true
           temporaryPublicStorage: true
@@ -214,3 +210,11 @@ jobs:
         run: |
           echo "Checking mobile performance metrics..."
           echo "Target: FCP < 1.8s, LCP < 2.5s, TTI < 3.8s"
+
+      - name: Upload performance server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-performance-log
+          path: mobile-performance.log
+          retention-days: 7

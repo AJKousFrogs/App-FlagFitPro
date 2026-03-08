@@ -20,6 +20,7 @@ import {
   ElementRef,
   viewChild,
   computed,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -35,7 +36,6 @@ import { firstValueFrom } from "rxjs";
 import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
-import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import {
   LoggerService,
   toLogContext,
@@ -43,6 +43,10 @@ import {
 import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import {
+  getProtocolAcwrDisplay,
+  getProtocolReadinessPresentation,
+} from "../../core/utils/protocol-metrics-presentation";
 import {
   AIModeExplanationComponent,
   AIModeStatus,
@@ -168,7 +172,6 @@ export class AiCoachChatComponent implements AfterViewChecked {
   private readonly destroyRef = inject(DestroyRef);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly route = inject(ActivatedRoute);
-  private readonly dataConfidenceService = inject(DataConfidenceService);
   private readonly missingDataService = inject(MissingDataDetectionService);
 
   // Design system tokens
@@ -189,6 +192,20 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
   // Daily readiness
   todayReadinessScore = signal<number | null>(null);
+  readonly todayProtocol = this.trainingService.todayProtocol;
+  readonly acwrDisplay = computed(() =>
+    getProtocolAcwrDisplay(
+      this.todayProtocol(),
+      this.trainingService.acwrRatio(),
+      this.trainingService.acwrData().dataQuality.daysWithData || null,
+    ),
+  );
+  readonly readinessPresentation = computed(() =>
+    getProtocolReadinessPresentation(
+      this.todayProtocol(),
+      this.trainingService.readinessScore(),
+    ),
+  );
 
   // Phase 2.3: AI Mode Status
   aiModeStatus = signal<AIModeStatus | null>(null);
@@ -318,15 +335,18 @@ export class AiCoachChatComponent implements AfterViewChecked {
     ];
 
     // Add load-based suggestion
-    const acwr = this.trainingService.acwrRatio();
-    if (acwr > 1.3) {
+    const acwr = this.acwrDisplay();
+    if (
+      typeof acwr.value === "number" &&
+      (acwr.level === "elevated-risk" || acwr.level === "danger-zone")
+    ) {
       suggestions.push({
         icon: "pi-exclamation-triangle",
         label: "Handle high load",
-        query: `My ACWR is ${acwr.toFixed(2)}. How should I adjust my training?`,
+        query: `My ACWR is ${acwr.value.toFixed(2)}. How should I adjust my training?`,
         category: "Safety",
       });
-    } else if (acwr < 0.8 && acwr > 0) {
+    } else if (acwr.level === "under-training") {
       suggestions.push({
         icon: "pi-chart-line",
         label: "Build back up",
@@ -347,8 +367,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
     }
 
     // Add health-based suggestion
-    const readinessLevel = this.trainingService.readinessLevel();
-    if (readinessLevel === "low") {
+    if (this.readinessPresentation().severity === "danger") {
       suggestions.push({
         icon: "pi-info-circle",
         label: "Recover better",
@@ -376,10 +395,15 @@ export class AiCoachChatComponent implements AfterViewChecked {
           "Injury report",
         );
       } else {
-        const acwr = this.trainingService.acwrRatio();
-        const readiness = this.trainingService.readinessScore();
-        if (acwr !== null && acwr > 1.3) chips.push("Explain my high ACWR");
-        if (readiness !== null && readiness < 60)
+        const acwr = this.acwrDisplay();
+        const readiness = this.readinessPresentation();
+        if (
+          acwr.level === "elevated-risk" ||
+          acwr.level === "danger-zone"
+        ) {
+          chips.push("Explain my high ACWR");
+        }
+        if (readiness.score !== null && readiness.severity === "danger")
           chips.push("Why is my readiness low?");
       }
       return chips.slice(0, UI_LIMITS.AI_CHIPS_COUNT);
@@ -431,8 +455,12 @@ export class AiCoachChatComponent implements AfterViewChecked {
           break;
         default:
           // Fallback to state-based context
-          if (this.trainingService.acwrRatio() > 1.2)
+          if (
+            this.acwrDisplay().level === "elevated-risk" ||
+            this.acwrDisplay().level === "danger-zone"
+          ) {
             chips.push("Injury prevention tips");
+          }
           if (msgs.length === 2) {
             chips.push("Tell me more", "Give me a routine");
           }
@@ -467,6 +495,13 @@ export class AiCoachChatComponent implements AfterViewChecked {
   }
 
   constructor() {
+    effect(() => {
+      const score = this.readinessPresentation().score;
+      if (score !== null && score > 0) {
+        this.todayReadinessScore.set(score);
+      }
+    });
+
     this.searchControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
@@ -477,8 +512,22 @@ export class AiCoachChatComponent implements AfterViewChecked {
     // Initialize on construction (Angular 21 pattern)
     this.loadTodayReadiness();
     this.loadAIModeStatus();
+    this.loadTrainingOverviewContext();
     this.initializeSpeechRecognition();
     this.handleRouteParams();
+  }
+
+  private loadTrainingOverviewContext(): void {
+    this.trainingService
+      .getTodayOverview()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: (error) =>
+          this.logger.warn(
+            "[AI Chat] Failed to load protocol overview, using live metric fallback",
+            error,
+          ),
+      });
   }
 
   private handleRouteParams(): void {
@@ -568,8 +617,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
   }
 
   async loadTodayReadiness(): Promise<void> {
-    // We can now use the UnifiedTrainingService directly
-    const score = this.trainingService.readinessScore();
+    const score = this.readinessPresentation().score;
     if (score !== null && score > 0) {
       this.todayReadinessScore.set(score);
     }
@@ -588,7 +636,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
         user.id,
       );
       const trainingDays =
-        this.trainingService.acwrData().dataQuality.daysWithData || 0;
+        (this.acwrDisplay().trainingDaysLogged ??
+          this.trainingService.acwrData().dataQuality.daysWithData) ||
+        0;
 
       // Calculate confidence similar to backend
       let confidence = 1.0;

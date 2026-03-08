@@ -59,5 +59,5 @@ reset, tokens, primeng-base, primeng-brand, primitives, features, overrides
 ## Current Style Root Boundary
 
 - **Canonical design-system modules:** `angular/src/scss/design-system/**`
-- **Compatibility shims only:** `angular/src/styles/design-system/**`
 - New imports should use `scss/design-system/...`
+- The legacy `angular/src/styles/design-system/**` shim layer has been removed

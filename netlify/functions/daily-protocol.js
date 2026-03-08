@@ -12,6 +12,7 @@ import {
 import { resolveTodaySession } from "./utils/session-resolver.js";
 import { resolveTeamActivityForAthleteDay } from "./utils/team-activity-resolver.js";
 import { getTrainingProgramById } from "./utils/training-programs.js";
+import { resolveYouTubeVideoMetadata } from "./utils/youtube.js";
 import crypto from "crypto";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
@@ -1461,6 +1462,65 @@ function getSafeConditioningIntensity(acwr, daysSinceLastSession, phase) {
   };
 }
 
+function buildAcwrPresentation(acwrValue, confidenceMetadata = null) {
+  const trainingDaysLogged =
+    confidenceMetadata?.acwr?.trainingDaysLogged ?? null;
+
+  if (
+    typeof acwrValue !== "number" ||
+    !Number.isFinite(acwrValue) ||
+    acwrValue <= 0
+  ) {
+    const baselineBuilding =
+      typeof trainingDaysLogged === "number" &&
+      trainingDaysLogged > 0 &&
+      trainingDaysLogged < 21;
+
+    return {
+      value: null,
+      level: "no-data",
+      label: baselineBuilding ? "baseline building" : "no data",
+      text: baselineBuilding
+        ? `ACWR baseline building (${trainingDaysLogged}/21 logged)`
+        : null,
+    };
+  }
+
+  if (acwrValue < 0.8) {
+    return {
+      value: acwrValue,
+      level: "under-training",
+      label: "under target",
+      text: `ACWR ${acwrValue.toFixed(2)} · under target`,
+    };
+  }
+
+  if (acwrValue <= 1.3) {
+    return {
+      value: acwrValue,
+      level: "sweet-spot",
+      label: "sweet spot",
+      text: `ACWR ${acwrValue.toFixed(2)} · sweet spot`,
+    };
+  }
+
+  if (acwrValue <= 1.5) {
+    return {
+      value: acwrValue,
+      level: "elevated-risk",
+      label: "elevated",
+      text: `ACWR ${acwrValue.toFixed(2)} · elevated`,
+    };
+  }
+
+  return {
+    value: acwrValue,
+    level: "danger-zone",
+    label: "high risk",
+    text: `ACWR ${acwrValue.toFixed(2)} · high risk`,
+  };
+}
+
 /**
  * Check if Nordic curls should be included today
  * Evidence: 2-3x per week reduces hamstring injury by 50-70%
@@ -2008,7 +2068,7 @@ const legacyDailyProtocolHandler = async (event) => {
   }
 };
 
-const handler = async (event, context) =>
+export const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "daily-protocol",
     allowedMethods: ["GET", "POST"],
@@ -5391,6 +5451,10 @@ function transformProtocolResponse(
     protocol_date: protocol.protocol_date,
     readiness_score: protocol.readiness_score,
     acwr_value: protocol.acwr_value,
+    acwr_presentation: buildAcwrPresentation(
+      protocol.acwr_value,
+      protocol.confidence_metadata,
+    ),
     totalLoadTargetAu: protocol.total_load_target_au,
     aiRationale: protocol.ai_rationale,
     trainingFocus: protocol.training_focus,
@@ -5490,6 +5554,11 @@ function transformExercise(protocolExercise) {
     // Generate a name from the sequence and block type if not available
     const exerciseName = `${blockType.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Exercise ${protocolExercise.sequence_order || 1}`;
 
+    const video = resolveYouTubeVideoMetadata({
+      videoUrl: protocolExercise.video_url || null,
+      thumbnailUrl: protocolExercise.thumbnail_url || null,
+    });
+
     return {
       id: protocolExercise.id,
       exerciseId: protocolExercise.id, // Use protocol_exercise id as fallback
@@ -5499,10 +5568,10 @@ function transformExercise(protocolExercise) {
         slug: exerciseName.toLowerCase().replace(/\s+/g, "-"),
         category: blockType,
         subcategory: null,
-        videoUrl: protocolExercise.video_url || null,
-        videoId: null,
+        videoUrl: video.videoUrl,
+        videoId: video.videoId,
         videoDurationSeconds: protocolExercise.prescribed_duration_seconds,
-        thumbnailUrl: null,
+        thumbnailUrl: video.thumbnailUrl,
         howText: aiNote, // Use AI note as instructions
         feelText: null,
         compensationText: null,
@@ -5536,6 +5605,12 @@ function transformExercise(protocolExercise) {
   }
 
   // Normal path: exercise data from joined exercises table
+  const video = resolveYouTubeVideoMetadata({
+    videoId: ex.video_id,
+    videoUrl: ex.video_url,
+    thumbnailUrl: ex.thumbnail_url,
+  });
+
   return {
     id: protocolExercise.id,
     exerciseId: ex.id,
@@ -5545,10 +5620,10 @@ function transformExercise(protocolExercise) {
       slug: ex.slug,
       category: ex.category,
       subcategory: ex.subcategory,
-      videoUrl: ex.video_url,
-      videoId: ex.video_id,
+      videoUrl: video.videoUrl,
+      videoId: video.videoId,
       videoDurationSeconds: ex.video_duration_seconds,
-      thumbnailUrl: ex.thumbnail_url,
+      thumbnailUrl: video.thumbnailUrl,
       howText: ex.how_text,
       feelText: ex.feel_text,
       compensationText: ex.compensation_text,
@@ -5582,4 +5657,8 @@ function transformExercise(protocolExercise) {
 }
 
 export const testHandler = handler;
+export const testTransforms = {
+  buildAcwrPresentation,
+  transformExercise,
+};
 export default createRuntimeV2Handler(handler);

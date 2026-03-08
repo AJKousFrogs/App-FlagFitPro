@@ -87,10 +87,10 @@ type LoginForm = FormGroup<{
               role="alert"
               aria-live="polite"
             >
-              <p class="form-error-summary__title">
+              <div class="form-error-summary__header">
                 <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
-                Unable to sign in
-              </p>
+                <p class="form-error-summary__title">Unable to sign in</p>
+              </div>
               <p class="form-error-summary__body">{{ submitError() }}</p>
             </div>
           }

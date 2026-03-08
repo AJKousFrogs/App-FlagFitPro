@@ -19,6 +19,8 @@ import { CommonModule } from "@angular/common";
 import { DatePicker } from "primeng/datepicker";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
+let nextDatePickerId = 0;
+
 /**
  * Date Picker Component - Angular 21
  *
@@ -76,7 +78,7 @@ export class DatePickerComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
 
   // Configuration
-  id = input<string>(`date-picker-${Math.random().toString(36).substr(2, 9)}`);
+  id = input<string>(`date-picker-${++nextDatePickerId}`);
   label = input<string>();
   helpText = input<string>();
   errorMessage = input<string>();

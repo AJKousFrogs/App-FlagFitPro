@@ -82,6 +82,11 @@ import { UnifiedTrainingService } from "../../core/services/unified-training.ser
 
 // Utils
 import { mapDailyProtocolResponse } from "../../core/utils/api-response-mapper";
+import { getDateKey, getTodayISO } from "../../shared/utils/date.utils";
+import {
+  ExactTrainingSummary,
+  TodayProtocolFacade,
+} from "./today-protocol.facade";
 
 // Constants
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
@@ -204,6 +209,7 @@ export class TodayComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(ApiService);
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
+  private readonly todayProtocolFacade = inject(TodayProtocolFacade);
 
   // Angular 21: viewChild signals for DOM element references
   private readonly wellnessSection = viewChild<ElementRef>("wellnessSection");
@@ -281,7 +287,6 @@ export class TodayComponent {
   readonly aiInsight = this.trainingService.aiInsight;
   readonly isLoading = this.trainingService.isRefreshing;
   readonly hasCheckedInToday = this.trainingService.hasCheckedInToday;
-  readonly currentDate = signal(new Date().toISOString().split("T")[0]);
 
   // ============================================================================
   // COMPUTED VALUES
@@ -331,12 +336,11 @@ export class TodayComponent {
     return dayNames.map((dayName, i) => {
       const date = new Date(monday);
       date.setDate(monday.getDate() + i);
-      const dateStr = date.toISOString().split("T")[0];
-      const isToday = dateStr === new Date().toISOString().split("T")[0];
+      const dateStr = getDateKey(date);
+      const isToday = dateStr === getTodayISO();
 
       const daySchedule = schedule.find(
-        (s) =>
-          s.date && new Date(s.date).toISOString().split("T")[0] === dateStr,
+        (s) => s.date && getDateKey(s.date) === dateStr,
       );
 
       let status: WeekDay["status"] = "empty";
@@ -374,11 +378,16 @@ export class TodayComponent {
   // COMPUTED STATUS HELPERS
   // ============================================================================
   readonly acwrStatusLabel = computed(
-    () => this.acwrRiskZone()?.label || "Unknown",
+    () =>
+      this.protocolJson()?.acwr_presentation?.label ||
+      this.acwrRiskZone()?.label ||
+      "Unknown",
   );
 
   readonly acwrSeverity = computed<TagSeverity>(() => {
-    const level = this.acwrRiskZone()?.level;
+    const level =
+      this.protocolJson()?.acwr_presentation?.level ??
+      this.acwrRiskZone()?.level;
     const severityMap: Record<string, TagSeverity> = {
       "sweet-spot": "success",
       "under-training": "warning",
@@ -390,7 +399,9 @@ export class TodayComponent {
   });
 
   readonly acwrClass = computed(() => {
-    const level = this.acwrRiskZone()?.level;
+    const level =
+      this.protocolJson()?.acwr_presentation?.level ??
+      this.acwrRiskZone()?.level;
     const classMap: Record<string, string> = {
       "sweet-spot": "optimal",
       "under-training": "moderate",
@@ -478,10 +489,24 @@ export class TodayComponent {
     return banners.filter((banner) => banner !== blockingBanner);
   });
 
+  readonly exactTrainingSummary = computed<ExactTrainingSummary | null>(() => {
+    return this.todayProtocolFacade.buildExactTrainingSummary({
+      todayViewModel: this.todayViewModel(),
+      protocol: this.protocol(),
+      protocolJson: this.protocolJson(),
+      metrics: {
+        readinessScore: this.readinessScore(),
+        acwrValue: this.acwrValue(),
+        acwrRiskLevel: this.acwrRiskZone()?.level ?? null,
+        hasCheckedInToday: this.hasCheckedInToday(),
+      },
+    });
+  });
+
   readonly tomorrowDate = computed(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split("T")[0];
+    return getDateKey(tomorrow);
   });
 
   readonly tomorrowDateLabel = computed(() => {
@@ -580,7 +605,7 @@ export class TodayComponent {
    * 5. Do NOT fabricate fallback UI if generation fails
    */
   private loadTodayData(): void {
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayISO();
 
     // Step 1: Try GET first (via Netlify Functions)
     this.api
@@ -751,6 +776,14 @@ export class TodayComponent {
     section?.nativeElement?.scrollIntoView({ behavior: "smooth" });
   }
 
+  scrollToProtocolBlocks(): void {
+    const blocksContainer = this.protocolBlocks();
+    blocksContainer?.nativeElement?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
   // ============================================================================
   // QUICK CHECK-IN METHODS
   // ============================================================================
@@ -794,7 +827,7 @@ export class TodayComponent {
     this.isSavingQuickCheckin.set(true);
 
     const data = this.quickFormData();
-    const targetDate = new Date().toISOString().split("T")[0];
+    const targetDate = getTodayISO();
     const readiness = this.quickReadinessScore();
 
     this.logger.info("Quick checkin data:", {
@@ -1055,7 +1088,7 @@ export class TodayComponent {
   }
 
   private todayDate(): string {
-    return new Date().toISOString().split("T")[0];
+    return getTodayISO();
   }
 
   private showCoachAlertDialog(): void {
@@ -1092,8 +1125,7 @@ export class TodayComponent {
     }
 
     const alertId = protocol.id;
-    const sessionDate =
-      protocol.protocol_date || new Date().toISOString().split("T")[0];
+    const sessionDate = protocol.protocol_date || getTodayISO();
 
     // Call backend endpoint to acknowledge coach alert
     this.api
@@ -1137,25 +1169,12 @@ export class TodayComponent {
   });
 
   readonly readinessDisplay = computed(() => {
-    const vm = this.todayViewModel();
-    const protocol = this.protocolJson();
-
-    if (!vm || !protocol) {
-      return { value: "—", logged: false };
-    }
-
-    const score = protocol.readiness_score;
-    if (score === null || score === undefined) {
-      return { value: "—", logged: false };
-    }
-
-    // Check if logged today (from confidence metadata)
-    const logged = protocol.confidence_metadata?.readiness?.daysStale === 0;
-
-    return {
-      value: `${score}`,
-      logged,
-    };
+    return this.todayProtocolFacade.buildReadinessDisplay(this.protocolJson(), {
+      readinessScore: this.readinessScore(),
+      acwrValue: this.acwrValue(),
+      acwrRiskLevel: this.acwrRiskZone()?.level ?? null,
+      hasCheckedInToday: this.hasCheckedInToday(),
+    });
   });
 
   // ============================================================================
@@ -1169,38 +1188,7 @@ export class TodayComponent {
     protocol: Partial<DailyProtocol>,
     blockType: string,
   ): ProtocolBlock | null {
-    if (!protocol) return null;
-
-    // Map database block types to DailyProtocol property names
-    // Evidence-based 1.5h training structure with new blocks
-    const blockMap: Record<string, keyof DailyProtocol> = {
-      morning_mobility: "morningMobility",
-      foam_roll: "foamRoll",
-      warm_up: "warmUp",
-      isometrics: "isometrics",
-      plyometrics: "plyometrics",
-      strength: "strength",
-      conditioning: "conditioning",
-      skill_drills: "skillDrills",
-      main_session: "mainSession",
-      cool_down: "coolDown",
-      recovery: "eveningRecovery",
-      evening_recovery: "eveningRecovery",
-    };
-
-    const prop = blockMap[blockType];
-    if (!prop) return null;
-
-    const block = protocol[prop] as ProtocolBlock | undefined;
-
-    // Return null if block doesn't exist or has no exercises
-    // Main Session should always have exercises (except recovery days)
-    // This prevents rendering empty block cards
-    if (!block || !block.exercises || block.exercises.length === 0) {
-      return null;
-    }
-
-    return block;
+    return this.todayProtocolFacade.getBlockByType(protocol, blockType);
   }
 
   /**

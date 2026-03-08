@@ -832,6 +832,19 @@ $ds-font-weight-extrabold: 800;
   --header-height-mobile: 56px;
   --header-height-profile: 80px;
   --header-height-profile-mobile: 60px;
+  --app-shell-header-height: var(--header-height);
+  --app-shell-header-height-mobile: var(--header-height-mobile);
+  --app-shell-sidebar-width: clamp(15rem, 17vw, 16.5rem);
+  --app-shell-sidebar-width-collapsed: var(--sidebar-collapsed-width);
+  --app-shell-mobile-drawer-width: min(86vw, 22rem);
+  --app-shell-content-max-width: 96rem;
+  --app-shell-content-max-width-narrow: 72rem;
+  --app-shell-gutter-inline: clamp(var(--space-4), 2vw, var(--space-6));
+  --app-shell-gutter-block: clamp(var(--space-4), 2vw, var(--space-5));
+  --app-shell-grid-gap: 0;
+  --z-index-app-sidebar: calc(var(--z-index-fixed) - 1);
+  --z-index-app-header: calc(var(--z-index-fixed) + 2);
+  --z-index-app-bottom-nav: var(--z-index-fixed);
 
   /* ================================
      GRADIENT TOKENS

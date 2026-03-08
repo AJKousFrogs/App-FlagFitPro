@@ -18,6 +18,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
@@ -27,7 +28,6 @@ import { Slider } from "primeng/slider";
 
 import { Textarea } from "primeng/textarea";
 
-import { DataConfidenceService } from "../../../core/services/data-confidence.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
@@ -42,6 +42,7 @@ import {
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
+import { getProtocolAcwrDisplay } from "../../../core/utils/protocol-metrics-presentation";
 import { GameDayReadinessDataService } from "../services/game-day-readiness-data.service";
 
 interface ReadinessMetric {
@@ -77,7 +78,13 @@ interface ReadinessMetric {
         </div>
         <div class="acwr-badge" [class]="acwrStatus()">
           <span class="acwr-label">ACWR</span>
-          <span class="acwr-value">{{ acwrValue() | number: "1.2-2" }}</span>
+          <span class="acwr-value">
+            @if (acwrDisplay().value !== null) {
+              {{ acwrDisplay().value | number: "1.2-2" }}
+            } @else {
+              --
+            }
+          </span>
         </div>
       </div>
 
@@ -256,17 +263,23 @@ export class GameDayReadinessComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly confidenceService = inject(DataConfidenceService);
 
-  // ACWR from service
-  acwrValue = this.trainingService.acwrRatio;
+  readonly todayProtocol = this.trainingService.todayProtocol;
+  readonly acwrDisplay = computed(() =>
+    getProtocolAcwrDisplay(
+      this.todayProtocol(),
+      this.trainingService.acwrRatio(),
+      null,
+    ),
+  );
+
   acwrStatus = computed(() => {
-    const ratio = this.acwrValue();
-    if (ratio === 0) return "yellow";
-    if (ratio < 0.8) return "orange";
-    if (ratio <= 1.3) return "green";
-    if (ratio <= 1.5) return "yellow";
-    return "red";
+    const level = this.acwrDisplay().level;
+    if (level === "sweet-spot") return "green";
+    if (level === "under-training") return "orange";
+    if (level === "elevated-risk") return "yellow";
+    if (level === "danger-zone") return "red";
+    return "yellow";
   });
 
   // Form state - CRITICAL: No default values - user must enter their own data
@@ -358,10 +371,12 @@ export class GameDayReadinessComponent implements OnInit {
 
     // Factor in ACWR penalty if in danger zone
     let acwrPenalty = 0;
-    const acwr = this.acwrValue();
-    if (acwr > 1.5) acwrPenalty = 15;
-    else if (acwr > 1.3) acwrPenalty = 5;
-    else if (acwr < 0.8 && acwr > 0) acwrPenalty = 10;
+    const acwr = this.acwrDisplay().value;
+    if (acwr !== null) {
+      if (acwr > 1.5) acwrPenalty = 15;
+      else if (acwr > 1.3) acwrPenalty = 5;
+      else if (acwr < 0.8 && acwr > 0) acwrPenalty = 10;
+    }
 
     const baseScore = Math.round((totalWeightedScore / totalWeight) * 100);
     return Math.max(0, baseScore - acwrPenalty);
@@ -441,7 +456,7 @@ export class GameDayReadinessComponent implements OnInit {
   recommendations = computed(() => {
     const recs: string[] = [];
     const m = this.metrics();
-    const acwr = this.acwrValue();
+    const acwr = this.acwrDisplay().value;
 
     // Sleep recommendations
     const sleep = m.find((x) => x.key === "sleep");
@@ -473,7 +488,7 @@ export class GameDayReadinessComponent implements OnInit {
     }
 
     // ACWR recommendations
-    if (acwr > 1.3) {
+    if (acwr !== null && acwr > 1.3) {
       recs.push("Monitor fatigue levels closely during competition");
       recs.push("Consider rotation strategy with coach");
     }
@@ -494,6 +509,18 @@ export class GameDayReadinessComponent implements OnInit {
     if (gameParam) {
       this.gameInfo.set(gameParam);
     }
+
+    this.trainingService
+      .getTodayOverview()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: (error) => {
+          this.logger.warn(
+            "[GameDayReadiness] Failed to load protocol context",
+            toLogContext(error),
+          );
+        },
+      });
   }
 
   updateMetric(key: string, value: number): void {
@@ -537,7 +564,7 @@ export class GameDayReadinessComponent implements OnInit {
         mental_focus: metrics.find((m) => m.key === "mental")?.value,
         confidence_level: metrics.find((m) => m.key === "confidence")?.value,
         readiness_score: this.readinessScore() ?? 0,
-        acwr_at_checkin: this.acwrValue(),
+        acwr_at_checkin: this.acwrDisplay().value,
         notes: this.notes || null,
         game_info: this.gameInfo(),
       };

@@ -1,23 +1,36 @@
 .register-page {
   .register-card {
     width: 100%;
-    max-width: 38rem;
+    max-width: 35rem;
     margin-inline: auto;
   }
 
   .register-title {
-    max-width: 22ch;
+    max-width: 20ch;
     margin-inline: auto;
+  }
+
+  .register-divider {
+    margin-top: var(--space-1);
   }
 
   .register-login-link {
     font-size: var(--font-body-sm-size);
   }
 
+  .form-help {
+    margin-top: var(--space-2);
+  }
+
   .age-label,
   .terms-label {
     font-size: var(--font-body-sm-size);
     line-height: var(--line-height-relaxed);
+  }
+
+  .age-verification,
+  .terms-agreement {
+    padding-top: var(--space-1);
   }
 
   .age-label strong {
@@ -28,6 +41,7 @@
     color: var(--color-brand-primary);
     font-weight: var(--font-weight-semibold);
     text-decoration: none;
+    text-underline-offset: 0.15em;
   }
 
   .terms-label a:hover {

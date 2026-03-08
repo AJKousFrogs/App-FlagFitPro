@@ -26,10 +26,15 @@ const IPHONE_DEVICES = [
   },
 ];
 
+function toDeviceUseOptions(device) {
+  const { name, defaultBrowserType, ...useOptions } = device;
+  return useOptions;
+}
+
 test.describe("Mobile Dropdown Z-Index Tests", () => {
   for (const device of IPHONE_DEVICES) {
     test.describe(device.name, () => {
-      test.use(device);
+      test.use(toDeviceUseOptions(device));
 
       test("autocomplete dropdown should appear above form content", async ({
         page,

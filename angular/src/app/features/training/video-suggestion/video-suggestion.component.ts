@@ -69,7 +69,7 @@ import { VideoSuggestionDataService } from "../services/video-suggestion-data.se
 import {
   FlagPosition,
   TrainingFocus,
-} from "../../../core/services/training-video-database.service";
+} from "../../../core/models/training-video.models";
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";

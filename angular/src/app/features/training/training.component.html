@@ -42,10 +42,15 @@
               training sessions
             </p>
           </div>
-          @if (readinessScore() !== null && readinessScore()! > 0) {
+          @if (
+            readinessPresentation().score !== null &&
+            readinessPresentation().score! > 0
+          ) {
             <div class="ui-page-hero__aside">
               <div class="readiness-badge-compact" [class]="readinessStatus()">
-                <span class="readiness-value">{{ readinessScore() }}</span>
+                <span class="readiness-value">{{
+                  readinessPresentation().score
+                }}</span>
                 <span class="readiness-label">Readiness</span>
               </div>
             </div>

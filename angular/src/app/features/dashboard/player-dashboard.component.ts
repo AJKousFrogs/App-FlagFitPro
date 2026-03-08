@@ -96,8 +96,11 @@ import { TeamMembershipService } from "../../core/services/team-membership.servi
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { NextGenMetricsService } from "../../core/services/next-gen-metrics.service";
 import { TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
-import { getReadinessLevel } from "../../core/constants/wellness.constants";
 import { getTimeAgo } from "../../shared/utils/date.utils";
+import {
+  getProtocolAcwrDisplay,
+  getProtocolReadinessPresentation,
+} from "../../core/utils/protocol-metrics-presentation";
 import { PlayerDashboardDataService } from "./services/player-dashboard-data.service";
 import type { SimpleChartData } from "../../core/models/chart.models";
 
@@ -238,10 +241,18 @@ export class PlayerDashboardComponent {
     return preview?.readiness?.score ?? null;
   });
 
+  readonly todayProtocol = this.unifiedTrainingService.todayProtocol;
+
   // ACWR progress tracking (UX Audit Fix #5)
   trainingDaysLogged = signal<number | null>(null); // Calculate from real training sessions
   acwrDataSufficient = computed(() => {
-    const days = this.trainingDaysLogged();
+    if (this.todayProtocol()?.acwr_presentation?.value !== null) {
+      return true;
+    }
+
+    const days =
+      this.todayProtocol()?.confidence_metadata?.acwr?.trainingDaysLogged ??
+      this.trainingDaysLogged();
     return days !== null && days >= TRAINING.MIN_DAYS_FOR_CHRONIC;
   });
 
@@ -362,8 +373,8 @@ export class PlayerDashboardComponent {
   });
 
   merlinInsight = computed(() => {
-    const readiness = this.readinessScore();
-    const acwrVal = this.acwr();
+    const readiness = this.dashboardReadinessPresentation().score;
+    const acwrVal = this.dashboardAcwrDisplay().value;
 
     // CRITICAL: Only provide insights if we have real data
     if (readiness === null && acwrVal === null) {
@@ -392,6 +403,21 @@ export class PlayerDashboardComponent {
     const planned = this.weeklySessionsPlanned();
     return planned > 0 ? Math.round((completed / planned) * 100) : 0;
   });
+
+  readonly dashboardReadinessPresentation = computed(() =>
+    getProtocolReadinessPresentation(
+      this.todayProtocol(),
+      this.readinessScore(),
+    ),
+  );
+
+  readonly dashboardAcwrDisplay = computed(() =>
+    getProtocolAcwrDisplay(
+      this.todayProtocol(),
+      this.acwr(),
+      this.trainingDaysLogged(),
+    ),
+  );
 
   // Data Confidence Calculations
   readinessConfidence = computed(() => {
@@ -1024,9 +1050,7 @@ export class PlayerDashboardComponent {
   }
 
   getReadinessStatus(): string {
-    const score = this.readinessScore();
-    if (score === null) return "No data";
-    return getReadinessLevel(score).label;
+    return this.dashboardReadinessPresentation().label;
   }
 
   getReadinessSeverity():
@@ -1036,18 +1060,11 @@ export class PlayerDashboardComponent {
     | "info"
     | "secondary"
     | "primary" {
-    const score = this.readinessScore();
-    if (score === null) return "info";
-    const severity = getReadinessLevel(score).severity;
-    return severity === "warning" ? "warning" : severity;
+    return this.dashboardReadinessPresentation().severity;
   }
 
   getAcwrStatus(): string {
-    const value = this.acwr();
-    if (value === null) return "No data";
-    if (value <= 1.0) return "Optimal";
-    if (value <= 1.3) return "Elevated";
-    return "High";
+    return this.dashboardAcwrDisplay().label;
   }
 
   getAcwrSeverity():
@@ -1057,11 +1074,7 @@ export class PlayerDashboardComponent {
     | "info"
     | "secondary"
     | "primary" {
-    const value = this.acwr();
-    if (value === null) return "info";
-    if (value <= 1.0) return "success";
-    if (value <= 1.3) return "warning";
-    return "danger";
+    return this.dashboardAcwrDisplay().severity;
   }
 
   getEventSeverity(

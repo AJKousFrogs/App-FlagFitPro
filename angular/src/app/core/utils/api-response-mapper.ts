@@ -36,6 +36,10 @@ export function mapDailyProtocolResponse<T>(data: T): T {
     mapped.acwr_value = source.acwrValue;
   }
 
+  if ("acwrPresentation" in source && !("acwr_presentation" in source)) {
+    mapped.acwr_presentation = source.acwrPresentation;
+  }
+
   // protocol_date mapping
   if ("protocolDate" in source && !("protocol_date" in source)) {
     mapped.protocol_date = source.protocolDate;

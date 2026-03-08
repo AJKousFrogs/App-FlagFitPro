@@ -52,6 +52,7 @@ import {
   WeeklyScheduleDay,
 } from "../../core/models/training.models";
 import { UI_LIMITS } from "../../core/constants/app.constants";
+import { getProtocolReadinessPresentation } from "../../core/utils/protocol-metrics-presentation";
 
 interface AchievementApiRecord {
   id: string;
@@ -105,6 +106,7 @@ export class TrainingComponent {
   readonly wellnessAlert = this.trainingService.wellnessAlert;
   readonly readinessScore = this.trainingService.readinessScore;
   readonly readinessLevel = this.trainingService.readinessLevel;
+  readonly todayProtocol = this.trainingService.todayProtocol;
 
   // Computed signals from state service
   readonly hasWorkouts = computed(() => this.workouts().length > 0);
@@ -146,7 +148,15 @@ export class TrainingComponent {
   >([]);
 
   // Computed for readiness badge status
-  readonly readinessStatus = computed(() => this.readinessLevel());
+  readonly readinessPresentation = computed(() =>
+    getProtocolReadinessPresentation(
+      this.todayProtocol(),
+      this.readinessScore(),
+    ),
+  );
+  readonly readinessStatus = computed(
+    () => this.readinessPresentation().cssClass,
+  );
 
   constructor() {
     // Initialize on construction (Angular 21 pattern)

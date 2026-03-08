@@ -16,6 +16,17 @@ export interface ProtocolJson {
   protocol_date?: string;
   readiness_score?: number | null;
   acwr_value?: number | null;
+  acwr_presentation?: {
+    value?: number | null;
+    level?:
+      | "sweet-spot"
+      | "under-training"
+      | "elevated-risk"
+      | "danger-zone"
+      | "no-data";
+    label?: string | null;
+    text?: string | null;
+  };
 
   // Confidence metadata (from backend)
   confidence_metadata?: {

@@ -28,7 +28,7 @@ import {
   TrainingFocus,
   SkillLevel,
   TrainingPhase,
-} from "./training-video-database.service";
+} from "../models/training-video.models";
 
 // ============================================================================
 // INTERFACES

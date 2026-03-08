@@ -10,7 +10,6 @@ import { Observable, catchError, combineLatest, finalize, firstValueFrom, from, 
 import { COLORS } from "../constants/app.constants";
 import { WELLNESS } from "../constants/wellness.constants";
 import {
-    DailyProtocolResponse,
     DailyRoutineSlot,
     SmartRecommendationsResponse,
     TodayScheduleItem,
@@ -39,6 +38,10 @@ import {
 } from "./performance-data.service";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 import { normalizeTemplateDayOfWeekToWeekIndex } from "../../shared/utils/training-template.utils";
+import {
+  normalizeProtocolMetricsSnapshot,
+  type ProtocolMetricsSnapshot,
+} from "../utils/protocol-metrics-presentation";
 import {
     PlayerProgramService,
     ProgramAssignment,
@@ -69,7 +72,7 @@ interface WellnessCheckinRecord {
  * Today overview data structure
  */
 interface TodayOverviewData {
-  protocol?: { data?: DailyProtocolResponse };
+  protocol?: { data?: ProtocolMetricsSnapshot | null };
   readiness?: unknown;
   recommendations?: { data?: SmartRecommendationsResponse };
   trainingData?: TrainingDataResult;
@@ -441,6 +444,9 @@ export class UnifiedTrainingService {
   private readonly _achievements = signal<Achievement[]>([]);
   readonly achievements = this._achievements.asReadonly();
 
+  private readonly _todayProtocol = signal<ProtocolMetricsSnapshot | null>(null);
+  readonly todayProtocol = this._todayProtocol.asReadonly();
+
   private readonly _wellnessAlert = signal<WellnessAlert | null>(null);
   readonly wellnessAlert = this._wellnessAlert.asReadonly();
 
@@ -463,18 +469,26 @@ export class UnifiedTrainingService {
   getTodayOverview(date?: string) {
     const now = Date.now();
     if (now < this.authFailureCooldownUntil) {
+      this._todayProtocol.set(null);
       return of(null);
     }
 
-    if (!this.authService.isAuthenticated()) return of(null);
+    if (!this.authService.isAuthenticated()) {
+      this._todayProtocol.set(null);
+      return of(null);
+    }
 
     const session = this.supabase.session();
     if (!session?.access_token) {
+      this._todayProtocol.set(null);
       return of(null);
     }
 
     const id = this.userId();
-    if (!id) return of(null);
+    if (!id) {
+      this._todayProtocol.set(null);
+      return of(null);
+    }
 
     const targetDate = date || new Date().toISOString().split("T")[0];
     const requestKey = `${id}:${targetDate}`;
@@ -500,6 +514,7 @@ export class UnifiedTrainingService {
       trainingData: from(this.loadAllTrainingData()),
     }).pipe(
       map((data) => {
+        this._todayProtocol.set(data.protocol?.data ?? null);
         const insight = this.generateAiInsight(
           data as unknown as TodayOverviewData,
         );
@@ -510,6 +525,7 @@ export class UnifiedTrainingService {
         };
       }),
       catchError((err) => {
+        this._todayProtocol.set(null);
         if (this.isExpectedApiClientError(err)) {
           // Avoid request storms during unauthenticated/expired sessions.
           this.authFailureCooldownUntil = Date.now() + 15_000;
@@ -537,7 +553,28 @@ export class UnifiedTrainingService {
   private async loadDailyProtocolDirect(
     userId: string,
     date: string,
-  ): Promise<{ data: DailyProtocolResponse | null }> {
+  ): Promise<{ data: ProtocolMetricsSnapshot | null }> {
+    try {
+      const response = await firstValueFrom(
+        this.api.get<{ success: boolean; data?: unknown }>(
+          API_ENDPOINTS.dailyProtocol.byDate(date),
+        ),
+      );
+
+      if (response?.success && response.data) {
+        return {
+          data: normalizeProtocolMetricsSnapshot(response.data),
+        };
+      }
+    } catch (err) {
+      if (!this.isExpectedApiClientError(err)) {
+        this.logger.warn(
+          "[UnifiedTraining] API protocol load failed, falling back to direct query",
+          toLogContext(err),
+        );
+      }
+    }
+
     try {
       const { data, error } = await this.supabase.client
         .from("daily_protocols")
@@ -561,7 +598,9 @@ export class UnifiedTrainingService {
         return { data: null };
       }
 
-      return { data: data as DailyProtocolResponse };
+      return {
+        data: normalizeProtocolMetricsSnapshot(data),
+      };
     } catch (err) {
       if (!isBenignSupabaseQueryError(err)) {
         this.logger.warn(
@@ -1411,9 +1450,7 @@ export class UnifiedTrainingService {
       return "You're a bit dehydrated. Drink 500ml of water before you start your session.";
 
     // 3. Protocol-Specific Insights
-    const protocolData = data.protocol?.data as
-      | DailyProtocolResponse
-      | undefined;
+    const protocolData = data.protocol?.data;
     if (protocolData?.aiRationale) {
       return protocolData.aiRationale;
     }

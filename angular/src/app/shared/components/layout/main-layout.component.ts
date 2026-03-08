@@ -3,7 +3,12 @@ import {
   ChangeDetectionStrategy,
   inject,
   OnInit,
+  OnDestroy,
+  PLATFORM_ID,
+  Renderer2,
+  viewChild,
 } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
@@ -30,18 +35,27 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
     ScrollToTopComponent,
   ],
   template: `
-    <!-- Offline Banner -->
-    <app-offline-banner></app-offline-banner>
+    <div class="app-shell dashboard-container">
+      <app-header
+        class="app-shell__header"
+        (toggleSidebar)="toggleSidebar()"
+      ></app-header>
 
-    <div class="dashboard-container">
-      <app-sidebar #sidebar></app-sidebar>
-      <main class="main-content">
-        <app-header (toggleSidebar)="sidebar.toggleSidebar()"></app-header>
-        <app-smart-breadcrumbs></app-smart-breadcrumbs>
-        <div class="content-wrapper">
-          <ng-content></ng-content>
-        </div>
-      </main>
+      <div class="app-shell__main">
+        <app-sidebar #sidebar class="app-shell__sidebar"></app-sidebar>
+
+        <section class="app-shell__content" aria-label="Application content">
+          <div class="app-main">
+            <div class="page-container">
+              <app-offline-banner></app-offline-banner>
+              <app-smart-breadcrumbs class="app-shell__breadcrumbs"></app-smart-breadcrumbs>
+              <div class="page-content content-wrapper">
+                <ng-content></ng-content>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <!-- Quick Actions FAB (hidden on mobile, bottom nav takes over) -->
       <app-quick-actions-fab class="desktop-only"></app-quick-actions-fab>
@@ -64,28 +78,46 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
     "(window:toggle-theme)": "onToggleTheme()",
   },
 })
-export class MainLayoutComponent implements OnInit {
+export class MainLayoutComponent implements OnInit, OnDestroy {
   private themeService = inject(ThemeService);
   private profileNotificationService = inject(ProfileNotificationService);
+  private readonly renderer = inject(Renderer2);
+  private readonly platformId = inject(PLATFORM_ID);
+  readonly sidebar = viewChild.required(SidebarComponent);
 
   ngOnInit(): void {
     // Check profile completion on every page load
     // This ensures users are reminded to complete their profile
     this.profileNotificationService.checkAndNotify();
+    this.applyShellBodyClass(true);
+  }
+
+  ngOnDestroy(): void {
+    this.applyShellBodyClass(false);
   }
 
   /**
    * Listen for custom events from keyboard shortcuts service
    */
   onToggleSidebar(): void {
-    // This will be handled by the sidebar component
-    // We dispatch a custom event that the sidebar listens to
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("sidebar-toggle-request"));
-    }
+    this.toggleSidebar();
   }
 
   onToggleTheme(): void {
     this.themeService.toggle();
+  }
+
+  toggleSidebar(): void {
+    this.sidebar().toggleSidebar();
+  }
+
+  private applyShellBodyClass(enabled: boolean): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    if (enabled) {
+      this.renderer.addClass(document.body, "app-shell-active");
+    } else {
+      this.renderer.removeClass(document.body, "app-shell-active");
+    }
   }
 }

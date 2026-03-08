@@ -15,6 +15,8 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 
+let nextFormInputId = 0;
+
 export type InputType =
   | "text"
   | "email"
@@ -96,10 +98,10 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
             type="button"
             class="form-field__toggle"
             (click)="togglePassword()"
+            [disabled]="isDisabled()"
             [attr.aria-label]="
               showPassword() ? 'Hide password' : 'Show password'
             "
-            tabindex="-1"
           >
             <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
           </button>
@@ -166,7 +168,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 })
 export class FormInputComponent implements ControlValueAccessor {
   // Configuration inputs
-  inputId = input<string>("");
+  inputId = input<string>(`form-input-${++nextFormInputId}`);
   label = input<string>("");
   type = input<InputType>("text");
   placeholder = input<string>("");
@@ -194,7 +196,6 @@ export class FormInputComponent implements ControlValueAccessor {
   value = signal<string>("");
   isDisabled = signal<boolean>(false);
   isTouched = signal<boolean>(false);
-  isFocused = signal<boolean>(false);
   showPassword = signal<boolean>(false);
 
   // ControlValueAccessor callbacks
@@ -255,7 +256,6 @@ export class FormInputComponent implements ControlValueAccessor {
    */
   onBlur(): void {
     this.isTouched.set(true);
-    this.isFocused.set(false);
     this.onTouched();
     this.blurred.emit();
   }
@@ -264,7 +264,6 @@ export class FormInputComponent implements ControlValueAccessor {
    * Handle focus event
    */
   onFocus(): void {
-    this.isFocused.set(true);
     this.focused.emit();
   }
 

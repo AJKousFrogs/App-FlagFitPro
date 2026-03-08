@@ -211,6 +211,11 @@
   min-width: 0;
 }
 
+.roster-filter {
+  flex-basis: 15rem;
+  min-width: 15rem;
+}
+
 .table-filters input {
   width: 100%;
   min-height: var(--component-input-height-md);

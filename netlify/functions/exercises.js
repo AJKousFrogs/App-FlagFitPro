@@ -1,6 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
+import { resolveYouTubeVideoMetadata } from "./utils/youtube.js";
 
 function parseBoundedInt(rawValue, fieldName, { min, max, fallback }) {
   if (rawValue === undefined || rawValue === null || rawValue === "") {
@@ -46,6 +47,8 @@ function parseSearch(rawValue) {
  * Map plyometric exercise to unified format
  */
 function mapPlyometricExercise(ex) {
+  const video = resolveYouTubeVideoMetadata({ videoUrl: ex.video_url });
+
   return {
     id: ex.id,
     name: ex.exercise_name,
@@ -64,8 +67,8 @@ function mapPlyometricExercise(ex) {
       : ex.common_mistakes || null,
     target_muscles: ex.target_muscles || [],
     equipment_required: ex.equipment_needed || [],
-    video_url: ex.video_url,
-    video_id: extractYoutubeId(ex.video_url),
+    video_url: video.videoUrl,
+    video_id: video.videoId,
     default_sets: 3,
     default_reps: 8,
     is_high_intensity:
@@ -83,6 +86,8 @@ function mapPlyometricExercise(ex) {
  * Map isometric exercise to unified format
  */
 function mapIsometricExercise(ex) {
+  const video = resolveYouTubeVideoMetadata({ videoUrl: ex.video_url });
+
   return {
     id: ex.id,
     name: ex.name,
@@ -101,8 +106,8 @@ function mapIsometricExercise(ex) {
       : ex.safety_notes || null,
     target_muscles: ex.target_muscles || [],
     equipment_required: [],
-    video_url: ex.video_url,
-    video_id: extractYoutubeId(ex.video_url),
+    video_url: video.videoUrl,
+    video_id: video.videoId,
     default_sets: ex.sets || 3,
     default_reps: ex.reps || 1,
     default_hold_seconds: ex.hold_duration_seconds || 30,
@@ -118,6 +123,11 @@ function mapIsometricExercise(ex) {
  * Map main exercises table to unified format
  */
 function mapMainExercise(ex) {
+  const video = resolveYouTubeVideoMetadata({
+    videoId: ex.video_id,
+    videoUrl: ex.video_url,
+  });
+
   return {
     id: ex.id,
     name: ex.name,
@@ -131,8 +141,8 @@ function mapMainExercise(ex) {
     compensation_text: ex.compensation_text,
     target_muscles: ex.target_muscles || [],
     equipment_required: ex.equipment_required || [],
-    video_url: ex.video_url,
-    video_id: ex.video_id || extractYoutubeId(ex.video_url),
+    video_url: video.videoUrl,
+    video_id: video.videoId,
     default_sets: ex.default_sets,
     default_reps: ex.default_reps,
     default_hold_seconds: ex.default_hold_seconds,
@@ -141,19 +151,6 @@ function mapMainExercise(ex) {
     load_contribution_au: ex.load_contribution_au,
     position_specific: ex.position_specific,
   };
-}
-
-/**
- * Extract YouTube video ID from URL
- */
-function extractYoutubeId(url) {
-  if (!url) {
-    return null;
-  }
-  const match = url.match(
-    /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,
-  );
-  return match ? match[1] : null;
 }
 
 /**

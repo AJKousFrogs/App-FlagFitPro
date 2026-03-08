@@ -11,6 +11,18 @@
 
 import { defineConfig, devices } from "@playwright/test";
 
+const managedWebServer =
+  process.env["PW_SKIP_WEBSERVER"] === "1"
+    ? undefined
+    : {
+        command: process.env["CI"] ? "npm run start" : "npm run start",
+        url: "http://localhost:4200",
+        reuseExistingServer: true, // Always reuse to avoid conflicts
+        timeout: 120 * 1000,
+        stdout: "ignore" as const,
+        stderr: "pipe" as const,
+      };
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -135,12 +147,5 @@ export default defineConfig({
   ],
 
   // Local dev server
-  webServer: {
-    command: process.env["CI"] ? "npm run start" : "npm run start",
-    url: "http://localhost:4200",
-    reuseExistingServer: true, // Always reuse to avoid conflicts
-    timeout: 120 * 1000,
-    stdout: "ignore",
-    stderr: "pipe",
-  },
+  webServer: managedWebServer,
 });

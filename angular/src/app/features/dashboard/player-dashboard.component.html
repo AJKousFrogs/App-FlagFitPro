@@ -15,7 +15,7 @@
 
       <!-- Dashboard Content -->
       @if (!isLoading() && !hasError()) {
-        <div class="player-dashboard section-stack elite-phase2-shell ui-page-stack">
+        <div class="player-dashboard section-stack elite-phase2-shell ui-page-shell ui-page-stack">
           <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
           @if (needsProgramAssignment()) {
             <section class="no-program-section">
@@ -315,14 +315,14 @@
               tooltipPosition="bottom"
               [showDelay]="500"
             >
-              @if (readinessScore() !== null) {
+              @if (dashboardReadinessPresentation().score !== null) {
                 <div class="stat-card-content">
                   <div class="stat-icon readiness-icon">
                     <i class="pi pi-heart"></i>
                   </div>
                   <div class="stat-details">
                     <span class="stat-block__value">
-                      {{ readinessScore() }}%
+                      {{ dashboardReadinessPresentation().score }}%
                     </span>
                     <span class="stat-block__label">Readiness</span>
                   </div>
@@ -418,7 +418,7 @@ Keep logging sessions to unlock this injury prevention metric!'
               tooltipPosition="bottom"
               [showDelay]="500"
             >
-              @if (acwr() !== null && acwrDataSufficient()) {
+              @if (dashboardAcwrDisplay().hasData && acwrDataSufficient()) {
                 <!-- Full ACWR Display (MIN_DAYS_FOR_CHRONIC+ days of data) -->
                 <div class="stat-card-content">
                   <div class="stat-icon acwr-icon">
@@ -426,7 +426,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                   </div>
                   <div class="stat-details">
                     <span class="stat-block__value">{{
-                      acwr() | number: "1.2-2"
+                      dashboardAcwrDisplay().value | number: "1.2-2"
                     }}</span>
                     <span class="stat-block__label">ACWR</span>
                   </div>
@@ -436,7 +436,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                     size="sm"
                   ></app-status-tag>
                 </div>
-              } @else if (trainingDaysLogged() !== null) {
+              } @else if (dashboardAcwrDisplay().trainingDaysLogged !== null) {
                 <!-- Progress Tracking (< MIN_DAYS_FOR_CHRONIC days) -->
                 <div class="acwr-progress-content">
                   <div class="stat-icon acwr-icon-building">
@@ -450,22 +450,23 @@ Keep logging sessions to unlock this injury prevention metric!'
                         <div
                           class="acwr-progress-fill"
                           [style.width.%]="
-                            (trainingDaysLogged()! /
+                            (dashboardAcwrDisplay().trainingDaysLogged! /
                               TRAINING.MIN_DAYS_FOR_CHRONIC) *
                             100
                           "
                         ></div>
                       </div>
                       <span class="acwr-progress-text">
-                        {{ trainingDaysLogged() }}/{{
+                        {{ dashboardAcwrDisplay().trainingDaysLogged }}/{{
                           TRAINING.MIN_DAYS_FOR_CHRONIC
                         }}
                         days
                       </span>
                     </div>
                     @if (
-                      trainingDaysLogged()! >= TRAINING.ACUTE_LOAD_DAYS &&
-                      trainingDaysLogged()! < 14
+                      dashboardAcwrDisplay().trainingDaysLogged! >=
+                        TRAINING.ACUTE_LOAD_DAYS &&
+                      dashboardAcwrDisplay().trainingDaysLogged! < 14
                     ) {
                       <app-status-tag
                         value="7-day milestone! 🎉"
@@ -474,8 +475,9 @@ Keep logging sessions to unlock this injury prevention metric!'
                         class="milestone-tag"
                       ></app-status-tag>
                     } @else if (
-                      trainingDaysLogged()! >= 14 &&
-                      trainingDaysLogged()! < TRAINING.MIN_DAYS_FOR_CHRONIC
+                      dashboardAcwrDisplay().trainingDaysLogged! >= 14 &&
+                      dashboardAcwrDisplay().trainingDaysLogged! <
+                        TRAINING.MIN_DAYS_FOR_CHRONIC
                     ) {
                       <app-status-tag
                         value="Halfway there!"
@@ -484,7 +486,8 @@ Keep logging sessions to unlock this injury prevention metric!'
                         class="milestone-tag"
                       ></app-status-tag>
                     } @else if (
-                      trainingDaysLogged()! < TRAINING.ACUTE_LOAD_DAYS
+                      dashboardAcwrDisplay().trainingDaysLogged! <
+                        TRAINING.ACUTE_LOAD_DAYS
                     ) {
                       <span class="acwr-help-text"
                         >Keep logging to unlock insights</span
@@ -511,7 +514,10 @@ Keep logging sessions to unlock this injury prevention metric!'
               }
 
               <!-- Data Confidence Indicator (Phase 3 - Semantic Meaning) -->
-              @if (acwr() !== null || trainingDaysLogged() !== null) {
+              @if (
+                dashboardAcwrDisplay().hasData ||
+                dashboardAcwrDisplay().trainingDaysLogged !== null
+              ) {
                 <div class="confidence-indicator-wrapper">
                   <!-- Phase 3: Semantic Incomplete Data Badge when confidence is low -->
                   @if (

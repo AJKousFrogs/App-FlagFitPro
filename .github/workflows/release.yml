@@ -38,7 +38,7 @@ jobs:
         run: npm ci
 
       - name: Install Angular dependencies
-        run: cd angular && npm ci
+        run: cd angular && npm ci --legacy-peer-deps
 
       - name: Run unit tests
         run: npm run test:unit
@@ -73,7 +73,7 @@ jobs:
         run: npm ci
 
       - name: Install Angular dependencies
-        run: cd angular && npm ci
+        run: cd angular && npm ci --legacy-peer-deps
 
       - name: Build for production
         run: npm run build:production
@@ -153,7 +153,7 @@ jobs:
         run: npm ci
 
       - name: Install Angular dependencies
-        run: cd angular && npm ci
+        run: cd angular && npm ci --legacy-peer-deps
 
       - name: Build for production
         run: npm run build:production

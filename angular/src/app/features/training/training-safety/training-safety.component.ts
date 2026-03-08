@@ -22,7 +22,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import {} from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Card } from "primeng/card";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -35,13 +35,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { SafetyWarningsComponent } from "../../../shared/components/safety-warnings/safety-warnings.component";
 import { TrafficLightRiskComponent } from "../../../shared/components/traffic-light-risk/traffic-light-risk.component";
-import { TrainingSafetyService } from "../../../core/services/training-safety.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
-import { AgeAdjustedRecoveryService } from "../../../core/services/age-adjusted-recovery.service";
-import { SleepDebtService } from "../../../core/services/sleep-debt.service";
-import { TrainingLimitsService } from "../../../core/services/training-limits.service";
-import { ReturnToPlayService } from "../../../core/services/return-to-play.service";
-import { ApiService } from "../../../core/services/api.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
@@ -51,6 +45,10 @@ import {
   DATA_STATE_MESSAGES,
 } from "../../../shared/utils/privacy-ux-copy";
 import { calculateAge } from "../../../shared/utils/date.utils";
+import {
+  getProtocolAcwrDisplay,
+  getProtocolRiskZone,
+} from "../../../core/utils/protocol-metrics-presentation";
 
 @Component({
   selector: "app-training-safety",
@@ -376,21 +374,32 @@ import { calculateAge } from "../../../shared/utils/date.utils";
   styleUrl: "./training-safety.component.scss",
 })
 export class TrainingSafetyComponent implements OnInit {
-  private safetyService = inject(TrainingSafetyService);
   private trainingService = inject(UnifiedTrainingService);
-  private ageRecoveryService = inject(AgeAdjustedRecoveryService);
-  private sleepDebtService = inject(SleepDebtService);
-  private trainingLimitsService = inject(TrainingLimitsService);
-  private returnToPlayService = inject(ReturnToPlayService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private trainingSafetyDataService = inject(TrainingSafetyDataService);
   private destroyRef = inject(DestroyRef);
-  private api = inject(ApiService);
 
   // ACWR signals
-  acwrValue = this.trainingService.acwrRatio;
-  acwrRiskZone = this.trainingService.acwrRiskZone;
+  readonly todayProtocol = this.trainingService.todayProtocol;
+  readonly acwrDisplay = computed(() =>
+    getProtocolAcwrDisplay(
+      this.todayProtocol(),
+      this.trainingService.acwrRatio(),
+      null,
+    ),
+  );
+  acwrValue = computed(
+    () => this.acwrDisplay().value ?? this.trainingService.acwrRatio(),
+  );
+  acwrRiskZone = computed(() =>
+    getProtocolRiskZone(
+      this.todayProtocol(),
+      this.trainingService.acwrRiskZone(),
+      this.trainingService.acwrRatio(),
+      null,
+    ),
+  );
   acuteLoad = this.trainingService.acuteLoad;
   chronicLoad = this.trainingService.chronicLoad;
 
@@ -399,7 +408,7 @@ export class TrainingSafetyComponent implements OnInit {
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
   // Data state checks
-  hasInsufficientAcwrData = computed(() => this.chronicLoad() === 0);
+  hasInsufficientAcwrData = computed(() => !this.acwrDisplay().hasData);
 
   // Age-adjusted recovery signals
   ageGroup = signal<string>("Adult");
@@ -449,6 +458,17 @@ export class TrainingSafetyComponent implements OnInit {
   weeklyLoadChange = signal<number>(0);
 
   ngOnInit(): void {
+    this.trainingService
+      .getTodayOverview()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: (error) =>
+          this.logger.warn(
+            "[TrainingSafety] Failed to load protocol overview, using live ACWR fallback",
+            error,
+          ),
+      });
+
     this.loadSafetyData();
   }
 
@@ -819,23 +839,31 @@ export class TrainingSafetyComponent implements OnInit {
     }> = [];
 
     // Check ACWR
-    const acwr = this.acwrValue();
-    if (acwr > 1.5) {
+    const acwr = this.acwrDisplay();
+    if (acwr.level === "danger-zone") {
       recs.push({
         id: "acwr-high",
         title: "High Injury Risk",
         message:
-          "Your ACWR is above 1.5. Consider reducing training load by 20-30%.",
+          "Your ACWR is above the safe range. Consider reducing training load by 20-30%.",
         priority: "critical",
         action: { label: "View Training Plan", route: "/training" },
       });
-    } else if (acwr > 1.3) {
+    } else if (acwr.level === "elevated-risk") {
       recs.push({
         id: "acwr-elevated",
         title: "Elevated Risk Zone",
         message:
           "Your ACWR is in the caution zone. Monitor closely and avoid high-intensity work.",
         priority: "high",
+      });
+    } else if (acwr.level === "under-training") {
+      recs.push({
+        id: "acwr-under",
+        title: "Load Below Target",
+        message:
+          "Your recent training load is below target. Build back up gradually instead of making a sudden jump.",
+        priority: "medium",
       });
     }
 

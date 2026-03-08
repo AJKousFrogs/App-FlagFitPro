@@ -140,7 +140,7 @@ vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
   }),
 }));
 
-vi.mock("../../netlify/functions/supabase-client.js", () => ({
+vi.mock("../../netlify/functions/utils/supabase-client.js", () => ({
   supabaseAdmin: {
     from: (...args) => mockCtx.supabase.from(...args),
     rpc: async () => ({ data: null, error: null }),

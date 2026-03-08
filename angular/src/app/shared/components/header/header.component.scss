@@ -16,7 +16,7 @@
   display: block;
   position: sticky;
   top: 0;
-  z-index: var(--z-modal);
+  z-index: var(--z-index-app-header);
 
   --header-control-height: var(--button-height-sm);
   --header-control-radius: var(--radius-lg);
@@ -26,6 +26,7 @@
 
 .app-header-shell {
   display: block;
+  min-height: var(--app-shell-header-height);
   border-bottom: var(--border-1) solid
     color-mix(in srgb, var(--surface-border) 86%, transparent);
   background: color-mix(
@@ -33,6 +34,8 @@
     var(--surface-ground) 88%,
     var(--surface-card) 12%
   );
+  backdrop-filter: blur(var(--blur-sm));
+  box-shadow: 0 var(--border-1) 0 var(--color-border-subtle);
 }
 
 // PrimeNG toolbar: _component-overrides.scss (DS-EXC-004)
@@ -45,7 +48,7 @@
   display: flex;
   align-items: center;
   gap: var(--header-inline-gap);
-  height: var(--header-height, 4rem);
+  height: var(--app-shell-header-height);
   min-width: 0;
 }
 
@@ -56,7 +59,7 @@
   flex: 1;
   max-width: min(100%, 40rem);
   min-width: clamp(14rem, 30vw, 22rem);
-  height: var(--header-height, 4rem);
+  height: var(--app-shell-header-height);
   cursor: pointer;
   padding: var(--space-1) 0;
   border-radius: var(--radius-2xl);
@@ -75,7 +78,7 @@
   display: flex;
   align-items: center;
   gap: var(--header-inline-gap);
-  height: var(--header-height, 4rem);
+  height: var(--app-shell-header-height);
   min-width: 0;
 }
 
@@ -96,7 +99,7 @@
    ================================================================ */
 
 // PrimeNG button override moved to _component-overrides.scss (DS-EXC-004)
-.mobile-menu-toggle {
+.header-menu-toggle {
   display: none;
 }
 
@@ -626,8 +629,12 @@
     height: var(--header-height-mobile);
   }
 
-  .mobile-menu-toggle {
+  .header-menu-toggle {
     display: flex;
+  }
+
+  .app-header-shell {
+    min-height: var(--app-shell-header-height-mobile);
   }
 
   .header-center {

@@ -11,7 +11,7 @@ import {
 import {
   FlagPosition,
   TrainingFocus,
-} from "../../../core/services/training-video-database.service";
+} from "../../../core/models/training-video.models";
 
 export interface CuratedVideo extends InstagramVideo {
   status: "pending" | "approved" | "rejected";

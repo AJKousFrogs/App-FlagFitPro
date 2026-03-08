@@ -32,8 +32,6 @@ const __dirname = dirname(__filename);
 const CONFIG = {
   // Files/directories that are allowed to use raw buttons
   whitelistedPaths: [
-    // Rich text editor needs raw buttons for toolbar
-    "rich-text/rich-text.component.ts",
     // Storybook stories can show legacy patterns
     ".stories.ts",
     // Third-party integrations

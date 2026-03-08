@@ -280,12 +280,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
+          path: dist
 
       - name: Install dependencies for audit script
         run: cd angular && npm ci --legacy-peer-deps
 
       - name: Serve and run a11y audit
         run: |
-          npx serve -s flagfit-pro/browser -l 4200 &
-          npx wait-on http://localhost:4200 --timeout 60000
-          cd angular && BASE_URL=http://localhost:4200 npm run audit:a11y
+          npx --yes serve -s dist/flagfit-pro/browser -l 4200 &
+          npx --yes wait-on http://127.0.0.1:4200 --timeout 60000
+          cd angular && BASE_URL=http://127.0.0.1:4200 npm run audit:a11y

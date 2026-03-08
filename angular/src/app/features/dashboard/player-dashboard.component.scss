@@ -32,6 +32,8 @@
        ========================================== */
       .no-program-section {
         margin-bottom: 0;
+        display: flex;
+        justify-content: center;
       }
 
       .no-program-card {
@@ -39,6 +41,7 @@
         border: var(--border-2) dashed var(--ui-border-default);
         border-radius: var(--component-card-radius);
         box-shadow: var(--component-card-shadow);
+        width: min(100%, 56rem);
       }
 
       .no-program-content {
@@ -46,8 +49,8 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: var(--component-card-padding);
-        gap: var(--space-4);
+        padding: clamp(var(--space-6), 4vw, var(--space-8));
+        gap: var(--space-5);
       }
 
       .no-program-icon {

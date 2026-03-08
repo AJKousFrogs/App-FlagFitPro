@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          cd angular && npm ci
+          cd angular && npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -42,29 +42,30 @@ jobs:
 
       - name: Start application server
         run: |
-          npm run start &
+          npm run dev > netlify-dev.log 2>&1 &
           echo "Waiting for server to start..."
-          sleep 10
-          timeout 60 bash -c 'until curl -f http://localhost:4200; do sleep 2; done'
+          timeout 180 bash -c 'until curl -fsS http://127.0.0.1:8888 >/dev/null; do sleep 2; done'
         env:
-          BASE_URL: http://localhost:4200
+          BASE_URL: http://127.0.0.1:8888
 
       - name: Run smoke tests
         run: npx playwright test e2e/smoke.spec.ts --project=chromium
         working-directory: angular
         env:
-          BASE_URL: http://localhost:4200
+          BASE_URL: http://127.0.0.1:8888
           CI: true
+          PW_SKIP_WEBSERVER: "1"
 
       - name: Run critical flow tests
         run: |
           npx playwright test e2e/critical-flow-morning-training.spec.ts --project=chromium
         working-directory: angular
         env:
-          BASE_URL: http://localhost:4200
+          BASE_URL: http://127.0.0.1:8888
           TEST_USER_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
           CI: true
+          PW_SKIP_WEBSERVER: "1"
         continue-on-error: false
 
       - name: Upload test results
@@ -81,4 +82,12 @@ jobs:
         with:
           name: test-videos
           path: angular/test-results/
+          retention-days: 7
+
+      - name: Upload Netlify dev log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netlify-dev-log
+          path: netlify-dev.log
           retention-days: 7

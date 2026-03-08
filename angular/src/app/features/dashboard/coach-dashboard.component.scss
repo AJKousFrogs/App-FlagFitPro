@@ -9,10 +9,9 @@
 @use "styles/mixins" as *;
 
 .dashboard-content {
-  padding: var(--space-6);
-  background: var(--surface-ground);
-  min-height: 100vh;
-  min-height: 100dvh;
+  padding: 0;
+  background: transparent;
+  min-height: auto;
 
   // Tablet
   @include respond-to(lg) {
