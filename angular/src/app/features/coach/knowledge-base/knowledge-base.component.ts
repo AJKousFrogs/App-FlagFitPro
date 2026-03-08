@@ -22,7 +22,6 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 
@@ -35,6 +34,11 @@ import { TeamMembershipService } from "../../../core/services/team-membership.se
 import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../shared/components/ui-components";
 
 // ===== Interfaces =====
 interface KnowledgeResource {
@@ -129,8 +133,6 @@ const VISIBILITY_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Dialog,
-    
     InputText,
     Select,
     Textarea,
@@ -140,6 +142,9 @@ const VISIBILITY_OPTIONS = [
     ButtonComponent,
     EmptyStateComponent,
     SearchInputComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
@@ -613,12 +618,21 @@ const VISIBILITY_OPTIONS = [
       </div>
 
       <!-- Add Resource Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showAddDialog"
-        header="Add Resource"
         [modal]="true"
-        class="knowledge-base-add-dialog"
+        styleClass="knowledge-base-add-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Add knowledge resource"
       >
+        <app-dialog-header
+          icon="plus-circle"
+          title="Add Resource"
+          subtitle="Submit a coaching resource for review and Merlin AI approval."
+          (close)="showAddDialog = false"
+        />
         <div class="add-form">
           <div class="form-field">
             <p class="resource-meta">
@@ -723,25 +737,32 @@ const VISIBILITY_OPTIONS = [
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showAddDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [disabled]="isSubmitting()"
-            (clicked)="saveResource()"
-            >Submit for Review</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Submit for Review"
+          primaryIcon="check"
+          [disabled]="isSubmitting()"
+          (cancel)="showAddDialog = false"
+          (primary)="saveResource()"
+        />
+      </app-dialog>
 
-      <p-dialog
+      <app-dialog
         [(visible)]="showApproveDialog"
-        header="Approve Knowledge Entry"
         [modal]="true"
-        class="knowledge-base-add-dialog"
+        styleClass="knowledge-base-add-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Approve knowledge entry"
       >
+        <app-dialog-header
+          icon="check-circle"
+          title="Approve Knowledge Entry"
+          subtitle="Review quality checks and finalize approval for Merlin knowledge."
+          (close)="showApproveDialog = false"
+        />
         @if (selectedPendingEntry()) {
           <div class="add-form">
             <div class="form-field">
@@ -782,18 +803,16 @@ const VISIBILITY_OPTIONS = [
             </div>
           </div>
         }
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showApproveDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [disabled]="isReviewSubmitting()"
-            (clicked)="confirmApprove()"
-            >Approve Entry</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Approve Entry"
+          primaryIcon="check"
+          [disabled]="isReviewSubmitting()"
+          (cancel)="showApproveDialog = false"
+          (primary)="confirmApprove()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./knowledge-base.component.scss",

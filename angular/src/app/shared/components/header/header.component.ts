@@ -18,7 +18,6 @@ import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { MenuItem } from "primeng/api";
 import { Avatar } from "primeng/avatar";
-import { Dialog } from "primeng/dialog";
 import { InputGroup } from "primeng/inputgroup";
 import { InputGroupAddon } from "primeng/inputgroupaddon";
 import { InputText } from "primeng/inputtext";
@@ -35,6 +34,7 @@ import { SearchService } from "../../../core/services/search.service";
 import { ThemeService } from "../../../core/services/theme.service";
 import { TrainingStatsCalculationService } from "../../../core/services/training-stats-calculation.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortcuts.service";
 import { BadgeComponent } from "../badge/badge.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
@@ -59,7 +59,6 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
     Tooltip,
     Toolbar,
     Menu,
-    Dialog,
     SearchPanelComponent,
     NotificationsPanelComponent,
     IconButtonComponent,
@@ -70,7 +69,6 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
   styleUrl: "./header.component.scss",
   host: {
     "(document:keydown.escape)": "onEscapePress()",
-    "(document:keydown)": "onKeyDown($event)",
   },
 })
 export class HeaderComponent implements OnInit, OnDestroy {
@@ -81,6 +79,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private searchService = inject(SearchService);
   private router = inject(Router);
   private logger = inject(LoggerService);
+  private keyboardShortcuts = inject(KeyboardShortcutsService);
   private trainingStatsService = inject(TrainingStatsCalculationService);
   private weatherService = inject(WeatherService);
   private confirmDialog = inject(ConfirmDialogService);
@@ -96,18 +95,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onEscapePress(): void {
     if (this.isUserMenuOpen()) {
       this.closeUserMenu();
-    }
-    if (this.showShortcutsDialog()) {
-      this.showShortcutsDialog.set(false);
-    }
-  }
-
-  // Show shortcuts dialog on "?"
-  onKeyDown(event: KeyboardEvent): void {
-    // Show shortcuts on "?" (Shift + /)
-    if (event.key === "?" && !this.isInputFocused()) {
-      event.preventDefault();
-      this.showShortcutsDialog.set(true);
     }
   }
 
@@ -167,29 +154,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userEmail = signal("user@example.com");
   userRole = signal("Player");
   userStats = signal({ trainingSessions: 0, streak: 0, level: 0 });
-
-  // Keyboard shortcuts dialog
-  showShortcutsDialog = signal(false);
-  shortcuts = [
-    {
-      key: "⌘K / Ctrl+K",
-      description: "Open Global Search",
-      icon: "pi-search",
-    },
-    { key: "⌘D / Ctrl+D", description: "Go to Dashboard", icon: "pi-home" },
-    { key: "⌘T / Ctrl+T", description: "Go to Training", icon: "pi-bolt" },
-    {
-      key: "⌘N / Ctrl+N",
-      description: "Toggle Notifications",
-      icon: "pi-bell",
-    },
-    { key: "Escape", description: "Close Dialogs/Menus", icon: "pi-times" },
-    {
-      key: "?",
-      description: "Show Keyboard Shortcuts",
-      icon: "pi-question-circle",
-    },
-  ];
 
   // User menu items for p-menu
   userMenuItems = computed<MenuItem[]>(() => [
@@ -384,6 +348,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.router.navigate(["/settings"]);
   }
 
+  openKeyboardShortcuts(): void {
+    this.keyboardShortcuts.openHelpModal();
+  }
+
   cycleTheme(): void {
     this.themeService.cycleMode();
   }
@@ -571,15 +539,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   formatNumber(num: number): string {
     return num.toString().padStart(2, "0");
-  }
-
-  private isInputFocused(): boolean {
-    const activeElement = document.activeElement;
-    return (
-      activeElement?.tagName === "INPUT" ||
-      activeElement?.tagName === "TEXTAREA" ||
-      activeElement?.getAttribute("contenteditable") === "true"
-    );
   }
 
   private loadWeatherData(): void {

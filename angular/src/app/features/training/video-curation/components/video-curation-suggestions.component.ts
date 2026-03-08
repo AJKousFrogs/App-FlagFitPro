@@ -18,6 +18,7 @@ import { EmptyStateComponent } from "../../../../shared/components/empty-state/e
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
 import { PlayerSuggestion } from "../video-curation.models";
 import {
@@ -35,6 +36,7 @@ import {
     StatusTagComponent,
     ButtonComponent,
     IconButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <div class="tab-content">
@@ -52,7 +54,11 @@ import {
       } @else {
         <div class="suggestions-grid">
           @for (suggestion of suggestions(); track suggestion.id) {
-            <div class="suggestion-review-card">
+            <app-card-shell
+              class="suggestion-review-card"
+              [flush]="true"
+              [hasFooter]="true"
+            >
               <div class="suggestion-thumbnail">
                 <i class="pi pi-play-circle" aria-hidden="true"></i>
                 <div class="instagram-badge" aria-label="Instagram video">
@@ -106,7 +112,7 @@ import {
                   }
                 </div>
               </div>
-              <div class="suggestion-actions">
+              <div footer class="suggestion-actions">
                 <app-icon-button
                   icon="pi-external-link"
                   ariaLabel="Open in Instagram"
@@ -130,7 +136,7 @@ import {
                   >
                 }
               </div>
-            </div>
+            </app-card-shell>
           }
         </div>
       }

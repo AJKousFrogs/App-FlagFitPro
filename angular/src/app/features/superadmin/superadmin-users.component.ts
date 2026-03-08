@@ -6,9 +6,9 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
@@ -41,7 +41,7 @@ interface User {
   imports: [
     CommonModule,
     RouterLink,
-    Card,
+    CardShellComponent,
     StatusTagComponent,
     TableModule,
     InputText,
@@ -54,7 +54,7 @@ interface User {
   ],
   template: `
     <app-main-layout>
-      <div class="users-content">
+      <div class="users-content ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="User Management"
           subtitle="View and manage all users on the platform"
@@ -70,9 +70,9 @@ interface User {
         </app-page-header>
 
         <!-- Filters -->
-        <p-card class="filters-card">
+        <app-card-shell class="filters-card">
           <div class="filters-row">
-            <span class="p-input-icon-left">
+            <span class="p-input-icon-left users-search">
               <i class="pi pi-search"></i>
               <input
                 type="text"
@@ -109,10 +109,10 @@ interface User {
               >
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Users Table -->
-        <p-card>
+        <app-card-shell class="users-table-card" title="Users">
           @if (isLoading()) {
             <app-loading message="Loading users..." variant="inline" />
           } @else if (filteredUsers.length === 0) {
@@ -129,6 +129,7 @@ interface User {
               [virtualScroll]="filteredUsers.length > 50"
               [virtualScrollItemSize]="46"
               class="p-datatable-sm table-standard"
+              [scrollable]="true"
             >
               <ng-template #header>
                 <tr>
@@ -197,89 +198,39 @@ interface User {
               </ng-template>
             </p-table>
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Stats Summary -->
         <div class="stats-row">
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ totalUsers }}</span>
               <span class="stat-block__label">Total Users</span>
             </div>
-          </p-card>
-          <p-card class="stat-card">
+          </app-card-shell>
+          <app-card-shell class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ playerCount }}</span>
               <span class="stat-block__label">Players</span>
             </div>
-          </p-card>
-          <p-card class="stat-card">
+          </app-card-shell>
+          <app-card-shell class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ coachCount }}</span>
               <span class="stat-block__label">Coaches</span>
             </div>
-          </p-card>
-          <p-card class="stat-card">
+          </app-card-shell>
+          <app-card-shell class="stat-card">
             <div class="stat-content stat-block__content">
               <span class="stat-block__value">{{ adminCount }}</span>
               <span class="stat-block__label">Admins</span>
             </div>
-          </p-card>
+          </app-card-shell>
         </div>
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .users-content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-lg);
-      }
-
-      .filters-row {
-        display: flex;
-        gap: var(--spacing-md);
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .filter-buttons {
-        display: flex;
-        gap: var(--spacing-xs);
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: var(--spacing-xs);
-      }
-
-      .stats-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(var(--size-150), 1fr));
-        gap: var(--spacing-md);
-      }
-
-      .stat-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .stat-block__value {
-        font-size: var(--ds-font-size-2xl);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-brand-primary);
-      }
-
-      .stat-block__label {
-        font-size: var(--ds-font-size-sm);
-        color: var(--text-secondary);
-      }
-
-    `,
-  ],
+  styleUrl: "./superadmin-users.component.scss",
 })
 export class SuperadminUsersComponent implements OnInit {
   private superadminService = inject(SuperadminService);

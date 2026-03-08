@@ -1,54 +1,53 @@
-<p-dialog
+<app-dialog
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
-  [modal]="true"
-  [closable]="true"
-  [showHeader]="false"
-  class="twofa-dialog"
+  [blockScroll]="true"
+  [draggable]="false"
+  [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+  styleClass="twofa-dialog"
+  ariaLabel="Disable two-factor authentication"
 >
-  <div class="dialog-container">
-    <app-dialog-header
-      icon="shield-slash"
-      title="Disable 2FA"
-      subtitle="Remove the extra layer of security"
-      [danger]="true"
-      (close)="closeDialog()"
-    />
+  <app-dialog-header
+    icon="shield-slash"
+    title="Disable 2FA"
+    subtitle="Remove the extra layer of security"
+    [danger]="true"
+    (close)="closeDialog()"
+  />
 
-    <div class="twofa-content">
-      <div class="step-section">
-        <i class="pi pi-exclamation-triangle success-icon error-warning-icon"></i>
-        <p class="step-desc">
-          Disabling 2FA will make your account less secure. Please confirm with your
-          authenticator code.
-        </p>
+  <div class="twofa-content">
+    <div class="step-section">
+      <i class="pi pi-exclamation-triangle success-icon error-warning-icon"></i>
+      <p class="step-desc">
+        Disabling 2FA will make your account less secure. Please confirm with your
+        authenticator code.
+      </p>
 
-        <div class="code-input-wrapper">
-          <input
-            id="settings-disable2FACode"
-            name="disable2FACode"
-            type="text"
-            [value]="disableCode()"
-            (input)="onDisableCodeInput($event)"
-            placeholder="000000"
-            maxlength="6"
-            class="verification-code-input"
-            autocomplete="one-time-code"
-            inputmode="numeric"
-          />
-        </div>
+      <div class="code-input-wrapper">
+        <input
+          id="settings-disable2FACode"
+          name="disable2FACode"
+          type="text"
+          [value]="disableCode()"
+          (input)="onDisableCodeInput($event)"
+          placeholder="000000"
+          maxlength="6"
+          class="verification-code-input"
+          autocomplete="one-time-code"
+          inputmode="numeric"
+        />
       </div>
     </div>
-
-    <app-dialog-footer
-      cancelLabel="Cancel"
-      primaryLabel="Disable 2FA"
-      primaryIcon="times"
-      primaryVariant="danger"
-      [loading]="loading()"
-      [disabled]="disableCode().length !== 6"
-      (cancel)="closeDialog()"
-      (primary)="submit.emit()"
-    />
   </div>
-</p-dialog>
+
+  <app-dialog-footer
+    cancelLabel="Cancel"
+    primaryLabel="Disable 2FA"
+    primaryIcon="times"
+    primaryVariant="danger"
+    [loading]="loading()"
+    [disabled]="disableCode().length !== 6"
+    (cancel)="closeDialog()"
+    (primary)="submit.emit()"
+  />
+</app-dialog>

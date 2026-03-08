@@ -6,11 +6,10 @@
 @use "styles/mixins" as *;
 
 .team-create-page {
-  @include page-container(var(--content-max-width-2xl));
+  width: 100%;
 }
 
 .team-create-card {
-  margin-top: var(--space-6);
   max-width: var(--content-max-width-sm);
 }
 

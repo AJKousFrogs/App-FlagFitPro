@@ -53,7 +53,7 @@
        ======================================================================== -->
   @if (isLoading() || isGeneratingProtocol()) {
     <div
-      class="today-page elite-phase2-shell ui-page-stack"
+      class="today-page elite-phase2-shell ui-page-shell ui-page-stack"
       aria-busy="true"
       aria-label="Loading today's practice"
     >
@@ -72,12 +72,12 @@
        ======================================================================== -->
   @if (!isLoading() && !isGeneratingProtocol()) {
     @if (todayViewModel(); as vm) {
-      <div class="today-page elite-phase2-shell ui-page-stack">
+      <div class="today-page elite-phase2-shell ui-page-shell ui-page-stack">
         <!-- ====================================================================
              HEADER: 5-Second Comprehension
              ==================================================================== -->
         <section aria-labelledby="today-heading">
-          <p-card class="welcome-card">
+          <app-card-shell class="welcome-card">
             <div class="welcome-row">
               <div class="user-avatar" aria-hidden="true">
                 <i class="pi pi-user"></i>
@@ -111,12 +111,12 @@
                 </div>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         </section>
 
         @if (exactTrainingSummary(); as summary) {
           <section aria-labelledby="exact-training-heading">
-            <p-card class="exact-training-card">
+            <app-card-shell class="exact-training-card">
               <app-card-header
                 title="Today's Exact Training"
                 icon="pi-compass"
@@ -208,7 +208,7 @@
                   </app-button>
                 </aside>
               </div>
-            </p-card>
+            </app-card-shell>
           </section>
         }
 
@@ -254,7 +254,7 @@
              ==================================================================== -->
         @if (vm.headerContext?.coachAttribution) {
           <section class="coach-attribution">
-            <p-card class="attribution-card">
+            <app-card-shell class="attribution-card">
               <div class="attribution-content">
                 <i class="pi pi-user-edit"></i>
                 <span>{{ vm.headerContext?.coachAttribution }}</span>
@@ -264,7 +264,7 @@
                   </span>
                 }
               </div>
-            </p-card>
+            </app-card-shell>
           </section>
         }
 
@@ -304,7 +304,7 @@
         @if (vm.trainingAllowed && vm.blocksDisplayed.length > 0) {
           <main class="content-section">
             <section aria-labelledby="protocol-heading">
-              <p-card class="content-card">
+              <app-card-shell class="content-card">
                 <app-card-header
                   title="Today's Protocol"
                   icon="pi-list"
@@ -400,7 +400,7 @@
                     >
                   </app-empty-state>
                 }
-              </p-card>
+              </app-card-shell>
             </section>
           </main>
         }
@@ -408,7 +408,7 @@
     } @else {
       <!-- No ViewModel - show error -->
       <div class="today-page">
-        <p-card class="error-card">
+        <app-card-shell class="error-card">
           <app-empty-state
             icon="exclamation-triangle"
             heading="Unable to Load Plan"
@@ -418,7 +418,7 @@
               >Refresh</app-button
             >
           </app-empty-state>
-        </p-card>
+        </app-card-shell>
       </div>
     }
   }
@@ -426,17 +426,24 @@
   <!-- ========================================================================
        QUICK CHECK-IN DIALOG (keep existing)
        ======================================================================== -->
-  <p-dialog
+  <app-dialog
     [visible]="showQuickCheckin()"
     (visibleChange)="showQuickCheckin.set($event)"
-    header="Quick Check-in"
     [modal]="true"
-    class="quick-checkin-modal"
-    [focusOnShow]="true"
+    [closable]="false"
+    [draggable]="false"
+    [resizable]="false"
     [closeOnEscape]="true"
-    ariaLabel="Quick wellness check-in dialog"
-    role="dialog"
+    [focusOnShow]="true"
+    [ariaLabel]="'Quick wellness check-in dialog'"
+    [styleClass]="'quick-checkin-modal'"
   >
+    <app-dialog-header
+      icon="heart"
+      title="Quick Check-in"
+      subtitle="A fast readiness check before training."
+      (close)="showQuickCheckin.set(false)"
+    />
     <div class="quick-checkin-form">
       <p class="quick-intro">How are you feeling today? Tap to select.</p>
 
@@ -549,17 +556,14 @@
       </div>
     </div>
 
-    <ng-template #footer>
-      <app-button variant="text" (clicked)="showQuickCheckin.set(false)"
-        >Cancel</app-button
-      >
-      <app-button
-        iconLeft="pi-check"
-        [loading]="isSavingQuickCheckin()"
-        [disabled]="!isQuickFormValid()"
-        (clicked)="submitQuickCheckin()"
-        >Save</app-button
-      >
-    </ng-template>
-  </p-dialog>
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Save"
+      primaryIcon="check"
+      [loading]="isSavingQuickCheckin()"
+      [disabled]="!isQuickFormValid()"
+      (cancel)="showQuickCheckin.set(false)"
+      (primary)="submitQuickCheckin()"
+    />
+  </app-dialog>
 </app-main-layout>

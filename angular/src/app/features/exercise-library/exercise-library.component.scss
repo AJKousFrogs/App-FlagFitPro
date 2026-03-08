@@ -6,10 +6,7 @@
    ================================================================ */
 
 .exercise-library-page {
-  width: min(100%, var(--content-max-width-2xl));
-  margin-inline: auto;
-  padding: 0;
-  gap: var(--layout-page-section-gap);
+  width: 100%;
 }
 
 @include stat-block;

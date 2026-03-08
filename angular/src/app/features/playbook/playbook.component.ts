@@ -101,7 +101,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
   ],
   template: `
     <app-main-layout>
-<div class="playbook-page">
+      <div class="playbook-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Playbook"
           subtitle="Study and memorize team plays for your position"

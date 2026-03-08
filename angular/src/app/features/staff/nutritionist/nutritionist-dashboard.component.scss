@@ -2,7 +2,7 @@
 @include stat-block;
 
 .nutritionist-dashboard {
-  @include page-container(var(--content-max-width-2xl));
+  width: 100%;
 }
 
 // Stats Grid
@@ -219,18 +219,6 @@
     gap: var(--ds-spacing-lg);
   }
 
-  // @see docs/CARD_SHELL_CONTRACT.md
-
-  .compliance-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .athlete-name {
-      font-weight: var(--ds-font-weight-semibold);
-    }
-  }
-
   .supplement-list {
     display: flex;
     flex-direction: column;
@@ -306,19 +294,6 @@
       minmax(var(--grid-card-min-lg), 1fr)
     );
     gap: var(--ds-spacing-lg);
-  }
-
-  // @see docs/CARD_SHELL_CONTRACT.md
-
-  .tournament-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    h4 {
-      margin: 0;
-      font-size: var(--ds-font-size-md);
-    }
   }
 
   .tournament-details {

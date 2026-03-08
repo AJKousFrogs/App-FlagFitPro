@@ -10,10 +10,7 @@
    ================================================================ */
 
 .game-tracker-page {
-  width: min(100%, var(--content-max-width-xl));
-  margin-inline: auto;
-  padding: 0;
-  gap: var(--layout-page-section-gap);
+  width: 100%;
 }
 
 /* ================================================================

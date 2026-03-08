@@ -45,6 +45,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { Chip } from "primeng/chip";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
@@ -114,23 +115,18 @@ interface VideoSuggestion {
     StatusTagComponent,
     AppDialogComponent,
     DialogHeaderComponent,
+    PageHeaderComponent,
   ],
   template: `
 <app-main-layout>
-      <div class="suggestion-page ui-page-stack">
-        <!-- Hero Header -->
-        <header class="page-header">
-          <div class="header-content">
-            <div class="header-icon">
-              <i class="pi pi-lightbulb"></i>
-            </div>
-            <div class="header-text">
-              <h1>Suggest a Training Video</h1>
-              <p>Found a great drill on Instagram? Share it with your team!</p>
-            </div>
-          </div>
-
-          <!-- Stats Pills -->
+      <div class="suggestion-page ui-page-shell ui-page-shell--wide ui-page-stack">
+        <app-page-header
+          class="suggestion-hero-header"
+          title="Suggest a Training Video"
+          subtitle="Found a great drill on Instagram? Share it with your team!"
+          icon="pi-lightbulb"
+          variant="hero"
+        >
           <div class="stats-pills">
             <div class="stat-pill">
               <i class="pi pi-send"></i>
@@ -145,7 +141,7 @@ interface VideoSuggestion {
               <span>{{ pendingCount() }} Pending</span>
             </div>
           </div>
-        </header>
+        </app-page-header>
 
         <!-- Main Content Grid -->
         <div class="content-grid">

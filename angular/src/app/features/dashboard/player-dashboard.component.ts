@@ -33,7 +33,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Timeline } from "primeng/timeline";
@@ -62,7 +61,7 @@ import {
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { CloseButtonComponent } from "../../shared/components/close-button/close-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
@@ -134,11 +133,10 @@ interface AnnouncementBanner {
     CommonModule,
     RouterModule,
     DecimalPipe,
-    Card,
     AlertComponent,
     StatusTagComponent,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
     CloseButtonComponent,
 
     LazyChartComponent,

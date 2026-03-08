@@ -7,13 +7,13 @@ import {
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { ProgressSpinner } from "primeng/progressspinner";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -36,15 +36,14 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    Card,
     AlertComponent,
     ButtonComponent,
+    CardShellComponent,
     ProgressSpinner,
-
   ],
   template: `
 <div class="auth-callback-page">
-      <p-card class="auth-callback-card">
+      <app-card-shell class="auth-callback-card">
         @if (isProcessing()) {
           <div class="processing-state">
             <p-progressSpinner
@@ -90,7 +89,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             <p class="success-description">Redirecting you now...</p>
           </div>
         }
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./auth-callback.component.scss",

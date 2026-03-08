@@ -19,7 +19,6 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -31,6 +30,9 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -101,8 +103,9 @@ const ROUTES = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Dialog,
-    
+    AppDialogComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     InputText,
     ProgressBar,
     Select,
@@ -321,12 +324,21 @@ const ROUTES = [
       </div>
 
       <!-- Create/Edit Play Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showPlayDialog"
-        [header]="isEditing() ? 'Edit Play' : 'Create New Play'"
         [modal]="true"
-        class="play-dialog"
+        styleClass="play-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '1200px': '94vw', '640px': '96vw' }"
+        [ariaLabel]="isEditing() ? 'Edit play' : 'Create new play'"
       >
+        <app-dialog-header
+          icon="book"
+          [title]="isEditing() ? 'Edit Play' : 'Create New Play'"
+          subtitle="Define the formation, assignments, and coaching notes for this play."
+          (close)="showPlayDialog = false"
+        />
         <div class="play-form">
           <div class="form-columns">
             <!-- Left: Designer -->
@@ -491,26 +503,33 @@ const ROUTES = [
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showPlayDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [disabled]="!playForm.name"
-            (clicked)="savePlay()"
-            >Save Play</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Play"
+          primaryIcon="check"
+          [disabled]="!playForm.name"
+          (cancel)="showPlayDialog = false"
+          (primary)="savePlay()"
+        />
+      </app-dialog>
 
       <!-- Stats Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showStatsDialog"
-        header="Memorization Stats"
         [modal]="true"
-        class="play-stats-dialog"
+        styleClass="play-stats-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '1200px': '92vw', '640px': '96vw' }"
+        ariaLabel="Memorization stats"
       >
+        <app-dialog-header
+          icon="chart-bar"
+          title="Memorization Stats"
+          subtitle="Review who has memorized the play and who still needs a reminder."
+          (close)="showStatsDialog = false"
+        />
         @if (selectedPlay()) {
           <div class="stats-content">
             <div class="stats-header">
@@ -574,7 +593,7 @@ const ROUTES = [
             </div>
           </div>
         }
-      </p-dialog>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./playbook-manager.component.scss",

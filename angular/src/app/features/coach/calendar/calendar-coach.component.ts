@@ -17,9 +17,8 @@ import {
   signal,
 } from "@angular/core";
 import { ToastService } from "../../../core/services/toast.service";
-import { Card } from "primeng/card";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 
 import { Select } from "primeng/select";
@@ -27,7 +26,6 @@ import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { UI_LIMITS } from "../../../core/constants/app.constants";
@@ -37,6 +35,11 @@ import { ApiResponse } from "../../../core/models/common.models";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../shared/components/ui-components";
 
 // ===== Interfaces =====
 interface TeamEvent {
@@ -127,10 +130,8 @@ const RECURRING_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
+    CardShellComponent,
     DatePicker,
-    Dialog,
-    
     InputText,
     Select,
     Textarea,
@@ -139,12 +140,14 @@ const RECURRING_OPTIONS = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
-    IconButtonComponent,
     StatusTagComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
-<div class="calendar-coach-page">
+<div class="calendar-coach-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Team Calendar"
           subtitle="Manage team schedule and RSVPs"
@@ -156,7 +159,7 @@ const RECURRING_OPTIONS = [
         </app-page-header>
 
         <!-- Calendar View -->
-        <p-card class="calendar-card">
+        <app-card-shell class="calendar-card">
           <div class="calendar-header">
             <div class="calendar-nav">
               <app-button
@@ -255,7 +258,7 @@ const RECURRING_OPTIONS = [
               >
             </div>
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Upcoming Events -->
         <div class="section">
@@ -377,12 +380,21 @@ const RECURRING_OPTIONS = [
       </div>
 
       <!-- Create Event Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showCreateDialog"
-        [header]="isEditing() ? 'Edit Event' : 'Create Event'"
         [modal]="true"
-        class="coach-calendar-event-dialog"
+        styleClass="coach-calendar-event-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        [ariaLabel]="isEditing() ? 'Edit event' : 'Create event'"
       >
+        <app-dialog-header
+          icon="calendar-plus"
+          [title]="isEditing() ? 'Edit Event' : 'Create Event'"
+          subtitle="Create practices, games, tournaments, and team events with RSVP settings."
+          (close)="showCreateDialog = false"
+        />
         <div class="event-form">
           <div class="form-field">
             <label>Event Type</label>
@@ -548,26 +560,32 @@ const RECURRING_OPTIONS = [
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showCreateDialog = false"
-            >Cancel</app-button
-          >
-          <app-icon-button
-            icon="pi-check"
-            (clicked)="saveEvent()"
-            ariaLabel="Save event"
-            tooltip="Save"
-          />
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Event"
+          primaryIcon="check"
+          (cancel)="showCreateDialog = false"
+          (primary)="saveEvent()"
+        />
+      </app-dialog>
 
       <!-- RSVP Management Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showRsvpDialog"
-        [header]="'RSVP Management: ' + (selectedEvent()?.title || '')"
         [modal]="true"
-        class="coach-calendar-rsvp-dialog"
+        styleClass="coach-calendar-rsvp-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        [ariaLabel]="'RSVP management for ' + (selectedEvent()?.title || 'event')"
       >
+        <app-dialog-header
+          icon="users"
+          [title]="'RSVP Management: ' + (selectedEvent()?.title || '')"
+          subtitle="Review who is going, who declined, and who still needs a reminder."
+          (close)="showRsvpDialog = false"
+        />
         @if (selectedEvent()) {
           <div class="rsvp-content">
             <div class="rsvp-header-info">
@@ -659,7 +677,7 @@ const RECURRING_OPTIONS = [
             </div>
           </div>
         }
-      </p-dialog>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./calendar-coach.component.scss",

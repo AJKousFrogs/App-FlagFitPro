@@ -1,9 +1,7 @@
 @use "styles/mixins" as *;
 
 .payments-page {
-  width: min(100%, var(--content-max-width-lg));
-  margin-inline: auto;
-  gap: var(--layout-page-section-gap);
+  width: 100%;
 }
 
 // Summary Grid

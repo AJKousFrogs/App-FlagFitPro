@@ -21,9 +21,11 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { InputNumber } from "primeng/inputnumber";
 import { Select } from "primeng/select";
 
@@ -96,8 +98,6 @@ const EVENT_TYPE_CONFIG: Record<
     CommonModule,
     FormsModule,
     DatePipe,
-    Card,
-    Dialog,
     InputNumber,
     Select,
     StatusTagComponent,
@@ -106,12 +106,16 @@ const EVENT_TYPE_CONFIG: Record<
     MainLayoutComponent,
     PageHeaderComponent,
     AlertComponent,
+    AppDialogComponent,
     ButtonComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     EmptyStateComponent,
+    CardShellComponent,
   ],
   template: `
     <app-main-layout>
-<div class="calendar-page ui-page-stack">
+<div class="calendar-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="Team Calendar"
           subtitle="Upcoming events and your RSVPs"
@@ -164,7 +168,7 @@ const EVENT_TYPE_CONFIG: Record<
 
             <div class="events-list ui-page-stack--tight">
               @for (event of dateGroup.events; track event.id) {
-                <p-card class="event-card" [class]="'type-' + event.type">
+                <app-card-shell class="event-card" [class]="'type-' + event.type">
                   <div class="event-content">
                     <div class="event-time">
                       <span class="item-time">{{ event.startTime }}</span>
@@ -244,7 +248,7 @@ const EVENT_TYPE_CONFIG: Record<
                       >
                     </div>
                   </div>
-                </p-card>
+                </app-card-shell>
               }
             </div>
           </div>
@@ -261,13 +265,23 @@ const EVENT_TYPE_CONFIG: Record<
       </div>
 
       <!-- RSVP Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showRsvpDialog"
-        [header]="'RSVP: ' + (selectedEvent()?.title || '')"
         [modal]="true"
-        [closable]="true"
-        class="rsvp-dialog"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [styleClass]="'rsvp-dialog'"
       >
+        @if (selectedEvent(); as event) {
+          <app-dialog-header
+            icon="calendar"
+            [title]="'RSVP: ' + event.title"
+            [subtitle]="(event.date | date: 'EEEE, MMMM d') || ''"
+            (close)="showRsvpDialog = false"
+          />
+        }
         @if (selectedEvent(); as event) {
           <div class="rsvp-form">
             <!-- Event Summary -->
@@ -418,21 +432,19 @@ const EVENT_TYPE_CONFIG: Record<
               ></textarea>
             </div>
 
-            <!-- Submit -->
-            <div class="rsvp-actions">
-              <app-button variant="secondary" (clicked)="showRsvpDialog = false"
-                >Cancel</app-button
-              >
-              <app-button
-                iconLeft="pi-check"
-                [disabled]="!rsvpForm.status"
-                (clicked)="submitRsvp()"
-                >Submit RSVP</app-button
-              >
-            </div>
           </div>
         }
-      </p-dialog>
+        @if (selectedEvent()) {
+          <app-dialog-footer
+            cancelLabel="Cancel"
+            primaryLabel="Submit RSVP"
+            primaryIcon="check"
+            [disabled]="!rsvpForm.status"
+            (cancel)="showRsvpDialog = false"
+            (primary)="submitRsvp()"
+          />
+        }
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./team-calendar.component.scss",

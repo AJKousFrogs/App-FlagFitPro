@@ -8,8 +8,7 @@
 .performance-page {
   display: flex;
   flex-direction: column;
-  width: min(100%, var(--content-max-width-2xl));
-  margin-inline: auto;
+  width: 100%;
   gap: var(--layout-page-section-gap);
 
   .data-freshness {
@@ -22,12 +21,21 @@
 
     @include data-source-meta;
   }
-
   padding: 0;
 }
 
 .performance-preview-banner {
   margin: 0;
+}
+
+.team-rankings-card,
+.benchmark-card,
+.gap-analysis-card,
+.table-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-secondary);
+  --app-card-shell-header-icon-color: var(--ds-primary-green);
 }
 
 // .charts-grid: Use primitives/_charts.scss
@@ -40,17 +48,9 @@
   @include preview-badge;
 }
 
-.table-card {
-  margin-bottom: 0;
-}
-
 // ===== Position Benchmark Section =====
-.benchmark-card {
-  margin-bottom: 0;
-}
-
 .benchmark-preview-note {
-  margin: var(--space-3) var(--space-4) 0;
+  margin: var(--space-3) 0 0;
 
   @include preview-callout;
 }
@@ -108,9 +108,6 @@
 }
 
 // ===== Gap Analysis Section =====
-.gap-analysis-card {
-  margin-bottom: 0;
-}
 
 .priority-header {
   display: flex;
@@ -213,18 +210,6 @@
 }
 
 // ===== Team Rankings Section =====
-.team-rankings-card {
-  margin-bottom: 0;
-}
-
-app-card-header.rankings-card-header,
-app-card-header.gap-analysis-card-header,
-app-card-header.table-card-header {
-  --app-card-header-padding: var(--space-4);
-  --app-card-header-border-bottom: var(--border-1) solid
-    var(--color-border-secondary);
-  --app-card-header-icon-color: var(--ds-primary-green);
-}
 
 .badge-summary {
   display: flex;

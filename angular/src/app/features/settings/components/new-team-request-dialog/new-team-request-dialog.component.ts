@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import {
+  AppDialogComponent,
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
@@ -11,7 +11,7 @@ import { AlertComponent } from "../../../../shared/components/alert/alert.compon
   selector: "app-new-team-request-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    Dialog,
+    AppDialogComponent,
     InputText,
     DialogHeaderComponent,
     DialogFooterComponent,

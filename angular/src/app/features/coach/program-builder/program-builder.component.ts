@@ -19,7 +19,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
-import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
@@ -43,6 +42,7 @@ import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { DialogService } from "../../../core/ui/dialog.service";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -153,7 +153,6 @@ const PHASE_PRESETS = [
   imports: [
     CommonModule,
     DatePipe,
-    Card,
     DatePicker,
     InputNumber,
     InputText,
@@ -167,6 +166,7 @@ const PHASE_PRESETS = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    CardShellComponent,
     AppDialogComponent,
     DialogHeaderComponent,
   ],
@@ -214,7 +214,7 @@ const PHASE_PRESETS = [
             <h3>Active Programs</h3>
             <div class="programs-list">
               @for (program of activePrograms(); track program.id) {
-                <p-card class="program-card">
+                <app-card-shell class="program-card">
                   <div class="program-header">
                     <div class="program-title">
                       <span class="program-icon"><i [class]="'pi ' + getProgramIcon(program.type)" aria-hidden="true"></i></span>
@@ -317,7 +317,7 @@ const PHASE_PRESETS = [
                       >Duplicate</app-button
                     >
                   </div>
-                </p-card>
+                </app-card-shell>
               }
             </div>
           </div>
@@ -329,7 +329,7 @@ const PHASE_PRESETS = [
             <h3>Draft Programs</h3>
             <div class="programs-list">
               @for (program of draftPrograms(); track program.id) {
-                <p-card class="program-card draft">
+                <app-card-shell class="program-card draft">
                   <div class="program-header">
                     <div class="program-title">
                       <span class="program-icon"><i class="pi pi-pencil" aria-hidden="true"></i></span>
@@ -374,7 +374,7 @@ const PHASE_PRESETS = [
                       >Delete</app-button
                     >
                   </div>
-                </p-card>
+                </app-card-shell>
               }
             </div>
           </div>

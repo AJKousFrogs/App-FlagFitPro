@@ -2,12 +2,12 @@
 @include stat-block;
 
 .injury-management-page {
-  width: min(100%, var(--content-max-width-xl));
-  margin-inline: auto;
+  width: 100%;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap);
+  min-width: 0;
 }
 
 // Tab Navigation
@@ -141,6 +141,13 @@
   &.cleared {
     border-left-color: var(--ds-primary-green);
   }
+}
+
+.history-card,
+.analytics-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--ds-border-subtle);
 }
 
 .injury-header {

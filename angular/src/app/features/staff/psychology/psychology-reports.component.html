@@ -1,5 +1,5 @@
 <app-main-layout>
-      <div class="psychology-reports">
+      <div class="psychology-reports ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Mental Performance Reports"
           subtitle="Generate reports to share with sports psychologists or mental performance coaches"
@@ -51,23 +51,21 @@
                 @if (generatedReports().length > 0) {
                   <div class="reports-grid">
                     @for (report of generatedReports(); track trackByGeneratedReport($index, report)) {
-                      <p-card class="report-card">
-                        <ng-template #header>
-                          <div class="report-header">
-                            <i
-                              [class]="getReportIcon(report.type)"
-                              class="report-icon"
-                            ></i>
-                            <div class="report-info">
-                              <span class="report-type">{{
-                                getReportTypeLabel(report.type)
-                              }}</span>
-                              <span class="report-date">{{
-                                report.generatedDate | date: "medium"
-                              }}</span>
-                            </div>
+                      <app-card-shell class="report-card" [hasFooter]="true">
+                        <div class="report-header">
+                          <i
+                            [class]="getReportIcon(report.type)"
+                            class="report-icon"
+                          ></i>
+                          <div class="report-info">
+                            <span class="report-type">{{
+                              getReportTypeLabel(report.type)
+                            }}</span>
+                            <span class="report-date">{{
+                              report.generatedDate | date: "medium"
+                            }}</span>
                           </div>
-                        </ng-template>
+                        </div>
                         <div class="report-details">
                           <p class="report-period">
                             Period:
@@ -88,7 +86,7 @@
                             </div>
                           </div>
                         </div>
-                        <ng-template #footer>
+                        <div footer>
                           <app-button
                             variant="text"
                             iconLeft="pi-download"
@@ -108,8 +106,8 @@
                             ariaLabel="Delete psychology report"
                             tooltip="Delete"
                           />
-                        </ng-template>
-                      </p-card>
+                        </div>
+                      </app-card-shell>
                     }
                   </div>
                 } @else {
@@ -248,17 +246,17 @@
                     </div>
 
                     <!-- Trends Chart -->
-                    <p-card header="Wellness Trends Over Time">
+                    <app-card-shell title="Wellness Trends Over Time">
                       <app-lazy-chart
                         type="line"
                         [data]="wellnessChartData()"
                         [options]="chartOptions"
                       ></app-lazy-chart>
-                    </p-card>
+                    </app-card-shell>
 
                     <!-- Sleep & Recovery -->
                     <div class="dual-cards">
-                      <p-card header="Sleep Patterns">
+                      <app-card-shell title="Sleep Patterns">
                         <div class="sleep-stats">
                           <div
                             class="sleep-stat stat-block stat-block--compact"
@@ -341,9 +339,9 @@
                             }}</span>
                           </div>
                         </div>
-                      </p-card>
+                      </app-card-shell>
 
-                      <p-card header="Recovery Behaviors">
+                      <app-card-shell title="Recovery Behaviors">
                         <div class="recovery-stats">
                           <div
                             class="recovery-stat stat-block stat-block--compact"
@@ -405,11 +403,11 @@
                             }
                           </div>
                         </div>
-                      </p-card>
+                      </app-card-shell>
                     </div>
 
                     <!-- Observed Patterns -->
-                    <p-card header="AI-Observed Patterns">
+                    <app-card-shell title="AI-Observed Patterns">
                       <div class="patterns-grid">
                         @if (
                           currentWellnessData()!.observedPatterns.stressTriggers
@@ -472,7 +470,7 @@
                           </div>
                         }
                       </div>
-                    </p-card>
+                    </app-card-shell>
                   </div>
                 }
               </div>
@@ -494,28 +492,26 @@
                 @if (preCompReports().length > 0) {
                   <div class="precomp-grid">
                     @for (report of preCompReports(); track trackByPreCompReport($index, report)) {
-                      <p-card class="precomp-card">
-                        <ng-template #header>
-                          <div class="precomp-header">
-                            <div class="comp-info">
-                              <span class="comp-name">{{
-                                report.competition.name
-                              }}</span>
-                              <span class="comp-date">{{
-                                report.competition.date | date: "mediumDate"
-                              }}</span>
-                            </div>
-                            <app-status-tag
-                              [value]="report.competition.significance"
-                              [severity]="
-                                getSignificanceSeverity(
-                                  report.competition.significance
-                                )
-                              "
-                              size="sm"
-                            />
+                      <app-card-shell class="precomp-card" [hasFooter]="true">
+                        <div class="precomp-header">
+                          <div class="comp-info">
+                            <span class="comp-name">{{
+                              report.competition.name
+                            }}</span>
+                            <span class="comp-date">{{
+                              report.competition.date | date: "mediumDate"
+                            }}</span>
                           </div>
-                        </ng-template>
+                          <app-status-tag
+                            [value]="report.competition.significance"
+                            [severity]="
+                              getSignificanceSeverity(
+                                report.competition.significance
+                              )
+                            "
+                            size="sm"
+                          />
+                        </div>
 
                         <div class="precomp-content">
                           <div class="mental-state">
@@ -622,7 +618,7 @@
                           </div>
                         </div>
 
-                        <ng-template #footer>
+                        <div footer>
                           <app-button
                             variant="text"
                             iconLeft="pi-eye"
@@ -635,8 +631,8 @@
                             (clicked)="downloadPreCompReport(report)"
                             >Download</app-button
                           >
-                        </ng-template>
-                      </p-card>
+                        </div>
+                      </app-card-shell>
                     }
                   </div>
                 } @else {
@@ -682,41 +678,37 @@
                       insight of insightFeedService.filteredInsights();
                       track insight.id
                     ) {
-                      <p-card
+                      <app-card-shell
                         class="insight-card"
                         [class]="'priority-' + insight.priority"
                       >
-                        <ng-template #header>
-                          <div class="insight-header">
-                            <div class="insight-meta">
-                              <app-status-tag
-                                [value]="insight.fromRole"
-                                [severity]="getRoleSeverity(insight.fromRole)"
-                                size="sm"
-                              />
-                              <span class="insight-type">{{
-                                getInsightTypeLabel(insight.insightType)
+                        <div class="insight-header">
+                          <div class="insight-meta">
+                            <app-status-tag
+                              [value]="insight.fromRole"
+                              [severity]="getRoleSeverity(insight.fromRole)"
+                              size="sm"
+                            />
+                            <span class="insight-type">{{
+                              getInsightTypeLabel(insight.insightType)
+                            }}</span>
+                            @if (insight.playerName) {
+                              <span class="player-name">{{
+                                insight.playerName
                               }}</span>
-                              @if (insight.playerName) {
-                                <span class="player-name">{{
-                                  insight.playerName
-                                }}</span>
-                              }
-                            </div>
-                            <div class="insight-actions">
-                              <app-status-tag
-                                [value]="insight.priority"
-                                [severity]="
-                                  getPrioritySeverity(insight.priority)
-                                "
-                                size="sm"
-                              />
-                              <span class="insight-date">{{
-                                formatDate(insight.createdAt)
-                              }}</span>
-                            </div>
+                            }
                           </div>
-                        </ng-template>
+                          <div class="insight-actions">
+                            <app-status-tag
+                              [value]="insight.priority"
+                              [severity]="getPrioritySeverity(insight.priority)"
+                              size="sm"
+                            />
+                            <span class="insight-date">{{
+                              formatDate(insight.createdAt)
+                            }}</span>
+                          </div>
+                        </div>
                         <div class="insight-content">
                           <h4 class="insight-title">{{ insight.title }}</h4>
                           <p class="insight-text">{{ insight.content }}</p>
@@ -736,7 +728,7 @@
                             </div>
                           }
                         </div>
-                      </p-card>
+                      </app-card-shell>
                     }
                   </div>
                 }
@@ -746,13 +738,22 @@
         </p-tabs>
 
         <!-- Generate Report Dialog -->
-        <p-dialog
-          header="Generate Mental Wellness Report"
+        <app-dialog
           [(visible)]="showGenerateDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Generate mental wellness report"
           [dismissableMask]="true"
-          class="psychology-generate-dialog"
+          styleClass="psychology-generate-dialog"
         >
+          <app-dialog-header
+            icon="file-pdf"
+            title="Generate Mental Wellness Report"
+            subtitle="Create a structured report with the right privacy scope for the athlete."
+            (close)="showGenerateDialog.set(false)"
+          />
           <div class="generate-form">
             <div class="form-group">
               <label>Report Type</label>
@@ -893,24 +894,33 @@
               ></textarea>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showGenerateDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()"
-              >Generate Report</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Generate Report"
+            primaryIcon="file-pdf"
+            (cancel)="showGenerateDialog.set(false)"
+            (primary)="generateReport()"
+          />
+        </app-dialog>
 
         <!-- Pre-Competition Dialog -->
-        <p-dialog
-          header="Pre-Competition Assessment"
+        <app-dialog
           [(visible)]="showPreCompDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Pre-competition assessment"
           [dismissableMask]="true"
-          class="psychology-precomp-dialog"
+          styleClass="psychology-precomp-dialog"
         >
+          <app-dialog-header
+            icon="bolt"
+            title="Pre-Competition Assessment"
+            subtitle="Capture the athlete’s readiness, competition importance, and main mental concern."
+            (close)="showPreCompDialog.set(false)"
+          />
           <div class="precomp-form">
             <div class="form-group">
               <label>Competition Name</label>
@@ -960,17 +970,15 @@
               />
             </div>
           </div>
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showPreCompDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              (clicked)="createPreCompAssessment()"
-              >Create Assessment</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Create Assessment"
+            primaryIcon="check"
+            (cancel)="showPreCompDialog.set(false)"
+            (primary)="createPreCompAssessment()"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>
   

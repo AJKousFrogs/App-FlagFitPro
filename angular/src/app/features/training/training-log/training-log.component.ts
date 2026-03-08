@@ -75,8 +75,8 @@ interface SessionType {
     CardShellComponent,
   ],
   template: `
-<app-main-layout>
-      <div class="training-log-page">
+    <app-main-layout>
+      <div class="training-log-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="Log Training Session"
           subtitle="Record your training to track load and prevent injuries"

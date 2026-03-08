@@ -192,16 +192,14 @@
               </h3>
 
               @if (teamContinuity().gameDayRecovery.length > 0) {
-                <app-card [compact]="true" class="protocol-group">
-                  <div class="protocol-header">
-                    <span class="protocol-icon">🏈</span>
-                    <span class="protocol-title"
-                      >Game Day Recovery ({{
-                        teamContinuity().gameDayRecovery.length
-                      }}
-                      players)</span
-                    >
-                  </div>
+                <app-card-shell
+                  class="protocol-group"
+                  density="compact"
+                  title="Game Day Recovery"
+                  [subtitle]="
+                    teamContinuity().gameDayRecovery.length + ' players'
+                  "
+                >
                   <div class="protocol-players">
                     @for (
                       player of teamContinuity().gameDayRecovery;
@@ -226,20 +224,16 @@
                       </div>
                     }
                   </div>
-                </app-card>
+                </app-card-shell>
               }
 
               @if (teamContinuity().loadCaps.length > 0) {
-                <app-card [compact]="true" class="protocol-group">
-                  <div class="protocol-header">
-                    <span class="protocol-icon">⚠️</span>
-                    <span class="protocol-title"
-                      >ACWR Load Caps ({{
-                        teamContinuity().loadCaps.length
-                      }}
-                      players)</span
-                    >
-                  </div>
+                <app-card-shell
+                  class="protocol-group"
+                  density="compact"
+                  title="ACWR Load Caps"
+                  [subtitle]="teamContinuity().loadCaps.length + ' players'"
+                >
                   <div class="protocol-players">
                     @for (
                       player of teamContinuity().loadCaps;
@@ -266,20 +260,18 @@
                       </div>
                     }
                   </div>
-                </app-card>
+                </app-card-shell>
               }
 
               @if (teamContinuity().travelRecovery.length > 0) {
-                <app-card [compact]="true" class="protocol-group">
-                  <div class="protocol-header">
-                    <span class="protocol-icon">🛫</span>
-                    <span class="protocol-title"
-                      >Travel Recovery ({{
-                        teamContinuity().travelRecovery.length
-                      }}
-                      players)</span
-                    >
-                  </div>
+                <app-card-shell
+                  class="protocol-group"
+                  density="compact"
+                  title="Travel Recovery"
+                  [subtitle]="
+                    teamContinuity().travelRecovery.length + ' players'
+                  "
+                >
                   <div class="protocol-players">
                     @for (
                       player of teamContinuity().travelRecovery;
@@ -304,7 +296,7 @@
                       </div>
                     }
                   </div>
-                </app-card>
+                </app-card-shell>
               }
             </section>
           }
@@ -389,11 +381,11 @@
           </div>
 
           @if (nextGenEnabled()) {
-            <app-card
+            <app-card-shell
               class="next-gen-preview-card"
               headerIcon="pi-sparkles"
               title="Next-Gen Preview (Coach)"
-              [compact]="true"
+              density="compact"
             >
               <div class="next-gen-preview-grid">
                 <div class="preview-metric">
@@ -490,7 +482,7 @@
                 Next-gen team aggregation is in preview. Use legacy ACWR and
                 roster alerts for decisions until full validation completes.
               </p>
-            </app-card>
+            </app-card-shell>
           }
 
           <!-- Main Content Grid - Streamlined for Phase 2 -->
@@ -522,7 +514,7 @@
           <div class="dashboard-workspace">
             <!-- Left Workspace: Roster & Performance -->
             <div class="workspace-main">
-              <app-card [flush]="true">
+              <app-card-shell [flush]="true" class="workspace-card">
                 <div class="workspace-tabs-header">
                   <div class="tab-triggers">
                     <button type="button"
@@ -822,15 +814,15 @@
                     </div>
                   }
                 </div>
-              </app-card>
+              </app-card-shell>
             </div>
 
             <!-- Right Workspace: Schedule & Quick -->
             <div class="workspace-side">
-              <app-card
+              <app-card-shell
                 title="Today schedule"
                 headerIcon="pi-calendar"
-                [compact]="true"
+                density="compact"
               >
                 <div class="schedule-mini">
                   @for (
@@ -870,7 +862,7 @@
                     </div>
                   }
                 </div>
-                <div class="card-footer">
+                <div footer class="schedule-card-footer">
                   <app-button
                     variant="text"
                     size="sm"
@@ -884,11 +876,10 @@
                     [fullWidth]="true"
                     iconLeft="pi-calendar-plus"
                     (clicked)="planTomorrow()"
-                    class="mt-2"
                     >Plan Tomorrow</app-button
                   >
                 </div>
-              </app-card>
+              </app-card-shell>
 
               <div class="quick-command-grid">
                 <app-button
@@ -921,13 +912,21 @@
         </div>
 
         <!-- Create Session Dialog -->
-        <p-dialog
-          header="Create Training Session"
+        <app-dialog
           [(visible)]="showCreateSessionDialog"
           [modal]="true"
-          class="dashboard-dialog"
-          [closable]="true"
+          styleClass="dashboard-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Create training session"
         >
+          <app-dialog-header
+            icon="calendar-plus"
+            title="Create Training Session"
+            subtitle="Schedule a new practice, prep block, or recovery session."
+            (close)="showCreateSessionDialog = false"
+          />
           <div class="session-form">
             <div class="form-field">
               <label for="coach-sessionTitle">Session Title</label>
@@ -995,26 +994,32 @@
               ></textarea>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button
-              variant="text"
-              (clicked)="showCreateSessionDialog = false"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-check" (clicked)="createSession()"
-              >Create</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Create"
+            primaryIcon="check"
+            (cancel)="showCreateSessionDialog = false"
+            (primary)="createSession()"
+          />
+        </app-dialog>
 
         <!-- Team Message Dialog -->
-        <p-dialog
-          header="Send Team Message"
+        <app-dialog
           [(visible)]="showTeamMessageDialog"
           [modal]="true"
-          class="dashboard-dialog"
-          [closable]="true"
+          styleClass="dashboard-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Send team message"
         >
+          <app-dialog-header
+            icon="send"
+            title="Send Team Message"
+            subtitle="Broadcast a clear update to the full team."
+            (close)="showTeamMessageDialog = false"
+          />
           <div class="message-form">
             <div class="form-field">
               <label for="messageContent">Message</label>
@@ -1029,24 +1034,32 @@
               ></textarea>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showTeamMessageDialog = false"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-send" (clicked)="sendTeamMessage()"
-              >Send</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Send"
+            primaryIcon="send"
+            (cancel)="showTeamMessageDialog = false"
+            (primary)="sendTeamMessage()"
+          />
+        </app-dialog>
 
         <!-- Request Access Dialog -->
-        <p-dialog
-          header="Request Data Access"
+        <app-dialog
           [(visible)]="showRequestAccessDialog"
           [modal]="true"
-          class="dashboard-dialog"
-          [closable]="true"
+          styleClass="dashboard-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Request data access"
         >
+          <app-dialog-header
+            icon="shield"
+            title="Request Data Access"
+            subtitle="Ask a player to share their wellness and training data."
+            (close)="cancelAccessRequest()"
+          />
           <div class="request-access-form">
             <p class="request-intro">
               Send a non-pushy request to the player to share their wellness and
@@ -1065,15 +1078,15 @@
               ></textarea>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="cancelAccessRequest()"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-send" (clicked)="sendAccessRequest()"
-              >Send Request</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Send Request"
+            primaryIcon="send"
+            (cancel)="cancelAccessRequest()"
+            (primary)="sendAccessRequest()"
+          />
+        </app-dialog>
       }
       <!-- End of @else for content -->
     </app-main-layout>

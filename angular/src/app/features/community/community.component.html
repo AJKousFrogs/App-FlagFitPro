@@ -1,13 +1,20 @@
 <app-main-layout>
       <!-- Poll Creation Dialog -->
-      <p-dialog
-        header="Create a Poll"
+      <app-dialog
         [(visible)]="showPollDialog"
         [modal]="true"
+        [closable]="false"
         [draggable]="false"
         [resizable]="false"
-        class="poll-dialog"
+        [dismissableMask]="true"
+        [styleClass]="'poll-dialog'"
       >
+        <app-dialog-header
+          icon="chart-bar"
+          title="Create a Poll"
+          subtitle="Ask the community a quick question and collect votes."
+          (close)="cancelPoll()"
+        />
         <div class="poll-form">
           <div class="form-field">
             <label for="pollQuestion">Poll Question</label>
@@ -57,28 +64,32 @@
             }
           </div>
         </div>
-        <ng-template #footer>
-          <app-button variant="text" (clicked)="cancelPoll()"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [disabled]="!isPollValid"
-            (clicked)="confirmPoll()"
-            >Add Poll</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Add Poll"
+          primaryIcon="check"
+          [disabled]="!isPollValid"
+          (cancel)="cancelPoll()"
+          (primary)="confirmPoll()"
+        />
+      </app-dialog>
 
       <!-- Location Dialog -->
-      <p-dialog
-        header="Add Location"
+      <app-dialog
         [(visible)]="showLocationDialog"
         [modal]="true"
+        [closable]="false"
         [draggable]="false"
         [resizable]="false"
-        class="location-dialog"
+        [dismissableMask]="true"
+        [styleClass]="'location-dialog'"
       >
+        <app-dialog-header
+          icon="map-marker"
+          title="Add Location"
+          subtitle="Share where this post or update is happening."
+          (close)="cancelLocation()"
+        />
         <div class="location-form">
           <div class="form-field">
             <label for="locationInput">Where are you?</label>
@@ -92,18 +103,15 @@
             />
           </div>
         </div>
-        <ng-template #footer>
-          <app-button variant="text" (clicked)="cancelLocation()"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-map-marker"
-            [disabled]="!locationInput.trim()"
-            (clicked)="confirmLocation()"
-            >Add Location</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Add Location"
+          primaryIcon="map-marker"
+          [disabled]="!locationInput.trim()"
+          (cancel)="cancelLocation()"
+          (primary)="confirmLocation()"
+        />
+      </app-dialog>
 
       <!-- Loading State -->
       <app-loading
@@ -123,7 +131,9 @@
 
       <!-- Content -->
       @if (!isPageLoading() && !hasPageError()) {
-      <div class="community-page elite-phase2-shell">
+      <div
+        class="community-page elite-phase2-shell ui-page-shell ui-page-shell--wide ui-page-stack"
+      >
         <!-- Modern Header -->
         <div class="community-header">
           <div class="header-content">

@@ -1,5 +1,5 @@
 <app-main-layout>
-      <div class="scouting-reports">
+      <div class="scouting-reports ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Scouting Reports"
           subtitle="Analyze opponents and prepare game plans"
@@ -54,33 +54,24 @@
                   @if (filteredReports().length > 0) {
                     <div class="reports-grid">
                       @for (report of filteredReports(); track report.id) {
-                        <p-card class="report-card">
-                          <ng-template #header>
-                            <div class="report-header">
-                              <div class="opponent-info">
-                                <span class="opponent-name">{{
-                                  report.opponentName
-                                }}</span>
-                                <span class="game-date">{{
-                                  report.gameDate | date: "mediumDate"
-                                }}</span>
-                              </div>
-                              <app-status-tag
-                                [value]="
-                                  report.sharedWith === 'team'
-                                    ? 'Team'
-                                    : 'Coaches'
-                                "
-                                [severity]="
-                                  report.sharedWith === 'team'
-                                    ? 'info'
-                                    : 'secondary'
-                                "
-                                size="sm"
-                              />
-                            </div>
-                          </ng-template>
-
+                        <app-card-shell
+                          class="report-card"
+                          [title]="report.opponentName"
+                          [subtitle]="(report.gameDate | date: 'mediumDate') || undefined"
+                          [hasFooter]="true"
+                        >
+                          <app-status-tag
+                            header-actions
+                            [value]="
+                              report.sharedWith === 'team' ? 'Team' : 'Coaches'
+                            "
+                            [severity]="
+                              report.sharedWith === 'team'
+                                ? 'info'
+                                : 'secondary'
+                            "
+                            size="sm"
+                          />
                           <div class="report-summary">
                             <p>{{ report.executiveSummary }}</p>
                           </div>
@@ -102,7 +93,7 @@
                             </span>
                           </div>
 
-                          <ng-template #footer>
+                          <div footer>
                             <app-button
                               variant="text"
                               iconLeft="pi-eye"
@@ -122,8 +113,8 @@
                               ariaLabel="Edit scouting report"
                               tooltip="Edit"
                             />
-                          </ng-template>
-                        </p-card>
+                          </div>
+                        </app-card-shell>
                       }
                     </div>
                   } @else {
@@ -154,30 +145,20 @@
 
                   <div class="opponents-grid">
                     @for (opponent of opponents(); track opponent.id) {
-                      <p-card class="opponent-card">
-                        <ng-template #header>
-                          <div class="opponent-header">
-                            <div class="team-info">
-                              <span class="team-name">{{
-                                opponent.teamName
-                              }}</span>
-                              @if (opponent.conference) {
-                                <span class="conference">{{
-                                  opponent.conference
-                                }}</span>
-                              }
-                            </div>
-                            <div class="record">
-                              {{ opponent.record.wins }}-{{
-                                opponent.record.losses
-                              }}
-                              @if (opponent.record.ties > 0) {
-                                -{{ opponent.record.ties }}
-                              }
-                            </div>
-                          </div>
-                        </ng-template>
-
+                      <app-card-shell
+                        class="opponent-card"
+                        [title]="opponent.teamName"
+                        [subtitle]="opponent.conference || ''"
+                        [hasFooter]="true"
+                      >
+                        <div header-actions class="record">
+                          <span>{{ opponent.record.wins }}</span>
+                          <span>-</span>
+                          <span>{{ opponent.record.losses }}</span>
+                          @if (opponent.record.ties > 0) {
+                            <span>-{{ opponent.record.ties }}</span>
+                          }
+                        </div>
                         <div class="opponent-details">
                           @if (opponent.headCoach) {
                             <div class="detail-row">
@@ -244,7 +225,7 @@
                           }
                         </div>
 
-                        <ng-template #footer>
+                        <div footer>
                           <app-button
                             variant="text"
                             iconLeft="pi-eye"
@@ -257,8 +238,8 @@
                             (clicked)="createReportForOpponent(opponent)"
                             >Create Report</app-button
                           >
-                        </ng-template>
-                      </p-card>
+                        </div>
+                      </app-card-shell>
                     }
                   </div>
                 </div>
@@ -279,7 +260,7 @@
                   @if (selectedTendencyOpponent && currentTendencies()) {
                     <div class="tendencies-content">
                       <!-- Offensive Tendencies -->
-                      <p-card header="Offensive Tendencies">
+                      <app-card-shell title="Offensive Tendencies">
                         <div class="tendency-section">
                           <h5>Formation Frequency</h5>
                           <div class="formation-bars">
@@ -392,10 +373,10 @@
                             </div>
                           </div>
                         }
-                      </p-card>
+                      </app-card-shell>
 
                       <!-- Defensive Tendencies -->
-                      <p-card header="Defensive Tendencies">
+                      <app-card-shell title="Defensive Tendencies">
                         <div class="tendency-section">
                           <h5>Coverage Frequency</h5>
                           <div class="formation-bars">
@@ -468,10 +449,10 @@
                             </ul>
                           </div>
                         }
-                      </p-card>
+                      </app-card-shell>
 
                       <!-- Special Situations -->
-                      <p-card header="Special Situations">
+                      <app-card-shell title="Special Situations">
                         @if (
                           currentTendencies()!.specialSituations.twoPointPlays
                             .length > 0
@@ -525,7 +506,7 @@
                             </ul>
                           </div>
                         }
-                      </p-card>
+                      </app-card-shell>
                     </div>
                   } @else {
                     <div class="select-prompt">
@@ -540,13 +521,22 @@
         }
 
         <!-- New Report Dialog -->
-        <p-dialog
-          header="Create Scouting Report"
+        <app-dialog
           [(visible)]="showNewReportDialog"
           [modal]="true"
-          class="dialog-w-lg"
+          styleClass="dialog-w-lg"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '1200px': '92vw', '640px': '96vw' }"
+          ariaLabel="Create scouting report"
           [dismissableMask]="true"
         >
+          <app-dialog-header
+            icon="file-edit"
+            title="Create Scouting Report"
+            subtitle="Capture the opponent summary, game plan, and sharing scope for the staff."
+            (close)="showNewReportDialog.set(false)"
+          />
           <div class="report-form">
             <div class="form-group">
               <label>Opponent</label>
@@ -661,26 +651,33 @@
               </div>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button
-              variant="text"
-              (clicked)="showNewReportDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-check" (clicked)="createReport()"
-              >Create Report</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Create Report"
+            primaryIcon="check"
+            (cancel)="showNewReportDialog.set(false)"
+            (primary)="createReport()"
+          />
+        </app-dialog>
 
         <!-- View Report Dialog -->
-        <p-dialog
-          header="Scouting Report"
+        <app-dialog
           [(visible)]="showViewReportDialog"
           [modal]="true"
-          class="dialog-w-lg"
+          styleClass="dialog-w-lg"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '1200px': '92vw', '640px': '96vw' }"
+          ariaLabel="View scouting report"
           [dismissableMask]="true"
         >
+          <app-dialog-header
+            icon="search"
+            title="Scouting Report"
+            subtitle="Review the full opponent scouting plan and share the finalized brief."
+            (close)="showViewReportDialog.set(false)"
+          />
           @if (viewingReport()) {
             <div class="view-report">
               <div class="report-meta-header">
@@ -791,7 +788,7 @@
               }
             </div>
           }
-          <ng-template #footer>
+          <div dialogFooter class="dialog-actions">
             <app-button
               variant="text"
               iconLeft="pi-share-alt"
@@ -803,17 +800,26 @@
               (clicked)="exportReport(viewingReport()!)"
               >Export PDF</app-button
             >
-          </ng-template>
-        </p-dialog>
+          </div>
+        </app-dialog>
 
         <!-- Add Opponent Dialog -->
-        <p-dialog
-          header="Add Opponent"
+        <app-dialog
           [(visible)]="showAddOpponentDialog"
           [modal]="true"
-          class="dialog-max-w-lg"
+          styleClass="dialog-max-w-lg"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Add opponent"
           [dismissableMask]="true"
         >
+          <app-dialog-header
+            icon="users"
+            title="Add Opponent"
+            subtitle="Create a reusable opponent profile for future scouting reports and tendency analysis."
+            (close)="showAddOpponentDialog.set(false)"
+          />
           <div class="opponent-form">
             <div class="form-group">
               <label>Team Name</label>
@@ -895,16 +901,14 @@
               ></p-select>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button
-              variant="text"
-              (clicked)="showAddOpponentDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-plus" (clicked)="addOpponent()"
-              >Add Opponent</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Add Opponent"
+            primaryIcon="plus"
+            (cancel)="showAddOpponentDialog.set(false)"
+            (primary)="addOpponent()"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>

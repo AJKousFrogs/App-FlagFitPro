@@ -1,9 +1,7 @@
 @use "styles/mixins" as *;
 
 .scouting-reports {
-  padding: var(--ds-spacing-lg);
-  max-width: var(--content-max-width-2xl);
-  margin: 0 auto;
+  width: 100%;
 }
 
 // Section styles
@@ -42,29 +40,6 @@
       minmax(var(--grid-card-min-lg), 1fr)
     );
     gap: var(--ds-spacing-lg);
-  }
-
-  // @see docs/CARD_SHELL_CONTRACT.md
-
-  .report-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-
-    .opponent-info {
-      display: flex;
-      flex-direction: column;
-
-      .opponent-name {
-        font-weight: var(--ds-font-weight-semibold);
-        font-size: var(--ds-font-size-md);
-      }
-
-      .game-date {
-        font-size: var(--ds-font-size-md);
-        color: var(--color-text-secondary);
-      }
-    }
   }
 
   .report-summary {
@@ -116,34 +91,6 @@
       minmax(var(--grid-card-min-lg), 1fr)
     );
     gap: var(--ds-spacing-lg);
-  }
-
-  // @see docs/CARD_SHELL_CONTRACT.md
-
-  .opponent-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .team-info {
-      display: flex;
-      flex-direction: column;
-
-      .team-name {
-        font-weight: var(--ds-font-weight-semibold);
-      }
-
-      .conference {
-        font-size: var(--ds-font-size-xs);
-        color: var(--color-text-secondary);
-      }
-    }
-
-    .record {
-      font-size: var(--ds-font-size-2xl);
-      font-weight: var(--ds-font-weight-bold);
-      color: var(--color-brand-primary);
-    }
   }
 
   .opponent-details {
@@ -198,6 +145,15 @@
       }
     }
   }
+}
+
+.opponents-section .record {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0-5);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-brand-primary);
 }
 
 .opponents-section .player-badge {

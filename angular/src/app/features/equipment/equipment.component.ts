@@ -10,8 +10,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Badge } from "primeng/badge";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -33,11 +31,16 @@ import { TeamStatisticsService } from "../../core/services/team-statistics.servi
 import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../shared/components/ui-components";
 
 type ItemType =
   | "jersey"
@@ -66,11 +69,8 @@ type ReturnData = { condition: Condition; notes: string };
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     TableModule,
     StatusTagComponent,
-    Dialog,
-    
     InputText,
     InputNumber,
     Select,
@@ -79,13 +79,16 @@ type ReturnData = { condition: Condition; notes: string };
     PageHeaderComponent,
     DatePipe,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
     IconButtonComponent,
     EmptyStateComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="equipment-page ui-page-stack">
+      <div class="equipment-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Equipment Management"
           subtitle="Track and manage team gear"
@@ -103,7 +106,7 @@ type ReturnData = { condition: Condition; notes: string };
           <!-- Summary Cards -->
           @if (summary()) {
             <div class="summary-grid">
-              <p-card class="summary-card">
+              <app-card-shell class="summary-card">
                 <div class="summary-content">
                   <i class="pi pi-box summary-icon"></i>
                   <div class="summary-info">
@@ -113,9 +116,9 @@ type ReturnData = { condition: Condition; notes: string };
                     <span class="summary-label">Total Items</span>
                   </div>
                 </div>
-              </p-card>
+              </app-card-shell>
 
-              <p-card class="summary-card">
+              <app-card-shell class="summary-card">
                 <div class="summary-content">
                   <i class="pi pi-check-circle summary-icon success"></i>
                   <div class="summary-info">
@@ -125,9 +128,9 @@ type ReturnData = { condition: Condition; notes: string };
                     <span class="summary-label">Available</span>
                   </div>
                 </div>
-              </p-card>
+              </app-card-shell>
 
-              <p-card class="summary-card">
+              <app-card-shell class="summary-card">
                 <div class="summary-content">
                   <i class="pi pi-users summary-icon info"></i>
                   <div class="summary-info">
@@ -137,9 +140,9 @@ type ReturnData = { condition: Condition; notes: string };
                     <span class="summary-label">Assigned</span>
                   </div>
                 </div>
-              </p-card>
+              </app-card-shell>
 
-              <p-card
+              <app-card-shell
                 class="summary-card"
                 [class.alert]="summary()!.items_needing_replacement > 0"
               >
@@ -154,24 +157,21 @@ type ReturnData = { condition: Condition; notes: string };
                     <span class="summary-label">Need Replacement</span>
                   </div>
                 </div>
-              </p-card>
+              </app-card-shell>
             </div>
           }
 
           <!-- Equipment Inventory -->
-          <p-card class="inventory-card">
-            <ng-template #header>
-              <app-card-header title="Equipment Inventory">
-                <div header-actions class="filter-actions">
-                  <p-select
-                    [options]="typeOptions"
-                    (onChange)="onSelectedTypeChange($event.value)"
-                    placeholder="All Types"
-                    [showClear]="true"
-                  ></p-select>
-                </div>
-              </app-card-header>
-            </ng-template>
+          <app-card-shell class="inventory-card" title="Equipment Inventory">
+            <div header-actions class="filter-actions">
+              <p-select
+                [options]="typeOptions"
+                (onChange)="onSelectedTypeChange($event.value)"
+                placeholder="All Types"
+                [showClear]="true"
+                class="equipment-filter-select"
+              ></p-select>
+            </div>
 
             <p-table
               [value]="filteredEquipment()"
@@ -179,6 +179,7 @@ type ReturnData = { condition: Condition; notes: string };
               [rows]="10"
               class="p-datatable-sm"
               [rowHover]="true"
+              [scrollable]="true"
             >
               <ng-template #header>
                 <tr>
@@ -276,19 +277,15 @@ type ReturnData = { condition: Condition; notes: string };
                 </tr>
               </ng-template>
             </p-table>
-          </p-card>
+          </app-card-shell>
 
           <!-- Active Assignments -->
           @if (isCoach()) {
-            <p-card class="assignments-card">
-              <ng-template #header>
-                <app-card-header title="Active Assignments">
-                  <p-badge
-                    header-actions
-                    [value]="activeAssignments().length.toString()"
-                  ></p-badge>
-                </app-card-header>
-              </ng-template>
+            <app-card-shell class="assignments-card" title="Active Assignments">
+              <p-badge
+                header-actions
+                [value]="activeAssignments().length.toString()"
+              ></p-badge>
 
               @if (activeAssignments().length === 0) {
                 <app-empty-state
@@ -302,6 +299,7 @@ type ReturnData = { condition: Condition; notes: string };
                   [paginator]="true"
                   [rows]="5"
                   class="p-datatable-sm"
+                  [scrollable]="true"
                 >
                   <ng-template #header>
                     <tr>
@@ -331,17 +329,26 @@ type ReturnData = { condition: Condition; notes: string };
                   </ng-template>
                 </p-table>
               }
-            </p-card>
+            </app-card-shell>
           }
         </div>
 
         <!-- Add/Edit Equipment Dialog -->
-        <p-dialog
-          [header]="editingItem ? 'Edit Equipment' : 'Add Equipment'"
+        <app-dialog
           [(visible)]="showAddDialog"
           [modal]="true"
-          class="equipment-add-dialog"
+          styleClass="equipment-add-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          [ariaLabel]="editingItem ? 'Edit equipment' : 'Add equipment'"
         >
+          <app-dialog-header
+            icon="box"
+            [title]="editingItem ? 'Edit Equipment' : 'Add Equipment'"
+            subtitle="Track inventory, condition, and available quantities."
+            (close)="showAddDialog = false"
+          />
           <div class="dialog-form">
             <div class="form-field">
               <label>Name *</label>
@@ -415,27 +422,33 @@ type ReturnData = { condition: Condition; notes: string };
             </div>
           </div>
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showAddDialog = false"
-              >Cancel</app-button
-            >
-            <app-icon-button
-              icon="pi-check"
-              [disabled]="!canSaveItem()"
-              (clicked)="saveItem()"
-              ariaLabel="Save equipment"
-              tooltip="Save"
-            />
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Save Equipment"
+            primaryIcon="check"
+            [disabled]="!canSaveItem()"
+            (cancel)="showAddDialog = false"
+            (primary)="saveItem()"
+          />
+        </app-dialog>
 
         <!-- Checkout Dialog -->
-        <p-dialog
-          header="Checkout Equipment"
+        <app-dialog
           [(visible)]="showCheckoutDialog"
           [modal]="true"
-          class="equipment-checkout-dialog"
+          styleClass="equipment-checkout-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Checkout equipment"
         >
+          <app-dialog-header
+            icon="arrow-right-arrow-left"
+            title="Checkout Equipment"
+            subtitle="Assign team gear to a player and track quantity."
+            (close)="showCheckoutDialog = false"
+          />
           @if (checkoutItem()) {
             <div class="dialog-form">
               <p class="checkout-info">
@@ -478,26 +491,33 @@ type ReturnData = { condition: Condition; notes: string };
             </div>
           }
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showCheckoutDialog = false"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [disabled]="!checkoutData.player_id"
-              (clicked)="checkout()"
-              >Checkout</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Checkout"
+            primaryIcon="check"
+            [disabled]="!checkoutData.player_id"
+            (cancel)="showCheckoutDialog = false"
+            (primary)="checkout()"
+          />
+        </app-dialog>
 
         <!-- Return Dialog -->
-        <p-dialog
-          header="Return Equipment"
+        <app-dialog
           [(visible)]="showReturnDialog"
           [modal]="true"
-          class="equipment-return-dialog"
+          styleClass="equipment-return-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Return equipment"
         >
+          <app-dialog-header
+            icon="undo"
+            title="Return Equipment"
+            subtitle="Record the condition of gear as it comes back in."
+            (close)="showReturnDialog = false"
+          />
           @if (returnAssignment()) {
             <div class="dialog-form">
               <p class="return-info">
@@ -527,15 +547,15 @@ type ReturnData = { condition: Condition; notes: string };
             </div>
           }
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showReturnDialog = false"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-check" (clicked)="processReturn()"
-              >Process Return</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Process Return"
+            primaryIcon="check"
+            (cancel)="showReturnDialog = false"
+            (primary)="processReturn()"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>
   `,

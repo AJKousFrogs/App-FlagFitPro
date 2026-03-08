@@ -1,72 +1,71 @@
-<p-dialog
+<app-dialog
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
-  [modal]="true"
-  [closable]="true"
-  [showHeader]="false"
-  class="new-team-dialog"
+  [blockScroll]="true"
+  [draggable]="false"
+  [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+  styleClass="new-team-dialog"
+  ariaLabel="Request new team"
 >
-  <div class="dialog-container">
-    <app-dialog-header
-      icon="users"
-      title="Request New Team"
-      subtitle="Submit a request to create a new team"
-      (close)="closeDialog()"
+  <app-dialog-header
+    icon="users"
+    title="Request New Team"
+    subtitle="Submit a request to create a new team"
+    (close)="closeDialog()"
+  />
+
+  <div class="new-team-content">
+    <app-alert
+      variant="info"
+      density="compact"
+      icon="pi pi-info-circle"
+      message="New team requests require approval from a superadmin. You will be notified via email once your request has been reviewed."
+      styleClass="settings-dialog-alert"
     />
 
-    <div class="new-team-content">
-      <app-alert
-        variant="info"
-        density="compact"
-        icon="pi pi-info-circle"
-        message="New team requests require approval from a superadmin. You will be notified via email once your request has been reviewed."
-        styleClass="settings-dialog-alert"
+    <div class="form-field">
+      <label for="new-team-name">
+        <i class="pi pi-tag"></i>
+        Team Name <span class="required">*</span>
+      </label>
+      <input
+        id="new-team-name"
+        name="newTeamName"
+        type="text"
+        pInputText
+        [value]="teamName()"
+        (input)="onTeamNameInput($event)"
+        placeholder="Enter your team name"
+        class="w-full"
+        autocomplete="organization"
       />
-
-      <div class="form-field">
-        <label for="new-team-name">
-          <i class="pi pi-tag"></i>
-          Team Name <span class="required">*</span>
-        </label>
-        <input
-          id="new-team-name"
-          name="newTeamName"
-          type="text"
-          pInputText
-          [value]="teamName()"
-          (input)="onTeamNameInput($event)"
-          placeholder="Enter your team name"
-          class="w-full"
-          autocomplete="organization"
-        />
-      </div>
-
-      <div class="form-field">
-        <label for="new-team-notes">
-          <i class="pi pi-file-edit"></i>
-          Additional Notes (Optional)
-        </label>
-        <textarea
-          id="new-team-notes"
-          name="newTeamNotes"
-          pInputText
-          [value]="teamNotes()"
-          (input)="onTeamNotesInput($event)"
-          placeholder="Tell us about your team (e.g., location, league, number of members)"
-          rows="3"
-          class="w-full"
-        ></textarea>
-      </div>
     </div>
 
-    <app-dialog-footer
-      cancelLabel="Cancel"
-      primaryLabel="Submit Request"
-      primaryIcon="send"
-      [loading]="loading()"
-      [disabled]="!teamName().trim()"
-      (cancel)="closeDialog()"
-      (primary)="submit.emit()"
-    />
+    <div class="form-field">
+      <label for="new-team-notes">
+        <i class="pi pi-file-edit"></i>
+        Additional Notes (Optional)
+      </label>
+      <textarea
+        id="new-team-notes"
+        name="newTeamNotes"
+        pInputText
+        [value]="teamNotes()"
+        (input)="onTeamNotesInput($event)"
+        placeholder="Tell us about your team (e.g., location, league, number of members)"
+        rows="3"
+        class="w-full"
+      ></textarea>
+    </div>
   </div>
-</p-dialog>
+
+  <app-dialog-footer
+    cancelLabel="Cancel"
+    primaryLabel="Submit Request"
+    primaryIcon="send"
+    [loading]="loading()"
+    [disabled]="!teamName().trim()"
+    (cancel)="closeDialog()"
+    (primary)="submit.emit()"
+  />
+</app-dialog>

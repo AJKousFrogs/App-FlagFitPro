@@ -15,7 +15,11 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `
-    <div class="page-header" [class.hidden-in-composite]="hideInComposite()">
+    <div
+      class="page-header"
+      [class.hidden-in-composite]="hideInComposite()"
+      [class.page-header--hero]="variant() === 'hero'"
+    >
       <div class="header-content">
         <h1 class="page-title">
           @if (icon()) {
@@ -37,6 +41,7 @@ export class PageHeaderComponent {
   title = input<string>("");
   subtitle = input<string | undefined>(undefined);
   icon = input<string | undefined>(undefined);
+  variant = input<"default" | "hero">("default");
 
   /**
    * When true, header will be hidden when inside a composite view.

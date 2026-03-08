@@ -7,13 +7,13 @@ import {
   OnInit,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -32,8 +32,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    Card,
-
+    CardShellComponent,
     LazyChartComponent,
     Tabs,
     TabPanel,
@@ -46,7 +45,7 @@ import {
   ],
   template: `
     <app-main-layout>
-      <div class="enhanced-analytics-page">
+      <div class="enhanced-analytics-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="Enhanced Analytics"
           subtitle="Advanced performance insights and predictions"
@@ -62,10 +61,7 @@ import {
 
         <p-tabs>
           <p-tabpanel header="Performance Trends">
-            <p-card>
-              <ng-template #header>
-                <h3>7-Week Performance Trend</h3>
-              </ng-template>
+            <app-card-shell title="7-Week Performance Trend">
               @if (hasNoData()) {
                 <app-empty-state
                   [useCard]="false"
@@ -83,14 +79,11 @@ import {
                   [options]="chartOptions"
                 ></app-lazy-chart>
               }
-            </p-card>
+            </app-card-shell>
           </p-tabpanel>
 
           <p-tabpanel header="Injury Risk">
-            <p-card>
-              <ng-template #header>
-                <h3>Injury Risk Analysis</h3>
-              </ng-template>
+            <app-card-shell title="Injury Risk Analysis">
               @if (hasInsufficientDataForInjuryRisk()) {
                 <app-empty-state
                   [useCard]="false"
@@ -116,14 +109,11 @@ import {
                   </div>
                 </div>
               }
-            </p-card>
+            </app-card-shell>
           </p-tabpanel>
 
           <p-tabpanel header="Predictions">
-            <p-card>
-              <ng-template #header>
-                <h3>Performance Predictions</h3>
-              </ng-template>
+            <app-card-shell title="Performance Predictions">
               <!-- AI consent check for predictions -->
               @if (!aiEnabled()) {
                 <app-ai-consent-required></app-ai-consent-required>
@@ -132,7 +122,7 @@ import {
                   <p>AI-powered predictions coming soon...</p>
                 </div>
               }
-            </p-card>
+            </app-card-shell>
           </p-tabpanel>
         </p-tabs>
       </div>

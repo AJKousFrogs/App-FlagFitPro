@@ -8,10 +8,10 @@ import {
 
 import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import { TitleCasePipe } from "@angular/common";
-import { Card } from "primeng/card";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { ToastService } from "../../../core/services/toast.service";
 import { formatDate } from "../../../shared/utils/date.utils";
 import { TeamInvitationDataService } from "../services/team-invitation-data.service";
@@ -46,22 +46,21 @@ interface InvitationData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    Card,
     AlertComponent,
     TitleCasePipe,
     ButtonComponent,
     AppLoadingComponent,
+    CardShellComponent,
   ],
   template: `
 <div class="accept-invitation-page">
-      <p-card class="accept-invitation-card">
-        <ng-template #header>
+      <app-card-shell class="accept-invitation-card">
+        <div class="accept-invitation-header">
           <div class="accept-invitation-logo">
             <i class="pi pi-users"></i>
           </div>
           <h1 class="accept-invitation-title">Team Invitation</h1>
-        </ng-template>
-
+        </div>
         @if (isLoading()) {
           <app-loading message="Loading invitation..." variant="inline" />
         } @else if (needsLogin()) {
@@ -177,7 +176,7 @@ interface InvitationData {
             </div>
           </div>
         }
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./accept-invitation.component.scss",

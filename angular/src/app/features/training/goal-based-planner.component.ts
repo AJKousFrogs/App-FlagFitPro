@@ -46,7 +46,7 @@ import {
   ],
   template: `
     <app-main-layout>
-      <div class="goal-planner-page ui-page-stack">
+      <div class="goal-planner-page ui-page-shell ui-page-stack">
         <!-- Page Header -->
         <app-page-header
           title="Goal-Based Training Planner"

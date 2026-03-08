@@ -18,11 +18,9 @@ import {
   Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
-
 import { InputText } from "primeng/inputtext";
-
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -46,15 +44,14 @@ type LoginForm = FormGroup<{
     RouterModule,
     ReactiveFormsModule,
     FormsModule,
-    Card,
     ButtonComponent,
+    CardShellComponent,
     InputText,
-
   ],
   template: `
 <div class="login-page elite-auth-shell">
-      <p-card class="login-card elite-auth-card elite-auth-card--login">
-        <ng-template #header>
+      <app-card-shell class="login-card elite-auth-card elite-auth-card--login">
+        <div class="elite-auth-intro">
           <div class="login-logo elite-auth-logo">
             <i class="pi pi-activity"></i>
           </div>
@@ -64,7 +61,7 @@ type LoginForm = FormGroup<{
             Access your training plan, readiness, and daily protocol from one
             place.
           </p>
-        </ng-template>
+        </div>
 
         @if (isDemoMode()) {
           <div class="alert alert--info elite-auth-note">
@@ -198,7 +195,7 @@ type LoginForm = FormGroup<{
         >
           Create a new account
         </a>
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./login.component.scss",

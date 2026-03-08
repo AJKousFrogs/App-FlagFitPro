@@ -8,22 +8,22 @@ import { Component, ChangeDetectionStrategy, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Avatar } from "primeng/avatar";
 
 import { PositionStat, FocusStat, CreatorStat } from "../video-curation.models";
 import { formatFocus } from "../video-curation-utils";
+import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
 @Component({
   selector: "app-video-curation-analytics",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Card, ProgressBar, Avatar],
+  imports: [CommonModule, CardShellComponent, ProgressBar, Avatar],
   template: `
     <div class="tab-content">
       <div class="analytics-grid">
         <!-- Most Viewed Videos -->
-        <p-card header="Top Videos by Position">
+        <app-card-shell title="Top Videos by Position" class="analytics-card">
           <div class="analytics-list">
             @for (stat of videosByPosition(); track stat.position) {
               <div class="analytics-item">
@@ -52,10 +52,13 @@ import { formatFocus } from "../video-curation-utils";
               </div>
             }
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Videos by Focus -->
-        <p-card header="Videos by Training Focus">
+        <app-card-shell
+          title="Videos by Training Focus"
+          class="analytics-card"
+        >
           <div class="analytics-list">
             @for (stat of videosByFocus(); track stat.focus) {
               <div class="analytics-item">
@@ -84,10 +87,10 @@ import { formatFocus } from "../video-curation-utils";
               </div>
             }
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Creator Stats -->
-        <p-card header="Top Creators">
+        <app-card-shell title="Top Creators" class="analytics-card">
           <div class="creator-stats-list">
             @for (creator of topCreators(); track creator.username) {
               <div class="creator-stat-item">
@@ -114,7 +117,7 @@ import { formatFocus } from "../video-curation-utils";
               </div>
             }
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     </div>
   `,

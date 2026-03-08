@@ -7,52 +7,28 @@
 @include stat-block;
 
 .coach-analytics {
-  width: min(100%, var(--content-max-width-2xl));
-  margin-inline: auto;
+  width: 100%;
   padding: 0;
   gap: var(--layout-page-section-gap);
+  min-width: 0;
 }
 
-.analytics-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0;
-  gap: var(--layout-page-section-gap-tight);
-  flex-wrap: wrap;
-}
-
-.header-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  flex: 1;
-}
-
-.header-content h1 {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: 0;
-  font-size: var(--ds-font-size-3xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.header-content h1 i {
-  color: var(--ds-primary-green);
-}
-
-.header-subtitle {
-  margin: 0;
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
+.analytics-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-subtle);
 }
 
 .header-filters {
   display: flex;
   gap: var(--space-3);
   flex-wrap: wrap;
+  min-width: 0;
+
+  > * {
+    flex: 1 1 var(--input-min-width-md);
+    min-width: 0;
+  }
 }
 
 .metrics-grid {
@@ -145,10 +121,6 @@
   gap: var(--layout-page-section-gap);
 }
 
-.analytics-card {
-  height: 100%;
-}
-
 .leaderboard-rank-col {
   width: var(--space-12);
 }
@@ -225,10 +197,6 @@
 @include respond-to(lg) {
   .coach-analytics {
     gap: var(--layout-page-section-gap-tight);
-  }
-
-  .analytics-header {
-    align-items: flex-start;
   }
 
   .header-filters {

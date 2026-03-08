@@ -15,29 +15,18 @@ import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { filter } from "rxjs";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
+import {
+  AppNavigationItem,
+  getMeNavigationItems,
+  getPrimaryNavigationItems,
+  getSecondaryNavigationItems,
+  isExactNavigationRoute,
+} from "../../../core/navigation/app-navigation.config";
 import { AuthService } from "../../../core/services/auth.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
 import { BackdropComponent } from "../backdrop/backdrop.component";
 import { CloseButtonComponent } from "../close-button/close-button.component";
 import { NavItemComponent } from "../nav-item.component";
-
-interface NavItem {
-  label: string;
-  route: string;
-  icon: string;
-  ariaLabel: string;
-  badge?: number;
-  roles?: string[]; // Optional: restrict to specific roles
-  group?: string; // Navigation group for organization
-}
-
-interface _CollapsibleGroup {
-  id: string;
-  label: string;
-  icon: string;
-  items: NavItem[];
-  isExpanded: boolean;
-}
 
 @Component({
   selector: "app-sidebar",
@@ -98,10 +87,7 @@ interface _CollapsibleGroup {
                 [ariaLabel]="item.ariaLabel"
                 [testId]="getNavTestId(item.route)"
                 [itemId]="'nav-' + item.route.replace('/', '')"
-                [exact]="
-                  item.route === '/dashboard' ||
-                  item.route === '/todays-practice'
-                "
+                [exact]="isExactRoute(item.route)"
                 variant="sidebar"
                 [itemClass]="'nav-item-primary'"
                 (clicked)="onNavItemClick()"
@@ -251,327 +237,11 @@ export class SidebarComponent implements OnInit {
   meGroupExpanded = signal(this.loadMeGroupState());
 
   /**
-   * FULL NAVIGATION STRUCTURE
-   * All navigation items restored for complete functionality
-   */
-  private athleteNavItems: NavItem[] = [
-    {
-      label: "Dashboard",
-      route: "/player-dashboard",
-      icon: "pi-home",
-      ariaLabel: "Dashboard - Overview of your training and progress",
-      group: "primary",
-    },
-    {
-      label: "Today",
-      route: "/todays-practice",
-      icon: "pi-calendar",
-      ariaLabel: "Today's Practice - Your training for today",
-      group: "primary",
-    },
-    {
-      label: "Training",
-      route: "/training",
-      icon: "pi-bolt",
-      ariaLabel: "Training Schedule - View and manage your training calendar",
-      group: "primary",
-    },
-    {
-      label: "Wellness",
-      route: "/wellness",
-      icon: "pi-heart",
-      ariaLabel: "Wellness & Recovery - Daily check-in and recovery metrics",
-      group: "primary",
-    },
-    {
-      label: "Analytics",
-      route: "/analytics",
-      icon: "pi-chart-line",
-      ariaLabel: "Analytics - Performance metrics and insights",
-      group: "primary",
-    },
-    {
-      label: "Performance",
-      route: "/performance-tracking",
-      icon: "pi-bullseye",
-      ariaLabel:
-        "Performance Tracking - Track and analyze your performance metrics",
-      group: "primary",
-    },
-    {
-      label: "Roster",
-      route: "/roster",
-      icon: "pi-users",
-      ariaLabel: "Roster - Teammates, roles, and availability",
-      group: "primary",
-    },
-    {
-      label: "Team Chat",
-      route: "/team-chat",
-      icon: "pi-comments",
-      ariaLabel: "Team Chat - Communicate with your team",
-      group: "primary",
-    },
-    {
-      label: "Tournaments",
-      route: "/tournaments",
-      icon: "pi-trophy",
-      ariaLabel: "Tournaments - Games and competitions",
-      group: "primary",
-    },
-    {
-      label: "Game Nutrition",
-      route: "/game/nutrition",
-      icon: "pi-apple",
-      ariaLabel:
-        "Game Nutrition - Nutrition and hydration for tournament days",
-      group: "primary",
-    },
-    {
-      label: "Travel Recovery",
-      route: "/travel/recovery",
-      icon: "pi-map-marker",
-      ariaLabel: "Travel Recovery - Recovery protocols for travel days",
-      group: "primary",
-    },
-    {
-      label: "Game Tracker",
-      route: "/game-tracker",
-      icon: "pi-flag",
-      ariaLabel: "Game Tracker - Track live games and statistics",
-      group: "primary",
-    },
-    {
-      label: "Merlin AI",
-      route: "/chat",
-      icon: "pi-sparkles",
-      ariaLabel: "Merlin AI - Chat with your Merlin AI",
-      group: "primary",
-    },
-    {
-      label: "Community",
-      route: "/community",
-      icon: "pi-globe",
-      ariaLabel: "Community - Connect with other players and share experiences",
-      group: "primary",
-    },
-    {
-      label: "Exercise Library",
-      route: "/exercise-library",
-      icon: "pi-book",
-      ariaLabel: "Exercise Library - Browse exercise database",
-      group: "primary",
-    },
-    {
-      label: "Video Library",
-      route: "/training/videos",
-      icon: "pi-video",
-      ariaLabel: "Video Library - Training videos and drills",
-      group: "primary",
-    },
-    {
-      label: "ACWR",
-      route: "/acwr",
-      icon: "pi-chart-bar",
-      ariaLabel: "ACWR Dashboard - Acute Chronic Workload Ratio monitoring",
-      group: "primary",
-    },
-    {
-      label: "Knowledge Base",
-      route: "/knowledge",
-      icon: "pi-bookmark",
-      ariaLabel: "Knowledge Base - Submit and browse team knowledge resources",
-      group: "primary",
-    },
-  ];
-
-  private coachNavItems: NavItem[] = [
-    {
-      label: "Dashboard",
-      route: "/coach/dashboard",
-      icon: "pi-home",
-      ariaLabel: "Coach Dashboard - Team overview and insights",
-      group: "primary",
-    },
-    {
-      label: "Roster",
-      route: "/roster",
-      icon: "pi-users",
-      ariaLabel: "Roster - Player management and monitoring",
-      group: "primary",
-    },
-    {
-      label: "Team Chat",
-      route: "/team-chat",
-      icon: "pi-comments",
-      ariaLabel: "Team Chat - Communicate with your team",
-      group: "primary",
-    },
-    {
-      label: "Planning",
-      route: "/coach/programs",
-      icon: "pi-calendar",
-      ariaLabel: "Planning - Programs, practice planner, and calendar",
-      group: "primary",
-    },
-    {
-      label: "Analytics",
-      route: "/coach/analytics",
-      icon: "pi-chart-line",
-      ariaLabel: "Analytics - Team performance metrics and insights",
-      group: "primary",
-    },
-    {
-      label: "Performance",
-      route: "/performance-tracking",
-      icon: "pi-bullseye",
-      ariaLabel:
-        "Performance Tracking - Track and analyze team performance metrics",
-      group: "primary",
-    },
-    {
-      label: "Competition",
-      route: "/tournaments",
-      icon: "pi-trophy",
-      ariaLabel: "Competition - Games and tournaments",
-      group: "primary",
-    },
-    {
-      label: "Travel Recovery",
-      route: "/travel/recovery",
-      icon: "pi-map-marker",
-      ariaLabel: "Travel Recovery - Recovery protocols for travel days",
-      group: "primary",
-    },
-    {
-      label: "Game Tracker",
-      route: "/game-tracker",
-      icon: "pi-flag",
-      ariaLabel: "Game Tracker - Track live games and statistics",
-      group: "primary",
-    },
-    {
-      label: "Merlin AI",
-      route: "/chat",
-      icon: "pi-sparkles",
-      ariaLabel: "Merlin AI - Chat with your Merlin AI",
-      group: "primary",
-    },
-    {
-      label: "Community",
-      route: "/community",
-      icon: "pi-globe",
-      ariaLabel: "Community - Connect with players and share experiences",
-      group: "primary",
-    },
-    {
-      label: "Exercise Library",
-      route: "/exercise-library",
-      icon: "pi-book",
-      ariaLabel: "Exercise Library - Browse exercise database",
-      group: "primary",
-    },
-    {
-      label: "Video Library",
-      route: "/training/videos",
-      icon: "pi-video",
-      ariaLabel: "Video Library - Training videos and drills",
-      group: "primary",
-    },
-    {
-      label: "Knowledge Base",
-      route: "/knowledge",
-      icon: "pi-bookmark",
-      ariaLabel: "Knowledge Base - Training resources and guides",
-      group: "primary",
-    },
-  ];
-
-  /**
-   * "Me" group items - collapsible accordion
-   */
-  private meGroupItems: NavItem[] = [
-    {
-      label: "Profile",
-      route: "/profile",
-      icon: "pi-user",
-      ariaLabel: "Profile - View and edit your profile",
-      group: "me",
-    },
-    {
-      label: "Settings",
-      route: "/settings",
-      icon: "pi-cog",
-      ariaLabel: "Settings - App preferences and account settings",
-      group: "me",
-    },
-    {
-      label: "Help",
-      route: "/help",
-      icon: "pi-question-circle",
-      ariaLabel: "Help Center - Get support and guidance",
-      group: "me",
-    },
-    {
-      label: "Achievements",
-      route: "/achievements",
-      icon: "pi-trophy",
-      ariaLabel: "Achievements - View your progress and badges",
-      group: "me",
-    },
-  ];
-
-  /**
-   * Additional navigation items (shown after primary nav)
-   */
-  private additionalNavItems: NavItem[] = [
-    {
-      label: "Staff Hub",
-      route: "/staff",
-      icon: "pi-building",
-      ariaLabel: "Staff Hub - Access nutritionist, physio, and psychology dashboards",
-      roles: [
-        "physiotherapist",
-        "nutritionist",
-        "psychologist",
-        "strength_conditioning_coach",
-      ],
-      group: "secondary",
-    },
-    {
-      label: "Team Hub",
-      route: "/team/workspace",
-      icon: "pi-briefcase",
-      ariaLabel: "Team Hub - Collaborative team workspace",
-      roles: ["coach", "assistant_coach", "admin"],
-      group: "secondary",
-    },
-    {
-      label: "Team Management",
-      route: "/coach/team",
-      icon: "pi-sitemap",
-      ariaLabel: "Team Management - Manage team settings and roster",
-      roles: ["coach", "assistant_coach", "admin"],
-      group: "secondary",
-    },
-    {
-      label: "Exercise DB",
-      route: "/exercisedb",
-      icon: "pi-database",
-      ariaLabel: "Exercise DB - Manage exercise database (coach)",
-      roles: ["coach", "assistant_coach", "admin"],
-      group: "secondary",
-    },
-  ];
-
-  /**
    * Primary navigation items based on user role
    */
   primaryNavItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
-    const isCoach = ["coach", "assistant_coach", "admin"].includes(userRole);
-
-    return isCoach ? this.coachNavItems : this.athleteNavItems;
+    return getPrimaryNavigationItems(userRole);
   });
 
   /**
@@ -579,15 +249,16 @@ export class SidebarComponent implements OnInit {
    */
   additionalItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
-    return this.additionalNavItems.filter(
-      (item) => !item.roles || item.roles.includes(userRole),
-    );
+    return getSecondaryNavigationItems(userRole);
   });
 
   /**
    * "Me" group items (always same for all roles)
    */
-  meItems = computed(() => this.meGroupItems);
+  meItems = computed(() => {
+    const userRole = this.authService.getUser()?.role || "player";
+    return getMeNavigationItems(userRole);
+  });
 
   /**
    * Navigation groups for organized display
@@ -657,8 +328,12 @@ export class SidebarComponent implements OnInit {
     this.closeSidebar();
   }
 
-  trackByRoute(index: number, item: NavItem): string {
+  trackByRoute(index: number, item: AppNavigationItem): string {
     return item.route;
+  }
+
+  isExactRoute(route: string): boolean {
+    return isExactNavigationRoute(route);
   }
 
   /**
@@ -700,7 +375,7 @@ export class SidebarComponent implements OnInit {
   /**
    * Get navigation items for a specific group
    */
-  getGroupItems(groupId: string): NavItem[] {
+  getGroupItems(groupId: string): AppNavigationItem[] {
     if (groupId === "primary") {
       return this.primaryNavItems();
     } else if (groupId === "me") {

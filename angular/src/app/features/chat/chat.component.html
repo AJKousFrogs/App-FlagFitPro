@@ -401,12 +401,21 @@
     </app-main-layout>
 
     <!-- Create Channel Dialog -->
-    <p-dialog
-      header="Create New Channel"
+    <app-dialog
       [(visible)]="showCreateChannelDialog"
       [modal]="true"
-      class="chat-create-channel-dialog"
+      [closable]="false"
+      [draggable]="false"
+      [resizable]="false"
+      [dismissableMask]="true"
+      [styleClass]="'chat-create-channel-dialog'"
     >
+      <app-dialog-header
+        icon="plus-circle"
+        title="Create New Channel"
+        subtitle="Set up a space for a team, group, or position room."
+        (close)="showCreateChannelDialog = false"
+      />
       <div class="create-channel-form">
         <div class="form-field">
           <label for="chat-channelName">Channel Name</label>
@@ -463,26 +472,32 @@
         }
       </div>
 
-      <ng-template #footer>
-        <app-button variant="text" (clicked)="showCreateChannelDialog = false"
-          >Cancel</app-button
-        >
-        <app-button
-          iconLeft="pi-check"
-          [disabled]="!newChannelName.trim()"
-          (clicked)="createChannel()"
-          >Create Channel</app-button
-        >
-      </ng-template>
-    </p-dialog>
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Create Channel"
+        primaryIcon="check"
+        [disabled]="!newChannelName.trim()"
+        (cancel)="showCreateChannelDialog = false"
+        (primary)="createChannel()"
+      />
+    </app-dialog>
 
     <!-- Pinned Messages Dialog -->
-    <p-dialog
-      header="Pinned Messages"
+    <app-dialog
       [(visible)]="showPinnedMessages"
       [modal]="true"
-      class="chat-pinned-dialog"
+      [closable]="false"
+      [draggable]="false"
+      [resizable]="false"
+      [dismissableMask]="true"
+      [styleClass]="'chat-pinned-dialog'"
     >
+      <app-dialog-header
+        icon="bookmark"
+        title="Pinned Messages"
+        subtitle="Important messages saved for this channel."
+        (close)="showPinnedMessages = false"
+      />
       <div class="pinned-messages-list">
         @for (message of pinnedMessages(); track message.id) {
           <div class="pinned-message-item">
@@ -507,28 +522,29 @@
           <p class="no-pinned">No pinned messages in this channel</p>
         }
       </div>
-    </p-dialog>
+    </app-dialog>
 
     <!-- Members Dialog -->
-    <p-dialog
-      header="Channel Members"
+    <app-dialog
       [(visible)]="showMembersDialog"
       [modal]="true"
-      class="chat-members-dialog"
-      (onShow)="loadChannelMembers()"
+      [closable]="false"
+      [draggable]="false"
+      [resizable]="false"
+      [dismissableMask]="true"
+      [styleClass]="'chat-members-dialog'"
+      (visibleChange)="onMembersDialogVisibleChange($event)"
     >
-      <ng-template #header>
-        <div class="members-dialog-header">
-          <span class="dialog-title">Channel Members</span>
-          @if (channelMembersData()) {
-            <app-status-tag
-              [value]="channelMembersData()!.total_count.toString()"
-              severity="info"
-              size="sm"
-            />
-          }
-        </div>
-      </ng-template>
+      <app-dialog-header
+        icon="users"
+        title="Channel Members"
+        [subtitle]="
+          channelMembersData()
+            ? channelMembersData()!.total_count + ' members in this channel'
+            : 'See who can view and participate in this conversation.'
+        "
+        (close)="showMembersDialog = false"
+      />
 
       <div class="members-dialog-content">
         <!-- Visibility Description -->
@@ -698,5 +714,5 @@
           }
         }
       </div>
-    </p-dialog>
+    </app-dialog>
   

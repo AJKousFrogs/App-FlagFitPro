@@ -11,8 +11,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -47,8 +45,11 @@ import {
   type TrainingStatsData,
 } from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -116,11 +117,7 @@ type AnalyticsChartType =
     DecimalPipe,
     TitleCasePipe,
     RouterModule,
-    Card,
-
     LazyChartComponent,
-    Dialog,
-    
     ProgressBar,
     TableModule,
     StatusTagComponent,
@@ -133,8 +130,11 @@ type AnalyticsChartType =
     PageErrorStateComponent,
     AppLoadingComponent,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
     IconButtonComponent,
+    AppDialogComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     AlertComponent,
     DataSourceBannerComponent,
     EmptyStateComponent,

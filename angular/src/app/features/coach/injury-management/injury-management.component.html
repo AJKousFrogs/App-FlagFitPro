@@ -1,5 +1,5 @@
 <app-main-layout>
-<div class="injury-management-page ui-page-stack">
+<div class="injury-management-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="Injury Management"
           subtitle="Track injuries and recovery"
@@ -83,7 +83,7 @@
           <div class="injuries-section">
             <h3>Active Injuries</h3>
             @for (injury of activeInjuries(); track injury.id) {
-              <p-card class="injury-card new">
+              <app-card-shell class="injury-card new">
                 <div class="injury-header">
                   <app-status-tag
                     value="New Injury - Needs Evaluation"
@@ -131,7 +131,7 @@
                     >Request Medical Report</app-button
                   >
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
         }
@@ -144,7 +144,7 @@
           <div class="injuries-section">
             <h3>In Return-to-Play Protocol</h3>
             @for (injury of rtpInjuries(); track injury.id) {
-              <p-card class="injury-card rtp">
+              <app-card-shell class="injury-card rtp">
                 <div class="injury-header">
                   <app-status-tag
                     [value]="
@@ -248,7 +248,7 @@
                     >Advance Stage</app-button
                   >
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
         }
@@ -258,7 +258,7 @@
           <div class="injuries-section">
             <h3>Recently Cleared</h3>
             @for (injury of clearedInjuries(); track injury.id) {
-              <p-card class="injury-card cleared">
+              <app-card-shell class="injury-card cleared">
                 <div class="injury-content">
                   <p-avatar
                     [label]="getInitialsStr(injury.playerName)"
@@ -280,14 +280,14 @@
                     size="sm"
                   />
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
         }
 
         <!-- History Table -->
         @if (activeTab() === "history") {
-          <p-card class="history-card">
+          <app-card-shell class="history-card" title="Injury History">
             <p-table
               [value]="injuries()"
               [paginator]="true"
@@ -295,6 +295,7 @@
               [rowsPerPageOptions]="[10, 25, 50]"
               [virtualScroll]="injuries().length > 50"
               [virtualScrollItemSize]="46"
+              [scrollable]="true"
             >
               <ng-template #header>
                 <tr>
@@ -321,7 +322,7 @@
                 </tr>
               </ng-template>
             </p-table>
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- Empty State -->
@@ -338,7 +339,7 @@
         @if (activeTab() === "active" || activeTab() === "rtp") {
           <div class="analytics-section">
             <h3>Injury Analytics</h3>
-            <p-card>
+            <app-card-shell class="analytics-card" title="Injury Analytics">
               <div class="analytics-grid">
                 <div class="analytics-chart">
                   <h5>Injury by Type (This Season)</h5>
@@ -385,18 +386,27 @@
                   exercises.</span
                 >
               </div>
-            </p-card>
+            </app-card-shell>
           </div>
         }
       </div>
 
       <!-- Report Injury Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showReportDialog"
-        header="Report Injury"
         [modal]="true"
-        class="injury-report-dialog"
+        styleClass="injury-report-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Report injury"
       >
+        <app-dialog-header
+          icon="heart"
+          title="Report Injury"
+          subtitle="Capture the incident details and start the return-to-play process."
+          (close)="showReportDialog = false"
+        />
         <form [formGroup]="reportFormGroup" class="report-form">
           <div class="form-field">
             <label for="player">Player</label>
@@ -586,26 +596,33 @@
           </div>
         </form>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showReportDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [disabled]="reportFormGroup.invalid"
-            (clicked)="submitReport()"
-            >Report & Start RTP</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Report & Start RTP"
+          primaryIcon="check"
+          [disabled]="reportFormGroup.invalid"
+          (cancel)="showReportDialog = false"
+          (primary)="submitReport()"
+        />
+      </app-dialog>
 
       <!-- Daily Check-in Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showCheckinDialog"
-        header="Update Progress"
         [modal]="true"
-        class="injury-checkin-dialog"
+        styleClass="injury-checkin-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Update injury progress"
       >
+        <app-dialog-header
+          icon="chart-line"
+          title="Update Progress"
+          subtitle="Log today's recovery pain, function, and confidence scores."
+          (close)="showCheckinDialog = false"
+        />
         <form [formGroup]="checkinFormGroup" class="checkin-form">
           <div class="form-field">
             <label>Pain Level (0 = no pain, 10 = severe)</label>
@@ -646,13 +663,13 @@
           </div>
         </form>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showCheckinDialog = false"
-            >Cancel</app-button
-          >
-          <app-button iconLeft="pi-check" (clicked)="submitCheckin()"
-            >Save Check-in</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Check-in"
+          primaryIcon="check"
+          (cancel)="showCheckinDialog = false"
+          (primary)="submitCheckin()"
+        />
+      </app-dialog>
     </app-main-layout>

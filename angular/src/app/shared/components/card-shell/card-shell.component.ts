@@ -149,6 +149,11 @@ export class CardShellComponent {
   /** State mode: default, interactive (clickable), or disabled */
   state = input<"default" | "interactive" | "disabled">("default");
 
+  /** Visual tone for semantic card variants */
+  tone = input<"default" | "success" | "warning" | "danger" | "brand">(
+    "default",
+  );
+
   /** Remove body padding (for flush content like tables) */
   flush = input<boolean>(false);
 
@@ -184,6 +189,11 @@ export class CardShellComponent {
       classes.push("card-shell--interactive");
     } else if (this.state() === "disabled") {
       classes.push("card-shell--disabled");
+    }
+
+    // Tone
+    if (this.tone() !== "default") {
+      classes.push(`card-shell--tone-${this.tone()}`);
     }
 
     return classes.join(" ");

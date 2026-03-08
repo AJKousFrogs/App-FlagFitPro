@@ -19,7 +19,7 @@
           <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
           @if (needsProgramAssignment()) {
             <section class="no-program-section">
-              <p-card class="no-program-card">
+              <app-card-shell class="no-program-card">
                 <div class="no-program-content">
                   <div class="no-program-icon">
                     <i class="pi pi-calendar-times"></i>
@@ -163,7 +163,7 @@
                     >
                   </div>
                 </div>
-              </p-card>
+              </app-card-shell>
             </section>
           }
 
@@ -252,7 +252,7 @@
 
           <!-- SECTION 2: Welcome Header with Merlin AI Insight -->
           <section class="welcome-section">
-            <p-card class="welcome-card">
+            <app-card-shell class="welcome-card">
               <div class="welcome-wrapper">
                 <div class="merlin-avatar" aria-hidden="true">
                   <i class="pi pi-sparkles"></i>
@@ -297,20 +297,16 @@
                   </div>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
           </section>
 
           <!-- SECTION 3: Key Stats Overview (4 Cards) -->
           <section class="stats-overview" aria-label="Key statistics">
             <!-- Readiness Card - Enhanced with Check-in Status (UX Audit Fix #4) -->
-            <p-card
+            <app-card-shell
               class="stat-card stat-readiness stat-card--clickable"
-              (click)="navigateToWellness()"
-              role="button"
-              tabindex="0"
-              aria-label="Open wellness details"
-              (keydown.enter)="navigateToWellness()"
-              (keydown.space)="navigateToWellness(); $event.preventDefault()"
+              state="interactive"
+              (cardClick)="navigateToWellness()"
               pTooltip="Your overall readiness to train today based on sleep, soreness, stress, and energy levels. Checked daily via wellness survey."
               tooltipPosition="bottom"
               [showDelay]="500"
@@ -386,17 +382,13 @@
                   </div>
                 }
               </div>
-            </p-card>
+            </app-card-shell>
 
             <!-- ACWR Card - Enhanced with Progress Tracking (UX Audit Fix #5) -->
-            <p-card
+            <app-card-shell
               class="stat-card stat-acwr cursor-pointer"
-              (click)="navigateToACWR()"
-              role="button"
-              tabindex="0"
-              aria-label="Open ACWR details"
-              (keydown.enter)="navigateToACWR()"
-              (keydown.space)="navigateToACWR(); $event.preventDefault()"
+              state="interactive"
+              (cardClick)="navigateToACWR()"
               [pTooltip]="
                 acwrDataSufficient()
                   ? '📊 Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' +
@@ -542,10 +534,10 @@ Keep logging sessions to unlock this injury prevention metric!'
                   ></app-confidence-indicator>
                 </div>
               }
-            </p-card>
+            </app-card-shell>
 
             <!-- Streak Card -->
-            <p-card
+            <app-card-shell
               class="stat-card stat-streak cursor-pointer"
               pTooltip="Consecutive days with training logged. Building a streak helps maintain consistency and prevents gaps in your progress tracking."
               tooltipPosition="bottom"
@@ -560,10 +552,10 @@ Keep logging sessions to unlock this injury prevention metric!'
                   <span class="stat-block__label">Day Streak</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
 
             <!-- Weekly Sessions Card -->
-            <p-card class="stat-card stat-sessions cursor-pointer">
+            <app-card-shell class="stat-card stat-sessions cursor-pointer">
               <div class="stat-card-content">
                 <div class="stat-icon sessions-icon">
                   <i class="pi pi-calendar-plus"></i>
@@ -577,20 +569,17 @@ Keep logging sessions to unlock this injury prevention metric!'
                   <span class="stat-block__label">This Week</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
           </section>
 
           <!-- Main Content Grid -->
           <div class="dashboard-grid">
             <!-- SECTION 4: Weekly Progress -->
-            <p-card class="progress-card">
-              <ng-template #header>
-                <app-card-header
-                  class="dashboard-card-header"
-                  icon="pi-chart-bar"
-                  title="Weekly Progress"
-                />
-              </ng-template>
+            <app-card-shell
+              class="progress-card"
+              title="Weekly Progress"
+              headerIcon="pi-chart-bar"
+            >
               <div class="week-progress">
                 @for (day of weekDays(); track day.name) {
                   <div class="day-column">
@@ -628,17 +617,14 @@ Keep logging sessions to unlock this injury prevention metric!'
                   >{{ weeklyProgress() }}% completed</span
                 >
               </div>
-            </p-card>
+            </app-card-shell>
 
             <!-- SECTION 5: Today's Schedule Preview (using p-timeline) -->
-            <p-card class="schedule-card">
-              <ng-template #header>
-                <app-card-header
-                  class="dashboard-card-header"
-                  icon="pi-clock"
-                  title="Today's Schedule"
-                />
-              </ng-template>
+            <app-card-shell
+              class="schedule-card"
+              title="Today's Schedule"
+              headerIcon="pi-clock"
+            >
               @if (todaySchedule().length > 0) {
                 <p-timeline
                   [value]="
@@ -704,17 +690,14 @@ Keep logging sessions to unlock this injury prevention metric!'
                   >
                 </div>
               }
-            </p-card>
+            </app-card-shell>
 
             <!-- SECTION 6: Quick Actions Grid -->
-            <p-card class="actions-card">
-              <ng-template #header>
-                <app-card-header
-                  class="dashboard-card-header"
-                  icon="pi-bolt"
-                  title="Quick Actions"
-                />
-              </ng-template>
+            <app-card-shell
+              class="actions-card"
+              title="Quick Actions"
+              headerIcon="pi-bolt"
+            >
               <div class="quick-actions-grid">
                 @for (action of quickActions; track action.route) {
                   <app-button
@@ -727,17 +710,14 @@ Keep logging sessions to unlock this injury prevention metric!'
                   >
                 }
               </div>
-            </p-card>
+            </app-card-shell>
 
             <!-- SECTION 7: Performance Trend -->
-            <p-card class="trend-card">
-              <ng-template #header>
-                <app-card-header
-                  class="dashboard-card-header"
-                  icon="pi-trending-up"
-                  title="Performance Trend"
-                />
-              </ng-template>
+            <app-card-shell
+              class="trend-card"
+              title="Performance Trend"
+              headerIcon="pi-trending-up"
+            >
               @if (performanceChartData()) {
                 <div class="chart-container">
                   @defer (on viewport; prefetch on idle) {
@@ -781,7 +761,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                   </app-alert>
                 </div>
               }
-            </p-card>
+            </app-card-shell>
           </div>
 
           <!-- SECTION 8: What's Next (Continuity Events) -->
@@ -793,7 +773,7 @@ Keep logging sessions to unlock this injury prevention metric!'
               </h3>
               <div class="continuity-events">
                 @for (event of continuityEvents(); track event.type) {
-                  <p-card class="continuity-event-card">
+                  <app-card-shell class="continuity-event-card">
                     <div class="continuity-event">
                       <span class="event-icon">{{
                         getEventIcon(event.type)
@@ -824,7 +804,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                         }
                       </div>
                     </div>
-                  </p-card>
+                  </app-card-shell>
                 }
               </div>
             </section>
@@ -837,7 +817,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 <i class="pi pi-calendar-plus" aria-hidden="true"></i>
                 Tomorrow's Preview
               </h3>
-              <p-card class="schedule-card">
+              <app-card-shell class="schedule-card">
                 <p-timeline
                   [value]="
                     tomorrowSchedule().slice(
@@ -880,7 +860,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                     >View Full Schedule</app-button
                   >
                 </div>
-              </p-card>
+              </app-card-shell>
             </section>
           }
 
@@ -899,7 +879,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                   );
                   track event.id
                 ) {
-                  <p-card [class]="'event-card event-' + event.type">
+                  <app-card-shell [class]="'event-card event-' + event.type">
                     <div class="event-card-content">
                       <div class="event-date">
                         <span class="date-day">{{ event.day }}</span>
@@ -915,7 +895,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                         ></app-status-tag>
                       </div>
                     </div>
-                  </p-card>
+                  </app-card-shell>
                 }
               </div>
             </section>

@@ -8,7 +8,7 @@
  */
 
 .team-workspace-page {
-  @include page-container(var(--content-max-width-2xl));
+  width: 100%;
 }
 
 // ================================================================

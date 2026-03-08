@@ -1,12 +1,7 @@
 @use "styles/mixins" as *;
 
 .sleep-debt-page {
-  width: min(100%, var(--content-max-width-xl));
-  margin-inline: auto;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--layout-page-section-gap);
+  width: 100%;
 }
 
 .stats-grid {

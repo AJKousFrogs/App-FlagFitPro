@@ -1,9 +1,7 @@
 @use "styles/mixins" as *;
 
 .calendar-page {
-  width: min(100%, var(--content-max-width-lg));
-  margin-inline: auto;
-  gap: var(--layout-page-section-gap-tight);
+  width: 100%;
 }
 
 // Calendar Actions
@@ -366,7 +364,7 @@
 
 @include respond-to(md) {
   .calendar-page {
-    padding: var(--space-3);
+    padding: 0;
   }
 
   .event-content {

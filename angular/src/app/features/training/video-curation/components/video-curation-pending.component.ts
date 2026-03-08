@@ -18,6 +18,7 @@ import { EmptyStateComponent } from "../../../../shared/components/empty-state/e
 
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 import { InstagramVideo } from "../video-curation.models";
 
 @Component({
@@ -28,6 +29,7 @@ import { InstagramVideo } from "../video-curation.models";
     EmptyStateComponent,
     StatusTagComponent,
     ButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <div class="tab-content">
@@ -40,7 +42,11 @@ import { InstagramVideo } from "../video-curation.models";
       } @else {
         <div class="pending-grid">
           @for (video of videos(); track video.id) {
-            <div class="pending-card">
+            <app-card-shell
+              class="pending-card"
+              [flush]="true"
+              [hasFooter]="true"
+            >
               <div class="pending-thumbnail">
                 <i class="pi pi-play-circle" aria-hidden="true"></i>
               </div>
@@ -65,7 +71,7 @@ import { InstagramVideo } from "../video-curation.models";
                   }
                 </div>
               </div>
-              <div class="pending-actions">
+              <div footer class="pending-actions">
                 <app-button
                   iconLeft="pi-check"
                   variant="success"
@@ -85,7 +91,7 @@ import { InstagramVideo } from "../video-curation.models";
                   >Preview</app-button
                 >
               </div>
-            </div>
+            </app-card-shell>
           }
         </div>
       }

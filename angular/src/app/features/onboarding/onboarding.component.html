@@ -1,12 +1,12 @@
 <app-main-layout>
-      <div class="onboarding-page ui-page-stack">
+      <div class="onboarding-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Set Up Your FlagFit Profile"
           subtitle="Takes about 3-5 minutes. We'll personalize your training and team access."
           icon="pi-user-plus"
         ></app-page-header>
 
-        <p-card class="onboarding-card">
+        <app-card-shell class="onboarding-card" [flush]="true">
           <!-- Progress bar -->
           <div class="progress-section">
             <p-progressBar
@@ -129,6 +129,6 @@
               }
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>

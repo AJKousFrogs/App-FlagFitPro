@@ -23,9 +23,9 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Card } from "primeng/card";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { ProgressBar } from "primeng/progressbar";
@@ -56,7 +56,6 @@ import {
   imports: [
     CommonModule,
     RouterModule,
-    Card,
     ProgressBar,
     Tabs,
     TabPanel,
@@ -65,15 +64,15 @@ import {
     SafetyWarningsComponent,
     TrafficLightRiskComponent,
     AlertComponent,
-
     ButtonComponent,
+    CardShellComponent,
     CardHeaderComponent,
     IconButtonComponent,
     StatusTagComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="training-safety-page">
+      <div class="training-safety-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Training Safety Dashboard"
           subtitle="Monitor your training load, recovery, and injury prevention metrics"
@@ -93,7 +92,7 @@ import {
         <!-- Safety Overview Cards -->
         <div class="safety-overview">
           <!-- ACWR Status -->
-          <p-card class="safety-card">
+          <app-card-shell class="safety-card">
             <div class="card-content">
               <app-card-header title="ACWR Status">
                 @if (!hasInsufficientAcwrData()) {
@@ -146,10 +145,10 @@ import {
                 </div>
               }
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Age-Adjusted Recovery -->
-          <p-card class="safety-card">
+          <app-card-shell class="safety-card">
             <div class="card-content">
               <app-card-header title="Recovery Status">
                 <app-status-tag
@@ -178,10 +177,10 @@ import {
                 </div>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Sleep Debt -->
-          <p-card class="safety-card">
+          <app-card-shell class="safety-card">
             <div class="card-content">
               <app-card-header title="Sleep Debt">
                 <app-status-tag
@@ -207,10 +206,10 @@ import {
                 </span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Weekly Movement Limits -->
-          <p-card class="safety-card">
+          <app-card-shell class="safety-card">
             <div class="card-content">
               <app-card-header title="Movement Limits">
                 <app-status-tag
@@ -238,7 +237,7 @@ import {
                 }
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- Detailed Tabs -->

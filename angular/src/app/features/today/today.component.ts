@@ -37,8 +37,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "../../core/services/toast.service";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 
 import { ProgressBar } from "primeng/progressbar";
 import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
@@ -46,12 +44,16 @@ import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader
 
 import { from, type Observable } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
 
 // Layout & Components
 import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
 import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
   ProtocolJson,
@@ -135,15 +137,17 @@ interface QuickFormData {
   imports: [
     CommonModule,
     RouterModule,
-    Card,
-    Dialog,
     ProgressBar,
     SkeletonLoaderComponent,
     ButtonComponent,
+    CardShellComponent,
     CardHeaderComponent,
     EmptyStateComponent,
     AppBannerComponent,
+    AppDialogComponent,
     AcwrBaselineComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     MainLayoutComponent,
     ProtocolBlockComponent,
   ],

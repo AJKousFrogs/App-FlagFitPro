@@ -56,6 +56,7 @@ import {
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
   selector: "app-video-curation",
@@ -72,6 +73,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
     Badge,
     ButtonComponent,
     MainLayoutComponent,
+    PageHeaderComponent,
     VideoCurationStatsComponent,
     VideoCurationVideoTableComponent,
     VideoCurationSuggestionsComponent,
@@ -84,24 +86,18 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
   template: `
 <p-confirmDialog></p-confirmDialog>
     <app-main-layout>
-      <div class="curation-page ui-page-stack">
-        <!-- Header -->
-        <header class="page-header">
-          <div class="header-content">
-            <div class="header-text">
-              <h1>
-                <i class="pi pi-sliders-h"></i>
-                Video Curation
-              </h1>
-              <p>Manage and curate training videos for your team</p>
-            </div>
-            <div class="header-actions">
-              <app-button iconLeft="pi-plus" (clicked)="openPlaylistDialog()"
-                >Create Playlist</app-button
-              >
-            </div>
+      <div class="curation-page ui-page-shell ui-page-shell--wide ui-page-stack">
+        <app-page-header
+          title="Video Curation"
+          subtitle="Manage and curate training videos for your team"
+          icon="pi-sliders-h"
+        >
+          <div class="curation-header-actions">
+            <app-button iconLeft="pi-plus" (clicked)="openPlaylistDialog()"
+              >Create Playlist</app-button
+            >
           </div>
-        </header>
+        </app-page-header>
 
         <!-- Stats Overview -->
         <app-video-curation-stats

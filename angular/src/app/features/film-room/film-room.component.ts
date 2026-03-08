@@ -20,8 +20,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -35,6 +33,9 @@ import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 
 // ===== Interfaces =====
@@ -77,8 +78,6 @@ interface DiscussionMessage {
   imports: [
     CommonModule,
     DatePipe,
-    Card,
-    Dialog,
     InputText,
     ProgressBar,
     Select,
@@ -90,10 +89,13 @@ interface DiscussionMessage {
     MobileOptimizedImageDirective,
     ButtonComponent,
     EmptyStateComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   template: `
     <app-main-layout>
-<div class="film-room-page">
+      <div class="film-room-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Film Room"
           subtitle="Watch assigned game film and review coach feedback"
@@ -101,7 +103,7 @@ interface DiscussionMessage {
         ></app-page-header>
 
         <!-- Progress Overview -->
-        <p-card class="progress-card">
+        <app-card-shell class="progress-card">
           <div class="progress-header">
             <div class="progress-stats">
               <div class="stat-item stat-block stat-block--compact">
@@ -134,7 +136,7 @@ interface DiscussionMessage {
             class="progress-overall"
           ></p-progressBar>
           <p class="progress-text">{{ progressPercent() }}% complete</p>
-        </p-card>
+        </app-card-shell>
 
         <!-- Filters -->
         <div class="filters-row">
@@ -164,7 +166,12 @@ interface DiscussionMessage {
         @if (filteredFilms().length > 0) {
           <div class="films-grid">
             @for (film of filteredFilms(); track film.id) {
-              <p-card class="film-card" (click)="selectFilm(film)">
+              <app-card-shell
+                class="film-card"
+                [flush]="true"
+                state="interactive"
+                (cardClick)="selectFilm(film)"
+              >
                 <div class="film-thumbnail">
                   @if (film.thumbnailUrl) {
                     <img
@@ -223,7 +230,7 @@ interface DiscussionMessage {
                     ></p-progressBar>
                   }
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
         } @else {
@@ -237,13 +244,23 @@ interface DiscussionMessage {
       </div>
 
       <!-- Film Detail Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showFilmDetail"
-        [header]="selectedFilm()?.title || 'Film Details'"
         [modal]="true"
-        [closable]="true"
-        class="film-detail-dialog"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [styleClass]="'film-detail-dialog'"
       >
+        @if (selectedFilm(); as film) {
+          <app-dialog-header
+            icon="video"
+            [title]="film.title"
+            [subtitle]="'vs ' + film.opponent"
+            (close)="showFilmDetail = false"
+          />
+        }
         @if (selectedFilm(); as film) {
           <div class="film-detail">
             <!-- Video Player -->
@@ -371,7 +388,7 @@ interface DiscussionMessage {
             </div>
           </div>
         }
-      </p-dialog>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./film-room.component.scss",

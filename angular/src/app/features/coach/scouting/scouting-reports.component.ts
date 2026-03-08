@@ -8,8 +8,6 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -28,6 +26,10 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §44
 interface OpponentPlayer {
@@ -134,8 +136,10 @@ interface NewOpponentForm {
   imports: [
     CommonModule,
     RouterModule,
-    Card,
-    Dialog,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     InputText,
     Select,
     TableModule,

@@ -6,8 +6,7 @@
 @use "styles/mixins" as *;
 
 .dashboard-content {
-  width: min(100%, var(--content-max-width-xl));
-  margin-inline: auto;
+  width: 100%;
   padding: 0;
   gap: var(--layout-page-section-gap);
 }
@@ -27,6 +26,13 @@
 .stats-grid {
   margin-bottom: 0;
   gap: var(--layout-page-section-gap-tight);
+}
+
+.approvals-shell {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-primary);
+  --app-card-shell-header-icon-color: var(--ds-primary-green);
 }
 
 .stat-content {

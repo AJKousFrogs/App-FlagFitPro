@@ -8,9 +8,9 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
@@ -42,7 +42,7 @@ interface Team {
   imports: [
     CommonModule,
     RouterLink,
-    Card,
+    CardShellComponent,
     StatusTagComponent,
     TableModule,
     InputText,
@@ -55,7 +55,7 @@ interface Team {
   ],
   template: `
     <app-main-layout>
-      <div class="teams-content">
+      <div class="teams-content ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Team Management"
           subtitle="View and manage all teams on the platform"
@@ -71,9 +71,9 @@ interface Team {
         </app-page-header>
 
         <!-- Filters -->
-        <p-card class="filters-card">
+        <app-card-shell class="filters-card">
           <div class="filters-row">
-            <span class="p-input-icon-left">
+            <span class="p-input-icon-left teams-search">
               <i class="pi pi-search"></i>
               <input
                 type="text"
@@ -112,10 +112,10 @@ interface Team {
               >
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Teams Table -->
-        <p-card>
+        <app-card-shell class="teams-table-card" title="Teams">
           @if (isLoading()) {
             <app-loading message="Loading teams..." variant="inline" />
           } @else if (filteredTeams.length === 0) {
@@ -132,6 +132,7 @@ interface Team {
               [virtualScroll]="filteredTeams.length > 50"
               [virtualScrollItemSize]="46"
               class="p-datatable-sm table-standard"
+              [scrollable]="true"
             >
               <ng-template #header>
                 <tr>
@@ -196,37 +197,11 @@ interface Team {
               </ng-template>
             </p-table>
           }
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .teams-content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-lg);
-      }
-
-      .filters-row {
-        display: flex;
-        gap: var(--spacing-md);
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .filter-buttons {
-        display: flex;
-        gap: var(--spacing-xs);
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: var(--spacing-xs);
-      }
-
-    `,
-  ],
+  styleUrl: "./superadmin-teams.component.scss",
 })
 export class SuperadminTeamsComponent implements OnInit {
   private superadminService = inject(SuperadminService);

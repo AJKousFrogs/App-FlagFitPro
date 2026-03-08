@@ -120,15 +120,15 @@
         [tablet]="'span 12'"
         [mobile]="'span 12'"
       >
-        <p-card header="Contextual Nav" styleClass="elite-card">
+        <app-card-shell title="Contextual Nav" class="elite-card">
           <ul class="context-list" role="list">
             <li><i class="pi pi-flag"></i> Session Objective: Speed Capacity</li>
             <li><i class="pi pi-users"></i> Active Roster: 46 athletes</li>
             <li><i class="pi pi-shield"></i> Medical Holds: 3</li>
           </ul>
-        </p-card>
+        </app-card-shell>
 
-        <p-card header="Roster Status" styleClass="elite-card">
+        <app-card-shell title="Roster Status" class="elite-card">
           <p-dataView [value]="queue()" layout="list" [paginator]="false">
             <ng-template #listItem let-item>
               <div class="roster-item">
@@ -140,7 +140,7 @@
               </div>
             </ng-template>
           </p-dataView>
-        </p-card>
+        </app-card-shell>
       </article>
 
       <article
@@ -150,7 +150,7 @@
         [tablet]="'span 12'"
         [mobile]="'span 12'"
       >
-        <p-card header="Priority Queue" styleClass="elite-card">
+        <app-card-shell title="Priority Queue" class="elite-card">
           <div class="table-filters" role="group" aria-label="Queue filters">
             <p-multiSelect
               class="roster-filter"
@@ -227,9 +227,9 @@
             [totalRecords]="filteredQueue().length"
             (onPageChange)="onTablePageChange($event)"
           ></p-paginator>
-        </p-card>
+        </app-card-shell>
 
-        <p-card header="Training & Event Timeline" styleClass="elite-card">
+        <app-card-shell title="Training & Event Timeline" class="elite-card">
           <p-timeline [value]="timeline()" align="left" styleClass="elite-timeline">
             <ng-template #content let-event>
               <div
@@ -246,9 +246,9 @@
               </div>
             </ng-template>
           </p-timeline>
-        </p-card>
+        </app-card-shell>
 
-        <p-card header="Daily Protocol Checklist" styleClass="elite-card">
+        <app-card-shell title="Daily Protocol Checklist" class="elite-card">
           <p-stepper [value]="1" [linear]="false" aria-label="Daily protocol progress">
             <p-step-list>
               @for (step of protocolSteps(); track step.label; let i = $index) {
@@ -283,7 +283,7 @@
               </div>
             }
           </div>
-        </p-card>
+        </app-card-shell>
       </article>
 
       <article
@@ -293,15 +293,15 @@
         [tablet]="'span 12'"
         [mobile]="'span 12'"
       >
-        <p-card header="Pinned Insights" styleClass="elite-card">
+        <app-card-shell title="Pinned Insights" class="elite-card">
           <ul class="insight-list" role="list">
             <li><i class="pi pi-check-circle"></i> Recovery score +5% in last 72h.</li>
             <li><i class="pi pi-exclamation-circle"></i> Sprint load limit at 82% for two units.</li>
             <li><i class="pi pi-info-circle"></i> Sleep consistency improved on travel week.</li>
           </ul>
-        </p-card>
+        </app-card-shell>
 
-        <p-card header="Action Console" styleClass="elite-card">
+        <app-card-shell title="Action Console" class="elite-card">
           <div class="action-stack" role="group" aria-label="Quick actions">
             <app-button variant="secondary" [fullWidth]="true"
               >Adjust Session Intensity</app-button
@@ -313,9 +313,9 @@
               >Open Medical Review</app-button
             >
           </div>
-        </p-card>
+        </app-card-shell>
 
-        <p-card header="Interaction Spec" styleClass="elite-card">
+        <app-card-shell title="Interaction Spec" class="elite-card">
           <ul class="caption-list" role="list">
             @for (rule of interactionBehaviorSpecs; track rule.component) {
               <li>
@@ -324,7 +324,7 @@
               </li>
             }
           </ul>
-        </p-card>
+        </app-card-shell>
       </article>
     </section>
 

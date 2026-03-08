@@ -178,7 +178,7 @@
           icon="pi-question-circle"
           ariaLabel="Keyboard shortcuts"
           tooltip="Keyboard shortcuts (?)"
-          (clicked)="showShortcutsDialog.set(true)"
+          (clicked)="openKeyboardShortcuts()"
         />
 
         <!-- Theme Toggle -->
@@ -227,35 +227,3 @@
 
 <!-- Notifications Panel -->
 <app-notifications-panel #notificationsPanel />
-
-<!-- Keyboard Shortcuts Dialog -->
-<p-dialog
-  [(visible)]="showShortcutsDialog"
-  header="Keyboard Shortcuts"
-  [modal]="true"
-  [closable]="true"
-  class="shortcuts-dialog"
->
-  <div class="shortcuts-content">
-    <p class="shortcuts-intro">
-      Use these keyboard shortcuts to navigate faster:
-    </p>
-
-    <div class="shortcuts-list">
-      @for (shortcut of shortcuts; track shortcut.key) {
-        <div class="shortcut-row">
-          <div class="shortcut-key">
-            <i [class]="'pi ' + shortcut.icon" aria-hidden="true"></i>
-            <kbd>{{ shortcut.key }}</kbd>
-          </div>
-          <span class="shortcut-description">{{ shortcut.description }}</span>
-        </div>
-      }
-    </div>
-
-    <p class="shortcuts-tip">
-      <i class="pi pi-info-circle"></i>
-      <span>Press <kbd>?</kbd> to toggle this dialog</span>
-    </p>
-  </div>
-</p-dialog>

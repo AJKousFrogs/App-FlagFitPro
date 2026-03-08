@@ -1,5 +1,5 @@
 <app-main-layout>
-<div class="return-to-play-page ui-page-stack">
+<div class="return-to-play-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Return-to-Play Protocol"
           subtitle="Guided recovery from injury"
@@ -8,7 +8,7 @@
 
         <!-- No Active Protocol State -->
         @if (!activeProtocol()) {
-          <p-card class="no-protocol-card">
+          <app-card-shell class="no-protocol-card">
             <app-empty-state
               context="recovery"
               [inline]="true"
@@ -17,7 +17,7 @@
               [customActionLabel]="'Start Protocol'"
               [actionHandler]="openStartDialog"
             />
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- Active Protocol Display -->
@@ -31,7 +31,7 @@
           }
 
           <!-- Protocol Overview Card -->
-          <p-card class="protocol-overview-card">
+          <app-card-shell class="protocol-overview-card">
             <div class="protocol-header">
               <div class="injury-info">
                 <div class="injury-badge">
@@ -88,10 +88,14 @@
                 [showValue]="false"
               ></p-progressBar>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- 7-Stage Protocol Progress -->
-          <p-card header="7-Stage Protocol Progress" class="stages-card">
+          <app-card-shell
+            class="stages-card"
+            title="7-Stage Protocol Progress"
+            headerIcon="pi-sitemap"
+          >
             <div class="stages-visual">
               @for (stage of protocolStages; track stage.stage) {
                 <div
@@ -123,7 +127,7 @@
               <i class="pi pi-arrow-up"></i>
               <span>CURRENT</span>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Current Stage Details -->
           <p-card class="current-stage-card">
@@ -222,7 +226,11 @@
           </p-card>
 
           <!-- Daily Tracking Section -->
-          <p-card header="Daily Tracking" class="daily-tracking-card">
+          <app-card-shell
+            class="daily-tracking-card"
+            title="Daily Tracking"
+            headerIcon="pi-pencil"
+          >
             <div class="checkin-form">
               <h4><i class="pi pi-pencil"></i> Today's Check-in</h4>
 
@@ -321,10 +329,14 @@
                 >Save Check-in</app-button
               >
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Recovery Progress Chart -->
-          <p-card header="Recovery Progress Chart" class="chart-card">
+          <app-card-shell
+            class="chart-card"
+            title="Recovery Progress Chart"
+            headerIcon="pi-chart-line"
+          >
             @if (chartData()) {
               <app-lazy-chart
                 type="line"
@@ -339,11 +351,15 @@
                 [compact]="true"
               />
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Recent Check-ins -->
           @if (recentCheckins().length > 0) {
-            <p-card header="Recent Check-ins" class="checkins-card">
+            <app-card-shell
+              class="checkins-card"
+              title="Recent Check-ins"
+              headerIcon="pi-history"
+            >
               <p-table
                 [value]="recentCheckins()"
                 [rows]="5"
@@ -372,20 +388,28 @@
                   </tr>
                 </ng-template>
               </p-table>
-            </p-card>
+            </app-card-shell>
           }
         }
       </div>
 
       <!-- Start Protocol Dialog -->
-      <p-dialog
-        header="Start Return-to-Play Protocol"
-        [modal]="true"
+      <app-dialog
         [visible]="showStartDialog()"
         (visibleChange)="showStartDialog.set($event)"
-        class="rtp-start-dialog"
+        [modal]="true"
+        [closable]="false"
         [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [styleClass]="'rtp-start-dialog'"
       >
+        <app-dialog-header
+          icon="shield"
+          title="Start Return-to-Play Protocol"
+          subtitle="Set up your recovery plan before beginning stage one."
+          (close)="closeStartDialog()"
+        />
         <div class="start-form">
           <!-- Injury Type -->
           <div class="form-field">
@@ -506,17 +530,14 @@
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="outlined" (clicked)="closeStartDialog()"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [loading]="isStartingProtocol()"
-            [disabled]="!isStartFormValid()"
-            (clicked)="startProtocol()"
-            >Start Protocol</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Start Protocol"
+          primaryIcon="check"
+          [loading]="isStartingProtocol()"
+          [disabled]="!isStartFormValid()"
+          (cancel)="closeStartDialog()"
+          (primary)="startProtocol()"
+        />
+      </app-dialog>
     </app-main-layout>

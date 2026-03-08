@@ -64,7 +64,7 @@ import {
 
 // Layout & Components
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -111,7 +111,7 @@ interface FlightTripForm {
     AccordionContent,
     Badge,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     StatusTagComponent,

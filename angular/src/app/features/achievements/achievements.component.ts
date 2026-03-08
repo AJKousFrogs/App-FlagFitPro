@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -32,6 +31,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { UI_LIMITS } from "../../core/constants";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 // ===== Interfaces =====
 interface Achievement {
@@ -261,18 +261,17 @@ const CATEGORY_LABELS: Record<
     CommonModule,
     DatePipe,
     DecimalPipe,
-    Card,
     ProgressBar,
     Select,
     TableModule,
     StatusTagComponent,
-
+    CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
-<div class="achievements-page">
+      <div class="achievements-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Achievements"
           subtitle="Earn badges and points for your training milestones"
@@ -281,7 +280,7 @@ const CATEGORY_LABELS: Record<
 
         <!-- Stats Overview -->
         <div class="stats-grid">
-          <p-card class="stat-card highlight">
+          <app-card-shell class="stat-card highlight">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <i class="pi pi-trophy stat-icon"></i>
@@ -298,9 +297,9 @@ const CATEGORY_LABELS: Record<
                 />
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <span class="stat-emoji">🎖️</span>
@@ -312,9 +311,9 @@ const CATEGORY_LABELS: Record<
                 >
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <i class="pi pi-chart-line stat-icon"></i>
@@ -329,9 +328,9 @@ const CATEGORY_LABELS: Record<
                 ></p-progressBar>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <div class="stat-icon-wrapper">
                 <i class="pi pi-bolt stat-icon"></i>
@@ -348,12 +347,12 @@ const CATEGORY_LABELS: Record<
                 }
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- Recent Unlocks -->
         @if (recentUnlocks().length > 0) {
-          <p-card header="Recently Unlocked" class="recent-card">
+          <app-card-shell class="recent-card" title="Recently Unlocked">
             <div class="recent-grid">
               @for (
                 achievement of recentUnlocks().slice(
@@ -380,11 +379,11 @@ const CATEGORY_LABELS: Record<
                 </div>
               }
             </div>
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- Achievement Categories -->
-        <p-card class="categories-card">
+        <app-card-shell class="categories-card">
           <div class="category-tabs">
             @for (cat of categories; track cat.value) {
               <button
@@ -456,29 +455,24 @@ const CATEGORY_LABELS: Record<
               </div>
             }
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Team Leaderboard -->
-        <p-card class="leaderboard-card">
-          <ng-template #header>
-            <div class="leaderboard-header">
-              <div class="header-left">
-                <i class="pi pi-trophy"></i>
-                <span>Team Leaderboard</span>
-              </div>
-              <div class="header-filters">
-                <p-select
-                  [options]="timeRanges"
-                  (onChange)="onTimeRangeChange($event)"
-                  optionLabel="label"
-                  optionValue="value"
-                  placeholder="Time Range"
-                  class="leaderboard-range-select"
-                ></p-select>
-              </div>
-            </div>
-          </ng-template>
-
+        <app-card-shell
+          class="leaderboard-card"
+          title="Team Leaderboard"
+          headerIcon="pi-trophy"
+        >
+          <div header-actions class="header-filters">
+            <p-select
+              [options]="timeRanges"
+              (onChange)="onTimeRangeChange($event)"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Time Range"
+              class="leaderboard-range-select"
+            ></p-select>
+          </div>
           <p-table
             [value]="leaderboard()"
             [virtualScroll]="leaderboard().length > 50"
@@ -530,7 +524,7 @@ const CATEGORY_LABELS: Record<
               {{ leaderboard().length }} players</span
             >
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,

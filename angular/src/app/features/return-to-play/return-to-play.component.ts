@@ -20,7 +20,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -31,6 +30,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import {
   RTPPhaseCelebrationComponent,
   RTPPhaseInfo,
@@ -41,6 +41,9 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import {
   LazyChartComponent,
   LazyChartData,
@@ -299,8 +302,7 @@ const SEVERITY_LEVELS = [
     Card,
     LazyChartComponent,
     DatePicker,
-    Dialog,
-    
+    AppDialogComponent,
     ProgressBar,
     Select,
     Slider,
@@ -309,6 +311,9 @@ const SEVERITY_LEVELS = [
     Textarea,
 
     MainLayoutComponent,
+    CardShellComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     PageHeaderComponent,
     ButtonComponent,
     RTPPhaseCelebrationComponent,

@@ -1,16 +1,18 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Dialog } from "primeng/dialog";
 import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
-import { DialogHeaderComponent } from "../../../../shared/components/ui-components";
+import {
+  AppDialogComponent,
+  DialogHeaderComponent,
+} from "../../../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../../../shared/directives/mobile-optimized-image.directive";
 
 @Component({
   selector: "app-twofa-setup-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    Dialog,
+    AppDialogComponent,
     AlertComponent,
     ButtonComponent,
     IconButtonComponent,

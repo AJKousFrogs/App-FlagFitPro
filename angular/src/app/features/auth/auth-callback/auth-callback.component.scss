@@ -16,6 +16,8 @@
 .auth-callback-card {
   width: 100%;
   max-width: var(--dialog-max-width-md);
+
+  --app-card-shell-body-padding: var(--space-6);
   text-align: center;
 }
 

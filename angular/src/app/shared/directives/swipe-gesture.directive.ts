@@ -44,11 +44,13 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
   private initialScrollTop = 0;
   private pullDistance = 0;
   private maxPullDistance = 100;
+  private scrollContainer: HTMLElement | Window | null = null;
 
   ngOnInit(): void {
     // Prevent text selection during swipe
     this.elementRef.nativeElement.style.userSelect = "none";
     this.elementRef.nativeElement.style.touchAction = "pan-y";
+    this.scrollContainer = this.resolveScrollContainer();
   }
 
   ngOnDestroy(): void {
@@ -65,8 +67,7 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
 
     // For pull-to-refresh on containers
     if (this.enablePullToRefresh()) {
-      const element = this.elementRef.nativeElement;
-      this.initialScrollTop = element.scrollTop || window.scrollY;
+      this.initialScrollTop = this.getScrollTop();
     }
   }
 
@@ -80,8 +81,7 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
 
     // Handle pull-to-refresh
     if (this.enablePullToRefresh()) {
-      const element = this.elementRef.nativeElement;
-      const scrollTop = element.scrollTop || window.scrollY;
+      const scrollTop = this.getScrollTop();
 
       // Only allow pull-to-refresh when at the top
       if (scrollTop === 0 && deltaY > 0) {
@@ -173,5 +173,59 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     element.style.transform = "";
     element.style.opacity = "";
     this.pullDistance = 0;
+  }
+
+  private resolveScrollContainer(): HTMLElement | Window | null {
+    if (typeof window === "undefined") {
+      return null;
+    }
+
+    const element = this.elementRef.nativeElement as HTMLElement;
+    const shellScrollContainer = element.closest(".app-main");
+
+    if (shellScrollContainer instanceof HTMLElement) {
+      return shellScrollContainer;
+    }
+
+    const nearestScrollableAncestor = this.findScrollableAncestor(element);
+    return nearestScrollableAncestor ?? window;
+  }
+
+  private findScrollableAncestor(
+    element: HTMLElement | null,
+  ): HTMLElement | null {
+    let current = element?.parentElement ?? null;
+
+    while (current) {
+      const styles = window.getComputedStyle(current);
+      const overflowY = styles.overflowY;
+      if (
+        (overflowY === "auto" || overflowY === "scroll") &&
+        current.scrollHeight > current.clientHeight
+      ) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+
+    return null;
+  }
+
+  private getScrollTop(): number {
+    if (typeof window === "undefined") {
+      return 0;
+    }
+
+    const container = this.scrollContainer;
+    if (container instanceof Window) {
+      return (
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+      );
+    }
+
+    return container?.scrollTop ?? 0;
   }
 }

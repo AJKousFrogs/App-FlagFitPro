@@ -9,8 +9,6 @@ import {
 import { DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Accordion, AccordionPanel } from "primeng/accordion";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -26,7 +24,10 @@ import { PerformanceTrackingDataService } from "./services/performance-tracking-
 import { DataState } from "../../core/services/data-source.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -174,11 +175,14 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   selector: "app-performance-tracking",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    Card,
+    AppDialogComponent,
+    AlertComponent,
+    ButtonComponent,
+    CardShellComponent,
     LazyChartComponent,
     TableModule,
-    Dialog,
-    
+    DialogFooterComponent,
+    DialogHeaderComponent,
     InputText,
     InputNumber,
     ProgressBar,
@@ -191,9 +195,6 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     PageErrorStateComponent,
     AppLoadingComponent,
     RouterModule,
-    ButtonComponent,
-    CardHeaderComponent,
-    AlertComponent,
     StatusTagComponent,
     AchievementBadgeComponent,
     DataSourceBannerComponent,

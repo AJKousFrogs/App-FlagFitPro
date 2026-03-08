@@ -10,8 +10,6 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 
@@ -35,6 +33,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../../shared/utils/date.utils";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §31
 interface Injury {
@@ -198,8 +200,10 @@ const RTP_PHASES = [
     CommonModule,
     FormsModule,
     RouterModule,
-    Card,
-    Dialog,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
+    CardShellComponent,
     ProgressBar,
     Select,
     TableModule,

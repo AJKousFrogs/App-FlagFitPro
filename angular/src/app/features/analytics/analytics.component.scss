@@ -12,6 +12,11 @@
 
 .analytics-hub-card {
   margin-bottom: 0;
+
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-secondary);
+  --app-card-shell-header-icon-color: var(--ds-primary-green);
 }
 
 .analytics-preview-banner {
@@ -129,10 +134,6 @@
   // ================================================================
   // CHART HEADER - MOBILE STACK
   // ================================================================
-
-  .chart-title {
-    font-size: var(--ds-font-size-xl);
-  }
 
   .chart-actions {
     width: 100%;
@@ -621,6 +622,7 @@
 /* metrics-grid: use primitive from _dashboard.scss; local overrides in respond-to blocks above */
 
 .metric-card {
+  --app-card-shell-body-padding: var(--component-card-padding);
   text-align: left;
   transition:
     transform var(--ds-state-transition),
@@ -709,6 +711,9 @@
 // .charts-grid: Use primitives/_charts.scss
 
 .chart-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-secondary);
   min-height: var(--chart-min-height-lg);
 
   // PrimeNG card header/body overrides moved to _component-overrides.scss (DS-EXC-052)
@@ -716,13 +721,6 @@
 
 .chart-card.full-width {
   grid-column: 1 / -1;
-}
-
-.chart-title {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  margin: 0;
-  color: var(--color-text-primary);
 }
 
 .chart-actions {
@@ -862,28 +860,22 @@
 // ===== Development Goals Section =====
 .development-goals-card {
   margin-bottom: 0;
+
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-secondary);
+  --app-card-shell-header-icon-color: var(--ds-primary-green);
 }
 
-app-card-header.analytics-hub-card-header {
-  --app-card-header-padding: var(--space-4);
-  --app-card-header-border-bottom: var(--border-1) solid
+.team-badges-card,
+.player-stats-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
     var(--color-border-secondary);
-  --app-card-header-icon-color: var(--ds-primary-green);
 }
 
-app-card-header.goals-card-header {
-  --app-card-header-padding: var(--space-4);
-  --app-card-header-border-bottom: var(--border-1) solid
-    var(--color-border-secondary);
-  --app-card-header-icon-color: var(--ds-primary-green);
-}
-
-app-card-header.badges-card-header {
-  --app-card-header-padding: var(--space-4);
-  --app-card-header-border-bottom: var(--border-1) solid
-    var(--color-border-secondary);
-  --app-card-header-icon-color: var(--color-medal-gold);
-  --app-card-header-title-size: var(--font-h3-size);
+.team-badges-card {
+  --app-card-shell-header-icon-color: var(--color-medal-gold);
 }
 
 .view-all-link {

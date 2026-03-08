@@ -8,8 +8,8 @@ import {
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 import { Checkbox } from "primeng/checkbox";
 
@@ -50,7 +50,6 @@ interface Workout {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Card,
     Checkbox,
     StatusTagComponent,
     MainLayoutComponent,
@@ -58,10 +57,11 @@ interface Workout {
     EmptyStateComponent,
     ButtonComponent,
     AppLoadingComponent,
+    CardShellComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="workout-page ui-page-stack">
+      <div class="workout-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Workout Tracker"
           subtitle="Track your workouts and monitor your progress"
@@ -74,19 +74,16 @@ interface Workout {
 
         <!-- Active Workout -->
         @if (activeWorkout()) {
-          <p-card class="active-workout-card">
-            <ng-template #header>
-              <div class="workout-header">
-                <h3>{{ activeWorkout()?.name }}</h3>
-                <app-status-tag
-                  [value]="
-                    activeWorkout()?.completed ? 'Completed' : 'In Progress'
-                  "
-                  [severity]="activeWorkout()?.completed ? 'success' : 'info'"
-                  size="sm"
-                />
-              </div>
-            </ng-template>
+          <app-card-shell
+            class="active-workout-card"
+            [title]="activeWorkout()?.name || ''"
+          >
+            <app-status-tag
+              header-actions
+              [value]="activeWorkout()?.completed ? 'Completed' : 'In Progress'"
+              [severity]="activeWorkout()?.completed ? 'success' : 'info'"
+              size="sm"
+            />
             <div class="exercises-list">
               @for (
                 exercise of activeWorkout()?.exercises;
@@ -129,14 +126,11 @@ interface Workout {
                 >Complete Workout</app-button
               >
             </div>
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- Workout History -->
-        <p-card class="workout-history-card">
-          <ng-template #header>
-            <h3>Workout History</h3>
-          </ng-template>
+        <app-card-shell class="workout-history-card" title="Workout History">
           @if (isLoading()) {
             <app-loading message="Loading workouts..." variant="inline" />
           } @else if (workoutHistory().length === 0) {
@@ -172,7 +166,7 @@ interface Workout {
               }
             </div>
           }
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,

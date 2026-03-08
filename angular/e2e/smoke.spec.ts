@@ -15,9 +15,32 @@ const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 // Default: aljkous@gmail.com / Futsal12!!!!
 // Set TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables to override
 const _TEST_USER = {
-  email: process.env["TEST_USER_EMAIL"] || "aljkous@gmail.com",
-  password: process.env["TEST_USER_PASSWORD"] || "Futsal12!!!!",
+  email:
+    process.env["TEST_USER_EMAIL"] ||
+    process.env["E2E_TEST_EMAIL"] ||
+    "aljkous@gmail.com",
+  password:
+    process.env["TEST_USER_PASSWORD"] ||
+    process.env["E2E_TEST_PASSWORD"] ||
+    "Futsal12!!!!",
 };
+const HAS_EXPLICIT_TEST_CREDENTIALS = Boolean(
+  (process.env["TEST_USER_EMAIL"] && process.env["TEST_USER_PASSWORD"]) ||
+    (process.env["E2E_TEST_EMAIL"] && process.env["E2E_TEST_PASSWORD"]),
+);
+
+async function primeCookieConsent(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const consent = {
+      necessary: true,
+      analytics: true,
+      functional: true,
+      consentDate: new Date().toISOString(),
+      consentVersion: "1.0",
+    };
+    localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
+  });
+}
 
 /**
  * Dismisses the cookie consent banner by setting localStorage consent.
@@ -50,7 +73,64 @@ async function dismissCookieBanner(page: Page): Promise<void> {
   }
 }
 
+async function login(page: Page): Promise<void> {
+  await primeCookieConsent(page);
+  await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded" });
+  await page.waitForLoadState("networkidle");
+  await dismissCookieBanner(page);
+
+  const emailInput = page.locator('input[type="email"]');
+  await emailInput.waitFor({ state: "visible", timeout: 10000 });
+  await emailInput.click();
+  await emailInput.fill(_TEST_USER.email);
+  await emailInput.press("Tab");
+
+  const passwordInput = page.locator('input[type="password"]');
+  await passwordInput.click();
+  await passwordInput.fill(_TEST_USER.password);
+  await passwordInput.press("Tab");
+
+  await page.waitForSelector('button[type="submit"]:not([disabled])', {
+    timeout: 10000,
+  });
+  await page.locator('button[type="submit"]').click();
+  await page.waitForTimeout(2000);
+  await expect(page).toHaveURL(
+    /.*(dashboard|onboarding|today|player-dashboard).*/,
+    {
+      timeout: 20000,
+    },
+  );
+  await page.waitForLoadState("networkidle");
+}
+
+async function navigateToScrollableShellPage(page: Page): Promise<string> {
+  const candidatePaths = ["/settings", "/game/nutrition", "/community"];
+
+  for (const path of candidatePaths) {
+    await page.goto(`${BASE_URL}${path}`);
+    await dismissCookieBanner(page);
+    await page.waitForLoadState("networkidle");
+
+    const shellMetrics = await page.locator(".app-main").evaluate((element) => {
+      const appMain = element as HTMLElement;
+      return {
+        clientHeight: appMain.clientHeight,
+        scrollHeight: appMain.scrollHeight,
+      };
+    });
+
+    if (shellMetrics.scrollHeight > shellMetrics.clientHeight + 200) {
+      return path;
+    }
+  }
+
+  throw new Error("Could not find a sufficiently scrollable shell page");
+}
+
 test.describe("Smoke Test - App Shell", () => {
+  test.describe.configure({ mode: "serial" });
+
   test("should load app and render shell", async ({ page }) => {
     await page.goto(BASE_URL);
     await dismissCookieBanner(page);
@@ -121,5 +201,92 @@ test.describe("Smoke Test - App Shell", () => {
     // Verify page has heading
     const heading = page.locator("h1, h2, .page-header").first();
     await expect(heading).toBeVisible({ timeout: 5000 });
+  });
+
+  test("should keep header and sidebar stable while only content scrolls", async ({
+    page,
+  }) => {
+    test.skip(
+      !HAS_EXPLICIT_TEST_CREDENTIALS,
+      "Requires TEST_USER_EMAIL and TEST_USER_PASSWORD for authenticated shell verification",
+    );
+
+    await login(page);
+    const testedPath = await navigateToScrollableShellPage(page);
+
+    const header = page.locator("app-header");
+    const sidebar = page.locator("app-sidebar .sidebar");
+    const appMain = page.locator(".app-main");
+
+    await expect(header).toBeVisible({ timeout: 10000 });
+    await expect(sidebar).toBeVisible({ timeout: 10000 });
+    await expect(appMain).toBeVisible({ timeout: 10000 });
+
+    const before = await page.evaluate(() => {
+      const appMain = document.querySelector(".app-main") as HTMLElement | null;
+      const header = document.querySelector("app-header") as HTMLElement | null;
+      const sidebar = document.querySelector(
+        "app-sidebar .sidebar",
+      ) as HTMLElement | null;
+
+      if (!appMain || !header || !sidebar) {
+        throw new Error("Shell elements were not found");
+      }
+
+      return {
+        bodyOverflow: getComputedStyle(document.body).overflow,
+        appMainOverflowY: getComputedStyle(appMain).overflowY,
+        headerPosition: getComputedStyle(header).position,
+        sidebarPosition: getComputedStyle(sidebar).position,
+        appMainScrollTop: appMain.scrollTop,
+        appMainClientHeight: appMain.clientHeight,
+        appMainScrollHeight: appMain.scrollHeight,
+        windowScrollY: window.scrollY,
+        headerTop: header.getBoundingClientRect().top,
+        sidebarTop: sidebar.getBoundingClientRect().top,
+      };
+    });
+
+    expect(before.bodyOverflow).toBe("hidden");
+    expect(before.appMainOverflowY).toMatch(/auto|scroll/);
+    expect(before.headerPosition).toBe("sticky");
+    expect(before.sidebarPosition).toBe("sticky");
+    expect(before.appMainScrollHeight).toBeGreaterThan(
+      before.appMainClientHeight + 200,
+    );
+
+    await appMain.evaluate((element) => {
+      (element as HTMLElement).scrollTop = 640;
+    });
+    await page.waitForTimeout(200);
+
+    const after = await page.evaluate(() => {
+      const appMain = document.querySelector(".app-main") as HTMLElement | null;
+      const header = document.querySelector("app-header") as HTMLElement | null;
+      const sidebar = document.querySelector(
+        "app-sidebar .sidebar",
+      ) as HTMLElement | null;
+
+      if (!appMain || !header || !sidebar) {
+        throw new Error("Shell elements were not found after scroll");
+      }
+
+      return {
+        appMainScrollTop: appMain.scrollTop,
+        windowScrollY: window.scrollY,
+        headerTop: header.getBoundingClientRect().top,
+        sidebarTop: sidebar.getBoundingClientRect().top,
+      };
+    });
+
+    expect(after.appMainScrollTop).toBeGreaterThan(300);
+    expect(after.windowScrollY).toBe(0);
+    expect(Math.abs(after.headerTop - before.headerTop)).toBeLessThan(2);
+    expect(Math.abs(after.sidebarTop - before.sidebarTop)).toBeLessThan(2);
+
+    test.info().annotations.push({
+      type: "shell-route",
+      description: testedPath,
+    });
   });
 });

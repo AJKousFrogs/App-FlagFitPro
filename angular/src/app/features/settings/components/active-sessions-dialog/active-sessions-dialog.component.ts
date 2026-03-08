@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Dialog } from "primeng/dialog";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import {
+  AppDialogComponent,
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
@@ -18,7 +18,12 @@ type ActiveSession = {
 @Component({
   selector: "app-active-sessions-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dialog, IconButtonComponent, DialogHeaderComponent, DialogFooterComponent],
+  imports: [
+    AppDialogComponent,
+    IconButtonComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
+  ],
   templateUrl: "./active-sessions-dialog.component.html",
   styleUrl: "./active-sessions-dialog.component.scss",
 })

@@ -1,5 +1,5 @@
 <app-main-layout>
-      <div class="nutritionist-dashboard">
+      <div class="nutritionist-dashboard ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Nutritionist Dashboard"
           subtitle="Monitor athlete nutrition, body composition, and supplement compliance"
@@ -214,20 +214,20 @@
 
                   @if (selectedAthleteId) {
                     <div class="charts-grid">
-                      <p-card header="Weight Trend">
+                      <app-card-shell title="Weight Trend">
                         <app-lazy-chart
                           type="line"
                           [data]="weightChartData()"
                           [options]="chartOptions"
                         ></app-lazy-chart>
-                      </p-card>
-                      <p-card header="Body Fat %">
+                      </app-card-shell>
+                      <app-card-shell title="Body Fat %">
                         <app-lazy-chart
                           type="line"
                           [data]="bodyFatChartData()"
                           [options]="chartOptions"
                         ></app-lazy-chart>
-                      </p-card>
+                      </app-card-shell>
                     </div>
 
                     @if (compositionAlerts().length > 0) {
@@ -264,23 +264,20 @@
                       compliance of supplementCompliance();
                       track compliance.athleteId
                     ) {
-                      <p-card class="compliance-card">
-                        <ng-template #header>
-                          <div class="compliance-header">
-                            <span class="athlete-name">{{
-                              getAthleteName(compliance.athleteId)
-                            }}</span>
-                            <app-status-tag
-                              [value]="compliance.overallComplianceRate + '%'"
-                              [severity]="
-                                getComplianceSeverity(
-                                  compliance.overallComplianceRate
-                                )
-                              "
-                              size="sm"
-                            />
-                          </div>
-                        </ng-template>
+                      <app-card-shell
+                        class="compliance-card"
+                        [title]="getAthleteName(compliance.athleteId)"
+                      >
+                        <app-status-tag
+                          header-actions
+                          [value]="compliance.overallComplianceRate + '%'"
+                          [severity]="
+                            getComplianceSeverity(
+                              compliance.overallComplianceRate
+                            )
+                          "
+                          size="sm"
+                        />
                         <div class="supplement-list">
                           @for (
                             supplement of compliance.supplements;
@@ -319,7 +316,7 @@
                             </ul>
                           </div>
                         }
-                      </p-card>
+                      </app-card-shell>
                     }
                   </div>
                 </div>
@@ -343,19 +340,19 @@
                         tournament of upcomingTournaments();
                         track tournament.tournament.name
                       ) {
-                        <p-card class="tournament-card">
-                          <ng-template #header>
-                            <div class="tournament-header">
-                              <h4>{{ tournament.tournament.name }}</h4>
-                              <app-status-tag
-                                [value]="
-                                  tournament.tournament.expectedGames + ' games'
-                                "
-                                severity="info"
-                                size="sm"
-                              />
-                            </div>
-                          </ng-template>
+                        <app-card-shell
+                          class="tournament-card"
+                          [title]="tournament.tournament.name"
+                          [hasFooter]="true"
+                        >
+                          <app-status-tag
+                            header-actions
+                            [value]="
+                              tournament.tournament.expectedGames + ' games'
+                            "
+                            severity="info"
+                            size="sm"
+                          />
                           <div class="tournament-details">
                             <div class="detail-row">
                               <i class="pi pi-calendar"></i>
@@ -425,7 +422,7 @@
                               </div>
                             </div>
                           </div>
-                          <ng-template #footer>
+                          <div footer>
                             <app-button
                               variant="text"
                               iconLeft="pi-eye"
@@ -438,8 +435,8 @@
                               (clicked)="exportTournamentBrief(tournament)"
                               >Export PDF</app-button
                             >
-                          </ng-template>
-                        </p-card>
+                          </div>
+                        </app-card-shell>
                       }
                     </div>
                   } @else {
@@ -456,13 +453,22 @@
         }
 
         <!-- Athlete Details Dialog -->
-        <p-dialog
-          header="Athlete Nutrition Details"
+        <app-dialog
           [(visible)]="showAthleteDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '1200px': '92vw', '640px': '96vw' }"
+          ariaLabel="Athlete nutrition details"
           [dismissableMask]="true"
-          class="nutritionist-athlete-dialog"
+          styleClass="nutritionist-athlete-dialog"
         >
+          <app-dialog-header
+            icon="apple"
+            title="Athlete Nutrition Details"
+            subtitle="Review body composition, weight targets, and the current recommendation summary."
+            (close)="showAthleteDialog.set(false)"
+          />
           @if (selectedAthlete()) {
             <div class="athlete-details">
               <div class="detail-header">
@@ -518,23 +524,37 @@
               </div>
             </div>
           }
-          <ng-template #footer>
+          <div dialogFooter class="dialog-actions">
+            <app-button
+              variant="text"
+              (clicked)="showAthleteDialog.set(false)"
+              >Close</app-button
+            >
             <app-button
               iconLeft="pi-file-pdf"
               (clicked)="generateAthleteReport(selectedAthlete()!)"
               >Generate Full Report</app-button
             >
-          </ng-template>
-        </p-dialog>
+          </div>
+        </app-dialog>
 
         <!-- Report Generation Dialog -->
-        <p-dialog
-          header="Generate Nutrition Report"
+        <app-dialog
           [(visible)]="showReportDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Generate nutrition report"
           [dismissableMask]="true"
-          class="nutritionist-report-dialog"
+          styleClass="nutritionist-report-dialog"
         >
+          <app-dialog-header
+            icon="file-pdf"
+            title="Generate Nutrition Report"
+            subtitle="Create a nutrition summary, tournament brief, or supplement audit for a selected athlete."
+            (close)="showReportDialog.set(false)"
+          />
           <div class="report-form">
             <div class="form-group">
               <label>Report Type</label>
@@ -567,24 +587,33 @@
               ></p-select>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showReportDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()"
-              >Generate</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Generate"
+            primaryIcon="file-pdf"
+            (cancel)="showReportDialog.set(false)"
+            (primary)="generateReport()"
+          />
+        </app-dialog>
 
         <!-- Tournament Brief Dialog -->
-        <p-dialog
-          header="Create Tournament Nutrition Brief"
+        <app-dialog
           [(visible)]="showTournamentDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Create tournament nutrition brief"
           [dismissableMask]="true"
-          class="nutritionist-tournament-dialog"
+          styleClass="nutritionist-tournament-dialog"
         >
+          <app-dialog-header
+            icon="calendar-plus"
+            title="Create Tournament Nutrition Brief"
+            subtitle="Define the event conditions so the nutrition plan can be tailored to the competition."
+            (close)="showTournamentDialog.set(false)"
+          />
           <div class="tournament-form">
             <div class="form-group">
               <label>Tournament Name</label>
@@ -651,16 +680,14 @@
               </div>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button
-              variant="text"
-              (clicked)="showTournamentDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-plus" (clicked)="createTournamentBrief()"
-              >Create Brief</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Create Brief"
+            primaryIcon="plus"
+            (cancel)="showTournamentDialog.set(false)"
+            (primary)="createTournamentBrief()"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>

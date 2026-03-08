@@ -7,9 +7,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -19,6 +17,7 @@ import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -38,12 +37,11 @@ interface SuperadminUser {
   imports: [
     CommonModule,
     RouterLink,
-    Card,
+    CardShellComponent,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardHeaderComponent,
     AppLoadingComponent,
     EmptyStateComponent,
     AlertComponent,
@@ -67,14 +65,12 @@ interface SuperadminUser {
         </app-page-header>
 
         <!-- Your Status Card -->
-        <p-card class="status-card">
-          <ng-template #header>
-            <app-card-header
-              title="Your Superadmin Status"
-              icon="pi-shield"
-            >
-            </app-card-header>
-          </ng-template>
+        <app-card-shell
+          class="status-card"
+          title="Your Superadmin Status"
+          headerIcon="pi-shield"
+          tone="success"
+        >
 
           <div class="status-grid">
             <div class="status-item">
@@ -100,17 +96,13 @@ interface SuperadminUser {
             message="As the founding superadmin, you have full control over the platform. Only you can add additional superadmins."
             [styleClass]="'info-notice'"
           />
-        </p-card>
+        </app-card-shell>
 
         <!-- Manage Superadmins -->
-        <p-card>
-          <ng-template #header>
-            <app-card-header title="Manage Superadmins" icon="pi-users">
-              <app-button header-actions iconLeft="pi-plus" (clicked)="showAddModal = true"
-                >Add Superadmin</app-button
-              >
-            </app-card-header>
-          </ng-template>
+        <app-card-shell title="Manage Superadmins" headerIcon="pi-users">
+          <app-button header-actions iconLeft="pi-plus" (clicked)="showAddModal = true"
+            >Add Superadmin</app-button
+          >
 
           @if (isLoading()) {
             <app-loading message="Loading superadmins..." variant="inline" />
@@ -153,14 +145,10 @@ interface SuperadminUser {
               </ng-template>
             </p-table>
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Platform Settings -->
-        <p-card>
-          <ng-template #header>
-            <app-card-header title="Platform Settings" icon="pi-cog">
-            </app-card-header>
-          </ng-template>
+        <app-card-shell title="Platform Settings" headerIcon="pi-cog">
 
           <div class="settings-list">
             <div class="setting-item">
@@ -222,14 +210,15 @@ interface SuperadminUser {
             message="Platform settings are currently managed at the database level. Contact the development team for configuration changes."
             [styleClass]="'info-notice info'"
           />
-        </p-card>
+        </app-card-shell>
 
         <!-- Olympic Program -->
-        <p-card class="olympic-card">
-          <ng-template #header>
-            <app-card-header title="Olympic Program" icon="pi-trophy">
-            </app-card-header>
-          </ng-template>
+        <app-card-shell
+          class="olympic-card"
+          title="Olympic Program"
+          headerIcon="pi-trophy"
+          tone="brand"
+        >
 
           <div class="olympic-tracks">
             <div class="track-card">
@@ -251,7 +240,7 @@ interface SuperadminUser {
             Olympic competition. All team and admin approvals should consider
             the applicant's commitment to Olympic-level preparation.
           </p>
-        </p-card>
+        </app-card-shell>
       </div>
 
       <!-- Add Superadmin Modal -->

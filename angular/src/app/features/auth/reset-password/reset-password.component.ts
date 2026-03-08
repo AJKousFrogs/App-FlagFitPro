@@ -12,12 +12,12 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
 
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 @Component({
@@ -26,15 +26,14 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    Card,
     ButtonComponent,
+    CardShellComponent,
     InputText,
-
   ],
   template: `
 <div class="reset-password-page elite-auth-shell">
-      <p-card class="reset-password-card elite-auth-card elite-auth-card--reset">
-        <ng-template #header>
+      <app-card-shell class="reset-password-card elite-auth-card elite-auth-card--reset">
+        <div class="elite-auth-intro">
           <div class="reset-password-logo elite-auth-logo">
             <i class="pi pi-key"></i>
           </div>
@@ -44,7 +43,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             Enter the email tied to your account and we’ll send you a secure
             reset link.
           </p>
-        </ng-template>
+        </div>
 
         <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
           <div class="form-field elite-auth-field">
@@ -89,7 +88,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
         <a [routerLink]="['/login']" class="reset-password-login-link elite-auth-link elite-auth-link--centered"
           >Back to Sign In</a
         >
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./reset-password.component.scss",

@@ -224,6 +224,14 @@
   width: min(100%, var(--layout-page-max-width-narrow));
 }
 
+.ui-page-shell--content-md {
+  width: min(100%, var(--content-max-width-md));
+}
+
+.ui-page-shell--content-lg {
+  width: min(100%, var(--content-max-width-lg));
+}
+
 .ui-page-shell--wide {
   width: min(100%, var(--layout-page-max-width-wide));
 }

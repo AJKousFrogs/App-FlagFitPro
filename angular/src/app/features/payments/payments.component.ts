@@ -26,8 +26,6 @@ import {
   signal,
 } from "@angular/core";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { TableModule } from "primeng/table";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
@@ -37,10 +35,12 @@ import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 // ===== Interfaces =====
 interface AccountSummary {
@@ -118,13 +118,11 @@ const PAYMENT_METHOD_CONFIG: Record<
     CommonModule,
     CurrencyPipe,
     DatePipe,
-    Card,
-    Dialog,
-    
     TableModule,
     AlertComponent,
-
-    CardHeaderComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
     MainLayoutComponent,
     EmptyStateComponent,
     PageHeaderComponent,
@@ -134,7 +132,7 @@ const PAYMENT_METHOD_CONFIG: Record<
   ],
   template: `
     <app-main-layout>
-<div class="payments-page ui-page-stack">
+<div class="payments-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="My Payments"
           subtitle="View fees and payment history"
@@ -152,7 +150,7 @@ const PAYMENT_METHOD_CONFIG: Record<
 
         <!-- Account Summary -->
         <div class="summary-grid">
-          <p-card class="summary-card balance">
+          <app-card-shell class="summary-card balance">
             <div class="summary-content">
               <i class="pi pi-dollar summary-icon"></i>
               <div class="summary-details">
@@ -162,9 +160,9 @@ const PAYMENT_METHOD_CONFIG: Record<
                 }}</span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
-          <p-card class="summary-card paid">
+          <app-card-shell class="summary-card paid">
             <div class="summary-content">
               <i class="pi pi-check-circle summary-icon"></i>
               <div class="summary-details">
@@ -174,10 +172,10 @@ const PAYMENT_METHOD_CONFIG: Record<
                 }}</span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
           @if (accountSummary().nextPaymentDue) {
-            <p-card class="summary-card next">
+            <app-card-shell class="summary-card next">
               <div class="summary-content">
                 <i class="pi pi-calendar summary-icon"></i>
                 <div class="summary-details">
@@ -190,25 +188,20 @@ const PAYMENT_METHOD_CONFIG: Record<
                   }}</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
           }
         </div>
 
         <!-- Outstanding Fees -->
-        <p-card class="fees-card">
-          <ng-template #header>
-            <app-card-header title="Outstanding Fees" icon="pi-list">
-              <app-button
-                header-actions
-                variant="secondary"
-                size="sm"
-                iconLeft="pi-info-circle"
-                (clicked)="showInstructions = true"
-                >Payment Instructions</app-button
-              >
-            </app-card-header>
-          </ng-template>
-
+        <app-card-shell class="fees-card" title="Outstanding Fees" headerIcon="pi-list">
+          <app-button
+            header-actions
+            variant="secondary"
+            size="sm"
+            iconLeft="pi-info-circle"
+            (clicked)="showInstructions = true"
+            >Payment Instructions</app-button
+          >
           @if (outstandingFees().length > 0) {
             <div class="fees-list">
               @for (fee of outstandingFees(); track fee.id) {
@@ -279,15 +272,14 @@ const PAYMENT_METHOD_CONFIG: Record<
               [description]="'You are all caught up.'"
             />
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Payment History -->
-        <p-card class="history-card">
-          <ng-template #header>
-            <app-card-header title="Payment History" icon="pi-history">
-            </app-card-header>
-          </ng-template>
-
+        <app-card-shell
+          class="history-card"
+          title="Payment History"
+          headerIcon="pi-history"
+        >
           @if (paymentHistory().length > 0) {
             <p-table
               [value]="paymentHistory()"
@@ -351,17 +343,24 @@ const PAYMENT_METHOD_CONFIG: Record<
               [description]="'Payments you record with your coach will appear here.'"
             />
           }
-        </p-card>
+        </app-card-shell>
       </div>
 
       <!-- Payment Instructions Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showInstructions"
-        header="Payment Instructions"
-        [modal]="true"
-        [closable]="true"
-        class="payments-instructions-dialog"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [styleClass]="'payments-instructions-dialog'"
       >
+        <app-dialog-header
+          icon="wallet"
+          title="Payment Instructions"
+          subtitle="Coach-provided methods and details"
+          (close)="showInstructions = false"
+        ></app-dialog-header>
         <div class="instructions-content">
           @for (method of paymentInstructions().methods; track method.method) {
             <div class="method-card">
@@ -387,7 +386,7 @@ const PAYMENT_METHOD_CONFIG: Record<
             </div>
           }
         </div>
-      </p-dialog>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./payments.component.scss",

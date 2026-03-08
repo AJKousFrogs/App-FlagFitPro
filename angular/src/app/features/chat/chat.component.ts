@@ -27,7 +27,6 @@ import {
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 
 import { Select } from "primeng/select";
@@ -50,6 +49,9 @@ import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -65,14 +67,15 @@ import { getInitials } from "../../shared/utils/format.utils";
     Avatar,
     Badge,
     ScrollingModule,
-    Dialog,
-    
+    AppDialogComponent,
     Select,
     Textarea,
     Tooltip,
     MainLayoutComponent,
     AlertComponent,
     ButtonComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     IconButtonComponent,
     StatusTagComponent,
   ],
@@ -707,6 +710,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     } finally {
       this._loadingMembers.set(false);
     }
+  }
+
+  onMembersDialogVisibleChange(visible: boolean): void {
+    this.showMembersDialog = visible;
+    if (visible) {
+      void this.loadChannelMembers();
+      return;
+    }
+    this.memberSearchQuery = "";
   }
 
   async startDirectMessage(member: ChannelMemberDetails): Promise<void> {

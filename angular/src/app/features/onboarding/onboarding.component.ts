@@ -10,7 +10,6 @@ import {
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 
-import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Step, StepList, Stepper } from "primeng/stepper";
 import { firstValueFrom } from "rxjs";
@@ -30,6 +29,7 @@ import {
 import { ToastService } from "../../core/services/toast.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { RosterService } from "../roster/roster.service";
@@ -51,12 +51,12 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
   imports: [
     CommonModule,
     RouterModule,
-    Card,
     Stepper,
     StepList,
     Step,
     ProgressBar,
     AlertComponent,
+    CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,

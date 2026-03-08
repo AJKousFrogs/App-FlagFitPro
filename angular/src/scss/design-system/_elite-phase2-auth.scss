@@ -55,14 +55,15 @@
   z-index: 1;
   width: min(100%, var(--layout-page-max-width-narrow));
   max-width: 34rem;
-  border-radius: var(--component-card-radius);
-  border: var(--component-card-border);
-  background: color-mix(in srgb, var(--surface-card) 96%, transparent);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
+
+  --app-card-shell-bg: color-mix(in srgb, var(--surface-card) 96%, transparent);
+  --app-card-shell-border: var(--component-card-border);
+  --component-card-shadow: var(--shadow-lg);
+  --app-card-shell-body-padding: var(--space-8) var(--component-card-padding)
+    var(--component-card-padding);
 }
 
-.elite-auth-card::before {
+.elite-auth-card .card-shell::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;
@@ -75,14 +76,14 @@
   );
 }
 
-.elite-auth-card .p-card-header {
-  padding: var(--space-8) var(--component-card-padding) var(--space-4);
-}
-
-.elite-auth-card .p-card-body {
+.elite-auth-card .card-shell__body {
   display: grid;
   gap: var(--space-5);
-  padding: 0 var(--component-card-padding) var(--component-card-padding);
+}
+
+.elite-auth-intro {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .elite-auth-logo {
@@ -225,14 +226,9 @@
   .elite-auth-card {
     width: 100%;
     max-width: none;
-  }
 
-  .elite-auth-card .p-card-header {
-    padding: var(--space-6) var(--space-5) var(--space-4);
-  }
-
-  .elite-auth-card .p-card-body {
-    padding: 0 var(--space-5) var(--space-5);
+    --app-card-shell-body-padding: var(--space-6) var(--space-5)
+      var(--space-5);
   }
 }
 
@@ -243,12 +239,9 @@
     padding-bottom: calc(var(--space-7) + var(--safe-area-bottom));
   }
 
-  .elite-auth-card .p-card-header {
-    padding: var(--space-5) var(--space-4) var(--space-3);
-  }
-
-  .elite-auth-card .p-card-body {
-    padding: 0 var(--space-4) var(--space-4);
+  .elite-auth-card {
+    --app-card-shell-body-padding: var(--space-5) var(--space-4)
+      var(--space-4);
   }
 
   .elite-auth-logo {

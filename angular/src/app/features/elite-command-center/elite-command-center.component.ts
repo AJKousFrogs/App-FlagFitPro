@@ -9,7 +9,6 @@ import {
 import { FormsModule } from "@angular/forms";
 import type { MenuItem } from "primeng/api";
 import { Breadcrumb } from "primeng/breadcrumb";
-import { Card } from "primeng/card";
 import { DataView } from "primeng/dataview";
 import { Dock } from "primeng/dock";
 import { Drawer } from "primeng/drawer";
@@ -30,6 +29,7 @@ import { UIChart } from "primeng/chart";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { ResponsiveGridSpanDirective } from "../../shared/directives/responsive-grid-span.directive";
 import { PlatformService } from "../../core/services/platform.service";
@@ -81,7 +81,7 @@ interface ProtocolStep {
     Menubar,
     Breadcrumb,
     Dock,
-    Card,
+    CardShellComponent,
     Tag,
     ProgressBar,
     UIChart,

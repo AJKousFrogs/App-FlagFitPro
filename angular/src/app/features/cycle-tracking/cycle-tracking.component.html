@@ -20,7 +20,7 @@
         </app-alert>
 
         <!-- Current Cycle Status -->
-        <p-card class="cycle-status-card">
+        <app-card-shell class="cycle-status-card">
           <div class="cycle-status-content">
             <div class="cycle-day-display">
               <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
@@ -89,24 +89,16 @@
               </div>
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Today's Recommendations -->
         <div class="recommendations-grid">
           <!-- Training Recommendations -->
-          <p-card class="recommendation-card training-card">
-            <ng-template #header>
-              <div class="rec-header">
-                <i class="pi pi-bolt"></i>
-                <span
-                  >Training Recommendations ({{
-                    getCurrentPhase().name
-                  }}
-                  Phase)</span
-                >
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            class="recommendation-card training-card"
+            headerIcon="pi-bolt"
+            [title]="'Training Recommendations (' + getCurrentPhase().name + ' Phase)'"
+          >
             <div class="intensity-modifier">
               <span class="modifier-label">Intensity Modifier:</span>
               <span
@@ -175,22 +167,14 @@
                 </div>
               </div>
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Nutrition Recommendations -->
-          <p-card class="recommendation-card nutrition-card">
-            <ng-template #header>
-              <div class="rec-header">
-                <i class="pi pi-apple"></i>
-                <span
-                  >Nutrition Recommendations ({{
-                    getCurrentPhase().name
-                  }}
-                  Phase)</span
-                >
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            class="recommendation-card nutrition-card"
+            headerIcon="pi-apple"
+            [title]="'Nutrition Recommendations (' + getCurrentPhase().name + ' Phase)'"
+          >
             <div class="nutrition-modifiers">
               <div class="modifier-item">
                 <span class="modifier-name">Calorie Modifier:</span>
@@ -228,11 +212,15 @@
               [message]="'💡 ' + getNutritionTip()"
               styleClass="nutrition-tip status-message"
             />
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- ACWR Adjustment -->
-        <p-card header="ACWR Adjustment" class="acwr-card">
+        <app-card-shell
+          class="acwr-card"
+          title="ACWR Adjustment"
+          headerIcon="pi-chart-line"
+        >
           @if (baseAcwr() !== null && adjustedAcwr() !== null) {
             <div class="acwr-content">
               <div class="acwr-values">
@@ -269,25 +257,22 @@
               description="Log training sessions to see phase-adjusted training recommendations."
             />
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Symptom Tracking -->
-        <p-card class="symptom-card">
-          <ng-template #header>
-            <div class="symptom-header">
-              <div class="symptom-title">
-                <i class="pi pi-pencil"></i>
-                <span>Today's Symptoms</span>
-              </div>
+        <app-card-shell
+          class="symptom-card"
+          title="Today's Symptoms"
+          headerIcon="pi-pencil"
+        >
               <app-button
+                header-actions
                 size="sm"
                 iconLeft="pi-check"
                 [loading]="isSavingSymptoms()"
                 (clicked)="saveSymptoms()"
                 >Log Symptoms</app-button
               >
-            </div>
-          </ng-template>
 
           <div class="symptoms-form">
             <div class="symptoms-grid">
@@ -329,10 +314,14 @@
               </div>
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Cycle History -->
-        <p-card header="Recent Cycles" class="history-card">
+        <app-card-shell
+          class="history-card"
+          title="Recent Cycles"
+          headerIcon="pi-history"
+        >
           @if (cycleHistory().length === 0) {
             <app-empty-state
               context="generic"
@@ -392,10 +381,14 @@
               >
             </div>
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Privacy Settings -->
-        <p-card header="Privacy Controls" class="privacy-card">
+        <app-card-shell
+          class="privacy-card"
+          title="Privacy Controls"
+          headerIcon="pi-lock"
+        >
           <div class="privacy-settings">
             <div class="privacy-option">
               <label>Who can see your cycle data?</label>
@@ -447,19 +440,27 @@
               >
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
 
       <!-- Log Period Dialog -->
-      <p-dialog
-        header="Log Period"
-        [modal]="true"
+      <app-dialog
         [visible]="showLogDialog()"
         (visibleChange)="showLogDialog.set($event)"
-        class="dialog-max-w-lg"
-        [breakpoints]="dialogBreakpoints"
+        [modal]="true"
+        [closable]="false"
         [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [breakpoints]="dialogBreakpoints"
+        [styleClass]="'dialog-max-w-lg'"
       >
+        <app-dialog-header
+          icon="calendar-plus"
+          title="Log Period"
+          subtitle="Track your cycle dates and symptoms for better guidance."
+          (close)="closeLogDialog()"
+        />
         <div class="log-form">
           <!-- Dates -->
           <div class="form-row">
@@ -545,29 +546,35 @@
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="outlined" (clicked)="closeLogDialog()"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [loading]="isSavingPeriod()"
-            [disabled]="!newPeriod.startDate"
-            (clicked)="savePeriod()"
-            >Save</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Save"
+          primaryIcon="check"
+          [loading]="isSavingPeriod()"
+          [disabled]="!newPeriod.startDate"
+          (cancel)="closeLogDialog()"
+          (primary)="savePeriod()"
+        />
+      </app-dialog>
 
       <!-- Delete Confirmation Dialog -->
-      <p-dialog
-        header="Delete All Cycle Data"
-        [modal]="true"
+      <app-dialog
         [visible]="showDeleteDialog()"
         (visibleChange)="showDeleteDialog.set($event)"
-        class="dialog-max-w-sm"
+        [modal]="true"
+        [closable]="false"
         [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [styleClass]="'dialog-max-w-sm'"
       >
+        <app-dialog-header
+          icon="trash"
+          title="Delete All Cycle Data"
+          subtitle="This permanently removes your private cycle history."
+          [danger]="true"
+          (close)="showDeleteDialog.set(false)"
+        />
         <div class="delete-warning">
           <i class="pi pi-exclamation-triangle"></i>
           <p>
@@ -576,16 +583,13 @@
           </p>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="outlined" (clicked)="showDeleteDialog.set(false)"
-            >Cancel</app-button
-          >
-          <app-button
-            variant="danger"
-            iconLeft="pi-trash"
-            (clicked)="deleteAllData()"
-            >Delete All Data</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Delete All Data"
+          primaryIcon="trash"
+          primaryVariant="danger"
+          (cancel)="showDeleteDialog.set(false)"
+          (primary)="deleteAllData()"
+        />
+      </app-dialog>
     </app-main-layout>

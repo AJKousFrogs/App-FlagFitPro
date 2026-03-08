@@ -6,8 +6,7 @@
 // ============================================================================
 
 .equipment-page {
-  width: min(100%, var(--content-max-width-2xl));
-  margin-inline: auto;
+  width: 100%;
   gap: var(--layout-page-section-gap);
 }
 
@@ -17,6 +16,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap);
+  min-width: 0;
+}
+
+.inventory-card,
+.assignments-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-secondary);
+}
+
+.equipment-filter-select {
+  width: min(100%, var(--input-min-width-lg));
 }
 
 .summary-grid {
@@ -69,6 +80,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
 
   i {
     font-size: var(--ds-font-size-2xl);
@@ -79,15 +91,18 @@
 .item-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .item-name {
   font-weight: var(--ds-font-weight-medium);
+  overflow-wrap: anywhere;
 }
 
 .item-desc {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .color-dot {
@@ -121,6 +136,7 @@
 .action-buttons {
   display: flex;
   gap: var(--space-1);
+  flex-wrap: wrap;
 }
 
 // @see docs/CARD_SHELL_CONTRACT.md §8
@@ -160,5 +176,10 @@
 
   .summary-grid {
     grid-template-columns: 1fr;
+  }
+
+  .filter-actions,
+  .equipment-filter-select {
+    width: 100%;
   }
 }

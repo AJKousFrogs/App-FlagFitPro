@@ -7,10 +7,10 @@ import {
 } from "@angular/core";
 
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { ToastService } from "../../../core/services/toast.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -29,17 +29,22 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
 @Component({
   selector: "app-verify-email",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Card, ButtonComponent, AlertComponent],
+  imports: [
+    RouterModule,
+    ButtonComponent,
+    AlertComponent,
+    CardShellComponent,
+  ],
 
   template: `
 <div class="verify-email-page">
-      <p-card class="verify-email-card">
-        <ng-template #header>
+      <app-card-shell class="verify-email-card">
+        <div class="verify-email-intro">
           <div class="verify-email-logo">
             <i class="pi pi-envelope"></i>
           </div>
           <h1 class="verify-email-title">Verify Your Email</h1>
-        </ng-template>
+        </div>
 
         @if (isVerifying()) {
           <div class="verifying-state">
@@ -109,7 +114,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             >
           </div>
         }
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./verify-email.component.scss",

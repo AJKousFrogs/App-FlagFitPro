@@ -31,6 +31,7 @@ import { Textarea } from "primeng/textarea";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
+import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -66,189 +67,192 @@ interface ReadinessMetric {
     AlertComponent,
     ButtonComponent,
     ConfidenceIndicatorComponent,
+    MainLayoutComponent,
   ],
   styleUrl: "./game-day-readiness.component.scss",
   template: `
-    <div class="game-day-readiness">
-      <!-- Header -->
-      <div class="readiness-header">
-        <div class="header-content">
-          <h1><i class="pi pi-flag"></i> Game Day Readiness</h1>
-          <p class="subtitle">Pre-Competition Check-in for {{ gameInfo() }}</p>
-        </div>
-        <div class="acwr-badge" [class]="acwrStatus()">
-          <span class="acwr-label">ACWR</span>
-          <span class="acwr-value">
-            @if (acwrDisplay().value !== null) {
-              {{ acwrDisplay().value | number: "1.2-2" }}
-            } @else {
-              --
-            }
-          </span>
-        </div>
-      </div>
-
-      @if (!isSubmitted()) {
-        <!-- Check-in Form -->
-        <div class="checkin-form">
-          @for (metric of metrics(); track metric.key) {
-            <div class="metric-card">
-              <div class="metric-header">
-                <span class="metric-icon">{{ metric.icon }}</span>
-                <span class="metric-label">{{ metric.label }}</span>
-                <span class="metric-value" [class.warning]="metric.value < 5"
-                  >{{ metric.value }}/10</span
-                >
-              </div>
-              <p-slider
-                [min]="1"
-                [max]="10"
-                [step]="1"
-                (onChange)="updateMetric(metric.key, $event.value || 1)"
-              ></p-slider>
-              <p class="metric-description">{{ metric.description }}</p>
-              @if (metric.value < 5) {
-                <div class="metric-warning">
-                  <i class="pi pi-exclamation-triangle"></i>
-                  {{ metric.lowWarning }}
-                </div>
-              }
-            </div>
-          }
-
-          <!-- Additional Notes -->
-          <div class="notes-section">
-            <label>Any concerns or notes for today?</label>
-            <textarea
-              pInputTextarea
-              [value]="notes"
-              (input)="onNotesInput($event)"
-              [rows]="3"
-              placeholder="E.g., slight tightness in hamstring, nervous about opponent..."
-            ></textarea>
+    <app-main-layout>
+      <div class="game-day-readiness ui-page-shell ui-page-shell--content-md ui-page-stack">
+        <!-- Header -->
+        <div class="readiness-header">
+          <div class="header-content">
+            <h1><i class="pi pi-flag"></i> Game Day Readiness</h1>
+            <p class="subtitle">Pre-Competition Check-in for {{ gameInfo() }}</p>
           </div>
+          <div class="acwr-badge" [class]="acwrStatus()">
+            <span class="acwr-label">ACWR</span>
+            <span class="acwr-value">
+              @if (acwrDisplay().value !== null) {
+                {{ acwrDisplay().value | number: "1.2-2" }}
+              } @else {
+                --
+              }
+            </span>
+          </div>
+        </div>
 
-          <!-- Readiness Score Preview -->
-          <div class="readiness-preview">
-            <div class="score-display" [class]="readinessStatus()">
-              <div class="score-circle">
-                @if (readinessScore() !== null) {
-                  <span class="score-value">{{ readinessScore() }}</span>
-                  <span class="score-label">/ 100</span>
-                } @else {
-                  <span class="score-value">--</span>
-                  <span class="score-label">/ 100</span>
-                }
-                <!-- Data Confidence Indicator -->
-                @if (readinessScore() !== null) {
-                  <div class="confidence-wrapper">
-                    <app-confidence-indicator
-                      [score]="readinessConfidence().score"
-                      [missingInputs]="readinessConfidence().missingInputs"
-                      [showDetails]="false"
-                    ></app-confidence-indicator>
+        @if (!isSubmitted()) {
+          <!-- Check-in Form -->
+          <div class="checkin-form">
+            @for (metric of metrics(); track metric.key) {
+              <div class="metric-card">
+                <div class="metric-header">
+                  <span class="metric-icon">{{ metric.icon }}</span>
+                  <span class="metric-label">{{ metric.label }}</span>
+                  <span class="metric-value" [class.warning]="metric.value < 5"
+                    >{{ metric.value }}/10</span
+                  >
+                </div>
+                <p-slider
+                  [min]="1"
+                  [max]="10"
+                  [step]="1"
+                  (onChange)="updateMetric(metric.key, $event.value || 1)"
+                ></p-slider>
+                <p class="metric-description">{{ metric.description }}</p>
+                @if (metric.value < 5) {
+                  <div class="metric-warning">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    {{ metric.lowWarning }}
                   </div>
                 }
               </div>
-              <div class="score-info">
-                <h3>{{ readinessLabel() }}</h3>
-                <p>{{ readinessMessage() }}</p>
-              </div>
+            }
+
+            <!-- Additional Notes -->
+            <div class="notes-section">
+              <label>Any concerns or notes for today?</label>
+              <textarea
+                pInputTextarea
+                [value]="notes"
+                (input)="onNotesInput($event)"
+                [rows]="3"
+                placeholder="E.g., slight tightness in hamstring, nervous about opponent..."
+              ></textarea>
             </div>
 
-            @if (readinessScore() !== null && readinessScore()! < 70) {
-              <app-alert
-                class="coach-alert-warning"
-                variant="warning"
-                title="Coach will be notified"
-                message="Your readiness score is below 70%. Your coach will receive an alert to discuss modifications."
-                icon="pi-bell"
-              />
-            }
-          </div>
+            <!-- Readiness Score Preview -->
+            <div class="readiness-preview">
+              <div class="score-display" [class]="readinessStatus()">
+                <div class="score-circle">
+                  @if (readinessScore() !== null) {
+                    <span class="score-value">{{ readinessScore() }}</span>
+                    <span class="score-label">/ 100</span>
+                  } @else {
+                    <span class="score-value">--</span>
+                    <span class="score-label">/ 100</span>
+                  }
+                  <!-- Data Confidence Indicator -->
+                  @if (readinessScore() !== null) {
+                    <div class="confidence-wrapper">
+                      <app-confidence-indicator
+                        [score]="readinessConfidence().score"
+                        [missingInputs]="readinessConfidence().missingInputs"
+                        [showDetails]="false"
+                      ></app-confidence-indicator>
+                    </div>
+                  }
+                </div>
+                <div class="score-info">
+                  <h3>{{ readinessLabel() }}</h3>
+                  <p>{{ readinessMessage() }}</p>
+                </div>
+              </div>
 
-          <!-- Submit Button -->
-          <div class="submit-section">
-            <app-button
-              size="lg"
-              iconLeft="pi-check"
-              [loading]="isSubmitting()"
-              (clicked)="submitReadiness()"
-              >Submit Readiness Check</app-button
-            >
-            <p class="submit-note">
-              <i class="pi pi-info-circle"></i>
-              Complete this check-in at least 2 hours before competition
-            </p>
+              @if (readinessScore() !== null && readinessScore()! < 70) {
+                <app-alert
+                  class="coach-alert-warning"
+                  variant="warning"
+                  title="Coach will be notified"
+                  message="Your readiness score is below 70%. Your coach will receive an alert to discuss modifications."
+                  icon="pi-bell"
+                />
+              }
+            </div>
+
+            <!-- Submit Button -->
+            <div class="submit-section">
+              <app-button
+                size="lg"
+                iconLeft="pi-check"
+                [loading]="isSubmitting()"
+                (clicked)="submitReadiness()"
+                >Submit Readiness Check</app-button
+              >
+              <p class="submit-note">
+                <i class="pi pi-info-circle"></i>
+                Complete this check-in at least 2 hours before competition
+              </p>
+            </div>
           </div>
-        </div>
-      } @else {
-        <!-- Confirmation View -->
-        <div class="confirmation-view">
-          <div class="confirmation-icon" [class]="readinessStatus()">
-            @if (readinessScore() !== null) {
-              @if (readinessScore()! >= 85) {
-                ✅
-              } @else if (readinessScore()! >= 70) {
-                👍
+        } @else {
+          <!-- Confirmation View -->
+          <div class="confirmation-view">
+            <div class="confirmation-icon" [class]="readinessStatus()">
+              @if (readinessScore() !== null) {
+                @if (readinessScore()! >= 85) {
+                  ✅
+                } @else if (readinessScore()! >= 70) {
+                  👍
+                } @else {
+                  ⚠️
+                }
               } @else {
                 ⚠️
               }
-            } @else {
-              ⚠️
-            }
-          </div>
-
-          <h2>Check-in Complete</h2>
-
-          <div class="final-score" [class]="readinessStatus()">
-            @if (readinessScore() !== null) {
-              <span class="score">{{ readinessScore() }}</span>
-            } @else {
-              <span class="score">--</span>
-            }
-            <span class="label">Readiness Score</span>
-          </div>
-
-          <div class="recommendations">
-            <h3>Pre-Game Recommendations</h3>
-            <ul>
-              @for (rec of recommendations(); track rec) {
-                <li>{{ rec }}</li>
-              }
-            </ul>
-          </div>
-
-          @if (readinessScore() !== null && readinessScore()! < 70) {
-            <div class="coach-notified">
-              <i class="pi pi-send"></i>
-              <p>
-                Your coach has been notified and may reach out to discuss
-                adjustments.
-              </p>
             </div>
-          }
 
-          <div class="action-buttons">
-            <app-button
-              variant="outlined"
-              iconLeft="pi-home"
-              (clicked)="goToDashboard()"
-              >Back to Dashboard</app-button
-            >
-            <app-button
-              variant="outlined"
-              iconLeft="pi-heart"
-              routerLink="/game/nutrition"
-              >Tournament Nutrition</app-button
-            >
-            <app-button iconLeft="pi-file" (clicked)="viewGamePlan()"
-              >View Game Plan</app-button
-            >
+            <h2>Check-in Complete</h2>
+
+            <div class="final-score" [class]="readinessStatus()">
+              @if (readinessScore() !== null) {
+                <span class="score">{{ readinessScore() }}</span>
+              } @else {
+                <span class="score">--</span>
+              }
+              <span class="label">Readiness Score</span>
+            </div>
+
+            <div class="recommendations">
+              <h3>Pre-Game Recommendations</h3>
+              <ul>
+                @for (rec of recommendations(); track rec) {
+                  <li>{{ rec }}</li>
+                }
+              </ul>
+            </div>
+
+            @if (readinessScore() !== null && readinessScore()! < 70) {
+              <div class="coach-notified">
+                <i class="pi pi-send"></i>
+                <p>
+                  Your coach has been notified and may reach out to discuss
+                  adjustments.
+                </p>
+              </div>
+            }
+
+            <div class="action-buttons">
+              <app-button
+                variant="outlined"
+                iconLeft="pi-home"
+                (clicked)="goToDashboard()"
+                >Back to Dashboard</app-button
+              >
+              <app-button
+                variant="outlined"
+                iconLeft="pi-heart"
+                routerLink="/game/nutrition"
+                >Tournament Nutrition</app-button
+              >
+              <app-button iconLeft="pi-file" (clicked)="viewGamePlan()"
+                >View Game Plan</app-button
+              >
+            </div>
           </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    </app-main-layout>
   `,
 })
 export class GameDayReadinessComponent implements OnInit {

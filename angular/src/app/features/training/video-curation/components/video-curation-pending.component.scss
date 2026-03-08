@@ -22,10 +22,7 @@
 }
 
 .pending-card {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--component-card-radius);
-  overflow: hidden;
+  height: 100%;
 }
 
 .pending-thumbnail {
@@ -91,8 +88,6 @@
 }
 
 .pending-actions {
-  padding: var(--component-card-padding-compact);
-  border-top: var(--border-1) solid var(--color-border-primary);
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
@@ -102,6 +97,17 @@
   .pending-grid {
     grid-template-columns: 1fr;
     gap: var(--space-3);
+  }
+
+  .pending-meta {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .pending-actions {
+    > * {
+      flex: 1 1 100%;
+    }
   }
 }
 

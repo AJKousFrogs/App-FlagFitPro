@@ -15,11 +15,9 @@ import {
 } from "@angular/forms";
 
 import { ToastService } from "../../core/services/toast.service";
-import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 
@@ -48,6 +46,10 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { formatDateISO } from "../../shared/utils/date.utils";
 import { getCountryFlag } from "../../core/constants";
 import { TournamentsDataService } from "./services/tournaments-data.service";
@@ -235,10 +237,8 @@ const toDateOrNull = (value: unknown): Date | null => {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Card,
     Tabs,
     TabPanel,
-    Dialog,
     
     InputText,
     Textarea,
@@ -254,6 +254,10 @@ const toDateOrNull = (value: unknown): Date | null => {
     ButtonComponent,
     IconButtonComponent,
     AlertComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     StatusTagComponent,
     EmptyStateComponent,
     AppLoadingComponent,

@@ -7,6 +7,7 @@ import {
   DestroyRef,
   ElementRef,
   OnInit,
+  afterNextRender,
   computed,
   inject,
   signal,
@@ -17,8 +18,10 @@ import { RouterModule } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 
 import { Textarea } from "primeng/textarea";
@@ -149,8 +152,7 @@ type PostMedia = Post["media"];
     CommonModule,
     RouterModule,
     ScrollingModule,
-    Dialog,
-    
+    AppDialogComponent,
     Textarea,
     Avatar,
     InputText,
@@ -160,6 +162,8 @@ type PostMedia = Post["media"];
     AnnouncementsBannerComponent,
     ButtonComponent,
     CardShellComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     EmptyStateComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
@@ -168,9 +172,6 @@ type PostMedia = Post["media"];
   templateUrl: "./community.component.html",
 
   styleUrl: "./community.component.scss",
-  host: {
-    "(window:scroll)": "onScroll()",
-  },
 })
 export class CommunityComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -180,6 +181,8 @@ export class CommunityComponent implements OnInit {
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
+  private scrollContainer: HTMLElement | Window | null = null;
+  private readonly scrollHandler = () => this.onScroll();
 
   // Template references using Angular viewChild signals
   readonly createPostCard =
@@ -274,6 +277,28 @@ export class CommunityComponent implements OnInit {
     return metadata?.role === "coach" || metadata?.role === "assistant_coach";
   });
 
+  constructor() {
+    afterNextRender(() => {
+      if (typeof window === "undefined") return;
+
+      this.scrollContainer =
+        document.querySelector<HTMLElement>(".app-main") ?? window;
+      this.scrollContainer.addEventListener("scroll", this.scrollHandler, {
+        passive: true,
+      });
+      this.onScroll();
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (
+        typeof window !== "undefined" &&
+        this.scrollContainer
+      ) {
+        this.scrollContainer.removeEventListener("scroll", this.scrollHandler);
+      }
+    });
+  }
+
   // Avatar color generator based on initials
   getAvatarColorClass(initials: string): string {
     const index = initials.charCodeAt(0) % COLORS.CHART.length;
@@ -292,8 +317,17 @@ export class CommunityComponent implements OnInit {
   onScroll(): void {
     if (this.isLoadingMore() || !this.hasMorePosts()) return;
 
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const documentHeight = document.documentElement.scrollHeight;
+    const container = this.scrollContainer;
+    if (!container) return;
+
+    const scrollPosition =
+      container instanceof Window
+        ? window.innerHeight + window.scrollY
+        : container.clientHeight + container.scrollTop;
+    const documentHeight =
+      container instanceof Window
+        ? document.documentElement.scrollHeight
+        : container.scrollHeight;
     const threshold = 500; // Load more when 500px from bottom
 
     if (scrollPosition >= documentHeight - threshold) {

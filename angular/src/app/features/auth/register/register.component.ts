@@ -19,7 +19,6 @@ import {
 import { HttpBackend, HttpClient, HttpHeaders } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
 
 import { AuthService } from "../../../core/services/auth.service";
@@ -34,6 +33,7 @@ import {
   isFormControlInvalid,
   markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 @Component({
   selector: "app-register",
@@ -41,14 +41,14 @@ import {
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    Card,
     ButtonComponent,
+    CardShellComponent,
     InputText,
   ],
   template: `
 <div class="register-page elite-auth-shell">
-      <p-card class="register-card elite-auth-card elite-auth-card--register">
-        <ng-template #header>
+      <app-card-shell class="register-card elite-auth-card elite-auth-card--register">
+        <div class="elite-auth-intro">
           <div class="register-logo elite-auth-logo">
             <i class="pi pi-activity"></i>
           </div>
@@ -58,7 +58,7 @@ import {
             Set up your athlete profile and unlock training, readiness, and
             daily practice in one account.
           </p>
-        </ng-template>
+        </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
           <div class="form-field elite-auth-field">
@@ -242,7 +242,7 @@ import {
         <a [routerLink]="['/login']" class="register-login-link elite-auth-link elite-auth-link--centered"
           >Already have an account? Sign in</a
         >
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./register.component.scss",

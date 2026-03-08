@@ -1,7 +1,7 @@
 <app-main-layout>
       <p-confirmDialog></p-confirmDialog>
 
-      <div class="tournaments-page">
+      <div class="tournaments-page elite-phase2-shell ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Tournament Schedule"
           subtitle="View and manage upcoming flag football tournaments"
@@ -50,7 +50,7 @@
             <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
               <div class="tournaments-grid">
                 @for (tournament of tournaments2026(); track tournament.id) {
-                  <p-card
+                  <app-card-shell
                     class="tournament-card"
                     [attr.data-id]="tournament.id"
                     [class.personal-tournament]="
@@ -220,7 +220,7 @@
                         >
                       </div>
                     </div>
-                  </p-card>
+                  </app-card-shell>
                 } @empty {
                   <app-empty-state
                     class="empty-season"
@@ -250,7 +250,7 @@
             <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
               <div class="tournaments-grid">
                 @for (tournament of tournaments2027(); track tournament.id) {
-                  <p-card
+                  <app-card-shell
                     class="tournament-card"
                     [attr.data-id]="tournament.id"
                     [class.personal-tournament]="
@@ -353,7 +353,7 @@
                         >
                       </div>
                     </div>
-                  </p-card>
+                  </app-card-shell>
                 } @empty {
                   <app-empty-state
                     class="empty-season"
@@ -384,14 +384,20 @@
       </div>
 
       <!-- Create/Edit Tournament Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showDialog"
-        [header]="getDialogTitle()"
         [modal]="true"
         [draggable]="false"
         [resizable]="false"
-        class="tournament-dialog"
+        [blockScroll]="true"
+        [styleClass]="'tournament-dialog'"
+        [ariaLabel]="getDialogTitle()"
       >
+        <app-dialog-header
+          icon="trophy"
+          [title]="getDialogTitle()"
+          (close)="closeDialog()"
+        />
         <form [formGroup]="tournamentForm" class="tournament-form form-controls-full">
           <!-- Visibility Info Banner -->
           @if (isPlayer() && !editingTournament) {
@@ -847,31 +853,31 @@
           </div>
         </form>
 
-        <ng-template #footer>
-          <div class="dialog-footer">
-            <app-button
-              variant="outlined"
-              iconLeft="pi-times"
-              (clicked)="closeDialog()"
-              >Cancel</app-button
-            >
-            <app-button
-              [loading]="tournamentService.loading()"
-              (clicked)="saveTournament()"
-              >Save</app-button
-            >
-          </div>
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save"
+          primaryIcon="check"
+          [loading]="tournamentService.loading()"
+          (primary)="saveTournament()"
+          (cancel)="closeDialog()"
+        />
+      </app-dialog>
 
       <!-- Player Availability Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showAvailabilityDialog"
-        header="My Tournament Availability"
         [modal]="true"
         [draggable]="false"
-        class="tournament-availability-dialog"
+        [blockScroll]="true"
+        [styleClass]="'tournament-availability-dialog'"
+        ariaLabel="My Tournament Availability"
       >
+        <app-dialog-header
+          icon="calendar"
+          title="My Tournament Availability"
+          (close)="showAvailabilityDialog = false"
+        />
         @if (selectedTournament) {
           <div class="availability-dialog">
             <div class="tournament-summary">
@@ -1033,29 +1039,31 @@
           </div>
         }
 
-        <ng-template #footer>
-          <app-button
-            variant="outlined"
-            (clicked)="showAvailabilityDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [loading]="savingAvailability()"
-            (clicked)="saveAvailability()"
-            >Save</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save"
+          primaryIcon="check"
+          [loading]="savingAvailability()"
+          (primary)="saveAvailability()"
+          (cancel)="showAvailabilityDialog = false"
+        />
+      </app-dialog>
 
       <!-- Team Availability Overview Dialog (for coaches) -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showTeamAvailabilityDialog"
-        header="Team Availability"
         [modal]="true"
         [draggable]="false"
-        class="tournament-team-availability-dialog"
+        [blockScroll]="true"
+        [styleClass]="'tournament-team-availability-dialog'"
+        ariaLabel="Team Availability"
       >
+        <app-dialog-header
+          icon="users"
+          title="Team Availability"
+          (close)="showTeamAvailabilityDialog = false"
+        />
         @if (selectedTournament) {
           <div class="team-availability-dialog">
             <div class="tournament-summary">
@@ -1221,21 +1229,27 @@
           </div>
         }
 
-        <ng-template #footer>
+        <div dialogFooter class="dialog-actions">
           <app-button (clicked)="showTeamAvailabilityDialog = false"
             >Close</app-button
           >
-        </ng-template>
-      </p-dialog>
+        </div>
+      </app-dialog>
 
       <!-- Budget Management Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showBudgetDialog"
-        header="Tournament Budget"
         [modal]="true"
         [draggable]="false"
-        class="tournament-budget-dialog"
+        [blockScroll]="true"
+        [styleClass]="'tournament-budget-dialog'"
+        ariaLabel="Tournament Budget"
       >
+        <app-dialog-header
+          icon="wallet"
+          title="Tournament Budget"
+          (close)="showBudgetDialog = false"
+        />
         @if (selectedTournament) {
           <form [formGroup]="budgetFormGroup" class="budget-dialog">
             <div class="form-grid">
@@ -1378,17 +1392,15 @@
           </form>
         }
 
-        <ng-template #footer>
-          <app-button variant="outlined" (clicked)="showBudgetDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-check"
-            [loading]="savingBudget()"
-            (clicked)="saveBudget()"
-            >Save Budget</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Budget"
+          primaryIcon="check"
+          [loading]="savingBudget()"
+          (primary)="saveBudget()"
+          (cancel)="showBudgetDialog = false"
+        />
+      </app-dialog>
     </app-main-layout>
   

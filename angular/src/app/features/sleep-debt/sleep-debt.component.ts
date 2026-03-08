@@ -16,7 +16,6 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { Card } from "primeng/card";
 
 import { ProgressBar } from "primeng/progressbar";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -25,6 +24,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ApiResponse } from "../../core/models/common.models";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -77,10 +77,9 @@ const DEBT_THRESHOLDS = {
   imports: [
     CommonModule,
     DecimalPipe,
-    Card,
     LazyChartComponent,
     ProgressBar,
-
+    CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     StatusTagComponent,
@@ -88,7 +87,7 @@ const DEBT_THRESHOLDS = {
   ],
   template: `
     <app-main-layout>
-<div class="sleep-debt-page ui-page-stack">
+<div class="sleep-debt-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Sleep Debt Tracker"
           subtitle="Understanding your sleep deficit and its impact on performance"
@@ -97,7 +96,7 @@ const DEBT_THRESHOLDS = {
 
         <!-- Current Sleep Debt Status -->
         @if (sleepDebtAnalysis(); as analysis) {
-          <p-card class="debt-status-card">
+          <app-card-shell class="debt-status-card">
             <div class="debt-display">
               <div class="debt-circle" [class]="'debt-' + analysis.debtLevel">
                 <span class="debt-value">{{
@@ -110,9 +109,9 @@ const DEBT_THRESHOLDS = {
               </div>
               <p class="debt-description">Accumulated over the past 7 days</p>
             </div>
-          </p-card>
+          </app-card-shell>
         } @else {
-          <p-card class="debt-status-card">
+          <app-card-shell class="debt-status-card">
             <app-empty-state
               context="wellness"
               [inline]="true"
@@ -124,13 +123,13 @@ const DEBT_THRESHOLDS = {
               [customRoute]="'/wellness'"
               [customActionLabel]="'Log Wellness'"
             />
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- Stats Cards -->
         @if (sleepDebtAnalysis(); as analysis) {
           <div class="stats-grid">
-            <p-card class="stat-card">
+            <app-card-shell class="stat-card" density="compact">
               <div class="stat-content">
                 <i class="pi pi-moon stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -153,9 +152,9 @@ const DEBT_THRESHOLDS = {
                   />
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
 
-            <p-card class="stat-card">
+            <app-card-shell class="stat-card" density="compact">
               <div class="stat-content">
                 <i class="pi pi-chart-bar stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -178,9 +177,9 @@ const DEBT_THRESHOLDS = {
                   />
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
 
-            <p-card class="stat-card">
+            <app-card-shell class="stat-card" density="compact">
               <div class="stat-content">
                 <i class="pi pi-bullseye stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -191,9 +190,9 @@ const DEBT_THRESHOLDS = {
                   <span class="stat-hint">(for age {{ userAge() }})</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
 
-            <p-card class="stat-card">
+            <app-card-shell class="stat-card" density="compact">
               <div class="stat-content">
                 <i class="pi pi-clock stat-icon"></i>
                 <div class="stat-details stat-block__content">
@@ -204,13 +203,17 @@ const DEBT_THRESHOLDS = {
                   <span class="stat-hint">to clear debt</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
           </div>
         }
 
         <!-- Impact on Performance -->
         @if (impactMultipliers(); as multipliers) {
-          <p-card header="Impact on Performance" class="impact-card">
+          <app-card-shell
+            class="impact-card"
+            title="Impact on Performance"
+            headerIcon="pi-chart-line"
+          >
             <div class="impact-section">
               <div class="impact-item">
                 <div class="impact-header">
@@ -309,7 +312,7 @@ const DEBT_THRESHOLDS = {
                 </p>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- AI Recommendation -->
@@ -319,14 +322,11 @@ const DEBT_THRESHOLDS = {
             impactMultipliers();
           as multipliers
         ) {
-          <p-card class="recommendation-card">
-            <ng-template #header>
-              <div class="rec-header">
-                <i class="pi pi-lightbulb rec-header__icon"></i>
-                <span>AI Recommendation</span>
-              </div>
-            </ng-template>
-
+          <app-card-shell
+            class="recommendation-card"
+            title="AI Recommendation"
+            headerIcon="pi-lightbulb"
+          >
             <div class="recommendation-content">
               <p class="rec-intro">
                 Your sleep debt is affecting your performance. To recover
@@ -358,11 +358,15 @@ const DEBT_THRESHOLDS = {
                 </li>
               </ul>
             </div>
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- 7-Day Sleep History Chart -->
-        <p-card header="7-Day Sleep History" class="chart-card">
+        <app-card-shell
+          class="chart-card"
+          title="7-Day Sleep History"
+          headerIcon="pi-chart-bar"
+        >
           @if (sleepHistoryChartData()) {
             <app-lazy-chart
               type="bar"
@@ -376,10 +380,14 @@ const DEBT_THRESHOLDS = {
               description="Log your sleep in wellness check-ins to see your history."
             />
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Cumulative Debt Trend Chart -->
-        <p-card header="Cumulative Debt Trend" class="chart-card">
+        <app-card-shell
+          class="chart-card"
+          title="Cumulative Debt Trend"
+          headerIcon="pi-chart-line"
+        >
           @if (debtTrendChartData()) {
             <app-lazy-chart
               type="line"
@@ -393,17 +401,14 @@ const DEBT_THRESHOLDS = {
               description="Log more sleep to show your debt trend."
             />
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Research Basis -->
-        <p-card class="research-card">
-          <ng-template #header>
-            <div class="research-header">
-              <i class="pi pi-book"></i>
-              <span>Research Basis</span>
-            </div>
-          </ng-template>
-
+        <app-card-shell
+          class="research-card"
+          title="Research Basis"
+          headerIcon="pi-book"
+        >
           <div class="research-content">
             <div class="research-item">
               <strong>Reaction Time:</strong> Decreases ~30% with sleep
@@ -421,7 +426,7 @@ const DEBT_THRESHOLDS = {
               <span class="citation">(Mah et al., 2011)</span>
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,

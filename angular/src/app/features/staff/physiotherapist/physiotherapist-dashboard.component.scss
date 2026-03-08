@@ -2,7 +2,7 @@
 @include stat-block;
 
 .physio-dashboard {
-  @include page-container(var(--content-max-width-2xl));
+  width: 100%;
 }
 
 // Stats Grid
@@ -278,18 +278,6 @@
     gap: var(--ds-spacing-lg);
   }
 
-  .risk-card {
-    &.high-risk {
-      border-color: var(--red-300);
-      background: var(--red-50);
-    }
-
-    &.moderate-risk {
-      border-color: var(--orange-300);
-    }
-
-  }
-
   .risk-header {
     display: flex;
     justify-content: space-between;
@@ -479,12 +467,6 @@
       }
     }
   }
-
-  .recurrent-card {
-    background: var(--orange-50);
-    border-color: var(--orange-200);
-  }
-
   .recurrent-list {
     margin: 0;
     padding-left: var(--ds-spacing-lg);

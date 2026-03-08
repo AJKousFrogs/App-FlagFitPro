@@ -37,10 +37,7 @@
 }
 
 .playlist-card {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--component-card-radius);
-  padding: var(--component-card-padding-compact);
+  height: 100%;
 }
 
 .playlist-header {
@@ -98,7 +95,20 @@
   }
 
   .playlist-card {
-    padding: var(--component-card-padding-compact);
+    height: 100%;
+  }
+
+  .playlist-stats {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .playlist-actions {
+    justify-content: stretch;
+
+    > * {
+      flex: 1 1 auto;
+    }
   }
 }
 

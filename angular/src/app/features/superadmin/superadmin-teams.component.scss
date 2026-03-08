@@ -1,0 +1,49 @@
+@use "styles/mixins" as *;
+
+.teams-content {
+  width: 100%;
+  gap: var(--layout-page-section-gap);
+  min-width: 0;
+}
+
+.teams-table-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-subtle);
+}
+
+.filters-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.teams-search {
+  flex: 1 1 var(--input-min-width-lg);
+  min-width: 0;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+@include respond-to(md) {
+  .teams-content {
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  .filters-row,
+  .teams-search,
+  .filter-buttons {
+    width: 100%;
+  }
+}

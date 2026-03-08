@@ -6,7 +6,7 @@
 @use "styles/mixins" as *;
 
 .game-day-readiness {
-  @include page-container(var(--content-max-width-md));
+  width: 100%;
 }
 
 .readiness-header {

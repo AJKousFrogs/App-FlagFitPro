@@ -18,11 +18,8 @@ import {
 } from "@angular/core";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -42,6 +39,10 @@ import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 // ===== Interfaces =====
 interface Player {
@@ -115,11 +116,12 @@ const COMPARE_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     LazyChartComponent,
     DatePicker,
-    Dialog,
-    
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
+    CardShellComponent,
     InputText,
     ProgressBar,
     Select,
@@ -130,12 +132,11 @@ const COMPARE_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardHeaderComponent,
     EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
-<div class="player-development-page">
+<div class="player-development-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Player Development"
           subtitle="Track progress and set goals"
@@ -236,10 +237,10 @@ const COMPARE_OPTIONS = [
           </div>
 
           <!-- Spider Chart Section -->
-          <p-card class="chart-card">
-            <ng-template #header>
-              <app-card-header title="Position Benchmark Spider Chart" />
-            </ng-template>
+          <app-card-shell
+            class="chart-card"
+            title="Position Benchmark Spider Chart"
+          >
             <div class="spider-chart-container">
               <app-lazy-chart
                 type="radar"
@@ -262,21 +263,17 @@ const COMPARE_OPTIONS = [
                 ><span class="legend-color avg"></span> Position Average</span
               >
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Development Goals -->
-          <p-card class="goals-card">
-            <ng-template #header>
-              <app-card-header title="Development Goals">
-                <app-button
-                  header-actions
-                  size="sm"
-                  iconLeft="pi-plus"
-                  (clicked)="openGoalDialog()"
-                  >Add Goal</app-button
-                >
-              </app-card-header>
-            </ng-template>
+          <app-card-shell class="goals-card" title="Development Goals">
+            <app-button
+              header-actions
+              size="sm"
+              iconLeft="pi-plus"
+              (clicked)="openGoalDialog()"
+              >Add Goal</app-button
+            >
 
             @if (playerGoals().length > 0) {
               <div class="goals-list">
@@ -338,13 +335,10 @@ const COMPARE_OPTIONS = [
                 >
               </div>
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Performance History -->
-          <p-card class="history-card">
-            <ng-template #header>
-              <app-card-header title="Performance History" />
-            </ng-template>
+          <app-card-shell class="history-card" title="Performance History">
             <div class="history-filters">
               <p-select
                 inputId="metric-filter"
@@ -377,27 +371,22 @@ const COMPARE_OPTIONS = [
               <span><strong>Avg:</strong> {{ historyStats().avg }}</span>
               <span><strong>Trend:</strong> {{ historyStats().trend }}</span>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Skill Assessments -->
-          <p-card class="assessments-card">
-            <ng-template #header>
-              <app-card-header
-                [title]="selectedPlayer()?.position + '-Specific Skills'"
+          <app-card-shell
+            class="assessments-card"
+            [title]="selectedPlayer()?.position + '-Specific Skills'"
+          >
+            <div header-actions class="assessment-actions">
+              <span class="last-assessment">Last Assessment: Dec 28, 2025</span>
+              <app-button
+                variant="secondary"
+                size="sm"
+                (clicked)="newAssessment()"
+                >New Assessment</app-button
               >
-                <div header-actions class="assessment-actions">
-                  <span class="last-assessment"
-                    >Last Assessment: Dec 28, 2025</span
-                  >
-                  <app-button
-                    variant="secondary"
-                    size="sm"
-                    (clicked)="newAssessment()"
-                    >New Assessment</app-button
-                  >
-                </div>
-              </app-card-header>
-            </ng-template>
+            </div>
             <div class="skills-list">
               @for (skill of skillAssessments(); track skill.skill) {
                 <div class="skill-row">
@@ -421,21 +410,17 @@ const COMPARE_OPTIONS = [
             <div class="overall-grade">
               <strong>Overall Position Grade:</strong> B+ (78/100)
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Coach Notes -->
-          <p-card class="notes-card">
-            <ng-template #header>
-              <app-card-header title="Coach Development Notes">
-                <app-button
-                  header-actions
-                  size="sm"
-                  iconLeft="pi-plus"
-                  (clicked)="openNoteDialog()"
-                  >Add Note</app-button
-                >
-              </app-card-header>
-            </ng-template>
+          <app-card-shell class="notes-card" title="Coach Development Notes">
+            <app-button
+              header-actions
+              size="sm"
+              iconLeft="pi-plus"
+              (clicked)="openNoteDialog()"
+              >Add Note</app-button
+            >
             <div class="notes-list">
               @for (note of coachNotes(); track note.id) {
                 <div class="note-item">
@@ -447,7 +432,7 @@ const COMPARE_OPTIONS = [
                 </div>
               }
             </div>
-          </p-card>
+          </app-card-shell>
         } @else {
           <app-empty-state
             [useCard]="true"
@@ -459,12 +444,21 @@ const COMPARE_OPTIONS = [
       </div>
 
       <!-- Add Goal Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showGoalDialog"
-        header="Add Development Goal"
         [modal]="true"
-        class="development-goal-dialog"
+        styleClass="development-goal-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Add development goal"
       >
+        <app-dialog-header
+          icon="bullseye"
+          title="Add Development Goal"
+          subtitle="Set a measurable development target for the selected athlete."
+          (close)="showGoalDialog = false"
+        />
         <div class="goal-form">
           <div class="form-field">
             <label for="goal-player-select">Player</label>
@@ -560,23 +554,32 @@ const COMPARE_OPTIONS = [
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showGoalDialog = false"
-            >Cancel</app-button
-          >
-          <app-button iconLeft="pi-check" (clicked)="createGoal()"
-            >Create Goal</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Create Goal"
+          primaryIcon="check"
+          (cancel)="showGoalDialog = false"
+          (primary)="createGoal()"
+        />
+      </app-dialog>
 
       <!-- Add Note Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showNoteDialog"
-        header="Add Development Note"
         [modal]="true"
-        class="development-note-dialog"
+        styleClass="development-note-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Add development note"
       >
+        <app-dialog-header
+          icon="file-edit"
+          title="Add Development Note"
+          subtitle="Capture progress context, coaching observations, or follow-up actions."
+          (close)="showNoteDialog = false"
+        />
         <div class="note-form">
           <div class="form-field">
             <label>Note</label>
@@ -590,15 +593,15 @@ const COMPARE_OPTIONS = [
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showNoteDialog = false"
-            >Cancel</app-button
-          >
-          <app-button iconLeft="pi-check" (clicked)="saveNote()"
-            >Save Note</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Note"
+          primaryIcon="check"
+          (cancel)="showNoteDialog = false"
+          (primary)="saveNote()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./player-development.component.scss",

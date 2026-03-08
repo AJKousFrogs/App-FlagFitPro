@@ -618,15 +618,34 @@
 
         <!-- Micro-Session Modal -->
         @if (activeMicroSession()) {
-          <p-dialog
-            [header]="activeMicroSession()?.title || 'Session'"
+          <app-dialog
             [(visible)]="microSessionDialogVisible"
             [modal]="true"
-            [closable]="!microSessionInProgress()"
+            [closable]="false"
+            [draggable]="false"
+            [resizable]="false"
             [dismissableMask]="!microSessionInProgress()"
-            class="micro-session-dialog"
+            [styleClass]="'micro-session-dialog'"
             (onHide)="onMicroSessionDialogHide()"
           >
+            @if (activeMicroSession(); as session) {
+              <div dialogHeader class="dialog-header">
+                <div class="dialog-icon">
+                  <i class="pi pi-bolt"></i>
+                </div>
+                <div class="dialog-title-section">
+                  <h2>{{ session.title }}</h2>
+                  <p>Focused coaching guidance for your current training need.</p>
+                </div>
+                @if (!microSessionInProgress()) {
+                  <app-close-button
+                    ariaLabel="Close micro-session dialog"
+                    [styleClass]="'dialog-close-btn'"
+                    (clicked)="microSessionDialogVisible = false"
+                  />
+                }
+              </div>
+            }
             <app-micro-session
               [session]="activeMicroSessionSignal()"
               [mode]="microSessionDisplayMode()"
@@ -634,7 +653,7 @@
               (sessionSkipped)="onMicroSessionSkipped()"
               (closed)="onMicroSessionClosed()"
             ></app-micro-session>
-          </p-dialog>
+          </app-dialog>
         }
       </div>
     </app-main-layout>

@@ -14,14 +14,13 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
-
 import { Password } from "primeng/password";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -38,22 +37,21 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    Card,
     AlertComponent,
     ButtonComponent,
+    CardShellComponent,
     Password,
-
   ],
   template: `
 <div class="update-password-page">
-      <p-card class="update-password-card">
-        <ng-template #header>
+      <app-card-shell class="update-password-card">
+        <div class="update-password-intro">
           <div class="update-password-logo">
             <i class="pi pi-lock"></i>
           </div>
           <h1 class="update-password-title">Set New Password</h1>
           <p class="update-password-subtitle">Enter your new password below</p>
-        </ng-template>
+        </div>
 
         @if (isValidRecoverySession()) {
           <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
@@ -144,7 +142,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
         <a [routerLink]="['/login']" class="update-password-login-link">
           Back to Sign In
         </a>
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./update-password.component.scss",

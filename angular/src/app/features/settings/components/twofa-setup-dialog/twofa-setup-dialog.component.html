@@ -1,197 +1,196 @@
-<p-dialog
+<app-dialog
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
-  [modal]="true"
-  [closable]="true"
-  [showHeader]="false"
-  class="twofa-dialog"
+  [blockScroll]="true"
+  [draggable]="false"
+  [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+  styleClass="twofa-dialog"
+  ariaLabel="Two-factor authentication setup"
 >
-  <div class="dialog-container">
-    <app-dialog-header
-      icon="shield"
-      title="Two-Factor Authentication"
-      [subtitle]="'Step ' + step() + ' of 4 — Add extra security'"
-      (close)="closeDialog()"
-    />
+  <app-dialog-header
+    icon="shield"
+    title="Two-Factor Authentication"
+    [subtitle]="'Step ' + step() + ' of 4 — Add extra security'"
+    (close)="closeDialog()"
+  />
 
-    <div class="step-progress">
-      @for (stepIndex of [1, 2, 3, 4]; track stepIndex) {
-        <div
-          class="step-dot"
-          [class.active]="step() >= stepIndex"
-          [class.current]="step() === stepIndex"
-        ></div>
+  <div class="step-progress">
+    @for (stepIndex of [1, 2, 3, 4]; track stepIndex) {
+      <div
+        class="step-dot"
+        [class.active]="step() >= stepIndex"
+        [class.current]="step() === stepIndex"
+      ></div>
+    }
+  </div>
+
+  <div class="twofa-content">
+    @switch (step()) {
+      @case (1) {
+        <div class="step-section">
+          <h3>Install an Authenticator App</h3>
+          <p class="step-desc">
+            Download one of these apps on your mobile device:
+          </p>
+          <div class="app-list">
+            <div class="app-card">
+              <div class="app-icon google">
+                <i class="pi pi-google"></i>
+              </div>
+              <span>Google Authenticator</span>
+            </div>
+            <div class="app-card">
+              <div class="app-icon microsoft">
+                <i class="pi pi-microsoft"></i>
+              </div>
+              <span>Microsoft Authenticator</span>
+            </div>
+            <div class="app-card">
+              <div class="app-icon authy">
+                <i class="pi pi-lock"></i>
+              </div>
+              <span>Authy</span>
+            </div>
+          </div>
+        </div>
       }
-    </div>
-
-    <div class="twofa-content">
-      @switch (step()) {
-        @case (1) {
-          <div class="step-section">
-            <h3>Install an Authenticator App</h3>
-            <p class="step-desc">
-              Download one of these apps on your mobile device:
-            </p>
-            <div class="app-list">
-              <div class="app-card">
-                <div class="app-icon google">
-                  <i class="pi pi-google"></i>
-                </div>
-                <span>Google Authenticator</span>
-              </div>
-              <div class="app-card">
-                <div class="app-icon microsoft">
-                  <i class="pi pi-microsoft"></i>
-                </div>
-                <span>Microsoft Authenticator</span>
-              </div>
-              <div class="app-card">
-                <div class="app-icon authy">
-                  <i class="pi pi-lock"></i>
-                </div>
-                <span>Authy</span>
-              </div>
-            </div>
-          </div>
-        }
-        @case (2) {
-          <div class="step-section">
-            <h3>Scan QR Code</h3>
-            <p class="step-desc">
-              Open your authenticator app and scan this code:
-            </p>
-            <div class="qr-wrapper">
-              @if (qrCodeUrl()) {
-                <img
-                  appMobileOptimized
-                  [width]="256"
-                  [height]="256"
-                  [lazy]="false"
-                  [src]="qrCodeUrl()"
-                  alt="2FA QR Code"
-                  class="qr-image"
-                />
-              } @else {
-                <div class="qr-loading">
-                  <i class="pi pi-spin pi-spinner"></i>
-                  <span>Generating...</span>
-                </div>
-              }
-            </div>
-            <div class="manual-code">
-              <span class="manual-label">Can't scan? Enter manually:</span>
-              <div class="code-box">
-                <code>{{ twoFASecret() }}</code>
-                <app-icon-button
-                  icon="pi-copy"
-                  ariaLabel="Copy secret to clipboard"
-                  variant="primary"
-                  size="sm"
-                  (clicked)="copySecret.emit()"
-                ></app-icon-button>
-              </div>
-            </div>
-          </div>
-        }
-        @case (3) {
-          <div class="step-section">
-            <h3>Verify Setup</h3>
-            <p class="step-desc">Enter the 6-digit code from your app:</p>
-            <div class="code-input-wrapper">
-              <input
-                id="settings-2fa-code"
-                name="twoFACode"
-                type="text"
-                [value]="verificationCode()"
-                (input)="onVerificationCodeInput($event)"
-                placeholder="000000"
-                maxlength="6"
-                class="verification-code-input"
-                autocomplete="one-time-code"
-                inputmode="numeric"
-                (keyup.enter)="verify.emit()"
+      @case (2) {
+        <div class="step-section">
+          <h3>Scan QR Code</h3>
+          <p class="step-desc">
+            Open your authenticator app and scan this code:
+          </p>
+          <div class="qr-wrapper">
+            @if (qrCodeUrl()) {
+              <img
+                appMobileOptimized
+                [width]="256"
+                [height]="256"
+                [lazy]="false"
+                [src]="qrCodeUrl()"
+                alt="2FA QR Code"
+                class="qr-image"
               />
-            </div>
-            @if (twoFAError()) {
-              <app-alert
-                variant="error"
-                density="compact"
-                [message]="twoFAError()"
-              />
+            } @else {
+              <div class="qr-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+                <span>Generating...</span>
+              </div>
             }
           </div>
-        }
-        @case (4) {
-          <div class="step-section success-section">
-            <div class="success-icon-wrapper">
-              <i class="pi pi-check"></i>
-            </div>
-            <h3>2FA Enabled!</h3>
-            <p class="step-desc">
-              Your account is now protected with two-factor authentication.
-            </p>
-            <div class="backup-section">
-              <div class="backup-header">
-                <i class="pi pi-key"></i>
-                <span>Backup Codes</span>
-              </div>
-              <p class="backup-desc">
-                Save these codes securely. Use them if you lose access to your
-                authenticator.
-              </p>
-              <div class="codes-grid">
-                @for (code of backupCodes(); track code) {
-                  <code class="backup-code-item">{{ code }}</code>
-                }
-              </div>
-              <app-button
-                variant="outlined"
-                icon="download"
-                [fullWidth]="true"
-                (clicked)="downloadBackupCodes.emit()"
-                >Download Codes</app-button
-              >
+          <div class="manual-code">
+            <span class="manual-label">Can't scan? Enter manually:</span>
+            <div class="code-box">
+              <code>{{ twoFASecret() }}</code>
+              <app-icon-button
+                icon="pi-copy"
+                ariaLabel="Copy secret to clipboard"
+                variant="primary"
+                size="sm"
+                (clicked)="copySecret.emit()"
+              ></app-icon-button>
             </div>
           </div>
-        }
+        </div>
       }
-    </div>
+      @case (3) {
+        <div class="step-section">
+          <h3>Verify Setup</h3>
+          <p class="step-desc">Enter the 6-digit code from your app:</p>
+          <div class="code-input-wrapper">
+            <input
+              id="settings-2fa-code"
+              name="twoFACode"
+              type="text"
+              [value]="verificationCode()"
+              (input)="onVerificationCodeInput($event)"
+              placeholder="000000"
+              maxlength="6"
+              class="verification-code-input"
+              autocomplete="one-time-code"
+              inputmode="numeric"
+              (keyup.enter)="verify.emit()"
+            />
+          </div>
+          @if (twoFAError()) {
+            <app-alert
+              variant="error"
+              density="compact"
+              [message]="twoFAError()"
+            />
+          }
+        </div>
+      }
+      @case (4) {
+        <div class="step-section success-section">
+          <div class="success-icon-wrapper">
+            <i class="pi pi-check"></i>
+          </div>
+          <h3>2FA Enabled!</h3>
+          <p class="step-desc">
+            Your account is now protected with two-factor authentication.
+          </p>
+          <div class="backup-section">
+            <div class="backup-header">
+              <i class="pi pi-key"></i>
+              <span>Backup Codes</span>
+            </div>
+            <p class="backup-desc">
+              Save these codes securely. Use them if you lose access to your
+              authenticator.
+            </p>
+            <div class="codes-grid">
+              @for (code of backupCodes(); track code) {
+                <code class="backup-code-item">{{ code }}</code>
+              }
+            </div>
+            <app-button
+              variant="outlined"
+              icon="download"
+              [fullWidth]="true"
+              (clicked)="downloadBackupCodes.emit()"
+              >Download Codes</app-button
+            >
+          </div>
+        </div>
+      }
+    }
+  </div>
 
-    <div class="dialog-actions">
-      @if (step() < 4) {
-        <app-button variant="text" (clicked)="closeDialog()">Cancel</app-button>
+  <div class="dialog-actions" dialogFooter>
+    @if (step() < 4) {
+      <app-button variant="text" (clicked)="closeDialog()">Cancel</app-button>
 
-        @if (step() === 1) {
-          <app-button
-            icon="arrow-right"
-            iconPosition="right"
-            (clicked)="stepChange.emit(2)"
-            >I have an app</app-button
-          >
-        } @else if (step() === 2) {
-          <app-button
-            icon="arrow-right"
-            iconPosition="right"
-            (clicked)="stepChange.emit(3)"
-            >Next</app-button
-          >
-        } @else if (step() === 3) {
-          <app-button
-            icon="shield"
-            [loading]="isEnabling()"
-            [disabled]="verificationCode().length !== 6"
-            (clicked)="verify.emit()"
-            >Verify & Enable</app-button
-          >
-        }
-      } @else {
+      @if (step() === 1) {
         <app-button
-          iconLeft="check"
-          [fullWidth]="true"
-          (clicked)="closeDialog()"
-          >Done</app-button
+          icon="arrow-right"
+          iconPosition="right"
+          (clicked)="stepChange.emit(2)"
+          >I have an app</app-button
+        >
+      } @else if (step() === 2) {
+        <app-button
+          icon="arrow-right"
+          iconPosition="right"
+          (clicked)="stepChange.emit(3)"
+          >Next</app-button
+        >
+      } @else if (step() === 3) {
+        <app-button
+          icon="shield"
+          [loading]="isEnabling()"
+          [disabled]="verificationCode().length !== 6"
+          (clicked)="verify.emit()"
+          >Verify & Enable</app-button
         >
       }
-    </div>
+    } @else {
+      <app-button
+        iconLeft="check"
+        [fullWidth]="true"
+        (clicked)="closeDialog()"
+        >Done</app-button
+      >
+    }
   </div>
-</p-dialog>
+</app-dialog>

@@ -25,11 +25,9 @@ import {
 import { toSignal } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
-import { Card } from "primeng/card";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -52,6 +50,11 @@ import { ApiResponse } from "../../../core/models/common.models";
 import { RosterService } from "../../roster/roster.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../shared/components/ui-components";
 
 // ===== Interfaces =====
 interface TeamFee {
@@ -176,11 +179,9 @@ const BALANCE_FILTERS = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Card,
+    CardShellComponent,
     Checkbox,
     DatePicker,
-    Dialog,
-    
     InputNumber,
     InputText,
     ProgressBar,
@@ -193,11 +194,13 @@ const BALANCE_FILTERS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardHeaderComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
-<div class="payment-management-page ui-page-stack">
+      <div class="payment-management-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="Payment Management"
           subtitle="Track team dues and payments"
@@ -283,17 +286,13 @@ const BALANCE_FILTERS = [
             </div>
 
             <!-- Active Fees Preview -->
-            <p-card>
-              <ng-template #header>
-                <app-card-header title="Active Fees">
-                  <app-button
-                    header-actions
-                    variant="text"
-                    (clicked)="activeTab.set('fees')"
-                    >View All</app-button
-                  >
-                </app-card-header>
-              </ng-template>
+            <app-card-shell class="payment-shell-card" title="Active Fees">
+              <app-button
+                header-actions
+                variant="text"
+                (clicked)="activeTab.set('fees')"
+                >View All</app-button
+              >
               <div class="fees-preview">
                 @for (fee of fees().slice(0, 2); track fee.id) {
                   <div class="fee-preview-card" [class.overdue]="fee.isOverdue">
@@ -323,7 +322,7 @@ const BALANCE_FILTERS = [
                   </div>
                 }
               </div>
-            </p-card>
+            </app-card-shell>
           }
 
           @case ("fees") {
@@ -425,30 +424,30 @@ const BALANCE_FILTERS = [
 
           @case ("balances") {
             <!-- Player Balances -->
-            <p-card>
-              <ng-template #header>
-                <app-card-header title="Player Balances">
-                  <div header-actions class="balance-filters">
-                    <span class="p-input-icon-left">
-                      <i class="pi pi-search"></i>
-                      <input
-                        type="text"
-                        pInputText
-                        [formControl]="balanceSearchControl"
-                        placeholder="Search players..."
-                      />
-                    </span>
-                    <p-select
-                      [options]="balanceFilters"
-                      [formControl]="balanceFilterControl"
-                      optionLabel="label"
-                        optionValue="value"
-                      ></p-select>
-                    </div>
-                </app-card-header>
-              </ng-template>
+            <app-card-shell class="payment-shell-card" title="Player Balances">
+              <div header-actions class="balance-filters">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input
+                    type="text"
+                    pInputText
+                    [formControl]="balanceSearchControl"
+                    placeholder="Search players..."
+                  />
+                </span>
+                <p-select
+                  [options]="balanceFilters"
+                  [formControl]="balanceFilterControl"
+                  optionLabel="label"
+                  optionValue="value"
+                ></p-select>
+              </div>
 
-              <p-table [value]="filteredBalances()" class="p-datatable-sm">
+              <p-table
+                [value]="filteredBalances()"
+                class="p-datatable-sm"
+                [scrollable]="true"
+              >
                 <ng-template #header>
                   <tr>
                     <th>Player</th>
@@ -519,17 +518,17 @@ const BALANCE_FILTERS = [
                   >Send All Reminders</app-button
                 >
               </div>
-            </p-card>
+            </app-card-shell>
           }
 
           @case ("history") {
             <!-- Payment History -->
-            <p-card>
-              <ng-template #header>
-                <app-card-header title="Payment History" />
-              </ng-template>
-
-              <p-table [value]="payments()" class="p-datatable-sm">
+            <app-card-shell class="payment-shell-card" title="Payment History">
+              <p-table
+                [value]="payments()"
+                class="p-datatable-sm"
+                [scrollable]="true"
+              >
                 <ng-template #header>
                   <tr>
                     <th>Date</th>
@@ -551,18 +550,27 @@ const BALANCE_FILTERS = [
                   </tr>
                 </ng-template>
               </p-table>
-            </p-card>
+            </app-card-shell>
           }
         }
       </div>
 
       <!-- Create Fee Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showFeeDialog"
-        header="Create Fee"
         [modal]="true"
-        class="payment-fee-dialog"
+        styleClass="payment-fee-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Create fee"
       >
+        <app-dialog-header
+          icon="wallet"
+          title="Create Fee"
+          subtitle="Create dues, tournament fees, or equipment charges for your roster."
+          (close)="showFeeDialog = false"
+        />
         <form class="fee-form" [formGroup]="feeFormGroup">
           <div class="form-field">
             <label>Fee Name</label>
@@ -693,23 +701,32 @@ const BALANCE_FILTERS = [
           </div>
         </form>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showFeeDialog = false"
-            >Cancel</app-button
-          >
-          <app-button iconLeft="pi-check" (clicked)="createFee()"
-            >Create Fee</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Create Fee"
+          primaryIcon="check"
+          (cancel)="showFeeDialog = false"
+          (primary)="createFee()"
+        />
+      </app-dialog>
 
       <!-- Record Payment Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showPaymentDialog"
-        header="Record Payment"
         [modal]="true"
-        class="payment-record-dialog"
+        styleClass="payment-record-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Record payment"
       >
+        <app-dialog-header
+          icon="credit-card"
+          title="Record Payment"
+          subtitle="Log incoming payments and keep player balances current."
+          (close)="showPaymentDialog = false"
+        />
         <form class="payment-form" [formGroup]="paymentFormGroup">
           <div class="form-field">
             <label>Player</label>
@@ -784,15 +801,15 @@ const BALANCE_FILTERS = [
           </div>
         </form>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showPaymentDialog = false"
-            >Cancel</app-button
-          >
-          <app-button iconLeft="pi-check" (clicked)="recordPayment()"
-            >Record Payment</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Record Payment"
+          primaryIcon="check"
+          (cancel)="showPaymentDialog = false"
+          (primary)="recordPayment()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./payment-management.component.scss",

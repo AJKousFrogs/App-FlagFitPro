@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { Dialog } from "primeng/dialog";
 import { Password } from "primeng/password";
 import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 import {
+  AppDialogComponent,
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
@@ -13,7 +13,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    Dialog,
+    AppDialogComponent,
     Password,
     AlertComponent,
     DialogHeaderComponent,

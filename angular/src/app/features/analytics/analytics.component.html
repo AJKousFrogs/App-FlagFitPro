@@ -17,7 +17,9 @@
 
       <!-- Content -->
       @else {
-        <div class="analytics-page elite-phase2-shell ui-page-stack">
+        <div
+          class="analytics-page elite-phase2-shell ui-page-shell ui-page-shell--wide ui-page-stack"
+        >
           <app-page-header
             title="FlagFit Pro Analytics"
             subtitle="Advanced Performance Analytics & Team Insights"
@@ -66,15 +68,12 @@
             />
           }
 
-          <p-card class="analytics-hub-card">
-            <ng-template #header>
-              <app-card-header
-                class="analytics-hub-card-header"
-                icon="pi-compass"
-                title="Analytics Hub"
-                subtitle="Overview, deep analytics, and player performance trends"
-              />
-            </ng-template>
+          <app-card-shell
+            class="analytics-hub-card"
+            title="Analytics Hub"
+            subtitle="Overview, deep analytics, and player performance trends"
+            headerIcon="pi-compass"
+          >
             <div class="analytics-hub-grid">
               <a routerLink="/analytics" class="analytics-hub-link">
                 <span class="analytics-hub-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
@@ -101,23 +100,18 @@
                 }
               </a>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- My Development Goals (Coach Assigned) -->
-          <p-card class="development-goals-card">
-            <ng-template #header>
-              <app-card-header
-                class="goals-card-header"
-                icon="pi-bullseye"
-                title="My Development Goals"
-                subtitle="Coach assigned milestones and deadlines"
-              >
-                <a routerLink="/goals" class="view-all-link">
-                  View All <i class="pi pi-arrow-right"></i>
-                </a>
-              </app-card-header>
-            </ng-template>
-
+          <app-card-shell
+            class="development-goals-card"
+            title="My Development Goals"
+            subtitle="Coach assigned milestones and deadlines"
+            headerIcon="pi-bullseye"
+          >
+            <a header-actions routerLink="/goals" class="view-all-link">
+              View All <i class="pi pi-arrow-right"></i>
+            </a>
             @if (developmentGoals().length === 0) {
               <app-empty-state
                 [showBenefits]="false"
@@ -187,7 +181,7 @@
                 }
               </div>
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Key Metrics Overview -->
           <div class="metrics-grid">
@@ -195,7 +189,7 @@
               metric of metrics();
               track trackByMetricLabel($index, metric)
             ) {
-              <p-card class="metric-card">
+              <app-card-shell class="metric-card">
                 <div class="metric-card-content">
                   <div class="metric-icon">
                     <i [class]="'pi ' + metric.icon"></i>
@@ -211,28 +205,25 @@
                     </div>
                   </div>
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
 
           <!-- Team Performance Badges -->
           @if (teamPerformanceAchievements().length > 0) {
-            <p-card class="team-badges-card">
-              <ng-template #header>
-                <app-card-header
-                  class="badges-card-header"
-                  icon="pi-trophy"
-                  title="Your Team Performance Badges"
-                  subtitle="How you rank across team performance benchmarks"
-                >
-                  <a
-                    routerLink="/performance-tracking"
-                    class="view-details-link"
-                  >
-                    View Details <i class="pi pi-arrow-right"></i>
-                  </a>
-                </app-card-header>
-              </ng-template>
+            <app-card-shell
+              class="team-badges-card"
+              title="Your Team Performance Badges"
+              subtitle="How you rank across team performance benchmarks"
+              headerIcon="pi-trophy"
+            >
+              <a
+                header-actions
+                routerLink="/performance-tracking"
+                class="view-details-link"
+              >
+                View Details <i class="pi pi-arrow-right"></i>
+              </a>
               <div class="badges-content">
                 <div class="badges-summary">
                   @if (teamRankingBadgeCounts().gold > 0) {
@@ -282,40 +273,37 @@
                   }
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
           }
 
           <!-- Charts Grid -->
           <div class="charts-grid">
             <!-- Performance Trends Chart -->
             @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <app-card-header
-                    title="Load vs Performance"
-                    subtitle="Acute/Chronic Workload vs Subjective Wellness"
-                  >
-                    @if (performanceChartData()) {
-                      <div header-actions class="chart-actions">
-                        <app-button
-                          variant="text"
-                          size="sm"
-                          iconLeft="pi-refresh"
-                          (clicked)="resetChartZoom('performance')"
-                          >Reset zoom</app-button
-                        >
-                        <app-icon-button
-                          icon="pi-download"
-                          variant="outlined"
-                          size="sm"
-                          (clicked)="exportChart('performance')"
-                          ariaLabel="Download performance chart"
-                          tooltip="Download"
-                        />
-                      </div>
-                    }
-                  </app-card-header>
-                </ng-template>
+              <app-card-shell
+                class="chart-card"
+                title="Load vs Performance"
+                subtitle="Acute/Chronic Workload vs Subjective Wellness"
+              >
+                @if (performanceChartData()) {
+                  <div header-actions class="chart-actions">
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-refresh"
+                      (clicked)="resetChartZoom('performance')"
+                      >Reset zoom</app-button
+                    >
+                    <app-icon-button
+                      icon="pi-download"
+                      variant="outlined"
+                      size="sm"
+                      (clicked)="exportChart('performance')"
+                      ariaLabel="Download performance chart"
+                      tooltip="Download"
+                    />
+                  </div>
+                }
                 @if (performanceChartData()) {
                   <div class="chart-container">
                     <app-lazy-chart
@@ -353,26 +341,23 @@
                     actionIcon="pi-bolt"
                   />
                 }
-              </p-card>
+              </app-card-shell>
             } @placeholder {
-              <p-card class="chart-card">
+              <app-card-shell class="chart-card">
                 <app-loading
                   variant="inline"
                   message="Loading performance trends..."
                 />
-              </p-card>
+              </app-card-shell>
             }
 
             <!-- Team Chemistry Chart -->
             @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <app-card-header
-                    title="Skill Proficiency Radar"
-                    subtitle="Comparative assessment across core competencies"
-                  >
-                  </app-card-header>
-                </ng-template>
+              <app-card-shell
+                class="chart-card"
+                title="Skill Proficiency Radar"
+                subtitle="Comparative assessment across core competencies"
+              >
                 @if (chemistryChartData()) {
                   <div class="chart-container radar">
                     <app-lazy-chart
@@ -392,26 +377,23 @@
                     "
                   />
                 }
-              </p-card>
+              </app-card-shell>
             } @placeholder {
-              <p-card class="chart-card">
+              <app-card-shell class="chart-card">
                 <app-loading
                   variant="inline"
                   message="Loading skill proficiency..."
                 />
-              </p-card>
+              </app-card-shell>
             }
 
             <!-- Training Distribution Chart -->
             @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <app-card-header
-                    title="Training Mix"
-                    subtitle="Distribution of focus areas over 30 days"
-                  >
-                  </app-card-header>
-                </ng-template>
+              <app-card-shell
+                class="chart-card"
+                title="Training Mix"
+                subtitle="Distribution of focus areas over 30 days"
+              >
                 @if (distributionChartData()) {
                   <div class="chart-container doughnut">
                     <app-lazy-chart
@@ -431,23 +413,20 @@
                     "
                   />
                 }
-              </p-card>
+              </app-card-shell>
             } @placeholder {
-              <p-card class="chart-card">
+              <app-card-shell class="chart-card">
                 <app-loading variant="inline" message="Loading training mix..." />
-              </p-card>
+              </app-card-shell>
             }
 
             <!-- Position Performance Chart -->
             @defer (on idle) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <app-card-header
-                    title="Benchmark Comparison"
-                    subtitle="Your metrics vs Olympic standard benchmarks"
-                  >
-                  </app-card-header>
-                </ng-template>
+              <app-card-shell
+                class="chart-card"
+                title="Benchmark Comparison"
+                subtitle="Your metrics vs Olympic standard benchmarks"
+              >
                 @if (positionChartData()) {
                   <div class="chart-container">
                     <app-lazy-chart
@@ -467,24 +446,21 @@
                     "
                   />
                 }
-              </p-card>
+              </app-card-shell>
             } @placeholder {
-              <p-card class="chart-card">
+              <app-card-shell class="chart-card">
                 <app-loading variant="inline" message="Loading benchmarks..." />
-              </p-card>
+              </app-card-shell>
             }
           </div>
 
           <!-- Gap Analysis Visualization -->
           @defer (on idle) {
-            <p-card class="chart-card full-width gap-analysis-card">
-              <ng-template #header>
-                <app-card-header
-                  title="Gap Analysis"
-                  subtitle="Your performance vs Olympic benchmarks"
-                >
-                </app-card-header>
-              </ng-template>
+            <app-card-shell
+              class="chart-card full-width gap-analysis-card"
+              title="Gap Analysis"
+              subtitle="Your performance vs Olympic benchmarks"
+            >
               @if (gapAnalysisData().length > 0) {
                 <div class="gap-analysis-content">
                   <div class="gap-legend">
@@ -586,33 +562,29 @@
                   "
                 />
               }
-            </p-card>
+            </app-card-shell>
           } @placeholder {
-            <p-card class="chart-card full-width">
+            <app-card-shell class="chart-card full-width">
               <app-loading variant="inline" message="Loading gap analysis..." />
-            </p-card>
+            </app-card-shell>
           }
 
           <!-- Full Width Charts -->
-          <p-card class="chart-card full-width">
-            <ng-template #header>
-              <app-card-header title="Speed Development Progress">
-                <div header-actions class="chart-controls">
-                  <p-select
-                    [options]="timePeriods"
-                    (onChange)="onSelectedTimePeriodChange($event.value)"
-                    placeholder="Time Period"
-                    class="w-full md:w-14rem"
-                  ></p-select>
-                  <p-select
-                    [options]="metricOptions"
-                    (onChange)="onSelectedMetricChange($event.value)"
-                    placeholder="Metrics"
-                    class="w-full md:w-14rem"
-                  ></p-select>
-                </div>
-              </app-card-header>
-            </ng-template>
+          <app-card-shell class="chart-card full-width" title="Speed Development Progress">
+            <div header-actions class="chart-controls">
+              <p-select
+                [options]="timePeriods"
+                (onChange)="onSelectedTimePeriodChange($event.value)"
+                placeholder="Time Period"
+                class="w-full md:w-14rem"
+              ></p-select>
+              <p-select
+                [options]="metricOptions"
+                (onChange)="onSelectedMetricChange($event.value)"
+                placeholder="Metrics"
+                class="w-full md:w-14rem"
+              ></p-select>
+            </div>
             @if (speedChartData()) {
               <app-lazy-chart
                 type="line"
@@ -664,13 +636,13 @@
                 actionLink="/performance-tracking"
               />
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Player Statistics Section -->
-          <p-card class="player-stats-card full-width">
-            <ng-template #header>
-              <h3 class="chart-title">Player Statistics & Attendance</h3>
-            </ng-template>
+          <app-card-shell
+            class="player-stats-card full-width"
+            title="Player Statistics & Attendance"
+          >
             <p-tabs>
               <p-tabpanel header="Per Game Stats">
                 <div class="stats-summary">
@@ -1019,17 +991,24 @@
                 }
               </p-tabpanel>
             </p-tabs>
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- Share with Coach Dialog -->
-        <p-dialog
+        <app-dialog
           [(visible)]="showShareDialogValue"
-          [modal]="true"
-          [closable]="true"
-          header="Share Analytics with Coach"
-          class="share-dialog"
+          [closable]="false"
+          [draggable]="false"
+          [resizable]="false"
+          [dismissableMask]="true"
+          [styleClass]="'share-dialog'"
         >
+          <app-dialog-header
+            icon="send"
+            title="Share Analytics with Coach"
+            subtitle="Choose what to include in the report you send"
+            (close)="showShareDialog.set(false)"
+          ></app-dialog-header>
           <div class="share-content">
             <p class="share-intro">
               Send your analytics report to your coach for review and feedback.
@@ -1097,18 +1076,15 @@
             }
           </div>
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showShareDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button
-              icon="send"
-              [loading]="isSharing()"
-              (clicked)="shareWithCoach()"
-              >Send to Coach</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            cancelLabel="Cancel"
+            primaryLabel="Send to Coach"
+            primaryIcon="send"
+            [loading]="isSharing()"
+            (cancel)="showShareDialog.set(false)"
+            (primary)="shareWithCoach()"
+          ></app-dialog-footer>
+        </app-dialog>
       }
       <!-- End of @else for content -->
     </app-main-layout>

@@ -16,13 +16,13 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
-import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -48,7 +48,7 @@ interface TeamSettings {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
+    CardShellComponent,
     InputText,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -63,14 +63,14 @@ interface TeamSettings {
         message="Loading team settings..."
       ></app-loading>
 
-      <div class="team-management-page">
+      <div class="team-management-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Team Settings"
           subtitle="Manage team profile and coaching preferences"
           icon="pi-cog"
         ></app-page-header>
 
-        <p-card class="tab-content-card">
+        <app-card-shell class="tab-content-card">
           <div class="settings-form">
             <!-- Team Information -->
             <div class="settings-section">
@@ -199,7 +199,7 @@ interface TeamSettings {
               >
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,

@@ -9,8 +9,6 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -33,6 +31,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../../shared/utils/date.utils";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §32
 interface MentalWellnessReport {
@@ -149,9 +151,11 @@ interface PreCompForm {
     CommonModule,
     FormsModule,
     RouterModule,
-    Card,
     LazyChartComponent,
-    Dialog,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
+    CardShellComponent,
     InputText,
     ProgressBar,
     Select,

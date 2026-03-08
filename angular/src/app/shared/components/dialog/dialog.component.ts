@@ -29,6 +29,10 @@ import { Dialog } from "primeng/dialog";
       [closeOnEscape]="closeOnEscape()"
       [dismissableMask]="dismissableMask()"
       [appendTo]="appendTo()"
+      [focusOnShow]="focusOnShow()"
+      [breakpoints]="breakpoints()"
+      [attr.aria-label]="ariaLabel() || null"
+      [attr.role]="role()"
     >
       <ng-content select="app-dialog-header, [dialogHeader]"></ng-content>
       <div class="dialog-body">
@@ -59,6 +63,10 @@ export class AppDialogComponent {
   closeOnEscape = input(true);
   dismissableMask = input(false);
   appendTo = input<HTMLElement | string | null>(null);
+  focusOnShow = input(true);
+  breakpoints = input<Record<string, string> | null>(null);
+  ariaLabel = input<string | null>(null);
+  role = input("dialog");
 
   handleVisibleChange(value: boolean): void {
     this.visible.set(value);

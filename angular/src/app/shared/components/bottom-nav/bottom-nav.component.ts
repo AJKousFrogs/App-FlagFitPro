@@ -11,19 +11,16 @@ import {
 import { NavigationEnd, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { filter } from "rxjs";
+import {
+  getMobileMoreNavigationItems,
+  getMobilePrimaryNavigationItems,
+  isExactNavigationRoute,
+} from "../../../core/navigation/app-navigation.config";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
 import { NavItemComponent } from "../nav-item.component";
 import { BackdropComponent } from "../backdrop/backdrop.component";
 import { CloseButtonComponent } from "../close-button/close-button.component";
-
-interface NavItem {
-  label: string;
-  icon: string;
-  route: string;
-  badge?: number;
-  roles?: string[];
-}
 
 @Component({
   selector: "app-bottom-nav",
@@ -46,7 +43,7 @@ interface NavItem {
           [label]="item.label"
           [icon]="item.icon"
           [badge]="item.badge && item.badge > 0 ? item.badge : null"
-          [exact]="item.route === '/dashboard'"
+          [exact]="isExactRoute(item.route)"
           variant="bottom"
         />
       }
@@ -130,56 +127,10 @@ export class BottomNavComponent implements OnInit {
     );
   });
 
-  // Primary nav items (shown in bottom bar)
-  // Consolidated to 4 core items as per new architecture
-  private athleteNavItems: NavItem[] = [
-    { label: "Dashboard", icon: "pi-home", route: "/player-dashboard" },
-    { label: "Today", icon: "pi-calendar", route: "/todays-practice" },
-    { label: "Training", icon: "pi-bolt", route: "/training" },
-    { label: "Wellness", icon: "pi-heart", route: "/wellness" },
-  ];
-
-  private coachNavItems: NavItem[] = [
-    { label: "Dashboard", icon: "pi-home", route: "/coach/dashboard" },
-    { label: "Roster", icon: "pi-users", route: "/roster" },
-    { label: "Planning", icon: "pi-calendar", route: "/coach/programs" },
-    { label: "Analytics", icon: "pi-chart-line", route: "/coach/analytics" },
-  ];
-
-  private secondaryNavItems: NavItem[] = [
-    { label: "Merlin AI", icon: "pi-sparkles", route: "/chat" },
-    { label: "Performance", icon: "pi-bullseye", route: "/performance-tracking" },
-    { label: "Analytics", icon: "pi-chart-line", route: "/analytics", roles: ["player"] },
-    { label: "ACWR", icon: "pi-chart-bar", route: "/acwr", roles: ["player"] },
-    { label: "Roster", icon: "pi-users", route: "/roster", roles: ["player"] },
-    { label: "Team Chat", icon: "pi-comments", route: "/team-chat" },
-    { label: "Community", icon: "pi-globe", route: "/community" },
-    { label: "Tournaments", icon: "pi-trophy", route: "/tournaments" },
-    { label: "Game Tracker", icon: "pi-flag", route: "/game-tracker" },
-    { label: "Game Nutrition", icon: "pi-apple", route: "/game/nutrition" },
-    { label: "Travel Recovery", icon: "pi-map-marker", route: "/travel/recovery" },
-    { label: "Exercise Library", icon: "pi-book", route: "/exercise-library" },
-    { label: "Video Library", icon: "pi-video", route: "/training/videos" },
-    { label: "Staff Hub", icon: "pi-building", route: "/staff", roles: ["physiotherapist", "nutritionist", "psychologist", "strength_conditioning_coach"] },
-    { label: "Exercise DB", icon: "pi-database", route: "/exercisedb", roles: ["coach", "assistant_coach", "admin"] },
-    {
-      label: "Knowledge Base",
-      icon: "pi-bookmark",
-      route: "/knowledge",
-    },
-    { label: "Team Hub", icon: "pi-briefcase", route: "/team/workspace", roles: ["coach", "assistant_coach", "admin"] },
-    { label: "Team Management", icon: "pi-sitemap", route: "/coach/team", roles: ["coach", "assistant_coach", "admin"] },
-    { label: "Help", icon: "pi-question-circle", route: "/help" },
-    { label: "Settings", icon: "pi-cog", route: "/settings" },
-    { label: "Profile", icon: "pi-user", route: "/profile" },
-  ];
-
   visibleNavItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
-    const isCoach = ["coach", "assistant_coach", "admin"].includes(userRole);
     const unreadCount = this.notificationState.unreadCount();
-    const items =
-      isCoach ? this.coachNavItems : this.athleteNavItems;
+    const items = getMobilePrimaryNavigationItems(userRole);
 
     return items.map((item) => ({
       ...item,
@@ -191,15 +142,7 @@ export class BottomNavComponent implements OnInit {
     const userRole = this.authService.getUser()?.role || "player";
     const unreadCount = this.notificationState.unreadCount();
 
-    // All other routes move to the "More" menu for power users
-    return this.secondaryNavItems
-      .filter((item) => !item.roles || item.roles.includes(userRole))
-      .filter(
-        (item) =>
-          !this.visibleNavItems().some(
-            (visible) => visible.route === item.route,
-          ),
-      )
+    return getMobileMoreNavigationItems(userRole)
       .map((item) => ({
         ...item,
         badge: item.route === "/chat" ? unreadCount : undefined,
@@ -224,5 +167,9 @@ export class BottomNavComponent implements OnInit {
 
   toggleMoreMenu(): void {
     this.showMoreMenu.update((v) => !v);
+  }
+
+  isExactRoute(route: string): boolean {
+    return isExactNavigationRoute(route);
   }
 }

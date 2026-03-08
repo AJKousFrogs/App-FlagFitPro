@@ -1,5 +1,5 @@
 <app-main-layout>
-      <div class="physio-dashboard">
+      <div class="physio-dashboard ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Physiotherapist Dashboard"
           subtitle="Monitor injury status, return-to-play progress, and athlete risk factors"
@@ -228,33 +228,31 @@
                   @if (rtpData().length > 0) {
                     <div class="rtp-grid">
                       @for (rtp of rtpData(); track rtp.athleteId) {
-                        <p-card class="rtp-card">
-                          <ng-template #header>
-                            <div class="rtp-header">
-                              <div class="athlete-info">
-                                <span class="athlete-name">{{
-                                  getAthleteName(rtp.athleteId)
-                                }}</span>
-                                <span class="injury-info">{{
-                                  rtp.injury.type
-                                }}</span>
-                              </div>
-                              <app-status-tag
-                                [value]="
-                                  rtp.clearanceRecommendation.status.replace(
-                                    '_',
-                                    ' '
-                                  )
-                                "
-                                [severity]="
-                                  getRtpStatusSeverity(
-                                    rtp.clearanceRecommendation.status
-                                  )
-                                "
-                                size="sm"
-                              />
+                        <app-card-shell class="rtp-card" [hasFooter]="true">
+                          <div class="rtp-header">
+                            <div class="athlete-info">
+                              <span class="athlete-name">{{
+                                getAthleteName(rtp.athleteId)
+                              }}</span>
+                              <span class="injury-info">{{
+                                rtp.injury.type
+                              }}</span>
                             </div>
-                          </ng-template>
+                            <app-status-tag
+                              [value]="
+                                rtp.clearanceRecommendation.status.replace(
+                                  '_',
+                                  ' '
+                                )
+                              "
+                              [severity]="
+                                getRtpStatusSeverity(
+                                  rtp.clearanceRecommendation.status
+                                )
+                              "
+                              size="sm"
+                            />
+                          </div>
 
                           <div class="rtp-content">
                             <!-- Phase Progress -->
@@ -373,7 +371,7 @@
                             </div>
                           </div>
 
-                          <ng-template #footer>
+                          <div footer>
                             <app-button
                               variant="text"
                               iconLeft="pi-pencil"
@@ -386,8 +384,8 @@
                               (clicked)="viewRtpReport(rtp)"
                               >View Full Report</app-button
                             >
-                          </ng-template>
-                        </p-card>
+                          </div>
+                        </app-card-shell>
                       }
                     </div>
                   } @else {
@@ -409,23 +407,27 @@
 
                   <div class="risk-grid">
                     @for (risk of riskIndicators(); track risk.athleteId) {
-                      <p-card
+                      <app-card-shell
                         class="risk-card"
-                        [class.high-risk]="risk.acwrRisk === 'high'"
-                        [class.moderate-risk]="risk.acwrRisk === 'moderate'"
+                        [tone]="
+                          risk.acwrRisk === 'high'
+                            ? 'danger'
+                            : risk.acwrRisk === 'moderate'
+                              ? 'warning'
+                              : 'default'
+                        "
+                        [hasFooter]="true"
                       >
-                        <ng-template #header>
-                          <div class="risk-header">
-                            <span class="athlete-name">{{
-                              getAthleteName(risk.athleteId)
-                            }}</span>
-                            <app-status-tag
-                              [value]="risk.acwrRisk.toUpperCase() + ' RISK'"
-                              [severity]="getRiskSeverity(risk.acwrRisk)"
-                              size="sm"
-                            />
-                          </div>
-                        </ng-template>
+                        <div class="risk-header">
+                          <span class="athlete-name">{{
+                            getAthleteName(risk.athleteId)
+                          }}</span>
+                          <app-status-tag
+                            [value]="risk.acwrRisk.toUpperCase() + ' RISK'"
+                            [severity]="getRiskSeverity(risk.acwrRisk)"
+                            size="sm"
+                          />
+                        </div>
 
                         <div class="risk-content">
                           <!-- ACWR -->
@@ -505,15 +507,15 @@
                           }
                         </div>
 
-                        <ng-template #footer>
+                        <div footer>
                           <app-button
                             variant="text"
                             iconLeft="pi-info-circle"
                             (clicked)="viewPositionRisks(risk.athleteId)"
                             >View Position Risks</app-button
                           >
-                        </ng-template>
-                      </p-card>
+                        </div>
+                      </app-card-shell>
                     }
                   </div>
                 </div>
@@ -572,7 +574,7 @@
                       </div>
 
                       <!-- Injuries by Type -->
-                      <p-card header="Injuries by Type">
+                      <app-card-shell title="Injuries by Type">
                         <div class="injury-types">
                           @for (
                             type of currentInjuryHistory()!.injuriesByType;
@@ -588,15 +590,16 @@
                             </div>
                           }
                         </div>
-                      </p-card>
+                      </app-card-shell>
 
                       <!-- Recurrent Injuries -->
                       @if (
                         currentInjuryHistory()!.recurrentInjuries.length > 0
                       ) {
-                        <p-card
-                          header="Recurrent Injuries"
+                        <app-card-shell
+                          title="Recurrent Injuries"
                           class="recurrent-card"
+                          tone="warning"
                         >
                           <ul class="recurrent-list">
                             @for (
@@ -607,7 +610,7 @@
                               <li>{{ injury }}</li>
                             }
                           </ul>
-                        </p-card>
+                        </app-card-shell>
                       }
                     </div>
                   } @else {
@@ -649,41 +652,39 @@
                         insight of insightFeedService.filteredInsights();
                         track insight.id
                       ) {
-                        <p-card
+                        <app-card-shell
                           class="insight-card"
                           [class]="'priority-' + insight.priority"
                         >
-                          <ng-template #header>
-                            <div class="insight-header">
-                              <div class="insight-meta">
-                                <app-status-tag
-                                  [value]="insight.fromRole"
-                                  [severity]="getRoleSeverity(insight.fromRole)"
-                                  size="sm"
-                                />
-                                <span class="insight-type">{{
-                                  getInsightTypeLabel(insight.insightType)
+                          <div class="insight-header">
+                            <div class="insight-meta">
+                              <app-status-tag
+                                [value]="insight.fromRole"
+                                [severity]="getRoleSeverity(insight.fromRole)"
+                                size="sm"
+                              />
+                              <span class="insight-type">{{
+                                getInsightTypeLabel(insight.insightType)
+                              }}</span>
+                              @if (insight.playerName) {
+                                <span class="player-name">{{
+                                  insight.playerName
                                 }}</span>
-                                @if (insight.playerName) {
-                                  <span class="player-name">{{
-                                    insight.playerName
-                                  }}</span>
-                                }
-                              </div>
-                              <div class="insight-actions">
-                                <app-status-tag
-                                  [value]="insight.priority"
-                                  [severity]="
-                                    getPrioritySeverity(insight.priority)
-                                  "
-                                  size="sm"
-                                />
-                                <span class="insight-date">{{
-                                  formatDate(insight.createdAt)
-                                }}</span>
-                              </div>
+                              }
                             </div>
-                          </ng-template>
+                            <div class="insight-actions">
+                              <app-status-tag
+                                [value]="insight.priority"
+                                [severity]="
+                                  getPrioritySeverity(insight.priority)
+                                "
+                                size="sm"
+                              />
+                              <span class="insight-date">{{
+                                formatDate(insight.createdAt)
+                              }}</span>
+                            </div>
+                          </div>
                           <div class="insight-content">
                             <h4 class="insight-title">{{ insight.title }}</h4>
                             <p class="insight-text">{{ insight.content }}</p>
@@ -703,7 +704,7 @@
                               </div>
                             }
                           </div>
-                        </p-card>
+                        </app-card-shell>
                       }
                     </div>
                   }
@@ -714,13 +715,22 @@
         }
 
         <!-- Athlete Details Dialog -->
-        <p-dialog
-          header="Athlete Physiotherapy Profile"
+        <app-dialog
           [(visible)]="showAthleteDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '1200px': '92vw', '640px': '96vw' }"
+          ariaLabel="Athlete physiotherapy profile"
           [dismissableMask]="true"
-          class="physio-athlete-dialog"
+          styleClass="physio-athlete-dialog"
         >
+          <app-dialog-header
+            icon="heart"
+            title="Athlete Physiotherapy Profile"
+            subtitle="Review active injuries, restrictions, and the current position risk profile."
+            (close)="showAthleteDialog.set(false)"
+          />
           @if (selectedAthlete()) {
             <div class="athlete-profile">
               <div class="profile-header">
@@ -836,23 +846,35 @@
               }
             </div>
           }
-          <ng-template #footer>
+          <div dialogFooter class="dialog-actions">
+            <app-button variant="text" (clicked)="showAthleteDialog.set(false)"
+              >Close</app-button
+            >
             <app-button
               iconLeft="pi-file-pdf"
               (clicked)="generateAthleteReport(selectedAthlete()!)"
               >Generate Report</app-button
             >
-          </ng-template>
-        </p-dialog>
+          </div>
+        </app-dialog>
 
         <!-- Report Generation Dialog -->
-        <p-dialog
-          header="Generate Physiotherapy Report"
+        <app-dialog
           [(visible)]="showReportDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Generate physiotherapy report"
           [dismissableMask]="true"
-          class="physio-report-dialog"
+          styleClass="physio-report-dialog"
         >
+          <app-dialog-header
+            icon="file-pdf"
+            title="Generate Physiotherapy Report"
+            subtitle="Create a rehabilitation, clearance, or screening summary for a selected athlete."
+            (close)="showReportDialog.set(false)"
+          />
           <div class="report-form">
             <div class="form-group">
               <label for="report-type-select">Report Type</label>
@@ -879,24 +901,33 @@
               ></p-select>
             </div>
           </div>
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showReportDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button iconLeft="pi-file-pdf" (clicked)="generateReport()"
-              >Generate</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Generate"
+            primaryIcon="file-pdf"
+            (cancel)="showReportDialog.set(false)"
+            (primary)="generateReport()"
+          />
+        </app-dialog>
 
         <!-- Position Risk Dialog -->
-        <p-dialog
-          header="Position-Specific Risk Factors"
+        <app-dialog
           [(visible)]="showPositionRiskDialog"
           [modal]="true"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Position-specific risk factors"
           [dismissableMask]="true"
-          class="physio-risk-dialog"
+          styleClass="physio-risk-dialog"
         >
+          <app-dialog-header
+            icon="shield"
+            title="Position-Specific Risk Factors"
+            subtitle="Review common injuries, main risk factors, and the screening priorities for this position."
+            (close)="showPositionRiskDialog.set(false)"
+          />
           @if (viewingPositionRisk()) {
             <div class="position-risk-content">
               <h3>{{ viewingPositionRisk()!.position }}</h3>
@@ -940,6 +971,11 @@
               </div>
             </div>
           }
-        </p-dialog>
+          <div dialogFooter class="dialog-actions">
+            <app-button variant="text" (clicked)="showPositionRiskDialog.set(false)"
+              >Close</app-button
+            >
+          </div>
+        </app-dialog>
       </div>
     </app-main-layout>

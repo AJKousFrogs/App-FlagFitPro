@@ -41,12 +41,7 @@
 }
 
 .suggestion-review-card {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--component-card-radius);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
 }
 
 .suggestion-thumbnail {
@@ -142,8 +137,6 @@
 }
 
 .suggestion-actions {
-  padding: var(--component-card-padding-compact);
-  border-top: var(--border-1) solid var(--color-border-primary);
   display: flex;
   gap: var(--space-2);
   justify-content: flex-end;
@@ -154,5 +147,18 @@
 @include respond-to(sm) {
   .suggestions-grid {
     grid-template-columns: 1fr;
+  }
+
+  .suggestion-meta {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .suggestion-actions {
+    justify-content: stretch;
+
+    > * {
+      flex: 1 1 100%;
+    }
   }
 }

@@ -11,7 +11,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { InputNumber } from "primeng/inputnumber";
 
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -25,10 +24,12 @@ import { WellnessService } from "../../core/services/wellness.service";
 import { BodyCompositionCardComponent } from "../../shared/components/body-composition-card/body-composition-card.component";
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import {
   StatItem,
   StatsGridComponent,
@@ -69,7 +70,7 @@ interface WellnessMetric {
     CommonModule,
     FormsModule,
     RouterModule,
-    Card,
+    MainLayoutComponent,
     LazyChartComponent,
     InputNumber,
     AppLoadingComponent,
@@ -83,9 +84,10 @@ interface WellnessMetric {
     HydrationTrackerComponent,
     ConfidenceIndicatorComponent,
     AlertComponent,
+    CardShellComponent,
   ],
   template: `
-    <div class="wellness-root">
+    <app-main-layout>
       <!-- Loading State -->
       <app-loading
         [visible]="isPageLoading()"
@@ -103,7 +105,10 @@ interface WellnessMetric {
       }
 
       <!-- Content -->
-        <div class="wellness-page elite-phase2-shell">
+      <div
+        *ngIf="!isPageLoading() && !hasPageError()"
+        class="wellness-page elite-phase2-shell ui-page-shell ui-page-stack"
+      >
           <app-page-header
             title="Wellness & Recovery"
             subtitle="Track your health, recovery, and wellness metrics"
@@ -119,7 +124,7 @@ interface WellnessMetric {
 
           <!-- Partial Wellness Score Confidence Indicator -->
           @if (wellnessConfidence().score < 1.0) {
-            <p-card class="confidence-card">
+            <app-card-shell class="confidence-card">
               <div class="confidence-warning">
                 <app-confidence-indicator
                   [score]="wellnessConfidence().score"
@@ -132,7 +137,7 @@ interface WellnessMetric {
                   metrics. Complete all fields for a more accurate score.
                 </p>
               </div>
-            </p-card>
+            </app-card-shell>
           }
 
           <!-- Wellness Charts - Lazy loaded for performance -->
@@ -512,8 +517,8 @@ interface WellnessMetric {
             </div>
           </app-card>
         </div>
-      <!-- End of content -->
-    </div>
+      </div>
+    </app-main-layout>
   `,
   styleUrl: "./wellness.component.scss",
 })

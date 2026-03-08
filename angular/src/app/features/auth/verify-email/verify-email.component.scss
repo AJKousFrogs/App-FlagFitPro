@@ -16,6 +16,13 @@
 .verify-email-card {
   width: 100%;
   max-width: var(--dialog-max-width-lg);
+
+  --app-card-shell-body-padding: var(--space-6);
+}
+
+.verify-email-intro {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .verify-email-logo {

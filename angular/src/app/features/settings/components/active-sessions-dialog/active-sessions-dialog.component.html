@@ -1,71 +1,70 @@
-<p-dialog
+<app-dialog
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
-  [modal]="true"
-  [closable]="true"
-  [showHeader]="false"
-  class="sessions-dialog"
+  [blockScroll]="true"
+  [draggable]="false"
+  [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+  styleClass="sessions-dialog"
+  ariaLabel="Active sessions"
 >
-  <div class="dialog-container">
-    <app-dialog-header
-      icon="desktop"
-      title="Active Sessions"
-      subtitle="Manage your logged-in devices"
-      (close)="closeDialog()"
-    />
+  <app-dialog-header
+    icon="desktop"
+    title="Active Sessions"
+    subtitle="Manage your logged-in devices"
+    (close)="closeDialog()"
+  />
 
-    <div class="sessions-content">
-      @if (loadingSessions()) {
-        <div class="sessions-loading">
-          <i class="pi pi-spin pi-spinner"></i>
-          <span>Loading sessions...</span>
-        </div>
-      } @else {
-        <div class="sessions-list-new">
-          @for (session of sessions(); track session.id) {
-            <div class="session-card" [class.current]="session.isCurrent">
-              <div
-                class="session-device-icon"
-                [class.mobile]="session.deviceType === 'mobile'"
-                [class.tablet]="session.deviceType === 'tablet'"
-              >
-                <i [class]="getDeviceIcon(session.deviceType)"></i>
-              </div>
-              <div class="session-details-new">
-                <div class="session-name">
-                  {{ session.deviceName }}
-                  @if (session.isCurrent) {
-                    <span class="current-tag">This device</span>
-                  }
-                </div>
-                <div class="session-meta">
-                  <span><i class="pi pi-map-marker"></i> {{ session.location }}</span>
-                  <span><i class="pi pi-clock"></i> {{ session.lastActive }}</span>
-                </div>
-              </div>
-              @if (!session.isCurrent) {
-                <app-icon-button
-                  icon="pi-sign-out"
-                  ariaLabel="Revoke this session"
-                  variant="danger"
-                  size="md"
-                  (clicked)="revokeSession.emit(session.id)"
-                ></app-icon-button>
-              }
+  <div class="sessions-content">
+    @if (loadingSessions()) {
+      <div class="sessions-loading">
+        <i class="pi pi-spin pi-spinner"></i>
+        <span>Loading sessions...</span>
+      </div>
+    } @else {
+      <div class="sessions-list-new">
+        @for (session of sessions(); track session.id) {
+          <div class="session-card" [class.current]="session.isCurrent">
+            <div
+              class="session-device-icon"
+              [class.mobile]="session.deviceType === 'mobile'"
+              [class.tablet]="session.deviceType === 'tablet'"
+            >
+              <i [class]="getDeviceIcon(session.deviceType)"></i>
             </div>
-          }
-        </div>
-      }
-    </div>
-
-    <app-dialog-footer
-      cancelLabel="Close"
-      primaryLabel="Sign out all others"
-      primaryIcon="sign-out"
-      primaryVariant="danger"
-      [loading]="isRevokingAll()"
-      (cancel)="closeDialog()"
-      (primary)="revokeAllSessions.emit()"
-    />
+            <div class="session-details-new">
+              <div class="session-name">
+                {{ session.deviceName }}
+                @if (session.isCurrent) {
+                  <span class="current-tag">This device</span>
+                }
+              </div>
+              <div class="session-meta">
+                <span><i class="pi pi-map-marker"></i> {{ session.location }}</span>
+                <span><i class="pi pi-clock"></i> {{ session.lastActive }}</span>
+              </div>
+            </div>
+            @if (!session.isCurrent) {
+              <app-icon-button
+                icon="pi-sign-out"
+                ariaLabel="Revoke this session"
+                variant="danger"
+                size="md"
+                (clicked)="revokeSession.emit(session.id)"
+              ></app-icon-button>
+            }
+          </div>
+        }
+      </div>
+    }
   </div>
-</p-dialog>
+
+  <app-dialog-footer
+    cancelLabel="Close"
+    primaryLabel="Sign out all others"
+    primaryIcon="sign-out"
+    primaryVariant="danger"
+    [loading]="isRevokingAll()"
+    (cancel)="closeDialog()"
+    (primary)="revokeAllSessions.emit()"
+  />
+</app-dialog>

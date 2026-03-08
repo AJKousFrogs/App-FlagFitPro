@@ -10,12 +10,18 @@
 }
 
 .payment-management-page {
-  width: min(100%, var(--content-max-width-xl));
-  margin-inline: auto;
+  width: 100%;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap);
+  min-width: 0;
+}
+
+.payment-shell-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-subtle);
 }
 
 // Tab Navigation
@@ -126,6 +132,11 @@
   gap: var(--space-3);
   align-items: center;
   flex-wrap: wrap;
+
+  > * {
+    flex: 1 1 var(--input-min-width-md);
+    min-width: 0;
+  }
 }
 
 // Fees Preview
@@ -196,6 +207,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background: var(--ds-surface-base);
   border-bottom: var(--border-1) solid var(--color-border-subtle);
@@ -412,6 +424,16 @@
   // Note: .balance-filters responsive styles moved here
   .balance-filters {
     width: 100%;
+  }
+
+  .fee-card > .fee-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fee-card > .fee-header .fee-actions {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .fee-card-actions {

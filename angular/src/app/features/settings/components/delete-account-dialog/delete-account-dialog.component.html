@@ -1,63 +1,62 @@
-<p-dialog
+<app-dialog
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
-  [modal]="true"
-  [closable]="true"
-  [showHeader]="false"
-  class="delete-dialog"
+  [blockScroll]="true"
+  [draggable]="false"
+  [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+  styleClass="delete-dialog"
+  ariaLabel="Delete account"
 >
-  <div class="dialog-container">
-    <app-dialog-header
-      icon="trash"
-      title="Delete Account"
-      subtitle="This action is permanent and irreversible"
-      [danger]="true"
-      (close)="closeDialog()"
-    />
+  <app-dialog-header
+    icon="trash"
+    title="Delete Account"
+    subtitle="This action is permanent and irreversible"
+    [danger]="true"
+    (close)="closeDialog()"
+  />
 
-    <div class="delete-content">
-      <app-alert
-        variant="error"
-        icon="pi pi-exclamation-triangle"
-        title="Are you absolutely sure?"
-        message="All your data will be permanently deleted, including:"
-        styleClass="settings-dialog-alert"
-      >
-        <ul class="delete-list">
-          <li><i class="pi pi-chart-line"></i> Training history & progress</li>
-          <li><i class="pi pi-chart-bar"></i> Performance metrics & analytics</li>
-          <li><i class="pi pi-cog"></i> Settings & preferences</li>
-          <li><i class="pi pi-user"></i> Profile information</li>
-        </ul>
-      </app-alert>
+  <div class="delete-content">
+    <app-alert
+      variant="error"
+      icon="pi pi-exclamation-triangle"
+      title="Are you absolutely sure?"
+      message="All your data will be permanently deleted, including:"
+      styleClass="settings-dialog-alert"
+    >
+      <ul class="delete-list">
+        <li><i class="pi pi-chart-line"></i> Training history & progress</li>
+        <li><i class="pi pi-chart-bar"></i> Performance metrics & analytics</li>
+        <li><i class="pi pi-cog"></i> Settings & preferences</li>
+        <li><i class="pi pi-user"></i> Profile information</li>
+      </ul>
+    </app-alert>
 
-      <div class="confirm-field">
-        <label for="settings-deleteConfirm">
-          Type <strong>DELETE</strong> to confirm
-        </label>
-        <input
-          id="settings-deleteConfirm"
-          name="deleteConfirm"
-          type="text"
-          pInputText
-          [value]="confirmText()"
-          (input)="onConfirmTextInput($event)"
-          placeholder="Type DELETE"
-          class="delete-input"
-          autocomplete="off"
-        />
-      </div>
+    <div class="confirm-field">
+      <label for="settings-deleteConfirm">
+        Type <strong>DELETE</strong> to confirm
+      </label>
+      <input
+        id="settings-deleteConfirm"
+        name="deleteConfirm"
+        type="text"
+        pInputText
+        [value]="confirmText()"
+        (input)="onConfirmTextInput($event)"
+        placeholder="Type DELETE"
+        class="delete-input"
+        autocomplete="off"
+      />
     </div>
-
-    <app-dialog-footer
-      cancelLabel="Cancel"
-      primaryLabel="Delete My Account"
-      primaryIcon="trash"
-      primaryVariant="danger"
-      [loading]="loading()"
-      [disabled]="confirmText() !== 'DELETE'"
-      (cancel)="closeDialog()"
-      (primary)="submit.emit()"
-    />
   </div>
-</p-dialog>
+
+  <app-dialog-footer
+    cancelLabel="Cancel"
+    primaryLabel="Delete My Account"
+    primaryIcon="trash"
+    primaryVariant="danger"
+    [loading]="loading()"
+    [disabled]="confirmText() !== 'DELETE'"
+    (cancel)="closeDialog()"
+    (primary)="submit.emit()"
+  />
+</app-dialog>

@@ -16,6 +16,7 @@ import { CommonModule } from "@angular/common";
 
 import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
 import { Chip } from "primeng/chip";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -31,6 +32,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
     CommonModule,
     EmptyStateComponent,
     StatusTagComponent,
+    CardShellComponent,
     Chip,
     ButtonComponent,
     IconButtonComponent,
@@ -56,7 +58,10 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
       } @else {
         <div class="playlists-grid">
           @for (playlist of playlists(); track playlist.id) {
-            <div class="playlist-card">
+            <app-card-shell
+              class="playlist-card"
+              [hasFooter]="true"
+            >
               <div class="playlist-header">
                 <h4>{{ playlist.name }}</h4>
                 @if (playlist.position) {
@@ -83,7 +88,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
                   <p-chip [label]="getFormatFocus(focus)"></p-chip>
                 }
               </div>
-              <div class="playlist-actions">
+              <div footer class="playlist-actions">
                 <app-icon-button
                   icon="pi-pencil"
                   ariaLabel="Edit playlist"
@@ -104,7 +109,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
                   (clicked)="delete.emit(playlist)"
                 />
               </div>
-            </div>
+            </app-card-shell>
           }
         </div>
       }

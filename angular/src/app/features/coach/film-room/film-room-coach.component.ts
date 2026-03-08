@@ -19,8 +19,6 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -31,6 +29,9 @@ import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -89,8 +90,9 @@ const TAG_TYPES = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Dialog,
-    
+    AppDialogComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     InputText,
     ProgressBar,
     Select,
@@ -291,12 +293,21 @@ const TAG_TYPES = [
       </div>
 
       <!-- Upload Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showUploadDialog"
-        header="Upload Film"
         [modal]="true"
-        class="film-upload-dialog"
+        styleClass="film-upload-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Upload film"
       >
+        <app-dialog-header
+          icon="upload"
+          title="Upload Film"
+          subtitle="Add a new game, practice, scouting, or training video to the film room."
+          (close)="showUploadDialog = false"
+        />
         <div class="upload-form">
           <div class="form-field">
             <label>Source</label>
@@ -383,23 +394,32 @@ const TAG_TYPES = [
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showUploadDialog = false"
-            >Cancel</app-button
-          >
-          <app-button iconLeft="pi-upload" (clicked)="uploadFilm()"
-            >Upload & Open</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Upload & Open"
+          primaryIcon="upload"
+          (cancel)="showUploadDialog = false"
+          (primary)="uploadFilm()"
+        />
+      </app-dialog>
 
       <!-- Tag Editor Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showTagDialog"
-        header="Add Tag"
         [modal]="true"
-        class="film-tag-dialog"
+        styleClass="film-tag-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Add film tag"
       >
+        <app-dialog-header
+          icon="tag"
+          title="Add Tag"
+          subtitle="Highlight a film moment and connect it to the right player, play, or teaching point."
+          (close)="showTagDialog = false"
+        />
         <div class="tag-form">
           <p class="tag-timestamp">
             Adding tag at <strong>{{ tagForm.timestamp }}</strong>
@@ -496,15 +516,15 @@ const TAG_TYPES = [
           </div>
         </div>
 
-        <ng-template #footer>
-          <app-button variant="secondary" (clicked)="showTagDialog = false"
-            >Cancel</app-button
-          >
-          <app-button iconLeft="pi-check" (clicked)="saveTag()"
-            >Save Tag</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Tag"
+          primaryIcon="check"
+          (cancel)="showTagDialog = false"
+          (primary)="saveTag()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./film-room-coach.component.scss",

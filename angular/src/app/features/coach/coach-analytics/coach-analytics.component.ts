@@ -16,16 +16,17 @@
 import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import type { ChartOptions } from "chart.js";
-import { Card } from "primeng/card";
 import { Divider } from "primeng/divider";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { COLORS } from "../../../core/constants/app.constants";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getInitials } from "../../../shared/utils/format.utils";
 
@@ -94,8 +95,7 @@ interface TeamOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DecimalPipe,
-    Card,
-
+    CardShellComponent,
     LazyChartComponent,
     Divider,
     ProgressBar,
@@ -105,21 +105,16 @@ interface TeamOption {
     StatusTagComponent,
     MainLayoutComponent,
     IconButtonComponent,
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="coach-analytics ui-page-stack">
-        <!-- Header -->
-        <div class="analytics-header">
-          <div class="header-content">
-            <h1>
-              <i class="pi pi-chart-bar"></i>
-              Team Analytics
-            </h1>
-            <p class="header-subtitle">
-              Monitor Merlin AI performance and athlete engagement
-            </p>
-          </div>
+      <div class="coach-analytics ui-page-shell ui-page-shell--wide ui-page-stack">
+        <app-page-header
+          title="Team Analytics"
+          subtitle="Monitor Merlin AI performance and athlete engagement"
+          icon="pi-chart-bar"
+        >
           <div class="header-filters">
             <p-select
               [options]="teamOptions"
@@ -140,7 +135,7 @@ interface TeamOption {
               tooltip="Refresh"
             />
           </div>
-        </div>
+        </app-page-header>
 
         <!-- Overview Metrics -->
         @if (loading()) {
@@ -223,7 +218,7 @@ interface TeamOption {
           <!-- Left Column: Charts -->
           <div class="charts-column">
             <!-- AI Classification Breakdown -->
-            <p-card header="AI Classification" class="analytics-card">
+            <app-card-shell class="analytics-card" title="AI Classification">
               @if (loading()) {
                 <p-skeleton
                   width="100%"
@@ -312,10 +307,10 @@ interface TeamOption {
                   </div>
                 </div>
               }
-            </p-card>
+            </app-card-shell>
 
             <!-- Activity Trends -->
-            <p-card header="Activity Trends" class="analytics-card">
+            <app-card-shell class="analytics-card" title="Activity Trends">
               @if (loading()) {
                 <p-skeleton
                   width="100%"
@@ -344,17 +339,18 @@ interface TeamOption {
                   ></app-lazy-chart>
                 </div>
               }
-            </p-card>
+            </app-card-shell>
           </div>
 
           <!-- Right Column: Leaderboard & Feedback -->
           <div class="side-column">
             <!-- Team Leaderboard -->
-            <p-card header="Engagement Leaderboard" class="analytics-card">
+            <app-card-shell class="analytics-card" title="Engagement Leaderboard">
               <p-table
                 [value]="leaderboard()"
                 [rows]="5"
                 class="p-datatable-sm"
+                [scrollable]="true"
               >
                 <ng-template #header>
                   <tr>
@@ -379,10 +375,10 @@ interface TeamOption {
                   </tr>
                 </ng-template>
               </p-table>
-            </p-card>
+            </app-card-shell>
 
             <!-- Feedback Stats -->
-            <p-card header="Feedback Overview" class="analytics-card">
+            <app-card-shell class="analytics-card" title="Feedback Overview">
               @if (feedbackStats(); as stats) {
                 <div class="feedback-stats">
                   <div class="feedback-section">
@@ -428,7 +424,7 @@ interface TeamOption {
                   </div>
                 </div>
               }
-            </p-card>
+            </app-card-shell>
           </div>
         </div>
       </div>

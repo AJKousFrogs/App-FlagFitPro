@@ -13,10 +13,10 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ToastService } from "../../../core/services/toast.service";
@@ -38,25 +38,23 @@ type TeamCreateForm = FormGroup<{
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    Card,
     InputText,
-
     Select,
+    CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
   ],
   template: `
 <app-main-layout>
-      <div class="team-create-page">
+      <div class="team-create-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="Create New Team"
           subtitle="Start a new team and invite players"
           icon="pi-users"
         ></app-page-header>
 
-        <p-card class="team-create-card">
+        <app-card-shell class="team-create-card">
           <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
               <label for="name" class="required">Team Name</label>
@@ -137,7 +135,7 @@ type TeamCreateForm = FormGroup<{
               >
             </div>
           </form>
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,

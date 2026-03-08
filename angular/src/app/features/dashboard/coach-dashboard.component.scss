@@ -708,6 +708,11 @@
     gap: var(--space-2);
   }
 
+  .schedule-card-footer {
+    display: grid;
+    gap: var(--space-2);
+  }
+
   /* ============================================
    ROSTER TABLE CUSTOMIZATIONS
    ============================================ */
@@ -741,12 +746,14 @@
   .active-protocols-section {
     margin-top: var(--space-6);
     margin-bottom: var(--space-6);
+    display: grid;
+    gap: var(--space-3);
 
     .section-title {
       font-size: var(--ds-font-size-xl);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
-      margin-bottom: var(--space-4);
+      margin: 0;
       display: flex;
       align-items: center;
       gap: var(--space-2);
@@ -757,15 +764,7 @@
     }
 
       .protocol-group {
-        margin-bottom: var(--space-3);
-        padding: var(--space-4);
-
-        .protocol-header {
-          display: flex;
-          align-items: center;
-          gap: var(--space-2);
-          margin-bottom: var(--space-3);
-        }
+        margin-bottom: 0;
 
       .protocol-players {
         display: flex;
@@ -785,17 +784,6 @@
 
           @include ds-hover-state(var(--surface-hover));
         }
-      }
-
-      .protocol-icon {
-        font-size: var(--ds-font-size-xl);
-        flex-shrink: 0;
-      }
-
-      .protocol-title {
-        font-size: var(--ds-font-size-md);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-text-primary);
       }
 
       .protocol-player-item .player-name {

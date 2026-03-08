@@ -21,9 +21,11 @@ import {
 import { ToastService } from "../../core/services/toast.service";
 import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Card } from "primeng/card";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -288,17 +290,19 @@ const RETENTION_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
-    DatePicker,
-    Dialog,
+    AppDialogComponent,
     AlertComponent,
+    ButtonComponent,
+    CardShellComponent,
+    DatePicker,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     Select,
     TableModule,
     Textarea,
 
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent,
     StatusTagComponent,
     EmptyStateComponent,
   ],

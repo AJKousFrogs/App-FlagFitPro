@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Dialog } from "primeng/dialog";
 import {
+  AppDialogComponent,
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
@@ -8,7 +8,7 @@ import {
 @Component({
   selector: "app-disable-twofa-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dialog, DialogHeaderComponent, DialogFooterComponent],
+  imports: [AppDialogComponent, DialogHeaderComponent, DialogFooterComponent],
   templateUrl: "./disable-twofa-dialog.component.html",
   styleUrl: "./disable-twofa-dialog.component.scss",
 })

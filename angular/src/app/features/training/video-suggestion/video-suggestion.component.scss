@@ -17,54 +17,18 @@
   gap: var(--layout-page-section-gap);
 }
 
-/* Header */
-.page-header {
-  background: linear-gradient(
+.suggestion-page > app-page-header.suggestion-hero-header {
+  --page-header-bg: linear-gradient(
     135deg,
     var(--primitive-purple-500) 0%,
     var(--primitive-purple-700) 50%,
     var(--primitive-pink-400) 100%
   );
-  padding: var(--space-10) var(--space-6);
-  margin: calc(-1 * var(--space-6));
-  margin-bottom: 0;
-  color: var(--color-text-on-primary);
-}
-
-.header-content {
-  max-width: var(--content-max-width-lg);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
-}
-
-.header-icon {
-  width: var(--avatar-size-2xl);
-  height: var(--avatar-size-2xl);
-  background: var(--overlay-white-15);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: var(--border-1) solid var(--overlay-white-20);
-}
-
-.header-icon i {
-  font-size: var(--ds-font-size-2xl);
-}
-
-.header-text h1 {
-  font-size: var(--ds-font-size-3xl);
-  font-weight: var(--ds-font-weight-bold);
-  margin: 0 0 var(--space-2);
-}
-
-.header-text p {
-  margin: 0;
-  opacity: var(--opacity-strong);
-  font-size: var(--ds-font-size-md);
+  --page-header-border: var(--border-1) solid var(--overlay-white-20);
+  --page-header-shadow: var(--shadow-2);
+  --page-header-title-color: var(--color-text-on-primary);
+  --page-header-subtitle-color: var(--color-text-on-primary);
+  --page-header-hero-content-max-width: var(--content-max-width-lg);
 }
 
 .stats-pills {
@@ -72,7 +36,6 @@
   gap: var(--space-3);
   flex-wrap: wrap;
   max-width: var(--dialog-max-width-2xl);
-  margin: 0 auto;
 }
 
 .stat-pill {
@@ -100,9 +63,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--layout-page-section-gap);
-  max-width: var(--content-max-width-xl);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
 }
 
 /* Submit Section */
@@ -418,10 +378,6 @@
 
 /* Team Approved Section */
 .team-approved-section {
-  max-width: var(--content-max-width-xl);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
-
   .section-header {
     flex-direction: column;
     align-items: flex-start;
@@ -676,18 +632,11 @@
     gap: var(--layout-page-section-gap-tight);
   }
 
-  .page-header {
-    padding: var(--space-8) var(--space-4);
-  }
-
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-    gap: var(--space-4);
+  .suggestion-page > app-page-header.suggestion-hero-header {
+    --page-header-padding: var(--space-8) var(--space-4);
   }
 
   .content-grid {
-    padding: 0 var(--space-4);
     gap: var(--layout-page-section-gap-tight);
   }
 
@@ -700,11 +649,6 @@
   .suggestion-actions {
     flex-direction: row;
     justify-content: flex-end;
-  }
-
-  .team-approved-section,
-  .tips-section {
-    padding: 0 var(--space-4);
   }
 
   .form-step {

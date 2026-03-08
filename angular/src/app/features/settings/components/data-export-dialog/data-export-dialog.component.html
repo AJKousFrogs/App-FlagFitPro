@@ -1,122 +1,121 @@
-<p-dialog
+<app-dialog
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
-  [modal]="true"
-  [closable]="true"
-  [showHeader]="false"
-  class="export-dialog"
+  [blockScroll]="true"
+  [draggable]="false"
+  [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+  styleClass="export-dialog"
+  ariaLabel="Export your data"
 >
-  <div class="dialog-container">
-    <app-dialog-header
-      icon="download"
-      title="Export Your Data"
-      subtitle="Download a copy of your FlagFit Pro data"
-      (close)="closeDialog()"
-    />
+  <app-dialog-header
+    icon="download"
+    title="Export Your Data"
+    subtitle="Download a copy of your FlagFit Pro data"
+    (close)="closeDialog()"
+  />
 
-    <div class="export-content">
-      <div class="export-format-section">
-        <h4>Export Format</h4>
-        <div class="format-options">
-          <button
-                  type="button"
-            class="format-option"
-            [class.active]="exportFormat() === 'json'"
-            (click)="setFormat('json')"
-          >
-            <i class="pi pi-code"></i>
-            <span>JSON</span>
-            <small>Machine-readable</small>
-          </button>
-          <button
-                  type="button"
-            class="format-option"
-            [class.active]="exportFormat() === 'csv'"
-            (click)="setFormat('csv')"
-          >
-            <i class="pi pi-file"></i>
-            <span>CSV</span>
-            <small>Spreadsheet-friendly</small>
-          </button>
-        </div>
+  <div class="export-content">
+    <div class="export-format-section">
+      <h4>Export Format</h4>
+      <div class="format-options">
+        <button
+          type="button"
+          class="format-option"
+          [class.active]="exportFormat() === 'json'"
+          (click)="setFormat('json')"
+        >
+          <i class="pi pi-code"></i>
+          <span>JSON</span>
+          <small>Machine-readable</small>
+        </button>
+        <button
+          type="button"
+          class="format-option"
+          [class.active]="exportFormat() === 'csv'"
+          (click)="setFormat('csv')"
+        >
+          <i class="pi pi-file"></i>
+          <span>CSV</span>
+          <small>Spreadsheet-friendly</small>
+        </button>
       </div>
-
-      <div class="export-data-section">
-        <h4>Data to Include</h4>
-        <div class="data-options">
-          <div class="data-option">
-            <div class="option-info">
-              <i class="pi pi-user"></i>
-              <span>Profile Information</span>
-            </div>
-            <p-toggleswitch
-              [ngModel]="exportOptions().profile"
-              (ngModelChange)="updateOption('profile', $event)"
-            ></p-toggleswitch>
-          </div>
-          <div class="data-option">
-            <div class="option-info">
-              <i class="pi pi-calendar"></i>
-              <span>Training Sessions</span>
-            </div>
-            <p-toggleswitch
-              [ngModel]="exportOptions().training"
-              (ngModelChange)="updateOption('training', $event)"
-            ></p-toggleswitch>
-          </div>
-          <div class="data-option">
-            <div class="option-info">
-              <i class="pi pi-heart"></i>
-              <span>Wellness Check-ins</span>
-            </div>
-            <p-toggleswitch
-              [ngModel]="exportOptions().wellness"
-              (ngModelChange)="updateOption('wellness', $event)"
-            ></p-toggleswitch>
-          </div>
-          <div class="data-option">
-            <div class="option-info">
-              <i class="pi pi-trophy"></i>
-              <span>Achievements</span>
-            </div>
-            <p-toggleswitch
-              [ngModel]="exportOptions().achievements"
-              (ngModelChange)="updateOption('achievements', $event)"
-            ></p-toggleswitch>
-          </div>
-          <div class="data-option">
-            <div class="option-info">
-              <i class="pi pi-cog"></i>
-              <span>Settings & Preferences</span>
-            </div>
-            <p-toggleswitch
-              [ngModel]="exportOptions().settings"
-              (ngModelChange)="updateOption('settings', $event)"
-            ></p-toggleswitch>
-          </div>
-        </div>
-      </div>
-
-      @if (isExportingData()) {
-        <div class="export-progress-section">
-          <p-progressBar [value]="exportProgress()" [showValue]="true"></p-progressBar>
-          <span class="progress-label">Preparing your data...</span>
-          @if (exportTakingLong()) {
-            <p class="slow-operation-message">
-              This is taking a bit longer than usual. Please don't close this page.
-            </p>
-          }
-        </div>
-      }
     </div>
 
-    <app-dialog-footer
-      cancelLabel="Cancel"
-      primaryLabel="Export Data"
-      primaryIcon="download"
-      [loading]="isExportingData()"
-      (cancel)="closeDialog()"
-      (primary)="submit.emit()"
-    />
+    <div class="export-data-section">
+      <h4>Data to Include</h4>
+      <div class="data-options">
+        <div class="data-option">
+          <div class="option-info">
+            <i class="pi pi-user"></i>
+            <span>Profile Information</span>
+          </div>
+          <p-toggleswitch
+            [ngModel]="exportOptions().profile"
+            (ngModelChange)="updateOption('profile', $event)"
+          ></p-toggleswitch>
+        </div>
+        <div class="data-option">
+          <div class="option-info">
+            <i class="pi pi-calendar"></i>
+            <span>Training Sessions</span>
+          </div>
+          <p-toggleswitch
+            [ngModel]="exportOptions().training"
+            (ngModelChange)="updateOption('training', $event)"
+          ></p-toggleswitch>
+        </div>
+        <div class="data-option">
+          <div class="option-info">
+            <i class="pi pi-heart"></i>
+            <span>Wellness Check-ins</span>
+          </div>
+          <p-toggleswitch
+            [ngModel]="exportOptions().wellness"
+            (ngModelChange)="updateOption('wellness', $event)"
+          ></p-toggleswitch>
+        </div>
+        <div class="data-option">
+          <div class="option-info">
+            <i class="pi pi-trophy"></i>
+            <span>Achievements</span>
+          </div>
+          <p-toggleswitch
+            [ngModel]="exportOptions().achievements"
+            (ngModelChange)="updateOption('achievements', $event)"
+          ></p-toggleswitch>
+        </div>
+        <div class="data-option">
+          <div class="option-info">
+            <i class="pi pi-cog"></i>
+            <span>Settings & Preferences</span>
+          </div>
+          <p-toggleswitch
+            [ngModel]="exportOptions().settings"
+            (ngModelChange)="updateOption('settings', $event)"
+          ></p-toggleswitch>
+        </div>
+      </div>
+    </div>
+
+    @if (isExportingData()) {
+      <div class="export-progress-section">
+        <p-progressBar [value]="exportProgress()" [showValue]="true"></p-progressBar>
+        <span class="progress-label">Preparing your data...</span>
+        @if (exportTakingLong()) {
+          <p class="slow-operation-message">
+            This is taking a bit longer than usual. Please don't close this page.
+          </p>
+        }
+      </div>
+    }
   </div>
-</p-dialog>
+
+  <app-dialog-footer
+    cancelLabel="Cancel"
+    primaryLabel="Export Data"
+    primaryIcon="download"
+    [loading]="isExportingData()"
+    (cancel)="closeDialog()"
+    (primary)="submit.emit()"
+  />
+</app-dialog>

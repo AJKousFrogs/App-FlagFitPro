@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Dialog } from "primeng/dialog";
 import { ProgressBar } from "primeng/progressbar";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import {
+  AppDialogComponent,
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
@@ -21,7 +21,7 @@ type ExportOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Dialog,
+    AppDialogComponent,
     ProgressBar,
     ToggleSwitch,
     DialogHeaderComponent,

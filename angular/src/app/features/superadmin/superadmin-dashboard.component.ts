@@ -9,9 +9,8 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -34,13 +33,12 @@ import {
   imports: [
     CommonModule,
     RouterLink,
-    Card,
     StatusTagComponent,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
     IconButtonComponent,
     AppLoadingComponent,
     EmptyStateComponent,
@@ -50,7 +48,7 @@ import {
   ],
   template: `
     <app-main-layout>
-      <div class="dashboard-content ui-page-stack">
+      <div class="dashboard-content ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
           title="Superadmin Dashboard"
           subtitle="Platform management and approval workflow"
@@ -70,7 +68,7 @@ import {
 
         <!-- Stats Grid -->
         <div class="stats-grid">
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <div class="stat-icon pending">
                 <i class="pi pi-clock"></i>
@@ -82,9 +80,9 @@ import {
                 <span class="stat-block__label">Pending Teams</span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <div class="stat-icon roles">
                 <i class="pi pi-users"></i>
@@ -96,9 +94,9 @@ import {
                 <span class="stat-block__label">Pending Roles</span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <div class="stat-icon approved">
                 <i class="pi pi-check-circle"></i>
@@ -110,9 +108,9 @@ import {
                 <span class="stat-block__label">Active Teams</span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <div class="stat-icon users">
                 <i class="pi pi-user"></i>
@@ -122,22 +120,22 @@ import {
                 <span class="stat-block__label">Total Athletes</span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- Pending Approvals Section -->
-        <p-card>
-          <ng-template #header>
-            <app-card-header title="Pending Approvals" icon="pi-inbox">
-              <app-icon-button
-                header-actions
-                icon="pi-refresh"
-                variant="text"
-                (clicked)="refreshData()"
-                ariaLabel="Refresh"
-              />
-            </app-card-header>
-          </ng-template>
+        <app-card-shell
+          class="approvals-shell"
+          title="Pending Approvals"
+          headerIcon="pi-inbox"
+        >
+          <app-icon-button
+            header-actions
+            icon="pi-refresh"
+            variant="text"
+            (clicked)="refreshData()"
+            ariaLabel="Refresh"
+          />
 
           @if (isLoading()) {
             <app-loading message="Loading approvals..." variant="inline" />
@@ -239,7 +237,7 @@ import {
               }
             </div>
           }
-        </p-card>
+        </app-card-shell>
 
         <!-- Quick Actions -->
         <div class="quick-actions">

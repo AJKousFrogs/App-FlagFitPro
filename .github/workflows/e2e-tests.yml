@@ -53,6 +53,8 @@ jobs:
         working-directory: angular
         env:
           BASE_URL: http://127.0.0.1:8888
+          TEST_USER_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
           CI: true
           PW_SKIP_WEBSERVER: "1"
 

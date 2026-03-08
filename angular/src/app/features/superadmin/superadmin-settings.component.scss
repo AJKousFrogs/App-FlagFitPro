@@ -13,10 +13,6 @@
   gap: var(--space-6);
 }
 
-.status-card {
-  border-left: var(--space-1) solid var(--ds-primary-green);
-}
-
 .status-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
@@ -110,15 +106,6 @@
   margin: 0;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-}
-
-.olympic-card {
-  background: linear-gradient(
-    135deg,
-    var(--ds-primary-green-ultra-subtle),
-    var(--surface-primary)
-  );
-  border: var(--border-1) solid var(--ds-primary-green-subtle);
 }
 
 .olympic-tracks {

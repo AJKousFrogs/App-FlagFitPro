@@ -28,10 +28,18 @@
   max-width: var(--content-max-width-sm);
 }
 
+.accept-invitation-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
 .accept-invitation-logo {
   display: flex;
   justify-content: center;
-  margin-bottom: var(--space-4);
+  margin: 0;
 }
 
 .accept-invitation-logo i {

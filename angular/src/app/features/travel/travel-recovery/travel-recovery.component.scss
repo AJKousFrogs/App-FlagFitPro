@@ -6,8 +6,7 @@
 @use "styles/mixins" as *;
 
 .travel-recovery-page {
-  width: min(100%, var(--content-max-width-2xl));
-  margin-inline: auto;
+  width: 100%;
   gap: var(--layout-page-section-gap);
 }
 
@@ -62,14 +61,12 @@
   gap: var(--layout-page-section-gap);
 }
 
-// Note: This component had transparent bg + no border (closer to canonical)
-// but still needs migration to app-card-shell for consistency
-
 // ===== Olympic Card (Dashboard-consistent) =====
-app-card-header.olympic-header {
-  --app-card-header-bg: var(--surface-secondary);
-  --app-card-header-border-bottom: var(--border-1) solid var(--surface-border);
-  --app-card-header-icon-size: var(--ds-font-size-3xl);
+.olympic-card {
+  --app-card-shell-header-bg: var(--surface-secondary);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--surface-border);
+  --app-card-shell-header-icon-color: var(--color-brand-primary);
 }
 
 .olympic-buttons {
@@ -809,15 +806,15 @@ app-card-header.olympic-header {
   gap: var(--space-6);
 }
 
-app-card-header.car-header {
-  --app-card-header-bg: linear-gradient(
+.car-setup-card {
+  --app-card-shell-header-bg: linear-gradient(
     135deg,
     var(--ds-primary-green) 0%,
     var(--primitive-teal-500) 100%
   );
-  --app-card-header-title-color: var(--color-text-on-primary);
-  --app-card-header-subtitle-color: var(--color-text-on-primary);
-  --app-card-header-icon-color: var(--color-text-on-primary);
+  --app-card-shell-title-color: var(--color-text-on-primary);
+  --app-card-shell-subtitle-color: var(--color-text-on-primary);
+  --app-card-shell-header-icon-color: var(--color-text-on-primary);
 }
 
 // ===== Risk Assessment =====
@@ -977,15 +974,15 @@ app-card-header.car-header {
 }
 
 // ===== Compression Card =====
-app-card-header.compression-header {
-  --app-card-header-bg: linear-gradient(
+.compression-card {
+  --app-card-shell-header-bg: linear-gradient(
     135deg,
     var(--primitive-blue-400) 0%,
     var(--color-status-success) 100%
   );
-  --app-card-header-title-color: var(--color-text-on-primary);
-  --app-card-header-subtitle-color: var(--color-text-on-primary);
-  --app-card-header-icon-color: var(--color-text-on-primary);
+  --app-card-shell-title-color: var(--color-text-on-primary);
+  --app-card-shell-subtitle-color: var(--color-text-on-primary);
+  --app-card-shell-header-icon-color: var(--color-text-on-primary);
 }
 
 .compression-content {
@@ -1070,15 +1067,15 @@ app-card-header.compression-header {
 }
 
 // ===== Massage Gun Card =====
-app-card-header.massage-header {
-  --app-card-header-bg: linear-gradient(
+.massage-gun-card {
+  --app-card-shell-header-bg: linear-gradient(
     135deg,
     var(--primitive-error-400) 0%,
     var(--primitive-orange-500) 100%
   );
-  --app-card-header-title-color: var(--color-text-on-primary);
-  --app-card-header-subtitle-color: var(--color-text-on-primary);
-  --app-card-header-icon-color: var(--color-text-on-primary);
+  --app-card-shell-title-color: var(--color-text-on-primary);
+  --app-card-shell-subtitle-color: var(--color-text-on-primary);
+  --app-card-shell-header-icon-color: var(--color-text-on-primary);
 }
 
 .massage-protocol {
@@ -1155,15 +1152,15 @@ app-card-header.massage-header {
 }
 
 // ===== Exercises Card =====
-app-card-header.exercises-header {
-  --app-card-header-bg: linear-gradient(
+.exercises-card {
+  --app-card-shell-header-bg: linear-gradient(
     135deg,
     var(--primitive-teal-500) 0%,
     var(--color-status-success) 100%
   );
-  --app-card-header-title-color: var(--color-text-on-primary);
-  --app-card-header-subtitle-color: var(--color-text-on-primary);
-  --app-card-header-icon-color: var(--color-text-on-primary);
+  --app-card-shell-title-color: var(--color-text-on-primary);
+  --app-card-shell-subtitle-color: var(--color-text-on-primary);
+  --app-card-shell-header-icon-color: var(--color-text-on-primary);
 }
 
 .exercises-grid {
@@ -1215,15 +1212,15 @@ app-card-header.exercises-header {
 }
 
 // ===== Rest Stop Card =====
-app-card-header.rest-header {
-  --app-card-header-bg: linear-gradient(
+.rest-stop-card {
+  --app-card-shell-header-bg: linear-gradient(
     135deg,
     var(--primitive-indigo-500) 0%,
     var(--primitive-purple-500) 100%
   );
-  --app-card-header-title-color: var(--color-text-on-primary);
-  --app-card-header-subtitle-color: var(--color-text-on-primary);
-  --app-card-header-icon-color: var(--color-text-on-primary);
+  --app-card-shell-title-color: var(--color-text-on-primary);
+  --app-card-shell-subtitle-color: var(--color-text-on-primary);
+  --app-card-shell-header-icon-color: var(--color-text-on-primary);
 }
 
 .rest-stop-content {
@@ -1287,15 +1284,15 @@ app-card-header.rest-header {
 }
 
 // ===== Research Card =====
-app-card-header.research-header {
-  --app-card-header-bg: linear-gradient(
+.research-card {
+  --app-card-shell-header-bg: linear-gradient(
     135deg,
     var(--primitive-slate-700) 0%,
     var(--primitive-cyan-500) 100%
   );
-  --app-card-header-title-color: var(--color-text-on-primary);
-  --app-card-header-subtitle-color: var(--color-text-on-primary);
-  --app-card-header-icon-color: var(--color-text-on-primary);
+  --app-card-shell-title-color: var(--color-text-on-primary);
+  --app-card-shell-subtitle-color: var(--color-text-on-primary);
+  --app-card-shell-header-icon-color: var(--color-text-on-primary);
 }
 
 .research-item {

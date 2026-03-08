@@ -5,6 +5,10 @@
 
 @use "styles/mixins" as *;
 
+:host {
+  display: block;
+}
+
 // ============================================
 // BASE CARD SHELL
 // ============================================
@@ -13,9 +17,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--surface-card);
+  background: var(--app-card-shell-bg, var(--surface-card));
   border-radius: var(--component-card-radius);
-  border: var(--component-card-border);
+  border: var(--app-card-shell-border, var(--component-card-border));
   box-shadow: var(--component-card-shadow);
 
   overflow: hidden;
@@ -74,6 +78,38 @@
 }
 
 // ============================================
+// TONES
+// ============================================
+
+.card-shell--tone-success {
+  --app-card-shell-bg: color-mix(
+    in srgb,
+    var(--ds-primary-green-ultra-subtle) 82%,
+    var(--surface-primary)
+  );
+  --app-card-shell-border: var(--border-1) solid var(--ds-primary-green-subtle);
+}
+
+.card-shell--tone-warning {
+  --app-card-shell-bg: var(--orange-50);
+  --app-card-shell-border: var(--border-1) solid var(--orange-200);
+}
+
+.card-shell--tone-danger {
+  --app-card-shell-bg: var(--red-50);
+  --app-card-shell-border: var(--border-1) solid var(--red-300);
+}
+
+.card-shell--tone-brand {
+  --app-card-shell-bg: linear-gradient(
+    135deg,
+    var(--ds-primary-green-ultra-subtle),
+    var(--surface-primary)
+  );
+  --app-card-shell-border: var(--border-1) solid var(--ds-primary-green-subtle);
+}
+
+// ============================================
 // HEADER - CANONICAL (Player Dashboard style)
 // NO background, NO separator
 // ============================================
@@ -85,17 +121,22 @@
   gap: var(--space-4);
 
   // CANONICAL: tighter header padding (top/sides/bottom)
-  padding: var(--space-4) var(--component-card-padding) var(--space-2);
+  padding: var(
+    --app-card-shell-header-padding,
+    var(--space-4) var(--component-card-padding) var(--space-2)
+  );
 
   // NO background - transparent
-  background: transparent;
+  background: var(--app-card-shell-header-bg, transparent);
 
-  // NO separator
-  border-bottom: none;
+  border-bottom: var(--app-card-shell-header-border-bottom, none);
 }
 
 .card-shell__header--compact {
-  padding: var(--space-3) var(--component-card-padding-compact) var(--space-1);
+  padding: var(
+    --app-card-shell-header-padding-compact,
+    var(--space-3) var(--component-card-padding-compact) var(--space-1)
+  );
   gap: var(--space-3);
 }
 
@@ -114,7 +155,7 @@
 .card-shell__header-icon {
   // CANONICAL: raw icon, no container
   font-size: var(--ds-font-size-md); // 1rem
-  color: var(--color-brand-primary);
+  color: var(--app-card-shell-header-icon-color, var(--color-brand-primary));
   opacity: var(--opacity-strong);
   flex-shrink: 0;
   line-height: var(--ds-line-height-1);
@@ -140,7 +181,7 @@
   margin: 0;
   font-size: var(--font-h3-size);
   font-weight: var(--font-h2-weight);
-  color: var(--color-text-primary);
+  color: var(--app-card-shell-title-color, var(--color-text-primary));
   line-height: var(--font-h3-line-height);
 }
 
@@ -148,7 +189,7 @@
   margin: var(--space-1) 0 0 0;
   font-size: var(--font-body-sm-size);
   font-weight: var(--ds-font-weight-regular);
-  color: var(--color-text-secondary);
+  color: var(--app-card-shell-subtitle-color, var(--color-text-secondary));
   line-height: var(--ds-line-height-normal);
 }
 
@@ -168,13 +209,19 @@
 // ============================================
 
 .card-shell__body {
-  padding: 0 var(--component-card-padding) var(--component-card-padding);
+  padding: var(
+    --app-card-shell-body-padding,
+    0 var(--component-card-padding) var(--component-card-padding)
+  );
   flex: 1;
 }
 
 .card-shell__body--compact {
-  padding: 0 var(--component-card-padding-compact)
-    var(--component-card-padding-compact);
+  padding: var(
+    --app-card-shell-body-padding-compact,
+    0 var(--component-card-padding-compact)
+      var(--component-card-padding-compact)
+  );
 }
 
 .card-shell__body--flush {

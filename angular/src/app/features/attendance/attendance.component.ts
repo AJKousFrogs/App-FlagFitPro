@@ -10,9 +10,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
-import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -31,12 +29,17 @@ import { AuthService } from "../../core/services/auth.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { getInitials } from "../../shared/utils/format.utils";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../shared/components/ui-components";
 
 type EventType =
   | "practice"
@@ -52,11 +55,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     TableModule,
     StatusTagComponent,
-    Dialog,
-    
     InputText,
     Textarea,
     Select,
@@ -67,13 +67,16 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     PageHeaderComponent,
     DatePipe,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
     IconButtonComponent,
     EmptyStateComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="attendance-page ui-page-stack">
+      <div class="attendance-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Practice Attendance"
           subtitle="Track and manage team attendance"
@@ -90,7 +93,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         <div class="attendance-content ui-page-stack">
           <!-- Stats Overview -->
           <div class="stats-grid">
-            <p-card class="stat-card">
+            <app-card-shell class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-calendar stat-icon"></i>
                 <div class="stat-info stat-block__content">
@@ -100,9 +103,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   <span class="stat-block__label">Upcoming Events</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
 
-            <p-card class="stat-card">
+            <app-card-shell class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-check-circle stat-icon success"></i>
                 <div class="stat-info stat-block__content">
@@ -112,9 +115,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   <span class="stat-block__label">Team Attendance Rate</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
 
-            <p-card class="stat-card">
+            <app-card-shell class="stat-card">
               <div class="stat-content">
                 <i class="pi pi-users stat-icon"></i>
                 <div class="stat-info stat-block__content">
@@ -124,23 +127,20 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   <span class="stat-block__label">Players Tracked</span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
           </div>
 
           <!-- Upcoming Events -->
-          <p-card class="events-card">
-            <ng-template #header>
-              <app-card-header title="Upcoming Events">
-                <div header-actions class="filter-actions">
-                  <p-select
-                    [options]="eventTypeOptions"
-                    (onChange)="onSelectedEventTypeChange($event.value)"
-                    placeholder="All Types"
-                    [showClear]="true"
-                  ></p-select>
-                </div>
-              </app-card-header>
-            </ng-template>
+          <app-card-shell class="events-card" title="Upcoming Events">
+            <div header-actions class="filter-actions">
+              <p-select
+                [options]="eventTypeOptions"
+                (onChange)="onSelectedEventTypeChange($event.value)"
+                placeholder="All Types"
+                [showClear]="true"
+                class="attendance-filter-select"
+              ></p-select>
+            </div>
 
             @if (filteredEvents().length === 0) {
               <app-empty-state
@@ -203,15 +203,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 }
               </div>
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Player Attendance Stats (Coach View) -->
           @if (isCoach()) {
-            <p-card class="stats-card">
-              <ng-template #header>
-                <app-card-header title="Player Attendance Statistics" />
-              </ng-template>
-
+            <app-card-shell class="stats-card" title="Player Attendance Statistics">
               <p-table
                 [value]="playerStats()"
                 [paginator]="true"
@@ -219,6 +215,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 [showCurrentPageReport]="true"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} players"
                 class="p-datatable-sm"
+                [scrollable]="true"
               >
                 <ng-template #header>
                   <tr>
@@ -284,18 +281,26 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   </tr>
                 </ng-template>
               </p-table>
-            </p-card>
+            </app-card-shell>
           }
         </div>
 
         <!-- Create Event Dialog -->
-        <p-dialog
-          header="Create Event"
+        <app-dialog
           [(visible)]="showCreateEventDialog"
           [modal]="true"
-          [closable]="true"
-          class="attendance-create-dialog"
+          styleClass="attendance-create-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Create event"
         >
+          <app-dialog-header
+            icon="calendar-plus"
+            title="Create Event"
+            subtitle="Schedule a new practice, game, meeting, or conditioning session."
+            (close)="showCreateEventDialog = false"
+          />
           <div class="dialog-form">
             <div class="form-field">
               <label for="eventTitle">Title *</label>
@@ -379,27 +384,33 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             </div>
           </div>
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showCreateEventDialog = false"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [disabled]="!canCreateEvent()"
-              (clicked)="createEvent()"
-              >Create Event</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Create Event"
+            primaryIcon="check"
+            [disabled]="!canCreateEvent()"
+            (cancel)="showCreateEventDialog = false"
+            (primary)="createEvent()"
+          />
+        </app-dialog>
 
         <!-- Take Attendance Dialog -->
-        <p-dialog
-          header="Take Attendance"
+        <app-dialog
           [(visible)]="showAttendanceDialog"
           [modal]="true"
-          [closable]="true"
-          class="attendance-take-dialog"
+          styleClass="attendance-take-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Take attendance"
         >
+          <app-dialog-header
+            icon="users"
+            title="Take Attendance"
+            subtitle="Mark each player present, late, excused, or absent for this event."
+            (close)="showAttendanceDialog = false"
+          />
           @if (selectedEvent()) {
             <div class="attendance-dialog">
               <div class="event-summary">
@@ -438,15 +449,15 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             </div>
           }
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showAttendanceDialog = false"
-              >Close</app-button
-            >
-            <app-button iconLeft="pi-check" (clicked)="saveAttendance()"
-              >Save All</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Close"
+            primaryLabel="Save All"
+            primaryIcon="check"
+            (cancel)="showAttendanceDialog = false"
+            (primary)="saveAttendance()"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>
   `,

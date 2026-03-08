@@ -1,0 +1,403 @@
+export type NavigationGroup = "primary" | "secondary" | "me";
+
+export interface AppNavigationItem {
+  label: string;
+  route: string;
+  icon: string;
+  ariaLabel: string;
+  group: NavigationGroup;
+  mobilePrimary?: boolean;
+  roles?: string[];
+}
+
+const EXACT_NAV_ROUTES = new Set([
+  "/dashboard",
+  "/player-dashboard",
+  "/coach/dashboard",
+  "/todays-practice",
+]);
+
+const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
+  {
+    label: "Dashboard",
+    route: "/player-dashboard",
+    icon: "pi-home",
+    ariaLabel: "Dashboard - Overview of your training and progress",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Today",
+    route: "/todays-practice",
+    icon: "pi-calendar",
+    ariaLabel: "Today's Practice - Your training for today",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Training",
+    route: "/training",
+    icon: "pi-bolt",
+    ariaLabel: "Training Schedule - View and manage your training calendar",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Wellness",
+    route: "/wellness",
+    icon: "pi-heart",
+    ariaLabel: "Wellness & Recovery - Daily check-in and recovery metrics",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Analytics",
+    route: "/analytics",
+    icon: "pi-chart-line",
+    ariaLabel: "Analytics - Performance metrics and insights",
+    group: "primary",
+  },
+  {
+    label: "Performance",
+    route: "/performance-tracking",
+    icon: "pi-bullseye",
+    ariaLabel:
+      "Performance Tracking - Track and analyze your performance metrics",
+    group: "primary",
+  },
+  {
+    label: "Roster",
+    route: "/roster",
+    icon: "pi-users",
+    ariaLabel: "Roster - Teammates, roles, and availability",
+    group: "primary",
+  },
+  {
+    label: "Team Chat",
+    route: "/team-chat",
+    icon: "pi-comments",
+    ariaLabel: "Team Chat - Communicate with your team",
+    group: "primary",
+  },
+  {
+    label: "Tournaments",
+    route: "/tournaments",
+    icon: "pi-trophy",
+    ariaLabel: "Tournaments - Games and competitions",
+    group: "primary",
+  },
+  {
+    label: "Game Nutrition",
+    route: "/game/nutrition",
+    icon: "pi-apple",
+    ariaLabel:
+      "Game Nutrition - Nutrition and hydration for tournament days",
+    group: "primary",
+  },
+  {
+    label: "Travel Recovery",
+    route: "/travel/recovery",
+    icon: "pi-map-marker",
+    ariaLabel: "Travel Recovery - Recovery protocols for travel days",
+    group: "primary",
+  },
+  {
+    label: "Game Tracker",
+    route: "/game-tracker",
+    icon: "pi-flag",
+    ariaLabel: "Game Tracker - Track live games and statistics",
+    group: "primary",
+  },
+  {
+    label: "Merlin AI",
+    route: "/chat",
+    icon: "pi-sparkles",
+    ariaLabel: "Merlin AI - Chat with your Merlin AI",
+    group: "primary",
+  },
+  {
+    label: "Community",
+    route: "/community",
+    icon: "pi-globe",
+    ariaLabel: "Community - Connect with other players and share experiences",
+    group: "primary",
+  },
+  {
+    label: "Exercise Library",
+    route: "/exercise-library",
+    icon: "pi-book",
+    ariaLabel: "Exercise Library - Browse exercise database",
+    group: "primary",
+  },
+  {
+    label: "Video Library",
+    route: "/training/videos",
+    icon: "pi-video",
+    ariaLabel: "Video Library - Training videos and drills",
+    group: "primary",
+  },
+  {
+    label: "ACWR",
+    route: "/acwr",
+    icon: "pi-chart-bar",
+    ariaLabel: "ACWR Dashboard - Acute Chronic Workload Ratio monitoring",
+    group: "primary",
+  },
+  {
+    label: "Knowledge Base",
+    route: "/knowledge",
+    icon: "pi-bookmark",
+    ariaLabel: "Knowledge Base - Submit and browse team knowledge resources",
+    group: "primary",
+  },
+  {
+    label: "Profile",
+    route: "/profile",
+    icon: "pi-user",
+    ariaLabel: "Profile - View and edit your profile",
+    group: "me",
+  },
+  {
+    label: "Settings",
+    route: "/settings",
+    icon: "pi-cog",
+    ariaLabel: "Settings - App preferences and account settings",
+    group: "me",
+  },
+  {
+    label: "Help",
+    route: "/help",
+    icon: "pi-question-circle",
+    ariaLabel: "Help Center - Get support and guidance",
+    group: "me",
+  },
+  {
+    label: "Achievements",
+    route: "/achievements",
+    icon: "pi-trophy",
+    ariaLabel: "Achievements - View your progress and badges",
+    group: "me",
+  },
+];
+
+const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
+  {
+    label: "Dashboard",
+    route: "/coach/dashboard",
+    icon: "pi-home",
+    ariaLabel: "Coach Dashboard - Team overview and insights",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Roster",
+    route: "/roster",
+    icon: "pi-users",
+    ariaLabel: "Roster - Player management and monitoring",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Planning",
+    route: "/coach/programs",
+    icon: "pi-calendar",
+    ariaLabel: "Planning - Programs, practice planner, and calendar",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Analytics",
+    route: "/coach/analytics",
+    icon: "pi-chart-line",
+    ariaLabel: "Analytics - Team performance metrics and insights",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Team Chat",
+    route: "/team-chat",
+    icon: "pi-comments",
+    ariaLabel: "Team Chat - Communicate with your team",
+    group: "primary",
+  },
+  {
+    label: "Performance",
+    route: "/performance-tracking",
+    icon: "pi-bullseye",
+    ariaLabel:
+      "Performance Tracking - Track and analyze team performance metrics",
+    group: "primary",
+  },
+  {
+    label: "Competition",
+    route: "/tournaments",
+    icon: "pi-trophy",
+    ariaLabel: "Competition - Games and tournaments",
+    group: "primary",
+  },
+  {
+    label: "Travel Recovery",
+    route: "/travel/recovery",
+    icon: "pi-map-marker",
+    ariaLabel: "Travel Recovery - Recovery protocols for travel days",
+    group: "primary",
+  },
+  {
+    label: "Game Tracker",
+    route: "/game-tracker",
+    icon: "pi-flag",
+    ariaLabel: "Game Tracker - Track live games and statistics",
+    group: "primary",
+  },
+  {
+    label: "Merlin AI",
+    route: "/chat",
+    icon: "pi-sparkles",
+    ariaLabel: "Merlin AI - Chat with your Merlin AI",
+    group: "primary",
+  },
+  {
+    label: "Community",
+    route: "/community",
+    icon: "pi-globe",
+    ariaLabel: "Community - Connect with players and share experiences",
+    group: "primary",
+  },
+  {
+    label: "Exercise Library",
+    route: "/exercise-library",
+    icon: "pi-book",
+    ariaLabel: "Exercise Library - Browse exercise database",
+    group: "primary",
+  },
+  {
+    label: "Video Library",
+    route: "/training/videos",
+    icon: "pi-video",
+    ariaLabel: "Video Library - Training videos and drills",
+    group: "primary",
+  },
+  {
+    label: "Knowledge Base",
+    route: "/knowledge",
+    icon: "pi-bookmark",
+    ariaLabel: "Knowledge Base - Training resources and guides",
+    group: "primary",
+  },
+  {
+    label: "Staff Hub",
+    route: "/staff",
+    icon: "pi-building",
+    ariaLabel:
+      "Staff Hub - Access nutritionist, physio, and psychology dashboards",
+    group: "secondary",
+    roles: [
+      "physiotherapist",
+      "nutritionist",
+      "psychologist",
+      "strength_conditioning_coach",
+    ],
+  },
+  {
+    label: "Team Hub",
+    route: "/team/workspace",
+    icon: "pi-briefcase",
+    ariaLabel: "Team Hub - Collaborative team workspace",
+    group: "secondary",
+    roles: ["coach", "assistant_coach", "admin"],
+  },
+  {
+    label: "Team Management",
+    route: "/coach/team",
+    icon: "pi-sitemap",
+    ariaLabel: "Team Management - Manage team settings and roster",
+    group: "secondary",
+    roles: ["coach", "assistant_coach", "admin"],
+  },
+  {
+    label: "Exercise DB",
+    route: "/exercisedb",
+    icon: "pi-database",
+    ariaLabel: "Exercise DB - Manage exercise database (coach)",
+    group: "secondary",
+    roles: ["coach", "assistant_coach", "admin"],
+  },
+  {
+    label: "Profile",
+    route: "/profile",
+    icon: "pi-user",
+    ariaLabel: "Profile - View and edit your profile",
+    group: "me",
+  },
+  {
+    label: "Settings",
+    route: "/settings",
+    icon: "pi-cog",
+    ariaLabel: "Settings - App preferences and account settings",
+    group: "me",
+  },
+  {
+    label: "Help",
+    route: "/help",
+    icon: "pi-question-circle",
+    ariaLabel: "Help Center - Get support and guidance",
+    group: "me",
+  },
+  {
+    label: "Achievements",
+    route: "/achievements",
+    icon: "pi-trophy",
+    ariaLabel: "Achievements - View your progress and badges",
+    group: "me",
+  },
+];
+
+function isCoachNavigationRole(role: string | undefined): boolean {
+  return ["coach", "assistant_coach", "admin"].includes(role ?? "");
+}
+
+function filterByRole(
+  items: readonly AppNavigationItem[],
+  role: string | undefined,
+): AppNavigationItem[] {
+  return items.filter((item) => !item.roles || item.roles.includes(role ?? ""));
+}
+
+export function getRoleNavigationItems(role: string | undefined): AppNavigationItem[] {
+  const items = isCoachNavigationRole(role) ? COACH_NAV_ITEMS : ATHLETE_NAV_ITEMS;
+  return filterByRole(items, role);
+}
+
+export function getPrimaryNavigationItems(
+  role: string | undefined,
+): AppNavigationItem[] {
+  return getRoleNavigationItems(role).filter((item) => item.group === "primary");
+}
+
+export function getSecondaryNavigationItems(
+  role: string | undefined,
+): AppNavigationItem[] {
+  return getRoleNavigationItems(role).filter(
+    (item) => item.group === "secondary",
+  );
+}
+
+export function getMeNavigationItems(role: string | undefined): AppNavigationItem[] {
+  return getRoleNavigationItems(role).filter((item) => item.group === "me");
+}
+
+export function getMobilePrimaryNavigationItems(
+  role: string | undefined,
+): AppNavigationItem[] {
+  return getPrimaryNavigationItems(role).filter((item) => item.mobilePrimary);
+}
+
+export function getMobileMoreNavigationItems(
+  role: string | undefined,
+): AppNavigationItem[] {
+  return getRoleNavigationItems(role).filter((item) => !item.mobilePrimary);
+}
+
+export function isExactNavigationRoute(route: string): boolean {
+  return EXACT_NAV_ROUTES.has(route);
+}

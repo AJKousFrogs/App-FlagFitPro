@@ -9,10 +9,8 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -31,6 +29,10 @@ import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-c
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §30
 interface AthleteNutritionData {
@@ -124,9 +126,11 @@ interface TournamentNutritionBrief {
     CommonModule,
     FormsModule,
     RouterModule,
-    Card,
     LazyChartComponent,
-    Dialog,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     InputText,
     ProgressBar,
     Select,

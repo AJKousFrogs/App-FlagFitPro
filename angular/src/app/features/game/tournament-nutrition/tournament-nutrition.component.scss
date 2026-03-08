@@ -1,7 +1,7 @@
 @use "styles/mixins" as *;
 
 .tournament-nutrition-page {
-  @include page-container(var(--content-max-width-xl));
+  width: 100%;
 }
 
 @include stat-block;

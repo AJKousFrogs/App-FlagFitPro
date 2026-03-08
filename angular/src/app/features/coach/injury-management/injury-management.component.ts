@@ -25,11 +25,10 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 
 import { RadioButton } from "primeng/radiobutton";
@@ -49,6 +48,11 @@ import { ApiResponse } from "../../../core/models/common.models";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getInitials } from "../../../shared/utils/format.utils";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../shared/components/ui-components";
 
 // ===== Interfaces =====
 interface InjuryRecord {
@@ -261,11 +265,9 @@ const RTP_STAGES: RtpStage[] = [
     ReactiveFormsModule,
     DatePipe,
     Avatar,
-    Card,
+    CardShellComponent,
     Checkbox,
     DatePicker,
-    Dialog,
-    
     InputNumber,
     RadioButton,
     Select,
@@ -277,6 +279,9 @@ const RTP_STAGES: RtpStage[] = [
     ButtonComponent,
     EmptyStateComponent,
     StatusTagComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   templateUrl: "./injury-management.component.html",
   styleUrl: "./injury-management.component.scss",

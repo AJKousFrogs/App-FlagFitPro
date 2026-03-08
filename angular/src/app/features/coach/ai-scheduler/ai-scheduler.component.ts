@@ -18,14 +18,12 @@ import {
   signal,
 } from "@angular/core";
 import { ToastService } from "../../../core/services/toast.service";
-import { Card } from "primeng/card";
-
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -106,14 +104,13 @@ const PRACTICE_DURATIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
+    CardShellComponent,
     ProgressBar,
     Select,
 
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -126,7 +123,7 @@ const PRACTICE_DURATIONS = [
 
         @if (!generatedSchedule()) {
           <!-- Generation Form -->
-          <p-card class="generation-form-card">
+          <app-card-shell class="generation-form-card">
             <div class="merlin-intro">
               <div class="merlin-avatar">🤖</div>
               <div class="merlin-message">
@@ -311,7 +308,7 @@ const PRACTICE_DURATIONS = [
                 >Generate Schedule</app-button
               >
             </div>
-          </p-card>
+          </app-card-shell>
         } @else {
           <!-- Generated Schedule View -->
           <div class="schedule-header-actions">
@@ -333,7 +330,7 @@ const PRACTICE_DURATIONS = [
           </div>
 
           <!-- Merlin Recommendation -->
-          <p-card class="recommendation-card">
+          <app-card-shell class="recommendation-card">
             <div class="merlin-recommendation">
               <span class="merlin-icon">🤖</span>
               <div class="recommendation-content">
@@ -341,13 +338,10 @@ const PRACTICE_DURATIONS = [
                 <p>{{ merlinRecommendation() }}</p>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Periodization Overview -->
-          <p-card>
-            <ng-template #header>
-              <app-card-header title="Periodization Overview" />
-            </ng-template>
+          <app-card-shell title="Periodization Overview">
             <div class="periodization-timeline">
               @for (phase of periodizationPhases(); track phase.name) {
                 <div
@@ -369,14 +363,11 @@ const PRACTICE_DURATIONS = [
                 </div>
               }
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Weekly Schedule -->
           @for (week of scheduleWeeks(); track week.name) {
-            <p-card>
-              <ng-template #header>
-                <app-card-header [title]="week.name" />
-              </ng-template>
+            <app-card-shell [title]="week.name">
               <div class="sessions-list">
                 @for (session of week.sessions; track session.id) {
                   <div
@@ -437,18 +428,16 @@ const PRACTICE_DURATIONS = [
                   </div>
                 }
               </div>
-            </p-card>
+            </app-card-shell>
           }
 
           <!-- Player Modifications -->
           @if (playerModifications().length > 0) {
-            <p-card class="modifications-card">
-              <ng-template #header>
-                <app-card-header
-                  icon="pi-exclamation-triangle"
-                  title="Player-Specific Modifications"
-                />
-              </ng-template>
+            <app-card-shell
+              class="modifications-card"
+              headerIcon="pi-exclamation-triangle"
+              title="Player-Specific Modifications"
+            >
 
               @if (highAcwrMods().length > 0) {
                 <div class="mod-section">
@@ -491,7 +480,7 @@ const PRACTICE_DURATIONS = [
                   }
                 </div>
               }
-            </p-card>
+            </app-card-shell>
           }
 
           <!-- Export Actions -->

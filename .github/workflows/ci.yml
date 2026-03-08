@@ -213,6 +213,8 @@ jobs:
         env:
           CI: true
           BASE_URL: http://localhost:4200
+          TEST_USER_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
 
       - name: Upload Playwright report
         if: always()

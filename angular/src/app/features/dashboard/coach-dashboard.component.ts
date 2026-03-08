@@ -12,7 +12,6 @@ import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -51,8 +50,10 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   AppLoadingComponent,
+  AppDialogComponent,
   ButtonComponent,
-  CardComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -69,6 +70,7 @@ import { DatePipe, DecimalPipe } from "@angular/common";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { UI_LIMITS } from "../../core/constants";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 /**
  * Coach Dashboard Component
@@ -109,8 +111,6 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     StatusTagComponent,
     LazyChartComponent,
     ChartSkeletonComponent,
-    Dialog,
-    
     Tooltip,
     Avatar,
     Badge,
@@ -120,11 +120,14 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     ProgressBar,
     Select,
     AppLoadingComponent,
+    AppDialogComponent,
     ButtonComponent,
-    CardComponent,
+    CardShellComponent,
     AlertComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     DatePipe,
     DecimalPipe,
     SemanticMeaningRendererComponent,

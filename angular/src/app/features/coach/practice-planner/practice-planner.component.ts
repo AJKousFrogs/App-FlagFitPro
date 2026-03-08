@@ -20,10 +20,9 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 
@@ -38,6 +37,10 @@ import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import {
+  AppDialogComponent,
+  DialogHeaderComponent,
+} from "../../../shared/components/ui-components";
 
 // ===== Interfaces =====
 interface PracticePlan {
@@ -126,10 +129,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
   imports: [
     CommonModule,
     DatePipe,
-    Card,
+    CardShellComponent,
     DatePicker,
-    Dialog,
-    
     InputNumber,
     InputText,
     Select,
@@ -140,6 +141,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -183,7 +186,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         @if (filteredPractices().length > 0) {
           <div class="practices-list">
             @for (practice of filteredPractices(); track practice.id) {
-              <p-card class="practice-card">
+              <app-card-shell class="practice-card">
                 <div class="practice-header">
                   <div class="practice-title">
                     <span class="practice-icon"><i class="pi pi-bolt" aria-hidden="true"></i></span>
@@ -277,7 +280,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                     }
                   </span>
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
         } @else {
@@ -294,12 +297,23 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
       </div>
 
       <!-- Create/Edit Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showDialog"
-        [header]="isEditing() ? 'Edit Practice Plan' : 'Create Practice Plan'"
         [modal]="true"
-        class="practice-dialog"
+        styleClass="practice-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '1200px': '94vw', '960px': '96vw' }"
+        [ariaLabel]="
+          isEditing() ? 'Edit practice plan' : 'Create practice plan'
+        "
       >
+        <app-dialog-header
+          icon="calendar-plus"
+          [title]="isEditing() ? 'Edit Practice Plan' : 'Create Practice Plan'"
+          subtitle="Plan timing, drills, equipment, and coach notes for the session."
+          (close)="showDialog = false"
+        />
         <div class="practice-form">
           <!-- Details Section -->
           <div class="form-section">
@@ -480,7 +494,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           </div>
         </div>
 
-        <ng-template #footer>
+        <div dialogFooter class="dialog-actions practice-dialog-actions">
           <app-button variant="secondary" (clicked)="saveDraft()"
             >Save as Draft</app-button
           >
@@ -496,16 +510,25 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             (clicked)="saveAndNotify()"
             >Save & Notify Team</app-button
           >
-        </ng-template>
-      </p-dialog>
+        </div>
+      </app-dialog>
 
       <!-- Activity Editor Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showActivityDialog"
-        [header]="'Edit Activity: ' + (editingActivity?.title || '')"
         [modal]="true"
-        class="practice-activity-dialog"
+        styleClass="practice-activity-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        [ariaLabel]="'Edit activity ' + (editingActivity?.title || '')"
       >
+        <app-dialog-header
+          icon="pencil"
+          [title]="'Edit Activity: ' + (editingActivity?.title || '')"
+          subtitle="Adjust timing, structure, and coaching details for this block."
+          (close)="showActivityDialog = false"
+        />
         @if (editingActivity) {
           <div class="activity-form">
             <div class="form-row">
@@ -589,7 +612,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             }
           </div>
 
-          <ng-template #footer>
+        }
+        @if (editingActivity) {
+          <div dialogFooter class="dialog-actions">
             <app-button
               variant="secondary"
               (clicked)="showActivityDialog = false"
@@ -598,9 +623,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             <app-button iconLeft="pi-check" (clicked)="saveActivity()"
               >Save Activity</app-button
             >
-          </ng-template>
+          </div>
         }
-      </p-dialog>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./practice-planner.component.scss",

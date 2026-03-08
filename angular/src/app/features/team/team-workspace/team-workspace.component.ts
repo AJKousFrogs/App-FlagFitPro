@@ -21,7 +21,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   ],
   template: `
     <app-main-layout>
-      <div class="team-workspace-page">
+      <div class="team-workspace-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Team Management"
           subtitle="Roster, attendance, and administrative tools"

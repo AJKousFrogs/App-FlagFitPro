@@ -17,7 +17,7 @@
 
       <!-- Content -->
       @else {
-        <div class="performance-page ui-page-stack">
+        <div class="performance-page ui-page-shell ui-page-shell--wide ui-page-stack">
           <app-page-header
             title="Performance Tracking"
             subtitle="Track and analyze your performance metrics over time"
@@ -69,35 +69,31 @@
 
           <!-- Team Rankings & Achievement Badges -->
           @if (teamRankings() && teamRankings()!.rankings.length > 0) {
-            <p-card class="team-rankings-card">
-              <ng-template #header>
-                <app-card-header
-                  class="rankings-card-header"
-                  icon="pi-users"
-                  title="Your Team Rankings"
-                  subtitle="See how your latest metrics compare across the team"
-                >
-                  @if (performanceAchievements().length > 0) {
-                    <div header-actions class="badge-summary">
-                      @if (goldBadgeCount() > 0) {
-                        <span class="badge-count gold" pTooltip="Team Leader">
-                          🥇 {{ goldBadgeCount() }}
-                        </span>
-                      }
-                      @if (silverBadgeCount() > 0) {
-                        <span class="badge-count silver" pTooltip="2nd Place">
-                          🥈 {{ silverBadgeCount() }}
-                        </span>
-                      }
-                      @if (bronzeBadgeCount() > 0) {
-                        <span class="badge-count bronze" pTooltip="3rd Place">
-                          🥉 {{ bronzeBadgeCount() }}
-                        </span>
-                      }
-                    </div>
+            <app-card-shell
+              class="team-rankings-card"
+              title="Your Team Rankings"
+              subtitle="See how your latest metrics compare across the team"
+              headerIcon="pi-users"
+            >
+              @if (performanceAchievements().length > 0) {
+                <div header-actions class="badge-summary">
+                  @if (goldBadgeCount() > 0) {
+                    <span class="badge-count gold" pTooltip="Team Leader">
+                      🥇 {{ goldBadgeCount() }}
+                    </span>
                   }
-                </app-card-header>
-              </ng-template>
+                  @if (silverBadgeCount() > 0) {
+                    <span class="badge-count silver" pTooltip="2nd Place">
+                      🥈 {{ silverBadgeCount() }}
+                    </span>
+                  }
+                  @if (bronzeBadgeCount() > 0) {
+                    <span class="badge-count bronze" pTooltip="3rd Place">
+                      🥉 {{ bronzeBadgeCount() }}
+                    </span>
+                  }
+                </div>
+              }
 
               <!-- Achievement Badges Row -->
               @if (performanceAchievements().length > 0) {
@@ -224,30 +220,24 @@
                   </div>
                 }
               </div>
-            </p-card>
+            </app-card-shell>
           } @else if (hasTeam() && hasData()) {
-            <p-card class="team-rankings-card">
+            <app-card-shell class="team-rankings-card">
               <app-empty-state
                 icon="pi-users"
                 heading="Team Rankings Coming Soon"
                 description="Once more teammates log their performance tests, you'll see how you compare."
               />
-            </p-card>
+            </app-card-shell>
           }
 
           <!-- Performance Charts -->
           <div class="charts-grid">
             @defer (on viewport) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <app-card-header title="Performance Over Time">
-                    @if (nextGenEnabled()) {
-                      <span header-actions class="chart-preview-badge"
-                        >Preview</span
-                      >
-                    }
-                  </app-card-header>
-                </ng-template>
+              <app-card-shell class="chart-card" title="Performance Over Time">
+                @if (nextGenEnabled()) {
+                  <span header-actions class="chart-preview-badge">Preview</span>
+                }
                 @if (performanceChartData()) {
                   <app-lazy-chart
                     type="line"
@@ -261,27 +251,24 @@
                     description="Log at least 2 performance tests to see your progress over time."
                   />
                 }
-              </p-card>
+              </app-card-shell>
             } @placeholder {
-              <p-card class="chart-card">
+              <app-card-shell class="chart-card">
                 <app-loading
                   variant="inline"
                   message="Loading performance chart..."
                 />
-              </p-card>
+              </app-card-shell>
             }
 
             @defer (on viewport) {
-              <p-card class="chart-card">
-                <ng-template #header>
-                  <app-card-header title="Speed Metrics (10yd, 20yd, 40yd)">
-                    @if (nextGenEnabled()) {
-                      <span header-actions class="chart-preview-badge"
-                        >Preview</span
-                      >
-                    }
-                  </app-card-header>
-                </ng-template>
+              <app-card-shell
+                class="chart-card"
+                title="Speed Metrics (10yd, 20yd, 40yd)"
+              >
+                @if (nextGenEnabled()) {
+                  <span header-actions class="chart-preview-badge">Preview</span>
+                }
                 @if (speedChartData()) {
                   <app-lazy-chart
                     type="bar"
@@ -295,30 +282,27 @@
                     description="Log your 10-yard, 20-yard, or 40-yard times to see speed metrics."
                   />
                 }
-              </p-card>
+              </app-card-shell>
             } @placeholder {
-              <p-card class="chart-card">
+              <app-card-shell class="chart-card">
                 <app-loading variant="inline" message="Loading speed metrics..." />
-              </p-card>
+              </app-card-shell>
             }
           </div>
 
           <!-- Position Benchmark Comparison -->
-          <p-card class="benchmark-card">
-            <ng-template #header>
-              <app-card-header
-                [title]="selectedPosition() + ' Position Benchmarks'"
-                icon="pi-bullseye"
-              >
-                <p-select
-                  header-actions
-                  [options]="positionOptions"
-                  (onChange)="onPositionSelectionChange($event.value)"
-                  placeholder="Change Position"
-                  class="position-selector"
-                ></p-select>
-              </app-card-header>
-            </ng-template>
+          <app-card-shell
+            class="benchmark-card"
+            [title]="selectedPosition() + ' Position Benchmarks'"
+            headerIcon="pi-bullseye"
+          >
+            <p-select
+              header-actions
+              [options]="positionOptions"
+              (onChange)="onPositionSelectionChange($event.value)"
+              placeholder="Change Position"
+              class="position-selector"
+            ></p-select>
             @if (nextGenEnabled()) {
               <p class="benchmark-preview-note">
                 Next-gen benchmarks are in preview. Use current benchmarks for
@@ -360,18 +344,15 @@
                 description="Log your performance tests to compare against elite position benchmarks."
               />
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Gap Analysis & Training Priorities -->
-          <p-card class="gap-analysis-card">
-            <ng-template #header>
-              <app-card-header
-                class="gap-analysis-card-header"
-                icon="pi-search"
-                title="Your Training Priorities"
-                subtitle="Recommended focus areas based on current performance gaps"
-              />
-            </ng-template>
+          <app-card-shell
+            class="gap-analysis-card"
+            title="Your Training Priorities"
+            subtitle="Recommended focus areas based on current performance gaps"
+            headerIcon="pi-search"
+          >
             @if (gapAnalysis().length === 0) {
               <app-empty-state
                 icon="pi-chart-bar"
@@ -434,18 +415,15 @@
                 }
               </p-accordion>
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Performance History Table -->
-          <p-card class="table-card">
-            <ng-template #header>
-              <app-card-header
-                class="table-card-header"
-                icon="pi-history"
-                title="Performance History"
-                subtitle="Recent logged tests and overall scores"
-              />
-            </ng-template>
+          <app-card-shell
+            class="table-card"
+            title="Performance History"
+            subtitle="Recent logged tests and overall scores"
+            headerIcon="pi-history"
+          >
             @if (performanceHistory().length === 0) {
               <app-empty-state
                 [icon]="noDataMessage.icon"
@@ -498,17 +476,25 @@
                 </ng-template>
               </p-table>
             }
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- Log Performance Dialog (Extended) -->
-        <p-dialog
-          header="Log Performance"
+        <app-dialog
           [(visible)]="showLogDialog"
           [modal]="true"
-          class="performance-dialog"
-          [closable]="true"
+          [closable]="false"
+          [draggable]="false"
+          [resizable]="false"
+          [dismissableMask]="true"
+          [styleClass]="'performance-dialog'"
         >
+          <app-dialog-header
+            icon="chart-line"
+            title="Log Performance"
+            subtitle="Add a new testing session to update benchmarks and trends."
+            (close)="showLogDialog = false"
+          />
           <div class="log-form">
             <!-- Speed Metrics -->
             <h4 class="form-section-title">⚡ Speed Metrics</h4>
@@ -696,18 +682,15 @@
               />
             </div>
           </div>
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showLogDialog = false"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [loading]="isSaving()"
-              (clicked)="savePerformance()"
-              >Save Performance</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            cancelLabel="Cancel"
+            primaryLabel="Save Performance"
+            primaryIcon="check"
+            [loading]="isSaving()"
+            (cancel)="showLogDialog = false"
+            (primary)="savePerformance()"
+          />
+        </app-dialog>
       }
       <!-- End of @else for content -->
     </app-main-layout>

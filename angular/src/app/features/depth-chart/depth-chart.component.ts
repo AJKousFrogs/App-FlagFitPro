@@ -15,8 +15,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 
 import { Select } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
@@ -34,7 +32,9 @@ import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -53,21 +53,20 @@ interface PositionGroup {
   imports: [
     CommonModule,
     DragDropModule,
-    Card,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
-    Dialog,
-    
     Select,
     Avatar,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
   ],
@@ -92,7 +91,7 @@ interface PositionGroup {
 
         <div class="depth-chart-content ui-page-stack">
           @if (depthCharts().length === 0) {
-            <p-card class="empty-card">
+            <app-card-shell class="empty-card">
               <app-empty-state
                 icon="pi-sitemap"
                 heading="No Depth Charts"
@@ -100,7 +99,7 @@ interface PositionGroup {
                 [actionLabel]="isCoach() ? 'Initialize Depth Charts' : null"
                 [actionHandler]="isCoach() ? initializeDepthChartsHandler : null"
               />
-            </p-card>
+            </app-card-shell>
           } @else {
             <p-tabs
               [(value)]="activeTabIndex"
@@ -219,17 +218,13 @@ interface PositionGroup {
 
             <!-- Unassigned Players -->
             @if (isCoach() && unassignedPlayers().length > 0) {
-              <p-card class="unassigned-card">
-                <ng-template #header>
-                  <app-card-header title="Unassigned Players">
-                    <app-status-tag
-                      header-actions
-                      [value]="unassignedPlayers().length + ' players'"
-                      severity="warning"
-                      size="sm"
-                    />
-                  </app-card-header>
-                </ng-template>
+              <app-card-shell class="unassigned-card" title="Unassigned Players">
+                <app-status-tag
+                  header-actions
+                  [value]="unassignedPlayers().length + ' players'"
+                  severity="warning"
+                  size="sm"
+                />
                 <div class="unassigned-list">
                   @for (player of unassignedPlayers(); track player.id) {
                     <div class="unassigned-player">
@@ -241,18 +236,27 @@ interface PositionGroup {
                     </div>
                   }
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           }
         </div>
 
         <!-- Assign Player Dialog -->
-        <p-dialog
-          header="Assign Player"
+        <app-dialog
           [(visible)]="showAssignDialog"
           [modal]="true"
-          class="dialog-max-w-sm"
+          [closable]="false"
+          [draggable]="false"
+          [resizable]="false"
+          [dismissableMask]="true"
+          [styleClass]="'dialog-max-w-sm'"
         >
+          <app-dialog-header
+            icon="users"
+            title="Assign Player"
+            subtitle="Add an unassigned player to the selected depth slot"
+            (close)="showAssignDialog = false"
+          />
           <div class="assign-dialog">
             <p class="assign-info">
               Assign a player to
@@ -270,7 +274,7 @@ interface PositionGroup {
               class="w-full"
             ></p-select>
           </div>
-          <ng-template #footer>
+          <div class="dialog-actions">
             <app-button variant="text" (clicked)="showAssignDialog = false"
               >Cancel</app-button
             >
@@ -280,8 +284,8 @@ interface PositionGroup {
               (clicked)="assignPlayer()"
               >Assign</app-button
             >
-          </ng-template>
-        </p-dialog>
+          </div>
+        </app-dialog>
       </div>
     </app-main-layout>
   `,

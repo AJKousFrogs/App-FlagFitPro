@@ -15,7 +15,6 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { ToastService } from "../../core/services/toast.service";
 
-import { Dialog } from "primeng/dialog";
 import { Paginator } from "primeng/paginator";
 
 import { Tooltip } from "primeng/tooltip";
@@ -23,7 +22,9 @@ import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
-import { ButtonComponent } from "../../shared/components/button/button.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
@@ -65,17 +66,17 @@ interface Category {
     ReactiveFormsModule,
     Paginator,
     Tooltip,
-    Dialog,
-    
+    AppDialogComponent,
 
     MainLayoutComponent,
-    ButtonComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     SearchInputComponent,
     EmptyStateComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="exercise-library-page ui-page-stack">
+      <div class="exercise-library-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <!-- Premium Header with Stats -->
         <div class="page-hero">
           <div class="hero-content">
@@ -264,15 +265,24 @@ interface Category {
       </div>
 
       <!-- Exercise Details Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showDetailsDialog"
         [modal]="true"
-        [closable]="true"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
         [closeOnEscape]="true"
         [dismissableMask]="true"
-        header="Exercise Details"
-        class="exercise-details-dialog"
+        [styleClass]="'exercise-details-dialog'"
       >
+        @if (selectedExercise()) {
+          <app-dialog-header
+            icon="book"
+            title="Exercise Details"
+            subtitle="Movement guidance, prescription, and coaching cues."
+            (close)="showDetailsDialog.set(false)"
+          />
+        }
         @if (selectedExercise()) {
           <div class="dialog-content">
             <div class="detail-header">
@@ -442,22 +452,19 @@ interface Category {
             }
           </div>
 
-          <ng-template #footer>
-            <app-button
-              iconLeft="pi-plus"
-              (clicked)="
-                addToWorkout(selectedExercise()!); showDetailsDialog.set(false)
-              "
-              >Add to Workout</app-button
-            >
-            <app-button
-              iconLeft="pi-times"
-              (clicked)="showDetailsDialog.set(false)"
-              >Close</app-button
-            >
-          </ng-template>
         }
-      </p-dialog>
+        @if (selectedExercise()) {
+          <app-dialog-footer
+            cancelLabel="Close"
+            primaryLabel="Add to Workout"
+            primaryIcon="plus"
+            (cancel)="showDetailsDialog.set(false)"
+            (primary)="
+              addToWorkout(selectedExercise()!); showDetailsDialog.set(false)
+            "
+          />
+        }
+      </app-dialog>
 
       <!--for notifications -->
 </app-main-layout>

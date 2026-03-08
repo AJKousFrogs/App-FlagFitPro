@@ -10,8 +10,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -34,13 +32,18 @@ import { TeamMembershipService } from "../../core/services/team-membership.servi
 import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../shared/components/ui-components";
 
 type CertificationLevel = "youth" | "high_school" | "college" | "professional";
 type OfficialRole =
@@ -57,11 +60,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     TableModule,
     StatusTagComponent,
-    Dialog,
-    
     InputText,
     InputNumber,
     Select,
@@ -71,13 +71,16 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     DatePipe,
     CurrencyPipe,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
     IconButtonComponent,
     EmptyStateComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
-      <div class="officials-page ui-page-stack">
+      <div class="officials-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
           title="Officials Management"
           subtitle="Schedule and manage referees"
@@ -93,19 +96,16 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
         <div class="officials-content ui-page-stack">
           <!-- Officials Directory -->
-          <p-card class="directory-card">
-            <ng-template #header>
-              <app-card-header title="Officials Directory">
-                <div header-actions class="filter-actions">
-                  <p-select
-                    [options]="certificationOptions"
-                    (onChange)="onSelectedCertificationChange($event.value)"
-                    placeholder="All Levels"
-                    [showClear]="true"
-                  ></p-select>
-                </div>
-              </app-card-header>
-            </ng-template>
+          <app-card-shell class="directory-card" title="Officials Directory">
+            <div header-actions class="filter-actions">
+              <p-select
+                [options]="certificationOptions"
+                (onChange)="onSelectedCertificationChange($event.value)"
+                placeholder="All Levels"
+                [showClear]="true"
+                class="officials-filter-select"
+              ></p-select>
+            </div>
 
             <p-table
               [value]="filteredOfficials()"
@@ -113,6 +113,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               [rows]="10"
               class="p-datatable-sm"
               [rowHover]="true"
+              [scrollable]="true"
             >
               <ng-template #header>
                 <tr>
@@ -210,14 +211,10 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 </tr>
               </ng-template>
             </p-table>
-          </p-card>
+          </app-card-shell>
 
           <!-- Upcoming Game Assignments -->
-          <p-card class="assignments-card">
-            <ng-template #header>
-              <app-card-header title="Upcoming Game Assignments" />
-            </ng-template>
-
+          <app-card-shell class="assignments-card" title="Upcoming Game Assignments">
             @if (upcomingAssignments().length === 0) {
               <app-empty-state
                 icon="pi-calendar"
@@ -291,16 +288,16 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 }
               </div>
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Payment Summary (Coach View) -->
           @if (isCoach() && paymentSummary().length > 0) {
-            <p-card class="payment-card">
-              <ng-template #header>
-                <app-card-header title="Payment Summary" />
-              </ng-template>
-
-              <p-table [value]="paymentSummary()" class="p-datatable-sm">
+            <app-card-shell class="payment-card" title="Payment Summary">
+              <p-table
+                [value]="paymentSummary()"
+                class="p-datatable-sm"
+                [scrollable]="true"
+              >
                 <ng-template #header>
                   <tr>
                     <th>Official</th>
@@ -320,17 +317,26 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   </tr>
                 </ng-template>
               </p-table>
-            </p-card>
+            </app-card-shell>
           }
         </div>
 
         <!-- Add/Edit Official Dialog -->
-        <p-dialog
-          [header]="editingOfficial ? 'Edit Official' : 'Add Official'"
+        <app-dialog
           [(visible)]="showOfficialDialog"
           [modal]="true"
-          class="officials-standard-dialog"
+          styleClass="officials-standard-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          [ariaLabel]="editingOfficial ? 'Edit official' : 'Add official'"
         >
+          <app-dialog-header
+            icon="user-plus"
+            [title]="editingOfficial ? 'Edit Official' : 'Add Official'"
+            subtitle="Manage referee contact details, certification, and availability notes."
+            (close)="showOfficialDialog = false"
+          />
           <div class="dialog-form">
             <div class="form-field">
               <label>Name *</label>
@@ -396,27 +402,33 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             </div>
           </div>
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showOfficialDialog = false"
-              >Cancel</app-button
-            >
-            <app-icon-button
-              icon="pi-check"
-              [disabled]="!officialForm.name"
-              (clicked)="saveOfficial()"
-              ariaLabel="Save official"
-              tooltip="Save"
-            />
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Save Official"
+            primaryIcon="check"
+            [disabled]="!officialForm.name"
+            (cancel)="showOfficialDialog = false"
+            (primary)="saveOfficial()"
+          />
+        </app-dialog>
 
         <!-- Schedule Official Dialog -->
-        <p-dialog
-          header="Schedule Official for Game"
+        <app-dialog
           [(visible)]="showScheduleDialog"
           [modal]="true"
-          class="officials-schedule-dialog"
+          styleClass="officials-schedule-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+          ariaLabel="Schedule official for game"
         >
+          <app-dialog-header
+            icon="calendar-plus"
+            title="Schedule Official for Game"
+            subtitle="Assign the official to an upcoming game and record the expected payment."
+            (close)="showScheduleDialog = false"
+          />
           @if (selectedOfficial()) {
             <div class="dialog-form">
               <p class="schedule-info">
@@ -457,18 +469,16 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             </div>
           }
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showScheduleDialog = false"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [disabled]="!scheduleForm.game_id || !scheduleForm.role"
-              (clicked)="scheduleOfficial()"
-              >Schedule</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Schedule"
+            primaryIcon="check"
+            [disabled]="!scheduleForm.game_id || !scheduleForm.role"
+            (cancel)="showScheduleDialog = false"
+            (primary)="scheduleOfficial()"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>
   `,
