@@ -10,14 +10,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   input,
-  inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
-import { Card } from "primeng/card";
+import { CardShellComponent } from "../card-shell/card-shell.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { MissingDataStatus } from "../../../core/services/missing-data-detection.service";
-import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-missing-data-explanation",
@@ -26,14 +24,15 @@ import { LoggerService } from "../../../core/services/logger.service";
     CommonModule,
     RouterModule,
     ButtonComponent,
-    Card,
+    CardShellComponent,
     StatusTagComponent,
   ],
   template: `
     @if (missingStatus() && missingStatus()!.missing) {
-      <p-card
+      <app-card-shell
         class="missing-data-card"
         [class]="'severity-' + missingStatus()!.severity"
+        [flush]="true"
       >
         <div class="missing-data-header">
           <div class="header-content">
@@ -103,144 +102,14 @@ import { LoggerService } from "../../../core/services/logger.service";
             }
           </div>
         </div>
-      </p-card>
+      </app-card-shell>
     }
   `,
-  styles: [
-    `
-      .missing-data-card {
-        margin-bottom: var(--space-4);
-        border-left: var(--space-1) solid;
-      }
-
-      .missing-data-card.severity-warning {
-        border-left-color: var(--color-status-warning);
-        background: var(--color-status-warning-subtle);
-      }
-
-      .missing-data-card.severity-critical {
-        border-left-color: var(--color-status-error);
-        background: var(--color-status-error-subtle);
-      }
-
-      .missing-data-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: var(--space-4);
-      }
-
-      .header-content {
-        display: flex;
-        gap: var(--space-3);
-        align-items: flex-start;
-        flex: 1;
-      }
-
-      .header-content i {
-        font-size: var(--ds-font-size-2xl);
-        color: var(--color-status-warning);
-      }
-
-      .severity-critical .header-content i {
-        color: var(--color-status-error);
-      }
-
-      .header-text h3 {
-        margin: 0 0 var(--space-1) 0;
-        font-size: var(--ds-font-size-xl);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-text-primary);
-      }
-
-      .days-missing {
-        margin: 0;
-        font-size: var(--ds-font-size-md);
-        color: var(--color-text-secondary);
-      }
-
-      .severity-badge {
-        font-size: var(--ds-font-size-md);
-      }
-
-      .missing-data-content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3);
-      }
-
-      .explanation-section,
-      .impact-section {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-      }
-
-      .explanation-section strong,
-      .impact-section strong {
-        font-size: var(--ds-font-size-md);
-        color: var(--color-text-primary);
-        font-weight: var(--ds-font-weight-semibold);
-      }
-
-      .explanation-section p {
-        margin: 0;
-        font-size: var(--ds-font-size-md);
-        color: var(--color-text-secondary);
-        line-height: var(--ds-line-height-1-6);
-      }
-
-      .impact-list {
-        margin: var(--space-1) 0 0 var(--space-4);
-        padding: 0;
-        list-style: disc;
-        color: var(--color-text-secondary);
-        font-size: var(--ds-font-size-md);
-      }
-
-      .impact-list li {
-        margin-bottom: var(--space-1);
-      }
-
-      .escalation-section {
-        margin-top: var(--space-2);
-      }
-
-      .escalation-badge {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-3);
-        background: var(--overlay-white-50);
-        border-radius: var(--radius-md);
-        border: var(--border-1) solid var(--color-border-primary);
-      }
-
-      .escalation-badge i {
-        font-size: var(--ds-font-size-xl);
-        color: var(--color-status-info);
-      }
-
-      .escalation-badge span {
-        font-size: var(--ds-font-size-md);
-        color: var(--color-text-primary);
-        font-weight: var(--ds-font-weight-medium);
-      }
-
-      .action-section {
-        display: flex;
-        gap: var(--space-2);
-        margin-top: var(--space-2);
-        flex-wrap: wrap;
-      }
-    `,
-  ],
+  styleUrl: "./missing-data-explanation.component.scss",
 })
 export class MissingDataExplanationComponent {
   missingStatus = input<MissingDataStatus | null>(null);
   showCoachLink = input<boolean>(false);
-
-  private logger = inject(LoggerService);
 
   getTitle(): string {
     const days = this.missingStatus()?.daysMissing || 0;

@@ -22,7 +22,6 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 
 import { Tooltip } from "primeng/tooltip";
@@ -30,8 +29,12 @@ import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
-import { ButtonComponent, CardComponent } from "../ui-components";
+import { ButtonComponent } from "../ui-components";
 import { EmptyStateComponent } from "../empty-state/empty-state.component";
+import { CardShellComponent } from "../card-shell/card-shell.component";
+import { AppDialogComponent } from "../dialog/dialog.component";
+import { DialogHeaderComponent } from "../dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../dialog-footer/dialog-footer.component";
 
 interface BodyCompositionData {
   weight: number | null;
@@ -54,26 +57,20 @@ interface BodyCompositionData {
     FormsModule,
     RouterModule,
     ButtonComponent,
-    CardComponent,
     Tooltip,
     DecimalPipe,
-    Dialog,
-    
-    
     InputNumber,
     EmptyStateComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
-    <app-card
+    <app-card-shell
       title="Body Composition"
-      [subtitle]="
-        lastUpdated()
-          ? 'Last measured ' + formatDate(lastUpdated()!)
-          : undefined
-      "
-      headerIcon="pi-chart-pie"
-      headerIconColor="primary"
-      [loading]="isLoading()"
+      [subtitle]="lastUpdated() ? 'Last measured ' + formatDate(lastUpdated()!) : undefined"
+      headerIcon="chart-pie"
     >
       <!-- Empty State -->
       @if (!isLoading() && !hasData()) {
@@ -204,16 +201,24 @@ interface BodyCompositionData {
           <i class="pi pi-arrow-right"></i>
         </a>
       </div>
-    </app-card>
+    </app-card-shell>
 
     <!-- Log Measurement Dialog -->
-    <p-dialog
-      header="Log Body Composition"
+    <app-dialog
       [(visible)]="showLogDialog"
       [modal]="true"
-      class="body-comp-dialog"
-      [closable]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [blockScroll]="true"
+      [styleClass]="'body-comp-dialog'"
+      ariaLabel="Log Body Composition"
     >
+      <app-dialog-header
+        icon="chart-pie"
+        title="Log Body Composition"
+        subtitle="Enter your latest smart-scale measurement"
+        (close)="showLogDialog = false"
+      />
       <div class="measurement-form">
         <p class="form-description">
           Enter your body composition measurements. Weight is required, other
@@ -300,20 +305,16 @@ interface BodyCompositionData {
         </div>
       </div>
 
-      <ng-template #footer>
-        <app-button variant="text" (clicked)="showLogDialog = false">
-          Cancel
-        </app-button>
-        <app-button
-          iconLeft="pi-check"
-          [loading]="isSaving()"
-          [disabled]="!measurementForm.weight"
-          (clicked)="saveMeasurement()"
-        >
-          Save Measurement
-        </app-button>
-      </ng-template>
-    </p-dialog>
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Save Measurement"
+        primaryIcon="pi-check"
+        [loading]="isSaving()"
+        [disabled]="!measurementForm.weight"
+        (cancel)="showLogDialog = false"
+        (primary)="saveMeasurement()"
+      />
+    </app-dialog>
   `,
   styleUrl: "./body-composition-card.component.scss",
 })

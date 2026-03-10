@@ -1,0 +1,63 @@
+@use "styles/mixins" as *;
+
+:host {
+  display: block;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
+  gap: var(--space-4);
+}
+
+.achievement-content {
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.achievement-icon {
+  width: var(--space-12);
+  height: var(--space-12);
+  margin: 0 auto var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ds-primary-green-ultra-subtle);
+  border-radius: var(--radius-md);
+  font-size: var(--ds-font-size-xl);
+  color: var(--color-brand-primary);
+}
+
+.achievement-title {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-primary);
+}
+
+.achievement-description {
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3);
+  line-height: var(--ds-line-height-body);
+}
+
+.achievement-date {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+@include respond-to(md) {
+  .achievements-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@include respond-to(sm) {
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+}

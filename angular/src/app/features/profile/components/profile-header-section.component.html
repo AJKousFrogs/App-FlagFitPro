@@ -1,0 +1,133 @@
+<div class="profile-header-card">
+  <div class="profile-header-bg">
+    <div class="bg-pattern"></div>
+  </div>
+
+  <div class="profile-avatar-container">
+    <div class="avatar-wrapper">
+      @if (avatarUrl()) {
+        <img
+          appMobileOptimized
+          [width]="200"
+          [height]="200"
+          [lazy]="false"
+          [src]="avatarUrl()"
+          alt="Profile picture"
+          class="profile-avatar-img"
+        />
+      } @else {
+        <div class="profile-avatar-fallback">
+          <span>{{ userInitials() }}</span>
+        </div>
+      }
+
+      <label
+        class="avatar-upload-btn"
+        [class.is-disabled]="isUploadingAvatar()"
+        [attr.aria-disabled]="isUploadingAvatar()"
+        [attr.aria-label]="
+          isUploadingAvatar() ? 'Uploading profile picture' : 'Upload profile picture'
+        "
+      >
+        @if (isUploadingAvatar()) {
+          <i class="pi pi-spin pi-spinner"></i>
+        } @else {
+          <i class="pi pi-camera"></i>
+        }
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          class="hidden-file-input"
+          aria-label="Upload profile image file"
+          [disabled]="isUploadingAvatar()"
+          (change)="handleFileChange($event)"
+        />
+      </label>
+    </div>
+
+    @if (jerseyNumber()) {
+      <div class="jersey-badge">
+        <span>#{{ jerseyNumber() }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="profile-info-section">
+    <h1 class="profile-display-name">{{ userName() }}</h1>
+
+    <div class="profile-position-team">
+      @if (userPosition()) {
+        <span class="position-tag">
+          <i class="pi pi-user"></i>
+          {{ userPosition() }}
+        </span>
+      }
+      @if (teamName()) {
+        <span class="team-tag">
+          <i class="pi pi-users"></i>
+          {{ teamName() }}
+        </span>
+      }
+    </div>
+
+    <p class="profile-email-text">{{ userEmail() }}</p>
+
+    <p class="member-since">
+      <i class="pi pi-calendar"></i>
+      Member since {{ memberSince() }}
+    </p>
+  </div>
+
+  @if (profileCompletionPercentage() < 100) {
+    <div class="profile-completion-card">
+      <div class="completion-header">
+        <span class="completion-label">Profile Completion</span>
+        <span class="completion-percentage">{{ profileCompletionPercentage() }}%</span>
+      </div>
+      <p-progressBar
+        [value]="profileCompletionPercentage()"
+        [showValue]="false"
+        class="completion-progress"
+      ></p-progressBar>
+      @if (profileCompletionMissingFields().length > 0) {
+        <div class="completion-hint">
+          <i class="pi pi-info-circle"></i>
+          <span>
+            Complete your profile:
+            {{
+              profileCompletionMissingFields()
+                .slice(0, missingFieldsPreviewCount())
+                .join(", ")
+            }}
+            @if (
+              profileCompletionMissingFields().length > missingFieldsPreviewCount()
+            ) {
+              and
+              {{
+                profileCompletionMissingFields().length - missingFieldsPreviewCount()
+              }}
+              more
+            }
+          </span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="profile-complete-badge">
+      <i class="pi pi-check-circle"></i>
+      <span>Profile Complete</span>
+    </div>
+  }
+
+  <div class="profile-header-actions">
+    <app-button iconLeft="pi-cog" routerLink="/settings" [disabled]="deletionPending()">
+      Edit Profile
+    </app-button>
+    <app-icon-button
+      icon="pi-share-alt"
+      variant="outlined"
+      ariaLabel="Share profile"
+      (clicked)="shareProfile.emit()"
+    />
+  </div>
+</div>

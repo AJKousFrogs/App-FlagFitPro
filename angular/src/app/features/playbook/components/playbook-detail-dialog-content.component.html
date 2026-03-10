@@ -1,0 +1,79 @@
+<div class="play-detail">
+  @if (play().diagramUrl) {
+    <div class="play-diagram">
+      <img
+        appMobileOptimized
+        [width]="600"
+        [height]="400"
+        [src]="play().diagramUrl!"
+        [alt]="play().name + ' diagram'"
+      />
+    </div>
+  } @else {
+    <div class="play-diagram placeholder">
+      <i class="pi pi-image"></i>
+      <span>No diagram available</span>
+    </div>
+  }
+
+  <div class="section assignment-section">
+    <h4>
+      <i class="pi pi-user"></i> My Assignment ({{ play().personalAssignment.position }})
+    </h4>
+    <div class="assignment-details">
+      @if (play().personalAssignment.route) {
+        <div class="detail-row">
+          <span class="label">Route:</span>
+          <span class="value">{{ play().personalAssignment.route }}</span>
+        </div>
+      }
+      <div class="detail-row">
+        <span class="label">Responsibility:</span>
+        <span class="value">{{ play().personalAssignment.responsibility }}</span>
+      </div>
+      @if (play().personalAssignment.preSnapRead) {
+        <div class="detail-row">
+          <span class="label">Pre-Snap Read:</span>
+          <span class="value">{{ play().personalAssignment.preSnapRead }}</span>
+        </div>
+      }
+      @if (play().personalAssignment.postSnapRead) {
+        <div class="detail-row">
+          <span class="label">Post-Snap Read:</span>
+          <span class="value">{{ play().personalAssignment.postSnapRead }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="section">
+    <h4><i class="pi pi-info-circle"></i> Description</h4>
+    <p>{{ play().description }}</p>
+  </div>
+
+  @if (play().keyPoints.length > 0) {
+    <div class="section">
+      <h4><i class="pi pi-check-square"></i> Key Points</h4>
+      <ul class="key-points-list">
+        @for (point of play().keyPoints; track point) {
+          <li><i class="pi pi-check"></i> {{ point }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (play().commonMistakes.length > 0) {
+    <div class="section warning-section">
+      <h4><i class="pi pi-exclamation-triangle"></i> Common Mistakes</h4>
+      <ul class="mistakes-list">
+        @for (mistake of play().commonMistakes; track mistake) {
+          <li><i class="pi pi-times"></i> {{ mistake }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <div class="detail-actions">
+    <app-button (clicked)="toggleMemorized()(play())"></app-button>
+  </div>
+</div>

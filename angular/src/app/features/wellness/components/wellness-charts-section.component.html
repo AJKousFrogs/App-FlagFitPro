@@ -1,0 +1,39 @@
+<div class="charts-grid">
+  @defer (on viewport) {
+    <app-card title="Sleep Quality (7-day)">
+      @if (sleepChartData()) {
+        <app-lazy-chart
+          type="line"
+          [data]="sleepChartData()!"
+          [options]="chartOptions()"
+        ></app-lazy-chart>
+      } @else {
+        <div class="chart-empty">No sleep data yet. Start logging daily check-ins.</div>
+      }
+    </app-card>
+  } @placeholder {
+    <app-card title="Sleep Quality (7-day)" [loading]="true">
+      <div class="loading-text">Loading sleep data...</div>
+    </app-card>
+  }
+
+  @defer (on viewport) {
+    <app-card title="Recovery Score (7-day)">
+      @if (recoveryChartData()) {
+        <app-lazy-chart
+          type="bar"
+          [data]="recoveryChartData()!"
+          [options]="chartOptions()"
+        ></app-lazy-chart>
+      } @else {
+        <div class="chart-empty">
+          No recovery data yet. Start logging daily check-ins.
+        </div>
+      }
+    </app-card>
+  } @placeholder {
+    <app-card title="Recovery Score (7-day)" [loading]="true">
+      <div class="loading-text">Loading recovery data...</div>
+    </app-card>
+  }
+</div>

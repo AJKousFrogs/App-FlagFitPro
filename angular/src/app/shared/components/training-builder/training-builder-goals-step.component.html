@@ -1,0 +1,32 @@
+<div class="step-content">
+  <h3>What are your training goals for today?</h3>
+  <div class="goals-grid">
+    @for (goal of goals(); track trackByGoalId($index, goal)) {
+      <div
+        class="goal-card"
+        [class.selected]="isSelected(goal.id)"
+        (click)="toggleGoal.emit(goal.id)"
+      >
+        <i [class]="goal.icon + ' ' + iconClass(goal)"></i>
+        <h4>{{ goal.name }}</h4>
+        <p>{{ goal.description }}</p>
+        @if (goal.aiRecommended) {
+          <app-status-tag
+            value="AI Recommended"
+            severity="success"
+            icon="pi-sparkles"
+            size="sm"
+          />
+        }
+      </div>
+    }
+  </div>
+  <div class="step-actions">
+    <app-button
+      iconLeft="pi-arrow-right"
+      [disabled]="selectedGoalIds().length === 0"
+      (clicked)="next.emit()"
+      >Next</app-button
+    >
+  </div>
+</div>

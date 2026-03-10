@@ -1,15 +1,14 @@
-<p-dialog
+<app-dialog
   [(visible)]="visible"
   [modal]="true"
-  [showHeader]="false"
   [dismissableMask]="true"
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
   [blockScroll]="true"
-  position="top"
-  class="command-palette-dialog"
+  [styleClass]="'command-palette-dialog'"
   appendTo="body"
+  ariaLabel="Global search"
 >
   <div class="search-panel">
     <!-- Search Input -->
@@ -382,4 +381,4 @@
       </div>
     </div>
   </div>
-</p-dialog>
+</app-dialog>

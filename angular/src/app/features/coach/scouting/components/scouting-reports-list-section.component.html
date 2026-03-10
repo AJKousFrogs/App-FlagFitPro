@@ -1,0 +1,84 @@
+<div class="reports-section">
+  <div class="section-header">
+    <h3>Scouting Reports</h3>
+    <div class="filter-group">
+      <p-select
+        [options]="filterOptions()"
+        (onChange)="filterChange.emit($event.value)"
+        placeholder="Filter by opponent"
+        [showClear]="true"
+      ></p-select>
+    </div>
+  </div>
+
+  @if (items().length > 0) {
+    <div class="reports-grid">
+      @for (report of items(); track report.id) {
+        <app-card-shell
+          class="report-card"
+          [title]="report.opponentName"
+          [subtitle]="(report.gameDate | date: 'mediumDate') || undefined"
+          [hasFooter]="true"
+        >
+          <app-status-tag
+            header-actions
+            [value]="report.sharedWith === 'team' ? 'Team' : 'Coaches'"
+            [severity]="report.sharedWith === 'team' ? 'info' : 'secondary'"
+            size="sm"
+          />
+          <div class="report-summary">
+            <p>{{ report.executiveSummary }}</p>
+          </div>
+
+          <div class="report-meta">
+            <span class="created-by">
+              <i class="pi pi-user"></i>
+              {{ report.createdBy }}
+            </span>
+            @if (report.requiredReading) {
+              <span class="required-badge">
+                <i class="pi pi-exclamation-circle"></i>
+                Required Reading
+              </span>
+            }
+            <span class="read-count">
+              <i class="pi pi-eye"></i>
+              {{ report.readBy.length }} viewed
+            </span>
+          </div>
+
+          <div footer>
+            <app-button
+              variant="text"
+              iconLeft="pi-eye"
+              (clicked)="viewReport.emit(report)"
+              >View Full Report</app-button
+            >
+            <app-button
+              variant="text"
+              iconLeft="pi-share-alt"
+              (clicked)="shareReport.emit(report)"
+              >Share to Chat</app-button
+            >
+            <app-icon-button
+              icon="pi-pencil"
+              variant="text"
+              (clicked)="editReport.emit(report)"
+              ariaLabel="Edit scouting report"
+              tooltip="Edit"
+            />
+          </div>
+        </app-card-shell>
+      }
+    </div>
+  } @else {
+    <app-empty-state
+      icon="pi-file"
+      heading="No Scouting Reports"
+      description="Create a report to prepare your team for upcoming games."
+      actionLabel="Create Report"
+      actionIcon="pi-plus"
+      [actionHandler]="createReport.emit.bind(createReport)"
+    />
+  }
+</div>

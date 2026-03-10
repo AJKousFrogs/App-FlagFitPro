@@ -1,0 +1,29 @@
+<div class="overview-content">
+  <app-card-shell title="Recent Activity" headerIcon="pi-clock">
+    @if (activities().length === 0) {
+      <app-empty-state
+        [inline]="true"
+        [compact]="true"
+        [showBenefits]="false"
+        [showSafetyNote]="false"
+        icon="pi-clock"
+        [customTitle]="'No Recent Activity'"
+        [customMessage]="'Your activity will appear here once you start training.'"
+      />
+    } @else {
+      <div class="activity-list">
+        @for (activity of activities(); track trackByActivityTitle($index, activity)) {
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i [class]="'pi ' + activity.icon"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-title">{{ activity.title }}</div>
+              <div class="item-time">{{ activity.time }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </app-card-shell>
+</div>

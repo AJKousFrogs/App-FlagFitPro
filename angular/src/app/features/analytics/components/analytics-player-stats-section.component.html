@@ -1,0 +1,189 @@
+<app-card-shell class="player-stats-card full-width" title="Player Statistics & Attendance">
+  <p-tabs>
+    <p-tabpanel header="Per Game Stats">
+      <div class="stats-summary">
+        <div class="metric-tile stat-block--stat-item">
+          <div class="stat-block__label">Games Played</div>
+          <div class="stat-block__value">{{ playerGameStats().length }}</div>
+        </div>
+        <div class="metric-tile stat-block--stat-item">
+          <div class="stat-block__label">Games Missed</div>
+          <div class="stat-block__value error">{{ gamesMissed() }}</div>
+        </div>
+        <div class="metric-tile stat-block--stat-item">
+          <div class="stat-block__label">Attendance Rate</div>
+          <div class="stat-block__value">{{ attendanceRate() }}%</div>
+        </div>
+      </div>
+      <p-table [value]="playerGameStats()" [paginator]="true" [rows]="10" class="p-datatable-sm">
+        <ng-template #header>
+          <tr>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Status</th>
+            <th>Pass Att</th>
+            <th>Completions</th>
+            <th>Pass Yds</th>
+            <th>Rush Att</th>
+            <th>Rush Yds</th>
+            <th>Flag Pulls</th>
+            <th>Interceptions</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-game>
+          <tr>
+            <td>{{ game.gameDate }}</td>
+            <td>{{ game.opponent }}</td>
+            <td>
+              <app-status-tag
+                [value]="game.present ? 'Present' : 'Missed'"
+                [severity]="game.present ? 'success' : 'danger'"
+                size="sm"
+              />
+            </td>
+            <td>{{ game.passAttempts }}</td>
+            <td>{{ game.completions }}</td>
+            <td>{{ game.passingYards }}</td>
+            <td>{{ game.rushingAttempts }}</td>
+            <td>{{ game.rushingYards }}</td>
+            <td>{{ game.flagPulls }}</td>
+            <td>{{ game.interceptions }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabpanel>
+
+    <p-tabpanel header="Season Stats">
+      @if (playerSeasonStats()) {
+        <div class="season-stats">
+          <div class="stats-summary">
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Season</div>
+              <div class="stat-block__value">{{ playerSeasonStats()?.season }}</div>
+            </div>
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Games Played</div>
+              <div class="stat-block__value">{{ playerSeasonStats()?.gamesPlayed }}</div>
+            </div>
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Games Missed</div>
+              <div class="stat-block__value error">{{ playerSeasonStats()?.gamesMissed }}</div>
+            </div>
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Attendance Rate</div>
+              <div class="stat-block__value">
+                {{ playerSeasonStats()?.attendanceRate | number: "1.1-1" }}%
+              </div>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h4>Passing</h4>
+              <div class="stat-row"><span>Attempts:</span><strong>{{ playerSeasonStats()?.totalPassAttempts }}</strong></div>
+              <div class="stat-row"><span>Completions:</span><strong>{{ playerSeasonStats()?.totalCompletions }}</strong></div>
+              <div class="stat-row"><span>Yards:</span><strong>{{ playerSeasonStats()?.totalPassingYards }}</strong></div>
+              <div class="stat-row">
+                <span>Completion %:</span>
+                <strong>{{ playerSeasonStats()?.completionPercentage | number: "1.1-1" }}%</strong>
+              </div>
+            </div>
+            <div class="stat-card">
+              <h4>Receiving</h4>
+              <div class="stat-row"><span>Targets:</span><strong>{{ playerSeasonStats()?.totalTargets }}</strong></div>
+              <div class="stat-row"><span>Receptions:</span><strong>{{ playerSeasonStats()?.totalReceptions }}</strong></div>
+              <div class="stat-row"><span>Yards:</span><strong>{{ playerSeasonStats()?.totalReceivingYards }}</strong></div>
+              <div class="stat-row"><span>Drops:</span><strong>{{ playerSeasonStats()?.totalDrops }}</strong></div>
+            </div>
+            <div class="stat-card">
+              <h4>Rushing</h4>
+              <div class="stat-row"><span>Attempts:</span><strong>{{ playerSeasonStats()?.totalRushingAttempts }}</strong></div>
+              <div class="stat-row"><span>Yards:</span><strong>{{ playerSeasonStats()?.totalRushingYards }}</strong></div>
+              <div class="stat-row"><span>Avg Yards:</span><strong>{{ playerSeasonStats()?.avgRushingYards | number: "1.1-1" }}</strong></div>
+            </div>
+            <div class="stat-card">
+              <h4>Defense</h4>
+              <div class="stat-row"><span>Flag Pull Attempts:</span><strong>{{ playerSeasonStats()?.totalFlagPullAttempts }}</strong></div>
+              <div class="stat-row"><span>Flag Pulls:</span><strong>{{ playerSeasonStats()?.totalFlagPulls }}</strong></div>
+              <div class="stat-row"><span>Success Rate:</span><strong>{{ playerSeasonStats()?.flagPullSuccessRate | number: "1.1-1" }}%</strong></div>
+              <div class="stat-row"><span>Interceptions:</span><strong>{{ playerSeasonStats()?.totalInterceptionsDef }}</strong></div>
+            </div>
+          </div>
+        </div>
+      }
+    </p-tabpanel>
+
+    <p-tabpanel header="Multi-Season Stats">
+      @if (playerMultiSeasonStats()) {
+        <div class="multi-season-stats">
+          <div class="stats-summary">
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Total Seasons</div>
+              <div class="stat-block__value">{{ playerMultiSeasonStats()?.totalSeasons }}</div>
+            </div>
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Total Games Played</div>
+              <div class="stat-block__value">{{ playerMultiSeasonStats()?.totalGamesPlayed }}</div>
+            </div>
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Total Games Missed</div>
+              <div class="stat-block__value error">{{ playerMultiSeasonStats()?.totalGamesMissed }}</div>
+            </div>
+            <div class="metric-tile stat-block--stat-item">
+              <div class="stat-block__label">Overall Attendance</div>
+              <div class="stat-block__value">
+                {{ playerMultiSeasonStats()?.overallAttendanceRate | number: "1.1-1" }}%
+              </div>
+            </div>
+          </div>
+          <h4>Career Totals</h4>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h5>Passing</h5>
+              <div class="stat-row"><span>Career Attempts:</span><strong>{{ playerMultiSeasonStats()?.careerPassAttempts }}</strong></div>
+              <div class="stat-row"><span>Career Yards:</span><strong>{{ playerMultiSeasonStats()?.careerPassingYards }}</strong></div>
+              <div class="stat-row"><span>Career TDs:</span><strong>{{ playerMultiSeasonStats()?.careerTouchdowns }}</strong></div>
+            </div>
+            <div class="stat-card">
+              <h5>Receiving</h5>
+              <div class="stat-row"><span>Career Receptions:</span><strong>{{ playerMultiSeasonStats()?.careerReceptions }}</strong></div>
+              <div class="stat-row"><span>Career Yards:</span><strong>{{ playerMultiSeasonStats()?.careerReceivingYards }}</strong></div>
+            </div>
+            <div class="stat-card">
+              <h5>Rushing</h5>
+              <div class="stat-row"><span>Career Attempts:</span><strong>{{ playerMultiSeasonStats()?.careerRushingAttempts }}</strong></div>
+              <div class="stat-row"><span>Career Yards:</span><strong>{{ playerMultiSeasonStats()?.careerRushingYards }}</strong></div>
+            </div>
+            <div class="stat-card">
+              <h5>Defense</h5>
+              <div class="stat-row"><span>Career Flag Pulls:</span><strong>{{ playerMultiSeasonStats()?.careerFlagPulls }}</strong></div>
+              <div class="stat-row"><span>Career Interceptions:</span><strong>{{ playerMultiSeasonStats()?.careerInterceptionsDef }}</strong></div>
+            </div>
+          </div>
+          <h4>Season Breakdown</h4>
+          <p-table [value]="playerMultiSeasonStats()?.seasons || []" [paginator]="true" [rows]="5">
+            <ng-template #header>
+              <tr>
+                <th>Season</th>
+                <th>Games Played</th>
+                <th>Games Missed</th>
+                <th>Attendance Rate</th>
+                <th>Total Yards</th>
+                <th>Total TDs</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-season>
+              <tr>
+                <td>{{ season.season }}</td>
+                <td>{{ season.gamesPlayed }}</td>
+                <td>{{ season.gamesMissed }}</td>
+                <td>{{ season.attendanceRate | number: "1.1-1" }}%</td>
+                <td>{{ season.totalPassingYards + season.totalReceivingYards + season.totalRushingYards }}</td>
+                <td>{{ season.totalTouchdowns }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      }
+    </p-tabpanel>
+  </p-tabs>
+</app-card-shell>

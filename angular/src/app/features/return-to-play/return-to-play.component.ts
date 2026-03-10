@@ -18,7 +18,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
-import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 
 import { ProgressBar } from "primeng/progressbar";
@@ -299,7 +298,6 @@ const SEVERITY_LEVELS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     LazyChartComponent,
     DatePicker,
     AppDialogComponent,

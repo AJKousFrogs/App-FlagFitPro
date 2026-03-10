@@ -11,22 +11,6 @@
   overflow-x: clip;
 }
 
-/* Settings Navigation */
-.settings-nav-card {
-  margin-bottom: 0;
-}
-
-.settings-nav-item {
-  justify-content: flex-start;
-}
-
-.settings-nav-item i {
-  font-size: var(--font-body-size);
-  color: inherit;
-  line-height: var(--ds-line-height-1);
-  flex-shrink: 0;
-}
-
 .settings-grid {
   display: grid;
   gap: var(--layout-page-section-gap);
@@ -40,30 +24,6 @@
   height: 100%;
 }
 
-/* Ensure cards have consistent minimum heights */
-.settings-grid .settings-section app-card {
-  min-height: var(--chart-min-height-lg);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Two Column Form Row */
-.form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--layout-gap-md);
-}
-
-.form-row .form-field {
-  flex: 1 1 0;
-  min-width: 0;
-  margin-bottom: 0;
-}
-
-.settings-profile-form .form-field {
-  margin-bottom: 0;
-}
-
 /* ================================================================
    MOBILE RESPONSIVENESS FIXES
    Target devices: iPhone 11-17 (414-26.875rem), Samsung S23-S25 (412-26.875rem)
@@ -71,7 +31,11 @@
 
 /* Tablet and below */
 @include respond-to(lg) {
-  .settings-nav-item {
+  app-settings-nav-section {
+    width: 100%;
+  }
+
+  :where(app-settings-nav-section) .settings-nav-item {
     width: 100%;
     min-height: var(--touch-target-md);
   }
@@ -84,18 +48,8 @@
     gap: var(--space-5);
   }
 
-  .settings-nav-item {
+  :where(app-settings-nav-section) .settings-nav-item {
     justify-content: flex-start;
-  }
-
-  .form-row.two-columns {
-    flex-direction: column;
-    gap: var(--space-4);
-
-    .form-field {
-      width: 100%;
-      flex: 1 1 100%;
-    }
   }
 
   // Prevent iOS zoom on form focus
@@ -116,7 +70,7 @@
 
 /* Small mobile */
 @include respond-to(sm) {
-  .settings-nav-item {
+  :where(app-settings-nav-section) .settings-nav-item {
     padding: var(--space-3);
   }
 }
@@ -150,82 +104,3 @@
 /* ================================================================
    DATA EXPORT DIALOG
    ================================================================ */
-
-.age-display {
-  margin-top: 0;
-}
-
-/* Birthday Suggestion Styles */
-.datepicker-with-suggestion {
-  position: relative;
-}
-
-.birthday-suggestion {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  background: linear-gradient(
-    135deg,
-    var(--color-status-success-subtle) 0%,
-    var(--ui-surface-card-alt) 100%
-  );
-  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.18);
-  border-radius: var(--radius-xl);
-
-  --ui-motion-enter-from-y: calc(-1 * var(--space-1));
-  animation: ui-motion-enter-y 0.2s ease-out;
-}
-
-.suggestion-content {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex: 1;
-}
-
-.suggestion-icon {
-  font-size: var(--ds-font-size-md);
-  color: var(--ds-primary-green);
-  flex-shrink: 0;
-}
-
-.suggestion-text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  flex: 1;
-}
-
-.suggestion-label {
-  font-size: var(--font-caption-size);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--ds-primary-green);
-  text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-wide);
-}
-
-.suggestion-date {
-  font-size: var(--font-body-size);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-}
-
-.suggestion-age {
-  font-size: var(--font-body-sm-size);
-  color: var(--color-text-secondary);
-}
-
-.birthday-suggestion app-button {
-  flex-shrink: 0;
-}
-
-.field-hint {
-  margin-top: 0;
-}
-
-.field-hint i {
-  font-size: var(--ds-font-size-xs);
-}

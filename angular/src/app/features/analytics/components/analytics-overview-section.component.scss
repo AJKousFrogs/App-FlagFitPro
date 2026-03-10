@@ -1,0 +1,53 @@
+@use "styles/mixins" as *;
+
+.analytics-hub-card {
+  margin-bottom: 0;
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid var(--color-border-secondary);
+  --app-card-shell-header-icon-color: var(--ds-primary-green);
+}
+
+.analytics-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
+  gap: var(--space-3);
+}
+
+.analytics-hub-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: var(--border-1) solid var(--surface-border);
+  background: var(--surface-card);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--duration-2) ease,
+    box-shadow var(--duration-2) ease;
+}
+
+.analytics-hub-link:hover {
+  transform: var(--transform-hover-lift);
+  box-shadow: var(--shadow-sm);
+}
+
+.analytics-hub-icon {
+  font-size: var(--ds-font-size-lg);
+}
+
+.analytics-hub-title {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.analytics-hub-subtitle {
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.analytics-hub-preview {
+  @include preview-badge;
+  align-self: flex-start;
+}

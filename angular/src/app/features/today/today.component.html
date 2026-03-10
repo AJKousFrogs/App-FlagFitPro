@@ -73,337 +73,38 @@
   @if (!isLoading() && !isGeneratingProtocol()) {
     @if (todayViewModel(); as vm) {
       <div class="today-page elite-phase2-shell ui-page-shell ui-page-stack">
-        <!-- ====================================================================
-             HEADER: 5-Second Comprehension
-             ==================================================================== -->
-        <section aria-labelledby="today-heading">
-          <app-card-shell class="welcome-card">
-            <div class="welcome-row">
-              <div class="user-avatar" aria-hidden="true">
-                <i class="pi pi-user"></i>
-              </div>
-              <div class="welcome-text">
-                <h1 id="today-heading" class="welcome-greeting">Today</h1>
-                <h2 class="welcome-name">{{ todayDateLabel() }}</h2>
-                <div class="welcome-stats">
-                  <span class="stat-item">
-                    <span class="stat-block__label">Readiness:</span>
-                    <span
-                      class="stat-block__value"
-                      [class.logged]="readinessDisplay().logged"
-                    >
-                      {{ readinessDisplay().value }}
-                      @if (readinessDisplay().logged) {
-                        <i class="pi pi-check stat-check-icon"></i>
-                      }
-                    </span>
-                  </span>
-                </div>
-                <div class="welcome-actions">
-                  <app-button
-                    variant="primary"
-                    iconLeft="pi-pencil"
-                    (clicked)="handleCta('log_session')"
-                    ariaLabel="Log today's training session"
-                  >
-                    Log Today's Session
-                  </app-button>
-                </div>
-              </div>
-            </div>
-          </app-card-shell>
-        </section>
+        <app-today-summary-header
+          [todayDateLabel]="todayDateLabel()"
+          [readinessDisplay]="readinessDisplay()"
+          [exactTrainingSummary]="exactTrainingSummary()"
+          (logSession)="handleCta('log_session')"
+          (startExactPlan)="scrollToProtocolBlocks()"
+        />
 
-        @if (exactTrainingSummary(); as summary) {
-          <section aria-labelledby="exact-training-heading">
-            <app-card-shell class="exact-training-card">
-              <app-card-header
-                title="Today's Exact Training"
-                icon="pi-compass"
-                titleId="exact-training-heading"
-                [divider]="true"
-              />
-
-              <div class="exact-training-layout">
-                <div class="exact-training-main">
-                  <p class="exact-training-kicker">{{ summary.focusLabel }}</p>
-                  <h2 class="exact-training-title">{{ summary.title }}</h2>
-                  <p class="exact-training-description">
-                    {{ summary.description }}
-                  </p>
-
-                  <div class="exact-training-metrics">
-                    <div class="exact-training-metric">
-                      <span class="exact-training-metric__label">Blocks</span>
-                      <strong class="exact-training-metric__value">{{
-                        summary.blockCount
-                      }}</strong>
-                    </div>
-                    <div class="exact-training-metric">
-                      <span class="exact-training-metric__label"
-                        >Exercises</span
-                      >
-                      <strong class="exact-training-metric__value">{{
-                        summary.exerciseCount
-                      }}</strong>
-                    </div>
-                    <div class="exact-training-metric">
-                      <span class="exact-training-metric__label">Duration</span>
-                      <strong class="exact-training-metric__value">
-                        @if (summary.estimatedMinutes > 0) {
-                          ~{{ summary.estimatedMinutes }} min
-                        } @else {
-                          Adaptive
-                        }
-                      </strong>
-                    </div>
-                    <div class="exact-training-metric">
-                      <span class="exact-training-metric__label"
-                        >Video demos</span
-                      >
-                      <strong class="exact-training-metric__value">{{
-                        summary.videoCount
-                      }}</strong>
-                    </div>
-                  </div>
-
-                  <div class="exact-training-status">
-                    @if (summary.readinessText) {
-                      <span class="exact-training-pill">{{
-                        summary.readinessText
-                      }}</span>
-                    }
-                    @if (summary.acwrText) {
-                      <span class="exact-training-pill">{{
-                        summary.acwrText
-                      }}</span>
-                    }
-                    @if (summary.coachContext) {
-                      <span class="exact-training-pill exact-training-pill--coach">
-                        {{ summary.coachContext }}
-                      </span>
-                    }
-                  </div>
-                </div>
-
-                <aside class="exact-training-sidebar" aria-label="Session start">
-                  <div class="exact-training-start">
-                    <span class="exact-training-start__label">Start with</span>
-                    <strong class="exact-training-start__block">{{
-                      summary.startBlock
-                    }}</strong>
-                    @if (summary.firstExercise) {
-                      <span class="exact-training-start__exercise">{{
-                        summary.firstExercise
-                      }}</span>
-                    }
-                  </div>
-
-                  <app-button
-                    iconLeft="pi-play"
-                    size="md"
-                    (clicked)="scrollToProtocolBlocks()"
-                  >
-                    Start Exact Plan
-                  </app-button>
-                </aside>
-              </div>
-            </app-card-shell>
-          </section>
-        }
-
-        <!-- ====================================================================
-             ERROR STATE (if training not allowed)
-             ==================================================================== -->
-        @if (vm.errorState) {
-          <section aria-labelledby="error-heading">
-            <app-banner
-              type="error"
-              [message]="vm.errorState.message"
-              [primaryCta]="
-                vm.errorState.cta
-                  ? {
-                      label: vm.errorState.cta.label,
-                      action: vm.errorState.cta.action,
-                    }
-                  : null
-              "
-              (ctaClick)="handleCta($event)"
-            />
-          </section>
-        }
-
-        <!-- ====================================================================
-             COACH ALERT ACKNOWLEDGMENT GATE (blocking)
-             ==================================================================== -->
-        @if (blockingCoachAlertBanner(); as coachAlertBanner) {
-          <section class="coach-alert-gate">
-            <app-banner
-              type="alert"
-              [message]="coachAlertBanner.text"
-              [primaryCta]="blockingCoachAlertPrimaryCta()"
-              [secondaryCta]="blockingCoachAlertSecondaryCta()"
-              icon="pi-bell"
-              (ctaClick)="handleCta($event)"
-            />
-          </section>
-        }
-
-        <!-- ====================================================================
-             COACH ATTRIBUTION (if coach modified)
-             ==================================================================== -->
-        @if (vm.headerContext?.coachAttribution) {
-          <section class="coach-attribution">
-            <app-card-shell class="attribution-card">
-              <div class="attribution-content">
-                <i class="pi pi-user-edit"></i>
-                <span>{{ vm.headerContext?.coachAttribution }}</span>
-                @if (protocolJson()?.modified_at) {
-                  <span class="attribution-time">
-                    {{ formatCoachTimestamp(protocolJson()!.modified_at!) }}
-                  </span>
-                }
-              </div>
-            </app-card-shell>
-          </section>
-        }
-
-        <!-- ====================================================================
-             BANNERS (ordered by priority, above first block)
-             ==================================================================== -->
-        @if (visibleBanners().length > 0) {
-          <section class="banners-section">
-            @for (banner of visibleBanners(); track trackByBanner($index, banner)) {
-              <app-banner
-                [type]="banner.type"
-                [message]="banner.text"
-                [primaryCta]="banner.ctas?.[0] || null"
-                [secondaryCta]="banner.ctas?.[1] || null"
-                (ctaClick)="handleCta($event)"
-              />
-            }
-          </section>
-        }
-
-        <!-- ====================================================================
-             ACWR BASELINE WIDGET (if building baseline)
-             ==================================================================== -->
-        @if (vm.acwrBaseline) {
-          <section class="acwr-section">
-            <app-acwr-baseline
-              [daysLogged]="vm.acwrBaseline.trainingDaysLogged"
-              [targetDays]="21"
-              label="Load Management"
-            />
-          </section>
-        }
+        <app-today-status-stack
+          [errorState]="vm.errorState"
+          [blockingCoachAlertBanner]="blockingCoachAlertBanner()"
+          [blockingCoachAlertPrimaryCta]="blockingCoachAlertPrimaryCta()"
+          [blockingCoachAlertSecondaryCta]="blockingCoachAlertSecondaryCta()"
+          [coachAttribution]="vm.headerContext?.coachAttribution || null"
+          [coachModifiedTime]="coachModifiedTime()"
+          [visibleBanners]="visibleBanners()"
+          [acwrBaseline]="vm.acwrBaseline"
+          (ctaClick)="handleCta($event)"
+        />
 
         <!-- ====================================================================
              MAIN EXECUTION BLOCKS (ordered by ViewModel)
              ==================================================================== -->
-        @if (vm.trainingAllowed && vm.blocksDisplayed.length > 0) {
-          <main class="content-section">
-            <section aria-labelledby="protocol-heading">
-              <app-card-shell class="content-card">
-                <app-card-header
-                  title="Today's Protocol"
-                  icon="pi-list"
-                  titleId="protocol-heading"
-                  [divider]="true"
-                >
-                </app-card-header>
-
-                @if (protocol(); as p) {
-                  <!-- Progress Bar -->
-                  @if (p.overallProgress !== undefined) {
-                    <div class="protocol-progress-wrapper">
-                      <p-progressBar
-                        [value]="p.overallProgress"
-                        [showValue]="false"
-                        class="protocol-bar"
-                      />
-                      <div class="protocol-meta">
-                        <span
-                          >{{ p.completedExercises }}/{{
-                            p.totalExercises
-                          }}
-                          Exercises</span
-                        >
-                        <span>{{ p.overallProgress }}%</span>
-                      </div>
-                    </div>
-                  }
-
-                  <!-- Protocol Blocks (ordered by ViewModel) -->
-                  <div
-                    class="protocol-blocks"
-                    data-testid="protocol-blocks"
-                    #protocolBlocks
-                  >
-                    @for (blockType of vm.blocksDisplayed; track blockType) {
-                      @if (getBlockByType(p, blockType); as block) {
-                        <app-protocol-block
-                          [attr.data-block-type]="blockType"
-                          [block]="block"
-                          [simpleView]="true"
-                          [defaultExpanded]="true"
-                          (exerciseComplete)="refreshProtocol()"
-                        />
-                      }
-                    }
-                  </div>
-
-                  <!-- Empty blocks message - when protocol exists but no exercises loaded -->
-                  @if (p.totalExercises === 0) {
-                    <div class="no-exercises-message">
-                      <p>
-                        Your training plan is being prepared. Try refreshing in
-                        a moment.
-                      </p>
-                      <app-button
-                        iconLeft="pi-refresh"
-                        variant="outlined"
-                        size="sm"
-                        (clicked)="refreshProtocol()"
-                        >Refresh</app-button
-                      >
-                    </div>
-                  }
-
-                  <!-- Footer Link -->
-                  <div class="card-footer">
-                    <app-button
-                      iconRight="pi-external-link"
-                      variant="text"
-                      routerLink="/training/advanced"
-                      >Advanced Training Workspace</app-button
-                    >
-                    <app-button
-                      iconLeft="pi-refresh"
-                      variant="text"
-                      (clicked)="generateProtocol()"
-                      >Regenerate Today</app-button
-                    >
-                  </div>
-                } @else {
-                  <!-- Empty State -->
-                  <app-empty-state
-                    icon="calendar-plus"
-                    heading="No Training Plan Yet"
-                    description="Generate your personalized protocol to see exercises with videos and instructions."
-                  >
-                    <app-button
-                      iconLeft="pi-sparkles"
-                      [loading]="isGeneratingProtocol()"
-                      (clicked)="generateProtocol()"
-                      >Generate Today's Protocol</app-button
-                    >
-                  </app-empty-state>
-                }
-              </app-card-shell>
-            </section>
-          </main>
-        }
+        <app-today-protocol-section
+          [protocol]="protocol()"
+          [blocks]="protocolDisplayBlocks()"
+          [trainingAllowed]="vm.trainingAllowed"
+          [isGenerating]="isGeneratingProtocol()"
+          (refresh)="refreshProtocol()"
+          (generate)="generateProtocol()"
+          (exerciseComplete)="refreshProtocol()"
+        />
       </div>
     } @else {
       <!-- No ViewModel - show error -->
@@ -423,147 +124,19 @@
     }
   }
 
-  <!-- ========================================================================
-       QUICK CHECK-IN DIALOG (keep existing)
-       ======================================================================== -->
-  <app-dialog
+  <app-today-quick-checkin-dialog
     [visible]="showQuickCheckin()"
+    [isSaving]="isSavingQuickCheckin()"
+    [isValid]="isQuickFormValid()"
+    [quickFormData]="quickFormData()"
+    [quickMoods]="quickMoods"
+    [quickEnergyLevels]="quickEnergyLevels"
+    [quickReadinessScore]="quickReadinessScore()"
+    [quickReadinessClass]="getQuickReadinessClass()"
     (visibleChange)="showQuickCheckin.set($event)"
-    [modal]="true"
-    [closable]="false"
-    [draggable]="false"
-    [resizable]="false"
-    [closeOnEscape]="true"
-    [focusOnShow]="true"
-    [ariaLabel]="'Quick wellness check-in dialog'"
-    [styleClass]="'quick-checkin-modal'"
-  >
-    <app-dialog-header
-      icon="heart"
-      title="Quick Check-in"
-      subtitle="A fast readiness check before training."
-      (close)="showQuickCheckin.set(false)"
-    />
-    <div class="quick-checkin-form">
-      <p class="quick-intro">How are you feeling today? Tap to select.</p>
-
-      <!-- Step 1: Overall Feeling -->
-      <div class="quick-section">
-        <span class="quick-label" id="mood-label">Overall Feeling</span>
-        <div
-          class="mood-selector"
-          role="radiogroup"
-          aria-labelledby="mood-label"
-        >
-          @for (mood of quickMoods; track mood.value) {
-            <button
-                  type="button"
-              class="mood-btn"
-              [class.selected]="quickFormData().overallFeeling === mood.value"
-              (click)="setQuickField('overallFeeling', mood.value)"
-              [attr.aria-label]="'Overall feeling: ' + mood.label"
-              role="radio"
-              [attr.aria-checked]="
-                quickFormData().overallFeeling === mood.value
-              "
-            >
-              <span class="mood-emoji" aria-hidden="true">{{
-                mood.emoji
-              }}</span>
-              <span class="mood-text">{{ mood.label }}</span>
-            </button>
-          }
-        </div>
-      </div>
-
-      <!-- Step 2: Energy Level -->
-      <div class="quick-section">
-        <span class="quick-label" id="energy-level-label">Energy Level</span>
-        <div
-          class="energy-selector"
-          role="radiogroup"
-          aria-labelledby="energy-level-label"
-        >
-          @for (level of quickEnergyLevels; track level.value) {
-            <button
-                  type="button"
-              class="energy-btn"
-              [class.selected]="quickFormData().energyLevel === level.value"
-              (click)="setQuickField('energyLevel', level.value)"
-              [attr.aria-label]="'Energy level: ' + level.label"
-              [attr.aria-pressed]="quickFormData().energyLevel === level.value"
-              role="radio"
-              [attr.aria-checked]="quickFormData().energyLevel === level.value"
-            >
-              <i
-                [class]="'pi pi-bolt energy-icon--' + level.value"
-                aria-hidden="true"
-              ></i>
-              <span>{{ level.label }}</span>
-            </button>
-          }
-        </div>
-      </div>
-
-      <!-- Step 3: Any Soreness -->
-      <div class="quick-section">
-        <span class="quick-label" id="soreness-label">Any Soreness?</span>
-        <div
-          class="soreness-selector"
-          role="radiogroup"
-          aria-labelledby="soreness-label"
-        >
-          <button
-                  type="button"
-            class="soreness-btn"
-            [class.selected]="quickFormData().hasSoreness === false"
-            (click)="setQuickField('hasSoreness', false)"
-            aria-label="No soreness - Feeling Good"
-            role="radio"
-            [attr.aria-checked]="quickFormData().hasSoreness === false"
-          >
-            <i class="pi pi-check-circle" aria-hidden="true"></i>
-            <span>Feeling Good</span>
-          </button>
-          <button
-                  type="button"
-            class="soreness-btn soreness-yes"
-            [class.selected]="quickFormData().hasSoreness === true"
-            (click)="setQuickField('hasSoreness', true)"
-            aria-label="Has soreness - Some Soreness"
-            role="radio"
-            [attr.aria-checked]="quickFormData().hasSoreness === true"
-          >
-            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
-            <span>Some Soreness</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Preview Score -->
-      <div class="quick-preview" aria-live="polite" aria-atomic="true">
-        <span class="preview-label" id="readiness-preview-label"
-          >Estimated Readiness</span
-        >
-        <span
-          class="preview-score"
-          [class]="getQuickReadinessClass()"
-          aria-labelledby="readiness-preview-label"
-          role="status"
-        >
-          {{ quickReadinessScore() }}%
-        </span>
-      </div>
-    </div>
-
-    <app-dialog-footer
-      cancelLabel="Cancel"
-      primaryLabel="Save"
-      primaryIcon="check"
-      [loading]="isSavingQuickCheckin()"
-      [disabled]="!isQuickFormValid()"
-      (cancel)="showQuickCheckin.set(false)"
-      (primary)="submitQuickCheckin()"
-    />
-  </app-dialog>
+    (submit)="submitQuickCheckin()"
+    (setOverallFeeling)="setQuickField('overallFeeling', $event)"
+    (setEnergyLevel)="setQuickField('energyLevel', $event)"
+    (setHasSoreness)="setQuickField('hasSoreness', $event)"
+  />
 </app-main-layout>

@@ -1,0 +1,89 @@
+<div class="roster-workspace">
+  <div class="workspace-filters">
+    <app-button [variant]="playerFilter() === 'all' ? 'primary' : 'text'" size="sm" (clicked)="setFilter('all')">All</app-button>
+    <app-button [variant]="playerFilter() === 'at_risk' ? 'danger' : 'text'" size="sm" (clicked)="setFilter('at_risk')">At Risk</app-button>
+    <app-button [variant]="playerFilter() === 'injured' ? 'danger' : 'text'" size="sm" (clicked)="setFilter('injured')">Injured</app-button>
+  </div>
+
+  <p-table [value]="filteredPlayers()" [paginator]="filteredPlayers().length > 10" [rows]="10" class="p-datatable-sm" [rowHover]="true">
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="playerName">Player</th>
+        <th pSortableColumn="position">Pos</th>
+        <th pSortableColumn="performanceScore">Perf</th>
+        <th pSortableColumn="acwr">ACWR</th>
+        <th pSortableColumn="readiness">Ready</th>
+        <th>Status</th>
+        <th>Data Sharing</th>
+        <th>Overrides</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-player>
+      <tr (click)="openPlayer(player.playerId)" class="clickable-row">
+        <td>
+          <div class="player-cell">
+            <p-avatar [label]="player.avatarInitials" shape="circle" [class]="getAvatarClass(player)"></p-avatar>
+            <div class="player-info">
+              <span class="player-name">{{ player.playerName }}</span>
+              <span class="jersey-number">#{{ player.jerseyNumber || "--" }}</span>
+            </div>
+          </div>
+        </td>
+        <td>
+          <app-status-tag [value]="player.position" [severity]="getPositionSeverity(player.position)" size="sm" />
+        </td>
+        <td>
+          <span class="perf-score" [class]="getPerformanceClass(player.performanceScore)">{{ player.performanceScore }}%</span>
+        </td>
+        <td>
+          <span [class]="getAcwrClass(player.acwr)">{{ player.acwr | number: "1.2-2" }}</span>
+        </td>
+        <td>
+          <div class="readiness-compact">
+            <div class="r-dot" [class]="getReadinessBarClass(player.readiness)"></div>
+            <span>{{ player.readiness }}</span>
+          </div>
+        </td>
+        <td>
+          <app-status-tag [value]="getStatusLabel(player.status)" [severity]="getStatusSeverity(player.status)" size="sm" />
+        </td>
+        <td>
+          @if (player._consentBlocked) {
+            <div class="data-sharing-cell">
+              <app-status-tag class="data-sharing-tag" value="⛔ Not Shared" severity="danger" size="sm" [pTooltip]="'Player has not enabled data sharing'" />
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-send"
+                (clicked)="requestAccess(player.playerId, $event)"
+                class="request-access-btn"
+                [pTooltip]="'Request access to player data'"
+              ></app-button>
+            </div>
+          } @else {
+            <app-status-tag class="data-sharing-tag" value="✅ Shared" severity="success" size="sm" [pTooltip]="'All metrics are shared with coach'" />
+          }
+        </td>
+        <td>
+          @if (getPlayerOverrideCount(player.playerId) > 0) {
+            <p-badge
+              [value]="getPlayerOverrideCount(player.playerId).toString()"
+              severity="info"
+              [pTooltip]="'View override history for ' + player.playerName"
+              tooltipPosition="top"
+              (click)="openOverrideHistory(player.playerId, $event)"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'View override history for ' + player.playerName"
+              (keydown.enter)="openOverrideHistory(player.playerId, $event)"
+              (keydown.space)="openOverrideHistory(player.playerId, $event); $event.preventDefault()"
+              class="override-badge"
+            ></p-badge>
+          } @else {
+            <span class="no-overrides">—</span>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

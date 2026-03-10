@@ -1,0 +1,88 @@
+<div class="step-content">
+  <div class="session-overview">
+    <h3>Generated Training Session</h3>
+    <div class="session-stats">
+      <div class="stat">
+        <span class="label">Duration</span>
+        <span class="value">{{ totalDuration() }} min</span>
+      </div>
+      <div class="stat">
+        <span class="label">Exercises</span>
+        <span class="value">{{ exerciseCount() }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">Intensity</span>
+        <app-status-tag
+          [value]="intensity()"
+          [severity]="intensitySeverity()"
+          size="sm"
+        />
+      </div>
+    </div>
+  </div>
+
+  <p-timeline
+    [value]="timelineEvents()"
+    layout="vertical"
+    class="session-timeline"
+  >
+    <ng-template #marker let-event>
+      <div class="timeline-marker" [class]="'marker-' + event.type">
+        <i [class]="event.icon"></i>
+      </div>
+    </ng-template>
+    <ng-template #content let-event>
+      <app-card-shell class="timeline-card" density="compact">
+        <div class="exercise-header">
+          <h4>{{ event.title }}</h4>
+          <div class="exercise-meta">
+            <span class="duration">{{ event.duration }} min</span>
+            @if (event.aiGenerated) {
+              <app-status-tag value="AI Generated" severity="info" size="sm" />
+            }
+          </div>
+        </div>
+        <p class="exercise-description">{{ event.description }}</p>
+        <div class="exercise-actions">
+          <app-button
+            variant="text"
+            size="sm"
+            iconLeft="pi-play"
+            (clicked)="preview.emit(event)"
+            >Preview</app-button
+          >
+          <app-button
+            variant="text"
+            size="sm"
+            iconLeft="pi-pencil"
+            (clicked)="modify.emit(event)"
+            >Modify</app-button
+          >
+        </div>
+      </app-card-shell>
+    </ng-template>
+  </p-timeline>
+
+  <div class="step-actions">
+    <app-button
+      variant="outlined"
+      iconLeft="pi-arrow-left"
+      (clicked)="previous.emit()"
+      >Previous</app-button
+    >
+    <app-button
+      variant="success"
+      iconLeft="pi-play"
+      [loading]="isSaving()"
+      (clicked)="start.emit()"
+      >Start Session</app-button
+    >
+    <app-button
+      variant="outlined"
+      iconLeft="pi-bookmark"
+      [loading]="isSaving()"
+      (clicked)="save.emit()"
+      >Save for Later</app-button
+    >
+  </div>
+</div>

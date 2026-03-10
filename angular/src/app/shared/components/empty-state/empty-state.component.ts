@@ -7,9 +7,8 @@ import {
   output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
-
 import { ButtonComponent } from "../button/button.component";
+import { CardShellComponent } from "../card-shell/card-shell.component";
 
 /** Context presets for "no data entered yet" scenarios (replaces legacy app-no-data-entry) */
 export type EmptyStateContext =
@@ -100,7 +99,7 @@ const CONTEXT_CONFIGS: Record<
 @Component({
   selector: "app-empty-state",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Card, ButtonComponent],
+  imports: [CommonModule, RouterModule, ButtonComponent, CardShellComponent],
   template: `
     <div
       class="empty-state-wrapper"
@@ -108,9 +107,9 @@ const CONTEXT_CONFIGS: Record<
       [attr.data-context]="context()"
     >
       @if (useCard() && !inline()) {
-        <p-card class="empty-state-card">
+        <app-card-shell class="empty-state-card" [flush]="true">
           <ng-container *ngTemplateOutlet="content"></ng-container>
-        </p-card>
+        </app-card-shell>
       } @else {
         <ng-container *ngTemplateOutlet="content"></ng-container>
       }

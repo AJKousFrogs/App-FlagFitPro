@@ -1,0 +1,24 @@
+@if (achievements().length === 0) {
+  <app-empty-state
+    [showBenefits]="false"
+    [showSafetyNote]="false"
+    icon="pi-trophy"
+    [customTitle]="'No Achievements Yet'"
+    [customMessage]="'Complete training sessions and reach milestones to earn achievements.'"
+  />
+} @else {
+  <div class="achievements-grid">
+    @for (achievement of achievements(); track trackByAchievementTitle($index, achievement)) {
+      <app-card-shell>
+        <div class="achievement-content">
+          <div class="achievement-icon">
+            <i [class]="'pi ' + achievement.icon"></i>
+          </div>
+          <h4 class="achievement-title">{{ achievement.title }}</h4>
+          <p class="achievement-description">{{ achievement.description }}</p>
+          <div class="achievement-date">{{ achievement.date }}</div>
+        </div>
+      </app-card-shell>
+    }
+  </div>
+}

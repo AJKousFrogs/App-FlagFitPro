@@ -1,0 +1,163 @@
+<app-card-shell
+  class="analytics-hub-card"
+  title="Analytics Hub"
+  subtitle="Overview, deep analytics, and player performance trends"
+  headerIcon="pi-compass"
+>
+  <div class="analytics-hub-grid">
+    <a routerLink="/analytics" class="analytics-hub-link">
+      <span class="analytics-hub-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
+      <span class="analytics-hub-title">Overview</span>
+      <span class="analytics-hub-subtitle">Team performance</span>
+      @if (nextGenEnabled()) {
+        <span class="analytics-hub-preview">Preview</span>
+      }
+    </a>
+    <a routerLink="/analytics/enhanced" class="analytics-hub-link">
+      <span class="analytics-hub-icon"><i class="pi pi-flask" aria-hidden="true"></i></span>
+      <span class="analytics-hub-title">Enhanced</span>
+      <span class="analytics-hub-subtitle">Deep analytics</span>
+      @if (nextGenEnabled()) {
+        <span class="analytics-hub-preview">Preview</span>
+      }
+    </a>
+    <a routerLink="/performance-tracking" class="analytics-hub-link">
+      <span class="analytics-hub-icon"><i class="pi pi-bullseye" aria-hidden="true"></i></span>
+      <span class="analytics-hub-title">Performance</span>
+      <span class="analytics-hub-subtitle">Player trends</span>
+      @if (nextGenEnabled()) {
+        <span class="analytics-hub-preview">Preview</span>
+      }
+    </a>
+  </div>
+</app-card-shell>
+
+<app-card-shell
+  class="development-goals-card"
+  title="My Development Goals"
+  subtitle="Coach assigned milestones and deadlines"
+  headerIcon="pi-bullseye"
+>
+  <a header-actions routerLink="/goals" class="view-all-link">
+    View All <i class="pi pi-arrow-right"></i>
+  </a>
+  @if (developmentGoals().length === 0) {
+    <app-empty-state
+      [showBenefits]="false"
+      [showSafetyNote]="false"
+      icon="pi-bullseye"
+      [customTitle]="'No goals assigned yet'"
+      [customMessage]="'Your coach will assign development goals here. Check back soon or ask your coach to set goals for you.'"
+      actionLabel="Request Goals from Coach"
+      actionIcon="pi-envelope"
+      actionLink="/team-chat"
+    />
+  } @else {
+    <div class="goals-grid">
+      @for (goal of developmentGoals().slice(0, goalsPreviewCount()); track goal.id) {
+        <div class="goal-card" [class.achieved]="goal.status === 'achieved'">
+          <div class="goal-header">
+            <i [class]="getGoalIcon(goal.metricType)"></i>
+            <span class="goal-name">{{ goal.metricName }}</span>
+          </div>
+          <div class="goal-targets">
+            <div class="target-row">
+              <span class="target-label">Target:</span>
+              <span class="target-value">{{ goal.targetValue }}{{ goal.targetUnit }} by {{ goal.deadline | date: "MMM d" }}</span>
+            </div>
+            <div class="target-row">
+              <span class="target-label">Current:</span>
+              <span class="current-value">{{ goal.currentValue }}{{ goal.targetUnit }}</span>
+            </div>
+          </div>
+          <div class="goal-progress">
+            <p-progressBar
+              [value]="calculateGoalProgress(goal)"
+              [showValue]="false"
+              class="goal-progress-bar"
+            />
+            <span class="progress-percent">{{ calculateGoalProgress(goal) }}%</span>
+          </div>
+          <div class="goal-meta">
+            <span class="days-remaining">
+              <i class="pi pi-calendar"></i>
+              {{ getDaysRemaining(goal.deadline) }} days remaining
+            </span>
+          </div>
+          @if (goal.coachNote) {
+            <div class="coach-note">
+              <i class="pi pi-comment"></i>
+              <span>"{{ goal.coachNote }}"</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</app-card-shell>
+
+<div class="metrics-grid">
+  @for (metric of metrics(); track trackByMetricLabel($index, metric)) {
+    <app-card-shell class="metric-card">
+      <div class="metric-card-content">
+        <div class="metric-icon">
+          <i [class]="'pi ' + metric.icon"></i>
+        </div>
+        <div class="metric-details">
+          <div class="metric-value">{{ metric.value }}</div>
+          <div class="metric-label">{{ metric.label }}</div>
+          <div class="metric-trend" [class]="'trend-' + metric.trendType">
+            {{ metric.trend }}
+          </div>
+        </div>
+      </div>
+    </app-card-shell>
+  }
+</div>
+
+@if (teamPerformanceAchievements().length > 0) {
+  <app-card-shell
+    class="team-badges-card"
+    title="Your Team Performance Badges"
+    subtitle="How you rank across team performance benchmarks"
+    headerIcon="pi-trophy"
+  >
+    <a header-actions routerLink="/performance-tracking" class="view-details-link">
+      View Details <i class="pi pi-arrow-right"></i>
+    </a>
+    <div class="badges-content">
+      <div class="badges-summary">
+        @if (teamRankingBadgeCounts().gold > 0) {
+          <div class="badge-stat gold">
+            <span class="badge-emoji">🥇</span>
+            <span class="badge-count">{{ teamRankingBadgeCounts().gold }}</span>
+            <span class="badge-label">Team Leader</span>
+          </div>
+        }
+        @if (teamRankingBadgeCounts().silver > 0) {
+          <div class="badge-stat silver">
+            <span class="badge-emoji">🥈</span>
+            <span class="badge-count">{{ teamRankingBadgeCounts().silver }}</span>
+            <span class="badge-label">2nd Place</span>
+          </div>
+        }
+        @if (teamRankingBadgeCounts().bronze > 0) {
+          <div class="badge-stat bronze">
+            <span class="badge-emoji">🥉</span>
+            <span class="badge-count">{{ teamRankingBadgeCounts().bronze }}</span>
+            <span class="badge-label">3rd Place</span>
+          </div>
+        }
+      </div>
+      <div class="badges-list">
+        @for (achievement of teamPerformanceAchievements().slice(0, 4); track achievement.id) {
+          <div class="badge-item" [class]="achievement.tier">
+            <span class="badge-rank">{{ getRankEmoji(achievement.rank) }}</span>
+            <span class="badge-metric">{{ achievement.metricLabel }}</span>
+            <span class="badge-value">{{ achievement.valueFormatted }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </app-card-shell>
+}

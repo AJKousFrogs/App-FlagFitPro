@@ -60,10 +60,14 @@
         </div>
 
         <!-- Quick Hydration Logger -->
-        <p-card class="hydration-card">
+        <app-card-shell
+          class="hydration-card"
+          title="Quick Hydration Log"
+          headerIcon="pi-tint"
+          [flush]="true"
+        >
           <div class="hydration-tracker">
             <div class="hydration-header">
-              <h3><i class="pi pi-tint"></i> Quick Hydration Log</h3>
               <div class="hydration-progress">
                 <span>{{ hydrationProgress() }}%</span>
                 <p-progressBar
@@ -89,24 +93,24 @@
               }
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
 
         <!-- Schedule Editor (Collapsible) -->
         @if (showScheduleEditor) {
-          <p-card class="schedule-editor-card">
-            <ng-template #header>
-              <app-card-header icon="pi-calendar" title="Game Schedule">
-                <app-icon-button
-                  header-actions
-                  icon="pi-times"
-                  variant="text"
-                  (clicked)="showScheduleEditor = false"
-                  ariaLabel="Close schedule editor"
-                  tooltip="Close"
-                />
-              </app-card-header>
-            </ng-template>
-
+          <app-card-shell
+            class="schedule-editor-card"
+            title="Game Schedule"
+            headerIcon="pi-calendar"
+            [flush]="true"
+          >
+            <app-icon-button
+              header-actions
+              icon="pi-times"
+              variant="text"
+              (clicked)="showScheduleEditor = false"
+              ariaLabel="Close schedule editor"
+              tooltip="Close"
+            />
             <div class="schedule-form">
               <div class="form-row">
                 <label>Tournament Name</label>
@@ -175,7 +179,7 @@
                 >
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- Timeline View -->
@@ -418,11 +422,15 @@
 
         <!-- Referee Duty Alert -->
         @if (hasRefereeDuty()) {
-          <p-card class="referee-alert-card">
+          <app-card-shell
+            class="referee-alert-card"
+            title="Referee Duty Detected"
+            headerIcon="pi-flag"
+            tone="warning"
+            [flush]="true"
+          >
             <div class="referee-alert">
-              <div class="alert-icon"><i class="pi pi-flag" aria-hidden="true"></i></div>
               <div class="alert-content">
-                <h4>Referee Duty Detected</h4>
                 <p>
                   You're refereeing between games. Stay hydrated but avoid heavy
                   eating. Light snacks and electrolytes only. Full recovery
@@ -430,14 +438,16 @@
                 </p>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         }
 
         <!-- Quick Reference Card -->
-        <p-card class="quick-ref-card">
-          <ng-template #header>
-            <h3><i class="pi pi-list"></i> Quick Reference - What to Pack</h3>
-          </ng-template>
+        <app-card-shell
+          class="quick-ref-card"
+          title="Quick Reference - What to Pack"
+          headerIcon="pi-list"
+          [flush]="true"
+        >
           <div class="packing-list">
             <div class="pack-category">
               <h4>🥤 Drinks</h4>
@@ -476,6 +486,6 @@
               </ul>
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>

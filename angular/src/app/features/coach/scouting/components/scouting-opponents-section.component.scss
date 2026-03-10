@@ -1,0 +1,95 @@
+.opponents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+  gap: var(--ds-spacing-lg);
+}
+
+.opponent-details {
+  .detail-row {
+    display: flex;
+    gap: var(--ds-spacing-sm);
+    padding: var(--ds-spacing-xs) 0;
+
+    .label {
+      font-size: var(--ds-font-size-md);
+      color: var(--color-text-secondary);
+    }
+
+    .value {
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
+    }
+  }
+
+  .key-players {
+    margin-top: var(--ds-spacing-md);
+
+    .label {
+      display: block;
+      margin-bottom: var(--ds-spacing-xs);
+      font-size: var(--ds-font-size-md);
+      color: var(--color-text-secondary);
+    }
+
+    .player-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--ds-spacing-xs);
+    }
+  }
+
+  .last-meeting {
+    display: flex;
+    gap: var(--ds-spacing-sm);
+    margin-top: var(--ds-spacing-md);
+    padding-top: var(--ds-spacing-md);
+    border-top: var(--border-1) solid var(--surface-border);
+
+    .label {
+      font-size: var(--ds-font-size-md);
+      color: var(--color-text-secondary);
+    }
+
+    .value {
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
+    }
+  }
+}
+
+.record {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0-5);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-brand-primary);
+}
+
+.player-badge {
+  cursor: help;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--ds-radius-sm);
+  background: var(--surface-ground);
+  font-size: var(--ds-font-size-xs);
+}
+
+.player-badge.high {
+  background: var(--red-50);
+  color: var(--red-700);
+}
+
+.player-badge.medium {
+  background: var(--orange-50);
+  color: var(--orange-700);
+}
+
+.player-badge.low {
+  background: var(--green-50);
+  color: var(--green-700);
+}
+
+.more-players {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}

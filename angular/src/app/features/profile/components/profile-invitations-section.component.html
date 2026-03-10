@@ -1,0 +1,82 @@
+<div class="invitations-section">
+  @if (loading()) {
+    <div class="loading-invitations">
+      <p-progressSpinner
+        class="invitation-loading-spinner"
+        strokeWidth="4"
+      ></p-progressSpinner>
+      <span>Loading invitations...</span>
+    </div>
+  } @else if (invitations().length === 0) {
+    <app-empty-state
+      [showBenefits]="false"
+      [showSafetyNote]="false"
+      icon="pi-envelope"
+      [customTitle]="'No Pending Invitations'"
+      [customMessage]="'You do not have any team invitations at the moment.'"
+    />
+  } @else {
+    <div class="invitations-list">
+      @for (invitation of invitations(); track invitation.id) {
+        <app-card-shell class="invitation-card">
+          <div class="invitation-content">
+            <div class="invitation-header">
+              <h4>{{ invitation.teamName }}</h4>
+              <app-status-tag
+                [value]="invitation.role | titlecase"
+                severity="info"
+                size="sm"
+              />
+            </div>
+            <p class="invitation-message">
+              @if (invitation.message) {
+                "{{ invitation.message }}"
+              } @else {
+                You've been invited to join this team as a
+                {{ invitation.role }}.
+              }
+            </p>
+            <div class="invitation-meta">
+              <span><i class="pi pi-user"></i> Invited by {{ invitation.invitedBy }}</span>
+              <span><i class="pi pi-calendar"></i> {{ invitation.createdAt | date: "mediumDate" }}</span>
+              @if (invitation.isExpired) {
+                <app-status-tag value="Expired" severity="danger" size="sm" />
+              } @else {
+                <span class="expires-soon">
+                  Expires {{ invitation.expiresAt | date: "mediumDate" }}
+                </span>
+              }
+            </div>
+            <div class="invitation-actions">
+              @if (!invitation.isExpired) {
+                <app-button
+                  iconLeft="pi-check"
+                  [loading]="processingInvitationId() === invitation.id"
+                  (clicked)="acceptInvitation.emit(invitation)"
+                >
+                  Accept
+                </app-button>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-times"
+                  [loading]="processingInvitationId() === invitation.id"
+                  (clicked)="declineInvitation.emit(invitation)"
+                >
+                  Decline
+                </app-button>
+              } @else {
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-refresh"
+                  (clicked)="requestNewInvitation.emit(invitation)"
+                >
+                  Request New Invitation
+                </app-button>
+              }
+            </div>
+          </div>
+        </app-card-shell>
+      }
+    </div>
+  }
+</div>

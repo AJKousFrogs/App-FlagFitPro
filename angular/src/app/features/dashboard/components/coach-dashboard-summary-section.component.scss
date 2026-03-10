@@ -1,0 +1,284 @@
+@use "styles/mixins" as *;
+
+:host {
+  display: contents;
+}
+
+.dashboard-header {
+  @include flex-between;
+
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-card);
+  border-radius: var(--radius-xl);
+  border: var(--border-1) solid var(--surface-border);
+  box-shadow: var(--shadow-sm);
+
+  @include respond-to(lg) {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  @include respond-to(md) {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-3);
+  }
+}
+
+.header-info {
+  flex: 1;
+}
+
+.next-gen-preview-tag {
+  margin-top: var(--space-2);
+
+  @include preview-badge($color: var(--color-text-secondary));
+}
+
+.next-gen-preview-card {
+  margin-top: var(--space-4);
+}
+
+.next-gen-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--size-150), 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.preview-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.preview-label {
+  font-size: var(--ds-font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-caption);
+  color: var(--color-text-muted);
+}
+
+.preview-value {
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.preview-note {
+  margin: 0;
+
+  @include preview-callout($font-size: var(--ds-font-size-xs));
+}
+
+.preview-insights {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-3);
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.preview-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.preview-bars {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.preview-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.signal-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--ds-font-size-xs);
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
+  border: var(--border-1) solid var(--surface-border);
+
+  &.good {
+    color: var(--color-status-success);
+    border-color: var(--color-status-success);
+  }
+
+  &.warning {
+    color: var(--color-status-warning);
+    border-color: var(--color-status-warning);
+  }
+
+  &.danger {
+    color: var(--color-status-error);
+    border-color: var(--color-status-error);
+  }
+}
+
+.team-name {
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  @include respond-to(md) {
+    font-size: var(--ds-font-size-2xl);
+    justify-content: center;
+  }
+}
+
+.team-icon {
+  font-size: var(--ds-font-size-2xl);
+}
+
+.header-subtitle {
+  color: var(--color-text-secondary);
+  margin: var(--space-1) 0 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  @include respond-to(lg) {
+    justify-content: center;
+  }
+
+  @include respond-to(md) {
+    flex-wrap: wrap;
+    font-size: var(--ds-font-size-md);
+  }
+}
+
+.streak-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-lg);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
+
+  &.winning {
+    background: var(--color-status-success-subtle);
+    color: var(--color-status-success);
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--space-2);
+
+  @include respond-to(lg) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  @include respond-to(md) {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
+.stats-compact-row {
+  display: flex;
+  align-items: center;
+  background: var(--surface-card);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-xl);
+  border: var(--border-1) solid var(--surface-border);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+
+  @include respond-to(lg) {
+    padding: var(--space-3) var(--space-4);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @include respond-to(md) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+}
+
+.sc-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: calc(var(--space-24) * 1.042);
+
+  @include respond-to(md) {
+    min-width: auto;
+    padding: var(--space-2);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+  }
+}
+
+.sc-label {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--ds-font-weight-medium);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.sc-preview-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-secondary);
+  color: var(--color-text-muted);
+  font-size: var(--ds-font-size-2xs, 0.625rem);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.sc-value {
+  margin-top: var(--space-1);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-primary);
+
+  &.warning {
+    color: var(--color-status-warning);
+  }
+}
+
+.sc-divider {
+  width: var(--border-1);
+  height: var(--space-10);
+  background: var(--surface-border);
+  margin: 0 var(--space-4);
+  flex-shrink: 0;
+
+  @include respond-to(md) {
+    display: none;
+  }
+}

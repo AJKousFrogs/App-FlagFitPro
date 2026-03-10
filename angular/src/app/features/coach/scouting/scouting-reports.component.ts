@@ -15,21 +15,30 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
-import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import {
+  ScoutingReportListItem,
+  ScoutingReportsListSectionComponent,
+} from "./components/scouting-reports-list-section.component";
+import {
+  ScoutingOpponentProfileView,
+  ScoutingOpponentsSectionComponent,
+} from "./components/scouting-opponents-section.component";
+import {
+  ScoutingTendenciesSectionComponent,
+  ScoutingTendenciesView,
+  ScoutingTendencyFilterOption,
+} from "./components/scouting-tendencies-section.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §44
 interface OpponentPlayer {
@@ -136,7 +145,6 @@ interface NewOpponentForm {
   imports: [
     CommonModule,
     RouterModule,
-    CardShellComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -150,13 +158,13 @@ interface NewOpponentForm {
     TabPanel,
     StatusTagComponent,
     Textarea,
-    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    EmptyStateComponent,
     AppLoadingComponent,
-    IconButtonComponent,
+    ScoutingReportsListSectionComponent,
+    ScoutingOpponentsSectionComponent,
+    ScoutingTendenciesSectionComponent,
   ],
   templateUrl: "./scouting-reports.component.html",
   styleUrl: "./scouting-reports.component.scss",
@@ -546,6 +554,46 @@ export class ScoutingReportsComponent implements OnInit {
 
   editReport(report: ScoutingReport): void {
     this.toast.info(`Opening editor for ${report.opponentName} report`);
+  }
+
+  updateSelectedOpponentFilterFromSection(
+    value: string | null,
+  ): void {
+    this.updateSelectedOpponentFilter(value);
+  }
+
+  viewReportFromSection(report: ScoutingReportListItem): void {
+    this.viewReport(report as ScoutingReport);
+  }
+
+  shareToChatFromSection(report: ScoutingReportListItem): void {
+    this.shareToChat(report as ScoutingReport);
+  }
+
+  editReportFromSection(report: ScoutingReportListItem): void {
+    this.editReport(report as ScoutingReport);
+  }
+
+  viewOpponentFromSection(opponent: ScoutingOpponentProfileView): void {
+    this.viewOpponent(opponent as OpponentProfile);
+  }
+
+  createReportForOpponentFromSection(
+    opponent: ScoutingOpponentProfileView,
+  ): void {
+    this.createReportForOpponent(opponent as OpponentProfile);
+  }
+
+  updateSelectedTendencyOpponentFromSection(value: string | null): void {
+    this.updateSelectedTendencyOpponent(value);
+  }
+
+  get tendencyFilterOptions(): ScoutingTendencyFilterOption[] {
+    return this.opponentFilterOptions();
+  }
+
+  get currentTendenciesView(): ScoutingTendenciesView | null {
+    return this.currentTendencies();
   }
 
   exportReport(report: ScoutingReport): void {

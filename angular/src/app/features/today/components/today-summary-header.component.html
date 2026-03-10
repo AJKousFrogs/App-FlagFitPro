@@ -1,0 +1,125 @@
+<section aria-labelledby="today-heading">
+  <app-card-shell class="welcome-card">
+    <div class="welcome-row">
+      <div class="user-avatar" aria-hidden="true">
+        <i class="pi pi-user"></i>
+      </div>
+      <div class="welcome-text">
+        <h1 id="today-heading" class="welcome-greeting">Today</h1>
+        <h2 class="welcome-name">{{ todayDateLabel() }}</h2>
+        <div class="welcome-stats">
+          <span class="stat-item">
+            <span class="stat-block__label">Readiness:</span>
+            <span
+              class="stat-block__value"
+              [class.logged]="readinessDisplay().logged"
+            >
+              {{ readinessDisplay().value }}
+              @if (readinessDisplay().logged) {
+                <i class="pi pi-check stat-check-icon"></i>
+              }
+            </span>
+          </span>
+        </div>
+        <div class="welcome-actions">
+          <app-button
+            variant="primary"
+            iconLeft="pi-pencil"
+            (clicked)="logSession.emit()"
+            ariaLabel="Log today's training session"
+          >
+            Log Today's Session
+          </app-button>
+        </div>
+      </div>
+    </div>
+  </app-card-shell>
+</section>
+
+@if (exactTrainingSummary(); as summary) {
+  <section aria-labelledby="exact-training-heading">
+    <app-card-shell class="exact-training-card">
+      <app-card-header
+        title="Today's Exact Training"
+        icon="pi-compass"
+        titleId="exact-training-heading"
+        [divider]="true"
+      />
+
+      <div class="exact-training-layout">
+        <div class="exact-training-main">
+          <p class="exact-training-kicker">{{ summary.focusLabel }}</p>
+          <h2 class="exact-training-title">{{ summary.title }}</h2>
+          <p class="exact-training-description">{{ summary.description }}</p>
+
+          <div class="exact-training-metrics">
+            <div class="exact-training-metric">
+              <span class="exact-training-metric__label">Blocks</span>
+              <strong class="exact-training-metric__value">{{
+                summary.blockCount
+              }}</strong>
+            </div>
+            <div class="exact-training-metric">
+              <span class="exact-training-metric__label">Exercises</span>
+              <strong class="exact-training-metric__value">{{
+                summary.exerciseCount
+              }}</strong>
+            </div>
+            <div class="exact-training-metric">
+              <span class="exact-training-metric__label">Duration</span>
+              <strong class="exact-training-metric__value">
+                @if (summary.estimatedMinutes > 0) {
+                  ~{{ summary.estimatedMinutes }} min
+                } @else {
+                  Adaptive
+                }
+              </strong>
+            </div>
+            <div class="exact-training-metric">
+              <span class="exact-training-metric__label">Video demos</span>
+              <strong class="exact-training-metric__value">{{
+                summary.videoCount
+              }}</strong>
+            </div>
+          </div>
+
+          <div class="exact-training-status">
+            @if (summary.readinessText) {
+              <span class="exact-training-pill">{{ summary.readinessText }}</span>
+            }
+            @if (summary.acwrText) {
+              <span class="exact-training-pill">{{ summary.acwrText }}</span>
+            }
+            @if (summary.coachContext) {
+              <span class="exact-training-pill exact-training-pill--coach">
+                {{ summary.coachContext }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <aside class="exact-training-sidebar" aria-label="Session start">
+          <div class="exact-training-start">
+            <span class="exact-training-start__label">Start with</span>
+            <strong class="exact-training-start__block">{{
+              summary.startBlock
+            }}</strong>
+            @if (summary.firstExercise) {
+              <span class="exact-training-start__exercise">{{
+                summary.firstExercise
+              }}</span>
+            }
+          </div>
+
+          <app-button
+            iconLeft="pi-play"
+            size="md"
+            (clicked)="startExactPlan.emit()"
+          >
+            Start Exact Plan
+          </app-button>
+        </aside>
+      </div>
+    </app-card-shell>
+  </section>
+}

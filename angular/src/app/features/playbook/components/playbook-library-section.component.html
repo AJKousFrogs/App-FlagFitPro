@@ -1,0 +1,97 @@
+<app-card-shell class="progress-card" [flush]="true">
+  <div class="progress-header">
+    <div class="progress-stats">
+      <div class="stat-item stat-block stat-block--compact">
+        <div class="stat-block__content">
+          <span class="stat-block__value">{{ memorizedCount() }}</span>
+          <span class="stat-block__label">Memorized</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item stat-block stat-block--compact">
+        <div class="stat-block__content">
+          <span class="stat-block__value">{{ totalPlays() }}</span>
+          <span class="stat-block__label">Total Plays</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item stat-block stat-block--compact">
+        <div class="stat-block__content">
+          <span class="stat-block__value">{{ progressPercent() }}%</span>
+          <span class="stat-block__label">Complete</span>
+        </div>
+      </div>
+    </div>
+    <app-button iconLeft="pi-question-circle" [disabled]="filteredPlays().length === 0" (clicked)="startQuiz.emit()">
+      Quiz Mode
+    </app-button>
+  </div>
+  <p-progressBar [value]="progressPercent()" [showValue]="false" class="progress-overall"></p-progressBar>
+</app-card-shell>
+
+<div class="filters-row">
+  <span class="p-input-icon-left filter-search">
+    <i class="pi pi-search"></i>
+    <input
+      type="text"
+      pInputText
+      placeholder="Search plays..."
+      [value]="searchQuery()"
+      (input)="searchInput.emit($event)"
+    />
+  </span>
+
+  <p-select
+    [options]="categoryOptions()"
+    (onChange)="categoryChange.emit($event.value)"
+    optionLabel="label"
+    optionValue="value"
+    placeholder="Category"
+    [showClear]="true"
+    class="playbook-filter-select"
+  ></p-select>
+
+  <p-select
+    [options]="statusOptions()"
+    (onChange)="statusChange.emit($event.value)"
+    optionLabel="label"
+    optionValue="value"
+    placeholder="Status"
+    [showClear]="true"
+    class="playbook-filter-select"
+  ></p-select>
+</div>
+
+@if (filteredPlays().length > 0) {
+  <div class="plays-grid">
+    @for (play of filteredPlays(); track play.id) {
+      <app-card-shell class="play-card" [flush]="true" (click)="selectPlay.emit(play)">
+        <div class="play-header">
+          <div class="play-title">
+            <h3>{{ play.name }}</h3>
+            <app-status-tag
+              [value]="getCategoryLabel(play.category)"
+              [severity]="getCategorySeverity(play.category)"
+              size="sm"
+            />
+          </div>
+          @if (play.isMemorized) {
+            <i class="pi pi-check-circle memorized-icon" title="Memorized"></i>
+          }
+        </div>
+
+        <p class="play-formation">{{ play.formationName }}</p>
+        <p class="play-assignment">
+          <strong>Your Assignment:</strong>
+          {{ play.personalAssignment.responsibility }}
+        </p>
+
+        @if (play.lastStudied) {
+          <span class="last-studied">Last studied: {{ play.lastStudied | date: "MMM d" }}</span>
+        }
+      </app-card-shell>
+    }
+  </div>
+} @else {
+  <app-empty-state [useCard]="true" icon="pi-book" heading="No plays found" [description]="emptyDescription()" />
+}

@@ -24,9 +24,9 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { TIMEOUTS } from "../../../core/constants/app.constants";
+import { AppDialogComponent } from "../dialog/dialog.component";
 
 import { Subject, debounceTime, distinctUntilChanged, tap } from "rxjs";
 import {
@@ -43,7 +43,7 @@ const SUGGESTION_DEBOUNCE_MS = 150;
 @Component({
   selector: "app-search-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, InputText, Dialog, IconButtonComponent],
+  imports: [RouterModule, InputText, AppDialogComponent, IconButtonComponent],
   templateUrl: "./search-panel.component.html",
   styleUrl: "./search-panel.component.scss",
   host: {

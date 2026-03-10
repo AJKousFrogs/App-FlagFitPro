@@ -28,11 +28,15 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
-import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { NutritionistSupplementSectionComponent } from "./components/nutritionist-supplement-section.component";
+import {
+  NutritionistTournamentBriefView,
+  NutritionistTournamentSectionComponent,
+} from "./components/nutritionist-tournament-section.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §30
 interface AthleteNutritionData {
@@ -128,6 +132,8 @@ interface TournamentNutritionBrief {
     RouterModule,
     LazyChartComponent,
     CardShellComponent,
+    NutritionistSupplementSectionComponent,
+    NutritionistTournamentSectionComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -147,7 +153,6 @@ interface TournamentNutritionBrief {
     ButtonComponent,
     IconButtonComponent,
     AppLoadingComponent,
-    EmptyStateComponent,
   ],
   templateUrl: "./nutritionist-dashboard.component.html",
   styleUrl: "./nutritionist-dashboard.component.scss",
@@ -630,6 +635,14 @@ export class NutritionistDashboardComponent implements OnInit {
 
   exportTournamentBrief(brief: TournamentNutritionBrief): void {
     this.toast.success(`Exporting PDF for ${brief.tournament.name}...`);
+  }
+
+  viewTournamentBriefCard(brief: NutritionistTournamentBriefView): void {
+    this.viewTournamentBrief(brief as TournamentNutritionBrief);
+  }
+
+  exportTournamentBriefCard(brief: NutritionistTournamentBriefView): void {
+    this.exportTournamentBrief(brief as TournamentNutritionBrief);
   }
 
   generateReport(): void {

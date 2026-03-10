@@ -2,22 +2,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ElementRef,
   inject,
   OnInit,
   signal,
-  viewChild,
 } from "@angular/core";
 
-import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
-import { ProgressBar } from "primeng/progressbar";
-import { ProgressSpinner } from "primeng/progressspinner";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -32,19 +26,21 @@ import { ProfileCompletionService } from "../../core/services/profile-completion
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
-import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
 import {
   DELETION_MESSAGES,
   getDeletionMessage,
 } from "../../shared/utils/privacy-ux-copy";
+import { ProfileHeaderSectionComponent } from "./components/profile-header-section.component";
+import { ProfileInvitationsSectionComponent } from "./components/profile-invitations-section.component";
+import { ProfileOverviewSectionComponent } from "./components/profile-overview-section.component";
+import { ProfileAchievementsSectionComponent } from "./components/profile-achievements-section.component";
+import { ProfileStatisticsSectionComponent } from "./components/profile-statistics-section.component";
 import { ProfileDataService } from "./services/profile-data.service";
 
 interface PendingInvitation {
@@ -65,26 +61,22 @@ interface PendingInvitation {
   imports: [
     CommonModule,
     RouterModule,
-    StatusTagComponent,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
-    ProgressBar,
-    ProgressSpinner,
     MainLayoutComponent,
-    EmptyStateComponent,
     PageErrorStateComponent,
-    MobileOptimizedImageDirective,
     AlertComponent,
-    DatePipe,
-    TitleCasePipe,
     ButtonComponent,
-    IconButtonComponent,
-    CardShellComponent,
     StatsGridComponent,
     AppLoadingComponent,
+    ProfileHeaderSectionComponent,
+    ProfileInvitationsSectionComponent,
+    ProfileOverviewSectionComponent,
+    ProfileAchievementsSectionComponent,
+    ProfileStatisticsSectionComponent,
   ],
   templateUrl: "./profile.component.html",
 
@@ -99,9 +91,6 @@ export class ProfileComponent implements OnInit {
   private accountDeletionService = inject(AccountDeletionService);
   private profileCompletionService = inject(ProfileCompletionService);
   private teamMembershipService = inject(TeamMembershipService);
-
-  // Angular 21: Use viewChild() signal instead of @ViewChild()
-  fileInput = viewChild.required<ElementRef<HTMLInputElement>>("fileInput");
 
   // Expose UI_LIMITS for template usage
   readonly UI_LIMITS = UI_LIMITS;
@@ -628,40 +617,6 @@ export class ProfileComponent implements OnInit {
     ]);
   }
 
-  trackByActivityTitle(
-    index: number,
-    activity: { icon: string; title: string; time: string },
-  ): string {
-    return activity.title || index.toString();
-  }
-
-  trackByAchievementTitle(
-    index: number,
-    achievement: {
-      icon: string;
-      title: string;
-      description: string;
-      date: string;
-    },
-  ): string {
-    return achievement.title || index.toString();
-  }
-
-  trackByPerformanceStatLabel(
-    index: number,
-    stat: { label: string; value: string; trend: string; trendType: string },
-  ): string {
-    return stat.label || index.toString();
-  }
-
-  /**
-   * Trigger file input click
-   */
-  triggerFileUpload(): void {
-    const input = this.fileInput();
-    input?.nativeElement?.click();
-  }
-
   /**
    * Handle file selection for profile picture upload
    */
@@ -746,11 +701,7 @@ export class ProfileComponent implements OnInit {
       this.toastService.error(TOAST.ERROR.AVATAR_UPLOAD_FAILED);
     } finally {
       this.isUploadingAvatar.set(false);
-      // Reset file input
-      const input = this.fileInput();
-      if (input?.nativeElement) {
-        input.nativeElement.value = "";
-      }
+      input.value = "";
     }
   }
 

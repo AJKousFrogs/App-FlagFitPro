@@ -1,0 +1,192 @@
+.date-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  .date-header {
+    margin: 0;
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--ds-text-primary);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-1) solid var(--ds-border-subtle);
+  }
+}
+
+.events-list {
+  gap: var(--layout-page-section-gap-tight);
+}
+
+.event-card {
+  border-left: var(--space-1) solid var(--ds-border-default);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
+
+  &.type-practice {
+    border-left-color: var(--ds-primary-green);
+  }
+
+  &.type-game {
+    border-left-color: var(--primitive-error-500);
+  }
+
+  &.type-team-event {
+    border-left-color: var(--primitive-blue-500);
+  }
+
+  &.type-meeting {
+    border-left-color: var(--primitive-warning-500);
+  }
+
+  &.type-tournament {
+    border-left-color: var(--primitive-purple-500);
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-1);
+  }
+}
+
+.event-content {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+
+.event-time {
+  min-width: var(--badge-min-width-md);
+  text-align: center;
+  padding: var(--space-2);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  .item-time {
+    display: block;
+    font-weight: var(--ds-font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    color: var(--ds-text-primary);
+  }
+
+  .duration {
+    display: block;
+    font-size: var(--ds-font-size-xs);
+    color: var(--ds-text-tertiary);
+    margin-top: var(--space-1);
+  }
+}
+
+.event-details {
+  flex: 1;
+  min-width: 0;
+
+  .event-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+    flex-wrap: wrap;
+
+    h4 {
+      margin: 0;
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
+      color: var(--ds-text-primary);
+    }
+  }
+
+  .event-location {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--ds-font-size-md);
+    color: var(--ds-text-secondary);
+
+    i {
+      font-size: var(--ds-font-size-xs);
+    }
+  }
+
+  .event-description {
+    margin: 0;
+    font-size: var(--ds-font-size-md);
+    color: var(--ds-text-secondary);
+    line-height: var(--ds-line-height-normal);
+  }
+}
+
+.rsvp-stats {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--ds-font-size-xs);
+    color: var(--ds-text-tertiary);
+
+    &.going {
+      color: var(--ds-primary-green);
+    }
+
+    &.not-going {
+      color: var(--primitive-error-500);
+    }
+
+    &.maybe {
+      color: var(--primitive-warning-500);
+    }
+
+    i {
+      font-size: var(--ds-font-size-xs);
+    }
+  }
+}
+
+.event-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  min-width: var(--input-min-width-md);
+
+  .current-rsvp {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--ds-surface-base);
+
+    &.status-going {
+      background: var(--color-status-success-subtle);
+      color: var(--color-status-success);
+    }
+
+    &.status-not-going {
+      background: var(--primitive-error-50);
+      color: var(--primitive-error-600);
+    }
+
+    &.status-maybe {
+      background: var(--primitive-warning-50);
+      color: var(--primitive-warning-600);
+    }
+
+    &.status-pending {
+      background: var(--primitive-neutral-100);
+      color: var(--primitive-neutral-500);
+    }
+
+    i {
+      font-size: var(--ds-font-size-xs);
+    }
+  }
+}

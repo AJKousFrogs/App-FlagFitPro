@@ -1,0 +1,134 @@
+.rtp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xl), 1fr));
+  gap: var(--ds-spacing-lg);
+}
+
+.rtp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .athlete-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .athlete-name {
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  .injury-info {
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-secondary);
+  }
+}
+
+.rtp-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-md);
+}
+
+.phase-progress {
+  h5 {
+    margin: 0 0 var(--ds-spacing-sm);
+    font-size: var(--ds-font-size-md);
+  }
+
+  .days-in-phase {
+    margin-top: var(--ds-spacing-xs);
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
+    text-align: center;
+  }
+}
+
+.phase-timeline {
+  display: flex;
+  gap: var(--ds-spacing-xs);
+}
+
+.phase-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.phase-number {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-circle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  background: var(--surface-ground);
+  color: var(--color-text-secondary);
+}
+
+.phase-name {
+  font-size: var(--ds-font-size-xs);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.phase-step.completed .phase-number {
+  background: var(--green-500);
+  color: var(--surface-0);
+}
+
+.phase-step.current .phase-number {
+  background: var(--color-brand-primary);
+  color: var(--surface-0);
+}
+
+.phase-step.current .phase-name {
+  color: var(--color-brand-primary);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.progress-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--ds-spacing-sm);
+
+  .metric-label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .metric-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-spacing-xs);
+  }
+}
+
+.phase-criteria {
+  padding: var(--ds-spacing-md);
+  background: var(--surface-ground);
+  border-radius: var(--ds-radius-md);
+
+  h5 {
+    margin: 0 0 var(--ds-spacing-sm);
+    font-size: var(--ds-font-size-md);
+  }
+}
+
+.criteria-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 768px) {
+  .rtp-grid {
+    grid-template-columns: 1fr;
+  }
+}

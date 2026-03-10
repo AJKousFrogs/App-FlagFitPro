@@ -1,0 +1,109 @@
+@use "styles/mixins" as *;
+
+.player-stats-card {
+  margin-top: 0;
+
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-secondary);
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.stat-card {
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.stat-card h4,
+.stat-card h5 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row span {
+  color: var(--color-text-secondary);
+}
+
+.stat-row strong {
+  color: var(--color-text-primary);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.multi-season-stats h4 {
+  margin: var(--space-6) 0 var(--space-4);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+@include respond-to(md) {
+  .player-stats-card {
+    margin-top: var(--space-4);
+  }
+
+  .stats-summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .stats-summary .metric-tile {
+    padding: var(--space-2);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .stat-card {
+    padding: var(--space-3);
+
+    h4,
+    h5 {
+      font-size: var(--ds-font-size-md);
+      margin-bottom: var(--space-3);
+    }
+  }
+
+  .stat-row {
+    padding: var(--space-1) 0;
+    font-size: var(--ds-font-size-md);
+  }
+
+  .multi-season-stats h4 {
+    margin: var(--space-4) 0 var(--space-3);
+    font-size: var(--ds-font-size-xl);
+  }
+}

@@ -1,0 +1,194 @@
+<div id="account-settings" class="settings-section ui-stack-md">
+  <div class="ui-section-heading">
+    <div class="ui-section-heading__content">
+      <h2 class="ui-section-heading__title">
+        <span class="ui-section-heading__icon">
+          <i class="pi pi-user"></i>
+        </span>
+        Account Settings
+      </h2>
+      <p class="ui-section-heading__description">
+        Manage your personal information and account details
+      </p>
+    </div>
+  </div>
+
+  <app-card-shell
+    title="Profile Information"
+    headerIcon="pi-user"
+    class="settings-account-card"
+  >
+    <form [formGroup]="profileForm()" class="settings-profile-form ui-stack-md">
+      <div class="form-field">
+        <label for="settings-displayName" class="form-label">Display Name</label>
+        <input
+          id="settings-displayName"
+          name="displayName"
+          type="text"
+          pInputText
+          formControlName="displayName"
+          placeholder="Enter your display name"
+          autocomplete="name"
+        />
+      </div>
+      <div class="form-field">
+        <label for="settings-email" class="form-label">Email</label>
+        <input
+          id="settings-email"
+          name="email"
+          type="email"
+          pInputText
+          formControlName="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+        />
+      </div>
+      <div class="form-field">
+        <label for="settings-dob" class="form-label">Date of Birth</label>
+        <div class="datepicker-with-suggestion">
+          <p-datepicker
+            appBirthdayInputSuggestion
+            inputId="settings-dob"
+            formControlName="dateOfBirth"
+            [showIcon]="true"
+            [maxDate]="maxBirthDate()"
+            dateFormat="mm/dd/yy"
+            placeholder="Select your date of birth"
+            appendTo="body"
+            class="w-full"
+            (inputTyped)="birthdayInputTyped.emit($event)"
+            (inputBlurred)="birthdayInputBlurred.emit()"
+          ></p-datepicker>
+          @if (birthdaySuggestion(); as suggestion) {
+            <div class="birthday-suggestion">
+              <div class="suggestion-content">
+                <i class="pi pi-lightbulb suggestion-icon"></i>
+                <div class="suggestion-text">
+                  <span class="suggestion-label">Suggested:</span>
+                  <span class="suggestion-date">{{ suggestion.formatted }}</span>
+                  @if (suggestion.age !== null) {
+                    <span class="suggestion-age">(Age: {{ suggestion.age }} years)</span>
+                  }
+                </div>
+              </div>
+              <app-button
+                variant="secondary"
+                size="sm"
+                iconLeft="check"
+                ariaLabel="Apply suggested date"
+                (clicked)="applyBirthdaySuggestion.emit()"
+              >
+                Apply
+              </app-button>
+            </div>
+          }
+        </div>
+        @if (calculatedAge() !== null) {
+          <small class="form-help age-display">Age: {{ calculatedAge() }} years</small>
+        }
+      </div>
+      <div class="form-row two-columns">
+        <div class="form-field">
+          <label for="settings-position" class="form-label">Position</label>
+          <p-select
+            inputId="settings-position"
+            formControlName="position"
+            [options]="positionOptions()"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select your position"
+            appendTo="body"
+            [attr.aria-label]="'Select your position'"
+          ></p-select>
+        </div>
+        <div class="form-field">
+          <label for="settings-jerseyNumber" class="form-label">Jersey Number</label>
+          <input
+            id="settings-jerseyNumber"
+            name="jerseyNumber"
+            type="text"
+            pInputText
+            formControlName="jerseyNumber"
+            placeholder="#55"
+            maxlength="3"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <div class="form-row two-columns">
+        <div class="form-field">
+          <label for="settings-height" class="form-label">Height (cm)</label>
+          <input
+            id="settings-height"
+            name="height"
+            type="number"
+            pInputText
+            formControlName="heightCm"
+            placeholder="175"
+            min="100"
+            max="250"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-field">
+          <label for="settings-weight" class="form-label">Weight (kg)</label>
+          <input
+            id="settings-weight"
+            name="weight"
+            type="number"
+            pInputText
+            formControlName="weightKg"
+            placeholder="70"
+            min="30"
+            max="200"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="settings-team" class="form-label">Team</label>
+        <p-select
+          inputId="settings-team"
+          formControlName="teamId"
+          [options]="availableTeams()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select your team"
+          appendTo="body"
+          (onChange)="teamChange.emit($event.value)"
+          [attr.aria-label]="'Select your team'"
+        ></p-select>
+        <small class="form-help field-hint">
+          <i class="pi pi-info-circle"></i>
+          Select your team or request to create a new one
+        </small>
+      </div>
+      <div class="form-field">
+        <label for="settings-phone" class="form-label">Phone Number</label>
+        <input
+          id="settings-phone"
+          name="phone"
+          type="tel"
+          pInputText
+          formControlName="phone"
+          placeholder="Enter your phone number"
+          autocomplete="tel"
+        />
+      </div>
+      <div class="form-field">
+        <label for="settings-country" class="form-label">Country</label>
+        <p-select
+          inputId="settings-country"
+          formControlName="country"
+          [options]="countryOptions()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select your country"
+          [filter]="true"
+          filterPlaceholder="Search countries..."
+          appendTo="body"
+        ></p-select>
+      </div>
+    </form>
+  </app-card-shell>
+</div>

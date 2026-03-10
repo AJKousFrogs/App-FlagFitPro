@@ -1,0 +1,180 @@
+:host {
+  display: block;
+}
+
+.priority-command-center {
+  margin-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.merlin-coach-card {
+  background: var(--ds-primary-green-gradient);
+  color: var(--color-text-on-primary);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  display: flex;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-md);
+}
+
+.merlin-avatar {
+  width: var(--avatar-lg);
+  height: var(--avatar-lg);
+  background: var(--state-layer-on-primary);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ds-font-size-2xl);
+  flex-shrink: 0;
+}
+
+.merlin-content {
+  flex: 1;
+}
+
+.merlin-content h3 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.merlin-content p {
+  margin: 0 0 var(--space-3);
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-normal);
+  opacity: var(--opacity-strong);
+}
+
+.merlin-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.priority-athletes-strip {
+  background: var(--surface-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  border: var(--border-1) solid var(--surface-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.strip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  gap: var(--space-3);
+}
+
+.strip-title {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
+}
+
+.strip-preview-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-2);
+  min-height: var(--space-5);
+  border-radius: var(--radius-full);
+  background: var(--state-layer-on-primary);
+  color: var(--color-text-on-primary);
+  font-size: var(--font-caption-size);
+}
+
+.strip-title-icon {
+  color: var(--color-status-error);
+}
+
+.athlete-scroll {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.athlete-scroll::-webkit-scrollbar {
+  height: var(--space-1);
+}
+
+.athlete-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: var(--radius-full);
+}
+
+.priority-avatar {
+  color: var(--color-text-on-primary);
+}
+
+.priority-avatar--critical {
+  background: var(--color-status-error);
+}
+
+.priority-avatar--warning {
+  background: var(--color-status-warning);
+}
+
+.priority-athlete-card {
+  flex: 0 0 calc(var(--space-24) * 2.5);
+  background: var(--surface-ground);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  border: var(--border-1) solid transparent;
+}
+
+.pa-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.pa-name {
+  display: block;
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pa-reason {
+  display: block;
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.priority-athlete-card > i {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.missing-data-strip {
+  border-left: var(--border-4) solid var(--color-status-warning);
+}
+
+@media (max-width: 768px) {
+  .merlin-coach-card {
+    flex-direction: column;
+  }
+
+  .priority-athlete-card {
+    flex-basis: min(100%, 18rem);
+  }
+}

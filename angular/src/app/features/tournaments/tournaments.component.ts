@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {
     ChangeDetectionStrategy,
     Component,
@@ -26,7 +26,6 @@ import { TabPanel, Tabs } from "primeng/tabs";
 import { Textarea } from "primeng/textarea";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 
 import { AuthService } from "../../core/services/auth.service";
@@ -46,13 +45,16 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { formatDateISO } from "../../shared/utils/date.utils";
 import { getCountryFlag } from "../../core/constants";
 import { TournamentsDataService } from "./services/tournaments-data.service";
+import { TournamentAvailabilityDialogContentComponent } from "./components/tournament-availability-dialog-content.component";
+import { TournamentBudgetDialogContentComponent } from "./components/tournament-budget-dialog-content.component";
+import { TournamentTeamAvailabilityDialogContentComponent } from "./components/tournament-team-availability-dialog-content.component";
+import { TournamentSeasonPanelComponent } from "./components/tournament-season-panel.component";
 
 interface PlayerAvailability {
   playerId: string;
@@ -250,17 +252,18 @@ const toDateOrNull = (value: unknown): Date | null => {
     
     MainLayoutComponent,
     PageHeaderComponent,
-    DecimalPipe,
     ButtonComponent,
     IconButtonComponent,
     AlertComponent,
-    CardShellComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
-    StatusTagComponent,
     EmptyStateComponent,
     AppLoadingComponent,
+    TournamentAvailabilityDialogContentComponent,
+    TournamentBudgetDialogContentComponent,
+    TournamentTeamAvailabilityDialogContentComponent,
+    TournamentSeasonPanelComponent,
   ],
   templateUrl: "./tournaments.component.html",
 

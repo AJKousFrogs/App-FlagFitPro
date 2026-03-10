@@ -1,0 +1,35 @@
+<div class="analytics-workspace">
+  <div class="analytics-hero">
+    <div class="chart-container">
+      @defer (on viewport; prefetch on idle) {
+        @if (performanceChartData()) {
+          <app-lazy-chart
+            type="line"
+            [data]="performanceChartData()!"
+            [options]="lineChartOptions()"
+            height="var(--chart-min-height-sm)"
+          ></app-lazy-chart>
+        }
+      } @placeholder {
+        <app-chart-skeleton type="line" height="var(--chart-min-height-sm)" />
+      } @loading (minimum 500ms) {
+        <app-chart-skeleton type="line" height="var(--chart-min-height-sm)" />
+      }
+    </div>
+    <div class="hero-stats">
+      <div class="h-stat">
+        <span class="h-label">Current Strength</span>
+        <span class="h-value">{{ latestPerformanceScore() }}%</span>
+      </div>
+      <div class="h-stat">
+        <span class="h-label">Attendance</span>
+        <span class="h-value">{{ practiceAttendanceRate() }}%</span>
+      </div>
+    </div>
+  </div>
+  @if (nextGenEnabled()) {
+    <p class="analytics-preview-note">
+      Next-gen performance trends are in preview. Keep using legacy charts for decisions until validation completes.
+    </p>
+  }
+</div>

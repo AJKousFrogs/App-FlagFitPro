@@ -1,0 +1,114 @@
+.achievements-scroll {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+}
+
+.achievement-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--radius-xl);
+  white-space: nowrap;
+  cursor: help;
+}
+
+.ach-icon {
+  font-size: var(--ds-font-size-md);
+}
+
+.ach-name {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+.la28-teaser-content {
+  display: flex;
+  align-items: center;
+  gap: var(--layout-gap-md);
+  background: linear-gradient(
+    135deg,
+    var(--ui-surface-card-alt) 0%,
+    var(--color-status-info-subtle) 100%
+  );
+  border: var(--border-1) solid var(--ui-border-subtle);
+  padding: var(--space-5);
+  border-radius: calc(var(--component-card-radius) - var(--space-1));
+  color: var(--ui-text-primary);
+  margin: calc(-1 * var(--component-card-padding));
+}
+
+.teaser-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.teaser-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-container-lg);
+  height: var(--icon-container-lg);
+  border-radius: var(--radius-xl);
+  background: rgba(var(--primitive-info-500-rgb), 0.12);
+  color: var(--ui-info);
+  font-size: var(--font-h3-size);
+}
+
+.teaser-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.teaser-title {
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--font-body-size);
+}
+
+.teaser-subtitle {
+  font-size: var(--font-body-sm-size);
+  color: var(--ui-text-secondary);
+  opacity: 1;
+}
+
+.teaser-progress {
+  display: flex;
+  align-items: center;
+}
+
+.progress-ring-mini {
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  border-radius: var(--radius-circle);
+  background: rgba(var(--primitive-info-500-rgb), 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ui-info);
+  font-size: var(--font-body-sm-size);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.la28-teaser-content .pi-chevron-right {
+  color: var(--ui-text-tertiary);
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .la28-teaser-content {
+    margin: calc(-1 * var(--component-card-padding-compact));
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 576px) {
+  .la28-teaser-content {
+    flex-wrap: wrap;
+  }
+}

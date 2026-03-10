@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,84 +20,38 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
-import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
 import { firstValueFrom } from "rxjs";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { ApiResponse } from "../../core/models/common.models";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
-import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
-
-// ===== Interfaces =====
-interface Play {
-  id: string;
-  name: string;
-  category: PlayCategory;
-  formationName: string;
-  diagramUrl?: string;
-  description: string;
-  keyPoints: string[];
-  commonMistakes: string[];
-  personalAssignment: PositionAssignment;
-  isMemorized: boolean;
-  lastStudied?: string;
-}
-
-interface PositionAssignment {
-  position: string;
-  route?: string;
-  responsibility: string;
-  preSnapRead?: string;
-  postSnapRead?: string;
-}
-
-interface QuizQuestion {
-  playId: string;
-  playName: string;
-  question: string;
-  options: string[];
-  correctIndex: number;
-  userAnswer?: number;
-}
-
-type PlayCategory = "offense" | "defense" | "special-teams";
-
-// ===== Constants =====
-const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
-  { label: "Offense", value: "offense" },
-  { label: "Defense", value: "defense" },
-  { label: "Special Teams", value: "special-teams" },
-];
+import {
+  PLAY_CATEGORIES,
+  Play,
+  PlayCategory,
+  QuizQuestion,
+} from "./playbook.models";
+import { PlaybookLibrarySectionComponent } from "./components/playbook-library-section.component";
+import { PlaybookDetailDialogContentComponent } from "./components/playbook-detail-dialog-content.component";
+import { PlaybookQuizDialogContentComponent } from "./components/playbook-quiz-dialog-content.component";
 
 @Component({
   selector: "app-playbook",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    DatePipe,
-    Card,
-    AlertComponent,
-    Dialog,
-    InputText,
-    ProgressBar,
-    Select,
-
     MainLayoutComponent,
+    AppDialogComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     PageHeaderComponent,
-    MobileOptimizedImageDirective,
-    ButtonComponent,
-    StatusTagComponent,
-    EmptyStateComponent,
+    PlaybookLibrarySectionComponent,
+    PlaybookDetailDialogContentComponent,
+    PlaybookQuizDialogContentComponent,
   ],
   template: `
     <app-main-layout>
@@ -107,387 +61,90 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
           subtitle="Study and memorize team plays for your position"
           icon="pi-book"
         ></app-page-header>
-
-        <!-- Progress Overview -->
-        <p-card class="progress-card">
-          <div class="progress-header">
-            <div class="progress-stats">
-              <div class="stat-item stat-block stat-block--compact">
-                <div class="stat-block__content">
-                  <span class="stat-block__value">{{ memorizedCount() }}</span>
-                  <span class="stat-block__label">Memorized</span>
-                </div>
-              </div>
-              <div class="stat-divider"></div>
-              <div class="stat-item stat-block stat-block--compact">
-                <div class="stat-block__content">
-                  <span class="stat-block__value">{{ totalPlays() }}</span>
-                  <span class="stat-block__label">Total Plays</span>
-                </div>
-              </div>
-              <div class="stat-divider"></div>
-              <div class="stat-item stat-block stat-block--compact">
-                <div class="stat-block__content">
-                  <span class="stat-block__value"
-                    >{{ progressPercent() }}%</span
-                  >
-                  <span class="stat-block__label">Complete</span>
-                </div>
-              </div>
-            </div>
-            <app-button
-              iconLeft="pi-question-circle"
-              [disabled]="plays().length === 0"
-              (clicked)="startQuiz()"
-              >Quiz Mode</app-button
-            >
-          </div>
-          <p-progressBar
-            [value]="progressPercent()"
-            [showValue]="false"
-            class="progress-overall"
-          ></p-progressBar>
-        </p-card>
-
-        <!-- Filters -->
-        <div class="filters-row">
-          <span class="p-input-icon-left filter-search">
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              placeholder="Search plays..."
-              [value]="searchQuery()"
-              (input)="onSearchInput($event)"
-            />
-          </span>
-
-          <p-select
-            [options]="categoryOptions"
-            (onChange)="onCategoryChange($event.value)"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Category"
-            [showClear]="true"
-            class="playbook-filter-select"
-          ></p-select>
-
-          <p-select
-            [options]="statusOptions"
-            (onChange)="onStatusChange($event.value)"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Status"
-            [showClear]="true"
-            class="playbook-filter-select"
-          ></p-select>
-        </div>
-
-        <!-- Plays List -->
-        @if (filteredPlays().length > 0) {
-          <div class="plays-grid">
-            @for (play of filteredPlays(); track play.id) {
-              <p-card class="play-card" (click)="selectPlay(play)">
-                <div class="play-header">
-                  <div class="play-title">
-                    <h3>{{ play.name }}</h3>
-                    <app-status-tag
-                      [value]="getCategoryLabel(play.category)"
-                      [severity]="getCategorySeverity(play.category)"
-                      size="sm"
-                    />
-                  </div>
-                  @if (play.isMemorized) {
-                    <i
-                      class="pi pi-check-circle memorized-icon"
-                      title="Memorized"
-                    ></i>
-                  }
-                </div>
-
-                <p class="play-formation">{{ play.formationName }}</p>
-                <p class="play-assignment">
-                  <strong>Your Assignment:</strong>
-                  {{ play.personalAssignment.responsibility }}
-                </p>
-
-                @if (play.lastStudied) {
-                  <span class="last-studied">
-                    Last studied: {{ play.lastStudied | date: "MMM d" }}
-                  </span>
-                }
-              </p-card>
-            }
-          </div>
-        } @else {
-          <app-empty-state
-            [useCard]="true"
-            icon="pi-book"
-            heading="No plays found"
-            [description]="getEmptyDescription()"
-          />
-        }
+        <app-playbook-library-section
+          [filteredPlays]="filteredPlays()"
+          [memorizedCount]="memorizedCount()"
+          [totalPlays]="totalPlays()"
+          [progressPercent]="progressPercent()"
+          [searchQuery]="searchQuery()"
+          [categoryOptions]="categoryOptions"
+          [statusOptions]="statusOptions"
+          [emptyDescription]="getEmptyDescription()"
+          (searchInput)="onSearchInput($event)"
+          (categoryChange)="onCategoryChange($event)"
+          (statusChange)="onStatusChange($event)"
+          (selectPlay)="selectPlay($event)"
+          (startQuiz)="startQuiz()"
+        />
       </div>
 
       <!-- Play Detail Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showPlayDetail"
-        [header]="selectedPlay()?.name || 'Play Details'"
         [modal]="true"
-        [closable]="true"
-        class="play-detail-dialog"
+        [draggable]="false"
+        [resizable]="false"
+        [blockScroll]="true"
+        [styleClass]="'play-detail-dialog'"
+        ariaLabel="Play Details"
       >
+        <app-dialog-header
+          icon="pi-book"
+          [title]="selectedPlay()?.name || 'Play Details'"
+          subtitle="Study your assignment and memorize the concept"
+          (close)="showPlayDetail = false"
+        />
         @if (selectedPlay(); as play) {
-          <div class="play-detail">
-            <!-- Play Diagram -->
-            @if (play.diagramUrl) {
-              <div class="play-diagram">
-                <img
-                  appMobileOptimized
-                  [width]="600"
-                  [height]="400"
-                  [src]="play.diagramUrl"
-                  [alt]="play.name + ' diagram'"
-                />
-              </div>
-            } @else {
-              <div class="play-diagram placeholder">
-                <i class="pi pi-image"></i>
-                <span>No diagram available</span>
-              </div>
-            }
-
-            <!-- My Assignment -->
-            <div class="section assignment-section">
-              <h4>
-                <i class="pi pi-user"></i> My Assignment ({{
-                  play.personalAssignment.position
-                }})
-              </h4>
-              <div class="assignment-details">
-                @if (play.personalAssignment.route) {
-                  <div class="detail-row">
-                    <span class="label">Route:</span>
-                    <span class="value">{{
-                      play.personalAssignment.route
-                    }}</span>
-                  </div>
-                }
-                <div class="detail-row">
-                  <span class="label">Responsibility:</span>
-                  <span class="value">{{
-                    play.personalAssignment.responsibility
-                  }}</span>
-                </div>
-                @if (play.personalAssignment.preSnapRead) {
-                  <div class="detail-row">
-                    <span class="label">Pre-Snap Read:</span>
-                    <span class="value">{{
-                      play.personalAssignment.preSnapRead
-                    }}</span>
-                  </div>
-                }
-                @if (play.personalAssignment.postSnapRead) {
-                  <div class="detail-row">
-                    <span class="label">Post-Snap Read:</span>
-                    <span class="value">{{
-                      play.personalAssignment.postSnapRead
-                    }}</span>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <!-- Description -->
-            <div class="section">
-              <h4><i class="pi pi-info-circle"></i> Description</h4>
-              <p>{{ play.description }}</p>
-            </div>
-
-            <!-- Key Points -->
-            @if (play.keyPoints.length > 0) {
-              <div class="section">
-                <h4><i class="pi pi-check-square"></i> Key Points</h4>
-                <ul class="key-points-list">
-                  @for (point of play.keyPoints; track point) {
-                    <li><i class="pi pi-check"></i> {{ point }}</li>
-                  }
-                </ul>
-              </div>
-            }
-
-            <!-- Common Mistakes -->
-            @if (play.commonMistakes.length > 0) {
-              <div class="section warning-section">
-                <h4>
-                  <i class="pi pi-exclamation-triangle"></i> Common Mistakes
-                </h4>
-                <ul class="mistakes-list">
-                  @for (mistake of play.commonMistakes; track mistake) {
-                    <li><i class="pi pi-times"></i> {{ mistake }}</li>
-                  }
-                </ul>
-              </div>
-            }
-
-            <!-- Actions -->
-            <div class="detail-actions">
-              <app-button (clicked)="toggleMemorized(play)"></app-button>
-            </div>
-          </div>
+          <app-playbook-detail-dialog-content
+            [play]="play"
+            [toggleMemorized]="toggleMemorized.bind(this)"
+          />
         }
-      </p-dialog>
+      </app-dialog>
 
       <!-- Quiz Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showQuiz"
-        header="Playbook Quiz"
         [modal]="true"
-        [closable]="true"
-        class="quiz-dialog"
+        [draggable]="false"
+        [resizable]="false"
+        [blockScroll]="true"
+        [styleClass]="'quiz-dialog'"
+        ariaLabel="Playbook Quiz"
       >
-        @if (quizActive()) {
-          <div class="quiz-content">
-            <!-- Progress -->
-            <div class="quiz-progress">
-              <span
-                >Question {{ currentQuestionIndex() + 1 }} of
-                {{ quizQuestions().length }}</span
-              >
-              <p-progressBar
-                [value]="
-                  ((currentQuestionIndex() + 1) / quizQuestions().length) * 100
-                "
-                [showValue]="false"
-              ></p-progressBar>
-            </div>
-
-            <!-- Question -->
-            @if (currentQuestion(); as q) {
-              <div class="quiz-question">
-                <p class="play-reference">Play: {{ q.playName }}</p>
-                <h3>{{ q.question }}</h3>
-
-                <div class="options-list">
-                  @for (option of q.options; track option; let i = $index) {
-                    <button
-                      class="option-btn"
-                      [class.selected]="selectedAnswer() === i"
-                      [class.correct]="
-                        answerSubmitted() && i === q.correctIndex
-                      "
-                      [class.incorrect]="
-                        answerSubmitted() &&
-                        selectedAnswer() === i &&
-                        i !== q.correctIndex
-                      "
-                      [disabled]="answerSubmitted()"
-                      (click)="selectAnswer(i)"
-                    >
-                      <span class="option-letter">{{
-                        getOptionLetter(i)
-                      }}</span>
-                      <span class="option-text">{{ option }}</span>
-                    </button>
-                  }
-                </div>
-
-                @if (answerSubmitted()) {
-                  <app-alert
-                    [variant]="
-                      selectedAnswer() === q.correctIndex ? 'success' : 'error'
-                    "
-                    [message]="
-                      selectedAnswer() === q.correctIndex
-                        ? 'Correct!'
-                        : 'Incorrect. The correct answer is: ' +
-                          q.options[q.correctIndex]
-                    "
-                    density="compact"
-                    styleClass="status-message"
-                  />
-                }
-              </div>
-            }
-
-            <!-- Quiz Actions -->
-            <div class="quiz-actions">
-              @if (!answerSubmitted()) {
-                <app-button
-                  iconLeft="pi-check"
-                  [disabled]="selectedAnswer() === null"
-                  (clicked)="submitAnswer()"
-                  >Submit Answer</app-button
-                >
-              } @else if (currentQuestionIndex() < quizQuestions().length - 1) {
-                <app-button iconLeft="pi-arrow-right" (clicked)="nextQuestion()"
-                  >Next Question</app-button
-                >
-              } @else {
-                <app-button
-                  iconLeft="pi-chart-bar"
-                  (clicked)="showQuizResults()"
-                  >See Results</app-button
-                >
-              }
-            </div>
-          </div>
-        } @else if (quizCompleted()) {
-          <!-- Quiz Results -->
-          <div class="quiz-results">
-            <div class="results-icon" [class.success]="quizScore() >= 80">
-              @if (quizScore() >= 80) {
-                <i class="pi pi-trophy"></i>
-              } @else {
-                <i class="pi pi-chart-bar"></i>
-              }
-            </div>
-
-            <h2>Quiz Complete!</h2>
-            <p class="score-display">
-              <span class="score">{{ quizScore() }}%</span>
-              <span class="score-detail">
-                ({{ correctAnswers() }}/{{ quizQuestions().length }} correct)
-              </span>
-            </p>
-
-            @if (quizScore() >= 80) {
-              <app-alert
-                variant="success"
-                message="Great job! You know your plays well."
-                density="compact"
-                styleClass="status-message status-message--success"
-              />
-            } @else if (quizScore() >= 60) {
-              <app-alert
-                variant="warning"
-                message="Good effort! Keep studying to improve."
-                density="compact"
-                styleClass="status-message"
-              />
-            } @else {
-              <app-alert
-                variant="info"
-                message="Keep studying! Review the plays you missed."
-                density="compact"
-                styleClass="status-message"
-              />
-            }
-
-            <div class="results-actions">
-              <app-button iconLeft="pi-refresh" (clicked)="startQuiz()"
-                >Try Again</app-button
-              >
-              <app-button
-                variant="secondary"
-                iconLeft="pi-times"
-                (clicked)="showQuiz = false"
-                >Close</app-button
-              >
-            </div>
-          </div>
+        <app-dialog-header
+          icon="pi-question-circle"
+          title="Playbook Quiz"
+          subtitle="Test recall, assignments, and play recognition"
+          (close)="showQuiz = false"
+        />
+        <app-playbook-quiz-dialog-content
+          [quizActive]="quizActive()"
+          [quizCompleted]="quizCompleted()"
+          [quizQuestions]="quizQuestions()"
+          [currentQuestionIndex]="currentQuestionIndex()"
+          [currentQuestion]="currentQuestion()"
+          [selectedAnswer]="selectedAnswer()"
+          [answerSubmitted]="answerSubmitted()"
+          [quizScore]="quizScore()"
+          [correctAnswers]="correctAnswers()"
+          (selectAnswer)="selectAnswer($event)"
+          (submitAnswer)="submitAnswer()"
+          (nextQuestion)="nextQuestion()"
+          (showResults)="showQuizResults()"
+          (restartQuiz)="startQuiz()"
+          (closeQuiz)="showQuiz = false"
+        />
+        @if (!quizActive() || quizCompleted()) {
+          <app-dialog-footer
+            cancelLabel="Close"
+            primaryLabel="Restart Quiz"
+            primaryIcon="pi-refresh"
+            (cancel)="showQuiz = false"
+            (primary)="startQuiz()"
+          />
         }
-      </p-dialog>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./playbook.component.scss",
@@ -524,7 +181,7 @@ export class PlaybookComponent implements OnInit {
 
   // Options
   readonly categoryOptions = PLAY_CATEGORIES;
-  readonly statusOptions = [
+  readonly statusOptions: { label: string; value: "memorized" | "learning" }[] = [
     { label: "Memorized", value: "memorized" },
     { label: "Learning", value: "learning" },
   ];
@@ -760,29 +417,5 @@ export class PlaybookComponent implements OnInit {
   showQuizResults(): void {
     this.quizActive.set(false);
     this.quizCompleted.set(true);
-  }
-
-  getOptionLetter(index: number): string {
-    return String.fromCharCode(65 + index); // A, B, C, D
-  }
-
-  getCategoryLabel(category: PlayCategory): string {
-    const found = PLAY_CATEGORIES.find((c) => c.value === category);
-    return found?.label || category;
-  }
-
-  getCategorySeverity(
-    category: PlayCategory,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
-    switch (category) {
-      case "offense":
-        return "success";
-      case "defense":
-        return "info";
-      case "special-teams":
-        return "warning";
-      default:
-        return "secondary";
-    }
   }
 }

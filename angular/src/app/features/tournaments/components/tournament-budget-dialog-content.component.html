@@ -1,0 +1,123 @@
+<form [formGroup]="budgetForm()" class="budget-dialog">
+  <div class="form-grid">
+    <div class="form-field">
+      <label>Registration Fee</label>
+      <p-inputNumber
+        formControlName="registrationFee"
+        mode="currency"
+        currency="EUR"
+        locale="en-US"
+        class="w-full"
+      ></p-inputNumber>
+    </div>
+    <div class="form-field">
+      <label>Entry Fee Per Player</label>
+      <p-inputNumber
+        formControlName="entryFeePerPlayer"
+        mode="currency"
+        currency="EUR"
+        locale="en-US"
+        class="w-full"
+      ></p-inputNumber>
+    </div>
+    <div class="form-field">
+      <label>Travel Cost (Estimated)</label>
+      <p-inputNumber
+        formControlName="travelCost"
+        mode="currency"
+        currency="EUR"
+        locale="en-US"
+        class="w-full"
+      ></p-inputNumber>
+    </div>
+    <div class="form-field">
+      <label>Accommodation Per Night</label>
+      <p-inputNumber
+        formControlName="accommodationPerNight"
+        mode="currency"
+        currency="EUR"
+        locale="en-US"
+        class="w-full"
+      ></p-inputNumber>
+    </div>
+    <div class="form-field">
+      <label>Number of Nights</label>
+      <p-inputNumber
+        formControlName="totalNights"
+        [min]="0"
+        class="w-full"
+      ></p-inputNumber>
+    </div>
+    <div class="form-field">
+      <label>Per Diem Per Player</label>
+      <p-inputNumber
+        formControlName="perDiem"
+        mode="currency"
+        currency="EUR"
+        locale="en-US"
+        class="w-full"
+      ></p-inputNumber>
+    </div>
+    <div class="form-field full-width">
+      <label>Other Costs</label>
+      <p-inputNumber
+        formControlName="otherCosts"
+        mode="currency"
+        currency="EUR"
+        locale="en-US"
+        class="w-full"
+      ></p-inputNumber>
+    </div>
+    <div class="form-field full-width">
+      <label>Other Costs Description</label>
+      <input
+        pInputText
+        formControlName="otherCostsDescription"
+        placeholder="Equipment, uniforms, etc."
+        class="w-full"
+        aria-label="Other costs description"
+      />
+    </div>
+  </div>
+
+  <div class="budget-funding">
+    <h4>Funding Sources</h4>
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Team Contribution</label>
+        <p-inputNumber
+          formControlName="teamContribution"
+          mode="currency"
+          currency="EUR"
+          locale="en-US"
+          class="w-full"
+        ></p-inputNumber>
+      </div>
+      <div class="form-field">
+        <label>Sponsor Contribution</label>
+        <p-inputNumber
+          formControlName="sponsorContribution"
+          mode="currency"
+          currency="EUR"
+          locale="en-US"
+          class="w-full"
+        ></p-inputNumber>
+      </div>
+    </div>
+  </div>
+
+  <div class="budget-calculated">
+    <div class="calc-row">
+      <span>Total Estimated Cost:</span>
+      <span class="calc-value">€{{ totalEstimatedCost() | number: "1.2-2" }}</span>
+    </div>
+    <div class="calc-row">
+      <span>Total Funding:</span>
+      <span class="calc-value">€{{ totalFunding() | number: "1.2-2" }}</span>
+    </div>
+    <div class="calc-row highlight">
+      <span>Player Share ({{ confirmedPlayers() }} confirmed):</span>
+      <span class="calc-value">€{{ playerShare() | number: "1.2-2" }}</span>
+    </div>
+  </div>
+</form>

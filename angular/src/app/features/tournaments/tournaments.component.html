@@ -48,336 +48,39 @@
         @if (tournaments().length > 0) {
           <p-tabs>
             <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
-              <div class="tournaments-grid">
-                @for (tournament of tournaments2026(); track tournament.id) {
-                  <app-card-shell
-                    class="tournament-card"
-                    [attr.data-id]="tournament.id"
-                    [class.personal-tournament]="
-                      isPersonalTournament(tournament)
-                    "
-                  >
-                    <div class="tournament-header">
-                      <div class="header-row">
-                        <div class="tags-row">
-                          <app-status-tag
-                            [value]="
-                              tournamentService.getStatusLabel(
-                                tournament.calculatedStatus || 'upcoming'
-                              )
-                            "
-                            [severity]="
-                              tournamentService.getStatusSeverity(
-                                tournament.calculatedStatus || 'upcoming'
-                              )
-                            "
-                            size="sm"
-                          />
-                          @if (isPersonalTournament(tournament)) {
-                            <app-status-tag
-                              value="Personal"
-                              severity="warning"
-                              icon="pi-user"
-                              size="sm"
-                            />
-                          }
-                        </div>
-                        @if (isAuthenticated()) {
-                          <div class="card-actions">
-                            <app-icon-button
-                              icon="pi-pencil"
-                              variant="text"
-                              size="sm"
-                              (clicked)="openEditDialog(tournament)"
-                              ariaLabel="Edit tournament"
-                              tooltip="Edit"
-                            />
-                            <app-icon-button
-                              icon="pi-trash"
-                              variant="text"
-                              size="sm"
-                              (clicked)="confirmDelete(tournament)"
-                              ariaLabel="Delete tournament"
-                              tooltip="Delete"
-                            />
-                          </div>
-                        }
-                      </div>
-                      <h3 class="tournament-title">
-                        {{ tournament.flag }} {{ tournament.name }}
-                      </h3>
-                      <p class="tournament-subtitle">
-                        {{
-                          tournament.tournament_type === "game_day"
-                            ? "Game Day"
-                            : tournament.tournament_type || "Championship"
-                        }}
-                      </p>
-                    </div>
-                    <div class="tournament-body">
-                      <div class="tournament-info">
-                        <div class="info-item">
-                          <div class="info-icon">
-                            <i class="pi pi-calendar"></i>
-                          </div>
-                          <div>
-                            <div class="info-value">
-                              {{
-                                tournamentService.formatDateRange(
-                                  tournament.start_date,
-                                  tournament.end_date
-                                )
-                              }}
-                            </div>
-                            <div class="info-label">Date</div>
-                          </div>
-                        </div>
-                        <div class="info-item">
-                          <div class="info-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></div>
-                          <div>
-                            <div class="info-value">
-                              {{ tournament.location || "TBD" }}
-                            </div>
-                            <div class="info-label">
-                              {{ tournament.country || "Location" }}
-                            </div>
-                          </div>
-                        </div>
-                        @if (tournament.venue) {
-                          <div class="info-item">
-                            <div class="info-icon"><i class="pi pi-building" aria-hidden="true"></i></div>
-                            <div>
-                              <div class="info-value">
-                                {{ tournament.venue }}
-                              </div>
-                              <div class="info-label">Venue</div>
-                            </div>
-                          </div>
-                        }
-                        @if (tournament.expected_teams) {
-                          <div class="info-item">
-                            <div class="info-icon">
-                              <i class="pi pi-users"></i>
-                            </div>
-                            <div>
-                              <div class="info-value">
-                                {{ tournament.expected_teams }}
-                              </div>
-                              <div class="info-label">Expected Teams</div>
-                            </div>
-                          </div>
-                        }
-                      </div>
-
-                      @if (tournament.daysUntil && tournament.daysUntil > 0) {
-                        <div class="tournament-countdown">
-                          <span class="countdown-value">{{
-                            tournament.daysUntil
-                          }}</span>
-                          <span class="countdown-label"
-                            >days until tournament</span
-                          >
-                        </div>
-                      }
-
-                      @if (tournament.notes) {
-                        <div class="tournament-notes">
-                          <p>{{ tournament.notes }}</p>
-                        </div>
-                      }
-
-                      <div class="tournament-actions">
-                        @if (tournament.website_url) {
-                          <app-button
-                            variant="outlined"
-                            size="sm"
-                            iconLeft="pi-external-link"
-                            (clicked)="openWebsite(tournament.website_url)"
-                            >Website</app-button
-                          >
-                        }
-                        @if (isAuthenticated()) {
-                          <app-button
-                            variant="outlined"
-                            size="sm"
-                            iconLeft="pi-calendar-plus"
-                            (clicked)="openAvailabilityDialog(tournament)"
-                            >My Availability</app-button
-                          >
-                        }
-                        @if (canViewTeamAvailability()) {
-                          <app-button
-                            size="sm"
-                            iconLeft="pi-users"
-                            (clicked)="openTeamAvailabilityDialog(tournament)"
-                            >Team Status</app-button
-                          >
-                        }
-                        <app-button
-                          size="sm"
-                          (clicked)="viewDetails(tournament)"
-                          >View Details</app-button
-                        >
-                      </div>
-                    </div>
-                  </app-card-shell>
-                } @empty {
-                  <app-empty-state
-                    class="empty-season"
-                    [useCard]="false"
-                    [compact]="true"
-                    icon="pi-calendar"
-                    heading="No tournaments scheduled for 2026 yet"
-                    [description]="
-                      isAuthenticated()
-                        ? 'Add the first tournament to start planning travel and availability.'
-                        : 'Check back later for season events.'
-                    "
-                  >
-                    @if (isAuthenticated()) {
-                      <app-button
-                        variant="outlined"
-                        iconLeft="pi-plus"
-                        (clicked)="openCreateDialog()"
-                        >Add Tournament</app-button
-                      >
-                    }
-                  </app-empty-state>
-                }
-              </div>
+              <app-tournament-season-panel
+                [tournaments]="tournaments2026()"
+                seasonYear="2026"
+                [isAuthenticated]="isAuthenticated()"
+                [canViewTeamAvailability]="canViewTeamAvailability()"
+                [showExtendedDetails]="true"
+                [isPlayerView]="isPlayer()"
+                (addTournament)="openCreateDialog()"
+                (edit)="openEditDialog($event)"
+                (delete)="confirmDelete($event)"
+                (availability)="openAvailabilityDialog($event)"
+                (teamAvailability)="openTeamAvailabilityDialog($event)"
+                (viewDetails)="viewDetails($event)"
+                (openWebsite)="openWebsite($event)"
+              />
             </p-tabpanel>
 
             <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
-              <div class="tournaments-grid">
-                @for (tournament of tournaments2027(); track tournament.id) {
-                  <app-card-shell
-                    class="tournament-card"
-                    [attr.data-id]="tournament.id"
-                    [class.personal-tournament]="
-                      isPersonalTournament(tournament)
-                    "
-                  >
-                    <div class="tournament-header">
-                      <div class="header-row">
-                        <div class="tags-row">
-                          <app-status-tag
-                            [value]="
-                              tournamentService.getStatusLabel(
-                                tournament.calculatedStatus || 'upcoming'
-                              )
-                            "
-                            [severity]="
-                              tournamentService.getStatusSeverity(
-                                tournament.calculatedStatus || 'upcoming'
-                              )
-                            "
-                            size="sm"
-                          />
-                          @if (isPersonalTournament(tournament)) {
-                            <app-status-tag
-                              value="Personal"
-                              severity="warning"
-                              icon="pi-user"
-                              size="sm"
-                            />
-                          }
-                        </div>
-                        @if (isAuthenticated()) {
-                          <div class="card-actions">
-                            <app-icon-button
-                              icon="pi-pencil"
-                              variant="text"
-                              size="sm"
-                              (clicked)="openEditDialog(tournament)"
-                              ariaLabel="Edit tournament"
-                              tooltip="Edit"
-                            />
-                            <app-icon-button
-                              icon="pi-trash"
-                              variant="text"
-                              size="sm"
-                              (clicked)="confirmDelete(tournament)"
-                              ariaLabel="Delete tournament"
-                              tooltip="Delete"
-                            />
-                          </div>
-                        }
-                      </div>
-                      <h3 class="tournament-title">
-                        {{ tournament.flag }} {{ tournament.name }}
-                      </h3>
-                      <p class="tournament-subtitle">
-                        {{
-                          tournament.tournament_type === "game_day"
-                            ? "Game Day"
-                            : tournament.tournament_type || "Championship"
-                        }}
-                      </p>
-                    </div>
-                    <div class="tournament-body">
-                      <div class="tournament-info">
-                        <div class="info-item">
-                          <div class="info-icon">
-                            <i class="pi pi-calendar"></i>
-                          </div>
-                          <div>
-                            <div class="info-value">
-                              {{
-                                tournamentService.formatDateRange(
-                                  tournament.start_date,
-                                  tournament.end_date
-                                )
-                              }}
-                            </div>
-                            <div class="info-label">Date</div>
-                          </div>
-                        </div>
-                        <div class="info-item">
-                          <div class="info-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></div>
-                          <div>
-                            <div class="info-value">
-                              {{ tournament.location || "TBD" }}
-                            </div>
-                            <div class="info-label">
-                              {{ tournament.country || "Location" }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="tournament-actions">
-                        <app-button
-                          size="sm"
-                          (clicked)="viewDetails(tournament)"
-                          >View Details</app-button
-                        >
-                      </div>
-                    </div>
-                  </app-card-shell>
-                } @empty {
-                  <app-empty-state
-                    class="empty-season"
-                    [useCard]="false"
-                    [compact]="true"
-                    icon="pi-calendar"
-                    heading="No tournaments scheduled for 2027 yet"
-                    [description]="
-                      isAuthenticated()
-                        ? 'Add the first tournament to start planning travel and availability.'
-                        : 'Check back later for season events.'
-                    "
-                  >
-                    @if (isAuthenticated()) {
-                      <app-button
-                        variant="outlined"
-                        iconLeft="pi-plus"
-                        (clicked)="openCreateDialog()"
-                        >Add Tournament</app-button
-                      >
-                    }
-                  </app-empty-state>
-                }
-              </div>
+              <app-tournament-season-panel
+                [tournaments]="tournaments2027()"
+                seasonYear="2027"
+                [isAuthenticated]="isAuthenticated()"
+                [canViewTeamAvailability]="canViewTeamAvailability()"
+                [showExtendedDetails]="false"
+                [isPlayerView]="isPlayer()"
+                (addTournament)="openCreateDialog()"
+                (edit)="openEditDialog($event)"
+                (delete)="confirmDelete($event)"
+                (availability)="openAvailabilityDialog($event)"
+                (teamAvailability)="openTeamAvailabilityDialog($event)"
+                (viewDetails)="viewDetails($event)"
+                (openWebsite)="openWebsite($event)"
+              />
             </p-tabpanel>
           </p-tabs>
         }
@@ -879,164 +582,20 @@
           (close)="showAvailabilityDialog = false"
         />
         @if (selectedTournament) {
-          <div class="availability-dialog">
-            <div class="tournament-summary">
-              <h3>
-                {{ selectedTournament.flag }} {{ selectedTournament.name }}
-              </h3>
-              <p class="tournament-dates">
-                <i class="pi pi-calendar"></i>
-                {{
-                  tournamentService.formatDateRange(
-                    selectedTournament.start_date,
-                    selectedTournament.end_date
-                  )
-                }}
-              </p>
-              <p class="tournament-location">
-                <i class="pi pi-map-marker"></i>
-                {{ selectedTournament.location }},
-                {{ selectedTournament.country }}
-              </p>
-            </div>
-
-            <form [formGroup]="availabilityFormGroup" class="availability-form">
-              <div class="form-field">
-                <label>Will you be attending?</label>
-                <div class="availability-options">
-                  @for (option of availabilityOptions; track option.value) {
-                    <div
-                      class="availability-option"
-                      [class.selected]="
-                        currentAvailabilityStatus() === option.value
-                      "
-                      [class]="'option-' + option.value"
-                      (click)="setAvailabilityStatus(option.value)"
-                      role="button"
-                      tabindex="0"
-                      [attr.aria-label]="'Set availability to ' + option.label"
-                      (keydown.enter)="setAvailabilityStatus(option.value)"
-                      (keydown.space)="setAvailabilityStatus(option.value); $event.preventDefault()"
-                    >
-                      <i [class]="option.icon"></i>
-                      <span>{{ option.label }}</span>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              @if (
-                currentAvailabilityStatus() === "declined" ||
-                currentAvailabilityStatus() === "tentative"
-              ) {
-                <div class="form-field">
-                  <label>Reason (optional)</label>
-                  <textarea
-                    pTextarea
-                    formControlName="reason"
-                    rows="2"
-                    placeholder="Let your coach know why..."
-                    class="w-full"
-                    aria-label="Reason for unavailability"
-                  ></textarea>
-                </div>
-              }
-
-              @if (currentAvailabilityStatus() === "confirmed") {
-                <div class="form-grid-2">
-                  <div class="form-field">
-                    <label>Arrival Date</label>
-                    <p-datepicker
-                      formControlName="arrivalDate"
-                      [showIcon]="true"
-                      dateFormat="yy-mm-dd"
-                      placeholder="When do you arrive?"
-                      class="w-full"
-                    ></p-datepicker>
-                  </div>
-                  <div class="form-field">
-                    <label>Departure Date</label>
-                    <p-datepicker
-                      formControlName="departureDate"
-                      [showIcon]="true"
-                      dateFormat="yy-mm-dd"
-                      placeholder="When do you leave?"
-                      class="w-full"
-                    ></p-datepicker>
-                  </div>
-                </div>
-
-                <div class="form-field">
-                  <p-checkbox
-                    formControlName="accommodationNeeded"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="accommodation"
-                    label="I need accommodation"
-                  ></p-checkbox>
-                </div>
-
-                <div class="form-field">
-                  <p-checkbox
-                    formControlName="transportationNeeded"
-                    [binary]="true"
-                    variant="filled"
-                    inputId="transportation"
-                    label="I need transportation"
-                  ></p-checkbox>
-                </div>
-
-                <div class="form-field">
-                  <label>Dietary Restrictions</label>
-                  <input
-                    pInputText
-                    formControlName="dietaryRestrictions"
-                    placeholder="Any dietary needs..."
-                    class="w-full"
-                    aria-label="Dietary restrictions"
-                  />
-                </div>
-              }
-
-              <!-- Cost Information -->
-              @if (
-                tournamentCost() > 0 && currentAvailabilityStatus() === "confirmed"
-              ) {
-                <div class="cost-summary">
-                  <h4><i class="pi pi-wallet"></i> Estimated Cost</h4>
-                  <div class="cost-breakdown">
-                    <div class="cost-item">
-                      <span>Your share:</span>
-                      <span class="cost-value"
-                        >€{{ tournamentCost() | number: "1.2-2" }}</span
-                      >
-                    </div>
-                    @if (availabilityFormGroup.controls.amountPaid.value > 0) {
-                      <div class="cost-item paid">
-                        <span>Already paid:</span>
-                        <span class="cost-value"
-                          >€{{
-                            availabilityFormGroup.controls.amountPaid.value
-                              | number: "1.2-2"
-                          }}</span
-                        >
-                      </div>
-                    }
-                    <div class="cost-item remaining">
-                      <span>Remaining:</span>
-                      <span class="cost-value"
-                        >€{{
-                          tournamentCost() -
-                            availabilityFormGroup.controls.amountPaid.value
-                            | number: "1.2-2"
-                        }}</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              }
-            </form>
-          </div>
+          <app-tournament-availability-dialog-content
+            [tournament]="selectedTournament"
+            [dateRangeLabel]="
+              tournamentService.formatDateRange(
+                selectedTournament.start_date,
+                selectedTournament.end_date
+              )
+            "
+            [availabilityForm]="availabilityFormGroup"
+            [availabilityOptions]="availabilityOptions"
+            [currentStatus]="currentAvailabilityStatus()"
+            [tournamentCost]="tournamentCost()"
+            (setStatus)="setAvailabilityStatus($event)"
+          />
         }
 
         <app-dialog-footer
@@ -1065,168 +624,21 @@
           (close)="showTeamAvailabilityDialog = false"
         />
         @if (selectedTournament) {
-          <div class="team-availability-dialog">
-            <div class="tournament-summary">
-              <h3>
-                {{ selectedTournament.flag }} {{ selectedTournament.name }}
-              </h3>
-              <p class="tournament-dates">
-                {{
-                  tournamentService.formatDateRange(
-                    selectedTournament.start_date,
-                    selectedTournament.end_date
-                  )
-                }}
-              </p>
-            </div>
-
-            <!-- Summary Stats -->
-            <div class="availability-summary">
-              <div class="summary-stat confirmed">
-                <div class="stat-block__value">
-                  {{ teamAvailabilitySummary().confirmed }}
-                </div>
-                <div class="stat-block__label">Confirmed</div>
-              </div>
-              <div class="summary-stat tentative">
-                <div class="stat-block__value">
-                  {{ teamAvailabilitySummary().tentative }}
-                </div>
-                <div class="stat-block__label">Tentative</div>
-              </div>
-              <div class="summary-stat declined">
-                <div class="stat-block__value">
-                  {{ teamAvailabilitySummary().declined }}
-                </div>
-                <div class="stat-block__label">Declined</div>
-              </div>
-              <div class="summary-stat pending">
-                <div class="stat-block__value">
-                  {{ teamAvailabilitySummary().pending }}
-                </div>
-                <div class="stat-block__label">No Response</div>
-              </div>
-            </div>
-
-            <!-- Budget Overview -->
-            @if (tournamentBudget()) {
-              <div class="budget-overview">
-                <h4><i class="pi pi-wallet"></i> Budget Overview</h4>
-                <div class="budget-grid">
-                  <div class="budget-item">
-                    <span class="budget-label">Total Estimated</span>
-                    <span class="budget-value"
-                      >€{{
-                        tournamentBudget()!.totalEstimated | number: "1.2-2"
-                      }}</span
-                    >
-                  </div>
-                  <div class="budget-item">
-                    <span class="budget-label">Team Contribution</span>
-                    <span class="budget-value"
-                      >€{{
-                        tournamentBudget()!.teamContribution | number: "1.2-2"
-                      }}</span
-                    >
-                  </div>
-                  <div class="budget-item">
-                    <span class="budget-label">Sponsor Contribution</span>
-                    <span class="budget-value"
-                      >€{{
-                        tournamentBudget()!.sponsorContribution
-                          | number: "1.2-2"
-                      }}</span
-                    >
-                  </div>
-                  <div class="budget-item highlight">
-                    <span class="budget-label">Per Player</span>
-                    <span class="budget-value"
-                      >€{{
-                        tournamentBudget()!.perPlayer | number: "1.2-2"
-                      }}</span
-                    >
-                  </div>
-                </div>
-                <app-button
-                  variant="outlined"
-                  size="sm"
-                  iconLeft="pi-cog"
-                  (clicked)="openBudgetDialog()"
-                  >Manage Budget</app-button
-                >
-              </div>
-            }
-
-            <!-- Player List -->
-            <div class="player-availability-list">
-              <h4>Player Responses</h4>
-              @for (player of teamAvailability(); track player.playerId) {
-                <div
-                  class="player-availability-item"
-                  [class]="'status-' + player.status"
-                >
-                  <div class="player-info">
-                    <span class="player-name">{{ player.playerName }}</span>
-                    <span class="player-position">{{ player.position }}</span>
-                  </div>
-                  <div class="player-status">
-                    <app-status-tag
-                      [value]="getAvailabilityLabel(player.status)"
-                      [severity]="getAvailabilitySeverity(player.status)"
-                      size="sm"
-                    />
-                  </div>
-                  @if (player.reason) {
-                    <div class="player-reason">
-                      <i class="pi pi-info-circle"></i>
-                      {{ player.reason }}
-                    </div>
-                  }
-                  <div class="player-payment">
-                    @if (player.paymentStatus === "paid") {
-                      <app-status-tag
-                        value="Paid"
-                        severity="success"
-                        size="sm"
-                      />
-                    } @else if (player.paymentStatus === "partial") {
-                      <app-status-tag
-                        value="Partial"
-                        severity="warning"
-                        size="sm"
-                      />
-                    } @else if (player.status === "confirmed") {
-                      <app-status-tag
-                        value="Unpaid"
-                        severity="danger"
-                        size="sm"
-                      />
-                    }
-                  </div>
-                </div>
-              } @empty {
-                <div class="empty-list">
-                  <p>No player responses yet</p>
-                </div>
-              }
-            </div>
-
-            <!-- Actions -->
-            <div class="dialog-actions">
-              <app-button
-                variant="outlined"
-                iconLeft="pi-bell"
-                (clicked)="sendAvailabilityReminders()"
-                >Send Reminders</app-button
-              >
-              <app-button
-                variant="outlined"
-                iconLeft="pi-download"
-                (clicked)="exportAvailabilityReport()"
-                >Export Report</app-button
-              >
-            </div>
-          </div>
+          <app-tournament-team-availability-dialog-content
+            [tournament]="selectedTournament"
+            [dateRangeLabel]="
+              tournamentService.formatDateRange(
+                selectedTournament.start_date,
+                selectedTournament.end_date
+              )
+            "
+            [summary]="teamAvailabilitySummary()"
+            [budget]="tournamentBudget()"
+            [players]="teamAvailability()"
+            (openBudget)="openBudgetDialog()"
+            (sendReminders)="sendAvailabilityReminders()"
+            (exportReport)="exportAvailabilityReport()"
+          />
         }
 
         <div dialogFooter class="dialog-actions">
@@ -1251,145 +663,16 @@
           (close)="showBudgetDialog = false"
         />
         @if (selectedTournament) {
-          <form [formGroup]="budgetFormGroup" class="budget-dialog">
-            <div class="form-grid">
-              <div class="form-field">
-                <label>Registration Fee</label>
-                <p-inputNumber
-                  formControlName="registrationFee"
-                  mode="currency"
-                  currency="EUR"
-                  locale="en-US"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-              <div class="form-field">
-                <label>Entry Fee Per Player</label>
-                <p-inputNumber
-                  formControlName="entryFeePerPlayer"
-                  mode="currency"
-                  currency="EUR"
-                  locale="en-US"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-              <div class="form-field">
-                <label>Travel Cost (Estimated)</label>
-                <p-inputNumber
-                  formControlName="travelCost"
-                  mode="currency"
-                  currency="EUR"
-                  locale="en-US"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-              <div class="form-field">
-                <label>Accommodation Per Night</label>
-                <p-inputNumber
-                  formControlName="accommodationPerNight"
-                  mode="currency"
-                  currency="EUR"
-                  locale="en-US"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-              <div class="form-field">
-                <label>Number of Nights</label>
-                <p-inputNumber
-                  formControlName="totalNights"
-                  [min]="0"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-              <div class="form-field">
-                <label>Per Diem Per Player</label>
-                <p-inputNumber
-                  formControlName="perDiem"
-                  mode="currency"
-                  currency="EUR"
-                  locale="en-US"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-              <div class="form-field full-width">
-                <label>Other Costs</label>
-                <p-inputNumber
-                  formControlName="otherCosts"
-                  mode="currency"
-                  currency="EUR"
-                  locale="en-US"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-              <div class="form-field full-width">
-                <label>Other Costs Description</label>
-                <input
-                  pInputText
-                  formControlName="otherCostsDescription"
-                  placeholder="Equipment, uniforms, etc."
-                  class="w-full"
-                  aria-label="Other costs description"
-                />
-              </div>
-            </div>
-
-            <div class="budget-funding">
-              <h4>Funding Sources</h4>
-              <div class="form-grid">
-                <div class="form-field">
-                  <label>Team Contribution</label>
-                  <p-inputNumber
-                    formControlName="teamContribution"
-                    mode="currency"
-                    currency="EUR"
-                    locale="en-US"
-                    class="w-full"
-                  ></p-inputNumber>
-                </div>
-                <div class="form-field">
-                  <label>Sponsor Contribution</label>
-                  <p-inputNumber
-                    formControlName="sponsorContribution"
-                    mode="currency"
-                    currency="EUR"
-                    locale="en-US"
-                    class="w-full"
-                  ></p-inputNumber>
-                </div>
-              </div>
-            </div>
-
-            <!-- Calculated Summary -->
-            <div class="budget-calculated">
-              <div class="calc-row">
-                <span>Total Estimated Cost:</span>
-                <span class="calc-value"
-                  >€{{ calculateTotalBudget() | number: "1.2-2" }}</span
-                >
-              </div>
-              <div class="calc-row">
-                <span>Total Funding:</span>
-                <span class="calc-value"
-                  >€{{
-                    budgetFormGroup.controls.teamContribution.value +
-                      budgetFormGroup.controls.sponsorContribution.value
-                      | number: "1.2-2"
-                  }}</span
-                >
-              </div>
-              <div class="calc-row highlight">
-                <span
-                  >Player Share ({{
-                    teamAvailabilitySummary().confirmed
-                  }}
-                  confirmed):</span
-                >
-                <span class="calc-value"
-                  >€{{ calculatePlayerShare() | number: "1.2-2" }}</span
-                >
-              </div>
-            </div>
-          </form>
+          <app-tournament-budget-dialog-content
+            [budgetForm]="budgetFormGroup"
+            [totalEstimatedCost]="calculateTotalBudget()"
+            [totalFunding]="
+              budgetFormGroup.controls.teamContribution.value +
+              budgetFormGroup.controls.sponsorContribution.value
+            "
+            [playerShare]="calculatePlayerShare()"
+            [confirmedPlayers]="teamAvailabilitySummary().confirmed"
+          />
         }
 
         <app-dialog-footer

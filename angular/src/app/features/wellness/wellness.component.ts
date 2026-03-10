@@ -25,7 +25,6 @@ import { BodyCompositionCardComponent } from "../../shared/components/body-compo
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
@@ -44,6 +43,7 @@ import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { SimpleChartData } from "../../core/models/chart.models";
 import { WellnessData } from "../../core/services/wellness.service";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+import { WellnessChartsSectionComponent } from "./components/wellness-charts-section.component";
 
 interface WellnessAlert {
   id: string;
@@ -71,7 +71,6 @@ interface WellnessMetric {
     FormsModule,
     RouterModule,
     MainLayoutComponent,
-    LazyChartComponent,
     InputNumber,
     AppLoadingComponent,
     ButtonComponent,
@@ -85,6 +84,7 @@ interface WellnessMetric {
     ConfidenceIndicatorComponent,
     AlertComponent,
     CardShellComponent,
+    WellnessChartsSectionComponent,
   ],
   template: `
     <app-main-layout>
@@ -140,48 +140,11 @@ interface WellnessMetric {
             </app-card-shell>
           }
 
-          <!-- Wellness Charts - Lazy loaded for performance -->
-          <div class="charts-grid">
-            @defer (on viewport) {
-              <app-card title="Sleep Quality (7-day)">
-                @if (sleepChartData()) {
-                  <app-lazy-chart
-                    type="line"
-                    [data]="sleepChartData()"
-                    [options]="chartOptions"
-                  ></app-lazy-chart>
-                } @else {
-                  <div class="chart-empty">
-                    No sleep data yet. Start logging daily check-ins.
-                  </div>
-                }
-              </app-card>
-            } @placeholder {
-              <app-card title="Sleep Quality (7-day)" [loading]="true">
-                <div class="loading-text">Loading sleep data...</div>
-              </app-card>
-            }
-
-            @defer (on viewport) {
-              <app-card title="Recovery Score (7-day)">
-                @if (recoveryChartData()) {
-                  <app-lazy-chart
-                    type="bar"
-                    [data]="recoveryChartData()"
-                    [options]="chartOptions"
-                  ></app-lazy-chart>
-                } @else {
-                  <div class="chart-empty">
-                    No recovery data yet. Start logging daily check-ins.
-                  </div>
-                }
-              </app-card>
-            } @placeholder {
-              <app-card title="Recovery Score (7-day)" [loading]="true">
-                <div class="loading-text">Loading recovery data...</div>
-              </app-card>
-            }
-          </div>
+          <app-wellness-charts-section
+            [sleepChartData]="sleepChartData()"
+            [recoveryChartData]="recoveryChartData()"
+            [chartOptions]="chartOptions"
+          />
 
           <!-- Body Composition Card -->
           @defer (on viewport) {

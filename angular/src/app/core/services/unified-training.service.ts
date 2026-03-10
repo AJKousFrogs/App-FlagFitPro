@@ -7,13 +7,10 @@ import {
 } from "@angular/core";
 import { Observable, catchError, combineLatest, finalize, firstValueFrom, from, map, of, shareReplay } from "rxjs";
 
-import { COLORS } from "../constants/app.constants";
-import { WELLNESS } from "../constants/wellness.constants";
 import {
     DailyRoutineSlot,
     SmartRecommendationsResponse,
     TodayScheduleItem,
-    TrainingRecommendation,
     TrainingSessionRecord,
     UserMetadata,
 } from "../models/api.models";
@@ -21,7 +18,6 @@ import type { SupplementEntry } from "../models/supplement.models";
 import {
     Achievement,
     ReadinessStatus,
-    SessionType,
     TrainingDataResult,
     TrainingStatCard,
     WeeklyScheduleDay,
@@ -36,12 +32,41 @@ import {
     PerformanceDataService,
     PhysicalMeasurement,
 } from "./performance-data.service";
-import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
-import { normalizeTemplateDayOfWeekToWeekIndex } from "../../shared/utils/training-template.utils";
 import {
-  normalizeProtocolMetricsSnapshot,
   type ProtocolMetricsSnapshot,
 } from "../utils/protocol-metrics-presentation";
+import {
+  calculateReadinessScoreFromWellness,
+  calculateTrainingStreak,
+  calculateTrainingStatsFromSessions,
+  generateTrainingInsight,
+  generateWellnessAlertFromStatus,
+  getReadinessStatusFromScore,
+  loadAchievementsForProgress,
+  type WellnessCheckinRecord,
+} from "../utils/unified-training-presenters";
+import {
+  loadDailyProtocolSnapshot,
+  loadTrainingRecommendationsSnapshot,
+} from "../utils/unified-training-loaders";
+import {
+  getUnifiedTrainingFallbackData,
+  loadUnifiedTrainingData,
+} from "../utils/unified-training-data";
+import {
+  markWorkoutCompleteSnapshot,
+  postponeWorkoutSnapshot,
+} from "../utils/unified-training-mutations";
+import {
+  loadAvailableWorkoutsSnapshot,
+  loadTrainingSessionsSnapshot,
+  loadWeeklyScheduleSnapshot,
+} from "../utils/unified-training-schedule";
+import {
+  getStartOfTrainingWeek,
+  isDateInCurrentTrainingWeek,
+  transformSessionRecordToWorkout,
+} from "../utils/unified-training-transforms";
 import {
     PlayerProgramService,
     ProgramAssignment,
@@ -51,22 +76,6 @@ import { SupabaseService } from "./supabase.service";
 import { TrainingDataService } from "./training-data.service";
 import { WellnessService } from "./wellness.service";
 // Note: WellnessCheckinData is defined locally below
-
-/**
- * Wellness checkin record from database
- */
-interface WellnessCheckinRecord {
-  sleep_quality?: number;
-  sleep?: number;
-  energy_level?: number;
-  energy?: number;
-  stress_level?: number;
-  stress?: number;
-  soreness_level?: number;
-  soreness?: number;
-  motivation_level?: number;
-  motivation?: number;
-}
 
 /**
  * Today overview data structure
@@ -467,42 +476,80 @@ export class UnifiedTrainingService {
    * Uses direct Supabase for protocol data when API is not available
    */
   getTodayOverview(date?: string) {
-    const now = Date.now();
-    if (now < this.authFailureCooldownUntil) {
-      this._todayProtocol.set(null);
+    const context = this.getTodayOverviewContext(date);
+    if (!context) {
       return of(null);
     }
 
-    if (!this.authService.isAuthenticated()) {
-      this._todayProtocol.set(null);
-      return of(null);
-    }
-
-    const session = this.supabase.session();
-    if (!session?.access_token) {
-      this._todayProtocol.set(null);
-      return of(null);
-    }
-
-    const id = this.userId();
-    if (!id) {
-      this._todayProtocol.set(null);
-      return of(null);
-    }
-
-    const targetDate = date || new Date().toISOString().split("T")[0];
-    const requestKey = `${id}:${targetDate}`;
-
-    if (this.overviewRequest$ && this.lastOverviewRequestKey === requestKey) {
+    if (
+      this.overviewRequest$ &&
+      this.lastOverviewRequestKey === context.requestKey
+    ) {
       return this.overviewRequest$;
     }
 
     this._isRefreshing.set(true);
 
-    // Use direct Supabase queries instead of API calls for better reliability
-    const request$ = combineLatest({
-      protocol: from(this.loadDailyProtocolDirect(id, targetDate)),
-      readiness: this.readinessService.calculateToday(id).pipe(
+    const request$ = this.createTodayOverviewRequest(
+      context.userId,
+      context.targetDate,
+    );
+
+    this.overviewRequest$ = request$;
+    this.lastOverviewRequestKey = context.requestKey;
+    return request$;
+  }
+
+  private getTodayOverviewContext(date?: string): {
+    userId: string;
+    targetDate: string;
+    requestKey: string;
+  } | null {
+    const now = Date.now();
+    if (now < this.authFailureCooldownUntil) {
+      this._todayProtocol.set(null);
+      return null;
+    }
+
+    if (!this.authService.isAuthenticated()) {
+      this._todayProtocol.set(null);
+      return null;
+    }
+
+    const session = this.supabase.session();
+    if (!session?.access_token) {
+      this._todayProtocol.set(null);
+      return null;
+    }
+
+    const userId = this.userId();
+    if (!userId) {
+      this._todayProtocol.set(null);
+      return null;
+    }
+
+    const targetDate = date || new Date().toISOString().split("T")[0];
+    return {
+      userId,
+      targetDate,
+      requestKey: `${userId}:${targetDate}`,
+    };
+  }
+
+  private createTodayOverviewRequest(userId: string, targetDate: string) {
+    return combineLatest({
+      protocol: from(
+        loadDailyProtocolSnapshot({
+          userId,
+          date: targetDate,
+          api: this.api,
+          supabase: this.supabase,
+          logger: this.logger,
+          isExpectedApiClientError: (error) =>
+            this.isExpectedApiClientError(error),
+        }),
+      ),
+      readiness: this.readinessService.calculateToday(userId).pipe(
         catchError((err) => {
           if (!this.isExpectedApiClientError(err)) {
             this.logger.warn("[UnifiedTraining] Readiness unavailable", err);
@@ -510,172 +557,51 @@ export class UnifiedTrainingService {
           return of(null);
         }),
       ),
-      recommendations: from(this.loadRecommendationsDirect(id)),
+      recommendations: from(
+        loadTrainingRecommendationsSnapshot({
+          userId,
+          supabase: this.supabase,
+          logger: this.logger,
+        }),
+      ),
       trainingData: from(this.loadAllTrainingData()),
     }).pipe(
-      map((data) => {
-        this._todayProtocol.set(data.protocol?.data ?? null);
-        const insight = this.generateAiInsight(
-          data as unknown as TodayOverviewData,
-        );
-        this._aiInsight.set(insight);
-        return {
-          ...data,
-          aiInsight: insight,
-        };
-      }),
-      catchError((err) => {
-        this._todayProtocol.set(null);
-        if (this.isExpectedApiClientError(err)) {
-          // Avoid request storms during unauthenticated/expired sessions.
-          this.authFailureCooldownUntil = Date.now() + 15_000;
-        } else {
-          this.logger.error("Error in getTodayOverview", err);
-        }
-        return of(null);
-      }),
-      finalize(() => {
-        this._isRefreshing.set(false);
-        this.overviewRequest$ = null;
-        this.lastOverviewRequestKey = null;
-      }),
+      map((data) => this.handleTodayOverviewSuccess(data)),
+      catchError((err) => this.handleTodayOverviewFailure(err)),
+      finalize(() => this.resetTodayOverviewRequest()),
       shareReplay(1),
     );
-
-    this.overviewRequest$ = request$;
-    this.lastOverviewRequestKey = requestKey;
-    return request$;
   }
 
-  /**
-   * Load daily protocol directly from Supabase
-   */
-  private async loadDailyProtocolDirect(
-    userId: string,
-    date: string,
-  ): Promise<{ data: ProtocolMetricsSnapshot | null }> {
-    try {
-      const response = await firstValueFrom(
-        this.api.get<{ success: boolean; data?: unknown }>(
-          API_ENDPOINTS.dailyProtocol.byDate(date),
-        ),
-      );
-
-      if (response?.success && response.data) {
-        return {
-          data: normalizeProtocolMetricsSnapshot(response.data),
-        };
-      }
-    } catch (err) {
-      if (!this.isExpectedApiClientError(err)) {
-        this.logger.warn(
-          "[UnifiedTraining] API protocol load failed, falling back to direct query",
-          toLogContext(err),
-        );
-      }
-    }
-
-    try {
-      const { data, error } = await this.supabase.client
-        .from("daily_protocols")
-        .select(
-          `
-          *,
-          protocol_exercises (*)
-        `,
-        )
-        .eq("user_id", userId)
-        .eq("protocol_date", date)
-        .maybeSingle();
-
-      if (error) {
-        if (!isBenignSupabaseQueryError(error)) {
-          this.logger.warn(
-            "[UnifiedTraining] Error loading daily protocol:",
-            error,
-          );
-        }
-        return { data: null };
-      }
-
-      return {
-        data: normalizeProtocolMetricsSnapshot(data),
-      };
-    } catch (err) {
-      if (!isBenignSupabaseQueryError(err)) {
-        this.logger.warn(
-          "[UnifiedTraining] Failed to load daily protocol:",
-          toLogContext(err),
-        );
-      }
-      return { data: null };
-    }
+  private handleTodayOverviewSuccess(data: {
+    protocol: { data: ProtocolMetricsSnapshot | null };
+    readiness: unknown;
+    recommendations: { data: SmartRecommendationsResponse | null };
+    trainingData: TrainingDataResult;
+  }) {
+    this._todayProtocol.set(data.protocol?.data ?? null);
+    const insight = this.generateAiInsight(data as unknown as TodayOverviewData);
+    this._aiInsight.set(insight);
+    return {
+      ...data,
+      aiInsight: insight,
+    };
   }
 
-  /**
-   * Load training recommendations directly from Supabase
-   */
-  private async loadRecommendationsDirect(
-    userId: string,
-  ): Promise<{ data: SmartRecommendationsResponse | null }> {
-    try {
-      // Get latest training suggestions for user
-      const { data, error } = await this.supabase.client
-        .from("ai_training_suggestions")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(5);
-
-      if (error) {
-        if (!isBenignSupabaseQueryError(error)) {
-          this.logger.warn(
-            "[UnifiedTraining] Error loading recommendations:",
-            error,
-          );
-        }
-        return { data: null };
-      }
-
-      // Transform to expected SmartRecommendationsResponse format
-      // Note: ai_training_suggestions has: id, user_id, suggestion_type, title, description, priority, confidence_score, data_sources, status, expires_at, created_at
-      const recommendations: SmartRecommendationsResponse = {
-        athleteId: userId,
-        date: new Date().toISOString().split("T")[0],
-        overallStatus: "optimal",
-        recommendations:
-          data?.map((s) => ({
-            type:
-              (s.suggestion_type as TrainingRecommendation["type"]) || "focus",
-            priority:
-              (s.priority as TrainingRecommendation["priority"]) || "medium",
-            message: s.description || s.title || "Training suggestion",
-            action: undefined, // Column doesn't exist in table
-            reasoning: undefined, // Column doesn't exist in table
-          })) || [],
-        warnings: [],
-        suggestions:
-          (data
-            ?.map((s) => s.title || s.description)
-            .filter(Boolean) as string[]) || [],
-        metrics: {
-          acwr: 1.0, // Will be overridden by actual ACWR service
-          readiness: 75,
-          fatigue: 3,
-          injuryRisk: 0.1,
-        },
-      };
-
-      return { data: recommendations };
-    } catch (err) {
-      if (!isBenignSupabaseQueryError(err)) {
-        this.logger.warn(
-          "[UnifiedTraining] Failed to load recommendations:",
-          err,
-        );
-      }
-      return { data: null };
+  private handleTodayOverviewFailure(err: unknown) {
+    this._todayProtocol.set(null);
+    if (this.isExpectedApiClientError(err)) {
+      this.authFailureCooldownUntil = Date.now() + 15_000;
+    } else {
+      this.logger.error("Error in getTodayOverview", err);
     }
+    return of(null);
+  }
+
+  private resetTodayOverviewRequest() {
+    this._isRefreshing.set(false);
+    this.overviewRequest$ = null;
+    this.lastOverviewRequestKey = null;
   }
 
   /**
@@ -699,49 +625,44 @@ export class UnifiedTrainingService {
    */
   private async loadAllTrainingData(): Promise<TrainingDataResult> {
     const userId = this.userId();
-    if (!userId) return this.getFallbackData();
+    if (!userId) return getUnifiedTrainingFallbackData();
 
     try {
-      // Load program assignment first (non-blocking for other data)
-      this.loadProgramAssignment();
-
-      const [sessions, schedule, workouts, wellnessData] = await Promise.all([
-        this.loadTrainingSessions(userId),
-        this.loadWeeklySchedule(userId),
-        this.loadAvailableWorkouts(),
-        this.checkWellnessForTraining(userId),
-      ]);
-
-      const stats = this.calculateTrainingStats(sessions);
-      const streak = this.calculateStreak(sessions);
-      const achievements = this.loadAchievements(
+      const result = await loadUnifiedTrainingData({
         userId,
-        streak,
-        sessions.length,
-      );
-      const userName = await this.getUserDisplayName(userId);
+        loadProgramAssignment: () => this.loadProgramAssignment(),
+        loadTrainingSessions: (currentUserId) =>
+          this.loadTrainingSessions(currentUserId),
+        loadWeeklySchedule: (currentUserId) =>
+          this.loadWeeklySchedule(currentUserId),
+        loadAvailableWorkouts: () => this.loadAvailableWorkouts(),
+        checkWellnessForTraining: (currentUserId) =>
+          this.checkWellnessForTraining(currentUserId),
+        calculateTrainingStats: (sessions) =>
+          this.calculateTrainingStats(sessions),
+        calculateTrainingStreak: (sessions) =>
+          calculateTrainingStreak(sessions),
+        loadAchievements: (currentUserId, streak, total) =>
+          this.loadAchievements(currentUserId, streak, total),
+        getUserDisplayName: (currentUserId) =>
+          this.getUserDisplayName(currentUserId),
+      });
 
-      // Update Signals
-      this._userName.set(userName);
-      this._trainingStats.set(stats);
-      this._weeklySchedule.set(schedule);
-      this._workouts.set(workouts);
-      this._achievements.set(achievements);
-      this._wellnessAlert.set(wellnessData.alert);
-
-      return {
-        stats,
-        schedule,
-        workouts,
-        achievements,
-        wellnessData,
-        userName,
-        lastRefresh: new Date(),
-      };
+      this.applyTrainingDataResult(result);
+      return result;
     } catch (error) {
       this.logger.error("Error loading all training data", error);
-      return this.getFallbackData();
+      return getUnifiedTrainingFallbackData();
     }
+  }
+
+  private applyTrainingDataResult(result: TrainingDataResult): void {
+    this._userName.set(result.userName || "Athlete");
+    this._trainingStats.set(result.stats);
+    this._weeklySchedule.set(result.schedule);
+    this._workouts.set(result.workouts);
+    this._achievements.set(result.achievements);
+    this._wellnessAlert.set(result.wellnessData.alert);
   }
 
   /**
@@ -810,12 +731,7 @@ export class UnifiedTrainingService {
       ),
     );
 
-    // Trigger updates
-    const currentUserId = this.userId();
-    if (currentUserId) {
-      this.readinessService.calculateToday(currentUserId).subscribe();
-      this.loadAllTrainingData(); // Refresh signals
-    }
+    this.refreshAfterMutation({ refreshReadiness: true });
 
     return result;
   }
@@ -829,11 +745,7 @@ export class UnifiedTrainingService {
         data as Parameters<typeof this.wellnessService.logWellness>[0],
       ),
     );
-    const currentUserId = this.userId();
-    if (currentUserId) {
-      this.readinessService.calculateToday(currentUserId).subscribe();
-      this.loadAllTrainingData(); // Refresh signals
-    }
+    this.refreshAfterMutation({ refreshReadiness: true });
     return result;
   }
 
@@ -883,7 +795,7 @@ export class UnifiedTrainingService {
       this.performanceDataService.logMeasurement(measurement),
     );
     if (result && result.success) {
-      this.loadAllTrainingData();
+      this.refreshAfterMutation();
     }
     return result;
   }
@@ -906,203 +818,41 @@ export class UnifiedTrainingService {
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
     const start = ninetyDaysAgo.toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
 
-    const { data, error } = await this.supabase.client
-      .from("training_sessions")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("session_date", start)
-      .order("session_date", { ascending: false });
-
-    if (error) {
-      this.logger.error(
-        "[UnifiedTrainingService] Failed to load training sessions",
-        toLogContext({
-          userId,
-          dateRange: { start },
-          error: error.message,
-          code: error.code,
-        }),
-      );
-      return [];
-    }
-
-    return (data as TrainingSessionRecord[]) || [];
+    return loadTrainingSessionsSnapshot({
+      supabaseClient: this.supabase.client,
+      userId,
+      startDate: start,
+      onError: (message, error) => {
+        const queryError = error as { message?: string; code?: string };
+        this.logger.error(
+          `[UnifiedTrainingService] ${message}`,
+          toLogContext({
+            userId,
+            dateRange: { start },
+            error: queryError.message,
+            code: queryError.code,
+          }),
+        );
+      },
+    });
   }
 
   private async loadWeeklySchedule(
     userId: string,
   ): Promise<WeeklyScheduleDay[]> {
-    try {
-      // 1. Get user's assigned program
-      // Per audit: use maybeSingle() since new users may not have a program yet (avoids 406)
-      const { data: playerProgram } = await this.supabase.client
-        .from("player_programs")
-        .select("*")
-        .eq("player_id", userId)
-        .eq("status", "active")
-        .maybeSingle();
+    const today = new Date().toISOString().split("T")[0];
+    const weekStart = getStartOfTrainingWeek();
 
-      if (!playerProgram) {
-        this.logger.info(
-          "[UnifiedTrainingService] No active program assigned, returning empty schedule",
-        );
-        return this.getEmptyWeekSchedule();
-      }
-
-      const programId = playerProgram.program_id;
-
-      // 2. Get current week based on today's date
-      const today = new Date().toISOString().split("T")[0];
-      const startOfWeek = this.getStartOfWeek();
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(endOfWeek.getDate() + 6);
-
-      // Get phase for current date
-      const { data: currentPhase } = await this.supabase.client
-        .from("training_phases")
-        .select("*")
-        .eq("program_id", programId)
-        .lte("start_date", today)
-        .gte("end_date", today)
-        .single();
-
-      if (!currentPhase) {
-        this.logger.info(
-          "[UnifiedTrainingService] No active phase found for current date",
-        );
-        return this.getEmptyWeekSchedule();
-      }
-
-      // Get week for current date
-      const { data: currentWeek } = await this.supabase.client
-        .from("training_weeks")
-        .select("*")
-        .eq("phase_id", currentPhase.id)
-        .lte("start_date", today)
-        .gte("end_date", today)
-        .single();
-
-      if (!currentWeek) {
-        this.logger.info(
-          "[UnifiedTrainingService] No active week found for current date",
-        );
-        return this.getEmptyWeekSchedule();
-      }
-
-      // 3. Get scheduled sessions for the week from training_session_templates
-      const { data: sessionTemplates } = await this.supabase.client
-        .from("training_session_templates")
-        .select("*")
-        .eq("week_id", currentWeek.id)
-        .order("day_of_week", { ascending: true })
-        .order("session_order", { ascending: true });
-
-      if (!sessionTemplates || sessionTemplates.length === 0) {
-        this.logger.info(
-          "[UnifiedTrainingService] No session templates found for current week",
-        );
-        return this.getEmptyWeekSchedule();
-      }
-
-      // 4. Transform to WeeklyScheduleDay format
-      return this.transformSessionTemplatesToWeeklySchedule(
-        sessionTemplates,
-        startOfWeek,
-      );
-    } catch (error) {
-      this.logger.error(
-        "[UnifiedTrainingService] Error loading weekly schedule:",
-        error,
-      );
-      return this.getEmptyWeekSchedule();
-    }
-  }
-
-  private getEmptyWeekSchedule(): WeeklyScheduleDay[] {
-    const days = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ];
-    const start = this.getStartOfWeek();
-    return days.map((name, i) => {
-      const d = new Date(start);
-      d.setDate(d.getDate() + i);
-      return {
-        name,
-        date: d,
-        sessions: [],
-        isToday: d.toDateString() === new Date().toDateString(),
-      };
+    return loadWeeklyScheduleSnapshot({
+      supabaseClient: this.supabase.client,
+      userId,
+      today,
+      weekStart,
+      onInfo: (message) =>
+        this.logger.info(`[UnifiedTrainingService] ${message}`),
+      onError: (message, error) =>
+        this.logger.error(`[UnifiedTrainingService] ${message}:`, error),
     });
-  }
-
-  private transformSessionTemplatesToWeeklySchedule(
-    templates: Array<{
-      id: string;
-      day_of_week: number;
-      session_name: string;
-      session_type?: string;
-      duration_minutes?: number;
-      notes?: string;
-      warm_up_protocol?: string;
-      session_order?: number;
-    }>,
-    weekStart: Date,
-  ): WeeklyScheduleDay[] {
-    const days = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ];
-
-    return days.map((name, i) => {
-      const d = new Date(weekStart);
-      d.setDate(d.getDate() + i);
-      const daySessions = templates.filter(
-        (t) => normalizeTemplateDayOfWeekToWeekIndex(t.day_of_week) === i,
-      );
-
-      return {
-        name,
-        date: d,
-        sessions: daySessions.map((s) => ({
-          time: "TBD",
-          title: s.session_name || "Training Session",
-          type: this.mapSessionTypeToScheduleType(s.session_type || "training"),
-          duration: s.duration_minutes || 60,
-          description: s.notes || s.warm_up_protocol || "",
-        })),
-        isToday: d.toDateString() === new Date().toDateString(),
-      };
-    });
-  }
-
-  private mapSessionTypeToScheduleType(
-    sessionType: string,
-  ): SessionType | undefined {
-    const lower = sessionType.toLowerCase();
-    if (lower.includes("recovery") || lower.includes("rest")) return "recovery";
-    if (lower.includes("game") || lower.includes("match")) return "game";
-    if (lower.includes("speed")) return "speed";
-    if (lower.includes("strength")) return "strength";
-    if (lower.includes("skills")) return "skills";
-    if (lower.includes("conditioning")) return "conditioning";
-    if (lower.includes("technique")) return "technique";
-    if (lower.includes("team_practice") || lower.includes("team practice"))
-      return "team_practice";
-    if (lower.includes("scrimmage")) return "scrimmage";
-    if (lower.includes("mixed")) return "mixed";
-    // For generic "training", return undefined since type is optional
-    return undefined;
   }
 
   private async loadAvailableWorkouts(): Promise<Workout[]> {
@@ -1116,36 +866,26 @@ export class UnifiedTrainingService {
     }
 
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
-    const { data, error } = await this.supabase.client
-      .from("training_sessions")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("session_date", today)
-      .eq("status", "scheduled")
-      .order("created_at", { ascending: true }); // Order by creation time since start_time doesn't exist
-
-    if (error) {
-      this.logger.error(
-        "[UnifiedTrainingService] Failed to load available workouts",
-        toLogContext({
-          userId,
-          today,
-          error: error.message,
-          code: error.code,
-        }),
-      );
-      // Return empty array on error - don't show fake workouts
-      return [];
-    }
-
-    // Return empty array if no scheduled workouts - don't show fake defaults
-    if (!data || data.length === 0) {
-      this.logger.info(
-        "[UnifiedTrainingService] No scheduled workouts for today",
-      );
-      return [];
-    }
-    return data.map((w) => this.transformToWorkout(w));
+    return loadAvailableWorkoutsSnapshot({
+      supabaseClient: this.supabase.client,
+      userId,
+      today,
+      toWorkout: (workout) => transformSessionRecordToWorkout(workout),
+      onInfo: (message) =>
+        this.logger.info(`[UnifiedTrainingService] ${message}`),
+      onError: (message, error) => {
+        const queryError = error as { message?: string; code?: string };
+        this.logger.error(
+          `[UnifiedTrainingService] ${message}`,
+          toLogContext({
+            userId,
+            today,
+            error: queryError.message,
+            code: queryError.code,
+          }),
+        );
+      },
+    });
   }
 
   private async checkWellnessForTraining(_userId: string) {
@@ -1177,10 +917,13 @@ export class UnifiedTrainingService {
         soreness_level: response.data.muscleSoreness,
       };
 
-      const score = this.calculateReadinessScore(wellnessData);
+      const score = calculateReadinessScoreFromWellness(wellnessData);
 
       // If no score could be calculated (missing required data), return with null score
       if (score === null) {
+        this.logger.warn(
+          "[UnifiedTrainingService] Cannot calculate readiness: missing required fields (sleep and/or energy)",
+        );
         return {
           alert: null,
           readinessScore: null,
@@ -1188,9 +931,9 @@ export class UnifiedTrainingService {
         };
       }
 
-      const status = this.getReadinessStatus(score);
+      const status = getReadinessStatusFromScore(score);
       return {
-        alert: this.generateWellnessAlert(score, status),
+        alert: generateWellnessAlertFromStatus(status),
         readinessScore: score,
         readinessStatus: status,
       };
@@ -1209,181 +952,12 @@ export class UnifiedTrainingService {
     }
   }
 
-  /**
-   * Calculate readiness score from wellness check-in data
-   *
-   * IMPORTANT: Returns null if required data is missing.
-   * DO NOT use default values - readiness must be calculated from real user input.
-   *
-   * Required: sleep_quality AND energy_level (minimum for valid calculation)
-   *
-   * Evidence-based weights (team-sport optimized):
-   * - Sleep: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
-   * - Energy: 25% (correlates with perceived performance)
-   * - Stress: 25% (inverted - lower stress = better readiness)
-   * - Soreness: 20% (inverted - lower soreness = better readiness)
-   */
-  private calculateReadinessScore(
-    wellness: WellnessCheckinRecord,
-  ): number | null {
-    // Get values without defaults - we need real data
-    const sleep = wellness.sleep_quality ?? wellness.sleep ?? null;
-    const energy = wellness.energy_level ?? wellness.energy ?? null;
-    const stress = wellness.stress_level ?? wellness.stress ?? null;
-    const soreness = wellness.soreness_level ?? wellness.soreness ?? null;
-
-    // CRITICAL: Require at least sleep AND energy for valid calculation
-    if (sleep === null || energy === null) {
-      this.logger.warn(
-        "[UnifiedTrainingService] Cannot calculate readiness: missing required fields (sleep and/or energy)",
-      );
-      return null;
-    }
-
-    // All values on 0-10 scale, convert to 0-100
-    const sleepScore = (sleep / 10) * 100;
-    const energyScore = (energy / 10) * 100;
-
-    const hasStress = stress !== null;
-    const hasSoreness = soreness !== null;
-
-    let score: number;
-
-    if (hasStress && hasSoreness) {
-      // Full calculation with all 4 metrics
-      const stressScore = ((10 - stress) / 10) * 100; // Invert
-      const sorenessScore = ((10 - soreness) / 10) * 100; // Invert
-      score =
-        sleepScore * 0.3 +
-        energyScore * 0.25 +
-        stressScore * 0.25 +
-        sorenessScore * 0.2;
-    } else if (hasStress) {
-      // Sleep, energy, stress (redistribute soreness weight)
-      const stressScore = ((10 - stress) / 10) * 100;
-      score = sleepScore * 0.375 + energyScore * 0.3125 + stressScore * 0.3125;
-    } else if (hasSoreness) {
-      // Sleep, energy, soreness (redistribute stress weight)
-      const sorenessScore = ((10 - soreness) / 10) * 100;
-      score = sleepScore * 0.4 + energyScore * 0.333 + sorenessScore * 0.267;
-    } else {
-      // Minimal: sleep and energy only
-      score = sleepScore * 0.55 + energyScore * 0.45;
-    }
-
-    return Math.round(Math.max(0, Math.min(100, score)));
-  }
-
-  private getReadinessStatus(score: number): ReadinessStatus {
-    if (score >= WELLNESS.READINESS_EXCELLENT) return "excellent";
-    if (score >= WELLNESS.READINESS_GOOD) return "good";
-    if (score >= WELLNESS.READINESS_MODERATE) return "caution";
-    return "rest";
-  }
-
-  private generateWellnessAlert(
-    score: number,
-    status: ReadinessStatus,
-  ): WellnessAlert | null {
-    if (status === "rest")
-      return {
-        severity: "critical",
-        message: "Your body needs rest. Consider light recovery work today.",
-        recommendations: [
-          "Focus on sleep",
-          "Light stretching",
-          "Proper hydration",
-        ],
-        icon: "pi-exclamation-triangle",
-      };
-    if (status === "caution")
-      return {
-        severity: "warning",
-        message: "Signs of fatigue detected. Train with caution.",
-        recommendations: ["Reduce intensity 20%", "Extra warm-up"],
-        icon: "pi-info-circle",
-      };
-    return null;
-  }
-
   private calculateTrainingStats(
     sessions: TrainingSessionRecord[],
   ): TrainingStatCard[] {
-    const thisWeek = sessions.filter((s) => {
-      const dateStr = s.session_date || s.date;
-      if (!dateStr) return false;
-      const date = new Date(dateStr);
-      return !isNaN(date.getTime()) && this.isThisWeek(date);
-    });
-    const totalDuration = thisWeek.reduce(
-      (sum, s) => sum + (s.duration ?? 0),
-      0,
+    return calculateTrainingStatsFromSessions(sessions, (date) =>
+      isDateInCurrentTrainingWeek(date),
     );
-    const streak = this.calculateStreak(sessions);
-
-    return [
-      {
-        label: "This Week",
-        value: `${thisWeek.length} sessions`,
-        icon: "pi-calendar",
-        color: COLORS.BLUE,
-        trend: "Active",
-        trendType: "neutral",
-      },
-      {
-        label: "Total Duration",
-        value: `${totalDuration} min`,
-        icon: "pi-clock",
-        color: COLORS.SUCCESS,
-        trend: "This week",
-        trendType: "neutral",
-      },
-      {
-        label: "Current Streak",
-        value: `${streak} days`,
-        icon: "pi-bolt",
-        color: COLORS.ERROR,
-        trend: "Keep it up!",
-        trendType: "positive",
-      },
-    ];
-  }
-
-  private calculateStreak(sessions: TrainingSessionRecord[]): number {
-    if (sessions.length === 0) return 0;
-
-    // Extract valid dates from sessions, supporting both 'date' and 'session_date' fields
-    const validDates = sessions
-      .map((s) => s.session_date || s.date)
-      .filter((d): d is string => {
-        if (!d) return false;
-        const dateObj = new Date(d);
-        return !isNaN(dateObj.getTime());
-      })
-      .map((d) => {
-        const dateObj = new Date(d);
-        return dateObj.toISOString().split("T")[0];
-      });
-
-    if (validDates.length === 0) return 0;
-
-    const uniqueDates = [...new Set(validDates)].sort().reverse();
-
-    const today = new Date().toISOString().split("T")[0];
-    const yesterday = new Date(Date.now() - 86400000)
-      .toISOString()
-      .split("T")[0];
-
-    if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) return 0;
-
-    let streak = 0;
-    for (let i = 0; i < uniqueDates.length; i++) {
-      const expected = new Date();
-      expected.setDate(expected.getDate() - i);
-      if (uniqueDates[i] === expected.toISOString().split("T")[0]) streak++;
-      else break;
-    }
-    return streak;
   }
 
   private loadAchievements(
@@ -1391,22 +965,7 @@ export class UnifiedTrainingService {
     streak: number,
     total: number,
   ): Achievement[] {
-    const list: Achievement[] = [];
-    if (streak >= 7)
-      list.push({
-        icon: "pi-bolt",
-        title: "7-Day Streak",
-        date: new Date().toISOString(),
-        level: "bronze",
-      });
-    if (total >= 10)
-      list.push({
-        icon: "pi-check-circle",
-        title: "10 Sessions",
-        date: new Date().toISOString(),
-        level: "bronze",
-      });
-    return list;
+    return loadAchievementsForProgress(streak, total);
   }
 
   private async getUserDisplayName(userId: string): Promise<string> {
@@ -1423,129 +982,25 @@ export class UnifiedTrainingService {
     const recommendations = data.recommendations?.data as
       | SmartRecommendationsResponse
       | undefined;
-    const acwr = this.acwrRatio();
-    const readiness = this.readinessScore();
-    const hydration = this.hydrationLevel();
-    const userName = this.userName();
-
-    // 1. Critical Performance/Safety Insights (from Smart Recommendations)
-    if (recommendations) {
-      if (recommendations.overallStatus === "injured") {
-        return `Hey ${userName}, let's take it easy. ${recommendations.warnings[0] || "Focus on recovery exercises today."}`;
-      }
-      if (recommendations.overallStatus === "caution") {
-        return `Watch out, ${userName}! ${recommendations.warnings[0] || "Your training load is high. Reduce intensity to stay safe."}`;
-      }
-      if (recommendations.overallStatus === "taper") {
-        return `Tournament mode on! ${recommendations.suggestions[0] || "Keep intensity high but volume low."}`;
-      }
-    }
-
-    // 2. High Priority Rule-Based Insights
-    if (acwr !== null && acwr > 1.5)
-      return `Your injury risk is very high (ACWR: ${acwr.toFixed(2)}). Merlin recommends immediate rest today.`;
-    if (readiness !== null && readiness < 40)
-      return `Readiness is low (${readiness}%). Focus heavily on recovery and extra sleep tonight.`;
-    if (hydration < 5 && hydration > 0)
-      return "You're a bit dehydrated. Drink 500ml of water before you start your session.";
-
-    // 3. Protocol-Specific Insights
     const protocolData = data.protocol?.data;
-    if (protocolData?.aiRationale) {
-      return protocolData.aiRationale;
-    }
-
-    // 4. Achievement/Streak Insights
     const streak = this.trainingStats().find(
       (s) => s.label === "Current Streak",
     )?.value;
-    if (streak && parseInt(streak) >= 3) {
-      return `${streak} streak! You're building amazing momentum, ${userName}. Keep it rolling!`;
-    }
 
-    // 5. General Performance Insights
-    if (readiness !== null && readiness > 80 && acwr !== null && acwr < 1.3)
-      return "Physiological green light! You're perfectly primed for a high-intensity session.";
-
-    return "Consistency is your superpower. Follow today's protocol to stay on track.";
+    return generateTrainingInsight({
+      recommendations,
+      acwr: this.acwrRatio(),
+      readiness: this.readinessScore(),
+      hydration: this.hydrationLevel(),
+      userName: this.userName(),
+      aiRationale: protocolData?.aiRationale || null,
+      streakValue: streak || null,
+    });
   }
 
   // ============================================================================
   // HELPERS
   // ============================================================================
-
-  private getStartOfWeek(): Date {
-    const now = new Date();
-    const diff = now.getDay() === 0 ? -6 : 1 - now.getDay();
-    const monday = new Date(now);
-    monday.setDate(now.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday;
-  }
-
-  private isThisWeek(date: Date): boolean {
-    const start = this.getStartOfWeek();
-    const end = new Date(start);
-    end.setDate(end.getDate() + 6);
-    return date >= start && date <= end;
-  }
-
-  private transformToWeeklySchedule(
-    sessions: TrainingSessionRecord[],
-  ): WeeklyScheduleDay[] {
-    const days = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ];
-    const start = this.getStartOfWeek();
-    return days.map((name, i) => {
-      const d = new Date(start);
-      d.setDate(d.getDate() + i);
-      const daySessions = sessions.filter((s) => {
-        const dateStr = s.session_date || s.date;
-        if (!dateStr) return false;
-        const sessionDate = new Date(dateStr);
-        return (
-          !isNaN(sessionDate.getTime()) &&
-          sessionDate.toDateString() === d.toDateString()
-        );
-      });
-      return {
-        name,
-        date: d,
-        sessions: daySessions.map((s) => ({
-          time: s.scheduled_time || "TBD",
-          title: s.title || "Session",
-          type: s.session_type as WeeklyScheduleDay["sessions"][0]["type"],
-        })),
-        isToday: d.toDateString() === new Date().toDateString(),
-      };
-    });
-  }
-
-  private transformToWorkout(w: TrainingSessionRecord): Workout {
-    return {
-      id: w.id,
-      type: w.session_type || "training",
-      title: w.title || "Workout",
-      description: w.description || "",
-      duration: `${w.duration ?? 60} min`,
-      intensity:
-        (w.intensity ?? 5) > 6
-          ? "high"
-          : (w.intensity ?? 5) > 3
-            ? "medium"
-            : "low",
-      location: w.location || "Gym",
-      icon: "pi-bolt",
-      iconBg: COLORS.ERROR,
-    };
-  }
 
   /**
    * Mark workout as complete
@@ -1555,25 +1010,14 @@ export class UnifiedTrainingService {
       const userId = this.userId();
       if (!userId) return false;
 
-      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
-      const { error } = await this.supabase.client
-        .from("training_sessions")
-        .insert({
-          user_id: userId,
-          session_date: today,
-          session_type: workout.type,
-          duration_minutes: parseInt(workout.duration) || 60,
-          intensity_level:
-            workout.intensity === "high"
-              ? 9
-              : workout.intensity === "medium"
-                ? 6
-                : 3,
-          status: "completed",
-          notes: `Completed: ${workout.title}`,
-        });
+      const result = await markWorkoutCompleteSnapshot(
+        this.supabase.client,
+        userId,
+        workout,
+      );
 
-      if (error) {
+      if (!result.success) {
+        const error = result.error as { message?: string; code?: string };
         this.logger.error(
           "[UnifiedTrainingService] Failed to mark workout complete",
           toLogContext({
@@ -1587,8 +1031,7 @@ export class UnifiedTrainingService {
         return false;
       }
 
-      // Refresh state
-      await firstValueFrom(this.getTodayOverview());
+      await this.refreshOverviewAfterWorkoutMutation();
       return true;
     } catch (error) {
       this.logger.error(
@@ -1606,24 +1049,18 @@ export class UnifiedTrainingService {
     try {
       if (!workout.id) return false;
 
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowDate = tomorrow.toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
+      const result = await postponeWorkoutSnapshot(
+        this.supabase.client,
+        workout.id,
+      );
 
-      const { error } = await this.supabase.client
-        .from("training_sessions")
-        .update({
-          session_date: tomorrowDate,
-          notes: "[Postponed]",
-        })
-        .eq("id", workout.id);
-
-      if (error) {
+      if (!result.success) {
+        const error = result.error as { message?: string; code?: string };
         this.logger.error(
           "[UnifiedTrainingService] Failed to postpone workout",
           toLogContext({
             workoutId: workout.id,
-            newDate: tomorrowDate,
+            newDate: result.tomorrowDate,
             error: error.message,
             code: error.code,
           }),
@@ -1631,8 +1068,7 @@ export class UnifiedTrainingService {
         return false;
       }
 
-      // Refresh state
-      await firstValueFrom(this.getTodayOverview());
+      await this.refreshOverviewAfterWorkoutMutation();
       return true;
     } catch (error) {
       this.logger.error(
@@ -1659,21 +1095,19 @@ export class UnifiedTrainingService {
     );
   }
 
-  private getFallbackData(): TrainingDataResult {
-    // Return empty data - don't show fake workouts or achievements
-    // CRITICAL: Use null for readinessScore when no data - don't use fake 0
-    return {
-      stats: [],
-      schedule: [],
-      workouts: [], // Empty - no fake workouts
-      achievements: [],
-      wellnessData: {
-        alert: null,
-        readinessScore: null,
-        readinessStatus: "unknown",
-      },
-      userName: "Athlete",
-      lastRefresh: new Date(),
-    };
+  private refreshAfterMutation(options?: { refreshReadiness?: boolean }) {
+    const currentUserId = this.userId();
+    if (!currentUserId) return;
+
+    if (options?.refreshReadiness) {
+      this.readinessService.calculateToday(currentUserId).subscribe();
+    }
+
+    void this.loadAllTrainingData();
   }
+
+  private async refreshOverviewAfterWorkoutMutation(): Promise<void> {
+    await firstValueFrom(this.getTodayOverview());
+  }
+
 }

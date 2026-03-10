@@ -1,0 +1,102 @@
+<section class="dashboard-grid" aria-label="Training overview">
+  <app-card-shell
+    class="progress-card"
+    title="Weekly Progress"
+    headerIcon="pi-chart-bar"
+  >
+    <div class="week-progress">
+      @for (day of weekDays(); track day.name) {
+        <div class="day-column">
+          <div
+            class="day-indicator"
+            [class.completed]="day.completed"
+            [class.today]="day.isToday"
+            [class.future]="day.isFuture"
+            [attr.aria-label]="
+              day.name +
+              (day.completed ? ', completed' : day.isToday ? ', today' : '')
+            "
+          >
+            @if (day.completed) {
+              <i class="pi pi-check"></i>
+            } @else if (day.isToday) {
+              <i class="pi pi-circle"></i>
+            }
+          </div>
+          <span class="day-name">{{ day.short }}</span>
+        </div>
+      }
+    </div>
+    <div class="progress-summary">
+      <p-progressBar
+        [value]="weeklyProgress()"
+        [showValue]="false"
+        class="custom-progress"
+      ></p-progressBar>
+      <span class="progress-text">{{ weeklyProgress() }}% completed</span>
+    </div>
+  </app-card-shell>
+
+  <app-card-shell
+    class="actions-card"
+    title="Quick Actions"
+    headerIcon="pi-bolt"
+  >
+    <div class="quick-actions-grid">
+      @for (action of quickActions(); track action.route) {
+        <app-button
+          variant="outlined"
+          [iconLeft]="action.icon"
+          [routerLink]="action.route"
+          [tooltip]="action.description"
+          [ariaLabel]="action.description"
+          >{{ action.label }}</app-button
+        >
+      }
+    </div>
+  </app-card-shell>
+
+  <app-card-shell
+    class="trend-card"
+    title="Performance Trend"
+    headerIcon="pi-trending-up"
+  >
+    @if (performanceChartData()) {
+      <div class="chart-container">
+        @defer (on viewport; prefetch on idle) {
+          <app-lazy-chart
+            type="line"
+            [data]="performanceChartData()"
+            [options]="chartOptions()"
+            height="calc(var(--space-6) * 7.5)"
+          ></app-lazy-chart>
+        } @placeholder {
+          <app-chart-skeleton
+            type="line"
+            height="calc(var(--space-6) * 7.5)"
+          />
+        } @loading (minimum 500ms) {
+          <app-chart-skeleton
+            type="line"
+            height="calc(var(--space-6) * 7.5)"
+          />
+        }
+      </div>
+      <div class="card-footer-action">
+        <app-button
+          variant="text"
+          iconRight="pi-arrow-right"
+          routerLink="/analytics"
+          >View Detailed Analytics</app-button
+        >
+      </div>
+    } @else {
+      <div class="empty-chart">
+        <div class="empty-content">
+          <i class="pi pi-chart-line empty-icon"></i>
+          <span>Complete more sessions to see your trend</span>
+        </div>
+      </div>
+    }
+  </app-card-shell>
+</section>

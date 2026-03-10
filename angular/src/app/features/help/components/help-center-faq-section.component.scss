@@ -1,0 +1,19 @@
+.faq-item {
+  padding: var(--spacing-md) 0;
+  border-bottom: var(--border-1) solid var(--surface-border);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-item h4 {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--text-color);
+}
+
+.faq-item p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: var(--ds-line-height-1-6);
+}

@@ -38,29 +38,21 @@ import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "../../core/services/toast.service";
 
-import { ProgressBar } from "primeng/progressbar";
 import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
 
 
 import { from, type Observable } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { CardHeaderComponent } from "../../shared/components/card-header/card-header.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
 
 // Layout & Components
-import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
-import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
-import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
-import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
-import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
   ProtocolJson,
   TodayViewModel,
   resolveTodayState,
 } from "./resolution/today-state.resolver";
-import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
 import {
   DailyProtocol,
@@ -89,6 +81,10 @@ import {
   ExactTrainingSummary,
   TodayProtocolFacade,
 } from "./today-protocol.facade";
+import { TodaySummaryHeaderComponent } from "./components/today-summary-header.component";
+import { TodayQuickCheckinDialogComponent } from "./components/today-quick-checkin-dialog.component";
+import { TodayProtocolSectionComponent } from "./components/today-protocol-section.component";
+import { TodayStatusStackComponent } from "./components/today-status-stack.component";
 
 // Constants
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
@@ -137,19 +133,15 @@ interface QuickFormData {
   imports: [
     CommonModule,
     RouterModule,
-    ProgressBar,
     SkeletonLoaderComponent,
     ButtonComponent,
     CardShellComponent,
-    CardHeaderComponent,
     EmptyStateComponent,
-    AppBannerComponent,
-    AppDialogComponent,
-    AcwrBaselineComponent,
-    DialogHeaderComponent,
-    DialogFooterComponent,
     MainLayoutComponent,
-    ProtocolBlockComponent,
+    TodaySummaryHeaderComponent,
+    TodayQuickCheckinDialogComponent,
+    TodayProtocolSectionComponent,
+    TodayStatusStackComponent,
   ],
   animations: [
     trigger("fadeSlideIn", [
@@ -493,6 +485,11 @@ export class TodayComponent {
     return banners.filter((banner) => banner !== blockingBanner);
   });
 
+  readonly coachModifiedTime = computed(() => {
+    const modifiedAt = this.protocolJson()?.modified_at;
+    return modifiedAt ? this.formatCoachTimestamp(modifiedAt) : null;
+  });
+
   readonly exactTrainingSummary = computed<ExactTrainingSummary | null>(() => {
     return this.todayProtocolFacade.buildExactTrainingSummary({
       todayViewModel: this.todayViewModel(),
@@ -505,6 +502,19 @@ export class TodayComponent {
         hasCheckedInToday: this.hasCheckedInToday(),
       },
     });
+  });
+
+  readonly protocolDisplayBlocks = computed<ProtocolBlock[]>(() => {
+    const vm = this.todayViewModel();
+    const protocol = this.protocol();
+
+    if (!vm || !protocol) {
+      return [];
+    }
+
+    return vm.blocksDisplayed
+      .map((blockType) => this.getBlockByType(protocol, blockType))
+      .filter((block): block is ProtocolBlock => Boolean(block));
   });
 
   readonly tomorrowDate = computed(() => {

@@ -1,0 +1,81 @@
+<div class="step-content">
+  <form [formGroup]="sessionForm()" class="parameters-form">
+    <div class="form-row">
+      <div class="form-field">
+        <label>Session Duration (minutes)</label>
+        <p-slider
+          formControlName="duration"
+          [min]="15"
+          [max]="120"
+          [step]="15"
+        >
+        </p-slider>
+        <span class="duration-display"
+          >{{ sessionForm().get("duration")?.value }} minutes</span
+        >
+      </div>
+      <div class="form-field">
+        <label>Intensity Level</label>
+        <p-select
+          formControlName="intensity"
+          [options]="$any(intensityLevels())"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select intensity"
+        >
+          <ng-template let-option #item>
+            <div class="intensity-option">
+              <span
+                class="intensity-indicator"
+                [class]="'intensity-' + option.value"
+              ></span>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+        </p-select>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Available Equipment (comma-separated)</label>
+      <input
+        type="text"
+        pInputText
+        formControlName="equipment"
+        placeholder="e.g., cones, football, agility ladder"
+      />
+    </div>
+
+    @if (weatherData()) {
+      <app-alert
+        icon="pi-sun"
+        [variant]="weatherAlertVariant()"
+        title="Outdoor conditions"
+        [message]="weatherSummary()"
+        density="compact"
+        styleClass="weather-notice"
+      >
+        <app-status-tag
+          [value]="weatherData()?.recommendation ?? 'No recommendation'"
+          [severity]="weatherSeverity()"
+          size="sm"
+        />
+      </app-alert>
+    }
+  </form>
+
+  <div class="step-actions">
+    <app-button
+      variant="outlined"
+      iconLeft="pi-arrow-left"
+      (clicked)="previous.emit()"
+      >Previous</app-button
+    >
+    <app-button
+      iconLeft="pi-sparkles"
+      [disabled]="sessionForm().invalid"
+      (clicked)="generate.emit()"
+      >Generate Session</app-button
+    >
+  </div>
+</div>

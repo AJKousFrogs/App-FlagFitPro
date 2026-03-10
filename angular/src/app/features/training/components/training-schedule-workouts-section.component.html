@@ -1,0 +1,61 @@
+<div class="training-grid">
+  <app-card-shell title="This Week" headerIcon="pi-calendar" [hasFooter]="true">
+    <div class="weekly-schedule-compact">
+      @for (day of weeklySchedule(); track trackByDayName($index, day)) {
+        <div class="schedule-day-compact" [class.today]="isToday(day.name)">
+          <div class="day-indicator">
+            <span class="day-abbrev">{{ day.name.substring(0, 3) }}</span>
+            @if (day.sessions.length > 0) {
+              <span class="session-dot"></span>
+            }
+          </div>
+          @if (day.sessions.length > 0) {
+            <div class="day-session-preview">{{ day.sessions[0].title }}</div>
+          } @else {
+            <div class="day-session-preview empty">Rest</div>
+          }
+        </div>
+      }
+    </div>
+    <ng-container footer>
+      <app-button variant="text" size="sm" iconLeft="pi-th-large" (clicked)="openSchedule.emit()">
+        Full Schedule
+      </app-button>
+    </ng-container>
+  </app-card-shell>
+
+  <app-card-shell title="Quick Workouts" headerIcon="pi-bolt" [hasFooter]="workouts().length > 4">
+    <div class="workouts-list-compact">
+      @for (workout of previewWorkouts(); track trackByWorkoutTitle($index, workout)) {
+        <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+        <div
+          class="workout-card-compact"
+          [style.border-left-color]="workout.iconBg"
+          (click)="selectWorkout.emit(workout)"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Start workout ' + workout.title"
+          (keydown.enter)="selectWorkout.emit(workout)"
+          (keydown.space)="selectWorkout.emit(workout); $event.preventDefault()"
+        >
+          <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+          <div class="workout-icon-small" [style.background]="workout.iconBg">
+            <i [class]="workout.icon"></i>
+          </div>
+          <div class="workout-info">
+            <span class="workout-name">{{ workout.title }}</span>
+            <span class="workout-meta-compact">{{ workout.duration }} • {{ workout.intensity }}</span>
+          </div>
+          <i class="pi pi-play"></i>
+        </div>
+      }
+    </div>
+    @if (workouts().length > 4) {
+      <ng-container footer>
+        <app-button variant="text" size="sm" iconLeft="pi-list" (clicked)="openAllWorkouts.emit()">
+          View All {{ workouts().length }} Workouts
+        </app-button>
+      </ng-container>
+    }
+  </app-card-shell>
+</div>

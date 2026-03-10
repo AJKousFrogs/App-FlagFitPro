@@ -130,22 +130,23 @@
           </app-card-shell>
 
           <!-- Current Stage Details -->
-          <p-card class="current-stage-card">
-            <ng-template #header>
-              <div class="stage-detail-header">
-                <div class="stage-title">
-                  <span
-                    >Stage {{ protocol.currentStage }}:
-                    {{ getCurrentStage().name }}</span
-                  >
-                </div>
-                <app-status-tag
-                  [value]="'Load: ' + getCurrentStage().loadPercentage + '%'"
-                  severity="info"
-                  size="sm"
-                />
+          <app-card-shell class="current-stage-card" [flush]="true">
+            <div header-actions>
+              <app-status-tag
+                [value]="'Load: ' + getCurrentStage().loadPercentage + '%'"
+                severity="info"
+                size="sm"
+              />
+            </div>
+
+            <div class="stage-detail-header">
+              <div class="stage-title">
+                <span
+                  >Stage {{ protocol.currentStage }}:
+                  {{ getCurrentStage().name }}</span
+                >
               </div>
-            </ng-template>
+            </div>
 
             <div class="stage-day-info">
               <i class="pi pi-calendar"></i>
@@ -223,7 +224,7 @@
                 </small>
               }
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Daily Tracking Section -->
           <app-card-shell

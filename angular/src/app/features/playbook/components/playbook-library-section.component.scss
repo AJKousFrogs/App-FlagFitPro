@@ -1,0 +1,133 @@
+.playbook-filter-select {
+  width: var(--size-150);
+  max-width: 100%;
+}
+
+.progress-card {
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .progress-stats {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-block__content {
+    align-items: center;
+  }
+
+  .stat-block__value {
+    font-size: var(--ds-font-size-2xl);
+    color: var(--color-text-primary);
+  }
+
+  .stat-block__label {
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-secondary);
+  }
+
+  .stat-divider {
+    width: var(--border-1);
+    height: var(--avatar-size-md);
+    background: var(--color-border-subtle);
+  }
+
+  .progress-overall {
+    height: var(--indicator-size-sm);
+    border-radius: var(--radius-sm);
+  }
+}
+
+.filters-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+
+  .filter-search {
+    flex: 1;
+    min-width: var(--input-min-width-lg);
+
+    input {
+      width: 100%;
+    }
+  }
+}
+
+.plays-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
+  gap: var(--space-4);
+}
+
+.play-card {
+  cursor: pointer;
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard),
+    transform var(--motion-base) var(--ease-standard);
+
+  &:hover {
+    transform: var(--transform-hover-lift);
+    box-shadow: var(--shadow-2);
+    border-color: var(--color-brand-primary);
+  }
+
+  .play-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-2);
+
+    .play-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+
+      h3 {
+        margin: 0;
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
+        color: var(--color-text-primary);
+      }
+    }
+  }
+
+  .memorized-icon {
+    color: var(--color-brand-primary);
+    font-size: var(--ds-font-size-2xl);
+  }
+
+  .play-formation {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-secondary);
+  }
+
+  .play-assignment {
+    margin: 0;
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-primary);
+    line-height: var(--ds-line-height-normal);
+  }
+
+  .last-studied {
+    display: block;
+    margin-top: var(--space-3);
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-tertiary);
+  }
+}

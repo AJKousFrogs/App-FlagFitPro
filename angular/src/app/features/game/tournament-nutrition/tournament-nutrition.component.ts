@@ -32,9 +32,7 @@ import { Router } from "@angular/router";
 // PrimeNG Components
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 
 import { ProgressBar } from "primeng/progressbar";
@@ -48,6 +46,7 @@ import { NutritionService } from "../../../core/services/nutrition.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -100,15 +99,14 @@ interface HydrationLog {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     Checkbox,
     StatusTagComponent,
     Tooltip,
     ProgressBar,
+    CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
   ],

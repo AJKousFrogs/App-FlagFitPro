@@ -15,14 +15,7 @@ import {
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router } from "@angular/router";
-import { AlertComponent, AlertVariant } from "../alert/alert.component";
-import { ButtonComponent } from "../button/button.component";
-import { Card } from "primeng/card";
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
-import { Slider } from "primeng/slider";
 import { Stepper, StepList, Step } from "primeng/stepper";
-import { Timeline } from "primeng/timeline";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
@@ -34,48 +27,36 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { WeatherService } from "../../../core/services/weather.service";
 import { formatDate } from "../../utils/date.utils";
-import { StatusTagComponent } from "../status-tag/status-tag.component";
-
-interface TrainingExercise {
-  id: string;
-  name: string;
-  category: string;
-  duration: number;
-  intensity: "low" | "medium" | "high";
-  equipment: string[];
-  description: string;
-  videoUrl?: string;
-  aiRecommended?: boolean;
-}
-
-interface Goal {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  color: string;
-  aiRecommended: boolean;
-}
+import { type AlertVariant } from "../alert/alert.component";
+import { CardShellComponent } from "../card-shell/card-shell.component";
+import { TrainingBuilderGeneratedSessionComponent } from "./training-builder-generated-session.component";
+import { TrainingBuilderGoalsStepComponent } from "./training-builder-goals-step.component";
+import { TrainingBuilderParametersStepComponent } from "./training-builder-parameters-step.component";
+import {
+  Goal,
+  TrainingExercise,
+  TrainingTimelineEvent,
+} from "./training-builder.models";
 
 @Component({
   selector: "app-training-builder",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    Card,
+    CardShellComponent,
     Stepper,
     StepList,
     Step,
-    Select,
-    Slider,
-    InputText,
-    Timeline,
-    AlertComponent,
-    ButtonComponent,
-    StatusTagComponent,
+    TrainingBuilderGoalsStepComponent,
+    TrainingBuilderGeneratedSessionComponent,
+    TrainingBuilderParametersStepComponent,
   ],
   template: `
-    <p-card header="Smart Training Session Builder" class="training-builder">
+    <app-card-shell
+      class="training-builder"
+      title="Smart Training Session Builder"
+      [flush]="true"
+    >
       <p-stepper
         [value]="activeStep"
         (valueChange)="activeStep = $event ?? 0"
@@ -91,221 +72,46 @@ interface Goal {
       <div class="step-content-wrapper">
         <!-- Step 1: Session Goals -->
         @if (activeStep === 0) {
-          <div class="step-content">
-            <h3>What are your training goals for today?</h3>
-            <div class="goals-grid">
-              @for (goal of availableGoals; track trackByGoalId($index, goal)) {
-                <div
-                  class="goal-card"
-                  [class.selected]="isGoalSelected(goal.id)"
-                  (click)="toggleGoal(goal.id)"
-                >
-                  <i [class]="goal.icon" [style.color]="goal.color"></i>
-                  <h4>{{ goal.name }}</h4>
-                  <p>{{ goal.description }}</p>
-                  @if (goal.aiRecommended) {
-                    <app-status-tag
-                      value="AI Recommended"
-                      severity="success"
-                      icon="pi-sparkles"
-                      size="sm"
-                    />
-                  }
-                </div>
-              }
-            </div>
-            <div class="step-actions">
-              <app-button
-                iconLeft="pi-arrow-right"
-                [disabled]="selectedGoals().length === 0"
-                (clicked)="activeStep = 1"
-                >Next</app-button
-              >
-            </div>
-          </div>
+          <app-training-builder-goals-step
+            [goals]="availableGoals"
+            [selectedGoalIds]="selectedGoals()"
+            (toggleGoal)="toggleGoal($event)"
+            (next)="activeStep = 1"
+          />
         }
 
         <!-- Step 2: Session Parameters -->
         @if (activeStep === 1) {
-          <div class="step-content">
-            <form [formGroup]="sessionForm" class="parameters-form">
-              <div class="form-row">
-                <div class="form-field">
-                  <label>Session Duration (minutes)</label>
-                  <p-slider
-                    formControlName="duration"
-                    [min]="15"
-                    [max]="120"
-                    [step]="15"
-                  >
-                  </p-slider>
-                  <span class="duration-display"
-                    >{{ sessionForm.get("duration")?.value }} minutes</span
-                  >
-                </div>
-                <div class="form-field">
-                  <label>Intensity Level</label>
-                  <p-select
-                    formControlName="intensity"
-                    [options]="intensityLevels"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select intensity"
-                  >
-                    <ng-template let-option #item>
-                      <div class="intensity-option">
-                        <span
-                          class="intensity-indicator"
-                          [class]="'intensity-' + option.value"
-                        ></span>
-                        <span>{{ option.label }}</span>
-                      </div>
-                    </ng-template>
-                  </p-select>
-                </div>
-              </div>
-              <div class="form-field">
-                <label>Available Equipment (comma-separated)</label>
-                <input
-                  type="text"
-                  pInputText
-                  formControlName="equipment"
-                  placeholder="e.g., cones, football, agility ladder"
-                />
-              </div>
-              <!-- Weather-based recommendations -->
-              @if (weatherData()) {
-                <app-alert
-                  icon="pi-sun"
-                  [variant]="weatherAlertVariant()"
-                  title="Outdoor conditions"
-                  [message]="weatherSummary()"
-                  density="compact"
-                  styleClass="weather-notice"
-                >
-                  <app-status-tag
-                    [value]="
-                      weatherData()?.recommendation ?? 'No recommendation'
-                    "
-                    [severity]="getWeatherSeverity()"
-                    size="sm"
-                  />
-                </app-alert>
-              }
-            </form>
-            <div class="step-actions">
-              <app-button
-                variant="outlined"
-                iconLeft="pi-arrow-left"
-                (clicked)="activeStep = 0"
-                >Previous</app-button
-              >
-              <app-button
-                iconLeft="pi-sparkles"
-                [disabled]="sessionForm.invalid"
-                (clicked)="generateSession(); activeStep = 2"
-                >Generate Session</app-button
-              >
-            </div>
-          </div>
+          <app-training-builder-parameters-step
+            [sessionForm]="sessionForm"
+            [intensityLevels]="intensityLevels"
+            [weatherData]="weatherData()"
+            [weatherSummary]="weatherSummary()"
+            [weatherAlertVariant]="weatherAlertVariant()"
+            [weatherSeverity]="getWeatherSeverity()"
+            (previous)="activeStep = 0"
+            (generate)="generateSession(); activeStep = 2"
+          />
         }
 
         <!-- Step 3: Generated Session -->
         @if (activeStep === 2) {
-          <div class="step-content">
-            <div class="session-overview">
-              <h3>Generated Training Session</h3>
-              <div class="session-stats">
-                <div class="stat">
-                  <span class="label">Duration</span>
-                  <span class="value">{{ totalDuration() }} min</span>
-                </div>
-                <div class="stat">
-                  <span class="label">Exercises</span>
-                  <span class="value">{{ generatedExercises().length }}</span>
-                </div>
-                <div class="stat">
-                  <span class="label">Intensity</span>
-                  <app-status-tag
-                    [value]="sessionForm.get('intensity')?.value"
-                    [severity]="getIntensitySeverity()"
-                    size="sm"
-                  />
-                </div>
-              </div>
-            </div>
-            <!-- Exercise Timeline -->
-            <p-timeline
-              [value]="timelineEvents()"
-              layout="vertical"
-              class="session-timeline"
-            >
-              <ng-template #marker let-event>
-                <div class="timeline-marker" [class]="'marker-' + event.type">
-                  <i [class]="event.icon"></i>
-                </div>
-              </ng-template>
-              <ng-template #content let-event>
-                <p-card class="timeline-card">
-                  <div class="exercise-header">
-                    <h4>{{ event.title }}</h4>
-                    <div class="exercise-meta">
-                      <span class="duration">{{ event.duration }} min</span>
-                      @if (event.aiGenerated) {
-                        <app-status-tag
-                          value="AI Generated"
-                          severity="info"
-                          size="sm"
-                        />
-                      }
-                    </div>
-                  </div>
-                  <p class="exercise-description">{{ event.description }}</p>
-                  <div class="exercise-actions">
-                    <app-button
-                      variant="text"
-                      size="sm"
-                      iconLeft="pi-play"
-                      (clicked)="previewExercise(event)"
-                      >Preview</app-button
-                    >
-                    <app-button
-                      variant="text"
-                      size="sm"
-                      iconLeft="pi-pencil"
-                      (clicked)="modifyExercise(event)"
-                      >Modify</app-button
-                    >
-                  </div>
-                </p-card>
-              </ng-template>
-            </p-timeline>
-            <div class="step-actions">
-              <app-button
-                variant="outlined"
-                iconLeft="pi-arrow-left"
-                (clicked)="activeStep = 1"
-                >Previous</app-button
-              >
-              <app-button
-                variant="success"
-                iconLeft="pi-play"
-                [loading]="isSaving()"
-                (clicked)="startSession()"
-                >Start Session</app-button
-              >
-              <app-button
-                variant="outlined"
-                iconLeft="pi-bookmark"
-                [loading]="isSaving()"
-                (clicked)="saveSession()"
-                >Save for Later</app-button
-              >
-            </div>
-          </div>
+          <app-training-builder-generated-session
+            [totalDuration]="totalDuration()"
+            [exerciseCount]="generatedExercises().length"
+            [intensity]="sessionForm.get('intensity')?.value"
+            [intensitySeverity]="getIntensitySeverity()"
+            [timelineEvents]="timelineEvents()"
+            [isSaving]="isSaving()"
+            (previous)="activeStep = 1"
+            (preview)="previewExercise($event)"
+            (modify)="modifyExercise($event)"
+            (start)="startSession()"
+            (save)="saveSession()"
+          />
         }
       </div>
-    </p-card>
+    </app-card-shell>
   `,
   styleUrl: "./training-builder.component.scss",
 })
@@ -413,16 +219,7 @@ export class TrainingBuilderComponent {
   });
 
   timelineEvents = computed(() => {
-    interface TimelineEvent {
-      type: string;
-      icon: string;
-      title: string;
-      duration: number;
-      description: string;
-      aiGenerated: boolean;
-    }
-
-    const events: TimelineEvent[] = [];
+    const events: TrainingTimelineEvent[] = [];
 
     // Warmup
     events.push({
@@ -571,10 +368,6 @@ export class TrainingBuilderComponent {
           this.logger.debug("AI service not available, using default goals");
         },
       });
-  }
-
-  isGoalSelected(goalId: string): boolean {
-    return this.selectedGoals().includes(goalId);
   }
 
   toggleGoal(goalId: string) {
@@ -980,9 +773,5 @@ export class TrainingBuilderComponent {
     if (goals.includes("endurance")) return "conditioning";
     if (goals.includes("skills")) return "technical";
     return "technical"; // Default
-  }
-
-  trackByGoalId(index: number, goal: Goal): string {
-    return goal.id;
   }
 }

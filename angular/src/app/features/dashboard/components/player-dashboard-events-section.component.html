@@ -1,0 +1,110 @@
+@if (continuityEvents().length > 0) {
+  <section class="continuity-section" aria-label="What's next">
+    <h3 class="section-title">
+      <i class="pi pi-calendar-clock" aria-hidden="true"></i>
+      What's Next
+    </h3>
+    <div class="continuity-events">
+      @for (event of continuityEvents(); track event.type) {
+        <app-card-shell class="continuity-event-card">
+          <div class="continuity-event">
+            <span class="event-icon">{{ event.icon }}</span>
+            <div class="event-details">
+              <h4>{{ event.title }}</h4>
+              <p>{{ event.description }}</p>
+              @if (event.daysRemaining !== undefined && event.daysRemaining > 0) {
+                <app-status-tag
+                  [value]="event.daysRemaining + ' day(s) remaining'"
+                  severity="info"
+                  size="sm"
+                  class="event-tag"
+                ></app-status-tag>
+              }
+              @if (event.sessionsRemaining !== undefined) {
+                <app-status-tag
+                  [value]="event.sessionsRemaining + ' sessions remaining'"
+                  severity="warning"
+                  size="sm"
+                  class="event-tag"
+                ></app-status-tag>
+              }
+            </div>
+          </div>
+        </app-card-shell>
+      }
+    </div>
+  </section>
+}
+
+@if (tomorrowSchedule().length > 0) {
+  <section class="tomorrow-section" aria-label="Tomorrow's schedule">
+    <h3 class="section-title">
+      <i class="pi pi-calendar-plus" aria-hidden="true"></i>
+      Tomorrow's Preview
+    </h3>
+    <app-card-shell class="schedule-card">
+      <p-timeline
+        [value]="tomorrowSchedule().slice(0, schedulePreviewCount())"
+        class="schedule-timeline"
+      >
+        <ng-template #marker let-item>
+          <span class="timeline-marker upcoming" [attr.aria-hidden]="true">
+            <i class="pi pi-circle"></i>
+          </span>
+        </ng-template>
+        <ng-template #content let-item>
+          <div class="schedule-item upcoming">
+            <div class="item-time">{{ item.time }}</div>
+            <div class="item-info">
+              <span class="item-title">{{ item.title }}</span>
+              <span class="item-duration">{{ item.duration }} min</span>
+            </div>
+          </div>
+        </ng-template>
+      </p-timeline>
+      @if (tomorrowSchedule().length > 3) {
+        <p class="more-items">
+          +{{ tomorrowSchedule().length - 3 }} more items
+        </p>
+      }
+      <div class="card-footer-action">
+        <app-button
+          variant="text"
+          iconRight="pi-arrow-right"
+          routerLink="/calendar"
+          >View Full Schedule</app-button
+        >
+      </div>
+    </app-card-shell>
+  </section>
+}
+
+@if (upcomingEvents().length > 0) {
+  <section class="upcoming-section" aria-label="Upcoming events">
+    <h3 class="section-title">
+      <i class="pi pi-calendar" aria-hidden="true"></i>
+      Coming Up
+    </h3>
+    <div class="events-strip">
+      @for (event of upcomingEvents().slice(0, eventsPreviewCount()); track event.id) {
+        <app-card-shell [class]="'event-card event-' + event.type">
+          <div class="event-card-content">
+            <div class="event-date">
+              <span class="date-day">{{ event.day }}</span>
+              <span class="date-month">{{ event.month }}</span>
+            </div>
+            <div class="event-info">
+              <span class="event-title">{{ event.title }}</span>
+              <app-status-tag
+                [value]="event.typeLabel"
+                [severity]="event.severity"
+                size="sm"
+                class="event-tag"
+              ></app-status-tag>
+            </div>
+          </div>
+        </app-card-shell>
+      }
+    </div>
+  </section>
+}

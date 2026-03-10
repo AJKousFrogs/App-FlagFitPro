@@ -19,8 +19,6 @@ import {
   signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 
 import { ButtonComponent } from "../button/button.component";
 import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-override-badge.component";
@@ -30,6 +28,9 @@ import {
 } from "../../../core/services/override-logging.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
+import { CardShellComponent } from "../card-shell/card-shell.component";
+import { AppDialogComponent } from "../dialog/dialog.component";
+import { DialogHeaderComponent } from "../dialog-header/dialog-header.component";
 
 @Component({
   selector: "app-coach-override-notification",
@@ -37,31 +38,28 @@ import { getTimeAgo } from "../../utils/date.utils";
   imports: [
     CommonModule,
     RouterModule,
-    Card,
-    Dialog,
     ButtonComponent,
     CoachOverrideBadgeComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   template: `
     @if (override()) {
-      <p-card class="override-notification-card">
-        <ng-template #header>
-          <div class="override-header">
-            <div class="header-content">
-              <i class="pi pi-info-circle override-icon"></i>
-              <h3>Training Plan Adjusted</h3>
-            </div>
-            <!-- Phase 3: Semantic Coach Override Badge -->
-            <app-coach-override-badge
-              [overrideType]="getSemanticOverrideType(override()!.overrideType)"
-              [placement]="'inline'"
-              [showTag]="true"
-              [showTimestamp]="true"
-              [timestamp]="getTimestamp(override()!.createdAt)"
-            ></app-coach-override-badge>
-          </div>
-        </ng-template>
-
+      <app-card-shell
+        class="override-notification-card"
+        title="Training Plan Adjusted"
+        headerIcon="info-circle"
+      >
+        <ng-container header-actions>
+          <app-coach-override-badge
+            [overrideType]="getSemanticOverrideType(override()!.overrideType)"
+            [placement]="'inline'"
+            [showTag]="true"
+            [showTimestamp]="true"
+            [timestamp]="getTimestamp(override()!.createdAt)"
+          ></app-coach-override-badge>
+        </ng-container>
         <!-- 5-Question Contract Display -->
         <div class="override-content">
           <!-- 1. What changed -->
@@ -161,18 +159,27 @@ import { getTimeAgo } from "../../utils/date.utils";
             }
           </div>
         </div>
-      </p-card>
+      </app-card-shell>
     }
 
     <!-- Override History Dialog -->
-    <p-dialog
-      header="Override History"
+    <app-dialog
       [(visible)]="showHistory"
       [modal]="true"
-      class="dialog-w-lg"
+      [draggable]="false"
+      [resizable]="false"
       [dismissableMask]="true"
-      (onShow)="loadHistory()"
+      [styleClass]="'dialog-w-lg'"
+      ariaLabel="Override History"
+      (onHide)="showHistory.set(false)"
+      (visibleChange)="onHistoryVisibleChange($event)"
     >
+      <app-dialog-header
+        icon="history"
+        title="Override History"
+        subtitle="Recent coach adjustments to your training plan"
+        (close)="showHistory.set(false)"
+      />
       @if (overrideHistory().length > 0) {
         <div class="history-list">
           @for (item of overrideHistory(); track item.id) {
@@ -199,174 +206,9 @@ import { getTimeAgo } from "../../utils/date.utils";
       } @else {
         <p>No override history available.</p>
       }
-    </p-dialog>
+    </app-dialog>
   `,
-  styles: [
-    `
-      .override-notification-card {
-        margin-bottom: var(--space-4);
-        border-left: var(--space-1) solid var(--color-brand-primary);
-      }
-
-      .override-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .header-content {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .override-icon {
-        color: var(--color-brand-primary);
-        font-size: var(--ds-font-size-xl);
-      }
-
-      .override-content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .contract-section {
-        padding: var(--space-3);
-        background: var(--surface-secondary);
-        border-radius: var(--radius-lg);
-      }
-
-      .contract-question {
-        font-size: var(--ds-font-size-sm);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--text-color-secondary);
-        margin-bottom: var(--space-2);
-      }
-
-      .contract-answer {
-        margin: 0;
-        color: var(--text-color);
-      }
-
-      .change-details {
-        margin-top: var(--space-2);
-        padding: var(--space-2);
-        background: var(--surface-100);
-        border-radius: var(--space-1);
-        font-size: var(--ds-font-size-sm);
-      }
-
-      .timestamp {
-        display: block;
-        margin-top: var(--space-2);
-        color: var(--text-color-secondary);
-        font-size: var(--ds-font-size-xs);
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: var(--space-2);
-        margin-top: var(--space-3);
-        flex-wrap: wrap;
-      }
-
-      .transparency-panel {
-        margin-top: var(--space-4);
-        border-top: var(--border-1) solid var(--surface-200);
-        padding-top: var(--space-4);
-      }
-
-      .transparency-toggle {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-2);
-        background: transparent;
-        border: var(--border-1) solid var(--surface-300);
-        border-radius: var(--space-1);
-        cursor: pointer;
-        color: var(--text-color);
-        transition: all 0.2s;
-      }
-
-      .transparency-toggle:hover {
-        background: var(--surface-100);
-      }
-
-      .transparency-content {
-        margin-top: var(--space-4);
-        padding: var(--space-4);
-        background: var(--surface-secondary);
-        border-radius: var(--radius-lg);
-      }
-
-      .comparison-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-4);
-      }
-
-      .comparison-item {
-        padding: var(--space-3);
-        border-radius: var(--space-1);
-      }
-
-      .comparison-item.ai {
-        background: var(--blue-50);
-        border-left: var(--space-0-75) solid var(--blue-500);
-      }
-
-      .comparison-item.coach {
-        background: var(--green-50);
-        border-left: var(--space-0-75) solid var(--green-500);
-      }
-
-      .comparison-item h5 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: var(--ds-font-size-sm);
-        font-weight: var(--ds-font-weight-semibold);
-      }
-
-      .comparison-item pre {
-        margin: 0;
-        font-size: var(--ds-font-size-sm);
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      .history-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-
-      .history-item {
-        padding: var(--space-3);
-        background: var(--surface-secondary);
-        border-radius: var(--space-1);
-      }
-
-      .history-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-2);
-      }
-
-      .history-date {
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--text-color);
-      }
-
-      .history-reason {
-        margin: 0;
-        color: var(--text-color-secondary);
-        font-size: var(--ds-font-size-sm);
-      }
-    `,
-  ],
+  styleUrl: "./coach-override-notification.component.scss",
 })
 export class CoachOverrideNotificationComponent {
   override = input.required<CoachOverride>();
@@ -497,6 +339,12 @@ export class CoachOverrideNotificationComponent {
       this.overrideHistory.set(history);
     } catch (error) {
       this.logger.error("[OverrideNotification] Error loading history:", error);
+    }
+  }
+
+  onHistoryVisibleChange(visible: boolean): void {
+    if (visible) {
+      void this.loadHistory();
     }
   }
 }

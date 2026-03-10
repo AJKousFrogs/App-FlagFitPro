@@ -41,9 +41,8 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { Skeleton } from "primeng/skeleton";
 import { Tooltip } from "primeng/tooltip";
-import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 import { formatDate as formatDateValue } from "../../../shared/utils/date.utils";
+import { VideoFeedHeaderSectionComponent } from "./components/video-feed-header-section.component";
 
 // Services
 import { AuthService } from "../../../core/services/auth.service";
@@ -64,14 +63,7 @@ import {
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-
-interface FilterChip {
-  label: string;
-  value: string;
-  type: "position" | "focus" | "skill";
-  icon?: string;
-  active: boolean;
-}
+import { FilterChip } from "./video-feed.models";
 
 @Component({
   selector: "app-video-feed",
@@ -85,134 +77,28 @@ interface FilterChip {
     MainLayoutComponent,
     ButtonComponent,
     EmptyStateComponent,
-    StatusTagComponent,
-    SearchInputComponent,
     AppDialogComponent,
     DialogHeaderComponent,
+    VideoFeedHeaderSectionComponent,
   ],
   template: `
 <app-main-layout>
       <div class="video-feed-page ui-page-stack">
-        <!-- Hero Header -->
-        <header class="feed-header">
-          <div class="header-content">
-            <div class="header-text">
-              <h1 class="feed-title">
-                <i class="pi pi-video"></i>
-                Training Videos
-              </h1>
-              <p class="feed-subtitle">
-                Curated drills from pro athletes & coaches
-              </p>
-            </div>
-            <div class="header-actions">
-              <div class="header-stats">
-                <button
-                  class="stat-pill stat-pill-interactive"
-                  pTooltip="Browse all training videos"
-                  tooltipPosition="bottom"
-                  (click)="scrollToVideos()"
-                >
-                  <i class="pi pi-video"></i>
-                  <span class="stat-number">{{ totalVideos() }}</span>
-                  <span class="stat-block__label">Videos</span>
-                  <i class="pi pi-chevron-down stat-action-icon"></i>
-                </button>
-                <button
-                  class="stat-pill stat-pill-interactive"
-                  pTooltip="View all creators"
-                  tooltipPosition="bottom"
-                  (click)="scrollToCreators()"
-                >
-                  <i class="pi pi-star"></i>
-                  <span class="stat-number">{{ totalCreators() }}</span>
-                  <span class="stat-block__label">Creators</span>
-                  <i class="pi pi-chevron-down stat-action-icon"></i>
-                </button>
-              </div>
-              <app-button
-                iconLeft="pi-lightbulb"
-                class="suggest-btn"
-                (clicked)="navigateToSuggest()"
-                >Suggest a Video</app-button
-              >
-            </div>
-          </div>
-        </header>
-
-        <!-- Filter Section -->
-        <section class="filter-section">
-          <!-- Search Bar -->
-          <app-search-input
-            class="search-container"
-            [formControl]="searchControl"
-            placeholder="Search videos, creators, or tags..."
-            ariaLabel="Search videos, creators, or tags"
-            [clearable]="true"
-          />
-
-          <!-- Position Filter Chips -->
-          <div class="filter-chips-container">
-            <div class="filter-label">
-              <i class="pi pi-filter"></i>
-              <span>Position</span>
-            </div>
-            <div class="filter-chips">
-              @for (chip of positionChips(); track chip.value) {
-                <button
-                  class="filter-chip"
-                  [class.active]="chip.active"
-                  (click)="togglePositionFilter(chip)"
-                  [attr.aria-pressed]="chip.active"
-                  [attr.aria-label]="'Filter by ' + chip.label"
-                >
-                  @if (chip.icon) {
-                    <i [class]="chip.icon"></i>
-                  }
-                  <span class="chip-label">{{ chip.label }}</span>
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Training Focus Filter -->
-          <div class="filter-chips-container">
-            <div class="filter-label">
-              <i class="pi pi-bolt"></i>
-              <span>Focus</span>
-            </div>
-            <div class="filter-chips scrollable">
-              @for (chip of focusChips(); track chip.value) {
-                <button
-                  class="filter-chip"
-                  [class.active]="chip.active"
-                  (click)="toggleFocusFilter(chip)"
-                  [attr.aria-pressed]="chip.active"
-                  [attr.aria-label]="'Filter by ' + chip.label"
-                >
-                  <span class="chip-label">{{ chip.label }}</span>
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Active Filters Display -->
-          @if (hasActiveFilters()) {
-            <div class="active-filters">
-              <span class="active-label">Active:</span>
-              @for (filter of activeFilterLabels(); track filter) {
-                <app-status-tag [value]="filter" severity="success" size="sm" />
-              }
-              <app-button
-                iconLeft="pi-times"
-                variant="text"
-                size="sm"
-                (clicked)="clearAllFilters()"
-                >Clear All</app-button
-              >
-            </div>
-          }
-        </section>
+        <app-video-feed-header-section
+          [searchControl]="searchControl"
+          [totalVideos]="totalVideos()"
+          [totalCreators]="totalCreators()"
+          [positionChips]="positionChips()"
+          [focusChips]="focusChips()"
+          [hasActiveFilters]="hasActiveFilters()"
+          [activeFilterLabels]="activeFilterLabels()"
+          (scrollToVideos)="scrollToVideos()"
+          (scrollToCreators)="scrollToCreators()"
+          (navigateToSuggest)="navigateToSuggest()"
+          (togglePositionFilter)="togglePositionFilter($event)"
+          (toggleFocusFilter)="toggleFocusFilter($event)"
+          (clearAllFilters)="clearAllFilters()"
+        />
 
         <!-- Video Grid -->
         <section class="video-grid-section">

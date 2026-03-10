@@ -1,0 +1,49 @@
+<div class="supplement-section">
+  <div class="section-header">
+    <h3>Supplement Compliance Overview</h3>
+  </div>
+
+  <div class="compliance-grid">
+    @for (compliance of items(); track compliance.athleteId) {
+      <app-card-shell
+        class="compliance-card"
+        [title]="athleteName()(compliance.athleteId)"
+      >
+        <app-status-tag
+          header-actions
+          [value]="compliance.overallComplianceRate + '%'"
+          [severity]="complianceSeverity()(compliance.overallComplianceRate)"
+          size="sm"
+        />
+        <div class="supplement-list">
+          @for (supplement of compliance.supplements; track supplement.name) {
+            <div class="supplement-item">
+              <span class="supplement-name">{{ supplement.name }}</span>
+              <div class="supplement-stats">
+                <p-progressBar
+                  [value]="supplement.complianceRate"
+                  [showValue]="false"
+                  class="supplement-bar"
+                />
+                <span>{{ supplement.complianceRate }}%</span>
+              </div>
+              @if (supplement.missedDays > 0) {
+                <span class="missed-days">{{ supplement.missedDays }} missed</span>
+              }
+            </div>
+          }
+        </div>
+        @if (compliance.timingIssues.length > 0) {
+          <div class="timing-issues">
+            <strong>Timing Issues:</strong>
+            <ul>
+              @for (issue of compliance.timingIssues; track issue) {
+                <li>{{ issue }}</li>
+              }
+            </ul>
+          </div>
+        }
+      </app-card-shell>
+    }
+  </div>
+</div>

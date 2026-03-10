@@ -1,0 +1,136 @@
+<div class="availability-dialog">
+  <div class="tournament-summary">
+    <h3>{{ tournament().flag }} {{ tournament().name }}</h3>
+    <p class="tournament-dates">
+      <i class="pi pi-calendar"></i>
+      {{ dateRangeLabel() }}
+    </p>
+    <p class="tournament-location">
+      <i class="pi pi-map-marker"></i>
+      {{ tournament().location }}, {{ tournament().country }}
+    </p>
+  </div>
+
+  <form [formGroup]="availabilityForm()" class="availability-form">
+    <div class="form-field">
+      <label>Will you be attending?</label>
+      <div class="availability-options">
+        @for (option of availabilityOptions(); track option.value) {
+          <div
+            class="availability-option"
+            [class.selected]="currentStatus() === option.value"
+            [class]="'option-' + option.value"
+            (click)="setStatus.emit(option.value)"
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="'Set availability to ' + option.label"
+            (keydown.enter)="setStatus.emit(option.value)"
+            (keydown.space)="setStatus.emit(option.value); $event.preventDefault()"
+          >
+            <i [class]="option.icon"></i>
+            <span>{{ option.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (currentStatus() === "declined" || currentStatus() === "tentative") {
+      <div class="form-field">
+        <label>Reason (optional)</label>
+        <textarea
+          pTextarea
+          formControlName="reason"
+          rows="2"
+          placeholder="Let your coach know why..."
+          class="w-full"
+          aria-label="Reason for unavailability"
+        ></textarea>
+      </div>
+    }
+
+    @if (currentStatus() === "confirmed") {
+      <div class="form-grid-2">
+        <div class="form-field">
+          <label>Arrival Date</label>
+          <p-datepicker
+            formControlName="arrivalDate"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            placeholder="When do you arrive?"
+            class="w-full"
+          ></p-datepicker>
+        </div>
+        <div class="form-field">
+          <label>Departure Date</label>
+          <p-datepicker
+            formControlName="departureDate"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            placeholder="When do you leave?"
+            class="w-full"
+          ></p-datepicker>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <p-checkbox
+          formControlName="accommodationNeeded"
+          [binary]="true"
+          variant="filled"
+          inputId="accommodation"
+          label="I need accommodation"
+        ></p-checkbox>
+      </div>
+
+      <div class="form-field">
+        <p-checkbox
+          formControlName="transportationNeeded"
+          [binary]="true"
+          variant="filled"
+          inputId="transportation"
+          label="I need transportation"
+        ></p-checkbox>
+      </div>
+
+      <div class="form-field">
+        <label>Dietary Restrictions</label>
+        <input
+          pInputText
+          formControlName="dietaryRestrictions"
+          placeholder="Any dietary needs..."
+          class="w-full"
+          aria-label="Dietary restrictions"
+        />
+      </div>
+    }
+
+    @if (tournamentCost() > 0 && currentStatus() === "confirmed") {
+      <div class="cost-summary">
+        <h4><i class="pi pi-wallet"></i> Estimated Cost</h4>
+        <div class="cost-breakdown">
+          <div class="cost-item">
+            <span>Your share:</span>
+            <span class="cost-value">€{{ tournamentCost() | number: "1.2-2" }}</span>
+          </div>
+          @if (availabilityForm().controls["amountPaid"].value > 0) {
+            <div class="cost-item paid">
+              <span>Already paid:</span>
+              <span class="cost-value">
+                €{{ availabilityForm().controls["amountPaid"].value | number: "1.2-2" }}
+              </span>
+            </div>
+          }
+          <div class="cost-item remaining">
+            <span>Remaining:</span>
+            <span class="cost-value">
+              €{{
+                tournamentCost() - availabilityForm().controls["amountPaid"].value
+                  | number: "1.2-2"
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+  </form>
+</div>

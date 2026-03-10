@@ -9,13 +9,10 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import {
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
 } from "@angular/forms";
-import { DatePicker } from "primeng/datepicker";
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
 
 import {
     COUNTRY_OPTIONS,
@@ -32,10 +29,7 @@ import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import {
-    ButtonComponent,
-    CardComponent,
-} from "../../shared/components/ui-components";
+import { ButtonComponent } from "../../shared/components/ui-components";
 import { calculateAge } from "../../shared/utils/date.utils";
 import { SettingsDataService } from "./services/settings-data.service";
 import { SettingsAccountDeletionService } from "./services/settings-account-deletion.service";
@@ -55,7 +49,6 @@ import { SettingsSecurityService } from "./services/settings-security.service";
 import { SettingsSessionManagementService } from "./services/settings-session-management.service";
 import { SettingsTeamRequestService } from "./services/settings-team-request.service";
 import { SettingsTwoFactorService } from "./services/settings-two-factor.service";
-import { BirthdayInputSuggestionDirective } from "./directives/birthday-input-suggestion.directive";
 import { NotificationPreferencesCardComponent } from "./components/notification-preferences-card/notification-preferences-card.component";
 import { PrivacyControlsCardComponent } from "./components/privacy-controls-card/privacy-controls-card.component";
 import { SecuritySettingsCardComponent } from "./components/security-settings-card/security-settings-card.component";
@@ -68,6 +61,11 @@ import { DisableTwofaDialogComponent } from "./components/disable-twofa-dialog/d
 import { ActiveSessionsDialogComponent } from "./components/active-sessions-dialog/active-sessions-dialog.component";
 import { DataExportDialogComponent } from "./components/data-export-dialog/data-export-dialog.component";
 import { NewTeamRequestDialogComponent } from "./components/new-team-request-dialog/new-team-request-dialog.component";
+import { SettingsAccountSectionComponent } from "./components/settings-account-section.component";
+import {
+  SettingsNavItem,
+  SettingsNavSectionComponent,
+} from "./components/settings-nav-section.component";
 
 @Component({
   selector: "app-settings",
@@ -75,14 +73,10 @@ import { NewTeamRequestDialogComponent } from "./components/new-team-request-dia
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    DatePicker,
-    InputText,
-    Select,
-    BirthdayInputSuggestionDirective,
     ButtonComponent,
-    CardComponent,
     MainLayoutComponent,
     PageHeaderComponent,
+    SettingsAccountSectionComponent,
     NotificationPreferencesCardComponent,
     PrivacyControlsCardComponent,
     SecuritySettingsCardComponent,
@@ -95,6 +89,7 @@ import { NewTeamRequestDialogComponent } from "./components/new-team-request-dia
     ActiveSessionsDialogComponent,
     DataExportDialogComponent,
     NewTeamRequestDialogComponent,
+    SettingsNavSectionComponent,
   ],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
@@ -238,6 +233,13 @@ export class SettingsComponent implements OnInit {
   ];
 
   countryOptions = COUNTRY_OPTIONS;
+
+  readonly settingsNavItems: SettingsNavItem[] = [
+    { id: "account-settings", icon: "pi-user", label: "Account" },
+    { id: "notifications-settings", icon: "pi-bell", label: "Notifications" },
+    { id: "privacy-settings", icon: "pi-lock", label: "Privacy & Security" },
+    { id: "preferences-settings", icon: "pi-sliders-h", label: "Preferences" },
+  ];
 
   ngOnInit(): void {
     const user = this.authService.getUser();

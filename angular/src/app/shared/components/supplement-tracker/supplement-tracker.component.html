@@ -105,13 +105,21 @@
 </div>
 
 <!-- Add Supplement Dialog -->
-<p-dialog
-  header="Add Supplement"
+<app-dialog
   [(visible)]="showAddDialog"
   [modal]="true"
-  [closable]="true"
-  class="supplement-dialog"
+  [draggable]="false"
+  [resizable]="false"
+  [blockScroll]="true"
+  [styleClass]="'supplement-dialog'"
+  ariaLabel="Add Supplement"
 >
+  <app-dialog-header
+    icon="pi-plus"
+    title="Add Supplement"
+    subtitle="Log a new supplement for your daily stack"
+    (close)="closeAddDialog()"
+  />
   <form class="dialog-form" [formGroup]="newSupplementFormGroup">
     <div class="form-field">
       <label for="suppName">Supplement Name *</label>
@@ -158,10 +166,11 @@
     </div>
   </form>
 
-  <ng-template #footer>
-    <app-button variant="text" (clicked)="closeAddDialog()">Cancel</app-button>
-    <app-button iconLeft="pi-plus" (clicked)="addSupplement()"
-      >Add Supplement</app-button
-    >
-  </ng-template>
-</p-dialog>
+  <app-dialog-footer
+    cancelLabel="Cancel"
+    primaryLabel="Add Supplement"
+    primaryIcon="pi-plus"
+    (cancel)="closeAddDialog()"
+    (primary)="addSupplement()"
+  />
+</app-dialog>

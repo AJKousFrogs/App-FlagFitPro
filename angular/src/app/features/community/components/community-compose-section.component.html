@@ -1,0 +1,92 @@
+<div class="create-post-card">
+  <div class="create-post-header">
+    <p-avatar
+      [label]="currentUserInitials()"
+      shape="circle"
+      class="user-avatar"
+    ></p-avatar>
+    <div class="post-prompt">What's on your mind?</div>
+  </div>
+
+  <div class="create-post-body">
+    <textarea
+      pInputTextarea
+      [value]="newPostContent()"
+      (input)="onInput($event)"
+      placeholder="Share your training progress, game highlights, or tips with the community..."
+      rows="3"
+      [autoResize]="true"
+      class="post-textarea"
+      aria-label="Create post content"
+    ></textarea>
+  </div>
+
+  <div class="create-post-footer">
+    <div class="media-options">
+      <button
+        type="button"
+        class="media-btn"
+        (click)="attachPhoto.emit()"
+        pTooltip="Add Photo"
+      >
+        <i class="pi pi-image"></i>
+        <span>Photo</span>
+      </button>
+      <button
+        type="button"
+        class="media-btn"
+        (click)="attachVideo.emit()"
+        pTooltip="Add Video"
+      >
+        <i class="pi pi-video"></i>
+        <span>Video</span>
+      </button>
+      <button
+        type="button"
+        class="media-btn"
+        (click)="createPoll.emit()"
+        pTooltip="Create Poll"
+      >
+        <i class="pi pi-chart-bar"></i>
+        <span>Poll</span>
+      </button>
+      <button
+        type="button"
+        class="media-btn"
+        (click)="addLocation.emit()"
+        pTooltip="Add Location"
+      >
+        <i class="pi pi-map-marker"></i>
+        <span>Location</span>
+      </button>
+    </div>
+    <app-button
+      iconLeft="pi-send"
+      [disabled]="!newPostContent().trim()"
+      (clicked)="submitPost.emit()"
+    >
+      Post
+    </app-button>
+  </div>
+</div>
+
+@if (selectedTopic()) {
+  <app-alert
+    variant="info"
+    density="compact"
+    title="Topic Filter"
+    [message]="'Showing posts about #' + selectedTopic()"
+    styleClass="filter-banner-alert"
+  >
+    <div class="filter-banner-actions">
+      <app-button
+        variant="text"
+        size="sm"
+        iconLeft="pi-times"
+        (clicked)="clearTopicFilter.emit()"
+      >
+        Clear
+      </app-button>
+    </div>
+  </app-alert>
+}

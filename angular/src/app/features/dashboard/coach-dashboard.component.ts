@@ -8,16 +8,11 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
 
 import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { Tooltip } from "primeng/tooltip";
 import { forkJoin } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
@@ -45,9 +40,7 @@ import {
 } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   AppLoadingComponent,
   AppDialogComponent,
@@ -56,21 +49,21 @@ import {
   DialogHeaderComponent,
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
-import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 import {
-  getMappedStatusSeverity,
   getStatusSeverity as getStatusSeverityValue,
-  playerStatusSeverityMap,
 } from "../../shared/utils/status.utils";
-import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
-import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
-import { DatePipe, DecimalPipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { UI_LIMITS } from "../../core/constants";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { CoachDashboardPartialDataNoticeComponent } from "./components/coach-dashboard-partial-data-notice.component";
+import { CoachDashboardAnalyticsSectionComponent } from "./components/coach-dashboard-analytics-section.component";
+import { CoachDashboardPrioritySectionComponent } from "./components/coach-dashboard-priority-section.component";
+import { CoachDashboardProtocolsSectionComponent } from "./components/coach-dashboard-protocols-section.component";
+import { CoachDashboardRosterSectionComponent } from "./components/coach-dashboard-roster-section.component";
+import { CoachDashboardSummarySectionComponent } from "./components/coach-dashboard-summary-section.component";
 
 /**
  * Coach Dashboard Component
@@ -107,30 +100,25 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    TableModule,
-    StatusTagComponent,
-    LazyChartComponent,
-    ChartSkeletonComponent,
-    Tooltip,
-    Avatar,
-    Badge,
     InputText,
     Textarea,
     DatePicker,
-    ProgressBar,
     Select,
     AppLoadingComponent,
     AppDialogComponent,
     ButtonComponent,
     CardShellComponent,
-    AlertComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
     DatePipe,
-    DecimalPipe,
-    SemanticMeaningRendererComponent,
+    CoachDashboardPartialDataNoticeComponent,
+    CoachDashboardAnalyticsSectionComponent,
+    CoachDashboardSummarySectionComponent,
+    CoachDashboardPrioritySectionComponent,
+    CoachDashboardProtocolsSectionComponent,
+    CoachDashboardRosterSectionComponent,
   ],
   templateUrl: "./coach-dashboard.component.html",
 
@@ -582,50 +570,6 @@ export class CoachDashboardComponent {
     }
   }
 
-  /**
-   * Get severity badge for missing data
-   */
-  getMissingDataSeverity(
-    severity: string,
-  ): "success" | "info" | "warning" | "danger" {
-    switch (severity) {
-      case "critical":
-        return "danger";
-      case "warning":
-        return "warning";
-      default:
-        return "info";
-    }
-  }
-
-  /**
-   * Phase 3: Convert risk alert to semantic risk meaning
-   */
-  getRiskMeaningForAlert(alert: RiskAlert): RiskMeaning | null {
-    if (alert.alertType !== "high_acwr" || !alert.acwr || alert.acwr <= 1.3) {
-      return null;
-    }
-
-    // Map ACWR value to risk severity
-    let severity: RiskMeaning["severity"] = "moderate";
-    if (alert.acwr > 1.5) {
-      severity = "critical";
-    } else if (alert.acwr > 1.3) {
-      severity = "high";
-    }
-
-    return {
-      type: "risk",
-      severity,
-      source: "acwr",
-      affectedEntity: `player-${alert.playerId}`,
-      message:
-        alert.message ||
-        `ACWR is ${alert.acwr.toFixed(2)} - injury risk elevated`,
-      recommendation: `Review training load for ${alert.playerName}. Consider reducing load by ${severity === "critical" ? "20-30%" : "15-20%"}.`,
-    };
-  }
-
   // Filter methods
   setPlayerFilter(filter: PlayerFilterType): void {
     this.playerFilter.set(filter);
@@ -811,47 +755,6 @@ export class CoachDashboardComponent {
   }
 
   // Helper methods
-  getPlayerInitials(name: string): string {
-    const parts = name.split(" ");
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
-  }
-
-  getAvatarClass(player: PlayerPerformanceStats): string {
-    if (player.status === "injured") {
-      return "performance-avatar performance-avatar--injured";
-    }
-    if (player.riskLevel === "high") {
-      return "performance-avatar performance-avatar--high-risk";
-    }
-    return "performance-avatar performance-avatar--standard";
-  }
-
-  getPositionSeverity(
-    position: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
-    const positionColors: Record<
-      string,
-      "success" | "info" | "warning" | "danger" | "secondary"
-    > = {
-      QB: "success",
-      WR: "info",
-      RB: "warning",
-      DB: "secondary",
-      Rusher: "danger",
-    };
-    return positionColors[position] || "info";
-  }
-
-  getPerformanceClass(score: number): string {
-    if (score >= 90) return "excellent";
-    if (score >= 80) return "good";
-    if (score >= 70) return "average";
-    return "poor";
-  }
-
   getTrendIcon(trend: "up" | "down" | "stable"): string {
     const icons = {
       up: "pi pi-arrow-up",
@@ -859,33 +762,6 @@ export class CoachDashboardComponent {
       stable: "pi pi-minus",
     };
     return icons[trend];
-  }
-
-  getACWRClass(acwr: number): string {
-    if (acwr <= 1.0) return "acwr-safe";
-    if (acwr <= 1.3) return "acwr-moderate";
-    if (acwr <= 1.5) return "acwr-high";
-    return "acwr-danger";
-  }
-
-  getReadinessBarClass(readiness: number): string {
-    if (readiness >= 75) return "readiness-high";
-    if (readiness >= 55) return "readiness-medium";
-    return "readiness-low";
-  }
-
-  getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      active: "Active",
-      injured: "Injured",
-      inactive: "Inactive",
-      at_risk: "At Risk",
-    };
-    return labels[status] || status;
-  }
-
-  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
-    return getMappedStatusSeverity(status, playerStatusSeverityMap, "info");
   }
 
   getCountdownLabel(days: number): string {
@@ -945,7 +821,14 @@ export class CoachDashboardComponent {
    */
   async viewOverrideHistory(playerId: string, event: Event): Promise<void> {
     event.stopPropagation(); // Prevent row click
+    await this.showOverrideHistory(playerId);
+  }
 
+  async viewOverrideHistoryFromSection(playerId: string): Promise<void> {
+    await this.showOverrideHistory(playerId);
+  }
+
+  private async showOverrideHistory(playerId: string): Promise<void> {
     const overrides = await this.overrideService.getPlayerOverrides(
       playerId,
       10,
@@ -973,24 +856,6 @@ export class CoachDashboardComponent {
     this.toastService.info(
       `${overrides.length} override(s) found. Check console for details.`,
     );
-  }
-
-  /**
-   * Check if player data is partially shared
-   * For now, we check if player is in consent blocked list
-   * In future, this could check specific metric sharing status
-   */
-  isPlayerDataPartiallyShared(playerId: string): boolean {
-    // If player is fully blocked, they're not partially shared
-    const player = this.players().find((p) => p.playerId === playerId);
-    if (player?._consentBlocked) {
-      return false;
-    }
-
-    // For now, we don't have granular metric-level sharing status
-    // So we assume if not blocked, it's fully shared
-    // This can be enhanced later with actual metric-level checks
-    return false;
   }
 
   /**

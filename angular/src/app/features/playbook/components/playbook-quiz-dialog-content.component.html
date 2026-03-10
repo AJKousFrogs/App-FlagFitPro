@@ -1,0 +1,125 @@
+@if (quizActive()) {
+  <div class="quiz-content">
+    <div class="quiz-progress">
+      <span>
+        Question {{ currentQuestionIndex() + 1 }} of {{ quizQuestions().length }}
+      </span>
+      <p-progressBar
+        [value]="((currentQuestionIndex() + 1) / quizQuestions().length) * 100"
+        [showValue]="false"
+      />
+    </div>
+
+    @if (currentQuestion(); as q) {
+      <div class="quiz-question">
+        <p class="play-reference">Play: {{ q.playName }}</p>
+        <h3>{{ q.question }}</h3>
+
+        <div class="options-list">
+          @for (option of q.options; track option; let i = $index) {
+            <button
+              class="option-btn"
+              [class.selected]="selectedAnswer() === i"
+              [class.correct]="answerSubmitted() && i === q.correctIndex"
+              [class.incorrect]="
+                answerSubmitted() &&
+                selectedAnswer() === i &&
+                i !== q.correctIndex
+              "
+              [disabled]="answerSubmitted()"
+              (click)="selectAnswer.emit(i)"
+            >
+              <span class="option-letter">{{ getOptionLetter(i) }}</span>
+              <span class="option-text">{{ option }}</span>
+            </button>
+          }
+        </div>
+
+        @if (answerSubmitted()) {
+          <app-alert
+            [variant]="selectedAnswer() === q.correctIndex ? 'success' : 'error'"
+            [message]="
+              selectedAnswer() === q.correctIndex
+                ? 'Correct!'
+                : 'Incorrect. The correct answer is: ' + q.options[q.correctIndex]
+            "
+            density="compact"
+            styleClass="status-message"
+          />
+        }
+      </div>
+    }
+
+    <div class="quiz-actions">
+      @if (!answerSubmitted()) {
+        <app-button
+          iconLeft="pi-check"
+          [disabled]="selectedAnswer() === null"
+          (clicked)="submitAnswer.emit()"
+          >Submit Answer</app-button
+        >
+      } @else if (currentQuestionIndex() < quizQuestions().length - 1) {
+        <app-button iconLeft="pi-arrow-right" (clicked)="nextQuestion.emit()"
+          >Next Question</app-button
+        >
+      } @else {
+        <app-button iconLeft="pi-chart-bar" (clicked)="showResults.emit()"
+          >See Results</app-button
+        >
+      }
+    </div>
+  </div>
+} @else if (quizCompleted()) {
+  <div class="quiz-results">
+    <div class="results-icon" [class.success]="quizScore() >= 80">
+      @if (quizScore() >= 80) {
+        <i class="pi pi-trophy"></i>
+      } @else {
+        <i class="pi pi-chart-bar"></i>
+      }
+    </div>
+
+    <h2>Quiz Complete!</h2>
+    <p class="score-display">
+      <span class="score">{{ quizScore() }}%</span>
+      <span class="score-detail">
+        ({{ correctAnswers() }}/{{ quizQuestions().length }} correct)
+      </span>
+    </p>
+
+    @if (quizScore() >= 80) {
+      <app-alert
+        variant="success"
+        message="Great job! You know your plays well."
+        density="compact"
+        styleClass="status-message status-message--success"
+      />
+    } @else if (quizScore() >= 60) {
+      <app-alert
+        variant="warning"
+        message="Good effort! Keep studying to improve."
+        density="compact"
+        styleClass="status-message"
+      />
+    } @else {
+      <app-alert
+        variant="info"
+        message="Keep studying! Review the plays you missed."
+        density="compact"
+        styleClass="status-message"
+      />
+    }
+
+    <div class="results-actions">
+      <app-button iconLeft="pi-refresh" (clicked)="restartQuiz.emit()"
+        >Try Again</app-button
+      >
+      <app-button
+        variant="secondary"
+        iconLeft="pi-times"
+        (clicked)="closeQuiz.emit()"
+        >Close</app-button
+      >
+    </div>
+  </div>
+}

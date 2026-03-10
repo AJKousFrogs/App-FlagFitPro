@@ -33,7 +33,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
@@ -42,6 +41,9 @@ import { Tag } from "primeng/tag";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { EmptyStateComponent } from "../ui-components";
+import { AppDialogComponent } from "../dialog/dialog.component";
+import { DialogFooterComponent } from "../dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../dialog-header/dialog-header.component";
 
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { API_ENDPOINTS, ApiService } from "../../../core/services/api.service";
@@ -190,12 +192,14 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     ReactiveFormsModule,
     Tag,
     SkeletonLoaderComponent,
-    Dialog,
     InputText,
     Select,
     ButtonComponent,
     IconButtonComponent,
     EmptyStateComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   templateUrl: "./supplement-tracker.component.html",
   styleUrl: "./supplement-tracker.component.scss",

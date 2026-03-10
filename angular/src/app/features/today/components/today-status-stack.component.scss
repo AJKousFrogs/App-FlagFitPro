@@ -1,0 +1,32 @@
+.coach-attribution {
+  margin-bottom: var(--space-4);
+}
+
+.attribution-card {
+  background: var(--surface-tertiary);
+  border-left: var(--space-1) solid var(--ds-primary-green);
+}
+
+.attribution-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.attribution-content i {
+  color: var(--ds-primary-green);
+}
+
+.attribution-time {
+  margin-left: auto;
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.coach-alert-gate,
+.banners-section,
+.acwr-section {
+  margin: 0;
+}

@@ -1,0 +1,205 @@
+:host {
+  display: block;
+}
+
+.no-program-section {
+  display: flex;
+  justify-content: center;
+}
+
+.no-program-card {
+  width: min(100%, 56rem);
+  background: var(--surface-card);
+  border: var(--border-2) dashed var(--ui-border-default);
+  border-radius: var(--component-card-radius);
+  box-shadow: var(--component-card-shadow);
+}
+
+.no-program-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: clamp(var(--space-6), 4vw, var(--space-8));
+  text-align: center;
+}
+
+.no-program-icon {
+  display: flex;
+  width: var(--space-16);
+  height: var(--space-16);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--ui-surface-subtle);
+  box-shadow: inset 0 0 0 var(--border-1) var(--color-border-subtle);
+  color: var(--color-text-secondary);
+}
+
+.no-program-icon i {
+  font-size: var(--ds-font-size-3xl);
+}
+
+.no-program-title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.no-program-message {
+  max-width: var(--content-max-width-sm);
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-sm);
+  line-height: var(--ds-line-height-body);
+}
+
+.no-program-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.setup-checklist {
+  display: flex;
+  width: 100%;
+  max-width: var(--content-max-width-sm);
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  text-align: left;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-left: var(--border-4) solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  background: var(--surface-secondary);
+}
+
+.checklist-item.checklist-action-needed {
+  border-left-color: var(--color-status-warning);
+  background: var(--color-status-warning-bg);
+}
+
+.checklist-icon {
+  display: flex;
+  width: var(--space-8);
+  height: var(--space-8);
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+}
+
+.checklist-icon.checklist-complete {
+  background: var(--color-status-success);
+  color: white;
+}
+
+.checklist-icon.checklist-warning {
+  background: var(--color-status-warning);
+  color: white;
+}
+
+.checklist-icon.checklist-waiting {
+  background: var(--surface-border);
+  color: var(--color-text-secondary);
+}
+
+.checklist-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.checklist-label {
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+.checklist-status {
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-xs);
+}
+
+.setup-next-steps {
+  width: 100%;
+  max-width: var(--content-max-width-sm);
+  margin: var(--space-2) 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface-secondary);
+  text-align: left;
+}
+
+.next-steps-title {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.next-steps-list {
+  margin: 0;
+  padding-left: var(--space-5);
+  list-style: decimal;
+}
+
+.next-steps-list li {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-sm);
+  line-height: var(--ds-line-height-1-6);
+}
+
+.next-steps-message {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-sm);
+  line-height: var(--ds-line-height-1-6);
+}
+
+.next-steps-tip {
+  margin: 0;
+  padding: var(--space-3);
+  border-left: var(--border-4) solid var(--ds-primary-green);
+  border-radius: var(--radius-sm);
+  background: var(--surface-card);
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-sm);
+}
+
+.setup-timeline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-xs);
+}
+
+.setup-timeline i {
+  color: var(--ds-primary-green);
+}
+
+@media (width <= 640px) {
+  .no-program-actions {
+    width: 100%;
+  }
+
+  .no-program-actions app-button {
+    flex: 1 1 100%;
+  }
+}

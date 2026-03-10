@@ -1,0 +1,113 @@
+.session-overview {
+  margin-bottom: var(--space-8);
+}
+
+.session-stats {
+  display: flex;
+  gap: var(--space-8);
+  margin-top: var(--space-4);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.stat .label {
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.stat .value {
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.timeline-marker {
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-circle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-on-primary);
+}
+
+.marker-exercise {
+  background: var(--ds-primary-green);
+}
+
+.marker-rest {
+  background: var(--color-border-primary);
+}
+
+.marker-warmup {
+  background: var(--color-status-warning);
+}
+
+.marker-cooldown {
+  background: var(--color-brand-primary);
+}
+
+.timeline-card {
+  display: block;
+  margin-left: var(--space-4);
+  width: min(100%, var(--grid-card-min-md-plus));
+}
+
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.exercise-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.duration {
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.exercise-description {
+  margin: var(--space-2) 0;
+  color: var(--color-text-secondary);
+}
+
+.exercise-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: var(--border-1) solid var(--color-border-primary);
+}
+
+@media (width <= 768px) {
+  .session-stats {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .timeline-card {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .step-actions {
+    flex-direction: column;
+  }
+}

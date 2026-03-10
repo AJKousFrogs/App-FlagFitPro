@@ -1,0 +1,132 @@
+@if (currentStatus() === "in_progress" || currentStatus() === "paused") {
+  <div class="in-progress-state">
+    <div class="overall-progress">
+      <span
+        >Step {{ currentStepIndex() + 1 }} of
+        {{ session().steps.length }}</span
+      >
+      <p-progressBar
+        [value]="overallProgress()"
+        [showValue]="false"
+        class="overall-bar"
+      ></p-progressBar>
+    </div>
+
+    <div class="current-step" [class.paused]="currentStatus() === 'paused'">
+      <div class="step-instruction">
+        {{ currentStep().instruction }}
+      </div>
+
+      <div class="step-timer">
+        <div class="timer-circle" [class]="timerClass()">
+          <span class="timer-value">{{ formatTime(stepTimeRemaining()) }}</span>
+          <span class="timer-label">{{
+            currentStatus() === "paused" ? "PAUSED" : "remaining"
+          }}</span>
+        </div>
+      </div>
+
+      <p-progressBar
+        [value]="stepProgress()"
+        [showValue]="false"
+        class="step-bar"
+      ></p-progressBar>
+    </div>
+
+    <div class="session-controls">
+      @if (currentStatus() === "paused") {
+        <app-button iconLeft="pi-play" (clicked)="resume.emit()"
+          >Resume</app-button
+        >
+      } @else {
+        <app-button
+          variant="secondary"
+          iconLeft="pi-pause"
+          (clicked)="pause.emit()"
+          >Pause</app-button
+        >
+      }
+
+      <app-button
+        iconLeft="pi-forward"
+        variant="secondary"
+        [disabled]="currentStepIndex() >= session().steps.length - 1"
+        (clicked)="nextStep.emit()"
+        >Next Step</app-button
+      >
+
+      <app-button
+        variant="success"
+        iconLeft="pi-check"
+        (clicked)="complete.emit()"
+        >Complete</app-button
+      >
+    </div>
+
+    <div class="elapsed-time">
+      Total time: {{ formatTime(totalElapsedTime()) }}
+    </div>
+  </div>
+}
+
+@if (currentStatus() === "completed") {
+  <div class="completed-state">
+    <div class="completion-icon">
+      <i class="pi pi-check-circle"></i>
+    </div>
+    <h3>Great Work!</h3>
+    <p>
+      You completed the session in {{ formatTime(totalElapsedTime()) }}
+    </p>
+
+    <div class="completion-stats">
+      <div class="stat">
+        <span class="stat-block__value">{{ session().steps.length }}</span>
+        <span class="stat-block__label">Steps</span>
+      </div>
+      <div class="stat">
+        <span class="stat-block__value">{{
+          Math.round(totalElapsedTime() / 60)
+        }}</span>
+        <span class="stat-block__label">Minutes</span>
+      </div>
+    </div>
+
+    @if (session().follow_up_prompt && !followUpSubmitted()) {
+      <div class="follow-up-section">
+        <h4>{{ session().follow_up_prompt }}</h4>
+        <div class="follow-up-slider">
+          <p-slider
+            [ngModel]="followUpRating()"
+            (ngModelChange)="followUpRatingChange.emit($event)"
+            [min]="0"
+            [max]="10"
+            [step]="1"
+          ></p-slider>
+          <div class="slider-value">{{ followUpRating() }}/10</div>
+        </div>
+        <textarea
+          pInputTextarea
+          [value]="followUpNotes()"
+          (input)="followUpNotesInput.emit($event)"
+          placeholder="Any additional notes? (optional)"
+          [rows]="2"
+          class="follow-up-notes"
+        ></textarea>
+        <app-button
+          iconLeft="pi-send"
+          [loading]="submitting()"
+          (clicked)="submitFollowUp.emit()"
+          >Submit Feedback</app-button
+        >
+      </div>
+    } @else if (followUpSubmitted()) {
+      <div class="follow-up-submitted">
+        <i class="pi pi-check"></i>
+        <span>Feedback submitted. Thanks!</span>
+      </div>
+    }
+
+    <app-button variant="text" (clicked)="done.emit()">Done</app-button>
+  </div>
+}

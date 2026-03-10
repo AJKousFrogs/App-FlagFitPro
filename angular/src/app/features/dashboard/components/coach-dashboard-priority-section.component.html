@@ -1,0 +1,131 @@
+<section class="priority-command-center">
+  <div class="merlin-coach-card">
+    <div class="merlin-avatar">
+      <i class="pi pi-sparkles"></i>
+    </div>
+    <div class="merlin-content">
+      <h3>Merlin's Team Briefing</h3>
+      <p>{{ merlinCoachInsight() }}</p>
+      <div class="merlin-actions">
+        <app-button variant="text" size="sm" icon="comments" routerLink="/chat">
+          Discuss Team Strategy
+        </app-button>
+      </div>
+    </div>
+  </div>
+
+  @if (riskAlerts().length > 0) {
+    <div class="priority-athletes-strip">
+      <div class="strip-header">
+        <span class="strip-title">
+          <i class="pi pi-exclamation-triangle strip-title-icon"></i>
+          Needs Attention Now
+          @if (nextGenEnabled()) {
+            <span class="strip-preview-badge">Preview</span>
+          }
+        </span>
+        <p-badge [value]="riskAlerts().length.toString()" severity="danger" />
+      </div>
+      <div class="athlete-scroll">
+        @for (alert of riskAlerts(); track alert.playerId) {
+          <div
+            class="priority-athlete-card"
+            (click)="viewPlayer.emit(alert.playerId)"
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="'View player ' + alert.playerName"
+            (keydown.enter)="viewPlayer.emit(alert.playerId)"
+            (keydown.space)="viewPlayer.emit(alert.playerId); $event.preventDefault()"
+          >
+            <p-avatar
+              [label]="getPlayerInitials(alert.playerName)"
+              shape="circle"
+              [class]="
+                alert.severity === 'critical'
+                  ? 'priority-avatar priority-avatar--critical'
+                  : 'priority-avatar priority-avatar--warning'
+              "
+            />
+            <div class="pa-info">
+              <span class="pa-name">{{ alert.playerName }}</span>
+              <span class="pa-reason">{{ alert.message }}</span>
+            </div>
+            @if (getRiskMeaningForAlert(alert); as riskMeaning) {
+              <app-semantic-meaning-renderer
+                [meaning]="riskMeaning"
+                [context]="{
+                  container: 'inline',
+                  priority: alert.acwr && alert.acwr > 1.5 ? 'critical' : 'high',
+                  dismissible: false
+                }"
+              />
+            }
+            @if (
+              alert.alertType === "low_readiness" &&
+              alert.readiness !== undefined &&
+              alert.readiness < 40
+            ) {
+              <app-status-tag
+                class="wellness-low-tag"
+                value="Wellness Low"
+                severity="danger"
+                size="sm"
+              />
+            }
+            <i class="pi pi-chevron-right"></i>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (playersWithMissingData().length > 0) {
+    <div class="priority-athletes-strip missing-data-strip">
+      <div class="strip-header">
+        <span class="strip-title">
+          <i class="pi pi-exclamation-circle strip-title-icon"></i>
+          Data Incomplete
+        </span>
+        <p-badge
+          [value]="playersWithMissingData().length.toString()"
+          severity="warn"
+        />
+      </div>
+      <div class="athlete-scroll">
+        @for (player of playersWithMissingData(); track player.playerId) {
+          <div
+            class="priority-athlete-card"
+            (click)="viewPlayer.emit(player.playerId)"
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="'View player ' + player.playerName"
+            (keydown.enter)="viewPlayer.emit(player.playerId)"
+            (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
+          >
+            <p-avatar
+              [label]="getPlayerInitials(player.playerName)"
+              shape="circle"
+              [class]="
+                player.severity === 'critical'
+                  ? 'priority-avatar priority-avatar--critical'
+                  : 'priority-avatar priority-avatar--warning'
+              "
+            />
+            <div class="pa-info">
+              <span class="pa-name">{{ player.playerName }}</span>
+              <span class="pa-reason">
+                Missing {{ player.daysMissing }} day(s) of wellness data
+              </span>
+            </div>
+            <app-status-tag
+              [value]="player.daysMissing + ' days'"
+              [severity]="getMissingDataSeverity(player.severity)"
+              size="sm"
+            />
+            <i class="pi pi-chevron-right"></i>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

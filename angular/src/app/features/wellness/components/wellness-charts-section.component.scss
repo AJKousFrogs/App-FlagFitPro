@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+// .charts-grid: use primitives/_charts.scss
+
+.loading-text {
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-md);
+}
+
+.chart-empty {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-md);
+}

@@ -1,0 +1,119 @@
+<section class="no-program-section">
+  <app-card-shell class="no-program-card">
+    <div class="no-program-content">
+      <div class="no-program-icon">
+        <i class="pi pi-calendar-times"></i>
+      </div>
+      <h3 class="no-program-title">Let's Get You Set Up!</h3>
+      <p class="no-program-message">
+        Your training program is almost ready. Let's check what's needed:
+      </p>
+
+      <div class="setup-checklist">
+        <div class="checklist-item">
+          <div class="checklist-icon checklist-complete">
+            <i class="pi pi-check"></i>
+          </div>
+          <div class="checklist-content">
+            <span class="checklist-label">Account created</span>
+            <span class="checklist-status">Complete</span>
+          </div>
+        </div>
+
+        @if (!hasCompletedOnboarding()) {
+          @if (actionRequiredMeaning()) {
+            <app-semantic-meaning-renderer
+              [meaning]="actionRequiredMeaning()!"
+              [context]="{
+                container: 'inline',
+                priority: 'high',
+                dismissible: false,
+              }"
+            ></app-semantic-meaning-renderer>
+          }
+          <div class="checklist-item checklist-action-needed">
+            <div class="checklist-icon checklist-warning">
+              <i class="pi pi-exclamation-circle"></i>
+            </div>
+            <div class="checklist-content">
+              <span class="checklist-label">Complete your profile</span>
+              <span class="checklist-status">Action required</span>
+            </div>
+          </div>
+        } @else {
+          <div class="checklist-item">
+            <div class="checklist-icon checklist-complete">
+              <i class="pi pi-check"></i>
+            </div>
+            <div class="checklist-content">
+              <span class="checklist-label">Profile completed</span>
+              <span class="checklist-status">Complete</span>
+            </div>
+          </div>
+        }
+
+        <div class="checklist-item">
+          <div class="checklist-icon checklist-waiting">
+            <i class="pi pi-clock"></i>
+          </div>
+          <div class="checklist-content">
+            <span class="checklist-label">Coach program assignment</span>
+            <span class="checklist-status">Usually 24-48 hours</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-next-steps">
+        <h4 class="next-steps-title">What happens next?</h4>
+        @if (!hasCompletedOnboarding()) {
+          <ol class="next-steps-list">
+            <li><strong>Complete your profile</strong> (2-3 minutes)</li>
+            <li>Your coach will review and assign a program (24-48 hours)</li>
+            <li>Start training!</li>
+          </ol>
+        } @else {
+          <p class="next-steps-message">
+            Your profile looks great! Your coach will assign a training program
+            within 24-48 hours. You'll receive a notification when it's ready.
+          </p>
+          <p class="next-steps-tip">
+            💡 <strong>In the meantime:</strong> Explore the exercise library
+            and watch training videos!
+          </p>
+        }
+      </div>
+
+      <div class="no-program-actions">
+        @if (!hasCompletedOnboarding()) {
+          <app-button iconLeft="pi-user-edit" routerLink="/onboarding">
+            Complete Profile (2 min)
+          </app-button>
+        }
+        @if (hasCompletedOnboarding()) {
+          <app-button iconLeft="pi-book" routerLink="/exercise-library">
+            Browse Exercises
+          </app-button>
+          <app-button
+            iconLeft="pi-youtube"
+            variant="outlined"
+            routerLink="/training/videos"
+          >
+            Watch Videos
+          </app-button>
+        }
+        <app-button
+          iconLeft="pi-envelope"
+          variant="outlined"
+          (clicked)="contactCoach.emit()"
+        >
+          Contact Coach
+        </app-button>
+      </div>
+
+      <div class="setup-timeline">
+        <i class="pi pi-info-circle"></i>
+        <span>Most athletes get their program within 24 hours. Check back tomorrow!</span>
+      </div>
+    </div>
+  </app-card-shell>
+</section>

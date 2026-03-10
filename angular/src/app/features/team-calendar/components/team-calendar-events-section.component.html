@@ -1,0 +1,96 @@
+@for (dateGroup of groupedEvents(); track dateGroup.date) {
+  <div class="date-group ui-page-stack--tight">
+    <h3 class="date-header">{{ formatDateHeader(dateGroup.date) }}</h3>
+
+    <div class="events-list ui-page-stack--tight">
+      @for (event of dateGroup.events; track event.id) {
+        <app-card-shell class="event-card" [class]="'type-' + event.type">
+          <div class="event-content">
+            <div class="event-time">
+              <span class="item-time">{{ event.startTime }}</span>
+              <span class="duration">{{ event.endTime }}</span>
+            </div>
+
+            <div class="event-details">
+              <div class="event-header">
+                <h4>{{ event.title }}</h4>
+                <app-status-tag
+                  [value]="getEventTypeConfig(event.type).label"
+                  [severity]="getEventTypeConfig(event.type).severity"
+                  size="sm"
+                />
+              </div>
+
+              <p class="event-location">
+                <i class="pi pi-map-marker"></i>
+                {{ event.location }}
+              </p>
+
+              @if (event.description) {
+                <p class="event-description">{{ event.description }}</p>
+              }
+
+              <div class="rsvp-stats">
+                <span class="stat going">
+                  <i class="pi pi-check-circle"></i>
+                  {{ event.rsvpStats.going }} going
+                </span>
+                <span class="stat not-going">
+                  <i class="pi pi-times-circle"></i>
+                  {{ event.rsvpStats.notGoing }} can't go
+                </span>
+                @if (event.rsvpStats.maybe > 0) {
+                  <span class="stat maybe">
+                    <i class="pi pi-question-circle"></i>
+                    {{ event.rsvpStats.maybe }} maybe
+                  </span>
+                }
+              </div>
+            </div>
+
+            <div class="event-actions">
+              <div class="current-rsvp" [class]="'status-' + event.myRsvp">
+                @switch (event.myRsvp) {
+                  @case ("going") {
+                    <i class="pi pi-check-circle"></i>
+                    <span>{{ getRsvpLabel(event.myRsvp) }}</span>
+                  }
+                  @case ("not-going") {
+                    <i class="pi pi-times-circle"></i>
+                    <span>{{ getRsvpLabel(event.myRsvp) }}</span>
+                  }
+                  @case ("maybe") {
+                    <i class="pi pi-question-circle"></i>
+                    <span>{{ getRsvpLabel(event.myRsvp) }}</span>
+                  }
+                  @default {
+                    <i class="pi pi-clock"></i>
+                    <span>{{ getRsvpLabel(event.myRsvp) }}</span>
+                  }
+                }
+              </div>
+
+              <app-button
+                variant="secondary"
+                size="sm"
+                iconLeft="pi-user-edit"
+                (clicked)="openRsvp.emit(event)"
+              >
+                Manage RSVP
+              </app-button>
+            </div>
+          </div>
+        </app-card-shell>
+      }
+    </div>
+  </div>
+}
+
+@if (groupedEvents().length === 0) {
+  <app-empty-state
+    [useCard]="true"
+    icon="pi-calendar"
+    heading="No upcoming events"
+    [description]="getEmptyDescription()"
+  />
+}

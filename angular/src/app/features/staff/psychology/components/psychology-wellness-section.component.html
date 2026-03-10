@@ -1,0 +1,192 @@
+<div class="wellness-section">
+  <div class="section-header">
+    <h3>Mental Wellness Trends</h3>
+    <p-select
+      [options]="timePeriods()"
+      [ngModel]="selectedPeriod()"
+      (onChange)="periodChange.emit($event.value ?? '30days')"
+    ></p-select>
+  </div>
+
+  @if (data(); as wellness) {
+    <div class="wellness-content">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Mood</span>
+            <app-status-tag
+              [value]="wellness.wellnessTrends.moodTrend"
+              [severity]="trendSeverity()(wellness.wellnessTrends.moodTrend)"
+              size="sm"
+            />
+          </div>
+          <span class="metric-value">{{ wellness.wellnessTrends.avgMoodScore.toFixed(1) }}/10</span>
+          <p-progressBar [value]="wellness.wellnessTrends.avgMoodScore * 10" [showValue]="false" />
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Stress Level</span>
+            <app-status-tag
+              [value]="wellness.wellnessTrends.stressTrend"
+              [severity]="trendSeverity()(wellness.wellnessTrends.stressTrend, true)"
+              size="sm"
+            />
+          </div>
+          <span class="metric-value">{{ wellness.wellnessTrends.avgStressLevel.toFixed(1) }}/10</span>
+          <p-progressBar
+            [value]="wellness.wellnessTrends.avgStressLevel * 10"
+            [showValue]="false"
+            class="stress-bar"
+          />
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Motivation</span>
+          </div>
+          <span class="metric-value">{{ wellness.wellnessTrends.avgMotivation.toFixed(1) }}/10</span>
+          <p-progressBar [value]="wellness.wellnessTrends.avgMotivation * 10" [showValue]="false" />
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Confidence</span>
+          </div>
+          <span class="metric-value">{{ wellness.wellnessTrends.avgConfidence.toFixed(1) }}/10</span>
+          <p-progressBar [value]="wellness.wellnessTrends.avgConfidence * 10" [showValue]="false" />
+        </div>
+      </div>
+
+      <app-card-shell title="Wellness Trends Over Time">
+        <app-lazy-chart
+          type="line"
+          [data]="chartData()"
+          [options]="chartOptions()"
+        ></app-lazy-chart>
+      </app-card-shell>
+
+      <div class="dual-cards">
+        <app-card-shell title="Sleep Patterns">
+          <div class="sleep-stats">
+            <div class="sleep-stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ wellness.sleepPatterns.avgSleepHours.toFixed(1) }}h</span>
+                <span class="stat-block__label">Avg Sleep</span>
+              </div>
+            </div>
+            <div class="sleep-stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ wellness.sleepPatterns.sleepQualityAvg.toFixed(1) }}/10</span>
+                <span class="stat-block__label">Quality</span>
+              </div>
+            </div>
+            <div class="sleep-stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ wellness.sleepPatterns.sleepDebtDays }}</span>
+                <span class="stat-block__label">Debt Days</span>
+              </div>
+            </div>
+          </div>
+          <div class="sleep-indicators">
+            <div class="indicator" [class.positive]="wellness.sleepPatterns.consistentBedtime">
+              <i
+                [class]="wellness.sleepPatterns.consistentBedtime ? 'pi pi-check-circle' : 'pi pi-times-circle'"
+              ></i>
+              <span>Consistent bedtime</span>
+            </div>
+            <div class="indicator" [class.negative]="wellness.sleepPatterns.weekendOversleep">
+              <i
+                [class]="wellness.sleepPatterns.weekendOversleep ? 'pi pi-exclamation-circle' : 'pi pi-check-circle'"
+              ></i>
+              <span>
+                {{
+                  wellness.sleepPatterns.weekendOversleep
+                    ? "Weekend oversleep detected"
+                    : "No weekend compensation"
+                }}
+              </span>
+            </div>
+          </div>
+        </app-card-shell>
+
+        <app-card-shell title="Recovery Behaviors">
+          <div class="recovery-stats">
+            <div class="recovery-stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ wellness.recoveryBehaviors.avgRecoveryScore.toFixed(1) }}/10</span>
+                <span class="stat-block__label">Avg Recovery Score</span>
+              </div>
+            </div>
+            <div class="recovery-stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ wellness.recoveryBehaviors.socialRecoveryActivities }}</span>
+                <span class="stat-block__label">Social Activities</span>
+              </div>
+            </div>
+          </div>
+          <div class="screen-time">
+            <span>Screen time before bed:</span>
+            <app-status-tag
+              [value]="wellness.recoveryBehaviors.screenTimeBeforeBed"
+              [severity]="screenTimeSeverity()(wellness.recoveryBehaviors.screenTimeBeforeBed)"
+              size="sm"
+            />
+          </div>
+          <div class="activities-list">
+            <span class="list-label">Logged recovery activities:</span>
+            <div class="activity-tags">
+              @for (activity of wellness.recoveryBehaviors.recoveryActivitiesLogged; track $index) {
+                <span class="activity-tag">{{ activity }}</span>
+              }
+            </div>
+          </div>
+        </app-card-shell>
+      </div>
+
+      <app-card-shell title="AI-Observed Patterns">
+        <div class="patterns-grid">
+          @if (wellness.observedPatterns.stressTriggers.length > 0) {
+            <div class="pattern-section">
+              <h5>
+                <i class="pi pi-exclamation-triangle pattern-icon"></i>
+                Stress Triggers
+              </h5>
+              <ul>
+                @for (trigger of wellness.observedPatterns.stressTriggers; track $index) {
+                  <li>{{ trigger }}</li>
+                }
+              </ul>
+            </div>
+          }
+          @if (wellness.observedPatterns.positiveCorrelations.length > 0) {
+            <div class="pattern-section positive">
+              <h5>
+                <i class="pi pi-thumbs-up pattern-icon"></i>
+                Positive Correlations
+              </h5>
+              <ul>
+                @for (correlation of wellness.observedPatterns.positiveCorrelations; track $index) {
+                  <li>{{ correlation }}</li>
+                }
+              </ul>
+            </div>
+          }
+          @if (wellness.observedPatterns.concerningPatterns.length > 0) {
+            <div class="pattern-section concerning">
+              <h5>
+                <i class="pi pi-info-circle pattern-icon"></i>
+                Patterns to Discuss
+              </h5>
+              <ul>
+                @for (pattern of wellness.observedPatterns.concerningPatterns; track $index) {
+                  <li>{{ pattern }}</li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </app-card-shell>
+    </div>
+  }
+</div>

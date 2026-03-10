@@ -24,7 +24,6 @@ import { DialogHeaderComponent } from "../../shared/components/dialog-header/dia
 
 import { InputText } from "primeng/inputtext";
 
-import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
@@ -34,15 +33,16 @@ import { toLogContext } from "../../core/services/logger.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { AnnouncementsBannerComponent } from "../../shared/components/announcements-banner/announcements-banner.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { fadeInOut } from "../../shared/animations/app.animations";
 import { getInitials } from "../../shared/utils/format.utils";
+import { CommunityComposeSectionComponent } from "./components/community-compose-section.component";
+import { CommunityHeaderComponent } from "./components/community-header.component";
+import { CommunitySidebarComponent } from "./components/community-sidebar.component";
 
 interface Comment {
   id: string;
@@ -153,20 +153,20 @@ type PostMedia = Post["media"];
     RouterModule,
     ScrollingModule,
     AppDialogComponent,
-    Textarea,
     Avatar,
     InputText,
     Tooltip,
     MainLayoutComponent,
-    AlertComponent,
     AnnouncementsBannerComponent,
     ButtonComponent,
-    CardShellComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
     EmptyStateComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
+    CommunityComposeSectionComponent,
+    CommunityHeaderComponent,
+    CommunitySidebarComponent,
   ],
   animations: [fadeInOut],
   templateUrl: "./community.component.html",

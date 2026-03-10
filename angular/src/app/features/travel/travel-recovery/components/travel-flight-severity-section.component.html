@@ -1,0 +1,55 @@
+<div class="severity-section">
+  <app-card-shell
+    [class]="'severity-card severity-' + jetLagSeverity().level"
+    [flush]="true"
+  >
+    <div class="severity-content">
+      <div class="severity-gauge">
+        <div class="gauge-circle">
+          <span class="gauge-value">{{ jetLagSeverity().score }}</span>
+          <span class="gauge-label">Jet Lag Score</span>
+        </div>
+      </div>
+      <div class="severity-details">
+        <h2>{{ currentPlan()?.tripName }}</h2>
+        <div class="detail-chips">
+          <p-chip [label]="Math.abs(currentPlan()?.timezonesEast || 0) + ' Time Zones'" icon="pi pi-clock"></p-chip>
+          <p-chip
+            [label]="(currentPlan()?.travelDirection || 'none') | titlecase"
+            [icon]="currentPlan()?.travelDirection === 'eastward' ? 'pi pi-arrow-right' : 'pi pi-arrow-left'"
+          ></p-chip>
+          <app-status-tag [value]="jetLagSeverity().level | titlecase" [severity]="severityColor()" size="sm" />
+        </div>
+        <div class="recovery-estimate">
+          <i class="pi pi-calendar-plus"></i>
+          <span>
+            Estimated Recovery:
+            <strong>{{ jetLagSeverity().estimatedRecoveryDays }} days</strong>
+          </span>
+        </div>
+        @if (daysUntilCompetition() !== null) {
+          <div class="competition-countdown" [class.warning]="!isCompetitionReady()">
+            <i class="pi pi-flag"></i>
+            <span>
+              Competition in <strong>{{ daysUntilCompetition() }} days</strong>
+              @if (!isCompetitionReady()) {
+                <span class="warning-text"> - Arrive earlier!</span>
+              }
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (jetLagSeverity().symptoms.length > 0) {
+      <div class="symptoms-section">
+        <h4>Expected Symptoms</h4>
+        <div class="symptoms-list">
+          @for (symptom of jetLagSeverity().symptoms; track symptom) {
+            <span class="symptom-chip">{{ symptom }}</span>
+          }
+        </div>
+      </div>
+    }
+  </app-card-shell>
+</div>

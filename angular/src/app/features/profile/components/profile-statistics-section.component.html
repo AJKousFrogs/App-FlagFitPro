@@ -1,0 +1,13 @@
+<app-card-shell title="Performance Statistics" headerIcon="pi-chart-bar">
+  <div class="performance-stats-grid">
+    @for (stat of performanceStats(); track trackByPerformanceStatLabel($index, stat)) {
+      <div class="stat-block">
+        <div class="stat-block__content">
+          <span class="stat-block__value">{{ stat.value }}</span>
+          <span class="stat-block__label">{{ stat.label }}</span>
+        </div>
+        <app-status-tag [value]="stat.trend" [severity]="stat.trendType" size="sm" />
+      </div>
+    }
+  </div>
+</app-card-shell>

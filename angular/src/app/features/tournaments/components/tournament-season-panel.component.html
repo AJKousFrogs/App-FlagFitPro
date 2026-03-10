@@ -1,0 +1,183 @@
+@if (tournaments().length === 0) {
+  <app-empty-state
+    icon="pi-calendar-times"
+    [heading]="'No ' + seasonYear() + ' Tournaments Yet'"
+    [description]="
+      isPlayerView()
+        ? 'No personal game days are scheduled for this season yet.'
+        : 'No tournaments are scheduled for this season yet.'
+    "
+    [actionLabel]="isAuthenticated() ? (isPlayerView() ? 'Add Game Day' : 'Add Tournament') : null"
+    [actionHandler]="isAuthenticated() ? addTournamentHandler : null"
+  />
+} @else {
+  <div class="tournaments-grid">
+    @for (tournament of tournaments(); track tournament.id) {
+      <app-card-shell
+        class="tournament-card"
+        [class.personal-tournament]="isPersonalTournament(tournament)"
+        [attr.data-id]="tournament.id"
+        [tone]="isPersonalTournament(tournament) ? 'warning' : 'default'"
+      >
+        <div class="tournament-header">
+          <div class="header-row">
+            <div class="tournament-title-group">
+              <h3 class="tournament-title">
+                {{ tournament.flag || "🏳️" }} {{ tournament.name }}
+              </h3>
+              @if (tournament.short_name && tournament.short_name !== tournament.name) {
+                <p class="tournament-subtitle">{{ tournament.short_name }}</p>
+              }
+            </div>
+
+            <div class="card-actions">
+              @if (isAuthenticated()) {
+                <app-icon-button
+                  icon="pi-pencil"
+                  variant="text"
+                  size="sm"
+                  ariaLabel="Edit tournament"
+                  tooltip="Edit"
+                  (clicked)="edit.emit(tournament)"
+                />
+                <app-icon-button
+                  icon="pi-trash"
+                  variant="text"
+                  size="sm"
+                  ariaLabel="Delete tournament"
+                  tooltip="Delete"
+                  (clicked)="delete.emit(tournament)"
+                />
+              }
+            </div>
+          </div>
+
+          <div class="tags-row">
+            <app-status-tag
+              [value]="tournamentService.getStatusLabel(resolveStatus(tournament))"
+              [severity]="tournamentService.getStatusSeverity(resolveStatus(tournament))"
+            />
+            @if (isPersonalTournament(tournament)) {
+              <app-status-tag value="Personal" severity="warning" />
+            }
+            @if (tournament.tournament_type) {
+              <app-status-tag
+                [value]="formatTournamentType(tournament.tournament_type)"
+                severity="secondary"
+              />
+            }
+          </div>
+        </div>
+
+        <div class="tournament-body">
+          <div class="tournament-info">
+            <div class="info-item">
+              <i class="pi pi-calendar info-icon" aria-hidden="true"></i>
+              <div class="info-copy">
+                <span class="info-label">Dates</span>
+                <span class="info-value">
+                  {{
+                    tournamentService.formatDateRange(
+                      tournament.start_date,
+                      tournament.end_date
+                    )
+                  }}
+                </span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="pi pi-map-marker info-icon" aria-hidden="true"></i>
+              <div class="info-copy">
+                <span class="info-label">Location</span>
+                <span class="info-value">
+                  {{ tournament.location || "TBD" }}
+                  @if (tournament.country) {
+                    , {{ tournament.country }}
+                  }
+                </span>
+              </div>
+            </div>
+
+            @if (showExtendedDetails() && tournament.venue) {
+              <div class="info-item">
+                <i class="pi pi-building info-icon" aria-hidden="true"></i>
+                <div class="info-copy">
+                  <span class="info-label">Venue</span>
+                  <span class="info-value">{{ tournament.venue }}</span>
+                </div>
+              </div>
+            }
+
+            @if (showExtendedDetails() && tournament.expected_teams) {
+              <div class="info-item">
+                <i class="pi pi-users info-icon" aria-hidden="true"></i>
+                <div class="info-copy">
+                  <span class="info-label">Expected teams</span>
+                  <span class="info-value">{{ tournament.expected_teams }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (shouldShowCountdown(tournament)) {
+            <div class="tournament-countdown">
+              <span class="countdown-value">{{ tournament.daysUntil }}</span>
+              <span class="countdown-label">
+                {{ tournament.daysUntil === 1 ? "day to go" : "days to go" }}
+              </span>
+            </div>
+          }
+
+          @if (tournament.notes) {
+            <p class="tournament-notes">{{ tournament.notes }}</p>
+          }
+        </div>
+
+        <div footer class="tournament-actions">
+          @if (websiteUrl(tournament); as websiteUrl) {
+            <app-button
+              variant="secondary"
+              size="sm"
+              iconLeft="pi-globe"
+              (clicked)="openWebsite.emit(websiteUrl)"
+            >
+              Website
+            </app-button>
+          }
+
+          @if (isPlayerView()) {
+            <app-button
+              variant="secondary"
+              size="sm"
+              iconLeft="pi-user-edit"
+              (clicked)="availability.emit(tournament)"
+            >
+              My Availability
+            </app-button>
+          }
+
+          @if (canViewTeamAvailability() && !isPersonalTournament(tournament)) {
+            <app-button
+              variant="secondary"
+              size="sm"
+              iconLeft="pi-users"
+              (clicked)="teamAvailability.emit(tournament)"
+            >
+              Team Availability
+            </app-button>
+          }
+
+          <app-button
+            variant="tertiary"
+            size="sm"
+            iconLeft="pi-arrow-right"
+            (clicked)="viewDetails.emit(tournament)"
+          >
+            Details
+          </app-button>
+        </div>
+      </app-card-shell>
+    }
+  </div>
+}

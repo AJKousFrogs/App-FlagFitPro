@@ -1,4 +1,4 @@
-import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -12,13 +12,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterModule } from "@angular/router";
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
-import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
-import { TabPanel, Tabs } from "primeng/tabs";
-import { Tooltip } from "primeng/tooltip";
 import type { Chart } from "chart.js";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   COLORS,
   TIMEOUTS,
@@ -45,13 +39,10 @@ import {
   type TrainingStatsData,
 } from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -68,39 +59,15 @@ import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { formatDate } from "../../shared/utils/date.utils";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
-import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { DataState } from "../../core/services/data-source.service";
-
-interface Metric {
-  icon: string;
-  value: string;
-  label: string;
-  trend: string;
-  trendType: "positive" | "negative" | "neutral";
-}
-
-interface DevelopmentGoal {
-  id: string;
-  metricType: "speed" | "agility" | "strength" | "power" | "skill";
-  metricName: string;
-  targetValue: number;
-  targetUnit: string;
-  currentValue: number;
-  startValue: number;
-  deadline: Date;
-  coachNote: string;
-  status: "active" | "achieved" | "missed";
-}
-
-interface AnalyticsAcwrData {
-  acwr: number | null;
-  acuteLoad: number;
-  chronicLoad: number;
-  acuteDays: number;
-  chronicDays: number;
-  riskZone: string;
-  message: string;
-}
+import {
+  AnalyticsAcwrData,
+  DevelopmentGoal,
+  Metric,
+} from "./analytics.models";
+import { AnalyticsChartsSectionComponent } from "./components/analytics-charts-section.component";
+import { AnalyticsOverviewSectionComponent } from "./components/analytics-overview-section.component";
+import { AnalyticsPlayerStatsSectionComponent } from "./components/analytics-player-stats-section.component";
 
 type AnalyticsChartType =
   | "performance"
@@ -114,30 +81,20 @@ type AnalyticsChartType =
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,
-    DecimalPipe,
-    TitleCasePipe,
     RouterModule,
-    LazyChartComponent,
-    ProgressBar,
-    TableModule,
-    StatusTagComponent,
-    Tooltip,
-    Tabs,
-    TabPanel,
-    Select,
     MainLayoutComponent,
     PageHeaderComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
     ButtonComponent,
-    CardShellComponent,
-    IconButtonComponent,
     AppDialogComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
     AlertComponent,
     DataSourceBannerComponent,
-    EmptyStateComponent,
+    AnalyticsChartsSectionComponent,
+    AnalyticsOverviewSectionComponent,
+    AnalyticsPlayerStatsSectionComponent,
   ],
   templateUrl: "./analytics.component.html",
 

@@ -1,0 +1,88 @@
+<app-card-shell title="Leaderboard" headerIcon="pi-trophy" [hasFooter]="true">
+  <div class="leaderboard-list">
+    @for (entry of leaderboard(); track entry.rank) {
+      <div class="leaderboard-item" [class.top-rank]="entry.rank <= 3">
+        <div class="rank" [class]="'rank-' + entry.rank">
+          @if (entry.rank === 1) {
+            <i class="pi pi-crown"></i>
+          } @else {
+            {{ entry.rank }}
+          }
+        </div>
+        <p-avatar
+          [label]="entry.initials"
+          shape="circle"
+          [class]="'leaderboard-avatar ' + getAvatarColorClass(entry.initials)"
+        />
+        <div class="player-info">
+          <div class="player-name">{{ entry.name }}</div>
+          <div class="player-score">{{ entry.score | number }} pts</div>
+        </div>
+        @if (entry.rank <= 3) {
+          <div class="rank-badge" [class]="'badge-' + entry.rank">
+            {{ entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : "🥉" }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+  <ng-container footer>
+    <app-button variant="text" block>View Full Leaderboard</app-button>
+  </ng-container>
+</app-card-shell>
+
+<app-card-shell title="Trending Topics" headerIcon="pi-bolt">
+  <div class="topics-list">
+    @for (topic of trendingTopics(); track topic.name) {
+      <div
+        class="topic-item"
+        [class.active]="selectedTopic() === topic.name"
+        (click)="selectTopic.emit(topic.name)"
+        pTooltip="View posts about #{{ topic.name }}"
+        tooltipPosition="left"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Filter posts by topic ' + topic.name"
+        (keydown.enter)="selectTopic.emit(topic.name)"
+        (keydown.space)="selectTopic.emit(topic.name); $event.preventDefault()"
+      >
+        <div class="topic-info">
+          <span class="topic-hashtag">#{{ topic.name }}</span>
+          <span class="topic-count">{{ topic.count }} posts</span>
+        </div>
+        <div class="topic-trend">
+          <i class="pi pi-arrow-up"></i>
+        </div>
+      </div>
+    }
+    @if (selectedTopic()) {
+      <button type="button" class="clear-filter-btn" (click)="clearTopicFilter.emit()">
+        <i class="pi pi-times"></i>
+        Clear filter
+      </button>
+    }
+  </div>
+</app-card-shell>
+
+<app-card-shell title="Your Activity" headerIcon="pi-chart-line">
+  <div class="quick-stats">
+    <div class="stat-block">
+      <div class="stat-block__content">
+        <span class="stat-block__value">{{ userStats().posts }}</span>
+        <span class="stat-block__label">Posts</span>
+      </div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-block__content">
+        <span class="stat-block__value">{{ userStats().likes }}</span>
+        <span class="stat-block__label">Likes</span>
+      </div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-block__content">
+        <span class="stat-block__value">{{ userStats().comments }}</span>
+        <span class="stat-block__label">Comments</span>
+      </div>
+    </div>
+  </div>
+</app-card-shell>

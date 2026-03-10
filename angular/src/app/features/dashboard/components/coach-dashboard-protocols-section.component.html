@@ -1,0 +1,105 @@
+@if (
+  teamContinuity().gameDayRecovery.length > 0 ||
+  teamContinuity().loadCaps.length > 0 ||
+  teamContinuity().travelRecovery.length > 0
+) {
+  <section class="active-protocols-section">
+    <h3 class="section-title">
+      <i class="pi pi-calendar-clock" aria-hidden="true"></i>
+      Active Protocols
+    </h3>
+
+    @if (teamContinuity().gameDayRecovery.length > 0) {
+      <app-card-shell
+        class="protocol-group"
+        density="compact"
+        title="Game Day Recovery"
+        [subtitle]="teamContinuity().gameDayRecovery.length + ' players'"
+      >
+        <div class="protocol-players">
+          @for (player of teamContinuity().gameDayRecovery; track player.playerId) {
+            <div
+              class="protocol-player-item"
+              (click)="viewPlayer.emit(player.playerId)"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'View player ' + player.playerName"
+              (keydown.enter)="viewPlayer.emit(player.playerId)"
+              (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
+            >
+              <span class="player-name">{{ player.playerName }}</span>
+              <app-status-tag
+                class="protocol-tag"
+                [value]="'Day ' + player.dayNumber"
+                severity="info"
+                size="sm"
+              />
+            </div>
+          }
+        </div>
+      </app-card-shell>
+    }
+
+    @if (teamContinuity().loadCaps.length > 0) {
+      <app-card-shell
+        class="protocol-group"
+        density="compact"
+        title="ACWR Load Caps"
+        [subtitle]="teamContinuity().loadCaps.length + ' players'"
+      >
+        <div class="protocol-players">
+          @for (player of teamContinuity().loadCaps; track player.playerId) {
+            <div
+              class="protocol-player-item"
+              (click)="viewPlayer.emit(player.playerId)"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'View player ' + player.playerName"
+              (keydown.enter)="viewPlayer.emit(player.playerId)"
+              (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
+            >
+              <span class="player-name">{{ player.playerName }}</span>
+              <app-status-tag
+                class="protocol-tag"
+                [value]="player.sessionsRemaining + ' sessions remaining'"
+                severity="warning"
+                size="sm"
+              />
+            </div>
+          }
+        </div>
+      </app-card-shell>
+    }
+
+    @if (teamContinuity().travelRecovery.length > 0) {
+      <app-card-shell
+        class="protocol-group"
+        density="compact"
+        title="Travel Recovery"
+        [subtitle]="teamContinuity().travelRecovery.length + ' players'"
+      >
+        <div class="protocol-players">
+          @for (player of teamContinuity().travelRecovery; track player.playerId) {
+            <div
+              class="protocol-player-item"
+              (click)="viewPlayer.emit(player.playerId)"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'View player ' + player.playerName"
+              (keydown.enter)="viewPlayer.emit(player.playerId)"
+              (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
+            >
+              <span class="player-name">{{ player.playerName }}</span>
+              <app-status-tag
+                class="protocol-tag"
+                [value]="player.daysRemaining + ' day(s) remaining'"
+                severity="info"
+                size="sm"
+              />
+            </div>
+          }
+        </div>
+      </app-card-shell>
+    }
+  </section>
+}

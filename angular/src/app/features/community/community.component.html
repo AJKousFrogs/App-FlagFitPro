@@ -134,29 +134,7 @@
       <div
         class="community-page elite-phase2-shell ui-page-shell ui-page-shell--wide ui-page-stack"
       >
-        <!-- Modern Header -->
-        <div class="community-header">
-          <div class="header-content">
-            <div class="header-icon">
-              <i class="pi pi-users"></i>
-            </div>
-            <div class="header-text">
-              <h1>Community Hub</h1>
-              <p>Connect, share, and grow with fellow flag football athletes</p>
-            </div>
-          </div>
-          <div class="header-actions">
-            <app-button
-              variant="outlined"
-              iconLeft="pi-comments"
-              routerLink="/team-chat"
-              >Team Chat</app-button
-            >
-            <app-button iconLeft="pi-plus" (clicked)="scrollToCreatePost()"
-              >Create Post</app-button
-            >
-          </div>
-        </div>
+        <app-community-header (createPost)="scrollToCreatePost()" />
 
         <!-- Announcements Banner -->
         <app-announcements-banner
@@ -167,99 +145,19 @@
         <div class="community-grid">
           <!-- Feed Container -->
           <div class="feed-container">
-            <!-- Create Post Card - Premium Design -->
-            <div class="create-post-card" #createPostCard>
-              <div class="create-post-header">
-                <p-avatar
-                  [label]="currentUserInitials()"
-                  shape="circle"
-                  class="user-avatar"
-                ></p-avatar>
-                <div class="post-prompt">What's on your mind?</div>
-              </div>
-
-              <div class="create-post-body">
-                <textarea
-                  pInputTextarea
-                  [value]="newPostContent"
-                  (input)="setNewPostContent(getInputValue($event))"
-                  placeholder="Share your training progress, game highlights, or tips with the community..."
-                  rows="3"
-                  [autoResize]="true"
-                  class="post-textarea"
-                  aria-label="Create post content"
-                ></textarea>
-              </div>
-
-              <div class="create-post-footer">
-                <div class="media-options">
-                  <button
-                  type="button"
-                    class="media-btn"
-                    (click)="attachPhoto()"
-                    pTooltip="Add Photo"
-                  >
-                    <i class="pi pi-image"></i>
-                    <span>Photo</span>
-                  </button>
-                  <button
-                  type="button"
-                    class="media-btn"
-                    (click)="attachVideo()"
-                    pTooltip="Add Video"
-                  >
-                    <i class="pi pi-video"></i>
-                    <span>Video</span>
-                  </button>
-                  <button
-                  type="button"
-                    class="media-btn"
-                    (click)="createPoll()"
-                    pTooltip="Create Poll"
-                  >
-                    <i class="pi pi-chart-bar"></i>
-                    <span>Poll</span>
-                  </button>
-                  <button
-                  type="button"
-                    class="media-btn"
-                    (click)="addLocation()"
-                    pTooltip="Add Location"
-                  >
-                    <i class="pi pi-map-marker"></i>
-                    <span>Location</span>
-                  </button>
-                </div>
-                <app-button
-                  iconLeft="pi-send"
-                  [disabled]="!newPostContent.trim()"
-                  (clicked)="createPost()"
-                  >Post</app-button
-                >
-              </div>
-            </div>
-
-            <!-- Active Filter Banner -->
-            @if (selectedTopic()) {
-              <app-alert
-                variant="info"
-                density="compact"
-                title="Topic Filter"
-                [message]="'Showing posts about #' + selectedTopic()"
-                styleClass="filter-banner-alert"
-              >
-                <div class="filter-banner-actions">
-                  <app-button
-                    variant="text"
-                    size="sm"
-                    iconLeft="pi-times"
-                    (clicked)="clearTopicFilter()"
-                  >
-                    Clear
-                  </app-button>
-                </div>
-              </app-alert>
-            }
+            <app-community-compose-section
+              #createPostCard
+              [currentUserInitials]="currentUserInitials()"
+              [newPostContent]="newPostContent"
+              [selectedTopic]="selectedTopic()"
+              (updateContent)="setNewPostContent($event)"
+              (attachPhoto)="attachPhoto()"
+              (attachVideo)="attachVideo()"
+              (createPoll)="createPoll()"
+              (addLocation)="addLocation()"
+              (submitPost)="createPost()"
+              (clearTopicFilter)="clearTopicFilter()"
+            ></app-community-compose-section>
 
             <!-- Posts Feed -->
             <div class="posts-feed" #postsFeed>
@@ -588,126 +486,15 @@
             </div>
           </div>
 
-          <!-- Sidebar -->
-          <div class="sidebar">
-            <!-- Leaderboard Card -->
-            <app-card-shell
-              title="Leaderboard"
-              headerIcon="pi-trophy"
-              [hasFooter]="true"
-            >
-              <div class="leaderboard-list">
-                @for (entry of leaderboard(); track entry.rank) {
-                  <div
-                    class="leaderboard-item"
-                    [class.top-rank]="entry.rank <= 3"
-                  >
-                    <div class="rank" [class]="'rank-' + entry.rank">
-                      @if (entry.rank === 1) {
-                        <i class="pi pi-crown"></i>
-                      } @else {
-                        {{ entry.rank }}
-                      }
-                    </div>
-                    <p-avatar
-                      [label]="entry.initials"
-                      shape="circle"
-                      [class]="
-                        'leaderboard-avatar ' +
-                        getAvatarColorClass(entry.initials)
-                      "
-                    ></p-avatar>
-                    <div class="player-info">
-                      <div class="player-name">{{ entry.name }}</div>
-                      <div class="player-score">
-                        {{ entry.score | number }} pts
-                      </div>
-                    </div>
-                    @if (entry.rank <= 3) {
-                      <div class="rank-badge" [class]="'badge-' + entry.rank">
-                        {{
-                          entry.rank === 1
-                            ? "🥇"
-                            : entry.rank === 2
-                              ? "🥈"
-                              : "🥉"
-                        }}
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-              <ng-container footer>
-                <app-button variant="text" block
-                  >View Full Leaderboard</app-button
-                >
-              </ng-container>
-            </app-card-shell>
-
-            <!-- Trending Topics Card -->
-            <app-card-shell title="Trending Topics" headerIcon="pi-bolt">
-              <div class="topics-list">
-                @for (topic of trendingTopics(); track topic.name) {
-                  <div
-                    class="topic-item"
-                    [class.active]="selectedTopic() === topic.name"
-                    (click)="selectTopic(topic.name)"
-                    pTooltip="View posts about #{{ topic.name }}"
-                    tooltipPosition="left"
-                    role="button"
-                    tabindex="0"
-                    [attr.aria-label]="'Filter posts by topic ' + topic.name"
-                    (keydown.enter)="selectTopic(topic.name)"
-                    (keydown.space)="selectTopic(topic.name); $event.preventDefault()"
-                  >
-                    <div class="topic-info">
-                      <span class="topic-hashtag">#{{ topic.name }}</span>
-                      <span class="topic-count">{{ topic.count }} posts</span>
-                    </div>
-                    <div class="topic-trend">
-                      <i class="pi pi-arrow-up"></i>
-                    </div>
-                  </div>
-                }
-                @if (selectedTopic()) {
-                  <button type="button" class="clear-filter-btn" (click)="clearTopicFilter()">
-                    <i class="pi pi-times"></i>
-                    Clear filter
-                  </button>
-                }
-              </div>
-            </app-card-shell>
-
-            <!-- Quick Stats Card -->
-            <app-card-shell title="Your Activity" headerIcon="pi-chart-line">
-              <div class="quick-stats">
-                <div class="stat-block">
-                  <div class="stat-block__content">
-                    <span class="stat-block__value">{{
-                      userStats().posts
-                    }}</span>
-                    <span class="stat-block__label">Posts</span>
-                  </div>
-                </div>
-                <div class="stat-block">
-                  <div class="stat-block__content">
-                    <span class="stat-block__value">{{
-                      userStats().likes
-                    }}</span>
-                    <span class="stat-block__label">Likes</span>
-                  </div>
-                </div>
-                <div class="stat-block">
-                  <div class="stat-block__content">
-                    <span class="stat-block__value">{{
-                      userStats().comments
-                    }}</span>
-                    <span class="stat-block__label">Comments</span>
-                  </div>
-                </div>
-              </div>
-            </app-card-shell>
-          </div>
+          <app-community-sidebar
+            class="sidebar"
+            [leaderboard]="leaderboard()"
+            [trendingTopics]="trendingTopics()"
+            [selectedTopic]="selectedTopic()"
+            [userStats]="userStats()"
+            (selectTopic)="selectTopic($event)"
+            (clearTopicFilter)="clearTopicFilter()"
+          />
         </div>
       </div>
       }

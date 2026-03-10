@@ -1,0 +1,19 @@
+<div class="community-header">
+  <div class="header-content">
+    <div class="header-icon">
+      <i class="pi pi-users"></i>
+    </div>
+    <div class="header-text">
+      <h1>Community Hub</h1>
+      <p>Connect, share, and grow with fellow flag football athletes</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <app-button variant="outlined" iconLeft="pi-comments" routerLink="/team-chat">
+      Team Chat
+    </app-button>
+    <app-button iconLeft="pi-plus" (clicked)="createPost.emit()">
+      Create Post
+    </app-button>
+  </div>
+</div>

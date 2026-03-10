@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Card } from "primeng/card";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { formatNumber, formatStat } from "../../utils/format.utils";
+import { CardShellComponent } from "../card-shell/card-shell.component";
 
 export interface StatItem {
   label: string;
@@ -28,11 +28,11 @@ export interface StatItem {
 @Component({
   selector: "app-stats-grid",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Card, StatusTagComponent],
+  imports: [CommonModule, CardShellComponent, StatusTagComponent],
   template: `
     <section class="stats-overview" aria-label="Statistics">
       @for (stat of stats(); track trackByLabel($index, stat)) {
-        <p-card class="stat-card">
+        <app-card-shell class="stat-card" [flush]="true">
           <div class="stat-card-content">
             @if (stat.icon) {
               <div [class]="'stat-icon ' + getIconClass(stat.iconType)">
@@ -51,7 +51,7 @@ export interface StatItem {
               />
             }
           </div>
-        </p-card>
+        </app-card-shell>
       }
     </section>
   `,

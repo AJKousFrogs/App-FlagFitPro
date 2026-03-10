@@ -13,6 +13,7 @@
     "start:ssr": "ng serve-ssr",
     "build": "ng build --progress=false",
     "build:analyze": "ng build && node scripts/check-bundle-size.js",
+    "serve:dist": "node scripts/serve-dist.mjs",
     "build:ssr": "ng build && ng run flagfit-pro:server",
     "build:prerender": "ng build && ng run flagfit-pro:prerender",
     "watch": "ng build --watch --configuration development",
@@ -51,6 +52,7 @@
     "serve:ssr:flagfit-pro": "node dist/flagfit-pro/server/server.mjs",
     "type-check": "tsc --noEmit",
     "audit:a11y": "npx tsx src/scripts/accessibility-audit.ts",
+    "audit:a11y:ci": "BASE_URL=${BASE_URL:-http://127.0.0.1:4200} npm run audit:a11y",
     "audit:primeng-bindings": "node scripts/audit-primeng-bindings.js"
   },
   "private": true,

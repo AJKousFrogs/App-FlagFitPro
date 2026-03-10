@@ -1,0 +1,156 @@
+<app-card-shell class="today-card" title="Today's Protocol" headerIcon="pi-sun">
+  <div header-actions class="header-right">
+    <app-status-tag
+      [value]="protocol().phase | titlecase"
+      [severity]="phaseSeverity()"
+      size="sm"
+    />
+    <span class="day-badge">Day {{ protocol().day }}</span>
+  </div>
+
+  <div class="protocol-grid">
+    <div class="protocol-section">
+      <h4><i class="pi pi-moon"></i> Sleep Window</h4>
+      <div class="sleep-times">
+        <div class="time-block">
+          <span class="time-label">Bedtime</span>
+          <span class="time-value">{{ protocol().sleepWindow.bedTime }}</span>
+        </div>
+        <i class="pi pi-arrow-right"></i>
+        <div class="time-block">
+          <span class="time-label">Wake Up</span>
+          <span class="time-value">{{ protocol().sleepWindow.wakeTime }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="protocol-section">
+      <h4><i class="pi pi-sun"></i> Light Exposure</h4>
+      <div class="light-windows">
+        @for (light of protocol().lightExposure; track light.startTime) {
+          <div class="light-item" [class]="light.type">
+            <span class="light-icon">
+              @if (light.type === "seek") {
+                ☀️
+              } @else {
+                🕶️
+              }
+            </span>
+            <div class="light-details">
+              <span class="light-action">
+                {{ light.type === "seek" ? "Seek" : "Avoid" }}
+                {{ light.intensity }} light
+              </span>
+              <span class="light-time"
+                >{{ light.startTime }} - {{ light.endTime }}</span
+              >
+              <span class="light-reason">{{ light.reason }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="protocol-section">
+      <h4><i class="pi pi-bolt"></i> Training</h4>
+      <div class="training-info">
+        <app-status-tag
+          [value]="
+            'Intensity: ' +
+            (protocol().trainingGuidelines.allowedIntensity | titlecase)
+          "
+          [severity]="
+            getIntensityColor(protocol().trainingGuidelines.allowedIntensity)
+          "
+          size="sm"
+        />
+        <span class="max-duration"
+          >Max {{ protocol().trainingGuidelines.maxDuration }} min</span
+        >
+      </div>
+      <div class="activity-lists">
+        <div class="activity-list recommended">
+          <span class="list-label">✅ Recommended</span>
+          <ul>
+            @for (
+              activity of protocol().trainingGuidelines.recommendedActivities;
+              track activity
+            ) {
+              <li>{{ activity }}</li>
+            }
+          </ul>
+        </div>
+        @if (protocol().trainingGuidelines.avoidActivities.length > 0) {
+          <div class="activity-list avoid">
+            <span class="list-label">❌ Avoid</span>
+            <ul>
+              @for (
+                activity of protocol().trainingGuidelines.avoidActivities;
+                track activity
+              ) {
+                <li>{{ activity }}</li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="protocol-section">
+      <h4><i class="pi pi-tint"></i> Hydration Target</h4>
+      <div class="hydration-target">
+        <span class="hydration-value">{{
+          protocol().hydrationTarget / 1000 | number: "1.1-1"
+        }}L</span>
+        <span class="hydration-note"
+          >Stay well hydrated throughout the day</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="recommendations-section">
+    <h4>Key Actions</h4>
+    <div class="recommendations-list">
+      @for (rec of protocol().recommendations; track rec.action) {
+        <div class="recommendation-item" [class]="'importance-' + rec.importance">
+          <span class="rec-time">{{ rec.time }}</span>
+          <span class="rec-action">{{ rec.action }}</span>
+          <app-status-tag
+            [value]="rec.importance"
+            [severity]="getImportanceColor(rec.importance)"
+            size="sm"
+          />
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (protocol().supplements.length > 0) {
+    <div class="supplements-section">
+      <h4><i class="pi pi-heart"></i> Supplements</h4>
+      <div class="supplements-list">
+        @for (supp of protocol().supplements; track supp.name) {
+          <div class="supplement-item">
+            <div class="supp-header">
+              <span class="supp-name">{{ supp.name }}</span>
+              <span class="supp-dosage">{{ supp.dosage }}</span>
+            </div>
+            <div class="supp-details">
+              <span class="supp-timing"
+                ><i class="pi pi-clock"></i> {{ supp.timing }}</span
+              >
+              <span class="supp-purpose">{{ supp.purpose }}</span>
+            </div>
+            @if (supp.caution) {
+              <div class="supp-caution">
+                <i class="pi pi-exclamation-triangle"></i>
+                {{ supp.caution }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</app-card-shell>

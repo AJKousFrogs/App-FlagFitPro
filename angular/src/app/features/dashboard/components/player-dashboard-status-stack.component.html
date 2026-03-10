@@ -1,0 +1,70 @@
+@if (announcement()?.message && !announcementDismissed()) {
+  <section class="announcement-section">
+    <div class="announcement-banner">
+      <div class="announcement-content">
+        <div class="announcement-text">
+          <i
+            [class]="
+              announcement()?.priority === 'important'
+                ? 'pi pi-exclamation-triangle'
+                : 'pi pi-megaphone'
+            "
+            class="announcement-icon"
+          ></i>
+          <span class="announcement-message">{{ announcement()?.message }}</span>
+        </div>
+        <span class="announcement-meta">
+          — {{ announcement()?.coachName }} · {{ announcementTimeAgo() }}
+        </span>
+      </div>
+      <app-close-button
+        class="announcement-close-btn"
+        tone="inverse"
+        ariaLabel="Dismiss announcement"
+        (clicked)="dismissAnnouncement.emit()"
+      />
+    </div>
+  </section>
+}
+
+@if (overrideItems().length > 0) {
+  <section class="override-notifications-section">
+    @for (item of overrideItems(); track item.override.id) {
+      @if (item.meaning) {
+        <app-semantic-meaning-renderer
+          [meaning]="item.meaning"
+          [context]="{
+            container: 'card',
+            priority: 'medium',
+            dismissible: false,
+          }"
+        ></app-semantic-meaning-renderer>
+      }
+      <app-coach-override-notification
+        [override]="item.override"
+        [coachName]="item.coachName"
+        [playerId]="currentUserId()"
+      ></app-coach-override-notification>
+    }
+  </section>
+}
+
+@if (activeTransitions().length > 0) {
+  <section class="ownership-transitions-section">
+    @for (transition of activeTransitions(); track transition.id) {
+      <app-ownership-transition-badge
+        [transition]="transition"
+        [showDetails]="true"
+      ></app-ownership-transition-badge>
+    }
+  </section>
+}
+
+@if (missingWellnessStatus() && missingWellnessStatus()!.missing) {
+  <section class="missing-data-section">
+    <app-missing-data-explanation
+      [missingStatus]="missingWellnessStatus()!"
+      [showCoachLink]="true"
+    ></app-missing-data-explanation>
+  </section>
+}

@@ -24,9 +24,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -35,6 +33,8 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { PsychologyReportsListSectionComponent } from "./components/psychology-reports-list-section.component";
+import { PsychologyWellnessSectionComponent } from "./components/psychology-wellness-section.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §32
 interface MentalWellnessReport {
@@ -151,7 +151,6 @@ interface PreCompForm {
     CommonModule,
     FormsModule,
     RouterModule,
-    LazyChartComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -170,9 +169,10 @@ interface PreCompForm {
     PageHeaderComponent,
     AlertComponent,
     ButtonComponent,
-    IconButtonComponent,
     AppLoadingComponent,
     EmptyStateComponent,
+    PsychologyReportsListSectionComponent,
+    PsychologyWellnessSectionComponent,
   ],
   templateUrl: "./psychology-reports.component.html",
 

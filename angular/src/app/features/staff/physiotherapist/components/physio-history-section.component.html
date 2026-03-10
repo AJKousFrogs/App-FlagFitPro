@@ -1,0 +1,69 @@
+<div class="history-section">
+  <div class="section-header">
+    <h3>Injury History Analysis</h3>
+    <p-select
+      inputId="history-athlete-select"
+      [options]="athleteOptions()"
+      [ngModel]="selectedAthlete()"
+      (onChange)="athleteChange.emit($event.value ?? null)"
+      placeholder="Select athlete"
+      [attr.aria-label]="'Select athlete to view injury history'"
+    />
+  </div>
+
+  @if (selectedAthlete() && history(); as injuryHistory) {
+    <div class="history-content">
+      <div class="history-stats">
+        <div class="stat stat-block stat-block--compact">
+          <div class="stat-block__content">
+            <span class="stat-block__value">{{ injuryHistory.totalInjuries }}</span>
+            <span class="stat-block__label">Total Injuries</span>
+          </div>
+        </div>
+        <div class="stat stat-block stat-block--compact">
+          <div class="stat-block__content">
+            <span class="stat-block__value">{{ injuryHistory.daysSinceLastInjury }}</span>
+            <span class="stat-block__label">Days Since Last Injury</span>
+          </div>
+        </div>
+        <div class="stat stat-block stat-block--compact">
+          <div class="stat-block__content">
+            <span class="stat-block__value">{{ injuryHistory.recurrentInjuries.length }}</span>
+            <span class="stat-block__label">Recurrent Issues</span>
+          </div>
+        </div>
+      </div>
+
+      <app-card-shell title="Injuries by Type">
+        <div class="injury-types">
+          @for (type of injuryHistory.injuriesByType; track type.type) {
+            <div class="injury-type-row">
+              <span class="type-name">{{ type.type }}</span>
+              <span class="type-count">{{ type.count }}x</span>
+              <span class="type-recovery">Avg {{ type.avgRecoveryDays }} days recovery</span>
+            </div>
+          }
+        </div>
+      </app-card-shell>
+
+      @if (injuryHistory.recurrentInjuries.length > 0) {
+        <app-card-shell
+          title="Recurrent Injuries"
+          class="recurrent-card"
+          tone="warning"
+        >
+          <ul class="recurrent-list">
+            @for (injury of injuryHistory.recurrentInjuries; track $index) {
+              <li>{{ injury }}</li>
+            }
+          </ul>
+        </app-card-shell>
+      }
+    </div>
+  } @else {
+    <div class="select-prompt">
+      <i class="pi pi-user"></i>
+      <p>Select an athlete to view their injury history</p>
+    </div>
+  }
+</div>

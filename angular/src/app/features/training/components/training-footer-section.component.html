@@ -1,0 +1,35 @@
+@if (recentAchievements().length > 0) {
+  <app-card-shell title="Recent Achievements" headerIcon="pi-trophy">
+    <ng-container header-actions>
+      <app-button variant="text" size="sm" (clicked)="openAchievements.emit()">
+        View All
+      </app-button>
+    </ng-container>
+    <div class="achievements-scroll">
+      @for (achievement of recentAchievements(); track trackByAchievementTitle($index, achievement)) {
+        <div class="achievement-chip" [pTooltip]="achievement.description">
+          <span class="ach-icon">{{ achievement.icon }}</span>
+          <span class="ach-name">{{ achievement.title }}</span>
+        </div>
+      }
+    </div>
+  </app-card-shell>
+}
+
+<app-card-shell state="interactive" (cardClick)="openRoadmap.emit()">
+  <div class="la28-teaser-content">
+    <div class="teaser-content">
+      <span class="teaser-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
+      <div class="teaser-text">
+        <span class="teaser-title">Road to LA28</span>
+        <span class="teaser-subtitle">{{ daysUntilOlympics() }} days until Olympics</span>
+      </div>
+    </div>
+    <div class="teaser-progress">
+      <div class="progress-ring-mini">
+        <span>{{ overallProgress() }}%</span>
+      </div>
+    </div>
+    <i class="pi pi-chevron-right"></i>
+  </div>
+</app-card-shell>

@@ -1,0 +1,149 @@
+<div class="tendencies-section">
+  <div class="section-header">
+    <h3>Team Tendencies Analysis</h3>
+    <p-select
+      [options]="filterOptions()"
+      (onChange)="filterChange.emit($event.value)"
+      placeholder="Select opponent"
+    ></p-select>
+  </div>
+
+  @if (selectedOpponentId() && tendencies()) {
+    <div class="tendencies-content">
+      <app-card-shell title="Offensive Tendencies">
+        <div class="tendency-section">
+          <h5>Formation Frequency</h5>
+          <div class="formation-bars">
+            @for (formation of tendencies()!.offensive.formationFrequency; track formation.formation) {
+              <div class="formation-bar">
+                <span class="formation-name">{{ formation.formation }}</span>
+                <div class="bar-container">
+                  <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                  <div class="bar-fill" [style.width.%]="formation.percentage"></div>
+                </div>
+                <span class="percentage">{{ formation.percentage }}%</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="tendency-section">
+          <h5>Play Type Distribution</h5>
+          <div class="play-distribution">
+            <div class="play-type"><span class="type-name">Quick Pass</span><span class="type-value">{{ tendencies()!.offensive.playTypeDistribution.quickPass }}%</span></div>
+            <div class="play-type"><span class="type-name">Deep Pass</span><span class="type-value">{{ tendencies()!.offensive.playTypeDistribution.deepPass }}%</span></div>
+            <div class="play-type"><span class="type-name">QB Run</span><span class="type-value">{{ tendencies()!.offensive.playTypeDistribution.qbRun }}%</span></div>
+            <div class="play-type"><span class="type-name">Screen</span><span class="type-value">{{ tendencies()!.offensive.playTypeDistribution.screen }}%</span></div>
+          </div>
+        </div>
+
+        @if (tendencies()!.offensive.redZoneTendencies.length > 0) {
+          <div class="tendency-section">
+            <h5>Red Zone Tendencies</h5>
+            <ul class="tendency-list">
+              @for (tendency of tendencies()!.offensive.redZoneTendencies; track $index) {
+                <li>{{ tendency }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (tendencies()!.offensive.favoriteTargets.length > 0) {
+          <div class="tendency-section">
+            <h5>Favorite Targets</h5>
+            <div class="targets-list">
+              @for (target of tendencies()!.offensive.favoriteTargets; track target.player) {
+                <div class="target-item">
+                  <span class="target-name">{{ target.player }}</span>
+                  <span class="target-share">{{ target.targetShare }}% target share</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </app-card-shell>
+
+      <app-card-shell title="Defensive Tendencies">
+        <div class="tendency-section">
+          <h5>Coverage Frequency</h5>
+          <div class="formation-bars">
+            @for (coverage of tendencies()!.defensive.coverageFrequency; track coverage.coverage) {
+              <div class="formation-bar">
+                <span class="formation-name">{{ coverage.coverage }}</span>
+                <div class="bar-container">
+                  <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                  <div class="bar-fill defensive" [style.width.%]="coverage.percentage"></div>
+                </div>
+                <span class="percentage">{{ coverage.percentage }}%</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="tendency-section">
+          <h5>Blitz Rate</h5>
+          <div class="blitz-rate">
+            <span class="rate-value">{{ tendencies()!.defensive.blitzRate }}%</span>
+            <span class="rate-label">of plays</span>
+          </div>
+          @if (tendencies()!.defensive.blitzTendencies.length > 0) {
+            <ul class="tendency-list">
+              @for (tendency of tendencies()!.defensive.blitzTendencies; track $index) {
+                <li>{{ tendency }}</li>
+              }
+            </ul>
+          }
+        </div>
+
+        @if (tendencies()!.defensive.weaknesses.length > 0) {
+          <div class="tendency-section weaknesses">
+            <h5><i class="pi pi-exclamation-triangle"></i>Weaknesses to Exploit</h5>
+            <ul class="tendency-list">
+              @for (weakness of tendencies()!.defensive.weaknesses; track $index) {
+                <li>{{ weakness }}</li>
+              }
+            </ul>
+          </div>
+        }
+      </app-card-shell>
+
+      <app-card-shell title="Special Situations">
+        @if (tendencies()!.specialSituations.twoPointPlays.length > 0) {
+          <div class="tendency-section">
+            <h5>2-Point Conversion Plays</h5>
+            <ul class="tendency-list">
+              @for (play of tendencies()!.specialSituations.twoPointPlays; track $index) {
+                <li>{{ play }}</li>
+              }
+            </ul>
+          </div>
+        }
+        @if (tendencies()!.specialSituations.hurryUpOffense.length > 0) {
+          <div class="tendency-section">
+            <h5>Hurry-Up Offense</h5>
+            <ul class="tendency-list">
+              @for (tendency of tendencies()!.specialSituations.hurryUpOffense; track $index) {
+                <li>{{ tendency }}</li>
+              }
+            </ul>
+          </div>
+        }
+        @if (tendencies()!.specialSituations.endOfHalfStrategy.length > 0) {
+          <div class="tendency-section">
+            <h5>End of Half Strategy</h5>
+            <ul class="tendency-list">
+              @for (strategy of tendencies()!.specialSituations.endOfHalfStrategy; track $index) {
+                <li>{{ strategy }}</li>
+              }
+            </ul>
+          </div>
+        }
+      </app-card-shell>
+    </div>
+  } @else {
+    <div class="select-prompt">
+      <i class="pi pi-chart-bar"></i>
+      <p>Select an opponent to view their tendencies</p>
+    </div>
+  }
+</div>

@@ -1,0 +1,110 @@
+.play-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.play-diagram {
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--chart-min-height-sm);
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  &.placeholder {
+    flex-direction: column;
+    gap: var(--space-2);
+    color: var(--color-text-tertiary);
+    padding: var(--space-6);
+
+    i {
+      font-size: var(--ds-font-size-2xl);
+    }
+  }
+}
+
+.section {
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+
+    i {
+      color: var(--color-brand-primary);
+    }
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: var(--ds-line-height-normal);
+  }
+}
+
+.assignment-section {
+  background: var(--color-brand-primary-subtle);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border-left: var(--border-3) solid var(--color-brand-primary);
+
+  .assignment-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .detail-row {
+    display: flex;
+    gap: var(--space-2);
+
+    .label {
+      font-weight: var(--ds-font-weight-medium);
+      color: var(--color-text-secondary);
+      min-width: var(--input-min-width-sm);
+    }
+
+    .value {
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+.key-points-list,
+.mistakes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    color: var(--color-text-secondary);
+
+    i {
+      margin-top: var(--space-1);
+    }
+  }
+}
+
+.key-points-list li i {
+  color: var(--color-brand-primary);
+}
+
+.mistakes-list li i {
+  color: var(--color-status-error);
+}

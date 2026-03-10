@@ -1,0 +1,68 @@
+@if (errorState()) {
+  <section aria-labelledby="error-heading">
+    <app-banner
+      type="error"
+      [message]="errorState()!.message"
+      [primaryCta]="
+        errorState()!.cta
+          ? {
+              label: errorState()!.cta!.label,
+              action: errorState()!.cta!.action,
+            }
+          : null
+      "
+      (ctaClick)="ctaClick.emit($event)"
+    />
+  </section>
+}
+
+@if (blockingCoachAlertBanner(); as coachAlertBanner) {
+  <section class="coach-alert-gate">
+    <app-banner
+      type="alert"
+      [message]="coachAlertBanner.text"
+      [primaryCta]="blockingCoachAlertPrimaryCta()"
+      [secondaryCta]="blockingCoachAlertSecondaryCta()"
+      icon="pi-bell"
+      (ctaClick)="ctaClick.emit($event)"
+    />
+  </section>
+}
+
+@if (coachAttribution()) {
+  <section class="coach-attribution">
+    <app-card-shell class="attribution-card">
+      <div class="attribution-content">
+        <i class="pi pi-user-edit"></i>
+        <span>{{ coachAttribution() }}</span>
+        @if (coachModifiedTime()) {
+          <span class="attribution-time">{{ coachModifiedTime() }}</span>
+        }
+      </div>
+    </app-card-shell>
+  </section>
+}
+
+@if (visibleBanners().length > 0) {
+  <section class="banners-section">
+    @for (banner of visibleBanners(); track banner.text + '-' + $index) {
+      <app-banner
+        [type]="banner.type"
+        [message]="banner.text"
+        [primaryCta]="banner.ctas?.[0] || null"
+        [secondaryCta]="banner.ctas?.[1] || null"
+        (ctaClick)="ctaClick.emit($event)"
+      />
+    }
+  </section>
+}
+
+@if (acwrBaseline()) {
+  <section class="acwr-section">
+    <app-acwr-baseline
+      [daysLogged]="acwrBaseline()!.trainingDaysLogged"
+      [targetDays]="21"
+      label="Load Management"
+    />
+  </section>
+}

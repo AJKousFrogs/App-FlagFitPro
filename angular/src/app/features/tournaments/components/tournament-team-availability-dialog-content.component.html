@@ -1,0 +1,112 @@
+<div class="team-availability-dialog">
+  <div class="tournament-summary">
+    <h3>{{ tournament().flag }} {{ tournament().name }}</h3>
+    <p class="tournament-dates">{{ dateRangeLabel() }}</p>
+  </div>
+
+  <div class="availability-summary">
+    <div class="summary-stat confirmed">
+      <div class="stat-block__value">{{ summary().confirmed }}</div>
+      <div class="stat-block__label">Confirmed</div>
+    </div>
+    <div class="summary-stat tentative">
+      <div class="stat-block__value">{{ summary().tentative }}</div>
+      <div class="stat-block__label">Tentative</div>
+    </div>
+    <div class="summary-stat declined">
+      <div class="stat-block__value">{{ summary().declined }}</div>
+      <div class="stat-block__label">Declined</div>
+    </div>
+    <div class="summary-stat pending">
+      <div class="stat-block__value">{{ summary().pending }}</div>
+      <div class="stat-block__label">No Response</div>
+    </div>
+  </div>
+
+  @if (budget()) {
+    <div class="budget-overview">
+      <h4><i class="pi pi-wallet"></i> Budget Overview</h4>
+      <div class="budget-grid">
+        <div class="budget-item">
+          <span class="budget-label">Total Estimated</span>
+          <span class="budget-value">€{{ budget()!.totalEstimated | number: "1.2-2" }}</span>
+        </div>
+        <div class="budget-item">
+          <span class="budget-label">Team Contribution</span>
+          <span class="budget-value">€{{ budget()!.teamContribution | number: "1.2-2" }}</span>
+        </div>
+        <div class="budget-item">
+          <span class="budget-label">Sponsor Contribution</span>
+          <span class="budget-value">€{{ budget()!.sponsorContribution | number: "1.2-2" }}</span>
+        </div>
+        <div class="budget-item highlight">
+          <span class="budget-label">Per Player</span>
+          <span class="budget-value">€{{ budget()!.perPlayer | number: "1.2-2" }}</span>
+        </div>
+      </div>
+      <app-button
+        variant="outlined"
+        size="sm"
+        iconLeft="pi-cog"
+        (clicked)="openBudget.emit()"
+      >
+        Manage Budget
+      </app-button>
+    </div>
+  }
+
+  <div class="player-availability-list">
+    <h4>Player Responses</h4>
+    @for (player of players(); track player.playerId) {
+      <div class="player-availability-item" [class]="'status-' + player.status">
+        <div class="player-info">
+          <span class="player-name">{{ player.playerName }}</span>
+          <span class="player-position">{{ player.position }}</span>
+        </div>
+        <div class="player-status">
+          <app-status-tag
+            [value]="getAvailabilityLabel(player.status)"
+            [severity]="getAvailabilitySeverity(player.status)"
+            size="sm"
+          />
+        </div>
+        @if (player.reason) {
+          <div class="player-reason">
+            <i class="pi pi-info-circle"></i>
+            {{ player.reason }}
+          </div>
+        }
+        <div class="player-payment">
+          @if (player.paymentStatus === "paid") {
+            <app-status-tag value="Paid" severity="success" size="sm" />
+          } @else if (player.paymentStatus === "partial") {
+            <app-status-tag value="Partial" severity="warning" size="sm" />
+          } @else if (player.status === "confirmed") {
+            <app-status-tag value="Unpaid" severity="danger" size="sm" />
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-list">
+        <p>No player responses yet</p>
+      </div>
+    }
+  </div>
+
+  <div class="dialog-actions">
+    <app-button
+      variant="outlined"
+      iconLeft="pi-bell"
+      (clicked)="sendReminders.emit()"
+    >
+      Send Reminders
+    </app-button>
+    <app-button
+      variant="outlined"
+      iconLeft="pi-download"
+      (clicked)="exportReport.emit()"
+    >
+      Export Report
+    </app-button>
+  </div>
+</div>

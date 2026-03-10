@@ -1,0 +1,68 @@
+<div class="reports-section">
+  <div class="section-header">
+    <h3>Generated Reports</h3>
+  </div>
+
+  @if (reports().length > 0) {
+    <div class="reports-grid">
+      @for (report of reports(); track trackByGeneratedReport($index, report)) {
+        <app-card-shell class="report-card" [hasFooter]="true">
+          <div class="report-header">
+            <i [class]="reportIcon()(report.type)" class="report-icon"></i>
+            <div class="report-info">
+              <span class="report-type">{{ reportTypeLabel()(report.type) }}</span>
+              <span class="report-date">{{ report.generatedDate | date: "medium" }}</span>
+            </div>
+          </div>
+          <div class="report-details">
+            <p class="report-period">
+              Period:
+              {{ report.periodStart | date: "shortDate" }} -
+              {{ report.periodEnd | date: "shortDate" }}
+            </p>
+            <div class="included-sections">
+              <span class="section-label">Included sections:</span>
+              <div class="section-tags">
+                @for (section of report.includedSections; track section) {
+                  <span class="section-tag">{{ section }}</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div footer>
+            <app-button
+              variant="text"
+              iconLeft="pi-download"
+              (clicked)="downloadPdf.emit(report)"
+            >
+              Download PDF
+            </app-button>
+            <app-button
+              variant="text"
+              iconLeft="pi-file-excel"
+              (clicked)="downloadCsv.emit(report)"
+            >
+              Download CSV
+            </app-button>
+            <app-icon-button
+              icon="pi-trash"
+              variant="text"
+              (clicked)="deleteReport.emit(report)"
+              ariaLabel="Delete psychology report"
+              tooltip="Delete"
+            />
+          </div>
+        </app-card-shell>
+      }
+    </div>
+  } @else {
+    <app-empty-state
+      icon="pi-file"
+      heading="No Reports Generated"
+      description="Generate a report to share your mental wellness data with your sports psychologist or counselor."
+      actionLabel="Generate Report"
+      actionIcon="pi-plus"
+      [actionHandler]="openGenerate.emit"
+    />
+  }
+</div>

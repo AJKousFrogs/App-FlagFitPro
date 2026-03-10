@@ -24,18 +24,18 @@ import {
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
-import { Card } from "primeng/card";
 import { GlobalErrorHandlerService } from "../../../core/services/global-error-handler.service";
+import { CardShellComponent } from "../card-shell/card-shell.component";
 import { PageErrorStateComponent } from "../page-error-state/page-error-state.component";
 
 @Component({
   selector: "app-error-boundary",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Card, ButtonComponent, PageErrorStateComponent],
+  imports: [ButtonComponent, CardShellComponent, PageErrorStateComponent],
   template: `
     @if (hasError()) {
       <div class="error-boundary-container">
-        <p-card class="error-boundary-card">
+        <app-card-shell class="error-boundary-card" [flush]="true">
           <div class="error-boundary-layout">
             <app-page-error-state
               class="error-boundary-state"
@@ -61,7 +61,7 @@ import { PageErrorStateComponent } from "../page-error-state/page-error-state.co
               >
             </div>
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     } @else {
       <ng-content></ng-content>

@@ -13,7 +13,6 @@ import { UI_LIMITS } from "@core/constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 
-import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
@@ -37,6 +36,9 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { PhysioHistorySectionComponent } from "./components/physio-history-section.component";
+import { PhysioRiskSectionComponent } from "./components/physio-risk-section.component";
+import { PhysioRtpSectionComponent } from "./components/physio-rtp-section.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §31
 interface Injury {
@@ -204,7 +206,9 @@ const RTP_PHASES = [
     DialogHeaderComponent,
     DialogFooterComponent,
     CardShellComponent,
-    ProgressBar,
+    PhysioHistorySectionComponent,
+    PhysioRiskSectionComponent,
+    PhysioRtpSectionComponent,
     Select,
     TableModule,
     Tabs,
@@ -657,6 +661,11 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     return painLevels[painLevels.length - 1] || 0;
   }
 
+  getLatestPainView(rtp: { progressMetrics: { painLevel: number[] } }): number {
+    const painLevels = rtp.progressMetrics.painLevel;
+    return painLevels[painLevels.length - 1] || 0;
+  }
+
   viewAthleteDetails(athlete: AthletePhysioData): void {
     this.selectedAthlete.set(athlete);
     const riskProfile = POSITION_INJURY_RISK[athlete.position];
@@ -688,10 +697,18 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     );
   }
 
+  handleRtpProgressUpdate(rtp: unknown): void {
+    this.updateRtpProgress(rtp as ReturnToPlayData);
+  }
+
   viewRtpReport(rtp: ReturnToPlayData): void {
     this.toast.info(
       `Viewing RTP report for ${this.getAthleteName(rtp.athleteId)}`,
     );
+  }
+
+  handleRtpReportView(rtp: unknown): void {
+    this.viewRtpReport(rtp as ReturnToPlayData);
   }
 
   loadInjuryHistory(): void {

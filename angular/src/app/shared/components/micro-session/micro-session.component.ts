@@ -24,12 +24,7 @@ import {
   input,
   output,
 } from "@angular/core";
-import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { Dialog } from "primeng/dialog";
-import { ProgressBar } from "primeng/progressbar";
-import { Slider } from "primeng/slider";
-import { Textarea } from "primeng/textarea";
 
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
@@ -39,36 +34,14 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../button/button.component";
 import { formatTimeMMSS } from "../../utils/format.utils";
-
-export interface MicroSessionStep {
-  order: number;
-  instruction: string;
-  duration_seconds: number;
-}
-
-export interface MicroSessionData {
-  id?: string;
-  title: string;
-  description?: string;
-  session_type: string;
-  estimated_duration_minutes: number;
-  equipment_needed: string[];
-  intensity_level: string;
-  position_relevance: string[];
-  steps: MicroSessionStep[];
-  coaching_cues: string[];
-  safety_notes?: string | null;
-  follow_up_prompt: string;
-  source_message_id?: string;
-}
-
-type SessionStatus =
-  | "ready"
-  | "equipment_check"
-  | "in_progress"
-  | "paused"
-  | "completed"
-  | "follow_up";
+import {
+  MicroSessionData,
+  SessionStatus,
+} from "./micro-session.models";
+import { MicroSessionActiveSectionComponent } from "./micro-session-active-section.component";
+import { AppDialogComponent } from "../dialog/dialog.component";
+import { DialogHeaderComponent } from "../dialog-header/dialog-header.component";
+import { CardShellComponent } from "../card-shell/card-shell.component";
 
 @Component({
   selector: "app-micro-session",
@@ -76,54 +49,59 @@ type SessionStatus =
   imports: [
     CommonModule,
     FormsModule,
-    Card,
-    Dialog,
-    
-    ProgressBar,
     Checkbox,
-    Slider,
-    Textarea,
     ButtonComponent,
     StatusTagComponent,
+    MicroSessionActiveSectionComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    CardShellComponent,
   ],
   template: `
     <!-- Session Card / Modal -->
     @if (mode() === "modal") {
-      <p-dialog
-        [header]="session().title"
+      <app-dialog
         [(visible)]="dialogVisible"
         [modal]="true"
         [closable]="currentStatus() !== 'in_progress'"
         [dismissableMask]="currentStatus() !== 'in_progress'"
-        class="dialog-w-xl dialog-max-w-lg"
-        (onHide)="onDialogHide()"
+        [draggable]="false"
+        [resizable]="false"
+        [blockScroll]="true"
+        [styleClass]="'dialog-w-xl dialog-max-w-lg micro-session-dialog'"
+        [ariaLabel]="session().title"
+        (hide)="onDialogHide()"
       >
+        <app-dialog-header
+          icon="play-circle"
+          [title]="session().title"
+          [subtitle]="session().description || ''"
+          (close)="onDialogHide()"
+        />
         <ng-container *ngTemplateOutlet="sessionContent"></ng-container>
-      </p-dialog>
+      </app-dialog>
     } @else {
-      <p-card class="micro-session-card">
-        <ng-template #header>
-          <div class="session-card-header">
-            <div class="header-info">
-              <app-status-tag
-                [value]="getSessionTypeLabel(session().session_type)"
-                [severity]="getSessionTypeSeverity(session().session_type)"
-                size="sm"
-              />
-              <span class="duration-badge">
-                <i class="pi pi-clock"></i>
-                {{ session().estimated_duration_minutes }} min
-              </span>
-            </div>
-            <h3>{{ session().title }}</h3>
-            @if (session().description) {
-              <p class="description">{{ session().description }}</p>
-            }
+      <app-card-shell
+        class="micro-session-card"
+        [title]="session().title"
+        [subtitle]="session().description || ''"
+        headerIcon="play-circle"
+      >
+        <ng-container header-actions>
+          <div class="header-info">
+            <app-status-tag
+              [value]="getSessionTypeLabel(session().session_type)"
+              [severity]="getSessionTypeSeverity(session().session_type)"
+              size="sm"
+            />
+            <span class="duration-badge">
+              <i class="pi pi-clock"></i>
+              {{ session().estimated_duration_minutes }} min
+            </span>
           </div>
-        </ng-template>
-
+        </ng-container>
         <ng-container *ngTemplateOutlet="sessionContent"></ng-container>
-      </p-card>
+      </app-card-shell>
     }
 
     <!-- Shared Session Content Template -->
@@ -221,151 +199,56 @@ type SessionStatus =
         @if (
           currentStatus() === "in_progress" || currentStatus() === "paused"
         ) {
-          <div class="in-progress-state">
-            <!-- Overall Progress -->
-            <div class="overall-progress">
-              <span
-                >Step {{ currentStepIndex() + 1 }} of
-                {{ session().steps.length }}</span
-              >
-              <p-progressBar
-                [value]="overallProgress()"
-                [showValue]="false"
-                class="overall-bar"
-              ></p-progressBar>
-            </div>
-
-            <!-- Current Step -->
-            <div
-              class="current-step"
-              [class.paused]="currentStatus() === 'paused'"
-            >
-              <div class="step-instruction">
-                {{ currentStep().instruction }}
-              </div>
-
-              <!-- Step Timer -->
-              <div class="step-timer">
-                <div class="timer-circle" [class]="timerClass()">
-                  <span class="timer-value">{{
-                    formatTime(stepTimeRemaining())
-                  }}</span>
-                  <span class="timer-label">{{
-                    currentStatus() === "paused" ? "PAUSED" : "remaining"
-                  }}</span>
-                </div>
-              </div>
-
-              <!-- Step Progress Bar -->
-              <p-progressBar
-                [value]="stepProgress()"
-                [showValue]="false"
-                class="step-bar"
-              ></p-progressBar>
-            </div>
-
-            <!-- Controls -->
-            <div class="session-controls">
-              @if (currentStatus() === "paused") {
-                <app-button iconLeft="pi-play" (clicked)="resumeSession()"
-                  >Resume</app-button
-                >
-              } @else {
-                <app-button
-                  variant="secondary"
-                  iconLeft="pi-pause"
-                  (clicked)="pauseSession()"
-                  >Pause</app-button
-                >
-              }
-
-              <app-button
-                iconLeft="pi-forward"
-                variant="secondary"
-                [disabled]="currentStepIndex() >= session().steps.length - 1"
-                (clicked)="nextStep()"
-                >Next Step</app-button
-              >
-
-              <app-button
-                variant="success"
-                iconLeft="pi-check"
-                (clicked)="completeSession()"
-                >Complete</app-button
-              >
-            </div>
-
-            <!-- Elapsed Time -->
-            <div class="elapsed-time">
-              Total time: {{ formatTime(totalElapsedTime()) }}
-            </div>
-          </div>
+          <app-micro-session-active-section
+            [session]="session()"
+            [currentStatus]="currentStatus()"
+            [currentStepIndex]="currentStepIndex()"
+            [currentStep]="currentStep()"
+            [overallProgress]="overallProgress()"
+            [stepProgress]="stepProgress()"
+            [timerClass]="timerClass()"
+            [stepTimeRemaining]="stepTimeRemaining()"
+            [totalElapsedTime]="totalElapsedTime()"
+            [followUpRating]="followUpRating"
+            [followUpNotes]="followUpNotes"
+            [followUpSubmitted]="followUpSubmitted()"
+            [submitting]="submitting()"
+            (resume)="resumeSession()"
+            (pause)="pauseSession()"
+            (nextStep)="nextStep()"
+            (complete)="completeSession()"
+            (followUpRatingChange)="onFollowUpRatingChange($event)"
+            (followUpNotesInput)="onFollowUpNotesInput($event)"
+            (submitFollowUp)="submitFollowUp()"
+            (done)="close()"
+          />
         }
 
         <!-- Completed State -->
         @if (currentStatus() === "completed") {
-          <div class="completed-state">
-            <div class="completion-icon">
-              <i class="pi pi-check-circle"></i>
-            </div>
-            <h3>Great Work!</h3>
-            <p>
-              You completed the session in {{ formatTime(totalElapsedTime()) }}
-            </p>
-
-            <div class="completion-stats">
-              <div class="stat">
-                <span class="stat-block__value">{{
-                  session().steps.length
-                }}</span>
-                <span class="stat-block__label">Steps</span>
-              </div>
-              <div class="stat">
-                <span class="stat-block__value">{{
-                  Math.round(totalElapsedTime() / 60)
-                }}</span>
-                <span class="stat-block__label">Minutes</span>
-              </div>
-            </div>
-
-            <!-- Follow-up Prompt -->
-            @if (session().follow_up_prompt && !followUpSubmitted()) {
-              <div class="follow-up-section">
-                <h4>{{ session().follow_up_prompt }}</h4>
-                <div class="follow-up-slider">
-                  <p-slider
-                    [ngModel]="followUpRating"
-                    (ngModelChange)="onFollowUpRatingChange($event)"
-                    [min]="0"
-                    [max]="10"
-                    [step]="1"
-                  ></p-slider>
-                  <div class="slider-value">{{ followUpRating }}/10</div>
-                </div>
-                <textarea
-                  pInputTextarea
-                  [value]="followUpNotes"
-                  (input)="onFollowUpNotesInput($event)"
-                  placeholder="Any additional notes? (optional)"
-                  [rows]="2"
-                  class="follow-up-notes"
-                ></textarea>
-                <app-button
-                  iconLeft="pi-send"
-                  [loading]="submitting()"
-                  (clicked)="submitFollowUp()"
-                  >Submit Feedback</app-button
-                >
-              </div>
-            } @else if (followUpSubmitted()) {
-              <div class="follow-up-submitted">
-                <i class="pi pi-check"></i>
-                <span>Feedback submitted. Thanks!</span>
-              </div>
-            }
-
-            <app-button variant="text" (clicked)="close()">Done</app-button>
-          </div>
+          <app-micro-session-active-section
+            [session]="session()"
+            [currentStatus]="currentStatus()"
+            [currentStepIndex]="currentStepIndex()"
+            [currentStep]="currentStep()"
+            [overallProgress]="overallProgress()"
+            [stepProgress]="stepProgress()"
+            [timerClass]="timerClass()"
+            [stepTimeRemaining]="stepTimeRemaining()"
+            [totalElapsedTime]="totalElapsedTime()"
+            [followUpRating]="followUpRating"
+            [followUpNotes]="followUpNotes"
+            [followUpSubmitted]="followUpSubmitted()"
+            [submitting]="submitting()"
+            (resume)="resumeSession()"
+            (pause)="pauseSession()"
+            (nextStep)="nextStep()"
+            (complete)="completeSession()"
+            (followUpRatingChange)="onFollowUpRatingChange($event)"
+            (followUpNotesInput)="onFollowUpNotesInput($event)"
+            (submitFollowUp)="submitFollowUp()"
+            (done)="close()"
+          />
         }
       </div>
     </ng-template>
@@ -450,9 +333,6 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
     if (remaining <= 15) return "warning";
     return "plenty";
   });
-
-  // Use Math in template
-  Math = Math;
 
   ngOnInit(): void {
     // Initialize equipment checklist

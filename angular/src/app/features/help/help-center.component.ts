@@ -1,16 +1,12 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { Card } from "primeng/card";
-import {
-  Accordion,
-  AccordionPanel,
-  AccordionHeader,
-  AccordionContent,
-} from "primeng/accordion";
+
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { HelpCenterFaqSectionComponent } from "./components/help-center-faq-section.component";
 
 interface HelpTopic {
   id: string;
@@ -25,14 +21,11 @@ interface HelpTopic {
   imports: [
     CommonModule,
     RouterLink,
-    Card,
-    Accordion,
-    AccordionPanel,
-    AccordionHeader,
-    AccordionContent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    CardShellComponent,
+    HelpCenterFaqSectionComponent,
   ],
   template: `
     <app-main-layout>
@@ -69,36 +62,13 @@ interface HelpTopic {
           </a>
         </div>
 
-        <!-- FAQ Sections -->
-        <p-card>
-          <ng-template #header>
-            <h3>
-              <i class="pi pi-question-circle"></i> Frequently Asked Questions
-            </h3>
-          </ng-template>
-
-          <p-accordion [multiple]="true">
-            @for (category of categories; track category) {
-              <p-accordion-panel [value]="category">
-                <p-accordion-header>{{ category }}</p-accordion-header>
-                <p-accordion-content>
-                  @for (
-                    topic of getTopicsByCategory(category);
-                    track topic.id
-                  ) {
-                    <div class="faq-item">
-                      <h4>{{ topic.title }}</h4>
-                      <p>{{ topic.content }}</p>
-                    </div>
-                  }
-                </p-accordion-content>
-              </p-accordion-panel>
-            }
-          </p-accordion>
-        </p-card>
+        <app-help-center-faq-section
+          [categories]="categories"
+          [topics]="topics"
+        />
 
         <!-- Contact Support -->
-        <p-card class="support-card">
+        <app-card-shell class="support-card" [flush]="true">
           <div class="support-content">
             <i class="pi pi-envelope"></i>
             <h3>Still need help?</h3>
@@ -107,93 +77,11 @@ interface HelpTopic {
               >Contact Support</app-button
             >
           </div>
-        </p-card>
+        </app-card-shell>
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .help-content {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-lg);
-      }
-
-      .quick-links {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(var(--size-150), 1fr));
-        gap: var(--spacing-md);
-      }
-
-      .quick-link-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-lg);
-        background: var(--surface-card);
-        border-radius: var(--border-radius-lg);
-        text-decoration: none;
-        color: var(--text-color);
-        transition: all 0.2s ease;
-        border: var(--border-1) solid var(--surface-border);
-      }
-
-      .quick-link-card:hover {
-        background: var(--surface-hover);
-        transform: translateY(calc(var(--space-0-5) * -1));
-        box-shadow: var(--shadow-md);
-      }
-
-      .quick-link-card i {
-        font-size: var(--ds-font-size-2xl);
-        color: var(--color-brand-primary);
-      }
-
-      .faq-item {
-        padding: var(--spacing-md) 0;
-        border-bottom: var(--border-1) solid var(--surface-border);
-      }
-
-      .faq-item:last-child {
-        border-bottom: none;
-      }
-
-      .faq-item h4 {
-        margin: 0 0 var(--spacing-sm) 0;
-        color: var(--text-color);
-      }
-
-      .faq-item p {
-        margin: 0;
-        color: var(--text-secondary);
-        line-height: var(--ds-line-height-1-6);
-      }
-
-      .support-card .support-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: var(--spacing-xl);
-      }
-
-      .support-content i {
-        font-size: var(--ds-font-size-2-5rem);
-        color: var(--color-brand-primary);
-        margin-bottom: var(--spacing-md);
-      }
-
-      .support-content h3 {
-        margin: 0 0 var(--spacing-sm) 0;
-      }
-
-      .support-content p {
-        margin: 0 0 var(--spacing-lg) 0;
-        color: var(--text-secondary);
-      }
-    `,
-  ],
+  styleUrl: "./help-center.component.scss",
 })
 export class HelpCenterComponent {
   categories = ["Privacy & Data", "Training & Load", "Account", "General"];
@@ -271,7 +159,4 @@ export class HelpCenterComponent {
     },
   ];
 
-  getTopicsByCategory(category: string): HelpTopic[] {
-    return this.topics.filter((t) => t.category === category);
-  }
 }

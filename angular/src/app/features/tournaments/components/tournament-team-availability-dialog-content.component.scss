@@ -1,0 +1,174 @@
+.team-availability-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.tournament-summary {
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.tournament-summary h3 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--ds-font-size-2xl);
+}
+
+.tournament-dates {
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-md);
+  margin: 0;
+}
+
+.availability-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.summary-stat {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.summary-stat.confirmed {
+  background: var(--color-success-bg);
+  border: var(--border-1) solid var(--color-status-success);
+}
+
+.summary-stat.tentative {
+  background: var(--color-warning-bg);
+  border: var(--border-1) solid var(--color-status-warning);
+}
+
+.summary-stat.declined {
+  background: var(--color-error-bg);
+  border: var(--border-1) solid var(--color-status-error);
+}
+
+.summary-stat.pending {
+  background: var(--surface-tertiary);
+  border: var(--border-1) solid var(--color-border-secondary);
+}
+
+.budget-overview {
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.budget-overview h4 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+
+.budget-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.budget-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.budget-item.highlight {
+  padding: var(--space-2);
+  background: var(--ds-primary-green-ultra-subtle);
+  border-radius: var(--radius-md);
+}
+
+.budget-label {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.budget-value {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
+}
+
+.player-availability-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+}
+
+.player-availability-item:last-child {
+  border-bottom: none;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: var(--ds-font-weight-medium);
+}
+
+.player-position {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.player-status,
+.player-payment {
+  display: flex;
+  align-items: center;
+}
+
+.player-reason {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-md);
+}
+
+.empty-list {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: var(--border-1) solid var(--color-border-secondary);
+}
+
+@media (max-width: 767px) {
+  .availability-summary,
+  .budget-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .player-availability-item {
+    grid-template-columns: 1fr;
+  }
+
+  .dialog-actions {
+    flex-direction: column;
+  }
+}

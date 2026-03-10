@@ -1,0 +1,12 @@
+<div class="settings-nav-card ui-page-nav">
+  @for (item of items(); track item.id) {
+    <button
+      type="button"
+      class="settings-nav-item ui-page-nav__item"
+      (click)="onSelect(item.id)"
+    >
+      <i [class]="'pi ' + item.icon"></i>
+      <span>{{ item.label }}</span>
+    </button>
+  }
+</div>

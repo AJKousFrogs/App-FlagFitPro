@@ -21,7 +21,7 @@
  * - Merlin AI Merlin insights
  */
 
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -33,7 +33,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { ProgressBar } from "primeng/progressbar";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Timeline } from "primeng/timeline";
 import { Tooltip } from "primeng/tooltip";
@@ -56,35 +55,26 @@ import {
 import { AcwrSpikeDetectionService } from "../../core/services/acwr-spike-detection.service";
 import {
   PrivacySettingsService,
-  METRIC_CATEGORIES,
 } from "../../core/services/privacy-settings.service";
-import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { CloseButtonComponent } from "../../shared/components/close-button/close-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
-import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
 import { DashboardSkeletonComponent } from "../../shared/components/dashboard-skeleton/dashboard-skeleton.component";
-import { CoachOverrideNotificationComponent } from "../../shared/components/coach-override-notification/coach-override-notification.component";
 import {
   OverrideLoggingService,
   CoachOverride,
 } from "../../core/services/override-logging.service";
-import { OwnershipTransitionBadgeComponent } from "../../shared/components/ownership-transition-badge/ownership-transition-badge.component";
 import {
   OwnershipTransitionService,
   OwnershipTransition,
 } from "../../core/services/ownership-transition.service";
-import { MissingDataExplanationComponent } from "../../shared/components/missing-data-explanation/missing-data-explanation.component";
 import {
   MissingDataDetectionService,
   MissingDataStatus,
 } from "../../core/services/missing-data-detection.service";
-import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import {
   CoachOverrideMeaning,
   IncompleteDataMeaning,
@@ -101,6 +91,20 @@ import {
   getProtocolReadinessPresentation,
 } from "../../core/utils/protocol-metrics-presentation";
 import { PlayerDashboardDataService } from "./services/player-dashboard-data.service";
+import { PlayerDashboardSetupCardComponent } from "./components/player-dashboard-setup-card.component";
+import { PlayerDashboardEventsSectionComponent } from "./components/player-dashboard-events-section.component";
+import { PlayerDashboardInsightsGridComponent } from "./components/player-dashboard-insights-grid.component";
+import { PlayerDashboardStatsOverviewComponent } from "./components/player-dashboard-stats-overview.component";
+import { PlayerDashboardStatusStackComponent } from "./components/player-dashboard-status-stack.component";
+import {
+  getDashboardEventIcon,
+  getDashboardEventSeverity,
+  getDashboardGreeting,
+  getDashboardMerlinInsight,
+  getDashboardPrivacySharingStatus,
+  getWeeklyProgress,
+  hasCompletedDashboardOnboarding,
+} from "./utils/player-dashboard-presenters";
 import type { SimpleChartData } from "../../core/models/chart.models";
 
 interface QuickAction {
@@ -132,26 +136,21 @@ interface AnnouncementBanner {
   imports: [
     CommonModule,
     RouterModule,
-    DecimalPipe,
     AlertComponent,
     StatusTagComponent,
     ButtonComponent,
     CardShellComponent,
-    CloseButtonComponent,
+    PlayerDashboardEventsSectionComponent,
+    PlayerDashboardSetupCardComponent,
+    PlayerDashboardInsightsGridComponent,
 
-    LazyChartComponent,
-    ChartSkeletonComponent,
     DashboardSkeletonComponent,
     Tooltip,
-    ProgressBar,
     Timeline,
     MainLayoutComponent,
     PageErrorStateComponent,
-    ConfidenceIndicatorComponent,
-    CoachOverrideNotificationComponent,
-    OwnershipTransitionBadgeComponent,
-    MissingDataExplanationComponent,
-    SemanticMeaningRendererComponent,
+    PlayerDashboardStatsOverviewComponent,
+    PlayerDashboardStatusStackComponent,
   ],
   templateUrl: "./player-dashboard.component.html",
   styleUrl: "./player-dashboard.component.scss",
@@ -363,44 +362,21 @@ export class PlayerDashboardComponent {
   };
 
   // Computed
-  greeting = computed(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  });
+  greeting = computed(() => getDashboardGreeting());
 
   merlinInsight = computed(() => {
-    const readiness = this.dashboardReadinessPresentation().score;
-    const acwrVal = this.dashboardAcwrDisplay().value;
-
-    // CRITICAL: Only provide insights if we have real data
-    if (readiness === null && acwrVal === null) {
-      return "Complete a wellness check-in and log training sessions to get personalized insights.";
-    }
-
-    if (readiness !== null && readiness < 50) {
-      return "Your readiness is low today. Consider a lighter session focused on recovery and mobility.";
-    }
-    if (acwrVal !== null && acwrVal > 1.3) {
-      return "Your training load is elevated. Take it easy today to avoid overtraining and reduce injury risk.";
-    }
-    if (
-      readiness !== null &&
-      readiness >= 80 &&
-      acwrVal !== null &&
-      acwrVal <= 1.0
-    ) {
-      return "You're in great shape! Today is perfect for a high-intensity session. Let's push it!";
-    }
-    return "Solid day ahead! Stick to your plan and focus on quality over quantity in today's session.";
+    return getDashboardMerlinInsight(
+      this.dashboardReadinessPresentation().score,
+      this.dashboardAcwrDisplay().value,
+    );
   });
 
-  weeklyProgress = computed(() => {
-    const completed = this.weeklySessionsCompleted();
-    const planned = this.weeklySessionsPlanned();
-    return planned > 0 ? Math.round((completed / planned) * 100) : 0;
-  });
+  weeklyProgress = computed(() =>
+    getWeeklyProgress(
+      this.weeklySessionsCompleted(),
+      this.weeklySessionsPlanned(),
+    ),
+  );
 
   readonly dashboardReadinessPresentation = computed(() =>
     getProtocolReadinessPresentation(
@@ -446,54 +422,37 @@ export class PlayerDashboardComponent {
 
   // Privacy Sharing Status
   privacySharingStatus = computed(() => {
-    const teamSettings = this.privacySettingsService.teamSettings();
-    const totalMetrics = METRIC_CATEGORIES.length; // 6 metrics
-
-    if (teamSettings.length === 0) {
-      return {
-        sharedMetrics: 0,
-        totalMetrics,
-        sharingEnabled: false,
-      };
-    }
-
-    // Count shared metrics across all teams
-    // For simplicity, count metrics shared with at least one team
-    const sharedCategories = new Set<string>();
-    teamSettings.forEach((teamSetting) => {
-      if (
-        teamSetting.performanceSharingEnabled ||
-        teamSetting.healthSharingEnabled
-      ) {
-        // Add all allowed metric categories
-        teamSetting.allowedMetricCategories?.forEach((category) => {
-          sharedCategories.add(category);
-        });
-
-        // If performance sharing is enabled, add performance and training_load
-        if (teamSetting.performanceSharingEnabled) {
-          sharedCategories.add("performance");
-          sharedCategories.add("training_load");
-        }
-
-        // If health sharing is enabled, add wellness, readiness, injury_history
-        if (teamSetting.healthSharingEnabled) {
-          sharedCategories.add("wellness");
-          sharedCategories.add("readiness");
-          sharedCategories.add("injury_history");
-        }
-      }
-    });
-
-    return {
-      sharedMetrics: sharedCategories.size,
-      totalMetrics,
-      sharingEnabled: sharedCategories.size > 0,
-    };
+    return getDashboardPrivacySharingStatus(
+      this.privacySettingsService.teamSettings(),
+    );
   });
 
   // Continuity Events
   continuityEvents = signal<ContinuityEvent[]>([]);
+  readonly overrideDisplayItems = computed(() =>
+    this.recentOverrides().map((override) => ({
+      override,
+      coachName: this.getCoachName(override.coachId),
+      meaning: this.getCoachOverrideMeaning(override),
+    })),
+  );
+  readonly announcementTimeAgo = computed(() =>
+    getTimeAgo(this.announcement()?.postedAt),
+  );
+
+  readonly continuityDisplayEvents = computed(() =>
+    this.continuityEvents().map((event) => ({
+      ...event,
+      icon: getDashboardEventIcon(event.type),
+    })),
+  );
+
+  readonly upcomingDisplayEvents = computed(() =>
+    this.upcomingEvents().map((event) => ({
+      ...event,
+      severity: getDashboardEventSeverity(event.type),
+    })),
+  );
 
   constructor() {
     this.headerService.setDashboardHeader();
@@ -909,17 +868,6 @@ export class PlayerDashboardComponent {
     }
   }
 
-  getEventIcon(type: string): string {
-    const icons: Record<string, string> = {
-      recovery_protocol: "🏈",
-      load_cap: "⚠️",
-      travel_recovery: "🛫",
-      rtp_protocol: "🏥",
-      wellness_focus: "💚",
-    };
-    return icons[type] || "📋";
-  }
-
   private initializeWeekDays(): void {
     const today = new Date();
     const dayOfWeek = today.getDay();
@@ -995,11 +943,9 @@ export class PlayerDashboardComponent {
    * UX Audit Fix #3
    */
   hasCompletedOnboarding(): boolean {
-    // Use ProfileCompletionService for consistent calculation
-    const status = this.profileCompletionService.completionStatus();
-    // Profile is considered "complete" for onboarding if required fields are filled
-    // or if percentage is >= 80% (allowing some optional fields to be missing)
-    return status.missingRequired.length === 0 || status.percentage >= 80;
+    return hasCompletedDashboardOnboarding(
+      this.profileCompletionService.completionStatus(),
+    );
   }
 
   /**
@@ -1075,16 +1021,4 @@ export class PlayerDashboardComponent {
     return this.dashboardAcwrDisplay().severity;
   }
 
-  getEventSeverity(
-    type: string,
-  ): "success" | "warning" | "danger" | "info" | "secondary" | "primary" {
-    switch (type) {
-      case "game":
-        return "danger";
-      case "tournament":
-        return "warning";
-      default:
-        return "success";
-    }
-  }
 }

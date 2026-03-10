@@ -64,193 +64,10 @@
   opacity: var(--opacity-strong);
 }
 
-/* --------------------------------------------------------------------------
- WELCOME CARD
- PrimeNG card styling handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
-.welcome-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-}
-
-.user-avatar {
-  width: var(--space-12);
-  height: var(--space-12);
-  min-width: var(--space-12);
-  background: var(--ui-surface-subtle);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-secondary);
-  font-size: var(--ds-font-size-md);
-  border: var(--border-1) solid var(--color-border-subtle);
-  box-shadow: inset 0 0 0 var(--border-1) rgba(255, 255, 255, 0.16);
-}
-
-.welcome-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.welcome-greeting {
-  font-size: clamp(var(--ds-font-size-2xl), 4vw, var(--ds-font-size-3xl));
-  font-weight: var(--ds-font-weight-semibold); /* H1: Semibold (600) */
-  margin: 0;
-  color: var(--color-text-primary);
-  line-height: var(--ds-line-height-tight);
-}
-
-.welcome-name {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  margin: var(--space-1) 0 0;
-  color: var(--color-text-secondary);
-  line-height: var(--ds-line-height-h1);
-}
-
 .welcome-hint {
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   margin: var(--space-1) 0 0;
-}
-
-/* --------------------------------------------------------------------------
- EXACT TRAINING SUMMARY
- -------------------------------------------------------------------------- */
-.exact-training-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.9fr) minmax(18rem, 0.9fr);
-  gap: var(--layout-page-section-gap-tight);
-  align-items: stretch;
-}
-
-.exact-training-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.exact-training-kicker {
-  margin: 0;
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-semibold);
-  letter-spacing: var(--ds-letter-spacing-caption);
-  text-transform: var(--ds-text-transform-uppercase);
-  color: var(--color-brand-primary);
-}
-
-.exact-training-title {
-  margin: 0;
-  font-size: clamp(var(--ds-font-size-xl), 2.4vw, var(--ds-font-size-2xl));
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary);
-  line-height: var(--ds-line-height-tight);
-}
-
-.exact-training-description {
-  margin: 0;
-  font-size: var(--ds-font-size-sm);
-  line-height: var(--ds-line-height-1-6);
-  color: var(--color-text-secondary);
-}
-
-.exact-training-metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-
-.exact-training-metric {
-  padding: var(--component-card-padding-compact);
-  border: var(--component-card-border);
-  border-radius: var(--component-card-radius);
-  background: var(--ui-surface-subtle);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.exact-training-metric__label {
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  letter-spacing: var(--ds-letter-spacing-caption);
-  text-transform: var(--ds-text-transform-uppercase);
-  color: var(--color-text-muted);
-}
-
-.exact-training-metric__value {
-  font-size: var(--ds-font-size-lg);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.exact-training-status {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.exact-training-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--ui-surface-subtle);
-  border: var(--border-1) solid var(--color-border-secondary);
-  color: var(--color-text-secondary);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.exact-training-pill--coach {
-  background: rgba(var(--ds-primary-green-rgb), 0.08);
-  border-color: rgba(var(--ds-primary-green-rgb), 0.18);
-  color: var(--color-brand-primary);
-}
-
-.exact-training-sidebar {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--component-card-padding);
-  border-radius: var(--component-card-radius);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(var(--ds-primary-green-rgb), 0.08) 0%,
-      rgba(var(--ds-primary-green-rgb), 0.02) 100%
-    ),
-    var(--surface-card);
-  border: var(--component-card-border);
-}
-
-.exact-training-start {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.exact-training-start__label {
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  letter-spacing: var(--ds-letter-spacing-caption);
-  text-transform: var(--ds-text-transform-uppercase);
-  color: var(--color-text-muted);
-}
-
-.exact-training-start__block {
-  font-size: var(--ds-font-size-lg);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.exact-training-start__exercise {
-  font-size: var(--ds-font-size-sm);
-  line-height: var(--ds-line-height-1-6);
-  color: var(--color-text-secondary);
 }
 
 /* --------------------------------------------------------------------------
@@ -346,16 +163,6 @@
  PrimeNG card styling handled globally in _brand-overrides.scss
  -------------------------------------------------------------------------- */
 
-/* --------------------------------------------------------------------------
- CONTENT CARDS (Check-in, Protocol, Wrap-up)
- PrimeNG card styling handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
-.content-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--layout-gap-lg);
-}
-
 .card-description {
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
@@ -402,42 +209,6 @@
   font-size: var(--ds-font-size-sm);
   line-height: var(--ds-line-height-1-6);
   color: var(--color-text-secondary);
-}
-
-/* --------------------------------------------------------------------------
- PROTOCOL SECTION
- -------------------------------------------------------------------------- */
-.protocol-progress-wrapper {
-  background: var(--surface-secondary);
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-4);
-}
-
-/* Protocol progress bar styling handled globally in _brand-overrides.scss */
-
-.protocol-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: var(--space-2);
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.protocol-blocks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.card-footer {
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: var(--border-1) solid var(--color-border-secondary);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  justify-content: center;
 }
 
 /* --------------------------------------------------------------------------
@@ -510,15 +281,6 @@
     gap: var(--space-4);
   }
 
-  .welcome-row {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .user-avatar {
-    margin: 0 auto;
-  }
-
   .welcome-cta {
     margin-top: var(--space-2);
   }
@@ -526,15 +288,6 @@
   .stats-grid {
     grid-template-columns: 1fr;
   }
-
-  .exact-training-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .exact-training-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .onboarding-content {
     flex-direction: column;
     text-align: center;
@@ -551,12 +304,6 @@
 
   .insight-avatar {
     margin: 0 auto;
-  }
-}
-
-@media (max-width: var(--breakpoint-md)) {
-  .exact-training-layout {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -971,48 +718,6 @@
   letter-spacing: var(--ds-letter-spacing-wide);
 }
 
-/* --------------------------------------------------------------------------
- COACH ATTRIBUTION & ALERT GATE
- -------------------------------------------------------------------------- */
-.coach-attribution {
-  margin-bottom: var(--space-4);
-}
-
-.attribution-card {
-  background: var(--surface-tertiary);
-  border-left: var(--space-1) solid var(--ds-primary-green);
-}
-
-.attribution-content {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.attribution-content i {
-  color: var(--ds-primary-green);
-}
-
-.attribution-time {
-  margin-left: auto;
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-muted);
-}
-
-.coach-alert-gate {
-  margin: 0;
-}
-
-.banners-section {
-  margin: 0;
-}
-
-.acwr-section {
-  margin: 0;
-}
-
 .welcome-stats {
   margin-top: var(--space-2);
   display: flex;
@@ -1117,23 +822,6 @@
 .tomorrow-empty p {
   margin: 0 0 var(--space-3);
   font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-/* --------------------------------------------------------------------------
- NO EXERCISES MESSAGE - When protocol exists but exercises not loaded
- -------------------------------------------------------------------------- */
-.no-exercises-message {
-  text-align: center;
-  padding: var(--space-6);
-  background: var(--color-surface-secondary);
-  border-radius: var(--radius-lg);
-  margin: var(--space-4) 0;
-}
-
-.no-exercises-message p {
-  margin: 0 0 var(--space-4);
-  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 

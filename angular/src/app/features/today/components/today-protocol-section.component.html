@@ -1,0 +1,87 @@
+@if (trainingAllowed() && blocks().length > 0) {
+  <main class="content-section">
+    <section aria-labelledby="protocol-heading">
+      <app-card-shell class="content-card">
+        <app-card-header
+          title="Today's Protocol"
+          icon="pi-list"
+          titleId="protocol-heading"
+          [divider]="true"
+        />
+
+        @if (protocol(); as p) {
+          @if (p.overallProgress !== undefined) {
+            <div class="protocol-progress-wrapper">
+              <p-progressBar
+                [value]="p.overallProgress"
+                [showValue]="false"
+                class="protocol-bar"
+              />
+              <div class="protocol-meta">
+                <span>{{ p.completedExercises }}/{{ p.totalExercises }} Exercises</span>
+                <span>{{ p.overallProgress }}%</span>
+              </div>
+            </div>
+          }
+
+          <div class="protocol-blocks" data-testid="protocol-blocks">
+            @for (block of blocks(); track block.type) {
+              <app-protocol-block
+                [attr.data-block-type]="block.type"
+                [block]="block"
+                [simpleView]="true"
+                [defaultExpanded]="true"
+                (exerciseComplete)="exerciseComplete.emit()"
+              />
+            }
+          </div>
+
+          @if (p.totalExercises === 0) {
+            <div class="no-exercises-message">
+              <p>Your training plan is being prepared. Try refreshing in a moment.</p>
+              <app-button
+                iconLeft="pi-refresh"
+                variant="outlined"
+                size="sm"
+                (clicked)="refresh.emit()"
+              >
+                Refresh
+              </app-button>
+            </div>
+          }
+
+          <div class="card-footer">
+            <app-button
+              iconRight="pi-external-link"
+              variant="text"
+              routerLink="/training/advanced"
+            >
+              Advanced Training Workspace
+            </app-button>
+            <app-button
+              iconLeft="pi-refresh"
+              variant="text"
+              (clicked)="generate.emit()"
+            >
+              Regenerate Today
+            </app-button>
+          </div>
+        } @else {
+          <app-empty-state
+            icon="calendar-plus"
+            heading="No Training Plan Yet"
+            description="Generate your personalized protocol to see exercises with videos and instructions."
+          >
+            <app-button
+              iconLeft="pi-sparkles"
+              [loading]="isGenerating()"
+              (clicked)="generate.emit()"
+            >
+              Generate Today's Protocol
+            </app-button>
+          </app-empty-state>
+        }
+      </app-card-shell>
+    </section>
+  </main>
+}

@@ -67,6 +67,8 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { TravelFlightSeveritySectionComponent } from "./components/travel-flight-severity-section.component";
+import { TravelFlightTodayProtocolSectionComponent } from "./components/travel-flight-today-protocol-section.component";
 
 interface TimezoneOption {
   value: string;
@@ -115,6 +117,8 @@ interface FlightTripForm {
     MainLayoutComponent,
     PageHeaderComponent,
     StatusTagComponent,
+    TravelFlightSeveritySectionComponent,
+    TravelFlightTodayProtocolSectionComponent,
   ],
   templateUrl: "./travel-recovery.component.html",
 
@@ -577,40 +581,6 @@ export class TravelRecoveryComponent implements OnInit {
         return "danger";
       case "competition-ready":
         return "success";
-      default:
-        return "secondary";
-    }
-  }
-
-  getIntensityColor(
-    intensity: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
-    switch (intensity) {
-      case "full":
-        return "success";
-      case "moderate":
-        return "info";
-      case "light":
-        return "warning";
-      case "none":
-        return "danger";
-      default:
-        return "secondary";
-    }
-  }
-
-  getImportanceColor(
-    importance: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
-    switch (importance) {
-      case "critical":
-        return "danger";
-      case "high":
-        return "warning";
-      case "medium":
-        return "info";
-      case "low":
-        return "secondary";
       default:
         return "secondary";
     }

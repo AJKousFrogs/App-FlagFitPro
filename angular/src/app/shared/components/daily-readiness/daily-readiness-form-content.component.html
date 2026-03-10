@@ -1,0 +1,143 @@
+<div class="readiness-form">
+  <div class="score-display">
+    <div class="score-circle" [class]="readinessClass()">
+      <span class="score-value">{{ readinessScore() }}</span>
+      <span class="score-label">Ready</span>
+    </div>
+    <p class="score-hint">{{ readinessHint() }}</p>
+  </div>
+
+  <div class="slider-group">
+    <div class="slider-item">
+      <div class="slider-header">
+        <label>
+          <i class="pi pi-exclamation-circle"></i>
+          Pain Level
+        </label>
+        <span class="slider-value" [class.danger]="state().pain_level >= 7">
+          {{ state().pain_level }}/10
+        </span>
+      </div>
+      <p-slider
+        [ngModel]="state().pain_level"
+        (ngModelChange)="sliderChange.emit({ key: 'pain_level', value: $event })"
+        [min]="0"
+        [max]="10"
+        [step]="1"
+      ></p-slider>
+      <div class="slider-labels">
+        <span>No pain</span>
+        <span>Severe</span>
+      </div>
+    </div>
+
+    <div class="slider-item">
+      <div class="slider-header">
+        <label>
+          <i class="pi pi-moon"></i>
+          Fatigue
+        </label>
+        <span class="slider-value" [class.danger]="state().fatigue_level >= 7">
+          {{ state().fatigue_level }}/10
+        </span>
+      </div>
+      <p-slider
+        [ngModel]="state().fatigue_level"
+        (ngModelChange)="sliderChange.emit({ key: 'fatigue_level', value: $event })"
+        [min]="0"
+        [max]="10"
+        [step]="1"
+      ></p-slider>
+      <div class="slider-labels">
+        <span>Energized</span>
+        <span>Exhausted</span>
+      </div>
+    </div>
+
+    <div class="slider-item">
+      <div class="slider-header">
+        <label>
+          <i class="pi pi-star"></i>
+          Sleep Quality
+        </label>
+        <span class="slider-value" [class.good]="state().sleep_quality >= 7">
+          {{ state().sleep_quality }}/10
+        </span>
+      </div>
+      <p-slider
+        [ngModel]="state().sleep_quality"
+        (ngModelChange)="sliderChange.emit({ key: 'sleep_quality', value: $event })"
+        [min]="0"
+        [max]="10"
+        [step]="1"
+      ></p-slider>
+      <div class="slider-labels">
+        <span>Poor</span>
+        <span>Excellent</span>
+      </div>
+    </div>
+
+    <div class="slider-item">
+      <div class="slider-header">
+        <label>
+          <i class="pi pi-bolt"></i>
+          Motivation
+        </label>
+        <span class="slider-value" [class.good]="state().motivation_level >= 7">
+          {{ state().motivation_level }}/10
+        </span>
+      </div>
+      <p-slider
+        [ngModel]="state().motivation_level"
+        (ngModelChange)="sliderChange.emit({ key: 'motivation_level', value: $event })"
+        [min]="0"
+        [max]="10"
+        [step]="1"
+      ></p-slider>
+      <div class="slider-labels">
+        <span>Low</span>
+        <span>High</span>
+      </div>
+    </div>
+
+    <div class="slider-item weight-input form-controls-full">
+      <div class="slider-header">
+        <label>
+          <i class="pi pi-chart-line"></i>
+          Today's Weight
+          <span class="optional-label">(optional)</span>
+        </label>
+      </div>
+      <p-inputNumber
+        [ngModel]="state().weight_kg"
+        (ngModelChange)="weightChange.emit($event)"
+        [suffix]="' kg'"
+        [min]="30"
+        [max]="200"
+        [step]="0.1"
+        [showButtons]="true"
+        [buttonLayout]="'horizontal'"
+        inputStyleClass="weight-input-field"
+        incrementButtonClass="weight-btn"
+        decrementButtonClass="weight-btn"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        placeholder="Enter weight"
+      ></p-inputNumber>
+      <p class="weight-hint">
+        @if (lastWeight()) {
+          Last: {{ lastWeight() }} kg
+        } @else {
+          Track daily for hydration & recovery insights
+        }
+      </p>
+    </div>
+  </div>
+
+  @if (riskFlags().length > 0) {
+    <div class="risk-flags">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ riskFlags().join(', ') }}</span>
+    </div>
+  }
+</div>

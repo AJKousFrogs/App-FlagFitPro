@@ -1,0 +1,67 @@
+@use "styles/mixins" as *;
+
+.roster-workspace {
+  display: flex;
+  flex-direction: column;
+}
+
+.workspace-filters {
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: var(--border-1) solid var(--surface-border);
+}
+
+.clickable-row {
+  cursor: pointer;
+
+  @include ds-hover-state(var(--surface-ground));
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-md);
+}
+
+.jersey-number {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.readiness-compact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.r-dot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.r-dot.readiness-high {
+  background: var(--color-status-success);
+}
+
+.r-dot.readiness-medium {
+  background: var(--color-status-warning);
+}
+
+.r-dot.readiness-low {
+  background: var(--color-status-error);
+}

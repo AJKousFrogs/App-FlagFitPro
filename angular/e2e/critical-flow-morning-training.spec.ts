@@ -16,19 +16,20 @@ import { test, expect, Page } from "@playwright/test";
 
 const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 
-// Test credentials from environment variables
-// Set TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables to override defaults
-// Default test account: aljkous@gmail.com / Futsal12!!!!
-const TEST_USER = {
-  email:
-    process.env["TEST_USER_EMAIL"] ||
-    process.env["E2E_TEST_EMAIL"] ||
-    "aljkous@gmail.com",
-  password:
-    process.env["TEST_USER_PASSWORD"] ||
-    process.env["E2E_TEST_PASSWORD"] ||
-    "Futsal12!!!!",
-};
+function getTestUser(): { email: string; password: string } {
+  const email =
+    process.env["TEST_USER_EMAIL"] || process.env["E2E_TEST_EMAIL"] || "";
+  const password =
+    process.env["TEST_USER_PASSWORD"] || process.env["E2E_TEST_PASSWORD"] || "";
+
+  if (!email || !password) {
+    throw new Error(
+      "Missing E2E credentials. Set TEST_USER_EMAIL and TEST_USER_PASSWORD (or E2E_TEST_EMAIL / E2E_TEST_PASSWORD).",
+    );
+  }
+
+  return { email, password };
+}
 
 /**
  * Dismisses the cookie consent banner by setting localStorage consent.
@@ -64,18 +65,16 @@ async function dismissCookieBanner(page: Page): Promise<void> {
  * Login helper function
  */
 async function login(page: Page): Promise<void> {
+  const testUser = getTestUser();
   await page.goto(`${BASE_URL}/login`);
   await dismissCookieBanner(page);
-
-  // Default credentials: aljkous@gmail.com / Futsal12!!!!
-  // Can be overridden via TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables
 
   // Fill email
   const emailInput = page.locator(
     'input[type="email"], [data-testid="email-input"]',
   );
   await emailInput.click();
-  await emailInput.fill(TEST_USER.email);
+  await emailInput.fill(testUser.email);
   await emailInput.press("Tab");
 
   // Fill password
@@ -83,7 +82,7 @@ async function login(page: Page): Promise<void> {
     'input[type="password"], [data-testid="password-input"]',
   );
   await passwordInput.click();
-  await passwordInput.fill(TEST_USER.password);
+  await passwordInput.fill(testUser.password);
   await passwordInput.press("Tab");
 
   // Wait for submit button to be enabled
@@ -94,9 +93,23 @@ async function login(page: Page): Promise<void> {
   // Submit login
   await page.click('button[type="submit"]');
 
-  // Wait for navigation (either to dashboard or onboarding)
-  await page.waitForTimeout(2000);
-  await page.waitForURL(/.*(dashboard|onboarding).*/, { timeout: 15000 });
+  const authError = page
+    .locator(
+      ".form-error-summary, app-alert, [role='alert'], .p-message-error, .error-message",
+    )
+    .filter({ hasText: /unable to sign in|invalid email|invalid password|invalid email or password/i })
+    .first();
+
+  await Promise.race([
+    page.waitForURL(/.*(dashboard|player-dashboard|coach-dashboard|onboarding).*/, {
+      timeout: 15000,
+    }),
+    (async () => {
+      await authError.waitFor({ state: "visible", timeout: 15000 });
+      const errorText = (await authError.textContent())?.trim() || "unknown auth error";
+      throw new Error(`Login failed before navigation: ${errorText}`);
+    })(),
+  ]);
 }
 
 /**

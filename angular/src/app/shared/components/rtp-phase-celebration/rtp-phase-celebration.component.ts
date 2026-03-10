@@ -13,9 +13,9 @@ import {
   computed,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
 
 import { ButtonComponent } from "../button/button.component";
+import { CardShellComponent } from "../card-shell/card-shell.component";
 
 export interface RTPPhaseInfo {
   currentPhase: number;
@@ -35,10 +35,10 @@ export interface RTPPhaseInfo {
 @Component({
   selector: "app-rtp-phase-celebration",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Card, ButtonComponent],
+  imports: [CommonModule, RouterModule, CardShellComponent, ButtonComponent],
   template: `
     @if (showCelebration()) {
-      <p-card class="celebration-card">
+      <app-card-shell class="celebration-card" [flush]="true">
         <div class="celebration-header">
           <div class="celebration-icon"><i class="pi pi-sparkles" aria-hidden="true"></i></div>
           <div class="celebration-content">
@@ -119,171 +119,10 @@ export interface RTPPhaseInfo {
             >Continue Recovery Journey</app-button
           >
         </div>
-      </p-card>
+      </app-card-shell>
     }
   `,
-  styles: [
-    `
-      .celebration-card {
-        margin-bottom: var(--space-6);
-        background: linear-gradient(
-          135deg,
-          var(--color-status-success-subtle) 0%,
-          var(--surface-primary) 100%
-        );
-        border: var(--border-2) solid var(--color-status-success);
-        border-radius: var(--radius-xl);
-        padding: var(--space-6);
-      }
-
-      .celebration-header {
-        display: flex;
-        gap: var(--space-4);
-        align-items: flex-start;
-        margin-bottom: var(--space-4);
-      }
-
-      .celebration-icon {
-        font-size: var(--ds-font-size-3xl);
-        line-height: var(--ds-line-height-1);
-      }
-
-      .celebration-content {
-        flex: 1;
-      }
-
-      .celebration-content h2 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: var(--ds-font-size-2xl);
-        font-weight: var(--ds-font-weight-bold);
-        color: var(--color-text-primary);
-      }
-
-      .celebration-subtitle {
-        margin: 0;
-        font-size: var(--ds-font-size-md);
-        color: var(--color-text-secondary);
-      }
-
-      .progress-context {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-        padding: var(--space-4);
-        background: var(--overlay-white-50);
-        border-radius: var(--radius-md);
-        margin-bottom: var(--space-4);
-      }
-
-      .context-item {
-        display: flex;
-        gap: var(--space-2);
-        font-size: var(--ds-font-size-md);
-      }
-
-      .context-label {
-        font-weight: var(--ds-font-weight-medium);
-        color: var(--color-text-secondary);
-      }
-
-      .context-value {
-        color: var(--color-text-primary);
-        font-weight: var(--ds-font-weight-semibold);
-      }
-
-      .instructions-section {
-        margin-bottom: var(--space-4);
-      }
-
-      .instructions-section h3 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: var(--ds-font-size-xl);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-text-primary);
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .instructions-section h3 i {
-        color: var(--color-status-success);
-      }
-
-      .activities-list {
-        margin: var(--space-2) 0 var(--space-4) var(--space-4);
-        padding: 0;
-        list-style: disc;
-        color: var(--color-text-primary);
-        font-size: var(--ds-font-size-md);
-      }
-
-      .activities-list.allowed li {
-        color: var(--color-status-success-text);
-      }
-
-      .activities-list.restricted li {
-        color: var(--color-status-warning-text);
-      }
-
-      .next-phase-section {
-        padding: var(--space-4);
-        background: var(--surface-secondary);
-        border-radius: var(--radius-md);
-        margin-bottom: var(--space-4);
-      }
-
-      .next-phase-section h3 {
-        margin: 0 0 var(--space-2) 0;
-        font-size: var(--ds-font-size-xl);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-text-primary);
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .next-phase-section h3 i {
-        color: var(--color-brand-primary);
-      }
-
-      .next-phase-name {
-        margin: 0 0 var(--space-2) 0;
-        font-size: var(--ds-font-size-md);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-brand-primary);
-      }
-
-      .unlock-criteria {
-        margin: var(--space-2) 0 0 var(--space-4);
-        padding: 0;
-        list-style: disc;
-        color: var(--color-text-secondary);
-        font-size: var(--ds-font-size-md);
-      }
-
-      .coach-notification {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        padding: var(--space-3);
-        background: var(--color-status-info-subtle);
-        border-radius: var(--radius-md);
-        margin-bottom: var(--space-4);
-        font-size: var(--ds-font-size-md);
-        color: var(--color-text-primary);
-      }
-
-      .coach-notification i {
-        color: var(--color-status-info);
-        font-size: var(--ds-font-size-xl);
-      }
-
-      .celebration-actions {
-        display: flex;
-        justify-content: center;
-      }
-    `,
-  ],
+  styleUrl: "./rtp-phase-celebration.component.scss",
 })
 export class RTPPhaseCelebrationComponent {
   phaseInfo = input<RTPPhaseInfo | null>(null);

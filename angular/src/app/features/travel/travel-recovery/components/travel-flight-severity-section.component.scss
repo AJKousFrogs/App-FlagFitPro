@@ -1,0 +1,131 @@
+.severity-section {
+  margin-bottom: 0;
+}
+
+.severity-card {
+  overflow: hidden;
+
+  &.severity-none {
+    border-left: var(--space-1) solid var(--color-status-success);
+  }
+
+  &.severity-mild {
+    border-left: var(--space-1) solid var(--color-status-info);
+  }
+
+  &.severity-moderate {
+    border-left: var(--space-1) solid var(--color-status-warning);
+  }
+
+  &.severity-severe {
+    border-left: var(--space-1) solid var(--color-status-error);
+  }
+}
+
+.severity-content {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-4);
+}
+
+.severity-gauge {
+  flex-shrink: 0;
+}
+
+.gauge-circle {
+  width: calc(var(--space-20) + var(--space-10));
+  height: calc(var(--space-20) + var(--space-10));
+  border-radius: var(--radius-full);
+  background: conic-gradient(
+    var(--color-brand-primary) calc(var(--score, 0) * 1%),
+    var(--color-border-secondary) 0
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: calc(var(--space-16) + var(--space-6));
+    height: calc(var(--space-16) + var(--space-6));
+    border-radius: var(--radius-full);
+    background: var(--surface-primary);
+  }
+}
+
+.gauge-value,
+.gauge-label {
+  position: relative;
+  z-index: 1;
+}
+
+.gauge-value {
+  font-size: var(--font-h2-size);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.gauge-label {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.severity-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.recovery-estimate,
+.competition-countdown {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+.competition-countdown.warning {
+  color: var(--color-status-warning);
+}
+
+.warning-text {
+  color: var(--color-status-warning);
+}
+
+.symptoms-section {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.symptoms-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.symptom-chip {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  font-size: var(--font-body-sm-size);
+  color: var(--ui-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .severity-content {
+    flex-direction: column;
+  }
+}

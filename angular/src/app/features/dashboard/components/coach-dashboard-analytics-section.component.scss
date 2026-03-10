@@ -1,0 +1,70 @@
+@use "styles/mixins" as *;
+
+.analytics-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.analytics-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.chart-container {
+  min-width: 0;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  min-width: 12rem;
+}
+
+.h-stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--component-card-radius);
+  background: var(--ui-surface-card-alt);
+}
+
+.h-label {
+  font-size: var(--font-body-sm-size);
+  color: var(--ui-text-secondary);
+}
+
+.h-value {
+  font-size: var(--font-h2-size);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ui-text-primary);
+}
+
+.analytics-preview-note {
+  margin: 0;
+
+  @include preview-callout;
+}
+
+@include respond-to(md) {
+  .analytics-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
+  }
+}
+
+@include respond-to(sm) {
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+}

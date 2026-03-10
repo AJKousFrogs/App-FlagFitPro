@@ -26,18 +26,18 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
-import { CardHeaderComponent } from "../card-header/card-header.component";
-import { Card } from "primeng/card";
-import { Slider } from "primeng/slider";
-import { Dialog } from "primeng/dialog";
+import { CardShellComponent } from "../card-shell/card-shell.component";
+import { AppDialogComponent } from "../dialog/dialog.component";
+import { DialogFooterComponent } from "../dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../dialog-header/dialog-header.component";
 
 import { AuthService } from "../../../core/services/auth.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
-import { InputNumber } from "primeng/inputnumber";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
+import { DailyReadinessFormContentComponent } from "./daily-readiness-form-content.component";
 
 // Centralized wellness constants
 import {
@@ -61,235 +61,93 @@ interface DailyState {
   imports: [
     CommonModule,
     FormsModule,
-    Card,
-    Slider,
-    Dialog,
-    
-    
-    InputNumber,
     ButtonComponent,
-    CardHeaderComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
+    DailyReadinessFormContentComponent,
   ],
   template: `
     @if (mode() === "modal") {
-      <p-dialog
-        [header]="'Daily Check-in'"
+      <app-dialog
         [(visible)]="dialogVisible"
         [modal]="true"
-        [closable]="true"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
         [dismissableMask]="true"
-        class="dialog-w-xl dialog-max-w-md"
+        [blockScroll]="true"
+        [styleClass]="'dialog-w-xl dialog-max-w-md'"
+        [ariaLabel]="'Daily Check-in'"
         (onHide)="onSkip()"
       >
-        <ng-container *ngTemplateOutlet="formContent"></ng-container>
+        <app-dialog-header
+          icon="heart-fill"
+          title="Daily Check-in"
+          subtitle="Quick recovery check before training"
+          (close)="onSkip()"
+        />
 
-        <ng-template #footer>
-          <div class="dialog-footer">
-            <app-button variant="text" (clicked)="onSkip()"
-              >Skip for now</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [loading]="saving()"
-              [disabled]="saving()"
-              (clicked)="saveState()"
-              >Save Check-in</app-button
-            >
-          </div>
-        </ng-template>
-      </p-dialog>
+        <app-daily-readiness-form-content
+          [state]="state()"
+          [readinessScore]="readinessScore()"
+          [readinessClass]="readinessClass()"
+          [readinessHint]="readinessHint()"
+          [riskFlags]="riskFlags()"
+          [lastWeight]="lastWeight()"
+          (sliderChange)="onSliderChange($event.key, $event.value)"
+          (weightChange)="onWeightChange($event)"
+        />
+
+        <app-dialog-footer
+          cancelLabel="Skip for now"
+          primaryLabel="Save Check-in"
+          primaryIcon="check"
+          [loading]="saving()"
+          [disabled]="saving()"
+          (cancel)="onSkip()"
+          (primary)="saveState()"
+        />
+      </app-dialog>
     } @else {
-      <p-card class="readiness-card">
-        <ng-template #header>
-          <app-card-header icon="pi-heart-fill" title="Daily Check-in">
-            <span header-actions class="readiness-badge" [class]="readinessClass()">
-              {{ readinessLabel() }}
-            </span>
-          </app-card-header>
-        </ng-template>
+      <app-card-shell
+        class="readiness-card"
+        title="Daily Check-in"
+        headerIcon="pi-heart-fill"
+        [hasFooter]="true"
+      >
+        <span
+          header-actions
+          class="readiness-badge"
+          [class]="readinessClass()"
+        >
+          {{ readinessLabel() }}
+        </span>
 
-        <ng-container *ngTemplateOutlet="formContent"></ng-container>
+        <app-daily-readiness-form-content
+          [state]="state()"
+          [readinessScore]="readinessScore()"
+          [readinessClass]="readinessClass()"
+          [readinessHint]="readinessHint()"
+          [riskFlags]="riskFlags()"
+          [lastWeight]="lastWeight()"
+          (sliderChange)="onSliderChange($event.key, $event.value)"
+          (weightChange)="onWeightChange($event)"
+        />
 
-        <ng-template #footer>
-          <div class="card-footer">
-            <app-button
-              iconLeft="pi-check"
-              [loading]="saving()"
-              [disabled]="saving()"
-              (clicked)="saveState()"
-              >Save</app-button
-            >
-          </div>
-        </ng-template>
-      </p-card>
+        <div footer class="card-footer">
+          <app-button
+            iconLeft="pi-check"
+            [loading]="saving()"
+            [disabled]="saving()"
+            (clicked)="saveState()"
+          >
+            Save
+          </app-button>
+        </div>
+      </app-card-shell>
     }
-
-    <!-- Shared form content template -->
-    <ng-template #formContent>
-      <div class="readiness-form">
-        <!-- Readiness Score Display -->
-        <div class="score-display">
-          <div class="score-circle" [class]="readinessClass()">
-            <span class="score-value">{{ readinessScore() }}</span>
-            <span class="score-label">Ready</span>
-          </div>
-          <p class="score-hint">{{ readinessHint() }}</p>
-        </div>
-
-        <!-- Sliders -->
-        <div class="slider-group">
-          <!-- Pain Level -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label>
-                <i class="pi pi-exclamation-circle"></i>
-                Pain Level
-              </label>
-              <span
-                class="slider-value"
-                [class.danger]="state().pain_level >= 7"
-              >
-                {{ state().pain_level }}/10
-              </span>
-            </div>
-            <p-slider
-              [ngModel]="state().pain_level"
-              (ngModelChange)="onSliderChange('pain_level', $event)"
-              [min]="0"
-              [max]="10"
-              [step]="1"
-            ></p-slider>
-            <div class="slider-labels">
-              <span>No pain</span>
-              <span>Severe</span>
-            </div>
-          </div>
-
-          <!-- Fatigue Level -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label>
-                <i class="pi pi-moon"></i>
-                Fatigue
-              </label>
-              <span
-                class="slider-value"
-                [class.danger]="state().fatigue_level >= 7"
-              >
-                {{ state().fatigue_level }}/10
-              </span>
-            </div>
-            <p-slider
-              [ngModel]="state().fatigue_level"
-              (ngModelChange)="onSliderChange('fatigue_level', $event)"
-              [min]="0"
-              [max]="10"
-              [step]="1"
-            ></p-slider>
-            <div class="slider-labels">
-              <span>Energized</span>
-              <span>Exhausted</span>
-            </div>
-          </div>
-
-          <!-- Sleep Quality -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label>
-                <i class="pi pi-star"></i>
-                Sleep Quality
-              </label>
-              <span
-                class="slider-value"
-                [class.good]="state().sleep_quality >= 7"
-              >
-                {{ state().sleep_quality }}/10
-              </span>
-            </div>
-            <p-slider
-              [ngModel]="state().sleep_quality"
-              (ngModelChange)="onSliderChange('sleep_quality', $event)"
-              [min]="0"
-              [max]="10"
-              [step]="1"
-            ></p-slider>
-            <div class="slider-labels">
-              <span>Poor</span>
-              <span>Excellent</span>
-            </div>
-          </div>
-
-          <!-- Motivation -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label>
-                <i class="pi pi-bolt"></i>
-                Motivation
-              </label>
-              <span
-                class="slider-value"
-                [class.good]="state().motivation_level >= 7"
-              >
-                {{ state().motivation_level }}/10
-              </span>
-            </div>
-            <p-slider
-              [ngModel]="state().motivation_level"
-              (ngModelChange)="onSliderChange('motivation_level', $event)"
-              [min]="0"
-              [max]="10"
-              [step]="1"
-            ></p-slider>
-            <div class="slider-labels">
-              <span>Low</span>
-              <span>High</span>
-            </div>
-          </div>
-
-          <!-- Weight (Optional) -->
-          <div class="slider-item weight-input form-controls-full">
-            <div class="slider-header">
-              <label>
-                <i class="pi pi-chart-line"></i>
-                Today's Weight
-                <span class="optional-label">(optional)</span>
-              </label>
-            </div>
-            <p-inputNumber
-              [ngModel]="state().weight_kg"
-              (ngModelChange)="onWeightChange($event)"
-              [suffix]="' kg'"
-              [min]="30"
-              [max]="200"
-              [step]="0.1"
-              [showButtons]="true"
-              [buttonLayout]="'horizontal'"
-              inputStyleClass="weight-input-field"
-              incrementButtonClass="weight-btn"
-              decrementButtonClass="weight-btn"
-              incrementButtonIcon="pi pi-plus"
-              decrementButtonIcon="pi pi-minus"
-              placeholder="Enter weight"
-            ></p-inputNumber>
-            <p class="weight-hint">
-              @if (lastWeight()) {
-                Last: {{ lastWeight() }} kg
-              } @else {
-                Track daily for hydration & recovery insights
-              }
-            </p>
-          </div>
-        </div>
-
-        <!-- Risk Flags -->
-        @if (riskFlags().length > 0) {
-          <div class="risk-flags">
-            <i class="pi pi-exclamation-triangle"></i>
-            <span>{{ riskFlags().join(", ") }}</span>
-          </div>
-        }
-      </div>
-    </ng-template>
   `,
   styleUrl: "./daily-readiness.component.scss",
 })
