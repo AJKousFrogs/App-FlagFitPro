@@ -9,7 +9,6 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Dialog } from "primeng/dialog";
 import { Slider } from "primeng/slider";
 import { Tag } from "primeng/tag";
 import { Tooltip } from "primeng/tooltip";
@@ -18,6 +17,11 @@ import { LoggerService } from "../../../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../../shared/components/ui-components";
 
 export interface WellnessData {
   sleepQuality: number;
@@ -44,13 +48,13 @@ export interface ReadinessResult {
   imports: [
     FormsModule,
     Slider,
-    Dialog,
-    
-    
     Tag,
     Tooltip,
     ButtonComponent,
     IconButtonComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <!-- Quick Checkin Button -->
@@ -112,13 +116,22 @@ export interface ReadinessResult {
     }
 
     <!-- Checkin Dialog -->
-    <p-dialog
+    <app-dialog
       [visible]="showDialog()"
       (visibleChange)="showDialog.set($event)"
-      header="Daily Wellness Check-in"
-      [modal]="true"
-      class="wellness-dialog"
+      [blockScroll]="true"
+      [draggable]="false"
+      [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+      styleClass="wellness-dialog"
+      ariaLabel="Daily wellness check-in"
     >
+      <app-dialog-header
+        icon="heart"
+        title="Daily Wellness Check-in"
+        subtitle="Track your readiness for today"
+        (close)="showDialog.set(false)"
+      />
+
       <div class="checkin-form">
         <!-- Sleep Quality -->
         <div class="form-section">
@@ -394,31 +407,29 @@ export interface ReadinessResult {
         </div>
       </div>
 
-      <ng-template #footer>
-        <app-button variant="text" (clicked)="showDialog.set(false)"
-          >Cancel</app-button
-        >
-        <app-button
-          iconLeft="pi-check"
-          [loading]="isSaving()"
-          (clicked)="saveCheckin()"
-          >Save Check-in</app-button
-        >
-        @if (isSaving()) {
-          <div class="save-narration">
-            <small class="state-narration">
-              <strong>What changed:</strong> Check-in is being saved.
-              <strong>Why:</strong> You clicked "Save Check-in".
-              <strong>What it means:</strong> Your wellness data and readiness
-              score ({{ previewScore() }}) are being recorded.
-              <strong>Who:</strong> System is processing your submission.
-              <strong>What next:</strong> Dialog will close automatically when
-              saved. Your readiness score will appear on your dashboard.
-            </small>
-          </div>
-        }
-      </ng-template>
-    </p-dialog>
+      @if (isSaving()) {
+        <div class="save-narration">
+          <small class="state-narration">
+            <strong>What changed:</strong> Check-in is being saved.
+            <strong>Why:</strong> You clicked "Save Check-in".
+            <strong>What it means:</strong> Your wellness data and readiness
+            score ({{ previewScore() }}) are being recorded.
+            <strong>Who:</strong> System is processing your submission.
+            <strong>What next:</strong> Dialog will close automatically when
+            saved. Your readiness score will appear on your dashboard.
+          </small>
+        </div>
+      }
+
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Save Check-in"
+        primaryIcon="check"
+        [loading]="isSaving()"
+        (cancel)="showDialog.set(false)"
+        (primary)="saveCheckin()"
+      />
+    </app-dialog>
   `,
   styleUrl: "./wellness-checkin.component.scss",
 })

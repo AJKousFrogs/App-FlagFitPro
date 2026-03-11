@@ -1,0 +1,71 @@
+.coach-override-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  text-transform: var(--ds-text-transform-none);
+  letter-spacing: var(--ds-letter-spacing-normal);
+  line-height: var(--ds-line-height-tight);
+  min-height: var(--space-8);
+  transition: all var(--motion-fast) var(--ease-standard);
+  background: var(--color-status-info-subtle);
+  color: var(--color-status-info);
+  border-left: var(--space-0-75) solid var(--color-status-info);
+}
+
+.coach-override-badge.placement-top-right {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 10;
+}
+
+.coach-override-badge.placement-top-left {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 10;
+}
+
+.coach-override-badge.placement-inline {
+  display: inline-flex;
+  position: static;
+}
+
+.coach-override-badge.placement-card {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.override-icon {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-status-info);
+}
+
+.override-label {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-status-info);
+}
+
+.override-tag {
+  margin-left: var(--space-1);
+}
+
+.override-timestamp {
+  margin-left: var(--space-2);
+  font-size: var(--ds-font-size-md);
+  opacity: 0.9;
+  font-weight: var(--ds-font-weight-regular);
+}
+
+@media (max-width: 768px) {
+  .coach-override-badge.placement-top-right,
+  .coach-override-badge.placement-top-left {
+    position: static;
+    margin-bottom: var(--space-2);
+  }
+}

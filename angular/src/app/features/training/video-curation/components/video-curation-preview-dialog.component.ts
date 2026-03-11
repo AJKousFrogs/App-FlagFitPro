@@ -11,24 +11,31 @@ import {
   model,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-
-// PrimeNG
-import { Dialog } from "primeng/dialog";
+import { AppDialogComponent } from "../../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../../shared/components/dialog-header/dialog-header.component";
 
 import { InstagramVideo } from "../video-curation.models";
 
 @Component({
   selector: "app-video-curation-preview-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Dialog],
+  imports: [CommonModule, AppDialogComponent, DialogHeaderComponent],
   template: `
-    <p-dialog
-      [(visible)]="visible"
+    <app-dialog
+      [visible]="visible()"
+      (visibleChange)="visible.set($event)"
       [modal]="true"
+      [blockScroll]="true"
       [draggable]="false"
-      [header]="video()?.title || 'Video Preview'"
+      ariaLabel="Video preview"
       class="video-curation-preview-dialog"
     >
+      <app-dialog-header
+        dialogHeader
+        icon="video"
+        [title]="video()?.title || 'Video Preview'"
+        (close)="visible.set(false)"
+      />
       @if (video(); as v) {
         <div class="preview-content">
           <div class="preview-embed" [innerHTML]="embedHtml()"></div>
@@ -54,7 +61,7 @@ import { InstagramVideo } from "../video-curation.models";
           </div>
         </div>
       }
-    </p-dialog>
+    </app-dialog>
   `,
   styleUrl: "./video-curation-preview-dialog.component.scss",
 })

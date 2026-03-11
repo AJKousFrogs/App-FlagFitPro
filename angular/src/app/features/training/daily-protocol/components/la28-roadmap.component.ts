@@ -15,13 +15,16 @@ import {
 } from "../../../../shared/utils/status.utils";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
-import { Dialog } from "primeng/dialog";
 import { Timeline } from "primeng/timeline";
-import { Card } from "primeng/card";
 import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { ApiResponse } from "../../../../core/models/common.models";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
+import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
+import {
+  AppDialogComponent,
+  DialogHeaderComponent,
+} from "../../../../shared/components/ui-components";
 
 interface ProgramCycle {
   id: string;
@@ -63,10 +66,12 @@ interface Milestone {
     StatusTagComponent,
     Tooltip,
     ProgressBar,
-    Dialog,
     Timeline,
     Card,
     IconButtonComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    CardShellComponent,
   ],
   template: `
     <div class="roadmap-panel">
@@ -138,12 +143,20 @@ interface Milestone {
       </div>
 
       <!-- Full Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showFullDialog"
-        header="Road to LA28 Olympics"
-        [modal]="true"
-        class="la28-roadmap-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        styleClass="la28-roadmap-dialog"
+        ariaLabel="Road to LA28 Olympics"
       >
+        <app-dialog-header
+          icon="trophy"
+          title="Road to LA28 Olympics"
+          subtitle="Track your long-term progress toward the Games"
+          (close)="showFullDialog = false"
+        />
+
         <div class="roadmap-full">
           <!-- Stats Header -->
           <div class="stats-header">
@@ -232,9 +245,11 @@ interface Milestone {
               class="roadmap-timeline"
             >
               <ng-template #content let-event>
-                <p-card
-                  [header]="event.title"
-                  [subheader]="formatDate(event.date, 'MMM yyyy')"
+                <app-card-shell
+                  class="milestone-card"
+                  [title]="event.title"
+                  [subtitle]="formatDate(event.date, 'MMM yyyy')"
+                  density="compact"
                 >
                   <p>{{ event.description }}</p>
                   <app-status-tag
@@ -242,7 +257,7 @@ interface Milestone {
                     [severity]="getMilestoneTypeSeverity(event.type)"
                     size="sm"
                   />
-                </p-card>
+                </app-card-shell>
               </ng-template>
               <ng-template #opposite let-event>
                 <span class="milestone-icon-large">{{ event.icon }}</span>
@@ -275,7 +290,7 @@ interface Milestone {
             </div>
           </div>
         </div>
-      </p-dialog>
+      </app-dialog>
     </div>
   `,
   styleUrl: "./la28-roadmap.component.scss",

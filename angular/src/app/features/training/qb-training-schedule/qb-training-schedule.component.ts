@@ -5,21 +5,21 @@ import {
 } from "@angular/core";
 
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
 
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 @Component({
   selector: "app-qb-training-schedule",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    Card,
     DatePicker,
     PageHeaderComponent,
     ButtonComponent,
+    CardShellComponent,
   ],
   template: `
     <div class="qb-training-schedule-page">
@@ -29,10 +29,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         icon="pi-calendar"
       ></app-page-header>
 
-      <p-card class="schedule-card">
-        <ng-template #header>
-          <h3>Throwing Volume Program</h3>
-        </ng-template>
+      <app-card-shell class="schedule-card" title="Throwing Volume Program">
         <div class="program-info">
           <p>
             This is a specialized training schedule for quarterbacks focusing on
@@ -42,18 +39,15 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             >View Full Program</app-button
           >
         </div>
-      </p-card>
+      </app-card-shell>
 
-      <p-card class="calendar-card mt-4">
-        <ng-template #header>
-          <h3>Weekly Schedule</h3>
-        </ng-template>
+      <app-card-shell class="calendar-card mt-4" title="Weekly Schedule">
         <p-datepicker
           [formControl]="selectedDateControl"
           [inline]="true"
           [showWeek]="true"
         ></p-datepicker>
-      </p-card>
+      </app-card-shell>
     </div>
   `,
   styleUrl: "./qb-training-schedule.component.scss",

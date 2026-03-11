@@ -66,6 +66,19 @@ export class PresenceService implements OnDestroy {
   // Idle detection
   private idleTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly IDLE_TIMEOUT_MS = TIMEOUTS.IDLE_TIMEOUT;
+  private readonly idleActivityHandler = () => this.resetIdleTimer();
+  private readonly visibilityChangeHandler = () => {
+    if (document.hidden) {
+      if (this.idleTimer) {
+        clearTimeout(this.idleTimer);
+      }
+      this.idleTimer = setTimeout(() => {
+        this.setStatus("away");
+      }, 30000);
+    } else {
+      this.resetIdleTimer();
+    }
+  };
 
   // State
   private readonly _myPresence = signal<PresenceState | null>(null);
@@ -360,58 +373,65 @@ export class PresenceService implements OnDestroy {
   // ============================================================================
 
   private setupIdleDetection(): void {
-    const resetIdleTimer = () => {
-      // If we were away, set back to online
-      if (this._myPresence()?.status === "away") {
-        this.setStatus("online");
-      }
-
-      // Reset the timer
-      if (this.idleTimer) {
-        clearTimeout(this.idleTimer);
-      }
-
-      this.idleTimer = setTimeout(() => {
-        // Mark as away after idle timeout
-        if (this._myPresence()?.status === "online") {
-          this.setStatus("away");
-          this.logger.debug("User idle - marked as away");
-        }
-      }, this.IDLE_TIMEOUT_MS);
-    };
-
     // Listen for user activity
-    window.addEventListener("mousemove", resetIdleTimer, { passive: true });
-    window.addEventListener("keydown", resetIdleTimer, { passive: true });
-    window.addEventListener("click", resetIdleTimer, { passive: true });
-    window.addEventListener("scroll", resetIdleTimer, { passive: true });
-    window.addEventListener("touchstart", resetIdleTimer, { passive: true });
-
-    // Handle visibility change
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        // Tab is hidden, mark as away faster
-        if (this.idleTimer) {
-          clearTimeout(this.idleTimer);
-        }
-        this.idleTimer = setTimeout(() => {
-          this.setStatus("away");
-        }, 30000); // 30 seconds when tab hidden
-      } else {
-        // Tab is visible again
-        resetIdleTimer();
-      }
+    window.addEventListener("mousemove", this.idleActivityHandler, {
+      passive: true,
+    });
+    window.addEventListener("keydown", this.idleActivityHandler, {
+      passive: true,
+    });
+    window.addEventListener("click", this.idleActivityHandler, {
+      passive: true,
+    });
+    window.addEventListener("touchstart", this.idleActivityHandler, {
+      passive: true,
+    });
+    document.addEventListener("scroll", this.idleActivityHandler, {
+      passive: true,
+      capture: true,
     });
 
+    document.addEventListener(
+      "visibilitychange",
+      this.visibilityChangeHandler,
+    );
+
     // Initial timer
-    resetIdleTimer();
+    this.resetIdleTimer();
   }
 
   private cleanupIdleDetection(): void {
+    window.removeEventListener("mousemove", this.idleActivityHandler);
+    window.removeEventListener("keydown", this.idleActivityHandler);
+    window.removeEventListener("click", this.idleActivityHandler);
+    window.removeEventListener("touchstart", this.idleActivityHandler);
+    document.removeEventListener("scroll", this.idleActivityHandler, true);
+    document.removeEventListener(
+      "visibilitychange",
+      this.visibilityChangeHandler,
+    );
+
     if (this.idleTimer) {
       clearTimeout(this.idleTimer);
       this.idleTimer = null;
     }
+  }
+
+  private resetIdleTimer(): void {
+    if (this._myPresence()?.status === "away") {
+      this.setStatus("online");
+    }
+
+    if (this.idleTimer) {
+      clearTimeout(this.idleTimer);
+    }
+
+    this.idleTimer = setTimeout(() => {
+      if (this._myPresence()?.status === "online") {
+        this.setStatus("away");
+        this.logger.debug("User idle - marked as away");
+      }
+    }, this.IDLE_TIMEOUT_MS);
   }
 
   // ============================================================================

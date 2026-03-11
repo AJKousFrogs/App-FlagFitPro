@@ -25,8 +25,6 @@ import {
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { Card } from "primeng/card";
-
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ProgressBar } from "primeng/progressbar";
 import {
@@ -65,6 +63,7 @@ import { AcwrService } from "../../../../core/services/acwr.service";
 import { MainLayoutComponent } from "../../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../../shared/components/page-header/page-header.component";
 import { AlertComponent } from "../../../../shared/components/alert/alert.component";
+import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
 interface TimelineEvent {
   phase: string;
@@ -79,7 +78,6 @@ interface TimelineEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     StatusTagComponent,
     ProgressBar,
     Accordion,
@@ -97,6 +95,7 @@ interface TimelineEvent {
     MainLayoutComponent,
     PageHeaderComponent,
     AlertComponent,
+    CardShellComponent,
   ],
   template: `
     <app-main-layout>
@@ -111,8 +110,8 @@ interface TimelineEvent {
 
         <div class="periodization-dashboard ui-page-stack">
           <!-- Current Phase Card -->
-          <p-card class="phase-card">
-            <ng-template #header>
+          <app-card-shell class="phase-card" [flush]="true">
+            <div class="phase-shell">
               <div class="phase-header">
                 <div class="phase-info">
                   <app-status-tag
@@ -129,83 +128,88 @@ interface TimelineEvent {
                   {{ currentDate | date: "MMMM yyyy" }}
                 </div>
               </div>
-            </ng-template>
 
-            <div class="phase-content">
-              <p class="phase-description">{{ currentPhase()?.description }}</p>
+              <div class="phase-content">
+                <p class="phase-description">
+                  {{ currentPhase()?.description }}
+                </p>
 
-              <div class="focus-areas">
-                <h4>Primary Focus</h4>
-                <div class="chips-container">
-                  @for (
-                    focus of currentPhase()?.primaryFocus || [];
-                    track focus
-                  ) {
-                    <p-chip
-                      [label]="formatFocus(focus)"
-                      class="focus-chip primary"
-                    ></p-chip>
-                  }
-                </div>
-
-                <h4>Secondary Focus</h4>
-                <div class="chips-container">
-                  @for (
-                    focus of currentPhase()?.secondaryFocus || [];
-                    track focus
-                  ) {
-                    <p-chip
-                      [label]="formatFocus(focus)"
-                      class="focus-chip secondary"
-                    ></p-chip>
-                  }
-                </div>
-              </div>
-
-              <!-- Load Targets -->
-              <div class="load-targets">
-                <h4>Weekly Load Target</h4>
-                <div class="load-bar-container">
-                  <div class="load-info">
-                    <span
-                      >Target:
-                      {{ loadRecommendation()?.recommendedLoad || 0 }} AU</span
-                    >
-                    <span
-                      >Range: {{ loadRecommendation()?.loadRange?.[0] || 0 }} -
-                      {{ loadRecommendation()?.loadRange?.[1] || 0 }} AU</span
-                    >
+                <div class="focus-areas">
+                  <h4>Primary Focus</h4>
+                  <div class="chips-container">
+                    @for (
+                      focus of currentPhase()?.primaryFocus || [];
+                      track focus
+                    ) {
+                      <p-chip
+                        [label]="formatFocus(focus)"
+                        class="focus-chip primary"
+                      ></p-chip>
+                    }
                   </div>
-                  <p-progressBar
-                    [value]="getLoadProgress()"
-                    [showValue]="false"
-                    class="load-bar"
-                  ></p-progressBar>
-                </div>
-              </div>
 
-              <!-- ACWR Status -->
-              @if (acwrStatus()) {
-                <div
-                  class="acwr-status"
-                  [class]="'acwr-' + acwrStatus()?.riskZone"
-                >
-                  <div class="acwr-header">
-                    <span class="acwr-label">ACWR</span>
-                    <span class="acwr-value">{{ acwrStatus()?.acwr }}</span>
-                    <app-status-tag
-                      [value]="acwrStatus()?.riskZone || 'unknown'"
-                      [severity]="getAcwrSeverity()"
-                      size="sm"
-                    />
+                  <h4>Secondary Focus</h4>
+                  <div class="chips-container">
+                    @for (
+                      focus of currentPhase()?.secondaryFocus || [];
+                      track focus
+                    ) {
+                      <p-chip
+                        [label]="formatFocus(focus)"
+                        class="focus-chip secondary"
+                      ></p-chip>
+                    }
                   </div>
-                  <p class="acwr-recommendation">
-                    {{ acwrStatus()?.recommendation }}
-                  </p>
                 </div>
-              }
+
+                <!-- Load Targets -->
+                <div class="load-targets">
+                  <h4>Weekly Load Target</h4>
+                  <div class="load-bar-container">
+                    <div class="load-info">
+                      <span
+                        >Target:
+                        {{ loadRecommendation()?.recommendedLoad || 0 }}
+                        AU</span
+                      >
+                      <span
+                        >Range:
+                        {{ loadRecommendation()?.loadRange?.[0] || 0 }} -
+                        {{ loadRecommendation()?.loadRange?.[1] || 0 }}
+                        AU</span
+                      >
+                    </div>
+                    <p-progressBar
+                      [value]="getLoadProgress()"
+                      [showValue]="false"
+                      class="load-bar"
+                    ></p-progressBar>
+                  </div>
+                </div>
+
+                <!-- ACWR Status -->
+                @if (acwrStatus()) {
+                  <div
+                    class="acwr-status"
+                    [class]="'acwr-' + acwrStatus()?.riskZone"
+                  >
+                    <div class="acwr-header">
+                      <span class="acwr-label">ACWR</span>
+                      <span class="acwr-value">{{ acwrStatus()?.acwr }}</span>
+                      <app-status-tag
+                        [value]="acwrStatus()?.riskZone || 'unknown'"
+                        [severity]="getAcwrSeverity()"
+                        size="sm"
+                      />
+                    </div>
+                    <p class="acwr-recommendation">
+                      {{ acwrStatus()?.recommendation }}
+                    </p>
+                  </div>
+                }
+              </div>
             </div>
-          </p-card>
+          </app-card-shell>
 
           <!-- Tabs for different views -->
           <p-tabs class="training-tabs" [(value)]="activeTab">
@@ -534,8 +538,8 @@ interface TimelineEvent {
 
           <!-- Personalized Adjustments -->
           @if (seasonalRecommendation()?.personalizedAdjustments?.length) {
-            <p-card
-              header="Personalized Recommendations"
+            <app-card-shell
+              title="Personalized Recommendations"
               class="adjustments-card"
             >
               <ul class="adjustments-list">
@@ -547,7 +551,7 @@ interface TimelineEvent {
                   <li>{{ adjustment }}</li>
                 }
               </ul>
-            </p-card>
+            </app-card-shell>
           }
 
           <!-- Warnings -->

@@ -22,7 +22,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Card } from "primeng/card";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 import { FileUpload } from "primeng/fileupload";
 import { InputText } from "primeng/inputtext";
@@ -187,7 +187,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
   imports: [
     CommonModule,
     AlertComponent,
-    Card,
+    CardShellComponent,
     FileUpload,
     InputText,
     Select,
@@ -214,7 +214,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
         @if (!selectedType()) {
           <div class="import-types-grid">
             @for (type of importTypes; track type.id) {
-              <p-card
+              <app-card-shell
                 class="import-type-card"
                 (click)="selectImportType(type)"
               >
@@ -229,7 +229,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     Perfect for: {{ type.perfectFor }}
                   </span>
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
         }
@@ -256,7 +256,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 
             <!-- Step 1: Upload -->
             @if (currentStep() === 0) {
-              <p-card class="step-card">
+              <app-card-shell class="step-card">
                 <h3>Step 1: Upload File</h3>
 
                 <div class="upload-area">
@@ -313,12 +313,12 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   message="💡 Tip: Ask your coach for an export file in the supported format"
                   styleClass="tip-message status-message"
                 />
-              </p-card>
+              </app-card-shell>
             }
 
             <!-- Step 2: Preview & Map -->
             @if (currentStep() === 1 && importPreview()) {
-              <p-card class="step-card">
+              <app-card-shell class="step-card">
                 <h3>Step 2: Preview & Map Fields</h3>
 
                 <!-- File Summary -->
@@ -432,12 +432,12 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     >Import Data</app-button
                   >
                 </div>
-              </p-card>
+              </app-card-shell>
             }
 
             <!-- Step 3: Complete -->
             @if (currentStep() === 2 && importResult()) {
-              <p-card class="step-card result-card">
+              <app-card-shell class="step-card result-card">
                 <div class="result-content">
                   <div
                     class="result-icon"
@@ -506,7 +506,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     >
                   </div>
                 </div>
-              </p-card>
+              </app-card-shell>
             }
           </div>
         }
@@ -521,7 +521,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
               >Back to Import Options</app-button
             >
 
-            <p-card class="wearables-card">
+            <app-card-shell class="wearables-card">
               <h3>Connect Wearable Devices</h3>
 
               <!-- Connected Devices -->
@@ -615,7 +615,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   Your data is encrypted and never shared
                 </p>
               </div>
-            </p-card>
+            </app-card-shell>
           </div>
         }
       </div>

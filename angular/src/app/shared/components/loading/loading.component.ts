@@ -17,7 +17,12 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
   imports: [CommonModule, ProgressSpinner, SkeletonLoaderComponent],
   template: `
     @if (visible()) {
-      <div [class]="'loading-container ' + variant()">
+      <div
+        [class]="'loading-container ' + variant()"
+        role="status"
+        aria-live="polite"
+        [attr.aria-busy]="visible()"
+      >
         <!-- Overlay Variant -->
         @if (variant() === "overlay") {
           <div class="loading-overlay">

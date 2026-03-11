@@ -7,6 +7,11 @@ import {
   input,
   output,
 } from "@angular/core";
+import {
+  getScrollTop,
+  resolveScrollContainer,
+  ScrollContainer,
+} from "../../core/utils/scroll-container";
 
 export interface SwipeEvent {
   direction: "left" | "right" | "up" | "down";
@@ -44,13 +49,15 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
   private initialScrollTop = 0;
   private pullDistance = 0;
   private maxPullDistance = 100;
-  private scrollContainer: HTMLElement | Window | null = null;
+  private scrollContainer: ScrollContainer | null = null;
 
   ngOnInit(): void {
     // Prevent text selection during swipe
     this.elementRef.nativeElement.style.userSelect = "none";
     this.elementRef.nativeElement.style.touchAction = "pan-y";
-    this.scrollContainer = this.resolveScrollContainer();
+    this.scrollContainer = resolveScrollContainer(
+      this.elementRef.nativeElement as HTMLElement,
+    );
   }
 
   ngOnDestroy(): void {
@@ -175,57 +182,7 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     this.pullDistance = 0;
   }
 
-  private resolveScrollContainer(): HTMLElement | Window | null {
-    if (typeof window === "undefined") {
-      return null;
-    }
-
-    const element = this.elementRef.nativeElement as HTMLElement;
-    const shellScrollContainer = element.closest(".app-main");
-
-    if (shellScrollContainer instanceof HTMLElement) {
-      return shellScrollContainer;
-    }
-
-    const nearestScrollableAncestor = this.findScrollableAncestor(element);
-    return nearestScrollableAncestor ?? window;
-  }
-
-  private findScrollableAncestor(
-    element: HTMLElement | null,
-  ): HTMLElement | null {
-    let current = element?.parentElement ?? null;
-
-    while (current) {
-      const styles = window.getComputedStyle(current);
-      const overflowY = styles.overflowY;
-      if (
-        (overflowY === "auto" || overflowY === "scroll") &&
-        current.scrollHeight > current.clientHeight
-      ) {
-        return current;
-      }
-      current = current.parentElement;
-    }
-
-    return null;
-  }
-
   private getScrollTop(): number {
-    if (typeof window === "undefined") {
-      return 0;
-    }
-
-    const container = this.scrollContainer;
-    if (container instanceof Window) {
-      return (
-        window.scrollY ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop ||
-        0
-      );
-    }
-
-    return container?.scrollTop ?? 0;
+    return getScrollTop(this.scrollContainer);
   }
 }

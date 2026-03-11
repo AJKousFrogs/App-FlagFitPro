@@ -543,7 +543,8 @@
               <!-- Active Car Travel Plan -->
               <div class="car-protocol-dashboard">
                 <!-- Risk Overview -->
-                <p-card
+                <app-card-shell
+                  [flush]="true"
                   [class]="'car-risk-card risk-' + carTravelRisk().riskLevel"
                 >
                   <div class="car-risk-content">
@@ -597,7 +598,7 @@
                       </div>
                     </div>
                   </div>
-                </p-card>
+                </app-card-shell>
 
                 <!-- Compression Guidelines -->
                 <app-card-shell

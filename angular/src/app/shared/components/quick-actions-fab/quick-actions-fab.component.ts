@@ -62,7 +62,7 @@ interface QuickActionItem {
           class="main-fab"
           [class.active]="isExpanded()"
           (click)="toggleMenu()"
-          aria-label="Merlin Merlin AI quick actions"
+          aria-label="Merlin AI quick actions"
         >
           <div class="fab-icon">
             <i class="pi pi-sparkles merlin-icon"></i>

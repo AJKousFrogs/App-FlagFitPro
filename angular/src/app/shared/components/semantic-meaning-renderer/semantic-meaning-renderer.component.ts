@@ -26,7 +26,6 @@ import {
   viewChild,
   ComponentRef,
   OnDestroy,
-  OnInit,
   effect,
   DestroyRef,
 } from "@angular/core";
@@ -50,15 +49,9 @@ import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-overr
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: ` <ng-container #renderTarget></ng-container> `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-    `,
-  ],
+  styleUrl: "./semantic-meaning-renderer.component.scss",
 })
-export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
+export class SemanticMeaningRendererComponent implements OnDestroy {
   // Required inputs
   meaning = input.required<SemanticMeaning>();
   context = input.required<MeaningMetadata["context"]>();
@@ -104,17 +97,6 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
         }
       }, 0);
     });
-  }
-
-  ngOnInit(): void {
-    // Render the meaning when component initializes
-    // MEMORY SAFETY: Clear any pending timeout before setting new one
-    this.clearPendingTimeout();
-    this.pendingTimeoutId = setTimeout(() => {
-      if (!this.isDestroyed) {
-        this.render();
-      }
-    }, 0);
   }
 
   ngOnDestroy(): void {

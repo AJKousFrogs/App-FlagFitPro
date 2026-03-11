@@ -16,12 +16,12 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { TitleCasePipe, DecimalPipe } from "@angular/common";
-import { Card } from "primeng/card";
 
 import { Checkbox } from "primeng/checkbox";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
 import { getRiskSeverityFromLevel } from "../../../shared/utils/risk.utils";
@@ -43,21 +43,23 @@ import { TRAINING } from "../../../core/constants/app.constants";
   selector: "app-roster-player-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    Card,
     Checkbox,
     Tooltip,
     ProgressBar,
     TitleCasePipe,
     DecimalPipe,
+    CardShellComponent,
     SemanticMeaningRendererComponent,
     IconButtonComponent,
   ],
   template: `
-    <p-card
+    <app-card-shell
       class="player-card"
       [class.selected]="isSelected()"
       [class.risk-high]="enrichedPlayer().riskLevel === 'high'"
       [class.risk-critical]="enrichedPlayer().riskLevel === 'critical'"
+      [tone]="cardTone()"
+      [flush]="true"
     >
       <!-- Selection Checkbox (Coach+ only) -->
       @if (canManage()) {
@@ -250,7 +252,7 @@ import { TRAINING } from "../../../core/constants/app.constants";
           />
         }
       </div>
-    </p-card>
+    </app-card-shell>
   `,
   styleUrl: "./roster-player-card.component.scss",
 })
@@ -406,6 +408,16 @@ export class RosterPlayerCardComponent {
       message: assessment.factors.join("; ") || `${severity} risk detected`,
       recommendation: assessment.recommendations.join("; ") || undefined,
     };
+  });
+
+  cardTone = computed<"default" | "warning" | "danger">(() => {
+    if (this.enrichedPlayer().riskLevel === "critical") {
+      return "danger";
+    }
+    if (this.enrichedPlayer().riskLevel === "high") {
+      return "warning";
+    }
+    return "default";
   });
 
   getRiskPriority(): "low" | "medium" | "high" | "critical" {

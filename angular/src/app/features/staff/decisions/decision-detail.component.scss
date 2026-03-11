@@ -1,0 +1,130 @@
+.decision-detail {
+  padding: var(--space-6);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(calc(var(--size-200) * 2), 1fr)
+  );
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.overview-content,
+.maker-content,
+.review-content,
+.outcome-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.overview-item,
+.review-item,
+.outcome-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.overview-item label,
+.review-item label,
+.outcome-item label {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.overview-item p,
+.review-item p {
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.maker-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.role-badge {
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-sm);
+  font-size: var(--ds-font-size-xs);
+}
+
+.maker-date {
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.data-points-list,
+.constraints-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.data-points-list li,
+.constraints-list li {
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+}
+
+.data-quality {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.quality-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.quality-item label {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.related-decisions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.related-decision {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  background: var(--surface-ground);
+  border-radius: var(--radius-md);
+}
+
+.related-decision a {
+  color: var(--color-brand-primary);
+  text-decoration: none;
+}
+
+.related-decision a:hover {
+  text-decoration: underline;
+}
+
+.error-state {
+  padding: var(--space-8);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -6,26 +6,7 @@
 @use "styles/mixins" as *;
 
 .overview-card {
-  margin-bottom: 0;
   display: block;
-  border: var(--border-1) solid var(--ui-border-subtle);
-  border-radius: var(--component-card-radius);
-  background: var(--surface-card);
-  box-shadow: var(--component-card-shadow);
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
-  margin: 0;
-  color: var(--color-text-primary);
-}
-
-.card-title i {
-  color: var(--color-brand-primary);
 }
 
 .team-overview-grid {

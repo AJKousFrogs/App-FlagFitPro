@@ -3,21 +3,19 @@
  * Displays team statistics overview card
  */
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { Card } from "primeng/card";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { TeamStat } from "../roster.models";
 
 @Component({
   selector: "app-roster-overview",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Card],
+  imports: [CardShellComponent],
   template: `
-    <p-card class="overview-card">
-      <ng-template #header>
-        <h2 class="card-title">
-          <i class="pi pi-trophy"></i>
-          Team Overview
-        </h2>
-      </ng-template>
+    <app-card-shell
+      class="overview-card"
+      title="Team Overview"
+      headerIcon="pi-trophy"
+    >
       <div class="team-overview-grid">
         @for (stat of stats(); track stat.label) {
           <div class="overview-stat">
@@ -26,7 +24,7 @@ import { TeamStat } from "../roster.models";
           </div>
         }
       </div>
-    </p-card>
+    </app-card-shell>
   `,
   styleUrl: "./roster-overview.component.scss",
 })

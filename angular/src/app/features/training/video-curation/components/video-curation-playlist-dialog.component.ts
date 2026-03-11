@@ -13,14 +13,13 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-
-// PrimeNG
-import { Dialog } from "primeng/dialog";
+import { AppDialogComponent } from "../../../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../../../shared/components/dialog-header/dialog-header.component";
 import { InputText } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
 import { Select } from "primeng/select";
 import { MultiSelect } from "primeng/multiselect";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
 import { PlaylistForm, VideoOption } from "../video-curation.models";
 import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
@@ -31,22 +30,30 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
   imports: [
     CommonModule,
     FormsModule,
-    Dialog,
-    
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     InputText,
     Textarea,
     Select,
     MultiSelect,
-    ButtonComponent,
   ],
   template: `
-    <p-dialog
-      [(visible)]="visible"
+    <app-dialog
+      [visible]="visible()"
+      (visibleChange)="visible.set($event)"
       [modal]="true"
+      [blockScroll]="true"
       [draggable]="false"
-      header="Create Playlist"
+      ariaLabel="Create playlist"
       class="video-curation-playlist-dialog"
     >
+      <app-dialog-header
+        dialogHeader
+        icon="list"
+        title="Create Playlist"
+        (close)="onCancel()"
+      />
       <div class="playlist-form">
         <div class="form-field">
           <label for="playlistName">Playlist Name</label>
@@ -116,16 +123,15 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
         </div>
       </div>
 
-      <ng-template #footer>
-        <app-button variant="text" (clicked)="onCancel()">Cancel</app-button>
-        <app-button
-          iconLeft="pi-check"
-          (clicked)="onSubmit()"
-          [disabled]="!form.name || form.videoIds.length === 0"
-          >Create Playlist</app-button
-        >
-      </ng-template>
-    </p-dialog>
+      <app-dialog-footer
+        dialogFooter
+        cancelLabel="Cancel"
+        primaryLabel="Create Playlist"
+        [disabled]="!form.name || form.videoIds.length === 0"
+        (cancel)="onCancel()"
+        (primary)="onSubmit()"
+      />
+    </app-dialog>
   `,
   styleUrl: "./video-curation-playlist-dialog.component.scss",
 })

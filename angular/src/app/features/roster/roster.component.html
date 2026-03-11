@@ -274,14 +274,22 @@
         ></app-roster-player-form-dialog>
 
         <!-- Player Details Dialog (Phase 1 Enhanced) -->
-        <p-dialog
+        <app-dialog
           [visible]="showDetailsDialog()"
           (visibleChange)="showDetailsDialog.set($event)"
           [modal]="true"
-          header="Player Details"
-          [closable]="true"
-          class="roster-player-details-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          ariaLabel="Player details dialog"
+          styleClass="roster-player-details-dialog"
         >
+          <app-dialog-header
+            icon="user"
+            title="Player Details"
+            subtitle="Review roster information, benchmarks, and risk details"
+            (close)="showDetailsDialog.set(false)"
+          />
+
           @if (selectedPlayer()) {
             <div class="player-details-modal">
               <div class="details-header">
@@ -548,7 +556,7 @@
             </div>
           }
 
-          <ng-template #footer>
+          <div dialogFooter class="dialog-actions">
             <app-button variant="text" (clicked)="showDetailsDialog.set(false)"
               >Close</app-button
             >
@@ -559,18 +567,26 @@
                 >Edit Player</app-button
               >
             }
-          </ng-template>
-        </p-dialog>
+          </div>
+        </app-dialog>
 
         <!-- Status Change Dialog -->
-        <p-dialog
+        <app-dialog
           [visible]="showStatusDialog()"
           (visibleChange)="showStatusDialog.set($event)"
           [modal]="true"
-          header="Change Player Status"
-          [closable]="true"
-          class="roster-status-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          ariaLabel="Change player status dialog"
+          styleClass="roster-status-dialog"
         >
+          <app-dialog-header
+            icon="sync"
+            title="Change Player Status"
+            subtitle="Update the selected player's current roster status"
+            (close)="showStatusDialog.set(false)"
+          />
+
           <div class="status-dialog-content">
             <p>
               Select new status for
@@ -599,28 +615,33 @@
             </div>
           </div>
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showStatusDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [loading]="isSaving()"
-              (clicked)="updatePlayerStatus()"
-              >Update Status</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            cancelLabel="Cancel"
+            primaryLabel="Update Status"
+            primaryIcon="check"
+            [loading]="isSaving()"
+            (cancel)="showStatusDialog.set(false)"
+            (primary)="updatePlayerStatus()"
+          />
+        </app-dialog>
 
         <!-- Bulk Status Change Dialog -->
-        <p-dialog
+        <app-dialog
           [visible]="showBulkStatusDialog()"
           (visibleChange)="showBulkStatusDialog.set($event)"
           [modal]="true"
-          header="Change Status for Selected Players"
-          [closable]="true"
-          class="roster-bulk-status-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          ariaLabel="Change status for selected players dialog"
+          styleClass="roster-bulk-status-dialog"
         >
+          <app-dialog-header
+            icon="users"
+            title="Change Status for Selected Players"
+            subtitle="Apply one roster status to the current player selection"
+            (close)="showBulkStatusDialog.set(false)"
+          />
+
           <div class="status-dialog-content">
             <p>
               Update status for
@@ -648,30 +669,33 @@
             </div>
           </div>
 
-          <ng-template #footer>
-            <app-button
-              variant="text"
-              (clicked)="showBulkStatusDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [loading]="isSaving()"
-              (clicked)="updateBulkStatus()"
-              >Update All</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            cancelLabel="Cancel"
+            primaryLabel="Update All"
+            primaryIcon="check"
+            [loading]="isSaving()"
+            (cancel)="showBulkStatusDialog.set(false)"
+            (primary)="updateBulkStatus()"
+          />
+        </app-dialog>
 
         <!-- Invite Dialog -->
-        <p-dialog
+        <app-dialog
           [visible]="showInviteDialog()"
           (visibleChange)="showInviteDialog.set($event)"
           [modal]="true"
-          header="Invite to Team"
-          [closable]="true"
-          class="roster-invite-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          ariaLabel="Invite player to team dialog"
+          styleClass="roster-invite-dialog"
         >
+          <app-dialog-header
+            icon="send"
+            title="Invite to Team"
+            subtitle="Send a secure invitation to join the roster"
+            (close)="showInviteDialog.set(false)"
+          />
+
           <div class="invite-form">
             <div class="form-field">
               <label for="inviteEmail">Email Address *</label>
@@ -712,29 +736,34 @@
             </div>
           </div>
 
-          <ng-template #footer>
-            <app-button variant="text" (clicked)="showInviteDialog.set(false)"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-send"
-              [loading]="isSaving()"
-              [disabled]="!inviteEmail || isSaving()"
-              (clicked)="sendInvitation()"
-              >Send Invitation</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <app-dialog-footer
+            cancelLabel="Cancel"
+            primaryLabel="Send Invitation"
+            primaryIcon="send"
+            [loading]="isSaving()"
+            [disabled]="!inviteEmail || isSaving()"
+            (cancel)="showInviteDialog.set(false)"
+            (primary)="sendInvitation()"
+          />
+        </app-dialog>
 
         <!-- Invitations Management Dialog -->
-        <p-dialog
+        <app-dialog
           [visible]="showInvitationsDialog()"
           (visibleChange)="showInvitationsDialog.set($event)"
           [modal]="true"
-          header="Pending Invitations"
-          [closable]="true"
-          class="roster-invitations-dialog"
+          [blockScroll]="true"
+          [draggable]="false"
+          ariaLabel="Pending invitations dialog"
+          styleClass="roster-invitations-dialog"
         >
+          <app-dialog-header
+            icon="envelope"
+            title="Pending Invitations"
+            subtitle="Review, resend, or cancel outstanding team invites"
+            (close)="showInvitationsDialog.set(false)"
+          />
+
           <div class="invitations-list">
             @if (rosterService.pendingInvitations().length === 0) {
               <div class="empty-invitations" role="status">
@@ -808,7 +837,7 @@
             }
           </div>
 
-          <ng-template #footer>
+          <div dialogFooter class="dialog-actions">
             <app-button
               variant="text"
               (clicked)="showInvitationsDialog.set(false)"
@@ -819,8 +848,8 @@
               (clicked)="showInvitationsDialog.set(false); openInviteDialog()"
               >Send New Invitation</app-button
             >
-          </ng-template>
-        </p-dialog>
+          </div>
+        </app-dialog>
 
         <!-- Confirmation Dialog -->
         <p-confirmDialog></p-confirmDialog>

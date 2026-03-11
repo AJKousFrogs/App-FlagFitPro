@@ -39,7 +39,6 @@ import {
 } from "@angular/core";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
-import { Dialog } from "primeng/dialog";
 import { Select } from "primeng/select";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -55,6 +54,11 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../shared/components/ui-components";
 
 import {
   PlayerFormData,
@@ -102,8 +106,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     StatusTagComponent,
-    Dialog,
-    
     Tooltip,
     ConfirmDialog,
     Select,
@@ -123,6 +125,9 @@ import {
     ButtonComponent,
     CardHeaderComponent,
     IconButtonComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   templateUrl: "./roster.component.html",
 

@@ -19,11 +19,17 @@
   height: fit-content;
 }
 
+.privacy-section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
 .section-header {
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);
-  padding: var(--space-4);
+  padding: 0 0 var(--space-4);
 }
 
 .section-icon {
@@ -153,6 +159,10 @@
 
 .privacy-alert {
   margin-top: var(--space-4);
+}
+
+.dialog-actions--single {
+  justify-content: flex-end;
 }
 
 .consent-info {

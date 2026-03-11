@@ -49,7 +49,6 @@ import { CommonModule } from "@angular/common";
       </div>
     </div>
   `,
-  styles: [],
 })
 export class ControlRowComponent {
   /**

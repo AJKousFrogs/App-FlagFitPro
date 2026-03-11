@@ -9,40 +9,34 @@
   position: relative;
   display: block;
   height: 100%;
-  border: var(--border-1) solid var(--ui-border-subtle);
-  border-radius: var(--component-card-radius);
-  background: var(--surface-card);
-  box-shadow: var(--component-card-shadow);
   transition:
-    border-color var(--transition-fast),
     box-shadow var(--transition-fast),
-    transform var(--transition-fast);
+    transform var(--transition-fast),
+    outline-color var(--transition-fast);
 }
 
 .player-card.selected {
-  border-color: var(--ui-border-focus);
-  box-shadow:
-    var(--component-card-shadow),
-    0 0 0 var(--border-2) var(--ui-border-focus);
+  outline: var(--border-2) solid var(--ui-border-focus);
+  outline-offset: var(--border-1);
 }
 
 // Risk level card styling
 .player-card.risk-high {
-  border-color: rgba(var(--primitive-warning-500-rgb), 0.22);
   background: linear-gradient(
     180deg,
-    var(--color-status-warning-subtle) 0%,
-    var(--surface-card) 100%
+    rgba(var(--primitive-warning-500-rgb), 0.08) 0%,
+    transparent 100%
   );
+  border-radius: var(--component-card-radius);
 }
 
 .player-card.risk-critical {
-  border-color: rgba(var(--primitive-error-500-rgb), 0.22);
   background: linear-gradient(
     180deg,
-    var(--color-status-error-subtle) 0%,
-    var(--surface-card) 100%
+    rgba(var(--primitive-error-500-rgb), 0.08) 0%,
+    transparent 100%
   );
+  border-radius: var(--component-card-radius);
 }
 
 .card-checkbox {

@@ -10,7 +10,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { InputText } from "primeng/inputtext";
@@ -18,7 +17,6 @@ import { InputText } from "primeng/inputtext";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Select } from "primeng/select";
 import { MultiSelect } from "primeng/multiselect";
-import { Dialog } from "primeng/dialog";
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Chip } from "primeng/chip";
@@ -29,6 +27,9 @@ import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { formatDate as formatDateValue } from "../../shared/utils/date.utils";
 import { getStatusSeverity } from "../../shared/utils/status.utils";
 import {
@@ -47,13 +48,9 @@ import { capitalize } from "../../shared/utils/format.utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     InputText,
     Select,
     MultiSelect,
-    Dialog,
-    
-
     ProgressBar,
     Tabs,
     TabList,
@@ -70,6 +67,9 @@ import { capitalize } from "../../shared/utils/format.utils";
     EmptyStateComponent,
     StatusTagComponent,
     SearchInputComponent,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -82,7 +82,7 @@ import { capitalize } from "../../shared/utils/format.utils";
 
         <!-- Stats Overview -->
         <div class="stats-grid">
-          <p-card class="stat-card">
+          <app-card-shell class="stat-card">
             <div class="stat-content">
               <i class="pi pi-database stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -90,8 +90,8 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <span class="stat-block__label">Total Exercises</span>
               </div>
             </div>
-          </p-card>
-          <p-card class="stat-card approved">
+          </app-card-shell>
+          <app-card-shell class="stat-card approved">
             <div class="stat-content">
               <i class="pi pi-check-circle stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -99,8 +99,8 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <span class="stat-block__label">Approved</span>
               </div>
             </div>
-          </p-card>
-          <p-card class="stat-card pending">
+          </app-card-shell>
+          <app-card-shell class="stat-card pending">
             <div class="stat-content">
               <i class="pi pi-clock stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -108,8 +108,8 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <span class="stat-block__label">Pending Review</span>
               </div>
             </div>
-          </p-card>
-          <p-card class="stat-card curated">
+          </app-card-shell>
+          <app-card-shell class="stat-card curated">
             <div class="stat-content">
               <i class="pi pi-star stat-icon"></i>
               <div class="stat-details stat-block__content">
@@ -117,7 +117,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <span class="stat-block__label">Curated</span>
               </div>
             </div>
-          </p-card>
+          </app-card-shell>
         </div>
 
         <!-- Tab View -->
@@ -133,7 +133,7 @@ import { capitalize } from "../../shared/utils/format.utils";
             <p-tabpanel value="0">
               <div class="tab-content">
                 <!-- Filters -->
-                <p-card class="filters-card">
+                <app-card-shell class="filters-card">
                   <div class="filters-row">
                     <div class="filter-group">
                       <label>Search</label>
@@ -198,13 +198,13 @@ import { capitalize } from "../../shared/utils/format.utils";
                       ></p-select>
                     </div>
                   </div>
-                </p-card>
+                </app-card-shell>
 
                 <!-- Exercise Grid -->
                 @if (loading()) {
                   <div class="exercises-grid">
                     @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                      <p-card class="exercise-card skeleton-card">
+                      <app-card-shell class="exercise-card skeleton-card" [flush]="true">
                         <p-skeleton height="var(--size-200)"></p-skeleton>
                         <p-skeleton
                           width="70%"
@@ -216,14 +216,15 @@ import { capitalize } from "../../shared/utils/format.utils";
                           height="var(--space-4)"
                           class="mt-2"
                         ></p-skeleton>
-                      </p-card>
+                      </app-card-shell>
                     }
                   </div>
                 } @else {
                   <div class="exercises-grid">
                     @for (exercise of filteredExercises(); track exercise.id) {
-                      <p-card
+                      <app-card-shell
                         class="exercise-card"
+                        [flush]="true"
                         (click)="openExerciseDetail(exercise)"
                       >
                         <div class="exercise-image-container">
@@ -315,7 +316,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                             </div>
                           }
                         </div>
-                      </p-card>
+                      </app-card-shell>
                     }
                   </div>
 
@@ -333,7 +334,7 @@ import { capitalize } from "../../shared/utils/format.utils";
             <!-- Import Tab -->
             <p-tabpanel value="1">
               <div class="tab-content import-tab">
-                <p-card class="import-card">
+                <app-card-shell class="import-card">
                   <h3 class="import-title">
                     <i class="pi pi-cloud-download"></i>
                     Import Exercises from ExerciseDB API
@@ -436,10 +437,10 @@ import { capitalize } from "../../shared/utils/format.utils";
                       </div>
                     </div>
                   }
-                </p-card>
+                </app-card-shell>
 
                 <!-- Import History -->
-                <p-card class="history-card">
+                <app-card-shell class="history-card">
                   <h3 class="history-title">
                     <i class="pi pi-history"></i>
                     Import History
@@ -473,24 +474,24 @@ import { capitalize } from "../../shared/utils/format.utils";
                   } @else {
                     <p class="no-history">No import history yet</p>
                   }
-                </p-card>
+                </app-card-shell>
               </div>
             </p-tabpanel>
 
             <!-- Approval Queue Tab -->
             <p-tabpanel value="2">
               <div class="tab-content approval-tab">
-                <p-card class="queue-info">
+                <app-card-shell class="queue-info">
                   <p>
                     <i class="pi pi-info-circle"></i>
                     Review and approve exercises for use in training programs.
                     Exercises with high flag football relevance are prioritized.
                   </p>
-                </p-card>
+                </app-card-shell>
 
                 <div class="approval-grid">
                   @for (exercise of pendingExercises(); track exercise.id) {
-                    <p-card class="approval-card">
+                    <app-card-shell class="approval-card" [flush]="true">
                       <div class="approval-header">
                         @if (exercise.gif_url) {
                           <img
@@ -549,7 +550,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                           >Skip</app-button
                         >
                       </div>
-                    </p-card>
+                    </app-card-shell>
                   }
                 </div>
 
@@ -566,14 +567,20 @@ import { capitalize } from "../../shared/utils/format.utils";
         </p-tabs>
 
         <!-- Exercise Detail Dialog -->
-        <p-dialog
-          [(visible)]="showDetailDialog"
-          [header]="selectedExercise()?.name || 'Exercise Details'"
-          [modal]="true"
+        <app-dialog
+          [visible]="showDetailDialog"
+          (visibleChange)="showDetailDialog = $event"
+          (hide)="showDetailDialog = false"
+          [ariaLabel]="selectedExercise()?.name || 'Exercise Details'"
           [draggable]="false"
           [resizable]="false"
           class="exercisedb-detail-dialog"
         >
+          <app-dialog-header
+            icon="database"
+            [title]="selectedExercise()?.name || 'Exercise Details'"
+            (close)="showDetailDialog = false"
+          />
           @if (selectedExercise()) {
             <div class="detail-content">
               <div class="detail-media">
@@ -714,7 +721,9 @@ import { capitalize } from "../../shared/utils/format.utils";
                 }
               </div>
             </div>
-            <ng-template #footer>
+          }
+          <div dialogFooter>
+            @if (selectedExercise()) {
               @if (!selectedExercise()?.is_approved) {
                 <app-button
                   variant="success"
@@ -729,19 +738,25 @@ import { capitalize } from "../../shared/utils/format.utils";
                 (clicked)="showDetailDialog = false"
                 >Close</app-button
               >
-            </ng-template>
-          }
-        </p-dialog>
+            }
+          </div>
+        </app-dialog>
 
         <!-- Approval Dialog -->
-        <p-dialog
-          [(visible)]="showApprovalDialog"
-          header="Approve Exercise"
-          [modal]="true"
+        <app-dialog
+          [visible]="showApprovalDialog"
+          (visibleChange)="showApprovalDialog = $event"
+          (hide)="showApprovalDialog = false"
+          ariaLabel="Approve Exercise"
           [draggable]="false"
           [resizable]="false"
           class="exercisedb-approval-dialog"
         >
+          <app-dialog-header
+            icon="check-circle"
+            title="Approve Exercise"
+            (close)="showApprovalDialog = false"
+          />
           @if (exerciseToApprove()) {
             <div class="approval-form">
               <h4>{{ exerciseToApprove()?.name }}</h4>
@@ -831,21 +846,23 @@ import { capitalize } from "../../shared/utils/format.utils";
               </div>
             </div>
           }
-          <ng-template #footer>
-            <app-button
-              variant="text"
-              iconLeft="pi-times"
-              (clicked)="showApprovalDialog = false"
-              >Cancel</app-button
-            >
-            <app-button
-              variant="success"
-              iconLeft="pi-check"
-              (clicked)="approveExercise()"
-              >Approve</app-button
-            >
-          </ng-template>
-        </p-dialog>
+          <div dialogFooter>
+            @if (exerciseToApprove()) {
+              <app-button
+                variant="text"
+                iconLeft="pi-times"
+                (clicked)="showApprovalDialog = false"
+                >Cancel</app-button
+              >
+              <app-button
+                variant="success"
+                iconLeft="pi-check"
+                (clicked)="approveExercise()"
+                >Approve</app-button
+              >
+            }
+          </div>
+        </app-dialog>
       </div>
     </app-main-layout>
   `,

@@ -3,17 +3,21 @@
  * Displays a single staff member card
  */
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { Card } from "primeng/card";
 import { StaffMember } from "../roster.models";
 import { getInitials } from "../../../shared/utils/format.utils";
 import { getYears } from "../roster-utils";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 @Component({
   selector: "app-roster-staff-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Card],
+  imports: [CardShellComponent],
   template: `
-    <p-card class="staff-card" [class]="'staff-' + member().roleCategory">
+    <app-card-shell
+      class="staff-card"
+      [class]="'staff-' + member().roleCategory"
+      [flush]="true"
+    >
       <div class="role-badge" [class]="member().roleCategory">
         {{ member().position }}
       </div>
@@ -62,7 +66,7 @@ import { getYears } from "../roster-utils";
           }
         </div>
       }
-    </p-card>
+    </app-card-shell>
   `,
   styleUrl: "./roster-staff-card.component.scss",
 })

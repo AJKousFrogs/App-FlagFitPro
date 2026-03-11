@@ -10,13 +10,16 @@ import { IconButtonComponent } from "../../../../shared/components/button/icon-b
 import { Tag } from "primeng/tag";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
-import { Dialog } from "primeng/dialog";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Skeleton } from "primeng/skeleton";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
+import {
+  AppDialogComponent,
+  DialogHeaderComponent,
+} from "../../../../shared/components/ui-components";
 
 interface Achievement {
   id: string;
@@ -62,7 +65,6 @@ interface Stats {
     StatusTagComponent,
     Tooltip,
     ProgressBar,
-    Dialog,
     Tabs,
     TabList,
     Tab,
@@ -70,6 +72,8 @@ interface Stats {
     TabPanel,
     Skeleton,
     IconButtonComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
   ],
   template: `
     <div class="achievements-panel">
@@ -177,12 +181,20 @@ interface Stats {
       </div>
 
       <!-- Full Dialog -->
-      <p-dialog
+      <app-dialog
         [(visible)]="showFullDialog"
-        header="Achievements & Progress"
-        [modal]="true"
-        class="achievements-panel-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        styleClass="achievements-panel-dialog"
+        ariaLabel="Achievements and progress"
       >
+        <app-dialog-header
+          icon="trophy"
+          title="Achievements & Progress"
+          subtitle="Track your milestones, streaks, and training stats"
+          (close)="showFullDialog = false"
+        />
+
         <p-tabs>
           <p-tabpanel value="all">
             <ng-template #header>
@@ -369,7 +381,7 @@ interface Stats {
             </div>
           </p-tabpanel>
         </p-tabs>
-      </p-dialog>
+      </app-dialog>
     </div>
   `,
   styleUrl: "./achievements-panel.component.scss",

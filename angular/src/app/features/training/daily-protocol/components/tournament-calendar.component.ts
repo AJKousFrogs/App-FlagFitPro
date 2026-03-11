@@ -24,7 +24,6 @@ import { EmptyStateComponent } from "../../../../shared/components/empty-state/e
 import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -38,6 +37,11 @@ import { DialogService } from "../../../../core/ui/dialog.service";
 import { ApiResponse } from "../../../../core/models/common.models";
 import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
 import { DesignTokens } from "../../../../shared/models/design-tokens";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../../shared/components/ui-components";
 
 export interface Tournament {
   id: string;
@@ -70,8 +74,6 @@ interface EventTypeOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Dialog,
-    
     InputText,
     InputNumber,
     DatePicker,
@@ -86,6 +88,9 @@ interface EventTypeOption {
     IconButtonComponent,
     EmptyStateComponent,
     AppLoadingComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <div class="tournament-calendar">
@@ -247,15 +252,22 @@ interface EventTypeOption {
     </div>
 
     <!-- Add/Edit Tournament Dialog -->
-    <p-dialog
-      [header]="isEditing() ? 'Edit Tournament' : 'Add Tournament'"
-      [modal]="true"
+    <app-dialog
       [visible]="showDialog()"
       (visibleChange)="showDialog.set($event)"
+      [blockScroll]="true"
       [breakpoints]="dialogBreakpoints"
       [draggable]="false"
-      class="training-tournament-dialog"
+      styleClass="training-tournament-dialog"
+      [ariaLabel]="isEditing() ? 'Edit tournament' : 'Add tournament'"
     >
+      <app-dialog-header
+        icon="trophy"
+        [title]="isEditing() ? 'Edit Tournament' : 'Add Tournament'"
+        subtitle="Manage your upcoming events and taper windows"
+        (close)="closeDialog()"
+      />
+
       <div class="tournament-form">
         <div class="form-field">
           <label for="name">Tournament Name *</label>
@@ -411,20 +423,16 @@ interface EventTypeOption {
         </div>
       </div>
 
-      <ng-template #footer>
-        <app-button variant="outlined" (clicked)="closeDialog()"
-          >Cancel</app-button
-        >
-        <app-icon-button
-          icon="pi-check"
-          [loading]="isSaving()"
-          [disabled]="!isFormValid()"
-          (clicked)="saveTournament()"
-          ariaLabel="Save tournament"
-          tooltip="Save"
-        />
-      </ng-template>
-    </p-dialog>
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Save Tournament"
+        primaryIcon="check"
+        [loading]="isSaving()"
+        [disabled]="!isFormValid()"
+        (cancel)="closeDialog()"
+        (primary)="saveTournament()"
+      />
+    </app-dialog>
   `,
   styleUrl: "./tournament-calendar.component.scss",
 })

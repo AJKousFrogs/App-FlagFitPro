@@ -40,6 +40,12 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { fadeInOut } from "../../shared/animations/app.animations";
 import { getInitials } from "../../shared/utils/format.utils";
+import {
+  getScrollHeight,
+  getViewportBottom,
+  resolveScrollContainer,
+  ScrollContainer,
+} from "../../core/utils/scroll-container";
 import { CommunityComposeSectionComponent } from "./components/community-compose-section.component";
 import { CommunityHeaderComponent } from "./components/community-header.component";
 import { CommunitySidebarComponent } from "./components/community-sidebar.component";
@@ -181,7 +187,7 @@ export class CommunityComponent implements OnInit {
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
-  private scrollContainer: HTMLElement | Window | null = null;
+  private scrollContainer: ScrollContainer | null = null;
   private readonly scrollHandler = () => this.onScroll();
 
   // Template references using Angular viewChild signals
@@ -281,8 +287,8 @@ export class CommunityComponent implements OnInit {
     afterNextRender(() => {
       if (typeof window === "undefined") return;
 
-      this.scrollContainer =
-        document.querySelector<HTMLElement>(".app-main") ?? window;
+      this.scrollContainer = resolveScrollContainer();
+      if (!this.scrollContainer) return;
       this.scrollContainer.addEventListener("scroll", this.scrollHandler, {
         passive: true,
       });
@@ -320,14 +326,8 @@ export class CommunityComponent implements OnInit {
     const container = this.scrollContainer;
     if (!container) return;
 
-    const scrollPosition =
-      container instanceof Window
-        ? window.innerHeight + window.scrollY
-        : container.clientHeight + container.scrollTop;
-    const documentHeight =
-      container instanceof Window
-        ? document.documentElement.scrollHeight
-        : container.scrollHeight;
+    const scrollPosition = getViewportBottom(container);
+    const documentHeight = getScrollHeight(container);
     const threshold = 500; // Load more when 500px from bottom
 
     if (scrollPosition >= documentHeight - threshold) {

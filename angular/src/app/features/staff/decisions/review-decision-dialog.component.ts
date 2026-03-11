@@ -211,70 +211,7 @@ import type {
       />
     </app-dialog>
   `,
-  styles: [
-    `
-      .review-context,
-      .review-options,
-      .review-notes,
-      .outcome-tracking {
-        margin-bottom: var(--space-6);
-      }
-
-      .review-context h3,
-      .review-options h3,
-      .review-notes h3,
-      .outcome-tracking h3 {
-        font-size: var(--ds-font-size-lg);
-        font-weight: var(--ds-font-weight-semibold);
-        margin: 0 0 var(--space-3) 0;
-      }
-
-      .context-item {
-        display: flex;
-        gap: var(--space-2);
-        margin-bottom: var(--space-2);
-      }
-
-      .context-item label {
-        font-weight: var(--ds-font-weight-semibold);
-        min-width: var(--size-120);
-      }
-
-      .extension-options {
-        margin-top: var(--space-3);
-      }
-
-      .outcome-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        margin-bottom: var(--space-3);
-      }
-
-      .consequences-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-        margin-top: var(--space-3);
-      }
-
-      .consequence-item {
-        display: flex;
-        gap: var(--space-2);
-        align-items: center;
-      }
-
-      .lessons-learned {
-        margin-top: var(--space-3);
-      }
-
-      .lessons-learned label {
-        display: block;
-        font-weight: var(--ds-font-weight-semibold);
-        margin-bottom: var(--space-2);
-      }
-    `,
-  ],
+  styleUrl: "./review-decision-dialog.component.scss",
 })
 export class ReviewDecisionDialogComponent {
   // Inputs/Outputs

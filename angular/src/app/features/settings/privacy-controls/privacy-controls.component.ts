@@ -8,9 +8,7 @@ import {
   signal,
 } from "@angular/core";
 import { Accordion, AccordionPanel } from "primeng/accordion";
-import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
-import { Dialog } from "primeng/dialog";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -32,6 +30,10 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -55,17 +57,17 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   imports: [
     CommonModule,
     FormsModule,
-    Card,
     Select,
     InputText,
-
-    Dialog,
-    
     Divider,
     Tooltip,
     Chip,
     Accordion,
     AccordionPanel,
+    CardShellComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -100,8 +102,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         } @else {
           <div class="privacy-grid">
             <!-- AI Processing Section -->
-            <p-card class="privacy-section ai-section">
-              <ng-template #header>
+            <app-card-shell class="privacy-section ai-section">
+              <div class="privacy-section-card">
                 <div class="section-header">
                   <div class="section-icon ai-icon" aria-hidden="true">
                     <i class="pi pi-sparkles"></i>
@@ -113,7 +115,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                     </p>
                   </div>
                 </div>
-              </ng-template>
 
               <div class="setting-item">
                 <div class="setting-info">
@@ -190,11 +191,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   </div>
                 }
               </div>
-            </p-card>
+              </div>
+            </app-card-shell>
 
             <!-- Team Data Sharing Section -->
-            <p-card class="privacy-section team-section">
-              <ng-template #header>
+            <app-card-shell class="privacy-section team-section">
+              <div class="privacy-section-card">
                 <div class="section-header">
                   <div class="section-icon team-icon" aria-hidden="true">
                     <i class="pi pi-users"></i>
@@ -204,7 +206,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                     <p class="section-subtitle">Control what coaches can see</p>
                   </div>
                 </div>
-              </ng-template>
 
               @if (teamSettings().length === 0) {
                 <app-empty-state
@@ -314,11 +315,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   }
                 </p-accordion>
               }
-            </p-card>
+              </div>
+            </app-card-shell>
 
             <!-- Emergency Data Section -->
-            <p-card class="privacy-section emergency-section">
-              <ng-template #header>
+            <app-card-shell class="privacy-section emergency-section">
+              <div class="privacy-section-card">
                 <div class="section-header">
                   <div class="section-icon emergency-icon" aria-hidden="true">
                     <i class="pi pi-exclamation-triangle"></i>
@@ -328,7 +330,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                     <p class="section-subtitle">In case of medical emergency</p>
                   </div>
                 </div>
-              </ng-template>
 
               <div class="setting-item">
                 <div class="setting-info">
@@ -388,11 +389,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   >
                 }
               </div>
-            </p-card>
+              </div>
+            </app-card-shell>
 
             <!-- Research & Marketing Section -->
-            <p-card class="privacy-section research-section">
-              <ng-template #header>
+            <app-card-shell class="privacy-section research-section">
+              <div class="privacy-section-card">
                 <div class="section-header">
                   <div class="section-icon research-icon" aria-hidden="true">
                     <i class="pi pi-chart-bar"></i>
@@ -402,7 +404,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                     <p class="section-subtitle">Optional data usage</p>
                   </div>
                 </div>
-              </ng-template>
 
               <div class="setting-item">
                 <div class="setting-info">
@@ -441,13 +442,14 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   />
                 </div>
               </div>
-            </p-card>
+              </div>
+            </app-card-shell>
 
             <!-- Note: Parental Consent Section removed - App is 16+ only -->
 
             <!-- Data Rights Section -->
-            <p-card class="privacy-section rights-section">
-              <ng-template #header>
+            <app-card-shell class="privacy-section rights-section">
+              <div class="privacy-section-card">
                 <div class="section-header">
                   <div class="section-icon rights-icon" aria-hidden="true">
                     <i class="pi pi-file-check"></i>
@@ -457,7 +459,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                     <p class="section-subtitle">GDPR Article 15-22</p>
                   </div>
                 </div>
-              </ng-template>
 
               <div class="rights-grid">
                 <div class="right-item">
@@ -531,18 +532,27 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   >
                 </div>
               </div>
-            </p-card>
+              </div>
+            </app-card-shell>
           </div>
         }
       </div>
 
       <!-- Add Emergency Contact Dialog -->
-      <p-dialog
-        header="Add Emergency Contact"
+      <app-dialog
         [(visible)]="showAddContactDialog"
         [modal]="true"
-        class="privacy-contact-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Add emergency contact"
+        styleClass="privacy-contact-dialog"
       >
+        <app-dialog-header
+          dialogHeader
+          icon="user-plus"
+          title="Add Emergency Contact"
+          (close)="showAddContactDialog = false"
+        />
         <div class="contact-form">
           <div class="form-field">
             <label for="contactName">Name</label>
@@ -577,28 +587,35 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             ></p-select>
           </div>
         </div>
-        <ng-template #footer>
-          <app-button variant="text" (clicked)="showAddContactDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            iconLeft="pi-plus"
-            [disabled]="!isContactValid()"
-            (clicked)="addEmergencyContact()"
-            >Add Contact</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          primaryLabel="Add Contact"
+          primaryIcon="plus"
+          [disabled]="!isContactValid()"
+          (cancel)="showAddContactDialog = false"
+          (primary)="addEmergencyContact()"
+        />
+      </app-dialog>
 
       <!-- Note: Parental Consent Dialog removed - App is 16+ only -->
 
       <!-- Delete Account Confirmation Dialog -->
-      <p-dialog
-        header="Delete Account"
+      <app-dialog
         [(visible)]="showDeleteAccountDialog"
         [modal]="true"
-        class="privacy-delete-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Delete account"
+        styleClass="privacy-delete-dialog"
       >
+        <app-dialog-header
+          dialogHeader
+          icon="trash"
+          title="Delete Account"
+          subtitle="This action is permanent and irreversible"
+          [danger]="true"
+          (close)="showDeleteAccountDialog = false"
+        />
         <div class="delete-warning-content">
           <app-alert
             variant="error"
@@ -644,29 +661,35 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             />
           </div>
         </div>
-        <ng-template #footer>
-          <app-button variant="text" (clicked)="showDeleteAccountDialog = false"
-            >Cancel</app-button
-          >
-          <app-button
-            variant="danger"
-            iconLeft="pi-trash"
-            [loading]="deletionLoading()"
-            [disabled]="deleteConfirmText !== 'DELETE'"
-            (clicked)="deleteAccount()"
-            >Delete My Account</app-button
-          >
-        </ng-template>
-      </p-dialog>
+        <app-dialog-footer
+          dialogFooter
+          primaryLabel="Delete My Account"
+          primaryIcon="trash"
+          primaryVariant="danger"
+          [loading]="deletionLoading()"
+          [disabled]="deleteConfirmText !== 'DELETE'"
+          (cancel)="showDeleteAccountDialog = false"
+          (primary)="deleteAccount()"
+        />
+      </app-dialog>
 
       <!-- Audit Log Dialog -->
-      <p-dialog
-        header="Privacy Audit Log"
+      <app-dialog
         [(visible)]="showAuditLogDialog"
         [modal]="true"
-        [style]="{ width: 'min(90vw, 600px)' }"
+        [blockScroll]="true"
+        [draggable]="false"
+        [contentStyle]="{ width: 'min(90vw, 600px)' }"
+        ariaLabel="Privacy audit log"
+        styleClass="privacy-audit-dialog"
         (onHide)="auditLogEntries.set([])"
       >
+        <app-dialog-header
+          dialogHeader
+          icon="history"
+          title="Privacy Audit Log"
+          (close)="showAuditLogDialog = false"
+        />
         <div class="audit-log-content">
           @if (auditLogLoading()) {
             <p><i class="pi pi-spin pi-spinner"></i> Loading...</p>
@@ -686,12 +709,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             </div>
           }
         </div>
-        <ng-template #footer>
+        <div dialogFooter class="dialog-actions dialog-actions--single">
           <app-button variant="text" (clicked)="showAuditLogDialog = false"
             >Close</app-button
           >
-        </ng-template>
-      </p-dialog>
+        </div>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./privacy-controls.component.scss",

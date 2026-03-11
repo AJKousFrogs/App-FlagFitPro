@@ -1,0 +1,85 @@
+.ownership-badge {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: var(--border-1) solid var(--color-border-primary);
+  background: var(--surface-primary);
+  margin-bottom: var(--space-3);
+}
+
+.ownership-badge.status-pending {
+  border-color: var(--color-status-warning);
+  background: var(--color-status-warning-subtle);
+}
+
+.ownership-badge.status-in_progress {
+  border-color: var(--color-status-info);
+  background: var(--color-status-info-subtle);
+}
+
+.ownership-badge.status-completed {
+  border-color: var(--color-status-success);
+  background: var(--color-status-success-subtle);
+}
+
+.ownership-badge.status-overdue {
+  border-color: var(--color-status-error);
+  background: var(--color-status-error-subtle);
+}
+
+.badge-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.badge-content i {
+  font-size: var(--ds-font-size-xl);
+  color: var(--color-text-primary);
+}
+
+.badge-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.badge-title {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-md);
+}
+
+.badge-subtitle {
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.status-tag {
+  font-size: var(--ds-font-size-md);
+}
+
+.badge-details {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: var(--border-1) solid var(--color-border-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.detail-item {
+  display: flex;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-md);
+}
+
+.detail-label {
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-secondary);
+  min-width: var(--size-120);
+}
+
+.detail-value {
+  color: var(--color-text-primary);
+}

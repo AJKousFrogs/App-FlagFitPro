@@ -1,0 +1,104 @@
+:host {
+  display: inline-block;
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--touch-target-sm);
+  min-height: var(--touch-target-sm);
+  padding: 0 var(--space-3);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-1);
+  white-space: nowrap;
+  text-transform: var(--ds-text-transform-none);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  border: none;
+  box-shadow: var(--shadow-1);
+  outline: none;
+  background-color: var(--ds-status-success-solid);
+  color: var(--ds-status-success-text);
+  flex-shrink: 0;
+  transition:
+    box-shadow var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+
+.status-tag i {
+  font-size: var(--ds-font-size-xs);
+  line-height: var(--ds-line-height-1);
+  text-decoration: none;
+}
+
+.status-tag-text {
+  line-height: var(--ds-line-height-1);
+  text-decoration: none;
+}
+
+.status-tag-success {
+  background-color: var(--ds-status-success-solid);
+  color: var(--ds-status-success-text);
+}
+
+.status-tag-primary {
+  background-color: var(--ds-primary-green);
+  color: var(--ds-color-brand-contrast);
+}
+
+.status-tag-warning {
+  background-color: var(--ds-status-warning-solid);
+  color: var(--ds-status-warning-text);
+}
+
+.status-tag-danger {
+  background-color: var(--ds-status-danger-solid);
+  color: var(--ds-status-danger-text);
+}
+
+.status-tag-info {
+  background-color: var(--ds-status-info-solid);
+  color: var(--ds-status-info-text);
+}
+
+.status-tag-secondary {
+  background-color: var(--ds-status-neutral-bg);
+  color: var(--ds-status-neutral-text);
+}
+
+.status-tag-contrast {
+  background-color: var(--ds-status-neutral-solid);
+  color: var(--ds-color-brand-contrast);
+}
+
+.status-tag-warn {
+  background-color: var(--ds-status-warning-solid);
+  color: var(--ds-status-warning-text);
+}
+
+.status-tag-sm {
+  height: var(--space-6);
+  min-height: var(--space-6);
+  padding: 0 var(--space-2);
+  font-size: var(--ds-font-size-xs);
+  border-radius: var(--radius-sm);
+}
+
+.status-tag-lg {
+  height: var(--touch-target-md);
+  min-height: var(--touch-target-md);
+  padding: 0 var(--space-5);
+  font-size: var(--ds-font-size-md);
+  border-radius: var(--radius-lg);
+}
+
+:host-context([data-theme="dark"]),
+:host-context(.dark-theme) {
+  .status-tag-secondary {
+    background-color: var(--primitive-neutral-700);
+    color: var(--primitive-neutral-200);
+  }
+}

@@ -32,6 +32,7 @@ import { Dialog } from "primeng/dialog";
       [focusOnShow]="focusOnShow()"
       [breakpoints]="breakpoints()"
       [attr.aria-label]="ariaLabel() || null"
+      [attr.aria-modal]="modal() ? 'true' : null"
       [attr.role]="role()"
     >
       <ng-content select="app-dialog-header, [dialogHeader]"></ng-content>
@@ -41,14 +42,13 @@ import { Dialog } from "primeng/dialog";
       <ng-content select="app-dialog-footer, [dialogFooter]"></ng-content>
     </p-dialog>
   `,
-  styles: [
-    ".dialog-body { margin-top: var(--space-4); }",
-  ],
+  styleUrl: "./dialog.component.scss",
 })
 export class AppDialogComponent {
   visible = model(false);
   hide = output<void>();
   onHide = output<void>();
+  private hasEmittedClose = false;
 
   modal = input(true);
   closable = input(true);
@@ -71,13 +71,22 @@ export class AppDialogComponent {
   handleVisibleChange(value: boolean): void {
     this.visible.set(value);
     if (!value) {
-      this.hide.emit();
-      this.onHide.emit();
+      this.emitCloseIfNeeded();
+    } else {
+      this.hasEmittedClose = false;
     }
   }
 
   handleHide(): void {
     this.visible.set(false);
+    this.emitCloseIfNeeded();
+  }
+
+  private emitCloseIfNeeded(): void {
+    if (this.hasEmittedClose) {
+      return;
+    }
+    this.hasEmittedClose = true;
     this.hide.emit();
     this.onHide.emit();
   }

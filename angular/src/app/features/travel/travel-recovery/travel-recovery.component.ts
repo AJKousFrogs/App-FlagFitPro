@@ -36,7 +36,6 @@ import {
   AccordionContent,
 } from "primeng/accordion";
 import { Badge } from "primeng/badge";
-import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { DatePicker } from "primeng/datepicker";
 
@@ -101,7 +100,6 @@ interface FlightTripForm {
     CommonModule,
     FormsModule,
     RouterModule,
-    Card,
     Chip,
     DatePicker,
     InputNumber,

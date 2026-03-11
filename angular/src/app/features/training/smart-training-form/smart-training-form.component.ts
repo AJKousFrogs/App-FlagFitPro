@@ -16,7 +16,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { Select } from "primeng/select";
 import { SelectButton } from "primeng/selectbutton";
@@ -40,6 +39,7 @@ import {
   WeatherService,
 } from "../../../core/services/weather.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { SmartTrainingDataService } from "../services/smart-training-data.service";
 
 interface SessionTypeOption {
@@ -61,18 +61,17 @@ interface EquipmentOption {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Card,
     Select,
     Slider,
     ToggleSwitch,
     Chip,
     StatusTagComponent,
     SelectButton,
-
     ButtonComponent,
+    CardShellComponent,
   ],
   template: `
-<p-card header="Create Training Session">
+    <app-card-shell title="Create Training Session">
       <form [formGroup]="trainingForm" class="smart-training-form">
         <!-- AI Suggestions Banner -->
         @if (aiSuggestions().length > 0) {
@@ -195,7 +194,7 @@ interface EquipmentOption {
           >
         </div>
       </form>
-    </p-card>
+    </app-card-shell>
   `,
   styleUrl: "./smart-training-form.component.scss",
 })

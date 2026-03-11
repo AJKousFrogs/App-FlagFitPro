@@ -61,7 +61,6 @@ import { ButtonComponent } from "../button/button.component";
       </app-button>
     </div>
   `,
-  styles: [],
 })
 export class DialogFooterComponent {
   /**

@@ -20,17 +20,20 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { InputNumber } from "primeng/inputnumber";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
 import {
   FormErrorSummaryComponent,
   FormError,
 } from "../../../shared/components/form-error-summary/form-error-summary.component";
 import { FormErrorService } from "../../../core/services/form-error.service";
 import { Player, POSITION_OPTIONS, STATUS_OPTIONS } from "../roster.models";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../shared/components/ui-components";
 
 export interface PlayerFormData {
   name: string;
@@ -50,25 +53,31 @@ export interface PlayerFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    Dialog,
-    
-    
+    AppDialogComponent,
     InputText,
     Select,
     InputNumber,
-
-    ButtonComponent,
     FormErrorSummaryComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
-    <p-dialog
+    <app-dialog
       [visible]="visible()"
       (visibleChange)="visibleChange.emit($event)"
       [modal]="true"
-      [header]="editingPlayer() ? 'Edit Player' : 'Add New Player'"
-      class="roster-player-dialog"
-      [closable]="true"
+      [blockScroll]="true"
+      [draggable]="false"
+      [ariaLabel]="editingPlayer() ? 'Edit player dialog' : 'Add new player dialog'"
+      styleClass="roster-player-dialog"
     >
+      <app-dialog-header
+        icon="user-edit"
+        [title]="editingPlayer() ? 'Edit Player' : 'Add New Player'"
+        subtitle="Update roster details and player contact information"
+        (close)="visibleChange.emit(false)"
+      />
+
       <!-- Form Error Summary (WCAG 2.1 AA) -->
       <app-form-error-summary
         [errors]="formErrors()"
@@ -224,26 +233,16 @@ export interface PlayerFormData {
         }
       </form>
 
-      <ng-template #footer>
-        <app-button
-          variant="text"
-          iconLeft="pi-times"
-          (clicked)="visibleChange.emit(false)"
-          ariaLabel="Cancel and close dialog"
-          >Cancel</app-button
-        >
-        <app-button
-          iconLeft="pi-check"
-          [loading]="isSaving()"
-          [disabled]="!playerForm.valid || isSaving()"
-          (clicked)="onSave()"
-          [attr.aria-label]="
-            editingPlayer() ? 'Save player changes' : 'Add new player'
-          "
-          >{{ editingPlayer() ? "Save Changes" : "Add Player" }}</app-button
-        >
-      </ng-template>
-    </p-dialog>
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        [primaryLabel]="editingPlayer() ? 'Save Changes' : 'Add Player'"
+        primaryIcon="check"
+        [loading]="isSaving()"
+        [disabled]="!playerForm.valid || isSaving()"
+        (cancel)="visibleChange.emit(false)"
+        (primary)="onSave()"
+      />
+    </app-dialog>
   `,
   styleUrl: "./roster-player-form-dialog.component.scss",
 })

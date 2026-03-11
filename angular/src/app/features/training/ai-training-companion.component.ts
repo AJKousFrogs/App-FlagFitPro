@@ -10,7 +10,6 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Card } from "primeng/card";
 import { Carousel } from "primeng/carousel";
 import { Knob } from "primeng/knob";
 import { scaleInOut } from "../../shared/animations/app.animations";
@@ -118,7 +117,6 @@ declare global {
   imports: [
     CommonModule,
     RouterModule,
-    Card,
     Carousel,
     Knob,
 

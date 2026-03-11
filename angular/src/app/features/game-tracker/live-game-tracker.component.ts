@@ -15,9 +15,10 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { Dialog } from "primeng/dialog";
+import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
+import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { Select } from "primeng/select";
 import { InputNumber } from "primeng/inputnumber";
 import { SelectButton } from "primeng/selectbutton";
@@ -69,14 +70,15 @@ interface Play {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Dialog,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     Select,
     InputNumber,
     SelectButton,
     SpeedDial,
     SwipeGestureDirective,
     GameTimePipe,
-    ButtonComponent,
     IconButtonComponent,
   ],
   template: `
@@ -213,14 +215,21 @@ interface Play {
       </div>
 
       <!-- Play Details Modal -->
-      <p-dialog
+      <app-dialog
         [visible]="showPlayDetails()"
         (visibleChange)="showPlayDetails.set($event)"
-        header="Play Details"
         [modal]="true"
-        [position]="'bottom'"
-        class="game-tracker-play-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Play details"
+        styleClass="game-tracker-play-dialog"
       >
+        <app-dialog-header
+          dialogHeader
+          icon="clipboard"
+          title="Play Details"
+          (close)="cancelPlay()"
+        />
         <form [formGroup]="playForm" class="play-form">
           <div class="form-row">
             <label>Play Type</label>
@@ -254,15 +263,16 @@ interface Play {
           </div>
 
           <div class="form-actions">
-            <app-button variant="text" (clicked)="cancelPlay()"
-              >Cancel</app-button
-            >
-            <app-button [disabled]="playForm.invalid" (clicked)="savePlay()"
-              >Save Play</app-button
-            >
+            <app-dialog-footer
+              dialogFooter
+              primaryLabel="Save Play"
+              [disabled]="playForm.invalid"
+              (cancel)="cancelPlay()"
+              (primary)="savePlay()"
+            />
           </div>
         </form>
-      </p-dialog>
+      </app-dialog>
     </div>
   `,
   styleUrl: "./live-game-tracker.component.scss",

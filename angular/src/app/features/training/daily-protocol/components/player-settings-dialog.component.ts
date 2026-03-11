@@ -21,13 +21,17 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DatePicker } from "primeng/datepicker";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { Select } from "primeng/select";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../../../shared/components/ui-components";
 
 import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service";
 import {
@@ -84,27 +88,34 @@ interface DayOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Dialog,
-    
     Select,
     DatePicker,
     InputText,
     MultiSelect,
-
-    ButtonComponent,
     IconButtonComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
+    ButtonComponent,
   ],
   template: `
-    <p-dialog
-      header="Training Settings"
-      [modal]="true"
+    <app-dialog
       [visible]="visible()"
       (visibleChange)="onVisibleChange($event)"
+      [blockScroll]="true"
       [breakpoints]="dialogBreakpoints"
       [draggable]="false"
       [resizable]="false"
-      class="player-settings-dialog"
+      styleClass="player-settings-dialog"
+      ariaLabel="Training settings"
     >
+      <app-dialog-header
+        icon="sliders-h"
+        title="Training Settings"
+        subtitle="Configure your availability and training preferences"
+        (close)="onCancel()"
+      />
+
       <div class="settings-form">
         <!-- Position Selection -->
         <div class="form-section">
@@ -338,18 +349,15 @@ interface DayOption {
         </div>
       </div>
 
-      <ng-template #footer>
-        <app-button variant="outlined" (clicked)="onCancel()"
-          >Cancel</app-button
-        >
-        <app-button
-          iconLeft="pi-check"
-          [loading]="isSaving()"
-          (clicked)="onSave()"
-          >Save Settings</app-button
-        >
-      </ng-template>
-    </p-dialog>
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Save Settings"
+        primaryIcon="check"
+        [loading]="isSaving()"
+        (cancel)="onCancel()"
+        (primary)="onSave()"
+      />
+    </app-dialog>
   `,
   styleUrl: "./player-settings-dialog.component.scss",
 })

@@ -12,9 +12,8 @@ import { firstValueFrom } from "rxjs";
 
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { DatePicker } from "primeng/datepicker";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -98,7 +97,7 @@ interface AthleteMetrics {
   imports: [
     ReactiveFormsModule,
     CommonModule,
-    Card,
+    CardShellComponent,
     DatePicker,
     StatusTagComponent,
     Skeleton,
@@ -108,7 +107,6 @@ interface AthleteMetrics {
     PageHeaderComponent,
     AiConsentRequiredComponent,
     ButtonComponent,
-    CardHeaderComponent,
     EmptyStateComponent,
   ],
   template: `
@@ -141,7 +139,7 @@ interface AthleteMetrics {
         <!-- Readiness Overview -->
         @if (athleteMetrics()) {
           <div class="readiness-overview">
-            <p-card class="readiness-card">
+            <app-card-shell class="readiness-card">
               <div class="readiness-header">
                 <h3><i class="pi pi-heart-fill"></i> Your Readiness</h3>
                 <span class="readiness-score" [class]="getReadinessClass()">
@@ -202,33 +200,33 @@ interface AthleteMetrics {
                   </span>
                 </div>
               </div>
-            </p-card>
+            </app-card-shell>
           </div>
         } @else {
-          <p-card class="readiness-card">
+          <app-card-shell class="readiness-card">
             <app-empty-state
               icon="pi-info-circle"
               heading="No Readiness Data Available"
               description="Complete your wellness check-in to see your readiness metrics here."
             />
-          </p-card>
+          </app-card-shell>
         }
 
         <div class="scheduler-content">
           <!-- AI Suggestions -->
-          <p-card class="suggestions-card">
-            <ng-template #header>
-              <app-card-header icon="pi-sparkles" title="AI Suggestions">
-                @if (pendingSuggestions().length > 0) {
-                  <app-status-tag
-                    header-actions
-                    [value]="pendingSuggestions().length + ' pending'"
-                    severity="info"
-                    size="sm"
-                  />
-                }
-              </app-card-header>
-            </ng-template>
+          <app-card-shell
+            class="suggestions-card"
+            title="AI Suggestions"
+            headerIcon="pi-sparkles"
+          >
+            @if (pendingSuggestions().length > 0) {
+              <app-status-tag
+                header-actions
+                [value]="pendingSuggestions().length + ' pending'"
+                severity="info"
+                size="sm"
+              />
+            }
 
             @if (isLoading()) {
               <div class="suggestions-list">
@@ -315,25 +313,26 @@ interface AthleteMetrics {
                 }
               </div>
             }
-          </p-card>
+          </app-card-shell>
 
           <!-- Optimized Schedule -->
           <div class="schedule-section">
-            <p-card class="calendar-card">
-              <ng-template #header>
-                <h3><i class="pi pi-calendar"></i> Optimized Schedule</h3>
-              </ng-template>
+            <app-card-shell
+              class="calendar-card"
+              title="Optimized Schedule"
+              headerIcon="pi-calendar"
+            >
               <p-datepicker
                 [formControl]="selectedDateControl"
                 [inline]="true"
                 [showWeek]="true"
               ></p-datepicker>
-            </p-card>
+            </app-card-shell>
 
-            <p-card class="sessions-card">
-              <ng-template #header>
-                <h3>Sessions for {{ selectedDate() | date: "MMM d" }}</h3>
-              </ng-template>
+            <app-card-shell
+              class="sessions-card"
+              [title]="'Sessions for ' + (selectedDate() | date: 'MMM d')"
+            >
               @if (selectedDateSessions().length === 0) {
                 <div class="empty-sessions">
                   <p>No sessions scheduled for this date</p>
@@ -367,7 +366,7 @@ interface AthleteMetrics {
                   }
                 </div>
               }
-            </p-card>
+            </app-card-shell>
           </div>
         </div>
       </div>

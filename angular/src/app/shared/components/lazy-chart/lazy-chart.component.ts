@@ -103,29 +103,7 @@ interface ChartInstance {
       }
     </div>
   `,
-  styles: [
-    `
-      .lazy-chart-container {
-        position: relative;
-        width: 100%;
-      }
-      .chart-error {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--space-2);
-        padding: var(--space-8);
-        color: var(--color-text-secondary);
-        font-size: var(--ds-font-size-sm);
-      }
-      .chart-error i {
-        color: var(--color-status-warning);
-      }
-      canvas {
-        display: block;
-      }
-    `,
-  ],
+  styleUrl: "./lazy-chart.component.scss",
 })
 export class LazyChartComponent implements OnInit, OnDestroy {
   private readonly logger = inject(LoggerService);

@@ -56,7 +56,6 @@ import { CloseButtonComponent } from "../close-button/close-button.component";
       />
     </div>
   `,
-  styles: [],
 })
 export class DialogHeaderComponent {
   /**

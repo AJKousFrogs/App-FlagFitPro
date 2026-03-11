@@ -19,7 +19,9 @@ import { FormsModule } from "@angular/forms";
 import { firstValueFrom } from "rxjs";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { Dialog } from "primeng/dialog";
+import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -90,8 +92,9 @@ interface SessionTypeOption {
   imports: [
     CommonModule,
     FormsModule,
-    Dialog,
-    
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
     InputNumber,
     InputText,
     ProgressBar,
@@ -337,15 +340,19 @@ interface SessionTypeOption {
     </div>
 
     <!-- Log Session Dialog -->
-    <p-dialog
-      header="Log Throwing Session"
-      [modal]="true"
+    <app-dialog
+      ariaLabel="Log Throwing Session"
       [visible]="showLogDialog()"
       (visibleChange)="showLogDialog.set($event)"
+      (hide)="closeLogDialog()"
       [breakpoints]="dialogBreakpoints"
-      [draggable]="false"
       class="qb-throwing-log-dialog"
     >
+      <app-dialog-header
+        title="Log Throwing Session"
+        icon="pi-send"
+      ></app-dialog-header>
+
       <div class="log-form">
         <!-- Session Type -->
         <div class="form-field">
@@ -482,19 +489,15 @@ interface SessionTypeOption {
         </div>
       </div>
 
-      <ng-template #footer>
-        <app-button variant="outlined" (clicked)="closeLogDialog()"
-          >Cancel</app-button
-        >
-        <app-button
-          iconLeft="pi-check"
-          [loading]="isSaving()"
-          [disabled]="!isFormValid()"
-          (clicked)="saveSession()"
-          >Save Session</app-button
-        >
-      </ng-template>
-    </p-dialog>
+      <app-dialog-footer
+        primaryLabel="Save Session"
+        primaryIcon="check"
+        [loading]="isSaving()"
+        [disabled]="!isFormValid()"
+        (cancel)="closeLogDialog()"
+        (primary)="saveSession()"
+      />
+    </app-dialog>
   `,
   styleUrl: "./qb-throwing-tracker.component.scss",
 })

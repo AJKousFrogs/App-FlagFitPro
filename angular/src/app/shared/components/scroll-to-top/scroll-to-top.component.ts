@@ -16,6 +16,11 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Tooltip } from "primeng/tooltip";
+import {
+  getScrollTop,
+  resolveScrollContainer,
+  ScrollContainer,
+} from "../../../core/utils/scroll-container";
 
 @Component({
   selector: "app-scroll-to-top",
@@ -39,14 +44,14 @@ import { Tooltip } from "primeng/tooltip";
 })
 export class ScrollToTopComponent implements OnDestroy {
   isVisible = signal(false);
-  private scrollContainer: HTMLElement | Window | null = null;
+  private scrollContainer: ScrollContainer | null = null;
   private readonly onScroll = () => this.updateVisibility();
 
   constructor() {
     afterNextRender(() => {
       if (typeof window === "undefined") return;
-      this.scrollContainer =
-        document.querySelector<HTMLElement>(".app-main") ?? window;
+      this.scrollContainer = resolveScrollContainer();
+      if (!this.scrollContainer) return;
       this.scrollContainer.addEventListener("scroll", this.onScroll, {
         passive: true,
       });
@@ -79,14 +84,6 @@ export class ScrollToTopComponent implements OnDestroy {
 
   private updateVisibility(): void {
     if (typeof window === "undefined" || !this.scrollContainer) return;
-
-    const scrollPosition = this.scrollContainer instanceof Window
-      ? window.pageYOffset ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop ||
-        0
-      : this.scrollContainer.scrollTop;
-
-    this.isVisible.set(scrollPosition > 300);
+    this.isVisible.set(getScrollTop(this.scrollContainer) > 300);
   }
 }
