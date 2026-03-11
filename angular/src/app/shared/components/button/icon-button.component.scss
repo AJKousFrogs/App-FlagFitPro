@@ -3,24 +3,34 @@
 }
 
 .icon-btn {
+  --icon-btn-background: var(--ui-primary);
+  --icon-btn-background-hover: var(--ui-primary-hover);
+  --icon-btn-background-active: var(--ui-primary-active);
+  --icon-btn-color: var(--color-text-on-primary);
+  --icon-btn-border-color: transparent;
+  --icon-btn-shadow: var(--shadow-sm);
+  --icon-btn-shadow-hover: var(--shadow-md);
+
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: none;
+  border: var(--border-1) solid var(--icon-btn-border-color);
   border-radius: var(--radius-lg);
   cursor: pointer;
   overflow: hidden;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   text-decoration: none;
-  background-color: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-  box-shadow: var(--shadow-md);
+  background-color: var(--icon-btn-background);
+  color: var(--icon-btn-color);
+  box-shadow: var(--icon-btn-shadow);
   transition:
-    transform var(--hover-transition-fast),
-    box-shadow var(--hover-transition-fast),
-    background-color var(--hover-transition-fast);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
   will-change: transform, box-shadow;
   width: var(--touch-target-md);
   height: var(--touch-target-md);
@@ -31,13 +41,14 @@
 
 @media (hover: hover) and (pointer: fine) {
   .icon-btn:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--ds-primary-green-hover);
+    background-color: var(--icon-btn-background-hover);
     transform: translateY(calc(var(--space-0-5) * -1));
-    box-shadow: var(--hover-shadow-md);
+    box-shadow: var(--icon-btn-shadow-hover);
   }
 }
 
 .icon-btn:active:not(:disabled):not(.btn-disabled) {
+  background-color: var(--icon-btn-background-active);
   transform: translateY(0) scale(0.98);
   box-shadow: var(--shadow-sm);
 }
@@ -45,7 +56,7 @@
 .icon-btn:focus-visible {
   outline: var(--border-3) solid var(--focus-ring-color);
   outline-offset: var(--border-2);
-  box-shadow: var(--shadow-md), var(--focus-ring-shadow);
+  box-shadow: var(--shadow-focus);
 }
 
 .icon-btn:focus:not(:focus-visible) {
@@ -96,64 +107,84 @@
 .icon-btn-secondary,
 .icon-btn-outlined,
 .icon-btn-success {
-  background-color: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
+  --icon-btn-background: var(--ui-primary);
+  --icon-btn-background-hover: var(--ui-primary-hover);
+  --icon-btn-background-active: var(--ui-primary-active);
+  --icon-btn-color: var(--color-text-on-primary);
+  --icon-btn-border-color: transparent;
+  --icon-btn-shadow: var(--shadow-sm);
+  --icon-btn-shadow-hover: var(--shadow-md);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .icon-btn-primary:hover:not(:disabled):not(.btn-disabled),
-  .icon-btn-secondary:hover:not(:disabled):not(.btn-disabled),
-  .icon-btn-outlined:hover:not(:disabled):not(.btn-disabled),
-  .icon-btn-success:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--ds-primary-green-hover);
-  }
+.icon-btn-secondary {
+  --icon-btn-background: var(--surface-card);
+  --icon-btn-background-hover: var(--surface-secondary);
+  --icon-btn-background-active: var(--ui-surface-subtle);
+  --icon-btn-color: var(--color-text-primary);
+  --icon-btn-border-color: var(--color-border-default);
+  --icon-btn-shadow: none;
+  --icon-btn-shadow-hover: var(--shadow-sm);
+}
+
+.icon-btn-outlined {
+  --icon-btn-background: transparent;
+  --icon-btn-background-hover: rgba(var(--ds-primary-green-rgb), 0.06);
+  --icon-btn-background-active: rgba(var(--ds-primary-green-rgb), 0.12);
+  --icon-btn-color: var(--color-brand-primary);
+  --icon-btn-border-color: rgba(var(--ds-primary-green-rgb), 0.22);
+  --icon-btn-shadow: none;
+  --icon-btn-shadow-hover: none;
+}
+
+.icon-btn-success {
+  --icon-btn-background: var(--ui-success);
+  --icon-btn-background-hover: color-mix(
+    in srgb,
+    var(--ui-success) 90%,
+    var(--color-text-primary)
+  );
+  --icon-btn-background-active: color-mix(
+    in srgb,
+    var(--ui-success) 82%,
+    var(--color-text-primary)
+  );
+  --icon-btn-color: var(--color-text-on-primary);
 }
 
 .icon-btn-text {
-  background-color: transparent;
-  color: var(--ds-primary-green);
-  box-shadow: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .icon-btn-text:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--hover-bg-tertiary);
-    color: var(--ds-primary-green-hover);
-    transform: none;
-    box-shadow: none;
-  }
+  --icon-btn-background: transparent;
+  --icon-btn-background-hover: rgba(var(--ds-primary-green-rgb), 0.08);
+  --icon-btn-background-active: rgba(var(--ds-primary-green-rgb), 0.14);
+  --icon-btn-color: var(--color-brand-primary);
+  --icon-btn-border-color: transparent;
+  --icon-btn-shadow: none;
+  --icon-btn-shadow-hover: none;
+  transform-origin: center;
 }
 
 .icon-btn-text:active:not(:disabled):not(.btn-disabled) {
-  background-color: var(--ds-primary-green-subtle);
+  background-color: var(--icon-btn-background-active);
   transform: none;
   box-shadow: none;
 }
 
 .icon-btn-text:focus-visible {
-  box-shadow: var(--focus-ring-shadow);
+  box-shadow: var(--shadow-focus);
 }
 
 .icon-btn-danger {
-  background-color: var(--color-status-error);
-  color: var(--color-text-on-primary);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .icon-btn-danger:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-interactive-destructive-hover);
-    transform: translateY(calc(var(--space-0-5) * -1));
-    box-shadow:
-      0 var(--space-2) var(--space-5) rgba(var(--primitive-error-500-rgb), 0.4),
-      var(--shadow-md);
-  }
+  --icon-btn-background: var(--ui-danger);
+  --icon-btn-background-hover: var(--color-interactive-destructive-hover);
+  --icon-btn-background-active: var(--primitive-error-700);
+  --icon-btn-color: var(--color-text-on-primary);
+  --icon-btn-border-color: transparent;
+  --icon-btn-shadow: var(--shadow-sm);
+  --icon-btn-shadow-hover: var(--shadow-md);
 }
 
 .icon-btn-danger:focus-visible {
   outline-color: var(--color-status-error);
-  box-shadow:
-    var(--shadow-md),
-    0 0 0 var(--border-4) rgba(var(--primitive-error-500-rgb), 0.25);
+  box-shadow: var(--shadow-focus);
 }
 
 .icon-btn i {
@@ -169,7 +200,7 @@
 
 @media (hover: none) and (pointer: coarse) {
   .icon-btn:active:not(:disabled):not(.btn-disabled) {
-    transform: scale(0.95);
+    transform: scale(var(--motion-scale-press));
   }
 }
 

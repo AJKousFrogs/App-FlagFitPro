@@ -9,8 +9,10 @@
         <!-- Mobile Menu Toggle -->
         <app-icon-button
           class="header-menu-toggle"
-          icon="pi-bars"
-          ariaLabel="Toggle navigation menu"
+          [icon]="sidebarToggleIcon()"
+          [ariaLabel]="sidebarToggleAriaLabel()"
+          [tooltip]="sidebarToggleTooltip()"
+          tooltipPosition="bottom"
           (clicked)="onToggleSidebar()"
         />
 

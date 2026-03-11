@@ -24,8 +24,9 @@
 
   overflow: hidden;
 
-  // ✅ Keep transitions minimal (no hover effects on default cards)
   transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
     box-shadow var(--motion-base) var(--ease-standard),
     transform var(--motion-base) var(--ease-standard);
 }
@@ -45,27 +46,42 @@
 
 .card-shell--interactive {
   cursor: pointer;
-
-  // Optional: if you want keyboard users to see it's interactive even without hover
-  // transition already inherited from .card-shell
+  will-change: transform, box-shadow;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .card-shell--interactive:hover {
     transform: translateY(-var(--border-1));
     box-shadow: var(--component-card-shadow-hover);
-    border-color: var(--ui-border-default);
+    border-color: color-mix(
+      in srgb,
+      var(--ui-border-default) 78%,
+      var(--color-brand-primary)
+    );
   }
 }
 
 .card-shell--interactive:active,
 .card-shell--interactive.card-shell--pressed {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.995);
   box-shadow: var(--shadow-sm);
 }
 
 .card-shell--interactive {
   @include ds-focus-ring;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-shell,
+  .card-shell--interactive {
+    transition: none;
+  }
+
+  .card-shell--interactive:hover,
+  .card-shell--interactive:active,
+  .card-shell--interactive.card-shell--pressed {
+    transform: none;
+  }
 }
 
 // ============================================

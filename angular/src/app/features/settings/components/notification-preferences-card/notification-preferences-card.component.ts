@@ -3,7 +3,7 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Select } from "primeng/select";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import {
-  CardComponent,
+  CardShellComponent,
   ControlRowComponent,
 } from "../../../../shared/components/ui-components";
 
@@ -14,7 +14,7 @@ import {
     ReactiveFormsModule,
     Select,
     ToggleSwitch,
-    CardComponent,
+    CardShellComponent,
     ControlRowComponent,
   ],
   templateUrl: "./notification-preferences-card.component.html",

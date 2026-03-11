@@ -6,12 +6,12 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ToggleSwitch } from "primeng/toggleswitch";
-import { CardComponent } from "../../../../shared/components/ui-components";
+import { CardShellComponent } from "../../../../shared/components/ui-components";
 
 @Component({
   selector: "app-experimental-features-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, ToggleSwitch, CardComponent],
+  imports: [FormsModule, ToggleSwitch, CardShellComponent],
   templateUrl: "./experimental-features-card.component.html",
   styleUrl: "./experimental-features-card.component.scss",
 })

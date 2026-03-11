@@ -147,8 +147,15 @@
     inset: 0;
     z-index: var(--z-index-modal-backdrop);
     background: var(--ui-surface-overlay);
+    opacity: 1;
     animation: feedback-fade-in var(--motion-feedback-duration-fast)
       var(--ease-standard);
+    transition:
+      opacity var(--motion-feedback-duration-fast) var(--ease-standard),
+      background-color var(--motion-feedback-duration-fast)
+        var(--ease-standard),
+      backdrop-filter var(--motion-feedback-duration-fast)
+        var(--ease-standard);
   }
 
   .app-backdrop--light {
@@ -326,6 +333,12 @@
     color: var(--color-text-primary);
   }
 
+  .app-toast .p-toast-close-button:focus-visible {
+    outline: var(--focus-outline-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
+  }
+
   .toast-content {
     display: flex;
     align-items: flex-start;
@@ -399,6 +412,20 @@
     border: var(--border-1) solid var(--color-border-subtle);
     border-left-width: var(--component-alert-accent-width);
     background: var(--surface-card);
+    transition:
+      background-color var(--motion-feedback-duration-fast)
+        var(--ease-standard),
+      border-color var(--motion-feedback-duration-fast)
+        var(--ease-standard),
+      box-shadow var(--motion-feedback-duration-fast) var(--ease-standard);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-backdrop,
+    .app-toast .p-toast-message {
+      animation: none;
+      transition: none;
+    }
   }
 
   .banner.banner-info {

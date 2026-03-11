@@ -11,7 +11,7 @@ import { Select } from "primeng/select";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import {
   ButtonComponent,
-  CardComponent,
+  CardShellComponent,
 } from "../../../../shared/components/ui-components";
 
 type VisibilityOption = {
@@ -29,7 +29,7 @@ type VisibilityOption = {
     ToggleSwitch,
     Divider,
     RouterLink,
-    CardComponent,
+    CardShellComponent,
     ButtonComponent,
   ],
   templateUrl: "./privacy-controls-card.component.html",

@@ -6,6 +6,7 @@ import {
   OnDestroy,
   PLATFORM_ID,
   Renderer2,
+  signal,
   viewChild,
 } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
@@ -38,11 +39,18 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
     <div class="app-shell dashboard-container">
       <app-header
         class="app-shell__header"
+        [sidebarCollapsed]="sidebarCollapsed()"
+        [mobileNav]="mobileNav()"
         (toggleSidebar)="toggleSidebar()"
       ></app-header>
 
       <div class="app-shell__main">
-        <app-sidebar #sidebar class="app-shell__sidebar"></app-sidebar>
+        <app-sidebar
+          #sidebar
+          class="app-shell__sidebar"
+          [collapsed]="sidebarCollapsed()"
+          [mobileViewport]="mobileNav()"
+        ></app-sidebar>
 
         <section class="app-shell__content" aria-label="Application content">
           <div class="app-main">
@@ -76,6 +84,8 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
   host: {
     "(window:toggle-sidebar)": "onToggleSidebar()",
     "(window:toggle-theme)": "onToggleTheme()",
+    "(window:resize)": "onWindowResize()",
+    "[class.app-shell--sidebar-collapsed]": "sidebarCollapsed() && !mobileNav()",
   },
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
@@ -83,12 +93,15 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private profileNotificationService = inject(ProfileNotificationService);
   private readonly renderer = inject(Renderer2);
   private readonly platformId = inject(PLATFORM_ID);
-  readonly sidebar = viewChild.required(SidebarComponent);
+  readonly sidebar = viewChild(SidebarComponent);
+  readonly sidebarCollapsed = signal(this.loadSidebarCollapsedState());
+  readonly mobileNav = signal(false);
 
   ngOnInit(): void {
     // Check profile completion on every page load
     // This ensures users are reminded to complete their profile
     this.profileNotificationService.checkAndNotify();
+    this.syncViewportState();
     this.applyShellBodyClass(true);
   }
 
@@ -108,7 +121,20 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar(): void {
-    this.sidebar().toggleSidebar();
+    if (this.mobileNav()) {
+      this.sidebar()?.toggleSidebar();
+      return;
+    }
+
+    this.sidebarCollapsed.update((value) => {
+      const next = !value;
+      this.saveSidebarCollapsedState(next);
+      return next;
+    });
+  }
+
+  onWindowResize(): void {
+    this.syncViewportState();
   }
 
   private applyShellBodyClass(enabled: boolean): void {
@@ -119,5 +145,26 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     } else {
       this.renderer.removeClass(document.body, "app-shell-active");
     }
+  }
+
+  private syncViewportState(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+    this.mobileNav.set(isMobile);
+
+    if (!isMobile) {
+      this.sidebar()?.closeSidebar();
+    }
+  }
+
+  private loadSidebarCollapsedState(): boolean {
+    if (!isPlatformBrowser(this.platformId)) return false;
+    return localStorage.getItem("app-shell-sidebar-collapsed") === "true";
+  }
+
+  private saveSidebarCollapsedState(collapsed: boolean): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    localStorage.setItem("app-shell-sidebar-collapsed", String(collapsed));
   }
 }

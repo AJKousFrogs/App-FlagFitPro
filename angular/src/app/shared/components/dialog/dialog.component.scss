@@ -1,3 +1,11 @@
 .dialog-body {
   margin-top: var(--space-4);
+  animation: feedback-fade-in var(--motion-feedback-duration-fast)
+    var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-body {
+    animation: none;
+  }
 }

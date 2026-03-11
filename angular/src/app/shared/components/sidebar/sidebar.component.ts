@@ -6,6 +6,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  input,
   OnInit,
   PLATFORM_ID,
   Renderer2,
@@ -41,6 +42,7 @@ import { NavItemComponent } from "../nav-item.component";
     <div
       class="sidebar"
       [class.sidebar-open]="isOpen()"
+      [class.sidebar-collapsed]="isCollapsed()"
       role="navigation"
       aria-label="Main navigation"
     >
@@ -65,7 +67,10 @@ import { NavItemComponent } from "../nav-item.component";
       </a>
 
       <!-- User Info Section -->
-      <div class="user-section">
+      <div
+        class="user-section"
+        [attr.title]="isCollapsed() ? userName() + ' - ' + userRoleLabel() : null"
+      >
         <div class="user-avatar">
           {{ userInitials() }}
         </div>
@@ -89,7 +94,9 @@ import { NavItemComponent } from "../nav-item.component";
                 [itemId]="'nav-' + item.route.replace('/', '')"
                 [exact]="isExactRoute(item.route)"
                 variant="sidebar"
-                [itemClass]="'nav-item-primary'"
+                [itemClass]="navItemClass('nav-item-primary')"
+                [tooltipDisabled]="!isCollapsed()"
+                tooltipPosition="right"
                 (clicked)="onNavItemClick()"
               />
             }
@@ -112,6 +119,9 @@ import { NavItemComponent } from "../nav-item.component";
                   [testId]="getNavTestId(item.route)"
                   [itemId]="'nav-' + item.route.replace('/', '')"
                   variant="sidebar"
+                  [itemClass]="navItemClass()"
+                  [tooltipDisabled]="!isCollapsed()"
+                  tooltipPosition="right"
                   (clicked)="onNavItemClick()"
                 />
               }
@@ -119,63 +129,92 @@ import { NavItemComponent } from "../nav-item.component";
           </div>
         }
 
-        <!-- COLLAPSIBLE "ME" GROUP -->
-        <div class="me-group-container">
-          <button
-            class="me-group-header"
-            (click)="toggleMeGroup()"
-            [attr.aria-expanded]="meGroupExpanded()"
-            aria-controls="me-group-items"
-            type="button"
-          >
-            <span class="me-group-icon">
-              <i
-                [class]="
-                  meGroupExpanded()
-                    ? 'pi pi-chevron-down'
-                    : 'pi pi-chevron-right'
-                "
-              ></i>
-            </span>
-            <span class="me-group-label">Me</span>
-          </button>
+        @if (isCollapsed()) {
+          <div class="nav-group me-group-container me-group-container--collapsed">
+            @for (item of meItems(); track trackByRoute($index, item)) {
+              <app-nav-item
+                [route]="item.route"
+                [label]="item.label"
+                [icon]="item.icon"
+                [ariaLabel]="item.ariaLabel"
+                [testId]="getNavTestId(item.route)"
+                [itemId]="'nav-' + item.route.replace('/', '')"
+                variant="sidebar"
+                [itemClass]="navItemClass()"
+                [tooltipDisabled]="!isCollapsed()"
+                tooltipPosition="right"
+                (clicked)="onNavItemClick()"
+              />
+            }
+          </div>
+        } @else {
+          <!-- COLLAPSIBLE "ME" GROUP -->
+          <div class="me-group-container">
+            <button
+              class="me-group-header"
+              (click)="toggleMeGroup()"
+              [attr.aria-expanded]="meGroupExpanded()"
+              aria-controls="me-group-items"
+              type="button"
+            >
+              <span class="me-group-icon">
+                <i
+                  [class]="
+                    meGroupExpanded()
+                      ? 'pi pi-chevron-down'
+                      : 'pi pi-chevron-right'
+                  "
+                ></i>
+              </span>
+              <span class="me-group-label">Me</span>
+            </button>
 
-          @if (meGroupExpanded()) {
-            <div id="me-group-items" class="me-group-items">
-              @for (item of meItems(); track trackByRoute($index, item)) {
-                <app-nav-item
-                  [route]="item.route"
-                  [label]="item.label"
-                  [icon]="item.icon"
-                  [ariaLabel]="item.ariaLabel"
-                  [testId]="getNavTestId(item.route)"
-                  [itemId]="'nav-' + item.route.replace('/', '')"
-                  variant="sidebar"
-                  [itemClass]="'nav-item-sub'"
-                  (clicked)="onNavItemClick()"
-                />
-              }
-            </div>
-          }
-        </div>
+            @if (meGroupExpanded()) {
+              <div id="me-group-items" class="me-group-items">
+                @for (item of meItems(); track trackByRoute($index, item)) {
+                  <app-nav-item
+                    [route]="item.route"
+                    [label]="item.label"
+                    [icon]="item.icon"
+                    [ariaLabel]="item.ariaLabel"
+                    [testId]="getNavTestId(item.route)"
+                    [itemId]="'nav-' + item.route.replace('/', '')"
+                    variant="sidebar"
+                    [itemClass]="navItemClass('nav-item-sub')"
+                    [tooltipDisabled]="!isCollapsed()"
+                    tooltipPosition="right"
+                    (clicked)="onNavItemClick()"
+                  />
+                }
+              </div>
+            }
+          </div>
+        }
       </nav>
 
       <!-- Bottom Section (Profile quick access + Logout) -->
       <div class="sidebar-footer">
-        <app-nav-item
-          route="/profile"
-          label="Profile"
-          icon="pi-user"
-          ariaLabel="Profile - Quick access"
-          variant="sidebar"
-          (clicked)="onNavItemClick()"
-        />
+        @if (!isCollapsed()) {
+          <app-nav-item
+            route="/profile"
+            label="Profile"
+            icon="pi-user"
+            ariaLabel="Profile - Quick access"
+            variant="sidebar"
+            [itemClass]="navItemClass()"
+            [tooltipDisabled]="!isCollapsed()"
+            tooltipPosition="right"
+            (clicked)="onNavItemClick()"
+          />
+        }
         <app-nav-item
           label="Logout"
           icon="pi-sign-out"
           ariaLabel="Log out"
           variant="sidebar"
-          [itemClass]="'logout-btn'"
+          [itemClass]="navItemClass('logout-btn')"
+          [tooltipDisabled]="!isCollapsed()"
+          tooltipPosition="right"
           (clicked)="logout()"
         />
       </div>
@@ -201,7 +240,12 @@ export class SidebarComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
 
+  readonly collapsed = input(false);
+  readonly mobileViewport = input(false);
   isOpen = signal(false);
+  readonly isCollapsed = computed(
+    () => this.collapsed() && !this.mobileViewport(),
+  );
 
   constructor() {
     this.destroyRef.onDestroy(() => {
@@ -213,7 +257,7 @@ export class SidebarComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       effect(() => {
         const isOpen = this.isOpen();
-        if (window.innerWidth <= 768) {
+        if (this.mobileViewport()) {
           if (isOpen) {
             this.renderer.addClass(document.body, "sidebar-open");
           } else {
@@ -297,7 +341,7 @@ export class SidebarComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        if (window.innerWidth <= 768) {
+        if (this.mobileViewport()) {
           this.closeSidebar();
         }
       });
@@ -313,7 +357,7 @@ export class SidebarComponent implements OnInit {
 
   onNavItemClick(): void {
     // Auto-close sidebar on mobile after navigation
-    if (window.innerWidth <= 768) {
+    if (this.mobileViewport()) {
       this.closeSidebar();
     }
   }
@@ -382,5 +426,13 @@ export class SidebarComponent implements OnInit {
       return this.meItems();
     }
     return [];
+  }
+
+  navItemClass(...classes: string[]): string {
+    const resolved = classes.filter(Boolean);
+    if (this.isCollapsed()) {
+      resolved.push("nav-item--collapsed");
+    }
+    return resolved.join(" ");
   }
 }

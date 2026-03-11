@@ -7,13 +7,14 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Badge } from "primeng/badge";
+import { Tooltip } from "primeng/tooltip";
 
 export type NavItemVariant = "sidebar" | "bottom" | "menu";
 
 @Component({
   selector: "app-nav-item",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Badge],
+  imports: [CommonModule, RouterModule, Badge, Tooltip],
   template: `
     @if (route()) {
       <a
@@ -27,6 +28,9 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
         [attr.id]="itemId() || null"
         [attr.data-testid]="testId() || null"
         [attr.title]="label()"
+        [pTooltip]="resolvedTooltip()"
+        [tooltipDisabled]="tooltipDisabled() || !resolvedTooltip()"
+        [tooltipPosition]="tooltipPosition()"
         (click)="onClick($event)"
       >
         <span class="nav-item-icon">
@@ -50,6 +54,9 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
         [attr.id]="itemId() || null"
         [attr.data-testid]="testId() || null"
         [attr.title]="label()"
+        [pTooltip]="resolvedTooltip()"
+        [tooltipDisabled]="tooltipDisabled() || !resolvedTooltip()"
+        [tooltipPosition]="tooltipPosition()"
         [disabled]="disabled()"
         (click)="onClick($event)"
       >
@@ -89,6 +96,9 @@ export class NavItemComponent {
   itemId = input<string | null>(null);
   testId = input<string | null>(null);
   disabled = input(false);
+  tooltip = input<string | null>(null);
+  tooltipDisabled = input(false);
+  tooltipPosition = input<"top" | "bottom" | "left" | "right">("bottom");
 
   clicked = output<void>();
 
@@ -133,5 +143,9 @@ export class NavItemComponent {
     if (variant === "sidebar") return "nav-item--sidebar";
     if (variant === "bottom") return "nav-item--bottom";
     return "nav-item--menu";
+  }
+
+  resolvedTooltip(): string {
+    return this.tooltip() || this.label();
   }
 }

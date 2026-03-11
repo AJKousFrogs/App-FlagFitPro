@@ -100,7 +100,7 @@
 
 // PrimeNG button override moved to _component-overrides.scss (DS-EXC-004)
 .header-menu-toggle {
-  display: none;
+  display: flex;
 }
 
 /* ================================================================
@@ -627,10 +627,6 @@
   .header-center,
   .header-end {
     height: var(--header-height-mobile);
-  }
-
-  .header-menu-toggle {
-    display: flex;
   }
 
   .app-header-shell {

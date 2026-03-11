@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   isDevMode,
+  input,
   model,
   OnDestroy,
   OnInit,
@@ -100,9 +101,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Angular 21: Use output() signal instead of @Output() EventEmitter
   toggleSidebar = output<void>();
+  readonly sidebarCollapsed = input(false);
+  readonly mobileNav = input(false);
 
   // Angular 21: Use model() for two-way binding
   searchQuery = model("");
+  readonly sidebarToggleIcon = computed(() =>
+    this.mobileNav()
+      ? "pi-bars"
+      : this.sidebarCollapsed()
+        ? "pi-angle-right"
+        : "pi-angle-left",
+  );
+  readonly sidebarToggleTooltip = computed(() =>
+    this.mobileNav()
+      ? "Open navigation"
+      : this.sidebarCollapsed()
+        ? "Expand sidebar"
+        : "Collapse sidebar",
+  );
+  readonly sidebarToggleAriaLabel = computed(() =>
+    this.mobileNav()
+      ? "Open navigation menu"
+      : this.sidebarCollapsed()
+        ? "Expand sidebar"
+        : "Collapse sidebar",
+  );
 
   notificationCount = signal(0);
   // Theme computed signals from service

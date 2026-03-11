@@ -9,7 +9,11 @@
   position: fixed;
   inset: auto 0 0;
   height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
-  background: var(--surface-primary);
+  background: color-mix(
+    in srgb,
+    var(--surface-primary) 90%,
+    var(--surface-secondary)
+  );
   border-top: var(--border-1) solid var(--color-border-secondary);
   display: none;
   justify-content: space-around;
@@ -17,6 +21,13 @@
   padding: 0 var(--space-2) var(--safe-area-bottom);
   z-index: var(--z-modal);
   box-sizing: border-box;
+  backdrop-filter: blur(var(--blur-sm));
+  box-shadow: 0 calc(var(--border-1) * -1) 0 var(--color-border-subtle);
+  transition:
+    transform var(--motion-feedback-duration-fast) var(--ease-standard),
+    box-shadow var(--motion-feedback-duration-fast) var(--ease-standard),
+    background-color var(--motion-feedback-duration-fast)
+      var(--ease-standard);
 }
 
 .bottom-nav.hidden {
@@ -44,6 +55,7 @@
   padding-bottom: env(safe-area-inset-bottom, var(--space-4));
   animation: feedback-slide-up var(--motion-feedback-duration)
     var(--ease-standard);
+  will-change: transform, opacity;
 }
 
 .more-menu-header {
@@ -66,5 +78,13 @@
 @include respond-to(xs) {
   .more-menu-items {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav,
+  .more-menu {
+    transition: none;
+    animation: none;
   }
 }

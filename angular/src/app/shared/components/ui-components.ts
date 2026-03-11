@@ -16,6 +16,7 @@ export { ButtonComponent } from "./button/button.component";
 // CARD COMPONENTS
 // ============================================================================
 export { CardComponent } from "./card/card.component";
+export { CardShellComponent } from "./card-shell/card-shell.component";
 
 // ============================================================================
 // FORM COMPONENTS

@@ -77,6 +77,7 @@ export type ButtonSize = "sm" | "md" | "lg";
         [class.btn-disabled]="isDisabled()"
         [attr.aria-label]="ariaLabel() || undefined"
         [attr.aria-disabled]="isDisabled() || undefined"
+        [attr.tabindex]="isDisabled() ? -1 : null"
         [attr.data-testid]="testId() || undefined"
         [pTooltip]="tooltip()"
         [tooltipPosition]="tooltipPosition()"

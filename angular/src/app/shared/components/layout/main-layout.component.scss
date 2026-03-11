@@ -27,6 +27,10 @@
   --page-shell-max-width: var(--app-shell-content-max-width);
 }
 
+:host(.app-shell--sidebar-collapsed) .app-shell {
+  --app-shell-sidebar-track: var(--app-shell-sidebar-width-collapsed);
+}
+
 .app-shell__header {
   min-height: 0;
 }
@@ -36,6 +40,8 @@
   grid-template-columns: var(--app-shell-sidebar-track) minmax(0, 1fr);
   min-height: 0;
   overflow: hidden;
+  transition: grid-template-columns var(--motion-feedback-duration)
+    var(--ease-standard);
   background:
     linear-gradient(
       180deg,
@@ -101,7 +107,6 @@
 @include respond-to(lg) {
   .app-shell {
     --page-shell-max-width: 100%;
-    --app-shell-sidebar-track: var(--app-shell-sidebar-width-collapsed);
   }
 }
 

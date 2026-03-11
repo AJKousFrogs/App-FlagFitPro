@@ -27,10 +27,13 @@
   background: var(--surface-primary);
   border-right: var(--border-1) solid var(--color-border-primary);
   z-index: var(--z-index-app-sidebar);
-  transition: transform var(--transition-slow) var(--ease-standard);
+  transition:
+    transform var(--motion-feedback-duration) var(--ease-standard),
+    box-shadow var(--motion-feedback-duration) var(--ease-standard);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  container-type: inline-size;
 }
 
 .sidebar::before,
@@ -60,9 +63,10 @@ app-close-button.sidebar-close-btn {
   background: var(--surface-primary);
   border-bottom: var(--border-1) solid var(--color-border-primary);
   transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast),
-    background var(--transition-fast);
+    transform var(--transition-fast) var(--ease-standard),
+    opacity var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
   min-height: var(--header-height, 4rem);
   text-decoration: none;
 
@@ -89,9 +93,10 @@ app-close-button.sidebar-close-btn {
   align-items: center;
   justify-content: center;
   transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast),
-    background var(--transition-fast);
+    transform var(--transition-fast) var(--ease-standard),
+    opacity var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
   box-shadow: var(--shadow-1);
   flex-shrink: 0;
 }
@@ -115,6 +120,9 @@ app-close-button.sidebar-close-btn {
   padding: var(--space-4);
   border-bottom: var(--border-1) solid var(--color-border-secondary);
   background: var(--surface-secondary);
+  transition:
+    padding var(--motion-feedback-duration) var(--ease-standard),
+    gap var(--motion-feedback-duration) var(--ease-standard);
 }
 
 .user-avatar {
@@ -175,6 +183,9 @@ app-close-button.sidebar-close-btn {
   color: var(--color-text-tertiary);
   text-transform: var(--ds-text-transform-uppercase);
   letter-spacing: var(--ds-letter-spacing-0-08em);
+  transition:
+    opacity var(--motion-feedback-duration-fast) var(--ease-standard),
+    transform var(--motion-feedback-duration-fast) var(--ease-standard);
 }
 
 .nav-group-items {
@@ -203,8 +214,9 @@ app-close-button.sidebar-close-btn {
   cursor: pointer;
   border-radius: var(--radius-md);
   transition:
-    background var(--transition-fast),
-    color var(--transition-fast);
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
   min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) WCAG */
 
   @include ds-focus-ring;
@@ -219,7 +231,7 @@ app-close-button.sidebar-close-btn {
   align-items: center;
   justify-content: center;
   width: var(--indicator-size-lg); /* 1rem */
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast) var(--ease-standard);
 }
 
 .me-group-label {
@@ -229,24 +241,54 @@ app-close-button.sidebar-close-btn {
 
 .me-group-items {
   padding-left: var(--space-2);
-  animation: slideDown 0.2s ease-out;
+  animation: ui-motion-enter-y var(--motion-feedback-duration-fast)
+    var(--ease-standard);
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(calc(-1 * var(--space-2)));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.me-group-header[aria-expanded="true"] {
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--surface-secondary) 86%, transparent);
+  box-shadow: inset 0 0 0 var(--border-1) var(--color-border-secondary);
+}
+
+.me-group-header[aria-expanded="true"] .me-group-icon {
+  transform: rotate(90deg);
 }
 
 .sidebar-footer {
   padding: var(--space-4);
   border-top: var(--border-1) solid var(--color-border-secondary);
   margin-top: auto;
+}
+
+.sidebar.sidebar-collapsed .logo-text,
+.sidebar.sidebar-collapsed .user-info,
+.sidebar.sidebar-collapsed .me-group-label,
+.sidebar.sidebar-collapsed .nav-group-title {
+  display: none;
+}
+
+.sidebar.sidebar-collapsed .sidebar-logo {
+  justify-content: center;
+  padding: var(--space-3);
+}
+
+.sidebar.sidebar-collapsed .user-section {
+  justify-content: center;
+  padding: var(--space-3);
+}
+
+.sidebar.sidebar-collapsed .me-group-header {
+  justify-content: center;
+  padding: var(--space-3);
+}
+
+.sidebar.sidebar-collapsed .me-group-items {
+  display: none;
+}
+
+.sidebar.sidebar-collapsed .me-group-icon {
+  margin: 0;
 }
 
 .sidebar-backdrop {
@@ -262,45 +304,6 @@ app-close-button.sidebar-close-btn {
 @media (max-width: var(--breakpoint-lg)) and (min-width: var(--breakpoint-md-min)) {
   .sidebar {
     width: 100%;
-  }
-
-  .logo-text,
-  .user-info,
-  .me-group-label {
-    display: none;
-  }
-
-  .nav-group-title {
-    display: none;
-  }
-
-  .sidebar-logo {
-    justify-content: center;
-    padding: var(--space-3);
-  }
-
-  .logo-icon-wrapper {
-    width: var(--touch-target-md);
-    height: var(--touch-target-md);
-  }
-
-  .user-section {
-    justify-content: center;
-    padding: var(--space-3);
-  }
-
-  .me-group-header {
-    justify-content: center;
-    padding: var(--space-3);
-  }
-
-  .me-group-icon {
-    margin: 0;
-  }
-
-  // Hide "Me" group items when collapsed (icon only mode)
-  .me-group-items {
-    display: none;
   }
 
   // Close button NOT shown at tablet width
@@ -340,6 +343,20 @@ app-close-button.sidebar-close-btn {
   .sidebar-backdrop {
     display: block;
     will-change: opacity;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar-logo,
+  .logo-icon-wrapper,
+  .me-group-header,
+  .me-group-icon {
+    transition: none;
+  }
+
+  .me-group-items {
+    animation: none;
   }
 }
 
