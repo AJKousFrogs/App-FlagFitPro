@@ -19,6 +19,8 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -102,6 +104,8 @@ const TAG_TYPES = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -193,6 +197,15 @@ const TAG_TYPES = [
 
         <!-- Film List -->
         <div class="film-list">
+          @if (isLoading()) {
+            <app-loading message="Loading film room..." />
+          } @else if (loadError()) {
+            <app-page-error-state
+              title="Unable to load film room"
+              [message]="loadError()!"
+              (retry)="retryLoadData()"
+            />
+          } @else {
           @for (session of filteredSessions(); track session.id) {
             <div class="film-card">
               <div class="film-header">
@@ -288,6 +301,7 @@ const TAG_TYPES = [
               actionIcon="pi-upload"
               [actionHandler]="openUploadDialogHandler"
             />
+          }
           }
         </div>
       </div>
@@ -544,6 +558,7 @@ export class FilmRoomCoachComponent implements OnInit {
   >("all");
   readonly selectedSession = signal<FilmSession | null>(null);
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
 
   // Dialog state
   showUploadDialog = false;
@@ -662,6 +677,7 @@ export class FilmRoomCoachComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<{
@@ -681,9 +697,14 @@ export class FilmRoomCoachComponent implements OnInit {
       this.sessions.set([]);
       this.players.set([]);
       this.plays.set([]);
+      this.loadError.set("We couldn't load film room data. Please try again.");
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   private getEmptyUploadForm() {

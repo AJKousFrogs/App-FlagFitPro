@@ -27,6 +27,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 
 interface TeamSettings {
   name: string;
@@ -54,6 +55,7 @@ interface TeamSettings {
     PageHeaderComponent,
     ButtonComponent,
     AppLoadingComponent,
+    PageErrorStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -70,8 +72,15 @@ interface TeamSettings {
           icon="pi-cog"
         ></app-page-header>
 
-        <app-card-shell class="tab-content-card">
-          <div class="settings-form">
+        @if (loadError()) {
+          <app-page-error-state
+            title="Unable to load team settings"
+            [message]="loadError()!"
+            (retry)="retryLoadSettings()"
+          />
+        } @else {
+          <app-card-shell class="tab-content-card">
+            <div class="settings-form">
             <!-- Team Information -->
             <div class="settings-section">
               <h4><i class="pi pi-flag"></i> Team Information</h4>
@@ -198,8 +207,9 @@ interface TeamSettings {
                 >Save Changes</app-button
               >
             </div>
-          </div>
-        </app-card-shell>
+            </div>
+          </app-card-shell>
+        }
       </div>
     </app-main-layout>
   `,
@@ -212,6 +222,7 @@ export class TeamManagementComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
   readonly teamSettings = signal<TeamSettings>({
     name: "",
     primaryColor: "var(--color-info-text-accessible)",
@@ -290,6 +301,7 @@ export class TeamManagementComponent implements OnInit {
 
   async loadSettings(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<{ settings?: TeamSettings }> =
@@ -299,9 +311,16 @@ export class TeamManagementComponent implements OnInit {
       }
     } catch (err) {
       this.logger.error("Failed to load team settings", err);
+      this.loadError.set(
+        "We couldn't load team settings. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadSettings(): void {
+    void this.loadSettings();
   }
 
   saveSettings(): void {

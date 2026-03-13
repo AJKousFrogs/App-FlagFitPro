@@ -20,6 +20,8 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
 import { InputText } from "primeng/inputtext";
@@ -141,6 +143,8 @@ const VISIBILITY_OPTIONS = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
     SearchInputComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -167,6 +171,15 @@ const VISIBILITY_OPTIONS = [
           ariaLabel="Search knowledge base"
         />
 
+        @if (isLoading()) {
+          <app-loading message="Loading knowledge base..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load knowledge base"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        } @else {
         @if (activeTab() === "all") {
           <div class="section">
             <div class="section-header">
@@ -615,6 +628,7 @@ const VISIBILITY_OPTIONS = [
             </div>
           </div>
         }
+        }
       </div>
 
       <!-- Add Resource Dialog -->
@@ -831,6 +845,7 @@ export class KnowledgeBaseComponent implements OnInit {
   readonly mySubmissions = signal<MyKnowledgeSubmission[]>([]);
   readonly activeTab = signal<string>("all");
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
   readonly isLoadingPending = signal(false);
   readonly isLoadingMySubmissions = signal(false);
   readonly isSubmitting = signal(false);
@@ -1000,6 +1015,7 @@ export class KnowledgeBaseComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<{
@@ -1016,9 +1032,16 @@ export class KnowledgeBaseComponent implements OnInit {
       this.logger.error("Failed to load knowledge base", err);
       this.categories.set([]);
       this.resources.set([]);
+      this.loadError.set(
+        "We couldn't load the knowledge base. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.bootstrap();
   }
 
   private getEmptyForm() {

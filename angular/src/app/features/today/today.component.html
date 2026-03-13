@@ -109,17 +109,11 @@
     } @else {
       <!-- No ViewModel - show error -->
       <div class="today-page">
-        <app-card-shell class="error-card">
-          <app-empty-state
-            icon="exclamation-triangle"
-            heading="Unable to Load Plan"
-            [description]="error() || 'Please try refreshing the page.'"
-          >
-            <app-button iconLeft="pi-refresh" (clicked)="refreshProtocol()"
-              >Refresh</app-button
-            >
-          </app-empty-state>
-        </app-card-shell>
+        <app-page-error-state
+          title="Unable to load plan"
+          [message]="error() || 'Please try refreshing the page.'"
+          (retry)="refreshProtocol()"
+        />
       </div>
     }
   }

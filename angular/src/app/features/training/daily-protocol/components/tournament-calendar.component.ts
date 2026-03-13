@@ -23,6 +23,7 @@ import { ButtonComponent } from "../../../../shared/components/button/button.com
 import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import { PageErrorStateComponent } from "../../../../shared/components/page-error-state/page-error-state.component";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
@@ -88,6 +89,7 @@ interface EventTypeOption {
     IconButtonComponent,
     EmptyStateComponent,
     AppLoadingComponent,
+    PageErrorStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -110,6 +112,12 @@ interface EventTypeOption {
 
       @if (isLoading()) {
         <app-loading message="Loading tournaments..." variant="inline" />
+      } @else if (loadError() && tournaments().length === 0) {
+        <app-page-error-state
+          title="Unable to load tournaments"
+          [message]="loadError()!"
+          (retry)="retryLoadTournaments()"
+        />
       } @else if (tournaments().length === 0) {
         <app-empty-state
           icon="pi-calendar-times"
@@ -451,6 +459,7 @@ export class TournamentCalendarComponent {
   // State
   readonly tournaments = signal<Tournament[]>([]);
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
   readonly showDialog = signal(false);
   readonly isEditing = signal(false);
   readonly isSaving = signal(false);
@@ -533,6 +542,7 @@ export class TournamentCalendarComponent {
 
   async loadTournaments(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<Tournament[] | null> = await firstValueFrom(
@@ -540,12 +550,25 @@ export class TournamentCalendarComponent {
       );
       if (response?.success && response.data) {
         this.tournaments.set(response.data);
+        return;
       }
+
+      this.tournaments.set([]);
+      this.loadError.set(
+        "We couldn't load your tournament calendar. Please try again.",
+      );
     } catch (err) {
       this.logger.error("Failed to load tournaments", err);
+      this.loadError.set(
+        "We couldn't load your tournament calendar. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadTournaments(): void {
+    void this.loadTournaments();
   }
 
   readonly openAddDialogHandler = (): void => this.openAddDialog();

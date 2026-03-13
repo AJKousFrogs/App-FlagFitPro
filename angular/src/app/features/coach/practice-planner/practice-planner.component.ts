@@ -22,6 +22,8 @@ import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
@@ -141,6 +143,8 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
   ],
@@ -183,7 +187,15 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         </div>
 
         <!-- Practice List -->
-        @if (filteredPractices().length > 0) {
+        @if (isLoading()) {
+          <app-loading message="Loading practice plans..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load practice plans"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        } @else if (filteredPractices().length > 0) {
           <div class="practices-list">
             @for (practice of filteredPractices(); track practice.id) {
               <app-card-shell class="practice-card">
@@ -640,6 +652,7 @@ export class PracticePlannerComponent implements OnInit {
   readonly activeTab = signal<"upcoming" | "past" | "templates">("upcoming");
   readonly practices = signal<PracticePlan[]>([]);
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
   readonly isEditing = signal(false);
 
   // Dialog state
@@ -691,6 +704,7 @@ export class PracticePlannerComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response = await firstValueFrom(
@@ -701,10 +715,17 @@ export class PracticePlannerComponent implements OnInit {
       }
     } catch (err) {
       this.logger.error("Failed to load practices", err);
-      // No data available - show empty state
+      this.practices.set([]);
+      this.loadError.set(
+        "We couldn't load practice plans. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   private getEmptyFormData(): PracticeFormData {

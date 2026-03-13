@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import { PageErrorStateComponent } from "../../../../shared/components/page-error-state/page-error-state.component";
 import { Tag } from "primeng/tag";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
@@ -72,6 +73,7 @@ interface Stats {
     TabPanel,
     Skeleton,
     IconButtonComponent,
+    PageErrorStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
   ],
@@ -97,6 +99,12 @@ interface Stats {
             />
             <p-skeleton height="var(--icon-container-md)" />
           </div>
+        } @else if (loadError() && !hasAnyData()) {
+          <app-page-error-state
+            title="Unable to load achievements"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
         } @else {
           <div class="summary-stats">
             <div class="stat stat-block stat-block--compact">
@@ -391,6 +399,7 @@ export class AchievementsPanelComponent {
   private readonly logger = inject(LoggerService);
 
   readonly loading = signal(true);
+  readonly loadError = signal<string | null>(null);
   readonly achievements = signal<Achievement[]>([]);
   readonly grouped = signal<Record<string, Achievement[]>>({});
   readonly summary = signal<{
@@ -408,6 +417,14 @@ export class AchievementsPanelComponent {
 
   readonly activeStreaks = computed(() =>
     this.streaks().filter((s) => s.isActive || s.atRisk),
+  );
+
+  readonly hasAnyData = computed(
+    () =>
+      this.achievements().length > 0 ||
+      this.streaks().length > 0 ||
+      this.stats() !== null ||
+      this.summary() !== null,
   );
 
   readonly currentStreak = computed(() => {
@@ -428,18 +445,32 @@ export class AchievementsPanelComponent {
 
   constructor() {
     // Initialize on construction (Angular 21 pattern)
-    this.loadData();
+    void this.loadData();
   }
 
-  loadData() {
+  async loadData(): Promise<void> {
     this.loading.set(true);
+    this.loadError.set(null);
 
-    this.loadAchievements();
-    this.loadStreaks();
-    this.loadStats();
+    try {
+      const [achievementsLoaded, streaksLoaded, statsLoaded] =
+        await Promise.all([
+          this.loadAchievements(),
+          this.loadStreaks(),
+          this.loadStats(),
+        ]);
+
+      if (!achievementsLoaded && !streaksLoaded && !statsLoaded) {
+        this.loadError.set(
+          "We couldn't load your achievements right now. Please try again.",
+        );
+      }
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  async loadAchievements(): Promise<void> {
+  async loadAchievements(): Promise<boolean> {
     try {
       const response = await firstValueFrom(
         this.api.get<{
@@ -477,14 +508,14 @@ export class AchievementsPanelComponent {
           });
         }
       }
+      return true;
     } catch (err) {
       this.logger.error("Failed to load achievements", err);
-    } finally {
-      this.loading.set(false);
+      return false;
     }
   }
 
-  async loadStreaks(): Promise<void> {
+  async loadStreaks(): Promise<boolean> {
     try {
       const response = await firstValueFrom(
         this.api.get<{ streaks?: Streak[] }>("/api/achievements/streaks"),
@@ -496,12 +527,14 @@ export class AchievementsPanelComponent {
         const legacyResponse = response as unknown as { streaks?: Streak[] };
         this.streaks.set(legacyResponse.streaks || []);
       }
+      return true;
     } catch (err) {
       this.logger.error("Failed to load streaks", err);
+      return false;
     }
   }
 
-  async loadStats(): Promise<void> {
+  async loadStats(): Promise<boolean> {
     try {
       const response = await firstValueFrom(
         this.api.get<{ stats?: Stats }>("/api/achievements/stats"),
@@ -513,9 +546,15 @@ export class AchievementsPanelComponent {
         const legacyResponse = response as unknown as { stats?: Stats };
         this.stats.set(legacyResponse.stats || null);
       }
+      return true;
     } catch (err) {
       this.logger.error("Failed to load stats", err);
+      return false;
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   getAchievementsByCategory(category: string): Achievement[] {

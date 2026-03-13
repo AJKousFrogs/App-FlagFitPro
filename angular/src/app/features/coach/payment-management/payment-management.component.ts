@@ -25,7 +25,9 @@ import {
 import { toSignal } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
@@ -193,6 +195,8 @@ const BALANCE_FILTERS = [
 
     MainLayoutComponent,
     PageHeaderComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
     ButtonComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -243,8 +247,17 @@ const BALANCE_FILTERS = [
           </button>
         </div>
 
-        @switch (activeTab()) {
-          @case ("overview") {
+        @if (isLoading()) {
+          <app-loading message="Loading payment data..." />
+        } @else if (loadError(); as errorMessage) {
+          <app-page-error-state
+            title="Unable to load payment data"
+            [message]="errorMessage"
+            (retry)="retryLoadData()"
+          />
+        } @else {
+          @switch (activeTab()) {
+            @case ("overview") {
             <!-- Financial Overview -->
             <div class="financial-overview">
               <div class="stat-card balance">
@@ -325,7 +338,7 @@ const BALANCE_FILTERS = [
             </app-card-shell>
           }
 
-          @case ("fees") {
+            @case ("fees") {
             <!-- Active Fees List -->
             <div class="fees-list">
               @for (fee of fees(); track fee.id) {
@@ -422,7 +435,7 @@ const BALANCE_FILTERS = [
             </div>
           }
 
-          @case ("balances") {
+            @case ("balances") {
             <!-- Player Balances -->
             <app-card-shell class="payment-shell-card" title="Player Balances">
               <div header-actions class="balance-filters">
@@ -521,7 +534,7 @@ const BALANCE_FILTERS = [
             </app-card-shell>
           }
 
-          @case ("history") {
+            @case ("history") {
             <!-- Payment History -->
             <app-card-shell class="payment-shell-card" title="Payment History">
               <p-table
@@ -551,6 +564,7 @@ const BALANCE_FILTERS = [
                 </ng-template>
               </p-table>
             </app-card-shell>
+            }
           }
         }
       </div>
@@ -829,6 +843,7 @@ export class PaymentManagementComponent implements OnInit {
     "overview",
   );
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
 
   // Filter controls
   readonly balanceSearchControl = new FormControl("", { nonNullable: true });
@@ -936,6 +951,7 @@ export class PaymentManagementComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const teamId = this.roster.currentTeamId();
@@ -958,10 +974,19 @@ export class PaymentManagementComponent implements OnInit {
       }
     } catch (err) {
       this.logger.error("Failed to load payment data", err);
-      // No data available - show empty state
+      this.fees.set([]);
+      this.balances.set([]);
+      this.payments.set([]);
+      this.loadError.set(
+        "We couldn't load payment data. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   private getEmptyFeeForm(): FeeForm {

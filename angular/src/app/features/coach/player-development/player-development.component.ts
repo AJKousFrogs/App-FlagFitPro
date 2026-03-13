@@ -19,6 +19,8 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -133,6 +135,8 @@ const COMPARE_OPTIONS = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
   ],
   template: `
     <app-main-layout>
@@ -180,7 +184,15 @@ const COMPARE_OPTIONS = [
           </div>
         </div>
 
-        @if (selectedPlayer()) {
+        @if (isLoading()) {
+          <app-loading message="Loading player development..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load player development"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        } @else if (selectedPlayer()) {
           <!-- Development Overview -->
           <div class="stats-summary">
             <div class="stat-card">
@@ -618,6 +630,7 @@ export class PlayerDevelopmentComponent implements OnInit {
   readonly notes = signal<CoachNote[]>([]);
   readonly performanceHistory = signal<PerformanceRecord[]>([]);
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
 
   // Selection
   selectedPlayerId: string | null = null;
@@ -780,6 +793,7 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<{
@@ -794,10 +808,18 @@ export class PlayerDevelopmentComponent implements OnInit {
       }
     } catch (err) {
       this.logger.error("Failed to load player development data", err);
-      // No data available - show empty state
+      this.players.set([]);
+      this.goals.set([]);
+      this.loadError.set(
+        "We couldn't load player development data. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   private getEmptyGoalForm() {

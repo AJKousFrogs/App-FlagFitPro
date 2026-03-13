@@ -10,6 +10,7 @@ import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { SkeletonLoaderComponent } from "../../../shared/components/skeleton-loader/skeleton-loader.component";
@@ -52,6 +53,7 @@ const isBoolean = (value: unknown): value is boolean =>
     ButtonComponent,
     CardShellComponent,
     MainLayoutComponent,
+    PageErrorStateComponent,
     PageHeaderComponent,
     StatusTagComponent,
     SkeletonLoaderComponent,
@@ -83,16 +85,11 @@ const isBoolean = (value: unknown): value is boolean =>
             }
           </div>
         } @else if (error()) {
-          <app-card-shell>
-            <div class="error-state">
-              <i class="pi pi-exclamation-triangle error-icon"></i>
-              <h3>Unable to load session</h3>
-              <p>{{ error() }}</p>
-              <app-button iconLeft="pi-refresh" (clicked)="loadSession()"
-                >Try Again</app-button
-              >
-            </div>
-          </app-card-shell>
+          <app-page-error-state
+            title="Unable to load session"
+            [message]="error()!"
+            (retry)="loadSession()"
+          />
         } @else if (sessionDetails()) {
           @let session = sessionDetails()!;
 

@@ -88,6 +88,13 @@
 | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) | **Start here** - Local dev setup for Angular 21 + Netlify + Supabase |
 | [MCP_SUPABASE_SETUP.md](./MCP_SUPABASE_SETUP.md)           | MCP + Supabase integration for Cursor/AI                             |
 
+### 📝 Release Notes
+
+| Document                                         | Description                                           |
+| ------------------------------------------------ | ----------------------------------------------------- |
+| [RELEASE_NOTES_1.2.0.md](./RELEASE_NOTES_1.2.0.md) | Route-state consistency and workflow completion update |
+| [RELEASE_NOTES_1.1.0.md](./RELEASE_NOTES_1.1.0.md) | Stability, backend hardening, and dependency alignment |
+
 ### 🧩 Angular-Specific (angular/docs/)
 
 | Document                                                                 | Description                                           |
@@ -146,6 +153,8 @@
 ├── ANGULAR_PRIMENG_GUIDE.md
 ├── DESIGN_SYSTEM_RULES.md
 ├── UX_READY_CRITERIA.md         ← UI polish gate
+├── RELEASE_NOTES_1.2.0.md
+├── RELEASE_NOTES_1.1.0.md
 ├── FLAG_FOOTBALL_TRAINING_SCIENCE.md
 ├── MCP_SUPABASE_SETUP.md
 ├── RUNBOOKS/                     ← 6 operational docs

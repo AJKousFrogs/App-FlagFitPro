@@ -21,6 +21,8 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -131,6 +133,8 @@ const POSITIONS = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
   ],
@@ -180,7 +184,15 @@ const POSITIONS = [
         </div>
 
         <!-- Tournaments List -->
-        @if (filteredTournaments().length > 0) {
+        @if (isLoading()) {
+          <app-loading message="Loading tournaments..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load tournaments"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        } @else if (filteredTournaments().length > 0) {
           <div class="tournaments-list">
             @for (tournament of filteredTournaments(); track tournament.id) {
               <div class="tournament-card">
@@ -636,6 +648,7 @@ export class TournamentManagementComponent implements OnInit {
     "overview",
   );
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
 
   lineupNotes = "";
 
@@ -680,6 +693,7 @@ export class TournamentManagementComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<{ tournaments?: Tournament[] }> =
@@ -691,10 +705,17 @@ export class TournamentManagementComponent implements OnInit {
       }
     } catch (err) {
       this.logger.error("Failed to load tournaments", err);
-      // No data available - show empty state
+      this.tournaments.set([]);
+      this.loadError.set(
+        "We couldn't load tournaments. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   // Actions

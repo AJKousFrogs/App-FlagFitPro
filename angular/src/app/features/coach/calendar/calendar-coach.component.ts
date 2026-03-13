@@ -26,6 +26,8 @@ import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { UI_LIMITS } from "../../../core/constants/app.constants";
@@ -140,6 +142,8 @@ const RECURRING_OPTIONS = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
     StatusTagComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -158,6 +162,15 @@ const RECURRING_OPTIONS = [
           >
         </app-page-header>
 
+        @if (isLoading()) {
+          <app-loading message="Loading calendar..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load calendar"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        } @else {
         <!-- Calendar View -->
         <app-card-shell class="calendar-card">
           <div class="calendar-header">
@@ -377,6 +390,7 @@ const RECURRING_OPTIONS = [
             }
           </div>
         </div>
+        }
       </div>
 
       <!-- Create Event Dialog -->
@@ -698,6 +712,7 @@ export class CalendarCoachComponent implements OnInit {
   readonly viewMode = signal<"month" | "list" | "agenda">("month");
   readonly selectedEvent = signal<TeamEvent | null>(null);
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
   readonly isEditing = signal(false);
 
   // Dialog state
@@ -807,6 +822,7 @@ export class CalendarCoachComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<{ events?: TeamEvent[] }> =
@@ -820,9 +836,16 @@ export class CalendarCoachComponent implements OnInit {
       this.logger.error("Failed to load calendar data", err);
       this.events.set([]);
       this.rsvps.set([]);
+      this.loadError.set(
+        "We couldn't load the team calendar. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   private getEmptyEventForm(): EventForm {

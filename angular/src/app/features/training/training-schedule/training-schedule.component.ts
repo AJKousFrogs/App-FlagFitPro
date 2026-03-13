@@ -32,6 +32,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 import { getTemplateSessionDateFromWeekRange } from "../../../shared/utils/training-template.utils";
@@ -94,6 +95,7 @@ interface MonthlyStats {
     ButtonComponent,
     CardShellComponent,
     EmptyStateComponent,
+    PageErrorStateComponent,
     RouterModule,
   ],
   templateUrl: "./training-schedule.component.html",

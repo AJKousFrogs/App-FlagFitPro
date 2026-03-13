@@ -37,6 +37,8 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -166,6 +168,8 @@ const PHASE_PRESETS = [
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
     CardShellComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -208,8 +212,18 @@ const PHASE_PRESETS = [
           </button>
         </div>
 
+        @if (isLoading()) {
+          <app-loading message="Loading training programs..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load training programs"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        }
+
         <!-- Active Programs -->
-        @if (activePrograms().length > 0) {
+        @if (!isLoading() && !loadError() && activePrograms().length > 0) {
           <div class="programs-section">
             <h3>Active Programs</h3>
             <div class="programs-list">
@@ -381,7 +395,7 @@ const PHASE_PRESETS = [
         }
 
         <!-- Empty State -->
-        @if (programs().length === 0) {
+        @if (!isLoading() && !loadError() && programs().length === 0) {
           <app-empty-state
             [useCard]="true"
             icon="pi-list-check"
@@ -630,6 +644,7 @@ export class ProgramBuilderComponent implements OnInit {
   readonly programs = signal<TrainingProgram[]>([]);
   readonly teamMembers = signal<TeamMemberOption[]>([]);
   readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
   readonly isEditing = signal(false);
 
   // Dialog state
@@ -773,6 +788,7 @@ export class ProgramBuilderComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const response: ApiResponse<{
@@ -788,10 +804,18 @@ export class ProgramBuilderComponent implements OnInit {
       }
     } catch (err) {
       this.logger.error("Failed to load programs", err);
-      // No data available - show empty state
+      this.programs.set([]);
+      this.teamMembers.set([]);
+      this.loadError.set(
+        "We couldn't load training programs. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   private getEmptyFormData() {

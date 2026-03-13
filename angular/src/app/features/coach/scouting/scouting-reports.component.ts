@@ -22,6 +22,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -159,6 +160,7 @@ interface NewOpponentForm {
     StatusTagComponent,
     Textarea,
     MainLayoutComponent,
+    PageErrorStateComponent,
     PageHeaderComponent,
     ButtonComponent,
     AppLoadingComponent,
@@ -176,6 +178,7 @@ export class ScoutingReportsComponent implements OnInit {
 
   // State
   loading = signal(true);
+  loadError = signal<string | null>(null);
   reports = signal<ScoutingReport[]>([]);
   opponents = signal<OpponentProfile[]>([]);
   tendenciesMap = signal<Map<string, TeamTendencies>>(new Map());
@@ -257,6 +260,7 @@ export class ScoutingReportsComponent implements OnInit {
 
   private async loadData(): Promise<void> {
     this.loading.set(true);
+    this.loadError.set(null);
     try {
       // Load scouting reports from API
       const [reportsRes, opponentsRes] = await Promise.all([
@@ -373,10 +377,18 @@ export class ScoutingReportsComponent implements OnInit {
       this.tendenciesMap.set(new Map());
     } catch (error) {
       this.logger.error("Failed to load scouting data", error);
+      this.reports.set([]);
+      this.opponents.set([]);
+      this.currentTendencies.set(null);
+      this.loadError.set("We couldn't load scouting data. Please try again.");
       this.toast.error("Failed to load scouting data");
     } finally {
       this.loading.set(false);
     }
+  }
+
+  retryLoadData(): void {
+    void this.loadData();
   }
 
   async loadTendencies(opponentName: string): Promise<void> {

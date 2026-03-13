@@ -39,12 +39,11 @@ import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "../../core/services/toast.service";
 
 import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 
 
 import { from, type Observable } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { EmptyStateComponent } from "../../shared/components/ui-components";
 
 // Layout & Components
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -134,9 +133,8 @@ interface QuickFormData {
     CommonModule,
     RouterModule,
     SkeletonLoaderComponent,
+    PageErrorStateComponent,
     ButtonComponent,
-    CardShellComponent,
-    EmptyStateComponent,
     MainLayoutComponent,
     TodaySummaryHeaderComponent,
     TodayQuickCheckinDialogComponent,

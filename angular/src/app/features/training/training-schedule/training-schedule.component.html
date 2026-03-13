@@ -387,22 +387,11 @@
             <div class="sessions-list">
               <!-- STEP 4: Error State with p-message and retry -->
               @if (hasError()) {
-                <div class="error-state">
-                  <i
-                    class="pi pi-calendar-times error-icon"
-                    aria-hidden="true"
-                  ></i>
-                  <div class="error-text">
-                    <strong>Unable to load sessions</strong>
-                    <p>{{ errorMessage() }}</p>
-                  </div>
-                  <app-button
-                    variant="outlined"
-                    iconLeft="pi-refresh"
-                    (clicked)="loadSessions()"
-                    >Try Again</app-button
-                  >
-                </div>
+                <app-page-error-state
+                  title="Unable to load sessions"
+                  [message]="errorMessage()"
+                  (retry)="loadSessions()"
+                />
               } @else if (isLoading()) {
                 <!-- STEP 4: Loading State with p-skeleton -->
                 @for (i of [1, 2, 3]; track i) {

@@ -10,6 +10,9 @@ import { IconButtonComponent } from "../../../../shared/components/button/icon-b
 import { Card } from "primeng/card";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../../../shared/components/page-error-state/page-error-state.component";
 import {
   getMappedStatusSeverity,
   roadmapStatusSeverityMap,
@@ -70,6 +73,9 @@ interface Milestone {
     Timeline,
     Card,
     IconButtonComponent,
+    AppLoadingComponent,
+    EmptyStateComponent,
+    PageErrorStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     CardShellComponent,
@@ -91,56 +97,72 @@ interface Milestone {
           />
         </div>
 
-        <!-- Progress Ring -->
-        <div class="progress-overview">
-          <div class="progress-ring">
-            <svg viewBox="0 0 100 100">
-              <circle class="ring-bg" cx="50" cy="50" r="45" />
-              <circle
-                class="ring-fill"
-                cx="50"
-                cy="50"
-                r="45"
-                [style.strokeDasharray]="ringCircumference"
-                [style.strokeDashoffset]="ringOffset()"
-              />
-            </svg>
-            <div class="ring-content">
-              <span class="ring-value">{{ overallProgress() }}%</span>
-              <span class="ring-label">Complete</span>
-            </div>
-          </div>
-
-          <div class="current-phase">
-            <span class="phase-label">Current Phase</span>
-            <span class="phase-name">{{
-              currentCycle()?.program_cycle?.cycle_name || "Not Started"
-            }}</span>
-            @if (currentCycle()?.program_cycle?.focus_area) {
-              <span class="phase-focus">{{
-                currentCycle()?.program_cycle?.focus_area
-              }}</span>
-            }
-          </div>
-        </div>
-
-        <!-- Mini Timeline -->
-        <div class="mini-timeline">
-          @for (
-            milestone of upcomingMilestones().slice(0, 3);
-            track milestone.title
-          ) {
-            <div class="milestone-item" [class]="milestone.status">
-              <span class="milestone-icon">{{ milestone.icon }}</span>
-              <div class="milestone-info">
-                <span class="milestone-title">{{ milestone.title }}</span>
-                <span class="milestone-date">{{
-                  formatDate(milestone.date, "MMM yyyy")
-                }}</span>
+        @if (isLoading()) {
+          <app-loading message="Loading roadmap..." variant="inline" />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load roadmap"
+            [message]="loadError()!"
+            (retry)="retryLoadCycles()"
+          />
+        } @else if (playerCycles().length === 0) {
+          <app-empty-state
+            icon="pi-map"
+            heading="No roadmap available yet"
+            description="Your coach has not assigned any long-term program cycles yet."
+          />
+        } @else {
+          <!-- Progress Ring -->
+          <div class="progress-overview">
+            <div class="progress-ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="ring-bg" cx="50" cy="50" r="45" />
+                <circle
+                  class="ring-fill"
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  [style.strokeDasharray]="ringCircumference"
+                  [style.strokeDashoffset]="ringOffset()"
+                />
+              </svg>
+              <div class="ring-content">
+                <span class="ring-value">{{ overallProgress() }}%</span>
+                <span class="ring-label">Complete</span>
               </div>
             </div>
-          }
-        </div>
+
+            <div class="current-phase">
+              <span class="phase-label">Current Phase</span>
+              <span class="phase-name">{{
+                currentCycle()?.program_cycle?.cycle_name || "Not Started"
+              }}</span>
+              @if (currentCycle()?.program_cycle?.focus_area) {
+                <span class="phase-focus">{{
+                  currentCycle()?.program_cycle?.focus_area
+                }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Mini Timeline -->
+          <div class="mini-timeline">
+            @for (
+              milestone of upcomingMilestones().slice(0, 3);
+              track milestone.title
+            ) {
+              <div class="milestone-item" [class]="milestone.status">
+                <span class="milestone-icon">{{ milestone.icon }}</span>
+                <div class="milestone-info">
+                  <span class="milestone-title">{{ milestone.title }}</span>
+                  <span class="milestone-date">{{
+                    formatDate(milestone.date, "MMM yyyy")
+                  }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
       </div>
 
       <!-- Full Dialog -->
@@ -305,6 +327,8 @@ export class La28RoadmapComponent {
   readonly ringCircumference = 2 * Math.PI * 45; // circumference = 2πr
 
   readonly playerCycles = signal<PlayerCycle[]>([]);
+  readonly isLoading = signal(true);
+  readonly loadError = signal<string | null>(null);
   showFullDialog = false;
 
   // Computed values
@@ -403,10 +427,13 @@ export class La28RoadmapComponent {
 
   constructor() {
     // Initialize on construction (Angular 21 pattern)
-    this.loadCycles();
+    void this.loadCycles();
   }
 
   async loadCycles(): Promise<void> {
+    this.isLoading.set(true);
+    this.loadError.set(null);
+
     try {
       const response: ApiResponse<PlayerCycle[] | null> =
         await firstValueFrom(
@@ -417,17 +444,22 @@ export class La28RoadmapComponent {
       } else if (Array.isArray(response)) {
         this.playerCycles.set(response);
       } else {
-        // No data available - show empty state instead of mock data
-        // This ensures athletes see real data only and calculations are accurate
         this.playerCycles.set([]);
         this.logger.info("No program cycles found - showing empty state");
       }
     } catch (err) {
       this.logger.error("Failed to load program cycles", err);
-      // Show empty state instead of mock data to avoid misleading athletes
-      // Real data will populate once coach assigns program cycles
       this.playerCycles.set([]);
+      this.loadError.set(
+        "We couldn't load your long-term roadmap. Please try again.",
+      );
+    } finally {
+      this.isLoading.set(false);
     }
+  }
+
+  retryLoadCycles(): void {
+    void this.loadCycles();
   }
 
   getStatusLabel(status: string): string {

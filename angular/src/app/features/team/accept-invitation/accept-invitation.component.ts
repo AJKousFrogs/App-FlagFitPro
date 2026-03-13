@@ -12,6 +12,7 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { ToastService } from "../../../core/services/toast.service";
 import { formatDate } from "../../../shared/utils/date.utils";
 import { TeamInvitationDataService } from "../services/team-invitation-data.service";
@@ -51,6 +52,7 @@ interface InvitationData {
     ButtonComponent,
     AppLoadingComponent,
     CardShellComponent,
+    PageErrorStateComponent,
   ],
   template: `
 <div class="accept-invitation-page">
@@ -89,16 +91,22 @@ interface InvitationData {
             >
           </div>
         } @else if (invitationError()) {
-          <div class="error-state">
-            <app-alert
-              variant="error"
-              [message]="invitationError() || ''"
-              styleClass="status-message"
-            />
+          <app-page-error-state
+            title="Unable to load invitation"
+            [message]="invitationError() || ''"
+            [showRetry]="hasRetryableError()"
+            [helpText]="
+              hasRetryableError()
+                ? null
+                : 'If this link came from an older email, ask the team to send a new invitation.'
+            "
+            (retry)="retryLoadInvitation()"
+          />
+          @if (!hasRetryableError()) {
             <a [routerLink]="['/dashboard']" class="back-link mt-4"
               >Go to Dashboard</a
             >
-          </div>
+          }
         } @else if (isAccepted()) {
           <div class="accepted-state">
             <app-alert
@@ -196,6 +204,7 @@ export class AcceptInvitationComponent implements OnInit {
   invitationData = signal<InvitationData | null>(null);
   teamName = signal("");
   currentUrl = signal("");
+  invitationToken = signal<string | null>(null);
 
   ngOnInit(): void {
     // Store current URL for return after login
@@ -205,6 +214,7 @@ export class AcceptInvitationComponent implements OnInit {
     const token = this.route.snapshot.queryParams["token"];
 
     if (token) {
+      this.invitationToken.set(token);
       this.loadInvitation(token);
     } else {
       this.invitationError.set(
@@ -212,6 +222,36 @@ export class AcceptInvitationComponent implements OnInit {
       );
       this.isLoading.set(false);
     }
+  }
+
+  hasRetryableError(): boolean {
+    const token = this.invitationToken();
+    const message = this.invitationError()?.toLowerCase() || "";
+
+    if (!token) {
+      return false;
+    }
+
+    if (
+      message.includes("not found") ||
+      message.includes("expired") ||
+      message.includes("already been")
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  retryLoadInvitation(): void {
+    const token = this.invitationToken();
+    if (!token) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.invitationError.set(undefined);
+    this.loadInvitation(token);
   }
 
   /**

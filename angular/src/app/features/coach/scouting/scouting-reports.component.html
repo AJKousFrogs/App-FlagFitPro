@@ -18,6 +18,12 @@
             variant="inline"
             message="Loading scouting data..."
           />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load scouting data"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
         } @else {
           <p-tabs [value]="0">
             <p-tablist>
