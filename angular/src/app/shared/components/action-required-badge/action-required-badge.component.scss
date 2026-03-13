@@ -2,42 +2,12 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-semibold);
-  text-transform: var(--ds-text-transform-none);
-  letter-spacing: var(--ds-letter-spacing-normal);
-  line-height: var(--ds-line-height-tight);
-  min-height: var(--space-8);
-  transition: all var(--motion-fast) var(--ease-standard);
-  cursor: pointer;
-}
-
-.action-required-badge.urgency-low {
-  background: var(--surface-primary);
-  color: var(--color-text-primary);
-  border: var(--border-2) solid var(--color-status-info);
-}
-
-.action-required-badge.urgency-medium {
-  background: var(--surface-primary);
-  color: var(--color-text-primary);
-  border: var(--border-2) solid var(--ds-primary-orange);
-}
-
-.action-required-badge.urgency-high {
-  background: var(--surface-primary);
-  color: var(--color-text-primary);
-  border: var(--border-2) solid var(--ds-primary-orange);
-  font-weight: var(--ds-font-weight-semibold);
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard);
 }
 
 .action-required-badge.urgency-critical {
-  background: var(--surface-primary);
-  color: var(--color-text-primary);
-  border: var(--border-2) solid var(--color-status-error);
-  font-weight: var(--ds-font-weight-bold);
   animation: pulse-action var(--motion-slow) infinite;
 }
 
@@ -54,7 +24,6 @@
 .action-required-badge.placement-top {
   width: 100%;
   justify-content: center;
-  padding: var(--space-3) var(--space-4);
   margin-bottom: var(--space-3);
 }
 
@@ -66,20 +35,7 @@
 .action-required-badge.placement-banner {
   width: 100%;
   justify-content: flex-start;
-  padding: var(--space-3) var(--space-4);
   margin-bottom: var(--space-2);
-}
-
-.action-icon {
-  font-size: var(--ds-font-size-xs);
-}
-
-.action-label {
-  font-weight: var(--ds-font-weight-semibold);
-}
-
-.urgency-tag {
-  margin-left: var(--space-1);
 }
 
 .action-btn {
@@ -98,9 +54,8 @@
   opacity: 0.9;
 }
 
-@media (max-width: 768px) {
-  .action-required-badge {
-    font-size: var(--ds-font-size-md);
-    padding: var(--space-2) var(--space-3);
+@media (prefers-reduced-motion: reduce) {
+  .action-required-badge.urgency-critical {
+    animation: none;
   }
 }

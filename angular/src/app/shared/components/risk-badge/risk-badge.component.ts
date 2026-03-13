@@ -33,16 +33,14 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
       [pTooltip]="tooltip() || getDefaultTooltip()"
       [tooltipPosition]="'top'"
     >
-      @if (showIcon()) {
-        <i [class]="getIconClass()" class="risk-icon"></i>
-      }
-      <span class="risk-label">{{ getLabel() }}</span>
+      <app-status-tag
+        [value]="getLabel()"
+        [severity]="getSeverity()"
+        [icon]="showIcon() ? getStatusTagIcon() : undefined"
+        [size]="placement() === 'banner' ? 'md' : 'sm'"
+      />
       @if (showTag()) {
-        <app-status-tag
-          [value]="getLabel()"
-          [severity]="getSeverity()"
-          size="sm"
-        />
+        <app-status-tag [value]="level()" severity="secondary" size="sm" />
       }
     </div>
   `,
@@ -70,15 +68,15 @@ export class RiskBadgeComponent {
     return labels[l] || "Risk";
   });
 
-  getIconClass(): string {
+  getStatusTagIcon(): string {
     const l = this.level();
     const icons: Record<RiskLevel, string> = {
-      low: "pi pi-check-circle",
-      moderate: "pi pi-exclamation-circle",
-      high: "pi pi-exclamation-triangle",
-      critical: "pi pi-exclamation-triangle",
+      low: "pi-check-circle",
+      moderate: "pi-exclamation-circle",
+      high: "pi-exclamation-triangle",
+      critical: "pi-exclamation-triangle",
     };
-    return icons[l] || "pi pi-info-circle";
+    return icons[l] || "pi-info-circle";
   }
 
   getSeverity():

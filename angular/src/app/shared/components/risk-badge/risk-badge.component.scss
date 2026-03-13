@@ -1,41 +1,10 @@
 .risk-badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  text-transform: var(--ds-text-transform-none);
-  letter-spacing: var(--ds-letter-spacing-normal);
-  line-height: var(--ds-line-height-tight);
-  min-height: var(--space-8);
-  transition: all var(--motion-fast) var(--ease-standard);
-}
-
-.risk-low {
-  background: var(--ds-status-danger-solid);
-  color: var(--ds-status-danger-text);
-  opacity: 0.4;
-}
-
-.risk-moderate {
-  background: var(--ds-status-danger-solid);
-  color: var(--ds-status-danger-text);
-  opacity: 0.6;
-}
-
-.risk-high {
-  background: var(--ds-status-danger-solid);
-  color: var(--ds-status-danger-text);
-  opacity: 0.9;
-}
-
-.risk-critical {
-  background: var(--ds-status-danger-solid);
-  color: var(--ds-status-danger-text);
-  opacity: 1;
-  animation: risk-badge-pulse 2s infinite;
+  gap: var(--space-2);
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard);
 }
 
 @keyframes risk-badge-pulse {
@@ -71,20 +40,10 @@
 .risk-badge.placement-banner {
   width: 100%;
   justify-content: center;
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--ds-font-size-md);
 }
 
-.risk-icon {
-  font-size: var(--ds-font-size-xs);
-}
-
-.risk-label {
-  font-weight: var(--ds-font-weight-semibold);
-}
-
-.risk-tag {
-  margin-left: var(--space-1);
+.risk-badge.risk-critical {
+  animation: risk-badge-pulse 2s infinite;
 }
 
 @media (max-width: 768px) {
@@ -92,5 +51,11 @@
   .risk-badge.placement-top-left {
     position: static;
     margin-bottom: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .risk-badge.risk-critical {
+    animation: none;
   }
 }

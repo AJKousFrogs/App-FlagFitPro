@@ -56,14 +56,16 @@ export type ActionType =
         [pTooltip]="tooltip() || getDefaultTooltip()"
         [tooltipPosition]="'top'"
       >
-        @if (showIcon()) {
-          <i [class]="getIconClass()" class="action-icon"></i>
-        }
-        <span class="action-label">{{ getLabel() }}</span>
+        <app-status-tag
+          [value]="getLabel()"
+          [severity]="getSeverity()"
+          [icon]="showIcon() ? getStatusTagIcon() : undefined"
+          [size]="placement() === 'banner' || placement() === 'top' ? 'md' : 'sm'"
+        />
         @if (showTag()) {
           <app-status-tag
             [value]="getUrgencyLabel()"
-            [severity]="getSeverity()"
+            severity="secondary"
             size="sm"
           />
         }
@@ -111,6 +113,10 @@ export class ActionRequiredBadgeComponent {
       general: "pi pi-exclamation-circle",
     };
     return icons[type] || "pi pi-exclamation-circle";
+  }
+
+  getStatusTagIcon(): string {
+    return this.getIconClass().replace("pi ", "");
   }
 
   getUrgencyLabel(): string {

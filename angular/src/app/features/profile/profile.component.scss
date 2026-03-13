@@ -35,13 +35,6 @@
  */
 .profile {
   container-type: inline-size;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  padding-block: var(--space-6);
-  padding-inline: clamp(var(--space-4), 4vw, var(--space-6));
-  max-inline-size: var(--content-max-width-2xl);
-  margin-inline: auto;
   inline-size: 100%;
   overflow-x: hidden;
 }
@@ -49,31 +42,8 @@
 /* Legacy class support */
 .profile-page {
   container-type: inline-size;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  padding-block: var(--space-6);
-  padding-inline: clamp(var(--space-4), 4vw, var(--space-6));
-  max-inline-size: var(--content-max-width-2xl);
-  margin-inline: auto;
   inline-size: 100%;
   overflow-x: hidden;
-}
-
-@include respond-to(md) {
-  .profile,
-  .profile-page {
-    padding-block: var(--space-5);
-    padding-inline: var(--space-4);
-  }
-}
-
-@include respond-to(sm) {
-  .profile,
-  .profile-page {
-    padding-block: var(--space-4);
-    padding-inline: var(--space-3);
-  }
 }
 
 /* ========== Deletion Pending Banner ========== */
@@ -175,10 +145,6 @@
     --profile-header-bg-height: var(--size-120);
     --profile-avatar-size: var(--size-120);
     --profile-avatar-border-width: var(--indicator-size-xs);
-
-    padding-block: var(--space-4);
-    padding-inline: var(--space-4);
-    gap: var(--space-5);
   }
 
   .profile-page .profile-tabs-container,
@@ -200,9 +166,6 @@
     --profile-header-bg-height: var(--size-120);
     --profile-avatar-size: var(--size-120);
     --profile-avatar-border-width: var(--indicator-size-xs);
-
-    padding: var(--space-4);
-    gap: var(--space-5);
   }
 
   .profile-page .profile-tabs-container {
@@ -241,9 +204,6 @@
     --profile-header-bg-height: calc(var(--size-80) + var(--space-2) + var(--space-0-5));
     --profile-avatar-size: calc(var(--size-80) + var(--space-2) + var(--space-0-5));
     --profile-avatar-border-width: calc(var(--border-2) + var(--border-1));
-
-    padding: var(--space-3) var(--space-2);
-    gap: var(--space-4);
   }
 
   .profile-page .profile-tabs-container {

@@ -992,6 +992,51 @@ $ds-font-weight-extrabold: 800;
   --component-alert-padding: var(--space-4);
   --component-alert-accent-width: 0.25rem;
   --component-banner-padding: var(--space-4);
+  --component-badge-height-sm: var(--tag-height-sm);
+  --component-badge-height-md: var(--tag-height-md);
+  --component-badge-height-lg: var(--touch-target-md);
+  --component-badge-padding-x-sm: var(--space-2);
+  --component-badge-padding-x-md: var(--space-3);
+  --component-badge-padding-x-lg: var(--space-5);
+  --component-badge-gap: var(--space-2);
+  --component-badge-radius-sm: var(--radius-sm);
+  --component-badge-radius-md: var(--radius-md);
+  --component-badge-radius-lg: var(--radius-lg);
+  --component-badge-shadow: var(--shadow-1);
+  --component-badge-font-size-sm: var(--ds-font-size-xs);
+  --component-badge-font-size-md: var(--ds-font-size-sm);
+  --component-badge-font-size-lg: var(--ds-font-size-md);
+  --component-badge-font-weight: var(--ds-font-weight-semibold);
+  --component-badge-success-bg: var(--primitive-primary-600);
+  --component-badge-success-text: var(--color-text-on-primary);
+  --component-badge-warning-bg: var(--primitive-warning-500);
+  --component-badge-warning-text: var(--primitive-neutral-900);
+  --component-badge-danger-bg: var(--primitive-error-500);
+  --component-badge-danger-text: var(--color-text-on-primary);
+  --component-badge-info-bg: var(--primitive-info-500);
+  --component-badge-info-text: var(--color-text-on-primary);
+  --component-badge-neutral-bg: var(--primitive-neutral-100);
+  --component-badge-neutral-text: var(--ui-text-secondary);
+  --component-badge-neutral-solid-bg: var(--primitive-neutral-700);
+  --component-badge-neutral-solid-text: var(--color-text-on-primary);
+  --component-dialog-body-margin-top: var(--space-4);
+  --component-dialog-body-gap: var(--space-4);
+  --component-dialog-body-section-gap: var(--space-5);
+  --component-dialog-body-max-width: none;
+  --component-section-gap: var(--space-4);
+  --component-section-title-size: var(--ds-font-size-2xl);
+  --component-section-title-weight: var(--ds-font-weight-semibold);
+  --component-section-title-color: var(--color-text-primary);
+  --component-section-subtitle-size: var(--ds-font-size-md);
+  --component-section-subtitle-weight: var(--ds-font-weight-regular);
+  --component-section-subtitle-color: var(--color-text-secondary);
+  --component-section-icon-color: currentColor;
+  --component-section-hero-icon-box-size: var(--avatar-size-2xl);
+  --component-section-hero-icon-size: var(--ds-font-size-2xl);
+  --component-section-hero-icon-bg: var(--overlay-white-15);
+  --component-section-hero-icon-border: var(--border-1) solid
+    var(--overlay-white-20);
+  --component-section-hero-icon-radius: var(--radius-xl);
   --component-close-button-size-sm: var(--button-height-sm);
   --component-close-button-size-md: var(--touch-target-md);
   --component-close-button-size-lg: var(--button-height-lg);
@@ -1243,6 +1288,19 @@ $ds-font-weight-extrabold: 800;
 
   /* Transition Aliases */
   --transition: var(--transition-base);
+
+  /* Canonical semantic aliases for status/badge primitives */
+  --ds-status-success-solid: var(--component-badge-success-bg);
+  --ds-status-success-text: var(--component-badge-success-text);
+  --ds-status-warning-solid: var(--component-badge-warning-bg);
+  --ds-status-warning-text: var(--component-badge-warning-text);
+  --ds-status-danger-solid: var(--component-badge-danger-bg);
+  --ds-status-danger-text: var(--component-badge-danger-text);
+  --ds-status-info-solid: var(--component-badge-info-bg);
+  --ds-status-info-text: var(--component-badge-info-text);
+  --ds-status-neutral-bg: var(--component-badge-neutral-bg);
+  --ds-status-neutral-text: var(--component-badge-neutral-text);
+  --ds-status-neutral-solid: var(--component-badge-neutral-solid-bg);
 
   /* Spacing Aliases */
   --spacing-component-xs: var(--space-2);

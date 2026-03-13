@@ -42,14 +42,16 @@ export type CoachOverridePlacement =
       [pTooltip]="tooltip() || getDefaultTooltip()"
       [tooltipPosition]="'top'"
     >
-      @if (showIcon()) {
-        <i class="pi pi-info-circle override-icon"></i>
-      }
-      <span class="override-label">{{ getLabel() }}</span>
+      <app-status-tag
+        [value]="getLabel()"
+        severity="info"
+        [icon]="showIcon() ? 'pi-info-circle' : undefined"
+        [size]="placement() === 'card' ? 'md' : 'sm'"
+      />
       @if (showTag()) {
         <app-status-tag
           [value]="getOverrideTypeLabel()"
-          severity="info"
+          severity="secondary"
           size="sm"
         />
       }

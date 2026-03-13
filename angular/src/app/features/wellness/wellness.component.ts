@@ -269,7 +269,10 @@ interface WellnessMetric {
           }
 
           <!-- Daily Check-in - Comprehensive for Olympic Athletes -->
-          <div #checkinCard class="checkin-card-anchor">
+          <div
+            #checkinCard
+            class="checkin-card-anchor ui-page-shell ui-page-shell--content-lg"
+          >
             <app-card
               title="Daily Wellness Check-in"
               class="checkin-card"

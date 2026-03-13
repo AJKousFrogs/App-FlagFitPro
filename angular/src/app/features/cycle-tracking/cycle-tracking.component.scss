@@ -3,9 +3,7 @@
 @use "styles/mixins" as *;
 
 .cycle-tracking-page {
-  padding: var(--space-4);
-  max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  min-height: 100%;
 }
 
 .cycle-status-content {
@@ -76,10 +74,6 @@
 
 // Responsive
 @include respond-to(md) {
-  .cycle-tracking-page {
-    padding: var(--space-3);
-  }
-
   .symptoms-grid {
     grid-template-columns: repeat(2, 1fr);
   }

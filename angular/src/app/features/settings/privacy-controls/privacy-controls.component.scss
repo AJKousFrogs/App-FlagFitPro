@@ -165,6 +165,28 @@
   justify-content: flex-end;
 }
 
+.privacy-dialog-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.privacy-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.privacy-dialog-actions--single {
+  justify-content: flex-end;
+}
+
+.privacy-dialog-stack app-loading,
+.privacy-dialog-stack app-empty-state {
+  margin: var(--space-2) 0;
+}
+
 .consent-info {
   margin-top: var(--space-3);
   padding-top: var(--space-3);
@@ -393,19 +415,7 @@
 }
 
 /* Dialog Forms */
-.contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
 // PrimeNG field overrides moved to _component-overrides.scss (DS-EXC-047)
-
-.delete-warning-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
 
 .delete-warning-notes {
   display: flex;

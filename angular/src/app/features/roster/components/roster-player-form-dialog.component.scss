@@ -3,25 +3,10 @@
 // Design System Compliant
 // ============================================================================
 
-@use "styles/mixins" as *;
-
 .player-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  flex: 1;
-}
-
-.form-field label {
-  font-weight: var(--ds-font-weight-medium);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-secondary);
 }
 
 .field-hint {
@@ -32,17 +17,6 @@
   font-style: italic;
 }
 
-.form-row {
-  display: flex;
-  gap: var(--space-4);
-}
-
 .w-full {
   width: 100%;
-}
-
-@include respond-to(md) {
-  .form-row {
-    flex-direction: column;
-  }
 }

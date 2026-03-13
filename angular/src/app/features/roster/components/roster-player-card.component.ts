@@ -23,6 +23,10 @@ import { ProgressBar } from "primeng/progressbar";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
+import {
+  StatusTagComponent,
+  StatusTagSeverity,
+} from "../../../shared/components/status-tag/status-tag.component";
 import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
 import { getRiskSeverityFromLevel } from "../../../shared/utils/risk.utils";
 import { Player } from "../roster.models";
@@ -51,6 +55,7 @@ import { TRAINING } from "../../../core/constants/app.constants";
     CardShellComponent,
     SemanticMeaningRendererComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <app-card-shell
@@ -75,9 +80,11 @@ import { TRAINING } from "../../../core/constants/app.constants";
 
       <!-- Status & Risk Badge -->
       <div class="badge-row">
-        <div class="status-badge" [class]="'status-' + player().status">
-          {{ player().status | titlecase }}
-        </div>
+        <app-status-tag
+          [value]="player().status | titlecase"
+          [severity]="playerStatusSeverity()"
+          size="sm"
+        />
         @if (riskMeaning() && enrichedPlayer().riskLevel !== "low") {
           <app-semantic-meaning-renderer
             [meaning]="riskMeaning()!"
@@ -418,6 +425,22 @@ export class RosterPlayerCardComponent {
       return "warning";
     }
     return "default";
+  });
+
+  playerStatusSeverity = computed<StatusTagSeverity>(() => {
+    switch (this.player().status) {
+      case "active":
+        return "success";
+      case "limited":
+        return "warning";
+      case "returning":
+        return "info";
+      case "injured":
+        return "danger";
+      case "inactive":
+      default:
+        return "secondary";
+    }
   });
 
   getRiskPriority(): "low" | "medium" | "high" | "critical" {

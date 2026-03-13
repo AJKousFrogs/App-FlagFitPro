@@ -43,12 +43,16 @@ export type IncompleteDataPlacement =
       [pTooltip]="tooltip() || getDefaultTooltip()"
       [tooltipPosition]="'top'"
     >
-      <i [class]="getIconClass()" class="badge-icon"></i>
-      <span class="badge-label">{{ getLabel() }}</span>
+      <app-status-tag
+        [value]="getLabel()"
+        [severity]="getSeverityTag()"
+        [icon]="showIcon() ? getStatusTagIcon() : undefined"
+        [size]="placement() === 'card' ? 'md' : 'sm'"
+      />
       @if (showTag()) {
         <app-status-tag
           [value]="getSeverityLabel()"
-          [severity]="getSeverityTag()"
+          severity="secondary"
           size="sm"
         />
       }
@@ -88,11 +92,11 @@ export class IncompleteDataBadgeComponent {
     return labels[type] || "Incomplete Data";
   });
 
-  getIconClass(): string {
+  getStatusTagIcon(): string {
     const s = this.severity();
     return s === "critical"
-      ? "pi pi-exclamation-triangle"
-      : "pi pi-exclamation-circle";
+      ? "pi-exclamation-triangle"
+      : "pi-exclamation-circle";
   }
 
   getSeverityLabel(): string {

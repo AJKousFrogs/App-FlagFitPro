@@ -553,7 +553,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
           title="Add Emergency Contact"
           (close)="showAddContactDialog = false"
         />
-        <div class="contact-form">
+        <div class="contact-form privacy-dialog-stack">
           <div class="form-field">
             <label for="contactName">Name</label>
             <input
@@ -616,7 +616,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
           [danger]="true"
           (close)="showDeleteAccountDialog = false"
         />
-        <div class="delete-warning-content">
+        <div class="delete-warning-content privacy-dialog-stack">
           <app-alert
             variant="error"
             icon="pi pi-exclamation-triangle"
@@ -690,11 +690,18 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
           title="Privacy Audit Log"
           (close)="showAuditLogDialog = false"
         />
-        <div class="audit-log-content">
+        <div class="audit-log-content privacy-dialog-stack">
           @if (auditLogLoading()) {
-            <p><i class="pi pi-spin pi-spinner"></i> Loading...</p>
+            <app-loading
+              variant="inline"
+              message="Loading audit log..."
+            ></app-loading>
           } @else if (auditLogEntries().length === 0) {
-            <p>No audit log entries yet.</p>
+            <app-empty-state
+              icon="pi-history"
+              heading="No audit log yet"
+              description="Privacy activity will appear here once actions are recorded."
+            ></app-empty-state>
           } @else {
             <div class="audit-log-list">
               @for (entry of auditLogEntries(); track entry.id) {
@@ -709,7 +716,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             </div>
           }
         </div>
-        <div dialogFooter class="dialog-actions dialog-actions--single">
+        <div
+          dialogFooter
+          class="privacy-dialog-actions privacy-dialog-actions--single"
+        >
           <app-button variant="text" (clicked)="showAuditLogDialog = false"
             >Close</app-button
           >

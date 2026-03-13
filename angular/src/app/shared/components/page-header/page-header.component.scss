@@ -10,7 +10,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--page-header-margin-bottom, 0);
-  gap: var(--page-header-gap, var(--space-4));
+  gap: var(--page-header-gap, var(--component-section-gap));
   padding: var(--page-header-padding, var(--space-5) var(--space-6));
   background: var(--page-header-bg, var(--surface-primary));
   border: var(
@@ -42,22 +42,37 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--page-header-title-size, var(--ds-font-size-2xl));
-  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(
+    --page-header-title-size,
+    var(--component-section-title-size)
+  );
+  font-weight: var(
+    --page-header-title-weight,
+    var(--component-section-title-weight)
+  );
   line-height: var(--ds-line-height-tight);
   margin: 0 0 var(--space-2) 0;
-  color: var(--page-header-title-color, var(--color-text-primary));
+  color: var(--page-header-title-color, var(--component-section-title-color));
 
   i {
-    color: var(--page-header-icon-color, currentColor);
+    color: var(--page-header-icon-color, var(--component-section-icon-color));
   }
 }
 
 .page-subtitle {
-  font-size: var(--page-header-subtitle-size, var(--ds-font-size-md));
-  font-weight: var(--ds-font-weight-regular);
+  font-size: var(
+    --page-header-subtitle-size,
+    var(--component-section-subtitle-size)
+  );
+  font-weight: var(
+    --page-header-subtitle-weight,
+    var(--component-section-subtitle-weight)
+  );
   line-height: var(--ds-line-height-normal);
-  color: var(--page-header-subtitle-color, var(--color-text-secondary));
+  color: var(
+    --page-header-subtitle-color,
+    var(--component-section-subtitle-color)
+  );
   margin: 0;
 }
 
@@ -77,16 +92,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--page-header-hero-icon-box-size, var(--avatar-size-2xl));
-  height: var(--page-header-hero-icon-box-size, var(--avatar-size-2xl));
-  background: var(--page-header-hero-icon-bg, var(--overlay-white-15));
+  width: var(
+    --page-header-hero-icon-box-size,
+    var(--component-section-hero-icon-box-size)
+  );
+  height: var(
+    --page-header-hero-icon-box-size,
+    var(--component-section-hero-icon-box-size)
+  );
+  background: var(
+    --page-header-hero-icon-bg,
+    var(--component-section-hero-icon-bg)
+  );
   border: var(
     --page-header-hero-icon-border,
-    var(--border-1) solid var(--overlay-white-20)
+    var(--component-section-hero-icon-border)
   );
-  border-radius: var(--page-header-hero-icon-radius, var(--radius-xl));
+  border-radius: var(
+    --page-header-hero-icon-radius,
+    var(--component-section-hero-icon-radius)
+  );
   color: var(--page-header-icon-color, var(--color-text-on-primary));
-  font-size: var(--page-header-hero-icon-size, var(--ds-font-size-2xl));
+  font-size: var(
+    --page-header-hero-icon-size,
+    var(--component-section-hero-icon-size)
+  );
   flex-shrink: 0;
 }
 

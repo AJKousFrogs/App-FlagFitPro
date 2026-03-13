@@ -6,22 +6,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  height: var(--touch-target-sm);
-  min-height: var(--touch-target-sm);
-  padding: 0 var(--space-3);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-semibold);
+  gap: var(--component-badge-gap);
+  height: var(--component-badge-height-md);
+  min-height: var(--component-badge-height-md);
+  padding: 0 var(--component-badge-padding-x-md);
+  font-size: var(--component-badge-font-size-md);
+  font-weight: var(--component-badge-font-weight);
   line-height: var(--ds-line-height-1);
   white-space: nowrap;
   text-transform: var(--ds-text-transform-none);
   text-decoration: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--component-badge-radius-md);
   border: none;
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--component-badge-shadow);
   outline: none;
-  background-color: var(--ds-status-success-solid);
-  color: var(--ds-status-success-text);
+  background-color: var(--component-badge-success-bg);
+  color: var(--component-badge-success-text);
   flex-shrink: 0;
   transition:
     box-shadow var(--motion-fast) var(--ease-standard),
@@ -40,8 +40,8 @@
 }
 
 .status-tag-success {
-  background-color: var(--ds-status-success-solid);
-  color: var(--ds-status-success-text);
+  background-color: var(--component-badge-success-bg);
+  color: var(--component-badge-success-text);
 }
 
 .status-tag-primary {
@@ -50,49 +50,49 @@
 }
 
 .status-tag-warning {
-  background-color: var(--ds-status-warning-solid);
-  color: var(--ds-status-warning-text);
+  background-color: var(--component-badge-warning-bg);
+  color: var(--component-badge-warning-text);
 }
 
 .status-tag-danger {
-  background-color: var(--ds-status-danger-solid);
-  color: var(--ds-status-danger-text);
+  background-color: var(--component-badge-danger-bg);
+  color: var(--component-badge-danger-text);
 }
 
 .status-tag-info {
-  background-color: var(--ds-status-info-solid);
-  color: var(--ds-status-info-text);
+  background-color: var(--component-badge-info-bg);
+  color: var(--component-badge-info-text);
 }
 
 .status-tag-secondary {
-  background-color: var(--ds-status-neutral-bg);
-  color: var(--ds-status-neutral-text);
+  background-color: var(--component-badge-neutral-bg);
+  color: var(--component-badge-neutral-text);
 }
 
 .status-tag-contrast {
-  background-color: var(--ds-status-neutral-solid);
-  color: var(--ds-color-brand-contrast);
+  background-color: var(--component-badge-neutral-solid-bg);
+  color: var(--component-badge-neutral-solid-text);
 }
 
 .status-tag-warn {
-  background-color: var(--ds-status-warning-solid);
-  color: var(--ds-status-warning-text);
+  background-color: var(--component-badge-warning-bg);
+  color: var(--component-badge-warning-text);
 }
 
 .status-tag-sm {
-  height: var(--space-6);
-  min-height: var(--space-6);
-  padding: 0 var(--space-2);
-  font-size: var(--ds-font-size-xs);
-  border-radius: var(--radius-sm);
+  height: var(--component-badge-height-sm);
+  min-height: var(--component-badge-height-sm);
+  padding: 0 var(--component-badge-padding-x-sm);
+  font-size: var(--component-badge-font-size-sm);
+  border-radius: var(--component-badge-radius-sm);
 }
 
 .status-tag-lg {
-  height: var(--touch-target-md);
-  min-height: var(--touch-target-md);
-  padding: 0 var(--space-5);
-  font-size: var(--ds-font-size-md);
-  border-radius: var(--radius-lg);
+  height: var(--component-badge-height-lg);
+  min-height: var(--component-badge-height-lg);
+  padding: 0 var(--component-badge-padding-x-lg);
+  font-size: var(--component-badge-font-size-lg);
+  border-radius: var(--component-badge-radius-lg);
 }
 
 :host-context([data-theme="dark"]),
