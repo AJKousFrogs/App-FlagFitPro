@@ -273,6 +273,8 @@ async function resolveTodaySession(supabase, userId, date) {
  * @returns {Promise<Object|null>} Override object or null
  */
 async function checkSportLayerOverrides(supabase, userId, date, dayOfWeek) {
+  const targetDate = parseIsoDateString(date);
+
   // Override 1: Active injury/rehab protocol (blocks all other training)
   const { data: wellnessCheckin } = await supabase
     .from("daily_wellness_checkin")
@@ -328,9 +330,8 @@ async function checkSportLayerOverrides(supabase, userId, date, dayOfWeek) {
   if (upcomingTournaments && upcomingTournaments.length > 0) {
     for (const tournament of upcomingTournaments) {
       const tournamentDate = parseIsoDateString(tournament.start_date);
-      const currentDate = targetDate;
       const daysUntil = Math.ceil(
-        (tournamentDate - currentDate) / (1000 * 60 * 60 * 24),
+        (tournamentDate - targetDate) / (1000 * 60 * 60 * 24),
       );
       const taperWeeks = tournament.taper_weeks_before || 1;
       const taperDays = taperWeeks * 7;

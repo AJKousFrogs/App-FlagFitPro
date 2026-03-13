@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { db } from "./utils/supabase-client.js";
+import { db } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 
@@ -11,7 +11,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "notifications",
     allowedMethods: ["GET", "POST", "PATCH"],
-rateLimitType: rateLimitType,
+rateLimitType,
     requireAuth: true, // SECURITY: Explicit auth for notifications
     handler: async (event, _context, { userId }) => {
       const parseStrictPositiveInt = (raw, field, { min = 1, max = Number.POSITIVE_INFINITY } = {}) => {
@@ -251,4 +251,5 @@ rateLimitType: rateLimitType,
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

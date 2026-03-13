@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { getWeekStart } from "./utils/date-utils.js";
 import { DataState, MINIMUM_DATA_REQUIREMENTS, wrapWithDataState, getDataStateFromRiskZone, evaluateDataState } from "./utils/data-state.js";
@@ -1196,4 +1196,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

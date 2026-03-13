@@ -1,7 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { getSupabaseClient } from "./utils/supabase-client.js";
+import { getSupabaseClient } from "./supabase-client.js";
 
 /**
  * Privacy Settings API
@@ -516,4 +516,5 @@ function mapDbToParentalConsent(db) {
 }
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

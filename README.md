@@ -1,7 +1,7 @@
 # 🏈 FlagFit Pro - Professional Flag Football Training Platform
 
-[![Angular](https://img.shields.io/badge/Angular-21.1-red.svg)](https://angular.dev/)
-[![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0-blue.svg)](https://primeng.org/)
+[![Angular](https://img.shields.io/badge/Angular-21.2-red.svg)](https://angular.dev/)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-21.1-blue.svg)](https://primeng.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
@@ -137,16 +137,16 @@ cd flagfit-pro
 # Install root dependencies
 npm install
 
-# Install Angular dependencies (uses pnpm)
+# Install Angular dependencies
 cd angular
-npx pnpm install
+npm install
 cd ..
 
 # Start development (Netlify Dev + Angular)
 npm run dev
 ```
 
-> **Note:** The Angular folder uses **pnpm** as its package manager. The command `npx pnpm install` will automatically download and run pnpm if not installed globally.
+> **Note:** The Angular workspace uses `npm` and has its own lockfile at `angular/package-lock.json`.
 
 ### ⚠️ IMPORTANT: Local Development
 

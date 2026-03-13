@@ -44,7 +44,7 @@ export async function addMorningMobilityBlock({
   for (const config of positionConfigs) {
     const { data: exercises } = await config.query(supabase);
     if (exercises && exercises.length > 0) {
-      exercises.forEach((ex) => {
+      for (const ex of exercises) {
         mobilitySequence++;
         protocolExercises.push({
           exercise_id: ex.id,
@@ -57,7 +57,7 @@ export async function addMorningMobilityBlock({
           load_contribution_au: ex.load_contribution_au || 0,
           ai_note: config.note,
         });
-      });
+      }
       break;
     }
   }

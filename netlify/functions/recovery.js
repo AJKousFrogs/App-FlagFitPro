@@ -1,7 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 // Netlify Function: Recovery Protocol API
 // Handles recovery recommendations, protocols, and athlete recovery profiles
@@ -1076,4 +1076,5 @@ const handler = async (event, context) => {
 export { RECOVERY_PROTOCOLS, generateRecoveryRecommendations };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

@@ -16,14 +16,14 @@ export class SettingsTeamRequestService {
   readonly availableTeams = signal<Array<{ label: string; value: string }>>([]);
   readonly isSubmittingTeamRequest = signal(false);
 
-  async loadAvailableTeams(): Promise<void> {
+  async loadAvailableTeams(): Promise<string | null> {
     try {
       const { teams, error } =
         await this.settingsDataService.fetchApprovedTeams();
 
       if (error) {
         this.logger.warn("Could not load teams:", toLogContext(error.message));
-        return;
+        return error.message || "We couldn't load your available teams.";
       }
 
       const teamOptions = (teams || []).map((team) => ({
@@ -37,8 +37,10 @@ export class SettingsTeamRequestService {
       });
 
       this.availableTeams.set(teamOptions);
+      return null;
     } catch (error) {
       this.logger.warn("Failed to load teams:", toLogContext(error));
+      return "We couldn't load your available teams.";
     }
   }
 

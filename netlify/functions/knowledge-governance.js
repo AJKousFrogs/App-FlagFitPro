@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
@@ -434,4 +434,5 @@ const handler = async (event, context) =>
   });
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

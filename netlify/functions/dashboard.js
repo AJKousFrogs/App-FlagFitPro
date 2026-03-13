@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { db, supabaseAdmin } from "./utils/supabase-client.js";
+import { db, supabaseAdmin } from "./supabase-client.js";
 import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getTimeAgo } from "./utils/date-utils.js";
@@ -345,4 +345,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

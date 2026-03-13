@@ -14,6 +14,8 @@ import { resolveTeamActivityForAthleteDay } from "./utils/team-activity-resolver
 import { getTrainingProgramById } from "./utils/training-programs.js";
 import {
   buildAcwrPresentation,
+  computeReadinessDaysStale,
+  computeTrainingDaysLogged,
   computeDynamicConfidenceMetadata,
   transformExercise,
   transformProtocolResponse,
@@ -1519,6 +1521,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     if (skillExercises && skillExercises.length > 0) {
       // Filter for position-specific where available
       let filteredSkill = skillExercises;
+      const normalizedPosition = normalizePosition(context.position);
 
       if (context.isQB) {
         const qbSkills = skillExercises.filter(

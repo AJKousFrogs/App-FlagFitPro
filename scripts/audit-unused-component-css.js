@@ -14,8 +14,8 @@ function read(file) {
 function walk(dir, acc = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) walk(full, acc);
-    else acc.push(full);
+    if (entry.isDirectory()) {walk(full, acc);}
+    else {acc.push(full);}
   }
   return acc;
 }
@@ -34,7 +34,7 @@ function extractScssClasses(scss) {
       cls.startsWith("prime") ||
       cls.startsWith("pi-")
     )
-      continue;
+      {continue;}
     classSet.add(cls);
   }
   return classSet;
@@ -66,13 +66,13 @@ function extractTemplateClasses(template) {
 function extractTsClassRefs(ts) {
   const classSet = new Set();
   // strings that look like class names
-  const strRe = /['\"]([a-zA-Z0-9_-]+)['\"]/g;
+  const strRe = /['"]([a-zA-Z0-9_-]+)['"]/g;
   let m;
   while ((m = strRe.exec(ts)) !== null) {
     const val = m[1];
-    if (val.includes("-")) classSet.add(val);
+    if (val.includes("-")) {classSet.add(val);}
   }
-  if (ts.includes("ngClass")) classSet.add("__HAS_NGCLASS__");
+  if (ts.includes("ngClass")) {classSet.add("__HAS_NGCLASS__");}
   return classSet;
 }
 
@@ -88,7 +88,7 @@ for (const scssFile of files) {
   const template = html || ts;
 
   const scssClasses = extractScssClasses(scss);
-  if (!scssClasses.size) continue;
+  if (!scssClasses.size) {continue;}
   const templateClasses = extractTemplateClasses(template);
   const tsClasses = extractTsClassRefs(ts);
 

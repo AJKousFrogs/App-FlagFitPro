@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import { Card } from "primeng/card";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import {

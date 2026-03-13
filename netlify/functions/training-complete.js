@@ -7,7 +7,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 
 function parseJsonObjectBody(rawBody) {
@@ -445,4 +445,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

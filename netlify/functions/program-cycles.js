@@ -180,4 +180,5 @@ async function updateCycleStatus(supabase, userId, payload) {
 }
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

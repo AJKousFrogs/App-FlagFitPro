@@ -28,7 +28,7 @@ const THRESHOLDS = {
 const KEYFRAME_SELECTORS = new Set(["from", "to"]);
 
 function walkDir(dir, ext, files = []) {
-  if (!fs.existsSync(dir)) return files;
+  if (!fs.existsSync(dir)) {return files;}
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const e of entries) {
     const full = path.join(dir, e.name);
@@ -47,7 +47,7 @@ function normalizeWhitespace(s) {
 
 function extractRuleSignatures(content) {
   const rules = [];
-  const selectorRegex = /([.#\w\[\]\/\-\s:,]+)\s*\{/g;
+  const selectorRegex = /([.#\w[\]/\-\s:,]+)\s*\{/g;
   let m;
   while ((m = selectorRegex.exec(content)) !== null) {
     const sel = m[1].trim().replace(/\s+/g, " ");
@@ -69,8 +69,8 @@ function findDuplicateSelectors(files) {
     const trimmed = sel.trim();
     if (trimmed.length > 2 && !KEYFRAME_SELECTORS.has(trimmed)) {
       selectorCounts.set(trimmed, (selectorCounts.get(trimmed) || 0) + 1);
-        if (!selectorFiles.has(trimmed)) selectorFiles.set(trimmed, []);
-        if (!selectorFiles.get(trimmed).includes(rel)) selectorFiles.get(trimmed).push(rel);
+        if (!selectorFiles.has(trimmed)) {selectorFiles.set(trimmed, []);}
+        if (!selectorFiles.get(trimmed).includes(rel)) {selectorFiles.get(trimmed).push(rel);}
       }
     }
   }
@@ -96,7 +96,7 @@ function findRepeatedPatterns(files) {
 
 function findDuplicateValueBlocks(files) {
   const valueBlocks = new Map();
-  const blockRegex = /([.#\w\s\-\[\]:,]+)\s*\{([^}]{20,200})\}/g;
+  const blockRegex = /([.#\w\s\-[\]:,]+)\s*\{([^}]{20,200})\}/g;
   for (const file of files) {
     const content = fs.readFileSync(file, "utf8");
     let m;
@@ -104,7 +104,7 @@ function findDuplicateValueBlocks(files) {
       const sig = normalizeWhitespace(m[2]);
       if (sig.includes("var(--") || sig.includes("font-size") || sig.includes("padding")) {
         const key = `${m[1].trim()}|${sig.slice(0, 80)}`;
-        if (!valueBlocks.has(key)) valueBlocks.set(key, []);
+        if (!valueBlocks.has(key)) {valueBlocks.set(key, []);}
         valueBlocks.get(key).push(path.relative(ANGULAR_SRC, file));
       }
     }
@@ -165,7 +165,7 @@ function main() {
   } else {
     highDupes.forEach(([sel, count]) => {
       const files = selectorFiles.get(sel);
-      const preview = sel.length > 60 ? sel.slice(0, 57) + "..." : sel;
+      const preview = sel.length > 60 ? `${sel.slice(0, 57)  }...` : sel;
       console.log(`   ${count}x  ${preview}`);
       if (files && files.length <= 5) {
         files.forEach((f) => console.log(`         └ ${f}`));

@@ -71,7 +71,7 @@ function main() {
   const warnings = [];
 
   for (const item of findings) {
-    if (!item.dbUsage) continue;
+    if (!item.dbUsage) {continue;}
 
     if (!item.resilient) {
       severe.push(

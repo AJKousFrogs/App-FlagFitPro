@@ -7,7 +7,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
 
 function isPlainObject(value) {
@@ -80,4 +80,5 @@ const handler = async (event, context) =>
   });
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

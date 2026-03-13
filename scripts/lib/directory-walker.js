@@ -18,7 +18,7 @@ const DEFAULT_SKIP_DIRS = ["node_modules", "dist", ".git"];
  */
 export function walkDirectory(dir, fileProcessor, opts = {}) {
   const { extensions = [".ts"], skipDirs = DEFAULT_SKIP_DIRS } = opts;
-  if (!fs.existsSync(dir)) return;
+  if (!fs.existsSync(dir)) {return;}
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
 
@@ -26,7 +26,7 @@ export function walkDirectory(dir, fileProcessor, opts = {}) {
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      if (skipDirs.includes(entry.name)) continue;
+      if (skipDirs.includes(entry.name)) {continue;}
       walkDirectory(fullPath, fileProcessor, opts);
     } else if (entry.isFile()) {
       const matches = extensions.some((ext) => entry.name.endsWith(ext));

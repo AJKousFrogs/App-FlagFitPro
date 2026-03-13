@@ -30,8 +30,8 @@ class AppPerformanceChecker {
     // Angular outputs to angular/dist/flagfit-pro
     const angularDist = join(projectRoot, "angular", "dist", "flagfit-pro");
     const rootDist = join(projectRoot, "dist");
-    if (existsSync(angularDist)) return angularDist;
-    if (existsSync(rootDist)) return rootDist;
+    if (existsSync(angularDist)) {return angularDist;}
+    if (existsSync(rootDist)) {return rootDist;}
     return null;
   }
 

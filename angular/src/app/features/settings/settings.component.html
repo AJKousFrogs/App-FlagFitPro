@@ -1,123 +1,137 @@
 
 <app-main-layout>
-  <div class="settings-page section-stack elite-phase2-shell ui-page-shell ui-page-stack">
-    <app-page-header
-      title="Settings"
-      subtitle="Manage your account and application preferences"
-      icon="pi-cog"
-    >
-      <app-button
-        iconLeft="pi-save"
-        [loading]="isSavingSettings()"
-        (clicked)="saveSettings()"
-        >Save Changes</app-button
+  <app-loading
+    [visible]="isPageLoading()"
+    variant="skeleton"
+    message="Loading settings..."
+  ></app-loading>
+
+  @if (pageErrorMessage()) {
+    <app-page-error-state
+      title="Unable to load settings"
+      [message]="pageErrorMessage() || settingsLoadErrorFallback"
+      (retry)="retryLoad()"
+    ></app-page-error-state>
+  } @else {
+    <div class="settings-page section-stack elite-phase2-shell ui-page-shell ui-page-stack">
+      <app-page-header
+        title="Settings"
+        subtitle="Manage your account and application preferences"
+        icon="pi-cog"
       >
-    </app-page-header>
+        <app-button
+          iconLeft="pi-save"
+          [loading]="isSavingSettings()"
+          (clicked)="saveSettings()"
+          >Save Changes</app-button
+        >
+      </app-page-header>
 
-    <app-settings-nav-section
-      [items]="settingsNavItems"
-      (selectSection)="scrollToSection($event)"
-    ></app-settings-nav-section>
+      <app-settings-nav-section
+        [items]="settingsNavItems"
+        (selectSection)="scrollToSection($event)"
+      ></app-settings-nav-section>
 
-    <!-- Settings Grid -->
-    <div class="settings-grid form-controls-full">
-      <app-settings-account-section
-        [profileForm]="profileForm"
-        [maxBirthDate]="maxBirthDate"
-        [birthdaySuggestion]="birthdaySuggestion()"
-        [calculatedAge]="calculateAge()"
-        [positionOptions]="positionOptions"
-        [availableTeams]="availableTeams()"
-        [countryOptions]="countryOptions"
-        (birthdayInputTyped)="onBirthdayInputTyped($event)"
-        (birthdayInputBlurred)="onBirthdayInputBlurred()"
-        (applyBirthdaySuggestion)="applyBirthdaySuggestion()"
-        (teamChange)="onTeamChange($event ?? null)"
-      />
+      <!-- Settings Grid -->
+      <div class="settings-grid form-controls-full">
+        <app-settings-account-section
+          [profileForm]="profileForm"
+          [maxBirthDate]="maxBirthDate"
+          [birthdaySuggestion]="birthdaySuggestion()"
+          [calculatedAge]="calculateAge()"
+          [positionOptions]="positionOptions"
+          [availableTeams]="availableTeams()"
+          [countryOptions]="countryOptions"
+          (birthdayInputTyped)="onBirthdayInputTyped($event)"
+          (birthdayInputBlurred)="onBirthdayInputBlurred()"
+          (applyBirthdaySuggestion)="applyBirthdaySuggestion()"
+          (teamChange)="onTeamChange($event ?? null)"
+        />
 
-      <!-- Section 2: Notifications -->
-      <div id="notifications-settings" class="settings-section ui-stack-md">
-        <div class="ui-section-heading">
-          <div class="ui-section-heading__content">
-            <h2 class="ui-section-heading__title">
-              <span class="ui-section-heading__icon">
-                <i class="pi pi-bell"></i>
-              </span>
-              Notifications
-            </h2>
-            <p class="ui-section-heading__description">
-              Control how and when you receive notifications
-            </p>
+        <!-- Section 2: Notifications -->
+        <div id="notifications-settings" class="settings-section ui-stack-md">
+          <div class="ui-section-heading">
+            <div class="ui-section-heading__content">
+              <h2 class="ui-section-heading__title">
+                <span class="ui-section-heading__icon">
+                  <i class="pi pi-bell"></i>
+                </span>
+                Notifications
+              </h2>
+              <p class="ui-section-heading__description">
+                Control how and when you receive notifications
+              </p>
+            </div>
           </div>
+
+          <app-notification-preferences-card
+            [notificationForm]="notificationForm"
+          ></app-notification-preferences-card>
         </div>
 
-        <app-notification-preferences-card
-          [notificationForm]="notificationForm"
-        ></app-notification-preferences-card>
-      </div>
-
-      <!-- Section 3: Privacy & Security -->
-      <div id="privacy-settings" class="settings-section ui-stack-md">
-        <div class="ui-section-heading">
-          <div class="ui-section-heading__content">
-            <h2 class="ui-section-heading__title">
-              <span class="ui-section-heading__icon">
-                <i class="pi pi-lock"></i>
-              </span>
-              Privacy & Security
-            </h2>
-            <p class="ui-section-heading__description">
-              Manage your privacy settings and account security
-            </p>
+        <!-- Section 3: Privacy & Security -->
+        <div id="privacy-settings" class="settings-section ui-stack-md">
+          <div class="ui-section-heading">
+            <div class="ui-section-heading__content">
+              <h2 class="ui-section-heading__title">
+                <span class="ui-section-heading__icon">
+                  <i class="pi pi-lock"></i>
+                </span>
+                Privacy & Security
+              </h2>
+              <p class="ui-section-heading__description">
+                Manage your privacy settings and account security
+              </p>
+            </div>
           </div>
+
+          <app-privacy-controls-card
+            [privacyForm]="privacyForm"
+            [visibilityOptions]="visibilityOptions"
+            (exportData)="showDataExportDialog = true"
+          ></app-privacy-controls-card>
         </div>
 
-        <app-privacy-controls-card
-          [privacyForm]="privacyForm"
-          [visibilityOptions]="visibilityOptions"
-          (exportData)="showDataExportDialog = true"
-        ></app-privacy-controls-card>
-      </div>
-
-      <!-- Section 4: Preferences -->
-      <div id="preferences-settings" class="settings-section ui-stack-md">
-        <div class="ui-section-heading">
-          <div class="ui-section-heading__content">
-            <h2 class="ui-section-heading__title">
-              <span class="ui-section-heading__icon">
-                <i class="pi pi-sliders-h"></i>
-              </span>
-              Preferences
-            </h2>
-            <p class="ui-section-heading__description">
-              Customize your app experience and display options
-            </p>
+        <!-- Section 4: Preferences -->
+        <div id="preferences-settings" class="settings-section ui-stack-md">
+          <div class="ui-section-heading">
+            <div class="ui-section-heading__content">
+              <h2 class="ui-section-heading__title">
+                <span class="ui-section-heading__icon">
+                  <i class="pi pi-sliders-h"></i>
+                </span>
+                Preferences
+              </h2>
+              <p class="ui-section-heading__description">
+                Customize your app experience and display options
+              </p>
+            </div>
           </div>
+
+          <app-app-preferences-card
+            [preferencesForm]="preferencesForm"
+            [themeOptions]="themeOptions"
+            [languageOptions]="languageOptions"
+            (themeSelected)="selectTheme($event)"
+          ></app-app-preferences-card>
+
+          <app-experimental-features-card
+            [nextGenMetricsPreview]="nextGenMetricsPreview"
+            (nextGenMetricsPreviewChange)="setNextGenMetricsPreview($event)"
+          ></app-experimental-features-card>
+
+          <app-security-settings-card
+            [isTwoFactorEnabled]="is2FAEnabled()"
+            (changePassword)="showChangePasswordDialog = true"
+            (enableTwoFactor)="startSetup2FA()"
+            (disableTwoFactor)="showDisable2FADialog = true"
+            (viewSessions)="showSessionsDialog = true; loadSessions()"
+            (deleteAccount)="showDeleteAccountDialog = true"
+          ></app-security-settings-card>
         </div>
-
-        <app-app-preferences-card
-          [preferencesForm]="preferencesForm"
-          [themeOptions]="themeOptions"
-          [languageOptions]="languageOptions"
-          (themeSelected)="selectTheme($event)"
-        ></app-app-preferences-card>
-
-        <app-experimental-features-card
-          [nextGenMetricsPreview]="nextGenMetricsPreview"
-          (nextGenMetricsPreviewChange)="setNextGenMetricsPreview($event)"
-        ></app-experimental-features-card>
-
-        <app-security-settings-card
-          [isTwoFactorEnabled]="is2FAEnabled()"
-          (changePassword)="showChangePasswordDialog = true"
-          (enableTwoFactor)="startSetup2FA()"
-          (disableTwoFactor)="showDisable2FADialog = true"
-          (viewSessions)="showSessionsDialog = true; loadSessions()"
-          (deleteAccount)="showDeleteAccountDialog = true"
-        ></app-security-settings-card>
       </div>
     </div>
-  </div>
+  }
 </app-main-layout>
 
 <!-- All Dialogs (outside main layout for proper portal rendering) -->

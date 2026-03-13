@@ -67,7 +67,7 @@ function formatUtcDateOnly(date) {
   return date.toISOString().slice(0, 10);
 }
 
-async function computeReadinessDaysStale(
+export async function computeReadinessDaysStale(
   supabase,
   userId,
   date,
@@ -103,7 +103,7 @@ async function computeReadinessDaysStale(
   return Math.max(diffDays, 0);
 }
 
-async function computeTrainingDaysLogged(
+export async function computeTrainingDaysLogged(
   supabase,
   userId,
   date,

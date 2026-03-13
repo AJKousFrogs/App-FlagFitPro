@@ -126,4 +126,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

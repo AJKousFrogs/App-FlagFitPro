@@ -31,11 +31,16 @@ export class SettingsProfileInitService {
   async loadProfileData(): Promise<{
     profilePatch: SettingsProfilePatch | null;
     membershipPatch: SettingsMembershipPatch | null;
+    errorMessage: string | null;
   }> {
     try {
       const user = this.settingsDataService.getCurrentUser();
       if (!user) {
-        return { profilePatch: null, membershipPatch: null };
+        return {
+          profilePatch: null,
+          membershipPatch: null,
+          errorMessage: "Please sign in again to load your settings.",
+        };
       }
 
       let profilePatch: SettingsProfilePatch | null = null;
@@ -43,7 +48,16 @@ export class SettingsProfileInitService {
       const { profile, error } =
         await this.settingsDataService.fetchUserProfile(user.id);
 
-      if (!error && profile) {
+      if (error) {
+        return {
+          profilePatch: null,
+          membershipPatch: null,
+          errorMessage:
+            error.message || "We couldn't load your profile settings.",
+        };
+      }
+
+      if (profile) {
         const profileRecord = profile as Record<string, unknown>;
         this.logger.debug("[Settings] Loaded user profile:", {
           position: profileRecord["position"],
@@ -94,10 +108,15 @@ export class SettingsProfileInitService {
         };
       }
 
-      return { profilePatch, membershipPatch };
+      return { profilePatch, membershipPatch, errorMessage: null };
     } catch (error) {
       this.logger.warn("Could not load profile data:", toLogContext(error));
-      return { profilePatch: null, membershipPatch: null };
+      return {
+        profilePatch: null,
+        membershipPatch: null,
+        errorMessage:
+          "We couldn't load your settings right now. Please try again.",
+      };
     }
   }
 

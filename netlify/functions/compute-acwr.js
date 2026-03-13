@@ -4,7 +4,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // Computes ACWR using the stored procedure
 // Endpoint: /api/compute-acwr
 
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -132,4 +132,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

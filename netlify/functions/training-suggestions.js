@@ -1,7 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 // Netlify Function: Training Suggestions
 // Provides AI-powered training suggestions based on user history and performance
@@ -456,11 +456,12 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "Training-Suggestions",
     allowedMethods: ["GET", "POST"],
-rateLimitType: rateLimitType,
+rateLimitType,
     requireAuth: true,
     handler: handleRequest,
   });
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

@@ -12,19 +12,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
 
 function walkDir(dir, ext, files = [], opts = {}) {
-  if (!fs.existsSync(dir)) return files;
+  if (!fs.existsSync(dir)) {return files;}
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const e of entries) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (e.name.startsWith(".") || e.name === "node_modules") continue;
-      if (opts.skipDirs && opts.skipDirs.includes(e.name)) continue;
+      if (e.name.startsWith(".") || e.name === "node_modules") {continue;}
+      if (opts.skipDirs && opts.skipDirs.includes(e.name)) {continue;}
       walkDir(full, ext, files, opts);
     } else if (e.isFile()) {
       const match = Array.isArray(ext)
         ? ext.some((e2) => e.name.endsWith(e2))
         : e.name.endsWith(ext);
-      if (match) files.push(full);
+      if (match) {files.push(full);}
     }
   }
   return files;
@@ -62,9 +62,9 @@ function findRepeatedStringLiterals(files) {
       const lit = m[1].replace(/\s+/g, " ").trim();
       if (lit.length > 12 && !lit.includes("${") && !lit.startsWith("http")) {
         literalCounts.set(lit, (literalCounts.get(lit) || 0) + 1);
-        if (!literalFiles.has(lit)) literalFiles.set(lit, []);
+        if (!literalFiles.has(lit)) {literalFiles.set(lit, []);}
         const arr = literalFiles.get(lit);
-        if (!arr.includes(rel)) arr.push(rel);
+        if (!arr.includes(rel)) {arr.push(rel);}
       }
     }
   }
@@ -78,7 +78,7 @@ function findSimilarFunctionBlocks(files) {
   const blocks = new Map();
   const funcRegex = /(?:async\s+)?(?:function\s+)?(\w+)\s*\([^)]*\)\s*\{([\s\S]{1,500}?)\n\s*\}/g;
   for (const file of files) {
-    if (file.includes(".spec.") || file.includes(".test.")) continue;
+    if (file.includes(".spec.") || file.includes(".test.")) {continue;}
     const content = fs.readFileSync(file, "utf8");
     const rel = relPath(file);
     let m;
@@ -86,7 +86,7 @@ function findSimilarFunctionBlocks(files) {
       const normalized = normalizeForCompare(m[2]);
       if (normalized.length > 80) {
         const key = normalized.slice(0, 120);
-        if (!blocks.has(key)) blocks.set(key, []);
+        if (!blocks.has(key)) {blocks.set(key, []);}
         blocks.get(key).push({ file: rel, name: m[1] });
       }
     }
@@ -105,16 +105,16 @@ function findRepeatedRequireImport(files) {
       const m = line.match(/require\s*\(\s*['"]([^'"]+)['"]\s*\)/);
       if (m) {
         const pkg = m[1];
-        if (!reqs.has(pkg)) reqs.set(pkg, []);
-        if (!reqs.get(pkg).includes(rel)) reqs.get(pkg).push(rel);
+        if (!reqs.has(pkg)) {reqs.set(pkg, []);}
+        if (!reqs.get(pkg).includes(rel)) {reqs.get(pkg).push(rel);}
       }
     }
     for (const line of esImports) {
       const m = line.match(/from\s+['"]([^'"]+)['"]/);
       if (m) {
         const pkg = m[1];
-        if (!reqs.has(pkg)) reqs.set(pkg, []);
-        if (!reqs.get(pkg).includes(rel)) reqs.get(pkg).push(rel);
+        if (!reqs.has(pkg)) {reqs.set(pkg, []);}
+        if (!reqs.get(pkg).includes(rel)) {reqs.get(pkg).push(rel);}
       }
     }
   }
@@ -133,9 +133,9 @@ function main() {
     console.log("   ✓ None.\n");
   } else {
     repeatedLiterals.slice(0, 15).forEach(({ literal, count, files: fs }) => {
-      const preview = literal.length > 50 ? literal.slice(0, 47) + "..." : literal;
+      const preview = literal.length > 50 ? `${literal.slice(0, 47)  }...` : literal;
       console.log(`   ${count}x  "${preview}"`);
-      if (fs && fs.length <= 4) fs.forEach((f) => console.log(`         └ ${f}`));
+      if (fs && fs.length <= 4) {fs.forEach((f) => console.log(`         └ ${f}`));}
       console.log();
     });
   }
@@ -161,7 +161,7 @@ function main() {
   } else {
     repeatedImports.slice(0, 10).forEach(([pkg, arr]) => {
       console.log(`   ${arr.length}x  ${pkg}`);
-      if (arr.length <= 5) arr.forEach((f) => console.log(`         └ ${f}`));
+      if (arr.length <= 5) {arr.forEach((f) => console.log(`         └ ${f}`));}
       console.log();
     });
   }

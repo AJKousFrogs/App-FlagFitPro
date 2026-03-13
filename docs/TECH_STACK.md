@@ -20,13 +20,13 @@ Machine-readable summary: [tech-stack.json](./tech-stack.json)
 
 | Layer | Technology | Version |
 |-------|------------|---------|
-| Framework | Angular | 21.1.x |
+| Framework | Angular | 21.2.x |
 | UI Library | PrimeNG | 21.1.x |
 | Themes | @primeuix/themes | 2.0.x |
 | State | Angular Signals | Built-in |
 | Change Detection | Zoneless (optional) | - |
 | Styling | SCSS + CSS custom properties | - |
-| Package Manager | pnpm | 10.x (angular/) |
+| Package Manager | npm | 11.x |
 
 ---
 

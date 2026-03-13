@@ -1,7 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { getSupabaseClient } from "./utils/supabase-client.js";
+import { getSupabaseClient } from "./supabase-client.js";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -326,4 +326,5 @@ async function generatePlayerReport(
 }
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

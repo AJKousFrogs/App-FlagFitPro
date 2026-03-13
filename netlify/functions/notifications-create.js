@@ -3,12 +3,12 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // Netlify Function: Create Notification
 // Creates a notification in the database (for push notifications to sync with in-app)
 
-import { db } from "./utils/supabase-client.js";
+import { db } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
-const VALID_PRIORITIES = new Set(["low", "normal", "high", "urgent"]);
+const VALID_PRIORITIES = new Set(["low", "normal", "high"]);
 const MAX_MESSAGE_LENGTH = 2000;
 
 function normalizePriority(priority) {
@@ -24,6 +24,23 @@ function normalizePriority(priority) {
     return "urgent";
   }
   return normalized;
+}
+
+function isSupportedPriority(priority) {
+  if (priority === undefined) {
+    return true;
+  }
+
+  if (typeof priority !== "string") {
+    return false;
+  }
+
+  const normalized = priority.trim().toLowerCase();
+  return (
+    VALID_PRIORITIES.has(normalized) ||
+    normalized === "medium" ||
+    normalized === "critical"
+  );
 }
 
 const handler = async (event, context) => {
@@ -78,12 +95,9 @@ const handler = async (event, context) => {
           requestId,
         );
       }
-      if (
-        priority !== undefined &&
-        (!normalizedPriority || !VALID_PRIORITIES.has(normalizedPriority))
-      ) {
+      if (!isSupportedPriority(priority)) {
         return createErrorResponse(
-          `priority must be one of: ${Array.from(VALID_PRIORITIES).join(", ")}`,
+          "priority must be one of: low, normal, high, medium, critical",
           422,
           "validation_error",
           requestId,
@@ -139,4 +153,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

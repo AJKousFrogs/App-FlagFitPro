@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
@@ -279,7 +279,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "coach-activity",
     allowedMethods: ["GET", "POST"],
-rateLimitType: rateLimitType,
+rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       const path = event.path
@@ -367,4 +367,5 @@ rateLimitType: rateLimitType,
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

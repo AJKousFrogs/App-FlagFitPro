@@ -601,4 +601,5 @@ export { POSITION_TO_MODIFIER_KEY };
 export { getProgramIdForPosition };
 export { normalizePositionForModifiers };
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

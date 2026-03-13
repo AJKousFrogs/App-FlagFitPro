@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { validateQueryParams } from "./validation.js";
 import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -762,11 +762,11 @@ const handler = async (event, context) => {
         }
 
         const sanitizedQuery = validation.sanitized || {};
-        const hasWeeks = Object.prototype.hasOwnProperty.call(
+        const hasWeeks = Object.hasOwn(
           sanitizedQuery,
           "weeks",
         );
-        const hasPeriod = Object.prototype.hasOwnProperty.call(
+        const hasPeriod = Object.hasOwn(
           sanitizedQuery,
           "period",
         );
@@ -857,4 +857,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

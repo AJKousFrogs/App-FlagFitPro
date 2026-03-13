@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
@@ -242,7 +242,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "performance-data",
     allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const { httpMethod, path, body, queryStringParameters } = event;
@@ -2079,4 +2079,5 @@ function calculateWellnessTrends(wellness) {
 }
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

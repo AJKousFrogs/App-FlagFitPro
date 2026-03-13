@@ -1,7 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 // Netlify Function: AI Human Review Workflow API
 // Handles flagging, reviewing, and managing AI decisions that require human oversight
@@ -770,4 +770,5 @@ const handler = async (event, context) => {
 export { shouldFlagForReview, createReviewRequest };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

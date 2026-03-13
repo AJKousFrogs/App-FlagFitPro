@@ -3,7 +3,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // Netlify Function: File Upload API
 // Handles image and video uploads to Supabase Storage
 
-import { checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
+import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -265,4 +265,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

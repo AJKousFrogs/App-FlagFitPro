@@ -5,7 +5,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 //
 // REFACTORED: Uses base-handler for standardized authentication and error handling
 
-import { db } from "./utils/supabase-client.js";
+import { db } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -72,4 +72,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

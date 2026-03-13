@@ -1,7 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 // Netlify Function: GDPR Data Export API
 // Handles user data export requests for GDPR compliance
@@ -491,4 +491,5 @@ const handler = async (event, context) => {
 export { generateDataExport, generateDataInventory };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

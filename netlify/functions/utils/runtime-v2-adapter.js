@@ -61,7 +61,7 @@ function normalizeLambdaBody(result) {
   if (typeof result?.body === "string") {
     return result.body;
   }
-  if (result?.body == null) {
+  if (result?.body === null || result?.body === undefined) {
     return "";
   }
   return JSON.stringify(result.body);
@@ -75,8 +75,8 @@ function lambdaResponseToWebResponse(result) {
   const headers = new Headers(result?.headers || {});
   const multiValueHeaders = result?.multiValueHeaders || {};
   for (const [key, values] of Object.entries(multiValueHeaders)) {
-    if (!Array.isArray(values)) continue;
-    for (const value of values) headers.append(key, value);
+    if (!Array.isArray(values)) {continue;}
+    for (const value of values) {headers.append(key, value);}
   }
 
   const status = Number(result?.statusCode) || 200;

@@ -3,7 +3,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // Netlify Function: Notification Preferences
 // Manages user notification preferences (mute categories, push/in-app settings)
 
-import { db } from "./utils/supabase-client.js";
+import { db } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -67,7 +67,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "notifications-preferences",
     allowedMethods: ["GET", "POST", "PUT"],
-rateLimitType: rateLimitType,
+rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       if (event.httpMethod === "GET") {
@@ -117,4 +117,5 @@ rateLimitType: rateLimitType,
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

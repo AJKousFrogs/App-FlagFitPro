@@ -229,4 +229,5 @@ Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
   });
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

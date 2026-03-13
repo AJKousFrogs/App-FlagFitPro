@@ -4,7 +4,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // Searches the evidence-based knowledge database
 // Updated to work with actual knowledge_base_entries schema
 
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -123,7 +123,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "knowledge-search",
     allowedMethods: ["GET", "POST"],
-rateLimitType: rateLimitType,
+rateLimitType,
     requireAuth: false, // Knowledge search is public
     handler: async (event, _context, { requestId }) => {
       const supabase = getSupabase();
@@ -404,4 +404,5 @@ rateLimitType: rateLimitType,
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

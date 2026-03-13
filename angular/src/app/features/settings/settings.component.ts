@@ -5,6 +5,7 @@ import {
     ElementRef,
     inject,
     OnInit,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -28,7 +29,9 @@ import {
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { ButtonComponent } from "../../shared/components/ui-components";
 import { calculateAge } from "../../shared/utils/date.utils";
 import { SettingsDataService } from "./services/settings-data.service";
@@ -74,8 +77,10 @@ import {
     ReactiveFormsModule,
     FormsModule,
     ButtonComponent,
+    AppLoadingComponent,
     MainLayoutComponent,
     PageHeaderComponent,
+    PageErrorStateComponent,
     SettingsAccountSectionComponent,
     NotificationPreferencesCardComponent,
     PrivacyControlsCardComponent,
@@ -142,6 +147,10 @@ export class SettingsComponent implements OnInit {
   loadingSessions = this.sessionManagementService.loadingSessions;
 
   // Loading states
+  readonly isPageLoading = signal(true);
+  readonly pageErrorMessage = signal<string | null>(null);
+  readonly settingsLoadErrorFallback =
+    "We couldn't load your settings right now. Please try again.";
   isSavingSettings = this.saveSettingsService.isSavingSettings;
   isChangingPassword = this.securityService.isChangingPassword;
   isDeletingAccount = this.accountDeletionService.isDeletingAccount;
@@ -248,9 +257,7 @@ export class SettingsComponent implements OnInit {
 
     this.profileForm = this.formFactory.createProfileForm(user);
 
-    // Load existing profile data and available teams
-    this.loadProfileData();
-    void this.teamRequestService.loadAvailableTeams();
+    void this.loadInitialData();
 
     this.notificationForm = this.formFactory.createNotificationForm();
     this.privacyForm = this.formFactory.createPrivacyForm();
@@ -312,9 +319,25 @@ export class SettingsComponent implements OnInit {
   /**
    * Load existing profile data from Supabase and TeamMembershipService
    */
-  private async loadProfileData(): Promise<void> {
-    const { profilePatch, membershipPatch } =
-      await this.profileInitService.loadProfileData();
+  private async loadInitialData(): Promise<void> {
+    this.isPageLoading.set(true);
+    this.pageErrorMessage.set(null);
+
+    const [{ profilePatch, membershipPatch, errorMessage }, teamsErrorMessage] =
+      await Promise.all([
+        this.profileInitService.loadProfileData(),
+        this.teamRequestService.loadAvailableTeams(),
+      ]);
+
+    if (errorMessage || teamsErrorMessage) {
+      this.pageErrorMessage.set(
+        errorMessage ||
+          teamsErrorMessage ||
+          this.settingsLoadErrorFallback,
+      );
+      this.isPageLoading.set(false);
+      return;
+    }
 
     if (profilePatch) {
       this.profileForm.patchValue({
@@ -340,6 +363,12 @@ export class SettingsComponent implements OnInit {
         jerseyNumber: this.profileForm.get("jerseyNumber")?.value,
       });
     }
+
+    this.isPageLoading.set(false);
+  }
+
+  retryLoad(): void {
+    void this.loadInitialData();
   }
 
   async saveSettings(): Promise<void> {

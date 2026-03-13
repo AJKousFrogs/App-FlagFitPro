@@ -7,7 +7,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // REFACTORED: Uses base-handler, db-query-helper, and response-helper utilities
 // Reduced from 94 lines to 45 lines (52% reduction)
 
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -160,4 +160,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

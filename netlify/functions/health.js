@@ -6,7 +6,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 //
 // This endpoint does NOT require authentication and is rate-limited separately
 
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { lookup } from "node:dns/promises";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -145,4 +145,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

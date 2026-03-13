@@ -7,7 +7,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 /**
  * Get comprehensive user context
@@ -15,26 +15,25 @@ import { supabaseAdmin } from "./utils/supabase-client.js";
  * Returns: body metrics, injuries, role, last 7/28 day loads, active program, team role
  */
 async function getUserContext(userId) {
-  try {
-    // Get user basic info (note: role is in team_members, not users)
-    const { data: userData, error: userError } = await supabaseAdmin
-      .from("users")
-      .select(
-        "id, email, full_name, position, height_cm, weight_kg, updated_at",
-      )
-      .eq("id", userId)
-      .single();
+  // Get user basic info (note: role is in team_members, not users)
+  const { data: userData, error: userError } = await supabaseAdmin
+    .from("users")
+    .select(
+      "id, email, full_name, position, height_cm, weight_kg, updated_at",
+    )
+    .eq("id", userId)
+    .single();
 
-    if (userError) {
-      if (userError.code === "PGRST116") {
-        const notFoundError = new Error("User not found");
-        notFoundError.code = "not_found";
-        notFoundError.statusCode = 404;
-        throw notFoundError;
-      }
-      console.error("Error fetching user data:", userError);
-      throw userError;
+  if (userError) {
+    if (userError.code === "PGRST116") {
+      const notFoundError = new Error("User not found");
+      notFoundError.code = "not_found";
+      notFoundError.statusCode = 404;
+      throw notFoundError;
     }
+    console.error("Error fetching user data:", userError);
+    throw userError;
+  }
 
     // Get injuries (active and recent)
     const { data: injuries, error: injuriesError } = await supabaseAdmin
@@ -179,52 +178,49 @@ async function getUserContext(userId) {
     // For now, return null
     const activeProgram = null;
 
-    return {
-      userId: userData.id,
-      role: teamRole || "player",
-      position: userData.position || null,
-      teamRole,
-      bodyMetrics: {
-        height: userData.height_cm || null,
-        weight: userData.weight_kg || null,
-        lastUpdated: userData.updated_at || null,
-      },
-      injuries: (injuries || []).map((injury) => ({
-        id: injury.id,
-        type: injury.type,
-        severity: injury.severity,
-        occurredAt: injury.occurred_at,
-        status: injury.status,
-        restrictions: injury.restrictions || [],
+  return {
+    userId: userData.id,
+    role: teamRole || "player",
+    position: userData.position || null,
+    teamRole,
+    bodyMetrics: {
+      height: userData.height_cm || null,
+      weight: userData.weight_kg || null,
+      lastUpdated: userData.updated_at || null,
+    },
+    injuries: (injuries || []).map((injury) => ({
+      id: injury.id,
+      type: injury.type,
+      severity: injury.severity,
+      occurredAt: injury.occurred_at,
+      status: injury.status,
+      restrictions: injury.restrictions || [],
+    })),
+    loadData: {
+      acute: acuteLoad,
+      chronic: chronicLoad,
+      acwr,
+      last7Days,
+    },
+    wellness: latestWellness
+      ? {
+          lastCheckin: latestWellness.created_at,
+          readiness: latestWellness.readiness,
+          sleep: latestWellness.sleep,
+          energy: latestWellness.energy,
+          mood: latestWellness.mood,
+          soreness: latestWellness.soreness,
+        }
+      : null,
+    activeProgram,
+    supplements: {
+      recentLogs: (supplements || []).map((log) => ({
+        supplement: log.supplement_name,
+        loggedAt: log.created_at || log.date,
+        dose: log.dosage, // User logged, AI never recommends
       })),
-      loadData: {
-        acute: acuteLoad,
-        chronic: chronicLoad,
-        acwr,
-        last7Days,
-      },
-      wellness: latestWellness
-        ? {
-            lastCheckin: latestWellness.created_at,
-            readiness: latestWellness.readiness,
-            sleep: latestWellness.sleep,
-            energy: latestWellness.energy,
-            mood: latestWellness.mood,
-            soreness: latestWellness.soreness,
-          }
-        : null,
-      activeProgram,
-      supplements: {
-        recentLogs: (supplements || []).map((log) => ({
-          supplement: log.supplement_name,
-          loggedAt: log.created_at || log.date,
-          dose: log.dosage, // User logged, AI never recommends
-        })),
-      },
-    };
-  } catch (error) {
-    throw error;
-  }
+    },
+  };
 }
 
 const handler = async (event, context) => {
@@ -254,4 +250,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

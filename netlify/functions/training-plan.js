@@ -4,7 +4,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // Generates evidence-based training plans using real data up to and including today
 // Respects periodization phases, ACWR, and domestic vs international schedules
 
-import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
+import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -924,4 +924,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { supabaseAdmin, checkEnvVars } from "./utils/supabase-client.js";
+import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { classifyRiskLevel, classifyIntent as _classifyIntent, generateSafeResponse, filterContent, filterSourcesByEvidence, RISK_LEVELS, INTENT_TYPES, classifyWithConfidence, applyYouthRestrictions as _applyYouthRestrictions, generateBlockedYouthResponse, AGE_GROUPS as _AGE_GROUPS, YOUTH_RESTRICTED_TOPICS as _YOUTH_RESTRICTED_TOPICS } from "./utils/ai-safety-classifier.js";
@@ -3808,4 +3808,5 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);

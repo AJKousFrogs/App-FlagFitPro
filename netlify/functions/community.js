@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { checkEnvVars, supabaseAdmin } from "./utils/supabase-client.js";
+import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -832,7 +832,7 @@ const handler = async (event, context) => {
     return baseHandler(event, context, {
       functionName: "community",
       allowedMethods: ["GET", "POST", "DELETE"],
-      rateLimitType: rateLimitType,
+      rateLimitType,
       requireAuth: true,
       handler: async (event, _context, { requestId }) => {
         return handleCommunityRequest(event, requestId);
@@ -843,7 +843,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "community",
     allowedMethods: ["GET", "POST", "DELETE"],
-    rateLimitType: rateLimitType,
+    rateLimitType,
     requireAuth: false, // Optional auth for read-only access
     handler: async (event, _context, { requestId }) => {
       return handleCommunityRequest(event, requestId);
@@ -1095,4 +1095,5 @@ async function handleCommunityRequest(event, requestId) {
 }
 
 export const testHandler = handler;
+export { handler };
 export default createRuntimeV2Handler(handler);
