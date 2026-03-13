@@ -104,7 +104,7 @@
     "@vitest/ui": "^4.0.18",
     "angular-eslint": "^21.2.0",
     "eslint": "^9.39.2",
-    "eslint-plugin-storybook": "^10.2.8",
+    "eslint-plugin-storybook": "^10.2.18",
     "globals": "^17.3.0",
     "ignore-loader": "^0.1.2",
     "jsdom": "^27.4.0",
