@@ -283,6 +283,59 @@
   }
 }
 
+.rtp-detail-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rtp-detail-summary,
+.rtp-checkin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.rtp-detail-card,
+.rtp-stage-card,
+.rtp-checkin-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+}
+
+.rtp-stage-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rtp-detail-label {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--ds-text-tertiary);
+}
+
+.rtp-detail-value {
+  font-size: var(--ds-font-size-md);
+  color: var(--ds-text-primary);
+}
+
+.rtp-stage-card,
+.rtp-checkin-detail {
+  ul,
+  p {
+    margin: 0;
+  }
+
+  ul {
+    padding-left: var(--space-4);
+  }
+}
+
 .estimated-return {
   margin: var(--space-2) 0;
   font-size: var(--ds-font-size-md);
@@ -468,6 +521,11 @@
   }
 
   .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rtp-detail-summary,
+  .rtp-checkin-grid {
     grid-template-columns: 1fr;
   }
 }

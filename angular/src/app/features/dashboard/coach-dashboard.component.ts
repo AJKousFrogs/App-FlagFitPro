@@ -14,7 +14,9 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { forkJoin } from "rxjs";
+import { firstValueFrom } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
@@ -128,6 +130,7 @@ export class CoachDashboardComponent {
   // Expose constants for template use
   readonly UI_LIMITS = UI_LIMITS;
   private readonly router = inject(Router);
+  private readonly api = inject(ApiService);
   private readonly authService = inject(AuthService);
   private readonly headerService = inject(HeaderService);
   private readonly teamStatsService = inject(TeamStatisticsService);
@@ -581,13 +584,15 @@ export class CoachDashboardComponent {
   }
 
   viewPlayerStats(playerId: string): void {
-    this.router.navigate(["/analytics"], { queryParams: { player: playerId } });
+    this.router.navigate(["/coach/development"], {
+      queryParams: { player: playerId, source: "dashboard-stats" },
+    });
   }
 
   adjustPlayerLoad(playerId: string): void {
     this.toastService.info(TOAST.INFO.OPENING_LOAD_ADJUSTMENT);
-    this.router.navigate(["/training"], {
-      queryParams: { player: playerId, action: "adjust-load" },
+    this.router.navigate(["/coach/development"], {
+      queryParams: { player: playerId, source: "dashboard" },
     });
   }
 
@@ -603,9 +608,7 @@ export class CoachDashboardComponent {
    */
   requestDataSharing(playerId: string): void {
     this.toastService.info(TOAST.INFO.SENDING_DATA_REQUEST);
-    this.router.navigate(["/settings/privacy"], {
-      queryParams: { player: playerId, action: "request" },
-    });
+    this.openRequestAccessDialog(playerId);
   }
 
   navigateToAnalytics(): void {
@@ -630,17 +633,12 @@ export class CoachDashboardComponent {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateStr = tomorrow.toISOString().split("T")[0];
     this.router.navigate(["/calendar"], {
-      queryParams: {
-        date: dateStr,
-        action: "plan",
-      },
+      queryParams: { date: dateStr },
     });
   }
 
   scheduleGame(): void {
-    this.router.navigate(["/game-tracker"], {
-      queryParams: { action: "schedule" },
-    });
+    this.router.navigate(["/game-tracker"]);
   }
 
   // Dialog methods
@@ -704,36 +702,62 @@ export class CoachDashboardComponent {
     this.teamMessageContent = value;
   }
 
-  sendTeamMessage(): void {
+  async sendTeamMessage(): Promise<void> {
     if (!this.teamMessageContent.trim()) {
       this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
     }
 
-    this.toastService.success(TOAST.SUCCESS.MESSAGE_SENT_TO_TEAM);
-    this.showTeamMessageDialog = false;
-    // In real implementation, would call API to send message
+    try {
+      await firstValueFrom(
+        this.api.post(API_ENDPOINTS.coach.teamMessage, {
+          message: this.teamMessageContent.trim(),
+        }),
+      );
+
+      this.toastService.success(TOAST.SUCCESS.MESSAGE_SENT_TO_TEAM);
+      this.showTeamMessageDialog = false;
+      this.teamMessageContent = "";
+    } catch (error) {
+      this.logger.error("[CoachDashboard] Failed to send team message", error);
+      this.toastService.error(TOAST.ERROR.MESSAGE_SEND_FAILED);
+    }
   }
 
   requestDataAccess(playerId: string, event: Event): void {
     event.stopPropagation(); // Prevent row click
+    this.openRequestAccessDialog(playerId);
+  }
+
+  private openRequestAccessDialog(playerId: string): void {
     const player = this.players().find((p) => p.playerId === playerId);
     this.requestAccessPlayerId = playerId;
     this.requestAccessMessage = `Hi ${player?.playerName || "there"}, I'd like to request access to your wellness and training data to better support your performance. This will help me provide personalized training recommendations.`;
     this.showRequestAccessDialog = true;
   }
 
-  sendAccessRequest(): void {
+  async sendAccessRequest(): Promise<void> {
     if (!this.requestAccessPlayerId || !this.requestAccessMessage.trim()) {
       this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
     }
 
-    // In real implementation, would call API to send access request
-    this.toastService.success(TOAST.SUCCESS.ACCESS_REQUEST_SENT);
-    this.showRequestAccessDialog = false;
-    this.requestAccessPlayerId = null;
-    this.requestAccessMessage = "";
+    try {
+      await firstValueFrom(
+        this.api.post(API_ENDPOINTS.coach.accessRequest, {
+          playerId: this.requestAccessPlayerId,
+          message: this.requestAccessMessage.trim(),
+        }),
+      );
+
+      this.toastService.success(TOAST.SUCCESS.ACCESS_REQUEST_SENT);
+      this.showRequestAccessDialog = false;
+      this.requestAccessPlayerId = null;
+      this.requestAccessMessage = "";
+    } catch (error) {
+      this.logger.error("[CoachDashboard] Failed to send access request", error);
+      this.toastService.error(TOAST.ERROR.MESSAGE_SEND_FAILED);
+    }
   }
 
   cancelAccessRequest(): void {

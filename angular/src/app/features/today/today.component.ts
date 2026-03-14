@@ -35,7 +35,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
-import { Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "../../core/services/toast.service";
 
 import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
@@ -203,6 +203,7 @@ export class TodayComponent {
   private readonly headerService = inject(HeaderService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
   private readonly dataSourceService = inject(DataSourceService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(ApiService);
@@ -567,6 +568,8 @@ export class TodayComponent {
     );
   });
 
+  private readonly pendingFocus = signal<string | null>(null);
+
   // ============================================================================
   // CONSTRUCTOR
   // ============================================================================
@@ -609,6 +612,33 @@ export class TodayComponent {
         this.celebrationShownForSession = true;
         this.showCelebration.set(true);
       }
+    });
+
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.pendingFocus.set(params.get("focus"));
+      });
+
+    effect(() => {
+      const focus = this.pendingFocus();
+      if (!focus || this.isLoading() || this.isGeneratingProtocol()) {
+        return;
+      }
+
+      queueMicrotask(() => {
+        this.scrollToFirstBlock();
+        this.toastService.info(
+          `Opening today's plan for ${this.formatFocusLabel(focus)}`,
+          "Workout Focus",
+        );
+        void this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { focus: null },
+          queryParamsHandling: "merge",
+          replaceUrl: true,
+        });
+      });
     });
   }
 
@@ -1011,8 +1041,8 @@ export class TodayComponent {
   }
 
   viewTomorrowProtocol(): void {
-    // Navigate to training schedule with tomorrow's date highlighted
-    this.router.navigate(["/training"], {
+    // Navigate directly to the schedule view, which consumes the date param.
+    this.router.navigate(["/training/schedule"], {
       queryParams: { date: this.tomorrowDate() },
     });
   }
@@ -1189,7 +1219,23 @@ export class TodayComponent {
   }
 
   private showCoachNoteDialog(): void {
-    this.toastService.info("Coach note view coming soon", "Coach Note");
+    const noteContent = this.protocolJson()?.coach_note?.content?.trim();
+    const coachName = this.protocolJson()?.modified_by_coach_name || "Your coach";
+
+    if (!noteContent) {
+      this.toastService.info("No coach note is attached to today's plan.", "Coach Note");
+      return;
+    }
+
+    this.toastService.info(noteContent, `Coach Note from ${coachName}`, 10000);
+  }
+
+  private formatFocusLabel(focus: string): string {
+    return focus
+      .split("-")
+      .filter(Boolean)
+      .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+      .join(" ");
   }
 
   // ============================================================================

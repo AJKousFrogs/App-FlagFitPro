@@ -331,12 +331,28 @@ const ROUTES = [
         [blockScroll]="true"
         [draggable]="false"
         [breakpoints]="{ '1200px': '94vw', '640px': '96vw' }"
-        [ariaLabel]="isEditing() ? 'Edit play' : 'Create new play'"
+        [ariaLabel]="
+          isViewing()
+            ? 'View play'
+            : isEditing()
+              ? 'Edit play'
+              : 'Create new play'
+        "
       >
         <app-dialog-header
           icon="book"
-          [title]="isEditing() ? 'Edit Play' : 'Create New Play'"
-          subtitle="Define the formation, assignments, and coaching notes for this play."
+          [title]="
+            isViewing()
+              ? 'Play Details'
+              : isEditing()
+                ? 'Edit Play'
+                : 'Create New Play'
+          "
+          [subtitle]="
+            isViewing()
+              ? 'Review the formation, assignments, and coaching notes for this play.'
+              : 'Define the formation, assignments, and coaching notes for this play.'
+          "
           (close)="showPlayDialog = false"
         />
         <div class="play-form">
@@ -362,28 +378,46 @@ const ROUTES = [
                     variant="secondary"
                     size="sm"
                     iconLeft="pi-arrows-alt"
+                    [disabled]="isViewing()"
                     >Select</app-button
                   >
-                  <app-button variant="secondary" size="sm" iconLeft="pi-pencil"
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    iconLeft="pi-pencil"
+                    [disabled]="isViewing()"
                     >Draw</app-button
                   >
                   <app-button
                     variant="secondary"
                     size="sm"
                     iconLeft="pi-map-marker"
+                    [disabled]="isViewing()"
                     >Add player</app-button
                   >
-                  <app-button variant="text" size="sm" iconLeft="pi-trash"
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-trash"
+                    [disabled]="isViewing()"
                     >Delete</app-button
                   >
-                  <app-button variant="text" size="sm" iconLeft="pi-undo"
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-undo"
+                    [disabled]="isViewing()"
                     >Undo</app-button
                   >
                 </div>
                 <div class="route-buttons">
                   <span class="tool-label">Routes:</span>
                   @for (route of routeOptions; track route.value) {
-                    <app-button variant="text" size="sm"></app-button>
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      [disabled]="isViewing()"
+                    ></app-button>
                   }
                 </div>
               </div>
@@ -399,6 +433,7 @@ const ROUTES = [
                   type="text"
                   pInputText
                   [value]="playForm.name"
+                  [readonly]="isViewing()"
                   (input)="onPlayNameChange(getInputValue($event))"
                   placeholder="e.g., Mesh Right"
                   class="w-full"
@@ -415,6 +450,7 @@ const ROUTES = [
                   optionValue="value"
                   placeholder="Select formation"
                   class="w-full"
+                  [disabled]="isViewing()"
                 ></p-select>
               </div>
 
@@ -428,6 +464,7 @@ const ROUTES = [
                   optionValue="value"
                   placeholder="Select situation"
                   class="w-full"
+                  [disabled]="isViewing()"
                 ></p-select>
               </div>
 
@@ -441,6 +478,7 @@ const ROUTES = [
                       value="offense"
                       id="typeOff"
                       [checked]="playForm.type === 'offense'"
+                      [disabled]="isViewing()"
                       (change)="onPlayTypeChange('offense')"
                     />
                     <label for="typeOff">Offense</label>
@@ -452,6 +490,7 @@ const ROUTES = [
                       value="defense"
                       id="typeDef"
                       [checked]="playForm.type === 'defense'"
+                      [disabled]="isViewing()"
                       (change)="onPlayTypeChange('defense')"
                     />
                     <label for="typeDef">Defense</label>
@@ -483,6 +522,7 @@ const ROUTES = [
                     <textarea
                       pTextarea
                       [value]="assignment.instructions[0]"
+                      [readonly]="isViewing()"
                       (input)="onAssignmentInstructionChange(i, getInputValue($event))"
                       placeholder="Instructions for this position..."
                       rows="2"
@@ -495,6 +535,7 @@ const ROUTES = [
               <textarea
                 pTextarea
                 [value]="playForm.coachNotes"
+                [readonly]="isViewing()"
                 (input)="onPlayCoachNotesChange(getInputValue($event))"
                 placeholder="When to call this play, key coaching points..."
                 rows="4"
@@ -503,15 +544,26 @@ const ROUTES = [
           </div>
         </div>
 
-        <app-dialog-footer
-          dialogFooter
-          cancelLabel="Cancel"
-          primaryLabel="Save Play"
-          primaryIcon="check"
-          [disabled]="!playForm.name"
-          (cancel)="showPlayDialog = false"
-          (primary)="savePlay()"
-        />
+        @if (isViewing()) {
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Close"
+            primaryLabel="Edit Play"
+            primaryIcon="pencil"
+            (cancel)="showPlayDialog = false"
+            (primary)="editViewedPlay()"
+          />
+        } @else {
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Save Play"
+            primaryIcon="check"
+            [disabled]="!playForm.name"
+            (cancel)="showPlayDialog = false"
+            (primary)="savePlay()"
+          />
+        }
       </app-dialog>
 
       <!-- Stats Dialog -->
@@ -612,6 +664,7 @@ export class PlaybookManagerComponent implements OnInit {
   readonly selectedPlay = signal<Play | null>(null);
   readonly isLoading = signal(true);
   readonly isEditing = signal(false);
+  readonly isViewing = signal(false);
 
   // Filter state
   searchQuery = "";
@@ -797,6 +850,7 @@ export class PlaybookManagerComponent implements OnInit {
   // Dialog methods
   openCreateDialog(): void {
     this.isEditing.set(false);
+    this.isViewing.set(false);
     this.playForm = this.getEmptyPlayForm();
     this.showPlayDialog = true;
   }
@@ -805,6 +859,8 @@ export class PlaybookManagerComponent implements OnInit {
 
   editPlay(play: Play): void {
     this.isEditing.set(true);
+    this.isViewing.set(false);
+    this.selectedPlay.set(play);
     this.playForm = {
       id: play.id,
       name: play.name,
@@ -828,11 +884,35 @@ export class PlaybookManagerComponent implements OnInit {
       "Play Saved",
     );
     this.showPlayDialog = false;
+    this.isViewing.set(false);
     // Would submit to API
   }
 
   viewPlay(play: Play): void {
-    this.toastService.info(`Opening ${play.name} in full view`, "View Play");
+    this.selectedPlay.set(play);
+    this.isEditing.set(false);
+    this.isViewing.set(true);
+    this.playForm = {
+      id: play.id,
+      name: play.name,
+      formation: play.formation,
+      situation: play.situation,
+      type: play.type,
+      assignments: play.assignments.map((a) => ({
+        ...a,
+        instructions: [...a.instructions],
+      })),
+      coachNotes: play.coachNotes,
+    };
+    this.showPlayDialog = true;
+  }
+
+  editViewedPlay(): void {
+    const play = this.selectedPlay();
+    if (!play) {
+      return;
+    }
+    this.editPlay(play);
   }
 
   viewStats(play: Play): void {

@@ -20,7 +20,7 @@ import {
   ChangeDetectionStrategy,
   DestroyRef,
 } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import {
   TeamNotificationService,
   CoachActivityItem,
@@ -29,7 +29,6 @@ import {
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
-import { TIMEOUTS } from "../../core/constants/app.constants";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
@@ -41,6 +40,8 @@ import { ScrollPanel } from "primeng/scrollpanel";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
 import { getInitials } from "../../shared/utils/format.utils";
+
+const ACTIVITY_PAGE_SIZE = 20;
 
 @Component({
   selector: "app-coach-activity-feed",
@@ -228,6 +229,7 @@ export class CoachActivityFeedComponent implements OnDestroy {
   private readonly notificationService = inject(TeamNotificationService);
   private readonly logger = inject(LoggerService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
   // Inputs - Angular 21 signal inputs
   readonly compact = input(false);
@@ -285,7 +287,10 @@ export class CoachActivityFeedComponent implements OnDestroy {
   // ============================================================================
 
   async loadActivities(): Promise<void> {
-    await this.notificationService.loadActivityFeed();
+    const activities = await this.notificationService.loadActivityFeed({
+      limit: this.limit(),
+    });
+    this._hasMore.set(activities.length >= this.limit());
   }
 
   async refresh(): Promise<void> {
@@ -295,12 +300,12 @@ export class CoachActivityFeedComponent implements OnDestroy {
   async loadMore(): Promise<void> {
     this._loadingMore.set(true);
     try {
-      // Would implement pagination
-      // For now, just simulate
-      await new Promise((resolve) =>
-        setTimeout(resolve, TIMEOUTS.UI_TRANSITION_DELAY),
-      );
-      this._hasMore.set(false);
+      const nextBatch = await this.notificationService.loadActivityFeed({
+        limit: ACTIVITY_PAGE_SIZE,
+        offset: this.activities().length,
+        append: true,
+      });
+      this._hasMore.set(nextBatch.length >= ACTIVITY_PAGE_SIZE);
     } finally {
       this._loadingMore.set(false);
     }
@@ -315,14 +320,42 @@ export class CoachActivityFeedComponent implements OnDestroy {
   }
 
   async onActivityClick(activity: CoachActivityItem): Promise<void> {
-    // Mark as read
     if (!activity.is_read) {
       await this.notificationService.markActivityRead(activity.id);
     }
 
-    // Navigate based on activity type
-    // Would implement navigation to relevant page
-    this.logger.info("Activity clicked:", toLogContext(activity));
+    const playerId = activity.player_id || activity.player?.id || null;
+
+    switch (activity.activity_type) {
+      case "stats_uploaded":
+      case "wellness_logged":
+        if (playerId) {
+          await this.router.navigate(["/roster"], {
+            queryParams: { player: playerId },
+          });
+          return;
+        }
+        break;
+      case "training_completed":
+      case "achievement_earned":
+        if (playerId) {
+          await this.router.navigate(["/coach/development"], {
+            queryParams: { player: playerId, source: "activity" },
+          });
+          return;
+        }
+        break;
+      case "injury_reported":
+        await this.router.navigate(["/coach/injuries"]);
+        return;
+      case "message_sent":
+        await this.router.navigate(["/team-chat"]);
+        return;
+      default:
+        break;
+    }
+
+    this.logger.info("Activity clicked without route mapping:", toLogContext(activity));
   }
 
   // ============================================================================

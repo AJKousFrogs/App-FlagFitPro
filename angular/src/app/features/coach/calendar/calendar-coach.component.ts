@@ -16,6 +16,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { Router } from "@angular/router";
 import { ToastService } from "../../../core/services/toast.service";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { DatePicker } from "primeng/datepicker";
@@ -351,6 +352,12 @@ const RECURRING_OPTIONS = [
                 }
 
                 <div class="event-actions">
+                  <app-button
+                    variant="secondary"
+                    size="sm"
+                    (clicked)="viewEvent(event)"
+                    >View Details</app-button
+                  >
                   <app-button
                     variant="secondary"
                     size="sm"
@@ -692,6 +699,114 @@ const RECURRING_OPTIONS = [
           </div>
         }
       </app-dialog>
+
+      <!-- Event Details Dialog -->
+      <app-dialog
+        [(visible)]="showEventDetailDialog"
+        [modal]="true"
+        styleClass="coach-calendar-event-detail-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        [ariaLabel]="'Event details for ' + (selectedEvent()?.title || 'event')"
+      >
+        <app-dialog-header
+          icon="calendar"
+          [title]="selectedEvent()?.title || 'Event Details'"
+          subtitle="Review event logistics, RSVP summary, and next actions."
+          (close)="showEventDetailDialog = false"
+        />
+        @if (selectedEvent()) {
+          <div class="event-detail-content">
+            <div class="event-detail-grid">
+              <div class="event-detail-row">
+                <span class="event-detail-label">Type</span>
+                <span class="event-detail-value">{{
+                  selectedEvent()?.type | titlecase
+                }}</span>
+              </div>
+              <div class="event-detail-row">
+                <span class="event-detail-label">Date</span>
+                <span class="event-detail-value">{{ selectedEvent()?.date }}</span>
+              </div>
+              <div class="event-detail-row">
+                <span class="event-detail-label">Time</span>
+                <span class="event-detail-value"
+                  >{{ selectedEvent()?.startTime }} -
+                  {{ selectedEvent()?.endTime }}</span
+                >
+              </div>
+              <div class="event-detail-row">
+                <span class="event-detail-label">Location</span>
+                <span class="event-detail-value">{{
+                  selectedEvent()?.location
+                }}</span>
+              </div>
+              @if (selectedEvent()?.description) {
+                <div class="event-detail-row event-detail-row--stacked">
+                  <span class="event-detail-label">Description</span>
+                  <span class="event-detail-value">{{
+                    selectedEvent()?.description
+                  }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="event-detail-summary">
+              <h4>RSVP Summary</h4>
+              <div class="event-rsvp">
+                <span class="rsvp-item going"
+                  >{{ selectedEvent()?.rsvpSummary?.going || 0 }} going</span
+                >
+                <span class="rsvp-item cant-go"
+                  >{{ selectedEvent()?.rsvpSummary?.cantGo || 0 }} can't</span
+                >
+                <span class="rsvp-item pending"
+                  >{{ selectedEvent()?.rsvpSummary?.pending || 0 }} pending</span
+                >
+              </div>
+              @if (selectedEvent()?.rsvpDeadline) {
+                <p class="event-detail-note">
+                  RSVP deadline: {{ selectedEvent()?.rsvpDeadline }}
+                </p>
+              }
+              @if (selectedEvent()?.ridesNeeded || selectedEvent()?.ridesOffered) {
+                <p class="event-detail-note">
+                  Ride coordination:
+                  {{ selectedEvent()?.ridesNeeded || 0 }} need rides,
+                  {{ selectedEvent()?.ridesOffered || 0 }} can offer rides
+                </p>
+              }
+              @if (selectedEvent()?.paymentInfo) {
+                <p class="event-detail-note">
+                  Payment progress:
+                  \${{ selectedEvent()?.paymentInfo?.collected }} / \${{
+                    selectedEvent()?.paymentInfo?.total
+                  }}
+                </p>
+              }
+            </div>
+
+            <div class="event-detail-actions">
+              <app-button
+                variant="secondary"
+                (clicked)="openRsvpDialogFromDetails()"
+                >View RSVPs</app-button
+              >
+              <app-button
+                variant="secondary"
+                (clicked)="editSelectedEvent()"
+                >Edit Event</app-button
+              >
+              <app-button
+                variant="text"
+                (clicked)="showEventDetailDialog = false"
+                >Close</app-button
+              >
+            </div>
+          </div>
+        }
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./calendar-coach.component.scss",
@@ -700,6 +815,7 @@ export class CalendarCoachComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
   private readonly dialogService = inject(DialogService);
 
   // Constants exposed to template
@@ -718,6 +834,7 @@ export class CalendarCoachComponent implements OnInit {
   // Dialog state
   showCreateDialog = false;
   showRsvpDialog = false;
+  showEventDetailDialog = false;
 
   // Form
   eventForm: EventForm = this.getEmptyEventForm();
@@ -1022,22 +1139,40 @@ export class CalendarCoachComponent implements OnInit {
 
   viewEvent(event: TeamEvent): void {
     this.selectedEvent.set(event);
-    this.toastService.info(event.title, "Event Details");
+    this.showEventDetailDialog = true;
   }
 
   async viewRsvps(event: TeamEvent): Promise<void> {
     this.selectedEvent.set(event);
+    this.showEventDetailDialog = false;
     // Load RSVPs from backend when endpoint is available
     // For now, using empty array
     this.rsvps.set([]);
     this.showRsvpDialog = true;
   }
 
+  openRsvpDialogFromDetails(): void {
+    const event = this.selectedEvent();
+    if (!event) {
+      return;
+    }
+    void this.viewRsvps(event);
+  }
+
+  editSelectedEvent(): void {
+    const event = this.selectedEvent();
+    if (!event) {
+      return;
+    }
+    this.showEventDetailDialog = false;
+    this.editEvent(event);
+  }
+
   setLineup(event: TeamEvent): void {
-    this.toastService.info(
-      `Opening lineup editor for ${event.title}`,
-      "Set Lineup",
-    );
+    this.showEventDetailDialog = false;
+    void this.router.navigate(["/coach/tournaments"], {
+      queryParams: { event: event.id, focus: "lineup" },
+    });
   }
 
   async cancelEvent(event: TeamEvent): Promise<void> {
@@ -1074,10 +1209,15 @@ export class CalendarCoachComponent implements OnInit {
   }
 
   messageAll(group: string): void {
-    this.toastService.info(
-      `Opening message composer for ${group} group`,
-      "Message",
-    );
+    const eventId = this.selectedEvent()?.id;
+    this.showRsvpDialog = false;
+    void this.router.navigate(["/team-chat"], {
+      queryParams: {
+        source: "calendar",
+        event: eventId || null,
+        group,
+      },
+    });
   }
 
   exportRsvpList(): void {

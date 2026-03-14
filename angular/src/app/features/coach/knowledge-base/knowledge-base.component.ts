@@ -827,6 +827,83 @@ const VISIBILITY_OPTIONS = [
           (primary)="confirmApprove()"
         />
       </app-dialog>
+
+      <app-dialog
+        [(visible)]="showResourceDialog"
+        [modal]="true"
+        styleClass="knowledge-base-resource-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Knowledge resource details"
+      >
+        <app-dialog-header
+          icon="book"
+          [title]="selectedResource()?.title || 'Resource Details'"
+          subtitle="Review resource context, tags, and sharing actions."
+          (close)="showResourceDialog = false"
+        />
+        @if (selectedResource()) {
+          <div class="resource-detail-content">
+            <div class="resource-detail-meta">
+              <p>
+                <strong>Type:</strong>
+                {{ selectedResource()?.type | titlecase }}
+              </p>
+              <p>
+                <strong>Category:</strong>
+                {{ selectedResource()?.category }}
+              </p>
+              @if (selectedResource()?.readTime) {
+                <p>
+                  <strong>Read time:</strong>
+                  {{ selectedResource()?.readTime }}
+                </p>
+              }
+              @if (selectedResource()?.duration) {
+                <p>
+                  <strong>Duration:</strong>
+                  {{ selectedResource()?.duration }}
+                </p>
+              }
+              @if (selectedResource()?.createdBy) {
+                <p>
+                  <strong>Created by:</strong>
+                  {{ selectedResource()?.createdBy }}
+                </p>
+              }
+              @if (selectedResource()?.lastUpdated) {
+                <p>
+                  <strong>Last updated:</strong>
+                  {{ selectedResource()?.lastUpdated }}
+                </p>
+              }
+            </div>
+
+            <div class="resource-detail-body">
+              <h4>Description</h4>
+              <p>{{ selectedResource()?.description }}</p>
+            </div>
+
+            @if (selectedResource()?.tags?.length) {
+              <div class="resource-detail-tags">
+                @for (tag of selectedResource()?.tags || []; track tag) {
+                  <span class="resource-tag">{{ tag }}</span>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Share"
+          primaryIcon="share-alt"
+          (cancel)="showResourceDialog = false"
+          (primary)="shareSelectedResource()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./knowledge-base.component.scss",
@@ -851,6 +928,7 @@ export class KnowledgeBaseComponent implements OnInit {
   readonly isSubmitting = signal(false);
   readonly isReviewSubmitting = signal(false);
   readonly selectedPendingEntry = signal<PendingKnowledgeEntry | null>(null);
+  readonly selectedResource = signal<KnowledgeResource | null>(null);
   readonly myStatusFilter = signal<"all" | "pending" | "approved" | "rejected">(
     "all",
   );
@@ -864,6 +942,7 @@ export class KnowledgeBaseComponent implements OnInit {
   // Dialog state
   showAddDialog = false;
   showApproveDialog = false;
+  showResourceDialog = false;
   resourceForm = this.getEmptyForm();
   reviewForm = {
     notes: "",
@@ -1382,11 +1461,22 @@ export class KnowledgeBaseComponent implements OnInit {
   }
 
   openResource(resource: KnowledgeResource): void {
-    this.toastService.info(`Opening ${resource.title}`, "Opening Resource");
+    this.selectedResource.set(resource);
+    this.showResourceDialog = true;
   }
 
   editResource(resource: KnowledgeResource): void {
-    this.toastService.info(`Editing ${resource.title}`, "Edit Resource");
+    this.resourceForm = {
+      type: resource.type,
+      title: resource.title,
+      category: resource.category,
+      url: "",
+      content: resource.description,
+      visibility: resource.isTeamResource ? "team" : "coaches",
+      tags: resource.tags?.join(", ") || "",
+    };
+    this.showResourceDialog = false;
+    this.showAddDialog = true;
   }
 
   toggleFavorite(resource: KnowledgeResource): void {
@@ -1397,8 +1487,27 @@ export class KnowledgeBaseComponent implements OnInit {
     );
   }
 
-  shareResource(resource: KnowledgeResource): void {
-    this.toastService.info(`Sharing ${resource.title}`, "Share Resource");
+  async shareResource(resource: KnowledgeResource): Promise<void> {
+    const shareText = this.buildShareText(resource);
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareText);
+        this.toastService.success(
+          `${resource.title} details copied to clipboard`,
+          "Share Ready",
+        );
+        return;
+      }
+    } catch (error) {
+      this.logger.warn("Clipboard copy failed, falling back to dialog", error);
+    }
+
+    this.selectedResource.set(resource);
+    this.showResourceDialog = true;
+    this.toastService.info(
+      "Clipboard is unavailable, so the resource is open for manual sharing.",
+      "Share Resource",
+    );
   }
 
   shareToTeam(resource: KnowledgeResource): void {
@@ -1418,6 +1527,22 @@ export class KnowledgeBaseComponent implements OnInit {
 
   loadMore(): void {
     this.toastService.info("Loading more resources...", "Loading More");
+  }
+
+  shareSelectedResource(): void {
+    const resource = this.selectedResource();
+    if (!resource) {
+      return;
+    }
+    void this.shareResource(resource);
+  }
+
+  private buildShareText(resource: KnowledgeResource): string {
+    const tags =
+      resource.tags && resource.tags.length > 0
+        ? `\nTags: ${resource.tags.join(", ")}`
+        : "";
+    return `${resource.title}\nCategory: ${resource.category}\nType: ${resource.type}\n${resource.description}${tags}`;
   }
 
   // Helpers

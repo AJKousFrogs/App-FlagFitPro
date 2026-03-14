@@ -478,6 +478,74 @@
   border-top: var(--border-1) solid var(--ds-border-subtle);
 }
 
+.event-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.event-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+}
+
+.event-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.event-detail-row--stacked {
+  flex-direction: column;
+}
+
+.event-detail-label {
+  color: var(--ds-text-secondary);
+  font-size: var(--ds-font-size-md);
+}
+
+.event-detail-value {
+  color: var(--ds-text-primary);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
+  text-align: right;
+}
+
+.event-detail-row--stacked .event-detail-value {
+  text-align: left;
+  font-weight: var(--ds-font-weight-regular);
+}
+
+.event-detail-summary {
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+
+  h4 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--ds-text-primary);
+  }
+}
+
+.event-detail-note {
+  margin: var(--space-2) 0 0;
+  font-size: var(--ds-font-size-md);
+  color: var(--ds-text-secondary);
+}
+
+.event-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
 // Responsive
 @include respond-to(md) {
   .calendar-coach-page {
@@ -517,5 +585,17 @@
     p-button {
       width: 100%;
     }
+  }
+
+  .event-detail-row {
+    flex-direction: column;
+  }
+
+  .event-detail-value {
+    text-align: left;
+  }
+
+  .event-detail-actions {
+    flex-direction: column;
   }
 }

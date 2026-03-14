@@ -193,6 +193,7 @@ export class ScoutingReportsComponent implements OnInit {
   showViewReportDialog = signal(false);
   showAddOpponentDialog = signal(false);
   viewingReport = signal<ScoutingReport | null>(null);
+  editingReport = signal<ScoutingReport | null>(null);
 
   // Form data
   newReport: NewReportForm = {
@@ -565,7 +566,21 @@ export class ScoutingReportsComponent implements OnInit {
   }
 
   editReport(report: ScoutingReport): void {
-    this.toast.info(`Opening editor for ${report.opponentName} report`);
+    this.editingReport.set(report);
+    this.newReport = {
+      opponentId: report.opponentId,
+      gameDate: report.gameDate.toISOString().split("T")[0] ?? "",
+      executiveSummary: report.executiveSummary,
+      attackPoints: report.offensiveGamePlan.attackPoints.join("\n"),
+      playsToRun: report.offensiveGamePlan.playsToRun.join("\n"),
+      coverageAdjustments:
+        report.defensiveGamePlan.coverageAdjustments.join("\n"),
+      blitzPlan: report.defensiveGamePlan.blitzPlan.join("\n"),
+      sharedWith: report.sharedWith,
+      requiredReading: report.requiredReading,
+    };
+    this.showViewReportDialog.set(false);
+    this.showNewReportDialog.set(true);
   }
 
   updateSelectedOpponentFilterFromSection(
@@ -692,8 +707,11 @@ export class ScoutingReportsComponent implements OnInit {
       };
 
       this.reports.set([report, ...this.reports()]);
-      this.toast.success("Scouting report created!");
+      this.toast.success(
+        this.editingReport() ? "Scouting report revised!" : "Scouting report created!",
+      );
       this.showNewReportDialog.set(false);
+      this.editingReport.set(null);
       this.resetNewReport();
     } catch {
       this.toast.error("Failed to create report");
@@ -743,6 +761,7 @@ export class ScoutingReportsComponent implements OnInit {
   }
 
   private resetNewReport(): void {
+    this.editingReport.set(null);
     this.newReport = {
       opponentId: "",
       gameDate: "",

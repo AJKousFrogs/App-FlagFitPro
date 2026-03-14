@@ -301,6 +301,7 @@ export class InjuryManagementComponent implements OnInit {
   // Dialog state
   showReportDialog = false;
   showCheckinDialog = false;
+  showRtpDetailsDialog = false;
   selectedInjury: InjuryRecord | null = null;
 
   // Report form
@@ -634,10 +635,8 @@ export class InjuryManagementComponent implements OnInit {
   }
 
   viewRtpDetails(injury: InjuryRecord): void {
-    this.toastService.info(
-      `Opening full RTP for ${injury.playerName}`,
-      "View RTP",
-    );
+    this.selectedInjury = injury;
+    this.showRtpDetailsDialog = true;
   }
 
   requestMedical(_injury: InjuryRecord): void {
@@ -654,6 +653,10 @@ export class InjuryManagementComponent implements OnInit {
 
   getStageName(stage: number): string {
     return RTP_STAGES.find((s) => s.stage === stage)?.name || "";
+  }
+
+  getRtpStage(stage: number): RtpStage | undefined {
+    return RTP_STAGES.find((item) => item.stage === stage);
   }
 
   getStageShortName(stage: number): string {

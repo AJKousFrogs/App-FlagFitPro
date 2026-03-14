@@ -332,10 +332,84 @@
 
 // Form Styles
 .fee-form,
-.payment-form {
+.payment-form,
+.fee-details-dialog-content {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.fee-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.fee-detail-card,
+.fee-outstanding-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--ds-surface-base);
+  border-radius: var(--radius-md);
+}
+
+.fee-detail-card--wide {
+  grid-column: 1 / -1;
+}
+
+.fee-detail-label {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-tertiary);
+}
+
+.fee-detail-value {
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-primary);
+}
+
+.fee-detail-subtle {
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.fee-detail-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.fee-outstanding-summary {
+  h4,
+  p {
+    margin: 0;
+  }
+}
+
+.fee-outstanding-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fee-outstanding-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-top: var(--border-1) solid var(--color-border-subtle);
+
+  &:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+}
+
+.fee-outstanding-note {
+  color: var(--color-text-secondary);
 }
 
 .form-field {
@@ -450,5 +524,10 @@
 
   .balance-actions {
     flex-direction: column;
+  }
+
+  .fee-details-grid,
+  .fee-outstanding-row {
+    grid-template-columns: 1fr;
   }
 }

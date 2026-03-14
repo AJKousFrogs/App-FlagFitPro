@@ -42,6 +42,19 @@ const buildDateTime = (date, time) => {
   return `${date}T00:00:00`;
 };
 
+const MAX_COACH_MESSAGE_LENGTH = 1000;
+
+const parseRequiredTrimmedString = (value, fieldName, maxLength = MAX_COACH_MESSAGE_LENGTH) => {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw new Error(`${fieldName} is required`);
+  }
+  const trimmed = value.trim();
+  if (trimmed.length > maxLength) {
+    throw new Error(`${fieldName} must be ${maxLength} characters or fewer`);
+  }
+  return trimmed;
+};
+
 const parseJsonBody = (body) => {
   if (!body) {
     return {};
@@ -81,6 +94,94 @@ async function getCoachTeamId(coachId) {
     return null;
   }
   return teams[0].team_id;
+}
+
+async function getActiveCoachTeamMembers(coachId) {
+  const teamId = await getCoachTeamId(coachId);
+  if (!teamId) {
+    throw new Error("Not authorized");
+  }
+
+  const { data: members, error } = await supabaseAdmin
+    .from("team_members")
+    .select("user_id, role")
+    .eq("team_id", teamId)
+    .eq("status", "active");
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    teamId,
+    members: members || [],
+  };
+}
+
+async function createCoachTeamMessage(coachId, payload) {
+  const message = parseRequiredTrimmedString(payload?.message, "message");
+  const { teamId, members } = await getActiveCoachTeamMembers(coachId);
+
+  const recipients = members
+    .filter((member) => member.user_id && member.user_id !== coachId)
+    .map((member) => ({
+      user_id: member.user_id,
+      notification_type: "team",
+      message,
+      priority: "normal",
+      is_read: false,
+      metadata: {
+        source: "coach_dashboard",
+        team_id: teamId,
+        sender_id: coachId,
+        action: "team_message",
+      },
+    }));
+
+  if (recipients.length === 0) {
+    return { sent: 0 };
+  }
+
+  const { error } = await supabaseAdmin.from("notifications").insert(recipients);
+  if (error) {
+    throw error;
+  }
+
+  return { sent: recipients.length };
+}
+
+async function createCoachAccessRequest(coachId, payload) {
+  const playerId = parseRequiredTrimmedString(payload?.playerId, "playerId", 128);
+  const message = parseRequiredTrimmedString(payload?.message, "message");
+  const { teamId, members } = await getActiveCoachTeamMembers(coachId);
+
+  const targetPlayer = members.find(
+    (member) => member.user_id === playerId && member.role === "player",
+  );
+
+  if (!targetPlayer) {
+    throw new Error("playerId must reference an active player in coach team");
+  }
+
+  const { error } = await supabaseAdmin.from("notifications").insert({
+    user_id: playerId,
+    notification_type: "general",
+    message,
+    priority: "normal",
+    is_read: false,
+    metadata: {
+      source: "coach_dashboard",
+      team_id: teamId,
+      sender_id: coachId,
+      action: "access_request",
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return { sent: 1 };
 }
 
 /**
@@ -1010,6 +1111,24 @@ async function handleRequest(event, context, { userId }) {
         const body = parseJsonBody(event.body);
         const session = await createTrainingSession(userId, body);
         return createSuccessResponse(session);
+      }
+
+      case "/team-message": {
+        if (event.httpMethod !== "POST") {
+          return createErrorResponse("Method not allowed", 405);
+        }
+        const body = parseJsonBody(event.body);
+        const result = await createCoachTeamMessage(userId, body);
+        return createSuccessResponse(result);
+      }
+
+      case "/access-request": {
+        if (event.httpMethod !== "POST") {
+          return createErrorResponse("Method not allowed", 405);
+        }
+        const body = parseJsonBody(event.body);
+        const result = await createCoachAccessRequest(userId, body);
+        return createSuccessResponse(result);
       }
 
       case "/games": {

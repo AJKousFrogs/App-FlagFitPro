@@ -91,8 +91,12 @@
         >
           <app-dialog-header
             icon="file-edit"
-            title="Create Scouting Report"
-            subtitle="Capture the opponent summary, game plan, and sharing scope for the staff."
+            [title]="editingReport() ? 'Revise Scouting Report' : 'Create Scouting Report'"
+            [subtitle]="
+              editingReport()
+                ? 'Update the opponent brief using the existing report as your starting point.'
+                : 'Capture the opponent summary, game plan, and sharing scope for the staff.'
+            "
             (close)="showNewReportDialog.set(false)"
           />
           <div class="report-form">
@@ -212,8 +216,8 @@
           <app-dialog-footer
             dialogFooter
             cancelLabel="Cancel"
-            primaryLabel="Create Report"
-            primaryIcon="check"
+            [primaryLabel]="editingReport() ? 'Create Revised Report' : 'Create Report'"
+            [primaryIcon]="editingReport() ? 'pencil' : 'check'"
             (cancel)="showNewReportDialog.set(false)"
             (primary)="createReport()"
           />

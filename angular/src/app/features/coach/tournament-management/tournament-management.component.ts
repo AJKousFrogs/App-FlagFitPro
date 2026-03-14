@@ -720,35 +720,37 @@ export class TournamentManagementComponent implements OnInit {
 
   // Actions
   registerTeam(): void {
+    this.activeTab.set("available");
+
+    const firstAvailableTournament = this.tournaments().find(
+      (tournament) => tournament.status === "available",
+    );
+
+    if (firstAvailableTournament) {
+      this.openTournamentDetail(firstAvailableTournament, "overview");
+      return;
+    }
+
     this.toastService.info(
-      "Opening tournament registration form",
-      "Register Team",
+      "No available tournaments are ready for registration yet.",
+      "No Available Tournaments",
     );
   }
 
   manageTournament(tournament: Tournament): void {
-    this.selectedTournament.set(tournament);
-    this.detailTab.set("overview");
-    this.showDetailDialog = true;
+    this.openTournamentDetail(tournament, "overview");
   }
 
   viewRsvps(tournament: Tournament): void {
-    this.selectedTournament.set(tournament);
-    this.detailTab.set("rsvps");
-    this.showDetailDialog = true;
+    this.openTournamentDetail(tournament, "rsvps");
   }
 
   setLineup(tournament: Tournament): void {
-    this.selectedTournament.set(tournament);
-    this.detailTab.set("lineup");
-    this.showDetailDialog = true;
+    this.openTournamentDetail(tournament, "lineup");
   }
 
   sendReminders(tournament: Tournament): void {
-    this.toastService.success(
-      `Reminders sent for ${tournament.name}`,
-      "Reminders Sent",
-    );
+    this.openTournamentDetail(tournament, "rsvps");
   }
 
   sendPendingReminders(): void {
@@ -789,6 +791,15 @@ export class TournamentManagementComponent implements OnInit {
 
   getGamesForDay(day: number): TournamentGame[] {
     return this.selectedTournament()?.games?.filter((g) => g.day === day) || [];
+  }
+
+  private openTournamentDetail(
+    tournament: Tournament,
+    tab: "overview" | "rsvps" | "lineup" | "schedule",
+  ): void {
+    this.selectedTournament.set(tournament);
+    this.detailTab.set(tab);
+    this.showDetailDialog = true;
   }
 
   // Helpers

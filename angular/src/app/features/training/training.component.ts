@@ -341,13 +341,11 @@ export class TrainingComponent {
   }
 
   goToAchievements(): void {
-    // Open achievements dialog in daily protocol or navigate
-    this.router.navigate(["/training"]);
+    this.router.navigate(["/todays-practice"]);
   }
 
   goToRoadmap(): void {
-    // Navigate to daily protocol which has the LA28 roadmap
-    this.router.navigate(["/training"]);
+    this.router.navigate(["/todays-practice"]);
   }
 
   showAllWorkouts(): void {
@@ -378,8 +376,7 @@ export class TrainingComponent {
     priority: string;
   }): void {
     this.toastService.info(`Starting ${workout.title}`);
-    // Navigate to daily protocol which will handle the workout
-    this.router.navigate(["/training"], {
+    this.router.navigate(["/todays-practice"], {
       queryParams: {
         focus: workout.title.toLowerCase().replace(/\s+/g, "-"),
       },

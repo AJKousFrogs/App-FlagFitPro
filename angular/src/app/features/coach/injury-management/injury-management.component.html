@@ -672,4 +672,98 @@
           (primary)="submitCheckin()"
         />
       </app-dialog>
+
+      <app-dialog
+        [(visible)]="showRtpDetailsDialog"
+        [modal]="true"
+        styleClass="injury-rtp-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Return to play details"
+      >
+        <app-dialog-header
+          icon="heart"
+          [title]="selectedInjury?.playerName ? selectedInjury?.playerName + ' RTP Plan' : 'Return-to-Play Plan'"
+          subtitle="Review recovery stage, restrictions, and progression criteria."
+          (close)="showRtpDetailsDialog = false"
+        />
+
+        @if (selectedInjury; as injury) {
+          <div class="rtp-detail-dialog">
+            <div class="rtp-detail-summary">
+              <div class="rtp-detail-card">
+                <span class="rtp-detail-label">Current stage</span>
+                <span class="rtp-detail-value"
+                  >Stage {{ injury.rtpStage }}: {{ getStageName(injury.rtpStage || 1) }}</span
+                >
+              </div>
+              <div class="rtp-detail-card">
+                <span class="rtp-detail-label">Estimated return</span>
+                <span class="rtp-detail-value">{{ injury.estimatedReturn || "Not set" }}</span>
+              </div>
+              <div class="rtp-detail-card">
+                <span class="rtp-detail-label">Protocol progress</span>
+                <span class="rtp-detail-value">{{ injury.rtpProgress || 0 }}%</span>
+              </div>
+              <div class="rtp-detail-card">
+                <span class="rtp-detail-label">Days in protocol</span>
+                <span class="rtp-detail-value">{{ injury.daysInProtocol || 0 }}</span>
+              </div>
+            </div>
+
+            @if (injury.rtpStage; as stageNumber) {
+              @if (getRtpStage(stageNumber); as stage) {
+                <div class="rtp-stage-detail">
+                  <div class="rtp-stage-card">
+                    <span class="rtp-detail-label">Stage description</span>
+                    <span class="rtp-detail-value">{{ stage.description }}</span>
+                  </div>
+                  <div class="rtp-stage-card">
+                    <span class="rtp-detail-label">Allowed activities</span>
+                    <ul>
+                      @for (activity of stage.allowedActivities; track activity) {
+                        <li>{{ activity }}</li>
+                      }
+                    </ul>
+                  </div>
+                  <div class="rtp-stage-card">
+                    <span class="rtp-detail-label">Restricted activities</span>
+                    @if (stage.restrictedActivities.length > 0) {
+                      <ul>
+                        @for (activity of stage.restrictedActivities; track activity) {
+                          <li>{{ activity }}</li>
+                        }
+                      </ul>
+                    } @else {
+                      <p>No current restrictions.</p>
+                    }
+                  </div>
+                </div>
+              }
+            }
+
+            @if (injury.todayCheckin) {
+              <div class="rtp-checkin-detail">
+                <span class="rtp-detail-label">Today's check-in</span>
+                <div class="rtp-checkin-grid">
+                  <span>Pain: {{ injury.todayCheckin.painLevel }}/10</span>
+                  <span>Function: {{ injury.todayCheckin.functionLevel }}/10</span>
+                  <span>Confidence: {{ injury.todayCheckin.confidenceLevel }}/10</span>
+                </div>
+                <p>{{ injury.todayCheckin.notes || "No additional notes for today." }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Update Progress"
+          primaryIcon="chart-line"
+          (cancel)="showRtpDetailsDialog = false"
+          (primary)="selectedInjury && openCheckinDialog(selectedInjury)"
+        />
+      </app-dialog>
     </app-main-layout>

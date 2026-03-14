@@ -348,9 +348,15 @@ export const API_ENDPOINTS = {
   },
   coach: {
     dashboard: "/api/coach/dashboard",
+    inbox: "/api/coach-inbox",
+    inboxStats: "/api/coach-inbox/stats",
+    inboxDetail: (itemId: string) => `/api/coach-inbox/${itemId}`,
+    inboxMarkViewed: (itemId: string) => `/api/coach-inbox/${itemId}/mark-viewed`,
     team: "/api/coach/team",
     trainingAnalytics: "/api/coach/training-analytics",
     createTrainingSession: "/api/coach/training-session",
+    teamMessage: "/api/coach/team-message",
+    accessRequest: "/api/coach/access-request",
     games: "/api/games", // Uses main games endpoint - coach role handled server-side
     health: "/api/coach/health",
     tournaments: "/api/coach/tournaments",

@@ -625,6 +625,124 @@ const PHASE_PRESETS = [
           >
         </div>
       </app-dialog>
+
+      <app-dialog
+        [(visible)]="showProgramDetailsDialog"
+        class="program-detail-dialog"
+        (hide)="showProgramDetailsDialog = false"
+      >
+        <app-dialog-header
+          [title]="selectedProgram()?.name || 'Program Details'"
+          subtitle="Review structure, phase timing, and assignment context."
+          icon="list"
+          (close)="showProgramDetailsDialog = false"
+        ></app-dialog-header>
+        @if (selectedProgram(); as program) {
+          <div class="program-detail-content">
+            <div class="program-detail-grid">
+              <div class="program-detail-card">
+                <span class="program-detail-label">Type</span>
+                <span class="program-detail-value">{{ getProgramTypeLabel(program.type) }}</span>
+              </div>
+              <div class="program-detail-card">
+                <span class="program-detail-label">Status</span>
+                <span class="program-detail-value">{{ getStatusLabel(program.status) }}</span>
+              </div>
+              <div class="program-detail-card">
+                <span class="program-detail-label">Start date</span>
+                <span class="program-detail-value">{{ program.startDate | date: "MMM d, y" }}</span>
+              </div>
+              <div class="program-detail-card">
+                <span class="program-detail-label">Duration</span>
+                <span class="program-detail-value">{{ program.durationWeeks }} weeks</span>
+              </div>
+              <div class="program-detail-card">
+                <span class="program-detail-label">Assigned players</span>
+                <span class="program-detail-value">{{ program.assignedCount }}</span>
+              </div>
+              <div class="program-detail-card">
+                <span class="program-detail-label">Goal event</span>
+                <span class="program-detail-value">{{ program.goalEvent || "Not set" }}</span>
+              </div>
+              <div class="program-detail-card program-detail-card--wide">
+                <span class="program-detail-label">Description</span>
+                <span class="program-detail-value">{{ program.description || "No description added." }}</span>
+              </div>
+            </div>
+
+            <div class="program-phase-detail">
+              <h4>Phases</h4>
+              @for (phase of program.phases; track phase.id) {
+                <div class="phase-detail-row">
+                  <div>
+                    <strong>{{ phase.name }}</strong>
+                    <span>Weeks {{ phase.weekStart }}-{{ phase.weekEnd }}</span>
+                  </div>
+                  <div class="phase-detail-meta">
+                    <span>{{ phase.loadPercentage }}% load</span>
+                    <span>{{ phase.focus }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        <div class="dialog-actions">
+          <app-button variant="secondary" (clicked)="showProgramDetailsDialog = false"
+            >Close</app-button
+          >
+          <app-button iconLeft="pi-pencil" (clicked)="editSelectedProgram()"
+            >Edit Program</app-button
+          >
+        </div>
+      </app-dialog>
+
+      <app-dialog
+        [(visible)]="showComplianceDialog"
+        class="program-compliance-dialog"
+        (hide)="showComplianceDialog = false"
+      >
+        <app-dialog-header
+          [title]="selectedProgram()?.name || 'Compliance Report'"
+          subtitle="Track completion risk and assignment coverage for this program."
+          icon="chart-bar"
+          (close)="showComplianceDialog = false"
+        ></app-dialog-header>
+        @if (selectedProgram(); as program) {
+          <div class="program-compliance-content">
+            <div class="compliance-summary-card">
+              <span class="program-detail-label">Program compliance</span>
+              <div class="compliance-bar-row">
+                <p-progressBar [value]="program.compliance" [showValue]="false"></p-progressBar>
+                <span class="program-detail-value">{{ program.compliance }}%</span>
+              </div>
+              <span class="program-detail-subtle"
+                >{{ program.assignedCount }} assigned athletes, current phase:
+                {{ program.currentPhase || "Not started" }}</span
+              >
+            </div>
+
+            <div class="compliance-status-grid">
+              <div class="program-detail-card">
+                <span class="program-detail-label">On track</span>
+                <span class="program-detail-value">{{ getOnTrackCount(program) }} athletes</span>
+              </div>
+              <div class="program-detail-card">
+                <span class="program-detail-label">Needs follow-up</span>
+                <span class="program-detail-value">{{ getNeedsFollowUpCount(program) }} athletes</span>
+              </div>
+            </div>
+          </div>
+        }
+        <div class="dialog-actions">
+          <app-button variant="secondary" (clicked)="showComplianceDialog = false"
+            >Close</app-button
+          >
+          <app-button iconLeft="pi-eye" (clicked)="showComplianceDialog = false; showProgramDetailsDialog = true"
+            >View Program</app-button
+          >
+        </div>
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./program-builder.component.scss",
@@ -646,9 +764,12 @@ export class ProgramBuilderComponent implements OnInit {
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
   readonly isEditing = signal(false);
+  readonly selectedProgram = signal<TrainingProgram | null>(null);
 
   // Dialog state
   showCreateDialog = false;
+  showProgramDetailsDialog = false;
+  showComplianceDialog = false;
   selectAllPlayers = false;
 
   // Form data
@@ -991,17 +1112,13 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   viewProgramDetails(program: TrainingProgram): void {
-    this.toastService.info(
-      `Opening ${program.name} details`,
-      "View Details",
-    );
+    this.selectedProgram.set(program);
+    this.showProgramDetailsDialog = true;
   }
 
   viewCompliance(program: TrainingProgram): void {
-    this.toastService.info(
-      `Opening compliance for ${program.name}`,
-      "Compliance Report",
-    );
+    this.selectedProgram.set(program);
+    this.showComplianceDialog = true;
   }
 
   openProgramMenu(_event: Event, _program: TrainingProgram): void {
@@ -1037,6 +1154,25 @@ export class ProgramBuilderComponent implements OnInit {
       archived: "Archived",
     };
     return labels[status];
+  }
+
+  getProgramTypeLabel(type: ProgramType): string {
+    return this.programTypeOptions.find((option) => option.value === type)?.label || type;
+  }
+
+  getOnTrackCount(program: TrainingProgram): number {
+    return Math.round((program.assignedCount * program.compliance) / 100);
+  }
+
+  getNeedsFollowUpCount(program: TrainingProgram): number {
+    return Math.max(program.assignedCount - this.getOnTrackCount(program), 0);
+  }
+
+  editSelectedProgram(): void {
+    const program = this.selectedProgram();
+    if (!program) return;
+    this.showProgramDetailsDialog = false;
+    this.editProgram(program);
   }
 
   getStatusSeverity(

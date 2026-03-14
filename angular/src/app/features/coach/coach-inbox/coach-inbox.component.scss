@@ -6,42 +6,126 @@
 .coach-inbox {
   padding: var(--space-8);
 }
+
 .inbox-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-8); // 2rem
 }
+
+.header-content h1 {
+  margin: 0 0 var(--space-2);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.items-list {
+  display: grid;
+  gap: var(--space-6);
+}
+
 .inbox-item-card {
   background: var(--surface-primary);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  margin-bottom: var(--space-6); // 1.5rem
   box-shadow: var(--shadow-sm);
 }
+
+.inbox-item-card.is-new {
+  box-shadow: var(--shadow-md);
+}
+
 .item-header {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   margin-bottom: var(--space-4); // 1rem
 }
+
 .item-meta {
   flex: 1;
 }
+
+.item-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .item-meta h3 {
   margin: 0;
   font-size: var(--ds-font-size-md);
 }
+
 .timestamp {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
+
 .item-body h4 {
   margin: 0 0 var(--space-2); // 0.5rem
   color: var(--color-text-primary);
 }
+
+.item-body p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
 .item-actions {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   margin-top: var(--space-4); // 1rem
+}
+
+.empty-state {
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.empty-state h3 {
+  margin: 0 0 var(--space-2);
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.dialog-copy {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-secondary);
+}
+
+.dialog-copy p {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.dialog-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.dialog-textarea {
+  width: 100%;
+  min-height: 8rem;
+  padding: var(--space-4);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--surface-secondary);
+  color: var(--color-text-primary);
+  resize: vertical;
 }

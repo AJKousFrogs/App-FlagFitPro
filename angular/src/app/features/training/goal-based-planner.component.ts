@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-
+import { Router } from "@angular/router";
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
@@ -21,6 +21,7 @@ import {
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { AuthService } from "../../core/services/auth.service";
+import { ToastService } from "../../core/services/toast.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -316,9 +317,11 @@ import {
 })
 export class GoalBasedPlannerComponent {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly trainingPlanService = inject(TrainingPlanService);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly logger = inject(LoggerService);
+  private readonly toastService = inject(ToastService);
 
   private lastLoadedAthleteId: string | null = null;
   private lastOverviewAthleteId: string | null = null;
@@ -537,21 +540,33 @@ export class GoalBasedPlannerComponent {
 
   async savePlan() {
     const plan = this.weeklyPlan();
-    if (!plan) return;
+    const athleteId = this.currentUserId();
+    const goal = this.selectedGoal();
+    if (!plan || !athleteId || !goal) return;
 
     this.saving.set(true);
     try {
-      // In a real app, this would call a service to save to Supabase
-      // For now, we simulate a save and show success
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      this.trainingService.logTrainingSession({
-        title: `Plan: ${this.getGoalLabel()}`,
-        date: new Date().toISOString(),
-        notes: `Auto-generated ${this.getGoalLabel()} plan saved.`,
+      const saved = await this.trainingPlanService.savePlan(athleteId, {
+        ...plan,
+        goal,
       });
-      this.logger.info("Training plan saved to schedule");
+
+      if (!saved) {
+        throw new Error("Training plan save returned an unsuccessful response");
+      }
+
+      this.logger.info("Training plan saved to schedule", {
+        athleteId,
+        goal,
+      });
+      this.toastService.success(
+        `${this.getGoalLabel()} plan saved to your schedule.`,
+        "Plan Saved",
+      );
+      await this.router.navigate(["/training/schedule"]);
     } catch (error) {
       this.logger.error("Failed to save training plan", error);
+      this.toastService.error("Failed to save training plan. Please try again.");
     } finally {
       this.saving.set(false);
     }

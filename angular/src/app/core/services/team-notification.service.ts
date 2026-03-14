@@ -83,6 +83,13 @@ export interface UnreadAnnouncement {
   is_important: boolean;
 }
 
+interface LoadActivityFeedOptions {
+  teamIds?: string[];
+  limit?: number;
+  offset?: number;
+  append?: boolean;
+}
+
 // ============================================================================
 // SERVICE
 // ============================================================================
@@ -250,7 +257,7 @@ export class TeamNotificationService {
       });
 
     // Load initial activity
-    await this.loadActivityFeed(teamIds);
+    await this.loadActivityFeed({ teamIds });
   }
 
   // ============================================================================
@@ -339,12 +346,21 @@ export class TeamNotificationService {
   /**
    * Load activity feed for coach
    */
-  async loadActivityFeed(teamIds?: string[]): Promise<CoachActivityItem[]> {
+  async loadActivityFeed(
+    options: LoadActivityFeedOptions = {},
+  ): Promise<CoachActivityItem[]> {
     this._loading.set(true);
 
     try {
       const userId = this.authService.getUser()?.id;
       if (!userId) return [];
+
+      const {
+        limit = 50,
+        offset = 0,
+        append = false,
+      } = options;
+      let teamIds = options.teamIds;
 
       // Get team IDs if not provided
       if (!teamIds) {
@@ -352,6 +368,7 @@ export class TeamNotificationService {
           .from("team_members")
           .select("team_id")
           .eq("user_id", userId)
+          .eq("status", "active")
           .in("role", ["coach", "assistant_coach"]);
 
         teamIds = teams?.map((t) => t.team_id) || [];
@@ -392,7 +409,10 @@ export class TeamNotificationService {
         .in("team_id", teamIds)
         .or(`coach_id.eq.${userId},coach_id.is.null`)
         .order("created_at", { ascending: false })
-        .limit(50)) as { data: ActivityWithPlayer[] | null; error: unknown };
+        .range(offset, offset + limit - 1)) as {
+          data: ActivityWithPlayer[] | null;
+          error: unknown;
+        };
 
       if (error) throw error;
 
@@ -425,7 +445,17 @@ export class TeamNotificationService {
           : undefined,
       }));
 
-      this._activityFeed.set(activities);
+      this._activityFeed.update((existing) => {
+        if (!append) {
+          return activities;
+        }
+
+        const merged = new Map<string, CoachActivityItem>();
+        [...existing, ...activities].forEach((activity) => {
+          merged.set(activity.id, activity);
+        });
+        return Array.from(merged.values());
+      });
       return activities;
     } catch (error) {
       this.logger.error("Error loading activity feed:", error);

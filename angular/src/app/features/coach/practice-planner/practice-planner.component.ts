@@ -809,11 +809,18 @@ export class PracticePlannerComponent implements OnInit {
     this.showDialog = true;
   }
 
-  startPractice(_practice: PracticePlan): void {
-    this.toastService.info(
-      "Live practice mode would start here",
-      "Starting Practice",
+  startPractice(practice: PracticePlan): void {
+    this.practices.update((plans) =>
+      plans.map((plan) =>
+        plan.id === practice.id
+          ? { ...plan, status: "in-progress" as const }
+          : plan,
+      ),
     );
+    this.editPractice({
+      ...practice,
+      status: "in-progress",
+    });
   }
 
   // Activity management

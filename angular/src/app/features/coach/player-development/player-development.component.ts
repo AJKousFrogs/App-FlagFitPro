@@ -470,8 +470,12 @@ const COMPARE_OPTIONS = [
       >
         <app-dialog-header
           icon="bullseye"
-          title="Add Development Goal"
-          subtitle="Set a measurable development target for the selected athlete."
+          [title]="goalDialogMode === 'edit' ? 'Update Development Goal' : 'Add Development Goal'"
+          [subtitle]="
+            goalDialogMode === 'edit'
+              ? 'Adjust progress, target values, or notes for the selected athlete.'
+              : 'Set a measurable development target for the selected athlete.'
+          "
           (close)="showGoalDialog = false"
         />
         <div class="goal-form">
@@ -572,10 +576,90 @@ const COMPARE_OPTIONS = [
         <app-dialog-footer
           dialogFooter
           cancelLabel="Cancel"
-          primaryLabel="Create Goal"
-          primaryIcon="check"
+          [primaryLabel]="goalDialogMode === 'edit' ? 'Save Goal' : 'Create Goal'"
+          [primaryIcon]="goalDialogMode === 'edit' ? 'save' : 'check'"
           (cancel)="showGoalDialog = false"
           (primary)="createGoal()"
+        />
+      </app-dialog>
+
+      <!-- Goal Details Dialog -->
+      <app-dialog
+        [(visible)]="showGoalDetailsDialog"
+        [modal]="true"
+        styleClass="development-goal-details-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Development goal details"
+      >
+        <app-dialog-header
+          icon="bullseye"
+          title="Goal Details"
+          subtitle="Review progress, timing, and coaching notes for this development target."
+          (close)="showGoalDetailsDialog = false"
+        />
+        @if (selectedGoal(); as goal) {
+          <div class="goal-details">
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Player</span>
+              <span class="goal-detail-value">{{ getPlayerName(goal.playerId) }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Category</span>
+              <span class="goal-detail-value">{{ getGoalCategoryLabel(goal.category) }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Metric</span>
+              <span class="goal-detail-value">{{ goal.metric }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Status</span>
+              <span class="goal-detail-value">{{ getStatusLabel(goal.status) }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Start value</span>
+              <span class="goal-detail-value">{{ goal.startValue }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Current value</span>
+              <span class="goal-detail-value">{{ goal.currentValue }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Target value</span>
+              <span class="goal-detail-value">{{ goal.targetValue }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Due date</span>
+              <span class="goal-detail-value">{{ goal.dueDate }}</span>
+            </div>
+            <div class="goal-detail-card goal-detail-card--wide">
+              <span class="goal-detail-label">Progress</span>
+              <div class="goal-detail-progress">
+                <p-progressBar
+                  [value]="goal.progress"
+                  [showValue]="false"
+                  class="goal-progress-bar"
+                ></p-progressBar>
+                <span class="goal-detail-value">{{ goal.progress }}%</span>
+              </div>
+            </div>
+            <div class="goal-detail-card goal-detail-card--wide">
+              <span class="goal-detail-label">Coach notes</span>
+              <span class="goal-detail-value">{{
+                goal.notes?.trim() || "No notes added yet."
+              }}</span>
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Edit Goal"
+          primaryIcon="pencil"
+          (cancel)="showGoalDetailsDialog = false"
+          (primary)="editSelectedGoal()"
         />
       </app-dialog>
 
@@ -647,7 +731,10 @@ export class PlayerDevelopmentComponent implements OnInit {
   // Dialog state
   showGoalDialog = false;
   showNoteDialog = false;
+  showGoalDetailsDialog = false;
   noteContent = "";
+  goalDialogMode: "create" | "edit" = "create";
+  readonly selectedGoal = signal<DevelopmentGoal | null>(null);
 
   // Form
   goalForm = this.getEmptyGoalForm();
@@ -919,31 +1006,86 @@ export class PlayerDevelopmentComponent implements OnInit {
   }
 
   openGoalDialog(): void {
+    this.goalDialogMode = "create";
+    this.selectedGoal.set(null);
     this.goalForm = this.getEmptyGoalForm();
     this.goalForm.playerId = this.selectedPlayerId || "";
     this.showGoalDialog = true;
   }
 
   createGoal(): void {
-    this.toastService.success(
-      "Development goal has been created",
-      "Goal Created",
-    );
+    const playerId = this.goalForm.playerId || this.selectedPlayerId;
+    if (!playerId || !this.goalForm.metric || !this.goalForm.targetValue) return;
+
+    const activeGoal = this.selectedGoal();
+
+    if (this.goalDialogMode === "edit" && activeGoal) {
+      const goalId = activeGoal.id;
+      this.goals.update((goals) =>
+        goals.map((goal) =>
+          goal.id === goalId
+            ? {
+                ...goal,
+                playerId,
+                category: this.goalForm.category,
+                metric: this.goalForm.metric,
+                currentValue: this.goalForm.currentValue || goal.currentValue,
+                targetValue: this.goalForm.targetValue,
+                dueDate: this.formatGoalDueDate(this.goalForm.dueDate) || goal.dueDate,
+                notes: this.goalForm.notes,
+              }
+            : goal,
+        ),
+      );
+      this.toastService.success("Development goal has been updated", "Goal Updated");
+    } else {
+      const nextGoal: DevelopmentGoal = {
+        id: `goal-${Date.now()}`,
+        playerId,
+        category: this.goalForm.category,
+        metric: this.goalForm.metric,
+        currentValue: this.goalForm.currentValue,
+        targetValue: this.goalForm.targetValue,
+        startValue: this.goalForm.currentValue,
+        dueDate:
+          this.formatGoalDueDate(this.goalForm.dueDate) ||
+          new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
+        progress: 0,
+        status: "on-track",
+        notes: this.goalForm.notes,
+      };
+      this.goals.update((goals) => [nextGoal, ...goals]);
+      this.toastService.success("Development goal has been created", "Goal Created");
+    }
+
     this.showGoalDialog = false;
+    this.goalDialogMode = "create";
+    this.selectedGoal.set(null);
   }
 
   updateGoal(goal: DevelopmentGoal): void {
-    this.toastService.info(
-      `Opening update dialog for ${goal.metric}`,
-      "Update Goal",
-    );
+    this.goalDialogMode = "edit";
+    this.selectedGoal.set(goal);
+    this.goalForm = {
+      playerId: goal.playerId,
+      category: goal.category,
+      metric: goal.metric,
+      currentValue: goal.currentValue,
+      targetValue: goal.targetValue,
+      dueDate: this.parseGoalDueDate(goal.dueDate),
+      notes: goal.notes || "",
+    };
+    this.showGoalDetailsDialog = false;
+    this.showGoalDialog = true;
   }
 
   viewGoalDetails(goal: DevelopmentGoal): void {
-    this.toastService.info(
-      `Viewing details for ${goal.metric}`,
-      "Goal Details",
-    );
+    this.selectedGoal.set(goal);
+    this.showGoalDetailsDialog = true;
   }
 
   openNoteDialog(): void {
@@ -1012,5 +1154,33 @@ export class PlayerDevelopmentComponent implements OnInit {
       "Needs Work": "danger",
     };
     return severities[grade] || "secondary";
+  }
+
+  editSelectedGoal(): void {
+    const goal = this.selectedGoal();
+    if (!goal) return;
+    this.updateGoal(goal);
+  }
+
+  getPlayerName(playerId: string): string {
+    return this.players().find((player) => player.id === playerId)?.name || "Unknown player";
+  }
+
+  getGoalCategoryLabel(category: DevelopmentGoal["category"]): string {
+    return this.goalCategories.find((option) => option.value === category)?.label || category;
+  }
+
+  private formatGoalDueDate(value: Date | null): string {
+    if (!value) return "";
+    return value.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  private parseGoalDueDate(value: string): Date | null {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 }

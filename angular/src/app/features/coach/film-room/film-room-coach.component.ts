@@ -539,6 +539,133 @@ const TAG_TYPES = [
           (primary)="saveTag()"
         />
       </app-dialog>
+
+      <!-- Session Detail Dialog -->
+      <app-dialog
+        [(visible)]="showSessionDialog"
+        [modal]="true"
+        styleClass="film-session-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Film session details"
+      >
+        <app-dialog-header
+          icon="video"
+          [title]="selectedSession()?.title || 'Film Session'"
+          subtitle="Review assignment details before coaching actions."
+          (close)="closeSessionDialog()"
+        />
+        @if (selectedSession(); as session) {
+          <div class="film-session-detail">
+            <div class="film-session-preview">
+              <div class="thumbnail-placeholder">
+                <i class="pi pi-play-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+
+            <div class="film-session-grid">
+              <div class="detail-block">
+                <span class="detail-label">Type</span>
+                <span class="detail-value">{{ getTypeLabel(session.type) }}</span>
+              </div>
+              <div class="detail-block">
+                <span class="detail-label">Duration</span>
+                <span class="detail-value">{{ session.duration }}</span>
+              </div>
+              <div class="detail-block">
+                <span class="detail-label">Uploaded</span>
+                <span class="detail-value">{{ session.uploadDate }}</span>
+              </div>
+              <div class="detail-block">
+                <span class="detail-label">Tags</span>
+                <span class="detail-value">{{ session.tagCount }} timestamps</span>
+              </div>
+              <div class="detail-block detail-block--wide">
+                <span class="detail-label">Assignment</span>
+                <span class="detail-value">{{ session.assignment }}</span>
+              </div>
+              <div class="detail-block detail-block--wide">
+                <span class="detail-label">Due date</span>
+                <span class="detail-value">{{ session.dueDate }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Add Tag"
+          primaryIcon="tag"
+          (cancel)="closeSessionDialog()"
+          (primary)="openTagDialogFromSession()"
+        />
+      </app-dialog>
+
+      <!-- Compliance Dialog -->
+      <app-dialog
+        [(visible)]="showComplianceDialog"
+        [modal]="true"
+        styleClass="film-compliance-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Film compliance details"
+      >
+        <app-dialog-header
+          icon="check-square"
+          title="Viewing Compliance"
+          subtitle="Track who has completed the assignment and who still needs follow-up."
+          (close)="closeComplianceDialog()"
+        />
+        @if (selectedSession(); as session) {
+          <div class="film-compliance-detail">
+            <div class="compliance-summary">
+              <span class="detail-label">Watch progress</span>
+              <span class="detail-value"
+                >{{ session.watchedCount }}/{{ session.totalAssigned }} complete</span
+              >
+              <p-progressBar
+                [value]="getWatchPercent(session)"
+                [showValue]="false"
+                class="film-watch-progress"
+              ></p-progressBar>
+            </div>
+
+            <div class="compliance-columns">
+              <div class="compliance-list">
+                <h4>Waiting On</h4>
+                @if (session.notWatched.length > 0) {
+                  @for (playerName of session.notWatched; track playerName) {
+                    <span class="compliance-pill compliance-pill--pending">{{
+                      playerName
+                    }}</span>
+                  }
+                } @else {
+                  <p>Everyone assigned has completed this film.</p>
+                }
+              </div>
+
+              <div class="compliance-list">
+                <h4>Assignment</h4>
+                <p>{{ session.assignment }}</p>
+                <p><strong>Due:</strong> {{ session.dueDate }}</p>
+                <p><strong>Watch rate:</strong> {{ getWatchPercent(session) }}%</p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Send Reminder"
+          primaryIcon="send"
+          (cancel)="closeComplianceDialog()"
+          (primary)="sendReminderForSelectedSession()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./film-room-coach.component.scss",
@@ -563,6 +690,8 @@ export class FilmRoomCoachComponent implements OnInit {
   // Dialog state
   showUploadDialog = false;
   showTagDialog = false;
+  showSessionDialog = false;
+  showComplianceDialog = false;
 
   // Forms
   uploadForm = this.getEmptyUploadForm();
@@ -747,22 +876,18 @@ export class FilmRoomCoachComponent implements OnInit {
 
   watchFilm(session: FilmSession): void {
     this.selectedSession.set(session);
-    this.toastService.info(`Playing ${session.title}`, "Opening Film");
+    this.showSessionDialog = true;
   }
 
   editTags(session: FilmSession): void {
     this.selectedSession.set(session);
-    this.toastService.info(
-      `Opening tag editor for ${session.title}`,
-      "Tag Editor",
-    );
+    this.tagForm = this.getEmptyTagForm();
+    this.showTagDialog = true;
   }
 
   viewCompliance(session: FilmSession): void {
-    this.toastService.info(
-      `${session.watchedCount}/${session.totalAssigned} have watched`,
-      "Compliance",
-    );
+    this.selectedSession.set(session);
+    this.showComplianceDialog = true;
   }
 
   sendReminder(session: FilmSession): void {
@@ -770,6 +895,13 @@ export class FilmRoomCoachComponent implements OnInit {
       `Reminders sent to ${session.notWatched.length} players`,
       "Reminders Sent",
     );
+  }
+
+  sendReminderForSelectedSession(): void {
+    const session = this.selectedSession();
+    if (!session) return;
+    this.sendReminder(session);
+    this.closeComplianceDialog();
   }
 
   openAddTag(): void {
@@ -803,5 +935,18 @@ export class FilmRoomCoachComponent implements OnInit {
   getWatchPercent(session: FilmSession): number {
     if (session.totalAssigned === 0) return 100;
     return Math.round((session.watchedCount / session.totalAssigned) * 100);
+  }
+
+  closeSessionDialog(): void {
+    this.showSessionDialog = false;
+  }
+
+  closeComplianceDialog(): void {
+    this.showComplianceDialog = false;
+  }
+
+  openTagDialogFromSession(): void {
+    this.closeSessionDialog();
+    this.openAddTag();
   }
 }

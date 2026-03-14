@@ -497,14 +497,21 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async startEditing(message: ChatMessage): Promise<void> {
-    // Would implement inline editing UI
     const newContent = await this.dialogService.prompt(
       "Edit message:",
       message.message,
       "Edit Message",
     );
-    if (newContent && newContent !== message.message) {
-      this.channelService.editMessage(message.id, newContent);
+    const trimmedContent = newContent?.trim();
+    if (!trimmedContent || trimmedContent === message.message) {
+      return;
+    }
+
+    try {
+      await this.channelService.editMessage(message.id, trimmedContent);
+      this.toastService.success("Message updated");
+    } catch (_error) {
+      this.toastService.error("Failed to update message");
     }
   }
 
@@ -683,8 +690,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   openChannelSettings(): void {
     const channel = this.currentChannel();
     if (channel) {
-      this.toastService.info(`Channel settings for #${channel.name}`);
-      // Would open settings dialog
+      this.showMembersDialog = true;
+      void this.loadChannelMembers();
     }
   }
 

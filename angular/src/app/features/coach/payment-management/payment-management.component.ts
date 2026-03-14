@@ -824,6 +824,100 @@ const BALANCE_FILTERS = [
           (primary)="recordPayment()"
         />
       </app-dialog>
+
+      <app-dialog
+        [(visible)]="showFeeDetailsDialog"
+        [modal]="true"
+        styleClass="payment-fee-details-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Fee details"
+      >
+        <app-dialog-header
+          icon="wallet"
+          [title]="selectedFee()?.name || 'Fee Details'"
+          subtitle="Review collection progress, fee timing, and outstanding balances."
+          (close)="showFeeDetailsDialog = false"
+        />
+        @if (selectedFee(); as fee) {
+          <div class="fee-details-dialog-content">
+            <div class="fee-details-grid">
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Type</span>
+                <span class="fee-detail-value">{{ getFeeTypeLabel(fee.type) }}</span>
+              </div>
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Due date</span>
+                <span class="fee-detail-value">{{ fee.dueDate }}</span>
+              </div>
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Base fee</span>
+                <span class="fee-detail-value">\${{ fee.amount }}/player</span>
+              </div>
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Guest fee</span>
+                <span class="fee-detail-value">{{
+                  fee.guestFee ? "$" + fee.guestFee + "/guest" : "Not set"
+                }}</span>
+              </div>
+              <div class="fee-detail-card fee-detail-card--wide">
+                <span class="fee-detail-label">Collection progress</span>
+                <div class="fee-detail-progress">
+                  <p-progressBar
+                    [value]="getCollectionPercent(fee)"
+                    [showValue]="false"
+                    class="fees-list-progress"
+                  ></p-progressBar>
+                  <span class="fee-detail-value"
+                    >\${{ fee.collected }} / \${{ fee.total }} ({{
+                      getCollectionPercent(fee)
+                    }}%)</span
+                  >
+                </div>
+                <span class="fee-detail-subtle"
+                  >{{ fee.paidCount }} paid full, {{ fee.partialCount }} partial,
+                  {{ fee.unpaidCount }} unpaid</span
+                >
+              </div>
+              <div class="fee-detail-card fee-detail-card--wide">
+                <span class="fee-detail-label">Description</span>
+                <span class="fee-detail-value">{{
+                  fee.description?.trim() || "No additional description provided."
+                }}</span>
+              </div>
+            </div>
+
+            <div class="fee-outstanding-summary">
+              <h4>Outstanding balances</h4>
+              @if (fee.outstanding.length > 0) {
+                <div class="fee-outstanding-list">
+                  @for (item of fee.outstanding; track item.playerId) {
+                    <div class="fee-outstanding-row">
+                      <span>{{ item.playerName }}</span>
+                      <span>\${{ item.amount }}</span>
+                      <span class="fee-outstanding-note">{{
+                        item.note || "No note"
+                      }}</span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p>All assigned players are currently settled on this fee.</p>
+              }
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Record Payment"
+          primaryIcon="check"
+          (cancel)="showFeeDetailsDialog = false"
+          (primary)="openPaymentDialogFromDetails()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./payment-management.component.scss",
@@ -866,6 +960,8 @@ export class PaymentManagementComponent implements OnInit {
   // Dialog state
   showFeeDialog = false;
   showPaymentDialog = false;
+  showFeeDetailsDialog = false;
+  readonly selectedFee = signal<TeamFee | null>(null);
 
   // Forms
   readonly feeFormGroup: FeeFormGroup = this.createFeeForm();
@@ -1158,7 +1254,8 @@ export class PaymentManagementComponent implements OnInit {
 
   // Action methods
   viewFeeDetails(fee: TeamFee): void {
-    this.toastService.info(`Viewing details for ${fee.name}`, "Fee Details");
+    this.selectedFee.set(fee);
+    this.showFeeDetailsDialog = true;
   }
 
   sendFeeReminders(fee: TeamFee): void {
@@ -1237,5 +1334,14 @@ export class PaymentManagementComponent implements OnInit {
 
   getPlayerBalance(playerId: string): number {
     return this.balances().find((b) => b.id === playerId)?.balance || 0;
+  }
+
+  getFeeTypeLabel(type: TeamFee["type"]): string {
+    return this.feeTypes.find((option) => option.value === type)?.label || type;
+  }
+
+  openPaymentDialogFromDetails(): void {
+    this.showFeeDetailsDialog = false;
+    this.openRecordPaymentDialog(this.selectedFee() || undefined);
   }
 }

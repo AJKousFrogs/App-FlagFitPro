@@ -240,9 +240,9 @@ export class TeamCreateComponent {
         `${formData.name} has been created successfully!`,
       );
 
-      // Redirect to roster page with the new team
+      // Redirect to roster. The new team is already active via owner membership creation.
       setTimeout(() => {
-        this.router.navigate(["/roster"], { queryParams: { team: team.id } });
+        this.router.navigate(["/roster"]);
       }, 1000);
     } catch (error) {
       const message =
