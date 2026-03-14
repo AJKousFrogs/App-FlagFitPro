@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { db } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Notifications
 // Returns user notifications using Supabase
@@ -44,15 +45,18 @@ rateLimitType,
       let parsedBody = null;
       if (event.body) {
         try {
-          parsedBody = JSON.parse(event.body);
-        } catch {
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-          );
-        }
-        if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) {
+          parsedBody = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (
+            error?.code === "INVALID_JSON_BODY" &&
+            error?.message === "Invalid JSON in request body"
+          ) {
+            return createErrorResponse(
+              "Invalid JSON in request body",
+              400,
+              "invalid_json",
+            );
+          }
           return createErrorResponse(
             "Request body must be an object",
             422,

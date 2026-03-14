@@ -21,6 +21,7 @@ const ErrorType = Object.freeze({
   DATABASE: "database_error",
   NETWORK: "network_error",
   TIMEOUT: "timeout_error",
+  SERVICE_UNAVAILABLE: "service_unavailable",
   UNKNOWN: "unknown_error",
 });
 
@@ -325,6 +326,39 @@ function handleServerError(error, context = "Operation") {
   const isDevelopment =
     process.env.NETLIFY_DEV === "true" ||
     process.env.NODE_ENV === "development";
+
+  if (
+    error?.isValidation ||
+    error instanceof SyntaxError ||
+    error?.name === "SyntaxError" ||
+    error?.code === "INVALID_JSON_BODY"
+  ) {
+    return handleValidationError(error?.message || "Invalid request body");
+  }
+
+  if (
+    error?.code === "SUPABASE_CONFIG_ERROR" ||
+    error?.code === "SUPABASE_CLIENT_INIT_ERROR"
+  ) {
+    return createErrorResponse(
+      error.message || "Backend service is not configured correctly.",
+      503,
+      ErrorType.SERVICE_UNAVAILABLE,
+      isDevelopment ? { code: error.code } : {},
+    );
+  }
+
+  if (
+    error?.code === "SUPABASE_CONNECTION_ERROR" ||
+    error?.code === "NETWORK_ERROR"
+  ) {
+    return createErrorResponse(
+      error.message || "A backend dependency is temporarily unavailable.",
+      503,
+      ErrorType.NETWORK,
+      isDevelopment ? { code: error.code } : {},
+    );
+  }
 
   // Provide more detailed error messages in development
   let errorMessage =

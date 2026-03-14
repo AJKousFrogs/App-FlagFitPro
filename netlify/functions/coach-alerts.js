@@ -16,19 +16,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-
-const parseJsonObjectBody = (rawBody) => {
-  if (rawBody === undefined || rawBody === null || rawBody === "") {
-    return {};
-  }
-
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    throw new Error("Request body must be an object");
-  }
-
-  return parsed;
-};
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 const isValidDateOnly = (value) => {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -192,7 +180,10 @@ const handler = async (event, context) => {
         try {
           body = parseJsonObjectBody(event.body);
         } catch (error) {
-          if (error instanceof SyntaxError) {
+          if (
+            error?.code === "INVALID_JSON_BODY" &&
+            error?.message === "Invalid JSON in request body"
+          ) {
             return createErrorResponse("Invalid JSON", 400, "invalid_json");
           }
           return createErrorResponse(

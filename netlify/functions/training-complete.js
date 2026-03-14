@@ -7,23 +7,9 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
-
-function parseJsonObjectBody(rawBody) {
-  let parsed;
-  try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
-    const error = new Error("Invalid JSON in request body");
-    error.code = "invalid_json";
-    throw error;
-  }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Request body must be an object");
-  }
-  return parsed;
-}
 
 function parseOptionalBoundedNumber(value, { field, min, max, integer = false }) {
   if (value === undefined || value === null || value === "") {
@@ -380,7 +366,10 @@ async function handleRequest(event, context, { userId }) {
     try {
       parsedPayload = parseCompletionPayload(parseJsonObjectBody(event.body));
     } catch (validationError) {
-      if (validationError.code === "invalid_json") {
+      if (
+        validationError?.code === "INVALID_JSON_BODY" &&
+        validationError?.message === "Invalid JSON in request body"
+      ) {
         return createErrorResponse(
           "Invalid JSON in request body",
           400,

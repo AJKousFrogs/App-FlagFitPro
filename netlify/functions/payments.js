@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { checkTeamMembership, getUserContext } from "./utils/auth-helper.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
@@ -516,15 +517,18 @@ const handler = async (event, context) => {
       let body = {};
       if (event.body) {
         try {
-          body = JSON.parse(event.body);
-        } catch {
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-          );
-        }
-        if (!body || typeof body !== "object" || Array.isArray(body)) {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (
+            error?.code === "INVALID_JSON_BODY" &&
+            error?.message === "Invalid JSON in request body"
+          ) {
+            return createErrorResponse(
+              "Invalid JSON in request body",
+              400,
+              "invalid_json",
+            );
+          }
           return createErrorResponse(
             "Request body must be an object",
             422,

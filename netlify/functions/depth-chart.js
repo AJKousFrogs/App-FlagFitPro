@@ -1,5 +1,6 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership } from "./utils/auth-helper.js";
@@ -46,19 +47,6 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   const parsed = Number.parseInt(normalized, 10);
   if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
     throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-
-  return parsed;
-};
-
-const parseJsonObjectBody = (rawBody) => {
-  if (rawBody === undefined || rawBody === null || rawBody === "") {
-    return {};
-  }
-
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    throw new Error("Request body must be an object");
   }
 
   return parsed;

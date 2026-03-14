@@ -67,6 +67,7 @@
 | [CARD_COMPONENT_GUIDELINES.md](./CARD_COMPONENT_GUIDELINES.md) | app-card vs p-card usage          |
 | [API.md](./API.md)                                     | API reference                            |
 | [BACKEND_SETUP.md](./BACKEND_SETUP.md)                 | Backend/Netlify Functions setup          |
+| [BACKEND_FUNCTION_CONTRACT.md](./BACKEND_FUNCTION_CONTRACT.md) | Netlify request/response/role contract |
 | [TECH_STACK.md](./TECH_STACK.md)                       | **Tech stack** — ESM, Angular 21, tokens |
 
 ---

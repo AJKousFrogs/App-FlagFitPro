@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 const COACH_INBOX_ROLES = [
   "owner",
@@ -34,21 +35,6 @@ const parseBoundedInt = (value, fieldName, { min = 0, max = 200 } = {}) => {
   const parsed = Number.parseInt(String(value), 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
     throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
-
-const parseJsonObjectBody = (rawBody) => {
-  let parsed;
-  try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
-    const error = new Error("Invalid JSON in request body");
-    error.code = "invalid_json";
-    throw error;
-  }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Request body must be an object");
   }
   return parsed;
 };

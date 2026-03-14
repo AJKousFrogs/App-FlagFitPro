@@ -26,7 +26,17 @@ const handler = async (event, context) => {
       const normalizedEmail = email.trim().toLowerCase();
 
       // Initialize Supabase client
-      const supabase = getSupabaseClient();
+      let supabase;
+      try {
+        supabase = getSupabaseClient();
+      } catch (error) {
+        return createErrorResponse(
+          error.message || "Authentication service is unavailable",
+          503,
+          "service_unavailable",
+          requestId,
+        );
+      }
 
       // Sign in with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -49,7 +59,13 @@ const handler = async (event, context) => {
           "Login service returned an invalid response",
           502,
           "auth_response_invalid",
-          requestId,
+          {
+            requestId,
+            details: [
+              `hasUser=${Boolean(data?.user)}`,
+              `hasSession=${Boolean(data?.session)}`,
+            ],
+          },
         );
       }
 

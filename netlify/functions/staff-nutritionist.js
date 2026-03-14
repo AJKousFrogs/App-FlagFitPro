@@ -1,6 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { NUTRITION_ACCESS_ROLES } from "./utils/role-sets.js";
@@ -498,9 +499,14 @@ async function handleRequest(event, _context, { userId }) {
       const athleteId = path.split("/")[2];
       let body = {};
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch {
-        return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
+        body = parseJsonObjectBody(event.body);
+      } catch (error) {
+        const isObjectError = error.message === "Request body must be an object";
+        return createErrorResponse(
+          isObjectError ? error.message : "Invalid JSON in request body",
+          isObjectError ? 422 : 400,
+          isObjectError ? "validation_error" : "invalid_json",
+        );
       }
       const reportType = body.type || "weekly";
       if (!["weekly", "monthly"].includes(reportType)) {

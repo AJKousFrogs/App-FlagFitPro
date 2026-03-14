@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: GDPR Data Export API
 // Handles user data export requests for GDPR compliance
@@ -383,11 +384,14 @@ async function handleRequest(event, _context, { userId }) {
   let body = {};
   if (event.body && event.httpMethod === "POST") {
     try {
-      body = JSON.parse(event.body);
-    } catch {
-      return createErrorResponse("Invalid JSON body", 400, "invalid_json");
-    }
-    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      body = parseJsonObjectBody(event.body);
+    } catch (error) {
+      if (
+        error?.code === "INVALID_JSON_BODY" &&
+        error?.message === "Invalid JSON in request body"
+      ) {
+        return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+      }
       return createErrorResponse(
         "Request body must be an object",
         422,

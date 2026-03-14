@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { validate } from "./validation.js";
 
 const parseBoundedInt = (value, fieldName, { min, max }) => {
@@ -17,19 +18,6 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   const parsed = Number.parseInt(normalized, 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
     const error = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-    error.isValidation = true;
-    throw error;
-  }
-  return parsed;
-};
-
-const parseJsonObjectBody = (rawBody) => {
-  if (rawBody === undefined || rawBody === null || rawBody === "") {
-    return {};
-  }
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    const error = new Error("Request body must be an object");
     error.isValidation = true;
     throw error;
   }
@@ -617,6 +605,17 @@ const handler = async (event, context) => {
         try {
           body = parseJsonObjectBody(event.body);
         } catch (error) {
+          if (
+            error?.code === "INVALID_JSON_BODY" &&
+            error?.message === "Invalid JSON in request body"
+          ) {
+            return createErrorResponse(
+              "Invalid JSON",
+              400,
+              "invalid_json",
+              requestId,
+            );
+          }
           if (error?.isValidation) {
             return createErrorResponse(
               error.message,
@@ -625,12 +624,7 @@ const handler = async (event, context) => {
               requestId,
             );
           }
-          return createErrorResponse(
-            "Invalid JSON",
-            400,
-            "invalid_json",
-            requestId,
-          );
+          return createErrorResponse("Invalid JSON", 400, "invalid_json", requestId);
         }
       }
 

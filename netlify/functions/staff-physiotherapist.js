@@ -1,6 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 
@@ -621,12 +622,13 @@ async function handleRequest(event, _context, { userId }) {
       const injuryId = path.split("/")[2];
       let body = {};
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch {
+        body = parseJsonObjectBody(event.body);
+      } catch (error) {
+        const isObjectError = error.message === "Request body must be an object";
         return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
+          isObjectError ? error.message : "Invalid JSON in request body",
+          isObjectError ? 422 : 400,
+          isObjectError ? "validation_error" : "invalid_json",
         );
       }
 
@@ -667,12 +669,13 @@ async function handleRequest(event, _context, { userId }) {
     if (method === "POST" && path === "/injuries") {
       let body = {};
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch {
+        body = parseJsonObjectBody(event.body);
+      } catch (error) {
+        const isObjectError = error.message === "Request body must be an object";
         return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
+          isObjectError ? error.message : "Invalid JSON in request body",
+          isObjectError ? 422 : 400,
+          isObjectError ? "validation_error" : "invalid_json",
         );
       }
       if (!body.userId || !body.type || !body.location) {

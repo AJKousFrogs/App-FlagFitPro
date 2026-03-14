@@ -5,6 +5,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 // Updated to work with actual knowledge_base_entries schema
 
 import { supabaseAdmin } from "./supabase-client.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -77,17 +78,6 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   return parsed;
 };
 
-const parseJsonObjectBody = (rawBody) => {
-  if (rawBody === undefined || rawBody === null || rawBody === "") {
-    return {};
-  }
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    throw new Error("Request body must be an object");
-  }
-  return parsed;
-};
-
 const normalizeKnowledgeEntry = (entry) => {
   const sourceUrl = Array.isArray(entry.supporting_articles)
     ? entry.supporting_articles[0] || null
@@ -134,7 +124,10 @@ rateLimitType,
           try {
             bodyData = parseJsonObjectBody(event.body);
           } catch (error) {
-            if (error instanceof SyntaxError) {
+            if (
+              error?.code === "INVALID_JSON_BODY" &&
+              error?.message === "Invalid JSON in request body"
+            ) {
               return createErrorResponse(
                 "Invalid JSON in request body",
                 400,

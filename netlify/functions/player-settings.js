@@ -1,6 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -122,7 +123,7 @@ const handler = async (event, context) =>
 
         let payload = {};
         try {
-          payload = evt.body ? JSON.parse(evt.body) : {};
+          payload = parseJsonObjectBody(evt.body);
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }

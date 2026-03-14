@@ -5,6 +5,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { detectPainTrigger, detectACWRTrigger } from "./utils/safety-override.js";
 import { requireAuthorization, logViolation } from "./utils/authorization-guard.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Netlify Function: Daily Training
@@ -979,12 +980,13 @@ const handler = async (event, context) => {
       if (event.httpMethod === "POST") {
         let body;
         try {
-          body = JSON.parse(event.body || "{}");
-        } catch {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          const isObjectError = error.message === "Request body must be an object";
           return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
+            isObjectError ? error.message : "Invalid JSON in request body",
+            isObjectError ? 422 : 400,
+            isObjectError ? "validation_error" : "invalid_json",
             requestId,
           );
         }

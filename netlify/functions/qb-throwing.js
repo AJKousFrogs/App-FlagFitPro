@@ -12,10 +12,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
-
-function isPlainObject(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 function isValidDateString(value) {
   return typeof value === "string" && !Number.isNaN(new Date(value).getTime());
@@ -41,12 +38,9 @@ const handler = async (event, context) =>
 
         let payload = {};
         try {
-          payload = evt.body ? JSON.parse(evt.body) : {};
+          payload = parseJsonObjectBody(evt.body);
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
-        }
-        if (!isPlainObject(payload)) {
-          return handleValidationError("Request body must be an object");
         }
 
         if (endpoint === "arm-care") {

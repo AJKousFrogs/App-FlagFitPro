@@ -77,6 +77,16 @@ const supabaseAnonKey = sanitizeEnvValue(
   process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY,
 ); // Anon key for regular operations
 
+function getSupabaseConfigStatus() {
+  return {
+    hasUrl: !!supabaseUrl,
+    hasServiceKey: !!supabaseServiceKey,
+    hasAnonKey: !!supabaseAnonKey,
+    hasAdminClient: !!supabaseService,
+    hasAnonClient: !!supabase,
+  };
+}
+
 // Create Supabase client with service key for admin operations
 // Only create if environment variables are available
 let supabaseService;
@@ -118,9 +128,11 @@ try {
  */
 function getSupabaseClient(token = null) {
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
+    const error = new Error(
       "Supabase anon client is not initialized. Please check SUPABASE_URL and SUPABASE_ANON_KEY.",
     );
+    error.code = "SUPABASE_CONFIG_ERROR";
+    throw error;
   }
 
   const headers = token
@@ -1227,9 +1239,11 @@ function enhanceSupabaseError(error, context = "Database operation") {
 // Helper function to check supabaseAdmin and throw if not initialized
 function requireSupabaseAdmin(context = "Database operation") {
   if (!supabaseAdmin) {
-    throw new Error(
+    const error = new Error(
       `Supabase admin client is not initialized for ${context}. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY (or SUPABASE_SERVICE_ROLE_KEY) environment variables.`,
     );
+    error.code = "SUPABASE_CONFIG_ERROR";
+    throw error;
   }
 }
 
@@ -1297,9 +1311,11 @@ function checkEnvVars() {
           ? "SET"
           : "MISSING",
     });
-    throw new Error(
+    const error = new Error(
       `Missing required Supabase environment variables: ${missing.join(", ")}. Please set them in Netlify.`,
     );
+    error.code = "SUPABASE_CONFIG_ERROR";
+    throw error;
   }
 
   // Validate URL format
@@ -1307,9 +1323,11 @@ function checkEnvVars() {
     new URL(supabaseUrl);
   } catch (_urlError) {
     console.error("Invalid SUPABASE_URL format:", supabaseUrl);
-    throw new Error(
+    const error = new Error(
       `Invalid SUPABASE_URL format. Expected a valid URL, got: ${supabaseUrl?.substring(0, 50)}...`,
     );
+    error.code = "SUPABASE_CONFIG_ERROR";
+    throw error;
   }
 
   // Also check if clients were initialized
@@ -1322,9 +1340,11 @@ function checkEnvVars() {
         ? `${supabaseUrl.substring(0, 30)}...`
         : "MISSING",
     });
-    throw new Error(
+    const error = new Error(
       "Supabase clients failed to initialize. Please check your environment variables.",
     );
+    error.code = "SUPABASE_CLIENT_INIT_ERROR";
+    throw error;
   }
 }
 
@@ -1336,4 +1356,5 @@ export { supabase,
   setAuthContextToken,
   runWithAuthContext,
   db,
+  getSupabaseConfigStatus,
   checkEnvVars, };

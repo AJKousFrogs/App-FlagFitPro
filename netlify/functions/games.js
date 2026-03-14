@@ -20,13 +20,12 @@ async function getUserRole(userId) {
     .eq("user_id", userId)
     .eq("status", "active")
     .order("updated_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(1);
 
-  if (error || !data) {
+  if (error || !Array.isArray(data) || !data[0]) {
     return "player";
   }
-  return data.role || "player";
+  return data[0].role || "player";
 }
 
 // Check if user is coach/admin

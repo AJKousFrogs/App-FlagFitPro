@@ -6,6 +6,7 @@ import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Update Chatbot Statistics API Endpoint
 // Updates chatbot usage statistics and tracks preferred topics
@@ -27,35 +28,35 @@ const handler = async (event, context) =>
     requireAuth: true,
     handler: async (evt, _ctx, { userId, requestId }) => {
       try {
-        let bodyData = {};
         try {
-          bodyData = JSON.parse(evt.body || "{}");
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
-        }
-
-        if (bodyData === null || typeof bodyData !== "object" || Array.isArray(bodyData)) {
-          return handleValidationError("Request body must be an object");
-        }
-
-        const { topic } = bodyData;
-        if (topic !== undefined) {
-          if (typeof topic !== "string") {
-            return handleValidationError("topic must be a string");
+          const bodyData = parseJsonObjectBody(evt.body);
+          const { topic } = bodyData;
+          if (topic !== undefined) {
+            if (typeof topic !== "string") {
+              return handleValidationError("topic must be a string");
+            }
+            if (topic.trim().length > 120) {
+              return handleValidationError("topic must be 120 characters or fewer");
+            }
           }
-          if (topic.trim().length > 120) {
-            return handleValidationError("topic must be 120 characters or fewer");
+
+          await pool.query(`SELECT update_chatbot_query_stats($1, $2)`, [
+            userId,
+            topic?.trim() ? topic.trim() : null,
+          ]);
+
+          return createSuccessResponse({
+            message: "Statistics updated successfully",
+          });
+        } catch (parseError) {
+          if (parseError?.message === "Request body must be an object") {
+            return handleValidationError(parseError.message);
           }
+          if (parseError?.message === "Invalid JSON in request body") {
+            return handleValidationError(parseError.message);
+          }
+          throw parseError;
         }
-
-        await pool.query(`SELECT update_chatbot_query_stats($1, $2)`, [
-          userId,
-          topic?.trim() ? topic.trim() : null,
-        ]);
-
-        return createSuccessResponse({
-          message: "Statistics updated successfully",
-        });
       } catch (error) {
         if (error?.code) {
           console.error("Error in update-chatbot-stats function", { code: error.code });

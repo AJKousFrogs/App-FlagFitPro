@@ -12,6 +12,7 @@ import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 const handler = async (event, context) =>
   baseHandler(event, context, {
@@ -23,12 +24,13 @@ const handler = async (event, context) =>
     if (event.httpMethod === "POST") {
       let body = {};
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
-      }
-      if (!body || typeof body !== "object" || Array.isArray(body)) {
-        return handleValidationError("Request body must be an object");
+        body = parseJsonObjectBody(event.body);
+      } catch (error) {
+        return handleValidationError(
+          error.message === "Request body must be an object"
+            ? error.message
+            : "Invalid JSON in request body",
+        );
       }
       const { action, paused_until, reason } = body;
 

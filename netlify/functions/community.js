@@ -1,6 +1,6 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
-import { sanitizeObject } from "./utils/input-validator.js";
+import { parseJsonObjectBody, sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
@@ -19,17 +19,6 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   const parsed = Number.parseInt(normalized, 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
     throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
-
-const parseJsonObjectBody = (rawBody) => {
-  if (rawBody === undefined || rawBody === null || rawBody === "") {
-    return {};
-  }
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    throw new Error("Request body must be an object");
   }
   return parsed;
 };
@@ -996,7 +985,10 @@ async function handleCommunityRequest(event, requestId) {
           try {
             body = parseJsonObjectBody(event.body);
           } catch (error) {
-            if (error instanceof SyntaxError) {
+            if (
+              error?.code === "INVALID_JSON_BODY" &&
+              error?.message === "Invalid JSON in request body"
+            ) {
               return createErrorResponse(
                 "Invalid JSON in request body",
                 400,
@@ -1062,7 +1054,10 @@ async function handleCommunityRequest(event, requestId) {
         try {
           postData = parseJsonObjectBody(event.body);
         } catch (error) {
-          if (error instanceof SyntaxError) {
+          if (
+            error?.code === "INVALID_JSON_BODY" &&
+            error?.message === "Invalid JSON in request body"
+          ) {
             return createErrorResponse(
               "Invalid JSON in request body",
               400,

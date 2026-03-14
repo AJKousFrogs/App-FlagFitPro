@@ -3,6 +3,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Decision Ledger API
 // Handles decision accountability, review triggers, and confidence scoring
@@ -19,17 +20,6 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   const parsed = Number.parseInt(normalized, 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
     throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
-
-const parseJsonObjectBody = (rawBody) => {
-  if (rawBody === undefined || rawBody === null || rawBody === "") {
-    return {};
-  }
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    throw new Error("Request body must be an object");
   }
   return parsed;
 };
@@ -626,7 +616,10 @@ async function handleRequest(event, _context, { userId }) {
     try {
       body = parseJsonObjectBody(event.body);
     } catch (error) {
-      if (error instanceof SyntaxError) {
+      if (
+        error?.code === "INVALID_JSON_BODY" &&
+        error?.message === "Invalid JSON in request body"
+      ) {
         return createErrorResponse("Invalid JSON body", 400, "invalid_json");
       }
       return createErrorResponse(error.message, 422, "validation_error");
@@ -664,7 +657,7 @@ async function handleRequest(event, _context, { userId }) {
     // POST /api/decisions - Create decision
     if (event.httpMethod === "POST" && path === "") {
       const decision = await createDecision(userId, body);
-      return createSuccessResponse(decision, true, 201);
+      return createSuccessResponse(decision, 201);
     }
 
     // POST /api/decisions/:id/review - Review decision

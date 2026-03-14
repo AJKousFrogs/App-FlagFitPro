@@ -3,6 +3,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 const ALLOWED_ENTRY_TYPES = new Set([
   "training_method",
@@ -21,15 +22,20 @@ function normalizeText(value) {
   return String(value || "").trim();
 }
 
-function parseJsonObjectBody(rawBody) {
-  if (!rawBody) {
-    return {};
+function parseRequestBody(rawBody, requestId) {
+  try {
+    return { body: parseJsonObjectBody(rawBody) };
+  } catch (error) {
+    const isObjectError = error.message === "Request body must be an object";
+    return {
+      error: createErrorResponse(
+        isObjectError ? error.message : "Invalid JSON in request body",
+        isObjectError ? 422 : 400,
+        isObjectError ? "validation_error" : "invalid_json",
+        requestId,
+      ),
+    };
   }
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Request body must be an object");
-  }
-  return parsed;
 }
 
 function parsePositiveInt(value, fallback, min, max) {
@@ -215,7 +221,10 @@ const handler = async (event, context) =>
       }
 
       if (event.httpMethod === "POST" && pathParts[0] !== "review") {
-        const body = parseJsonObjectBody(event.body);
+        const { body, error } = parseRequestBody(event.body, requestId);
+        if (error) {
+          return error;
+        }
         const topic = normalizeText(body.topic).toLowerCase();
         const question = normalizeText(body.question);
         const answer = normalizeText(body.answer);
@@ -322,7 +331,10 @@ const handler = async (event, context) =>
         }
 
         const entryId = pathParts[1];
-        const body = parseJsonObjectBody(event.body);
+        const { body, error } = parseRequestBody(event.body, requestId);
+        if (error) {
+          return error;
+        }
         const action = normalizeText(body.action).toLowerCase();
         const notes = normalizeText(body.notes) || null;
         const overrideQualityGate = Boolean(body.override_quality_gate);

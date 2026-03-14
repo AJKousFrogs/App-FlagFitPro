@@ -8,6 +8,7 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = [
@@ -148,21 +149,13 @@ const handler = async (event, context) => {
       if (event.httpMethod === "POST") {
         let body = {};
         try {
-          body = JSON.parse(event.body || "{}");
-        } catch {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          const isObjectError = error.message === "Request body must be an object";
           return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-            requestId,
-          );
-        }
-
-        if (body === null || typeof body !== "object" || Array.isArray(body)) {
-          return createErrorResponse(
-            "Request body must be an object",
-            400,
-            "validation_error",
+            isObjectError ? error.message : "Invalid JSON in request body",
+            isObjectError ? 422 : 400,
+            isObjectError ? "validation_error" : "invalid_json",
             requestId,
           );
         }

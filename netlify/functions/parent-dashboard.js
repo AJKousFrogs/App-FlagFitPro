@@ -22,6 +22,7 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 const VALID_NOTIFICATION_STATUSES = new Set([
   "unread",
@@ -52,21 +53,6 @@ function parseBoundedInt(rawValue, fieldName, { min = 0, max = 200 } = {}) {
   const parsed = Number.parseInt(String(rawValue), 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
     throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
-
-function parseJsonObjectBody(rawBody) {
-  let parsed;
-  try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
-    const error = new Error("Invalid JSON");
-    error.code = "invalid_json";
-    throw error;
-  }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Request body must be an object");
   }
   return parsed;
 }
@@ -1071,7 +1057,19 @@ rateLimitType,
           requestId,
         );
       } catch (error) {
-        if (error.code === "invalid_json") {
+        if (error.message === "Request body must be an object") {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+        if (
+          error.code === "invalid_json" ||
+          error.code === "INVALID_JSON_BODY" ||
+          error.message === "Invalid JSON in request body"
+        ) {
           return createErrorResponse(
             "Invalid JSON",
             400,
@@ -1083,7 +1081,6 @@ rateLimitType,
           error.message?.includes("Invalid notification status") ||
           error.message?.includes("must be a boolean") ||
           error.message?.includes("positive integer") ||
-          error.message?.includes("Request body must be an object") ||
           error.message?.includes("must be an integer between")
         ) {
           return createErrorResponse(

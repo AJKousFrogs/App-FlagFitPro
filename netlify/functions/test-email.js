@@ -6,6 +6,7 @@ import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
@@ -83,13 +84,7 @@ const handler = async (event, context) =>
     requireAuth: true,
     handler: async (evt, _context, { userId, requestId }) => {
       try {
-        let bodyData = {};
-        try {
-          bodyData = JSON.parse(evt.body);
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
-        }
-
+        const bodyData = parseJsonObjectBody(evt.body);
         const { email, provider = "auto" } = bodyData;
 
         if (typeof email !== "string" || email.trim().length === 0) {
@@ -130,18 +125,18 @@ const handler = async (event, context) =>
           // Test connection
           await transporter.verify();
 
-      // Send test email
-      const mailOptions = {
-        from: {
-          name: "FlagFit Pro",
-          address:
-            process.env.FROM_EMAIL ||
-            process.env.GMAIL_EMAIL ||
-            process.env.SMTP_USER,
-        },
-        to: email,
-        subject: "🏈 FlagFit Pro - Email Service Test",
-        html: `
+          // Send test email
+          const mailOptions = {
+            from: {
+              name: "FlagFit Pro",
+              address:
+                process.env.FROM_EMAIL ||
+                process.env.GMAIL_EMAIL ||
+                process.env.SMTP_USER,
+            },
+            to: email,
+            subject: "🏈 FlagFit Pro - Email Service Test",
+            html: `
           <div style="font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #10c96b; border-radius: 10px;">
             <div style="text-align: center; margin-bottom: 20px;">
               <h1 style="color: #10c96b; margin: 0;">🏈 FlagFit Pro</h1>
@@ -178,7 +173,7 @@ const handler = async (event, context) =>
             </p>
           </div>
         `,
-        text: `
+            text: `
 FlagFit Pro - Email Service Test Successful!
 
 ✅ Email Provider: ${providerName}
@@ -196,7 +191,7 @@ Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
 
 © 2024 FlagFit Pro. Email service powered by ${providerName}.
         `.trim(),
-      };
+          };
 
           const result = await transporter.sendMail(mailOptions);
 
@@ -214,9 +209,30 @@ Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
         } catch (emailError) {
           console.error("Email service error:", emailError);
 
+          const errorCode = emailError?.code || emailError?.responseCode;
+          const isProviderAuthFailure =
+            errorCode === "EAUTH" || errorCode === 535 || errorCode === 534;
+          const isNetworkFailure = [
+            "ETIMEDOUT",
+            "ECONNREFUSED",
+            "ECONNRESET",
+            "ENOTFOUND",
+            "EAI_AGAIN",
+          ].includes(String(errorCode));
+          const isProviderVerifyFailure = !errorCode;
+
+          const message = isProviderAuthFailure
+            ? "Email provider rejected the configured credentials"
+            : isNetworkFailure
+              ? "Unable to reach the configured email provider"
+              : "Email service configuration issue";
+
+          const statusCode =
+            isProviderAuthFailure || isNetworkFailure || isProviderVerifyFailure ? 502 : 503;
+
           return createErrorResponse(
-            "Email service configuration issue",
-            502,
+            message,
+            statusCode,
             "email_service_error",
             requestId,
           );

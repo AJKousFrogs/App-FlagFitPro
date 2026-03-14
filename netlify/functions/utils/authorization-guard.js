@@ -20,17 +20,16 @@ async function getUserRole(userId) {
   }
 
   // Get role from team_members table (authoritative source for team roles)
-  const { data: membership, error: memberError } = await supabaseAdmin
+  const { data: memberships, error: memberError } = await supabaseAdmin
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
     .eq("status", "active")
     .order("updated_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(1);
 
-  if (!memberError && membership?.role) {
-    return membership.role;
+  if (!memberError && Array.isArray(memberships) && memberships[0]?.role) {
+    return memberships[0].role;
   }
 
   // Fallback to auth.users metadata

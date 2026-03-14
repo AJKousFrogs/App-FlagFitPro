@@ -331,6 +331,38 @@ function validateQueryParams(params, schema) {
   };
 }
 
+function parseJsonObjectBody(rawBody, { allowEmpty = true } = {}) {
+  if (rawBody === undefined || rawBody === null || rawBody === "") {
+    if (allowEmpty) {
+      return {};
+    }
+
+    const error = new Error("Request body is required");
+    error.isValidation = true;
+    error.code = "INVALID_JSON_BODY";
+    throw error;
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(rawBody);
+  } catch (_parseError) {
+    const error = new Error("Invalid JSON in request body");
+    error.isValidation = true;
+    error.code = "INVALID_JSON_BODY";
+    throw error;
+  }
+
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    const error = new Error("Request body must be an object");
+    error.isValidation = true;
+    error.code = "INVALID_JSON_BODY";
+    throw error;
+  }
+
+  return parsed;
+}
+
 /**
  * Common validation schemas for reuse
  */
@@ -353,6 +385,7 @@ export {
   sanitizeString,
   sanitizeObject,
   parseAndValidateBody,
+  parseJsonObjectBody,
   validateQueryParams,
   PATTERNS,
   VALIDATORS,
@@ -364,6 +397,7 @@ export default {
   sanitizeString,
   sanitizeObject,
   parseAndValidateBody,
+  parseJsonObjectBody,
   validateQueryParams,
   PATTERNS,
   VALIDATORS,

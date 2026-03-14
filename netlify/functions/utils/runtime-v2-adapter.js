@@ -1,3 +1,5 @@
+import { createErrorResponse } from "./error-handler.js";
+
 function buildHeadersObject(headers) {
   const out = {};
   headers.forEach((value, key) => {
@@ -85,9 +87,20 @@ function lambdaResponseToWebResponse(result) {
 
 export function createRuntimeV2Handler(legacyHandler) {
   return async (request, context) => {
-    const event = await buildLegacyEvent(request);
-    const legacyContext = buildLegacyContext(context);
-    const result = await legacyHandler(event, legacyContext);
-    return lambdaResponseToWebResponse(result);
+    try {
+      const event = await buildLegacyEvent(request);
+      const legacyContext = buildLegacyContext(context);
+      const result = await legacyHandler(event, legacyContext);
+      return lambdaResponseToWebResponse(result);
+    } catch (error) {
+      console.error("[runtime-v2-adapter] Unhandled function error:", error);
+      return lambdaResponseToWebResponse(
+        createErrorResponse(
+          error?.message || "Unhandled function error",
+          500,
+          "server_error",
+        ),
+      );
+    }
   };
 }

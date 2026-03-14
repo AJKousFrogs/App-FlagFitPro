@@ -14,6 +14,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 
 // =============================================================================
@@ -150,21 +151,6 @@ function parseBooleanQuery(value, field) {
     return false;
   }
   throw createValidationError(`${field} must be true or false`);
-}
-
-function parseJsonObjectBody(rawBody) {
-  let parsed;
-  try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
-    const error = new Error("Invalid JSON body");
-    error.code = "invalid_json";
-    throw error;
-  }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw createValidationError("Request body must be an object");
-  }
-  return parsed;
 }
 
 function normalizeNutritionInputs(input) {
@@ -705,10 +691,13 @@ async function handleRequest(event, _context, { userId }) {
     try {
       body = parseJsonObjectBody(event.body);
     } catch (error) {
-      if (error.code === "invalid_json") {
+      if (
+        error?.code === "INVALID_JSON_BODY" &&
+        error?.message === "Invalid JSON in request body"
+      ) {
         return createErrorResponse("Invalid JSON body", 400, "invalid_json");
       }
-      if (error.isValidation) {
+      if (error.isValidation || error?.code === "INVALID_JSON_BODY") {
         return createErrorResponse(error.message, 422, "validation_error");
       }
       return createErrorResponse("Invalid JSON body", 400, "invalid_json");

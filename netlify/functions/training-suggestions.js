@@ -1,6 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 
 // Netlify Function: Training Suggestions
@@ -373,7 +374,7 @@ async function handleRequest(event, context, { userId, requestId }) {
     // Parse request body if POST
     if (event.httpMethod === "POST" && event.body) {
       try {
-        params = JSON.parse(event.body);
+        params = parseJsonObjectBody(event.body);
         // #region agent log
         console.log(
           "[training-suggestions] Parsed params:",
@@ -381,10 +382,21 @@ async function handleRequest(event, context, { userId, requestId }) {
         );
         // #endregion
       } catch (e) {
+        if (
+          e?.code === "INVALID_JSON_BODY" &&
+          e?.message === "Invalid JSON in request body"
+        ) {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId,
+          );
+        }
         return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
+          "Request body must be an object",
+          422,
+          "validation_error",
           requestId,
         );
       }

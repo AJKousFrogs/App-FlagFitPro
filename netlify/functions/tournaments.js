@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin, checkEnvVars as _checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, handleNotFoundError } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Tournaments API
 // Full CRUD operations for tournament management
@@ -25,21 +26,6 @@ function isCoachOrAdminRole(role) {
 const VALID_VISIBILITY_SCOPES = new Set(["team", "personal"]);
 const VALID_LIST_STATUSES = new Set(["all", "upcoming", "ongoing", "completed"]);
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-
-function parseJsonObjectBody(rawBody) {
-  let parsed;
-  try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
-    const error = new Error("Invalid JSON in request body");
-    error.code = "invalid_json";
-    throw error;
-  }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Request body must be an object");
-  }
-  return parsed;
-}
 
 function assertValidIsoDate(value, fieldName) {
   if (value === undefined || value === null || value === "") {
@@ -81,14 +67,38 @@ async function getUserTeamRole(userId) {
     return "player";
   }
 
-  const { data: memberData } = await supabaseAdmin
+  const membershipQuery = supabaseAdmin
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
-    .eq("status", "active")
-    .maybeSingle();
+    .eq("status", "active");
 
-  return memberData?.role || "player";
+  const orderedQuery =
+    typeof membershipQuery.order === "function"
+      ? membershipQuery.order("updated_at", { ascending: false })
+      : membershipQuery;
+
+  if (typeof orderedQuery.limit === "function") {
+    const { data: memberData, error } = await orderedQuery.limit(1);
+
+    if (error) {
+      throw error;
+    }
+
+    return memberData?.[0]?.role || "player";
+  }
+
+  if (typeof orderedQuery.maybeSingle === "function") {
+    const { data: memberData, error } = await orderedQuery.maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return memberData?.role || "player";
+  }
+
+  return "player";
 }
 
 /**
@@ -239,7 +249,10 @@ async function createTournament(event, _context, { userId, requestId }) {
   try {
     body = parseJsonObjectBody(event.body);
   } catch (error) {
-    if (error.code === "invalid_json") {
+    if (
+      error?.code === "INVALID_JSON_BODY" &&
+      error?.message === "Invalid JSON in request body"
+    ) {
       return createErrorResponse(
         "Invalid JSON in request body",
         400,
@@ -397,7 +410,10 @@ async function updateTournament(
   try {
     body = parseJsonObjectBody(event.body);
   } catch (error) {
-    if (error.code === "invalid_json") {
+    if (
+      error?.code === "INVALID_JSON_BODY" &&
+      error?.message === "Invalid JSON in request body"
+    ) {
       return createErrorResponse(
         "Invalid JSON in request body",
         400,

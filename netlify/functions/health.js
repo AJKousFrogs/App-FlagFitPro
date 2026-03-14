@@ -6,15 +6,37 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 //
 // This endpoint does NOT require authentication and is rate-limited separately
 
-import { supabaseAdmin } from "./supabase-client.js";
+import { supabase, supabaseAdmin } from "./supabase-client.js";
 import { lookup } from "node:dns/promises";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 // Check database connectivity
+function getSupabaseConfigStatus() {
+  return {
+    hasUrl: !!process.env.SUPABASE_URL,
+    hasServiceKey:
+      !!process.env.SUPABASE_SERVICE_KEY ||
+      !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    hasAnonKey:
+      !!process.env.SUPABASE_ANON_KEY ||
+      !!process.env.VITE_SUPABASE_ANON_KEY,
+    hasAdminClient: !!supabaseAdmin,
+    hasAnonClient: !!supabase,
+  };
+}
+
 async function checkDatabase() {
   try {
+    const config = getSupabaseConfigStatus();
+    if (!config.hasAdminClient) {
+      return {
+        status: "unhealthy",
+        error: "Supabase admin client is not configured",
+      };
+    }
+
     const startTime = Date.now();
     let lastError = null;
 
@@ -59,7 +81,7 @@ async function checkAuth() {
   try {
     const startTime = Date.now();
     // Just verify the auth client is configured
-    const isConfigured = !!supabaseAdmin.auth;
+    const isConfigured = !!supabaseAdmin?.auth;
     const latency = Date.now() - startTime;
 
     return {
@@ -119,6 +141,7 @@ const handler = async (event, context) => {
           status: overallStatus,
           timestamp: new Date().toISOString(),
           version: "1.0.0",
+          config: getSupabaseConfigStatus(),
           checks: {
             database: dbHealth,
             auth: authHealth,

@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 /**
@@ -35,30 +36,31 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   return parsed;
 };
 
-const parseJsonObjectBody = (rawBody) => {
-  if (rawBody === undefined || rawBody === null || rawBody === "") {
-    return {};
-  }
-  const parsed = JSON.parse(rawBody);
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    throw new Error("Request body must be an object");
-  }
-  return parsed;
-};
-
 /**
  * Verify user has coach/admin role
  */
 async function verifyCoachRole(userId) {
   // Get role from team_members table (not users table)
-  const { data: memberData } = await supabase
+  const membershipQuery = supabase
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
-    .eq("status", "active")
-    .maybeSingle();
+    .eq("status", "active");
 
-  const role = memberData?.role || "player";
+  const orderedQuery =
+    typeof membershipQuery.order === "function"
+      ? membershipQuery.order("updated_at", { ascending: false })
+      : membershipQuery;
+
+  let role = "player";
+  if (typeof orderedQuery.maybeSingle === "function") {
+    const { data: memberData } = await orderedQuery.maybeSingle();
+    role = memberData?.role || "player";
+  } else if (typeof orderedQuery.limit === "function") {
+    const { data: memberData } = await orderedQuery.limit(1);
+    role = memberData?.[0]?.role || "player";
+  }
+
   if (!hasAnyRole(role, COACH_ROUTE_ROLES)) {
     return {
       authorized: false,

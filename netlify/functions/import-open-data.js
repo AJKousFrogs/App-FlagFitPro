@@ -10,6 +10,7 @@ import { createSuccessResponse, createErrorResponse, handleValidationError } fro
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Flag-football specific thresholds
 const HIGH_SPEED_M_S = 5.5; // High-speed running threshold (m/s)
@@ -39,29 +40,30 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     return { authorized: false };
   }
 
-  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
+  const { data: requesterMemberships, error: requesterError } = await supabaseAdmin
     .from("team_members")
     .select("team_id")
     .eq("user_id", requestUserId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
-  if (requesterError || !requesterMembership?.team_id) {
+    .eq("status", "active");
+  if (requesterError || !requesterMemberships?.length) {
     return { authorized: false };
   }
 
-  const { data: targetMembership, error: targetError } = await supabaseAdmin
+  const { data: targetMemberships, error: targetError } = await supabaseAdmin
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
-  if (targetError || !targetMembership?.team_id) {
+    .eq("status", "active");
+  if (targetError || !targetMemberships?.length) {
     return { authorized: false };
   }
 
-  return { authorized: targetMembership.team_id === requesterMembership.team_id };
+  const requesterTeamIds = new Set(
+    requesterMemberships.map((membership) => membership.team_id).filter(Boolean),
+  );
+  const authorized = targetMemberships.some((membership) => requesterTeamIds.has(membership.team_id));
+
+  return { authorized };
 }
 
 function validateDataset(dataset) {
@@ -153,13 +155,13 @@ const handler = async (event, context) => {
       // Parse request body
       let body;
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch (_e) {
-        return handleValidationError("Invalid JSON in request body");
-      }
-
-      if (!isPlainObject(body)) {
-        return handleValidationError("Request body must be an object");
+        body = parseJsonObjectBody(event.body);
+      } catch (error) {
+        return handleValidationError(
+          error.message === "Request body must be an object"
+            ? error.message
+            : "Invalid JSON in request body",
+        );
       }
 
       // If athleteId not provided, use authenticated user's ID

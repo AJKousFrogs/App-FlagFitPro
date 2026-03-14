@@ -1,5 +1,5 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { validateInput } from "./utils/input-validator.js";
+import { parseJsonObjectBody, validateInput } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { requireAuthorization, getUserRole, logViolation } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
@@ -699,12 +699,9 @@ const handler = async (event, context) => {
         // Parse and validate request body
         let sessionData = {};
         try {
-          sessionData = JSON.parse(event.body);
+          sessionData = parseJsonObjectBody(event.body);
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
-        }
-        if (!sessionData || typeof sessionData !== "object" || Array.isArray(sessionData)) {
-          return handleValidationError("Request body must be an object");
         }
 
         try {
@@ -764,12 +761,9 @@ const handler = async (event, context) => {
       if (event.httpMethod === "PUT") {
         let updateData = {};
         try {
-          updateData = JSON.parse(event.body);
+          updateData = parseJsonObjectBody(event.body);
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
-        }
-        if (!updateData || typeof updateData !== "object" || Array.isArray(updateData)) {
-          return handleValidationError("Request body must be an object");
         }
 
         const { sessionId, ...updates } = updateData;
@@ -809,12 +803,9 @@ const handler = async (event, context) => {
       if (event.httpMethod === "DELETE") {
         let deletePayload = {};
         try {
-          deletePayload = event.body ? JSON.parse(event.body) : {};
+          deletePayload = parseJsonObjectBody(event.body);
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
-        }
-        if (!deletePayload || typeof deletePayload !== "object" || Array.isArray(deletePayload)) {
-          return handleValidationError("Request body must be an object");
         }
 
         const sessionId =

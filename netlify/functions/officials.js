@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Officials API
@@ -31,29 +32,6 @@ const ALLOWED_STATUS_TRANSITIONS = {
 };
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_24H_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
-
-function parseJsonObjectBody(rawBody) {
-  let parsed;
-  try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
-    return {
-      ok: false,
-      response: createErrorResponse("Invalid JSON", 400, "invalid_json"),
-    };
-  }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    return {
-      ok: false,
-      response: createErrorResponse(
-        "Request body must be an object",
-        422,
-        "validation_error",
-      ),
-    };
-  }
-  return { ok: true, data: parsed };
-}
 
 function assertValidIsoDate(value, fieldName) {
   if (value === undefined || value === null || value === "") {
@@ -95,19 +73,41 @@ function assertDateRange(startDate, endDate) {
 }
 
 const canManageOfficials = async (userId) => {
-  const { data, error } = await supabaseAdmin
+  const membershipQuery = supabaseAdmin
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
+    .eq("status", "active");
 
-  if (error) {
-    throw error;
+  const orderedQuery =
+    typeof membershipQuery.order === "function"
+      ? membershipQuery.order("updated_at", { ascending: false })
+      : membershipQuery;
+
+  if (typeof orderedQuery.maybeSingle === "function") {
+    const { data, error } = await orderedQuery.maybeSingle();
+    if (error) {
+      if (typeof orderedQuery.limit === "function") {
+        const fallback = await orderedQuery.limit(1);
+        if (fallback.error) {
+          throw fallback.error;
+        }
+        return TEAM_OPERATIONS_ROLES.includes(fallback.data?.[0]?.role || "");
+      }
+      throw error;
+    }
+    return TEAM_OPERATIONS_ROLES.includes(data?.role || "");
   }
 
-  return TEAM_OPERATIONS_ROLES.includes(data?.role || "");
+  if (typeof orderedQuery.limit === "function") {
+    const { data, error } = await orderedQuery.limit(1);
+    if (error) {
+      throw error;
+    }
+    return TEAM_OPERATIONS_ROLES.includes(data?.[0]?.role || "");
+  }
+
+  return false;
 };
 
 // Get all officials
@@ -697,11 +697,21 @@ const handler = async (event, context) => {
 
       let body = {};
       if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
-        const parsedBody = parseJsonObjectBody(event.body);
-        if (!parsedBody.ok) {
-          return parsedBody.response;
+        try {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (
+            error?.code === "INVALID_JSON_BODY" &&
+            error?.message === "Invalid JSON in request body"
+          ) {
+            return createErrorResponse("Invalid JSON", 400, "invalid_json");
+          }
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+          );
         }
-        body = parsedBody.data;
       }
 
       try {

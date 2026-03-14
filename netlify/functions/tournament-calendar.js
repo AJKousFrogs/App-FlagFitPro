@@ -12,6 +12,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 async function hasCoachTournamentAccess(userId) {
@@ -34,12 +35,30 @@ async function hasCoachTournamentAccess(userId) {
     return Array.isArray(data) && data.length > 0;
   }
 
-  const { data, error } = await membershipQuery.maybeSingle();
-  if (error) {
-    throw error;
+  const orderedQuery =
+    typeof membershipQuery.order === "function"
+      ? membershipQuery.order("updated_at", { ascending: false })
+      : membershipQuery;
+
+  if (typeof orderedQuery.limit === "function") {
+    const { data, error } = await orderedQuery.limit(1);
+    if (error) {
+      throw error;
+    }
+
+    return COACH_ROUTE_ROLES.includes(data?.[0]?.role);
   }
 
-  return COACH_ROUTE_ROLES.includes(data?.role);
+  if (typeof orderedQuery.maybeSingle === "function") {
+    const { data, error } = await orderedQuery.maybeSingle();
+    if (error) {
+      throw error;
+    }
+
+    return COACH_ROUTE_ROLES.includes(data?.role);
+  }
+
+  return false;
 }
 
 const handler = async (event, context) =>
@@ -58,7 +77,7 @@ const handler = async (event, context) =>
 
         let payload = {};
         try {
-          payload = evt.body ? JSON.parse(evt.body) : {};
+          payload = parseJsonObjectBody(evt.body);
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
