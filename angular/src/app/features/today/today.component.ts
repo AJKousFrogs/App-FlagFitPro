@@ -70,6 +70,10 @@ import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ScreenReaderAnnouncerService } from "../../core/services/screen-reader-announcer.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import {
+  ContinuityEvent,
+  ContinuityIndicatorsService,
+} from "../../core/services/continuity-indicators.service";
 
 // Environment
 
@@ -204,6 +208,7 @@ export class TodayComponent {
   private readonly api = inject(ApiService);
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
   private readonly todayProtocolFacade = inject(TodayProtocolFacade);
+  private readonly continuityIndicators = inject(ContinuityIndicatorsService);
 
   // Angular 21: viewChild signals for DOM element references
   private readonly wellnessSection = viewChild<ElementRef>("wellnessSection");
@@ -225,6 +230,7 @@ export class TodayComponent {
   readonly protocol = signal<Partial<DailyProtocol> | null>(null);
   readonly protocolJson = signal<ProtocolJson | null>(null); // Raw JSON from API
   readonly todayViewModel = signal<TodayViewModel | null>(null); // Resolved state
+  readonly continuityEvents = signal<ContinuityEvent[]>([]);
   private fullProtocolData: ProtocolApiResponse | null = null; // Store full API response with blocks for UI rendering
   readonly showRecoveryDialog = signal(false);
   readonly error = signal<string | null>(null);
@@ -582,6 +588,7 @@ export class TodayComponent {
       );
       this.loadTodayData();
       this.loadTomorrowProtocol();
+      void this.loadContinuityEvents(id);
     });
 
     // Update time every minute
@@ -637,6 +644,10 @@ export class TodayComponent {
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
+            const userId = this.userId();
+            if (userId) {
+              void this.loadContinuityEvents(userId);
+            }
             // Reset generation flag on successful load
             this._generationAttempted.set(false);
           } else if (!this._generationAttempted()) {
@@ -756,6 +767,18 @@ export class TodayComponent {
 
   refreshProtocol(): void {
     this.loadTodayData();
+  }
+
+  private async loadContinuityEvents(userId: string): Promise<void> {
+    try {
+      const events = await this.continuityIndicators.getPlayerContinuity(userId);
+      this.continuityEvents.set(events);
+    } catch (error) {
+      this.logger.warn("[TodayComponent] Failed to load continuity events", {
+        error,
+      });
+      this.continuityEvents.set([]);
+    }
   }
 
   // ============================================================================

@@ -11,6 +11,7 @@ import { LoggerService } from "./logger.service";
 import { GameDayRecoveryService } from "./game-day-recovery.service";
 import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
+import { normalizePlayerName } from "../../shared/utils/format.utils";
 
 export interface ContinuityEvent {
   type:
@@ -120,7 +121,7 @@ export class ContinuityIndicatorsService {
    * Get active travel recovery from athlete_travel_log
    * Travel recovery is active if there's a recent travel and adaptation_day < 3
    */
-  private async getActiveTravelRecovery(
+  async getActiveTravelRecovery(
     playerId: string,
   ): Promise<{ endDate: Date; daysRemaining: number } | null> {
     try {
@@ -242,9 +243,15 @@ export class ContinuityIndicatorsService {
       // Get all team members
       const { data: teamMembers } = await this.supabaseService.client
         .from("team_members")
-        .select("user_id, users!inner(id, name)")
+        .select(
+          `
+          user_id,
+          users:user_id(first_name, last_name, full_name)
+        `,
+        )
         .eq("team_id", teamId)
-        .eq("role", "player");
+        .eq("role", "player")
+        .eq("status", "active");
 
       if (!teamMembers) {
         return { gameDayRecovery: [], loadCaps: [], travelRecovery: [] };
@@ -266,45 +273,71 @@ export class ContinuityIndicatorsService {
         daysRemaining: number;
       }> = [];
 
-      for (const member of teamMembers) {
-        const users = member.users as Array<{ id: string; name: string }>;
-        const user = users?.[0] || { id: "", name: "Unknown" };
-        const playerId = member.user_id;
+      const continuityByPlayer = await Promise.all(
+        teamMembers.map(async (member) => {
+          const userData = member.users as
+            | {
+                first_name?: string | null;
+                last_name?: string | null;
+                full_name?: string | null;
+              }
+            | null
+            | undefined;
+          const playerName = normalizePlayerName(
+            {
+              full_name: userData?.full_name,
+              first_name: userData?.first_name,
+              last_name: userData?.last_name,
+            },
+            "Unknown",
+          );
+          const playerId = member.user_id;
 
-        // Check game day recovery
-        const recovery = await this.gameDayRecovery.getActiveRecovery(playerId);
-        if (recovery) {
+          const [recovery, loadCap, travel] = await Promise.all([
+            this.gameDayRecovery.getActiveRecovery(playerId),
+            this.acwrSpike.getActiveLoadCap(playerId),
+            this.getActiveTravelRecovery(playerId),
+          ]);
+
+          return {
+            playerId,
+            playerName,
+            recovery,
+            loadCap,
+            travel,
+          };
+        }),
+      );
+
+      for (const entry of continuityByPlayer) {
+        if (entry.recovery) {
           const today = new Date();
-          const recoveryDate = new Date(recovery.date);
+          const recoveryDate = new Date(entry.recovery.date);
           const dayNumber = Math.ceil(
             (recoveryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
           );
           if (dayNumber >= 0 && dayNumber <= 2) {
             gameDayRecovery.push({
-              playerId,
-              playerName: user.name || "Unknown",
+              playerId: entry.playerId,
+              playerName: entry.playerName,
               dayNumber,
             });
           }
         }
 
-        // Check load caps
-        const loadCap = await this.acwrSpike.getActiveLoadCap(playerId);
-        if (loadCap) {
+        if (entry.loadCap) {
           loadCaps.push({
-            playerId,
-            playerName: user.name || "Unknown",
-            sessionsRemaining: loadCap.sessionsRemaining,
+            playerId: entry.playerId,
+            playerName: entry.playerName,
+            sessionsRemaining: entry.loadCap.sessionsRemaining,
           });
         }
 
-        // Check travel recovery
-        const travel = await this.getActiveTravelRecovery(playerId);
-        if (travel && travel.daysRemaining > 0) {
+        if (entry.travel && entry.travel.daysRemaining > 0) {
           travelRecovery.push({
-            playerId,
-            playerName: user.name || "Unknown",
-            daysRemaining: travel.daysRemaining,
+            playerId: entry.playerId,
+            playerName: entry.playerName,
+            daysRemaining: entry.travel.daysRemaining,
           });
         }
       }

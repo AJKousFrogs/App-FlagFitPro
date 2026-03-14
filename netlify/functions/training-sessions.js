@@ -5,6 +5,7 @@ import { requireAuthorization, getUserRole, logViolation } from "./utils/authori
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { prepareStateTransition } from "./utils/session-state-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Training Sessions API
 // Handles creation and retrieval of training sessions for the Training Builder component
@@ -103,7 +104,7 @@ async function createTrainingSession(
 
     // If creating for another user, must be coach
     const finalUserId = targetUserId || userId;
-    if (finalUserId !== userId && !["coach", "admin"].includes(role)) {
+    if (finalUserId !== userId && !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
       await logViolation(
         userId,
         null,

@@ -406,6 +406,10 @@ export class AcceptInvitationComponent implements OnInit {
         throw memberError;
       }
 
+      if ((invitation.role || "player") === "player") {
+        await this.syncRosterPlayer(currentUser.id, invitation);
+      }
+
       this.isAccepted.set(true);
       this.toastService.success(
         `You've joined ${this.teamName()}!`,
@@ -486,5 +490,103 @@ export class AcceptInvitationComponent implements OnInit {
     } else {
       return formatDate(expiry, "P");
     }
+  }
+
+  private async syncRosterPlayer(
+    userId: string,
+    invitation: InvitationData,
+  ): Promise<void> {
+    const { profile, error: profileError } =
+      await this.teamInvitationDataService.fetchUserProfile(userId);
+
+    if (profileError) {
+      throw new Error(
+        profileError.message || "Failed to load player profile for roster sync.",
+      );
+    }
+
+    const displayName =
+      profile?.full_name?.trim() ||
+      [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+      this.teamInvitationDataService.getCurrentUser()?.email ||
+      "Player";
+
+    const teamPlayerPayload = {
+      team_id: invitation.teamId,
+      user_id: userId,
+      name: displayName,
+      position: invitation.position || profile?.position || "Unknown",
+      jersey_number: invitation.jerseyNumber ?? profile?.jersey_number ?? null,
+      country: profile?.country || null,
+      age: this.calculateAge(profile?.date_of_birth || null),
+      height: profile?.height_cm ? `${profile.height_cm} cm` : null,
+      weight: profile?.weight_kg ? `${profile.weight_kg} kg` : null,
+      email: profile?.email || this.teamInvitationDataService.getCurrentUser()?.email || null,
+      phone: profile?.phone || null,
+      status: "active",
+      updated_at: new Date().toISOString(),
+    };
+
+    const { player, error: teamPlayerError } =
+      await this.teamInvitationDataService.fetchTeamPlayer({
+        userId,
+        teamId: invitation.teamId,
+      });
+
+    if (teamPlayerError) {
+      throw new Error(
+        teamPlayerError.message || "Failed to load team roster record.",
+      );
+    }
+
+    if (player?.id) {
+      const { error } = await this.teamInvitationDataService.updateTeamPlayer(
+        player.id,
+        teamPlayerPayload,
+      );
+
+      if (error) {
+        throw new Error(
+          error.message || "Failed to update team roster record.",
+        );
+      }
+
+      return;
+    }
+
+    const { error } = await this.teamInvitationDataService.insertTeamPlayer({
+      ...teamPlayerPayload,
+      created_by: userId,
+    });
+
+    if (error) {
+      throw new Error(
+        error.message || "Failed to create team roster record.",
+      );
+    }
+  }
+
+  private calculateAge(dateOfBirth: string | null): number | null {
+    if (!dateOfBirth) {
+      return null;
+    }
+
+    const birthDate = new Date(dateOfBirth);
+    if (Number.isNaN(birthDate.getTime())) {
+      return null;
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
   }
 }

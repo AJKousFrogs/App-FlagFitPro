@@ -1,5 +1,6 @@
 import { supabaseAdmin, supabaseService } from "../utils/supabase-client.js";
 import { createErrorResponse } from "./error-handler.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./role-sets.js";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
 /**
@@ -23,6 +24,7 @@ async function getUserRole(userId) {
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
+    .eq("status", "active")
     .maybeSingle();
 
   if (!memberError && membership?.role) {
@@ -106,11 +108,11 @@ async function canModifySession(
   // Check role for structure modifications
   if (modificationType === "structure") {
     const role = await getUserRole(userId);
-    if (!["coach", "admin"].includes(role)) {
+    if (!hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
       return {
         authorized: false,
         error: "INSUFFICIENT_PERMISSIONS",
-        message: "Coach role required for structure modifications",
+        message: "Authorized team staff role required for structure modifications",
       };
     }
   }

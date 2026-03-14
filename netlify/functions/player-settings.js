@@ -83,6 +83,20 @@ function validateSettingsPayload(payload) {
   ) {
     return "warmupFocus must be a string up to 120 characters";
   }
+  if (
+    payload.availableEquipment !== undefined &&
+    !Array.isArray(payload.availableEquipment)
+  ) {
+    return "availableEquipment must be an array";
+  }
+  if (
+    payload.currentLimitations !== undefined &&
+    payload.currentLimitations !== null &&
+    !isPlainObject(payload.currentLimitations) &&
+    !Array.isArray(payload.currentLimitations)
+  ) {
+    return "currentLimitations must be an object, array, or null";
+  }
   return null;
 }
 
@@ -215,6 +229,8 @@ async function saveSettings(supabase, userId, payload) {
     hasGymAccess,
     hasFieldAccess,
     warmupFocus,
+    availableEquipment,
+    currentLimitations,
   } = payload;
 
   // Map availabilitySchedule back to DB field (for backward compatibility)
@@ -256,6 +272,8 @@ async function saveSettings(supabase, userId, payload) {
         has_gym_access: hasGymAccess !== false,
         has_field_access: hasFieldAccess !== false,
         warmup_focus: warmupFocus || null,
+        available_equipment: availableEquipment || [],
+        current_limitations: currentLimitations || null,
         age_recovery_modifier: ageRecoveryModifier,
         acwr_target_min: acwrTargetMin,
         acwr_target_max: acwrTargetMax,

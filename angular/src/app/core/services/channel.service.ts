@@ -208,12 +208,19 @@ export class ChannelService {
     const userId = this.authService.getUser()?.id;
     if (!userId) return null;
 
+    const membership = await this.teamMembershipService.loadMembership();
+    if (membership?.userId === userId && membership.teamId) {
+      return membership.teamId;
+    }
+
     const { data } = await this.supabase.client
       .from("team_members")
       .select("team_id")
       .eq("user_id", userId)
+      .eq("status", "active")
+      .order("updated_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     return data?.team_id || null;
   }

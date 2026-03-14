@@ -32,11 +32,14 @@ import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, Router } from "@angular/router";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Select } from "primeng/select";
@@ -138,6 +141,9 @@ export class RosterComponent implements OnInit {
   readonly rosterService = inject(RosterService);
   private readonly metricsService = inject(PlayerMetricsService);
   private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private toastService = inject(ToastService);
   private confirmDialog = inject(ConfirmDialogService);
 
@@ -308,6 +314,12 @@ export class RosterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.applyRouteState();
+      });
+
     this.initializePage();
   }
 
@@ -322,7 +334,42 @@ export class RosterComponent implements OnInit {
       this.hasPageError.set(true);
     }
 
+    this.applyRouteState();
     this.isPageLoading.set(false);
+  }
+
+  private applyRouteState(): void {
+    const playerId = this.route.snapshot.queryParamMap.get("player");
+    const routeFilter = this.route.snapshot.queryParamMap.get("filter");
+
+    if (this.isPlayerStatus(routeFilter)) {
+      this.statusFilter = routeFilter;
+    }
+
+    if (!playerId) {
+      return;
+    }
+
+    const player = this.rosterService
+      .allPlayers()
+      .find((candidate) => candidate.id === playerId);
+
+    if (!player) {
+      return;
+    }
+
+    this.selectedPlayer.set(player);
+    this.showDetailsDialog.set(true);
+  }
+
+  private isPlayerStatus(value: string | null): value is PlayerStatus {
+    return (
+      value === "active" ||
+      value === "injured" ||
+      value === "inactive" ||
+      value === "limited" ||
+      value === "returning"
+    );
   }
 
   retryLoad(): void {
@@ -406,6 +453,18 @@ export class RosterComponent implements OnInit {
       this.showDetailsDialog.set(false);
       this.editPlayer(player);
     }
+  }
+
+  openPlayerDevelopment(): void {
+    const player = this.selectedPlayer();
+    if (!player) {
+      return;
+    }
+
+    this.showDetailsDialog.set(false);
+    void this.router.navigate(["/coach/development"], {
+      queryParams: { player: player.id },
+    });
   }
 
   // Status management

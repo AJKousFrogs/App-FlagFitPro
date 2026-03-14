@@ -11,11 +11,14 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   inject,
   OnInit,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -621,6 +624,9 @@ const COMPARE_OPTIONS = [
 export class PlayerDevelopmentComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly toastService = inject(ToastService);
 
   // State
@@ -769,11 +775,22 @@ export class PlayerDevelopmentComponent implements OnInit {
   }));
 
   ngOnInit(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.syncSelectionFromRoute();
+      });
+
     this.loadData();
   }
 
   onSelectedPlayerIdChange(value: string | null): void {
     this.selectedPlayerId = value;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { player: value || null },
+      queryParamsHandling: "merge",
+    });
     this.onPlayerChange();
   }
 
@@ -805,6 +822,7 @@ export class PlayerDevelopmentComponent implements OnInit {
       if (response?.success && response.data) {
         this.players.set(response.data.players || []);
         this.goals.set(response.data.goals || []);
+        this.syncSelectionFromRoute();
       }
     } catch (err) {
       this.logger.error("Failed to load player development data", err);
@@ -820,6 +838,21 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   retryLoadData(): void {
     void this.loadData();
+  }
+
+  private syncSelectionFromRoute(): void {
+    const playerId = this.route.snapshot.queryParamMap.get("player");
+    if (!playerId) {
+      return;
+    }
+
+    const matchingPlayer = this.players().find((player) => player.id === playerId);
+    if (!matchingPlayer || this.selectedPlayerId === matchingPlayer.id) {
+      return;
+    }
+
+    this.selectedPlayerId = matchingPlayer.id;
+    this.onPlayerChange();
   }
 
   private getEmptyGoalForm() {

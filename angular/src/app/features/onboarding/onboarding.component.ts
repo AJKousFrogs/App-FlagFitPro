@@ -685,7 +685,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // Player-only: Save training preferences and assign program
       if (!isStaffUser) {
         // Save training preferences (schedule, mobility, recovery)
-        await this.saveTrainingPreferences(user.email ?? "");
+        await this.saveTrainingPreferences(user.id, user.email ?? "");
+        await this.seedCanonicalPlayerSettings();
 
         // Save current injuries to wellness_checkins table
         await this.saveCurrentInjuries(user.id);
@@ -772,9 +773,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async saveTrainingPreferences(email: string): Promise<void> {
+  private async saveTrainingPreferences(
+    userId: string,
+    email: string,
+  ): Promise<void> {
     try {
       const preferences = {
+        user_id: userId,
         email: email,
         schedule_type: this.state.formData.scheduleType,
         practices_per_week: this.state.formData.practicesPerWeek,
@@ -813,6 +818,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           "flagfit_preferences",
           JSON.stringify(preferences),
         );
+      } else {
+        this.platform.removeLocalStorage("flagfit_preferences");
       }
     } catch (_e) {
       const preferences = {
@@ -831,6 +838,45 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       this.platform.setLocalStorage(
         "flagfit_preferences",
         JSON.stringify(preferences),
+      );
+    }
+  }
+
+  private async seedCanonicalPlayerSettings(): Promise<void> {
+    try {
+      const payload = {
+        primaryPosition: normalizePositionForModifiers(
+          this.state.formData.position || "WR",
+        ),
+        secondaryPosition: this.state.formData.secondaryPosition
+          ? normalizePositionForModifiers(this.state.formData.secondaryPosition)
+          : null,
+        birthDate:
+          this.state.formData.dateOfBirth?.toISOString().split("T")[0] || null,
+        availabilitySchedule: this.getPreferredTrainingDays().map((day) => ({
+          dayOfWeek: day,
+          available: true,
+        })),
+        preferredTrainingDays: this.getPreferredTrainingDays(),
+        maxSessionsPerWeek: this.state.formData.practicesPerWeek || 3,
+        hasGymAccess:
+          this.state.formData.equipmentAvailable?.includes("gym") || false,
+        hasFieldAccess:
+          this.state.formData.equipmentAvailable?.includes("field") || true,
+        availableEquipment: this.state.formData.equipmentAvailable || [],
+        currentLimitations:
+          this.state.formData.currentInjuries?.length > 0
+            ? { injuries: this.state.formData.currentInjuries }
+            : null,
+      };
+
+      await firstValueFrom(
+        this.api.post(API_ENDPOINTS.playerSettings.save, payload),
+      );
+    } catch (error) {
+      this.logger.warn(
+        "[Onboarding] Failed to seed canonical player settings",
+        toLogContext(error),
       );
     }
   }

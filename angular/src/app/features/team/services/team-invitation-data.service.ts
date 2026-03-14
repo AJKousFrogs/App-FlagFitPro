@@ -20,6 +20,20 @@ export interface InviterRecord {
   email?: string | null;
 }
 
+export interface InvitationUserProfileRecord {
+  full_name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  email?: string | null;
+  country?: string | null;
+  phone?: string | null;
+  height_cm?: number | null;
+  weight_kg?: number | null;
+  date_of_birth?: string | null;
+  position?: string | null;
+  jersey_number?: number | null;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -106,6 +120,65 @@ export class TeamInvitationDataService {
         status: "active",
         joined_at: new Date().toISOString(),
       });
+
+    return { error };
+  }
+
+  async fetchUserProfile(userId: string): Promise<{
+    profile: InvitationUserProfileRecord | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("users")
+      .select(
+        "full_name, first_name, last_name, email, country, phone, height_cm, weight_kg, date_of_birth, position, jersey_number",
+      )
+      .eq("id", userId)
+      .maybeSingle();
+
+    return {
+      profile: (data as InvitationUserProfileRecord) ?? null,
+      error,
+    };
+  }
+
+  async fetchTeamPlayer(input: {
+    userId: string;
+    teamId: string;
+  }): Promise<{
+    player: { id?: string } | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("team_players")
+      .select("id")
+      .eq("user_id", input.userId)
+      .eq("team_id", input.teamId)
+      .maybeSingle();
+
+    return {
+      player: (data as { id?: string }) ?? null,
+      error,
+    };
+  }
+
+  async insertTeamPlayer(data: Record<string, unknown>): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client
+      .from("team_players")
+      .insert(data);
+
+    return { error };
+  }
+
+  async updateTeamPlayer(playerId: string, data: Record<string, unknown>): Promise<{
+    error: { message?: string } | null;
+  }> {
+    const { error } = await this.supabaseService.client
+      .from("team_players")
+      .update(data)
+      .eq("id", playerId);
 
     return { error };
   }

@@ -454,7 +454,7 @@ export class TravelRecoveryComponent implements OnInit {
     );
   }
 
-  createPlan(): void {
+  async createPlan(): Promise<void> {
     this.logger.debug("[TravelRecovery] createPlan() called", {
       formData: this.tripForm,
       canCreate: this.canCreatePlan(),
@@ -482,7 +482,7 @@ export class TravelRecoveryComponent implements OnInit {
 
     try {
       this.logger.debug("[TravelRecovery] Creating travel plan...");
-      const plan = this.travelService.createTravelPlan({
+      const plan = await this.travelService.createTravelPlan({
         tripName: this.tripForm.tripName,
         departureDate: departureDate,
         arrivalDate: arrivalDate,
@@ -509,9 +509,9 @@ export class TravelRecoveryComponent implements OnInit {
     }
   }
 
-  startNewPlan(): void {
+  async startNewPlan(): Promise<void> {
     // Clear flight plan
-    this.travelService.clearPlan();
+    await this.travelService.clearPlan();
     this.selectedOlympicVenue = null;
     this.olympicImpact.set(null);
     this.tripForm = {

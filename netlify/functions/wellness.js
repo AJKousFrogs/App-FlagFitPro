@@ -5,6 +5,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consent-guard.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Wellness API
 // Handles wellness check-ins and wellness data retrieval
@@ -143,7 +144,7 @@ async function createWellnessCheckin(userId, checkinData) {
 async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
   try {
     const role = await getUserRole(userId);
-    const isCoach = ["coach", "admin"].includes(role);
+    const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
     const targetAthleteId = requestedAthleteId || userId;
 
     // If coach requesting another athlete's data, check consent
@@ -286,7 +287,7 @@ const handler = async (event, context) => {
           const athleteId = event.queryStringParameters?.athleteId || userId;
           if (athleteId !== userId) {
             const role = await getUserRole(userId);
-            if (!["coach", "admin"].includes(role)) {
+            if (!hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES)) {
               return createErrorResponse(
                 "Not authorized to view another athlete's wellness data",
                 403,

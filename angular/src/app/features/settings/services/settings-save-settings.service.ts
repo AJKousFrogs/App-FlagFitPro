@@ -90,6 +90,7 @@ export class SettingsSaveSettingsService {
 
       type ExistingUser = { id?: string } | null;
       let existingUser: ExistingUser = null;
+      let resolvedTeamId = settings.profile.teamId;
 
       try {
         const nameParts = settings.profile.displayName?.split(" ") || [];
@@ -242,6 +243,7 @@ export class SettingsSaveSettingsService {
               "Successfully transferred to new team:",
               newMember,
             );
+            resolvedTeamId = newTeamId;
           } else {
             if (!existingTeamMember.id) {
               this.logger.warn("Existing team member missing ID");
@@ -273,6 +275,7 @@ export class SettingsSaveSettingsService {
               "Successfully updated team membership:",
               updatedMember,
             );
+            resolvedTeamId = existingTeamMember.team_id ?? resolvedTeamId;
           }
         } else if (settings.profile.teamId) {
           this.logger.info(
@@ -285,6 +288,11 @@ export class SettingsSaveSettingsService {
             settings.profile.position,
             settings.profile.jerseyNumber,
           );
+          resolvedTeamId = settings.profile.teamId;
+        }
+
+        if (resolvedTeamId) {
+          await this.syncTeamPlayerProfile(user.id, resolvedTeamId, settings.profile);
         }
       } catch (error) {
         this.logger.warn("Users table update failed:", toLogContext(error));
@@ -483,5 +491,115 @@ export class SettingsSaveSettingsService {
         toLogContext(error),
       );
     }
+  }
+
+  private async syncTeamPlayerProfile(
+    userId: string,
+    teamId: string,
+    profile: SettingsProfileInput,
+  ): Promise<void> {
+    const parsedJersey = profile.jerseyNumber
+      ? parseInt(profile.jerseyNumber, 10)
+      : null;
+
+    const teamPlayerPayload = {
+      team_id: teamId,
+      user_id: userId,
+      name: profile.displayName,
+      position: profile.position || "Unknown",
+      jersey_number: parsedJersey,
+      country: profile.country || null,
+      age: this.calculateAge(profile.dateOfBirth),
+      height: profile.heightCm ? `${profile.heightCm} cm` : null,
+      weight: profile.weightKg ? `${profile.weightKg} kg` : null,
+      email: profile.email || null,
+      phone: profile.phone || null,
+      status: "active",
+      updated_at: new Date().toISOString(),
+    };
+
+    const { player: existingPlayer, error: fetchError } =
+      await this.settingsDataService.fetchTeamPlayer({
+        userId,
+        teamId,
+      });
+
+    if (fetchError) {
+      throw new Error(
+        `Failed to load team player profile: ${fetchError.message ?? "unknown error"}`,
+      );
+    }
+
+    if (existingPlayer?.id) {
+      const { error } = await this.settingsDataService.updateTeamPlayer(
+        existingPlayer.id,
+        teamPlayerPayload,
+      );
+      if (error) {
+        throw new Error(
+          `Failed to update team player profile: ${error.message ?? "unknown error"}`,
+        );
+      }
+      return;
+    }
+
+    const { player: teamPlayerOnOtherTeam, error: otherTeamError } =
+      await this.settingsDataService.fetchAnyTeamPlayer(userId);
+
+    if (otherTeamError) {
+      throw new Error(
+        `Failed to load existing roster record: ${otherTeamError.message ?? "unknown error"}`,
+      );
+    }
+
+    if (teamPlayerOnOtherTeam?.id) {
+      const { error } = await this.settingsDataService.updateTeamPlayer(
+        teamPlayerOnOtherTeam.id,
+        teamPlayerPayload,
+      );
+
+      if (error) {
+        throw new Error(
+          `Failed to move team player profile: ${error.message ?? "unknown error"}`,
+        );
+      }
+
+      return;
+    }
+
+    const { error } = await this.settingsDataService.insertTeamPlayer({
+      ...teamPlayerPayload,
+      created_by: userId,
+    });
+
+    if (error) {
+      throw new Error(
+        `Failed to create team player profile: ${error.message ?? "unknown error"}`,
+      );
+    }
+  }
+
+  private calculateAge(dateOfBirth: Date | string | null): number | null {
+    if (!dateOfBirth) {
+      return null;
+    }
+
+    const birthDate = new Date(dateOfBirth);
+    if (Number.isNaN(birthDate.getTime())) {
+      return null;
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
   }
 }

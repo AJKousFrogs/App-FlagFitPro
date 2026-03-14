@@ -1,11 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { TeamMembershipService } from "../../../core/services/team-membership.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class TournamentsDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
 
   async fetchPlayerAvailability(input: {
     tournamentId: string;
@@ -45,7 +47,7 @@ export class TournamentsDataService {
       .select("id")
       .eq("user_id", input.userId)
       .eq("team_id", input.teamId)
-      .single();
+      .maybeSingle();
 
     return { memberId: (data as { id?: string })?.id ?? null, error };
   }
@@ -127,12 +129,19 @@ export class TournamentsDataService {
     teamId: string | null;
     error: { message?: string } | null;
   }> {
+    const loadedMembership = await this.teamMembershipService.loadMembership();
+    if (loadedMembership?.userId === userId && loadedMembership.teamId) {
+      return { teamId: loadedMembership.teamId, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("team_members")
       .select("team_id")
       .eq("user_id", userId)
+      .eq("status", "active")
+      .order("updated_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     return { teamId: (data as { team_id?: string })?.team_id ?? null, error };
   }

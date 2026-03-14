@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "../../guards/auth.guard";
+import { staffRoleGuard } from "../../guards/team-role.guard";
 
 export const staffRoutes: Routes = [
   {
@@ -8,7 +9,7 @@ export const staffRoutes: Routes = [
       import("../../../features/staff/staff-hub.component").then(
         (m) => m.StaffHubComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "hub" },
   },
   {
@@ -17,7 +18,7 @@ export const staffRoutes: Routes = [
       import("../../../features/staff/nutritionist/nutritionist-dashboard.component").then(
         (m) => m.NutritionistDashboardComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "internal" },
   },
   {
@@ -26,7 +27,7 @@ export const staffRoutes: Routes = [
       import("../../../features/staff/physiotherapist/physiotherapist-dashboard.component").then(
         (m) => m.PhysiotherapistDashboardComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "internal" },
   },
   {
@@ -35,7 +36,7 @@ export const staffRoutes: Routes = [
       import("../../../features/staff/psychology/psychology-reports.component").then(
         (m) => m.PsychologyReportsComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "internal" },
   },
   {
@@ -44,7 +45,7 @@ export const staffRoutes: Routes = [
       import("../../../features/staff/decisions/decision-ledger-dashboard.component").then(
         (m) => m.DecisionLedgerDashboardComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "internal" },
   },
   {
@@ -53,7 +54,7 @@ export const staffRoutes: Routes = [
       import("../../../features/staff/decisions/decision-detail.component").then(
         (m) => m.DecisionDetailComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "deeplink" },
   },
 ];

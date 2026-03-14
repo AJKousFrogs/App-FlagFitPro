@@ -12,27 +12,34 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
-const COACH_ROLES = [
-  "coach",
-  "manager",
-  "admin",
-  "head_coach",
-  "assistant_coach",
-];
-
-async function getUserRole(userId) {
+async function hasCoachTournamentAccess(userId) {
   if (!userId) {
-    return "player";
+    return false;
   }
 
-  const { data } = await supabaseAdmin
+  const membershipQuery = supabaseAdmin
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
-    .maybeSingle();
+    .eq("status", "active");
 
-  return data?.role || "player";
+  if (typeof membershipQuery.in === "function") {
+    const { data, error } = await membershipQuery.in("role", COACH_ROUTE_ROLES);
+    if (error) {
+      throw error;
+    }
+
+    return Array.isArray(data) && data.length > 0;
+  }
+
+  const { data, error } = await membershipQuery.maybeSingle();
+  if (error) {
+    throw error;
+  }
+
+  return COACH_ROUTE_ROLES.includes(data?.role);
 }
 
 const handler = async (event, context) =>
@@ -166,8 +173,7 @@ async function saveTournament(supabase, userId, payload) {
     return handleValidationError("name, startDate, and endDate are required");
   }
 
-  const userRole = await getUserRole(userId);
-  const isCoachOrAdmin = COACH_ROLES.includes(userRole);
+  const isCoachOrAdmin = await hasCoachTournamentAccess(userId);
   const requestsNationalTeamEvent = isNationalTeamEvent === true;
 
   if (!isCoachOrAdmin && requestsNationalTeamEvent) {
@@ -299,8 +305,7 @@ async function deleteTournament(supabase, userId, payload) {
     throw fetchError;
   }
 
-  const userRole = await getUserRole(userId);
-  const isCoachOrAdmin = COACH_ROLES.includes(userRole);
+  const isCoachOrAdmin = await hasCoachTournamentAccess(userId);
   const isOwner = tournament.created_by === userId;
 
   if (!isCoachOrAdmin && !isOwner) {

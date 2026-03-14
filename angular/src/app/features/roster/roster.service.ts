@@ -94,6 +94,7 @@ interface PlayerMemberRecord {
     position?: string; // From users (fallback)
     jersey_number?: number; // From users (fallback)
     country?: string;
+    phone?: string;
     height_cm?: number;
     weight_kg?: number;
     date_of_birth?: string;
@@ -291,7 +292,7 @@ export class RosterService {
           const userQueryResult = await this.supabaseService.client
             .from("users")
             .select(
-              "id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed",
+              "id, email, first_name, last_name, full_name, position, jersey_number, country, phone, height_cm, weight_kg, date_of_birth, onboarding_completed",
             )
             .in("id", userIds);
 
@@ -371,30 +372,13 @@ export class RosterService {
         `[RosterService] Processed ${playersFromMembers.length} players from team_members`,
       );
 
-      // Merge both player lists, avoiding duplicates by user_id
-      const seenUserIds = new Set<string>();
-      const allPlayersList: Player[] = [];
-
-      // First add players from team_players (these are explicitly added players)
-      for (const player of playersFromTable) {
-        if (player.user_id) {
-          seenUserIds.add(player.user_id);
-        }
-        allPlayersList.push(player);
-      }
-
-      // Then add players from team_members who don't already exist in team_players
-      let skippedCount = 0;
-      for (const player of playersFromMembers) {
-        if (player.user_id && seenUserIds.has(player.user_id)) {
-          skippedCount++;
-          continue; // Skip if already in team_players
-        }
-        allPlayersList.push(player);
-      }
+      const allPlayersList = this.mergePlayers(
+        playersFromTable,
+        playersFromMembers,
+      );
 
       this.logger.warn(
-        `[RosterService] Merged players: ${playersFromTable.length} from team_players, ${playersFromMembers.length} from team_members, ${skippedCount} skipped (duplicates), total: ${allPlayersList.length}`,
+        `[RosterService] Merged players: ${playersFromTable.length} from team_players, ${playersFromMembers.length} from team_members, total: ${allPlayersList.length}`,
       );
 
       this.allPlayers.set(allPlayersList);
@@ -434,6 +418,7 @@ export class RosterService {
         .from("team_players")
         .insert({
           team_id: teamId,
+          user_id: playerData.user_id || null,
           name: playerData.name,
           position: playerData.position,
           jersey_number: playerData.jersey,
@@ -1001,13 +986,101 @@ export class RosterService {
         height,
         weight,
         email: user?.email || "",
-        phone: "",
+        phone: user?.phone || "",
         status,
         stats: {},
         created_at: new Date().toISOString(),
         user_id: m.user_id,
       };
     });
+  }
+
+  private mergePlayers(
+    playersFromTable: Player[],
+    playersFromMembers: Player[],
+  ): Player[] {
+    const memberPlayersByUserId = new Map<string, Player>();
+
+    for (const player of playersFromMembers) {
+      if (player.user_id) {
+        memberPlayersByUserId.set(player.user_id, player);
+      }
+    }
+
+    const mergedPlayers = playersFromTable.map((tablePlayer) => {
+      if (!tablePlayer.user_id) {
+        return tablePlayer;
+      }
+
+      const memberPlayer = memberPlayersByUserId.get(tablePlayer.user_id);
+      if (!memberPlayer) {
+        return tablePlayer;
+      }
+
+      memberPlayersByUserId.delete(tablePlayer.user_id);
+
+      return {
+        ...tablePlayer,
+        name: this.pickPreferredText(
+          memberPlayer.name,
+          tablePlayer.name,
+          "Unknown",
+        ),
+        position: this.pickPreferredText(
+          memberPlayer.position,
+          tablePlayer.position,
+          "Unknown",
+        ),
+        jersey: this.pickPreferredText(memberPlayer.jersey, tablePlayer.jersey, "0"),
+        country: this.pickPreferredText(
+          memberPlayer.country,
+          tablePlayer.country,
+          "Unknown",
+        ),
+        age: memberPlayer.age || tablePlayer.age || 0,
+        height: this.pickPreferredText(
+          memberPlayer.height,
+          tablePlayer.height,
+          "N/A",
+        ),
+        weight: this.pickPreferredText(
+          memberPlayer.weight,
+          tablePlayer.weight,
+          "N/A",
+        ),
+        email: this.pickPreferredText(memberPlayer.email, tablePlayer.email, ""),
+        phone: this.pickPreferredText(memberPlayer.phone, tablePlayer.phone, ""),
+      };
+    });
+
+    for (const player of playersFromMembers) {
+      if (!player.user_id || memberPlayersByUserId.has(player.user_id)) {
+        mergedPlayers.push(player);
+        if (player.user_id) {
+          memberPlayersByUserId.delete(player.user_id);
+        }
+      }
+    }
+
+    return mergedPlayers;
+  }
+
+  private pickPreferredText(
+    primary: string | undefined,
+    fallback: string | undefined,
+    placeholder: string,
+  ): string {
+    const normalizedPrimary = primary?.trim();
+    if (normalizedPrimary && normalizedPrimary !== placeholder) {
+      return normalizedPrimary;
+    }
+
+    const normalizedFallback = fallback?.trim();
+    if (normalizedFallback) {
+      return normalizedFallback;
+    }
+
+    return placeholder;
   }
 
   private calculateTeamStats(players: Player[], staff: StaffMember[]): void {

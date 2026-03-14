@@ -57,6 +57,17 @@
   </section>
 }
 
+@if (continuityEvents().length > 0) {
+  <section class="banners-section">
+    @for (event of continuityEvents(); track event.type + '-' + $index) {
+      <app-banner
+        type="warning"
+        [message]="event.title + ': ' + event.description"
+      />
+    }
+  </section>
+}
+
 @if (acwrBaseline()) {
   <section class="acwr-section">
     <app-acwr-baseline

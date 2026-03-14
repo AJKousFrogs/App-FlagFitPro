@@ -3,6 +3,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
+import { NUTRITION_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Staff Nutritionist API
 // Handles nutritionist dashboard data: athlete nutrition profiles, body composition, supplements
@@ -16,7 +17,7 @@ async function verifyNutritionistAccess(userId) {
     .from("team_members")
     .select("role, team_id")
     .eq("user_id", userId)
-    .in("role", ["nutritionist", "coach", "admin", "staff"])
+    .in("role", NUTRITION_ACCESS_ROLES)
     .eq("status", "active")
     .limit(1)
     .single();

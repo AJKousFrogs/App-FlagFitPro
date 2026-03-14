@@ -1,3 +1,5 @@
+import type { TeamRole } from "../../core/services/team-membership.service";
+
 /**
  * Privacy & Safety UX Copy Module
  *
@@ -39,7 +41,22 @@ export type DataStateType =
   | "DEMO_DATA"
   | "REAL_DATA";
 
-export type UserRole = "player" | "coach" | "admin";
+export type UserRole = TeamRole | "guardian";
+
+const COACH_VIEWER_ROLES: readonly UserRole[] = [
+  "owner",
+  "admin",
+  "head_coach",
+  "coach",
+  "offense_coordinator",
+  "defense_coordinator",
+  "assistant_coach",
+  "physiotherapist",
+  "nutritionist",
+  "strength_conditioning_coach",
+  "psychologist",
+  "manager",
+];
 
 // ============================================================================
 // CONSENT BLOCKED MESSAGES
@@ -435,7 +452,7 @@ export function getConsentBlockedMessage(
   role: UserRole,
   context: "single_player" | "team_partial" | "health_data" = "single_player",
 ): PrivacyMessage {
-  if (role === "coach") {
+  if (COACH_VIEWER_ROLES.includes(role)) {
     switch (context) {
       case "team_partial":
         return CONSENT_BLOCKED_MESSAGES.coachTeamPartialBlock;

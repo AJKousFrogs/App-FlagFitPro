@@ -4,6 +4,7 @@ import { AcwrBaselineComponent } from "../../../shared/components/acwr-baseline/
 import { AppBannerComponent } from "../../../shared/components/app-banner/app-banner.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { TodayViewModel } from "../resolution/today-state.resolver";
+import { ContinuityEvent } from "../../../core/services/continuity-indicators.service";
 
 @Component({
   selector: "app-today-status-stack",
@@ -34,6 +35,7 @@ export class TodayStatusStackComponent {
   coachModifiedTime = input<string | null>(null);
   visibleBanners = input<TodayViewModel["banners"]>([]);
   acwrBaseline = input<TodayViewModel["acwrBaseline"]>();
+  continuityEvents = input<ContinuityEvent[]>([]);
 
   ctaClick = output<string>();
 }

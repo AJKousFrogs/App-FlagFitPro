@@ -40,7 +40,6 @@ import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // App Components & Services
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { NutritionService } from "../../../core/services/nutrition.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -50,6 +49,10 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import {
+  TournamentNutritionHydrationLog,
+  TournamentNutritionStateService,
+} from "./tournament-nutrition-state.service";
 
 interface GameSchedule {
   id: string;
@@ -115,12 +118,12 @@ interface HydrationLog {
 })
 export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private router = inject(Router);
-  private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
   private nutritionService = inject(NutritionService);
   private dialogService = inject(DialogService);
+  private tournamentStateService = inject(TournamentNutritionStateService);
 
   // State
   games = signal<GameSchedule[]>([]);
@@ -326,7 +329,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit(): void {
-    this.loadSavedSchedule();
+    void this.loadSavedSchedule();
 
     // Auto-refresh every minute to update "next game" countdown
     this.refreshInterval = setInterval(() => {
@@ -342,8 +345,24 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   }
 
   private async loadSavedSchedule(): Promise<void> {
+    const persistedState = await this.tournamentStateService.loadTodayState();
+    if (persistedState) {
+      this.tournamentName.set(persistedState.tournamentName);
+      this.games.set((persistedState.games as GameSchedule[]) || []);
+      this.editTournamentName = persistedState.tournamentName;
+      this.editGames = [...((persistedState.games as GameSchedule[]) || [])];
+      this.nutritionWindows.set(
+        (persistedState.nutritionWindows as NutritionWindow[]) || [],
+      );
+      this.hydrationLogs.set(
+        (persistedState.hydrationLogs as HydrationLog[]) || [],
+      );
+      return;
+    }
+
     // Try to load from localStorage first (for quick access)
     const saved = localStorage.getItem("tournament_schedule");
+    let restoredFromLocalStorage = false;
     if (saved) {
       try {
         const data = JSON.parse(saved);
@@ -351,6 +370,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
         this.games.set(data.games || []);
         this.editTournamentName = data.name || "Tournament Day";
         this.editGames = [...(data.games || [])];
+        restoredFromLocalStorage = true;
 
         if (data.games?.length > 0) {
           this.generateNutritionPlan();
@@ -369,9 +389,14 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     if (todayLogs) {
       try {
         this.hydrationLogs.set(JSON.parse(todayLogs));
+        restoredFromLocalStorage = true;
       } catch (_e) {
         // Ignore
       }
+    }
+
+    if (restoredFromLocalStorage) {
+      await this.persistCurrentState();
     }
 
     // If no schedule, show empty state - user must create their own schedule
@@ -422,7 +447,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     game.isReferee = !!checked;
   }
 
-  generateNutritionPlan(): void {
+  async generateNutritionPlan(): Promise<void> {
     // Sort games by time
     const sortedGames = [...this.editGames].sort((a, b) =>
       a.time.localeCompare(b.time),
@@ -493,6 +518,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     });
 
     this.nutritionWindows.set(windows);
+    await this.persistCurrentState();
     this.toastService.success(
       `Nutrition plan generated for ${sortedGames.length} games!`,
     );
@@ -872,7 +898,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     return currentTime >= window.startTime && currentTime <= window.endTime;
   }
 
-  logHydration(type: string, amount: number): void {
+  async logHydration(type: string, amount: number): Promise<void> {
     const now = new Date();
     const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
 
@@ -890,6 +916,9 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       "hydration_logs_" + new Date().toDateString(),
       JSON.stringify(this.hydrationLogs()),
     );
+    await this.tournamentStateService.logHydration(
+      log as TournamentNutritionHydrationLog,
+    );
 
     // Visual feedback
     setTimeout(() => {
@@ -899,12 +928,13 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     this.toastService.success(`+${amount}ml logged! 💧`);
   }
 
-  completeWindow(window: NutritionWindow): void {
+  async completeWindow(window: NutritionWindow): Promise<void> {
     this.nutritionWindows.update((windows) =>
       windows.map((w) => (w.id === window.id ? { ...w, completed: true } : w)),
     );
     // Auto-collapse when completed
     this.expandedWindows.delete(window.id);
+    await this.persistCurrentState();
     this.toastService.success(TOAST.SUCCESS.WINDOW_COMPLETED);
   }
 
@@ -939,7 +969,16 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     // Clear localStorage
     localStorage.removeItem("tournament_schedule");
     localStorage.removeItem("hydration_logs_" + new Date().toDateString());
+    await this.tournamentStateService.clearTodayState();
 
     this.toastService.success("All tournament data cleared successfully!");
+  }
+
+  private async persistCurrentState(): Promise<void> {
+    await this.tournamentStateService.savePlan({
+      tournamentName: this.tournamentName(),
+      games: this.games(),
+      nutritionWindows: this.nutritionWindows(),
+    });
   }
 }

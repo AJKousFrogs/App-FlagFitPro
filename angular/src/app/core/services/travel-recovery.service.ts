@@ -59,7 +59,7 @@
  * @version 2.0.0
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
@@ -71,6 +71,7 @@ import { RecoveryService } from "./recovery.service";
 
 export interface TravelPlan {
   id: string;
+  persistedLogId?: string;
   userId: string;
   tripName: string;
   departureDate: Date;
@@ -360,6 +361,19 @@ export class TravelRecoveryService {
     return days >= severity.estimatedRecoveryDays;
   });
 
+  constructor() {
+    effect(() => {
+      const userId = this.authService.currentUser()?.id;
+      if (!userId) {
+        this._currentPlan.set(null);
+        this._recoveryProtocol.set([]);
+        return;
+      }
+
+      void this.loadPersistedPlan(userId);
+    });
+  }
+
   // ============================================================================
   // TRAVEL PLAN MANAGEMENT
   // ============================================================================
@@ -367,12 +381,12 @@ export class TravelRecoveryService {
   /**
    * Create a new travel plan
    */
-  createTravelPlan(
+  async createTravelPlan(
     planData: Omit<
       TravelPlan,
       "id" | "userId" | "createdAt" | "timezonesEast" | "travelDirection"
     >,
-  ): TravelPlan {
+  ): Promise<TravelPlan> {
     this.logger.debug("[TravelRecoveryService] createTravelPlan called", {
       planData,
     });
@@ -418,6 +432,11 @@ export class TravelRecoveryService {
       createdAt: new Date(),
     };
 
+    const persistedLogId = await this.persistPlan(plan);
+    if (persistedLogId) {
+      plan.persistedLogId = persistedLogId;
+    }
+
     this.logger.debug("[TravelRecoveryService] Created plan object", { plan });
     this._currentPlan.set(plan);
     this.logger.debug("[TravelRecoveryService] Current plan signal set");
@@ -449,9 +468,198 @@ export class TravelRecoveryService {
   /**
    * Clear current travel plan
    */
-  clearPlan(): void {
+  async clearPlan(): Promise<void> {
+    await this.deletePersistedPlan();
     this._currentPlan.set(null);
     this._recoveryProtocol.set([]);
+  }
+
+  private async loadPersistedPlan(userId: string): Promise<void> {
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from("athlete_travel_log")
+        .select("id, arrival_date, timezone_difference, notes, created_at")
+        .eq("user_id", userId)
+        .order("arrival_date", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error && !String(error.message || "").includes("relation")) {
+        this.logger.warn("[TravelRecoveryService] Failed to load persisted plan", {
+          error,
+        });
+        return;
+      }
+
+      if (!data) {
+        if (!this._currentPlan()) {
+          this._recoveryProtocol.set([]);
+        }
+        return;
+      }
+
+      const hydratedPlan = this.deserializePlanFromLog(
+        data as {
+          id: string;
+          arrival_date: string;
+          timezone_difference: number | null;
+          notes: string | null;
+          created_at: string | null;
+        },
+        userId,
+      );
+
+      if (!hydratedPlan) {
+        return;
+      }
+
+      const currentPlan = this._currentPlan();
+      if (currentPlan?.persistedLogId === hydratedPlan.persistedLogId) {
+        return;
+      }
+
+      this._currentPlan.set(hydratedPlan);
+      this.generateRecoveryProtocol(hydratedPlan);
+    } catch (error) {
+      this.logger.warn("[TravelRecoveryService] Could not restore travel plan", {
+        error,
+      });
+    }
+  }
+
+  private serializePlanNotes(plan: TravelPlan): string {
+    return JSON.stringify({
+      noteType: "travel_plan_v1",
+      tripName: plan.tripName,
+      departureDate: plan.departureDate.toISOString(),
+      returnDate: plan.returnDate?.toISOString() ?? null,
+      competitionDate: plan.competitionDate?.toISOString() ?? null,
+      departureTimezone: plan.departureTimezone,
+      arrivalTimezone: plan.arrivalTimezone,
+      flightDuration: plan.flightDuration,
+      layovers: plan.layovers,
+      createdAt: plan.createdAt.toISOString(),
+    });
+  }
+
+  private deserializePlanFromLog(
+    log: {
+      id: string;
+      arrival_date: string;
+      timezone_difference: number | null;
+      notes: string | null;
+      created_at: string | null;
+    },
+    userId: string,
+  ): TravelPlan | null {
+    if (!log.notes) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(log.notes) as {
+        tripName?: string;
+        departureDate?: string;
+        returnDate?: string | null;
+        competitionDate?: string | null;
+        departureTimezone?: string;
+        arrivalTimezone?: string;
+        flightDuration?: number;
+        layovers?: number;
+        createdAt?: string;
+      };
+      const timezonesEast = log.timezone_difference ?? 0;
+
+      return {
+        id: `travel-${log.id}`,
+        persistedLogId: log.id,
+        userId,
+        tripName: parsed.tripName || "Travel Plan",
+        departureDate: parsed.departureDate
+          ? new Date(parsed.departureDate)
+          : new Date(log.arrival_date),
+        arrivalDate: new Date(log.arrival_date),
+        returnDate: parsed.returnDate ? new Date(parsed.returnDate) : undefined,
+        competitionDate: parsed.competitionDate
+          ? new Date(parsed.competitionDate)
+          : undefined,
+        departureTimezone: parsed.departureTimezone || "UTC",
+        arrivalTimezone: parsed.arrivalTimezone || "UTC",
+        timezonesEast,
+        travelDirection:
+          timezonesEast > 0
+            ? "eastward"
+            : timezonesEast < 0
+              ? "westward"
+              : "none",
+        flightDuration: parsed.flightDuration || 0,
+        layovers: parsed.layovers || 0,
+        createdAt: parsed.createdAt
+          ? new Date(parsed.createdAt)
+          : new Date(log.created_at || log.arrival_date),
+      };
+    } catch (error) {
+      this.logger.warn("[TravelRecoveryService] Could not parse stored notes", {
+        error,
+      });
+      return null;
+    }
+  }
+
+  private async persistPlan(plan: TravelPlan): Promise<string | null> {
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from("athlete_travel_log")
+        .insert({
+          user_id: plan.userId,
+          arrival_date: plan.arrivalDate.toISOString().split("T")[0],
+          adaptation_day: 0,
+          timezone_difference: plan.timezonesEast,
+          notes: this.serializePlanNotes(plan),
+          updated_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        this.logger.warn("[TravelRecoveryService] Failed to persist travel plan", {
+          error,
+        });
+        return null;
+      }
+
+      return (data as { id?: string } | null)?.id ?? null;
+    } catch (error) {
+      this.logger.warn("[TravelRecoveryService] Travel persistence unavailable", {
+        error,
+      });
+      return null;
+    }
+  }
+
+  private async deletePersistedPlan(): Promise<void> {
+    const persistedLogId = this._currentPlan()?.persistedLogId;
+    if (!persistedLogId) {
+      return;
+    }
+
+    try {
+      const { error } = await this.supabaseService.client
+        .from("athlete_travel_log")
+        .delete()
+        .eq("id", persistedLogId);
+
+      if (error) {
+        this.logger.warn("[TravelRecoveryService] Failed to clear travel log", {
+          error,
+        });
+      }
+    } catch (error) {
+      this.logger.warn("[TravelRecoveryService] Travel log cleanup unavailable", {
+        error,
+      });
+    }
   }
 
   // ============================================================================

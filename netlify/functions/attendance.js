@@ -3,6 +3,7 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Attendance API
 // Handles practice attendance tracking, events, and absence requests
@@ -99,8 +100,8 @@ const createEvent = async (userId, eventData) => {
 
   // Verify user has permission (coach/admin)
   const { authorized, role } = await checkTeamMembership(userId, team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can create events");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can create events");
   }
 
   const { data, error } = await supabaseAdmin
@@ -142,8 +143,8 @@ const updateEvent = async (userId, eventId, updates) => {
 
   // Verify user has permission
   const { authorized, role } = await checkTeamMembership(userId, event.team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can update events");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can update events");
   }
 
   const allowedFields = [
@@ -190,8 +191,8 @@ const deleteEvent = async (userId, eventId) => {
   }
 
   const { authorized, role } = await checkTeamMembership(userId, event.team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can delete events");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can delete events");
   }
 
   const { error } = await supabaseAdmin
@@ -282,7 +283,7 @@ const recordAttendance = async (userId, attendanceData) => {
     throw new Error("Not authorized");
   }
 
-  if (!["coach", "admin"].includes(role) && player_id !== userId) {
+  if (!hasAnyRole(role, TEAM_OPERATIONS_ROLES) && player_id !== userId) {
     throw new Error("Players can only record their own attendance");
   }
   await assertActiveTeamPlayer(event.team_id, player_id);
@@ -337,8 +338,8 @@ const bulkRecordAttendance = async (userId, bulkData) => {
   }
 
   const { authorized, role } = await checkTeamMembership(userId, event.team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can bulk record attendance");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can bulk record attendance");
   }
 
   const dedupedRecords = new Map();
@@ -551,8 +552,8 @@ const getPendingAbsenceRequests = async (userId, teamId) => {
   checkEnvVars();
 
   const { authorized, role } = await checkTeamMembership(userId, teamId);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can view absence requests");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can view absence requests");
   }
 
   const { data, error } = await supabaseAdmin
@@ -602,8 +603,8 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
     userId,
     request.team_events.team_id,
   );
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can review absence requests");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can review absence requests");
   }
 
   const { data, error } = await supabaseAdmin

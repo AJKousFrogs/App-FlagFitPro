@@ -6,6 +6,7 @@ import { DataState, MINIMUM_DATA_REQUIREMENTS, wrapWithDataState, getDataStateFr
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { roundToPrecision, safeDivide, average, standardDeviation, ACWR_PRECISION } from "./utils/precision.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Functions - Load Management & Monitoring API
 // Evidence-based training load monitoring, injury risk prediction, and fatigue management
@@ -20,8 +21,6 @@ const supabase = supabaseAdmin;
 const consentReader = new ConsentDataReader(supabaseAdmin, {
   enableAuditLogging: true,
 });
-
-const LOAD_MANAGEMENT_STAFF_ROLES = ["coach", "assistant_coach", "admin", "staff"];
 
 async function validateCrossUserAccess(requesterId, targetUserId, teamId) {
   if (requesterId === targetUserId) {
@@ -42,7 +41,7 @@ async function validateCrossUserAccess(requesterId, targetUserId, teamId) {
     .eq("user_id", requesterId)
     .eq("team_id", teamId)
     .eq("status", "active")
-    .in("role", LOAD_MANAGEMENT_STAFF_ROLES)
+    .in("role", LOAD_MANAGEMENT_ACCESS_ROLES)
     .limit(1)
     .single();
 

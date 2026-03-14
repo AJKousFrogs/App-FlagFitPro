@@ -9,6 +9,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -29,7 +30,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
   }
 
   const role = await getUserRole(requestUserId);
-  if (!["coach", "assistant_coach", "head_coach", "admin"].includes(role)) {
+  if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
     return { authorized: false };
   }
 

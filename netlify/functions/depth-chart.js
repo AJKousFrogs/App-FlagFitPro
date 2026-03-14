@@ -3,6 +3,7 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership } from "./utils/auth-helper.js";
+import { hasAnyRole, ROSTER_MANAGEMENT_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Depth Chart API
 // Handles depth chart management for team rosters
@@ -128,7 +129,10 @@ const getDepthChartWithEntries = async (userId, templateId) => {
       *,
       users:player_id (
         id,
-        name
+        full_name,
+        first_name,
+        last_name,
+        email
       )
     `,
     )
@@ -143,7 +147,11 @@ const getDepthChartWithEntries = async (userId, templateId) => {
   // Transform entries to include player info
   const transformedEntries = (entries || []).map((entry) => ({
     ...entry,
-    player_name: entry.users?.name,
+    player_name:
+      entry.users?.full_name ||
+      [entry.users?.first_name, entry.users?.last_name].filter(Boolean).join(" ") ||
+      entry.users?.email ||
+      "Unknown player",
     player_number: null, // Would need to join with roster table
   }));
 
@@ -169,8 +177,8 @@ const createDepthChart = async (userId, chartData) => {
   }
 
   const { authorized, role } = await checkTeamMembership(userId, team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can create depth charts");
+  if (!authorized || !hasAnyRole(role, ROSTER_MANAGEMENT_ROLES)) {
+    throw new Error("Only authorized team coaches can create depth charts");
   }
 
   // Create the template
@@ -231,8 +239,8 @@ const updateDepthChart = async (userId, templateId, updates) => {
     userId,
     template.team_id,
   );
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can update depth charts");
+  if (!authorized || !hasAnyRole(role, ROSTER_MANAGEMENT_ROLES)) {
+    throw new Error("Only authorized team coaches can update depth charts");
   }
 
   const allowedFields = ["name", "is_active"];
@@ -274,8 +282,8 @@ const deleteDepthChart = async (userId, templateId) => {
     userId,
     template.team_id,
   );
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can delete depth charts");
+  if (!authorized || !hasAnyRole(role, ROSTER_MANAGEMENT_ROLES)) {
+    throw new Error("Only authorized team coaches can delete depth charts");
   }
 
   const { error } = await supabaseAdmin
@@ -313,8 +321,8 @@ const updateEntry = async (userId, entryId, updates) => {
     userId,
     entry.depth_chart_templates.team_id,
   );
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can update depth charts");
+  if (!authorized || !hasAnyRole(role, ROSTER_MANAGEMENT_ROLES)) {
+    throw new Error("Only authorized team coaches can update depth charts");
   }
   if (
     updates.player_id !== undefined &&
@@ -401,8 +409,8 @@ const swapPositions = async (userId, swapData) => {
     userId,
     entry1.depth_chart_templates.team_id,
   );
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can modify depth charts");
+  if (!authorized || !hasAnyRole(role, ROSTER_MANAGEMENT_ROLES)) {
+    throw new Error("Only authorized team coaches can modify depth charts");
   }
 
   // Record history for both
@@ -473,8 +481,8 @@ const addPosition = async (userId, positionData) => {
     userId,
     template.team_id,
   );
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can add positions");
+  if (!authorized || !hasAnyRole(role, ROSTER_MANAGEMENT_ROLES)) {
+    throw new Error("Only authorized team coaches can add positions");
   }
 
   const { data, error } = await supabaseAdmin
@@ -612,8 +620,8 @@ const initializeTeamDepthCharts = async (userId, teamId) => {
   checkEnvVars();
 
   const { authorized, role } = await checkTeamMembership(userId, teamId);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can initialize depth charts");
+  if (!authorized || !hasAnyRole(role, ROSTER_MANAGEMENT_ROLES)) {
+    throw new Error("Only authorized team coaches can initialize depth charts");
   }
 
   const chartTypes = ["offense", "defense", "special_teams"];

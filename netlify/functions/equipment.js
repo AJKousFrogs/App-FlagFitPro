@@ -3,6 +3,7 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership } from "./utils/auth-helper.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Equipment API
 // Handles equipment/gear tracking and assignments
@@ -147,8 +148,8 @@ const createEquipmentItem = async (userId, itemData) => {
   } = itemData;
 
   const { authorized, role } = await checkTeamMembership(userId, team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can add equipment");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can add equipment");
   }
 
   const parsedTotal = Number.parseInt(quantity_total, 10);
@@ -195,8 +196,8 @@ const updateEquipmentItem = async (userId, itemId, updates) => {
   }
 
   const { authorized, role } = await checkTeamMembership(userId, item.team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can update equipment");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can update equipment");
   }
 
   const allowedFields = [
@@ -267,8 +268,8 @@ const deleteEquipmentItem = async (userId, itemId) => {
   }
 
   const { authorized, role } = await checkTeamMembership(userId, item.team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can delete equipment");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can delete equipment");
   }
 
   const { error } = await supabaseAdmin
@@ -375,8 +376,8 @@ const checkoutEquipment = async (userId, checkoutData) => {
   }
 
   const { authorized, role } = await checkTeamMembership(userId, item.team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can checkout equipment");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can checkout equipment");
   }
 
   const checkoutQuantity = parsePositiveQuantity(quantity, "quantity");
@@ -433,8 +434,8 @@ const bulkCheckout = async (userId, bulkData) => {
   }
 
   const { authorized, role } = await checkTeamMembership(userId, item.team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can checkout equipment");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can checkout equipment");
   }
 
   const checkoutQuantity = parsePositiveQuantity(quantity, "quantity");
@@ -503,8 +504,8 @@ const returnEquipment = async (userId, returnData) => {
     userId,
     assignment.equipment_items.team_id,
   );
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches and admins can process returns");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can process returns");
   }
 
   // Update assignment (conditional to prevent double-return race)

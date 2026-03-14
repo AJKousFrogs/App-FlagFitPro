@@ -3,6 +3,7 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership, getUserContext } from "./utils/auth-helper.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Payments API
 // Handles payment tracking for players and coaches
@@ -186,8 +187,8 @@ const getCoachPayments = async (userId, queryParams) => {
 
   // Verify coach access
   const { authorized, role } = await checkTeamMembership(userId, team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches can manage payments");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can manage payments");
   }
 
   // Get all payments for this team
@@ -349,8 +350,8 @@ const createFee = async (userId, body) => {
 
   // Verify coach access
   const { authorized, role } = await checkTeamMembership(userId, team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches can create fees");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can create fees");
   }
 
   // Map fee type
@@ -436,8 +437,8 @@ const recordPayment = async (userId, body) => {
 
   // Verify coach access
   const { authorized, role } = await checkTeamMembership(userId, team_id);
-  if (!authorized || !["coach", "admin"].includes(role)) {
-    throw new Error("Only coaches can record payments");
+  if (!authorized || !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+    throw new Error("Only authorized team staff can record payments");
   }
 
   // If payment_id provided, update that specific payment

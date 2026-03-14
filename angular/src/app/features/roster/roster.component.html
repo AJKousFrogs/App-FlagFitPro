@@ -562,6 +562,12 @@
             >
             @if (rosterService.canManageRoster()) {
               <app-button
+                variant="secondary"
+                iconLeft="pi-chart-line"
+                (clicked)="openPlayerDevelopment()"
+                >Development</app-button
+              >
+              <app-button
                 iconLeft="pi-pencil"
                 (clicked)="editPlayerFromDetails()"
                 >Edit Player</app-button

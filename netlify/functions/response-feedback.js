@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 /**
  * Netlify Function: Response Feedback
@@ -130,7 +131,7 @@ async function submitCoachFeedback(messageId, coachId, feedbackData) {
     .select("team_id")
     .eq("user_id", coachId)
     .eq("status", "active")
-    .in("role", ["coach", "assistant_coach"]);
+    .in("role", COACH_ROUTE_ROLES);
   const coachTeamIds = [...new Set((coachTeams || []).map((t) => t.team_id))];
   if (coachTeamIds.length === 0) {
     throw new Error("Not authorized to review this message");
@@ -225,7 +226,7 @@ async function ensureMessageAccess(messageId, requesterId) {
     .select("team_id")
     .eq("user_id", requesterId)
     .eq("status", "active")
-    .in("role", ["coach", "assistant_coach"]);
+    .in("role", COACH_ROUTE_ROLES);
 
   const requesterTeamIds = [...new Set((requesterTeams || []).map((t) => t.team_id))];
   if (requesterTeamIds.length === 0) {
@@ -264,7 +265,7 @@ async function getFeedbackStats(coachId, teamId = null, options = {}) {
       .eq("team_id", teamId)
       .eq("user_id", coachId)
       .eq("status", "active")
-      .in("role", ["coach", "assistant_coach"])
+      .in("role", COACH_ROUTE_ROLES)
       .maybeSingle();
     if (!coachMembership) {
       throw new Error("Not authorized to access this team's feedback statistics");
@@ -283,7 +284,7 @@ async function getFeedbackStats(coachId, teamId = null, options = {}) {
       .select("team_id")
       .eq("user_id", coachId)
       .eq("status", "active")
-      .in("role", ["coach", "assistant_coach"]);
+      .in("role", COACH_ROUTE_ROLES);
 
     if (coachTeams && coachTeams.length > 0) {
       const { data: members } = await supabaseAdmin

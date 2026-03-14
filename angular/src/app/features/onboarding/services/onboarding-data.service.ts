@@ -91,7 +91,7 @@ export class OnboardingDataService {
   ): Promise<{ error: { message?: string } | null }> {
     const { error } = await this.supabaseService.client
       .from("user_preferences")
-      .upsert(preferences, { onConflict: "email" });
+      .upsert(preferences, { onConflict: "user_id" });
     return { error };
   }
 

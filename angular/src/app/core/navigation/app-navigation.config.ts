@@ -304,7 +304,16 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     icon: "pi-briefcase",
     ariaLabel: "Team Hub - Collaborative team workspace",
     group: "secondary",
-    roles: ["coach", "assistant_coach", "admin"],
+    roles: [
+      "owner",
+      "admin",
+      "head_coach",
+      "coach",
+      "offense_coordinator",
+      "defense_coordinator",
+      "assistant_coach",
+      "manager",
+    ],
   },
   {
     label: "Team Management",
@@ -312,7 +321,16 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     icon: "pi-sitemap",
     ariaLabel: "Team Management - Manage team settings and roster",
     group: "secondary",
-    roles: ["coach", "assistant_coach", "admin"],
+    roles: [
+      "owner",
+      "admin",
+      "head_coach",
+      "coach",
+      "offense_coordinator",
+      "defense_coordinator",
+      "assistant_coach",
+      "manager",
+    ],
   },
   {
     label: "Exercise DB",
@@ -320,7 +338,16 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     icon: "pi-database",
     ariaLabel: "Exercise DB - Manage exercise database (coach)",
     group: "secondary",
-    roles: ["coach", "assistant_coach", "admin"],
+    roles: [
+      "owner",
+      "admin",
+      "head_coach",
+      "coach",
+      "offense_coordinator",
+      "defense_coordinator",
+      "assistant_coach",
+      "manager",
+    ],
   },
   {
     label: "Profile",
@@ -352,8 +379,19 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
   },
 ];
 
+const COACH_NAV_ROLES = [
+  "owner",
+  "admin",
+  "head_coach",
+  "coach",
+  "offense_coordinator",
+  "defense_coordinator",
+  "assistant_coach",
+  "manager",
+] as const;
+
 function isCoachNavigationRole(role: string | undefined): boolean {
-  return ["coach", "assistant_coach", "admin"].includes(role ?? "");
+  return COACH_NAV_ROLES.includes((role ?? "") as (typeof COACH_NAV_ROLES)[number]);
 }
 
 function filterByRole(

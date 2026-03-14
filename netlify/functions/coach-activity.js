@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 /**
  * Coach Activity API Function
@@ -45,7 +46,7 @@ async function getActivityFeed(userId, options = {}) {
     .select("team_id")
     .eq("user_id", userId)
     .eq("status", "active")
-    .in("role", ["coach", "assistant_coach"]);
+    .in("role", COACH_ROUTE_ROLES);
 
   if (teamError) {
     throw teamError;
@@ -117,7 +118,7 @@ async function getUnreadCount(userId) {
     .select("team_id")
     .eq("user_id", userId)
     .eq("status", "active")
-    .in("role", ["coach", "assistant_coach"]);
+    .in("role", COACH_ROUTE_ROLES);
 
   if (!teams || teams.length === 0) {
     return 0;
@@ -162,7 +163,7 @@ async function markActivityRead(userId, activityId) {
     .eq("team_id", activity.team_id)
     .eq("user_id", userId)
     .eq("status", "active")
-    .in("role", ["coach", "assistant_coach"])
+    .in("role", COACH_ROUTE_ROLES)
     .single();
 
   if (!membership) {
@@ -196,7 +197,7 @@ async function markAllActivityRead(userId) {
     .select("team_id")
     .eq("user_id", userId)
     .eq("status", "active")
-    .in("role", ["coach", "assistant_coach"]);
+    .in("role", COACH_ROUTE_ROLES);
 
   if (!teams || teams.length === 0) {
     return { success: true, updated: 0 };
@@ -234,7 +235,7 @@ async function getActivitySummary(userId) {
     .select("team_id")
     .eq("user_id", userId)
     .eq("status", "active")
-    .in("role", ["coach", "assistant_coach"]);
+    .in("role", COACH_ROUTE_ROLES);
 
   if (!teams || teams.length === 0) {
     return {

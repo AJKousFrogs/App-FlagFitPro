@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "../../guards/auth.guard";
+import { coachRoleGuard } from "../../guards/team-role.guard";
 
 export const teamRoutes: Routes = [
   {
@@ -32,7 +33,7 @@ export const teamRoutes: Routes = [
       import("../../../features/dashboard/coach-dashboard.component").then(
         (m) => m.CoachDashboardComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: true, priority: "high", entry: "internal" }, // Coach main dashboard
   },
   // === NEW ROUTE: Coach Activity Feed ===
@@ -42,7 +43,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/coach-activity-feed.component").then(
         (m) => m.CoachActivityFeedComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
@@ -51,7 +52,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/coach-analytics/coach-analytics.component").then(
         (m) => m.CoachAnalyticsComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: true, priority: "medium", entry: "internal" }, // Coach analytics
   },
   {
@@ -60,7 +61,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/coach-inbox/coach-inbox.component").then(
         (m) => m.CoachInboxComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: true, priority: "medium", entry: "internal" }, // Coach messaging
   },
   {
@@ -69,7 +70,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/team-management/team-management.component").then(
         (m) => m.TeamManagementComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: true, priority: "medium", entry: "internal" }, // Team management
   },
   {
@@ -84,7 +85,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/program-builder/program-builder.component").then(
         (m) => m.ProgramBuilderComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
@@ -93,7 +94,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/practice-planner/practice-planner.component").then(
         (m) => m.PracticePlannerComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: true, priority: "low", entry: "internal" }, // Planning feature
   },
   {
@@ -102,7 +103,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/injury-management/injury-management.component").then(
         (m) => m.InjuryManagementComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // On-demand
   },
   {
@@ -111,7 +112,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/playbook-manager/playbook-manager.component").then(
         (m) => m.PlaybookManagerComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // On-demand
   },
   {
@@ -120,7 +121,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/player-development/player-development.component").then(
         (m) => m.PlayerDevelopmentComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // On-demand
   },
   {
@@ -129,7 +130,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/tournament-management/tournament-management.component").then(
         (m) => m.TournamentManagementComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Seasonal feature
   },
   {
@@ -138,7 +139,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/payment-management/payment-management.component").then(
         (m) => m.PaymentManagementComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Admin feature
   },
   {
@@ -147,7 +148,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/ai-scheduler/ai-scheduler.component").then(
         (m) => m.AiSchedulerComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
@@ -156,7 +157,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/knowledge-base/knowledge-base.component").then(
         (m) => m.KnowledgeBaseComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Reference feature
   },
   {
@@ -171,7 +172,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/film-room/film-room-coach.component").then(
         (m) => m.FilmRoomCoachComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Heavy component
   },
   {
@@ -180,7 +181,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/calendar/calendar-coach.component").then(
         (m) => m.CalendarCoachComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: true, priority: "low", entry: "internal" }, // Planning feature
   },
   {
@@ -189,7 +190,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/scouting/scouting-reports.component").then(
         (m) => m.ScoutingReportsComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // On-demand
   },
   {
@@ -204,7 +205,7 @@ export const teamRoutes: Routes = [
       import("../../../features/team/team-create/team-create.component").then(
         (m) => m.TeamCreateComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // One-time use
   },
   {
@@ -213,7 +214,7 @@ export const teamRoutes: Routes = [
       import("../../../features/attendance/attendance.component").then(
         (m) => m.AttendanceComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: true, priority: "low", entry: "internal" }, // Team feature
   },
   {
@@ -222,7 +223,7 @@ export const teamRoutes: Routes = [
       import("../../../features/depth-chart/depth-chart.component").then(
         (m) => m.DepthChartComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Coach feature
   },
   {
@@ -231,7 +232,7 @@ export const teamRoutes: Routes = [
       import("../../../features/equipment/equipment.component").then(
         (m) => m.EquipmentComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Admin feature
   },
   {
@@ -240,7 +241,7 @@ export const teamRoutes: Routes = [
       import("../../../features/officials/officials.component").then(
         (m) => m.OfficialsComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, coachRoleGuard],
     data: { preload: false, entry: "internal" }, // Game day feature
   },
 ];

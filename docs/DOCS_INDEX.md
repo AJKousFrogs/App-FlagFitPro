@@ -49,6 +49,8 @@
 | Document                                               | Description                              |
 | ------------------------------------------------------ | ---------------------------------------- |
 | [ARCHITECTURE.md](./ARCHITECTURE.md)                   | System architecture overview             |
+| [DATA_CONTINUITY_MODEL.md](./DATA_CONTINUITY_MODEL.md) | Cross-surface source-of-truth rules      |
+| [ROLE_AUTHORIZATION_MODEL.md](./ROLE_AUTHORIZATION_MODEL.md) | Admin/coach/staff/player role authority |
 | [ROUTE_MAP.md](./ROUTE_MAP.md)                         | Routes → data sources & API endpoints     |
 | [CALCULATION_SPEC.md](./CALCULATION_SPEC.md)           | Calculation formulas, windows, rounding  |
 | [CALCULATION_MAP.md](./CALCULATION_MAP.md)             | Calculation hotspots (services → code)   |
@@ -87,11 +89,13 @@
 | ---------------------------------------------------------- | -------------------------------------------------------------------- |
 | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) | **Start here** - Local dev setup for Angular 21 + Netlify + Supabase |
 | [MCP_SUPABASE_SETUP.md](./MCP_SUPABASE_SETUP.md)           | MCP + Supabase integration for Cursor/AI                             |
+| [QA_CONTINUITY_CHECKLIST.md](./QA_CONTINUITY_CHECKLIST.md) | End-to-end manual continuity verification                            |
 
 ### 📝 Release Notes
 
 | Document                                         | Description                                           |
 | ------------------------------------------------ | ----------------------------------------------------- |
+| [RELEASE_NOTES_1.5.0.md](./RELEASE_NOTES_1.5.0.md) | Role integrity, route guards, and authorization alignment |
 | [RELEASE_NOTES_1.2.0.md](./RELEASE_NOTES_1.2.0.md) | Route-state consistency and workflow completion update |
 | [RELEASE_NOTES_1.1.0.md](./RELEASE_NOTES_1.1.0.md) | Stability, backend hardening, and dependency alignment |
 
@@ -143,6 +147,8 @@
 ├── DOCS_INDEX.md                 ← YOU ARE HERE (single source of truth)
 ├── FEATURE_DOCUMENTATION.md      ← 49 features + Appendix E (6500+ lines)
 ├── ARCHITECTURE.md
+├── DATA_CONTINUITY_MODEL.md
+├── ROLE_AUTHORIZATION_MODEL.md
 ├── ROUTE_MAP.md                  ← Routes → data sources
 ├── CALCULATION_SPEC.md           ← Calculation formulas
 ├── CALCULATION_MAP.md            ← Calculation code locations
@@ -153,10 +159,12 @@
 ├── ANGULAR_PRIMENG_GUIDE.md
 ├── DESIGN_SYSTEM_RULES.md
 ├── UX_READY_CRITERIA.md         ← UI polish gate
+├── RELEASE_NOTES_1.5.0.md
 ├── RELEASE_NOTES_1.2.0.md
 ├── RELEASE_NOTES_1.1.0.md
 ├── FLAG_FOOTBALL_TRAINING_SCIENCE.md
 ├── MCP_SUPABASE_SETUP.md
+├── QA_CONTINUITY_CHECKLIST.md
 ├── RUNBOOKS/                     ← 6 operational docs
 ├── angular/docs/                 ← COMPONENT_OVERRIDES_TRACKING, EMPTY_STATE_COMPONENTS
 └── [Legal: ../LICENSE.md, angular/src/assets/legal/]

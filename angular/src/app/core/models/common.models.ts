@@ -1,3 +1,5 @@
+import type { TeamRole } from "../services/team-membership.service";
+
 /**
  * Common Shared Models
  *
@@ -45,7 +47,7 @@ export interface User {
   updatedAt: Date;
 }
 
-export type UserRole = "athlete" | "coach" | "admin" | "guardian";
+export type UserRole = TeamRole | "guardian";
 
 export interface UserProfile {
   firstName: string;

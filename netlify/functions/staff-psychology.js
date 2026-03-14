@@ -3,6 +3,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
+import { PSYCHOLOGY_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Staff Psychology API
 // Handles mental performance data, wellness reports, and psychological assessments
@@ -21,7 +22,7 @@ async function verifyPsychologyAccess(userId, targetUserId = null) {
     .from("team_members")
     .select("role, team_id")
     .eq("user_id", userId)
-    .in("role", ["sports_psychologist", "coach", "admin", "staff"])
+    .in("role", PSYCHOLOGY_ACCESS_ROLES)
     .eq("status", "active")
     .limit(1)
     .single();

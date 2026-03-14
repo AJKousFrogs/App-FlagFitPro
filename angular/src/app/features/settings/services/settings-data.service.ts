@@ -118,6 +118,69 @@ export class SettingsDataService {
     return { data: (result as Record<string, unknown>) ?? null, error };
   }
 
+  async fetchTeamPlayer(params: {
+    userId: string;
+    teamId: string;
+  }): Promise<{
+    player: { id?: string } | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("team_players")
+      .select("id")
+      .eq("user_id", params.userId)
+      .eq("team_id", params.teamId)
+      .maybeSingle();
+
+    return {
+      player: (data as { id?: string }) ?? null,
+      error,
+    };
+  }
+
+  async fetchAnyTeamPlayer(userId: string): Promise<{
+    player: { id?: string; team_id?: string } | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("team_players")
+      .select("id, team_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    return {
+      player: (data as { id?: string; team_id?: string }) ?? null,
+      error,
+    };
+  }
+
+  async updateTeamPlayer(playerId: string, data: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: result, error } = await this.supabaseService.client
+      .from("team_players")
+      .update(data)
+      .eq("id", playerId)
+      .select()
+      .maybeSingle();
+
+    return { data: (result as Record<string, unknown>) ?? null, error };
+  }
+
+  async insertTeamPlayer(data: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: result, error } = await this.supabaseService.client
+      .from("team_players")
+      .insert(data)
+      .select()
+      .maybeSingle();
+
+    return { data: (result as Record<string, unknown>) ?? null, error };
+  }
+
   async fetchUserSettings(userId: string): Promise<{
     settings: Record<string, unknown> | null;
     error: { message?: string } | null;
