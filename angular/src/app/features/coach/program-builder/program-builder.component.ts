@@ -34,6 +34,7 @@ import {
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -172,6 +173,7 @@ const PHASE_PRESETS = [
     PageErrorStateComponent,
     CardShellComponent,
     AppDialogComponent,
+    DialogFooterComponent,
     DialogHeaderComponent,
   ],
   template: `
@@ -687,14 +689,15 @@ const PHASE_PRESETS = [
             </div>
           </div>
         }
-        <div class="dialog-actions">
-          <app-button variant="secondary" (clicked)="showProgramDetailsDialog = false"
-            >Close</app-button
-          >
-          <app-button iconLeft="pi-pencil" (clicked)="editSelectedProgram()"
-            >Edit Program</app-button
-          >
-        </div>
+        <app-dialog-footer
+          [showCancel]="false"
+          secondaryLabel="Close"
+          secondaryVariant="secondary"
+          primaryLabel="Edit Program"
+          primaryIcon="pencil"
+          (secondary)="showProgramDetailsDialog = false"
+          (primary)="editSelectedProgram()"
+        />
       </app-dialog>
 
       <app-dialog
@@ -734,14 +737,15 @@ const PHASE_PRESETS = [
             </div>
           </div>
         }
-        <div class="dialog-actions">
-          <app-button variant="secondary" (clicked)="showComplianceDialog = false"
-            >Close</app-button
-          >
-          <app-button iconLeft="pi-eye" (clicked)="showComplianceDialog = false; showProgramDetailsDialog = true"
-            >View Program</app-button
-          >
-        </div>
+        <app-dialog-footer
+          [showCancel]="false"
+          secondaryLabel="Close"
+          secondaryVariant="secondary"
+          primaryLabel="View Program"
+          primaryIcon="eye"
+          (secondary)="showComplianceDialog = false"
+          (primary)="showComplianceDialog = false; showProgramDetailsDialog = true"
+        />
       </app-dialog>
     </app-main-layout>
   `,

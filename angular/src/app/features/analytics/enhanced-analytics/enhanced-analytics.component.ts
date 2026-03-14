@@ -118,9 +118,12 @@ import {
               @if (!aiEnabled()) {
                 <app-ai-consent-required></app-ai-consent-required>
               } @else {
-                <div class="predictions">
-                  <p>AI-powered predictions coming soon...</p>
-                </div>
+                <app-empty-state
+                  [useCard]="false"
+                  icon="pi-sparkles"
+                  heading="Predictions are not available yet"
+                  description="We need more validated training and wellness history before showing prediction insights here."
+                />
               }
             </app-card-shell>
           </p-tabpanel>

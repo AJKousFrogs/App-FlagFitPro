@@ -26,7 +26,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { formatTimeOfDay } from "../../utils/format.utils";
-import { ButtonComponent, CardComponent } from "../ui-components";
+import { ButtonComponent, CardShellComponent } from "../ui-components";
 
 interface HydrationLog {
   id: string;
@@ -38,13 +38,18 @@ interface HydrationLog {
 @Component({
   selector: "app-hydration-tracker",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent, CardComponent, ProgressBar, Tooltip],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    CardShellComponent,
+    ProgressBar,
+    Tooltip,
+  ],
   template: `
-    <app-card
+    <app-card-shell
       title="Hydration"
       [subtitle]="'Goal: ' + dailyGoal() + 'ml'"
       headerIcon="pi-tint"
-      headerIconColor="info"
     >
       <!-- Main Display -->
       <div class="hydration-display">
@@ -118,7 +123,7 @@ interface HydrationLog {
       }
 
       <!-- Hydration Tips -->
-      <div footer>
+      <div header-actions>
         @if (showTip()) {
           <div class="hydration-tip" [class.warning]="needsMoreWater()">
             <i
@@ -132,7 +137,7 @@ interface HydrationLog {
           </div>
         }
       </div>
-    </app-card>
+    </app-card-shell>
   `,
   styleUrl: "./hydration-tracker.component.scss",
 })

@@ -9,6 +9,10 @@
 
 @include stat-block;
 
+.page-state-card {
+  min-height: var(--size-240);
+}
+
 // Progress Card
 .progress-card {
   .progress-header {
@@ -86,9 +90,6 @@
 
 .film-card {
   cursor: pointer;
-
-  // Use app-card-shell with [interactive]="true" [flush]="true" instead
-  // @see docs/CARD_SHELL_CONTRACT.md
 }
 
 .film-thumbnail {

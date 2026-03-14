@@ -77,8 +77,9 @@
 
 .quick-actions-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(var(--space-20), 1fr));
   gap: var(--space-3);
+  align-items: stretch;
 }
 
 .chart-container {
@@ -121,6 +122,6 @@
 
 @media (max-width: 640px) {
   .quick-actions-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 }

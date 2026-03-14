@@ -46,9 +46,22 @@ import { ButtonComponent } from "../button/button.component";
   imports: [CommonModule, ButtonComponent],
   template: `
     <div class="dialog-actions">
-      <app-button variant="text" (clicked)="cancel.emit()">
-        {{ cancelLabel() }}
-      </app-button>
+      <ng-content select="[dialogFooterStart]"></ng-content>
+      @if (showCancel()) {
+        <app-button variant="text" (clicked)="cancel.emit()">
+          {{ cancelLabel() }}
+        </app-button>
+      }
+      @if (secondaryLabel()) {
+        <app-button
+          [iconLeft]="secondaryIcon()"
+          [variant]="secondaryVariant()"
+          [disabled]="secondaryDisabled()"
+          (clicked)="secondary.emit()"
+        >
+          {{ secondaryLabel() }}
+        </app-button>
+      }
       <app-button
         [iconLeft]="primaryIcon()"
         [variant]="primaryVariant()"
@@ -67,6 +80,31 @@ export class DialogFooterComponent {
    * Cancel button label text
    */
   cancelLabel = input<string>("Cancel");
+
+  /**
+   * Whether to show the secondary cancel button.
+   */
+  showCancel = input<boolean>(true);
+
+  /**
+   * Optional secondary action label.
+   */
+  secondaryLabel = input<string>("");
+
+  /**
+   * Optional icon for the secondary button.
+   */
+  secondaryIcon = input<string>("");
+
+  /**
+   * Visual variant for the secondary action.
+   */
+  secondaryVariant = input<ButtonVariant>("secondary");
+
+  /**
+   * Disabled state for secondary action.
+   */
+  secondaryDisabled = input<boolean>(false);
 
   /**
    * Primary action button label text (required)
@@ -109,4 +147,9 @@ export class DialogFooterComponent {
    * Emits when primary button is clicked
    */
   primary = output<void>();
+
+  /**
+   * Emits when the secondary button is clicked.
+   */
+  secondary = output<void>();
 }

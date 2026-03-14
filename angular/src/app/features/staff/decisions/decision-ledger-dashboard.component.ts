@@ -29,6 +29,7 @@ import { PageHeaderComponent } from "@shared/components/page-header/page-header.
 import { ButtonComponent } from "@shared/components/button/button.component";
 import { EmptyStateComponent } from "@shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "@shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "@shared/components/page-error-state/page-error-state.component";
 
 import { Select } from "primeng/select";
 
@@ -46,6 +47,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
     ButtonComponent,
     EmptyStateComponent,
     AppLoadingComponent,
+    PageErrorStateComponent,
     Select,
     PageHeaderComponent,
     CardShellComponent,
@@ -64,190 +66,187 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
         >
       </app-page-header>
 
-      <!-- Stats Cards -->
-      <div class="stats-grid">
-        <app-card-shell title="Active Decisions" headerIcon="pi-check-circle">
-          <div class="stat-block stat-block--compact">
-            <div class="stat-block__content">
-              <div class="stat-block__value">{{ stats()?.active || 0 }}</div>
-              <div class="stat-block__label">Currently active</div>
-            </div>
-          </div>
-        </app-card-shell>
-
-        <app-card-shell title="Due for Review" headerIcon="pi-clock">
-          <div class="stat-block stat-block--compact">
-            <div class="stat-block__content">
-              <div class="stat-block__value stat-value--warning">
-                {{ stats()?.dueForReview || 0 }}
-              </div>
-              <div class="stat-block__label">Requires attention</div>
-            </div>
-          </div>
-        </app-card-shell>
-
-        <app-card-shell title="Overdue" headerIcon="pi-exclamation-triangle">
-          <div class="stat-block stat-block--compact">
-            <div class="stat-block__content">
-              <div class="stat-block__value stat-value--danger">
-                {{ stats()?.overdue || 0 }}
-              </div>
-              <div class="stat-block__label">Past review date</div>
-            </div>
-          </div>
-        </app-card-shell>
-
-        <app-card-shell title="Low Confidence" headerIcon="pi-info-circle">
-          <div class="stat-block stat-block--compact">
-            <div class="stat-block__content">
-              <div class="stat-block__value stat-value--warning">
-                {{ stats()?.lowConfidence || 0 }}
-              </div>
-              <div class="stat-block__label">Need more data</div>
-            </div>
-          </div>
-        </app-card-shell>
-      </div>
-
-      <!-- Filters -->
-      <div class="filters-section">
-        <app-card-shell title="Filters" headerIcon="pi-filter">
-          <div class="filters-grid">
-            <div class="filter-item">
-              <label>Status</label>
-              <p-select
-                [options]="statusOptions"
-                [ngModel]="filters().status"
-                (onChange)="onStatusFilterChange($event.value)"
-                placeholder="All Statuses"
-              ></p-select>
-            </div>
-
-            <div class="filter-item">
-              <label>Category</label>
-              <p-select
-                [options]="categoryOptions"
-                [ngModel]="filters().decisionCategory"
-                (onChange)="onCategoryFilterChange($event.value)"
-                placeholder="All Categories"
-              ></p-select>
-            </div>
-
-            <div class="filter-item">
-              <label>Priority</label>
-              <p-select
-                [options]="priorityOptions"
-                [ngModel]="filters().reviewPriority"
-                (onChange)="onPriorityFilterChange($event.value)"
-                placeholder="All Priorities"
-              ></p-select>
-            </div>
-
-            <div class="filter-item">
-              <app-button
-                iconLeft="pi-times"
-                variant="outlined"
-                size="sm"
-                (clicked)="clearFilters()"
-                >Clear Filters</app-button
-              >
-            </div>
-          </div>
-        </app-card-shell>
-      </div>
-
-      <!-- Loading State -->
       @if (decisionService.isLoading()) {
         <app-loading
           [visible]="true"
-          variant="inline"
+          variant="skeleton"
           message="Loading decisions..."
         />
-      }
+      } @else if (decisionService.error()) {
+        <app-page-error-state
+          title="Unable to load decisions"
+          [message]="decisionService.error() || 'Something went wrong while loading decisions.'"
+          (retry)="loadData()"
+        />
+      } @else {
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <app-card-shell title="Active Decisions" headerIcon="pi-check-circle">
+            <div class="stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <div class="stat-block__value">{{ stats()?.active || 0 }}</div>
+                <div class="stat-block__label">Currently active</div>
+              </div>
+            </div>
+          </app-card-shell>
 
-      <!-- Error State -->
-      @if (decisionService.error()) {
-        <div class="error-state">
-          <p>Error: {{ decisionService.error() }}</p>
-          <app-button (clicked)="loadData()">Retry</app-button>
+          <app-card-shell title="Due for Review" headerIcon="pi-clock">
+            <div class="stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <div class="stat-block__value stat-value--warning">
+                  {{ stats()?.dueForReview || 0 }}
+                </div>
+                <div class="stat-block__label">Requires attention</div>
+              </div>
+            </div>
+          </app-card-shell>
+
+          <app-card-shell title="Overdue" headerIcon="pi-exclamation-triangle">
+            <div class="stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <div class="stat-block__value stat-value--danger">
+                  {{ stats()?.overdue || 0 }}
+                </div>
+                <div class="stat-block__label">Past review date</div>
+              </div>
+            </div>
+          </app-card-shell>
+
+          <app-card-shell title="Low Confidence" headerIcon="pi-info-circle">
+            <div class="stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <div class="stat-block__value stat-value--warning">
+                  {{ stats()?.lowConfidence || 0 }}
+                </div>
+                <div class="stat-block__label">Need more data</div>
+              </div>
+            </div>
+          </app-card-shell>
         </div>
-      }
 
-      <!-- Due for Review Section -->
-      @if (dueForReview().length > 0) {
+        <!-- Filters -->
+        <div class="filters-section">
+          <app-card-shell title="Filters" headerIcon="pi-filter">
+            <div class="filters-grid">
+              <div class="filter-item">
+                <label>Status</label>
+                <p-select
+                  [options]="statusOptions"
+                  [ngModel]="filters().status"
+                  (onChange)="onStatusFilterChange($event.value)"
+                  placeholder="All Statuses"
+                ></p-select>
+              </div>
+
+              <div class="filter-item">
+                <label>Category</label>
+                <p-select
+                  [options]="categoryOptions"
+                  [ngModel]="filters().decisionCategory"
+                  (onChange)="onCategoryFilterChange($event.value)"
+                  placeholder="All Categories"
+                ></p-select>
+              </div>
+
+              <div class="filter-item">
+                <label>Priority</label>
+                <p-select
+                  [options]="priorityOptions"
+                  [ngModel]="filters().reviewPriority"
+                  (onChange)="onPriorityFilterChange($event.value)"
+                  placeholder="All Priorities"
+                ></p-select>
+              </div>
+
+              <div class="filter-item">
+                <app-button
+                  iconLeft="pi-times"
+                  variant="outlined"
+                  size="sm"
+                  (clicked)="clearFilters()"
+                  >Clear Filters</app-button
+                >
+              </div>
+            </div>
+          </app-card-shell>
+        </div>
+
+        <!-- Due for Review Section -->
+        @if (dueForReview().length > 0) {
+          <div class="section">
+            <app-card-shell
+              title="Due for Review ({{ dueForReview().length }})"
+              headerIcon="pi-clock"
+            >
+              <ng-container header-actions>
+                <app-button
+                  variant="outlined"
+                  size="sm"
+                  [routerLink]="['/staff/decisions']"
+                  [queryParams]="{ dueForReview: 'true' }"
+                  >View All</app-button
+                >
+              </ng-container>
+
+              <div class="decisions-grid">
+                @for (
+                  decision of dueForReview().slice(
+                    0,
+                    UI_LIMITS.DECISIONS_PREVIEW
+                  );
+                  track decision.id
+                ) {
+                  <app-decision-card
+                    [decision]="decision"
+                    [canReview]="true"
+                    (review)="onReviewDecision($event)"
+                  ></app-decision-card>
+                }
+              </div>
+            </app-card-shell>
+          </div>
+        }
+
+        <!-- Recent Decisions -->
         <div class="section">
-          <app-card-shell
-            title="Due for Review ({{ dueForReview().length }})"
-            headerIcon="pi-clock"
-          >
+          <app-card-shell title="Recent Decisions" headerIcon="pi-history">
             <ng-container header-actions>
               <app-button
                 variant="outlined"
                 size="sm"
                 [routerLink]="['/staff/decisions']"
-                [queryParams]="{ dueForReview: 'true' }"
                 >View All</app-button
               >
             </ng-container>
 
-            <div class="decisions-grid">
-              @for (
-                decision of dueForReview().slice(
-                  0,
-                  UI_LIMITS.DECISIONS_PREVIEW
-                );
-                track decision.id
-              ) {
-                <app-decision-card
-                  [decision]="decision"
-                  [canReview]="true"
-                  (review)="onReviewDecision($event)"
-                ></app-decision-card>
-              }
-            </div>
+            @if (decisions().length === 0) {
+              <app-empty-state
+                icon="pi-inbox"
+                heading="No decisions found"
+                actionLabel="Create First Decision"
+                actionIcon="pi-plus"
+                [actionHandler]="openCreateDialogHandler"
+              />
+            } @else {
+              <div class="decisions-grid">
+                @for (
+                  decision of decisions().slice(
+                    0,
+                    UI_LIMITS.DECISIONS_LIST_COUNT
+                  );
+                  track decision.id
+                ) {
+                  <app-decision-card
+                    [decision]="decision"
+                    [canReview]="canReviewDecision(decision)"
+                    (review)="onReviewDecision($event)"
+                  ></app-decision-card>
+                }
+              </div>
+            }
           </app-card-shell>
         </div>
       }
-
-      <!-- Recent Decisions -->
-      <div class="section">
-        <app-card-shell title="Recent Decisions" headerIcon="pi-history">
-          <ng-container header-actions>
-            <app-button
-              variant="outlined"
-              size="sm"
-              [routerLink]="['/staff/decisions']"
-              >View All</app-button
-            >
-          </ng-container>
-
-          @if (decisions().length === 0) {
-            <app-empty-state
-              icon="pi-inbox"
-              heading="No decisions found"
-              actionLabel="Create First Decision"
-              actionIcon="pi-plus"
-              [actionHandler]="openCreateDialogHandler"
-            />
-          } @else {
-            <div class="decisions-grid">
-              @for (
-                decision of decisions().slice(
-                  0,
-                  UI_LIMITS.DECISIONS_LIST_COUNT
-                );
-                track decision.id
-              ) {
-                <app-decision-card
-                  [decision]="decision"
-                  [canReview]="canReviewDecision(decision)"
-                  (review)="onReviewDecision($event)"
-                ></app-decision-card>
-              }
-            </div>
-          }
-        </app-card-shell>
-      </div>
 
       <!-- Create Decision Dialog -->
       <app-create-decision-dialog

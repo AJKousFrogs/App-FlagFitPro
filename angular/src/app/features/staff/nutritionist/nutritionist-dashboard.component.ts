@@ -28,6 +28,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -153,6 +154,7 @@ interface TournamentNutritionBrief {
     ButtonComponent,
     IconButtonComponent,
     AppLoadingComponent,
+    PageErrorStateComponent,
   ],
   templateUrl: "./nutritionist-dashboard.component.html",
   styleUrl: "./nutritionist-dashboard.component.scss",
@@ -165,6 +167,7 @@ export class NutritionistDashboardComponent implements OnInit {
 
   // State
   loading = signal(true);
+  loadError = signal<string | null>(null);
   athletes = signal<AthleteNutritionData[]>([]);
   bodyCompositionData = signal<Map<string, BodyCompositionData>>(new Map());
   trainingLoadData = signal<Map<string, TrainingLoadData>>(new Map());
@@ -380,8 +383,9 @@ export class NutritionistDashboardComponent implements OnInit {
     return "";
   }
 
-  private async loadData(): Promise<void> {
+  protected async loadData(): Promise<void> {
     this.loading.set(true);
+    this.loadError.set(null);
     try {
       // Load real data from API
       const response = await firstValueFrom(
@@ -426,7 +430,9 @@ export class NutritionistDashboardComponent implements OnInit {
       }
     } catch (error) {
       this.logger.error("Failed to load nutrition data", error);
-      this.toast.error("Failed to load nutrition data");
+      this.loadError.set(
+        "Unable to load nutrition data right now. Please try again.",
+      );
     } finally {
       this.loading.set(false);
     }

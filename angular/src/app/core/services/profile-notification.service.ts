@@ -34,6 +34,13 @@ export class ProfileNotificationService {
 
   // Track if check is in progress
   private readonly isChecking = signal(false);
+  private readonly toastSuppressedRoutes = new Set([
+    "/dashboard",
+    "/onboarding",
+    "/profile",
+    "/settings",
+    "/settings/profile",
+  ]);
 
   /**
    * Check profile completion and show notification if incomplete.
@@ -87,25 +94,42 @@ export class ProfileNotificationService {
     missingFields: string[],
     percentage: number,
   ): void {
-    // Always show notification for incomplete profiles
-    // This ensures users see it on every login until they complete their profile
+    const hasLoadedProfileData =
+      missingFields.length > 0 &&
+      !missingFields.every((field) => field === "Profile not loaded");
+    const shouldShowToast =
+      hasLoadedProfileData &&
+      !this.isOnBlockingProfileRoute() &&
+      !this.hasShownNotification();
+
     const missingList =
       missingFields.length <= 3
         ? missingFields.join(", ")
         : `${missingFields.slice(0, 3).join(", ")} and ${missingFields.length - 3} more`;
 
-    this.toastService.warn(
-      `Your profile is ${percentage}% complete. Missing: ${missingList}. Complete your profile for the best experience.`,
-      {
-        life: 10000, // 10 seconds
-        sticky: false,
-      },
-    );
+    if (shouldShowToast) {
+      this.toastService.warn(
+        `Your profile is ${percentage}% complete. Missing: ${missingList}. Complete your profile for the best experience.`,
+        {
+          life: 10000,
+          sticky: false,
+        },
+      );
+    }
 
-    // Also save a persistent notification to the database
     this.saveProfileNotificationToDatabase(missingFields, percentage);
 
     this.hasShownNotification.set(true);
+  }
+
+  private isOnBlockingProfileRoute(): boolean {
+    const currentUrl = this.router.url.split("?")[0] ?? "";
+    for (const route of this.toastSuppressedRoutes) {
+      if (currentUrl === route || currentUrl.startsWith(`${route}/`)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

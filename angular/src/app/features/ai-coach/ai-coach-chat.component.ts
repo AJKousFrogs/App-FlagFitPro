@@ -18,6 +18,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  OnInit,
   viewChild,
   computed,
   effect,
@@ -38,6 +39,7 @@ import {
   toLogContext,
 } from "../../core/services/logger.service";
 import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import {
@@ -164,7 +166,7 @@ interface AutocompleteSuggestion {
     "(window:keydown)": "handleKeyboardShortcut($event)",
   },
 })
-export class AiCoachChatComponent implements AfterViewChecked {
+export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   private readonly apiService = inject(ApiService);
   private readonly authService = inject(AuthService);
   private readonly logger = inject(LoggerService);
@@ -173,10 +175,14 @@ export class AiCoachChatComponent implements AfterViewChecked {
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly route = inject(ActivatedRoute);
   private readonly missingDataService = inject(MissingDataDetectionService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
 
-  // Design system tokens
-  // User role check - per audit: use currentUser() signal for reactivity
-  isCoach = computed(() => this.authService.currentUser()?.role === "coach");
+  // Use the canonical team membership capability model instead of coarse auth roles.
+  readonly isCoach = computed(
+    () =>
+      this.teamMembershipService.isCoach() ||
+      this.teamMembershipService.isAdmin(),
+  );
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   messagesContainer = viewChild.required<ElementRef>("messagesContainer");
@@ -262,6 +268,10 @@ export class AiCoachChatComponent implements AfterViewChecked {
       m.content.toLowerCase().includes(query),
     );
   });
+
+  async ngOnInit(): Promise<void> {
+    await this.teamMembershipService.loadMembership();
+  }
 
   // Computed: bookmarked messages count
   bookmarkedCount = computed(() => {

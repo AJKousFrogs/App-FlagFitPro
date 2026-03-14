@@ -1,12 +1,10 @@
 <div class="invitations-section">
   @if (loading()) {
-    <div class="loading-invitations">
-      <p-progressSpinner
-        class="invitation-loading-spinner"
-        strokeWidth="4"
-      ></p-progressSpinner>
-      <span>Loading invitations...</span>
-    </div>
+    <app-loading
+      [visible]="true"
+      variant="skeleton"
+      message="Loading invitations..."
+    />
   } @else if (invitations().length === 0) {
     <app-empty-state
       [showBenefits]="false"

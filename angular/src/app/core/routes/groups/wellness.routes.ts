@@ -76,6 +76,12 @@ export const wellnessRoutes: Routes = [
     data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
+    path: "film-room",
+    redirectTo: "film",
+    pathMatch: "full",
+    data: { entry: "internal" },
+  },
+  {
     path: "calendar",
     loadComponent: () =>
       import("../../../features/team-calendar/team-calendar.component").then(

@@ -64,7 +64,11 @@ interface InvitationData {
           <h1 class="accept-invitation-title">Team Invitation</h1>
         </div>
         @if (isLoading()) {
-          <app-loading message="Loading invitation..." variant="inline" />
+          <app-loading
+            [visible]="true"
+            message="Loading invitation..."
+            variant="skeleton"
+          />
         } @else if (needsLogin()) {
           <div class="login-required-state">
             <app-alert

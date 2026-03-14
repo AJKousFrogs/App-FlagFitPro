@@ -26,13 +26,13 @@ const QUARTERBACK_CONFIG: TrainingPositionUIConfig = {
     {
       icon: "🎯",
       label: "Throwing",
-      route: "/training/qb/throwing",
+      route: "/training/qb",
       tooltip: "Track throwing sessions & arm care",
     },
     {
       icon: "💪",
       label: "Arm Care",
-      route: "/training/qb/throwing",
+      route: "/training/qb",
       tooltip: "Rotator cuff & arm health",
     },
     {

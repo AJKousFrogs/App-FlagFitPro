@@ -27,6 +27,9 @@ import { DialogFooterComponent } from "../../shared/components/dialog-footer/dia
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 
 interface Exercise {
@@ -73,43 +76,57 @@ interface Category {
     DialogHeaderComponent,
     SearchInputComponent,
     EmptyStateComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
       <div class="exercise-library-page ui-page-shell ui-page-shell--wide ui-page-stack">
-        <!-- Premium Header with Stats -->
-        <div class="page-hero">
-          <div class="hero-content">
-            <div class="hero-text">
-              <h1 class="hero-title">
-                <i class="pi pi-book"></i>
-                Exercise Library
-              </h1>
-              <p class="hero-subtitle">
-                Browse and discover {{ totalExercises() }} evidence-based
-                exercises for your training program
-              </p>
-            </div>
-            <div class="hero-stats">
-              <div class="stat-block stat-block--large">
-                <div class="stat-block__content">
-                  <span class="stat-block__value">{{ totalExercises() }}</span>
-                  <span class="stat-block__label">Exercises</span>
-                </div>
+        <app-page-header
+          title="Exercise Library"
+          [subtitle]="'Browse and discover ' + totalExercises() + ' evidence-based exercises for your training program'"
+          icon="pi-book"
+        />
+
+        @if (isLoading()) {
+          <section class="page-state-card ds-card-surface">
+            <app-loading
+              [visible]="true"
+              variant="skeleton"
+              message="Loading exercise library..."
+            />
+          </section>
+        } @else if (errorMessage()) {
+          <section class="page-state-card ds-card-surface">
+            <app-page-error-state
+              title="Unable to load exercise library"
+              [message]="errorMessage()!"
+              (retry)="loadExercises()"
+            />
+          </section>
+        } @else {
+        <div class="library-summary ds-card-surface">
+          <div class="library-summary__stats">
+            <div class="stat-block stat-block--large">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ totalExercises() }}</span>
+                <span class="stat-block__label">Exercises</span>
               </div>
-              <div class="stat-block stat-block--large">
-                <div class="stat-block__content">
-                  <span class="stat-block__value">{{
-                    categories.length - 1
-                  }}</span>
-                  <span class="stat-block__label">Categories</span>
-                </div>
+            </div>
+            <div class="stat-block stat-block--large">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ categories.length - 1 }}</span>
+                <span class="stat-block__label">Categories</span>
               </div>
             </div>
           </div>
+          <p class="library-summary__copy">
+            Use search and category filters to find the right drill, movement,
+            or recovery exercise for the current session.
+          </p>
         </div>
 
-        <!-- Modern Search and Filters -->
         <div class="search-filters-section">
           <!-- Search Bar with Icon -->
           <app-search-input
@@ -261,6 +278,7 @@ interface Category {
               [rowsPerPageOptions]="[8, 12, 24]"
             />
           </div>
+        }
         }
       </div>
 
@@ -488,6 +506,8 @@ export class ExerciseLibraryComponent implements OnInit {
   selectedCategory = signal<string>("all");
   showDetailsDialog = signal(false);
   selectedExercise = signal<Exercise | null>(null);
+  isLoading = signal(true);
+  errorMessage = signal<string | null>(null);
 
   categoryList: Category[] = [
     { name: "all", icon: "pi-th-large", color: COLORS.GRAY },
@@ -548,6 +568,8 @@ export class ExerciseLibraryComponent implements OnInit {
   }
 
   loadExercises(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
     type ExerciseApi = {
       id: string;
       name: string;
@@ -621,11 +643,18 @@ export class ExerciseLibraryComponent implements OnInit {
 
           this.exercises.set(mappedExercises);
           this.applyFilters();
+          this.isLoading.set(false);
         } else {
+          this.isLoading.set(false);
+          this.errorMessage.set("We couldn't load the exercise library right now.");
           this.toastService.error("Failed to load exercises");
         }
       },
       error: (err) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(
+          "We couldn't load the exercise library right now. Please try again.",
+        );
         this.logger.error("Failed to load exercises", err);
         this.toastService.error("Failed to load exercises from database");
       },

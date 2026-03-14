@@ -17,7 +17,7 @@ import {
   Validators,
 } from "@angular/forms";
 
-import { CardComponent } from "../../shared/components/card/card.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
@@ -122,7 +122,7 @@ interface Play {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    CardComponent,
+    CardShellComponent,
     InputText,
     Textarea,
     InputNumber,

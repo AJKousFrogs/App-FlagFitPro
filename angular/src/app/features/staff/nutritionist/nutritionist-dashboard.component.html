@@ -14,6 +14,12 @@
 
         @if (loading()) {
           <app-loading message="Loading nutrition data..." variant="inline" />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load nutrition data"
+            [message]="loadError()!"
+            (retry)="loadData()"
+          />
         } @else {
           <!-- Overview Stats -->
           <div class="stats-grid">
@@ -346,18 +352,14 @@
               </div>
             </div>
           }
-          <div dialogFooter class="dialog-actions">
-            <app-button
-              variant="text"
-              (clicked)="showAthleteDialog.set(false)"
-              >Close</app-button
-            >
-            <app-button
-              iconLeft="pi-file-pdf"
-              (clicked)="generateAthleteReport(selectedAthlete()!)"
-              >Generate Full Report</app-button
-            >
-          </div>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Close"
+            primaryLabel="Generate Full Report"
+            primaryIcon="file-pdf"
+            (cancel)="showAthleteDialog.set(false)"
+            (primary)="generateAthleteReport(selectedAthlete()!)"
+          />
         </app-dialog>
 
         <!-- Report Generation Dialog -->

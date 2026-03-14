@@ -19,6 +19,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
@@ -42,6 +43,7 @@ import {
     IconButtonComponent,
     AppLoadingComponent,
     EmptyStateComponent,
+    PageErrorStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -139,6 +141,12 @@ import {
 
           @if (isLoading()) {
             <app-loading message="Loading approvals..." variant="inline" />
+          } @else if (loadError()) {
+            <app-page-error-state
+              title="Unable to load superadmin dashboard"
+              [message]="loadError()!"
+              (retry)="refreshData()"
+            />
           } @else if (pendingApprovals().length === 0) {
             <app-empty-state
               icon="pi-check-circle"
@@ -310,6 +318,7 @@ export class SuperadminDashboardComponent implements OnInit {
   pendingApprovals = this.superadminService.pendingApprovals;
   stats = this.superadminService.stats;
   isLoading = this.superadminService.isLoading;
+  loadError = this.superadminService.loadError;
 
   // Modal state
   showRejectModal = false;

@@ -14,13 +14,19 @@ export const trainingRoutes: Routes = [
     data: { preload: true, priority: "high", entry: "hub" },
   },
   {
-    path: "training/builder",
+    path: "training/workspace",
     loadComponent: () =>
       import("../../../features/training/training.component").then(
         (m) => m.TrainingComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
     data: { preload: false, entry: "internal" },
+  },
+  {
+    path: "training/builder",
+    redirectTo: "/training/workspace",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   // Today's practice redirects to /todays-practice
   {
@@ -84,7 +90,7 @@ export const trainingRoutes: Routes = [
     path: "training/schedule",
     redirectTo: "/training",
     pathMatch: "full",
-    data: { entry: "internal" },
+    data: { entry: "legacy" },
   },
   {
     path: "training/qb",
@@ -97,21 +103,21 @@ export const trainingRoutes: Routes = [
   },
   {
     path: "training/qb/schedule",
-    redirectTo: "training/qb",
+    redirectTo: "/training/qb",
     pathMatch: "full",
-    data: { entry: "internal" },
+    data: { entry: "legacy" },
   },
   {
     path: "training/qb/throwing",
-    redirectTo: "training/qb",
+    redirectTo: "/training/qb",
     pathMatch: "full",
-    data: { entry: "internal" },
+    data: { entry: "legacy" },
   },
   {
     path: "training/qb/assessment",
-    redirectTo: "training/qb",
+    redirectTo: "/training/qb",
     pathMatch: "full",
-    data: { entry: "internal" },
+    data: { entry: "legacy" },
   },
   {
     path: "training/ai-scheduler",

@@ -26,7 +26,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabPanel } from "primeng/tabs";
@@ -66,7 +65,6 @@ import {
     AlertComponent,
     ButtonComponent,
     CardShellComponent,
-    CardHeaderComponent,
     IconButtonComponent,
     StatusTagComponent,
   ],
@@ -92,17 +90,16 @@ import {
         <!-- Safety Overview Cards -->
         <div class="safety-overview">
           <!-- ACWR Status -->
-          <app-card-shell class="safety-card">
+          <app-card-shell class="safety-card" title="ACWR Status">
             <div class="card-content">
-              <app-card-header title="ACWR Status">
+              <ng-container header-actions>
                 @if (!hasInsufficientAcwrData()) {
                   <app-traffic-light-risk
-                    header-actions
                     [riskZone]="acwrRiskZone()"
                     [acwrValue]="acwrValue()"
                   ></app-traffic-light-risk>
                 }
-              </app-card-header>
+              </ng-container>
               @if (hasInsufficientAcwrData()) {
                 <!-- Insufficient ACWR data - use centralized message -->
                 <app-alert
@@ -148,16 +145,15 @@ import {
           </app-card-shell>
 
           <!-- Age-Adjusted Recovery -->
-          <app-card-shell class="safety-card">
+          <app-card-shell class="safety-card" title="Recovery Status">
             <div class="card-content">
-              <app-card-header title="Recovery Status">
+              <ng-container header-actions>
                 <app-status-tag
-                  header-actions
                   [value]="ageGroup()"
                   [severity]="getAgeGroupSeverity()"
                   size="sm"
                 />
-              </app-card-header>
+              </ng-container>
               <div class="metric-display">
                 <span class="metric-value"
                   >{{ recoveryMultiplier() | number: "1.1-1" }}x</span
@@ -180,16 +176,15 @@ import {
           </app-card-shell>
 
           <!-- Sleep Debt -->
-          <app-card-shell class="safety-card">
+          <app-card-shell class="safety-card" title="Sleep Debt">
             <div class="card-content">
-              <app-card-header title="Sleep Debt">
+              <ng-container header-actions>
                 <app-status-tag
-                  header-actions
                   [value]="sleepDebtLevel()"
                   [severity]="getSleepDebtSeverity()"
                   size="sm"
                 />
-              </app-card-header>
+              </ng-container>
               <div class="metric-display">
                 <span class="metric-value"
                   >{{ sleepDebtHours() | number: "1.1-1" }}h</span
@@ -209,16 +204,15 @@ import {
           </app-card-shell>
 
           <!-- Weekly Movement Limits -->
-          <app-card-shell class="safety-card">
+          <app-card-shell class="safety-card" title="Movement Limits">
             <div class="card-content">
-              <app-card-header title="Movement Limits">
+              <ng-container header-actions>
                 <app-status-tag
-                  header-actions
                   [value]="movementLimitStatus()"
                   [severity]="getMovementLimitSeverity()"
                   size="sm"
                 />
-              </app-card-header>
+              </ng-container>
               <div class="movement-limits">
                 @for (limit of movementLimits(); track limit.type) {
                   <div class="limit-item">

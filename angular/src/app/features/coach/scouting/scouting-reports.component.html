@@ -350,19 +350,17 @@
               }
             </div>
           }
-          <div dialogFooter class="dialog-actions">
-            <app-button
-              variant="text"
-              iconLeft="pi-share-alt"
-              (clicked)="shareToChat(viewingReport()!)"
-              >Share to Chat</app-button
-            >
-            <app-button
-              iconLeft="pi-download"
-              (clicked)="exportReport(viewingReport()!)"
-              >Export PDF</app-button
-            >
-          </div>
+          <app-dialog-footer
+            dialogFooter
+            [showCancel]="false"
+            secondaryLabel="Share to Chat"
+            secondaryIcon="share-alt"
+            secondaryVariant="text"
+            primaryLabel="Export PDF"
+            primaryIcon="download"
+            (secondary)="shareToChat(viewingReport()!)"
+            (primary)="exportReport(viewingReport()!)"
+          />
         </app-dialog>
 
         <!-- Add Opponent Dialog -->

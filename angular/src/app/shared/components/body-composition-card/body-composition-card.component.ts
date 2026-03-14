@@ -196,7 +196,7 @@ interface BodyCompositionData {
 
       <!-- Footer -->
       <div footer>
-        <a routerLink="/performance-tracking" class="view-link">
+        <a routerLink="/performance" class="view-link">
           View Full History
           <i class="pi pi-arrow-right"></i>
         </a>

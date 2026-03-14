@@ -63,6 +63,7 @@
 | [CALCULATION_MAP.md](./CALCULATION_MAP.md)             | Calculation hotspots (services → code)   |
 | [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG 21 patterns         |
 | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)     | **UI rules and design tokens** (binding) |
+| [UI_STATE_CONTRACT.md](./UI_STATE_CONTRACT.md)         | Loading, error, and empty-state rules     |
 | [CARD_COMPONENT_GUIDELINES.md](./CARD_COMPONENT_GUIDELINES.md) | app-card vs p-card usage          |
 | [API.md](./API.md)                                     | API reference                            |
 | [BACKEND_SETUP.md](./BACKEND_SETUP.md)                 | Backend/Netlify Functions setup          |
@@ -169,6 +170,7 @@
 ├── SECURITY.md
 ├── ANGULAR_PRIMENG_GUIDE.md
 ├── DESIGN_SYSTEM_RULES.md
+├── UI_STATE_CONTRACT.md        ← Loading/error/empty-state contract
 ├── UX_READY_CRITERIA.md         ← UI polish gate
 ├── RELEASE_NOTES_1.5.0.md
 ├── RELEASE_NOTES_1.2.0.md

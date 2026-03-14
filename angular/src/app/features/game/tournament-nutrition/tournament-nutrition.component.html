@@ -86,7 +86,9 @@
                   (click)="logHydration(option.type, option.amount)"
                   [pTooltip]="option.tooltip"
                 >
-                  <span class="btn-icon">{{ option.icon }}</span>
+                  <span class="btn-icon" aria-hidden="true">
+                    <i [class]="option.icon"></i>
+                  </span>
                   <span class="btn-label">{{ option.label }}</span>
                   <span class="btn-amount">{{ option.amount }}ml</span>
                 </button>

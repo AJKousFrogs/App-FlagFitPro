@@ -38,6 +38,14 @@
   max-width: var(--page-header-content-max-width, none);
 }
 
+.page-header > :not(.header-content) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--page-header-actions-gap, var(--space-3));
+  flex-wrap: wrap;
+}
+
 .page-title {
   display: flex;
   align-items: center;
@@ -81,6 +89,10 @@
     --page-header-hero-content-max-width,
     var(--content-max-width-lg)
   );
+}
+
+.page-header--hero > :not(.header-content) {
+  justify-content: flex-start;
 }
 
 .page-header--hero .page-title {

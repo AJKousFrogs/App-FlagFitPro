@@ -47,6 +47,7 @@
         <app-button
           variant="outlined"
           [iconLeft]="action.icon"
+          [fullWidth]="true"
           [routerLink]="action.route"
           [tooltip]="action.description"
           [ariaLabel]="action.description"
@@ -91,12 +92,16 @@
         >
       </div>
     } @else {
-      <div class="empty-chart">
-        <div class="empty-content">
-          <i class="pi pi-chart-line empty-icon"></i>
-          <span>Complete more sessions to see your trend</span>
-        </div>
-      </div>
+      <app-empty-state
+        class="empty-chart-state"
+        [useCard]="false"
+        icon="pi-chart-line"
+        heading="Performance trend unavailable"
+        description="Complete more sessions to unlock your trend line and compare week-over-week progress."
+        actionLabel="Go to Analytics"
+        actionIcon="pi-arrow-right"
+        actionLink="/analytics"
+      />
     }
   </app-card-shell>
 </section>

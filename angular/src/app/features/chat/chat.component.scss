@@ -126,6 +126,17 @@
   width: 100%;
 }
 
+.chat-page-state {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: calc(var(--space-10) * 4);
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-6);
+}
+
 /* ============================================
    CHANNELS SIDEBAR
    ============================================ */
@@ -202,11 +213,7 @@
 }
 
 .channel-item.active {
-  background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.15) 0%,
-    rgba(var(--ds-primary-green-rgb), 0.05) 100%
-  );
+  background: rgba(var(--ds-primary-green-rgb), 0.12);
   color: var(--ds-primary-green);
   font-weight: var(--ds-font-weight-semibold);
   box-shadow: inset 0 0 0 var(--border-2) rgba(var(--ds-primary-green-rgb), 0.2);

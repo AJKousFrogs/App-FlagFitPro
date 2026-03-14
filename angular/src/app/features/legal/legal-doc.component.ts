@@ -13,6 +13,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, map, of, switchMap, tap } from "rxjs";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 
 type LegalDocKey = "terms" | "privacy" | "privacy-policy";
 
@@ -40,7 +42,14 @@ const LEGAL_DOCS: Record<
 @Component({
   selector: "app-legal-doc",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, PageHeaderComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    PageHeaderComponent,
+    ButtonComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
+  ],
   template: `
     <main class="legal-doc-page">
       <app-page-header [title]="title()" [subtitle]="subtitle()">
@@ -51,18 +60,25 @@ const LEGAL_DOCS: Record<
 
       @if (isLoading()) {
         <div class="legal-doc-card loading-state">
-          <div class="loading-title"></div>
-          <div class="loading-line"></div>
-          <div class="loading-line"></div>
-          <div class="loading-line"></div>
+          <app-loading
+            [visible]="true"
+            variant="skeleton"
+            message="Loading legal document..."
+          />
         </div>
       } @else if (errorMessage()) {
         <div class="legal-doc-card error-state">
-          <h2>Unable to load document</h2>
-          <p>{{ errorMessage() }}</p>
-          <app-button routerLink="/help" iconLeft="pi-question-circle">
-            Visit Help Center
-          </app-button>
+          <app-page-error-state
+            title="Unable to load document"
+            [message]="errorMessage() || 'We could not load this document.'"
+            [showRetry]="false"
+            helpText="Visit the Help Center if you still need assistance."
+          />
+          <div class="legal-doc-error-actions">
+            <app-button routerLink="/help" iconLeft="pi-question-circle">
+              Visit Help Center
+            </app-button>
+          </div>
         </div>
       } @else {
         <div class="legal-doc-card">

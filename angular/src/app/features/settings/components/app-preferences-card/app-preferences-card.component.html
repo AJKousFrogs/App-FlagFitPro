@@ -1,7 +1,7 @@
 <app-card-shell
   title="App Preferences"
   headerIcon="pi-cog"
-  headerIconColor="info"
+  tone="default"
 >
   <form [formGroup]="preferencesForm()">
     <div class="form-field">
@@ -71,7 +71,10 @@
       </p-select>
       <div class="language-hint-box">
         <i class="pi pi-info-circle"></i>
-        <span>Translation coming soon - your preference will be saved</span>
+        <span>
+          Language preference is saved now. Interface localization will expand
+          in upcoming releases.
+        </span>
       </div>
     </div>
   </form>

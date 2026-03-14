@@ -225,8 +225,8 @@
             <app-card-shell class="team-rankings-card">
               <app-empty-state
                 icon="pi-users"
-                heading="Team Rankings Coming Soon"
-                description="Once more teammates log their performance tests, you'll see how you compare."
+                heading="Team rankings not available yet"
+                description="Once more teammates log performance tests, you'll see how your latest results compare."
               />
             </app-card-shell>
           }
@@ -247,7 +247,7 @@
                 } @else {
                   <app-empty-state
                     icon="pi-chart-line"
-                    heading="No Performance Data Yet"
+                    heading="Performance trend unavailable"
                     description="Log at least 2 performance tests to see your progress over time."
                   />
                 }
@@ -255,7 +255,8 @@
             } @placeholder {
               <app-card-shell class="chart-card">
                 <app-loading
-                  variant="inline"
+                  [visible]="true"
+                  variant="skeleton"
                   message="Loading performance chart..."
                 />
               </app-card-shell>
@@ -278,14 +279,18 @@
                 } @else {
                   <app-empty-state
                     icon="pi-bolt"
-                    heading="No Speed Data Yet"
+                    heading="Speed metrics unavailable"
                     description="Log your 10-yard, 20-yard, or 40-yard times to see speed metrics."
                   />
                 }
               </app-card-shell>
             } @placeholder {
               <app-card-shell class="chart-card">
-                <app-loading variant="inline" message="Loading speed metrics..." />
+                <app-loading
+                  [visible]="true"
+                  variant="skeleton"
+                  message="Loading speed metrics..."
+                />
               </app-card-shell>
             }
           </div>
@@ -340,7 +345,7 @@
             } @else {
               <app-empty-state
                 icon="pi-bullseye"
-                heading="No Benchmark Data Yet"
+                heading="Benchmark comparison locked"
                 description="Log your performance tests to compare against elite position benchmarks."
               />
             }

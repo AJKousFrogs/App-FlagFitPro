@@ -11,9 +11,9 @@ import { ProgressSpinner } from "primeng/progressspinner";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -36,10 +36,10 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    AlertComponent,
     ButtonComponent,
     CardShellComponent,
     ProgressSpinner,
+    PageErrorStateComponent,
   ],
   template: `
 <div class="auth-callback-page">
@@ -55,14 +55,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           </div>
         } @else if (error()) {
           <div class="error-state">
-            <div class="error-icon">
-              <i class="pi pi-times-circle"></i>
-            </div>
-            <h2>Authentication Failed</h2>
-            <app-alert
-              variant="error"
-              [message]="error() || ''"
-              styleClass="status-message"
+            <app-page-error-state
+              title="Authentication failed"
+              [message]="error() || 'We could not complete authentication.'"
+              [showRetry]="false"
+              helpText="Try signing in again or return home."
             />
             <div class="error-actions">
               <app-button

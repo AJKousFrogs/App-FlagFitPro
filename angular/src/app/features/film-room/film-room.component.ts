@@ -31,7 +31,9 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
@@ -85,7 +87,9 @@ interface DiscussionMessage {
     Textarea,
 
     MainLayoutComponent,
+    AppLoadingComponent,
     PageHeaderComponent,
+    PageErrorStateComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
     EmptyStateComponent,
@@ -102,144 +106,162 @@ interface DiscussionMessage {
           icon="pi-video"
         ></app-page-header>
 
-        <!-- Progress Overview -->
-        <app-card-shell class="progress-card">
-          <div class="progress-header">
-            <div class="progress-stats">
-              <div class="stat-item stat-block stat-block--compact">
-                <div class="stat-block__content">
-                  <span class="stat-block__value">{{ watchedCount() }}</span>
-                  <span class="stat-block__label">Watched</span>
+        @if (isLoading()) {
+          <section class="page-state-card">
+            <app-loading
+              [visible]="true"
+              variant="skeleton"
+              message="Loading film room..."
+            />
+          </section>
+        } @else if (errorMessage()) {
+          <section class="page-state-card">
+            <app-page-error-state
+              title="Unable to load film room"
+              [message]="errorMessage()!"
+              (retry)="loadData()"
+            />
+          </section>
+        } @else {
+          <!-- Progress Overview -->
+          <app-card-shell class="progress-card">
+            <div class="progress-header">
+              <div class="progress-stats">
+                <div class="stat-item stat-block stat-block--compact">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{ watchedCount() }}</span>
+                    <span class="stat-block__label">Watched</span>
+                  </div>
                 </div>
-              </div>
-              <div class="stat-divider"></div>
-              <div class="stat-item stat-block stat-block--compact">
-                <div class="stat-block__content">
-                  <span class="stat-block__value">{{ totalFilms() }}</span>
-                  <span class="stat-block__label">Assigned</span>
+                <div class="stat-divider"></div>
+                <div class="stat-item stat-block stat-block--compact">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{ totalFilms() }}</span>
+                    <span class="stat-block__label">Assigned</span>
+                  </div>
                 </div>
-              </div>
-              <div class="stat-divider"></div>
-              <div class="stat-item stat-block stat-block--compact">
-                <div class="stat-block__content">
-                  <span class="stat-block__value">{{
-                    totalTaggedMoments()
-                  }}</span>
-                  <span class="stat-block__label">Tags to Review</span>
+                <div class="stat-divider"></div>
+                <div class="stat-item stat-block stat-block--compact">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      totalTaggedMoments()
+                    }}</span>
+                    <span class="stat-block__label">Tags to Review</span>
+                  </div>
                 </div>
               </div>
             </div>
+            <p-progressBar
+              [value]="progressPercent()"
+              [showValue]="false"
+              class="progress-overall"
+            ></p-progressBar>
+            <p class="progress-text">{{ progressPercent() }}% complete</p>
+          </app-card-shell>
+
+          <!-- Filters -->
+          <div class="filters-row">
+            <span class="p-input-icon-left filter-search">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Search film sessions..."
+                [value]="searchQuery()"
+                (input)="onSearchInput($event)"
+              />
+            </span>
+
+            <p-select
+              [options]="statusOptions"
+              (onChange)="onStatusChange($event.value)"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Status"
+              [showClear]="true"
+              class="filter-select"
+            ></p-select>
           </div>
-          <p-progressBar
-            [value]="progressPercent()"
-            [showValue]="false"
-            class="progress-overall"
-          ></p-progressBar>
-          <p class="progress-text">{{ progressPercent() }}% complete</p>
-        </app-card-shell>
 
-        <!-- Filters -->
-        <div class="filters-row">
-          <span class="p-input-icon-left filter-search">
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              placeholder="Search film sessions..."
-              [value]="searchQuery()"
-              (input)="onSearchInput($event)"
-            />
-          </span>
-
-          <p-select
-            [options]="statusOptions"
-            (onChange)="onStatusChange($event.value)"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Status"
-            [showClear]="true"
-            class="filter-select"
-          ></p-select>
-        </div>
-
-        <!-- Film Sessions List -->
-        @if (filteredFilms().length > 0) {
-          <div class="films-grid">
-            @for (film of filteredFilms(); track film.id) {
-              <app-card-shell
-                class="film-card"
-                [flush]="true"
-                state="interactive"
-                (cardClick)="selectFilm(film)"
-              >
-                <div class="film-thumbnail">
-                  @if (film.thumbnailUrl) {
-                    <img
-                      appMobileOptimized
-                      [width]="320"
-                      [height]="180"
-                      [src]="film.thumbnailUrl"
-                      [alt]="film.title"
-                    />
-                  } @else {
-                    <div class="thumbnail-placeholder">
-                      <i class="pi pi-video"></i>
-                    </div>
-                  }
-                  <span class="duration-badge">{{
-                    formatDuration(film.duration)
-                  }}</span>
-                  @if (film.isWatched) {
-                    <span class="watched-badge"
-                      ><i class="pi pi-check"></i
-                    ></span>
-                  }
-                </div>
-
-                <div class="film-info">
-                  <h3>{{ film.title }}</h3>
-                  <p class="opponent">vs {{ film.opponent }}</p>
-                  <p class="date">{{ film.gameDate | date: "MMM d, y" }}</p>
-
-                  <div class="film-meta">
-                    @if (film.taggedMoments.length > 0) {
-                      <span
-                        class="tag-count"
-                        [class.has-corrections]="hasCorrections(film)"
-                      >
-                        <i class="pi pi-bookmark"></i>
-                        {{ film.taggedMoments.length }} moments
-                      </span>
+          <!-- Film Sessions List -->
+          @if (filteredFilms().length > 0) {
+            <div class="films-grid">
+              @for (film of filteredFilms(); track film.id) {
+                <app-card-shell
+                  class="film-card"
+                  [flush]="true"
+                  state="interactive"
+                  (cardClick)="selectFilm(film)"
+                >
+                  <div class="film-thumbnail">
+                    @if (film.thumbnailUrl) {
+                      <img
+                        appMobileOptimized
+                        [width]="320"
+                        [height]="180"
+                        [src]="film.thumbnailUrl"
+                        [alt]="film.title"
+                      />
+                    } @else {
+                      <div class="thumbnail-placeholder">
+                        <i class="pi pi-video"></i>
+                      </div>
                     }
-                    @if (film.dueBy) {
-                      <span
-                        class="due-date"
-                        [class.overdue]="isOverdue(film.dueBy)"
-                      >
-                        <i class="pi pi-calendar"></i>
-                        Due: {{ film.dueBy | date: "MMM d" }}
-                      </span>
+                    <span class="duration-badge">{{
+                      formatDuration(film.duration)
+                    }}</span>
+                    @if (film.isWatched) {
+                      <span class="watched-badge"
+                        ><i class="pi pi-check"></i
+                      ></span>
                     }
                   </div>
 
-                  @if (film.watchProgress > 0 && film.watchProgress < 100) {
-                    <p-progressBar
-                      [value]="film.watchProgress"
-                      [showValue]="false"
-                      class="film-progress"
-                    ></p-progressBar>
-                  }
-                </div>
-              </app-card-shell>
-            }
-          </div>
-        } @else {
-          <app-empty-state
-            [useCard]="true"
-            icon="pi-video"
-            heading="No film assigned"
-            [description]="getEmptyDescription()"
-          />
+                  <div class="film-info">
+                    <h3>{{ film.title }}</h3>
+                    <p class="opponent">vs {{ film.opponent }}</p>
+                    <p class="date">{{ film.gameDate | date: "MMM d, y" }}</p>
+
+                    <div class="film-meta">
+                      @if (film.taggedMoments.length > 0) {
+                        <span
+                          class="tag-count"
+                          [class.has-corrections]="hasCorrections(film)"
+                        >
+                          <i class="pi pi-bookmark"></i>
+                          {{ film.taggedMoments.length }} moments
+                        </span>
+                      }
+                      @if (film.dueBy) {
+                        <span
+                          class="due-date"
+                          [class.overdue]="isOverdue(film.dueBy)"
+                        >
+                          <i class="pi pi-calendar"></i>
+                          Due: {{ film.dueBy | date: "MMM d" }}
+                        </span>
+                      }
+                    </div>
+
+                    @if (film.watchProgress > 0 && film.watchProgress < 100) {
+                      <p-progressBar
+                        [value]="film.watchProgress"
+                        [showValue]="false"
+                        class="film-progress"
+                      ></p-progressBar>
+                    }
+                  </div>
+                </app-card-shell>
+              }
+            </div>
+          } @else {
+            <app-empty-state
+              [useCard]="true"
+              icon="pi-video"
+              heading="No film assigned"
+              [description]="getEmptyDescription()"
+            />
+          }
         }
       </div>
 
@@ -404,6 +426,7 @@ export class FilmRoomComponent implements OnInit {
   readonly selectedFilm = signal<FilmSession | null>(null);
   readonly expandedMoment = signal<string | null>(null);
   readonly isLoading = signal(true);
+  readonly errorMessage = signal<string | null>(null);
 
   // Filter state
   readonly searchQuery = signal("");
@@ -485,6 +508,7 @@ export class FilmRoomComponent implements OnInit {
 
   async loadData(): Promise<void> {
     this.isLoading.set(true);
+    this.errorMessage.set(null);
 
     try {
       const response = await firstValueFrom(
@@ -492,11 +516,15 @@ export class FilmRoomComponent implements OnInit {
       );
       if (response?.success && response.data?.films) {
         this.films.set(response.data.films);
+      } else {
+        this.films.set([]);
       }
     } catch (err) {
       this.logger.error("Failed to load film room data", err);
-      // No film sessions assigned to player
       this.films.set([]);
+      this.errorMessage.set(
+        "We couldn't load your assigned film right now. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }

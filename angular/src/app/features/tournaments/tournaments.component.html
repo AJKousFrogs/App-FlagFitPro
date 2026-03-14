@@ -30,11 +30,21 @@
 
         <!-- Loading State -->
         @if (tournamentService.loading()) {
-          <app-loading message="Loading tournaments..." variant="inline" />
+          <app-loading
+            [visible]="true"
+            message="Loading tournaments..."
+            variant="skeleton"
+          />
+        } @else if (tournamentService.error()) {
+          <app-page-error-state
+            title="Unable to load tournaments"
+            [message]="tournamentService.error() || 'Something went wrong while loading tournaments.'"
+            (retry)="loadTournaments()"
+          />
         }
 
         <!-- Empty State -->
-        @if (!tournamentService.loading() && tournaments().length === 0) {
+        @if (!tournamentService.loading() && !tournamentService.error() && tournaments().length === 0) {
           <app-empty-state
             icon="pi-calendar-times"
             heading="No Tournaments Scheduled"
@@ -45,7 +55,7 @@
         }
 
         <!-- Tournament Tabs -->
-        @if (tournaments().length > 0) {
+        @if (!tournamentService.loading() && !tournamentService.error() && tournaments().length > 0) {
           <p-tabs>
             <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
               <app-tournament-season-panel
@@ -641,11 +651,13 @@
           />
         }
 
-        <div dialogFooter class="dialog-actions">
-          <app-button (clicked)="showTeamAvailabilityDialog = false"
-            >Close</app-button
-          >
-        </div>
+        <app-dialog-footer
+          dialogFooter
+          [showCancel]="false"
+          primaryLabel="Close"
+          primaryVariant="text"
+          (primary)="showTeamAvailabilityDialog = false"
+        />
       </app-dialog>
 
       <!-- Budget Management Dialog -->

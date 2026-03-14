@@ -32,6 +32,12 @@ export const analyticsRoutes: Routes = [
     canActivate: [authGuard],
     data: { preload: true, priority: "medium", entry: "internal" }, // Commonly accessed
   },
+  {
+    path: "performance",
+    redirectTo: "performance-tracking",
+    pathMatch: "full",
+    data: { entry: "internal" },
+  },
   // Redirect /performance/body-composition to performance-tracking with body composition tab
   {
     path: "performance/body-composition",

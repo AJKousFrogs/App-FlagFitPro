@@ -382,7 +382,6 @@ export class ScoutingReportsComponent implements OnInit {
       this.opponents.set([]);
       this.currentTendencies.set(null);
       this.loadError.set("We couldn't load scouting data. Please try again.");
-      this.toast.error("Failed to load scouting data");
     } finally {
       this.loading.set(false);
     }

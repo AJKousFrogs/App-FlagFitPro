@@ -352,7 +352,7 @@ export class ProfileComponent implements OnInit {
           label: "Training Sessions",
           icon: "pi-calendar-plus",
           iconType: "primary",
-          trend: totalSessions > 0 ? "Active" : "Start training",
+          trend: totalSessions > 0 ? "Active" : "Start logging sessions",
           trendType:
             totalSessions > 0
               ? "positive"
@@ -404,7 +404,7 @@ export class ProfileComponent implements OnInit {
               ? gamesPlayed >= 10
                 ? "Veteran"
                 : "Active"
-              : "No games yet",
+              : "Awaiting game logs",
           trendType:
             gamesPlayed > 0
               ? "positive"
@@ -495,7 +495,7 @@ export class ProfileComponent implements OnInit {
                 : performanceScore >= 60
                   ? "Good"
                   : "Building"
-              : "No wellness data yet",
+              : "Complete check-ins to unlock",
           trendType:
             performanceScore > 0
               ? performanceScore >= 80
@@ -513,7 +513,7 @@ export class ProfileComponent implements OnInit {
               ? avgSessionLength >= 45
                 ? "Great duration"
                 : "Keep it up"
-              : "No sessions yet",
+              : "Log sessions to unlock",
           trendType:
             avgSessionLength > 0
               ? avgSessionLength >= 45
@@ -529,7 +529,7 @@ export class ProfileComponent implements OnInit {
               ? totalMinutes >= 600
                 ? "Strong commitment"
                 : "Building base"
-              : "Start training to track",
+              : "Start logging sessions",
           trendType:
             totalMinutes > 0
               ? totalMinutes >= 600
@@ -572,7 +572,7 @@ export class ProfileComponent implements OnInit {
         label: "Performance Score",
         icon: "pi-heart",
         iconType: "error",
-        trend: "No data yet",
+        trend: "Complete wellness check-ins",
         trendType: "neutral" as "positive" | "negative" | "neutral",
       },
       {
@@ -588,7 +588,7 @@ export class ProfileComponent implements OnInit {
         label: "Games Played",
         icon: "pi-flag",
         iconType: "info",
-        trend: "Coming soon",
+        trend: "Awaiting game logs",
         trendType: "neutral" as "positive" | "negative" | "neutral",
       },
     ]);
@@ -599,13 +599,13 @@ export class ProfileComponent implements OnInit {
       {
         label: "Performance Score",
         value: "—",
-        trend: "No wellness data yet",
+        trend: "Complete check-ins to unlock",
         trendType: "secondary",
       },
       {
         label: "Avg Session Length",
         value: "—",
-        trend: "No sessions yet",
+        trend: "Log sessions to unlock",
         trendType: "secondary",
       },
       {

@@ -259,10 +259,18 @@
 }
 
 .benchmark-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
   margin-bottom: var(--space-1);
+}
 
-  --app-card-header-title-size: var(--ds-font-size-md);
-  --app-card-header-title-weight: var(--ds-font-weight-medium);
+.benchmark-title {
+  margin: 0;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-primary);
 }
 
 .benchmark-rating {

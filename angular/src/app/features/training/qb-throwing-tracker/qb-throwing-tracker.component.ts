@@ -201,9 +201,12 @@ interface SessionTypeOption {
                   [class.medium]="
                     week.weeklyThrows >= 300 && week.weeklyThrows < 600
                   "
-                  pTooltip="{{ week.weeklyThrows }} throws in {{
-                    week.sessionsCount
-                  }} sessions"
+                  [pTooltip]="
+                    week.weeklyThrows +
+                    ' throws in ' +
+                    week.sessionsCount +
+                    ' sessions'
+                  "
                 >
                   <span class="bar-value">{{ week.weeklyThrows }}</span>
                 </div>

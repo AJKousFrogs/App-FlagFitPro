@@ -404,7 +404,7 @@ export class AcwrDashboardComponent implements OnInit {
 
   public viewHistory(): void {
     // Navigate to training schedule to view history
-    this.router.navigate(["/training/schedule"]);
+    this.router.navigate(["/training"]);
   }
 
   public async downloadReport(): Promise<void> {

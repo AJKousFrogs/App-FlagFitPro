@@ -55,6 +55,8 @@ import { DialogFooterComponent } from "../../shared/components/dialog-footer/dia
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
@@ -78,6 +80,8 @@ import { getInitials } from "../../shared/utils/format.utils";
     DialogFooterComponent,
     DialogHeaderComponent,
     IconButtonComponent,
+    AppLoadingComponent,
+    PageErrorStateComponent,
     StatusTagComponent,
   ],
   templateUrl: "./chat.component.html",
@@ -103,6 +107,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly currentChannel = this.channelService.currentChannel;
   readonly channels = this.channelService.channels;
   readonly messages = this.channelService.messages;
+  readonly isLoading = this.channelService.loading;
+  readonly loadError = this.channelService.error;
   readonly pinnedMessages = this.channelService.pinnedMessages;
   readonly announcementChannels = this.channelService.announcementChannels;
   readonly teamChannels = this.channelService.teamChannels;
@@ -341,7 +347,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         await this.selectChannel(channels[0]);
       }
     } catch (_error) {
-      this.toastService.error(TOAST.ERROR.CHANNEL_LOAD_FAILED);
+      if (this.channels().length > 0) {
+        this.toastService.error(TOAST.ERROR.CHANNEL_LOAD_FAILED);
+      }
     }
   }
 

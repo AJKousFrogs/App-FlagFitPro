@@ -1,11 +1,11 @@
-<section aria-labelledby="today-heading">
+<section aria-label="Today">
   <app-card-shell class="welcome-card">
     <div class="welcome-row">
       <div class="user-avatar" aria-hidden="true">
         <i class="pi pi-user"></i>
       </div>
       <div class="welcome-text">
-        <h1 id="today-heading" class="welcome-greeting">Today</h1>
+        <h1 class="welcome-greeting">Today</h1>
         <h2 class="welcome-name">{{ todayDateLabel() }}</h2>
         <div class="welcome-stats">
           <span class="stat-item">
@@ -37,14 +37,12 @@
 </section>
 
 @if (exactTrainingSummary(); as summary) {
-  <section aria-labelledby="exact-training-heading">
-    <app-card-shell class="exact-training-card">
-      <app-card-header
-        title="Today's Exact Training"
-        icon="pi-compass"
-        titleId="exact-training-heading"
-        [divider]="true"
-      />
+  <section aria-label="Today's Exact Training">
+    <app-card-shell
+      class="exact-training-card"
+      title="Today's Exact Training"
+      headerIcon="pi-compass"
+    >
 
       <div class="exact-training-layout">
         <div class="exact-training-main">

@@ -20,6 +20,16 @@
           styleClass="privacy-notice"
         />
 
+        @if (loading()) {
+          <app-loading message="Loading psychology data..." variant="inline" />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load psychology data"
+            [message]="loadError()!"
+            (retry)="loadData()"
+          />
+        } @else {
+
         <p-tabs [value]="0">
           <p-tablist>
             <p-tab [value]="0">
@@ -328,6 +338,7 @@
             </p-tabpanel>
           </p-tabpanels>
         </p-tabs>
+        }
 
         <!-- Generate Report Dialog -->
         <app-dialog

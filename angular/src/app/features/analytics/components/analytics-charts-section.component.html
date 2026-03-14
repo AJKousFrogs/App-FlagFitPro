@@ -59,7 +59,11 @@
     </app-card-shell>
   } @placeholder {
     <app-card-shell class="chart-card">
-      <app-loading variant="inline" message="Loading performance trends..." />
+      <app-loading
+        [visible]="true"
+        variant="skeleton"
+        message="Loading performance trends..."
+      />
     </app-card-shell>
   }
 
@@ -81,15 +85,19 @@
         <app-empty-state
           class="empty-chart-state"
           [useCard]="false"
-          icon="pi-users"
-          heading="Proficiency Data Coming Soon"
+          [icon]="noDataMessage().icon || 'pi-users'"
+          heading="Skill profile not ready"
           [description]="'Log more varied training sessions to populate your skill proficiency radar.'"
         />
       }
     </app-card-shell>
   } @placeholder {
     <app-card-shell class="chart-card">
-      <app-loading variant="inline" message="Loading skill proficiency..." />
+      <app-loading
+        [visible]="true"
+        variant="skeleton"
+        message="Loading skill proficiency..."
+      />
     </app-card-shell>
   }
 
@@ -112,14 +120,18 @@
           class="empty-chart-state"
           [useCard]="false"
           [icon]="noDataMessage().icon || null"
-          heading="Mix Data Coming Soon"
+          heading="Training mix unavailable"
           [description]="'Log your training sessions to see how your time is distributed.'"
         />
       }
     </app-card-shell>
   } @placeholder {
     <app-card-shell class="chart-card">
-      <app-loading variant="inline" message="Loading training mix..." />
+      <app-loading
+        [visible]="true"
+        variant="skeleton"
+        message="Loading training mix..."
+      />
     </app-card-shell>
   }
 
@@ -141,15 +153,19 @@
         <app-empty-state
           class="empty-chart-state"
           [useCard]="false"
-          icon="pi-chart-bar"
-          heading="Benchmarks Coming Soon"
+          [icon]="noDataMessage().icon || 'pi-chart-bar'"
+          heading="Benchmark comparison locked"
           [description]="'Complete your profile and log tests to see comparative analytics.'"
         />
       }
     </app-card-shell>
   } @placeholder {
     <app-card-shell class="chart-card">
-      <app-loading variant="inline" message="Loading benchmarks..." />
+      <app-loading
+        [visible]="true"
+        variant="skeleton"
+        message="Loading benchmarks..."
+      />
     </app-card-shell>
   }
 </div>
@@ -233,15 +249,19 @@
       <app-empty-state
         class="empty-chart-state"
         [useCard]="false"
-        icon="pi-chart-bar"
-        heading="Gap Analysis Coming Soon"
+        [icon]="noDataMessage().icon || 'pi-chart-bar'"
+        heading="Gap analysis unavailable"
         [description]="'Complete fitness tests and log training to see how you compare to Olympic benchmarks.'"
       />
     }
   </app-card-shell>
 } @placeholder {
   <app-card-shell class="chart-card full-width">
-    <app-loading variant="inline" message="Loading gap analysis..." />
+    <app-loading
+      [visible]="true"
+      variant="skeleton"
+      message="Loading gap analysis..."
+    />
   </app-card-shell>
 }
 
@@ -287,7 +307,7 @@
       } @else {
         <div class="metric-insight">
           <div class="metric-insight__value">-</div>
-          <div class="metric-insight__label">No data yet</div>
+          <div class="metric-insight__label">Awaiting sprint tests</div>
         </div>
       }
     </div>
@@ -296,11 +316,11 @@
       class="empty-chart-state"
       [useCard]="false"
       icon="pi-bolt"
-      heading="No Speed Data Yet"
-      [description]="'Log your sprint times in Performance Tracking to see speed development progress.'"
-      actionLabel="Go to Performance Tracking"
+      heading="Speed development locked"
+      [description]="'Log your sprint times in Performance Tests to see speed development progress.'"
+      actionLabel="Go to Performance Tests"
       actionIcon="pi-arrow-right"
-      actionLink="/performance-tracking"
+      actionLink="/performance"
     />
   }
 </app-card-shell>

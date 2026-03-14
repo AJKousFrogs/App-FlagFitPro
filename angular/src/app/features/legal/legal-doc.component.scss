@@ -23,26 +23,16 @@
 }
 
 .loading-state {
-  display: grid;
-  gap: var(--spacing-sm);
-}
-
-.loading-title {
-  width: 40%;
-  height: var(--avatar-size-xs);
-  background: var(--surface-hover);
-  border-radius: var(--radius-md);
-}
-
-.loading-line {
-  width: 100%;
-  height: var(--indicator-size-lg);
-  background: var(--surface-hover);
-  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
 }
 
 .error-state {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+}
+
+.legal-doc-error-actions {
+  display: flex;
+  justify-content: center;
 }

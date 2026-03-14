@@ -363,7 +363,7 @@
       </div>
       <div class="keyboard-hint">
         <span class="key-combo"><kbd>↵</kbd></span>
-        <span>Select</span>
+        <span>{{ searchQuery ? "Open search page" : "Select" }}</span>
       </div>
       <div class="keyboard-hint">
         <span class="key-combo"><kbd>Esc</kbd></span>
@@ -379,6 +379,12 @@
           <span>Searching <strong>Global Content</strong></span>
         }
       </div>
+      @if (searchQuery) {
+        <button type="button" class="open-search-page-link" (click)="openFullSearch()">
+          <i class="pi pi-arrow-right"></i>
+          <span>Open full search</span>
+        </button>
+      }
     </div>
   </div>
 </app-dialog>

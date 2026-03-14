@@ -1,9 +1,9 @@
 import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
 import { Component, input, output } from "@angular/core";
-import { ProgressSpinner } from "primeng/progressspinner";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 interface ProfileInvitation {
@@ -25,7 +25,7 @@ interface ProfileInvitation {
     CommonModule,
     DatePipe,
     TitleCasePipe,
-    ProgressSpinner,
+    AppLoadingComponent,
     EmptyStateComponent,
     CardShellComponent,
     StatusTagComponent,

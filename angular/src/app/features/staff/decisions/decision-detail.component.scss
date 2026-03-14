@@ -12,6 +12,12 @@
   margin-top: var(--space-6);
 }
 
+.decision-detail__error-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4);
+}
+
 .overview-content,
 .maker-content,
 .review-content,

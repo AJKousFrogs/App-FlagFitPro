@@ -24,7 +24,6 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { Textarea } from "primeng/textarea";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 
@@ -45,6 +44,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
@@ -252,7 +252,6 @@ const toDateOrNull = (value: unknown): Date | null => {
     
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent,
     IconButtonComponent,
     AlertComponent,
     AppDialogComponent,
@@ -260,6 +259,7 @@ const toDateOrNull = (value: unknown): Date | null => {
     DialogFooterComponent,
     EmptyStateComponent,
     AppLoadingComponent,
+    PageErrorStateComponent,
     TournamentAvailabilityDialogContentComponent,
     TournamentBudgetDialogContentComponent,
     TournamentTeamAvailabilityDialogContentComponent,

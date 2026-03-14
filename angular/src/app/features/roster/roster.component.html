@@ -445,20 +445,15 @@
                       track benchmark.metric
                     ) {
                       <div class="benchmark-item">
-                        <app-card-header
-                          class="benchmark-header"
-                          [title]="benchmark.metric"
-                          [headingLevel]="4"
-                          [compact]="true"
-                        >
+                        <div class="benchmark-header">
+                          <h4 class="benchmark-title">{{ benchmark.metric }}</h4>
                           <span
-                            header-actions
                             class="benchmark-rating"
                             [class]="'rating-' + benchmark.rating"
                           >
                             {{ benchmark.rating | titlecase }}
                           </span>
-                        </app-card-header>
+                        </div>
                         @if (benchmark.value !== null) {
                           <div class="benchmark-value">
                             {{ benchmark.value }}{{ benchmark.unit }}
@@ -556,24 +551,27 @@
             </div>
           }
 
-          <div dialogFooter class="dialog-actions">
-            <app-button variant="text" (clicked)="showDetailsDialog.set(false)"
-              >Close</app-button
-            >
-            @if (rosterService.canManageRoster()) {
-              <app-button
-                variant="secondary"
-                iconLeft="pi-chart-line"
-                (clicked)="openPlayerDevelopment()"
-                >Development</app-button
-              >
-              <app-button
-                iconLeft="pi-pencil"
-                (clicked)="editPlayerFromDetails()"
-                >Edit Player</app-button
-              >
-            }
-          </div>
+          @if (rosterService.canManageRoster()) {
+            <app-dialog-footer
+              dialogFooter
+              cancelLabel="Close"
+              secondaryLabel="Development"
+              secondaryIcon="chart-line"
+              primaryLabel="Edit Player"
+              primaryIcon="pencil"
+              (cancel)="showDetailsDialog.set(false)"
+              (secondary)="openPlayerDevelopment()"
+              (primary)="editPlayerFromDetails()"
+            />
+          } @else {
+            <app-dialog-footer
+              dialogFooter
+              [showCancel]="false"
+              primaryLabel="Close"
+              primaryVariant="text"
+              (primary)="showDetailsDialog.set(false)"
+            />
+          }
         </app-dialog>
 
         <!-- Status Change Dialog -->
@@ -843,18 +841,14 @@
             }
           </div>
 
-          <div dialogFooter class="dialog-actions">
-            <app-button
-              variant="text"
-              (clicked)="showInvitationsDialog.set(false)"
-              >Close</app-button
-            >
-            <app-button
-              iconLeft="pi-plus"
-              (clicked)="showInvitationsDialog.set(false); openInviteDialog()"
-              >Send New Invitation</app-button
-            >
-          </div>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Close"
+            primaryLabel="Send New Invitation"
+            primaryIcon="plus"
+            (cancel)="showInvitationsDialog.set(false)"
+            (primary)="showInvitationsDialog.set(false); openInviteDialog()"
+          />
         </app-dialog>
 
         <!-- Confirmation Dialog -->

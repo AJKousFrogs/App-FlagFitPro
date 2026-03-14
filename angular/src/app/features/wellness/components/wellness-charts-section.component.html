@@ -1,6 +1,6 @@
 <div class="charts-grid">
   @defer (on viewport) {
-    <app-card title="Sleep Quality (7-day)">
+    <app-card-shell title="Sleep Quality (7-day)" headerIcon="pi-moon">
       @if (sleepChartData()) {
         <app-lazy-chart
           type="line"
@@ -8,17 +8,26 @@
           [options]="chartOptions()"
         ></app-lazy-chart>
       } @else {
-        <div class="chart-empty">No sleep data yet. Start logging daily check-ins.</div>
+        <app-empty-state
+          [useCard]="false"
+          icon="pi-moon"
+          heading="Sleep trend unavailable"
+          description="Start logging daily check-ins to unlock your sleep trend."
+        />
       }
-    </app-card>
+    </app-card-shell>
   } @placeholder {
-    <app-card title="Sleep Quality (7-day)" [loading]="true">
-      <div class="loading-text">Loading sleep data...</div>
-    </app-card>
+    <app-card-shell title="Sleep Quality (7-day)" headerIcon="pi-moon">
+      <app-loading
+        [visible]="true"
+        variant="skeleton"
+        message="Loading sleep data..."
+      />
+    </app-card-shell>
   }
 
   @defer (on viewport) {
-    <app-card title="Recovery Score (7-day)">
+    <app-card-shell title="Recovery Score (7-day)" headerIcon="pi-heart">
       @if (recoveryChartData()) {
         <app-lazy-chart
           type="bar"
@@ -26,14 +35,21 @@
           [options]="chartOptions()"
         ></app-lazy-chart>
       } @else {
-        <div class="chart-empty">
-          No recovery data yet. Start logging daily check-ins.
-        </div>
+        <app-empty-state
+          [useCard]="false"
+          icon="pi-heart"
+          heading="Recovery trend unavailable"
+          description="Complete daily check-ins to unlock your recovery trend."
+        />
       }
-    </app-card>
+    </app-card-shell>
   } @placeholder {
-    <app-card title="Recovery Score (7-day)" [loading]="true">
-      <div class="loading-text">Loading recovery data...</div>
-    </app-card>
+    <app-card-shell title="Recovery Score (7-day)" headerIcon="pi-heart">
+      <app-loading
+        [visible]="true"
+        variant="skeleton"
+        message="Loading recovery data..."
+      />
+    </app-card-shell>
   }
 </div>

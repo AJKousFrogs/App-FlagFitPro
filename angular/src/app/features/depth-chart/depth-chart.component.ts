@@ -34,6 +34,7 @@ import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -66,6 +67,7 @@ interface PositionGroup {
     ButtonComponent,
     CardShellComponent,
     AppDialogComponent,
+    DialogFooterComponent,
     DialogHeaderComponent,
     IconButtonComponent,
     EmptyStateComponent,
@@ -274,17 +276,15 @@ interface PositionGroup {
               class="w-full"
             ></p-select>
           </div>
-          <div class="dialog-actions">
-            <app-button variant="text" (clicked)="showAssignDialog = false"
-              >Cancel</app-button
-            >
-            <app-button
-              iconLeft="pi-check"
-              [disabled]="!selectedPlayerId"
-              (clicked)="assignPlayer()"
-              >Assign</app-button
-            >
-          </div>
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Assign"
+            primaryIcon="check"
+            [disabled]="!selectedPlayerId"
+            (cancel)="showAssignDialog = false"
+            (primary)="assignPlayer()"
+          />
         </app-dialog>
       </div>
     </app-main-layout>

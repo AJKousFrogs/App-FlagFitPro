@@ -41,6 +41,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import {
   AppDialogComponent,
+  DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../shared/components/ui-components";
 
@@ -146,6 +147,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     AppLoadingComponent,
     PageErrorStateComponent,
     AppDialogComponent,
+    DialogFooterComponent,
     DialogHeaderComponent,
   ],
   template: `
@@ -506,23 +508,27 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           </div>
         </div>
 
-        <div dialogFooter class="dialog-actions practice-dialog-actions">
-          <app-button variant="secondary" (clicked)="saveDraft()"
-            >Save as Draft</app-button
-          >
-          <app-button variant="text" (clicked)="saveAsTemplate()"
-            >Save as Template</app-button
-          >
-          <app-button variant="text" (clicked)="showDialog = false"
-            >Cancel</app-button
-          >
+        <app-dialog-footer
+          dialogFooter
+          class="practice-dialog-actions"
+          cancelLabel="Cancel"
+          secondaryLabel="Save as Template"
+          secondaryVariant="text"
+          primaryLabel="Save & Notify Team"
+          primaryIcon="check"
+          [disabled]="!formData.title"
+          (cancel)="showDialog = false"
+          (secondary)="saveAsTemplate()"
+          (primary)="saveAndNotify()"
+        >
           <app-button
-            iconLeft="pi-check"
-            [disabled]="!formData.title"
-            (clicked)="saveAndNotify()"
-            >Save & Notify Team</app-button
+            dialogFooterStart
+            variant="secondary"
+            (clicked)="saveDraft()"
           >
-        </div>
+            Save as Draft
+          </app-button>
+        </app-dialog-footer>
       </app-dialog>
 
       <!-- Activity Editor Dialog -->

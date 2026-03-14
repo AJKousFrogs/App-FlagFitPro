@@ -13,6 +13,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
@@ -44,6 +45,7 @@ interface SuperadminUser {
     ButtonComponent,
     AppLoadingComponent,
     EmptyStateComponent,
+    PageErrorStateComponent,
     AlertComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -106,6 +108,12 @@ interface SuperadminUser {
 
           @if (isLoading()) {
             <app-loading message="Loading superadmins..." variant="inline" />
+          } @else if (loadError()) {
+            <app-page-error-state
+              title="Unable to load superadmin access"
+              [message]="loadError()!"
+              (retry)="loadSuperadmins()"
+            />
           } @else if (superadmins().length === 0) {
             <app-empty-state
               icon="pi-shield"
@@ -316,6 +324,7 @@ export class SuperadminSettingsComponent implements OnInit {
   // State
   superadmins = signal<SuperadminUser[]>([]);
   isLoading = signal(false);
+  loadError = signal<string | null>(null);
   showAddModal = false;
   newAdminEmail = "";
   newAdminNotes = "";
@@ -334,6 +343,7 @@ export class SuperadminSettingsComponent implements OnInit {
 
   async loadSuperadmins(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
     try {
       const admins = await this.superadminService.getSuperadmins();
       this.superadmins.set(
@@ -349,6 +359,9 @@ export class SuperadminSettingsComponent implements OnInit {
       );
     } catch (error) {
       this.logger.error("Error loading superadmins:", error);
+      this.loadError.set(
+        "Unable to load superadmin access data right now. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }

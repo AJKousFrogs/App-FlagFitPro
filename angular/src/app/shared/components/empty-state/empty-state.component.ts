@@ -48,7 +48,7 @@ const CONTEXT_CONFIGS: Record<
     message: "Log your performance tests (40-yard dash, vertical jump, etc.) to track improvements and set goals.",
     actionLabel: "Log Performance Test",
     actionIcon: "pi pi-plus",
-    route: "/performance-tracking",
+    route: "/performance",
     benefits: ["Track speed, power, and agility metrics", "Compare against position benchmarks", "Identify areas for improvement", "Monitor progress over time"],
   },
   nutrition: {

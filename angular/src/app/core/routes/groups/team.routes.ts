@@ -167,6 +167,12 @@ export const teamRoutes: Routes = [
     data: { entry: "internal" },
   },
   {
+    path: "knowledge-base",
+    redirectTo: "knowledge",
+    pathMatch: "full",
+    data: { entry: "internal" },
+  },
+  {
     path: "coach/film",
     loadComponent: () =>
       import("../../../features/coach/film-room/film-room-coach.component").then(

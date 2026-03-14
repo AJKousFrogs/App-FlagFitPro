@@ -11,6 +11,32 @@
 
 @include stat-block;
 
+.page-state-card {
+  min-height: var(--size-240);
+}
+
+.library-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-5);
+}
+
+.library-summary__stats {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.library-summary__copy {
+  max-width: var(--layout-width-lg);
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-relaxed);
+}
+
 /* ===== HERO SECTION ===== */
 .page-hero {
   margin-bottom: 0;
@@ -628,6 +654,11 @@
 @include respond-to(md) {
   .exercise-library-page {
     gap: var(--layout-page-section-gap-tight);
+  }
+
+  .library-summary {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .page-hero {

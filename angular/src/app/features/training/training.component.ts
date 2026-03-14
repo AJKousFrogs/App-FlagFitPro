@@ -321,15 +321,15 @@ export class TrainingComponent {
   }
 
   toggleScheduleView(): void {
-    this.router.navigate(["/training/schedule"]);
+    this.router.navigate(["/training"]);
   }
 
   openScheduleBuilder(): void {
-    this.router.navigate(["/training/builder"]);
+    this.router.navigate(["/training/workspace"]);
   }
 
   goToQBThrowing(): void {
-    this.router.navigate(["/training/qb/throwing"]);
+    this.router.navigate(["/training/qb"]);
   }
 
   goToPeriodization(): void {
@@ -397,15 +397,15 @@ export class TrainingComponent {
 
   /**
    * Start a workout session
-   * Navigates to workout page with context
+   * Navigates into today's practice so the user stays inside the
+   * canonical training workflow instead of jumping to the orphaned workout tool.
    */
   startWorkout(workout: Workout): void {
     this.toastService.info(`Starting ${workout.title}`);
-    this.router.navigate(["/workout"], {
+    this.router.navigate(["/todays-practice"], {
       queryParams: {
-        type: workout.type,
-        title: workout.title,
-        duration: workout.duration,
+        focus: workout.title.toLowerCase().replace(/\s+/g, "-"),
+        source: "training-start",
       },
     });
   }

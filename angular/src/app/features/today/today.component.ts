@@ -1042,7 +1042,7 @@ export class TodayComponent {
 
   viewTomorrowProtocol(): void {
     // Navigate directly to the schedule view, which consumes the date param.
-    this.router.navigate(["/training/schedule"], {
+    this.router.navigate(["/training"], {
       queryParams: { date: this.tomorrowDate() },
     });
   }
@@ -1082,13 +1082,13 @@ export class TodayComponent {
         break;
 
       case "view_practice_details":
-        this.router.navigate(["/training/schedule"], {
+        this.router.navigate(["/training"], {
           queryParams: { date: this.todayDate() },
         });
         break;
 
       case "view_film_room_details":
-        this.router.navigate(["/film-room"]);
+        this.router.navigate(["/training/videos"]);
         break;
 
       case "view_rehab":

@@ -5,6 +5,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { ChartSkeletonComponent } from "../../../shared/components/chart-skeleton/chart-skeleton.component";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import type { SimpleChartData } from "../../../core/models/chart.models";
 
 interface DashboardWeekDay {
@@ -32,6 +33,7 @@ interface DashboardQuickAction {
     ButtonComponent,
     LazyChartComponent,
     ChartSkeletonComponent,
+    EmptyStateComponent,
   ],
   templateUrl: "./player-dashboard-insights-grid.component.html",
   styleUrl: "./player-dashboard-insights-grid.component.scss",

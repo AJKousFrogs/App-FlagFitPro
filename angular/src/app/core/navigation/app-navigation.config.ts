@@ -58,11 +58,11 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     group: "primary",
   },
   {
-    label: "Performance",
-    route: "/performance-tracking",
+    label: "Performance Tests",
+    route: "/performance",
     icon: "pi-bullseye",
     ariaLabel:
-      "Performance Tracking - Track and analyze your performance metrics",
+      "Performance Tests - Log speed, power, and testing benchmarks",
     group: "primary",
   },
   {
@@ -221,11 +221,11 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     group: "primary",
   },
   {
-    label: "Performance",
-    route: "/performance-tracking",
+    label: "Performance Tests",
+    route: "/performance",
     icon: "pi-bullseye",
     ariaLabel:
-      "Performance Tracking - Track and analyze team performance metrics",
+      "Performance Tests - Review speed, power, and testing benchmarks",
     group: "primary",
   },
   {

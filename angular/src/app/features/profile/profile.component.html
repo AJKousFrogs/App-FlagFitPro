@@ -28,16 +28,24 @@
 
         <!-- Loading State -->
         @if (isLoading()) {
-          <app-loading message="Loading profile..." variant="inline" />
+          <section class="page-state-card ds-card-surface">
+            <app-loading
+              [visible]="true"
+              message="Loading profile..."
+              variant="skeleton"
+            />
+          </section>
         }
 
         <!-- Error State -->
         @else if (hasError()) {
-          <app-page-error-state
-            title="Unable to load profile"
-            [message]="errorMessage()"
-            (retry)="retryLoad()"
-          ></app-page-error-state>
+          <section class="page-state-card ds-card-surface">
+            <app-page-error-state
+              title="Unable to load profile"
+              [message]="errorMessage()"
+              (retry)="retryLoad()"
+            ></app-page-error-state>
+          </section>
         } @else {
           <app-profile-header-section
             [avatarUrl]="avatarUrl()"

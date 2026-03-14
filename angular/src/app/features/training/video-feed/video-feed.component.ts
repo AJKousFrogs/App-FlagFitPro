@@ -83,7 +83,7 @@ import { FilterChip } from "./video-feed.models";
   ],
   template: `
 <app-main-layout>
-      <div class="video-feed-page ui-page-stack">
+      <div class="video-feed-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-video-feed-header-section
           [searchControl]="searchControl"
           [totalVideos]="totalVideos()"

@@ -4,7 +4,6 @@ import { RouterModule } from "@angular/router";
 import { ProgressBar } from "primeng/progressbar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
-import { CardHeaderComponent } from "../../../shared/components/card-header/card-header.component";
 import { EmptyStateComponent } from "../../../shared/components/ui-components";
 import { ProtocolBlockComponent } from "../../training/daily-protocol/components/protocol-block.component";
 import {
@@ -21,7 +20,6 @@ import {
     ProgressBar,
     ButtonComponent,
     CardShellComponent,
-    CardHeaderComponent,
     EmptyStateComponent,
     ProtocolBlockComponent,
   ],

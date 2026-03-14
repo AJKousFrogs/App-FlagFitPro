@@ -221,14 +221,22 @@ export class SearchPanelComponent implements OnDestroy {
   searchFor(query: string): void {
     this.searchQuery = query;
     this.showSuggestions.set(false);
-    this.searchService.search(query);
+    void this.searchService.search(query);
   }
 
   selectSuggestion(suggestion: string): void {
     this.searchQuery = suggestion;
     this.showSuggestions.set(false);
-    this.searchService.search(suggestion);
+    void this.searchService.search(suggestion);
     this.focusInput();
+  }
+
+  openFullSearch(): void {
+    const query = this.searchQuery.trim();
+    void this.router.navigate(["/search"], {
+      queryParams: { q: query || null },
+    });
+    this.close();
   }
 
   onEnter(): void {
@@ -251,7 +259,10 @@ export class SearchPanelComponent implements OnDestroy {
       if (route) {
         this.navigateTo(route);
       }
+      return;
     }
+
+    this.openFullSearch();
   }
 
   onArrowDown(event: Event): void {

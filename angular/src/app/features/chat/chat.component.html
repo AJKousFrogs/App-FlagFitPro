@@ -68,6 +68,23 @@
         </div>
 
         <div class="chat-container">
+          @if (isLoading() && channels().length === 0) {
+            <div class="chat-page-state">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading channels..."
+              />
+            </div>
+          } @else if (loadError() && channels().length === 0) {
+            <div class="chat-page-state">
+              <app-page-error-state
+                title="Unable to load team chat"
+                [message]="loadError() || 'Something went wrong while loading chat channels.'"
+                (retry)="loadChannels()"
+              />
+            </div>
+          } @else {
           <!-- Channels Sidebar -->
           <div class="channels-sidebar">
             <!-- Create Channel Button (Coaches Only) -->
@@ -396,6 +413,7 @@
               </div>
             }
           </div>
+          }
         </div>
       </div>
     </app-main-layout>

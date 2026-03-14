@@ -31,6 +31,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { formatDate } from "../../../shared/utils/date.utils";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -223,6 +224,7 @@ const RTP_PHASES = [
     IconButtonComponent,
     AppLoadingComponent,
     EmptyStateComponent,
+    PageErrorStateComponent,
   ],
   templateUrl: "./physiotherapist-dashboard.component.html",
   styleUrl: "./physiotherapist-dashboard.component.scss",
@@ -238,6 +240,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   // State
   loading = signal(true);
+  loadError = signal<string | null>(null);
   athletes = signal<AthletePhysioData[]>([]);
   riskIndicators = signal<RiskIndicators[]>([]);
   rtpData = signal<ReturnToPlayData[]>([]);
@@ -321,8 +324,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     this.sharedInsights.set(this.insightFeedService.filteredInsights());
   }
 
-  private async loadData(): Promise<void> {
+  protected async loadData(): Promise<void> {
     this.loading.set(true);
+    this.loadError.set(null);
     try {
       // Load athletes with physio status from real API
       const response = await firstValueFrom(
@@ -405,7 +409,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
       await this.loadAllInjuryHistory();
     } catch (error) {
       this.logger.error("Failed to load physiotherapy data", error);
-      this.toast.error("Failed to load physiotherapy data");
+      this.loadError.set(
+        "Unable to load physiotherapy data right now. Please try again.",
+      );
     } finally {
       this.loading.set(false);
     }

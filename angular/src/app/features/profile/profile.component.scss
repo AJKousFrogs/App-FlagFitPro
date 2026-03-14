@@ -46,6 +46,10 @@
   overflow-x: hidden;
 }
 
+.profile-page .page-state-card {
+  min-height: var(--size-240);
+}
+
 /* ========== Deletion Pending Banner ========== */
 .profile-page .profile-deletion-alert {
   margin: 0;
@@ -113,15 +117,13 @@
   color: inherit;
 }
 
-/* ========== Card Shell Overrides for Tab Panels ========== 
- * Ensure proper spacing between card header icon and card border
+/* ========== Card Shell Overrides for Tab Panels ==========
+ * Use public shell tokens instead of styling card-shell internals directly.
  */
-.profile-page .profile-tabs-container app-card-shell .card-shell__header {
-  padding: var(--space-4) var(--space-5) var(--space-3); // More left/right padding
-}
-
-.profile-page .profile-tabs-container app-card-shell .card-shell__body {
-  padding: var(--space-4) var(--space-5); // Match header padding
+.profile-page .profile-tabs-container app-card-shell {
+  --app-card-shell-header-padding: var(--space-4) var(--space-5)
+    var(--space-3);
+  --app-card-shell-body-padding: 0 var(--space-5) var(--space-4);
 }
 
 /* ========== Overview Content ========== */

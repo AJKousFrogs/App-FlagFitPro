@@ -28,6 +28,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { formatDate } from "../../../shared/utils/date.utils";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -171,6 +172,7 @@ interface PreCompForm {
     ButtonComponent,
     AppLoadingComponent,
     EmptyStateComponent,
+    PageErrorStateComponent,
     PsychologyReportsListSectionComponent,
     PsychologyWellnessSectionComponent,
   ],
@@ -186,6 +188,7 @@ export class PsychologyReportsComponent implements OnInit {
 
   // State
   loading = signal(false);
+  loadError = signal<string | null>(null);
   generatedReports = signal<
     {
       type: string;
@@ -377,8 +380,9 @@ export class PsychologyReportsComponent implements OnInit {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
-  private async loadData(): Promise<void> {
+  protected async loadData(): Promise<void> {
     this.loading.set(true);
+    this.loadError.set(null);
     try {
       // Load wellness data from API
       const response = await firstValueFrom(
@@ -412,7 +416,9 @@ export class PsychologyReportsComponent implements OnInit {
       }
     } catch (error) {
       this.logger.error("Failed to load psychology data", error);
-      this.toast.error("Failed to load psychology data");
+      this.loadError.set(
+        "Unable to load psychology data right now. Please try again.",
+      );
     } finally {
       this.loading.set(false);
     }

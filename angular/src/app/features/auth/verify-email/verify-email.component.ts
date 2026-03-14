@@ -11,6 +11,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -34,6 +35,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     ButtonComponent,
     AlertComponent,
     CardShellComponent,
+    PageErrorStateComponent,
   ],
 
   template: `
@@ -73,10 +75,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
-            <app-alert
-              variant="error"
-              [message]="verificationError() || ''"
-              styleClass="status-message"
+            <app-page-error-state
+              title="Unable to verify email"
+              [message]="verificationError() || 'We could not verify this email link.'"
+              [showRetry]="false"
+              helpText="Request a new verification email or return to sign in."
             />
             <app-button
               iconLeft="pi-send"

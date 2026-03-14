@@ -37,7 +37,6 @@ import { SupplementTrackerComponent } from "../../shared/components/supplement-t
 import {
   AppLoadingComponent,
   ButtonComponent,
-  CardComponent,
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { SimpleChartData } from "../../core/models/chart.models";
@@ -74,7 +73,6 @@ interface WellnessMetric {
     InputNumber,
     AppLoadingComponent,
     ButtonComponent,
-    CardComponent,
     PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
@@ -150,26 +148,34 @@ interface WellnessMetric {
           @defer (on viewport) {
             <app-body-composition-card></app-body-composition-card>
           } @placeholder {
-            <app-card title="Body Composition" [loading]="true">
-              <div class="loading-text">Loading body composition data...</div>
-            </app-card>
+            <app-card-shell title="Body Composition" headerIcon="pi-chart-line">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading body composition data..."
+              />
+            </app-card-shell>
           }
 
           <!-- Supplement Tracker -->
           @defer (on viewport) {
             <app-supplement-tracker></app-supplement-tracker>
           } @placeholder {
-            <app-card title="Supplement Tracker" [loading]="true">
-              <div class="loading-text">Loading supplements...</div>
-            </app-card>
+            <app-card-shell title="Supplement Tracker" headerIcon="pi-heart-fill">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading supplements..."
+              />
+            </app-card-shell>
           }
 
           <!-- Weight & Wellness Alerts (if triggered) -->
           @if (wellnessAlerts().length > 0) {
-            <app-card
+            <app-card-shell
               title="Weight & Wellness Alerts"
               headerIcon="pi-exclamation-triangle"
-              headerIconColor="warning"
+              tone="warning"
             >
               <div class="alerts-section">
                 @for (alert of wellnessAlerts(); track alert.id) {
@@ -206,22 +212,26 @@ interface WellnessMetric {
                   </app-alert>
                 }
               </div>
-            </app-card>
+            </app-card-shell>
           }
 
           <!-- Hydration Tracker -->
           @defer (on viewport) {
             <app-hydration-tracker></app-hydration-tracker>
           } @placeholder {
-            <app-card title="Hydration Tracker" [loading]="true">
-              <div class="loading-text">Loading hydration data...</div>
-            </app-card>
+            <app-card-shell title="Hydration Tracker" headerIcon="pi-tint">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading hydration data..."
+              />
+            </app-card-shell>
           }
 
           <!-- Menstrual Cycle Tracking (Female Athletes Only) -->
           @if (isFemaleAthlete()) {
             @defer (on viewport) {
-              <app-card
+              <app-card-shell
                 title="Cycle Tracking"
                 headerIcon="pi-heart"
                 class="cycle-tracking-card"
@@ -260,11 +270,15 @@ interface WellnessMetric {
                     >Open Cycle Tracker</app-button
                   >
                 </div>
-              </app-card>
+              </app-card-shell>
             } @placeholder {
-              <app-card title="Cycle Tracking" [loading]="true">
-                <div class="loading-text">Loading cycle tracking...</div>
-              </app-card>
+              <app-card-shell title="Cycle Tracking" headerIcon="pi-heart">
+                <app-loading
+                  [visible]="true"
+                  variant="skeleton"
+                  message="Loading cycle tracking..."
+                />
+              </app-card-shell>
             }
           }
 
@@ -273,7 +287,7 @@ interface WellnessMetric {
             #checkinCard
             class="checkin-card-anchor ui-page-shell ui-page-shell--content-lg"
           >
-            <app-card
+            <app-card-shell
               title="Daily Wellness Check-in"
               class="checkin-card"
               [flush]="true"
@@ -481,7 +495,7 @@ interface WellnessMetric {
                 >
               </div>
             </div>
-          </app-card>
+            </app-card-shell>
         </div>
       </div>
     </app-main-layout>

@@ -747,7 +747,7 @@ export class TrainingBuilderComponent {
       this.logger.info("Session template saved:", toLogContext(template.id));
 
       // Optionally navigate to training schedule
-      this.router.navigate(["/training/schedule"]);
+      this.router.navigate(["/training"]);
     } catch (error: unknown) {
       this.logger.error("Error saving session template:", error);
       this.toastService.error(

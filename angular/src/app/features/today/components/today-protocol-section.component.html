@@ -1,13 +1,7 @@
 @if (trainingAllowed() && blocks().length > 0) {
   <main class="content-section">
-    <section aria-labelledby="protocol-heading">
-      <app-card-shell class="content-card">
-        <app-card-header
-          title="Today's Protocol"
-          icon="pi-list"
-          titleId="protocol-heading"
-          [divider]="true"
-        />
+    <section aria-label="Today's Protocol">
+      <app-card-shell class="content-card" title="Today's Protocol" headerIcon="pi-list">
 
         @if (protocol(); as p) {
           @if (p.overallProgress !== undefined) {

@@ -53,7 +53,7 @@
                   <span
                     class="player-badge"
                     [class]="player.threatLevel"
-                    pTooltip="{{ player.notes }}"
+                    [pTooltip]="player.notes"
                   >
                     #{{ player.number }} {{ player.name }} ({{ player.position }})
                   </span>

@@ -563,7 +563,7 @@ export class GoalBasedPlannerComponent {
         `${this.getGoalLabel()} plan saved to your schedule.`,
         "Plan Saved",
       );
-      await this.router.navigate(["/training/schedule"]);
+      await this.router.navigate(["/training"]);
     } catch (error) {
       this.logger.error("Failed to save training plan", error);
       this.toastService.error("Failed to save training plan. Please try again.");

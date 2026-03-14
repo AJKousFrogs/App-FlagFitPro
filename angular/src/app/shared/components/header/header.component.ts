@@ -7,7 +7,6 @@ import {
   inject,
   isDevMode,
   input,
-  model,
   OnDestroy,
   OnInit,
   output,
@@ -31,7 +30,6 @@ import { ApiService } from "../../../core/services/api.service";
 import { HeaderService } from "../../../core/services/header.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
-import { SearchService } from "../../../core/services/search.service";
 import { ThemeService } from "../../../core/services/theme.service";
 import { TrainingStatsCalculationService } from "../../../core/services/training-stats-calculation.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
@@ -77,7 +75,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private themeService = inject(ThemeService);
   private headerService = inject(HeaderService);
   private notificationService = inject(NotificationStateService);
-  private searchService = inject(SearchService);
   private router = inject(Router);
   private logger = inject(LoggerService);
   private keyboardShortcuts = inject(KeyboardShortcutsService);
@@ -104,8 +101,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   readonly sidebarCollapsed = input(false);
   readonly mobileNav = input(false);
 
-  // Angular 21: Use model() for two-way binding
-  searchQuery = model("");
   readonly sidebarToggleIcon = computed(() =>
     this.mobileNav()
       ? "pi-bars"
@@ -350,14 +345,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSearch(): void {
-    if (this.searchQuery().trim()) {
-      // Open search panel with query
-      this.searchService.open();
-      this.searchService.search(this.searchQuery());
-    } else {
-      // Just open search panel
-      this.searchService.open();
-    }
+    void this.router.navigate(["/search"]);
   }
 
   toggleNotifications(): void {

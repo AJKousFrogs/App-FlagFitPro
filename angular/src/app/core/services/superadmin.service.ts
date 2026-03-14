@@ -64,6 +64,7 @@ export class SuperadminService {
   // Signals for reactive state
   isSuperadmin = signal<boolean>(false);
   isLoading = signal<boolean>(false);
+  loadError = signal<string | null>(null);
   pendingApprovals = signal<ApprovalRequest[]>([]);
   stats = signal<SuperadminStats>({
     pendingTeams: 0,
@@ -121,6 +122,7 @@ export class SuperadminService {
    */
   async loadPendingApprovals(): Promise<void> {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     try {
       const { data, error } = await this.supabaseService.client
@@ -163,6 +165,9 @@ export class SuperadminService {
       this.pendingApprovals.set(approvals);
     } catch (error) {
       this.logger.error("Error loading pending approvals:", error);
+      this.loadError.set(
+        "Unable to load pending approvals right now. Please try again.",
+      );
     } finally {
       this.isLoading.set(false);
     }
@@ -204,8 +209,12 @@ export class SuperadminService {
         totalUsers: totalUsers || 0,
         activeTeams: approvedTeams || 0,
       });
+      this.loadError.set(null);
     } catch (error) {
       this.logger.error("Error loading stats:", error);
+      this.loadError.set(
+        "Unable to load superadmin dashboard data right now. Please try again.",
+      );
     }
   }
 

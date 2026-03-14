@@ -630,7 +630,11 @@ export class RosterService {
 
       if (error) {
         if (error.code === "42P01") {
-          return { success: false, error: "Invitation feature coming soon!" };
+          return {
+            success: false,
+            error:
+              "Team invitations are not available in this environment yet.",
+          };
         }
         throw error;
       }

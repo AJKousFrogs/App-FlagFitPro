@@ -32,6 +32,7 @@ import { PageHeaderComponent } from "@shared/components/page-header/page-header.
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import { AppLoadingComponent } from "@shared/components/loading/loading.component";
+import { PageErrorStateComponent } from "@shared/components/page-error-state/page-error-state.component";
 import { ReviewDecisionDialogComponent } from "./review-decision-dialog.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
@@ -57,19 +58,28 @@ import type {
     ConfidenceIndicatorComponent,
     ReviewDecisionDialogComponent,
     AppLoadingComponent,
+    PageErrorStateComponent,
   ],
   template: `
     <div class="decision-detail">
       <!-- Loading State -->
       @if (isLoading()) {
-        <app-loading message="Loading decision details..." variant="inline" />
-      }
-
-      <!-- Error State -->
-      @else if (error()) {
-        <div class="error-state">
-          <p>Error: {{ error() }}</p>
-          <app-button (clicked)="goBack()">Go Back</app-button>
+        <app-loading
+          [visible]="true"
+          message="Loading decision details..."
+          variant="skeleton"
+        />
+      } @else if (error()) {
+        <app-page-error-state
+          title="Unable to load decision details"
+          [message]="error() || 'Something went wrong while loading this decision.'"
+          [helpText]="'Use Back to Decisions if the problem persists.'"
+          (retry)="loadDecision(currentDecisionId())"
+        />
+        <div class="decision-detail__error-actions">
+          <app-button variant="outlined" (clicked)="goBack()"
+            >Back to Decisions</app-button
+          >
         </div>
       }
 
@@ -77,7 +87,7 @@ import type {
       @else if (decision()) {
         <app-page-header
           [title]="decision()!.athleteName || 'Decision Details'"
-          subtitle="{{ getDecisionTypeLabel(decision()!.decisionType) }}"
+          [subtitle]="getDecisionTypeLabel(decision()!.decisionType)"
         >
           <app-button
             iconLeft="pi-arrow-left"
@@ -366,6 +376,7 @@ export class DecisionDetailComponent implements OnInit {
 
   // State
   decision = signal<DecisionLedgerEntry | null>(null);
+  currentDecisionId = signal("");
   isLoading = signal(false);
   error = signal<string | null>(null);
   relatedDecisions = signal<
@@ -400,6 +411,7 @@ export class DecisionDetailComponent implements OnInit {
   ngOnInit(): void {
     const decisionId = this.route.snapshot.paramMap.get("id");
     if (decisionId) {
+      this.currentDecisionId.set(decisionId);
       this.loadDecision(decisionId);
     } else {
       this.error.set("Decision ID not provided");
