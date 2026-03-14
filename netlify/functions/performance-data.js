@@ -10,6 +10,7 @@ import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
+import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Functions - Performance Data API
 // Handles athlete performance data storage and retrieval using Supabase
@@ -99,7 +100,6 @@ const ENDPOINT_HANDLERS = {
   export: handleExport,
 };
 
-const COACH_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
 const consentReader = new ConsentDataReader(supabaseAdmin);
 
 function parseBoundedInt(value, fallback, { min, max, field }) {
@@ -152,14 +152,15 @@ async function coachCanAccessAthlete(coachUserId, athleteUserId) {
   const { data: coachMemberships, error: coachError } = await supabaseAdmin
     .from("team_members")
     .select("team_id, role")
-    .eq("user_id", coachUserId);
+    .eq("user_id", coachUserId)
+    .eq("status", "active");
 
   if (coachError) {
     throw coachError;
   }
 
   const coachTeamIds = (coachMemberships || [])
-    .filter((m) => COACH_ROLES.has(m.role))
+    .filter((m) => hasAnyRole(m.role, HEALTH_DATA_ACCESS_ROLES))
     .map((m) => m.team_id)
     .filter(Boolean);
 
@@ -171,6 +172,7 @@ async function coachCanAccessAthlete(coachUserId, athleteUserId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteUserId)
+    .eq("status", "active")
     .in("team_id", coachTeamIds)
     .limit(1)
     .maybeSingle();
@@ -190,14 +192,15 @@ async function getSharedTeamIdForCoachAndAthlete(coachUserId, athleteUserId) {
   const { data: coachMemberships, error: coachError } = await supabaseAdmin
     .from("team_members")
     .select("team_id, role")
-    .eq("user_id", coachUserId);
+    .eq("user_id", coachUserId)
+    .eq("status", "active");
 
   if (coachError) {
     throw coachError;
   }
 
   const coachTeamIds = (coachMemberships || [])
-    .filter((m) => COACH_ROLES.has(m.role))
+    .filter((m) => hasAnyRole(m.role, HEALTH_DATA_ACCESS_ROLES))
     .map((m) => m.team_id)
     .filter(Boolean);
 
@@ -209,6 +212,7 @@ async function getSharedTeamIdForCoachAndAthlete(coachUserId, athleteUserId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteUserId)
+    .eq("status", "active")
     .in("team_id", coachTeamIds)
     .limit(1)
     .maybeSingle();
@@ -693,9 +697,7 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId) 
 async function handleWellness(method, userId, requestedAthleteId, body, query, _resourceId) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
-  const isCoach = ["coach", "assistant_coach", "head_coach", "admin"].includes(
-    role,
-  );
+  const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
 
   switch (method) {
     case "GET": {
@@ -1259,9 +1261,7 @@ async function handleTrends(method, userId, requestedAthleteId, body, query, _re
   try {
     if (targetAthleteId !== userId) {
       const role = await getUserRole(userId);
-      const isCoach = ["coach", "assistant_coach", "head_coach", "admin"].includes(
-        role,
-      );
+      const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
       if (!isCoach) {
         return createErrorResponse(
           "Not authorized to view another athlete's trends",

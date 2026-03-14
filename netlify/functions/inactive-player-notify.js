@@ -8,6 +8,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -39,6 +40,7 @@ async function verifyCoachCanNotify(userId, targetUserId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", userId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
   if (coachMembershipError || !coachMembership?.team_id) {
@@ -70,12 +72,9 @@ const handler = async (event, context) =>
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const userRole = await getUserRole(userId);
-      // Only coaches/admins can send notifications
-      if (
-        !["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)
-      ) {
+      if (!hasAnyRole(userRole, TEAM_OPERATIONS_ROLES)) {
         return createErrorResponse(
-          "Only coaches can send notifications",
+          "Only authorized team staff can send notifications",
           403,
           "authorization_error",
         );

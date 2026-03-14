@@ -2,17 +2,11 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Officials API
 // Handles referee/official scheduling and management
 
-const OFFICIALS_MANAGEMENT_ROLES = new Set([
-  "coach",
-  "assistant_coach",
-  "head_coach",
-  "manager",
-  "admin",
-]);
 const VALID_ASSIGNMENT_ROLES = new Set([
   "head_referee",
   "referee",
@@ -105,6 +99,7 @@ const canManageOfficials = async (userId) => {
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
 
@@ -112,7 +107,7 @@ const canManageOfficials = async (userId) => {
     throw error;
   }
 
-  return OFFICIALS_MANAGEMENT_ROLES.has(data?.role || "");
+  return TEAM_OPERATIONS_ROLES.includes(data?.role || "");
 };
 
 // Get all officials
@@ -721,7 +716,7 @@ const handler = async (event, context) => {
         if (event.httpMethod === "POST" && (path === "" || path === "/")) {
           if (!hasWriteAccess) {
             return createErrorResponse(
-              "Access denied. Coach/admin role required.",
+              "Access denied. Authorized team staff role required.",
               403,
               ErrorType.AUTHORIZATION,
             );
@@ -769,7 +764,7 @@ const handler = async (event, context) => {
         if (event.httpMethod === "GET" && path === "payments/summary") {
           if (!hasWriteAccess) {
             return createErrorResponse(
-              "Access denied. Coach/admin role required.",
+              "Access denied. Authorized team staff role required.",
               403,
               ErrorType.AUTHORIZATION,
             );
@@ -793,7 +788,7 @@ const handler = async (event, context) => {
         if (event.httpMethod === "POST" && path === "schedule") {
           if (!hasWriteAccess) {
             return createErrorResponse(
-              "Access denied. Coach/admin role required.",
+              "Access denied. Authorized team staff role required.",
               403,
               ErrorType.AUTHORIZATION,
             );
@@ -824,7 +819,7 @@ const handler = async (event, context) => {
           if (event.httpMethod === "PUT") {
             if (!hasWriteAccess) {
               return createErrorResponse(
-                "Access denied. Coach/admin role required.",
+                "Access denied. Authorized team staff role required.",
                 403,
                 ErrorType.AUTHORIZATION,
               );
@@ -836,7 +831,7 @@ const handler = async (event, context) => {
           if (event.httpMethod === "DELETE") {
             if (!hasWriteAccess) {
               return createErrorResponse(
-                "Access denied. Coach/admin role required.",
+                "Access denied. Authorized team staff role required.",
                 403,
                 ErrorType.AUTHORIZATION,
               );
@@ -884,7 +879,7 @@ const handler = async (event, context) => {
           if (event.httpMethod === "POST") {
             if (!hasWriteAccess) {
               return createErrorResponse(
-                "Access denied. Coach/admin role required.",
+                "Access denied. Authorized team staff role required.",
                 403,
                 ErrorType.AUTHORIZATION,
               );
@@ -909,7 +904,7 @@ const handler = async (event, context) => {
           if (event.httpMethod === "PUT") {
             if (!hasWriteAccess) {
               return createErrorResponse(
-                "Access denied. Coach/admin role required.",
+                "Access denied. Authorized team staff role required.",
                 403,
                 ErrorType.AUTHORIZATION,
               );
@@ -921,7 +916,7 @@ const handler = async (event, context) => {
           if (event.httpMethod === "DELETE") {
             if (!hasWriteAccess) {
               return createErrorResponse(
-                "Access denied. Coach/admin role required.",
+                "Access denied. Authorized team staff role required.",
                 403,
                 ErrorType.AUTHORIZATION,
               );
@@ -936,7 +931,7 @@ const handler = async (event, context) => {
         if (notifyMatch && event.httpMethod === "POST") {
           if (!hasWriteAccess) {
             return createErrorResponse(
-              "Access denied. Coach/admin role required.",
+              "Access denied. Authorized team staff role required.",
               403,
               ErrorType.AUTHORIZATION,
             );

@@ -7,6 +7,7 @@ import {
   handleValidationError,
 } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PROVIDERS = new Set(["auto", "gmail", "sendgrid", "smtp"]);
@@ -99,9 +100,9 @@ const handler = async (event, context) =>
         }
 
         const role = await getUserRole(userId);
-        if (!["admin", "coach"].includes(role || "")) {
+        if (!hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
           return createErrorResponse(
-            "Only admin/coach users can send test emails",
+            "Only authorized team staff can send test emails",
             403,
             "authorization_error",
           );

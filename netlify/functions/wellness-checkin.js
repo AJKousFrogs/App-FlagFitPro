@@ -5,6 +5,7 @@ import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 
 const handler = async (event, context) =>
   baseHandler(event, context, {
@@ -43,7 +44,7 @@ const handler = async (event, context) =>
 async function getCheckin(supabase, userId, requestedAthleteId, date, requestId) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
-  const isCoach = ["coach", "admin"].includes(role);
+  const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
   if (targetAthleteId !== userId && !isCoach) {
     return createErrorResponse(
       "Not authorized to view another athlete's wellness data",

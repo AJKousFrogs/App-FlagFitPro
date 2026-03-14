@@ -14,8 +14,7 @@ import { createErrorResponse } from "./utils/error-handler.js";
 import { calculateDateRange } from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-
-const STAFF_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
+import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 function isValidId(value) {
   return (
@@ -55,7 +54,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
   }
 
   const role = await getUserRole(requestUserId);
-  if (!STAFF_ROLES.has(role)) {
+  if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
     return { authorized: false };
   }
 
@@ -63,6 +62,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", requestUserId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
   if (requesterError || !requesterMembership?.team_id) {
@@ -73,6 +73,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
   if (targetError || !targetMembership?.team_id) {

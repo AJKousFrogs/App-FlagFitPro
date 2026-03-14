@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Scouting Reports API
 // Handles opponent scouting, game plans, and tendency analysis
@@ -14,13 +15,8 @@ async function verifyCoachAccess(userId) {
     .from("team_members")
     .select("role, team_id")
     .eq("user_id", userId)
-    .in("role", [
-      "coach",
-      "assistant_coach",
-      "offensive_coordinator",
-      "defensive_coordinator",
-      "admin",
-    ])
+    .eq("status", "active")
+    .in("role", COACH_ROUTE_ROLES)
     .limit(1)
     .single();
 

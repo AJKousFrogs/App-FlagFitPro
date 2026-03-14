@@ -6,6 +6,7 @@ import { createSuccessResponse, createErrorResponse, handleValidationError, hand
 import { checkTeamMembership as _checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getRateLimitType } from "./utils/rate-limiter.js";
+import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Games API
 // Handles game creation, retrieval, and statistics
@@ -17,6 +18,7 @@ async function getUserRole(userId) {
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
+    .eq("status", "active")
     .maybeSingle();
 
   if (error || !data) {
@@ -27,13 +29,7 @@ async function getUserRole(userId) {
 
 // Check if user is coach/admin
 function isCoachOrAdmin(role) {
-  return [
-    "coach",
-    "head_coach",
-    "assistant_coach",
-    "manager",
-    "admin",
-  ].includes(role);
+  return hasAnyRole(role, TEAM_OPERATIONS_ROLES);
 }
 
 function parseBoundedInt(value, fieldName, { min, max }) {

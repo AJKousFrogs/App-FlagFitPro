@@ -9,6 +9,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
+import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -33,11 +34,9 @@ const handler = async (event, context) =>
       const userRole = await getUserRole(userId);
 
       // Only coaches/admins can archive seasons
-      if (
-        !["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)
-      ) {
+      if (!hasAnyRole(userRole, COACH_ROUTE_ROLES)) {
         return createErrorResponse(
-          "Only coaches can archive seasons",
+          "Only authorized team staff can archive seasons",
           403,
           "authorization_error",
         );

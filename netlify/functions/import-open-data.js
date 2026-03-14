@@ -9,6 +9,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Flag-football specific thresholds
 const HIGH_SPEED_M_S = 5.5; // High-speed running threshold (m/s)
@@ -28,15 +29,13 @@ function isValidId(value) {
   );
 }
 
-const STAFF_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
-
 async function verifyAthleteAccess(requestUserId, athleteId) {
   if (athleteId === requestUserId) {
     return { authorized: true };
   }
 
   const role = await getUserRole(requestUserId);
-  if (!STAFF_ROLES.has(role)) {
+  if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
     return { authorized: false };
   }
 
@@ -44,6 +43,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", requestUserId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
   if (requesterError || !requesterMembership?.team_id) {
@@ -54,6 +54,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
   if (targetError || !targetMembership?.team_id) {

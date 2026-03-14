@@ -4,6 +4,7 @@ import { createSuccessResponse, createErrorResponse, handleValidationError } fro
 import { detectACWRTrigger } from "./utils/safety-override.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Calculate Readiness Score
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
@@ -182,7 +183,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
   }
 
   const role = await getUserRole(requestUserId);
-  if (!["coach", "assistant_coach", "head_coach", "admin"].includes(role)) {
+  if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
     return {
       authorized: false,
       message: "Not authorized to calculate readiness for another athlete",

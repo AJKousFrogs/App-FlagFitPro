@@ -3,6 +3,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 /**
  * Netlify Function: Calibration Logs API
@@ -92,15 +93,13 @@ function isValidId(value) {
   );
 }
 
-const STAFF_ROLES = new Set(["coach", "assistant_coach", "head_coach", "admin"]);
-
 async function verifyAthleteAccess(requestUserId, athleteId) {
   if (athleteId === requestUserId) {
     return { authorized: true };
   }
 
   const role = await getUserRole(requestUserId);
-  if (!STAFF_ROLES.has(role)) {
+  if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
     return { authorized: false };
   }
 
@@ -108,6 +107,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", requestUserId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
 
@@ -119,6 +119,7 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteId)
+    .eq("status", "active")
     .limit(1)
     .maybeSingle();
 
@@ -626,7 +627,7 @@ const handler = async (event, context) => {
         }
 
         const role = await getUserRole(userId);
-        if (!STAFF_ROLES.has(role)) {
+        if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
           return createErrorResponse(
             "Not authorized to view preset calibration stats",
             403,

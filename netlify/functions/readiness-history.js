@@ -15,8 +15,7 @@ import { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } from 
 import { successResponse } from "./utils/response-helper.js";
 import { canCoachViewReadiness, filterReadinessForCoach } from "./utils/consent-guard.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-
-const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"]);
+import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 /**
  * Get readiness history for an athlete
@@ -57,7 +56,7 @@ const handler = async (event, context) => {
 
         // Check if coach requesting another athlete's data
         const role = await getUserRole(userId);
-        const isCoach = COACH_ROLES.has(role);
+        const isCoach = hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES);
         if (athleteId !== userId && !isCoach) {
           return createErrorResponse(
             "Not authorized to view another athlete's readiness history",

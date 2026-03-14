@@ -8,8 +8,7 @@ import {
   handleValidationError,
 } from "./utils/error-handler.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
-
-const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"]);
+import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -40,9 +39,9 @@ const handler = async (event, context) =>
       const userRole = await getUserRole(userId);
 
       // Only coaches/admins can generate reports
-      if (!COACH_ROLES.has(userRole)) {
+      if (!hasAnyRole(userRole, COACH_ROUTE_ROLES)) {
         return createErrorResponse(
-          "Only coaches can generate season reports",
+          "Only authorized team staff can generate season reports",
           403,
           "authorization_error",
         );
@@ -88,12 +87,13 @@ const handler = async (event, context) =>
             .select("role")
             .eq("team_id", season.team_id)
             .eq("user_id", userId)
+            .eq("status", "active")
             .maybeSingle();
 
           if (membershipError) {
             throw membershipError;
           }
-          if (!membership || !COACH_ROLES.has(membership.role)) {
+          if (!membership || !hasAnyRole(membership.role, COACH_ROUTE_ROLES)) {
             return createErrorResponse(
               "Not authorized to generate reports for this season",
               403,

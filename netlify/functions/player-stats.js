@@ -3,6 +3,7 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseAthleteId } from "./utils/db-query-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Player Statistics API
 // Centralized endpoint for aggregating player statistics across all games
@@ -443,13 +444,10 @@ const handler = async (event, context) => {
           .from("team_members")
           .select("role")
           .eq("user_id", userId)
+          .eq("status", "active")
           .maybeSingle();
 
-        const isCoach =
-          teamMember?.role &&
-          ["coach", "head_coach", "assistant_coach", "admin"].includes(
-            teamMember.role,
-          );
+        const isCoach = hasAnyRole(teamMember?.role, COACH_ROUTE_ROLES);
 
         if (!isCoach) {
           return createErrorResponse(

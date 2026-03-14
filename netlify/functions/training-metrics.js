@@ -14,8 +14,7 @@ import { createErrorResponse } from "./utils/error-handler.js";
 import { executeQuery, parseAthleteId, parseDateParam } from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-
-const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"]);
+import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
 /**
  * Get training metrics for an athlete
@@ -50,7 +49,7 @@ const handler = async (event, context) => {
         // Cross-athlete reads are restricted to staff with team relationship.
         if (athleteId !== userId) {
           const role = await getUserRole(userId);
-          if (!COACH_ROLES.has(role)) {
+          if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
             return createErrorResponse(
               "Not authorized to view another athlete's metrics",
               403,
@@ -64,7 +63,8 @@ const handler = async (event, context) => {
               .from("team_members")
               .select("team_id")
               .eq("user_id", userId)
-              .in("role", [...COACH_ROLES]);
+              .eq("status", "active")
+              .in("role", LOAD_MANAGEMENT_ACCESS_ROLES);
           if (actorTeamsError) {
             throw actorTeamsError;
           }
@@ -87,7 +87,7 @@ const handler = async (event, context) => {
               .select("team_id")
               .eq("user_id", athleteId)
               .in("team_id", actorTeamIds)
-              .eq("is_active", true)
+              .eq("status", "active")
               .limit(1);
           if (targetMembershipError) {
             throw targetMembershipError;

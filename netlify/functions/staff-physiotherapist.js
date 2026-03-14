@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Staff Physiotherapist API
 // Handles physiotherapist dashboard: injury tracking, RTP protocols, risk assessment
@@ -14,13 +15,7 @@ async function verifyPhysioAccess(userId) {
     .from("team_members")
     .select("role, team_id")
     .eq("user_id", userId)
-    .in("role", [
-      "physiotherapist",
-      "athletic_trainer",
-      "coach",
-      "admin",
-      "staff",
-    ])
+    .in("role", HEALTH_DATA_ACCESS_ROLES)
     .eq("status", "active")
     .limit(1)
     .single();

@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 /**
  * ExerciseDB API Integration
@@ -54,10 +55,11 @@ async function verifyCoachRole(userId) {
     .from("team_members")
     .select("role")
     .eq("user_id", userId)
+    .eq("status", "active")
     .maybeSingle();
 
   const role = memberData?.role || "player";
-  if (!["coach", "admin", "head_coach", "assistant_coach"].includes(role)) {
+  if (!hasAnyRole(role, COACH_ROUTE_ROLES)) {
     return {
       authorized: false,
       error: createErrorResponse(
