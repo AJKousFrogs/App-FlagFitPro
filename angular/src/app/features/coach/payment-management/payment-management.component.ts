@@ -16,6 +16,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { Router } from "@angular/router";
 import {
   FormControl,
   FormGroup,
@@ -46,7 +47,6 @@ import { Textarea } from "primeng/textarea";
 import { firstValueFrom, startWith } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
-import { ContextService } from "../../../core/services/context.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ApiResponse } from "../../../core/models/common.models";
 import { RosterService } from "../../roster/roster.service";
@@ -924,10 +924,10 @@ const BALANCE_FILTERS = [
 })
 export class PaymentManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
-  private readonly context = inject(ContextService);
   private readonly roster = inject(RosterService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   // State
   readonly fees = signal<TeamFee[]>([]);
@@ -1259,17 +1259,13 @@ export class PaymentManagementComponent implements OnInit {
   }
 
   sendFeeReminders(fee: TeamFee): void {
-    this.toastService.success(
-      `Reminders sent for ${fee.name}`,
-      "Reminders Sent",
-    );
+    const draft = `Reminder: ${fee.name} is due on ${fee.dueDate}. Please review your payment status and settle any outstanding balance.`;
+    void this.openReminderComposer(draft, "Fee Reminder Draft");
   }
 
   sendPlayerReminder(balance: PlayerBalance): void {
-    this.toastService.success(
-      `Reminder sent to ${balance.playerName}`,
-      "Reminder Sent",
-    );
+    const draft = `Hi ${balance.playerName}, this is a reminder that your current outstanding balance is $${balance.balance}. Please check the latest team fee details.`;
+    void this.openReminderComposer(draft, "Player Reminder Draft");
   }
 
   markPlayerPaid(balance: PlayerBalance): void {
@@ -1287,14 +1283,62 @@ export class PaymentManagementComponent implements OnInit {
 
   sendAllReminders(): void {
     const count = this.playersOwing();
-    this.toastService.success(
-      `Reminders sent to ${count} players`,
-      "Reminders Sent",
-    );
+    if (count === 0) {
+      this.toastService.info("No outstanding balances need reminders.");
+      return;
+    }
+
+    const draft = `Team reminder: ${count} players still have outstanding balances. Please review payment details and update your status as soon as possible.`;
+    void this.openReminderComposer(draft, "Team Reminder Draft");
   }
 
   exportCSV(): void {
-    this.toastService.success("CSV file is being generated", "Export Started");
+    const rows = [
+      ["Player", "Fee", "Amount", "Method", "Date", "Reference"],
+      ...this.payments().map((payment) => [
+        payment.playerName,
+        payment.feeName,
+        payment.amount.toString(),
+        payment.method,
+        payment.date,
+        payment.reference || "",
+      ]),
+    ];
+    this.downloadCsv("payment-history.csv", rows);
+    this.toastService.success("Payment CSV downloaded.", "Export Ready");
+  }
+
+  private async openReminderComposer(
+    draft: string,
+    toastTitle: string,
+  ): Promise<void> {
+    await this.router.navigate(["/team-chat"], {
+      queryParams: {
+        source: "payments",
+        draft,
+      },
+    });
+    this.toastService.success(
+      "Reminder draft opened in team chat.",
+      toastTitle,
+    );
+  }
+
+  private downloadCsv(filename: string, rows: string[][]): void {
+    const content = rows
+      .map((row) =>
+        row
+          .map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`)
+          .join(","),
+      )
+      .join("\n");
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 
   // Helpers

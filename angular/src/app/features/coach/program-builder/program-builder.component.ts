@@ -1045,10 +1045,8 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   previewProgram(): void {
-    this.toastService.info(
-      "Program preview would open here",
-      "Preview",
-    );
+    this.selectedProgram.set(this.buildPreviewProgram());
+    this.showProgramDetailsDialog = true;
   }
 
   publishNewProgram(): void {
@@ -1121,8 +1119,8 @@ export class ProgramBuilderComponent implements OnInit {
     this.showComplianceDialog = true;
   }
 
-  openProgramMenu(_event: Event, _program: TrainingProgram): void {
-    // Menu would open here
+  openProgramMenu(_event: Event, program: TrainingProgram): void {
+    this.viewProgramDetails(program);
   }
 
   getInputValue(event: Event): string {
@@ -1173,6 +1171,26 @@ export class ProgramBuilderComponent implements OnInit {
     if (!program) return;
     this.showProgramDetailsDialog = false;
     this.editProgram(program);
+  }
+
+  private buildPreviewProgram(): TrainingProgram {
+    return {
+      id: this.formData.id || "preview-program",
+      name: this.formData.name || "Untitled Program",
+      description: this.formData.description,
+      type: this.formData.type,
+      status: "draft",
+      startDate: this.formData.startDate.toISOString(),
+      durationWeeks: this.formData.durationWeeks,
+      currentWeek: 1,
+      currentPhase: this.formData.phases[0]?.name || "",
+      goalEvent: this.formData.goalEvent || "",
+      assignedCount: this.selectedPlayerCount(),
+      compliance: 0,
+      phases: this.formData.phases.map((phase) => ({ ...phase })),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   }
 
   getStatusSeverity(

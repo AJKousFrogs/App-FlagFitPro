@@ -4,6 +4,11 @@ This document maps frontend routes to their primary data sources and backend API
 endpoints. The canonical API endpoint list lives in:
 `angular/src/app/core/services/api.service.ts` (`API_ENDPOINTS`).
 
+Use this together with:
+- `docs/CODEBASE_MAP.md` for feature/domain ownership
+- `docs/SINGLE_SOURCE_OF_TRUTH.md` for canonical write authority
+- `docs/DRIFT_REGISTER.md` for known route/workflow ambiguity hotspots
+
 ### Frontend Entry + Routing
 - FE entry: `angular/src/main.ts`
 - Route config: `angular/src/app/app.routes.ts`

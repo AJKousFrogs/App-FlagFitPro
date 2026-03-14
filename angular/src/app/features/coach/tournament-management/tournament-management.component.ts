@@ -16,6 +16,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { Router } from "@angular/router";
 import { ToastService } from "../../../core/services/toast.service";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -117,6 +118,8 @@ const POSITIONS = [
   { label: "Rush1", value: "Rush1" },
   { label: "Rush2", value: "Rush2" },
 ];
+
+const TOURNAMENT_LINEUP_STORAGE_KEY = "flagfit:tournament-lineup:";
 
 @Component({
   selector: "app-tournament-management",
@@ -635,6 +638,7 @@ export class TournamentManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   // State
   readonly tournaments = signal<Tournament[]>([]);
@@ -754,20 +758,38 @@ export class TournamentManagementComponent implements OnInit {
   }
 
   sendPendingReminders(): void {
-    this.toastService.success(
-      `Reminders sent to ${this.pendingRsvps().length} pending players`,
-      "Reminders Sent",
-    );
+    const count = this.pendingRsvps().length;
+    if (count === 0) {
+      this.toastService.info("No pending RSVPs need a reminder.");
+      return;
+    }
+
+    const tournamentName = this.selectedTournament()?.name || "the tournament";
+    const draft = `Reminder: ${count} RSVP responses are still pending for ${tournamentName}. Please update your availability as soon as possible.`;
+    void this.openReminderComposer(draft, "Tournament Reminder Draft");
   }
 
   sendNudge(rsvp: TournamentRsvp): void {
-    this.toastService.success(
-      `Reminder sent to ${rsvp.playerName}`,
-      "Nudge Sent",
-    );
+    const tournamentName = this.selectedTournament()?.name || "the tournament";
+    const draft = `Hi ${rsvp.playerName}, this is a reminder to update your RSVP for ${tournamentName}.`;
+    void this.openReminderComposer(draft, "Player Reminder Draft");
   }
 
   saveLineup(): void {
+    const tournament = this.selectedTournament();
+    if (!tournament) {
+      this.toastService.warn("Open a tournament before saving the lineup.");
+      return;
+    }
+
+    localStorage.setItem(
+      `${TOURNAMENT_LINEUP_STORAGE_KEY}${tournament.id}`,
+      JSON.stringify({
+        slots: this.lineupSlots(),
+        notes: this.lineupNotes,
+        savedAt: new Date().toISOString(),
+      }),
+    );
     this.toastService.success(
       "Tournament lineup has been saved",
       "Lineup Saved",
@@ -798,8 +820,57 @@ export class TournamentManagementComponent implements OnInit {
     tab: "overview" | "rsvps" | "lineup" | "schedule",
   ): void {
     this.selectedTournament.set(tournament);
+    this.hydrateLineupState(tournament.id);
     this.detailTab.set(tab);
     this.showDetailDialog = true;
+  }
+
+  private async openReminderComposer(
+    draft: string,
+    toastTitle: string,
+  ): Promise<void> {
+    this.showDetailDialog = false;
+    await this.router.navigate(["/team-chat"], {
+      queryParams: {
+        source: "tournaments",
+        draft,
+      },
+    });
+    this.toastService.success(
+      "Reminder draft opened in team chat.",
+      toastTitle,
+    );
+  }
+
+  private hydrateLineupState(tournamentId: string): void {
+    const savedState = localStorage.getItem(
+      `${TOURNAMENT_LINEUP_STORAGE_KEY}${tournamentId}`,
+    );
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState) as {
+          slots?: LineupSlot[];
+          notes?: string;
+        };
+        this.lineupSlots.set(parsed.slots || this.getDefaultLineupSlots());
+        this.lineupNotes = parsed.notes || "";
+        return;
+      } catch (_error) {
+        // Fall back to defaults if the cached state is malformed.
+      }
+    }
+
+    this.lineupSlots.set(this.getDefaultLineupSlots());
+    this.lineupNotes = "";
+  }
+
+  private getDefaultLineupSlots(): LineupSlot[] {
+    return POSITIONS.map((position, index) => ({
+      position: position.value,
+      playerId: null,
+      note: "",
+      isStarter: index < 7,
+    }));
   }
 
   // Helpers

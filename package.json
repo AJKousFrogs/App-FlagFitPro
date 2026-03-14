@@ -1,6 +1,6 @@
 {
   "name": "flagfit-pro",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "type": "module",
   "description": "FlagFit Pro - Angular 21 + PrimeNG 21 training platform with Supabase backend",
   "main": "index.js",

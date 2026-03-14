@@ -1202,9 +1202,26 @@ export class CalendarCoachComponent implements OnInit {
   }
 
   sendRsvpReminder(): void {
+    const event = this.selectedEvent();
+    const pendingCount = this.pendingCount();
+    if (!event || pendingCount === 0) {
+      this.toastService.info("No pending RSVPs need a reminder.");
+      return;
+    }
+
+    const draft = `Reminder: ${pendingCount} RSVP responses are still pending for ${event.title} on ${event.date}. Please update your availability.`;
+    this.showRsvpDialog = false;
+    void this.router.navigate(["/team-chat"], {
+      queryParams: {
+        source: "calendar",
+        event: event.id,
+        group: "pending",
+        draft,
+      },
+    });
     this.toastService.success(
-      `Reminders sent to ${this.pendingCount()} players`,
-      "Reminders Sent",
+      "Reminder draft opened in team chat.",
+      "Reminder Draft",
     );
   }
 
@@ -1221,7 +1238,38 @@ export class CalendarCoachComponent implements OnInit {
   }
 
   exportRsvpList(): void {
-    this.toastService.success("RSVP list is being exported", "Export Started");
+    const event = this.selectedEvent();
+    if (!event) {
+      this.toastService.warn("Open an event before exporting RSVPs.");
+      return;
+    }
+
+    const rows = [
+      ["Player", "Status", "Arrival Time", "Needs Ride", "Offers Ride", "Notes"],
+      ...this.rsvps().map((rsvp) => [
+        rsvp.playerName,
+        rsvp.status,
+        rsvp.arrivalTime || "",
+        rsvp.needsRide ? "yes" : "no",
+        rsvp.offersRide ? "yes" : "no",
+        rsvp.notes || "",
+      ]),
+    ];
+    const content = rows
+      .map((row) =>
+        row
+          .map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`)
+          .join(","),
+      )
+      .join("\n");
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${event.title.toLowerCase().replace(/\s+/g, "-")}-rsvps.csv`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    this.toastService.success("RSVP export downloaded.", "Export Ready");
   }
 
   // Helpers

@@ -7,6 +7,20 @@
 
 ---
 
+## Current Companion Docs
+
+This document is the system overview, not the only architecture authority.
+
+For current codebase grounding, also use:
+- `docs/SINGLE_SOURCE_OF_TRUTH.md`
+- `docs/CODEBASE_MAP.md`
+- `docs/REPO_DISCOVERY_GUIDE.md`
+- `docs/DRIFT_REGISTER.md`
+- `docs/DATA_CONTINUITY_MODEL.md`
+- `docs/ROLE_AUTHORIZATION_MODEL.md`
+
+---
+
 ## 📋 Table of Contents
 
 1. [System Overview](#system-overview)

@@ -22,6 +22,9 @@
 | Understand all features & business logic | [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)     |
 | Set up my dev environment                | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) |
 | Understand the architecture              | [ARCHITECTURE.md](./ARCHITECTURE.md)                       |
+| Understand canonical ownership           | [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md)   |
+| Map features to code and backend         | [CODEBASE_MAP.md](./CODEBASE_MAP.md)                       |
+| Navigate the repo quickly                | [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md)       |
 | Map routes to data sources               | [ROUTE_MAP.md](./ROUTE_MAP.md)                             |
 | Work with the API                        | [API.md](./API.md)                                         |
 | Set up the database                      | [DATABASE_SETUP.md](./DATABASE_SETUP.md)                   |
@@ -49,6 +52,10 @@
 | Document                                               | Description                              |
 | ------------------------------------------------------ | ---------------------------------------- |
 | [ARCHITECTURE.md](./ARCHITECTURE.md)                   | System architecture overview             |
+| [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md) | Cross-domain canonical ownership rules |
+| [CODEBASE_MAP.md](./CODEBASE_MAP.md)                   | Feature/domain → Angular/backend/data map |
+| [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md)   | Fast repo navigation guide               |
+| [DRIFT_REGISTER.md](./DRIFT_REGISTER.md)               | Active ambiguity and duplication hotspots |
 | [DATA_CONTINUITY_MODEL.md](./DATA_CONTINUITY_MODEL.md) | Cross-surface source-of-truth rules      |
 | [ROLE_AUTHORIZATION_MODEL.md](./ROLE_AUTHORIZATION_MODEL.md) | Admin/coach/staff/player role authority |
 | [ROUTE_MAP.md](./ROUTE_MAP.md)                         | Routes → data sources & API endpoints     |
@@ -147,6 +154,10 @@
 ├── DOCS_INDEX.md                 ← YOU ARE HERE (single source of truth)
 ├── FEATURE_DOCUMENTATION.md      ← 49 features + Appendix E (6500+ lines)
 ├── ARCHITECTURE.md
+├── SINGLE_SOURCE_OF_TRUTH.md
+├── CODEBASE_MAP.md
+├── REPO_DISCOVERY_GUIDE.md
+├── DRIFT_REGISTER.md
 ├── DATA_CONTINUITY_MODEL.md
 ├── ROLE_AUTHORIZATION_MODEL.md
 ├── ROUTE_MAP.md                  ← Routes → data sources

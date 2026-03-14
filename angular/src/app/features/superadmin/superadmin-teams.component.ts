@@ -23,6 +23,11 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../shared/components/ui-components";
 import { SuperadminService } from "../../core/services/superadmin.service";
 import { ToastService } from "../../core/services/toast.service";
 
@@ -52,6 +57,9 @@ interface Team {
     IconButtonComponent,
     EmptyStateComponent,
     AppLoadingComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
@@ -198,6 +206,50 @@ interface Team {
             </p-table>
           }
         </app-card-shell>
+
+        <app-dialog
+          [(visible)]="showTeamDialog"
+          [modal]="true"
+          [draggable]="false"
+          [blockScroll]="true"
+          styleClass="superadmin-team-dialog"
+          ariaLabel="Team details"
+        >
+          <app-dialog-header
+            icon="building"
+            [title]="selectedTeam?.name || 'Team Details'"
+            subtitle="Review team status and onboarding context."
+            (close)="showTeamDialog = false"
+          />
+          @if (selectedTeam; as team) {
+            <div class="goal-details">
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Country</span>
+                <span class="goal-detail-value">{{ team.country_code }}</span>
+              </div>
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Status</span>
+                <span class="goal-detail-value">{{ team.status }}</span>
+              </div>
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Members</span>
+                <span class="goal-detail-value">{{ team.member_count }}</span>
+              </div>
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Olympic Track</span>
+                <span class="goal-detail-value">{{ formatOlympicTrack(team.olympic_track) }}</span>
+              </div>
+            </div>
+          }
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Close"
+            primaryLabel="Done"
+            primaryIcon="check"
+            (cancel)="showTeamDialog = false"
+            (primary)="showTeamDialog = false"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>
   `,
@@ -212,6 +264,8 @@ export class SuperadminTeamsComponent implements OnInit {
   filteredTeams: Team[] = [];
   searchQuery = "";
   statusFilter: "all" | "active" | "pending" | "suspended" = "all";
+  showTeamDialog = false;
+  selectedTeam: Team | null = null;
   isLoading = this.superadminService.isLoading;
 
   ngOnInit(): void {
@@ -296,6 +350,7 @@ export class SuperadminTeamsComponent implements OnInit {
   }
 
   viewTeam(_team: Team): void {
-    this.toast.info("Team view functionality coming soon.", "Team details");
+    this.selectedTeam = _team;
+    this.showTeamDialog = true;
   }
 }

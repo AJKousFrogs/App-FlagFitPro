@@ -21,6 +21,11 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+  AppDialogComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
+} from "../../shared/components/ui-components";
 import { SuperadminService } from "../../core/services/superadmin.service";
 import { ToastService } from "../../core/services/toast.service";
 
@@ -51,6 +56,9 @@ interface User {
     IconButtonComponent,
     EmptyStateComponent,
     AppLoadingComponent,
+    AppDialogComponent,
+    DialogHeaderComponent,
+    DialogFooterComponent,
   ],
   template: `
     <app-main-layout>
@@ -227,6 +235,104 @@ interface User {
             </div>
           </app-card-shell>
         </div>
+
+        <app-dialog
+          [(visible)]="showUserDialog"
+          [modal]="true"
+          [draggable]="false"
+          [blockScroll]="true"
+          styleClass="superadmin-user-dialog"
+          ariaLabel="User details"
+        >
+          <app-dialog-header
+            icon="users"
+            [title]="selectedUser?.full_name || 'User Details'"
+            subtitle="Review user account information and membership context."
+            (close)="showUserDialog = false"
+          />
+          @if (selectedUser; as user) {
+            <div class="goal-details">
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Email</span>
+                <span class="goal-detail-value">{{ user.email }}</span>
+              </div>
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Role</span>
+                <span class="goal-detail-value">{{ user.role }}</span>
+              </div>
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Status</span>
+                <span class="goal-detail-value">{{ user.status }}</span>
+              </div>
+              <div class="goal-detail-card">
+                <span class="goal-detail-label">Team</span>
+                <span class="goal-detail-value">{{ user.team_name || "-" }}</span>
+              </div>
+            </div>
+          }
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Close"
+            primaryLabel="Edit User"
+            primaryIcon="pencil"
+            (cancel)="showUserDialog = false"
+            (primary)="openEditUserDialog()"
+          />
+        </app-dialog>
+
+        <app-dialog
+          [(visible)]="showEditDialog"
+          [modal]="true"
+          [draggable]="false"
+          [blockScroll]="true"
+          styleClass="superadmin-user-dialog"
+          ariaLabel="Edit user"
+        >
+          <app-dialog-header
+            icon="user-edit"
+            [title]="selectedUser?.full_name || 'Edit User'"
+            subtitle="Adjust the local review state for this user."
+            (close)="showEditDialog = false"
+          />
+          @if (selectedUser) {
+            <div class="goal-form">
+              <div class="form-field">
+                <label for="superadmin-user-role">Role</label>
+                <select
+                  id="superadmin-user-role"
+                  class="w-full"
+                  [value]="editRole"
+                  (change)="editRole = $any($event.target).value"
+                >
+                  @for (option of roleOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="superadmin-user-status">Status</label>
+                <select
+                  id="superadmin-user-status"
+                  class="w-full"
+                  [value]="editStatus"
+                  (change)="editStatus = $any($event.target).value"
+                >
+                  @for (option of statusOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          }
+          <app-dialog-footer
+            dialogFooter
+            cancelLabel="Cancel"
+            primaryLabel="Save Changes"
+            primaryIcon="check"
+            (cancel)="showEditDialog = false"
+            (primary)="saveUserEdits()"
+          />
+        </app-dialog>
       </div>
     </app-main-layout>
   `,
@@ -240,7 +346,23 @@ export class SuperadminUsersComponent implements OnInit {
   filteredUsers: User[] = [];
   searchQuery = "";
   roleFilter: "all" | "player" | "coach" | "admin" | "superadmin" = "all";
+  showUserDialog = false;
+  showEditDialog = false;
+  selectedUser: User | null = null;
+  editRole: User["role"] = "player";
+  editStatus: User["status"] = "active";
   isLoading = this.superadminService.isLoading;
+  readonly roleOptions = [
+    { label: "Player", value: "player" },
+    { label: "Coach", value: "coach" },
+    { label: "Admin", value: "admin" },
+    { label: "Superadmin", value: "superadmin" },
+  ];
+  readonly statusOptions = [
+    { label: "Active", value: "active" },
+    { label: "Suspended", value: "suspended" },
+    { label: "Pending", value: "pending" },
+  ];
 
   get totalUsers(): number {
     return this.users.length;
@@ -353,10 +475,31 @@ export class SuperadminUsersComponent implements OnInit {
   }
 
   editUser(_user: User): void {
-    this.toast.info("User edit functionality coming soon.", "User edit");
+    this.selectedUser = _user;
+    this.editRole = _user.role;
+    this.editStatus = _user.status;
+    this.showEditDialog = true;
   }
 
   viewUser(_user: User): void {
-    this.toast.info("User view functionality coming soon.", "User details");
+    this.selectedUser = _user;
+    this.showUserDialog = true;
+  }
+
+  openEditUserDialog(): void {
+    if (!this.selectedUser) return;
+    this.editRole = this.selectedUser.role;
+    this.editStatus = this.selectedUser.status;
+    this.showUserDialog = false;
+    this.showEditDialog = true;
+  }
+
+  saveUserEdits(): void {
+    if (!this.selectedUser) return;
+    this.selectedUser.role = this.editRole;
+    this.selectedUser.status = this.editStatus;
+    this.filterUsers();
+    this.showEditDialog = false;
+    this.toast.success("User details updated locally.", "User Updated");
   }
 }

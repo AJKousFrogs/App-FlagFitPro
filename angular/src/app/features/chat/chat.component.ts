@@ -24,6 +24,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 
@@ -96,9 +97,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private presenceService = inject(PresenceService);
   private notificationService = inject(TeamNotificationService);
   private dialogService = inject(DialogService);
+  private route = inject(ActivatedRoute);
 
   // State from services
   readonly currentChannel = this.channelService.currentChannel;
+  readonly channels = this.channelService.channels;
   readonly messages = this.channelService.messages;
   readonly pinnedMessages = this.channelService.pinnedMessages;
   readonly announcementChannels = this.channelService.announcementChannels;
@@ -301,6 +304,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadChannels();
+    await this.applyRouteContext();
 
     // Start presence tracking for the team
     const teamId = await this.getCurrentTeamId();
@@ -338,6 +342,41 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     } catch (_error) {
       this.toastService.error(TOAST.ERROR.CHANNEL_LOAD_FAILED);
+    }
+  }
+
+  private async applyRouteContext(): Promise<void> {
+    const queryMap = this.route.snapshot.queryParamMap;
+    const requestedChannelId = queryMap.get("channel");
+    const source = queryMap.get("source");
+    const group = queryMap.get("group");
+    const draft = queryMap.get("draft");
+
+    if (requestedChannelId) {
+      const channel = this.channels().find((item) => item.id === requestedChannelId);
+      if (channel) {
+        await this.selectChannel(channel);
+      }
+    } else if (source) {
+      const fallbackChannel =
+        this.teamChannels()[0] ||
+        this.announcementChannels()[0] ||
+        this.coachChannels()[0] ||
+        this.dmChannels()[0];
+      if (fallbackChannel && fallbackChannel.id !== this.currentChannel()?.id) {
+        await this.selectChannel(fallbackChannel);
+      }
+    }
+
+    if (draft) {
+      this.newMessage = draft;
+    }
+
+    if (source === "calendar" && group) {
+      this.toastService.info(
+        `Opened team chat for ${group} RSVP follow-up.`,
+        "Chat Ready",
+      );
     }
   }
 

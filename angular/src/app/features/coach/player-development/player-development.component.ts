@@ -701,6 +701,56 @@ const COMPARE_OPTIONS = [
           (primary)="saveNote()"
         />
       </app-dialog>
+
+      <app-dialog
+        [(visible)]="showAssessmentDialog"
+        [modal]="true"
+        styleClass="development-assessment-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Add skill assessment"
+      >
+        <app-dialog-header
+          icon="chart-bar"
+          title="Record Skill Assessment"
+          subtitle="Add or update a player skill grade from the current review session."
+          (close)="showAssessmentDialog = false"
+        />
+        <div class="note-form">
+          <div class="form-field">
+            <label>Skill</label>
+            <input
+              type="text"
+              pInputText
+              [value]="assessmentSkill"
+              (input)="onAssessmentSkillChange(getInputValue($event))"
+              placeholder="e.g. Route Running"
+            />
+          </div>
+          <div class="form-field">
+            <label>Score</label>
+            <input
+              type="number"
+              pInputText
+              min="0"
+              max="100"
+              [value]="assessmentScore"
+              (input)="onAssessmentScoreChange(getInputValue($event))"
+              placeholder="0-100"
+            />
+          </div>
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Assessment"
+          primaryIcon="check"
+          (cancel)="showAssessmentDialog = false"
+          (primary)="saveAssessment()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./player-development.component.scss",
@@ -732,7 +782,10 @@ export class PlayerDevelopmentComponent implements OnInit {
   showGoalDialog = false;
   showNoteDialog = false;
   showGoalDetailsDialog = false;
+  showAssessmentDialog = false;
   noteContent = "";
+  assessmentSkill = "";
+  assessmentScore = "75";
   goalDialogMode: "create" | "edit" = "create";
   readonly selectedGoal = signal<DevelopmentGoal | null>(null);
 
@@ -992,6 +1045,14 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.noteContent = value;
   }
 
+  onAssessmentSkillChange(value: string): void {
+    this.assessmentSkill = value;
+  }
+
+  onAssessmentScoreChange(value: string): void {
+    this.assessmentScore = value;
+  }
+
   getInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
@@ -1094,23 +1155,107 @@ export class PlayerDevelopmentComponent implements OnInit {
   }
 
   saveNote(): void {
-    if (!this.noteContent.trim()) return;
+    const content = this.noteContent.trim();
+    if (!content) return;
+
+    const nextNote: CoachNote = {
+      id: this.createClientId("note"),
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+      coachName: "Coaching Staff",
+      content,
+    };
+    this.notes.update((notes) => [nextNote, ...notes]);
     this.toastService.success(
       "Development note has been added",
       "Note Saved",
     );
     this.showNoteDialog = false;
+    this.noteContent = "";
   }
 
   newAssessment(): void {
-    this.toastService.info("Opening assessment form", "New Assessment");
+    this.assessmentSkill = "";
+    this.assessmentScore = "75";
+    this.showAssessmentDialog = true;
   }
 
   exportReport(): void {
-    this.toastService.success(
-      "Development report is being generated",
-      "Export Started",
+    const player = this.selectedPlayer();
+    if (!player) {
+      this.toastService.warn("Select a player before exporting a report.");
+      return;
+    }
+
+    const lines = [
+      `Player Development Report: ${player.name}`,
+      `Position: ${player.position}`,
+      `Overall Progress: ${player.overallProgress}%`,
+      `Goals Completed: ${player.goalsCompleted}/${player.goalsTotal}`,
+      `Improvement This Month: ${player.improvementThisMonth}%`,
+      `Focus Area: ${player.focusArea}`,
+      "",
+      "Goals",
+      ...this.playerGoals().map(
+        (goal) =>
+          `- ${goal.metric}: ${goal.currentValue} -> ${goal.targetValue} (${goal.progress}%, ${this.getStatusLabel(goal.status)})`,
+      ),
+      "",
+      "Skill Assessments",
+      ...this.skillAssessments().map(
+        (assessment) =>
+          `- ${assessment.skill}: ${assessment.score}% (${assessment.grade})`,
+      ),
+      "",
+      "Coach Notes",
+      ...this.coachNotes().map(
+        (note) => `- ${note.date} ${note.coachName}: ${note.content}`,
+      ),
+    ];
+    this.downloadTextFile(
+      `${player.name.toLowerCase().replace(/\s+/g, "-")}-development-report.txt`,
+      lines.join("\n"),
     );
+    this.toastService.success("Development report downloaded.", "Export Ready");
+  }
+
+  saveAssessment(): void {
+    const skill = this.assessmentSkill.trim();
+    const score = Number(this.assessmentScore);
+    if (!skill) {
+      this.toastService.warn("Enter a skill before saving the assessment.");
+      return;
+    }
+    if (!Number.isFinite(score) || score < 0 || score > 100) {
+      this.toastService.warn("Assessment score must be between 0 and 100.");
+      return;
+    }
+
+    const nextAssessment: SkillAssessment = {
+      skill,
+      score,
+      grade: this.getAssessmentGrade(score),
+    };
+    this.assessments.update((assessments) => {
+      const existingIndex = assessments.findIndex(
+        (assessment) =>
+          assessment.skill.toLowerCase() === skill.toLowerCase(),
+      );
+      if (existingIndex === -1) {
+        return [...assessments, nextAssessment].sort((a, b) =>
+          a.skill.localeCompare(b.skill),
+        );
+      }
+
+      return assessments.map((assessment, index) =>
+        index === existingIndex ? nextAssessment : assessment,
+      );
+    });
+    this.showAssessmentDialog = false;
+    this.toastService.success("Assessment saved.", "Assessment Updated");
   }
 
   // Helpers
@@ -1132,6 +1277,28 @@ export class PlayerDevelopmentComponent implements OnInit {
       completed: "Completed",
     };
     return labels[status] || status;
+  }
+
+  private getAssessmentGrade(score: number): string {
+    if (score >= 90) return "A";
+    if (score >= 80) return "B+";
+    if (score >= 70) return "B";
+    if (score >= 60) return "C";
+    return "Needs Work";
+  }
+
+  private createClientId(prefix: string): string {
+    return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  private downloadTextFile(filename: string, content: string): void {
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 
   getStatusSeverity(

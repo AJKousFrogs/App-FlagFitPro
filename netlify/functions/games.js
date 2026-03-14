@@ -19,6 +19,8 @@ async function getUserRole(userId) {
     .select("role")
     .eq("user_id", userId)
     .eq("status", "active")
+    .order("updated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   if (error || !data) {

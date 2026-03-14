@@ -1,7 +1,7 @@
 {
   "name": "flagfit-pro-angular",
   "type": "module",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "FlagFit Pro - Primary application built with Angular 21 + PrimeNG 21",
   "packageManager": "npm@11.4.2",
   "engines": {
