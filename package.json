@@ -159,7 +159,7 @@
     "@types/node": "^22.15.0",
     "chokidar": "^5.0.0",
     "concurrently": "^9.2.1",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.3",
     "express": "^5.2.1",
     "glob": "^13.0.1",
     "globals": "^17.3.0",
