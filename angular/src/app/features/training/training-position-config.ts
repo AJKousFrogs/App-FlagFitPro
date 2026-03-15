@@ -323,7 +323,7 @@ const ATHLETE_CONFIG: TrainingPositionUIConfig = {
     {
       icon: "💚",
       label: "Recovery",
-      route: "/travel/recovery",
+      route: "/wellness",
       tooltip: "Recovery protocols",
     },
     {

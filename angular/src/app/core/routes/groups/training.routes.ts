@@ -65,7 +65,7 @@ export const trainingRoutes: Routes = [
         (m) => m.WorkoutComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Frequently accessed
+    data: { preload: false, entry: "internal" }, // Secondary entry under training workspace
   },
   {
     path: "exercise-library",
@@ -74,7 +74,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ExerciseLibraryComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low", entry: "internal" }, // Secondary feature
+    data: { preload: false, entry: "internal" }, // Reference library
   },
   {
     path: "exercisedb",
@@ -135,7 +135,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingLogComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Frequently accessed
+    data: { preload: false, entry: "internal" }, // Accessed from training workflow
   },
   {
     path: "training/safety",
@@ -176,12 +176,9 @@ export const trainingRoutes: Routes = [
   },
   {
     path: "training/videos/curation",
-    loadComponent: () =>
-      import("../../../features/training/video-curation/video-curation.component").then(
-        (m) => m.VideoCurationComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Coach feature
+    redirectTo: "training/videos",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "training/videos/suggest",

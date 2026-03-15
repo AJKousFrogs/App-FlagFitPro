@@ -97,18 +97,18 @@ export const ROUTES = {
   TODAY: "/todays-practice",
 
   // Analytics & Performance
-  ANALYTICS: "/analytics",
-  ACWR: "/acwr",
-  ACWR_DASHBOARD: "/acwr-dashboard",
-  PERFORMANCE_TRACKING: "/performance-tracking",
+  ANALYTICS: "/performance/insights",
+  ACWR: "/performance/load",
+  ACWR_DASHBOARD: "/performance/load",
+  PERFORMANCE_TRACKING: "/performance/tests",
   GAME_TRACKER: "/game-tracker",
 
   // Team Management
   ROSTER: "/roster",
-  DEPTH_CHART: "/depth-chart",
+  DEPTH_CHART: "/team/workspace",
   ATTENDANCE: "/attendance",
   TEAM_WORKSPACE: "/team/workspace",
-  TEAM_CREATE: "/team/create",
+  TEAM_CREATE: "/team/workspace",
 
   // User
   PROFILE: "/profile",
@@ -133,13 +133,15 @@ export const ROUTES = {
   // Coach Features
   COACH: "/coach",
   COACH_ANALYTICS: "/coach/analytics",
+  COACH_PLANNING: "/coach/planning",
+  COACH_TEAM_WORKSPACE: "/team/workspace",
   COACH_TEAM_MANAGEMENT: "/coach/team",
-  COACH_PRACTICE_PLANNER: "/coach/practice-planner",
-  COACH_INJURY_MANAGEMENT: "/coach/injury-management",
+  COACH_PRACTICE_PLANNER: "/coach/planning",
+  COACH_INJURY_MANAGEMENT: "/coach/analytics",
   COACH_KNOWLEDGE_BASE: "/knowledge",
-  COACH_PROGRAM_BUILDER: "/coach/program-builder",
-  COACH_PLAYER_DEVELOPMENT: "/coach/player-development",
-  COACH_PAYMENT_MANAGEMENT: "/coach/payment-management",
+  COACH_PROGRAM_BUILDER: "/coach/planning",
+  COACH_PLAYER_DEVELOPMENT: "/coach/analytics",
+  COACH_PAYMENT_MANAGEMENT: "/team/workspace",
 
   // Staff
   STAFF_NUTRITIONIST: "/staff/nutritionist",
@@ -155,13 +157,13 @@ export const ROUTES = {
   SUPERADMIN_SETTINGS: "/superadmin/settings",
 
   // Other
-  EQUIPMENT: "/equipment",
+  EQUIPMENT: "/team/workspace",
   ACHIEVEMENTS: "/achievements",
   EXERCISE_LIBRARY: "/exercise-library",
   DATA_IMPORT: "/data-import",
   RETURN_TO_PLAY: "/return-to-play",
   HELP: "/help",
-  OFFICIALS: "/officials",
+  OFFICIALS: "/team/workspace",
   PAYMENTS: "/payments",
   NOT_FOUND: "/404",
 } as const;

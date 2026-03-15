@@ -14,31 +14,21 @@ export const gameRoutes: Routes = [
   },
   {
     path: "game/nutrition",
-    loadComponent: () =>
-      import("../../../features/game/tournament-nutrition/tournament-nutrition.component").then(
-        (m) => m.TournamentNutritionComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Only needed on tournament days - load on demand
+    redirectTo: "wellness",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "travel/recovery",
-    loadComponent: () =>
-      import("../../../features/travel/travel-recovery/travel-recovery.component").then(
-        (m) => m.TravelRecoveryComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Only needed when traveling - load on demand
+    redirectTo: "wellness",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "game-tracker",
-    loadComponent: () =>
-      import("../../../features/game-tracker/game-tracker.component").then(
-        (m) => m.GameTrackerComponent,
-      ),
-    canActivate: [authGuard],
-    resolve: { prefetch: gameTrackerPrefetchResolver },
-    data: { preload: false, entry: "internal" }, // Heavy component, don't preload
+    redirectTo: "tournaments",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "tournaments",
@@ -52,11 +42,8 @@ export const gameRoutes: Routes = [
   // === NEW ROUTE: Live Game Tracker ===
   {
     path: "game-tracker/live",
-    loadComponent: () =>
-      import("../../../features/game-tracker/live-game-tracker.component").then(
-        (m) => m.LiveGameTrackerComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Heavy real-time component
+    redirectTo: "tournaments",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
 ];

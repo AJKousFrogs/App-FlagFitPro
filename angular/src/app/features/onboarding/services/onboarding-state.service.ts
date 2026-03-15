@@ -44,7 +44,7 @@ export class OnboardingStateService {
   /** Current step index */
   readonly currentStep = signal(0);
 
-  /** Step definitions - player has 9 steps, staff has 3 */
+  /** Step definitions - player has 7 steps, staff has 3 */
   readonly steps = signal<OnboardingStep[]>([...PLAYER_STEPS]);
 
   readonly lastSaved = signal<Date | null>(null);
@@ -284,9 +284,15 @@ export class OnboardingStateService {
       Object.assign(this.formData, draft.data);
 
       if (draft.currentStep !== undefined) {
-        this.currentStep.set(draft.currentStep);
+        const maxStepIndex = Math.max(0, this.steps().length - 1);
+        const restoredStep = Math.min(
+          Math.max(Number(draft.currentStep) || 0, 0),
+          maxStepIndex,
+        );
+
+        this.currentStep.set(restoredStep);
         const stepList = this.steps().map((s) => ({ ...s }));
-        for (let i = 0; i < draft.currentStep; i++) {
+        for (let i = 0; i < restoredStep; i++) {
           stepList[i].completed = true;
         }
         this.steps.set(stepList);

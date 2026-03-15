@@ -2,7 +2,7 @@
       <div class="onboarding-page ui-page-shell ui-page-stack">
         <app-page-header
           title="Set Up Your FlagFit Profile"
-          subtitle="Takes about 3-5 minutes. We'll personalize your training and team access."
+          subtitle="Takes about 2-3 minutes. We'll set up your training baseline and team access."
           icon="pi-user-plus"
         ></app-page-header>
 
@@ -94,13 +94,9 @@
             } @else if (state.currentStep() === 3 && state.isPlayer()) {
               <app-onboarding-step-health />
             } @else if (state.currentStep() === 4 && state.isPlayer()) {
-              <app-onboarding-step-equipment />
-            } @else if (state.currentStep() === 5 && state.isPlayer()) {
               <app-onboarding-step-goals />
-            } @else if (state.currentStep() === 6 && state.isPlayer()) {
+            } @else if (state.currentStep() === 5 && state.isPlayer()) {
               <app-onboarding-step-schedule />
-            } @else if (state.currentStep() === 7 && state.isPlayer()) {
-              <app-onboarding-step-recovery />
             } @else if (isSummaryStep()) {
               <app-onboarding-step-summary (consentChange)="onConsentChange($event.type, { checked: $event.checked })" />
             }

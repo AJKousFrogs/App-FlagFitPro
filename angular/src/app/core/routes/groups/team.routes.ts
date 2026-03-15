@@ -19,7 +19,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamWorkspaceComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Team hub
+    data: { preload: true, priority: "high", entry: "internal" }, // Core team hub in 2.0
   },
   {
     path: "coach",
@@ -39,12 +39,9 @@ export const teamRoutes: Routes = [
   // === NEW ROUTE: Coach Activity Feed ===
   {
     path: "coach/activity",
-    loadComponent: () =>
-      import("../../../features/coach/coach-activity-feed.component").then(
-        (m) => m.CoachActivityFeedComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    redirectTo: "coach/dashboard",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/analytics",
@@ -53,16 +50,25 @@ export const teamRoutes: Routes = [
         (m) => m.CoachAnalyticsComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Coach analytics
+    data: { preload: true, priority: "high", entry: "internal" }, // Core coach workflow
+  },
+  {
+    path: "coach/planning",
+    redirectTo: "coach/calendar",
+    pathMatch: "full",
+    data: { entry: "hub" },
+  },
+  {
+    path: "coach/team-workspace",
+    redirectTo: "team/workspace",
+    pathMatch: "full",
+    data: { entry: "hub" },
   },
   {
     path: "coach/inbox",
-    loadComponent: () =>
-      import("../../../features/coach/coach-inbox/coach-inbox.component").then(
-        (m) => m.CoachInboxComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Coach messaging
+    redirectTo: "team-chat",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/team",
@@ -71,7 +77,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamManagementComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Team management
+    data: { preload: false, entry: "internal" }, // Operational tool
   },
   {
     path: "coach/team-management",
@@ -81,12 +87,15 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/programs",
-    loadComponent: () =>
-      import("../../../features/coach/program-builder/program-builder.component").then(
-        (m) => m.ProgramBuilderComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Advanced feature
+    redirectTo: "coach/planning",
+    pathMatch: "full",
+    data: { entry: "legacy" },
+  },
+  {
+    path: "coach/program-builder",
+    redirectTo: "coach/planning",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/practice",
@@ -95,34 +104,43 @@ export const teamRoutes: Routes = [
         (m) => m.PracticePlannerComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "low", entry: "internal" }, // Planning feature
+    data: { preload: false, entry: "internal" }, // Planning sub-tool
+  },
+  {
+    path: "coach/practice-planner",
+    redirectTo: "coach/planning",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/injuries",
-    loadComponent: () =>
-      import("../../../features/coach/injury-management/injury-management.component").then(
-        (m) => m.InjuryManagementComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // On-demand
+    redirectTo: "coach/analytics",
+    pathMatch: "full",
+    data: { entry: "legacy" },
+  },
+  {
+    path: "coach/injury-management",
+    redirectTo: "coach/analytics",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/playbook",
-    loadComponent: () =>
-      import("../../../features/coach/playbook-manager/playbook-manager.component").then(
-        (m) => m.PlaybookManagerComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // On-demand
+    redirectTo: "coach/planning",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/development",
-    loadComponent: () =>
-      import("../../../features/coach/player-development/player-development.component").then(
-        (m) => m.PlayerDevelopmentComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // On-demand
+    redirectTo: "coach/analytics",
+    pathMatch: "full",
+    data: { entry: "legacy" },
+  },
+  {
+    path: "coach/player-development",
+    redirectTo: "coach/analytics",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/tournaments",
@@ -135,21 +153,15 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/payments",
-    loadComponent: () =>
-      import("../../../features/coach/payment-management/payment-management.component").then(
-        (m) => m.PaymentManagementComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Admin feature
+    redirectTo: "team/workspace",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/ai-scheduler",
-    loadComponent: () =>
-      import("../../../features/coach/ai-scheduler/ai-scheduler.component").then(
-        (m) => m.AiSchedulerComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Advanced feature
+    redirectTo: "coach/planning",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "knowledge",
@@ -174,12 +186,9 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/film",
-    loadComponent: () =>
-      import("../../../features/coach/film-room/film-room-coach.component").then(
-        (m) => m.FilmRoomCoachComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Heavy component
+    redirectTo: "coach/planning",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "coach/calendar",
@@ -188,16 +197,13 @@ export const teamRoutes: Routes = [
         (m) => m.CalendarCoachComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "low", entry: "internal" }, // Planning feature
+    data: { preload: false, entry: "internal" }, // Planning sub-tool
   },
   {
     path: "coach/scouting",
-    loadComponent: () =>
-      import("../../../features/coach/scouting/scouting-reports.component").then(
-        (m) => m.ScoutingReportsComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // On-demand
+    redirectTo: "coach/planning",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "admin",
@@ -207,12 +213,9 @@ export const teamRoutes: Routes = [
   },
   {
     path: "team/create",
-    loadComponent: () =>
-      import("../../../features/team/team-create/team-create.component").then(
-        (m) => m.TeamCreateComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // One-time use
+    redirectTo: "team/workspace",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "attendance",
@@ -221,33 +224,24 @@ export const teamRoutes: Routes = [
         (m) => m.AttendanceComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "low", entry: "internal" }, // Team feature
+    data: { preload: false, entry: "internal" }, // Team operations tool
   },
   {
     path: "depth-chart",
-    loadComponent: () =>
-      import("../../../features/depth-chart/depth-chart.component").then(
-        (m) => m.DepthChartComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Coach feature
+    redirectTo: "team/workspace",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "equipment",
-    loadComponent: () =>
-      import("../../../features/equipment/equipment.component").then(
-        (m) => m.EquipmentComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Admin feature
+    redirectTo: "team/workspace",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "officials",
-    loadComponent: () =>
-      import("../../../features/officials/officials.component").then(
-        (m) => m.OfficialsComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Game day feature
+    redirectTo: "team/workspace",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
 ];

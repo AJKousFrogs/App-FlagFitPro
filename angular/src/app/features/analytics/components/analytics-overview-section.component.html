@@ -1,33 +1,19 @@
 <app-card-shell
   class="analytics-hub-card"
   title="Analytics Hub"
-  subtitle="Overview, deep analytics, and player performance trends"
+  subtitle="Overview and performance test tracking"
   headerIcon="pi-compass"
 >
   <div class="analytics-hub-grid">
-    <a routerLink="/analytics" class="analytics-hub-link">
+    <a routerLink="/performance/insights" class="analytics-hub-link">
       <span class="analytics-hub-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
       <span class="analytics-hub-title">Overview</span>
       <span class="analytics-hub-subtitle">Team performance</span>
-      @if (nextGenEnabled()) {
-        <span class="analytics-hub-preview">Preview</span>
-      }
     </a>
-    <a routerLink="/analytics/enhanced" class="analytics-hub-link">
-      <span class="analytics-hub-icon"><i class="pi pi-flask" aria-hidden="true"></i></span>
-      <span class="analytics-hub-title">Enhanced</span>
-      <span class="analytics-hub-subtitle">Deep analytics</span>
-      @if (nextGenEnabled()) {
-        <span class="analytics-hub-preview">Preview</span>
-      }
-    </a>
-    <a routerLink="/performance" class="analytics-hub-link">
+    <a routerLink="/performance/tests" class="analytics-hub-link">
       <span class="analytics-hub-icon"><i class="pi pi-bullseye" aria-hidden="true"></i></span>
       <span class="analytics-hub-title">Performance Tests</span>
       <span class="analytics-hub-subtitle">Speed, power, and benchmarks</span>
-      @if (nextGenEnabled()) {
-        <span class="analytics-hub-preview">Preview</span>
-      }
     </a>
   </div>
 </app-card-shell>
@@ -114,50 +100,3 @@
     </app-card-shell>
   }
 </div>
-
-@if (teamPerformanceAchievements().length > 0) {
-  <app-card-shell
-    class="team-badges-card"
-    title="Your Team Performance Badges"
-    subtitle="How you rank across team performance benchmarks"
-    headerIcon="pi-trophy"
-  >
-    <a header-actions routerLink="/performance" class="view-details-link">
-      View Details <i class="pi pi-arrow-right"></i>
-    </a>
-    <div class="badges-content">
-      <div class="badges-summary">
-        @if (teamRankingBadgeCounts().gold > 0) {
-          <div class="badge-stat gold">
-            <span class="badge-emoji">🥇</span>
-            <span class="badge-count">{{ teamRankingBadgeCounts().gold }}</span>
-            <span class="badge-label">Team Leader</span>
-          </div>
-        }
-        @if (teamRankingBadgeCounts().silver > 0) {
-          <div class="badge-stat silver">
-            <span class="badge-emoji">🥈</span>
-            <span class="badge-count">{{ teamRankingBadgeCounts().silver }}</span>
-            <span class="badge-label">2nd Place</span>
-          </div>
-        }
-        @if (teamRankingBadgeCounts().bronze > 0) {
-          <div class="badge-stat bronze">
-            <span class="badge-emoji">🥉</span>
-            <span class="badge-count">{{ teamRankingBadgeCounts().bronze }}</span>
-            <span class="badge-label">3rd Place</span>
-          </div>
-        }
-      </div>
-      <div class="badges-list">
-        @for (achievement of teamPerformanceAchievements().slice(0, 4); track achievement.id) {
-          <div class="badge-item" [class]="achievement.tier">
-            <span class="badge-rank">{{ getRankEmoji(achievement.rank) }}</span>
-            <span class="badge-metric">{{ achievement.metricLabel }}</span>
-            <span class="badge-value">{{ achievement.valueFormatted }}</span>
-          </div>
-        }
-      </div>
-    </div>
-  </app-card-shell>
-}

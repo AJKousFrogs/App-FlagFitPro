@@ -4,7 +4,6 @@ import { RouterModule } from "@angular/router";
 import { ProgressBar } from "primeng/progressbar";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { PerformanceAchievement } from "../../../core/services/team-performance-ranking.service";
 import { DevelopmentGoal, Metric } from "../analytics.models";
 
 @Component({
@@ -21,11 +20,8 @@ import { DevelopmentGoal, Metric } from "../analytics.models";
   styleUrl: "./analytics-overview-section.component.scss",
 })
 export class AnalyticsOverviewSectionComponent {
-  nextGenEnabled = input(false);
   developmentGoals = input<DevelopmentGoal[]>([]);
   metrics = input<Metric[]>([]);
-  teamPerformanceAchievements = input<PerformanceAchievement[]>([]);
-  teamRankingBadgeCounts = input({ gold: 0, silver: 0, bronze: 0 });
   goalsPreviewCount = input(3);
 
   trackByMetricLabel(index: number, metric: Metric): string {
@@ -58,10 +54,4 @@ export class AnalyticsOverviewSectionComponent {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }
 
-  getRankEmoji(rank: number): string {
-    if (rank === 1) return "🥇";
-    if (rank === 2) return "🥈";
-    if (rank === 3) return "🥉";
-    return "🏅";
-  }
 }

@@ -4,6 +4,12 @@ import { femaleAthleteGuard } from "../../guards/female-athlete.guard";
 
 export const wellnessRoutes: Routes = [
   {
+    path: "performance/load",
+    redirectTo: "acwr",
+    pathMatch: "full",
+    data: { entry: "internal" },
+  },
+  {
     path: "wellness",
     loadComponent: () =>
       import("../../../features/wellness/wellness.component").then(

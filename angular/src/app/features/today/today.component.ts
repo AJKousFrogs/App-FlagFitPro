@@ -212,7 +212,6 @@ export class TodayComponent {
   private readonly continuityIndicators = inject(ContinuityIndicatorsService);
 
   // Angular 21: viewChild signals for DOM element references
-  private readonly wellnessSection = viewChild<ElementRef>("wellnessSection");
   private readonly protocolBlocks = viewChild<ElementRef>("protocolBlocks");
 
   // Guard to prevent duplicate initial loads
@@ -233,7 +232,6 @@ export class TodayComponent {
   readonly todayViewModel = signal<TodayViewModel | null>(null); // Resolved state
   readonly continuityEvents = signal<ContinuityEvent[]>([]);
   private fullProtocolData: ProtocolApiResponse | null = null; // Store full API response with blocks for UI rendering
-  readonly showRecoveryDialog = signal(false);
   readonly error = signal<string | null>(null);
   readonly currentTime = signal(new Date());
 
@@ -256,10 +254,6 @@ export class TodayComponent {
 
   // Protocol Generation State
   readonly isGeneratingProtocol = signal(false);
-  readonly isGeneratingTomorrow = signal(false);
-  readonly isLoadingTomorrow = signal(false);
-  readonly tomorrowProtocol = signal<Partial<DailyProtocol> | null>(null);
-
   // Quick Check-in Options
   readonly quickMoods: QuickMood[] = [
     { value: 1, emoji: "😫", label: "Rough" },
@@ -522,22 +516,6 @@ export class TodayComponent {
       .filter((block): block is ProtocolBlock => Boolean(block));
   });
 
-  readonly tomorrowDate = computed(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return getDateKey(tomorrow);
-  });
-
-  readonly tomorrowDateLabel = computed(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-  });
-
   // ============================================================================
   // COMPUTED - Quick Check-in
   // ============================================================================
@@ -590,7 +568,6 @@ export class TodayComponent {
         id,
       );
       this.loadTodayData();
-      this.loadTomorrowProtocol();
       void this.loadContinuityEvents(id);
     });
 
@@ -823,24 +800,6 @@ export class TodayComponent {
     this.refreshProtocol();
   }
 
-  openRecoveryDialog(): void {
-    this.showRecoveryDialog.set(true);
-  }
-
-  closeRecoveryDialog(): void {
-    this.showRecoveryDialog.set(false);
-  }
-
-  onRecoverySaved(): void {
-    this.showRecoveryDialog.set(false);
-    this.loadTodayData();
-  }
-
-  scrollToWellness(): void {
-    const section = this.wellnessSection();
-    section?.nativeElement?.scrollIntoView({ behavior: "smooth" });
-  }
-
   scrollToProtocolBlocks(): void {
     const blocksContainer = this.protocolBlocks();
     blocksContainer?.nativeElement?.scrollIntoView({
@@ -981,28 +940,6 @@ export class TodayComponent {
     );
   }
 
-  generateTomorrowProtocol(): void {
-    this.isGeneratingTomorrow.set(true);
-    this.handleProtocolRequest(
-      this.trainingService.generateDailyProtocol(this.tomorrowDate()),
-      this.tomorrowProtocol,
-      this.isGeneratingTomorrow,
-      {
-        success: "Tomorrow's Protocol Ready",
-        detail: "Your training plan for tomorrow has been generated!",
-      },
-    );
-  }
-
-  loadTomorrowProtocol(): void {
-    this.isLoadingTomorrow.set(true);
-    this.handleProtocolRequest(
-      this.trainingService.getProtocolForDate(this.tomorrowDate()),
-      this.tomorrowProtocol,
-      this.isLoadingTomorrow,
-    );
-  }
-
   private handleProtocolRequest(
     request: ReturnType<typeof this.trainingService.generateDailyProtocol>,
     targetSignal: typeof this.protocol,
@@ -1040,18 +977,11 @@ export class TodayComponent {
     });
   }
 
-  viewTomorrowProtocol(): void {
-    // Navigate directly to the schedule view, which consumes the date param.
-    this.router.navigate(["/training"], {
-      queryParams: { date: this.tomorrowDate() },
-    });
-  }
-
   // ============================================================================
   // NAVIGATION
   // ============================================================================
   navigateToAcwr(): void {
-    this.router.navigate(["/acwr"]);
+    this.router.navigate(["/performance/load"]);
   }
 
   navigateToWellness(): void {
@@ -1088,7 +1018,7 @@ export class TodayComponent {
         break;
 
       case "view_film_room_details":
-        this.router.navigate(["/training/videos"]);
+        this.router.navigate(["/training/workspace"]);
         break;
 
       case "view_rehab":
@@ -1106,7 +1036,7 @@ export class TodayComponent {
 
       case "view_taper":
       case "view_taper_plan":
-        this.router.navigate(["/training/advanced"]);
+        this.router.navigate(["/training/workspace"]);
         break;
 
       case "log_session":

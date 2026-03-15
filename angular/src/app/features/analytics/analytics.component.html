@@ -22,23 +22,9 @@
         >
           <app-page-header
             title="FlagFit Pro Analytics"
-            subtitle="Advanced Performance Analytics & Team Insights"
+            subtitle="Performance trends, benchmarks, and athlete progress"
             icon="pi-chart-bar"
-          >
-            <div class="header-actions">
-              <app-button
-                variant="outlined"
-                iconLeft="pi-share-alt"
-                (clicked)="showShareDialog.set(true)"
-                >Share with Coach</app-button
-              >
-              <app-button
-                iconLeft="pi-file-pdf"
-                (clicked)="exportAnalyticsPDF()"
-                >Export PDF</app-button
-              >
-            </div>
-          </app-page-header>
+          ></app-page-header>
           <app-data-source-banner
             [dataState]="analyticsDataState()"
             [currentDataPoints]="analyticsDataPoints()"
@@ -57,23 +43,9 @@
               </span>
             }
           </div>
-          @if (nextGenEnabled()) {
-            <app-alert
-              variant="info"
-              density="compact"
-              icon="pi-sparkles"
-              title="Preview"
-              message="Next-gen analytics are in preview. Legacy charts remain the source of truth until validation completes."
-              styleClass="analytics-preview-banner"
-            />
-          }
-
           <app-analytics-overview-section
-            [nextGenEnabled]="nextGenEnabled()"
             [developmentGoals]="developmentGoals()"
             [metrics]="metrics()"
-            [teamPerformanceAchievements]="teamPerformanceAchievements()"
-            [teamRankingBadgeCounts]="teamRankingBadgeCounts()"
             [goalsPreviewCount]="UI_LIMITS.GOALS_PREVIEW_COUNT"
           />
 
@@ -108,98 +80,6 @@
             [attendanceRate]="attendanceRate()"
           />
         </div>
-
-        <!-- Share with Coach Dialog -->
-        <app-dialog
-          [(visible)]="showShareDialogValue"
-          [closable]="false"
-          [draggable]="false"
-          [resizable]="false"
-          [dismissableMask]="true"
-          [styleClass]="'share-dialog'"
-        >
-          <app-dialog-header
-            icon="send"
-            title="Share Analytics with Coach"
-            subtitle="Choose what to include in the report you send"
-            (close)="showShareDialog.set(false)"
-          ></app-dialog-header>
-          <div class="share-content">
-            <p class="share-intro">
-              Send your analytics report to your coach for review and feedback.
-            </p>
-
-            <div class="share-options">
-              <h4>Include in Report</h4>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [checked]="shareOptions.includeCharts"
-                    (change)="onShareOptionChange('includeCharts', isChecked($event))"
-                    aria-label="Include performance charts"
-                  />
-                  <span>Performance Charts</span>
-                </label>
-              </div>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [checked]="shareOptions.includeGoals"
-                    (change)="onShareOptionChange('includeGoals', isChecked($event))"
-                    aria-label="Include development goals"
-                  />
-                  <span>Development Goals</span>
-                </label>
-              </div>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [checked]="shareOptions.includeStats"
-                    (change)="onShareOptionChange('includeStats', isChecked($event))"
-                    aria-label="Include player statistics"
-                  />
-                  <span>Player Statistics</span>
-                </label>
-              </div>
-              <div class="option-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    [checked]="shareOptions.includeComments"
-                    (change)="onShareOptionChange('includeComments', isChecked($event))"
-                    aria-label="Include personal notes"
-                  />
-                  <span>Include My Notes</span>
-                </label>
-              </div>
-            </div>
-
-            @if (shareOptions.includeComments) {
-              <div class="message-section">
-                <label for="shareMessage">Add a message (optional)</label>
-                <textarea
-                  id="shareMessage"
-                  [value]="shareMessageValue"
-                  (input)="onShareMessageValueChange(getInputValue($event))"
-                  placeholder="Any comments or questions for your coach..."
-                  rows="3"
-                ></textarea>
-              </div>
-            }
-          </div>
-
-          <app-dialog-footer
-            cancelLabel="Cancel"
-            primaryLabel="Send to Coach"
-            primaryIcon="send"
-            [loading]="isSharing()"
-            (cancel)="showShareDialog.set(false)"
-            (primary)="shareWithCoach()"
-          ></app-dialog-footer>
-        </app-dialog>
       }
       <!-- End of @else for content -->
     </app-main-layout>

@@ -338,7 +338,7 @@ export class PlayerDashboardComponent {
     {
       label: "Analytics",
       icon: "pi pi-chart-bar",
-      route: "/analytics",
+      route: "/performance/insights",
       description: "Performance analytics",
     },
     {
@@ -961,7 +961,7 @@ export class PlayerDashboardComponent {
    * UX Audit Fix #5
    */
   navigateToACWR(): void {
-    this.router.navigate(["/acwr"]);
+    this.router.navigate(["/performance/load"]);
   }
 
   /**

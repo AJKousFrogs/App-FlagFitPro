@@ -159,7 +159,7 @@ export class KeyboardShortcutsService implements OnDestroy {
       keys: ["g a"],
       description: "Go to analytics",
       category: "navigation",
-      action: () => this.router.navigate(["/analytics"]),
+      action: () => this.router.navigate(["/performance/insights"]),
     });
 
     this.register({

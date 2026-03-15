@@ -39,10 +39,8 @@ import { OnboardingStepPersonalComponent } from "./steps/onboarding-step-persona
 import { OnboardingStepRoleComponent } from "./steps/onboarding-step-role.component";
 import { OnboardingStepPhysicalComponent } from "./steps/onboarding-step-physical.component";
 import { OnboardingStepHealthComponent } from "./steps/onboarding-step-health.component";
-import { OnboardingStepEquipmentComponent } from "./steps/onboarding-step-equipment.component";
 import { OnboardingStepGoalsComponent } from "./steps/onboarding-step-goals.component";
 import { OnboardingStepScheduleComponent } from "./steps/onboarding-step-schedule.component";
-import { OnboardingStepRecoveryComponent } from "./steps/onboarding-step-recovery.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { FormsModule } from "@angular/forms";
 import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.component";
@@ -66,10 +64,8 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
     OnboardingStepRoleComponent,
     OnboardingStepPhysicalComponent,
     OnboardingStepHealthComponent,
-    OnboardingStepEquipmentComponent,
     OnboardingStepGoalsComponent,
     OnboardingStepScheduleComponent,
-    OnboardingStepRecoveryComponent,
     OnboardingStepSummaryComponent,
     CheckboxModule,
     FormsModule,
@@ -477,7 +473,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
         return { valid: true };
 
-      case 5: // Goals
+      case 4: // Goals
         if (this.state.formData.goals.length === 0) {
           return {
             valid: false,
@@ -486,13 +482,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
         return { valid: true };
 
-      case 6: // Schedule
+      case 5: // Schedule
         if (!this.state.formData.scheduleType) {
           return { valid: false, message: "Please select your schedule type" };
         }
         return { valid: true };
 
-      case 8: // Summary & Consent
+      case 6: // Summary & Consent
         if (!this.state.formData.consentTermsOfService) {
           return {
             valid: false,
@@ -760,7 +756,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         } else {
           // Redirect based on user type
           if (isStaffUser) {
-            this.router.navigate(["/coach/team"]);
+            this.router.navigate(["/team/workspace"]);
           } else {
             this.router.navigate(["/dashboard"]);
           }

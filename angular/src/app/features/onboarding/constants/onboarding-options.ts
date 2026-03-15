@@ -6,11 +6,9 @@ export const PLAYER_STEPS = [
   { label: "2 · Team", icon: "pi pi-users", completed: false },
   { label: "3 · Physical", icon: "pi pi-heart", completed: false },
   { label: "4 · Health", icon: "pi pi-shield", completed: false },
-  { label: "5 · Equipment", icon: "pi pi-box", completed: false },
-  { label: "6 · Goals", icon: "pi pi-flag", completed: false },
-  { label: "7 · Schedule", icon: "pi pi-calendar", completed: false },
-  { label: "8 · Recovery", icon: "pi pi-refresh", completed: false },
-  { label: "9 · Summary", icon: "pi pi-check", completed: false },
+  { label: "5 · Goals", icon: "pi pi-flag", completed: false },
+  { label: "6 · Schedule", icon: "pi pi-calendar", completed: false },
+  { label: "7 · Summary", icon: "pi pi-check", completed: false },
 ];
 
 export const STAFF_STEPS = [

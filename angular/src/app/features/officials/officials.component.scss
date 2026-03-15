@@ -153,7 +153,7 @@
   font-weight: var(--ds-font-weight-medium);
 }
 
-.dialog-form {
+.officials-dialog-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -161,7 +161,7 @@
 
 /* Form layout: use primitives _forms.scss; add .two-col to form-row in template */
 .officials-page .form-field label,
-.dialog-form .form-field label {
+.officials-dialog-form .form-field label {
   font-weight: var(--ds-font-weight-medium);
   font-size: var(--ds-font-size-md);
 }

@@ -21,7 +21,6 @@ import {
     TOAST,
 } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
-import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import {
     LoggerService,
     toLogContext,
@@ -56,14 +55,12 @@ import { NotificationPreferencesCardComponent } from "./components/notification-
 import { PrivacyControlsCardComponent } from "./components/privacy-controls-card/privacy-controls-card.component";
 import { SecuritySettingsCardComponent } from "./components/security-settings-card/security-settings-card.component";
 import { AppPreferencesCardComponent } from "./components/app-preferences-card/app-preferences-card.component";
-import { ExperimentalFeaturesCardComponent } from "./components/experimental-features-card/experimental-features-card.component";
 import { ChangePasswordDialogComponent } from "./components/change-password-dialog/change-password-dialog.component";
 import { DeleteAccountDialogComponent } from "./components/delete-account-dialog/delete-account-dialog.component";
 import { TwofaSetupDialogComponent } from "./components/twofa-setup-dialog/twofa-setup-dialog.component";
 import { DisableTwofaDialogComponent } from "./components/disable-twofa-dialog/disable-twofa-dialog.component";
 import { ActiveSessionsDialogComponent } from "./components/active-sessions-dialog/active-sessions-dialog.component";
 import { DataExportDialogComponent } from "./components/data-export-dialog/data-export-dialog.component";
-import { NewTeamRequestDialogComponent } from "./components/new-team-request-dialog/new-team-request-dialog.component";
 import { SettingsAccountSectionComponent } from "./components/settings-account-section.component";
 import {
   SettingsNavItem,
@@ -86,14 +83,12 @@ import {
     PrivacyControlsCardComponent,
     SecuritySettingsCardComponent,
     AppPreferencesCardComponent,
-    ExperimentalFeaturesCardComponent,
     ChangePasswordDialogComponent,
     DeleteAccountDialogComponent,
     TwofaSetupDialogComponent,
     DisableTwofaDialogComponent,
     ActiveSessionsDialogComponent,
     DataExportDialogComponent,
-    NewTeamRequestDialogComponent,
     SettingsNavSectionComponent,
   ],
   templateUrl: "./settings.component.html",
@@ -116,7 +111,6 @@ export class SettingsComponent implements OnInit {
   private toastService = inject(ToastService);
   private themeService = inject(ThemeService);
   private logger = inject(LoggerService);
-  private featureFlags = inject(FeatureFlagsService);
 
   profileForm!: FormGroup;
   notificationForm!: FormGroup;
@@ -172,15 +166,8 @@ export class SettingsComponent implements OnInit {
     settings: true,
   };
 
-  nextGenMetricsPreview = false;
-
   // Team selection
   availableTeams = this.teamRequestService.availableTeams;
-  showNewTeamDialog = false;
-  newTeamName = "";
-  newTeamNotes = "";
-  isSubmittingTeamRequest = this.teamRequestService.isSubmittingTeamRequest;
-
   visibilityOptions = [
     {
       label: "Public",
@@ -253,8 +240,6 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getUser();
 
-    this.nextGenMetricsPreview = this.featureFlags.nextGenMetricsPreview();
-
     this.profileForm = this.formFactory.createProfileForm(user);
 
     void this.loadInitialData();
@@ -309,11 +294,6 @@ export class SettingsComponent implements OnInit {
 
   selectTheme(theme: string): void {
     this.preferencesForm.get("theme")?.setValue(theme);
-  }
-
-  setNextGenMetricsPreview(enabled: boolean): void {
-    this.nextGenMetricsPreview = enabled;
-    this.featureFlags.setNextGenMetricsPreview(enabled);
   }
 
   /**
@@ -517,24 +497,11 @@ export class SettingsComponent implements OnInit {
    */
   onTeamChange(value: string | null): void {
     if (value === "__new_team__") {
-      // Reset the dropdown selection and show new team dialog
       this.profileForm.get("teamId")?.setValue(null);
-      this.showNewTeamDialog = true;
-    }
-  }
-
-  /**
-   * Submit request for a new team
-   */
-  async submitNewTeamRequest(): Promise<void> {
-    const submitted = await this.teamRequestService.submitNewTeamRequest({
-      teamName: this.newTeamName,
-      teamNotes: this.newTeamNotes,
-    });
-    if (submitted) {
-      this.showNewTeamDialog = false;
-      this.newTeamName = "";
-      this.newTeamNotes = "";
+      this.toastService.info(
+        "Team creation requests have moved out of Settings for the 2.0 flow.",
+        "Choose an Existing Team",
+      );
     }
   }
 

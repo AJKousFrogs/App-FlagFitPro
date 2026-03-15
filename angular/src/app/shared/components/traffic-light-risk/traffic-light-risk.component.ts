@@ -17,10 +17,10 @@ import {
   computed,
   ElementRef,
   Renderer2,
-  ViewChild,
   afterNextRender,
   effect,
   inject,
+  viewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RiskZone } from "../../../core/models/acwr.models";

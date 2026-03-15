@@ -49,62 +49,37 @@
 
           <!-- Main Content Grid - Streamlined for Phase 2 -->
           <div class="dashboard-workspace">
-            <!-- Left Workspace: Roster & Performance -->
+            <!-- Left Workspace: Roster -->
             <div class="workspace-main">
               <app-card-shell [flush]="true" class="workspace-card">
                 <div class="workspace-tabs-header">
                   <div class="tab-triggers">
-                    <button type="button"
-                      class="tab-trigger"
-                      [class.active]="activeTab === 'roster'"
-                      (click)="activeTab = 'roster'"
-                    >
+                    <div class="tab-trigger active">
                       <i class="pi pi-users"></i> Team Roster
-                    </button>
-                    <button type="button"
-                      class="tab-trigger"
-                      [class.active]="activeTab === 'analytics'"
-                      (click)="activeTab = 'analytics'"
-                    >
-                      <i class="pi pi-chart-line"></i> Performance
-                      @if (nextGenEnabled()) {
-                        <span class="tab-preview-badge">Preview</span>
-                      }
-                    </button>
+                    </div>
                   </div>
                   <div class="tab-actions">
                     <app-button
                       variant="text"
                       size="sm"
                       icon="external-link"
-                      ariaLabel="Open analytics"
+                      ariaLabel="Open performance workspace"
                       (clicked)="navigateToAnalytics()"
-                    ></app-button>
+                      >Open Performance</app-button
+                    >
                   </div>
                 </div>
 
                 <div class="tab-content">
-                  @if (activeTab === "roster") {
-                    <app-coach-dashboard-roster-section
-                      [filteredPlayers]="filteredPlayers()"
-                      [playerFilter]="playerFilter()"
-                      [overrideCounts]="playerOverrideCounts()"
-                      (filterChange)="setPlayerFilter($event)"
-                      (selectPlayer)="viewPlayer($event)"
-                      (requestDataAccess)="requestDataSharing($event)"
-                      (viewOverrideHistory)="viewOverrideHistoryFromSection($event)"
-                    />
-                  }
-
-                  @if (activeTab === "analytics") {
-                    <app-coach-dashboard-analytics-section
-                      [performanceChartData]="performanceChartData()"
-                      [lineChartOptions]="lineChartOptions"
-                      [latestPerformanceScore]="latestPerformanceScore()"
-                      [practiceAttendanceRate]="teamOverview().practiceAttendanceRate"
-                      [nextGenEnabled]="nextGenEnabled()"
-                    />
-                  }
+                  <app-coach-dashboard-roster-section
+                    [filteredPlayers]="filteredPlayers()"
+                    [playerFilter]="playerFilter()"
+                    [overrideCounts]="playerOverrideCounts()"
+                    (filterChange)="setPlayerFilter($event)"
+                    (selectPlayer)="viewPlayer($event)"
+                    (requestDataAccess)="requestDataSharing($event)"
+                    (viewOverrideHistory)="viewOverrideHistoryFromSection($event)"
+                  />
                 </div>
               </app-card-shell>
             </div>
@@ -159,7 +134,7 @@
                     variant="text"
                     size="sm"
                     [fullWidth]="true"
-                    routerLink="/calendar"
+                    routerLink="/coach/planning"
                     >Full Schedule</app-button
                   >
                   <app-button

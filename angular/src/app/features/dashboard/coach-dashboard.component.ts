@@ -61,7 +61,6 @@ import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { UI_LIMITS } from "../../core/constants";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { CoachDashboardPartialDataNoticeComponent } from "./components/coach-dashboard-partial-data-notice.component";
-import { CoachDashboardAnalyticsSectionComponent } from "./components/coach-dashboard-analytics-section.component";
 import { CoachDashboardPrioritySectionComponent } from "./components/coach-dashboard-priority-section.component";
 import { CoachDashboardProtocolsSectionComponent } from "./components/coach-dashboard-protocols-section.component";
 import { CoachDashboardRosterSectionComponent } from "./components/coach-dashboard-roster-section.component";
@@ -116,7 +115,6 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     DialogHeaderComponent,
     DatePipe,
     CoachDashboardPartialDataNoticeComponent,
-    CoachDashboardAnalyticsSectionComponent,
     CoachDashboardSummarySectionComponent,
     CoachDashboardPrioritySectionComponent,
     CoachDashboardProtocolsSectionComponent,
@@ -150,9 +148,6 @@ export class CoachDashboardComponent {
 
   // Next-gen preview
   nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
-
-  // Workspace state
-  activeTab: "roster" | "analytics" = "roster";
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -584,14 +579,14 @@ export class CoachDashboardComponent {
   }
 
   viewPlayerStats(playerId: string): void {
-    this.router.navigate(["/coach/development"], {
+    this.router.navigate(["/coach/analytics"], {
       queryParams: { player: playerId, source: "dashboard-stats" },
     });
   }
 
   adjustPlayerLoad(playerId: string): void {
     this.toastService.info(TOAST.INFO.OPENING_LOAD_ADJUSTMENT);
-    this.router.navigate(["/coach/development"], {
+    this.router.navigate(["/coach/analytics"], {
       queryParams: { player: playerId, source: "dashboard" },
     });
   }
@@ -612,11 +607,11 @@ export class CoachDashboardComponent {
   }
 
   navigateToAnalytics(): void {
-    this.router.navigate(["/analytics"]);
+    this.router.navigate(["/coach/analytics"]);
   }
 
   viewAllStats(): void {
-    this.router.navigate(["/analytics"]);
+    this.router.navigate(["/coach/analytics"]);
   }
 
   viewInjuryReport(): void {
@@ -632,13 +627,13 @@ export class CoachDashboardComponent {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateStr = tomorrow.toISOString().split("T")[0];
-    this.router.navigate(["/calendar"], {
+    this.router.navigate(["/coach/planning"], {
       queryParams: { date: dateStr },
     });
   }
 
   scheduleGame(): void {
-    this.router.navigate(["/game-tracker"]);
+    this.router.navigate(["/tournaments"]);
   }
 
   // Dialog methods

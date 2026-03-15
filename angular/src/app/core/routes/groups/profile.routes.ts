@@ -9,7 +9,7 @@ export const profileRoutes: Routes = [
         (m) => m.ProfileComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low", entry: "internal" }, // User profile
+    data: { preload: false, entry: "internal" }, // User profile - on demand
   },
   {
     path: "settings",

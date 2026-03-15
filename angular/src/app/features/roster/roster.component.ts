@@ -28,7 +28,7 @@
  * - roster.models.ts: Shared interfaces
  * - roster-utils.ts: Helper functions
  */
-import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
+import { DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -42,10 +42,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
-import { Select } from "primeng/select";
-import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 
@@ -88,9 +85,7 @@ import {
   PlayerRiskLevel,
   PlayerStatus,
   PositionGroup,
-  ROLE_OPTIONS,
   STATUS_OPTIONS,
-  TeamInvitation,
 } from "./roster.models";
 import { RosterService } from "./roster.service";
 import {
@@ -108,10 +103,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     StatusTagComponent,
-    Tooltip,
     ConfirmDialog,
-    Select,
-    DatePipe,
     DecimalPipe,
     TitleCasePipe,
     MainLayoutComponent,
@@ -125,7 +117,6 @@ import {
     RosterFiltersComponent,
     RosterPlayerFormDialogComponent,
     ButtonComponent,
-    IconButtonComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -155,8 +146,6 @@ export class RosterComponent implements OnInit {
   showDetailsDialog = signal(false);
   showStatusDialog = signal(false);
   showBulkStatusDialog = signal(false);
-  showInviteDialog = signal(false);
-  showInvitationsDialog = signal(false);
 
   // Player editing
   editingPlayer = signal<Player | null>(null);
@@ -173,14 +162,8 @@ export class RosterComponent implements OnInit {
   positionFilter: string | null = null;
   statusFilter: string | null = null;
 
-  // Invite form
-  inviteEmail = "";
-  inviteRole = "player";
-  inviteMessage = "";
-
   // Options
   statusOptions = STATUS_OPTIONS;
-  roleOptions = ROLE_OPTIONS;
 
   // Expose utility functions
   getPositionDisplayName = getPositionDisplayName;
@@ -326,7 +309,6 @@ export class RosterComponent implements OnInit {
     this.hasPageError.set(false);
 
     await this.rosterService.loadRosterData();
-    await this.rosterService.loadPendingInvitations();
 
     if (this.rosterService.error()) {
       this.hasPageError.set(true);
@@ -460,9 +442,13 @@ export class RosterComponent implements OnInit {
     }
 
     this.showDetailsDialog.set(false);
-    void this.router.navigate(["/coach/development"], {
+    void this.router.navigate(["/coach/analytics"], {
       queryParams: { player: player.id },
     });
+  }
+
+  openTeamWorkspace(): void {
+    void this.router.navigate(["/team/workspace"]);
   }
 
   // Status management
@@ -596,85 +582,4 @@ export class RosterComponent implements OnInit {
     this.toastService.success(TOAST.SUCCESS.ROSTER_EXPORTED);
   }
 
-  // Invitations
-  openInviteDialog(): void {
-    this.inviteEmail = "";
-    this.inviteRole = "player";
-    this.inviteMessage = "";
-    this.showInviteDialog.set(true);
-  }
-
-  async sendInvitation(): Promise<void> {
-    if (!this.inviteEmail) {
-      this.toastService.warn(TOAST.WARN.MISSING_EMAIL);
-      return;
-    }
-
-    this.isSaving.set(true);
-    const result = await this.rosterService.sendInvitation(
-      this.inviteEmail,
-      this.inviteRole,
-      this.inviteMessage,
-    );
-
-    if (result.success) {
-      this.toastService.success(`Invitation sent to ${this.inviteEmail}`);
-      this.showInviteDialog.set(false);
-    } else {
-      this.toastService.error(
-        result.error || TOAST.ERROR.INVITATION_SEND_FAILED,
-      );
-    }
-
-    this.isSaving.set(false);
-  }
-
-  onInviteEmailInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.inviteEmail = input?.value ?? "";
-  }
-
-  onInviteRoleChange(value: string | null | undefined): void {
-    this.inviteRole = value ?? "player";
-  }
-
-  onInviteMessageInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.inviteMessage = input?.value ?? "";
-  }
-
-  openInvitationsDialog(): void {
-    this.rosterService.loadPendingInvitations();
-    this.showInvitationsDialog.set(true);
-  }
-
-  async resendInvitation(invitation: TeamInvitation): Promise<void> {
-    const result = await this.rosterService.resendInvitation(invitation.id);
-    if (result.success) {
-      this.toastService.success(`Invitation resent to ${invitation.email}`);
-    } else {
-      this.toastService.error(
-        result.error || TOAST.ERROR.INVITATION_RESEND_FAILED,
-      );
-    }
-  }
-
-  async cancelInvitation(invitation: TeamInvitation): Promise<void> {
-    const confirmed = await this.confirmDialog.confirm({
-      message: `Cancel invitation for ${invitation.email}?`,
-      title: "Cancel Invitation",
-      icon: "pi pi-exclamation-triangle",
-      acceptSeverity: "danger",
-      rejectSeverity: "secondary",
-      defaultFocus: "reject",
-    });
-    if (!confirmed) return;
-
-    const result = await this.rosterService.cancelInvitation(invitation.id);
-    if (result.success) {
-      this.toastService.success(TOAST.SUCCESS.INVITATION_CANCELLED);
-    } else {
-      this.toastService.error(result.error || "Failed to cancel invitation");
-    }
-  }
 }

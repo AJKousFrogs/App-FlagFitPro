@@ -115,11 +115,6 @@
             (themeSelected)="selectTheme($event)"
           ></app-app-preferences-card>
 
-          <app-experimental-features-card
-            [nextGenMetricsPreview]="nextGenMetricsPreview"
-            (nextGenMetricsPreviewChange)="setNextGenMetricsPreview($event)"
-          ></app-experimental-features-card>
-
           <app-security-settings-card
             [isTwoFactorEnabled]="is2FAEnabled()"
             (changePassword)="showChangePasswordDialog = true"
@@ -206,15 +201,3 @@
   (exportOptionsChange)="exportOptions = $event"
   (submit)="exportUserData()"
 ></app-data-export-dialog>
-
-<!-- Request New Team Dialog -->
-<app-new-team-request-dialog
-  [visible]="showNewTeamDialog"
-  [teamName]="newTeamName"
-  [teamNotes]="newTeamNotes"
-  [loading]="isSubmittingTeamRequest()"
-  (visibleChange)="showNewTeamDialog = $event"
-  (teamNameChange)="newTeamName = $event"
-  (teamNotesChange)="newTeamNotes = $event"
-  (submit)="submitNewTeamRequest()"
-></app-new-team-request-dialog>

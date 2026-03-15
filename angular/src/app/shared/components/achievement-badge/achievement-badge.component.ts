@@ -104,7 +104,7 @@ export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
           }
           @if (!unlocked() && progress() !== null) {
             <div class="badge-progress">
-              <div class="progress-bar">
+              <div class="badge-progress__bar">
                 <div class="progress-fill" [style.width.%]="progress()"></div>
               </div>
               <span class="progress-text">{{ progress() }}%</span>

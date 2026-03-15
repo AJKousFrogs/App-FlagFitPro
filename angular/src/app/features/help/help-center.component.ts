@@ -48,7 +48,7 @@ interface HelpTopic {
             <i class="pi pi-shield"></i>
             <span>Privacy Settings</span>
           </a>
-          <a routerLink="/acwr" class="quick-link-card">
+          <a routerLink="/performance/load" class="quick-link-card">
             <i class="pi pi-chart-line"></i>
             <span>Load Monitoring</span>
           </a>

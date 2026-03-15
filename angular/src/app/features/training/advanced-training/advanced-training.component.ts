@@ -124,15 +124,15 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <h3>Load Analysis</h3>
                   <p>Deep dive into acute/chronic imbalances.</p>
                 </div>
-                <div class="tool-card" routerLink="/game/nutrition">
+                <div class="tool-card" routerLink="/wellness">
                   <i class="pi pi-heart"></i>
-                  <h3>Game Nutrition</h3>
-                  <p>Meal timing for multi-game match days.</p>
+                  <h3>Nutrition & Wellness</h3>
+                  <p>Fueling, hydration, and recovery check-ins.</p>
                 </div>
-                <div class="tool-card" routerLink="/travel/recovery">
+                <div class="tool-card" routerLink="/wellness">
                   <i class="pi pi-map"></i>
-                  <h3>Travel Recovery</h3>
-                  <p>Optimizing sleep and jet lag for away games.</p>
+                  <h3>Recovery Protocols</h3>
+                  <p>Recovery readiness and travel-impact check-ins.</p>
                 </div>
               </div>
             </p-tabpanel>

@@ -56,18 +56,19 @@
   }
 
   .stat-details {
-    @extend %stat-block;
-    gap: var(--space-1);
     display: flex;
     flex-direction: column;
+    gap: var(--space-1);
   }
 
   .stat-block__label {
-    @extend %stat-label;
+    font-size: var(--font-label-size);
+    color: var(--text-secondary, var(--color-text-secondary));
   }
 
   .stat-block__value {
-    @extend %stat-value;
+    font-size: var(--font-h3-size);
+    font-weight: var(--font-weight-bold);
   }
 
   .stat-hint {

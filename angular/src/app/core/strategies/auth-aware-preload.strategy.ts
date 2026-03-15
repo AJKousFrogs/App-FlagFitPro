@@ -30,30 +30,34 @@ export class AuthAwarePreloadStrategy implements PreloadingStrategy {
 
   // High-priority routes that should preload immediately after auth
   private readonly highPriorityRoutes = [
-    "/dashboard",
+    "/player-dashboard",
+    "/coach/dashboard",
+    "/coach/calendar",
+    "/todays-practice",
     "/training",
-    "/analytics",
+    "/performance/insights",
+    "/coach/analytics",
+    "/wellness",
     "/roster",
+    "/team/workspace",
   ];
 
   // Routes that should only preload if user is authenticated
   private readonly authRequiredRoutes = [
-    "/dashboard",
+    "/player-dashboard",
+    "/coach/dashboard",
+    "/coach/calendar",
+    "/todays-practice",
     "/training",
-    "/analytics",
+    "/performance/insights",
+    "/coach/analytics",
     "/roster",
-    "/tournaments",
-    "/community",
-    "/chat",
-    "/coach",
+    "/team/workspace",
+    "/coach/planning",
     "/profile",
-    "/settings",
     "/wellness",
-    "/performance-tracking",
-    "/acwr",
-    "/game-tracker",
-    "/exercise-library",
-    "/workout",
+    "/team-chat",
+    "/chat",
   ];
 
   preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {

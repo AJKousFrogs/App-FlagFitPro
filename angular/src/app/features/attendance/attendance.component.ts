@@ -301,7 +301,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             subtitle="Schedule a new practice, game, meeting, or conditioning session."
             (close)="showCreateEventDialog = false"
           />
-          <div class="dialog-form">
+          <div class="attendance-dialog-form">
             <div class="form-field">
               <label for="eventTitle">Title *</label>
               <input

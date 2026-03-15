@@ -48,7 +48,7 @@ const CONTEXT_CONFIGS: Record<
     message: "Log your performance tests (40-yard dash, vertical jump, etc.) to track improvements and set goals.",
     actionLabel: "Log Performance Test",
     actionIcon: "pi pi-plus",
-    route: "/performance",
+    route: "/performance/tests",
     benefits: ["Track speed, power, and agility metrics", "Compare against position benchmarks", "Identify areas for improvement", "Monitor progress over time"],
   },
   nutrition: {
@@ -57,7 +57,7 @@ const CONTEXT_CONFIGS: Record<
     message: "Track your nutrition to optimize performance, recovery, and body composition.",
     actionLabel: "Log Nutrition",
     actionIcon: "pi pi-plus",
-    route: "/game/nutrition",
+    route: "/wellness",
     benefits: ["Track macros and calories", "Monitor hydration levels", "Optimize pre/post workout nutrition", "Support recovery with proper fueling"],
   },
   recovery: {

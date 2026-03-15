@@ -9,16 +9,13 @@ export const socialRoutes: Routes = [
         (m) => m.SearchComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium", entry: "internal" },
+    data: { preload: false, entry: "internal" },
   },
   {
     path: "community",
-    loadComponent: () =>
-      import("../../../features/community/community.component").then(
-        (m) => m.CommunityComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: true, priority: "low", entry: "internal" }, // Social feature
+    redirectTo: "team-chat",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   // Merlin AI - Main chat interface
   {
@@ -28,7 +25,7 @@ export const socialRoutes: Routes = [
         (m) => m.AiCoachChatComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "internal" }, // Merlin AI is frequently used
+    data: { preload: false, entry: "internal" }, // Secondary workflow in 2.0
   },
   // Redirect old ai-coach path to new /chat
   {
@@ -43,6 +40,6 @@ export const socialRoutes: Routes = [
     loadComponent: () =>
       import("../../../features/chat/chat.component").then((m) => m.ChatComponent),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Team communication
+    data: { preload: false, entry: "internal" }, // On-demand collaboration surface
   },
 ];

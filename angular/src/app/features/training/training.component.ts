@@ -337,7 +337,7 @@ export class TrainingComponent {
   }
 
   goToRecovery(): void {
-    this.router.navigate(["/travel/recovery"]);
+    this.router.navigate(["/wellness"]);
   }
 
   goToAchievements(): void {

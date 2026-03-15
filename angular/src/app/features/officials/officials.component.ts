@@ -337,7 +337,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             subtitle="Manage referee contact details, certification, and availability notes."
             (close)="showOfficialDialog = false"
           />
-          <div class="dialog-form">
+          <div class="officials-dialog-form">
             <div class="form-field">
               <label>Name *</label>
               <input
@@ -430,7 +430,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             (close)="showScheduleDialog = false"
           />
           @if (selectedOfficial()) {
-            <div class="dialog-form">
+            <div class="officials-dialog-form">
               <p class="schedule-info">
                 Scheduling: <strong>{{ selectedOfficial()!.name }}</strong>
               </p>

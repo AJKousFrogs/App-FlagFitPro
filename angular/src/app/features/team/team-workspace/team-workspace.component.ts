@@ -23,8 +23,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     <app-main-layout>
       <div class="team-workspace-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
-          title="Team Management"
-          subtitle="Roster, attendance, and administrative tools"
+          title="Team Workspace"
+          subtitle="Roster, operations, and shared team settings"
           icon="pi-users"
         ></app-page-header>
 
@@ -50,10 +50,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <h3>Roster Manager</h3>
                   <p>View and manage all active athletes.</p>
                 </div>
-                <div class="tool-card" routerLink="/depth-chart">
+                <div class="tool-card" routerLink="/roster" fragment="squad-planning">
                   <i class="pi pi-list"></i>
-                  <h3>Depth Chart</h3>
-                  <p>Set starters and secondary positions.</p>
+                  <h3>Squad Planning</h3>
+                  <p>Review starters and role coverage from the roster workspace.</p>
                 </div>
                 <div class="tool-card" routerLink="/attendance">
                   <i class="pi pi-check-square"></i>
@@ -66,20 +66,20 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <!-- Tab 1: Ops & Logistics -->
             <p-tabpanel value="1">
               <div class="tab-content-grid">
-                <div class="tool-card" routerLink="/equipment">
-                  <i class="pi pi-box"></i>
-                  <h3>Equipment Hub</h3>
-                  <p>Inventory and gear assignments.</p>
+                <div class="tool-card" routerLink="/coach/practice">
+                  <i class="pi pi-calendar-plus"></i>
+                  <h3>Practice Planner</h3>
+                  <p>Plan sessions, drills, attendance, and equipment needs.</p>
                 </div>
                 <div class="tool-card" routerLink="/tournaments">
                   <i class="pi pi-trophy"></i>
                   <h3>Tournaments</h3>
                   <p>Manage multi-game event logistics.</p>
                 </div>
-                <div class="tool-card" routerLink="/officials">
+                <div class="tool-card" routerLink="/coach/team">
                   <i class="pi pi-flag"></i>
-                  <h3>Officials</h3>
-                  <p>Manage referee assignments and contacts.</p>
+                  <h3>Game Day Setup</h3>
+                  <p>Manage operational details and team administration.</p>
                 </div>
               </div>
             </p-tabpanel>
@@ -92,10 +92,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <h3>Team Settings</h3>
                   <p>Update team profile and preferences.</p>
                 </div>
-                <div class="tool-card" routerLink="/team/create">
+                <div class="tool-card" routerLink="/coach/planning">
                   <i class="pi pi-plus"></i>
-                  <h3>Create New Team</h3>
-                  <p>Start a new squad or seasonal program.</p>
+                  <h3>Season Planning</h3>
+                  <p>Set up calendars, programs, and the next training cycle.</p>
                 </div>
                 <div class="tool-card" routerLink="/settings">
                   <i class="pi pi-cog"></i>

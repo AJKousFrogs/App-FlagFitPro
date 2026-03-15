@@ -18,13 +18,13 @@ import {
   DestroyRef,
   OnInit,
   Renderer2,
-  ViewChild,
   afterNextRender,
   computed,
   effect,
   inject,
   ElementRef,
   signal,
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {

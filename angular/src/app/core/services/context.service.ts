@@ -133,6 +133,28 @@ export class ContextService {
         },
       ],
     },
+    "/performance/insights": {
+      label: "Analytics",
+      icon: "pi-chart-bar",
+      parent: "/dashboard",
+      quickActions: [
+        {
+          label: "View Performance Tests",
+          icon: "pi-bullseye",
+          route: "/performance/tests",
+        },
+        {
+          label: "Set Goals",
+          icon: "pi-flag",
+          route: "/settings",
+        },
+        {
+          label: "Compare Periods",
+          icon: "pi-calendar-times",
+          action: () => this.comparePeriods(),
+        },
+      ],
+    },
     "/roster": {
       label: "Roster",
       icon: "pi-users",
@@ -179,6 +201,28 @@ export class ContextService {
           label: "Set Benchmark",
           icon: "pi-flag",
           action: () => this.setBenchmark(),
+        },
+        {
+          label: "Compare Players",
+          icon: "pi-users",
+          route: "/roster",
+        },
+      ],
+    },
+    "/performance/tests": {
+      label: "Performance Tests",
+      icon: "pi-bullseye",
+      parent: "/dashboard",
+      quickActions: [
+        {
+          label: "Log Session",
+          icon: "pi-plus",
+          route: "/performance/tests",
+        },
+        {
+          label: "View Trends",
+          icon: "pi-chart-line",
+          route: "/performance/insights",
         },
         {
           label: "Compare Players",
@@ -351,25 +395,25 @@ export class ContextService {
         },
       ],
     },
-    "/depth-chart": {
-      label: "Depth Chart",
-      icon: "pi-sitemap",
+    "/team/workspace": {
+      label: "Team Workspace",
+      icon: "pi-users",
       parent: "/dashboard",
       quickActions: [
         {
-          label: "Edit Chart",
-          icon: "pi-pencil",
-          route: "/depth-chart",
-        },
-        {
-          label: "View Roster",
+          label: "Open Roster",
           icon: "pi-users",
           route: "/roster",
         },
         {
-          label: "Print Chart",
-          icon: "pi-print",
-          action: () => window.print(),
+          label: "Attendance",
+          icon: "pi-check-square",
+          route: "/attendance",
+        },
+        {
+          label: "Team Settings",
+          icon: "pi-cog",
+          route: "/coach/team",
         },
       ],
     },

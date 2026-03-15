@@ -36,7 +36,7 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
           <ul>
             <li><a routerLink="/dashboard">Dashboard</a></li>
             <li><a routerLink="/training">Training</a></li>
-            <li><a routerLink="/analytics">Analytics</a></li>
+            <li><a routerLink="/performance/insights">Performance</a></li>
             <li><a routerLink="/settings">Settings</a></li>
           </ul>
         </div>

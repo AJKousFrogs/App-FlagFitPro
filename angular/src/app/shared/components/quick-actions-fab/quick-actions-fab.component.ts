@@ -12,6 +12,7 @@ import {
 import { NavigationEnd, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { filter } from "rxjs";
+import { isCoachNavigationRole } from "../../../core/navigation/app-navigation.config";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -106,11 +107,43 @@ export class QuickActionsFABComponent implements OnInit {
 
   // Quick actions - always show these core actions
   quickActions = computed<QuickActionItem[]>(() => {
+    const role = this.authService.getUser()?.role;
+
+    if (isCoachNavigationRole(role)) {
+      return [
+        {
+          icon: "pi-comments",
+          label: "Merlin AI Chat",
+          route: "/chat",
+        },
+        {
+          icon: "pi-users",
+          label: "Open Roster",
+          route: "/roster",
+        },
+        {
+          icon: "pi-chart-line",
+          label: "Team Performance",
+          route: "/coach/analytics",
+        },
+        {
+          icon: "pi-calendar",
+          label: "Coach Planning",
+          route: "/coach/planning",
+        },
+        {
+          icon: "pi-briefcase",
+          label: "Team Workspace",
+          route: "/team/workspace",
+        },
+      ];
+    }
+
     return [
       {
         icon: "pi-comments",
         label: "Merlin AI Chat",
-        route: "/ai-coach",
+        route: "/chat",
       },
       {
         icon: "pi-heart",
@@ -120,7 +153,7 @@ export class QuickActionsFABComponent implements OnInit {
       {
         icon: "pi-chart-line",
         label: "View Analytics",
-        route: "/analytics",
+        route: "/performance/insights",
       },
       {
         icon: "pi-bolt",

@@ -29,19 +29,12 @@ import {
   PlayerStatisticsService,
 } from "../../core/services/player-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { AnalyticsDataService } from "./services/analytics-data.service";
-import { FeatureFlagsService } from "../../core/services/feature-flags.service";
-import { TeamPerformanceRankingService } from "../../core/services/team-performance-ranking.service";
 import {
   TrainingStatsCalculationService,
   type TrainingStatsData,
 } from "../../core/services/training-stats-calculation.service";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
-import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
-import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
@@ -56,8 +49,6 @@ import {
   updateChartFontSizes,
 } from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
-import { formatDate } from "../../shared/utils/date.utils";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
 import { DataState } from "../../core/services/data-source.service";
 import {
@@ -86,11 +77,6 @@ type AnalyticsChartType =
     PageHeaderComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
-    ButtonComponent,
-    AppDialogComponent,
-    DialogFooterComponent,
-    DialogHeaderComponent,
-    AlertComponent,
     DataSourceBannerComponent,
     AnalyticsChartsSectionComponent,
     AnalyticsOverviewSectionComponent,
@@ -117,11 +103,6 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly acwrService = inject(AcwrService);
   private readonly toastService = inject(ToastService);
   private readonly analyticsDataService = inject(AnalyticsDataService);
-  private readonly teamRankingService = inject(TeamPerformanceRankingService);
-  private readonly featureFlags = inject(FeatureFlagsService);
-
-  // Next-gen preview
-  nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -136,16 +117,6 @@ export class AnalyticsComponent implements AfterViewInit {
 
   // Expose UI_LIMITS for template usage
   readonly UI_LIMITS = UI_LIMITS;
-
-  // Team performance achievements (compare against teammates)
-  readonly teamPerformanceAchievements = computed(() =>
-    this.teamRankingService.achievements(),
-  );
-  readonly teamRankingBadgeCounts = computed(() => ({
-    gold: this.teamRankingService.goldBadges().length,
-    silver: this.teamRankingService.silverBadges().length,
-    bronze: this.teamRankingService.bronzeBadges().length,
-  }));
 
   metrics = signal<Metric[]>([]);
   developmentGoals = signal<DevelopmentGoal[]>([]);
@@ -214,67 +185,12 @@ export class AnalyticsComponent implements AfterViewInit {
     "Agility Tests",
   ];
 
-  // Share with Coach
-  showShareDialog = signal(false);
-  isSharing = signal(false);
-  shareMessage = signal("");
-  shareOptions = {
-    includeCharts: true,
-    includeGoals: true,
-    includeStats: true,
-    includeComments: true,
-  };
-
-  // Getters/setters for two-way binding in template
-  get showShareDialogValue(): boolean {
-    return this.showShareDialog();
-  }
-  set showShareDialogValue(value: boolean) {
-    this.showShareDialog.set(value);
-  }
-  get shareMessageValue(): string {
-    return this.shareMessage();
-  }
-  set shareMessageValue(value: string) {
-    this.shareMessage.set(value);
-  }
-
   onSelectedTimePeriodChange(value: string): void {
     this.selectedTimePeriod = value;
   }
 
   onSelectedMetricChange(value: string): void {
     this.selectedMetric = value;
-  }
-
-  onShareOptionChange(
-    key: "includeCharts" | "includeGoals" | "includeStats" | "includeComments",
-    value: boolean,
-  ): void {
-    this.shareOptions = {
-      ...this.shareOptions,
-      [key]: value,
-    };
-  }
-
-  onShareMessageValueChange(value: string): void {
-    this.shareMessageValue = value;
-  }
-
-  getInputValue(event: Event): string {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      return target.value;
-    }
-    return "";
-  }
-
-  isChecked(event: Event): boolean {
-    const target = event.target;
-    if (target instanceof HTMLInputElement) {
-      return target.checked;
-    }
-    return false;
   }
 
   // Enhanced chart options with zoom, pan, custom tooltips
@@ -358,7 +274,6 @@ export class AnalyticsComponent implements AfterViewInit {
       this.loadDevelopmentGoals();
       this.loadGapAnalysis();
       this.loadSpeedInsightsFromRealData();
-      this.loadTeamRankings();
 
       // Set loading to false after initial data load starts
       setTimeout(
@@ -1034,115 +949,6 @@ Tip: Hover over data points to see trend information!`;
       });
   }
 
-  // ============================================================================
-  // SHARE WITH COACH
-  // ============================================================================
-
-  /**
-   * Share analytics report with coach
-   */
-  async shareWithCoach(): Promise<void> {
-    this.isSharing.set(true);
-
-    try {
-      const currentUser = this.authService.getUser();
-      if (!currentUser?.id) {
-        this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
-        return;
-      }
-
-      const reportData = this.buildShareReportData(currentUser);
-
-      // Send to coach via API
-      this.apiService
-        .post(API_ENDPOINTS.analytics.summary, {
-          action: "share_with_coach",
-          ...reportData,
-        })
-        .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: (_response) => {
-            this.isSharing.set(false);
-            this.showShareDialog.set(false);
-            this.shareMessage.set("");
-            this.toastService.success("Analytics report sent to your coach!");
-          },
-          error: (error) => {
-            this.isSharing.set(false);
-            this.logger.error("Error sharing with coach:", error);
-            // UX AUDIT FIX: Show actual error instead of false success
-            this.toastService.error(TOAST.ERROR.ANALYTICS_SHARE_FAILED);
-          },
-        });
-    } catch (error) {
-      this.isSharing.set(false);
-      this.logger.error("Error sharing analytics:", error);
-      this.toastService.error(TOAST.ERROR.ANALYTICS_SHARE_FAILED);
-    }
-  }
-
-  private buildShareReportData(currentUser: {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-  }): Record<string, unknown> {
-    return {
-      playerId: currentUser.id,
-      playerName: currentUser.name || currentUser.email,
-      reportDate: new Date().toISOString(),
-      message: this.shareMessage(),
-      includedSections: {
-        charts: this.shareOptions.includeCharts,
-        goals: this.shareOptions.includeGoals,
-        stats: this.shareOptions.includeStats,
-        comments: this.shareOptions.includeComments,
-      },
-      metrics: this.shareOptions.includeCharts ? this.metrics() : [],
-      goals: this.shareOptions.includeGoals ? this.developmentGoals() : [],
-      seasonStats: this.shareOptions.includeStats ? this.playerSeasonStats() : null,
-      acwr: this.acwrData(),
-    };
-  }
-
-  /**
-   * Export analytics as PDF
-   */
-  exportAnalyticsPDF(): void {
-    this.logger.info("Exporting analytics as PDF");
-
-    try {
-      const currentUser = this.authService.getUser();
-      const playerName = currentUser?.name || currentUser?.email || "Player";
-      const dateStr = new Date().toISOString().split("T")[0];
-
-      // Build PDF content as HTML (for print-to-PDF)
-      const content = this.generatePDFContent(playerName, dateStr);
-
-      // Create a new window for printing
-      const printWindow = window.open("", "_blank");
-      if (!printWindow) {
-        this.toastService.error(TOAST.ERROR.ALLOW_POPUPS_FOR_PDF);
-        return;
-      }
-
-      printWindow.document.write(content);
-      printWindow.document.close();
-
-      // Wait for content to load then print
-      printWindow.onload = () => {
-        setTimeout(() => {
-          printWindow.print();
-        }, TIMEOUTS.UI_TRANSITION_DELAY);
-      };
-
-      this.toastService.success(
-        "PDF export ready! Use your browser's print dialog to save.",
-      );
-    } catch (error) {
-      this.logger.error("Error exporting PDF:", error);
-      this.toastService.error(TOAST.ERROR.PDF_EXPORT_FAILED);
-    }
-  }
-
   /**
    * Load gap analysis data comparing player metrics to Olympic benchmarks
    */
@@ -1374,219 +1180,4 @@ Tip: Hover over data points to see trend information!`;
     });
   }
 
-  /**
-   * Generate PDF-ready HTML content
-   */
-  private generatePDFContent(playerName: string, dateStr: string): string {
-    const metrics = this.metrics();
-    const goals = this.developmentGoals();
-    const acwr = this.acwrData();
-    const seasonStats = this.playerSeasonStats();
-
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>FlagFit Pro Analytics - ${playerName}</title>
-        <style>
-          body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Poppins when available, else system fallback */
-            padding: var(--space-10);
-            max-width: var(--dialog-max-width-2xl);
-            margin: 0 auto;
-            color: var(--color-text-primary);
-          }
-          .header {
-            text-align: center;
-            margin-bottom: var(--space-10);
-            padding-bottom: var(--space-5);
-            border-bottom: var(--border-2) solid var(--color-brand-primary);
-          }
-          .header h1 {
-            color: var(--color-brand-primary);
-            margin: 0;
-            font-size: var(--ds-font-size-1-75rem);
-          }
-          .header p {
-            color: var(--color-text-secondary);
-            margin: calc(var(--space-5) / 2) 0 0;
-          }
-          .section {
-            margin-bottom: var(--space-8);
-          }
-          .section h2 {
-            color: var(--color-text-primary);
-            font-size: var(--ds-font-size-lg);
-            border-bottom: var(--border-1) solid var(--color-border-secondary);
-            padding-bottom: var(--space-2);
-            margin-bottom: var(--space-4);
-          }
-          .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-4);
-          }
-          .metric-card {
-            background: var(--surface-secondary);
-            padding: var(--space-4);
-            border-radius: var(--radius-lg);
-            text-align: center;
-          }
-          .metric-value {
-            font-size: var(--ds-font-size-2xl);
-            font-weight: var(--ds-font-weight-bold);
-            color: var(--ds-primary-green);
-          }
-          .metric-label {
-            color: var(--color-text-secondary);
-            font-size: var(--ds-font-size-sm);
-          }
-          .goal-item {
-            background: var(--surface-secondary);
-            padding: var(--space-3);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--space-2);
-          }
-          .goal-name {
-            font-weight: var(--ds-font-weight-bold);
-            color: var(--color-text-primary);
-          }
-          .goal-progress {
-            color: var(--color-text-secondary);
-            font-size: var(--ds-font-size-sm);
-          }
-          .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-          .stats-table th, .stats-table td {
-            padding: var(--space-2) var(--space-3);
-            text-align: left;
-            border-bottom: var(--border-1) solid var(--color-border-secondary);
-          }
-          .stats-table th {
-            background: var(--surface-secondary);
-            font-weight: var(--ds-font-weight-semibold);
-          }
-          .footer {
-            margin-top: var(--space-10);
-            padding-top: var(--space-5);
-            border-top: var(--border-1) solid var(--color-border-secondary);
-            text-align: center;
-            color: var(--color-text-muted);
-            font-size: var(--ds-font-size-xs);
-          }
-          @media print {
-            body { padding: var(--space-5); }
-            .no-print { display: none; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h1>FlagFit Pro Analytics Report</h1>
-          <p>${playerName} • ${dateStr}</p>
-        </div>
-
-        <div class="section">
-          <h2>Key Metrics</h2>
-          <div class="metrics-grid">
-            ${metrics
-              .map(
-                (m) => `
-              <div class="metric-card">
-                <div class="metric-value">${m.value}</div>
-                <div class="metric-label">${m.label}</div>
-              </div>
-            `,
-              )
-              .join("")}
-          </div>
-        </div>
-
-        ${
-          acwr
-            ? `
-          <div class="section">
-            <h2>Training Load (ACWR)</h2>
-            <div class="metrics-grid">
-              <div class="metric-card">
-                <div class="metric-value">${acwr.acwr}</div>
-                <div class="metric-label">Current ACWR</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-value">${acwr.riskZone || "N/A"}</div>
-                <div class="metric-label">Risk Zone</div>
-              </div>
-            </div>
-          </div>
-        `
-            : ""
-        }
-
-        ${
-          goals.length > 0
-            ? `
-          <div class="section">
-            <h2>Development Goals</h2>
-            ${goals
-              .map(
-                (g) => `
-              <div class="goal-item">
-                <div class="goal-name">${g.metricName}</div>
-                <div class="goal-progress">
-                  Target: ${g.targetValue}${g.targetUnit} • 
-                  Current: ${g.currentValue}${g.targetUnit} •
-                  Progress: ${this.calculateGoalProgress(g)}%
-                </div>
-              </div>
-            `,
-              )
-              .join("")}
-          </div>
-        `
-            : ""
-        }
-
-        ${
-          seasonStats
-            ? `
-          <div class="section">
-            <h2>Season Statistics</h2>
-            <table class="stats-table">
-              <tr><th>Metric</th><th>Value</th></tr>
-              <tr><td>Games Played</td><td>${seasonStats.gamesPlayed}</td></tr>
-              <tr><td>Attendance Rate</td><td>${seasonStats.attendanceRate?.toFixed(1)}%</td></tr>
-              <tr><td>Passing Yards</td><td>${seasonStats.totalPassingYards}</td></tr>
-              <tr><td>Completion %</td><td>${seasonStats.completionPercentage?.toFixed(1)}%</td></tr>
-              <tr><td>Rushing Yards</td><td>${seasonStats.totalRushingYards}</td></tr>
-              <tr><td>Flag Pulls</td><td>${seasonStats.totalFlagPulls}</td></tr>
-            </table>
-          </div>
-        `
-            : ""
-        }
-
-        <div class="footer">
-          <p>Generated by FlagFit Pro • ${formatDate(new Date(), "PPp")}</p>
-          <p>This report is confidential and intended for coaching purposes only.</p>
-        </div>
-      </body>
-      </html>
-    `;
-  }
-
-  /**
-   * Load team rankings for comparison badges
-   */
-  private loadTeamRankings(): void {
-    this.teamRankingService.loadTeamRankings();
-  }
-
-  /**
-   * Get emoji for rank display
-   */
-  getRankEmoji(rank: number): string {
-    return this.teamRankingService.getRankEmoji(rank);
-  }
 }
