@@ -211,7 +211,7 @@ export class SupplementTrackerComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private renderer = inject(Renderer2);
 
-  @ViewChild("progressFill") private progressFill?: ElementRef<HTMLDivElement>;
+  progressFill = viewChild<ElementRef<HTMLDivElement>>("progressFill");
 
   // State
   isLoading = signal(true);
@@ -272,7 +272,7 @@ export class SupplementTrackerComponent implements OnInit {
   constructor() {
     afterNextRender(() => {
       effect(() => {
-        const fill = this.progressFill?.nativeElement;
+        const fill = this.progressFill()?.nativeElement;
         if (!fill) return;
         this.renderer.setStyle(fill, "width", `${this.progressPercent()}%`);
       });

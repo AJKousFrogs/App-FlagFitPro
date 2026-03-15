@@ -89,7 +89,6 @@ import { getInitials } from "../../shared/utils/format.utils";
   styleUrl: "./chat.component.scss",
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
-  // Angular 21: Use viewChild() signal instead of @ViewChild()
   scrollViewport = viewChild.required<ElementRef>("scrollViewport");
   // Template reference for messages list scrolling
   readonly messagesList = viewChild<ElementRef<HTMLElement>>("messagesList");

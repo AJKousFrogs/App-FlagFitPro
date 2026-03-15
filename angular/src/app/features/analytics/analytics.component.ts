@@ -104,7 +104,6 @@ type AnalyticsChartType =
   },
 })
 export class AnalyticsComponent implements AfterViewInit {
-  // Angular 21: Use viewChildren() signal instead of @ViewChildren()
   chartRefs = viewChildren<UIChart>(UIChart);
   private readonly apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);

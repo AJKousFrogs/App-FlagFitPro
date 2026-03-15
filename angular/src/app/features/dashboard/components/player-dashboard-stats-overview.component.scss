@@ -16,13 +16,14 @@
 
 .stat-icon {
   display: flex;
-  width: var(--space-10);
-  height: var(--space-10);
-  min-width: var(--space-10);
+  width: var(--space-11);
+  height: var(--space-11);
+  min-width: var(--space-11);
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--ds-font-size-xl);
+  box-shadow: var(--shadow-inner);
 }
 
 .readiness-icon {
@@ -37,8 +38,8 @@
 }
 
 .streak-icon {
-  background: var(--color-status-warning-subtle);
-  color: var(--color-status-success);
+  background: var(--ds-primary-green-ultra-subtle);
+  color: var(--color-brand-primary);
 }
 
 .sessions-icon {

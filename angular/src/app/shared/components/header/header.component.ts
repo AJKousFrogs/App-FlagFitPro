@@ -84,7 +84,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
 
-  // Angular 21: Use viewChild() signal instead of @ViewChild()
   notificationsPanel =
     viewChild<NotificationsPanelComponent>("notificationsPanel");
   userMenu = viewChild<import("primeng/menu").Menu>("userMenu");
@@ -96,7 +95,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Angular 21: Use output() signal instead of @Output() EventEmitter
   toggleSidebar = output<void>();
   readonly sidebarCollapsed = input(false);
   readonly mobileNav = input(false);

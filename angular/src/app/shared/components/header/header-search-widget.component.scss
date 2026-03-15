@@ -1,0 +1,16 @@
+@use "styles/mixins" as *;
+
+.search-widget {
+  @include flex-center;
+  width: var(--touch-target-md);
+  height: var(--touch-target-md);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-lg);
+
+  &:hover {
+    background: var(--surface-hover);
+  }
+}

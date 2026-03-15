@@ -99,10 +99,16 @@ export class OnboardingStateService {
     return "Senior";
   }
 
-  getTeamLabel(value: string | null): string {
+  getTeamLabel(value: string | { label: string; value: string } | null): string {
     if (!value) return "Not selected";
-    const team = this.teams().find((t) => t.value === value);
-    return team ? team.label : value;
+
+    if (typeof value === 'object' && value.label) {
+      return value.label;
+    }
+
+    const teamValue = typeof value === 'string' ? value : value.value;
+    const team = this.teams().find((t) => t.value === teamValue);
+    return team ? team.label : String(teamValue);
   }
 
   getPositionLabel(value: string | null): string {

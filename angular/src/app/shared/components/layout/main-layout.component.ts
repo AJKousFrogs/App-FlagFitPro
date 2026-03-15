@@ -19,6 +19,7 @@ import { BottomNavComponent } from "../bottom-nav/bottom-nav.component";
 import { OfflineBannerComponent } from "../offline-banner/offline-banner.component";
 import { KeyboardShortcutsModalComponent } from "../keyboard-shortcuts-modal/keyboard-shortcuts-modal.component";
 import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
+import { MobileHeaderComponent } from "./mobile-header.component";
 import { ThemeService } from "../../../core/services/theme.service";
 import { ProfileNotificationService } from "../../../core/services/profile-notification.service";
 
@@ -28,6 +29,7 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
   imports: [
     SidebarComponent,
     HeaderComponent,
+    MobileHeaderComponent,
     QuickActionsFABComponent,
     SmartBreadcrumbsComponent,
     BottomNavComponent,
@@ -43,6 +45,11 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
         [mobileNav]="mobileNav()"
         (toggleSidebar)="toggleSidebar()"
       ></app-header>
+      
+      <app-mobile-header
+        class="mobile-header"
+        (toggleSidebar)="toggleSidebar()"
+      ></app-mobile-header>
 
       <div class="app-shell__main">
         <app-sidebar

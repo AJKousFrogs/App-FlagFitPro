@@ -48,6 +48,7 @@
   );
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.18);
   border-radius: var(--radius-xl);
+
   --ui-motion-enter-from-y: calc(-1 * var(--space-1));
   animation: ui-motion-enter-y 0.2s ease-out;
 }

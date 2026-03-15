@@ -1,0 +1,44 @@
+@use "styles/mixins" as *;
+
+.mobile-header-shell {
+  display: none; // Hidden by default
+
+  @include respond-to(md) {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    height: var(--app-shell-header-height-mobile);
+    padding: 0 var(--space-3);
+    gap: var(--space-3);
+    background: var(--surface-card);
+    border-bottom: var(--border-1) solid var(--surface-border);
+  }
+}
+
+.mobile-menu-toggle {
+  @include flex-center;
+  width: var(--touch-target-md);
+  height: var(--touch-target-md);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-xl);
+
+  &:hover {
+    background: var(--surface-hover);
+  }
+}
+
+.mobile-header-center {
+  @include flex-center;
+}
+
+.mobile-logo {
+  height: var(--space-8);
+  width: auto;
+}
+
+.mobile-header-end {
+  @include flex-center;
+}

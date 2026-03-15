@@ -29,7 +29,6 @@ export class SupabaseService {
   private logger = inject(LoggerService);
   private supabase: SupabaseClient;
 
-  // UI State: Use signals instead of BehaviorSubject
   private readonly _currentUser = signal<User | null>(null);
   private readonly _session = signal<Session | null>(null);
   private readonly _isInitialized = signal<boolean>(false);

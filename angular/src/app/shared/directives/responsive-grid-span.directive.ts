@@ -1,10 +1,11 @@
 import {
   Directive,
   HostBinding,
-  Input,
+  input,
   OnDestroy,
   OnInit,
   inject,
+  effect,
 } from "@angular/core";
 import { PlatformService } from "../../core/services/platform.service";
 
@@ -17,16 +18,26 @@ export class ResponsiveGridSpanDirective implements OnInit, OnDestroy {
   private mediaQueryList: MediaQueryList | null = null;
   private readonly onMediaQueryChange = () => this.applySpan();
 
-  @Input() desktop = "span 6";
-  @Input() tablet = "span 6";
-  @Input() mobile = "span 12";
+  desktop = input<string>("span 6");
+  tablet = input<string>("span 6");
+  mobile = input<string>("span 12");
 
   @HostBinding("style.grid-column")
-  gridColumn = this.desktop;
+  gridColumn = "span 6";
+
+  constructor() {
+    effect(() => {
+      // Re-apply whenever inputs change
+      this.desktop();
+      this.tablet();
+      this.mobile();
+      this.applySpan();
+    });
+  }
 
   ngOnInit(): void {
     if (!this.platform.isBrowser) {
-      this.gridColumn = this.desktop;
+      this.gridColumn = this.desktop();
       return;
     }
 
@@ -49,21 +60,21 @@ export class ResponsiveGridSpanDirective implements OnInit, OnDestroy {
 
   private applySpan(): void {
     if (!this.platform.isBrowser) {
-      this.gridColumn = this.desktop;
+      this.gridColumn = this.desktop();
       return;
     }
 
     const width = window.innerWidth;
     if (width <= 767) {
-      this.gridColumn = this.mobile;
+      this.gridColumn = this.mobile();
       return;
     }
 
     if (width <= 1023) {
-      this.gridColumn = this.tablet;
+      this.gridColumn = this.tablet();
       return;
     }
 
-    this.gridColumn = this.desktop;
+    this.gridColumn = this.desktop();
   }
 }

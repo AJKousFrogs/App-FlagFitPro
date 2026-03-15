@@ -111,7 +111,6 @@ export class LazyChartComponent implements OnInit, OnDestroy {
   // Canvas reference for Chart.js
   chartCanvas = viewChild<ElementRef<HTMLCanvasElement>>("chartCanvas");
 
-  // Angular 21: Use input() signals instead of @Input()
   type = input<"line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea">(
     "line",
   );
@@ -122,7 +121,6 @@ export class LazyChartComponent implements OnInit, OnDestroy {
   width = input<string>("100%");
   height = input<string>("var(--chart-min-height-md)");
 
-  // Angular 21: Use output() instead of @Output()
   chartClick = output<unknown>();
   chartHover = output<unknown>();
 

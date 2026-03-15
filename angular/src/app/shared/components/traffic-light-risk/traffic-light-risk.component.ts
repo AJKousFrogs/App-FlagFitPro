@@ -35,7 +35,7 @@ import { RiskZone } from "../../../core/models/acwr.models";
 export class TrafficLightRiskComponent {
   private renderer = inject(Renderer2);
 
-  @ViewChild("scaleMarker") private scaleMarker?: ElementRef<HTMLDivElement>;
+  scaleMarker = viewChild<ElementRef<HTMLDivElement>>("scaleMarker");
 
   // Angular signals for inputs
   riskZone = input.required<RiskZone>();
@@ -65,7 +65,7 @@ export class TrafficLightRiskComponent {
   constructor() {
     afterNextRender(() => {
       effect(() => {
-        const marker = this.scaleMarker?.nativeElement;
+        const marker = this.scaleMarker()?.nativeElement;
         if (!marker) return;
         this.renderer.setStyle(
           marker,

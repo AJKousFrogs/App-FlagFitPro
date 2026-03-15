@@ -8,39 +8,44 @@
  * ================================================================
  */
 
-import { Directive, ElementRef, input, OnInit, inject } from "@angular/core";
+import { Directive, ElementRef, input, effect, inject } from "@angular/core";
 
 @Directive({
   selector: "img[appMobileOptimized]",
 })
-export class MobileOptimizedImageDirective implements OnInit {
+export class MobileOptimizedImageDirective {
   private el = inject(ElementRef<HTMLImageElement>);
 
-  // Angular 21: Use input() signals instead of @Input()
   width = input<string | number | undefined>(undefined);
   height = input<string | number | undefined>(undefined);
   lazy = input<boolean>(true);
 
-  ngOnInit() {
-    const img = this.el.nativeElement;
+  constructor() {
+    // Use effect to react to input changes
+    effect(() => {
+      const img = this.el.nativeElement;
+      const w = this.width();
+      const h = this.height();
+      const isLazy = this.lazy();
 
-    // Add lazy loading
-    if (this.lazy()) {
-      img.loading = "lazy";
-    }
+      // Add lazy loading
+      if (isLazy) {
+        img.loading = "lazy";
+      }
 
-    // Add explicit dimensions if provided
-    if (this.width()) {
-      img.setAttribute("width", String(this.width()));
-    }
-    if (this.height()) {
-      img.setAttribute("height", String(this.height()));
-    }
+      // Add explicit dimensions if provided
+      if (w) {
+        img.setAttribute("width", String(w));
+      }
+      if (h) {
+        img.setAttribute("height", String(h));
+      }
 
-    // Add decoding async for better performance
-    img.decoding = "async";
+      // Add decoding async for better performance
+      img.decoding = "async";
 
-    // Prevent dragging (better UX on mobile)
-    img.draggable = false;
+      // Prevent dragging (better UX on mobile)
+      img.draggable = false;
+    });
   }
 }

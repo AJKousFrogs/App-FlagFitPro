@@ -184,7 +184,6 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       this.teamMembershipService.isAdmin(),
   );
 
-  // Angular 21: Use viewChild() signal instead of @ViewChild()
   messagesContainer = viewChild.required<ElementRef>("messagesContainer");
   messageInput = viewChild.required<ElementRef>("messageInput");
   searchInputElement = viewChild<SearchInputComponent>("searchInput");

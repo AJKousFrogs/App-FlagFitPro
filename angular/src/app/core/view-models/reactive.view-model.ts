@@ -5,7 +5,6 @@
  * Perfect for real-time analytics and live data
  *
  * ⚠️ IMPORTANT: Use RxJS ONLY for complex async work (API calls, intervals, etc.)
- * Use Signals for UI state management instead of BehaviorSubject
  *
  * Usage:
  * ```typescript

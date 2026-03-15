@@ -279,7 +279,6 @@ export type SkeletonVariant =
   styleUrl: "./skeleton-loader.component.scss",
 })
 export class SkeletonLoaderComponent {
-  // Angular 21: Use input() signals
   variant = input<SkeletonVariant>("text");
   width = input<string>("100%");
   height = input<string>("var(--space-5)");

@@ -37,7 +37,6 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
   styleUrl: "./page-header.component.scss",
 })
 export class PageHeaderComponent {
-  // Angular 21: Use input() signal instead of @Input()
   title = input<string>("");
   subtitle = input<string | undefined>(undefined);
   icon = input<string | undefined>(undefined);

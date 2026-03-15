@@ -127,7 +127,7 @@
     "css:coverage": "node scripts/css-coverage.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.95.3",
+    "@supabase/supabase-js": "^2.99.1",
     "ajv": "^8.17.1",
     "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
@@ -136,7 +136,7 @@
     "isomorphic-dompurify": "^2.35.0",
     "jsonwebtoken": "^9.0.3",
     "nodemailer": "^7.0.12",
-    "pg": "^8.18.0",
+    "pg": "^8.20.0",
     "pg-format": "^1.0.4",
     "sql-template-strings": "^2.2.2",
     "web-push": "^3.6.7"
@@ -176,7 +176,7 @@
     "supabase": "^2.76.7",
     "supertest": "^7.1.4",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.0"
   },
   "overrides": {
     "jws": "^4.0.1",

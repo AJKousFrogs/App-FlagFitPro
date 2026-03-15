@@ -292,13 +292,13 @@ const handler = async (event, context) =>
           merlin_submitted_at: new Date().toISOString(),
         };
 
-        const { data, error } = await supabaseAdmin
+        const { data: insertData, error: insertError } = await supabaseAdmin
           .from("knowledge_base_entries")
           .insert(payload)
           .select("id, topic, merlin_approval_status, is_merlin_approved")
           .single();
 
-        if (error) {
+        if (insertError) {
           return createErrorResponse(
             "Failed to submit knowledge entry",
             500,
@@ -310,7 +310,7 @@ const handler = async (event, context) =>
         return createSuccessResponse(
           {
             message: "Knowledge entry submitted for nutritionist review",
-            entry: data,
+            entry: insertData,
           },
           requestId,
         );
@@ -404,14 +404,14 @@ const handler = async (event, context) =>
               merlin_approval_notes: notes,
             };
 
-        const { data, error } = await supabaseAdmin
+        const { data: reviewData, error: reviewError } = await supabaseAdmin
           .from("knowledge_base_entries")
           .update(approvalUpdate)
           .eq("id", entryId)
           .select("id, topic, merlin_approval_status, is_merlin_approved, merlin_approved_by_role")
           .single();
 
-        if (error || !data) {
+        if (reviewError || !reviewData) {
           return createErrorResponse(
             "Failed to review knowledge entry",
             500,
@@ -423,7 +423,7 @@ const handler = async (event, context) =>
         const { error: auditError } = await supabaseAdmin
           .from("knowledge_review_audit")
           .insert({
-          entry_id: data.id,
+          entry_id: reviewData.id,
           reviewed_by: requestContext.userId,
           reviewed_by_role: roles.effectiveRole,
           action,
@@ -436,7 +436,7 @@ const handler = async (event, context) =>
         }
 
         return createSuccessResponse(
-          { message: `Entry ${action}d`, entry: data },
+          { message: `Entry ${action}d`, entry: reviewData },
           requestId,
         );
       }

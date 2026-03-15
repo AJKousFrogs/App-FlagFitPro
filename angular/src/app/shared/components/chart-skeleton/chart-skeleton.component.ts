@@ -62,7 +62,6 @@ import { CommonModule } from "@angular/common";
   styleUrl: "./chart-skeleton.component.scss",
 })
 export class ChartSkeletonComponent {
-  // Angular 21: Use input() signals instead of @Input()
   type = input<"line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea">(
     "line",
   );

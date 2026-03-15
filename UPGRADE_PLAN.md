@@ -113,10 +113,9 @@ Date: 2026-02-21
 ## Execution Status
 
 - Completed: Track A items 1-2 (repo-side secret hygiene and masking).
-- Completed: Track B items 1-4 (Node alignment, workflow fixups, cache paths, package-manager source of truth).
+- Completed: Track C item 1 (dependency refresh) with patch updates for Angular 21.2.4 and latest primeNG 21.1.3.
 - Partially completed: Track C item 3 (missing FK index migration added).
 - Deferred safely:
-  - Track C item 1 (dependency refresh) due registry connectivity error (`ENOTFOUND`).
   - Track C item 2 (framework major) pending release-window decision and network-enabled upgrade test cycle.
   - Remaining RLS policy initplan rewrites moved to dedicated DB policy PR.
 

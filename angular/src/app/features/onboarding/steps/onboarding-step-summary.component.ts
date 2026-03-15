@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { Checkbox } from "primeng/checkbox";
+import { CheckboxModule } from "primeng/checkbox";
+import { FormsModule } from "@angular/forms";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-summary",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, Checkbox],
+  imports: [CommonModule, RouterLink, CheckboxModule, FormsModule],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">

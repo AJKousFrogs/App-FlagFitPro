@@ -14,7 +14,8 @@
 
 .app-shell {
   display: grid;
-  grid-template-rows: var(--app-shell-header-height) minmax(0, 1fr);
+  grid-template-columns: var(--app-shell-sidebar-width) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   height: 100vh;
   height: 100dvh;
   width: 100%;
@@ -23,31 +24,35 @@
   background: var(--surface-ground);
 
   --bottom-nav-height: var(--space-16);
-  --app-shell-sidebar-track: var(--app-shell-sidebar-width);
   --page-shell-max-width: var(--app-shell-content-max-width);
 }
 
 :host(.app-shell--sidebar-collapsed) .app-shell {
-  --app-shell-sidebar-track: var(--app-shell-sidebar-width-collapsed);
+  grid-template-columns: var(--app-shell-sidebar-width-collapsed) minmax(0, 1fr);
 }
 
-.app-shell__header {
-  min-height: 0;
+.app-shell__header,
+.mobile-header {
+  display: none;
 }
 
 .app-shell__main {
   display: grid;
-  grid-template-columns: var(--app-shell-sidebar-track) minmax(0, 1fr);
+  grid-template-rows: var(--app-shell-header-height) minmax(0, 1fr);
   min-height: 0;
   overflow: hidden;
-  transition: grid-template-columns var(--motion-feedback-duration)
-    var(--ease-standard);
+  position: relative;
+  z-index: 1;
   background:
     linear-gradient(
       180deg,
       color-mix(in srgb, var(--surface-ground) 84%, var(--surface-card) 16%) 0%,
       var(--surface-ground) 14rem
     );
+}
+
+.app-shell__header {
+  display: block;
 }
 
 .app-shell__sidebar {

@@ -52,7 +52,6 @@ const SUGGESTION_DEBOUNCE_MS = 150;
   },
 })
 export class SearchPanelComponent implements OnDestroy {
-  // Angular 21: Use viewChild() signal instead of @ViewChild()
   searchInput = viewChild.required<ElementRef<HTMLInputElement>>("searchInput");
 
   readonly searchService = inject(SearchService);

@@ -389,28 +389,28 @@ export const COLORS = {
   PRIMARY_DARK: "var(--hover-text-primary)", // --ds-primary-green-hover
 
   // Semantic status colors (use STATUS_COLORS from design-tokens.util for DOM)
-  SUCCESS: "var(--p-highlight-text-color)", // --color-status-success (brand green)
-  SUCCESS_LIGHT: "var(--p-highlight-text-color)", // --color-brand-secondary
-  WARNING: "var(--color-chart-quaternary)", // --primitive-warning-500
-  WARNING_LIGHT: "var(--color-icon-notifications)", // --primitive-warning-400
-  ERROR: "var(--color-chart-quinary)", // --primitive-error-500
-  ERROR_LIGHT: "var(--color-error-text-accessible-dark)", // --primitive-error-400
-  INFO: "var(--color-chart-tertiary)", // --color-chart-tertiary
-  INFO_LIGHT: "#38bdf8", // --primitive-info-400
+  SUCCESS: "var(--color-status-success)",
+  SUCCESS_LIGHT: "var(--color-status-success-light)",
+  WARNING: "var(--color-status-warning)",
+  WARNING_LIGHT: "var(--color-status-warning-light)",
+  ERROR: "var(--color-status-error)",
+  ERROR_LIGHT: "var(--color-status-error-light)",
+  INFO: "var(--color-status-info)",
+  INFO_LIGHT: "var(--color-status-info-light)",
 
   // UI accent colors (map to design-system-tokens.scss)
-  BLUE: "var(--color-chart-tertiary)", // --color-chart-tertiary
-  CYAN: "#0284c7",
-  PURPLE: "var(--color-chart-senary)", // --color-status-help
-  PURPLE_LIGHT: "#a855f7",
+  BLUE: "var(--color-chart-tertiary)",
+  CYAN: "var(--primitive-info-500)",
+  PURPLE: "var(--color-status-help)",
+  PURPLE_LIGHT: "var(--color-status-help-light)",
   TEAL: "var(--color-phase-late-season)",
-  GRAY: "var(--color-workout-rest)", // --color-workout-rest
+  GRAY: "var(--color-workout-rest)",
   SLATE: "var(--p-surface-400)",
-  AMBER: "var(--color-chart-quaternary)", // --primitive-warning-500
+  AMBER: "var(--primitive-warning-500)",
   ORANGE: "var(--ds-primary-orange)",
-  LIME: "#84cc16",
-  GREEN: "#22c55e",
-  YELLOW: "#eab308",
+  LIME: "var(--primitive-primary-500)",
+  GREEN: "var(--primitive-primary-600)",
+  YELLOW: "var(--primitive-success-500)",
 
   // Chart-specific colors (for canvas rendering only)
   // Maps to: --color-chart-1 through --color-chart-6

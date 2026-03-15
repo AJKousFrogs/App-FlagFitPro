@@ -21,9 +21,9 @@
   text-decoration: none;
   color: var(--text-color);
   transition:
-    background-color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color var(--transition-base) var(--ease-standard),
+    transform var(--transition-base) var(--ease-standard),
+    box-shadow var(--transition-base) var(--ease-standard);
   border: var(--border-1) solid var(--surface-border);
 }
 
@@ -51,7 +51,7 @@
 }
 
 .support-content i {
-  font-size: var(--ds-font-size-2-5rem);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-brand-primary);
   margin-bottom: var(--spacing-md);
 }

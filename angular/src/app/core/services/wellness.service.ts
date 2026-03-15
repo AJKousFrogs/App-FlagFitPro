@@ -112,7 +112,6 @@ export class WellnessService {
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
 
-  // UI State: Use signals instead of BehaviorSubject
   private readonly _wellnessData = signal<WellnessData[]>([]);
   private readonly _averages = signal<WellnessAverages | null>(null);
 

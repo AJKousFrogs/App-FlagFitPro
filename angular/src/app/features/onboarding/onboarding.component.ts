@@ -43,6 +43,8 @@ import { OnboardingStepEquipmentComponent } from "./steps/onboarding-step-equipm
 import { OnboardingStepGoalsComponent } from "./steps/onboarding-step-goals.component";
 import { OnboardingStepScheduleComponent } from "./steps/onboarding-step-schedule.component";
 import { OnboardingStepRecoveryComponent } from "./steps/onboarding-step-recovery.component";
+import { CheckboxModule } from "primeng/checkbox";
+import { FormsModule } from "@angular/forms";
 import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.component";
 
 @Component({
@@ -69,6 +71,8 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
     OnboardingStepScheduleComponent,
     OnboardingStepRecoveryComponent,
     OnboardingStepSummaryComponent,
+    CheckboxModule,
+    FormsModule,
   ],
   templateUrl: "./onboarding.component.html",
   styleUrl: "./onboarding.component.scss",

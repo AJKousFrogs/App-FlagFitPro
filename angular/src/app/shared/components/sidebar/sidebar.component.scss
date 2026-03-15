@@ -325,7 +325,7 @@ app-close-button.sidebar-close-btn {
     transform: translateX(-100%);
     width: var(--app-shell-mobile-drawer-width);
     max-width: var(--app-shell-mobile-drawer-width);
-    box-shadow: var(--shadow-xl); /* Enhanced shadow for mobile */
+    box-shadow: none; /* Enhanced shadow for mobile */
     will-change: transform; /* Optimize animation performance */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
