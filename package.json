@@ -133,7 +133,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.4",
-    "isomorphic-dompurify": "^2.35.0",
+    "isomorphic-dompurify": "^3.3.0",
     "jsonwebtoken": "^9.0.3",
     "nodemailer": "^7.0.12",
     "pg": "^8.20.0",
