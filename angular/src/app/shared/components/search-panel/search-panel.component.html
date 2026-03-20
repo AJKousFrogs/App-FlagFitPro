@@ -311,10 +311,10 @@
               </div>
             </button>
             <button
-                  type="button"
+              type="button"
               class="quick-link-card"
               [class.selected]="quickActionIndex() === 2"
-              (click)="navigateTo('/analytics')"
+              (click)="navigateTo('/performance/insights')"
               (mouseenter)="quickActionIndex.set(2)"
               role="option"
               [attr.aria-selected]="quickActionIndex() === 2"
@@ -323,8 +323,8 @@
                 <i class="pi pi-chart-line"></i>
               </div>
               <div class="quick-link-text">
-                <span class="link-label">Analytics</span>
-                <span class="link-desc">View trends</span>
+                <span class="link-label">Performance</span>
+                <span class="link-desc">View insights</span>
               </div>
             </button>
             <button

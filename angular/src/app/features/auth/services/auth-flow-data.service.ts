@@ -1,12 +1,14 @@
 import { Injectable, inject } from "@angular/core";
 import type { Session } from "@supabase/supabase-js";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthFlowDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private usersTableUnavailable = false;
 
   getCurrentUser() {
     return this.supabaseService.getCurrentUser();
@@ -80,11 +82,20 @@ export class AuthFlowDataService {
     data: { onboarding_completed?: boolean } | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { data: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .select("onboarding_completed")
       .eq("id", userId)
       .single();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { data: null, error: null };
+    }
 
     return { data: data ?? null, error };
   }

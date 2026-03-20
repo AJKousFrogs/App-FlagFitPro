@@ -1,11 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class SettingsDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private usersTableUnavailable = false;
 
   getCurrentUser() {
     return this.supabaseService.getCurrentUser();
@@ -23,11 +25,21 @@ export class SettingsDataService {
     profile: Record<string, unknown> | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { profile: null, error: null };
+    }
+
     const { data: profile, error } = await this.supabaseService.client
       .from("users")
       .select("*")
       .eq("id", userId)
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { profile: null, error: null };
+    }
+
     return { profile: (profile as Record<string, unknown>) ?? null, error };
   }
 
@@ -35,11 +47,21 @@ export class SettingsDataService {
     user: { id?: string } | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { user: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .select("id")
       .eq("id", userId)
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { user: null, error: null };
+    }
+
     return { user: (data as { id?: string }) ?? null, error };
   }
 
@@ -47,12 +69,22 @@ export class SettingsDataService {
     data: Record<string, unknown> | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { data: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .update(updateData)
       .eq("id", userId)
       .select()
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { data: null, error: null };
+    }
+
     return { data: (data as Record<string, unknown>) ?? null, error };
   }
 
@@ -60,11 +92,21 @@ export class SettingsDataService {
     data: Record<string, unknown> | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { data: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .insert(insertData)
       .select()
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { data: null, error: null };
+    }
+
     return { data: (data as Record<string, unknown>) ?? null, error };
   }
 
@@ -250,11 +292,21 @@ export class SettingsDataService {
     profile: Record<string, unknown> | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { profile: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .select("*")
       .eq("id", userId)
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { profile: null, error: null };
+    }
+
     return { profile: (data as Record<string, unknown>) ?? null, error };
   }
 

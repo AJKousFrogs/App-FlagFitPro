@@ -4,6 +4,12 @@ This document maps frontend routes to their primary data sources and backend API
 endpoints. The canonical API endpoint list lives in:
 `angular/src/app/core/services/api.service.ts` (`API_ENDPOINTS`).
 
+_Version 2.1 | Last Updated: March 2026_
+
+This route map reflects the consolidated `2.1` product surface.
+Several older routes still exist as compatibility redirects, but they are not
+the canonical destinations users should be sent to.
+
 Use this together with:
 - `docs/CODEBASE_MAP.md` for feature/domain ownership
 - `docs/SINGLE_SOURCE_OF_TRUTH.md` for canonical write authority
@@ -41,7 +47,7 @@ Use this together with:
      `TrainingSession`, `UpcomingGame`
 
 3. Athlete/Player Data Entry (Performance + Wellness)
-   - Routes: `/performance-tracking`, `/wellness`
+   - Routes: `/performance/tests`, `/wellness`
    - Data source:
      - `PerformanceTrackingDataService` (Supabase table `performance_records`)
      - `WellnessService` + `PerformanceDataService`
@@ -54,7 +60,7 @@ Use this together with:
 4. Training + Recovery Suggestions
    - Routes: `/training`, `/training/log`, `/training/safety`,
      `/training/advanced`, `/training/periodization`, `/training/qb`,
-     `/travel/recovery`
+     `/training/workspace`
    - Data source: `TrainingDataService`, `TrainingSafetyService`,
      `LoadMonitoringService`, `RecoveryService`
    - API endpoints:
@@ -64,39 +70,36 @@ Use this together with:
    - Models: training session models, load monitoring summaries
 
 5. Analytics + Trends
-   - Routes: `/analytics`, `/analytics/enhanced`
+   - Routes: `/performance/insights`, `/performance/load`
    - Data source: `AnalyticsDataService`
    - API endpoints: `API_ENDPOINTS.analytics.*`, `API_ENDPOINTS.trends.*`
    - Models: analytics summary + chart datasets
 
 ### Other Route Groups (Feature-Routes)
-The following routes are registered in `feature-routes.ts` and use shared
-services backed by `API_ENDPOINTS` and/or Supabase tables where applicable.
+The following canonical routes are registered in `feature-routes.ts` and use
+shared services backed by `API_ENDPOINTS` and/or Supabase tables where
+applicable.
 
 - Training:
   `/training/builder`, `/training/ai-scheduler`, `/training/smart-form`,
-  `/training/session/:id`, `/training/videos`, `/training/videos/curation`,
+  `/training/session/:id`, `/training/videos`,
   `/training/videos/suggest`, `/training/load-analysis`,
   `/training/goal-planner`, `/training/microcycle`, `/training/import`
 
 - Team / Coach:
-  `/roster`, `/team/workspace`, `/coach`, `/coach/activity`, `/coach/analytics`,
-  `/coach/inbox`, `/coach/team`, `/coach/programs`, `/coach/practice`,
-  `/coach/injuries`, `/coach/playbook`, `/coach/development`,
-  `/coach/tournaments`, `/coach/payments`, `/coach/ai-scheduler`,
-  `/coach/knowledge`, `/coach/film`, `/coach/calendar`, `/coach/scouting`,
-  `/team/create`, `/attendance`, `/depth-chart`, `/equipment`, `/officials`
+  `/roster`, `/team/workspace`, `/coach`, `/coach/dashboard`,
+  `/coach/analytics`, `/coach/planning`, `/coach/team`, `/coach/tournaments`,
+  `/coach/knowledge`, `/attendance`
 
 - Game & Competition:
-  `/game/readiness`, `/game/nutrition`, `/game-tracker`,
-  `/game-tracker/live`, `/tournaments`
+  `/game/readiness`, `/tournaments`
 
 - Wellness & Health:
-  `/acwr`, `/return-to-play`, `/cycle-tracking`, `/sleep-debt`,
+  `/performance/load`, `/return-to-play`, `/cycle-tracking`, `/sleep-debt`,
   `/achievements`, `/playbook`, `/film`, `/calendar`, `/payments`, `/import`
 
 - Social & Community:
-  `/community`, `/chat`, `/team-chat`
+  `/chat`, `/team-chat`
 
 - Staff:
   `/staff`, `/staff/nutritionist`, `/staff/physiotherapist`,
@@ -114,3 +117,21 @@ services backed by `API_ENDPOINTS` and/or Supabase tables where applicable.
 
 - Wildcard:
   `**` → Not Found
+
+## Compatibility Redirects
+
+The following routes still exist for backward compatibility but should be
+treated as deprecated aliases rather than primary product destinations:
+
+- `/analytics`, `/analytics/enhanced` → `Performance`
+- `/performance-tracking` → `/performance/tests`
+- `/acwr` → `/performance/load`
+- `/community` → `/team-chat`
+- `/travel/recovery`, `/game/nutrition` → `/wellness`
+- `/game-tracker`, `/game-tracker/live` → `/tournaments`
+- `/depth-chart`, `/equipment`, `/officials`, `/coach/payments`,
+  `/team/create` → `/team/workspace`
+- `/coach/programs`, `/coach/program-builder`, `/coach/ai-scheduler`,
+  `/coach/playbook`, `/coach/scouting`, `/coach/film` → `/coach/planning`
+- `/coach/development`, `/coach/player-development`,
+  `/coach/injuries`, `/coach/injury-management` → `/coach/analytics`

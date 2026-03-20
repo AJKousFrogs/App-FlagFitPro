@@ -336,10 +336,10 @@ export class PlayerDashboardComponent {
       description: "View full schedule",
     },
     {
-      label: "Analytics",
+      label: "Performance",
       icon: "pi pi-chart-bar",
       route: "/performance/insights",
-      description: "Performance analytics",
+      description: "Performance insights",
     },
     {
       label: "Merlin AI",

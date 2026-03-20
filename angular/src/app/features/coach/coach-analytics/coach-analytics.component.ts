@@ -111,8 +111,8 @@ interface TeamOption {
     <app-main-layout>
       <div class="coach-analytics ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
-          title="Team Analytics"
-          subtitle="Monitor Merlin AI performance and athlete engagement"
+          title="Team Performance"
+          subtitle="Monitor Merlin AI performance, athlete engagement, and team trends"
           icon="pi-chart-bar"
         >
           <div class="header-filters">
@@ -131,7 +131,7 @@ interface TeamOption {
               variant="outlined"
               [loading]="loading()"
               (clicked)="loadAnalytics()"
-              ariaLabel="Refresh analytics"
+              ariaLabel="Refresh performance data"
               tooltip="Refresh"
             />
           </div>

@@ -1,0 +1,66 @@
+<div class="progress-section">
+  <p-progressBar
+    [value]="completionStats.percent"
+    [showValue]="false"
+    class="onboarding-progress"
+  ></p-progressBar>
+  <div class="progress-info">
+    <span class="progress-text">{{ completionStats.percent }}% complete</span>
+    <span class="progress-meta">
+      {{ completionStats.completed }} / {{ completionStats.total }}
+      required tasks done
+    </span>
+    <span class="progress-meta">Now: Step {{ stepPosition }} - {{ currentStepLabel }}</span>
+    @if (lastSaved) {
+      <span class="auto-save-indicator" [class.saving]="isSaving">
+        @if (isSaving) {
+          <i class="pi pi-spin pi-spinner"></i> Saving...
+        } @else {
+          <i class="pi pi-check-circle"></i> Draft saved
+        }
+      </span>
+    }
+  </div>
+</div>
+
+@if (hasPendingRequirements) {
+  <app-alert
+    class="completion-checklist"
+    variant="warning"
+    density="compact"
+    title="Next tasks to finish"
+  >
+    <div class="checklist-body">
+      <div class="checklist-items">
+        @for (item of pendingRequirementLabels; track item) {
+          <span class="checklist-item">{{ item }}</span>
+        }
+        @if (completionStats.remaining > 4) {
+          <span class="checklist-item more"
+            >+{{ completionStats.remaining - 4 }} more</span
+          >
+        }
+      </div>
+    </div>
+  </app-alert>
+}
+
+<p-stepper
+  class="onboarding-stepper"
+  [value]="currentStep"
+  (valueChange)="onStepperValueChange($event)"
+  [linear]="false"
+>
+  <p-step-list>
+    @for (step of steps; track $index) {
+      <p-step [value]="$index">
+        <ng-template #content>
+          <div class="step-with-icon">
+            <i [class]="'pi ' + step.icon"></i>
+            <span>{{ step.label }}</span>
+          </div>
+        </ng-template>
+      </p-step>
+    }
+  </p-step-list>
+</p-stepper>

@@ -1,0 +1,94 @@
+.progress-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--layout-page-section-gap-tight);
+  margin-bottom: 0;
+  padding: var(--component-card-padding);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--ds-primary-green-rgb), 0.04),
+    rgba(var(--ds-primary-green-rgb), 0.015)
+  );
+  border-bottom: var(--border-1) solid var(--color-border-muted);
+  border-radius: var(--component-card-radius) var(--component-card-radius) 0 0;
+}
+
+.progress-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.progress-text {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-primary-green);
+}
+
+.progress-meta {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.completion-checklist {
+  margin: 0 var(--component-card-padding) var(--space-5);
+}
+
+.checklist-body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.checklist-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.checklist-item {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  background: color-mix(
+    in srgb,
+    var(--color-status-warning-surface) 70%,
+    var(--surface-primary) 30%
+  );
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.checklist-item.more {
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
+}
+
+.auto-save-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  transition: color var(--transition-base);
+}
+
+.auto-save-indicator i {
+  font-size: var(--ds-font-size-xs);
+}
+
+.auto-save-indicator.saving {
+  color: var(--ds-primary-green);
+}
+
+.auto-save-indicator:not(.saving) {
+  color: var(--color-status-success);
+}
+
+.onboarding-stepper {
+  padding: 0 var(--component-card-padding);
+}

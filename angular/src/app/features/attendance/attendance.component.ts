@@ -10,11 +10,9 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
-import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -55,12 +53,10 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    TableModule,
     StatusTagComponent,
     InputText,
     Textarea,
     Select,
-    DatePicker,
     ProgressBar,
     Avatar,
     MainLayoutComponent,
@@ -208,79 +204,102 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           <!-- Player Attendance Stats (Coach View) -->
           @if (isCoach()) {
             <app-card-shell class="stats-card" title="Player Attendance Statistics">
-              <p-table
-                [value]="playerStats()"
-                [paginator]="true"
-                [rows]="10"
-                [showCurrentPageReport]="true"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} players"
-                class="p-datatable-sm"
-                [scrollable]="true"
-              >
-                <ng-template #header>
-                  <tr>
-                    <th>Player</th>
-                    <th>Attended</th>
-                    <th>Missed</th>
-                    <th>Excused</th>
-                    <th>Late</th>
-                    <th>Rate</th>
-                    <th>Streak</th>
-                  </tr>
-                </ng-template>
-                <ng-template #body let-stat>
-                  <tr>
-                    <td>
-                      <div class="player-cell">
-                        <p-avatar
-                          [label]="getInitialsStr(stat.player_name || 'U')"
-                          shape="circle"
-                          size="normal"
-                        ></p-avatar>
-                        <span>{{ stat.player_name || "Unknown" }}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span class="stat-badge success">{{
-                        stat.events_attended
-                      }}</span>
-                    </td>
-                    <td>
-                      <span class="stat-badge danger">{{
-                        stat.events_missed
-                      }}</span>
-                    </td>
-                    <td>
-                      <span class="stat-badge info">{{
-                        stat.events_excused
-                      }}</span>
-                    </td>
-                    <td>
-                      <span class="stat-badge warning">{{
-                        stat.events_late
-                      }}</span>
-                    </td>
-                    <td>
-                      <div class="rate-cell">
-                        <p-progressBar
-                          [value]="stat.attendance_rate"
-                          [showValue]="false"
-                          class="rate-bar"
-                        ></p-progressBar>
-                        <span>{{ stat.attendance_rate }}%</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span
-                        class="streak-badge"
-                        [class.active]="stat.current_streak > 0"
-                      >
-                        🔥 {{ stat.current_streak }}
-                      </span>
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
+              <div class="attendance-stats-table-wrapper">
+                <table class="attendance-stats-table">
+                  <thead>
+                    <tr>
+                      <th>Player</th>
+                      <th>Attended</th>
+                      <th>Missed</th>
+                      <th>Excused</th>
+                      <th>Late</th>
+                      <th>Rate</th>
+                      <th>Streak</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (stat of paginatedPlayerStats(); track stat.player_id) {
+                      <tr>
+                        <td>
+                          <div class="player-cell">
+                            <p-avatar
+                              [label]="getInitialsStr(stat.player_name || 'U')"
+                              shape="circle"
+                              size="normal"
+                            ></p-avatar>
+                            <span>{{ stat.player_name || "Unknown" }}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="stat-badge success">{{
+                            stat.events_attended
+                          }}</span>
+                        </td>
+                        <td>
+                          <span class="stat-badge danger">{{
+                            stat.events_missed
+                          }}</span>
+                        </td>
+                        <td>
+                          <span class="stat-badge info">{{
+                            stat.events_excused
+                          }}</span>
+                        </td>
+                        <td>
+                          <span class="stat-badge warning">{{
+                            stat.events_late
+                          }}</span>
+                        </td>
+                        <td>
+                          <div class="rate-cell">
+                            <p-progressBar
+                              [value]="stat.attendance_rate"
+                              [showValue]="false"
+                              class="rate-bar"
+                            ></p-progressBar>
+                            <span>{{ stat.attendance_rate }}%</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span
+                            class="streak-badge"
+                            [class.active]="stat.current_streak > 0"
+                          >
+                            🔥 {{ stat.current_streak }}
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              @if (playerStatsPageCount() > 1) {
+                <div class="attendance-stats-pagination">
+                  <span class="attendance-stats-page-label">
+                    {{ playerStatsPageRangeLabel() }}
+                  </span>
+
+                  <div class="attendance-stats-page-actions">
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-chevron-left"
+                      [disabled]="currentPlayerStatsPage() === 1"
+                      (clicked)="goToPreviousPlayerStatsPage()"
+                      >Previous</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-chevron-right"
+                      [disabled]="currentPlayerStatsPage() === playerStatsPageCount()"
+                      (clicked)="goToNextPlayerStatsPage()"
+                      >Next</app-button
+                    >
+                  </div>
+                </div>
+              }
             </app-card-shell>
           }
         </div>
@@ -328,24 +347,24 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <div class="form-row two-col">
               <div class="form-field">
                 <label for="startTime">Start Time *</label>
-                <p-datepicker
+                <input
                   id="startTime"
-                  (onSelect)="onNewEventStartTimeChange($event)"
-                  [showTime]="true"
-                  dateFormat="mm/dd/yy"
+                  type="datetime-local"
+                  [value]="getNewEventDateTimeInputValue(newEvent.start_time)"
+                  (input)="onNewEventStartTimeInput(getInputValue($event))"
                   class="w-full"
-                ></p-datepicker>
+                />
               </div>
 
               <div class="form-field">
                 <label for="endTime">End Time</label>
-                <p-datepicker
+                <input
                   id="endTime"
-                  (onSelect)="onNewEventEndTimeChange($event)"
-                  [showTime]="true"
-                  dateFormat="mm/dd/yy"
+                  type="datetime-local"
+                  [value]="getNewEventDateTimeInputValue(newEvent.end_time)"
+                  (input)="onNewEventEndTimeInput(getInputValue($event))"
                   class="w-full"
-                ></p-datepicker>
+                />
               </div>
             </div>
 
@@ -474,6 +493,7 @@ export class AttendanceComponent implements OnInit {
   // State
   events = signal<TeamEvent[]>([]);
   playerStats = signal<PlayerAttendanceStats[]>([]);
+  currentPlayerStatsPage = signal(1);
   attendanceRecords = signal<AttendanceRecord[]>([]);
   selectedEvent = signal<TeamEvent | null>(null);
   selectedEventType: EventType | null = null;
@@ -494,6 +514,7 @@ export class AttendanceComponent implements OnInit {
   };
 
   // Options
+  readonly playerStatsPageSize = 10;
   eventTypeOptions = [
     { label: "Practice", value: "practice" },
     { label: "Game", value: "game" },
@@ -534,6 +555,23 @@ export class AttendanceComponent implements OnInit {
     const totalRate = stats.reduce((sum, s) => sum + s.attendance_rate, 0);
     return Math.round(totalRate / stats.length);
   });
+  playerStatsPageCount = computed(() =>
+    Math.max(1, Math.ceil(this.playerStats().length / this.playerStatsPageSize)),
+  );
+  paginatedPlayerStats = computed(() => {
+    const start = (this.currentPlayerStatsPage() - 1) * this.playerStatsPageSize;
+    return this.playerStats().slice(start, start + this.playerStatsPageSize);
+  });
+  playerStatsPageRangeLabel = computed(() => {
+    const total = this.playerStats().length;
+    if (total === 0) {
+      return "No players tracked";
+    }
+
+    const start = (this.currentPlayerStatsPage() - 1) * this.playerStatsPageSize + 1;
+    const end = Math.min(total, start + this.playerStatsPageSize - 1);
+    return `Showing ${start}-${end} of ${total} players`;
+  });
 
   ngOnInit(): void {
     this.loadEvents();
@@ -570,7 +608,10 @@ export class AttendanceComponent implements OnInit {
       .getTeamAttendanceStats(teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (stats) => this.playerStats.set(stats),
+        next: (stats) => {
+          this.playerStats.set(stats);
+          this.currentPlayerStatsPage.set(1);
+        },
         error: (_err) => this.toastService.error(TOAST.ERROR.LOAD_FAILED),
       });
   }
@@ -582,6 +623,16 @@ export class AttendanceComponent implements OnInit {
   onSelectedEventTypeChange(value: EventType | null): void {
     this.selectedEventType = value;
     this.filterEvents();
+  }
+
+  goToPreviousPlayerStatsPage(): void {
+    this.currentPlayerStatsPage.update((page) => Math.max(1, page - 1));
+  }
+
+  goToNextPlayerStatsPage(): void {
+    this.currentPlayerStatsPage.update((page) =>
+      Math.min(this.playerStatsPageCount(), page + 1),
+    );
   }
 
   selectEvent(event: TeamEvent): void {
@@ -632,8 +683,16 @@ export class AttendanceComponent implements OnInit {
     this.newEvent = { ...this.newEvent, start_time: value };
   }
 
+  onNewEventStartTimeInput(value: string): void {
+    this.onNewEventStartTimeChange(this.parseDateTimeInputValue(value));
+  }
+
   onNewEventEndTimeChange(value: Date | null): void {
     this.newEvent = { ...this.newEvent, end_time: value };
+  }
+
+  onNewEventEndTimeInput(value: string): void {
+    this.onNewEventEndTimeChange(this.parseDateTimeInputValue(value));
   }
 
   onNewEventLocationChange(value: string): void {
@@ -662,6 +721,29 @@ export class AttendanceComponent implements OnInit {
       return target.checked;
     }
     return false;
+  }
+
+  getNewEventDateTimeInputValue(value: Date | null): string {
+    if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+      return "";
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+    const hours = String(value.getHours()).padStart(2, "0");
+    const minutes = String(value.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  parseDateTimeInputValue(value: string): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
   canCreateEvent(): boolean {

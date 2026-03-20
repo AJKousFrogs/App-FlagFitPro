@@ -1,0 +1,35 @@
+<app-dialog
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [blockScroll]="true"
+  [styleClass]="'tournament-team-availability-dialog'"
+  ariaLabel="Team Availability"
+>
+  <app-dialog-header
+    icon="users"
+    title="Team Availability"
+    (close)="visibleChange.emit(false)"
+  />
+  @if (tournament()) {
+    <app-tournament-team-availability-dialog-content
+      [tournament]="tournament()!"
+      [dateRangeLabel]="dateRangeLabel()"
+      [summary]="summary()"
+      [budget]="budget()"
+      [players]="players()"
+      (openBudget)="openBudget.emit()"
+      (sendReminders)="sendReminders.emit()"
+      (exportReport)="exportReport.emit()"
+    />
+  }
+
+  <app-dialog-footer
+    dialogFooter
+    [showCancel]="false"
+    primaryLabel="Close"
+    primaryVariant="text"
+    (primary)="visibleChange.emit(false)"
+  />
+</app-dialog>

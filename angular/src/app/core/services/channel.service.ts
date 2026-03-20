@@ -18,7 +18,10 @@ import {
   getInitials,
   normalizePlayerName,
 } from "../../shared/utils/format.utils";
-import { getErrorMessage } from "../../shared/utils/error.utils";
+import {
+  getErrorMessage,
+  isBenignSupabaseQueryError,
+} from "../../shared/utils/error.utils";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { RealtimeCallback, RealtimeService } from "./realtime.service";
@@ -189,6 +192,7 @@ export class ChannelService {
   private logger = inject(LoggerService);
   private realtimeService = inject(RealtimeService);
   private teamMembershipService = inject(TeamMembershipService);
+  private usersTableUnavailable = false;
 
   // State
   private readonly _channels = signal<Channel[]>([]);
@@ -486,11 +490,15 @@ export class ChannelService {
         }
       >();
 
-      if (senderIds.length > 0) {
-        const { data: usersData } = await this.supabase.client
+      if (senderIds.length > 0 && !this.usersTableUnavailable) {
+        const { data: usersData, error: usersError } = await this.supabase.client
           .from("users")
           .select("id, email, full_name, profile_photo_url")
           .in("id", senderIds);
+
+        if (usersError && isBenignSupabaseQueryError(usersError)) {
+          this.usersTableUnavailable = true;
+        }
 
         if (usersData) {
           usersMap = new Map(usersData.map((u) => [u.id, u]));
@@ -556,11 +564,30 @@ export class ChannelService {
       if (error) throw error;
 
       // Fetch author details
-      const { data: authorData } = await this.supabase.client
-        .from("users")
-        .select("id, email, full_name, profile_photo_url")
-        .eq("id", userId)
-        .single();
+      let authorData: {
+        id: string;
+        email: string;
+        full_name: string;
+        profile_photo_url: string;
+      } | null = null;
+      if (!this.usersTableUnavailable) {
+        const { data: fetchedAuthorData, error: authorError } =
+          await this.supabase.client
+            .from("users")
+            .select("id, email, full_name, profile_photo_url")
+            .eq("id", userId)
+            .single();
+
+        if (authorError) {
+          if (isBenignSupabaseQueryError(authorError)) {
+            this.usersTableUnavailable = true;
+          } else {
+            throw authorError;
+          }
+        } else {
+          authorData = fetchedAuthorData;
+        }
+      }
 
       const message = {
         ...data,
@@ -1268,16 +1295,30 @@ export class ChannelService {
 
       // Get user details from users table (public profile data)
       const userIds = teamMembersData.map((m) => m.user_id);
-      const { data: usersData, error: usersError } = await this.supabase.client
-        .from("users")
-        .select("id, email, full_name, profile_photo_url")
-        .in("id", userIds);
+      let usersData: Array<{
+        id: string;
+        email: string;
+        full_name: string;
+        profile_photo_url: string;
+      }> | null = null;
+      if (!this.usersTableUnavailable) {
+        const result = await this.supabase.client
+          .from("users")
+          .select("id, email, full_name, profile_photo_url")
+          .in("id", userIds);
 
-      if (usersError) {
-        this.logger.warn(
-          "Error fetching user details:",
-          toLogContext(usersError),
-        );
+        usersData = result.data;
+
+        if (result.error) {
+          if (isBenignSupabaseQueryError(result.error)) {
+            this.usersTableUnavailable = true;
+          } else {
+            this.logger.warn(
+              "Error fetching user details:",
+              toLogContext(result.error),
+            );
+          }
+        }
       }
 
       // Create a map for quick user lookup

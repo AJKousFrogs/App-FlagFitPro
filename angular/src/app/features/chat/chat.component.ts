@@ -27,11 +27,6 @@ import {
 import { ActivatedRoute } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
-
-import { InputText } from "primeng/inputtext";
-
-import { Select } from "primeng/select";
-import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -50,9 +45,6 @@ import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
-import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
-import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -60,29 +52,32 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
+import {
+  ChatChannelCreateRequest,
+  ChatCreateChannelDialogComponent,
+} from "./components/chat-create-channel-dialog.component";
+import { ChatMembersDialogComponent } from "./components/chat-members-dialog.component";
+import { ChatPinnedMessagesDialogComponent } from "./components/chat-pinned-messages-dialog.component";
 
 @Component({
   selector: "app-chat",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    InputText,
     Avatar,
     Badge,
     ScrollingModule,
-    AppDialogComponent,
-    Select,
-    Textarea,
     Tooltip,
     MainLayoutComponent,
     AlertComponent,
     ButtonComponent,
-    DialogFooterComponent,
-    DialogHeaderComponent,
     IconButtonComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
     StatusTagComponent,
+    ChatCreateChannelDialogComponent,
+    ChatMembersDialogComponent,
+    ChatPinnedMessagesDialogComponent,
   ],
   templateUrl: "./chat.component.html",
 
@@ -148,12 +143,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   showCreateChannelDialog = false;
   showPinnedMessages = false;
   showMembersDialog = false;
-
-  // Create channel form
-  newChannelName = "";
-  newChannelDescription = "";
-  newChannelType: ChannelType = "team_general";
-  newChannelPosition = "";
 
   // Mention state
   private readonly _showMentionSuggestions = signal(false);
@@ -409,9 +398,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.scrollToBottom();
   }
 
-  async createChannel(): Promise<void> {
-    if (!this.newChannelName.trim()) return;
-
+  async createChannel(request: ChatChannelCreateRequest): Promise<void> {
     try {
       // Get team ID (would come from current context in real app)
       const teamId = await this.getCurrentTeamId();
@@ -422,12 +409,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
       const channel = await this.channelService.createChannel({
         team_id: teamId,
-        name: this.newChannelName.toLowerCase().replace(/\s+/g, "-"),
-        description: this.newChannelDescription,
-        channel_type: this.newChannelType,
+        name: request.name.toLowerCase().replace(/\s+/g, "-"),
+        description: request.description,
+        channel_type: request.channelType,
         position_filter:
-          this.newChannelType === "position_group"
-            ? this.newChannelPosition
+          request.channelType === "position_group"
+            ? request.position
             : undefined,
       });
 
@@ -435,7 +422,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         TOAST.SUCCESS.CHANNEL_CREATED.replace("{name}", channel.name),
       );
       this.showCreateChannelDialog = false;
-      this.resetChannelForm();
 
       // Select the new channel
       await this.selectChannel(channel);
@@ -444,33 +430,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private resetChannelForm(): void {
-    this.newChannelName = "";
-    this.newChannelDescription = "";
-    this.newChannelType = "team_general";
-    this.newChannelPosition = "";
-  }
-
   onMessageFieldInput(event: Event): void {
     const inputValue = this.getInputValue(event);
     this.newMessage = inputValue;
     this.updateMentionSuggestions(inputValue);
-  }
-
-  onNewChannelNameChange(value: string): void {
-    this.newChannelName = value;
-  }
-
-  onNewChannelDescriptionChange(value: string): void {
-    this.newChannelDescription = value;
-  }
-
-  onNewChannelTypeChange(value: ChannelType | null): void {
-    this.newChannelType = value ?? "team_general";
-  }
-
-  onNewChannelPositionChange(value: string | null): void {
-    this.newChannelPosition = value ?? "";
   }
 
   onMemberSearchQueryChange(value: string): void {

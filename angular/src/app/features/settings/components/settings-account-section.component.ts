@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 
@@ -25,7 +24,6 @@ interface SelectOption {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    DatePicker,
     InputText,
     Select,
     ButtonComponent,
@@ -48,4 +46,53 @@ export class SettingsAccountSectionComponent {
   birthdayInputBlurred = output<void>();
   applyBirthdaySuggestion = output<void>();
   teamChange = output<string | null | undefined>();
+
+  getMaxBirthDateInputValue(): string {
+    const maxBirthDate = this.maxBirthDate();
+    const year = maxBirthDate.getFullYear();
+    const month = String(maxBirthDate.getMonth() + 1).padStart(2, "0");
+    const day = String(maxBirthDate.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  getDateOfBirthInputValue(): string {
+    const controlValue = this.profileForm().get("dateOfBirth")?.value;
+    if (!controlValue) {
+      return "";
+    }
+
+    const parsed = controlValue instanceof Date ? controlValue : new Date(controlValue);
+    if (Number.isNaN(parsed.getTime())) {
+      return "";
+    }
+
+    const year = parsed.getFullYear();
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const day = String(parsed.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  onDateOfBirthInput(value: string): void {
+    const control = this.profileForm().get("dateOfBirth");
+    if (!control) {
+      return;
+    }
+
+    if (!value) {
+      control.setValue(null);
+      return;
+    }
+
+    const parsed = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(parsed.getTime())) {
+      return;
+    }
+
+    control.setValue(parsed);
+  }
+
+  getInputValue(event: Event): string {
+    const target = event.target;
+    return target instanceof HTMLInputElement ? target.value : "";
+  }
 }

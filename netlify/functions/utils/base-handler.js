@@ -65,6 +65,7 @@ async function baseHandler(event, context, options = {}) {
     allowedMethods = ["GET"],
     rateLimitType = "READ",
     requireAuth = true,
+    skipEnvCheck = false,
     handler,
     onAuth = null,
   } = options;
@@ -96,8 +97,11 @@ async function baseHandler(event, context, options = {}) {
   logFunctionCall(functionName, event);
 
   try {
-    // Check environment variables
-    checkEnvVars();
+    // Check environment variables unless the handler explicitly allows
+    // degraded execution for observability or best-effort identity endpoints.
+    if (!skipEnvCheck) {
+      checkEnvVars();
+    }
 
     // Validate HTTP method
     if (!allowedMethods.includes(event.httpMethod)) {

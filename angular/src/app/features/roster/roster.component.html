@@ -111,139 +111,159 @@
             (filteredPlayers().length > 0 ||
               rosterService.coachingStaff().length > 0)
           ) {
-            <!-- Team Overview Stats -->
-            <app-roster-overview
-              [stats]="rosterService.teamStats()"
-            ></app-roster-overview>
+            @defer (on viewport) {
+              <!-- Team Overview Stats -->
+              <app-roster-overview
+                [stats]="rosterService.teamStats()"
+              ></app-roster-overview>
 
-            <!-- Coaching Staff -->
-            @if (rosterService.coachingStaffByCategory().coaching.length > 0) {
+              <!-- Coaching Staff -->
+              @if (rosterService.coachingStaffByCategory().coaching.length > 0) {
+                <div class="position-section ui-stack-md">
+                  <div class="ui-section-heading">
+                    <div class="ui-section-heading__content">
+                      <h2 class="ui-section-heading__title">
+                        <span class="ui-section-heading__icon">
+                          <i class="pi pi-users" aria-hidden="true"></i>
+                        </span>
+                        Coaching Staff
+                      </h2>
+                    </div>
+                    <span class="ui-section-count">
+                      {{ rosterService.coachingStaffByCategory().coaching.length }}
+                    </span>
+                  </div>
+                  <div class="roster-grid">
+                    @for (
+                      member of rosterService.coachingStaffByCategory().coaching;
+                      track member.id || member.name
+                    ) {
+                      <app-roster-staff-card
+                        [member]="member"
+                        [showEmail]="rosterService.canManageRoster()"
+                      ></app-roster-staff-card>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Medical Staff -->
+              @if (rosterService.coachingStaffByCategory().medical.length > 0) {
+                <div class="position-section ui-stack-md">
+                  <div class="ui-section-heading">
+                    <div class="ui-section-heading__content">
+                      <h2 class="ui-section-heading__title">
+                        <span class="ui-section-heading__icon">
+                          <i class="pi pi-heart" aria-hidden="true"></i>
+                        </span>
+                        Medical Staff
+                      </h2>
+                    </div>
+                    <span class="ui-section-count">
+                      {{ rosterService.coachingStaffByCategory().medical.length }}
+                    </span>
+                  </div>
+                  <div class="roster-grid">
+                    @for (
+                      member of rosterService.coachingStaffByCategory().medical;
+                      track member.id || member.name
+                    ) {
+                      <app-roster-staff-card
+                        [member]="member"
+                        [showEmail]="rosterService.canManageRoster()"
+                      ></app-roster-staff-card>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Performance Staff -->
+              @if (
+                rosterService.coachingStaffByCategory().performance.length > 0
+              ) {
+                <div class="position-section ui-stack-md">
+                  <div class="ui-section-heading">
+                    <div class="ui-section-heading__content">
+                      <h2 class="ui-section-heading__title">
+                        <span class="ui-section-heading__icon">
+                          <i class="pi pi-chart-line" aria-hidden="true"></i>
+                        </span>
+                        Performance Staff
+                      </h2>
+                    </div>
+                    <span class="ui-section-count">
+                      {{
+                        rosterService.coachingStaffByCategory().performance.length
+                      }}
+                    </span>
+                  </div>
+                  <div class="roster-grid">
+                    @for (
+                      member of rosterService.coachingStaffByCategory()
+                        .performance;
+                      track member.id || member.name
+                    ) {
+                      <app-roster-staff-card
+                        [member]="member"
+                        [showEmail]="rosterService.canManageRoster()"
+                      ></app-roster-staff-card>
+                    }
+                  </div>
+                </div>
+              }
+            } @placeholder {
               <div class="position-section ui-stack-md">
                 <div class="ui-section-heading">
                   <div class="ui-section-heading__content">
-                    <h2 class="ui-section-heading__title">
-                      <span class="ui-section-heading__icon">
-                        <i class="pi pi-users" aria-hidden="true"></i>
-                      </span>
-                      Coaching Staff
-                    </h2>
+                    <h2 class="ui-section-heading__title">Loading team overview…</h2>
                   </div>
-                  <span class="ui-section-count">
-                    {{ rosterService.coachingStaffByCategory().coaching.length }}
-                  </span>
-                </div>
-                <div class="roster-grid">
-                  @for (
-                    member of rosterService.coachingStaffByCategory().coaching;
-                    track member.id || member.name
-                  ) {
-                    <app-roster-staff-card
-                      [member]="member"
-                      [showEmail]="rosterService.canManageRoster()"
-                    ></app-roster-staff-card>
-                  }
                 </div>
               </div>
             }
 
-            <!-- Medical Staff -->
-            @if (rosterService.coachingStaffByCategory().medical.length > 0) {
+            @defer (on viewport) {
+              <!-- Players by Position -->
+              @for (
+                positionGroup of filteredPlayersByPosition();
+                track positionGroup.position
+              ) {
+                <div class="position-section ui-stack-md">
+                  <div class="ui-section-heading">
+                    <div class="ui-section-heading__content">
+                      <h2 class="ui-section-heading__title">
+                        <span class="ui-section-heading__icon">
+                          <i [class]="getPositionIcon(positionGroup.position)"></i>
+                        </span>
+                        {{ positionGroup.position }}
+                      </h2>
+                    </div>
+                    <span class="ui-section-count">
+                      {{ positionGroup.players.length }}
+                    </span>
+                  </div>
+                  <div class="roster-grid">
+                    @for (player of positionGroup.players; track player.id) {
+                      <app-roster-player-card
+                        [player]="player"
+                        [isSelected]="isPlayerSelected(player.id)"
+                        [canManage]="rosterService.canManageRoster()"
+                        [canDelete]="rosterService.canDeletePlayers()"
+                        (viewDetails)="viewPlayerDetails($event)"
+                        (edit)="editPlayer($event)"
+                        (changeStatus)="openStatusDialog($event)"
+                        (remove)="confirmRemovePlayer($event)"
+                        (selectionChange)="togglePlayerSelection($event)"
+                      ></app-roster-player-card>
+                    }
+                  </div>
+                </div>
+              }
+            } @placeholder {
               <div class="position-section ui-stack-md">
                 <div class="ui-section-heading">
                   <div class="ui-section-heading__content">
-                    <h2 class="ui-section-heading__title">
-                      <span class="ui-section-heading__icon">
-                        <i class="pi pi-heart" aria-hidden="true"></i>
-                      </span>
-                      Medical Staff
-                    </h2>
+                    <h2 class="ui-section-heading__title">Loading players…</h2>
                   </div>
-                  <span class="ui-section-count">
-                    {{ rosterService.coachingStaffByCategory().medical.length }}
-                  </span>
-                </div>
-                <div class="roster-grid">
-                  @for (
-                    member of rosterService.coachingStaffByCategory().medical;
-                    track member.id || member.name
-                  ) {
-                    <app-roster-staff-card
-                      [member]="member"
-                      [showEmail]="rosterService.canManageRoster()"
-                    ></app-roster-staff-card>
-                  }
-                </div>
-              </div>
-            }
-
-            <!-- Performance Staff -->
-            @if (
-              rosterService.coachingStaffByCategory().performance.length > 0
-            ) {
-              <div class="position-section ui-stack-md">
-                <div class="ui-section-heading">
-                  <div class="ui-section-heading__content">
-                    <h2 class="ui-section-heading__title">
-                      <span class="ui-section-heading__icon">
-                        <i class="pi pi-chart-line" aria-hidden="true"></i>
-                      </span>
-                      Performance Staff
-                    </h2>
-                  </div>
-                  <span class="ui-section-count">
-                    {{
-                      rosterService.coachingStaffByCategory().performance.length
-                    }}
-                  </span>
-                </div>
-                <div class="roster-grid">
-                  @for (
-                    member of rosterService.coachingStaffByCategory()
-                      .performance;
-                    track member.id || member.name
-                  ) {
-                    <app-roster-staff-card
-                      [member]="member"
-                      [showEmail]="rosterService.canManageRoster()"
-                    ></app-roster-staff-card>
-                  }
-                </div>
-              </div>
-            }
-
-            <!-- Players by Position -->
-            @for (
-              positionGroup of filteredPlayersByPosition();
-              track positionGroup.position
-            ) {
-              <div class="position-section ui-stack-md">
-                <div class="ui-section-heading">
-                  <div class="ui-section-heading__content">
-                    <h2 class="ui-section-heading__title">
-                      <span class="ui-section-heading__icon">
-                        <i [class]="getPositionIcon(positionGroup.position)"></i>
-                      </span>
-                      {{ positionGroup.position }}
-                    </h2>
-                  </div>
-                  <span class="ui-section-count">
-                    {{ positionGroup.players.length }}
-                  </span>
-                </div>
-                <div class="roster-grid">
-                  @for (player of positionGroup.players; track player.id) {
-                    <app-roster-player-card
-                      [player]="player"
-                      [isSelected]="isPlayerSelected(player.id)"
-                      [canManage]="rosterService.canManageRoster()"
-                      [canDelete]="rosterService.canDeletePlayers()"
-                      (viewDetails)="viewPlayerDetails($event)"
-                      (edit)="editPlayer($event)"
-                      (changeStatus)="openStatusDialog($event)"
-                      (remove)="confirmRemovePlayer($event)"
-                      (selectionChange)="togglePlayerSelection($event)"
-                    ></app-roster-player-card>
-                  }
                 </div>
               </div>
             }
@@ -251,25 +271,28 @@
         </div>
 
         <!-- Add/Edit Player Dialog -->
-        <app-roster-player-form-dialog
-          [visible]="showPlayerDialog()"
-          [editingPlayer]="editingPlayer()"
-          [isSaving]="isSaving()"
-          [showContactFields]="rosterService.canManageRoster()"
-          (visibleChange)="showPlayerDialog.set($event)"
-          (save)="savePlayer($event)"
-        ></app-roster-player-form-dialog>
+        @defer (when showPlayerDialog()) {
+          <app-roster-player-form-dialog
+            [visible]="showPlayerDialog()"
+            [editingPlayer]="editingPlayer()"
+            [isSaving]="isSaving()"
+            [showContactFields]="rosterService.canManageRoster()"
+            (visibleChange)="showPlayerDialog.set($event)"
+            (save)="savePlayer($event)"
+          ></app-roster-player-form-dialog>
+        }
 
         <!-- Player Details Dialog (Phase 1 Enhanced) -->
-        <app-dialog
-          [visible]="showDetailsDialog()"
-          (visibleChange)="showDetailsDialog.set($event)"
-          [modal]="true"
-          [blockScroll]="true"
-          [draggable]="false"
-          ariaLabel="Player details dialog"
-          styleClass="roster-player-details-dialog"
-        >
+        @defer (when showDetailsDialog()) {
+          <app-dialog
+            [visible]="showDetailsDialog()"
+            (visibleChange)="showDetailsDialog.set($event)"
+            [modal]="true"
+            [blockScroll]="true"
+            [draggable]="false"
+            ariaLabel="Player details dialog"
+            styleClass="roster-player-details-dialog"
+          >
           <app-dialog-header
             icon="user"
             title="Player Details"
@@ -319,7 +342,6 @@
                 </div>
               </div>
 
-              <!-- Live Metrics Summary -->
               @if (enrichedSelectedPlayer()) {
                 <div class="details-metrics-summary">
                   <div class="metric-card">
@@ -418,7 +440,6 @@
                 }
               </div>
 
-              <!-- Position Benchmarks Section -->
               @if (enrichedSelectedPlayer()?.benchmarkComparison?.length) {
                 <div class="details-panel details-benchmarks">
                   <h3 class="details-section-title">
@@ -460,7 +481,6 @@
                 </div>
               }
 
-              <!-- Training Priorities -->
               @if (trainingPriorities().length > 0) {
                 <div class="details-panel details-priorities">
                   <h3 class="details-section-title">
@@ -475,7 +495,6 @@
                 </div>
               }
 
-              <!-- Risk Assessment (for coaches) -->
               @if (
                 rosterService.canManageRoster() &&
                 riskAssessment()?.factors?.length
@@ -559,18 +578,20 @@
               (primary)="showDetailsDialog.set(false)"
             />
           }
-        </app-dialog>
+          </app-dialog>
+        }
 
         <!-- Status Change Dialog -->
-        <app-dialog
-          [visible]="showStatusDialog()"
-          (visibleChange)="showStatusDialog.set($event)"
-          [modal]="true"
-          [blockScroll]="true"
-          [draggable]="false"
-          ariaLabel="Change player status dialog"
-          styleClass="roster-status-dialog"
-        >
+        @defer (when showStatusDialog()) {
+          <app-dialog
+            [visible]="showStatusDialog()"
+            (visibleChange)="showStatusDialog.set($event)"
+            [modal]="true"
+            [blockScroll]="true"
+            [draggable]="false"
+            ariaLabel="Change player status dialog"
+            styleClass="roster-status-dialog"
+          >
           <app-dialog-header
             icon="sync"
             title="Change Player Status"
@@ -614,18 +635,20 @@
             (cancel)="showStatusDialog.set(false)"
             (primary)="updatePlayerStatus()"
           />
-        </app-dialog>
+          </app-dialog>
+        }
 
         <!-- Bulk Status Change Dialog -->
-        <app-dialog
-          [visible]="showBulkStatusDialog()"
-          (visibleChange)="showBulkStatusDialog.set($event)"
-          [modal]="true"
-          [blockScroll]="true"
-          [draggable]="false"
-          ariaLabel="Change status for selected players dialog"
-          styleClass="roster-bulk-status-dialog"
-        >
+        @defer (when showBulkStatusDialog()) {
+          <app-dialog
+            [visible]="showBulkStatusDialog()"
+            (visibleChange)="showBulkStatusDialog.set($event)"
+            [modal]="true"
+            [blockScroll]="true"
+            [draggable]="false"
+            ariaLabel="Change status for selected players dialog"
+            styleClass="roster-bulk-status-dialog"
+          >
           <app-dialog-header
             icon="users"
             title="Change Status for Selected Players"
@@ -668,7 +691,8 @@
             (cancel)="showBulkStatusDialog.set(false)"
             (primary)="updateBulkStatus()"
           />
-        </app-dialog>
+          </app-dialog>
+        }
 
         <!-- Confirmation Dialog -->
         <p-confirmDialog></p-confirmDialog>

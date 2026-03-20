@@ -1,11 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class ProfileDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private usersTableUnavailable = false;
 
   async fetchTrainingSessions(userId: string): Promise<{
     sessions: Array<{
@@ -88,6 +90,10 @@ export class ProfileDataService {
     userId: string;
     avatarUrl: string;
   }): Promise<{ error: { message?: string } | null }> {
+    if (this.usersTableUnavailable) {
+      return { error: null };
+    }
+
     const { error } = await this.supabaseService.client
       .from("users")
       .update({
@@ -96,6 +102,11 @@ export class ProfileDataService {
       })
       .eq("id", input.userId);
 
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { error: null };
+    }
+
     return { error };
   }
 
@@ -103,11 +114,20 @@ export class ProfileDataService {
     profilePhotoUrl: string | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { profilePhotoUrl: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .select("profile_photo_url")
       .eq("id", userId)
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { profilePhotoUrl: null, error: null };
+    }
 
     return { profilePhotoUrl: data?.profile_photo_url ?? null, error };
   }

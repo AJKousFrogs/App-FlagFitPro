@@ -25,19 +25,7 @@ import {
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
-import { ProgressBar } from "primeng/progressbar";
-import {
-  Accordion,
-  AccordionPanel,
-  AccordionHeader,
-  AccordionContent,
-} from "primeng/accordion";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-
-import { Divider } from "primeng/divider";
-import { Chip } from "primeng/chip";
-import { Timeline } from "primeng/timeline";
 
 // Services
 import {
@@ -64,6 +52,11 @@ import { MainLayoutComponent } from "../../../../shared/components/layout/main-l
 import { PageHeaderComponent } from "../../../../shared/components/page-header/page-header.component";
 import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
+import { PeriodizationAnnualTabComponent } from "./periodization-annual-tab.component";
+import { PeriodizationOverviewCardComponent } from "./periodization-overview-card.component";
+import { PeriodizationResearchTabComponent } from "./periodization-research-tab.component";
+import { PeriodizationScheduleTabComponent } from "./periodization-schedule-tab.component";
+import { PeriodizationSprintTabComponent } from "./periodization-sprint-tab.component";
 
 interface TimelineEvent {
   phase: string;
@@ -78,24 +71,20 @@ interface TimelineEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    StatusTagComponent,
-    ProgressBar,
-    Accordion,
-    AccordionPanel,
-    AccordionHeader,
-    AccordionContent,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
-    Divider,
-    Chip,
-    Timeline,
     MainLayoutComponent,
     PageHeaderComponent,
     AlertComponent,
     CardShellComponent,
+    PeriodizationOverviewCardComponent,
+    PeriodizationScheduleTabComponent,
+    PeriodizationSprintTabComponent,
+    PeriodizationAnnualTabComponent,
+    PeriodizationResearchTabComponent,
   ],
   template: `
     <app-main-layout>
@@ -109,107 +98,15 @@ interface TimelineEvent {
         </app-page-header>
 
         <div class="periodization-dashboard ui-page-stack">
-          <!-- Current Phase Card -->
-          <app-card-shell class="phase-card" [flush]="true">
-            <div class="phase-shell">
-              <div class="phase-header">
-                <div class="phase-info">
-                  <app-status-tag
-                    [value]="currentPhase()?.name || 'Loading...'"
-                    [severity]="getPhaseSeverity()"
-                    size="md"
-                  />
-                  <span class="phase-week"
-                    >Week {{ currentWeek() }} of
-                    {{ currentPhase()?.durationWeeks || 4 }}</span
-                  >
-                </div>
-                <div class="phase-date">
-                  {{ currentDate | date: "MMMM yyyy" }}
-                </div>
-              </div>
-
-              <div class="phase-content">
-                <p class="phase-description">
-                  {{ currentPhase()?.description }}
-                </p>
-
-                <div class="focus-areas">
-                  <h4>Primary Focus</h4>
-                  <div class="chips-container">
-                    @for (
-                      focus of currentPhase()?.primaryFocus || [];
-                      track focus
-                    ) {
-                      <p-chip
-                        [label]="formatFocus(focus)"
-                        class="focus-chip primary"
-                      ></p-chip>
-                    }
-                  </div>
-
-                  <h4>Secondary Focus</h4>
-                  <div class="chips-container">
-                    @for (
-                      focus of currentPhase()?.secondaryFocus || [];
-                      track focus
-                    ) {
-                      <p-chip
-                        [label]="formatFocus(focus)"
-                        class="focus-chip secondary"
-                      ></p-chip>
-                    }
-                  </div>
-                </div>
-
-                <!-- Load Targets -->
-                <div class="load-targets">
-                  <h4>Weekly Load Target</h4>
-                  <div class="load-bar-container">
-                    <div class="load-info">
-                      <span
-                        >Target:
-                        {{ loadRecommendation()?.recommendedLoad || 0 }}
-                        AU</span
-                      >
-                      <span
-                        >Range:
-                        {{ loadRecommendation()?.loadRange?.[0] || 0 }} -
-                        {{ loadRecommendation()?.loadRange?.[1] || 0 }}
-                        AU</span
-                      >
-                    </div>
-                    <p-progressBar
-                      [value]="getLoadProgress()"
-                      [showValue]="false"
-                      class="load-bar"
-                    ></p-progressBar>
-                  </div>
-                </div>
-
-                <!-- ACWR Status -->
-                @if (acwrStatus()) {
-                  <div
-                    class="acwr-status"
-                    [class]="'acwr-' + acwrStatus()?.riskZone"
-                  >
-                    <div class="acwr-header">
-                      <span class="acwr-label">ACWR</span>
-                      <span class="acwr-value">{{ acwrStatus()?.acwr }}</span>
-                      <app-status-tag
-                        [value]="acwrStatus()?.riskZone || 'unknown'"
-                        [severity]="getAcwrSeverity()"
-                        size="sm"
-                      />
-                    </div>
-                    <p class="acwr-recommendation">
-                      {{ acwrStatus()?.recommendation }}
-                    </p>
-                  </div>
-                }
-              </div>
-            </div>
-          </app-card-shell>
+          @defer (on idle) {
+            <app-periodization-overview-card
+              [currentPhase]="currentPhase()"
+              [currentWeek]="currentWeek()"
+              [currentDate]="currentDate"
+              [loadRecommendation]="loadRecommendation()"
+              [acwrStatus]="acwrStatus()"
+            />
+          }
 
           <!-- Tabs for different views -->
           <p-tabs class="training-tabs" [(value)]="activeTab">
@@ -222,316 +119,42 @@ interface TimelineEvent {
             <p-tabpanels>
               <!-- Weekly Schedule Tab -->
               <p-tabpanel value="schedule">
-                <div class="weekly-schedule">
-                  @if (weeklyTemplate()) {
-                    @for (
-                      day of weeklyTemplate()?.days || [];
-                      track day.dayName
-                    ) {
-                      <div
-                        class="day-card"
-                        [class]="'session-' + day.sessionType"
-                      >
-                        <div class="day-header">
-                          <span class="day-name">{{ day.dayName }}</span>
-                          <app-status-tag
-                            [value]="day.sessionType"
-                            [severity]="getSessionSeverity(day.sessionType)"
-                            size="sm"
-                          />
-                        </div>
-                        <div class="day-content">
-                          <div class="day-focus">
-                            <i class="pi pi-bolt"></i>
-                            {{ formatFocus(day.primaryFocus) }}
-                          </div>
-                          @if (day.estimatedDuration > 0) {
-                            <div class="day-duration">
-                              <i class="pi pi-clock"></i>
-                              {{ day.estimatedDuration }} min
-                            </div>
-                          }
-                          <div class="day-rpe">
-                            <i class="pi pi-chart-line"></i>
-                            RPE: {{ day.targetRPE }}
-                          </div>
-                          @if (day.notes) {
-                            <div class="day-notes">{{ day.notes }}</div>
-                          }
-                        </div>
-                      </div>
-                    }
-                  }
-                </div>
-
-                <!-- Weekly Totals -->
-                @if (weeklyTemplate()?.weeklyTotals) {
-                  <div class="weekly-totals">
-                    <h4>Weekly Totals</h4>
-                    <div class="totals-grid">
-                      <div class="total-item">
-                        <span class="total-value">{{
-                          weeklyTemplate()?.weeklyTotals?.totalSprints
-                        }}</span>
-                        <span class="total-label">Sprints</span>
-                      </div>
-                      <div class="total-item">
-                        <span class="total-value">{{
-                          weeklyTemplate()?.weeklyTotals?.totalCuts
-                        }}</span>
-                        <span class="total-label">Cuts</span>
-                      </div>
-                      <div class="total-item">
-                        <span class="total-value">{{
-                          weeklyTemplate()?.weeklyTotals?.totalPlyoContacts
-                        }}</span>
-                        <span class="total-label">Plyo Contacts</span>
-                      </div>
-                      <div class="total-item">
-                        <span class="total-value">{{
-                          weeklyTemplate()?.weeklyTotals?.trainingDays
-                        }}</span>
-                        <span class="total-label">Training Days</span>
-                      </div>
-                    </div>
-                  </div>
+                @defer (when activeTab() === 'schedule') {
+                  <app-periodization-schedule-tab
+                    [template]="weeklyTemplate()"
+                  />
                 }
               </p-tabpanel>
 
               <!-- Sprint Protocols Tab -->
               <p-tabpanel value="sprint">
-                <div class="sprint-protocols">
-                  @if (sprintGuidelines()) {
-                    <div class="sprint-header">
-                      <h3>{{ sprintGuidelines()?.phase }}</h3>
-                      <p>
-                        Weekly Sprint Volume:
-                        {{ sprintGuidelines()?.weeklySprintVolume?.[0] }} -
-                        {{ sprintGuidelines()?.weeklySprintVolume?.[1] }}
-                        sprints
-                      </p>
-                    </div>
-
-                    <div class="sprint-features">
-                      <div
-                        class="feature"
-                        [class.active]="sprintGuidelines()?.accelerationWork"
-                      >
-                        <i
-                          class="pi"
-                          [class.pi-check]="
-                            sprintGuidelines()?.accelerationWork
-                          "
-                          [class.pi-times]="
-                            !sprintGuidelines()?.accelerationWork
-                          "
-                        ></i>
-                        Acceleration Work
-                      </div>
-                      <div
-                        class="feature"
-                        [class.active]="sprintGuidelines()?.maxVelocityWork"
-                      >
-                        <i
-                          class="pi"
-                          [class.pi-check]="sprintGuidelines()?.maxVelocityWork"
-                          [class.pi-times]="
-                            !sprintGuidelines()?.maxVelocityWork
-                          "
-                        ></i>
-                        Max Velocity
-                      </div>
-                      <div
-                        class="feature"
-                        [class.active]="sprintGuidelines()?.resistedSprints"
-                      >
-                        <i
-                          class="pi"
-                          [class.pi-check]="sprintGuidelines()?.resistedSprints"
-                          [class.pi-times]="
-                            !sprintGuidelines()?.resistedSprints
-                          "
-                        ></i>
-                        Resisted Sprints
-                      </div>
-                      <div
-                        class="feature"
-                        [class.active]="sprintGuidelines()?.flyingSprints"
-                      >
-                        <i
-                          class="pi"
-                          [class.pi-check]="sprintGuidelines()?.flyingSprints"
-                          [class.pi-times]="!sprintGuidelines()?.flyingSprints"
-                        ></i>
-                        Flying Sprints
-                      </div>
-                    </div>
-
-                    <h4>Recommended Protocols</h4>
-                    <div class="protocols-list">
-                      @for (
-                        protocol of sprintGuidelines()?.recommendedProtocols ||
-                          [];
-                        track protocol
-                      ) {
-                        <p-chip
-                          [label]="formatProtocol(protocol)"
-                          class="protocol-chip"
-                        ></p-chip>
-                      }
-                    </div>
-
-                    @if (sprintGuidelines()?.avoidProtocols?.length) {
-                      <h4>Avoid This Phase</h4>
-                      <div class="protocols-list avoid">
-                        @for (
-                          protocol of sprintGuidelines()?.avoidProtocols || [];
-                          track protocol
-                        ) {
-                          <p-chip
-                            [label]="formatProtocol(protocol)"
-                            class="protocol-chip avoid"
-                          ></p-chip>
-                        }
-                      </div>
-                    }
-                  }
-
-                  <!-- Flag Football Sprint Tips -->
-                  <div class="sprint-tips">
-                    <h4>
-                      <i class="pi pi-flag"></i> Flag Football Sprint Tips
-                    </h4>
-                    <ul>
-                      @for (tip of sprintRecommendations(); track tip) {
-                        <li>{{ tip }}</li>
-                      }
-                    </ul>
-                  </div>
-                </div>
+                @defer (when activeTab() === 'sprint') {
+                  <app-periodization-sprint-tab
+                    [guidelines]="sprintGuidelines()"
+                    [recommendedProtocols]="formattedRecommendedProtocols()"
+                    [avoidProtocols]="formattedAvoidProtocols()"
+                    [tips]="sprintRecommendations()"
+                  />
+                }
               </p-tabpanel>
 
               <!-- Annual Timeline Tab -->
               <p-tabpanel value="annual">
-                <div class="annual-timeline">
-                  <p-timeline
-                    [value]="annualTimeline()"
-                    layout="horizontal"
-                    class="phase-timeline"
-                  >
-                    <ng-template #marker let-event>
-                      <span
-                        class="timeline-marker"
-                        [style.background-color]="event.color"
-                      >
-                        <i [class]="event.icon"></i>
-                      </span>
-                    </ng-template>
-                    <ng-template #content let-event>
-                      <div class="timeline-content">
-                        <span class="timeline-month">{{ event.month }}</span>
-                        <span class="timeline-phase">{{ event.phase }}</span>
-                      </div>
-                    </ng-template>
-                  </p-timeline>
-                </div>
-
-                <p-divider></p-divider>
-
-                <!-- Phase Details Accordion -->
-                <p-accordion [multiple]="true">
-                  @for (phase of allPhases(); track phase.type) {
-                    <p-accordion-panel [value]="phase.type">
-                      <p-accordion-header>{{ phase.name }}</p-accordion-header>
-                      <p-accordion-content>
-                        <div class="phase-detail">
-                          <p>{{ phase.description }}</p>
-
-                          <div class="phase-metrics">
-                            <div class="metric">
-                              <span class="metric-label">Duration</span>
-                              <span class="metric-value"
-                                >{{ phase.durationWeeks }} weeks</span
-                              >
-                            </div>
-                            <div class="metric">
-                              <span class="metric-label">Volume</span>
-                              <span class="metric-value"
-                                >{{
-                                  (phase.volumeMultiplier * 100).toFixed(0)
-                                }}%</span
-                              >
-                            </div>
-                            <div class="metric">
-                              <span class="metric-label">Intensity</span>
-                              <span class="metric-value"
-                                >{{
-                                  (phase.intensityMultiplier * 100).toFixed(0)
-                                }}%</span
-                              >
-                            </div>
-                            <div class="metric">
-                              <span class="metric-label"
-                                >Recovery Priority</span
-                              >
-                              <span class="metric-value">{{
-                                phase.recoveryPriority
-                              }}</span>
-                            </div>
-                          </div>
-
-                          <h5>Injury Prevention Focus</h5>
-                          <ul>
-                            @for (
-                              focus of phase.injuryPreventionFocus;
-                              track focus
-                            ) {
-                              <li>{{ focus }}</li>
-                            }
-                          </ul>
-                        </div>
-                      </p-accordion-content>
-                    </p-accordion-panel>
-                  }
-                </p-accordion>
+                @defer (when activeTab() === 'annual') {
+                  <app-periodization-annual-tab
+                    [timeline]="annualTimeline()"
+                    [phases]="allPhases()"
+                  />
+                }
               </p-tabpanel>
 
               <!-- Evidence Base Tab -->
               <p-tabpanel value="research">
-                <div class="evidence-section">
-                  <h3>📚 Evidence-Based Training</h3>
-                  <p class="evidence-intro">
-                    All training recommendations are based on peer-reviewed
-                    research. Below are the key studies informing our
-                    periodization model.
-                  </p>
-
-                  <div class="research-cards">
-                    @for (ref of evidenceReferences(); track ref.title) {
-                      <div class="research-card">
-                        <div class="research-header">
-                          <span class="research-authors">{{
-                            ref.authors
-                          }}</span>
-                          <span class="research-year">({{ ref.year }})</span>
-                        </div>
-                        <h4 class="research-title">{{ ref.title }}</h4>
-                        @if (ref.journal) {
-                          <span class="research-journal">{{
-                            ref.journal
-                          }}</span>
-                        }
-                        <div class="research-finding">
-                          <strong>Key Finding:</strong> {{ ref.keyFinding }}
-                        </div>
-                        <div class="research-application">
-                          <strong>Application:</strong>
-                          {{ ref.applicationToFlagFootball }}
-                        </div>
-                      </div>
-                    }
-                  </div>
-                </div>
+                @defer (when activeTab() === 'research') {
+                  <app-periodization-research-tab
+                    [references]="evidenceReferences()"
+                  />
+                }
               </p-tabpanel>
             </p-tabpanels>
           </p-tabs>
@@ -599,6 +222,8 @@ export class PeriodizationDashboardComponent implements OnInit {
   readonly evidenceReferences = signal<EvidenceReference[]>([]);
   readonly allPhases = signal<PhaseConfig[]>([]);
   readonly annualTimeline = signal<TimelineEvent[]>([]);
+  readonly formattedRecommendedProtocols = signal<string[]>([]);
+  readonly formattedAvoidProtocols = signal<string[]>([]);
 
   ngOnInit(): void {
     this.loadPeriodizationData();
@@ -640,6 +265,16 @@ export class PeriodizationDashboardComponent implements OnInit {
     const sprintPhase = this.mapPhaseToSprintPhase(phaseType);
     const guidelines = this.sprintService.getPhaseGuidelines(sprintPhase);
     this.sprintGuidelines.set(guidelines || null);
+    this.formattedRecommendedProtocols.set(
+      (guidelines?.recommendedProtocols || []).map((protocol) =>
+        this.formatProtocol(protocol),
+      ),
+    );
+    this.formattedAvoidProtocols.set(
+      (guidelines?.avoidProtocols || []).map((protocol) =>
+        this.formatProtocol(protocol),
+      ),
+    );
 
     // Get sprint recommendations
     this.sprintRecommendations.set(
@@ -763,25 +398,6 @@ export class PeriodizationDashboardComponent implements OnInit {
     }
   }
 
-  getPhaseSeverity(): "success" | "info" | "warning" | "danger" | "secondary" {
-    const phase = this.currentPhase();
-    if (!phase) return "info";
-
-    switch (phase.type) {
-      case "peak":
-      case "taper":
-        return "danger";
-      case "speed_development":
-      case "power_development":
-        return "warning";
-      case "in_season_maintenance":
-      case "mid_season_reload":
-        return "success";
-      default:
-        return "info";
-    }
-  }
-
   getSessionSeverity(
     sessionType: string,
   ): "success" | "info" | "warning" | "danger" | "secondary" {
@@ -795,33 +411,6 @@ export class PeriodizationDashboardComponent implements OnInit {
       default:
         return "info";
     }
-  }
-
-  getAcwrSeverity(): "success" | "info" | "warning" | "danger" {
-    const status = this.acwrStatus();
-    if (!status) return "info";
-
-    switch (status.riskZone) {
-      case "optimal":
-        return "success";
-      case "caution":
-        return "warning";
-      case "danger":
-        return "danger";
-      default:
-        return "info";
-    }
-  }
-
-  getLoadProgress(): number {
-    const rec = this.loadRecommendation();
-    if (!rec) return 50;
-    // This would be actual load vs target
-    return 65; // Demo value
-  }
-
-  formatFocus(focus: string): string {
-    return focus.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
   formatProtocol(protocol: string): string {

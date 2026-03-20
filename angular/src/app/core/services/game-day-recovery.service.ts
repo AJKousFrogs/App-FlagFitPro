@@ -24,6 +24,7 @@ export interface RecoveryBlock {
 export class GameDayRecoveryService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
+  private recoveryBlocksUnavailable = false;
 
   /**
    * Check if player had game today and trigger recovery protocol
@@ -165,6 +166,10 @@ export class GameDayRecoveryService {
       restrictions: string[];
     },
   ): Promise<void> {
+    if (this.recoveryBlocksUnavailable) {
+      return;
+    }
+
     try {
       const { error } = await this.supabaseService.client
         .from("recovery_blocks")
@@ -178,14 +183,20 @@ export class GameDayRecoveryService {
           created_at: new Date().toISOString(),
         });
 
-      if (error && !isBenignSupabaseQueryError(error)) {
+      if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this.recoveryBlocksUnavailable = true;
+          return;
+        }
         this.logger.error(
           "[GameDayRecovery] Error creating recovery block:",
           error,
         );
       }
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.recoveryBlocksUnavailable = true;
+      } else {
         this.logger.error(
           "[GameDayRecovery] Error creating recovery block:",
           error,
@@ -198,6 +209,10 @@ export class GameDayRecoveryService {
    * Get active recovery protocol for player
    */
   async getActiveRecovery(playerId: string): Promise<RecoveryBlock | null> {
+    if (this.recoveryBlocksUnavailable) {
+      return null;
+    }
+
     try {
       const today = new Date().toISOString().split("T")[0];
 
@@ -209,7 +224,11 @@ export class GameDayRecoveryService {
         .eq("protocol_type", "game_day_recovery")
         .maybeSingle();
 
-      if (error && !isBenignSupabaseQueryError(error)) {
+      if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this.recoveryBlocksUnavailable = true;
+          return null;
+        }
         this.logger.error(
           "[GameDayRecovery] Error fetching active recovery:",
           error,
@@ -230,7 +249,9 @@ export class GameDayRecoveryService {
         protocolType: "game_day_recovery",
       };
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.recoveryBlocksUnavailable = true;
+      } else {
         this.logger.error(
           "[GameDayRecovery] Error fetching active recovery:",
           error,

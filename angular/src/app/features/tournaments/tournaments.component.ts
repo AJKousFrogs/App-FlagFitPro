@@ -15,17 +15,9 @@ import {
 } from "@angular/forms";
 
 import { ToastService } from "../../core/services/toast.service";
-import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
-import { DatePicker } from "primeng/datepicker";
-import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
-
-import { Select } from "primeng/select";
 import { TabPanel, Tabs } from "primeng/tabs";
-import { Textarea } from "primeng/textarea";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 
 import { AuthService } from "../../core/services/auth.service";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
@@ -45,15 +37,13 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
-import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
-import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { formatDateISO } from "../../shared/utils/date.utils";
 import { getCountryFlag } from "../../core/constants";
 import { TournamentsDataService } from "./services/tournaments-data.service";
-import { TournamentAvailabilityDialogContentComponent } from "./components/tournament-availability-dialog-content.component";
-import { TournamentBudgetDialogContentComponent } from "./components/tournament-budget-dialog-content.component";
-import { TournamentTeamAvailabilityDialogContentComponent } from "./components/tournament-team-availability-dialog-content.component";
+import { TournamentAvailabilityDialogComponent } from "./components/tournament-availability-dialog.component";
+import { TournamentBudgetDialogComponent } from "./components/tournament-budget-dialog.component";
+import { TournamentFormDialogComponent } from "./components/tournament-form-dialog.component";
+import { TournamentTeamAvailabilityDialogComponent } from "./components/tournament-team-availability-dialog.component";
 import { TournamentSeasonPanelComponent } from "./components/tournament-season-panel.component";
 
 interface PlayerAvailability {
@@ -241,28 +231,17 @@ const toDateOrNull = (value: unknown): Date | null => {
     ReactiveFormsModule,
     Tabs,
     TabPanel,
-    
-    InputText,
-    Textarea,
-    DatePicker,
-    Select,
-    InputNumber,
-    Checkbox,
     ConfirmDialog,
-    
     MainLayoutComponent,
     PageHeaderComponent,
     IconButtonComponent,
-    AlertComponent,
-    AppDialogComponent,
-    DialogHeaderComponent,
-    DialogFooterComponent,
     EmptyStateComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
-    TournamentAvailabilityDialogContentComponent,
-    TournamentBudgetDialogContentComponent,
-    TournamentTeamAvailabilityDialogContentComponent,
+    TournamentFormDialogComponent,
+    TournamentAvailabilityDialogComponent,
+    TournamentBudgetDialogComponent,
+    TournamentTeamAvailabilityDialogComponent,
     TournamentSeasonPanelComponent,
   ],
   templateUrl: "./tournaments.component.html",

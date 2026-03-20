@@ -418,319 +418,44 @@
       </div>
     </app-main-layout>
 
-    <!-- Create Channel Dialog -->
-    <app-dialog
-      [(visible)]="showCreateChannelDialog"
-      [modal]="true"
-      [closable]="false"
-      [draggable]="false"
-      [resizable]="false"
-      [dismissableMask]="true"
-      [styleClass]="'chat-create-channel-dialog'"
-    >
-      <app-dialog-header
-        icon="plus-circle"
-        title="Create New Channel"
-        subtitle="Set up a space for a team, group, or position room."
-        (close)="showCreateChannelDialog = false"
+    @defer (when showCreateChannelDialog) {
+      <app-chat-create-channel-dialog
+        [visible]="showCreateChannelDialog"
+        [channelTypeOptions]="channelTypeOptions"
+        [positionOptions]="positionOptions"
+        (visibleChange)="showCreateChannelDialog = $event"
+        (createChannel)="createChannel($event)"
       />
-      <div class="create-channel-form">
-        <div class="form-field">
-          <label for="chat-channelName">Channel Name</label>
-          <input
-            id="chat-channelName"
-            name="channelName"
-            pInputText
-            [value]="newChannelName"
-            (input)="onNewChannelNameChange(getInputValue($event))"
-            placeholder="e.g., qb-room"
-            autocomplete="off"
-          />
-        </div>
+    }
 
-        <div class="form-field">
-          <label for="chat-channelDescription">Description</label>
-          <textarea
-            id="chat-channelDescription"
-            name="channelDescription"
-            pInputTextarea
-            [value]="newChannelDescription"
-            (input)="onNewChannelDescriptionChange(getInputValue($event))"
-            rows="2"
-            placeholder="What's this channel about?"
-            autocomplete="off"
-          ></textarea>
-        </div>
-
-        <div class="form-field">
-          <label for="chat-channelType">Channel Type</label>
-          <p-select
-            inputId="chat-channelType"
-            (onChange)="onNewChannelTypeChange($event.value)"
-            [options]="channelTypeOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select type"
-            class="w-full"
-          ></p-select>
-        </div>
-
-        @if (newChannelType === "position_group") {
-          <div class="form-field">
-            <label>Position</label>
-            <p-select
-              (onChange)="onNewChannelPositionChange($event.value)"
-              [options]="positionOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select position"
-              class="w-full"
-            ></p-select>
-          </div>
-        }
-      </div>
-
-      <app-dialog-footer
-        cancelLabel="Cancel"
-        primaryLabel="Create Channel"
-        primaryIcon="check"
-        [disabled]="!newChannelName.trim()"
-        (cancel)="showCreateChannelDialog = false"
-        (primary)="createChannel()"
+    @defer (when showPinnedMessages) {
+      <app-chat-pinned-messages-dialog
+        [visible]="showPinnedMessages"
+        [pinnedMessages]="pinnedMessages()"
+        [canPinMessages]="canPinMessages()"
+        (visibleChange)="showPinnedMessages = $event"
+        (togglePin)="togglePin($event)"
       />
-    </app-dialog>
+    }
 
-    <!-- Pinned Messages Dialog -->
-    <app-dialog
-      [(visible)]="showPinnedMessages"
-      [modal]="true"
-      [closable]="false"
-      [draggable]="false"
-      [resizable]="false"
-      [dismissableMask]="true"
-      [styleClass]="'chat-pinned-dialog'"
-    >
-      <app-dialog-header
-        icon="bookmark"
-        title="Pinned Messages"
-        subtitle="Important messages saved for this channel."
-        (close)="showPinnedMessages = false"
-      />
-      <div class="pinned-messages-list">
-        @for (message of pinnedMessages(); track message.id) {
-          <div class="pinned-message-item">
-            <div class="pinned-message-header">
-              <strong>{{ message.author?.full_name }}</strong>
-              <span class="pinned-time">{{
-                formatTime(message.created_at)
-              }}</span>
-            </div>
-            <p>{{ message.message }}</p>
-            @if (canPinMessages()) {
-              <app-button
-                variant="text"
-                size="sm"
-                iconLeft="pi-bookmark"
-                (clicked)="togglePin(message)"
-                >Unpin</app-button
-              >
-            }
-          </div>
-        } @empty {
-          <p class="no-pinned">No pinned messages in this channel</p>
-        }
-      </div>
-    </app-dialog>
-
-    <!-- Members Dialog -->
-    <app-dialog
-      [(visible)]="showMembersDialog"
-      [modal]="true"
-      [closable]="false"
-      [draggable]="false"
-      [resizable]="false"
-      [dismissableMask]="true"
-      [styleClass]="'chat-members-dialog'"
-      (visibleChange)="onMembersDialogVisibleChange($event)"
-    >
-      <app-dialog-header
-        icon="users"
-        title="Channel Members"
+    @defer (when showMembersDialog) {
+      <app-chat-members-dialog
+        [visible]="showMembersDialog"
         [subtitle]="
           channelMembersData()
             ? channelMembersData()!.total_count + ' members in this channel'
             : 'See who can view and participate in this conversation.'
         "
-        (close)="showMembersDialog = false"
+        [membersData]="channelMembersData()"
+        [loading]="loadingMembers()"
+        [memberSearchQuery]="memberSearchQuery"
+        [coaches]="filteredCoaches()"
+        [athletes]="filteredAthletes()"
+        [onlineCoachCount]="onlineCoachCount()"
+        [onlineAthleteCount]="onlineAthleteCount()"
+        (visibleChange)="onMembersDialogVisibleChange($event)"
+        (memberSearchQueryChange)="onMemberSearchQueryChange($event)"
+        (startDirectMessage)="startDirectMessage($event)"
       />
-
-      <div class="members-dialog-content">
-        <!-- Visibility Description -->
-        @if (channelMembersData()) {
-          <div class="visibility-info">
-            <i class="pi pi-info-circle"></i>
-            <span>{{ channelMembersData()!.visibility_description }}</span>
-          </div>
-        }
-
-        <!-- Loading State -->
-        @if (loadingMembers()) {
-          <div class="members-loading">
-            <i class="pi pi-spin pi-spinner icon-2xl"></i>
-            <p>Loading members...</p>
-          </div>
-        } @else if (channelMembersData()) {
-          <!-- Search Input -->
-          <div class="members-search">
-            <span class="p-input-icon-left w-full">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                [value]="memberSearchQuery"
-                (input)="onMemberSearchQueryChange(getInputValue($event))"
-                placeholder="Search members..."
-                class="w-full"
-                aria-label="Search channel members"
-              />
-            </span>
-          </div>
-
-          <!-- Coaches Section -->
-          @if (filteredCoaches().length > 0) {
-            <div class="members-section">
-              <h4 class="section-header">
-                <i class="pi pi-shield"></i>
-                Coaches ({{ filteredCoaches().length }})
-                @if (onlineCoachCount() > 0) {
-                  <span class="online-count-badge">
-                    <span class="online-dot"></span>
-                    {{ onlineCoachCount() }} online
-                  </span>
-                }
-              </h4>
-              <div class="members-grid">
-                @for (member of filteredCoaches(); track member.user_id) {
-                  <div class="member-card" [class.is-online]="member.is_online">
-                    <div class="member-avatar-container">
-                      <p-avatar
-                        [label]="
-                          member.initials || getInitialsStr(member.full_name)
-                        "
-                        shape="circle"
-                        size="large"
-                        [class]="
-                          'avatar-token ' + getAvatarColorClass(member.full_name)
-                        "
-                      ></p-avatar>
-                      @if (member.is_online) {
-                        <span class="online-indicator"></span>
-                      }
-                    </div>
-                    <div class="member-info">
-                      <span class="member-name">{{ member.full_name }}</span>
-                      <div class="member-meta">
-                        <app-status-tag
-                          [value]="
-                            member.role === 'coach' ? 'Head Coach' : 'Assistant'
-                          "
-                          severity="success"
-                          size="sm"
-                        />
-                      </div>
-                    </div>
-                    <app-icon-button
-                      icon="pi-comment"
-                      variant="text"
-                      size="sm"
-                      (clicked)="startDirectMessage(member)"
-                      ariaLabel="Send direct message"
-                      tooltip="Message"
-                    />
-                  </div>
-                }
-              </div>
-            </div>
-          }
-
-          <!-- Athletes Section -->
-          @if (filteredAthletes().length > 0) {
-            <div class="members-section">
-              <h4 class="section-header">
-                <i class="pi pi-users"></i>
-                Athletes ({{ filteredAthletes().length }})
-                @if (onlineAthleteCount() > 0) {
-                  <span class="online-count-badge">
-                    <span class="online-dot"></span>
-                    {{ onlineAthleteCount() }} online
-                  </span>
-                }
-              </h4>
-              <div class="members-grid">
-                @for (member of filteredAthletes(); track member.user_id) {
-                  <div class="member-card" [class.is-online]="member.is_online">
-                    <div class="member-avatar-container">
-                      <p-avatar
-                        [label]="
-                          member.initials || getInitialsStr(member.full_name)
-                        "
-                        shape="circle"
-                        size="large"
-                        [class]="
-                          'avatar-token ' + getAvatarColorClass(member.full_name)
-                        "
-                      ></p-avatar>
-                      @if (member.is_online) {
-                        <span class="online-indicator"></span>
-                      }
-                    </div>
-                    <div class="member-info">
-                      <span class="member-name">
-                        {{ member.full_name }}
-                        @if (member.jersey_number) {
-                          <span class="jersey-number"
-                            >#{{ member.jersey_number }}</span
-                          >
-                        }
-                      </span>
-                      <div class="member-meta">
-                        @if (member.position) {
-                          <app-status-tag
-                            [value]="member.position"
-                            severity="secondary"
-                            size="sm"
-                          />
-                        }
-                        @if (!member.can_post) {
-                          <span class="read-only-badge">
-                            <i class="pi pi-eye"></i> View only
-                          </span>
-                        }
-                      </div>
-                    </div>
-                    <app-icon-button
-                      icon="pi-comment"
-                      variant="text"
-                      size="sm"
-                      (clicked)="startDirectMessage(member)"
-                      ariaLabel="Send direct message"
-                      tooltip="Message"
-                    />
-                  </div>
-                }
-              </div>
-            </div>
-          }
-
-          <!-- Empty State -->
-          @if (
-            filteredCoaches().length === 0 && filteredAthletes().length === 0
-          ) {
-            <div class="no-members-found">
-              <i class="pi pi-search icon-2xl icon-secondary"></i>
-              <p>No members found matching "{{ memberSearchQuery }}"</p>
-            </div>
-          }
-        }
-      </div>
-    </app-dialog>
+    }
   

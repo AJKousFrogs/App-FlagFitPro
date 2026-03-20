@@ -7,6 +7,122 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 
+function isOptionalSchemaError(error) {
+  const code = error?.code;
+  const message = `${error?.message || ""}`.toLowerCase();
+  return (
+    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
+    message.includes("relation") ||
+    message.includes("schema cache") ||
+    message.includes("does not exist")
+  );
+}
+
+function mapLegacyWellnessRecord(data) {
+  if (!data) {
+    return null;
+  }
+
+  return {
+    sleepQuality: data.sleep_quality,
+    sleepHours: data.sleep_hours ?? null,
+    energyLevel: data.energy_level,
+    muscleSoreness: data.muscle_soreness,
+    stressLevel: data.stress_level,
+    sorenessAreas: data.soreness_areas || [],
+    notes: data.notes,
+    readinessScore: data.calculated_readiness ?? null,
+    motivationLevel: data.motivation_level ?? null,
+    mood: data.mood ?? null,
+    hydrationLevel: data.hydration_level ?? null,
+  };
+}
+
+async function fetchWellnessCheckinRecord(supabase, athleteId, date) {
+  const primary = await supabase
+    .from("daily_wellness_checkin")
+    .select("*")
+    .eq("user_id", athleteId)
+    .eq("checkin_date", date)
+    .single();
+
+  if (!primary.error || primary.error.code === "PGRST116") {
+    return primary;
+  }
+
+  if (!isOptionalSchemaError(primary.error)) {
+    return primary;
+  }
+
+  return supabase
+    .from("wellness_logs")
+    .select("*")
+    .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+    .eq("log_date", date)
+    .maybeSingle();
+}
+
+async function savePrimaryWellnessCheckin(supabase, userId, targetDate, payload) {
+  const primaryPayload = {
+    user_id: userId,
+    checkin_date: targetDate,
+    sleep_quality: payload.sleepQuality,
+    sleep_hours: payload.sleepHours,
+    energy_level: payload.energyLevel,
+    muscle_soreness: payload.muscleSoreness,
+    stress_level: payload.stressLevel,
+    soreness_areas: payload.sorenessAreas || [],
+    notes: payload.notes,
+    calculated_readiness: payload.calculatedReadiness,
+    motivation_level: payload.motivationLevel,
+    mood: payload.mood,
+    hydration_level: payload.hydrationLevel,
+  };
+
+  const primaryResult = await supabase
+    .from("daily_wellness_checkin")
+    .upsert(primaryPayload, {
+      onConflict: "user_id,checkin_date",
+    })
+    .select()
+    .single();
+
+  if (!primaryResult.error) {
+    return primaryResult;
+  }
+
+  if (!isOptionalSchemaError(primaryResult.error)) {
+    return primaryResult;
+  }
+
+  const legacyPayload = {
+    athlete_id: userId,
+    user_id: userId,
+    log_date: targetDate,
+    date: targetDate,
+    sleep_quality: payload.sleepQuality,
+    sleep_hours: payload.sleepHours,
+    energy_level: payload.energyLevel,
+    muscle_soreness: payload.muscleSoreness,
+    stress_level: payload.stressLevel,
+    soreness_areas: payload.sorenessAreas || [],
+    notes: payload.notes,
+    calculated_readiness: payload.calculatedReadiness,
+    motivation_level: payload.motivationLevel,
+    mood: payload.mood,
+    hydration_level: payload.hydrationLevel,
+    updated_at: new Date().toISOString(),
+  };
+
+  return supabase
+    .from("wellness_logs")
+    .upsert(legacyPayload, {
+      onConflict: "athlete_id,log_date",
+    })
+    .select()
+    .single();
+}
+
 const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "wellness-checkin",
@@ -53,12 +169,11 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, requestId)
     );
   }
 
-  const { data, error } = await supabase
-    .from("daily_wellness_checkin")
-    .select("*")
-    .eq("user_id", targetAthleteId)
-    .eq("checkin_date", date)
-    .single();
+  const { data, error } = await fetchWellnessCheckinRecord(
+    supabase,
+    targetAthleteId,
+    date,
+  );
 
   if (error && error.code !== "PGRST116") {
     return createErrorResponse(
@@ -77,20 +192,7 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, requestId)
   }
 
   // Check consent if coach requesting another athlete's data
-  let responseData = {
-    sleepQuality: data.sleep_quality,
-    sleepHours: data.sleep_hours,
-    energyLevel: data.energy_level,
-    muscleSoreness: data.muscle_soreness,
-    stressLevel: data.stress_level,
-    sorenessAreas: data.soreness_areas || [],
-    notes: data.notes,
-    readinessScore: data.calculated_readiness,
-    // Additional wellness fields
-    motivationLevel: data.motivation_level,
-    mood: data.mood,
-    hydrationLevel: data.hydration_level,
-  };
+  let responseData = mapLegacyWellnessRecord(data);
 
   if (isCoach && targetAthleteId !== userId) {
     const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
@@ -258,31 +360,24 @@ async function saveCheckin(supabase, userId, payload, requestId) {
   }
 
   // Upsert the checkin to daily_wellness_checkin (primary table)
-  const { data, error } = await supabase
-    .from("daily_wellness_checkin")
-    .upsert(
-      {
-        user_id: userId,
-        checkin_date: targetDate,
-        sleep_quality: sleepQuality,
-        sleep_hours: sleepHours,
-        energy_level: energyLevel,
-        muscle_soreness: muscleSoreness,
-        stress_level: stressLevel,
-        soreness_areas: sorenessAreas || [],
-        notes,
-        calculated_readiness: calculatedReadiness,
-        // Additional wellness fields
-        motivation_level: motivationLevel,
-        mood,
-        hydration_level: hydrationLevel,
-      },
-      {
-        onConflict: "user_id,checkin_date",
-      },
-    )
-    .select()
-    .single();
+  const { data, error } = await savePrimaryWellnessCheckin(
+    supabase,
+    userId,
+    targetDate,
+    {
+      sleepQuality,
+      sleepHours,
+      energyLevel,
+      muscleSoreness,
+      stressLevel,
+      sorenessAreas,
+      notes,
+      calculatedReadiness,
+      motivationLevel,
+      mood,
+      hydrationLevel,
+    },
+  );
 
   if (error) {
     return createErrorResponse(
@@ -320,10 +415,12 @@ async function saveCheckin(supabase, userId, payload, requestId) {
   } catch (dualWriteError) {
     // Non-fatal - log warning but don't fail the request
     // The primary write to daily_wellness_checkin succeeded
-    console.warn(
-      "[Wellness] Dual-write to wellness_entries failed (non-fatal):",
-      dualWriteError.message,
-    );
+    if (!isOptionalSchemaError(dualWriteError)) {
+      console.warn(
+        "[Wellness] Dual-write to wellness_entries failed (non-fatal):",
+        dualWriteError.message,
+      );
+    }
   }
 
   // Update wellness streak

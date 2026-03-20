@@ -1,0 +1,36 @@
+<app-dialog
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [blockScroll]="true"
+  [styleClass]="'tournament-availability-dialog'"
+  ariaLabel="My Tournament Availability"
+>
+  <app-dialog-header
+    icon="calendar"
+    title="My Tournament Availability"
+    (close)="visibleChange.emit(false)"
+  />
+  @if (tournament()) {
+    <app-tournament-availability-dialog-content
+      [tournament]="tournament()!"
+      [dateRangeLabel]="dateRangeLabel()"
+      [availabilityForm]="availabilityForm()"
+      [availabilityOptions]="availabilityOptions()"
+      [currentStatus]="currentStatus()"
+      [tournamentCost]="tournamentCost()"
+      (setStatus)="setStatus.emit($event)"
+    />
+  }
+
+  <app-dialog-footer
+    dialogFooter
+    cancelLabel="Cancel"
+    primaryLabel="Save"
+    primaryIcon="check"
+    [loading]="saving()"
+    (primary)="save.emit()"
+    (cancel)="visibleChange.emit(false)"
+  />
+</app-dialog>

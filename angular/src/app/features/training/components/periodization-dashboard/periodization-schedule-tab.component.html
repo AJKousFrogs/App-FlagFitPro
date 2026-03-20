@@ -1,0 +1,59 @@
+@if (template) {
+  <div class="weekly-schedule">
+    @for (day of template.days; track day.dayName) {
+      <div class="day-card" [class]="'session-' + day.sessionType">
+        <div class="day-header">
+          <span class="day-name">{{ day.dayName }}</span>
+          <app-status-tag
+            [value]="day.sessionType"
+            [severity]="getSessionSeverity(day.sessionType)"
+            size="sm"
+          />
+        </div>
+        <div class="day-content">
+          <div class="day-focus">
+            <i class="pi pi-bolt"></i>
+            {{ formatFocus(day.primaryFocus) }}
+          </div>
+          @if (day.estimatedDuration > 0) {
+            <div class="day-duration">
+              <i class="pi pi-clock"></i>
+              {{ day.estimatedDuration }} min
+            </div>
+          }
+          <div class="day-rpe">
+            <i class="pi pi-chart-line"></i>
+            RPE: {{ day.targetRPE }}
+          </div>
+          @if (day.notes) {
+            <div class="day-notes">{{ day.notes }}</div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (template.weeklyTotals) {
+    <div class="weekly-totals">
+      <h4>Weekly Totals</h4>
+      <div class="totals-grid">
+        <div class="total-item">
+          <span class="total-value">{{ template.weeklyTotals.totalSprints }}</span>
+          <span class="total-label">Sprints</span>
+        </div>
+        <div class="total-item">
+          <span class="total-value">{{ template.weeklyTotals.totalCuts }}</span>
+          <span class="total-label">Cuts</span>
+        </div>
+        <div class="total-item">
+          <span class="total-value">{{ template.weeklyTotals.totalPlyoContacts }}</span>
+          <span class="total-label">Plyo Contacts</span>
+        </div>
+        <div class="total-item">
+          <span class="total-value">{{ template.weeklyTotals.trainingDays }}</span>
+          <span class="total-label">Training Days</span>
+        </div>
+      </div>
+    </div>
+  }
+}

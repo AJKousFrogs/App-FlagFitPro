@@ -28,10 +28,10 @@ export class BirthdayInputSuggestionDirective implements OnInit {
     }
 
     const hostElement = this.host.nativeElement;
-    const datepickerWrapper = hostElement.querySelector(".p-datepicker, .p-calendar");
-    const inputElement = datepickerWrapper
-      ? (datepickerWrapper.querySelector("input") as HTMLInputElement | null)
-      : (hostElement.querySelector("input") as HTMLInputElement | null);
+    const inputElement =
+      hostElement instanceof HTMLInputElement
+        ? hostElement
+        : ((hostElement.querySelector(".p-datepicker input, .p-calendar input, input") as HTMLInputElement | null));
 
     if (!inputElement) {
       if (this.retryCount < this.maxRetries) {

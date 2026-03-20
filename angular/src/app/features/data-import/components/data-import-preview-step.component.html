@@ -1,0 +1,94 @@
+<app-card-shell class="step-card">
+  <h3>Step 2: Preview & Map Fields</h3>
+
+  <div class="file-summary">
+    <div class="summary-header">
+      <i class="pi pi-file summary-header__icon"></i>
+      <span>{{ preview().fileName }}</span>
+      <span class="file-size">{{ preview().fileSize }}</span>
+      <app-status-tag value="Validated" severity="success" size="sm" />
+    </div>
+    <div class="summary-stats">
+      @for (stat of previewStats(); track stat.label) {
+        <div class="stat-item stat-block stat-block--compact">
+          <div class="stat-block__content">
+            <span class="stat-block__value">{{ stat.value }}</span>
+            <span class="stat-block__label">{{ stat.label }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="field-mappings">
+    <h4>Field Mapping</h4>
+    <p-table
+      [value]="preview().fieldMappings"
+      [virtualScroll]="preview().fieldMappings.length > 50"
+      [virtualScrollItemSize]="46"
+      dataKey="fileField"
+      class="p-datatable-sm"
+    >
+      <ng-template #header>
+        <tr>
+          <th>File Field</th>
+          <th>Maps To</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-mapping>
+        <tr>
+          <td>
+            <code>{{ mapping.fileField }}</code>
+          </td>
+          <td>
+            @if (mapping.status === "unmapped") {
+              <p-select
+                [options]="availableMappings()"
+                (onChange)="mappingChange.emit({ mapping, value: $event.value })"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select mapping"
+                class="mapping-select"
+              ></p-select>
+            } @else {
+              {{ mapping.mapsTo }}
+            }
+          </td>
+          <td>
+            <app-status-tag
+              [value]="getMappingStatusLabel(mapping.status)"
+              [severity]="getMappingStatusSeverity(mapping.status)"
+              size="sm"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  @if (preview().previewData.length > 0) {
+    <div class="data-preview">
+      <h4>Preview (First 3 Records)</h4>
+      <div class="preview-items">
+        @for (item of preview().previewData.slice(0, 3); track $index) {
+          <div class="preview-item">
+            <pre>{{ item | json }}</pre>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="step-actions">
+    <app-button variant="secondary" iconLeft="pi-arrow-left" (clicked)="back.emit()"
+      >Back</app-button
+    >
+    <app-button
+      iconLeft="pi-check"
+      [disabled]="hasUnmappedFields()"
+      (clicked)="submit.emit()"
+      >Import Data</app-button
+    >
+  </div>
+</app-card-shell>

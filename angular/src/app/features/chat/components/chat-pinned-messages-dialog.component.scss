@@ -1,0 +1,29 @@
+.pinned-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.pinned-message-item {
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  border-left: var(--space-1) solid var(--color-brand-primary);
+}
+
+.pinned-message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.pinned-time {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.no-pinned {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: var(--space-4);
+}

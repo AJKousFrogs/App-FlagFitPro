@@ -9,7 +9,10 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
-import { getErrorMessage } from "../../shared/utils/error.utils";
+import {
+    getErrorMessage,
+    isBenignSupabaseQueryError,
+} from "../../shared/utils/error.utils";
 import { normalizePlayerName } from "../../shared/utils/format.utils";
 import {
     Player,
@@ -129,6 +132,7 @@ export class RosterService {
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private teamMembershipService = inject(TeamMembershipService);
+  private usersTableUnavailable = false;
 
   // State signals
   readonly isLoading = signal(false);
@@ -228,7 +232,7 @@ export class RosterService {
           .filter(Boolean);
         const usersMap = new Map<string, TeamMemberUserData>();
 
-        if (userIds.length > 0) {
+        if (userIds.length > 0 && !this.usersTableUnavailable) {
           const { data: usersData, error: usersError } =
             await this.supabaseService.client
               .from("users")
@@ -236,6 +240,9 @@ export class RosterService {
               .in("id", userIds);
 
           if (usersError) {
+            if (isBenignSupabaseQueryError(usersError)) {
+              this.usersTableUnavailable = true;
+            }
             this.logger.warn(
               `[RosterService] Error fetching user data:`,
               JSON.stringify(usersError),
@@ -288,7 +295,7 @@ export class RosterService {
         let userData = null;
         let userError = null;
 
-        if (userIds.length > 0) {
+        if (userIds.length > 0 && !this.usersTableUnavailable) {
           const userQueryResult = await this.supabaseService.client
             .from("users")
             .select(
@@ -301,6 +308,9 @@ export class RosterService {
         }
 
         if (userError) {
+          if (isBenignSupabaseQueryError(userError)) {
+            this.usersTableUnavailable = true;
+          }
           this.logger.warn(
             `[RosterService] Error fetching user data:`,
             JSON.stringify(userError),
@@ -692,11 +702,15 @@ export class RosterService {
       ];
 
       let invitersMap = new Map<string, string>();
-      if (inviterIds.length > 0) {
-        const { data: users } = await this.supabaseService.client
+      if (inviterIds.length > 0 && !this.usersTableUnavailable) {
+        const { data: users, error: usersError } = await this.supabaseService.client
           .from("users")
           .select("id, full_name, first_name, last_name")
           .in("id", inviterIds);
+
+        if (usersError && isBenignSupabaseQueryError(usersError)) {
+          this.usersTableUnavailable = true;
+        }
 
         if (users) {
           invitersMap = new Map(

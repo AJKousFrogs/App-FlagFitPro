@@ -18,7 +18,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
-import { DatePicker } from "primeng/datepicker";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -299,7 +298,6 @@ const SEVERITY_LEVELS = [
   imports: [
     CommonModule,
     LazyChartComponent,
-    DatePicker,
     AppDialogComponent,
     ProgressBar,
     Select,
@@ -641,6 +639,13 @@ export class ReturnToPlayComponent implements OnInit {
     }
   }
 
+  updateProtocolDateInput(
+    field: "injuryDate" | "targetReturnDate",
+    value: string,
+  ): void {
+    this.updateProtocolDate(field, this.parseDateInputValue(value));
+  }
+
   updateProtocolMedicalNotes(value: string | null | undefined): void {
     this.newProtocol = { ...this.newProtocol, medicalNotes: value ?? "" };
   }
@@ -671,6 +676,37 @@ export class ReturnToPlayComponent implements OnInit {
 
   isChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
+  }
+
+  getProtocolDateInputValue(
+    field: "injuryDate" | "targetReturnDate",
+  ): string {
+    return this.formatDateInputValue(this.newProtocol[field]);
+  }
+
+  getTodayDateInputValue(): string {
+    return this.formatDateInputValue(this.today);
+  }
+
+  private formatDateInputValue(value: Date | null | undefined): string {
+    if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+      return "";
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private parseDateInputValue(value: string): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = new Date(`${value}T00:00:00`);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
   isStartFormValid(): boolean {

@@ -4,12 +4,14 @@
         [class.has-messages]="messages().length > 0"
         [class.is-coach-mode]="isCoach()"
       >
-        <!-- Daily Readiness Component (Modal) -->
-        <app-daily-readiness
-          [showOnInit]="true"
-          (completed)="onReadinessCompleted($event)"
-          (skipped)="onReadinessSkipped()"
-        ></app-daily-readiness>
+        @defer (on immediate) {
+          <!-- Daily Readiness Component (Modal) -->
+          <app-daily-readiness
+            [showOnInit]="true"
+            (completed)="onReadinessCompleted($event)"
+            (skipped)="onReadinessSkipped()"
+          ></app-daily-readiness>
+        }
 
         <!-- Premium Header -->
         <header class="chat-header" role="banner">
@@ -87,29 +89,35 @@
 
         <!-- Phase 2.3: AI Mode Explanation -->
         @if (aiModeStatus() && aiModeStatus()!.isConservative) {
-          <div class="ai-mode-section">
-            <app-ai-mode-explanation
-              [modeStatus]="aiModeStatus()!"
-            ></app-ai-mode-explanation>
-          </div>
+          @defer (on viewport) {
+            <div class="ai-mode-section">
+              <app-ai-mode-explanation
+                [modeStatus]="aiModeStatus()!"
+              ></app-ai-mode-explanation>
+            </div>
+          } @placeholder {
+            <div class="ai-mode-section"></div>
+          }
         }
 
         <!-- Search Bar (conditionally shown) -->
         @if (searchMode()) {
-          <div class="search-bar" @slideDown>
-            <app-search-input
-              class="search-bar-input"
-              [formControl]="searchControl"
-              placeholder="Search in conversation..."
-              ariaLabel="Search in conversation"
-              #searchInput
-            />
-            @if (searchQuery()) {
-              <span class="search-count"
-                >{{ filteredMessages().length }} found</span
-              >
-            }
-          </div>
+          @defer (when searchMode()) {
+            <div class="search-bar" @slideDown>
+              <app-search-input
+                class="search-bar-input"
+                [formControl]="searchControl"
+                placeholder="Search in conversation..."
+                ariaLabel="Search in conversation"
+                #searchInput
+              />
+              @if (searchQuery()) {
+                <span class="search-count"
+                  >{{ filteredMessages().length }} found</span
+                >
+              }
+            </div>
+          }
         }
 
         <!-- Messages Area -->
@@ -618,42 +626,44 @@
 
         <!-- Micro-Session Modal -->
         @if (activeMicroSession()) {
-          <app-dialog
-            [(visible)]="microSessionDialogVisible"
-            [modal]="true"
-            [closable]="false"
-            [draggable]="false"
-            [resizable]="false"
-            [dismissableMask]="!microSessionInProgress()"
-            [styleClass]="'micro-session-dialog'"
-            (onHide)="onMicroSessionDialogHide()"
-          >
-            @if (activeMicroSession(); as session) {
-              <div dialogHeader class="dialog-header">
-                <div class="dialog-icon">
-                  <i class="pi pi-bolt"></i>
+          @defer (when microSessionDialogVisible) {
+            <app-dialog
+              [(visible)]="microSessionDialogVisible"
+              [modal]="true"
+              [closable]="false"
+              [draggable]="false"
+              [resizable]="false"
+              [dismissableMask]="!microSessionInProgress()"
+              [styleClass]="'micro-session-dialog'"
+              (onHide)="onMicroSessionDialogHide()"
+            >
+              @if (activeMicroSession(); as session) {
+                <div dialogHeader class="dialog-header">
+                  <div class="dialog-icon">
+                    <i class="pi pi-bolt"></i>
+                  </div>
+                  <div class="dialog-title-section">
+                    <h2>{{ session.title }}</h2>
+                    <p>Focused coaching guidance for your current training need.</p>
+                  </div>
+                  @if (!microSessionInProgress()) {
+                    <app-close-button
+                      ariaLabel="Close micro-session dialog"
+                      [styleClass]="'dialog-close-btn'"
+                      (clicked)="microSessionDialogVisible = false"
+                    />
+                  }
                 </div>
-                <div class="dialog-title-section">
-                  <h2>{{ session.title }}</h2>
-                  <p>Focused coaching guidance for your current training need.</p>
-                </div>
-                @if (!microSessionInProgress()) {
-                  <app-close-button
-                    ariaLabel="Close micro-session dialog"
-                    [styleClass]="'dialog-close-btn'"
-                    (clicked)="microSessionDialogVisible = false"
-                  />
-                }
-              </div>
-            }
-            <app-micro-session
-              [session]="activeMicroSessionSignal()"
-              [mode]="microSessionDisplayMode()"
-              (sessionCompleted)="onMicroSessionCompleted($event)"
-              (sessionSkipped)="onMicroSessionSkipped()"
-              (closed)="onMicroSessionClosed()"
-            ></app-micro-session>
-          </app-dialog>
+              }
+              <app-micro-session
+                [session]="activeMicroSessionSignal()"
+                [mode]="microSessionDisplayMode()"
+                (sessionCompleted)="onMicroSessionCompleted($event)"
+                (sessionSkipped)="onMicroSessionSkipped()"
+                (closed)="onMicroSessionClosed()"
+              ></app-micro-session>
+            </app-dialog>
+          }
         }
       </div>
     </app-main-layout>

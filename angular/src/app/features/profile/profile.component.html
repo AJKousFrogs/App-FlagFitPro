@@ -65,62 +65,88 @@
             (shareProfile)="shareProfile()"
           />
 
-          <!-- Profile Stats -->
-          <app-stats-grid [stats]="stats()"></app-stats-grid>
+          @defer (on viewport) {
+            <!-- Profile Stats -->
+            <app-stats-grid [stats]="stats()"></app-stats-grid>
 
-          <!-- Profile Tabs -->
-          <div class="profile-tabs-container">
-            <p-tabs [(value)]="activeTab">
-              <p-tablist>
-                <p-tab value="overview">
-                  <i class="pi pi-chart-line"></i>
-                  <span class="tab-label">Overview</span>
-                </p-tab>
-                <p-tab value="achievements">
-                  <i class="pi pi-trophy"></i>
-                  <span class="tab-label">Achievements</span>
-                </p-tab>
-                <p-tab value="statistics">
-                  <i class="pi pi-chart-bar"></i>
-                  <span class="tab-label">Statistics</span>
-                </p-tab>
-                <p-tab value="invitations">
-                  <i class="pi pi-envelope"></i>
-                  <span class="tab-label">Invitations</span>
-                  @if (pendingInvitations().length > 0) {
-                    <span class="invitation-badge">{{
-                      pendingInvitations().length
-                    }}</span>
-                  }
-                </p-tab>
-              </p-tablist>
-              <p-tabpanels>
-                <p-tabpanel value="overview">
-                  <app-profile-overview-section [activities]="activities()" />
-                </p-tabpanel>
-                <p-tabpanel value="achievements">
-                  <app-profile-achievements-section
-                    [achievements]="achievements()"
-                  />
-                </p-tabpanel>
-                <p-tabpanel value="statistics">
-                  <app-profile-statistics-section
-                    [performanceStats]="performanceStats()"
-                  />
-                </p-tabpanel>
-                <p-tabpanel value="invitations">
-                  <app-profile-invitations-section
-                    [loading]="loadingInvitations()"
-                    [invitations]="pendingInvitations()"
-                    [processingInvitationId]="processingInvitation()"
-                    (acceptInvitation)="acceptInvitation($event)"
-                    (declineInvitation)="declineInvitation($event)"
-                    (requestNewInvitation)="requestNewInvitation($event)"
-                  />
-                </p-tabpanel>
-              </p-tabpanels>
-            </p-tabs>
-          </div>
+            <!-- Profile Tabs -->
+            <div class="profile-tabs-container">
+              <p-tabs [(value)]="activeTab">
+                <p-tablist>
+                  <p-tab value="overview">
+                    <i class="pi pi-chart-line"></i>
+                    <span class="tab-label">Overview</span>
+                  </p-tab>
+                  <p-tab value="achievements">
+                    <i class="pi pi-trophy"></i>
+                    <span class="tab-label">Achievements</span>
+                  </p-tab>
+                  <p-tab value="statistics">
+                    <i class="pi pi-chart-bar"></i>
+                    <span class="tab-label">Statistics</span>
+                  </p-tab>
+                  <p-tab value="invitations">
+                    <i class="pi pi-envelope"></i>
+                    <span class="tab-label">Invitations</span>
+                    @if (pendingInvitations().length > 0) {
+                      <span class="invitation-badge">{{
+                        pendingInvitations().length
+                      }}</span>
+                    }
+                  </p-tab>
+                </p-tablist>
+                <p-tabpanels>
+                  <p-tabpanel value="overview">
+                    @defer (when activeTab() === 'overview') {
+                      <app-profile-overview-section [activities]="activities()" />
+                    } @placeholder {
+                      <app-loading [visible]="true" message="Loading overview..." variant="skeleton" />
+                    }
+                  </p-tabpanel>
+                  <p-tabpanel value="achievements">
+                    @defer (when activeTab() === 'achievements') {
+                      <app-profile-achievements-section
+                        [achievements]="achievements()"
+                      />
+                    } @placeholder {
+                      <app-loading [visible]="true" message="Loading achievements..." variant="skeleton" />
+                    }
+                  </p-tabpanel>
+                  <p-tabpanel value="statistics">
+                    @defer (when activeTab() === 'statistics') {
+                      <app-profile-statistics-section
+                        [performanceStats]="performanceStats()"
+                      />
+                    } @placeholder {
+                      <app-loading [visible]="true" message="Loading statistics..." variant="skeleton" />
+                    }
+                  </p-tabpanel>
+                  <p-tabpanel value="invitations">
+                    @defer (when activeTab() === 'invitations') {
+                      <app-profile-invitations-section
+                        [loading]="loadingInvitations()"
+                        [invitations]="pendingInvitations()"
+                        [processingInvitationId]="processingInvitation()"
+                        (acceptInvitation)="acceptInvitation($event)"
+                        (declineInvitation)="declineInvitation($event)"
+                        (requestNewInvitation)="requestNewInvitation($event)"
+                      />
+                    } @placeholder {
+                      <app-loading [visible]="true" message="Loading invitations..." variant="skeleton" />
+                    }
+                  </p-tabpanel>
+                </p-tabpanels>
+              </p-tabs>
+            </div>
+          } @placeholder {
+            <section class="page-state-card ds-card-surface">
+              <app-loading
+                [visible]="true"
+                message="Loading profile details..."
+                variant="skeleton"
+              />
+            </section>
+          }
         }
       </div>
     </app-main-layout>

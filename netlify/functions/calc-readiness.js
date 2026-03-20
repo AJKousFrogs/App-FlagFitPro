@@ -177,6 +177,173 @@ function isValidAthleteId(value) {
   return /^[A-Za-z0-9_-]+$/.test(trimmed);
 }
 
+function isOptionalSchemaError(error) {
+  const code = error?.code;
+  const message = `${error?.message || ""}`.toLowerCase();
+  return (
+    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
+    message.includes("relation") ||
+    message.includes("schema cache") ||
+    message.includes("does not exist") ||
+    message.includes("column")
+  );
+}
+
+async function fetchTrainingSessions(athleteId, startDate, endDate) {
+  const queryAttempts = [
+    () =>
+      supabaseAdmin
+        .from("training_sessions")
+        .select("session_date, duration_minutes, rpe, workload, intensity_level")
+        .eq("user_id", athleteId)
+        .gte("session_date", startDate)
+        .lte("session_date", endDate)
+        .order("session_date", { ascending: false }),
+    () =>
+      supabaseAdmin
+        .from("training_sessions")
+        .select("session_date, duration_minutes, rpe, workload, intensity_level")
+        .eq("athlete_id", athleteId)
+        .gte("session_date", startDate)
+        .lte("session_date", endDate)
+        .order("session_date", { ascending: false }),
+    () =>
+      supabaseAdmin
+        .from("training_sessions")
+        .select("session_date, duration_minutes, rpe, workload, intensity_level")
+        .gte("session_date", startDate)
+        .lte("session_date", endDate)
+        .order("session_date", { ascending: false }),
+  ];
+
+  let lastError = null;
+  for (const runQuery of queryAttempts) {
+    const result = await runQuery();
+    if (!result.error) {
+      return result;
+    }
+    lastError = result.error;
+    if (!isOptionalSchemaError(result.error)) {
+      return result;
+    }
+  }
+
+  return { data: [], error: lastError };
+}
+
+async function fetchWellnessForReadiness(athleteId, dayStr) {
+  const primary = await supabaseAdmin
+    .from("daily_wellness_checkin")
+    .select("*")
+    .eq("user_id", athleteId)
+    .eq("checkin_date", dayStr)
+    .maybeSingle();
+
+  if (!primary.error || primary.error.code === "PGRST116") {
+    if (!primary.data) {
+      return primary;
+    }
+    return {
+      data: {
+        ...primary.data,
+        fatigue: primary.data.fatigue ?? primary.data.muscle_soreness,
+        sleep_quality: primary.data.sleep_quality,
+        soreness: primary.data.muscle_soreness,
+        mood: primary.data.mood,
+        stress: primary.data.stress_level,
+        energy: primary.data.energy_level,
+      },
+      error: null,
+    };
+  }
+
+  if (!isOptionalSchemaError(primary.error)) {
+    return primary;
+  }
+
+  return supabaseAdmin
+    .from("wellness_logs")
+    .select("*")
+    .eq("user_id", athleteId)
+    .eq("log_date", dayStr)
+    .maybeSingle()
+    .then((result) => {
+      if (!result.error || result.error.code === "PGRST116") {
+        return result;
+      }
+      if (!isOptionalSchemaError(result.error)) {
+        return result;
+      }
+      return supabaseAdmin
+        .from("wellness_logs")
+        .select("*")
+        .eq("athlete_id", athleteId)
+        .eq("log_date", dayStr)
+        .maybeSingle();
+    });
+}
+
+async function fetchNextGame(targetDate, athleteId) {
+  const queries = [
+    () =>
+      supabaseAdmin
+        .from("fixtures")
+        .select("game_start")
+        .eq("athlete_id", athleteId)
+        .gte("game_start", targetDate.toISOString())
+        .order("game_start", { ascending: true })
+        .limit(1)
+        .maybeSingle(),
+    () =>
+      supabaseAdmin
+        .from("fixtures")
+        .select("game_start")
+        .gte("game_start", targetDate.toISOString())
+        .order("game_start", { ascending: true })
+        .limit(1)
+        .maybeSingle(),
+  ];
+
+  for (const runQuery of queries) {
+    const result = await runQuery();
+    if (!result.error || result.error.code === "PGRST116") {
+      return result;
+    }
+    if (!isOptionalSchemaError(result.error)) {
+      return result;
+    }
+  }
+
+  return { data: null, error: null };
+}
+
+async function persistReadinessScore(payload) {
+  const attempts = [
+    () =>
+      supabaseAdmin.from("readiness_scores").upsert(payload, {
+        onConflict: "athlete_id,day",
+      }),
+    () =>
+      supabaseAdmin.from("readiness_scores").upsert(payload, {
+        onConflict: "user_id,day",
+      }),
+  ];
+
+  let lastError = null;
+  for (const attempt of attempts) {
+    const result = await attempt();
+    if (!result.error) {
+      return result;
+    }
+    lastError = result.error;
+    if (!isOptionalSchemaError(result.error)) {
+      return result;
+    }
+  }
+
+  return { error: lastError };
+}
+
 async function verifyAthleteAccess(requestUserId, athleteId) {
   if (athleteId === requestUserId) {
     return { authorized: true };
@@ -234,6 +401,7 @@ const handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     requireAuth: true, // SECURITY: Explicit auth for readiness calculation
+    skipEnvCheck: true,
     handler: async (event, _context, { userId }) => {
       console.log("[calc-readiness] Starting function execution", {
         userId,
@@ -308,21 +476,23 @@ const handler = async (event, context) => {
       });
 
       // Query training_sessions - handle both user_id (new) and athlete_id (legacy) columns
-      const { data: sessions, error: sessErr } = await supabaseAdmin
-        .from("training_sessions")
-        .select(
-          "session_date, duration_minutes, rpe, workload, intensity_level",
-        )
-        .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
-        .gte("session_date", startChronic.toISOString().slice(0, 10))
-        .lte("session_date", dayStr)
-        .order("session_date", { ascending: false });
+      const { data: sessions, error: sessErr } = await fetchTrainingSessions(
+        athleteId,
+        startChronic.toISOString().slice(0, 10),
+        dayStr,
+      );
 
       if (sessErr) {
         console.error("[calc-readiness] Error fetching sessions:", sessErr);
-        return createErrorResponse(
-          500,
-          `Failed to fetch sessions: ${sessErr.message}`,
+        if (!isOptionalSchemaError(sessErr)) {
+          return createErrorResponse(
+            `Failed to fetch sessions: ${sessErr.message}`,
+            500,
+            "database_error",
+          );
+        }
+        console.warn(
+          "[calc-readiness] Training session history unavailable, falling back to wellness-only scoring",
         );
       }
 
@@ -382,19 +552,32 @@ const handler = async (event, context) => {
       });
 
       // Query wellness_logs - handle both user_id (new) and athlete_id (legacy) columns
-      const { data: wellness, error: wellErr } = await supabaseAdmin
-        .from("wellness_logs")
-        .select("*")
-        .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
-        .eq("log_date", dayStr)
-        .maybeSingle();
+      const { data: wellness, error: wellErr } =
+        await fetchWellnessForReadiness(athleteId, dayStr);
 
       if (wellErr) {
         console.error("[calc-readiness] Error fetching wellness log:", wellErr);
-        return createErrorResponse(
-          500,
-          `Failed to fetch wellness log: ${wellErr.message}`,
-        );
+        if (!isOptionalSchemaError(wellErr)) {
+          return createErrorResponse(
+            `Failed to fetch wellness log: ${wellErr.message}`,
+            500,
+            "database_error",
+          );
+        }
+        return createSuccessResponse({
+          score: null,
+          level: null,
+          suggestion: "log_wellness",
+          acwr: null,
+          acuteLoad: null,
+          chronicLoad: null,
+          dataMode: "unavailable",
+          wellnessIndex: null,
+          componentScores: null,
+          message:
+            "Wellness data is unavailable in this environment. Please try again later or contact support.",
+          missingData: ["wellness_log"],
+        });
       }
 
       console.log("[calc-readiness] Wellness log found:", !!wellness);
@@ -426,14 +609,7 @@ const handler = async (event, context) => {
       const dataMode = determineDataMode(wellnessIndex, 60); // 60% completeness threshold
 
       // 3) Get next fixture (game proximity)
-      const { data: nextGame } = await supabaseAdmin
-        .from("fixtures")
-        .select("game_start")
-        .or(`athlete_id.eq.${athleteId},athlete_id.is.null`)
-        .gte("game_start", targetDate.toISOString())
-        .order("game_start", { ascending: true })
-        .limit(1)
-        .maybeSingle();
+      const { data: nextGame } = await fetchNextGame(targetDate, athleteId);
 
       let gameProximityHours = 999;
       if (nextGame?.game_start) {
@@ -548,34 +724,33 @@ const handler = async (event, context) => {
       }
 
       // Store readiness score
-      const { error: upsertErr } = await supabaseAdmin
-        .from("readiness_scores")
-        .upsert(
-          {
-            athlete_id: athleteId,
-            user_id: athleteId, // Standardized ID
-            day: dayStr,
-            score,
-            level,
-            suggestion,
-            acwr: Math.round(acwr * 100) / 100,
-            acute_load: Math.round(acuteLoad * 100) / 100,
-            chronic_load: Math.round(chronicLoad * 100) / 100,
-            workload_score: workloadScore,
-            wellness_score: wellnessScore,
-            sleep_score: sleepScore,
-            proximity_score: proximityScore,
-          },
-          {
-            onConflict: "athlete_id,day",
-          },
-        );
+      const { error: upsertErr } = await persistReadinessScore({
+        athlete_id: athleteId,
+        user_id: athleteId, // Standardized ID
+        day: dayStr,
+        score,
+        level,
+        suggestion,
+        acwr: Math.round(acwr * 100) / 100,
+        acute_load: Math.round(acuteLoad * 100) / 100,
+        chronic_load: Math.round(chronicLoad * 100) / 100,
+        workload_score: workloadScore,
+        wellness_score: wellnessScore,
+        sleep_score: sleepScore,
+        proximity_score: proximityScore,
+      });
 
       if (upsertErr) {
         console.error("Error upserting readiness score:", upsertErr);
-        return createErrorResponse(
-          500,
-          `Failed to save readiness score: ${upsertErr.message}`,
+        if (!isOptionalSchemaError(upsertErr)) {
+          return createErrorResponse(
+            `Failed to save readiness score: ${upsertErr.message}`,
+            500,
+            "database_error",
+          );
+        }
+        console.warn(
+          "[calc-readiness] readiness_scores persistence unavailable, returning computed score without storing it",
         );
       }
 

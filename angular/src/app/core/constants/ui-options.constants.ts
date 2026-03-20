@@ -76,7 +76,7 @@ export const STAFF_VISIBILITY_OPTIONS = [
   { label: "Team Roster", value: "roster", icon: "pi pi-users" },
   { label: "Training Data", value: "training", icon: "pi pi-chart-line" },
   { label: "Wellness Data", value: "wellness", icon: "pi pi-heart" },
-  { label: "Analytics", value: "analytics", icon: "pi pi-chart-bar" },
+  { label: "Performance", value: "analytics", icon: "pi pi-chart-bar" },
   { label: "Chat & Messages", value: "chat", icon: "pi pi-comments" },
 ] as const;
 

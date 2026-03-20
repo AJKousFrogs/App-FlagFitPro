@@ -5,6 +5,7 @@ import { LoggerService } from "./logger.service";
 import { ProfileCompletionService } from "./profile-completion.service";
 import { SupabaseService } from "./supabase.service";
 import { ToastService } from "./toast.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 /**
  * ProfileNotificationService
@@ -34,6 +35,7 @@ export class ProfileNotificationService {
 
   // Track if check is in progress
   private readonly isChecking = signal(false);
+  private notificationsUnavailable = false;
   private readonly toastSuppressedRoutes = new Set([
     "/dashboard",
     "/onboarding",
@@ -141,11 +143,11 @@ export class ProfileNotificationService {
     percentage: number,
   ): Promise<void> {
     const user = this.authService.getUser();
-    if (!user?.id) return;
+    if (!user?.id || this.notificationsUnavailable) return;
 
     try {
       // Check if there's already an active profile completion notification
-      const { data: existing } = await this.supabaseService.client
+      const { data: existing, error: existingError } = await this.supabaseService.client
         .from("notifications")
         .select("id")
         .eq("user_id", user.id)
@@ -153,9 +155,17 @@ export class ProfileNotificationService {
         .eq("dismissed", false)
         .maybeSingle();
 
+      if (existingError) {
+        if (isBenignSupabaseQueryError(existingError)) {
+          this.notificationsUnavailable = true;
+          return;
+        }
+        throw existingError;
+      }
+
       // If there's already an active notification, update it instead of creating a new one
       if (existing) {
-        await this.supabaseService.client
+        const { error: updateError } = await this.supabaseService.client
           .from("notifications")
           .update({
             message: `Your profile is ${percentage}% complete. Add your ${missingFields[0]?.toLowerCase() || "missing information"} to unlock all features.`,
@@ -169,12 +179,22 @@ export class ProfileNotificationService {
           })
           .eq("id", existing.id);
 
+        if (updateError) {
+          if (isBenignSupabaseQueryError(updateError)) {
+            this.notificationsUnavailable = true;
+            return;
+          }
+          throw updateError;
+        }
+
         this.logger.debug(
           "[ProfileNotification] Updated existing notification",
         );
       } else {
         // Create new notification
-        await this.supabaseService.client.from("notifications").insert({
+        const { error: insertError } = await this.supabaseService.client
+          .from("notifications")
+          .insert({
           user_id: user.id,
           notification_type: "profile_incomplete",
           title: "Complete Your Profile",
@@ -187,6 +207,18 @@ export class ProfileNotificationService {
             actionLabel: "Complete Profile",
           },
         });
+
+        if (insertError) {
+          if (
+            isBenignSupabaseQueryError(insertError) ||
+            insertError.code === "23505" ||
+            Number((insertError as { status?: number }).status) === 409
+          ) {
+            this.notificationsUnavailable = true;
+            return;
+          }
+          throw insertError;
+        }
 
         this.logger.debug("[ProfileNotification] Created new notification");
       }
@@ -211,14 +243,22 @@ export class ProfileNotificationService {
    */
   async dismissNotification(): Promise<void> {
     const user = this.authService.getUser();
-    if (!user?.id) return;
+    if (!user?.id || this.notificationsUnavailable) return;
 
     try {
-      await this.supabaseService.client
+      const { error } = await this.supabaseService.client
         .from("notifications")
         .update({ dismissed: true })
         .eq("user_id", user.id)
         .eq("notification_type", "profile_incomplete");
+
+      if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this.notificationsUnavailable = true;
+          return;
+        }
+        throw error;
+      }
 
       this.logger.debug("[ProfileNotification] Notification dismissed");
     } catch (error) {

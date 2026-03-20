@@ -43,42 +43,60 @@
               </span>
             }
           </div>
-          <app-analytics-overview-section
-            [developmentGoals]="developmentGoals()"
-            [metrics]="metrics()"
-            [goalsPreviewCount]="UI_LIMITS.GOALS_PREVIEW_COUNT"
-          />
+          @defer (on idle) {
+            <app-analytics-overview-section
+              [developmentGoals]="developmentGoals()"
+              [metrics]="metrics()"
+              [goalsPreviewCount]="UI_LIMITS.GOALS_PREVIEW_COUNT"
+            />
+          } @placeholder {
+            <div class="analytics-section analytics-section--placeholder">
+              <p class="data-source">Loading performance summary…</p>
+            </div>
+          }
 
-          <app-analytics-charts-section
-            [performanceChartData]="performanceChartData()"
-            [chemistryChartData]="chemistryChartData()"
-            [distributionChartData]="distributionChartData()"
-            [positionChartData]="positionChartData()"
-            [speedChartData]="speedChartData()"
-            [acwrData]="acwrData()"
-            [noDataMessage]="noDataMessage"
-            [gapAnalysisData]="gapAnalysisData()"
-            [gapAnalysisSummary]="gapAnalysisSummary()"
-            [speedInsights]="speedInsights()"
-            [timePeriods]="timePeriods"
-            [metricOptions]="metricOptions"
-            [lineChartOptions]="lineChartOptions"
-            [radarChartOptions]="radarChartOptions"
-            [doughnutChartOptions]="DOUGHNUT_CHART_OPTIONS"
-            [barChartOptions]="BAR_CHART_OPTIONS"
-            (resetPerformanceChart)="resetChartZoom('performance')"
-            (exportPerformanceChart)="exportChart('performance')"
-            (selectedTimePeriodChange)="onSelectedTimePeriodChange($event)"
-            (selectedMetricChange)="onSelectedMetricChange($event)"
-          />
+          @defer (on viewport) {
+            <app-analytics-charts-section
+              [performanceChartData]="performanceChartData()"
+              [chemistryChartData]="chemistryChartData()"
+              [distributionChartData]="distributionChartData()"
+              [positionChartData]="positionChartData()"
+              [speedChartData]="speedChartData()"
+              [acwrData]="acwrData()"
+              [noDataMessage]="noDataMessage"
+              [gapAnalysisData]="gapAnalysisData()"
+              [gapAnalysisSummary]="gapAnalysisSummary()"
+              [speedInsights]="speedInsights()"
+              [timePeriods]="timePeriods"
+              [metricOptions]="metricOptions"
+              [lineChartOptions]="lineChartOptions"
+              [radarChartOptions]="radarChartOptions"
+              [doughnutChartOptions]="DOUGHNUT_CHART_OPTIONS"
+              [barChartOptions]="BAR_CHART_OPTIONS"
+              (resetPerformanceChart)="resetChartZoom('performance')"
+              (exportPerformanceChart)="exportChart('performance')"
+              (selectedTimePeriodChange)="onSelectedTimePeriodChange($event)"
+              (selectedMetricChange)="onSelectedMetricChange($event)"
+            />
+          } @placeholder {
+            <div class="analytics-section analytics-section--placeholder">
+              <p class="data-source">Loading charts…</p>
+            </div>
+          }
 
-          <app-analytics-player-stats-section
-            [playerGameStats]="playerGameStats()"
-            [playerSeasonStats]="playerSeasonStats()"
-            [playerMultiSeasonStats]="playerMultiSeasonStats()"
-            [gamesMissed]="gamesMissed()"
-            [attendanceRate]="attendanceRate()"
-          />
+          @defer (on viewport) {
+            <app-analytics-player-stats-section
+              [playerGameStats]="playerGameStats()"
+              [playerSeasonStats]="playerSeasonStats()"
+              [playerMultiSeasonStats]="playerMultiSeasonStats()"
+              [gamesMissed]="gamesMissed()"
+              [attendanceRate]="attendanceRate()"
+            />
+          } @placeholder {
+            <div class="analytics-section analytics-section--placeholder">
+              <p class="data-source">Loading player stats…</p>
+            </div>
+          }
         </div>
       }
       <!-- End of @else for content -->

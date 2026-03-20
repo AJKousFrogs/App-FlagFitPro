@@ -90,7 +90,7 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Knowledge Base",
     route: "/knowledge",
     icon: "pi-bookmark",
-    ariaLabel: "Knowledge Base - Submit and browse team knowledge resources",
+    ariaLabel: "Knowledge Base - Browse training guidance and team resources",
     group: "secondary",
   },
   {
@@ -160,7 +160,7 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Team",
     route: "/team/workspace",
     icon: "pi-briefcase",
-    ariaLabel: "Team Hub - Collaborative team workspace",
+    ariaLabel: "Team Workspace - Team operations and collaboration",
     group: "primary",
     mobilePrimary: true,
     roles: [
@@ -192,7 +192,7 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Knowledge Base",
     route: "/knowledge",
     icon: "pi-bookmark",
-    ariaLabel: "Knowledge Base - Training resources and guides",
+    ariaLabel: "Knowledge Base - Training resources, guides, and shared knowledge",
     group: "secondary",
   },
   {

@@ -10,8 +10,6 @@ import {
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 
-import { ProgressBar } from "primeng/progressbar";
-import { Step, StepList, Stepper } from "primeng/stepper";
 import { firstValueFrom } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -27,12 +25,12 @@ import {
     normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { ToastService } from "../../core/services/toast.service";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { RosterService } from "../roster/roster.service";
+import { OnboardingProgressShellComponent } from "./components/onboarding-progress-shell.component";
 import { OnboardingDataService } from "./services/onboarding-data.service";
 import { OnboardingStateService } from "./services/onboarding-state.service";
 import { OnboardingStepPersonalComponent } from "./steps/onboarding-step-personal.component";
@@ -41,8 +39,6 @@ import { OnboardingStepPhysicalComponent } from "./steps/onboarding-step-physica
 import { OnboardingStepHealthComponent } from "./steps/onboarding-step-health.component";
 import { OnboardingStepGoalsComponent } from "./steps/onboarding-step-goals.component";
 import { OnboardingStepScheduleComponent } from "./steps/onboarding-step-schedule.component";
-import { CheckboxModule } from "primeng/checkbox";
-import { FormsModule } from "@angular/forms";
 import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.component";
 
 @Component({
@@ -51,15 +47,11 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
   imports: [
     CommonModule,
     RouterModule,
-    Stepper,
-    StepList,
-    Step,
-    ProgressBar,
-    AlertComponent,
     CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    OnboardingProgressShellComponent,
     OnboardingStepPersonalComponent,
     OnboardingStepRoleComponent,
     OnboardingStepPhysicalComponent,
@@ -67,8 +59,6 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
     OnboardingStepGoalsComponent,
     OnboardingStepScheduleComponent,
     OnboardingStepSummaryComponent,
-    CheckboxModule,
-    FormsModule,
   ],
   templateUrl: "./onboarding.component.html",
   styleUrl: "./onboarding.component.scss",

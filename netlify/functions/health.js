@@ -12,6 +12,17 @@ import { lookup } from "node:dns/promises";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
+function isMissingResourceError(error) {
+  const code = error?.code;
+  const message = `${error?.message || ""}`.toLowerCase();
+  return (
+    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
+    message.includes("relation") ||
+    message.includes("schema cache") ||
+    message.includes("does not exist")
+  );
+}
+
 // Check database connectivity
 function getSupabaseConfigStatus() {
   return {
@@ -40,32 +51,41 @@ async function checkDatabase() {
     const startTime = Date.now();
     let lastError = null;
 
-    for (let attempt = 1; attempt <= 2; attempt += 1) {
-      const { error } = await supabaseAdmin.from("users").select("id").limit(1);
-      if (!error) {
-        return {
-          status: "healthy",
-          latency: Date.now() - startTime,
-        };
-      }
+    const probeTables = ["team_members", "users", "daily_wellness_checkin"];
 
-      lastError = error;
-      const isTransientFetchError = error.message?.includes("fetch failed");
-      if (!isTransientFetchError || attempt === 2) {
-        break;
-      }
+    for (const table of probeTables) {
+      for (let attempt = 1; attempt <= 2; attempt += 1) {
+        const { error } = await supabaseAdmin.from(table).select("*").limit(1);
+        if (!error) {
+          return {
+            status: "healthy",
+            latency: Date.now() - startTime,
+            probeTable: table,
+          };
+        }
 
-      try {
-        await lookup(new URL(process.env.SUPABASE_URL).hostname);
-      } catch (_dnsError) {
-        // Keep lastError from Supabase query for consistent response shape.
+        lastError = error;
+        if (isMissingResourceError(error)) {
+          break;
+        }
+
+        const isTransientFetchError = error.message?.includes("fetch failed");
+        if (!isTransientFetchError || attempt === 2) {
+          break;
+        }
+
+        try {
+          await lookup(new URL(process.env.SUPABASE_URL).hostname);
+        } catch (_dnsError) {
+          // Keep lastError from Supabase query for consistent response shape.
+        }
       }
     }
 
     return {
       status: "unhealthy",
       latency: Date.now() - startTime,
-      error: "Database check failed",
+      error: lastError?.message || "Database check failed",
     };
   } catch (error) {
     console.error("[health] Database health check error:", error);
@@ -119,6 +139,7 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "HEAD"],
     rateLimitType: "READ",
     requireAuth: false, // Health checks should be public
+    skipEnvCheck: true,
     handler: async (_event, _context, { requestId }) => {
       try {
         const startTime = Date.now();

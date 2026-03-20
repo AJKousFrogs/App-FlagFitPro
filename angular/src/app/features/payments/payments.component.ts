@@ -26,7 +26,6 @@ import {
   signal,
 } from "@angular/core";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { TableModule } from "primeng/table";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -118,7 +117,6 @@ const PAYMENT_METHOD_CONFIG: Record<
     CommonModule,
     CurrencyPipe,
     DatePipe,
-    TableModule,
     AlertComponent,
     CardShellComponent,
     AppDialogComponent,
@@ -281,59 +279,78 @@ const PAYMENT_METHOD_CONFIG: Record<
           headerIcon="pi-history"
         >
           @if (paymentHistory().length > 0) {
-            <p-table
-              [value]="paymentHistory()"
-              [paginator]="paymentHistory().length > 10"
-              [rows]="10"
-              class="p-datatable-sm"
-            >
-              <ng-template #header>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Method</th>
-                  <th class="amount-col">Amount</th>
-                  <th class="history-actions-col"></th>
-                </tr>
-              </ng-template>
-              <ng-template #body let-payment>
-                <tr>
-                  <td>{{ payment.date | date: "MMM d, y" }}</td>
-                  <td>{{ payment.feeName }}</td>
-                  <td>
-                    <span class="payment-method">
-                      <i
-                        [class]="
-                          'pi ' + getPaymentMethodConfig(payment.method).icon
-                        "
-                      ></i>
-                      {{ getPaymentMethodConfig(payment.method).label }}
-                    </span>
-                  </td>
-                  <td class="amount-cell">
-                    <strong>{{ payment.amount | currency }}</strong>
-                  </td>
-                  <td>
-                    @if (payment.receiptUrl) {
-                      <app-button
-                        variant="text"
-                        size="sm"
-                        iconLeft="pi-download"
-                        (clicked)="downloadReceipt(payment)"
-                        >Download receipt</app-button
-                      >
-                    }
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template #emptymessage>
-                <tr>
-                  <td colspan="5" class="empty-table">
-                    No payment history found
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
+            <div class="payments-history-table-wrapper">
+              <table class="payments-history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Method</th>
+                    <th class="amount-col">Amount</th>
+                    <th class="history-actions-col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (payment of paginatedPaymentHistory(); track payment.id) {
+                    <tr>
+                      <td>{{ payment.date | date: "MMM d, y" }}</td>
+                      <td>{{ payment.feeName }}</td>
+                      <td>
+                        <span class="payment-method">
+                          <i
+                            [class]="
+                              'pi ' + getPaymentMethodConfig(payment.method).icon
+                            "
+                          ></i>
+                          {{ getPaymentMethodConfig(payment.method).label }}
+                        </span>
+                      </td>
+                      <td class="amount-cell">
+                        <strong>{{ payment.amount | currency }}</strong>
+                      </td>
+                      <td>
+                        @if (payment.receiptUrl) {
+                          <app-button
+                            variant="text"
+                            size="sm"
+                            iconLeft="pi-download"
+                            (clicked)="downloadReceipt(payment)"
+                            >Download receipt</app-button
+                          >
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            @if (paymentHistoryPageCount() > 1) {
+              <div class="payments-history-pagination">
+                <span class="payments-history-page-label">
+                  {{ paymentHistoryPageRangeLabel() }}
+                </span>
+
+                <div class="payments-history-page-actions">
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-chevron-left"
+                    [disabled]="currentHistoryPage() === 1"
+                    (clicked)="goToPreviousHistoryPage()"
+                    >Previous</app-button
+                  >
+                  <app-button
+                    variant="text"
+                    size="sm"
+                    iconLeft="pi-chevron-right"
+                    [disabled]="currentHistoryPage() === paymentHistoryPageCount()"
+                    (clicked)="goToNextHistoryPage()"
+                    >Next</app-button
+                  >
+                </div>
+              </div>
+            }
           } @else {
             <app-empty-state
               [useCard]="false"
@@ -396,6 +413,7 @@ export class PaymentsComponent implements OnInit {
   private readonly logger = inject(LoggerService);
   // Design system tokens
   protected readonly tableColumnWidths = TABLE_COLUMN_WIDTHS;
+  private readonly paymentHistoryPageSize = 10;
 
   // State
   readonly accountSummary = signal<AccountSummary>({
@@ -410,6 +428,7 @@ export class PaymentsComponent implements OnInit {
   });
   readonly expandedFee = signal<string | null>(null);
   readonly isLoading = signal(true);
+  readonly currentHistoryPage = signal(1);
 
   // Dialog state
   showInstructions = false;
@@ -418,6 +437,33 @@ export class PaymentsComponent implements OnInit {
   readonly outstandingFees = computed(() =>
     this.fees().filter((f) => f.status !== "paid"),
   );
+  readonly paymentHistoryPageCount = computed(() =>
+    Math.max(
+      1,
+      Math.ceil(this.paymentHistory().length / this.paymentHistoryPageSize),
+    ),
+  );
+  readonly paginatedPaymentHistory = computed(() => {
+    const start = (this.currentHistoryPage() - 1) * this.paymentHistoryPageSize;
+    return this.paymentHistory().slice(
+      start,
+      start + this.paymentHistoryPageSize,
+    );
+  });
+  readonly paymentHistoryPageRangeLabel = computed(() => {
+    const total = this.paymentHistory().length;
+    if (total === 0) {
+      return "No payment history";
+    }
+
+    const start = (this.currentHistoryPage() - 1) * this.paymentHistoryPageSize + 1;
+    const end = Math.min(
+      total,
+      start + this.paymentHistoryPageSize - 1,
+    );
+
+    return `Showing ${start}-${end} of ${total}`;
+  });
 
   ngOnInit(): void {
     this.loadData();
@@ -442,6 +488,7 @@ export class PaymentsComponent implements OnInit {
         }
         if (response.data.history) {
           this.paymentHistory.set(response.data.history);
+          this.currentHistoryPage.set(1);
         }
         if (response.data.instructions) {
           this.paymentInstructions.set(response.data.instructions);
@@ -458,6 +505,7 @@ export class PaymentsComponent implements OnInit {
       });
       this.fees.set([]);
       this.paymentHistory.set([]);
+      this.currentHistoryPage.set(1);
       this.paymentInstructions.set({
         methods: [],
         notes: "",
@@ -479,6 +527,16 @@ export class PaymentsComponent implements OnInit {
     if (payment.receiptUrl) {
       window.open(payment.receiptUrl, "_blank");
     }
+  }
+
+  goToPreviousHistoryPage(): void {
+    this.currentHistoryPage.update((page) => Math.max(1, page - 1));
+  }
+
+  goToNextHistoryPage(): void {
+    this.currentHistoryPage.update((page) =>
+      Math.min(this.paymentHistoryPageCount(), page + 1),
+    );
   }
 
   isOverdue(dueDate: string): boolean {

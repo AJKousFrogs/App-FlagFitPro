@@ -1,0 +1,29 @@
+<div class="evidence-section">
+  <h3>📚 Evidence-Based Training</h3>
+  <p class="evidence-intro">
+    All training recommendations are based on peer-reviewed research. Below are
+    the key studies informing our periodization model.
+  </p>
+
+  <div class="research-cards">
+    @for (ref of references; track ref.title) {
+      <div class="research-card">
+        <div class="research-header">
+          <span class="research-authors">{{ ref.authors }}</span>
+          <span class="research-year">({{ ref.year }})</span>
+        </div>
+        <h4 class="research-title">{{ ref.title }}</h4>
+        @if (ref.journal) {
+          <span class="research-journal">{{ ref.journal }}</span>
+        }
+        <div class="research-finding">
+          <strong>Key Finding:</strong> {{ ref.keyFinding }}
+        </div>
+        <div class="research-application">
+          <strong>Application:</strong>
+          {{ ref.applicationToFlagFootball }}
+        </div>
+      </div>
+    }
+  </div>
+</div>

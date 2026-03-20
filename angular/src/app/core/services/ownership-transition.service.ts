@@ -30,6 +30,7 @@ export interface OwnershipTransition {
 export class OwnershipTransitionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
+  private transitionsUnavailable = false;
 
   /**
    * Log ownership transition
@@ -37,6 +38,10 @@ export class OwnershipTransitionService {
   async logTransition(
     transition: Omit<OwnershipTransition, "id" | "createdAt">,
   ): Promise<string | null> {
+    if (this.transitionsUnavailable) {
+      return null;
+    }
+
     try {
       const { data, error } = await this.supabaseService.client
         .from("ownership_transitions")
@@ -54,6 +59,7 @@ export class OwnershipTransitionService {
 
       if (error) {
         if (isBenignSupabaseQueryError(error)) {
+          this.transitionsUnavailable = true;
           this.logger.warn(
             "[OwnershipTransition] Transition log unavailable in current environment",
             error,
@@ -72,7 +78,9 @@ export class OwnershipTransitionService {
       );
       return data.id;
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.transitionsUnavailable = true;
+      } else {
         this.logger.error(
           "[OwnershipTransition] Error logging transition:",
           error,
@@ -90,6 +98,10 @@ export class OwnershipTransitionService {
     status: "pending" | "in_progress" | "completed" | "overdue",
     acknowledgedBy?: string,
   ): Promise<boolean> {
+    if (this.transitionsUnavailable) {
+      return false;
+    }
+
     try {
       const updateData: Record<string, unknown> = {
         status,
@@ -112,6 +124,7 @@ export class OwnershipTransitionService {
 
       if (error) {
         if (isBenignSupabaseQueryError(error)) {
+          this.transitionsUnavailable = true;
           return false;
         }
         this.logger.error(
@@ -123,7 +136,9 @@ export class OwnershipTransitionService {
 
       return true;
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.transitionsUnavailable = true;
+      } else {
         this.logger.error("[OwnershipTransition] Error updating status:", error);
       }
       return false;
@@ -137,6 +152,10 @@ export class OwnershipTransitionService {
     toRole: string,
     limit: number = 20,
   ): Promise<OwnershipTransition[]> {
+    if (this.transitionsUnavailable) {
+      return [];
+    }
+
     try {
       const { data, error } = await this.supabaseService.client
         .from("ownership_transitions")
@@ -148,6 +167,7 @@ export class OwnershipTransitionService {
 
       if (error) {
         if (isBenignSupabaseQueryError(error)) {
+          this.transitionsUnavailable = true;
           return [];
         }
         this.logger.error(
@@ -175,7 +195,9 @@ export class OwnershipTransitionService {
         })) || []
       );
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.transitionsUnavailable = true;
+      } else {
         this.logger.error(
           "[OwnershipTransition] Error fetching transitions:",
           error,
@@ -189,6 +211,10 @@ export class OwnershipTransitionService {
    * Check for overdue transitions
    */
   async checkOverdueTransitions(): Promise<void> {
+    if (this.transitionsUnavailable) {
+      return;
+    }
+
     try {
       const cutoff = new Date();
       cutoff.setHours(cutoff.getHours() - 24); // 24 hours ago
@@ -203,6 +229,7 @@ export class OwnershipTransitionService {
 
       if (error) {
         if (isBenignSupabaseQueryError(error)) {
+          this.transitionsUnavailable = true;
           return;
         }
         this.logger.error(
@@ -228,7 +255,9 @@ export class OwnershipTransitionService {
         );
       }
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.transitionsUnavailable = true;
+      } else {
         this.logger.error("[OwnershipTransition] Error checking overdue:", error);
       }
     }
@@ -241,6 +270,10 @@ export class OwnershipTransitionService {
     playerId: string,
     limit: number = 10,
   ): Promise<OwnershipTransition[]> {
+    if (this.transitionsUnavailable) {
+      return [];
+    }
+
     try {
       const { data, error } = await this.supabaseService.client
         .from("ownership_transitions")
@@ -251,6 +284,7 @@ export class OwnershipTransitionService {
 
       if (error) {
         if (isBenignSupabaseQueryError(error)) {
+          this.transitionsUnavailable = true;
           return [];
         }
         this.logger.error(
@@ -278,7 +312,9 @@ export class OwnershipTransitionService {
         })) || []
       );
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.transitionsUnavailable = true;
+      } else {
         this.logger.error(
           "[OwnershipTransition] Error fetching player transitions:",
           error,

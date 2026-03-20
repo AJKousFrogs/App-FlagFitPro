@@ -9,7 +9,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 
-import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
@@ -103,7 +102,6 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     RouterModule,
     InputText,
     Textarea,
-    DatePicker,
     Select,
     AppLoadingComponent,
     AppDialogComponent,
@@ -656,8 +654,27 @@ export class CoachDashboardComponent {
     this.newSession = { ...this.newSession, type: value ?? "practice" };
   }
 
-  onNewSessionDateChange(value: Date | null): void {
-    this.newSession = { ...this.newSession, date: value ?? new Date() };
+  getNewSessionDateInputValue(): string {
+    const date = this.newSession.date;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  onNewSessionDateInput(value: string): void {
+    if (!value) {
+      return;
+    }
+
+    const parsedDate = new Date(value);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return;
+    }
+
+    this.newSession = { ...this.newSession, date: parsedDate };
   }
 
   onNewSessionDurationChange(value: number | string): void {

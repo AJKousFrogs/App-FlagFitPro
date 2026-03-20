@@ -1,0 +1,40 @@
+<app-dialog
+  [visible]="visible"
+  [modal]="true"
+  [closable]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [styleClass]="'chat-pinned-dialog'"
+  (visibleChange)="visibleChange.emit($event)"
+>
+  <app-dialog-header
+    icon="bookmark"
+    title="Pinned Messages"
+    subtitle="Important messages saved for this channel."
+    (close)="onClose()"
+  />
+
+  <div class="pinned-messages-list">
+    @for (message of pinnedMessages; track message.id) {
+      <div class="pinned-message-item">
+        <div class="pinned-message-header">
+          <strong>{{ message.author?.full_name }}</strong>
+          <span class="pinned-time">{{ formatTime(message.created_at) }}</span>
+        </div>
+        <p>{{ message.message }}</p>
+        @if (canPinMessages) {
+          <app-button
+            variant="text"
+            size="sm"
+            iconLeft="pi-bookmark"
+            (clicked)="onTogglePin(message)"
+            >Unpin</app-button
+          >
+        }
+      </div>
+    } @empty {
+      <p class="no-pinned">No pinned messages in this channel</p>
+    }
+  </div>
+</app-dialog>

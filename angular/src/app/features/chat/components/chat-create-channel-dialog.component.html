@@ -1,0 +1,83 @@
+<app-dialog
+  [visible]="visible"
+  [modal]="true"
+  [closable]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [styleClass]="'chat-create-channel-dialog'"
+  (visibleChange)="visibleChange.emit($event)"
+>
+  <app-dialog-header
+    icon="plus-circle"
+    title="Create New Channel"
+    subtitle="Set up a space for a team, group, or position room."
+    (close)="onClose()"
+  />
+
+  <div class="create-channel-form">
+    <div class="form-field">
+      <label for="chat-channelName">Channel Name</label>
+      <input
+        id="chat-channelName"
+        name="channelName"
+        pInputText
+        [value]="channelName"
+        (input)="onChannelNameInput($event)"
+        placeholder="e.g., qb-room"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="form-field">
+      <label for="chat-channelDescription">Description</label>
+      <textarea
+        id="chat-channelDescription"
+        name="channelDescription"
+        pInputTextarea
+        [value]="channelDescription"
+        (input)="onChannelDescriptionInput($event)"
+        rows="2"
+        placeholder="What's this channel about?"
+        autocomplete="off"
+      ></textarea>
+    </div>
+
+    <div class="form-field">
+      <label for="chat-channelType">Channel Type</label>
+      <p-select
+        inputId="chat-channelType"
+        (onChange)="onChannelTypeChange($event.value)"
+        [options]="channelTypeOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select type"
+        class="w-full"
+      ></p-select>
+    </div>
+
+    @if (channelType === "position_group") {
+      <div class="form-field">
+        <label for="chat-channelPosition">Position</label>
+        <p-select
+          inputId="chat-channelPosition"
+          (onChange)="onChannelPositionChange($event.value)"
+          [options]="positionOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select position"
+          class="w-full"
+        ></p-select>
+      </div>
+    }
+  </div>
+
+  <app-dialog-footer
+    cancelLabel="Cancel"
+    primaryLabel="Create Channel"
+    primaryIcon="check"
+    [disabled]="!channelName.trim()"
+    (cancel)="onClose()"
+    (primary)="onCreate()"
+  />
+</app-dialog>

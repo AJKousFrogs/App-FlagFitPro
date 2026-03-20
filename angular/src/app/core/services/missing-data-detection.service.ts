@@ -8,6 +8,7 @@
 import { Injectable, inject } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface MissingDataStatus {
   missing: boolean;
@@ -32,6 +33,7 @@ export interface PlayerMissingData {
 export class MissingDataDetectionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
+  private notificationsUnavailable = false;
 
   /**
    * Check if player has missing wellness data
@@ -99,6 +101,10 @@ export class MissingDataDetectionService {
    * Check for players missing wellness 3+ days and create coach reminders
    */
   async checkAndCreateCoachReminders(teamId: string): Promise<void> {
+    if (this.notificationsUnavailable) {
+      return;
+    }
+
     try {
       const playersWithMissing =
         await this.getPlayersWithMissingWellness(teamId);
@@ -139,9 +145,22 @@ export class MissingDataDetectionService {
         })),
       );
 
-      await this.supabaseService.client
+      const { error } = await this.supabaseService.client
         .from("notifications")
         .insert(notifications);
+
+      if (error) {
+        const status = Number((error as { status?: number }).status);
+        if (
+          isBenignSupabaseQueryError(error) ||
+          (error as { code?: string }).code === "23505" ||
+          status === 409
+        ) {
+          this.notificationsUnavailable = true;
+          return;
+        }
+        throw error;
+      }
 
       this.logger.info(
         `[MissingData] Created ${notifications.length} coach reminders for ${criticalPlayers.length} players with missing wellness`,

@@ -324,6 +324,27 @@ export function isBenignSupabaseQueryError(error: unknown): boolean {
 
   if (code && benignCodes.has(code)) return true;
 
+  const message =
+    typeof e.message === "string" ? e.message.toLowerCase() : "";
+  const details =
+    typeof e.details === "string" ? e.details.toLowerCase() : "";
+
+  const missingOptionalResourcePatterns = [
+    "relation",
+    "schema cache",
+    "could not find the table",
+    "does not exist",
+  ];
+
+  if (
+    status === 400 &&
+    missingOptionalResourcePatterns.some(
+      (pattern) => message.includes(pattern) || details.includes(pattern),
+    )
+  ) {
+    return true;
+  }
+
   // Unauthenticated/forbidden/not-found in optional feature probes
   if ([401, 403, 404].includes(status)) return true;
 

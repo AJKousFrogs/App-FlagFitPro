@@ -1,0 +1,82 @@
+<div class="wearables-flow">
+  <app-button variant="text" iconLeft="pi-arrow-left" (clicked)="reset.emit()"
+    >Back to Import Options</app-button
+  >
+
+  <app-card-shell class="wearables-card">
+    <h3>Connect Wearable Devices</h3>
+
+    @if (connectedDevices.length > 0) {
+      <div class="section">
+        <h4>Connected Devices</h4>
+        @for (device of connectedDevices; track device.id) {
+          <div class="device-card connected">
+            <div class="device-info">
+              <span class="device-name">⌚ {{ device.name }}</span>
+              <app-status-tag value="Connected" severity="success" size="sm" />
+            </div>
+            <p class="device-sync">Last sync: {{ device.lastSync || "Never" }}</p>
+            <p class="device-data">Data: {{ device.dataTypes.join(", ") }}</p>
+            <div class="device-actions">
+              <app-button
+                size="sm"
+                iconLeft="pi-refresh"
+                (clicked)="syncDevice.emit(device)"
+                >Sync Now</app-button
+              >
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-times"
+                (clicked)="disconnectDevice.emit(device)"
+                >Disconnect</app-button
+              >
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="section">
+      <h4>Available to Connect</h4>
+      <div class="devices-grid">
+        @for (device of availableDevices; track device.id) {
+          <div class="device-card available">
+            <div class="device-icon">⌚</div>
+            <h5>{{ device.name }}</h5>
+            <p class="device-data">{{ device.dataTypes.join(", ") }}</p>
+            <app-button
+              size="sm"
+              iconLeft="pi-link"
+              (clicked)="connectDevice.emit(device)"
+              >Connect</app-button
+            >
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="data-usage-info">
+      <h4>💡 How Wearable Data Is Used</h4>
+      <ul>
+        <li>
+          <strong>HRV</strong> → Wellness Score calculation, readiness assessment
+        </li>
+        <li>
+          <strong>Sleep</strong> → Sleep debt tracking, recovery recommendations
+        </li>
+        <li>
+          <strong>Activity</strong> → ACWR calculation, training load tracking
+        </li>
+        <li><strong>HR Zones</strong> → Workout intensity validation</li>
+        <li>
+          <strong>Strain/Recovery</strong> → AI training recommendations
+        </li>
+      </ul>
+      <p class="privacy-note">
+        <i class="pi pi-lock privacy-note__icon"></i>
+        Your data is encrypted and never shared
+      </p>
+    </div>
+  </app-card-shell>
+</div>

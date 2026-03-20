@@ -1,0 +1,73 @@
+<div class="sprint-protocols">
+  @if (guidelines) {
+    <div class="sprint-header">
+      <h3>{{ guidelines.phase }}</h3>
+      <p>
+        Weekly Sprint Volume:
+        {{ guidelines.weeklySprintVolume[0] }} -
+        {{ guidelines.weeklySprintVolume[1] }}
+        sprints
+      </p>
+    </div>
+
+    <div class="sprint-features">
+      <div class="feature" [class.active]="guidelines.accelerationWork">
+        <i
+          class="pi"
+          [class.pi-check]="guidelines.accelerationWork"
+          [class.pi-times]="!guidelines.accelerationWork"
+        ></i>
+        Acceleration Work
+      </div>
+      <div class="feature" [class.active]="guidelines.maxVelocityWork">
+        <i
+          class="pi"
+          [class.pi-check]="guidelines.maxVelocityWork"
+          [class.pi-times]="!guidelines.maxVelocityWork"
+        ></i>
+        Max Velocity
+      </div>
+      <div class="feature" [class.active]="guidelines.resistedSprints">
+        <i
+          class="pi"
+          [class.pi-check]="guidelines.resistedSprints"
+          [class.pi-times]="!guidelines.resistedSprints"
+        ></i>
+        Resisted Sprints
+      </div>
+      <div class="feature" [class.active]="guidelines.flyingSprints">
+        <i
+          class="pi"
+          [class.pi-check]="guidelines.flyingSprints"
+          [class.pi-times]="!guidelines.flyingSprints"
+        ></i>
+        Flying Sprints
+      </div>
+    </div>
+
+    <h4>Recommended Protocols</h4>
+    <div class="protocols-list">
+      @for (protocol of recommendedProtocols; track protocol) {
+        <p-chip [label]="protocol" class="protocol-chip"></p-chip>
+      }
+    </div>
+
+    @if (avoidProtocols.length) {
+      <h4>Avoid This Phase</h4>
+      <div class="protocols-list avoid">
+        @for (protocol of avoidProtocols; track protocol) {
+          <p-chip [label]="protocol" class="protocol-chip avoid"></p-chip>
+        }
+      </div>
+    }
+  }
+
+  <div class="sprint-tips">
+    <h4><i class="pi pi-flag"></i> Flag Football Sprint Tips</h4>
+    <ul>
+      @for (tip of tips; track tip) {
+        <li>{{ tip }}</li>
+      }
+    </ul>
+  </div>
+</div>

@@ -27,18 +27,34 @@
             (viewPlayer)="viewPlayer($event)"
           />
 
-          <!-- Active Protocols Section -->
-          <app-coach-dashboard-protocols-section
-            [teamContinuity]="teamContinuity()"
-            (viewPlayer)="viewPlayer($event)"
-          />
+          @defer (on viewport) {
+            <!-- Active Protocols Section -->
+            <app-coach-dashboard-protocols-section
+              [teamContinuity]="teamContinuity()"
+              (viewPlayer)="viewPlayer($event)"
+            />
+          } @placeholder {
+            <app-loading
+              [visible]="true"
+              variant="skeleton"
+              message="Loading team protocols..."
+            />
+          }
 
-          <app-coach-dashboard-summary-section
-            [teamOverview]="teamOverview()"
-            [nextGenEnabled]="nextGenEnabled()"
-            (createSession)="openCreateSession()"
-            (openTeamMessage)="openTeamMessage()"
-          />
+          @defer (on viewport) {
+            <app-coach-dashboard-summary-section
+              [teamOverview]="teamOverview()"
+              [nextGenEnabled]="nextGenEnabled()"
+              (createSession)="openCreateSession()"
+              (openTeamMessage)="openTeamMessage()"
+            />
+          } @placeholder {
+            <app-loading
+              [visible]="true"
+              variant="skeleton"
+              message="Loading summary..."
+            />
+          }
 
           <!-- Main Content Grid - Streamlined for Phase 2 -->
           @if (hasBlockedPlayers()) {
@@ -84,101 +100,110 @@
               </app-card-shell>
             </div>
 
-            <!-- Right Workspace: Schedule & Quick -->
-            <div class="workspace-side">
-              <app-card-shell
-                title="Today schedule"
-                headerIcon="pi-calendar"
-                density="compact"
-              >
-                <div class="schedule-mini">
-                  @for (
-                    game of upcomingGames().slice(
-                      0,
-                      UI_LIMITS.UPCOMING_GAMES_PREVIEW
-                    );
-                    track game.gameId
-                  ) {
-                    <div class="mini-event game">
-                      <div class="ev-date">
-                        <span class="d">{{ game.date | date: "d" }}</span>
-                        <span class="m">{{ game.date | date: "MMM" }}</span>
+            @defer (on viewport) {
+              <!-- Right Workspace: Schedule & Quick -->
+              <div class="workspace-side">
+                <app-card-shell
+                  title="Today schedule"
+                  headerIcon="pi-calendar"
+                  density="compact"
+                >
+                  <div class="schedule-mini">
+                    @for (
+                      game of upcomingGames().slice(
+                        0,
+                        UI_LIMITS.UPCOMING_GAMES_PREVIEW
+                      );
+                      track game.gameId
+                    ) {
+                      <div class="mini-event game">
+                        <div class="ev-date">
+                          <span class="d">{{ game.date | date: "d" }}</span>
+                          <span class="m">{{ game.date | date: "MMM" }}</span>
+                        </div>
+                        <div class="ev-info">
+                          <span class="t">vs {{ game.opponent }}</span>
+                          <span class="s">Game Day</span>
+                        </div>
                       </div>
-                      <div class="ev-info">
-                        <span class="t">vs {{ game.opponent }}</span>
-                        <span class="s">Game Day</span>
+                    }
+                    @for (
+                      session of trainingSessions().slice(
+                        0,
+                        UI_LIMITS.TRAINING_SESSIONS_PREVIEW
+                      );
+                      track session.sessionId
+                    ) {
+                      <div class="mini-event practice">
+                        <div class="ev-date">
+                          <span class="d">{{ session.date | date: "d" }}</span>
+                          <span class="m">{{ session.date | date: "MMM" }}</span>
+                        </div>
+                        <div class="ev-info">
+                          <span class="t">{{ session.title }}</span>
+                          <span class="s">{{ session.time }}</span>
+                        </div>
                       </div>
-                    </div>
-                  }
-                  @for (
-                    session of trainingSessions().slice(
-                      0,
-                      UI_LIMITS.TRAINING_SESSIONS_PREVIEW
-                    );
-                    track session.sessionId
-                  ) {
-                    <div class="mini-event practice">
-                      <div class="ev-date">
-                        <span class="d">{{ session.date | date: "d" }}</span>
-                        <span class="m">{{ session.date | date: "MMM" }}</span>
-                      </div>
-                      <div class="ev-info">
-                        <span class="t">{{ session.title }}</span>
-                        <span class="s">{{ session.time }}</span>
-                      </div>
-                    </div>
-                  }
-                </div>
-                <div footer class="schedule-card-footer">
+                    }
+                  </div>
+                  <div footer class="schedule-card-footer">
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      [fullWidth]="true"
+                      routerLink="/coach/planning"
+                      >Full Schedule</app-button
+                    >
+                    <app-button
+                      variant="outlined"
+                      size="sm"
+                      [fullWidth]="true"
+                      iconLeft="pi-calendar-plus"
+                      (clicked)="planTomorrow()"
+                      >Plan Tomorrow</app-button
+                    >
+                  </div>
+                </app-card-shell>
+
+                <div class="quick-command-grid">
                   <app-button
-                    variant="text"
-                    size="sm"
-                    [fullWidth]="true"
-                    routerLink="/coach/planning"
-                    >Full Schedule</app-button
+                    variant="outlined"
+                    icon="calendar-plus"
+                    (clicked)="openCreateSession()"
+                    >New Practice</app-button
                   >
                   <app-button
                     variant="outlined"
-                    size="sm"
-                    [fullWidth]="true"
-                    iconLeft="pi-calendar-plus"
-                    (clicked)="planTomorrow()"
-                    >Plan Tomorrow</app-button
+                    icon="send"
+                    (clicked)="openTeamMessage()"
+                    >Msg Team</app-button
+                  >
+                  <app-button
+                    variant="outlined"
+                    icon="heart"
+                    (clicked)="viewInjuryReport()"
+                    >Injuries</app-button
+                  >
+                  <app-button
+                    variant="outlined"
+                    icon="users"
+                    (clicked)="manageRoster()"
+                    >Roster</app-button
                   >
                 </div>
-              </app-card-shell>
-
-              <div class="quick-command-grid">
-                <app-button
-                  variant="outlined"
-                  icon="calendar-plus"
-                  (clicked)="openCreateSession()"
-                  >New Practice</app-button
-                >
-                <app-button
-                  variant="outlined"
-                  icon="send"
-                  (clicked)="openTeamMessage()"
-                  >Msg Team</app-button
-                >
-                <app-button
-                  variant="outlined"
-                  icon="heart"
-                  (clicked)="viewInjuryReport()"
-                  >Injuries</app-button
-                >
-                <app-button
-                  variant="outlined"
-                  icon="users"
-                  (clicked)="manageRoster()"
-                  >Roster</app-button
-                >
               </div>
-            </div>
+            } @placeholder {
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading schedule..."
+              />
+            }
           </div>
         </div>
 
         <!-- Create Session Dialog -->
+        @defer (when showCreateSessionDialog) {
         <app-dialog
           [(visible)]="showCreateSessionDialog"
           [modal]="true"
@@ -223,14 +248,14 @@
             </div>
             <div class="form-field">
               <label for="coach-sessionDate">Date & Time</label>
-              <p-datepicker
-                inputId="coach-sessionDate"
-                (onSelect)="onNewSessionDateChange($event)"
-                [showTime]="true"
-                [showIcon]="true"
-                dateFormat="mm/dd/yy"
+              <input
+                id="coach-sessionDate"
+                name="sessionDate"
+                type="datetime-local"
+                [value]="getNewSessionDateInputValue()"
+                (input)="onNewSessionDateInput(getInputValue($event))"
                 class="w-full"
-              ></p-datepicker>
+              />
             </div>
             <div class="form-field">
               <label for="coach-sessionDuration">Duration (minutes)</label>
@@ -270,8 +295,10 @@
             (primary)="createSession()"
           />
         </app-dialog>
+        }
 
         <!-- Team Message Dialog -->
+        @defer (when showTeamMessageDialog) {
         <app-dialog
           [(visible)]="showTeamMessageDialog"
           [modal]="true"
@@ -310,8 +337,10 @@
             (primary)="sendTeamMessage()"
           />
         </app-dialog>
+        }
 
         <!-- Request Access Dialog -->
+        @defer (when showRequestAccessDialog) {
         <app-dialog
           [(visible)]="showRequestAccessDialog"
           [modal]="true"
@@ -354,6 +383,7 @@
             (primary)="sendAccessRequest()"
           />
         </app-dialog>
+        }
       }
       <!-- End of @else for content -->
     </app-main-layout>

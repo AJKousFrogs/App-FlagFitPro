@@ -47,8 +47,8 @@ import {
     <app-main-layout>
       <div class="enhanced-analytics-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
-          title="Enhanced Analytics"
-          subtitle="Advanced performance insights and predictions"
+          title="Advanced Performance"
+          subtitle="Advanced insights, risk signals, and prediction readiness"
           icon="pi-chart-line"
         >
           <app-button
@@ -186,7 +186,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     try {
       const user = this.authService.getUser();
       if (!user?.id) {
-        this.logger.warn("No user found for analytics");
+        this.logger.warn("No user found for performance workspace");
         this.setDefaultChartData();
         return;
       }
@@ -216,7 +216,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
         this.setDefaultChartData();
       }
     } catch (error) {
-      this.logger.error("Error loading analytics:", error);
+      this.logger.error("Error loading performance workspace:", error);
       this.setDefaultChartData();
     } finally {
       this.isLoading.set(false);

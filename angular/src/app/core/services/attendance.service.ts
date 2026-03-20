@@ -43,6 +43,7 @@ export interface AttendanceRecord {
 export interface PlayerAttendanceStats {
   player_id: string;
   team_id: string;
+  player_name?: string;
   total_events: number;
   events_attended: number;
   events_missed: number;

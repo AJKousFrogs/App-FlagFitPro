@@ -62,9 +62,9 @@ import {
 import {
   PlayerFormData,
   RosterFiltersComponent,
+  RosterPlayerFormDialogComponent,
   RosterOverviewComponent,
   RosterPlayerCardComponent,
-  RosterPlayerFormDialogComponent,
   RosterStaffCardComponent,
 } from "./components";
 import { getPositionDisplayName } from "../../core/constants";
@@ -116,10 +116,10 @@ import {
     RosterOverviewComponent,
     RosterFiltersComponent,
     RosterPlayerFormDialogComponent,
-    ButtonComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
+    ButtonComponent,
   ],
   templateUrl: "./roster.component.html",
 

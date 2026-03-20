@@ -83,7 +83,7 @@ export class SearchPanelComponent implements OnDestroy {
   private readonly quickActionRoutes = [
     "/training",
     "/exercise-library",
-    "/analytics",
+    "/performance/insights",
     "/roster",
   ];
 

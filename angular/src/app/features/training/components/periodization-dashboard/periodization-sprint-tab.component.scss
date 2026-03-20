@@ -1,0 +1,97 @@
+.sprint-protocols {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
+}
+
+.sprint-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.sprint-header h3 {
+  margin: 0;
+}
+
+.sprint-header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.sprint-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.feature {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-100);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.feature.active {
+  background: var(--color-status-success-subtle);
+  color: var(--ds-primary-green-dark);
+}
+
+.feature i {
+  font-size: var(--ds-font-size-xs);
+}
+
+.sprint-protocols h4 {
+  margin: 0;
+  font-size: var(--ds-font-size-md);
+  text-transform: var(--ds-text-transform-uppercase);
+  color: var(--color-text-secondary);
+}
+
+.protocols-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.protocols-list.avoid .protocol-chip {
+  background: var(--color-status-error-subtle);
+  color: var(--color-status-error);
+}
+
+.protocol-chip {
+  background: var(--ds-primary-green-subtle);
+  color: var(--ds-primary-green-dark);
+}
+
+.sprint-tips {
+  margin: 0;
+  padding: var(--component-card-padding);
+  background: var(--surface-secondary);
+  border-radius: var(--component-card-radius);
+}
+
+.sprint-tips h4 {
+  margin-bottom: var(--space-4);
+  font-size: var(--ds-font-size-md);
+}
+
+.sprint-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sprint-tips li {
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-1) solid var(--surface-200);
+}
+
+.sprint-tips li:last-child {
+  border-bottom: none;
+}

@@ -1,0 +1,108 @@
+.weekly-schedule {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
+  gap: var(--layout-page-section-gap-tight);
+  margin: 0;
+}
+
+.day-card {
+  padding: var(--component-card-padding-compact);
+  border-radius: var(--component-card-radius);
+  background: var(--surface-secondary);
+  border: var(--border-1) solid var(--surface-200);
+}
+
+.day-card.session-training {
+  border-left: var(--border-4) solid var(--color-brand-primary);
+}
+
+.day-card.session-game {
+  border-left: var(--border-4) solid var(--ds-primary-orange);
+  background: var(--ds-primary-orange-subtle);
+}
+
+.day-card.session-recovery {
+  border-left: var(--border-4) solid var(--color-status-success);
+  background: var(--color-status-success-subtle);
+}
+
+.day-card.session-rest {
+  border-left: var(--border-4) solid var(--gray-400);
+  background: var(--surface-100);
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.day-name {
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.day-content {
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.day-content > div {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.day-content i {
+  font-size: var(--ds-font-size-xs);
+}
+
+.day-notes {
+  margin-top: var(--space-2);
+  font-style: italic;
+}
+
+.weekly-totals {
+  background: var(--surface-secondary);
+  padding: var(--component-card-padding);
+  border-radius: var(--component-card-radius);
+}
+
+.weekly-totals h4 {
+  margin-bottom: var(--space-4);
+  font-size: var(--ds-font-size-md);
+}
+
+.totals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.total-value {
+  display: block;
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-brand-primary);
+}
+
+.total-label {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 900px) {
+  .weekly-schedule,
+  .totals-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .weekly-schedule,
+  .totals-grid {
+    grid-template-columns: 1fr;
+  }
+}

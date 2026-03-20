@@ -101,7 +101,7 @@ export const ROUTES = {
   ACWR: "/performance/load",
   ACWR_DASHBOARD: "/performance/load",
   PERFORMANCE_TRACKING: "/performance/tests",
-  GAME_TRACKER: "/game-tracker",
+  GAME_TRACKER: "/tournaments",
 
   // Team Management
   ROSTER: "/roster",
@@ -119,7 +119,7 @@ export const ROUTES = {
   WELLNESS: "/wellness",
   CYCLE_TRACKING: "/cycle-tracking",
   SLEEP_DEBT: "/sleep-debt",
-  TRAVEL_RECOVERY: "/travel/recovery",
+  TRAVEL_RECOVERY: "/wellness",
 
   // Game
   PLAYBOOK: "/playbook",
@@ -127,8 +127,9 @@ export const ROUTES = {
   TOURNAMENTS: "/tournaments",
 
   // Social
-  COMMUNITY: "/community",
+  COMMUNITY: "/team-chat",
   CHAT: "/chat",
+  TEAM_CHAT: "/team-chat",
 
   // Coach Features
   COACH: "/coach",

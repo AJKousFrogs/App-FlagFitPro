@@ -1,0 +1,77 @@
+.annual-timeline {
+  padding: var(--space-2) 0 0;
+  overflow-x: auto;
+}
+
+.timeline-marker {
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-circle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-on-primary);
+}
+
+.timeline-marker i {
+  font-size: var(--ds-font-size-md);
+}
+
+.timeline-content .timeline-month {
+  display: block;
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+}
+
+.timeline-content .timeline-phase {
+  display: block;
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.phase-detail p {
+  margin-bottom: var(--space-4);
+  line-height: var(--ds-line-height-relaxed);
+}
+
+.phase-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--layout-page-section-gap-tight);
+  margin-bottom: var(--layout-page-section-gap-tight);
+}
+
+.phase-metrics .metric {
+  text-align: center;
+  padding: var(--component-card-padding-compact);
+  background: var(--surface-secondary);
+  border-radius: var(--component-card-radius);
+}
+
+.phase-metrics .metric-label {
+  display: block;
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.phase-metrics .metric-value {
+  display: block;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-brand-primary);
+  text-transform: var(--ds-text-transform-capitalize);
+}
+
+.phase-detail h5 {
+  margin-bottom: var(--space-2);
+}
+
+.phase-detail ul {
+  margin: 0;
+  padding-left: var(--space-6);
+}
+
+.phase-detail li {
+  margin-bottom: var(--space-1);
+}

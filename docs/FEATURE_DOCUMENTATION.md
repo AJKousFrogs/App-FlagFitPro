@@ -2,7 +2,32 @@
 
 ## Complete Technical & Business Logic Guide
 
-_Version 2.0 | Last Updated: January 2026_
+_Version 2.1 | Last Updated: March 2026_
+
+---
+
+## Release Scope Note
+
+This document is still the long-form reference for the full platform surface,
+including retained specialist features and compatibility routes.
+
+For the active `2.1` product shape, treat the following as the canonical
+workspaces:
+- athlete core: `Dashboard`, `Today`, `Training`, `Wellness`, `Performance`
+- coach core: `Dashboard`, `Roster`, `Planning`, `Performance`, `Team`
+- supporting surfaces: `Team Chat`, `Knowledge`, `Settings`
+
+The table of contents below still includes legacy or specialist sections such as
+`Travel Recovery`, `Game Tracker`, `Depth Chart`, `Equipment`, `Officials`, and
+`Community Feed`. Those sections remain useful as implementation references, but
+they should not be interpreted as equal top-level product pillars in `2.1`.
+
+Canonical `2.1` route guidance:
+- `Performance insights` → `/performance/insights`
+- `Performance tests` → `/performance/tests`
+- `Load monitoring` → `/performance/load`
+- `Coach planning` → `/coach/planning`
+- `Team operations` → `/team/workspace`
 
 ---
 
@@ -157,7 +182,7 @@ The **Dashboard** serves as the central hub and primary entry point for all user
    - Videos → `/training/videos`
    - Wellness → `/wellness`
    - Schedule → `/training`
-   - Analytics → `/analytics`
+   - Performance → `/performance/insights`
    - AI Coach → `/chat`
 
 6. **Performance Trend Chart**
@@ -799,6 +824,10 @@ Session Load (AU) = Duration (min) × RPE (1-10) × Intensity Multiplier
 
 **Travel Recovery** (`/travel/recovery`) provides evidence-based protocols for managing jet lag (flights) and blood circulation (long car trips) - essential for Olympic athletes traveling to LA 2028 and Brisbane 2032.
 
+> `2.1` note: this is a retained specialist reference. The standalone route is
+> deprecated in the active product and recovery guidance is now funneled through
+> `Wellness`.
+
 ### Who Uses It
 
 - **Players**: Plan travel, follow recovery protocols
@@ -1361,6 +1390,10 @@ const NUTRITION_RECOMMENDATIONS = {
 
 **Game Tracker** (`/game-tracker`) enables real-time game statistics tracking and post-game analysis for flag football games.
 
+> `2.1` note: this is a retained specialist reference. The standalone route is
+> deprecated in the active product and competition workflows now center on
+> `Tournaments`.
+
 ### Who Uses It
 
 - **Coaches**: Live stat tracking during games
@@ -1577,6 +1610,10 @@ GET /api/team/roster?team_id=123
 
 **Depth Chart** (`/depth-chart`) allows coaches to manage player positions and create visual team formations for offense, defense, and special teams.
 
+> `2.1` note: this is a retained team-operations reference. The standalone
+> route is deprecated in the active product and coaches are directed through
+> `Team Workspace`.
+
 ### Who Uses It
 
 - **Coaches**: Set lineup, manage positions, plan formations
@@ -1721,6 +1758,10 @@ function calculateAttendanceRate(records: AttendanceRecord[]): number {
 
 **Equipment** (`/equipment`) tracks team gear inventory, assignments to players, and replacement needs.
 
+> `2.1` note: this is a retained team-operations reference. The standalone
+> route is deprecated in the active product and equipment workflows are now
+> accessed through `Team Workspace`.
+
 ### Who Uses It
 
 - **Coaches/Managers**: Manage inventory, assign equipment
@@ -1783,6 +1824,10 @@ function needsReplacement(item: EquipmentItem): boolean {
 ### Purpose
 
 **Officials** (`/officials`) manages referee scheduling, contact directory, and game assignments.
+
+> `2.1` note: this is a retained team-operations reference. The standalone
+> route is deprecated in the active product and officials workflows are now
+> accessed through `Team Workspace`.
 
 ### Who Uses It
 
@@ -4659,6 +4704,10 @@ function getMessagePriority(message: ChatMessage): "high" | "normal" | "low" {
 
 **Community Feed** provides a social media-style feed for team engagement with posts, comments, likes, polls, and media sharing.
 
+> `2.1` note: this is a retained social reference. The standalone community
+> surface is deprecated in the active product and collaboration now centers on
+> `Team Chat`.
+
 ### Who Uses It
 
 - **All Team Members**: Share updates, celebrate achievements
@@ -5435,6 +5484,10 @@ async function processApproval(
 
 **Playbook Library** allows coaches to create, organize, and share plays with detailed assignments for each position, route depths, reads, and coaching notes - so players can study and memorize their responsibilities.
 
+> `2.1` note: this is a retained coaching reference. In the active product,
+> strategy workflows are consolidated behind `Coach Planning` and `Knowledge`
+> rather than taught as separate top-level product pillars.
+
 ### Who Uses It
 
 - **Coaches**: Create plays, add notes, assign routes, organize by formation/situation
@@ -5633,6 +5686,11 @@ interface PlayQuiz {
 
 **Film Room** allows coaches to share game footage via YouTube links, add timestamps with notes, tag specific players or plays, and connect discussions to team chat for collaborative review.
 
+> `2.1` note: this is a retained coaching reference. In the active product,
+> film workflows are consolidated behind `Coach Planning` and related team
+> collaboration flows rather than promoted as a separate top-level product
+> destination.
+
 ### Who Uses It
 
 - **Coaches**: Upload/link videos, add timestamps, tag plays, assign film to watch
@@ -5805,6 +5863,10 @@ function getFilmComplianceReport(teamId: string): FilmComplianceReport {
 ### Purpose
 
 **Scouting Reports** provide structured opponent analysis including team tendencies, key players, and strategic notes - integrated with team communication for pre-game preparation.
+
+> `2.1` note: this is a retained coaching reference. In the active product,
+> scouting workflows are consolidated behind `Coach Planning` and team prep
+> workflows rather than promoted as a separate top-level product destination.
 
 ### Who Uses It
 
@@ -5979,6 +6041,10 @@ async function shareScoutingReport(reportId: string): Promise<void> {
 ### Purpose
 
 **Practice Planning** allows coaches to create structured practice scripts, design plays visually, and organize drills - exportable to PDF for field use.
+
+> `2.1` note: this is a retained coaching reference. In the active product,
+> practice design and program-building workflows are consolidated under
+> `Coach Planning`.
 
 ### Who Uses It
 
@@ -7484,6 +7550,10 @@ The menstrual cycle significantly impacts athletic performance, injury risk, rec
 
 ## Version History
 
+This table tracks documentation expansion over time. It should not be read as
+the current active product definition for `2.1`, which is intentionally more
+consolidated than the full historical feature inventory below.
+
 | Version | Date     | Changes                                                                                                                                                   |
 | ------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 3.1     | Jan 2026 | Added Appendix E: Menstrual Cycle Considerations for Female Athletes (evidence-based research, phase-specific training recommendations, injury risk data) |
@@ -7501,6 +7571,16 @@ The menstrual cycle significantly impacts athletic performance, injury risk, rec
 
 ## Quick Reference: Routes
 
+Canonical `2.1` routes:
+- `/performance/insights`
+- `/performance/tests`
+- `/performance/load`
+- `/coach/planning`
+- `/team/workspace`
+
+Legacy and compatibility routes are included in the table below for reference,
+but several are no longer intended as primary user destinations.
+
 | Route                           | Feature              | Component                      |
 | ------------------------------- | -------------------- | ------------------------------ |
 | `/dashboard`                    | Dashboard Switcher   | `DashboardComponent`           |
@@ -7509,19 +7589,25 @@ The menstrual cycle significantly impacts athletic performance, injury risk, rec
 | `/training`                     | Training Schedule    | `TrainingScheduleComponent`    |
 | `/today`                        | Today's Practice     | `TodayComponent`               |
 | `/wellness`                     | Wellness & Recovery  | `WellnessComponent`            |
-| `/acwr`                         | ACWR Dashboard       | `AcwrDashboardComponent`       |
-| `/travel/recovery`              | Travel Recovery      | `TravelRecoveryComponent`      |
+| `/performance/load`             | Load Monitoring      | `AcwrDashboardComponent`       |
+| `/acwr`                         | ACWR Dashboard (legacy alias) | `AcwrDashboardComponent` |
+| `/travel/recovery`              | Travel Recovery (legacy alias) | `TravelRecoveryComponent` |
 | `/game/readiness`               | Game Day Readiness   | `GameDayReadinessComponent`    |
-| `/game/nutrition`               | Tournament Nutrition | `TournamentNutritionComponent` |
-| `/game-tracker`                 | Game Tracker         | `GameTrackerComponent`         |
+| `/game/nutrition`               | Tournament Nutrition (legacy alias) | `TournamentNutritionComponent` |
+| `/game-tracker`                 | Game Tracker (legacy alias) | `GameTrackerComponent` |
 | `/tournaments`                  | Tournaments          | `TournamentsComponent`         |
 | `/roster`                       | Roster Management    | `RosterComponent`              |
-| `/depth-chart`                  | Depth Chart          | `DepthChartComponent`          |
+| `/team/workspace`               | Team Workspace       | `TeamWorkspaceComponent`       |
+| `/depth-chart`                  | Depth Chart (legacy alias) | `DepthChartComponent` |
 | `/attendance`                   | Attendance           | `AttendanceComponent`          |
-| `/equipment`                    | Equipment            | `EquipmentComponent`           |
-| `/officials`                    | Officials            | `OfficialsComponent`           |
-| `/analytics`                    | Analytics            | `AnalyticsComponent`           |
+| `/equipment`                    | Equipment (legacy alias) | `EquipmentComponent`       |
+| `/officials`                    | Officials (legacy alias) | `OfficialsComponent`       |
+| `/performance/insights`         | Analytics / Performance Insights | `AnalyticsComponent` |
+| `/performance/tests`            | Performance Tests    | `PerformanceTrackingComponent` |
+| `/analytics`                    | Analytics (legacy alias) | `AnalyticsComponent`       |
 | `/chat`                         | AI Coach             | `ChatComponent`                |
+| `/team-chat`                    | Team Chat            | `TeamChatComponent`            |
+| `/coach/planning`               | Coach Planning       | `CoachCalendarComponent`       |
 | `/profile`                      | User Profile         | `ProfileComponent`             |
 | `/settings`                     | Settings             | `SettingsComponent`            |
 | `/onboarding`                   | Onboarding           | `OnboardingComponent`          |

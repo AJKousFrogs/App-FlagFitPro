@@ -32,6 +32,7 @@ import {
 import { AcwrService } from "./acwr.service";
 import { OwnershipTransitionService } from "./ownership-transition.service";
 import { environment } from "../../../environments/environment";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
@@ -59,6 +60,8 @@ export class AcwrAlertsService {
   // Notification preferences
   private readonly notificationEnabled = signal<boolean>(true);
   private readonly coachNotificationEnabled = signal<boolean>(true);
+  private usersTableUnavailable = false;
+  private notificationsUnavailable = false;
 
   // Alert counters - readonly computed signal
   public readonly alertStats = computed(() => {
@@ -207,7 +210,10 @@ export class AcwrAlertsService {
     const user = this.authService.getUser();
     if (user?.id) {
       try {
-        await this.supabaseService.client.from("notifications").insert({
+        if (!this.notificationsUnavailable) {
+          const { error: notificationError } = await this.supabaseService.client
+            .from("notifications")
+            .insert({
           user_id: user.id,
           type: "acwr_alert",
           title: `Load Alert: ${alert.type.replace(/_/g, " ")}`,
@@ -219,6 +225,20 @@ export class AcwrAlertsService {
             acwrValue: alert.acwrValue,
           },
         });
+
+          if (notificationError) {
+            const status = Number((notificationError as { status?: number }).status);
+            if (
+              isBenignSupabaseQueryError(notificationError) ||
+              notificationError.code === "23505" ||
+              status === 409
+            ) {
+              this.notificationsUnavailable = true;
+            } else {
+              throw notificationError;
+            }
+          }
+        }
 
         // Refresh notification badge
         this.notificationService.refreshBadgeCount();
@@ -281,9 +301,27 @@ export class AcwrAlertsService {
         }));
 
         // Always create DB notifications first (fallback)
-        await this.supabaseService.client
-          .from("notifications")
-          .insert(coachNotifications);
+        if (!this.notificationsUnavailable) {
+          const { error: coachNotificationError } =
+            await this.supabaseService.client
+              .from("notifications")
+              .insert(coachNotifications);
+
+          if (coachNotificationError) {
+            const status = Number(
+              (coachNotificationError as { status?: number }).status,
+            );
+            if (
+              isBenignSupabaseQueryError(coachNotificationError) ||
+              coachNotificationError.code === "23505" ||
+              status === 409
+            ) {
+              this.notificationsUnavailable = true;
+            } else {
+              throw coachNotificationError;
+            }
+          }
+        }
 
         // Refresh notification badge
         this.notificationService.refreshBadgeCount();
@@ -300,14 +338,23 @@ export class AcwrAlertsService {
 
           try {
             // Use 'users' table for email
-            const { data: profile } = await this.supabaseService.client
-              .from("users")
-              .select("email")
-              .eq("id", coachUserId)
-              .single();
+            if (!this.usersTableUnavailable) {
+              const { data: profile, error: profileError } =
+                await this.supabaseService.client
+                  .from("users")
+                  .select("email")
+                  .eq("id", coachUserId)
+                  .single();
 
-            if (profile) {
-              coachEmail = profile.email || null;
+              if (profileError) {
+                if (isBenignSupabaseQueryError(profileError)) {
+                  this.usersTableUnavailable = true;
+                } else {
+                  throw profileError;
+                }
+              } else if (profile) {
+                coachEmail = profile.email || null;
+              }
             }
           } catch (_profileError) {
             this.logger.debug(

@@ -24,6 +24,7 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { DataSourceService } from "./data-source.service";
 import { calculateAge } from "../../shared/utils/date.utils";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 // ============================================================================
 // INTERFACES
@@ -200,6 +201,7 @@ export class TrainingSafetyService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
   private dataSourceService = inject(DataSourceService);
+  private usersTableUnavailable = false;
 
   // Current user's profile
   private userId = computed(() => this.supabaseService.userId());
@@ -257,6 +259,7 @@ export class TrainingSafetyService {
   async loadAthleteAge(userId?: string): Promise<number | null> {
     const targetUserId = userId || this.userId();
     if (!targetUserId) return null;
+    if (this.usersTableUnavailable) return null;
 
     try {
       const { data, error } = await this.supabaseService.client
@@ -266,6 +269,10 @@ export class TrainingSafetyService {
         .single();
 
       if (error || !data) {
+        if (error && isBenignSupabaseQueryError(error)) {
+          this.usersTableUnavailable = true;
+          return null;
+        }
         this.logger.warn("[TrainingSafety] Could not load athlete age");
         return null;
       }

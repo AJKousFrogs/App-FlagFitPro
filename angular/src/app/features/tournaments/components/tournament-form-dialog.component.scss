@@ -1,0 +1,53 @@
+.visibility-info-banner {
+  margin-bottom: var(--space-5);
+}
+
+.tournament-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-2) 0;
+}
+
+.form-section {
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  border: var(--border-1) solid var(--color-border-secondary);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+}
+
+.section-header i {
+  font-size: var(--ds-font-size-2xl);
+  color: var(--ds-primary-green);
+}
+
+.section-header span {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.tournament-form .form-field {
+  flex: 1;
+}
+
+.tournament-form .form-field.checkbox-field {
+  background: var(--surface-primary);
+}
+
+.tournament-form .form-field .checkbox-label i {
+  color: var(--ds-primary-green);
+}
+
+.w-full {
+  width: 100%;
+}

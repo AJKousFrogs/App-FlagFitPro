@@ -1,12 +1,14 @@
 import { Injectable, inject } from "@angular/core";
 import type { User } from "@supabase/supabase-js";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class OnboardingDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private usersTableUnavailable = false;
 
   getCurrentUser() {
     return this.supabaseService.currentUser();
@@ -44,11 +46,20 @@ export class OnboardingDataService {
     } | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { data: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .select("full_name, first_name, last_name, position, experience_level")
       .eq("email", email)
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { data: null, error: null };
+    }
 
     return { data: data ?? null, error };
   }
@@ -70,19 +81,39 @@ export class OnboardingDataService {
     email: string,
     profile: Record<string, unknown>,
   ): Promise<{ error: { message?: string } | null }> {
+    if (this.usersTableUnavailable) {
+      return { error: null };
+    }
+
     const { error } = await this.supabaseService.client
       .from("users")
       .update(profile)
       .eq("email", email);
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { error: null };
+    }
+
     return { error };
   }
 
   async insertUserProfile(
     profile: Record<string, unknown>,
   ): Promise<{ error: { message?: string } | null }> {
+    if (this.usersTableUnavailable) {
+      return { error: null };
+    }
+
     const { error } = await this.supabaseService.client
       .from("users")
       .insert(profile);
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { error: null };
+    }
+
     return { error };
   }
 

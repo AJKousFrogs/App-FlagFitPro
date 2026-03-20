@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 export interface InvitationRecord {
   id: string;
@@ -39,6 +40,7 @@ export interface InvitationUserProfileRecord {
 })
 export class TeamInvitationDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private usersTableUnavailable = false;
 
   getCurrentUser() {
     return this.supabaseService.getCurrentUser();
@@ -77,11 +79,20 @@ export class TeamInvitationDataService {
     inviter: InviterRecord | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { inviter: null, error: null };
+    }
+
     const { data: inviter, error } = await this.supabaseService.client
       .from("users")
       .select("first_name, last_name, email")
       .eq("id", inviterId)
       .single();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { inviter: null, error: null };
+    }
 
     return { inviter: inviter ?? null, error };
   }
@@ -128,6 +139,10 @@ export class TeamInvitationDataService {
     profile: InvitationUserProfileRecord | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { profile: null, error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("users")
       .select(
@@ -135,6 +150,11 @@ export class TeamInvitationDataService {
       )
       .eq("id", userId)
       .maybeSingle();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { profile: null, error: null };
+    }
 
     return {
       profile: (data as InvitationUserProfileRecord) ?? null,

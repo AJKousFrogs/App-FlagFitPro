@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, input, output } from "@angu
 import { CommonModule } from "@angular/common";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { DatePicker } from "primeng/datepicker";
 import { COUNTRY_OPTIONS } from "../../../core/constants";
 import { GENDER_OPTIONS } from "../constants/onboarding-options";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
@@ -16,7 +15,6 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
     CommonModule,
     InputText,
     Select,
-    DatePicker,
     AlertComponent,
     ButtonComponent,
   ],
@@ -52,16 +50,15 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <label for="onboarding-dob"
             >Date of Birth <span class="required">*</span></label
           >
-          <p-datepicker
-            inputId="onboarding-dob"
-            (onSelect)="onDateOfBirthChange($event)"
-            [maxDate]="maxDate()"
-            [minDate]="minDate()"
-            dateFormat="dd/mm/yy"
-            placeholder="Select date"
-            [showIcon]="true"
+          <input
+            id="onboarding-dob"
+            type="date"
+            [value]="getDateOfBirthInputValue()"
+            [max]="getMaxDateInputValue()"
+            [min]="getMinDateInputValue()"
+            (input)="onDateOfBirthInput($event)"
             class="w-full"
-          ></p-datepicker>
+          />
           @if (state.calculatedAge()) {
             <small class="age-hint"
               >Age: {{ state.calculatedAge() }} years ({{
@@ -179,6 +176,11 @@ export class OnboardingStepPersonalComponent {
     this.state.formData.dateOfBirth = value ?? null;
   }
 
+  onDateOfBirthInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.onDateOfBirthChange(this.parseDateInputValue(input?.value ?? ""));
+  }
+
   onGenderChange(value: string | null | undefined): void {
     this.state.formData.gender = value ?? null;
   }
@@ -190,5 +192,38 @@ export class OnboardingStepPersonalComponent {
   onPhoneInput(event: Event): void {
     const input = event.target as HTMLInputElement | null;
     this.state.formData.phone = input?.value ?? "";
+  }
+
+  getDateOfBirthInputValue(): string {
+    return this.formatDateInputValue(this.state.formData.dateOfBirth);
+  }
+
+  getMinDateInputValue(): string {
+    return this.formatDateInputValue(this.minDate());
+  }
+
+  getMaxDateInputValue(): string {
+    return this.formatDateInputValue(this.maxDate());
+  }
+
+  private formatDateInputValue(value: Date | null | undefined): string {
+    if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+      return "";
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private parseDateInputValue(value: string): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = new Date(`${value}T00:00:00`);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 }

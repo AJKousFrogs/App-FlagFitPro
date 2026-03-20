@@ -27,27 +27,43 @@
           (selectPriorityWorkout)="startPriorityWorkoutFromSection($event)"
         />
 
-        <!-- Smart Training Session Builder -->
-        <app-training-builder></app-training-builder>
+        @defer (on viewport) {
+          <!-- Smart Training Session Builder -->
+          <app-training-builder></app-training-builder>
+        } @placeholder {
+          <app-stats-grid [stats]="trainingStats().slice(0, 2)"></app-stats-grid>
+        }
 
-        <!-- Training Stats Grid -->
-        <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
+        @defer (on viewport) {
+          <!-- Training Stats Grid -->
+          <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
+        } @placeholder {
+          <div class="training-stats-placeholder"></div>
+        }
 
-        <app-training-schedule-workouts-section
-          [weeklySchedule]="weeklySchedule()"
-          [workouts]="workouts()"
-          [currentDayName]="currentDayName()"
-          (openSchedule)="toggleScheduleView()"
-          (openAllWorkouts)="showAllWorkouts()"
-          (selectWorkout)="startWorkout($event)"
-        />
+        @defer (on viewport) {
+          <app-training-schedule-workouts-section
+            [weeklySchedule]="weeklySchedule()"
+            [workouts]="workouts()"
+            [currentDayName]="currentDayName()"
+            (openSchedule)="toggleScheduleView()"
+            (openAllWorkouts)="showAllWorkouts()"
+            (selectWorkout)="startWorkout($event)"
+          />
+        } @placeholder {
+          <div class="training-schedule-placeholder"></div>
+        }
 
-        <app-training-footer-section
-          [recentAchievements]="recentAchievements()"
-          [daysUntilOlympics]="daysUntilOlympics()"
-          [overallProgress]="overallProgress()"
-          (openAchievements)="goToAchievements()"
-          (openRoadmap)="goToRoadmap()"
-        />
+        @defer (on viewport) {
+          <app-training-footer-section
+            [recentAchievements]="recentAchievements()"
+            [daysUntilOlympics]="daysUntilOlympics()"
+            [overallProgress]="overallProgress()"
+            (openAchievements)="goToAchievements()"
+            (openRoadmap)="goToRoadmap()"
+          />
+        } @placeholder {
+          <div class="training-footer-placeholder"></div>
+        }
       </div>
     </app-main-layout>

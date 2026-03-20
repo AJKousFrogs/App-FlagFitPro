@@ -756,27 +756,6 @@ Tip: Hover over data points to see trend information!`;
     this.toastService.info(instructions, "Chart Interactions");
   }
 
-  viewChartDetails(chartType: string): void {
-    this.logger.info(`Viewing details for ${chartType}`);
-    // Navigate to enhanced analytics with the specific chart focus
-    window.location.href = `/analytics/enhanced?focus=${chartType}`;
-  }
-
-  showImprovementTips(area: string): void {
-    const tips: Record<string, string> = {
-      chemistry:
-        "Focus on team communication drills, trust-building exercises, and collaborative training sessions.",
-      performance:
-        "Track your progress consistently, set incremental goals, and ensure adequate recovery.",
-      speed:
-        "Incorporate interval training, plyometrics, and proper warm-up routines.",
-    };
-    this.toastService.info(
-      tips[area] || "Continue consistent training and track your progress.",
-      "Improvement Tips",
-    );
-  }
-
   filterTrainingData(): void {
     this.logger.info("Opening training data filter");
     // For now, show available filter options

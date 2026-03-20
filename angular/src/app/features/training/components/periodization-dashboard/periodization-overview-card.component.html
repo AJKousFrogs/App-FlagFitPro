@@ -1,0 +1,76 @@
+<app-card-shell class="phase-card" [flush]="true">
+  <div class="phase-shell">
+    <div class="phase-header">
+      <div class="phase-info">
+        <app-status-tag
+          [value]="currentPhase?.name || 'Loading...'"
+          [severity]="getPhaseSeverity()"
+          size="md"
+        />
+        <span class="phase-week"
+          >Week {{ currentWeek }} of {{ currentPhase?.durationWeeks || 4 }}</span
+        >
+      </div>
+      <div class="phase-date">
+        {{ currentDate | date: "MMMM yyyy" }}
+      </div>
+    </div>
+
+    <div class="phase-content">
+      <p class="phase-description">
+        {{ currentPhase?.description }}
+      </p>
+
+      <div class="focus-areas">
+        <h4>Primary Focus</h4>
+        <div class="chips-container">
+          @for (focus of currentPhase?.primaryFocus || []; track focus) {
+            <p-chip [label]="formatFocus(focus)" class="focus-chip primary"></p-chip>
+          }
+        </div>
+
+        <h4>Secondary Focus</h4>
+        <div class="chips-container">
+          @for (focus of currentPhase?.secondaryFocus || []; track focus) {
+            <p-chip [label]="formatFocus(focus)" class="focus-chip secondary"></p-chip>
+          }
+        </div>
+      </div>
+
+      <div class="load-targets">
+        <h4>Weekly Load Target</h4>
+        <div class="load-bar-container">
+          <div class="load-info">
+            <span>Target: {{ loadRecommendation?.recommendedLoad || 0 }} AU</span>
+            <span
+              >Range: {{ loadRecommendation?.loadRange?.[0] || 0 }} -
+              {{ loadRecommendation?.loadRange?.[1] || 0 }} AU</span
+            >
+          </div>
+          <p-progressBar
+            [value]="getLoadProgress()"
+            [showValue]="false"
+            class="load-bar"
+          ></p-progressBar>
+        </div>
+      </div>
+
+      @if (acwrStatus) {
+        <div class="acwr-status" [class]="'acwr-' + acwrStatus.riskZone">
+          <div class="acwr-header">
+            <span class="acwr-label">ACWR</span>
+            <span class="acwr-value">{{ acwrStatus.acwr }}</span>
+            <app-status-tag
+              [value]="acwrStatus.riskZone || 'unknown'"
+              [severity]="getAcwrSeverity()"
+              size="sm"
+            />
+          </div>
+          <p class="acwr-recommendation">
+            {{ acwrStatus.recommendation }}
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</app-card-shell>

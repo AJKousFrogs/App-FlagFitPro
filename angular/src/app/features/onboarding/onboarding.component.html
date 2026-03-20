@@ -7,98 +7,59 @@
         ></app-page-header>
 
         <app-card-shell class="onboarding-card" [flush]="true">
-          <!-- Progress bar -->
-          <div class="progress-section">
-            <p-progressBar
-              [value]="getCompletionStats().percent"
-              [showValue]="false"
-              class="onboarding-progress"
-            ></p-progressBar>
-            <div class="progress-info">
-              <span class="progress-text"
-                >{{ getCompletionStats().percent }}% complete</span
-              >
-              <span class="progress-meta">
-                {{ getCompletionStats().completed }} / {{ getCompletionStats().total }}
-                required tasks done
-              </span>
-              <span class="progress-meta">Now: Step {{ getStepPosition() }} - {{ getCurrentStepLabel() }}</span>
-              @if (state.lastSaved()) {
-                <span class="auto-save-indicator" [class.saving]="state.isSaving()">
-                  @if (state.isSaving()) {
-                    <i class="pi pi-spin pi-spinner"></i> Saving...
-                  } @else {
-                    <i class="pi pi-check-circle"></i> Draft saved
-                  }
-                </span>
-              }
-            </div>
-          </div>
-
-          @if (hasPendingRequirements()) {
-            <app-alert
-              class="completion-checklist"
-              variant="warning"
-              density="compact"
-              title="Next tasks to finish"
-            >
-              <div class="checklist-body">
-                <div class="checklist-items">
-                  @for (item of getPendingRequirementLabels(); track item) {
-                    <span class="checklist-item">{{ item }}</span>
-                  }
-                  @if (getCompletionStats().remaining > 4) {
-                    <span class="checklist-item more"
-                      >+{{ getCompletionStats().remaining - 4 }} more</span
-                    >
-                  }
-                </div>
-              </div>
-            </app-alert>
+          @defer (on idle) {
+            <app-onboarding-progress-shell
+              [completionStats]="getCompletionStats()"
+              [currentStep]="state.currentStep()"
+              [stepPosition]="getStepPosition()"
+              [currentStepLabel]="getCurrentStepLabel()"
+              [lastSaved]="state.lastSaved()"
+              [isSaving]="state.isSaving()"
+              [hasPendingRequirements]="hasPendingRequirements()"
+              [pendingRequirementLabels]="getPendingRequirementLabels()"
+              [steps]="state.steps()"
+              (stepperChange)="onStepperChange($event)"
+            />
           }
-
-          <p-stepper
-            class="onboarding-stepper"
-            [value]="state.currentStep()"
-            (valueChange)="onStepperChange($event)"
-            [linear]="false"
-          >
-            <p-step-list>
-              @for (step of state.steps(); track $index) {
-                <p-step [value]="$index">
-                  <ng-template #content>
-                    <div class="step-with-icon">
-                      <i [class]="'pi ' + step.icon"></i>
-                      <span>{{ step.label }}</span>
-                    </div>
-                  </ng-template>
-                </p-step>
-              }
-            </p-step-list>
-          </p-stepper>
 
           <div class="onboarding-content">
             @if (state.currentStep() === 0) {
-              <app-onboarding-step-personal
-                [maxDate]="maxDate"
-                [minDate]="minDate"
-                [isEmailVerified]="isEmailVerified()"
-                [isResendingVerification]="isResendingVerification()"
-                (resendVerification)="resendVerificationEmail()"
-                (refreshVerification)="refreshVerificationStatus()"
-              />
+              @defer (when state.currentStep() === 0) {
+                <app-onboarding-step-personal
+                  [maxDate]="maxDate"
+                  [minDate]="minDate"
+                  [isEmailVerified]="isEmailVerified()"
+                  [isResendingVerification]="isResendingVerification()"
+                  (resendVerification)="resendVerificationEmail()"
+                  (refreshVerification)="refreshVerificationStatus()"
+                />
+              }
             } @else if (state.currentStep() === 1) {
-              <app-onboarding-step-role />
+              @defer (when state.currentStep() === 1) {
+                <app-onboarding-step-role />
+              }
             } @else if (state.currentStep() === 2 && state.isPlayer()) {
-              <app-onboarding-step-physical />
+              @defer (when state.currentStep() === 2 && state.isPlayer()) {
+                <app-onboarding-step-physical />
+              }
             } @else if (state.currentStep() === 3 && state.isPlayer()) {
-              <app-onboarding-step-health />
+              @defer (when state.currentStep() === 3 && state.isPlayer()) {
+                <app-onboarding-step-health />
+              }
             } @else if (state.currentStep() === 4 && state.isPlayer()) {
-              <app-onboarding-step-goals />
+              @defer (when state.currentStep() === 4 && state.isPlayer()) {
+                <app-onboarding-step-goals />
+              }
             } @else if (state.currentStep() === 5 && state.isPlayer()) {
-              <app-onboarding-step-schedule />
+              @defer (when state.currentStep() === 5 && state.isPlayer()) {
+                <app-onboarding-step-schedule />
+              }
             } @else if (isSummaryStep()) {
-              <app-onboarding-step-summary (consentChange)="onConsentChange($event.type, { checked: $event.checked })" />
+              @defer (when isSummaryStep()) {
+                <app-onboarding-step-summary
+                  (consentChange)="onConsentChange($event.type, { checked: $event.checked })"
+                />
+              }
             }
 
             <div class="onboarding-actions">

@@ -214,6 +214,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   );
   apiHealthLatencyMs = signal<number | null>(null);
   private apiHealthInterval: ReturnType<typeof setInterval> | null = null;
+  private apiHealthCheckDisabled = false;
 
   // Computed weather location from API response, with fallback
   weatherLocation = computed(() => {
@@ -331,10 +332,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.loadWeatherData();
     if (this.showApiStatus) {
       this.checkApiHealth();
-      this.apiHealthInterval = setInterval(
-        () => this.checkApiHealth(),
-        60000,
-      );
     }
   }
 
@@ -430,8 +427,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       } else {
         this.currentPage.set("");
       }
-    } else if (url.includes("/analytics")) {
-      this.currentSection.set("Analytics");
+    } else if (
+      url.includes("/analytics") ||
+      url.includes("/performance/insights") ||
+      url.includes("/performance/tests") ||
+      url.includes("/performance/load")
+    ) {
+      this.currentSection.set("Performance");
       this.currentPage.set("");
     } else if (url.includes("/roster")) {
       this.currentSection.set("Roster");
@@ -643,6 +645,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   private checkApiHealth(): void {
+    if (this.apiHealthCheckDisabled) {
+      return;
+    }
+
     const start = performance.now();
     this.api
       .head("/api/health", {
@@ -658,6 +664,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         error: () => {
           this.apiHealthLatencyMs.set(null);
           this.apiHealthStatus.set("down");
+          this.apiHealthCheckDisabled = true;
+          if (this.apiHealthInterval) {
+            clearInterval(this.apiHealthInterval);
+            this.apiHealthInterval = null;
+          }
         },
       });
   }

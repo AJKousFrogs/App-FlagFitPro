@@ -25,11 +25,16 @@ export interface LoadCap {
 export class AcwrSpikeDetectionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
+  private loadCapsUnavailable = false;
 
   /**
    * Check for ACWR spike and create load cap if needed
    */
   async checkAndCapLoad(playerId: string, acwrValue: number): Promise<boolean> {
+    if (this.loadCapsUnavailable) {
+      return false;
+    }
+
     if (acwrValue <= 1.5) {
       return false;
     }
@@ -79,6 +84,7 @@ export class AcwrSpikeDetectionService {
 
       if (error) {
         if (isBenignSupabaseQueryError(error)) {
+          this.loadCapsUnavailable = true;
           this.logger.warn("[AcwrSpike] Skipping load cap creation:", error);
           return;
         }
@@ -86,7 +92,9 @@ export class AcwrSpikeDetectionService {
         throw error;
       }
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.loadCapsUnavailable = true;
+      } else {
         this.logger.error("[AcwrSpike] Error creating load cap:", error);
       }
       throw error;
@@ -97,6 +105,10 @@ export class AcwrSpikeDetectionService {
    * Check if player has active load cap
    */
   async getActiveLoadCap(playerId: string): Promise<LoadCap | null> {
+    if (this.loadCapsUnavailable) {
+      return null;
+    }
+
     try {
       const { data, error } = await this.supabaseService.client
         .from("load_caps")
@@ -107,7 +119,11 @@ export class AcwrSpikeDetectionService {
         .limit(1)
         .maybeSingle();
 
-      if (error && !isBenignSupabaseQueryError(error)) {
+      if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this.loadCapsUnavailable = true;
+          return null;
+        }
         this.logger.error("[AcwrSpike] Error fetching load cap:", error);
         return null;
       }
@@ -126,7 +142,9 @@ export class AcwrSpikeDetectionService {
         createdAt: new Date(data.created_at),
       };
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.loadCapsUnavailable = true;
+      } else {
         this.logger.error("[AcwrSpike] Error fetching load cap:", error);
       }
       return null;
@@ -137,6 +155,10 @@ export class AcwrSpikeDetectionService {
    * Decrement sessions remaining when session logged
    */
   async decrementLoadCap(playerId: string): Promise<void> {
+    if (this.loadCapsUnavailable) {
+      return;
+    }
+
     const cap = await this.getActiveLoadCap(playerId);
     if (!cap || !cap.id) {
       return;
@@ -155,8 +177,12 @@ export class AcwrSpikeDetectionService {
           })
           .eq("id", cap.id);
 
-        if (error && !isBenignSupabaseQueryError(error)) {
-          this.logger.error("[AcwrSpike] Error deactivating load cap:", error);
+        if (error) {
+          if (isBenignSupabaseQueryError(error)) {
+            this.loadCapsUnavailable = true;
+          } else {
+            this.logger.error("[AcwrSpike] Error deactivating load cap:", error);
+          }
         } else {
           this.logger.info(
             `[AcwrSpike] Load cap completed for player ${playerId}`,
@@ -172,12 +198,18 @@ export class AcwrSpikeDetectionService {
           })
           .eq("id", cap.id);
 
-        if (error && !isBenignSupabaseQueryError(error)) {
-          this.logger.error("[AcwrSpike] Error updating load cap:", error);
+        if (error) {
+          if (isBenignSupabaseQueryError(error)) {
+            this.loadCapsUnavailable = true;
+          } else {
+            this.logger.error("[AcwrSpike] Error updating load cap:", error);
+          }
         }
       }
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.loadCapsUnavailable = true;
+      } else {
         this.logger.error("[AcwrSpike] Error updating load cap:", error);
       }
     }
@@ -191,6 +223,10 @@ export class AcwrSpikeDetectionService {
     reason: string,
     coachId: string,
   ): Promise<void> {
+    if (this.loadCapsUnavailable) {
+      return;
+    }
+
     const cap = await this.getActiveLoadCap(playerId);
     if (!cap || !cap.id) {
       return;
@@ -208,15 +244,21 @@ export class AcwrSpikeDetectionService {
         })
         .eq("id", cap.id);
 
-      if (error && !isBenignSupabaseQueryError(error)) {
-        this.logger.error("[AcwrSpike] Error overriding load cap:", error);
+      if (error) {
+        if (isBenignSupabaseQueryError(error)) {
+          this.loadCapsUnavailable = true;
+        } else {
+          this.logger.error("[AcwrSpike] Error overriding load cap:", error);
+        }
       } else {
         this.logger.info(
           `[AcwrSpike] Load cap overridden for player ${playerId} by coach ${coachId}`,
         );
       }
     } catch (error) {
-      if (!isBenignSupabaseQueryError(error)) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.loadCapsUnavailable = true;
+      } else {
         this.logger.error("[AcwrSpike] Error overriding load cap:", error);
       }
     }

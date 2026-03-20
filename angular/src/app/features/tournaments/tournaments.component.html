@@ -96,606 +96,83 @@
         }
       </div>
 
-      <!-- Create/Edit Tournament Dialog -->
-      <app-dialog
-        [(visible)]="showDialog"
-        [modal]="true"
-        [draggable]="false"
-        [resizable]="false"
-        [blockScroll]="true"
-        [styleClass]="'tournament-dialog'"
-        [ariaLabel]="getDialogTitle()"
-      >
-        <app-dialog-header
-          icon="trophy"
-          [title]="getDialogTitle()"
-          (close)="closeDialog()"
-        />
-        <form [formGroup]="tournamentForm" class="tournament-form form-controls-full">
-          <!-- Visibility Info Banner -->
-          @if (isPlayer() && !editingTournament) {
-            <div class="visibility-info-banner">
-              <app-alert
-                variant="warning"
-                icon="pi pi-user"
-                title="Personal Game Day"
-                message="This will only be visible to you and your coaches. It won't affect other players' schedules or workload calculations."
-                density="compact"
-              />
-            </div>
-          }
-          @if (isCoachOrAdmin() && !editingTournament) {
-            <div class="visibility-info-banner">
-              <app-alert
-                variant="info"
-                icon="pi pi-users"
-                title="Team Tournament"
-                message="This will be visible to all team members and will affect everyone's training schedule and workload calculations."
-                density="compact"
-              />
-            </div>
-          }
-          @if (editingTournament && isPersonalTournament(editingTournament)) {
-            <div class="visibility-info-banner">
-              <app-alert
-                variant="warning"
-                icon="pi pi-user"
-                title="Personal Game Day"
-                message="Only visible to the player who created it and coaches."
-                density="compact"
-              />
-            </div>
-          }
-
-          <!-- Section: Basic Info -->
-          <div class="form-section">
-            <div class="section-header">
-              <i class="pi pi-trophy"></i>
-              <span>Basic Information</span>
-            </div>
-            <div class="form-row">
-              <div class="form-field full-width">
-                <label for="tournament-name">
-                  <i class="pi pi-tag"></i>
-                  {{ isPlayer() ? "Game Day Name" : "Tournament Name" }}
-                  <span class="required">*</span>
-                </label>
-                <input
-                  pInputText
-                  id="tournament-name"
-                  name="tournamentName"
-                  formControlName="name"
-                  placeholder="e.g., Adria Bowl 2026"
-                  class="w-full"
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-shortName">
-                  <i class="pi pi-bookmark"></i>
-                  Short Name
-                </label>
-                <input
-                  pInputText
-                  id="tournament-shortName"
-                  name="shortName"
-                  formControlName="short_name"
-                  placeholder="e.g., Adria Bowl"
-                  autocomplete="off"
-                />
-              </div>
-              <div class="form-field">
-                <label for="tournament-teams">
-                  <i class="pi pi-users"></i>
-                  Expected Teams
-                </label>
-                <p-inputNumber
-                  inputId="tournament-teams"
-                  formControlName="expected_teams"
-                  [min]="2"
-                  [max]="100"
-                  placeholder="Number of teams"
-                  class="w-full"
-                ></p-inputNumber>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: Location -->
-          <div class="form-section">
-            <div class="section-header">
-              <i class="pi pi-map-marker"></i>
-              <span>Location</span>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-country">
-                  <i class="pi pi-globe"></i>
-                  Country
-                </label>
-                <input
-                  pInputText
-                  id="tournament-country"
-                  name="country"
-                  formControlName="country"
-                  placeholder="e.g., Croatia"
-                  autocomplete="country-name"
-                />
-              </div>
-              <div class="form-field">
-                <label for="tournament-location">
-                  <i class="pi pi-building"></i>
-                  City
-                </label>
-                <input
-                  pInputText
-                  id="tournament-location"
-                  name="location"
-                  formControlName="location"
-                  placeholder="e.g., Zagreb"
-                  autocomplete="address-level2"
-                />
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-field full-width">
-                <label for="tournament-venue">
-                  <i class="pi pi-home"></i>
-                  Venue / Stadium
-                </label>
-                <input
-                  pInputText
-                  id="tournament-venue"
-                  name="venue"
-                  formControlName="venue"
-                  placeholder="e.g., Stadium Name or Sports Complex"
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: Dates -->
-          <div class="form-section">
-            <div class="section-header">
-              <i class="pi pi-calendar"></i>
-              <span>Dates</span>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-startDate">
-                  <i class="pi pi-calendar-plus"></i>
-                  Start Date <span class="required">*</span>
-                </label>
-                <p-datepicker
-                  inputId="tournament-startDate"
-                  formControlName="start_date_obj"
-                  [showIcon]="true"
-                  [iconDisplay]="'input'"
-                  dateFormat="dd M yy"
-                  placeholder="Select start date"
-                  class="w-full"
-                  appendTo="body"
-                ></p-datepicker>
-              </div>
-              <div class="form-field">
-                <label for="tournament-endDate">
-                  <i class="pi pi-calendar-minus"></i>
-                  End Date
-                </label>
-                <p-datepicker
-                  inputId="tournament-endDate"
-                  formControlName="end_date_obj"
-                  [showIcon]="true"
-                  [iconDisplay]="'input'"
-                  dateFormat="dd M yy"
-                  placeholder="Select end date"
-                  class="w-full"
-                  appendTo="body"
-                ></p-datepicker>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-field full-width">
-                <label for="tournament-deadline">
-                  <i class="pi pi-clock"></i>
-                  Registration Deadline
-                </label>
-                <p-datepicker
-                  inputId="tournament-deadline"
-                  formControlName="registration_deadline_obj"
-                  [showIcon]="true"
-                  [iconDisplay]="'input'"
-                  dateFormat="dd M yy"
-                  placeholder="Select registration deadline"
-                  class="w-full"
-                  appendTo="body"
-                ></p-datepicker>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: Classification -->
-          <div class="form-section">
-            <div class="section-header">
-              <i class="pi pi-sliders-h"></i>
-              <span>Classification</span>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-type">
-                  <i class="pi pi-flag"></i>
-                  Tournament Type
-                </label>
-                <p-select
-                  inputId="tournament-type"
-                  formControlName="tournament_type"
-                  [options]="tournamentTypes"
-                  optionLabel="label"
-                  optionValue="value"
-                  placeholder="Select type"
-                  class="w-full"
-                  appendTo="body"
-                ></p-select>
-              </div>
-              <div class="form-field">
-                <label for="tournament-level">
-                  <i class="pi pi-star"></i>
-                  Competition Level
-                </label>
-                <p-select
-                  inputId="tournament-level"
-                  formControlName="competition_level"
-                  [options]="competitionLevels"
-                  optionLabel="label"
-                  optionValue="value"
-                  placeholder="Select level"
-                  class="w-full"
-                  appendTo="body"
-                ></p-select>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-field full-width checkbox-field">
-                <p-checkbox
-                  formControlName="is_home_tournament"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="homeTournament"
-                ></p-checkbox>
-                <label for="homeTournament" class="checkbox-label">
-                  <i class="pi pi-home"></i>
-                  This is a home tournament (we are hosting)
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: Links & Social -->
-          <div class="form-section">
-            <div class="section-header">
-              <i class="pi pi-link"></i>
-              <span>Links & Social Media</span>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-website">
-                  <i class="pi pi-globe"></i>
-                  Official Website
-                </label>
-                <input
-                  pInputText
-                  id="tournament-website"
-                  name="website"
-                  formControlName="website_url"
-                  placeholder="https://tournament-website.com"
-                  autocomplete="url"
-                />
-              </div>
-              <div class="form-field">
-                <label for="tournament-instagram">
-                  <i class="pi pi-instagram"></i>
-                  Instagram
-                </label>
-                <input
-                  pInputText
-                  id="tournament-instagram"
-                  name="instagram"
-                  formControlName="instagram_url"
-                  placeholder="https://instagram.com/tournament"
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-facebook">
-                  <i class="pi pi-facebook"></i>
-                  Facebook
-                </label>
-                <input
-                  pInputText
-                  id="tournament-facebook"
-                  name="facebook"
-                  formControlName="facebook_url"
-                  placeholder="https://facebook.com/event/..."
-                  autocomplete="off"
-                />
-              </div>
-              <div class="form-field">
-                <label for="tournament-registration">
-                  <i class="pi pi-file-edit"></i>
-                  Registration Link
-                </label>
-                <input
-                  pInputText
-                  id="tournament-registration"
-                  name="registration"
-                  formControlName="registration_url"
-                  placeholder="https://registration-form.com"
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: Venue & Accommodation -->
-          <div class="form-section">
-            <div class="section-header">
-              <i class="pi pi-map"></i>
-              <span>Venue & Accommodation</span>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-venue-map">
-                  <i class="pi pi-map-marker"></i>
-                  Venue Location (Google Maps)
-                </label>
-                <input
-                  pInputText
-                  id="tournament-venue-map"
-                  name="venueMap"
-                  formControlName="venue_maps_url"
-                  placeholder="https://maps.google.com/..."
-                  autocomplete="off"
-                />
-              </div>
-              <div class="form-field">
-                <label for="tournament-hotel-map">
-                  <i class="pi pi-building"></i>
-                  Hotel Location (Google Maps)
-                </label>
-                <input
-                  pInputText
-                  id="tournament-hotel-map"
-                  name="hotelMap"
-                  formControlName="hotel_maps_url"
-                  placeholder="https://maps.google.com/..."
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-hotel-name">
-                  <i class="pi pi-home"></i>
-                  Recommended Hotel
-                </label>
-                <input
-                  pInputText
-                  id="tournament-hotel-name"
-                  name="hotelName"
-                  formControlName="hotel_name"
-                  placeholder="e.g., Hotel Ambassador"
-                  autocomplete="off"
-                />
-              </div>
-              <div class="form-field">
-                <label for="tournament-hotel-booking">
-                  <i class="pi pi-external-link"></i>
-                  Hotel Booking Link
-                </label>
-                <input
-                  pInputText
-                  id="tournament-hotel-booking"
-                  name="hotelBooking"
-                  formControlName="hotel_booking_url"
-                  placeholder="https://booking.com/..."
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: Contact & Notes -->
-          <div class="form-section">
-            <div class="section-header">
-              <i class="pi pi-info-circle"></i>
-              <span>Contact & Notes</span>
-            </div>
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="tournament-contact-name">
-                  <i class="pi pi-user"></i>
-                  Contact Person
-                </label>
-                <input
-                  pInputText
-                  id="tournament-contact-name"
-                  name="contactName"
-                  formControlName="contact_name"
-                  placeholder="e.g., John Smith"
-                  autocomplete="off"
-                />
-              </div>
-              <div class="form-field">
-                <label for="tournament-contact-email">
-                  <i class="pi pi-envelope"></i>
-                  Contact Email
-                </label>
-                <input
-                  pInputText
-                  id="tournament-contact-email"
-                  name="contactEmail"
-                  formControlName="contact_email"
-                  placeholder="contact@tournament.com"
-                  autocomplete="email"
-                />
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-field full-width">
-                <label for="tournament-notes">
-                  <i class="pi pi-pencil"></i>
-                  Notes & Additional Information
-                </label>
-                <textarea
-                  pTextarea
-                  id="tournament-notes"
-                  name="notes"
-                  formControlName="notes"
-                  rows="3"
-                  placeholder="Travel tips, dress code, parking info, special requirements..."
-                  class="w-full"
-                  autocomplete="off"
-                ></textarea>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <app-dialog-footer
-          dialogFooter
-          cancelLabel="Cancel"
-          primaryLabel="Save"
-          primaryIcon="check"
+      @defer (when showDialog) {
+        <app-tournament-form-dialog
+          [visible]="showDialog"
+          [dialogTitle]="getDialogTitle()"
+          [form]="tournamentForm"
           [loading]="tournamentService.loading()"
-          (primary)="saveTournament()"
-          (cancel)="closeDialog()"
+          [isPlayer]="isPlayer()"
+          [isCoachOrAdmin]="isCoachOrAdmin()"
+          [editingTournament]="editingTournament"
+          [isPersonalTournament]="!!(editingTournament && isPersonalTournament(editingTournament))"
+          [tournamentTypes]="tournamentTypes"
+          [competitionLevels]="competitionLevels"
+          (visibleChange)="showDialog = $event"
+          (save)="saveTournament()"
         />
-      </app-dialog>
+      }
 
-      <!-- Player Availability Dialog -->
-      <app-dialog
-        [(visible)]="showAvailabilityDialog"
-        [modal]="true"
-        [draggable]="false"
-        [blockScroll]="true"
-        [styleClass]="'tournament-availability-dialog'"
-        ariaLabel="My Tournament Availability"
-      >
-        <app-dialog-header
-          icon="calendar"
-          title="My Tournament Availability"
-          (close)="showAvailabilityDialog = false"
+      @defer (when showAvailabilityDialog) {
+        <app-tournament-availability-dialog
+          [visible]="showAvailabilityDialog"
+          (visibleChange)="showAvailabilityDialog = $event"
+          [tournament]="selectedTournament"
+          [dateRangeLabel]="
+            selectedTournament
+              ? tournamentService.formatDateRange(
+                  selectedTournament.start_date,
+                  selectedTournament.end_date
+                )
+              : ''
+          "
+          [availabilityForm]="availabilityFormGroup"
+          [availabilityOptions]="availabilityOptions"
+          [currentStatus]="currentAvailabilityStatus()"
+          [tournamentCost]="tournamentCost()"
+          [saving]="savingAvailability()"
+          (setStatus)="setAvailabilityStatus($event)"
+          (save)="saveAvailability()"
         />
-        @if (selectedTournament) {
-          <app-tournament-availability-dialog-content
-            [tournament]="selectedTournament"
-            [dateRangeLabel]="
-              tournamentService.formatDateRange(
-                selectedTournament.start_date,
-                selectedTournament.end_date
-              )
-            "
-            [availabilityForm]="availabilityFormGroup"
-            [availabilityOptions]="availabilityOptions"
-            [currentStatus]="currentAvailabilityStatus()"
-            [tournamentCost]="tournamentCost()"
-            (setStatus)="setAvailabilityStatus($event)"
-          />
-        }
+      }
 
-        <app-dialog-footer
-          dialogFooter
-          cancelLabel="Cancel"
-          primaryLabel="Save"
-          primaryIcon="check"
-          [loading]="savingAvailability()"
-          (primary)="saveAvailability()"
-          (cancel)="showAvailabilityDialog = false"
+      @defer (when showTeamAvailabilityDialog) {
+        <app-tournament-team-availability-dialog
+          [visible]="showTeamAvailabilityDialog"
+          (visibleChange)="showTeamAvailabilityDialog = $event"
+          [tournament]="selectedTournament"
+          [dateRangeLabel]="
+            selectedTournament
+              ? tournamentService.formatDateRange(
+                  selectedTournament.start_date,
+                  selectedTournament.end_date
+                )
+              : ''
+          "
+          [summary]="teamAvailabilitySummary()"
+          [budget]="tournamentBudget()"
+          [players]="teamAvailability()"
+          (openBudget)="openBudgetDialog()"
+          (sendReminders)="sendAvailabilityReminders()"
+          (exportReport)="exportAvailabilityReport()"
         />
-      </app-dialog>
+      }
 
-      <!-- Team Availability Overview Dialog (for coaches) -->
-      <app-dialog
-        [(visible)]="showTeamAvailabilityDialog"
-        [modal]="true"
-        [draggable]="false"
-        [blockScroll]="true"
-        [styleClass]="'tournament-team-availability-dialog'"
-        ariaLabel="Team Availability"
-      >
-        <app-dialog-header
-          icon="users"
-          title="Team Availability"
-          (close)="showTeamAvailabilityDialog = false"
+      @defer (when showBudgetDialog) {
+        <app-tournament-budget-dialog
+          [visible]="showBudgetDialog"
+          (visibleChange)="showBudgetDialog = $event"
+          [budgetForm]="budgetFormGroup"
+          [totalEstimatedCost]="calculateTotalBudget()"
+          [totalFunding]="
+            budgetFormGroup.controls.teamContribution.value +
+            budgetFormGroup.controls.sponsorContribution.value
+          "
+          [playerShare]="calculatePlayerShare()"
+          [confirmedPlayers]="teamAvailabilitySummary().confirmed"
+          [saving]="savingBudget()"
+          (save)="saveBudget()"
         />
-        @if (selectedTournament) {
-          <app-tournament-team-availability-dialog-content
-            [tournament]="selectedTournament"
-            [dateRangeLabel]="
-              tournamentService.formatDateRange(
-                selectedTournament.start_date,
-                selectedTournament.end_date
-              )
-            "
-            [summary]="teamAvailabilitySummary()"
-            [budget]="tournamentBudget()"
-            [players]="teamAvailability()"
-            (openBudget)="openBudgetDialog()"
-            (sendReminders)="sendAvailabilityReminders()"
-            (exportReport)="exportAvailabilityReport()"
-          />
-        }
-
-        <app-dialog-footer
-          dialogFooter
-          [showCancel]="false"
-          primaryLabel="Close"
-          primaryVariant="text"
-          (primary)="showTeamAvailabilityDialog = false"
-        />
-      </app-dialog>
-
-      <!-- Budget Management Dialog -->
-      <app-dialog
-        [(visible)]="showBudgetDialog"
-        [modal]="true"
-        [draggable]="false"
-        [blockScroll]="true"
-        [styleClass]="'tournament-budget-dialog'"
-        ariaLabel="Tournament Budget"
-      >
-        <app-dialog-header
-          icon="wallet"
-          title="Tournament Budget"
-          (close)="showBudgetDialog = false"
-        />
-        @if (selectedTournament) {
-          <app-tournament-budget-dialog-content
-            [budgetForm]="budgetFormGroup"
-            [totalEstimatedCost]="calculateTotalBudget()"
-            [totalFunding]="
-              budgetFormGroup.controls.teamContribution.value +
-              budgetFormGroup.controls.sponsorContribution.value
-            "
-            [playerShare]="calculatePlayerShare()"
-            [confirmedPlayers]="teamAvailabilitySummary().confirmed"
-          />
-        }
-
-        <app-dialog-footer
-          dialogFooter
-          cancelLabel="Cancel"
-          primaryLabel="Save Budget"
-          primaryIcon="check"
-          [loading]="savingBudget()"
-          (primary)="saveBudget()"
-          (cancel)="showBudgetDialog = false"
-        />
-      </app-dialog>
+      }
     </app-main-layout>
   

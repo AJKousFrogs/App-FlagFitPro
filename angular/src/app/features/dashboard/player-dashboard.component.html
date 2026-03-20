@@ -114,94 +114,106 @@
             (navigateToAcwr)="navigateToACWR()"
           />
 
-          <app-player-dashboard-insights-grid
-            [weekDays]="weekDays()"
-            [weeklyProgress]="weeklyProgress()"
-            [quickActions]="quickActions"
-            [performanceChartData]="performanceChartData()"
-            [chartOptions]="chartOptions"
-          />
+          @defer (on viewport) {
+            <app-player-dashboard-insights-grid
+              [weekDays]="weekDays()"
+              [weeklyProgress]="weeklyProgress()"
+              [quickActions]="quickActions"
+              [performanceChartData]="performanceChartData()"
+              [chartOptions]="chartOptions"
+            />
+          } @placeholder {
+            <div class="player-dashboard-insights-placeholder"></div>
+          }
 
           <!-- SECTION 5: Today's Schedule Preview (using p-timeline) -->
-          <app-card-shell
-            class="schedule-card"
-            title="Today's Schedule"
-            headerIcon="pi-clock"
-          >
-              @if (todaySchedule().length > 0) {
-                <p-timeline
-                  [value]="
-                    todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)
-                  "
-                  class="schedule-timeline"
-                >
-                  <ng-template #marker let-item>
-                    <span
-                      class="timeline-marker"
-                      [class.completed]="item.completed"
-                      [attr.aria-hidden]="true"
-                    >
-                      @if (item.completed) {
-                        <i class="pi pi-check"></i>
-                      } @else {
-                        <i class="pi pi-circle"></i>
-                      }
-                    </span>
-                  </ng-template>
-                  <ng-template #content let-item>
-                    <div
-                      class="schedule-item"
-                      [class.completed]="item.completed"
-                    >
-                      <div class="item-time">{{ item.time }}</div>
-                      <div class="item-info">
-                        <span class="item-title">{{ item.title }}</span>
-                        <span class="item-duration"
-                          >{{ item.duration }} min</span
-                        >
+          @defer (on viewport) {
+            <app-card-shell
+              class="schedule-card"
+              title="Today's Schedule"
+              headerIcon="pi-clock"
+            >
+                @if (todaySchedule().length > 0) {
+                  <p-timeline
+                    [value]="
+                      todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)
+                    "
+                    class="schedule-timeline"
+                  >
+                    <ng-template #marker let-item>
+                      <span
+                        class="timeline-marker"
+                        [class.completed]="item.completed"
+                        [attr.aria-hidden]="true"
+                      >
+                        @if (item.completed) {
+                          <i class="pi pi-check"></i>
+                        } @else {
+                          <i class="pi pi-circle"></i>
+                        }
+                      </span>
+                    </ng-template>
+                    <ng-template #content let-item>
+                      <div
+                        class="schedule-item"
+                        [class.completed]="item.completed"
+                      >
+                        <div class="item-time">{{ item.time }}</div>
+                        <div class="item-info">
+                          <span class="item-title">{{ item.title }}</span>
+                          <span class="item-duration"
+                            >{{ item.duration }} min</span
+                          >
+                        </div>
                       </div>
-                    </div>
-                  </ng-template>
-                </p-timeline>
-                @if (todaySchedule().length > 3) {
-                  <p class="more-items">
-                    +{{ todaySchedule().length - 3 }} more items
-                  </p>
+                    </ng-template>
+                  </p-timeline>
+                  @if (todaySchedule().length > 3) {
+                    <p class="more-items">
+                      +{{ todaySchedule().length - 3 }} more items
+                    </p>
+                  }
+                  <div class="card-footer-action">
+                    <app-button
+                      variant="text"
+                      iconRight="pi-arrow-right"
+                      routerLink="/todays-practice"
+                      >View Full Day</app-button
+                    >
+                  </div>
+                } @else {
+                  <div class="empty-schedule">
+                    <app-alert
+                      variant="info"
+                      density="compact"
+                      styleClass="status-message"
+                    >
+                      <div class="empty-content">
+                        <i class="pi pi-calendar empty-icon"></i>
+                        <span>No training scheduled for today</span>
+                      </div>
+                    </app-alert>
+                    <app-button variant="text" routerLink="/training"
+                      >View Full Schedule</app-button
+                    >
+                  </div>
                 }
-                <div class="card-footer-action">
-                  <app-button
-                    variant="text"
-                    iconRight="pi-arrow-right"
-                    routerLink="/todays-practice"
-                    >View Full Day</app-button
-                  >
-                </div>
-              } @else {
-                <div class="empty-schedule">
-                  <app-alert
-                    variant="info"
-                    density="compact"
-                    styleClass="status-message"
-                  >
-                    <div class="empty-content">
-                      <i class="pi pi-calendar empty-icon"></i>
-                      <span>No training scheduled for today</span>
-                    </div>
-                  </app-alert>
-                  <app-button variant="text" routerLink="/training"
-                    >View Full Schedule</app-button
-                  >
-                </div>
-              }
-          </app-card-shell>
+            </app-card-shell>
+          } @placeholder {
+            <div class="player-dashboard-schedule-placeholder"></div>
+          }
 
-          <app-player-dashboard-events-section
-            [continuityEvents]="continuityDisplayEvents()"
-            [tomorrowSchedule]="tomorrowSchedule()"
-            [upcomingEvents]="upcomingDisplayEvents()"
-            [schedulePreviewCount]="UI_LIMITS.SCHEDULE_PREVIEW_COUNT"
-            [eventsPreviewCount]="UI_LIMITS.EVENTS_PREVIEW_COUNT"
-          />
+          @defer (on viewport) {
+            <app-player-dashboard-events-section
+              [continuityEvents]="continuityDisplayEvents()"
+              [tomorrowSchedule]="tomorrowSchedule()"
+              [upcomingEvents]="upcomingDisplayEvents()"
+              [schedulePreviewCount]="UI_LIMITS.SCHEDULE_PREVIEW_COUNT"
+              [eventsPreviewCount]="UI_LIMITS.EVENTS_PREVIEW_COUNT"
+            />
+          } @placeholder {
+            <div class="player-dashboard-events-placeholder"></div>
+          }
         </div>
       }
     </app-main-layout>

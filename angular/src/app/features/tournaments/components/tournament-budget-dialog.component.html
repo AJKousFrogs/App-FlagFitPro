@@ -1,0 +1,32 @@
+<app-dialog
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [blockScroll]="true"
+  [styleClass]="'tournament-budget-dialog'"
+  ariaLabel="Tournament Budget"
+>
+  <app-dialog-header
+    icon="wallet"
+    title="Tournament Budget"
+    (close)="visibleChange.emit(false)"
+  />
+  <app-tournament-budget-dialog-content
+    [budgetForm]="budgetForm()"
+    [totalEstimatedCost]="totalEstimatedCost()"
+    [totalFunding]="totalFunding()"
+    [playerShare]="playerShare()"
+    [confirmedPlayers]="confirmedPlayers()"
+  />
+
+  <app-dialog-footer
+    dialogFooter
+    cancelLabel="Cancel"
+    primaryLabel="Save Budget"
+    primaryIcon="check"
+    [loading]="saving()"
+    (primary)="save.emit()"
+    (cancel)="visibleChange.emit(false)"
+  />
+</app-dialog>

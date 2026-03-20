@@ -8,6 +8,7 @@ import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { AuthService } from "./auth.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface CoachOverride {
   id?: string;
@@ -33,6 +34,8 @@ export class OverrideLoggingService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private readonly authService = inject(AuthService);
+  private usersTableUnavailable = false;
+  private notificationsUnavailable = false;
 
   /**
    * Log coach override of AI recommendation
@@ -86,13 +89,25 @@ export class OverrideLoggingService {
   ): Promise<void> {
     try {
       // Get coach name for notification (use 'users' table - profiles doesn't exist)
-      const { data: coachData } = await this.supabaseService.client
-        .from("users")
-        .select("full_name")
-        .eq("id", override.coachId)
-        .single();
+      let coachName = "Your coach";
+      if (!this.usersTableUnavailable) {
+        const { data: coachData, error: coachError } =
+          await this.supabaseService.client
+            .from("users")
+            .select("full_name")
+            .eq("id", override.coachId)
+            .single();
 
-      const coachName = coachData?.full_name || "Your coach";
+        if (coachError) {
+          if (isBenignSupabaseQueryError(coachError)) {
+            this.usersTableUnavailable = true;
+          } else {
+            throw coachError;
+          }
+        } else {
+          coachName = coachData?.full_name || coachName;
+        }
+      }
 
       // Determine what changed based on override type
       let changeDescription = "";
@@ -112,23 +127,42 @@ export class OverrideLoggingService {
       const notificationMessage = `${coachName} adjusted your training plan. ${changeDescription}`;
 
       // Note: notifications table uses 'data' not 'metadata', 'is_read' not 'read'
-      await this.supabaseService.client.from("notifications").insert({
-        user_id: override.playerId,
-        notification_type: "coach_override",
-        title: "Training Plan Adjusted",
-        message: notificationMessage,
-        priority: "high",
-        is_read: false,
-        data: {
-          overrideId,
-          overrideType: override.overrideType,
-          coachId: override.coachId,
-          coachName,
-          reason: override.reason,
-          context: override.context,
-        },
-        created_at: new Date().toISOString(),
-      });
+      if (this.notificationsUnavailable) {
+        return;
+      }
+
+      const { error: notificationError } = await this.supabaseService.client
+        .from("notifications")
+        .insert({
+          user_id: override.playerId,
+          notification_type: "coach_override",
+          title: "Training Plan Adjusted",
+          message: notificationMessage,
+          priority: "high",
+          is_read: false,
+          data: {
+            overrideId,
+            overrideType: override.overrideType,
+            coachId: override.coachId,
+            coachName,
+            reason: override.reason,
+            context: override.context,
+          },
+          created_at: new Date().toISOString(),
+        });
+
+      if (notificationError) {
+        const status = Number((notificationError as { status?: number }).status);
+        if (
+          isBenignSupabaseQueryError(notificationError) ||
+          notificationError.code === "23505" ||
+          status === 409
+        ) {
+          this.notificationsUnavailable = true;
+          return;
+        }
+        throw notificationError;
+      }
 
       this.logger.info(
         `[OverrideLogging] Created notification for player ${override.playerId} about override ${overrideId}`,

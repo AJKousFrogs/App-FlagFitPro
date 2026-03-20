@@ -1,8 +1,8 @@
 {
   "name": "flagfit-pro-angular",
   "type": "module",
-  "version": "1.6.0",
-  "description": "FlagFit Pro - Primary application built with Angular 21 + PrimeNG 21",
+  "version": "2.1.0",
+  "description": "FlagFit Pro v2.1 - primary Angular application for athlete, coach, and team workflows",
   "packageManager": "npm@11.4.2",
   "engines": {
     "node": ">=22.0.0"

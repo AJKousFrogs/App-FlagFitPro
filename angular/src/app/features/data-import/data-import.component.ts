@@ -23,14 +23,13 @@ import { ToastService } from "../../core/services/toast.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { DataImportPreviewStepComponent } from "./components/data-import-preview-step.component";
+import { DataImportResultStepComponent } from "./components/data-import-result-step.component";
+import { DataImportWearablesFlowComponent } from "./components/data-import-wearables-flow.component";
 
 import { FileUpload } from "primeng/fileupload";
 import { InputText } from "primeng/inputtext";
-
-import { Select } from "primeng/select";
 import { Stepper, StepList, Step } from "primeng/stepper";
-import { TableModule } from "primeng/table";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -190,16 +189,16 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     CardShellComponent,
     FileUpload,
     InputText,
-    Select,
     Stepper,
     StepList,
     Step,
-    TableModule,
 
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    StatusTagComponent,
+    DataImportPreviewStepComponent,
+    DataImportResultStepComponent,
+    DataImportWearablesFlowComponent,
   ],
   template: `
     <app-main-layout>
@@ -318,305 +317,43 @@ const WEARABLE_DEVICES: WearableDevice[] = [
 
             <!-- Step 2: Preview & Map -->
             @if (currentStep() === 1 && importPreview()) {
-              <app-card-shell class="step-card">
-                <h3>Step 2: Preview & Map Fields</h3>
-
-                <!-- File Summary -->
-                <div class="file-summary">
-                  <div class="summary-header">
-                    <i class="pi pi-file summary-header__icon"></i>
-                    <span>{{ importPreview()!.fileName }}</span>
-                    <span class="file-size">{{
-                      importPreview()!.fileSize
-                    }}</span>
-                    <app-status-tag
-                      value="Validated"
-                      severity="success"
-                      size="sm"
-                    />
-                  </div>
-                  <div class="summary-stats">
-                    @for (stat of getPreviewStats(); track stat.label) {
-                      <div class="stat-item stat-block stat-block--compact">
-                        <div class="stat-block__content">
-                          <span class="stat-block__value">{{
-                            stat.value
-                          }}</span>
-                          <span class="stat-block__label">{{
-                            stat.label
-                          }}</span>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-
-                <!-- Field Mappings -->
-                <div class="field-mappings">
-                  <h4>Field Mapping</h4>
-                  <p-table
-                    [value]="importPreview()!.fieldMappings"
-                    [virtualScroll]="importPreview()!.fieldMappings.length > 50"
-                    [virtualScrollItemSize]="46"
-                    dataKey="fileField"
-                    class="p-datatable-sm"
-                  >
-                    <ng-template #header>
-                      <tr>
-                        <th>File Field</th>
-                        <th>Maps To</th>
-                        <th>Status</th>
-                      </tr>
-                    </ng-template>
-                    <ng-template #body let-mapping>
-                      <tr>
-                        <td>
-                          <code>{{ mapping.fileField }}</code>
-                        </td>
-                        <td>
-                          @if (mapping.status === "unmapped") {
-                            <p-select
-                              [options]="availableMappings"
-                              (onChange)="onMappingChange(mapping, $event.value)"
-                              optionLabel="label"
-                              optionValue="value"
-                              placeholder="Select mapping"
-                              class="mapping-select"
-                            ></p-select>
-                          } @else {
-                            {{ mapping.mapsTo }}
-                          }
-                        </td>
-                        <td>
-                          <app-status-tag
-                            [value]="getMappingStatusLabel(mapping.status)"
-                            [severity]="
-                              getMappingStatusSeverity(mapping.status)
-                            "
-                            size="sm"
-                          />
-                        </td>
-                      </tr>
-                    </ng-template>
-                  </p-table>
-                </div>
-
-                <!-- Preview Data -->
-                @if (importPreview()!.previewData.length > 0) {
-                  <div class="data-preview">
-                    <h4>Preview (First 3 Records)</h4>
-                    <div class="preview-items">
-                      @for (
-                        item of importPreview()!.previewData.slice(0, 3);
-                        track $index
-                      ) {
-                        <div class="preview-item">
-                          <pre>{{ item | json }}</pre>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
-
-                <div class="step-actions">
-                  <app-button
-                    variant="secondary"
-                    iconLeft="pi-arrow-left"
-                    (clicked)="previousStep()"
-                    >Back</app-button
-                  >
-                  <app-button
-                    iconLeft="pi-check"
-                    [disabled]="hasUnmappedFields()"
-                    (clicked)="processImport()"
-                    >Import Data</app-button
-                  >
-                </div>
-              </app-card-shell>
+              @defer (on idle) {
+                <app-data-import-preview-step
+                  [preview]="importPreview()!"
+                  [previewStats]="getPreviewStats()"
+                  [availableMappings]="availableMappings"
+                  [hasUnmappedFields]="hasUnmappedFields()"
+                  (mappingChange)="onMappingChange($event.mapping, $event.value)"
+                  (back)="previousStep()"
+                  (submit)="processImport()"
+                />
+              }
             }
 
             <!-- Step 3: Complete -->
             @if (currentStep() === 2 && importResult()) {
-              <app-card-shell class="step-card result-card">
-                <div class="result-content">
-                  <div
-                    class="result-icon"
-                    [class.success]="importResult()!.success"
-                  >
-                    @if (importResult()!.success) {
-                      <i class="pi pi-check-circle result-icon__glyph"></i>
-                    } @else {
-                      <i class="pi pi-times-circle result-icon__glyph"></i>
-                    }
-                  </div>
-
-                  <h2>
-                    {{
-                      importResult()!.success
-                        ? "Import Complete!"
-                        : "Import Failed"
-                    }}
-                  </h2>
-                  <p>{{ importResult()!.message }}</p>
-
-                  @if (importResult()!.success) {
-                    <div class="import-summary">
-                      <h4>Import Summary</h4>
-                      <ul>
-                        <li>
-                          <i class="pi pi-check result-list-icon"></i>
-                          {{ importResult()!.itemsImported }} items imported
-                        </li>
-                        @for (
-                          warning of importResult()!.warnings;
-                          track warning
-                        ) {
-                          <li class="warning">
-                            <i
-                              class="pi pi-exclamation-triangle result-list-icon result-list-icon--warning"
-                            ></i>
-                            {{ warning }}
-                          </li>
-                        }
-                      </ul>
-                    </div>
-
-                    <div class="next-steps">
-                      <h4>What Happens Next</h4>
-                      <ul>
-                        @for (step of importResult()!.nextSteps; track step) {
-                          <li>
-                            <i class="pi pi-arrow-right result-list-icon"></i>
-                            {{ step }}
-                          </li>
-                        }
-                      </ul>
-                    </div>
-                  }
-
-                  <div class="result-actions">
-                    <app-button iconLeft="pi-calendar" routerLink="/training"
-                      >View Training Schedule</app-button
-                    >
-                    <app-button
-                      variant="secondary"
-                      iconLeft="pi-plus"
-                      (clicked)="resetImport()"
-                      >Import Another</app-button
-                    >
-                  </div>
-                </div>
-              </app-card-shell>
+              @defer (on idle) {
+                <app-data-import-result-step
+                  [result]="importResult()!"
+                  (reset)="resetImport()"
+                />
+              }
             }
           </div>
         }
 
         <!-- Wearables Connection Flow -->
         @if (selectedType()?.id === "wearables") {
-          <div class="wearables-flow">
-            <app-button
-              variant="text"
-              iconLeft="pi-arrow-left"
-              (clicked)="resetImport()"
-              >Back to Import Options</app-button
-            >
-
-            <app-card-shell class="wearables-card">
-              <h3>Connect Wearable Devices</h3>
-
-              <!-- Connected Devices -->
-              @if (connectedDevices().length > 0) {
-                <div class="section">
-                  <h4>Connected Devices</h4>
-                  @for (device of connectedDevices(); track device.id) {
-                    <div class="device-card connected">
-                      <div class="device-info">
-                        <span class="device-name">⌚ {{ device.name }}</span>
-                        <app-status-tag
-                          value="Connected"
-                          severity="success"
-                          size="sm"
-                        />
-                      </div>
-                      <p class="device-sync">
-                        Last sync: {{ device.lastSync || "Never" }}
-                      </p>
-                      <p class="device-data">
-                        Data: {{ device.dataTypes.join(", ") }}
-                      </p>
-                      <div class="device-actions">
-                        <app-button
-                          size="sm"
-                          iconLeft="pi-refresh"
-                          (clicked)="syncDevice(device)"
-                          >Sync Now</app-button
-                        >
-                        <app-button
-                          variant="text"
-                          size="sm"
-                          iconLeft="pi-times"
-                          (clicked)="disconnectDevice(device)"
-                          >Disconnect</app-button
-                        >
-                      </div>
-                    </div>
-                  }
-                </div>
-              }
-
-              <!-- Available Devices -->
-              <div class="section">
-                <h4>Available to Connect</h4>
-                <div class="devices-grid">
-                  @for (device of availableDevices(); track device.id) {
-                    <div class="device-card available">
-                      <div class="device-icon">⌚</div>
-                      <h5>{{ device.name }}</h5>
-                      <p class="device-data">
-                        {{ device.dataTypes.join(", ") }}
-                      </p>
-                      <app-button
-                        size="sm"
-                        iconLeft="pi-link"
-                        (clicked)="connectDevice(device)"
-                        >Connect</app-button
-                      >
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <!-- Data Usage Info -->
-              <div class="data-usage-info">
-                <h4>💡 How Wearable Data Is Used</h4>
-                <ul>
-                  <li>
-                    <strong>HRV</strong> → Wellness Score calculation, readiness
-                    assessment
-                  </li>
-                  <li>
-                    <strong>Sleep</strong> → Sleep debt tracking, recovery
-                    recommendations
-                  </li>
-                  <li>
-                    <strong>Activity</strong> → ACWR calculation, training load
-                    tracking
-                  </li>
-                  <li>
-                    <strong>HR Zones</strong> → Workout intensity validation
-                  </li>
-                  <li>
-                    <strong>Strain/Recovery</strong> → AI training
-                    recommendations
-                  </li>
-                </ul>
-                <p class="privacy-note">
-                  <i class="pi pi-lock privacy-note__icon"></i>
-                  Your data is encrypted and never shared
-                </p>
-              </div>
-            </app-card-shell>
-          </div>
+          @defer (on idle) {
+            <app-data-import-wearables-flow
+              [connectedDevices]="connectedDevices()"
+              [availableDevices]="availableDevices()"
+              (reset)="resetImport()"
+              (syncDevice)="syncDevice($event)"
+              (disconnectDevice)="disconnectDevice($event)"
+              (connectDevice)="connectDevice($event)"
+            />
+          }
         }
       </div>
     </app-main-layout>

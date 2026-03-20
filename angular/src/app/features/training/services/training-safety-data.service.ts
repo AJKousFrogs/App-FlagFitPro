@@ -1,21 +1,32 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class TrainingSafetyDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private usersTableUnavailable = false;
 
   async getUserProfileDob(userId: string): Promise<{
     dateOfBirth: string | null;
     error: { message?: string } | null;
   }> {
+    if (this.usersTableUnavailable) {
+      return { dateOfBirth: null, error: null };
+    }
+
     const { data: profile, error } = await this.supabaseService.client
       .from("users")
       .select("date_of_birth")
       .eq("id", userId)
       .single();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.usersTableUnavailable = true;
+      return { dateOfBirth: null, error: null };
+    }
 
     return { dateOfBirth: profile?.date_of_birth ?? null, error };
   }

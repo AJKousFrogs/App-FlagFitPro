@@ -90,6 +90,17 @@ function isValidDateString(value) {
   return !Number.isNaN(parsed.getTime());
 }
 
+function isOptionalSchemaError(error) {
+  const code = error?.code;
+  const message = `${error?.message || ""}`.toLowerCase();
+  return (
+    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
+    message.includes("relation") ||
+    message.includes("schema cache") ||
+    message.includes("does not exist")
+  );
+}
+
 function mapAssignmentRecord(assignmentRecord, program) {
   if (!assignmentRecord) {
     return null;
@@ -164,6 +175,9 @@ async function getActiveAssignment(supabase, userId) {
     .maybeSingle();
 
   if (error) {
+    if (isOptionalSchemaError(error)) {
+      return null;
+    }
     console.error("[player-programs] Error fetching assignment:", error);
     throw error;
   }
@@ -567,30 +581,41 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT"],
     rateLimitType: "CREATE",
     requireAuth: true,
+    skipEnvCheck: true,
     handler: async (event, context, authContext) => {
-      const { httpMethod, path } = event;
+      try {
+        const { httpMethod, path } = event;
 
-      // Route: GET /api/player-programs/me
-      if (httpMethod === "GET" && path.endsWith("/me")) {
-        return handleGetMe(event, context, authContext);
+        // Route: GET /api/player-programs/me
+        if (httpMethod === "GET" && path.endsWith("/me")) {
+          return handleGetMe(event, context, authContext);
+        }
+
+        // Route: POST /api/player-programs
+        if (httpMethod === "POST") {
+          return handlePost(event, context, authContext);
+        }
+
+        // Route: PUT /api/player-programs/:id
+        if (httpMethod === "PUT") {
+          return handlePut(event, context, authContext);
+        }
+
+        // Fallback for unmatched routes
+        return createErrorResponse(
+          "Route not found. Available: GET /me, POST /, PUT /:id",
+          404,
+          ErrorType.NOT_FOUND,
+        );
+      } catch (error) {
+        if (isOptionalSchemaError(error)) {
+          return createSuccessResponse({
+            assignment: null,
+            message: "Program assignments are unavailable in this environment",
+          });
+        }
+        throw error;
       }
-
-      // Route: POST /api/player-programs
-      if (httpMethod === "POST") {
-        return handlePost(event, context, authContext);
-      }
-
-      // Route: PUT /api/player-programs/:id
-      if (httpMethod === "PUT") {
-        return handlePut(event, context, authContext);
-      }
-
-      // Fallback for unmatched routes
-      return createErrorResponse(
-        "Route not found. Available: GET /me, POST /, PUT /:id",
-        404,
-        ErrorType.NOT_FOUND,
-      );
     },
   });
 };

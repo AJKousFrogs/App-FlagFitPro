@@ -1,0 +1,67 @@
+<div class="annual-timeline">
+  <p-timeline
+    [value]="timeline"
+    layout="horizontal"
+    class="phase-timeline"
+  >
+    <ng-template #marker let-event>
+      <span
+        class="timeline-marker"
+        [style.background-color]="event.color"
+      >
+        <i [class]="event.icon"></i>
+      </span>
+    </ng-template>
+    <ng-template #content let-event>
+      <div class="timeline-content">
+        <span class="timeline-month">{{ event.month }}</span>
+        <span class="timeline-phase">{{ event.phase }}</span>
+      </div>
+    </ng-template>
+  </p-timeline>
+</div>
+
+<p-divider></p-divider>
+
+<p-accordion [multiple]="true">
+  @for (phase of phases; track phase.type) {
+    <p-accordion-panel [value]="phase.type">
+      <p-accordion-header>{{ phase.name }}</p-accordion-header>
+      <p-accordion-content>
+        <div class="phase-detail">
+          <p>{{ phase.description }}</p>
+
+          <div class="phase-metrics">
+            <div class="metric">
+              <span class="metric-label">Duration</span>
+              <span class="metric-value">{{ phase.durationWeeks }} weeks</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Volume</span>
+              <span class="metric-value"
+                >{{ (phase.volumeMultiplier * 100).toFixed(0) }}%</span
+              >
+            </div>
+            <div class="metric">
+              <span class="metric-label">Intensity</span>
+              <span class="metric-value"
+                >{{ (phase.intensityMultiplier * 100).toFixed(0) }}%</span
+              >
+            </div>
+            <div class="metric">
+              <span class="metric-label">Recovery Priority</span>
+              <span class="metric-value">{{ phase.recoveryPriority }}</span>
+            </div>
+          </div>
+
+          <h5>Injury Prevention Focus</h5>
+          <ul>
+            @for (focus of phase.injuryPreventionFocus; track focus) {
+              <li>{{ focus }}</li>
+            }
+          </ul>
+        </div>
+      </p-accordion-content>
+    </p-accordion-panel>
+  }
+</p-accordion>

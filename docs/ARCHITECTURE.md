@@ -1,9 +1,9 @@
 # 🏗️ FlagFit Pro - System Architecture
 
-**Version:** 2.3  
-**Last Updated:** 12 January 2026  
-**Last Verified Against Codebase:** 2026-01-12  
-**Status:** ✅ Production Ready (~88% Complete)
+**Version:** 2.1  
+**Last Updated:** 15 March 2026  
+**Last Verified Against Codebase:** 2026-03-15  
+**Status:** ✅ Consolidated Release Baseline
 
 ---
 
@@ -39,7 +39,20 @@ For current codebase grounding, also use:
 
 ### Mission Statement
 
-A comprehensive flag football training platform that prioritizes **athlete safety**, **performance tracking**, and **AI-powered coaching** through modern web technologies and sports science research.
+A flag football performance platform centered on **athlete safety**,
+**training execution**, **performance tracking**, and **coach workflows**
+through modern web technologies and sports science research.
+
+### Current Product Shape
+
+As of `2.1`, the product is being deliberately narrowed around a smaller set of
+canonical workspaces:
+- athlete core: `Dashboard`, `Today`, `Training`, `Wellness`, `Performance`
+- coach core: `Dashboard`, `Roster`, `Planning`, `Performance`, `Team`
+- collaboration/support: `Team Chat`, `Knowledge`, `Settings`
+
+Several older feature routes remain in the codebase as compatibility redirects,
+but they are no longer intended to define the primary information architecture.
 
 ### Core Principles
 
@@ -58,7 +71,7 @@ A comprehensive flag football training platform that prioritizes **athlete safet
 │                    PRESENTATION LAYER                           │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │  Angular 21 Frontend                                     │   │
-│  │  ├── 28+ Feature Components (standalone)                 │   │
+│  │  ├── Consolidated standalone feature domains             │   │
 │  │  ├── 86+ Core Services (signal-based)                    │   │
 │  │  ├── PrimeNG 21 UI Components                           │   │
 │  │  ├── Zoneless Change Detection                          │   │
@@ -135,8 +148,8 @@ angular/src/app/
 │   └── models/                     # TypeScript interfaces
 │       ├── acwr.models.ts
 │       └── ...
-├── features/                       # Feature modules (28+)
-│   ├── acwr-dashboard/             # ACWR monitoring UI
+├── features/                       # Feature domains and retained legacy surfaces
+│   ├── acwr-dashboard/             # Load monitoring surface (canonicalized under Performance)
 │   ├── training/                   # 10 training components
 │   │   ├── training.component.ts
 │   │   ├── ai-training-scheduler/
@@ -146,7 +159,7 @@ angular/src/app/
 │   ├── analytics/                  # Performance analytics
 │   ├── dashboard/                  # Dashboard variants
 │   ├── wellness/                   # Wellness tracking
-│   ├── game-tracker/               # Game statistics
+│   ├── game-tracker/               # Legacy compatibility surface
 │   ├── tournaments/                # Tournament management
 │   ├── auth/                       # Authentication
 │   └── ... (18+ more)

@@ -1,0 +1,55 @@
+<app-card-shell class="step-card result-card">
+  <div class="result-content">
+    <div class="result-icon" [class.success]="result().success">
+      @if (result().success) {
+        <i class="pi pi-check-circle result-icon__glyph"></i>
+      } @else {
+        <i class="pi pi-times-circle result-icon__glyph"></i>
+      }
+    </div>
+
+    <h2>{{ result().success ? "Import Complete!" : "Import Failed" }}</h2>
+    <p>{{ result().message }}</p>
+
+    @if (result().success) {
+      <div class="import-summary">
+        <h4>Import Summary</h4>
+        <ul>
+          <li>
+            <i class="pi pi-check result-list-icon"></i>
+            {{ result().itemsImported }} items imported
+          </li>
+          @for (warning of result().warnings; track warning) {
+            <li class="warning">
+              <i
+                class="pi pi-exclamation-triangle result-list-icon result-list-icon--warning"
+              ></i>
+              {{ warning }}
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="next-steps">
+        <h4>What Happens Next</h4>
+        <ul>
+          @for (step of result().nextSteps; track step) {
+            <li>
+              <i class="pi pi-arrow-right result-list-icon"></i>
+              {{ step }}
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    <div class="result-actions">
+      <app-button iconLeft="pi-calendar" routerLink="/training"
+        >View Training Schedule</app-button
+      >
+      <app-button variant="secondary" iconLeft="pi-plus" (clicked)="reset.emit()"
+        >Import Another</app-button
+      >
+    </div>
+  </div>
+</app-card-shell>

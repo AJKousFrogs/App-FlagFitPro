@@ -196,6 +196,15 @@ export class NotificationStateService implements OnDestroy {
   // Guard to prevent duplicate subscription initialization
   private _realtimeInitialized = false;
   private _initializationInProgress = false;
+  private notificationsApiUnavailable = false;
+
+  private isConflictOrUnavailableError(error: unknown): boolean {
+    const status =
+      error && typeof error === "object" && "status" in error
+        ? Number((error as { status?: number }).status)
+        : NaN;
+    return [409, 500, 502, 503].includes(status);
+  }
 
   constructor() {
     // Initialize realtime subscription when user is authenticated
@@ -520,6 +529,10 @@ export class NotificationStateService implements OnDestroy {
   async loadNotifications(
     options: { lastOpenedAt?: string } = {},
   ): Promise<Notification[]> {
+    if (this.notificationsApiUnavailable) {
+      return this.notifications();
+    }
+
     this.loading.set(true);
     this.error.set(null);
 
@@ -559,6 +572,17 @@ export class NotificationStateService implements OnDestroy {
       this.loading.set(false);
       return notifications;
     } catch (error) {
+      if (this.isConflictOrUnavailableError(error)) {
+        this.notificationsApiUnavailable = true;
+        this.loading.set(false);
+        this.error.set(null);
+        this.logger.warn(
+          "Notifications API unavailable; keeping existing notification state",
+          toLogContext(error),
+        );
+        return this.notifications();
+      }
+
       const errorMessage =
         error instanceof Error ? error.message : "Failed to load notifications";
       this.error.set(errorMessage);
@@ -607,6 +631,11 @@ export class NotificationStateService implements OnDestroy {
       await this.refreshBadgeCount();
       return true;
     } catch (error) {
+      if (this.isConflictOrUnavailableError(error)) {
+        this.notificationsApiUnavailable = true;
+        return true;
+      }
+
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
@@ -654,6 +683,11 @@ export class NotificationStateService implements OnDestroy {
       await this.refreshBadgeCount();
       return true;
     } catch (error) {
+      if (this.isConflictOrUnavailableError(error)) {
+        this.notificationsApiUnavailable = true;
+        return true;
+      }
+
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
@@ -702,6 +736,11 @@ export class NotificationStateService implements OnDestroy {
       await this.refreshBadgeCount();
       return true;
     } catch (error) {
+      if (this.isConflictOrUnavailableError(error)) {
+        this.notificationsApiUnavailable = true;
+        return true;
+      }
+
       // Revert optimistic update
       this.notifications.set(previousState);
       const errorMessage =
@@ -718,6 +757,10 @@ export class NotificationStateService implements OnDestroy {
    * Refresh badge count from API
    */
   async refreshBadgeCount(): Promise<number> {
+    if (this.notificationsApiUnavailable) {
+      return this.unreadCount();
+    }
+
     try {
       const response = await firstValueFrom(
         this.apiService.get<{ unreadCount: number }>(
@@ -751,6 +794,10 @@ export class NotificationStateService implements OnDestroy {
 
       return count;
     } catch (error) {
+      if (this.isConflictOrUnavailableError(error)) {
+        this.notificationsApiUnavailable = true;
+        return this.unreadCount();
+      }
       this.logger.warn("Error refreshing badge count:", toLogContext(error));
       // Return current count as fallback
       return this.unreadCount();
@@ -761,6 +808,10 @@ export class NotificationStateService implements OnDestroy {
    * Update last opened timestamp
    */
   async updateLastOpenedAt(): Promise<void> {
+    if (this.notificationsApiUnavailable) {
+      return;
+    }
+
     try {
       await firstValueFrom(
         this.apiService.patch<{ success: boolean }>(
@@ -771,6 +822,10 @@ export class NotificationStateService implements OnDestroy {
 
       this.lastOpenedAt.set(new Date().toISOString());
     } catch (error) {
+      if (this.isConflictOrUnavailableError(error)) {
+        this.notificationsApiUnavailable = true;
+        return;
+      }
       this.logger.warn(
         "Error updating last opened timestamp:",
         toLogContext(error),

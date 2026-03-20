@@ -181,10 +181,10 @@ export class SearchComponent {
       route: "/exercise-library",
     },
     {
-      label: "Analytics",
-      description: "Performance and training insights",
+      label: "Performance",
+      description: "Insights, load monitoring, and performance tests",
       icon: "pi-chart-line",
-      route: "/analytics",
+      route: "/performance/insights",
     },
     {
       label: "Roster",

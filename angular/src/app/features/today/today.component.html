@@ -81,31 +81,49 @@
           (startExactPlan)="scrollToProtocolBlocks()"
         />
 
-        <app-today-status-stack
-          [errorState]="vm.errorState"
-          [blockingCoachAlertBanner]="blockingCoachAlertBanner()"
-          [blockingCoachAlertPrimaryCta]="blockingCoachAlertPrimaryCta()"
-          [blockingCoachAlertSecondaryCta]="blockingCoachAlertSecondaryCta()"
-          [coachAttribution]="vm.headerContext?.coachAttribution || null"
-          [coachModifiedTime]="coachModifiedTime()"
-          [visibleBanners]="visibleBanners()"
-          [continuityEvents]="continuityEvents()"
-          [acwrBaseline]="vm.acwrBaseline"
-          (ctaClick)="handleCta($event)"
-        />
+        @defer (on viewport) {
+          <app-today-status-stack
+            [errorState]="vm.errorState"
+            [blockingCoachAlertBanner]="blockingCoachAlertBanner()"
+            [blockingCoachAlertPrimaryCta]="blockingCoachAlertPrimaryCta()"
+            [blockingCoachAlertSecondaryCta]="blockingCoachAlertSecondaryCta()"
+            [coachAttribution]="vm.headerContext?.coachAttribution || null"
+            [coachModifiedTime]="coachModifiedTime()"
+            [visibleBanners]="visibleBanners()"
+            [continuityEvents]="continuityEvents()"
+            [acwrBaseline]="vm.acwrBaseline"
+            (ctaClick)="handleCta($event)"
+          />
+        } @placeholder {
+          <app-skeleton-loader
+            variant="block"
+            width="100%"
+            height="calc(var(--size-80) * 0.85)"
+            borderRadius="var(--radius-lg)"
+          />
+        }
 
         <!-- ====================================================================
              MAIN EXECUTION BLOCKS (ordered by ViewModel)
              ==================================================================== -->
-        <app-today-protocol-section
-          [protocol]="protocol()"
-          [blocks]="protocolDisplayBlocks()"
-          [trainingAllowed]="vm.trainingAllowed"
-          [isGenerating]="isGeneratingProtocol()"
-          (refresh)="refreshProtocol()"
-          (generate)="generateProtocol()"
-          (exerciseComplete)="refreshProtocol()"
-        />
+        @defer (on viewport) {
+          <app-today-protocol-section
+            [protocol]="protocol()"
+            [blocks]="protocolDisplayBlocks()"
+            [trainingAllowed]="vm.trainingAllowed"
+            [isGenerating]="isGeneratingProtocol()"
+            (refresh)="refreshProtocol()"
+            (generate)="generateProtocol()"
+            (exerciseComplete)="refreshProtocol()"
+          />
+        } @placeholder {
+          <app-skeleton-loader
+            variant="block"
+            width="100%"
+            height="calc(var(--size-80) * 2)"
+            borderRadius="var(--radius-lg)"
+          />
+        }
       </div>
     } @else {
       <!-- No ViewModel - show error -->
@@ -119,19 +137,21 @@
     }
   }
 
-  <app-today-quick-checkin-dialog
-    [visible]="showQuickCheckin()"
-    [isSaving]="isSavingQuickCheckin()"
-    [isValid]="isQuickFormValid()"
-    [quickFormData]="quickFormData()"
-    [quickMoods]="quickMoods"
-    [quickEnergyLevels]="quickEnergyLevels"
-    [quickReadinessScore]="quickReadinessScore()"
-    [quickReadinessClass]="getQuickReadinessClass()"
-    (visibleChange)="showQuickCheckin.set($event)"
-    (submit)="submitQuickCheckin()"
-    (setOverallFeeling)="setQuickField('overallFeeling', $event)"
-    (setEnergyLevel)="setQuickField('energyLevel', $event)"
-    (setHasSoreness)="setQuickField('hasSoreness', $event)"
-  />
+  @defer (when showQuickCheckin()) {
+    <app-today-quick-checkin-dialog
+      [visible]="showQuickCheckin()"
+      [isSaving]="isSavingQuickCheckin()"
+      [isValid]="isQuickFormValid()"
+      [quickFormData]="quickFormData()"
+      [quickMoods]="quickMoods"
+      [quickEnergyLevels]="quickEnergyLevels"
+      [quickReadinessScore]="quickReadinessScore()"
+      [quickReadinessClass]="getQuickReadinessClass()"
+      (visibleChange)="showQuickCheckin.set($event)"
+      (submit)="submitQuickCheckin()"
+      (setOverallFeeling)="setQuickField('overallFeeling', $event)"
+      (setEnergyLevel)="setQuickField('energyLevel', $event)"
+      (setHasSoreness)="setQuickField('hasSoreness', $event)"
+    />
+  }
 </app-main-layout>

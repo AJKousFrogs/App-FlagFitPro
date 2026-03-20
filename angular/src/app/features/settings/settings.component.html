@@ -48,82 +48,95 @@
           (teamChange)="onTeamChange($event ?? null)"
         />
 
-        <!-- Section 2: Notifications -->
-        <div id="notifications-settings" class="settings-section ui-stack-md">
-          <div class="ui-section-heading">
-            <div class="ui-section-heading__content">
-              <h2 class="ui-section-heading__title">
-                <span class="ui-section-heading__icon">
-                  <i class="pi pi-bell"></i>
-                </span>
-                Notifications
-              </h2>
-              <p class="ui-section-heading__description">
-                Control how and when you receive notifications
-              </p>
+        @defer (on viewport) {
+          <!-- Section 2: Notifications -->
+          <div id="notifications-settings" class="settings-section ui-stack-md">
+            <div class="ui-section-heading">
+              <div class="ui-section-heading__content">
+                <h2 class="ui-section-heading__title">
+                  <span class="ui-section-heading__icon">
+                    <i class="pi pi-bell"></i>
+                  </span>
+                  Notifications
+                </h2>
+                <p class="ui-section-heading__description">
+                  Control how and when you receive notifications
+                </p>
+              </div>
             </div>
+
+            <app-notification-preferences-card
+              [notificationForm]="notificationForm"
+            ></app-notification-preferences-card>
           </div>
 
-          <app-notification-preferences-card
-            [notificationForm]="notificationForm"
-          ></app-notification-preferences-card>
-        </div>
-
-        <!-- Section 3: Privacy & Security -->
-        <div id="privacy-settings" class="settings-section ui-stack-md">
-          <div class="ui-section-heading">
-            <div class="ui-section-heading__content">
-              <h2 class="ui-section-heading__title">
-                <span class="ui-section-heading__icon">
-                  <i class="pi pi-lock"></i>
-                </span>
-                Privacy & Security
-              </h2>
-              <p class="ui-section-heading__description">
-                Manage your privacy settings and account security
-              </p>
+          <!-- Section 3: Privacy & Security -->
+          <div id="privacy-settings" class="settings-section ui-stack-md">
+            <div class="ui-section-heading">
+              <div class="ui-section-heading__content">
+                <h2 class="ui-section-heading__title">
+                  <span class="ui-section-heading__icon">
+                    <i class="pi pi-lock"></i>
+                  </span>
+                  Privacy & Security
+                </h2>
+                <p class="ui-section-heading__description">
+                  Manage your privacy settings and account security
+                </p>
+              </div>
             </div>
+
+            <app-privacy-controls-card
+              [privacyForm]="privacyForm"
+              [visibilityOptions]="visibilityOptions"
+              (exportData)="showDataExportDialog = true"
+            ></app-privacy-controls-card>
           </div>
 
-          <app-privacy-controls-card
-            [privacyForm]="privacyForm"
-            [visibilityOptions]="visibilityOptions"
-            (exportData)="showDataExportDialog = true"
-          ></app-privacy-controls-card>
-        </div>
+          <!-- Section 4: Preferences -->
+          <div id="preferences-settings" class="settings-section ui-stack-md">
+            <div class="ui-section-heading">
+              <div class="ui-section-heading__content">
+                <h2 class="ui-section-heading__title">
+                  <span class="ui-section-heading__icon">
+                    <i class="pi pi-sliders-h"></i>
+                  </span>
+                  Preferences
+                </h2>
+                <p class="ui-section-heading__description">
+                  Customize your app experience and display options
+                </p>
+              </div>
+            </div>
 
-        <!-- Section 4: Preferences -->
-        <div id="preferences-settings" class="settings-section ui-stack-md">
-          <div class="ui-section-heading">
-            <div class="ui-section-heading__content">
-              <h2 class="ui-section-heading__title">
-                <span class="ui-section-heading__icon">
-                  <i class="pi pi-sliders-h"></i>
-                </span>
-                Preferences
-              </h2>
-              <p class="ui-section-heading__description">
-                Customize your app experience and display options
-              </p>
+            <app-app-preferences-card
+              [preferencesForm]="preferencesForm"
+              [themeOptions]="themeOptions"
+              [languageOptions]="languageOptions"
+              (themeSelected)="selectTheme($event)"
+            ></app-app-preferences-card>
+
+            <app-security-settings-card
+              [isTwoFactorEnabled]="is2FAEnabled()"
+              (changePassword)="showChangePasswordDialog = true"
+              (enableTwoFactor)="startSetup2FA()"
+              (disableTwoFactor)="showDisable2FADialog = true"
+              (viewSessions)="showSessionsDialog = true; loadSessions()"
+              (deleteAccount)="showDeleteAccountDialog = true"
+            ></app-security-settings-card>
+          </div>
+        } @placeholder {
+          <div class="settings-section ui-stack-md">
+            <div class="ui-section-heading">
+              <div class="ui-section-heading__content">
+                <h2 class="ui-section-heading__title">Loading more settings…</h2>
+                <p class="ui-section-heading__description">
+                  Additional preferences load when you reach them.
+                </p>
+              </div>
             </div>
           </div>
-
-          <app-app-preferences-card
-            [preferencesForm]="preferencesForm"
-            [themeOptions]="themeOptions"
-            [languageOptions]="languageOptions"
-            (themeSelected)="selectTheme($event)"
-          ></app-app-preferences-card>
-
-          <app-security-settings-card
-            [isTwoFactorEnabled]="is2FAEnabled()"
-            (changePassword)="showChangePasswordDialog = true"
-            (enableTwoFactor)="startSetup2FA()"
-            (disableTwoFactor)="showDisable2FADialog = true"
-            (viewSessions)="showSessionsDialog = true; loadSessions()"
-            (deleteAccount)="showDeleteAccountDialog = true"
-          ></app-security-settings-card>
-        </div>
+        }
       </div>
     </div>
   }
@@ -131,73 +144,85 @@
 
 <!-- All Dialogs (outside main layout for proper portal rendering) -->
 <!-- Change Password Dialog -->
-<app-change-password-dialog
-  [visible]="showChangePasswordDialog"
-  [passwordForm]="passwordForm"
-  [loading]="isChangingPassword()"
-  (visibleChange)="showChangePasswordDialog = $event"
-  (submit)="changePassword()"
-></app-change-password-dialog>
+@defer (when showChangePasswordDialog) {
+  <app-change-password-dialog
+    [visible]="showChangePasswordDialog"
+    [passwordForm]="passwordForm"
+    [loading]="isChangingPassword()"
+    (visibleChange)="showChangePasswordDialog = $event"
+    (submit)="changePassword()"
+  ></app-change-password-dialog>
+}
 
 <!-- Delete Account Dialog -->
-<app-delete-account-dialog
-  [visible]="showDeleteAccountDialog"
-  [confirmText]="deleteConfirmText"
-  [loading]="isDeletingAccount()"
-  (visibleChange)="showDeleteAccountDialog = $event"
-  (confirmTextChange)="deleteConfirmText = $event"
-  (submit)="deleteAccount()"
-></app-delete-account-dialog>
+@defer (when showDeleteAccountDialog) {
+  <app-delete-account-dialog
+    [visible]="showDeleteAccountDialog"
+    [confirmText]="deleteConfirmText"
+    [loading]="isDeletingAccount()"
+    (visibleChange)="showDeleteAccountDialog = $event"
+    (confirmTextChange)="deleteConfirmText = $event"
+    (submit)="deleteAccount()"
+  ></app-delete-account-dialog>
+}
 
 <!-- 2FA Setup Dialog -->
-<app-twofa-setup-dialog
-  [visible]="show2FASetupDialog"
-  [step]="twoFAStep()"
-  [qrCodeUrl]="qrCodeUrl()"
-  [twoFASecret]="twoFASecret()"
-  [verificationCode]="twoFAVerificationCode"
-  [twoFAError]="twoFAError()"
-  [backupCodes]="backupCodes()"
-  [isEnabling]="isEnabling2FA()"
-  (visibleChange)="show2FASetupDialog = $event; !$event && close2FASetup()"
-  (stepChange)="twoFAStep.set($event)"
-  (verificationCodeChange)="twoFAVerificationCode = $event"
-  (copySecret)="copySecret()"
-  (verify)="verify2FA()"
-  (downloadBackupCodes)="downloadBackupCodes()"
-></app-twofa-setup-dialog>
+@defer (when show2FASetupDialog) {
+  <app-twofa-setup-dialog
+    [visible]="show2FASetupDialog"
+    [step]="twoFAStep()"
+    [qrCodeUrl]="qrCodeUrl()"
+    [twoFASecret]="twoFASecret()"
+    [verificationCode]="twoFAVerificationCode"
+    [twoFAError]="twoFAError()"
+    [backupCodes]="backupCodes()"
+    [isEnabling]="isEnabling2FA()"
+    (visibleChange)="show2FASetupDialog = $event; !$event && close2FASetup()"
+    (stepChange)="twoFAStep.set($event)"
+    (verificationCodeChange)="twoFAVerificationCode = $event"
+    (copySecret)="copySecret()"
+    (verify)="verify2FA()"
+    (downloadBackupCodes)="downloadBackupCodes()"
+  ></app-twofa-setup-dialog>
+}
 
 <!-- Disable 2FA Dialog -->
-<app-disable-twofa-dialog
-  [visible]="showDisable2FADialog"
-  [disableCode]="disable2FACode"
-  [loading]="isDisabling2FA()"
-  (visibleChange)="showDisable2FADialog = $event"
-  (disableCodeChange)="disable2FACode = $event"
-  (submit)="disable2FA()"
-></app-disable-twofa-dialog>
+@defer (when showDisable2FADialog) {
+  <app-disable-twofa-dialog
+    [visible]="showDisable2FADialog"
+    [disableCode]="disable2FACode"
+    [loading]="isDisabling2FA()"
+    (visibleChange)="showDisable2FADialog = $event"
+    (disableCodeChange)="disable2FACode = $event"
+    (submit)="disable2FA()"
+  ></app-disable-twofa-dialog>
+}
 
 <!-- Active Sessions Dialog -->
-<app-active-sessions-dialog
-  [visible]="showSessionsDialog"
-  [loadingSessions]="loadingSessions()"
-  [sessions]="activeSessions()"
-  [isRevokingAll]="isRevokingAll()"
-  (visibleChange)="showSessionsDialog = $event"
-  (revokeSession)="revokeSession($event)"
-  (revokeAllSessions)="revokeAllSessions()"
-></app-active-sessions-dialog>
+@defer (when showSessionsDialog) {
+  <app-active-sessions-dialog
+    [visible]="showSessionsDialog"
+    [loadingSessions]="loadingSessions()"
+    [sessions]="activeSessions()"
+    [isRevokingAll]="isRevokingAll()"
+    (visibleChange)="showSessionsDialog = $event"
+    (revokeSession)="revokeSession($event)"
+    (revokeAllSessions)="revokeAllSessions()"
+  ></app-active-sessions-dialog>
+}
 
 <!-- Data Export Dialog -->
-<app-data-export-dialog
-  [visible]="showDataExportDialog"
-  [exportFormat]="exportFormat"
-  [exportOptions]="exportOptions"
-  [isExportingData]="isExportingData()"
-  [exportProgress]="exportProgress()"
-  [exportTakingLong]="exportTakingLong()"
-  (visibleChange)="showDataExportDialog = $event"
-  (exportFormatChange)="exportFormat = $event"
-  (exportOptionsChange)="exportOptions = $event"
-  (submit)="exportUserData()"
-></app-data-export-dialog>
+@defer (when showDataExportDialog) {
+  <app-data-export-dialog
+    [visible]="showDataExportDialog"
+    [exportFormat]="exportFormat"
+    [exportOptions]="exportOptions"
+    [isExportingData]="isExportingData()"
+    [exportProgress]="exportProgress()"
+    [exportTakingLong]="exportTakingLong()"
+    (visibleChange)="showDataExportDialog = $event"
+    (exportFormatChange)="exportFormat = $event"
+    (exportOptionsChange)="exportOptions = $event"
+    (submit)="exportUserData()"
+  ></app-data-export-dialog>
+}
