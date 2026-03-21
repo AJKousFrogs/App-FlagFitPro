@@ -16,7 +16,7 @@ import {
 
 import { ToastService } from "../../core/services/toast.service";
 import { ConfirmDialog } from "primeng/confirmdialog";
-import { TabPanel, Tabs } from "primeng/tabs";
+import { TabsComponent, AppTabPanelDirective } from "../../shared/components/tabs/tabs.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { AuthService } from "../../core/services/auth.service";
@@ -229,8 +229,8 @@ const toDateOrNull = (value: unknown): Date | null => {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Tabs,
-    TabPanel,
+    TabsComponent,
+    AppTabPanelDirective,
     ConfirmDialog,
     MainLayoutComponent,
     PageHeaderComponent,

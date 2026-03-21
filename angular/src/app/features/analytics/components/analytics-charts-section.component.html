@@ -267,18 +267,18 @@
 
 <app-card-shell class="chart-card full-width" title="Speed Development Progress">
   <div header-actions class="chart-controls">
-    <p-select
+    <app-select
       [options]="timePeriods()"
-      (onChange)="selectedTimePeriodChange.emit($event.value)"
+      (change)="selectedTimePeriodChange.emit($event)"
       placeholder="Time Period"
       class="w-full md:w-14rem"
-    ></p-select>
-    <p-select
+    ></app-select>
+    <app-select
       [options]="metricOptions()"
-      (onChange)="selectedMetricChange.emit($event.value)"
+      (change)="selectedMetricChange.emit($event)"
       placeholder="Metrics"
       class="w-full md:w-14rem"
-    ></p-select>
+    ></app-select>
   </div>
   @if (speedChartData()) {
     <app-lazy-chart

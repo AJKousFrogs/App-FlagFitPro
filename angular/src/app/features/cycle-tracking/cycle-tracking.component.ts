@@ -27,9 +27,10 @@ import { DialogFooterComponent } from "../../shared/components/dialog-footer/dia
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { DatePicker } from "primeng/datepicker";
 
-import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
-import { Textarea } from "primeng/textarea";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { TableComponent } from "../../shared/components/table/table.component";
+import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
+import { CheckboxComponent } from "../../shared/components/checkbox/checkbox.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -297,9 +298,10 @@ const RETENTION_OPTIONS = [
     DatePicker,
     DialogFooterComponent,
     DialogHeaderComponent,
-    Select,
-    TableModule,
-    Textarea,
+    SelectComponent,
+    TableComponent,
+    TextareaComponent,
+    CheckboxComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,

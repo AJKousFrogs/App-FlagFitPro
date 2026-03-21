@@ -13,15 +13,12 @@ import { DataView } from "primeng/dataview";
 import { Dock } from "primeng/dock";
 import { Drawer } from "primeng/drawer";
 import { InputText } from "primeng/inputtext";
-import { Menubar } from "primeng/menubar";
 import { MultiSelect } from "primeng/multiselect";
 import { Paginator } from "primeng/paginator";
 import { PickList } from "primeng/picklist";
 import { ProgressBar } from "primeng/progressbar";
 import { Step, StepList, Stepper } from "primeng/stepper";
-import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
-import { Tag } from "primeng/tag";
 import { Timeline } from "primeng/timeline";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { Tooltip } from "primeng/tooltip";
@@ -32,6 +29,9 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { ResponsiveGridSpanDirective } from "../../shared/directives/responsive-grid-span.directive";
+import { TableComponent } from "../../shared/components/table/table.component";
+import { MenubarComponent } from "../../shared/components/menubar/menubar.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { PlatformService } from "../../core/services/platform.service";
 import { ELITE_INTERACTION_BEHAVIORS } from "./elite-interaction.behaviors";
 
@@ -71,22 +71,21 @@ interface ProtocolStep {
   selector: "app-elite-command-center",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     MainLayoutComponent,
     AlertComponent,
     ButtonComponent,
     IconButtonComponent,
     ResponsiveGridSpanDirective,
-    Menubar,
+    MenubarComponent,
     Breadcrumb,
     Dock,
     CardShellComponent,
-    Tag,
+    StatusTagComponent,
     ProgressBar,
     UIChart,
     DataView,
-    TableModule,
+    TableComponent,
     Timeline,
     Tooltip,
     Stepper,

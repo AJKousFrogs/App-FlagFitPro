@@ -56,8 +56,8 @@
 
         <!-- Tournament Tabs -->
         @if (!tournamentService.loading() && !tournamentService.error() && tournaments().length > 0) {
-          <p-tabs>
-            <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
+          <app-tabs [value]="0">
+            <div *appTabPanel="let panel; header: '2026 Season'; value: 0; icon: 'pi-calendar'">
               <app-tournament-season-panel
                 [tournaments]="tournaments2026()"
                 seasonYear="2026"
@@ -73,9 +73,9 @@
                 (viewDetails)="viewDetails($event)"
                 (openWebsite)="openWebsite($event)"
               />
-            </p-tabpanel>
+            </div>
 
-            <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
+            <div *appTabPanel="let panel; header: '2027 Season'; value: 1; icon: 'pi-calendar'">
               <app-tournament-season-panel
                 [tournaments]="tournaments2027()"
                 seasonYear="2027"
@@ -91,8 +91,8 @@
                 (viewDetails)="viewDetails($event)"
                 (openWebsite)="openWebsite($event)"
               />
-            </p-tabpanel>
-          </p-tabs>
+            </div>
+          </app-tabs>
         }
       </div>
 

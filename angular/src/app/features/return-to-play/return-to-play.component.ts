@@ -19,13 +19,14 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 
-import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { ProgressBarComponent } from "../../shared/components/progress-bar/progress-bar.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { TableComponent } from "../../shared/components/table/table.component";
+import { CheckboxComponent } from "../../shared/components/checkbox/checkbox.component";
+import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { Slider } from "primeng/slider";
-import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
@@ -299,12 +300,13 @@ const SEVERITY_LEVELS = [
     CommonModule,
     LazyChartComponent,
     AppDialogComponent,
-    ProgressBar,
-    Select,
+    ProgressBarComponent,
+    SelectComponent,
     Slider,
-    TableModule,
+    TableComponent,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
+    CheckboxComponent,
 
     MainLayoutComponent,
     CardShellComponent,

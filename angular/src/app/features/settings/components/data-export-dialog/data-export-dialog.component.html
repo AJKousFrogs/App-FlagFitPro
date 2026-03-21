@@ -99,7 +99,7 @@
 
     @if (isExportingData()) {
       <div class="export-progress-section">
-        <p-progressBar [value]="exportProgress()" [showValue]="true"></p-progressBar>
+        <app-progress-bar [value]="exportProgress()" [showValue]="true"></app-progress-bar>
         <span class="progress-label">Preparing your data...</span>
         @if (exportTakingLong()) {
           <p class="slow-operation-message">

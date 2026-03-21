@@ -64,50 +64,28 @@
           </div>
 
           <!-- Tabs for different views -->
-          <p-tabs [value]="0">
-            <p-tablist>
-              <p-tab [value]="0">
-                <i class="pi pi-users"></i>
-                Athletes Overview
-              </p-tab>
-              <p-tab [value]="1">
-                <i class="pi pi-chart-line"></i>
-                Body Composition
-              </p-tab>
-              <p-tab [value]="2">
-                <i class="pi pi-check-square"></i>
-                Supplement Compliance
-              </p-tab>
-              <p-tab [value]="3">
-                <i class="pi pi-calendar"></i>
-                Tournament Prep
-              </p-tab>
-            </p-tablist>
-
-            <p-tabpanels>
-              <!-- Athletes Overview -->
-              <p-tabpanel [value]="0">
+          <app-tabs [value]="0">
+            <!-- Athletes Overview -->
+            <div *appTabPanel="let panel; header: 'Athletes Overview'; value: 0; icon: 'pi-users'">
                 <div class="athletes-section">
                   <div class="section-header">
                     <h3>Athletes Under Care</h3>
                     <div class="search-box">
-                      <i class="pi pi-search"></i>
-                      <input
-                        type="text"
-                        pInputText
-                        [value]="searchQuery"
-                        (input)="onSearchQueryChange(getInputValue($event))"
+                      <app-form-input
+                        prefixIcon="pi-search"
+                        [ngModel]="searchQuery"
+                        (change)="onSearchQueryChange($event)"
                         placeholder="Search athletes..."
                         aria-label="Search athletes"
-                      />
+                      ></app-form-input>
                     </div>
                   </div>
 
-                  <p-table
-                    [value]="filteredAthletes()"
+                  <app-table
+                    [data]="filteredAthletes()"
                     [paginator]="true"
                     [rows]="10"
-                    class="p-datatable-sm"
+                    styleClass="p-datatable-sm"
                   >
                     <ng-template #header>
                       <tr>
@@ -149,11 +127,11 @@
                         </td>
                         <td>
                           <div class="compliance-cell">
-                            <p-progressBar
+                            <app-progress-bar
                               [value]="getAthleteCompliance(athlete.id)"
                               [showValue]="false"
                               class="compliance-bar"
-                            ></p-progressBar>
+                            ></app-progress-bar>
                             <span>{{ getAthleteCompliance(athlete.id) }}%</span>
                           </div>
                         </td>
@@ -201,21 +179,21 @@
                         </td>
                       </tr>
                     </ng-template>
-                  </p-table>
+                  </app-table>
                 </div>
-              </p-tabpanel>
+            </div>
 
-              <!-- Body Composition -->
-              <p-tabpanel [value]="1">
+            <!-- Body Composition -->
+            <div *appTabPanel="let panel; header: 'Body Composition'; value: 1; icon: 'pi-chart-line'">
                 <div class="body-composition-section">
                   <div class="section-header">
                     <h3>Body Composition Trends</h3>
-                    <p-select
+                    <app-select
                       [options]="athleteSelectOptions()"
                       [ngModel]="selectedAthleteId"
-                      (onChange)="onSelectedAthleteIdChange($event.value)"
+                      (change)="onSelectedAthleteIdChange($event)"
                       placeholder="Select athlete"
-                    ></p-select>
+                    ></app-select>
                   </div>
 
                   @if (selectedAthleteId) {
@@ -256,28 +234,27 @@
                     </div>
                   }
                 </div>
-              </p-tabpanel>
+            </div>
 
-              <!-- Supplement Compliance -->
-              <p-tabpanel [value]="2">
+            <!-- Supplement Compliance -->
+            <div *appTabPanel="let panel; header: 'Supplement Compliance'; value: 2; icon: 'pi-check-square'">
                 <app-nutritionist-supplement-section
                   [items]="supplementCompliance()"
                   [athleteName]="getAthleteName.bind(this)"
                   [complianceSeverity]="getComplianceSeverity.bind(this)"
                 />
-              </p-tabpanel>
+            </div>
 
-              <!-- Tournament Prep -->
-              <p-tabpanel [value]="3">
+            <!-- Tournament Prep -->
+            <div *appTabPanel="let panel; header: 'Tournament Prep'; value: 3; icon: 'pi-calendar'">
                 <app-nutritionist-tournament-section
                   [items]="upcomingTournaments()"
                   (createBrief)="showTournamentDialog.set(true)"
                   (viewBrief)="viewTournamentBriefCard($event)"
                   (exportBrief)="exportTournamentBriefCard($event)"
                 />
-              </p-tabpanel>
-            </p-tabpanels>
-          </p-tabs>
+            </div>
+          </app-tabs>
         }
 
         <!-- Athlete Details Dialog -->
@@ -381,34 +358,34 @@
           />
           <div class="report-form">
             <div class="form-group">
-              <label>Report Type</label>
-              <p-select
+              <app-select
+                label="Report Type"
                 [options]="reportTypes"
                 [ngModel]="selectedReportType"
-                (onChange)="onSelectedReportTypeChange($event.value)"
+                (change)="onSelectedReportTypeChange($event)"
                 placeholder="Select report type"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-group">
-              <label>Athlete</label>
-              <p-select
+              <app-select
+                label="Athlete"
                 [options]="athleteSelectOptions()"
                 [ngModel]="reportAthleteId"
-                (onChange)="onReportAthleteIdChange($event.value)"
+                (change)="onReportAthleteIdChange($event)"
                 placeholder="Select athlete"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-group">
-              <label>Time Period</label>
-              <p-select
+              <app-select
+                label="Time Period"
                 [options]="timePeriods"
                 [ngModel]="selectedTimePeriod"
-                (onChange)="onSelectedTimePeriodChange($event.value)"
+                (change)="onSelectedTimePeriodChange($event)"
                 placeholder="Select period"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
           </div>
           <app-dialog-footer
@@ -440,67 +417,57 @@
           />
           <div class="tournament-form">
             <div class="form-group">
-              <label>Tournament Name</label>
-              <input
-                type="text"
-                pInputText
-                [value]="newTournament.name"
-                (input)="onNewTournamentNameChange(getInputValue($event))"
+              <app-form-input
+                label="Tournament Name"
+                [ngModel]="newTournament.name"
+                (change)="onNewTournamentNameChange($event)"
                 placeholder="e.g., National Championships"
                 class="w-full"
                 aria-label="Tournament name"
-              />
+              ></app-form-input>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Location</label>
-                <input
-                  type="text"
-                  pInputText
-                  [value]="newTournament.location"
-                  (input)="onNewTournamentLocationChange(getInputValue($event))"
+                <app-form-input
+                  label="Location"
+                  [ngModel]="newTournament.location"
+                  (change)="onNewTournamentLocationChange($event)"
                   placeholder="City, Country"
                   class="w-full"
                   aria-label="Tournament location"
-                />
+                ></app-form-input>
               </div>
               <div class="form-group">
-                <label>Expected Games</label>
-                <input
+                <app-form-input
+                  label="Expected Games"
                   type="number"
-                  pInputText
-                  [value]="newTournament.expectedGames"
-                  (input)="onNewTournamentExpectedGamesChange(getInputValue($event))"
-                  min="1"
+                  [ngModel]="newTournament.expectedGames"
+                  (change)="onNewTournamentExpectedGamesChange($event)"
                   class="w-full"
                   aria-label="Expected number of games"
-                />
+                ></app-form-input>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Expected Temperature (°C)</label>
-                <input
+                <app-form-input
+                  label="Expected Temperature (°C)"
                   type="number"
-                  pInputText
-                  [value]="newTournament.temperature"
-                  (input)="onNewTournamentTemperatureChange(getInputValue($event))"
+                  [ngModel]="newTournament.temperature"
+                  (change)="onNewTournamentTemperatureChange($event)"
                   class="w-full"
                   aria-label="Expected temperature in Celsius"
-                />
+                ></app-form-input>
               </div>
               <div class="form-group">
-                <label>Humidity (%)</label>
-                <input
+                <app-form-input
+                  label="Humidity (%)"
                   type="number"
-                  pInputText
-                  [value]="newTournament.humidity"
-                  (input)="onNewTournamentHumidityChange(getInputValue($event))"
-                  min="0"
-                  max="100"
+                  [ngModel]="newTournament.humidity"
+                  (change)="onNewTournamentHumidityChange($event)"
                   class="w-full"
                   aria-label="Expected humidity percentage"
-                />
+                ></app-form-input>
               </div>
             </div>
           </div>

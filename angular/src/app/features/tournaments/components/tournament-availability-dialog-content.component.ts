@@ -1,9 +1,8 @@
-import { CommonModule } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { Checkbox } from "primeng/checkbox";
-import { InputText } from "primeng/inputtext";
-import { Textarea } from "primeng/textarea";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 
 import type { Tournament } from "../../../core/services/tournament.service";
 
@@ -17,11 +16,10 @@ interface AvailabilityOption {
   selector: "app-tournament-availability-dialog-content",
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    Checkbox,
-    InputText,
-    Textarea,
+    CheckboxComponent,
+    FormInputComponent,
+    TextareaComponent,
   ],
   templateUrl: "./tournament-availability-dialog-content.component.html",
   styleUrl: "./tournament-availability-dialog-content.component.scss",

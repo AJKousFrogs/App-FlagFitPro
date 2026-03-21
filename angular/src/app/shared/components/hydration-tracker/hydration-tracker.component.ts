@@ -20,7 +20,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -42,7 +42,7 @@ interface HydrationLog {
     CommonModule,
     ButtonComponent,
     CardShellComponent,
-    ProgressBar,
+    ProgressBarComponent,
     Tooltip,
   ],
   template: `
@@ -76,11 +76,11 @@ interface HydrationLog {
           <div class="progress-text">
             {{ progressPercent() }}% of daily goal
           </div>
-          <p-progressBar
+          <app-progress-bar
             [value]="progressPercent()"
             [showValue]="false"
             class="hydration-progress"
-          ></p-progressBar>
+          ></app-progress-bar>
         </div>
       </div>
 

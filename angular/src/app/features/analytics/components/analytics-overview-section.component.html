@@ -62,11 +62,11 @@
             </div>
           </div>
           <div class="goal-progress">
-            <p-progressBar
+            <app-progress-bar
               [value]="calculateGoalProgress(goal)"
               [showValue]="false"
               class="goal-progress-bar"
-            />
+            ></app-progress-bar>
             <span class="progress-percent">{{ calculateGoalProgress(goal) }}%</span>
           </div>
           <div class="goal-meta">

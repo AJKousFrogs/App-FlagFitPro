@@ -9,11 +9,11 @@ import {
 import { DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Accordion, AccordionPanel } from "primeng/accordion";
-import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { TableComponent } from "../../shared/components/table/table.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
@@ -180,13 +180,13 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     ButtonComponent,
     CardShellComponent,
     LazyChartComponent,
-    TableModule,
+    TableComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
-    InputText,
-    InputNumber,
+    FormInputComponent,
+    InputNumberComponent,
     ProgressBar,
-    Select,
+    SelectComponent,
     Accordion,
     AccordionPanel,
     MainLayoutComponent,

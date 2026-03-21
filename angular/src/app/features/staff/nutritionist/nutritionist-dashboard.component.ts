@@ -11,11 +11,11 @@ import {
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TableComponent } from "../../../shared/components/table/table.component";
+import { TabsComponent, AppTabPanelDirective } from "../../../shared/components/tabs/tabs.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
@@ -138,15 +138,12 @@ interface TournamentNutritionBrief {
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
-    InputText,
-    ProgressBar,
-    Select,
-    TableModule,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    FormInputComponent,
+    ProgressBarComponent,
+    SelectComponent,
+    TableComponent,
+    TabsComponent,
+    AppTabPanelDirective,
     StatusTagComponent,
     Tooltip,
     MainLayoutComponent,

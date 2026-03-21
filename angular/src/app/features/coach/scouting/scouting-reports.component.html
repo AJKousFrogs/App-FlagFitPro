@@ -101,115 +101,106 @@
           />
           <div class="report-form">
             <div class="form-group">
-              <label>Opponent</label>
-              <p-select
+              <app-select
+                label="Opponent"
                 [options]="opponentFilterOptions()"
-                (onChange)="updateNewReportOpponent($event.value)"
+                (change)="updateNewReportOpponent($event)"
                 placeholder="Select opponent"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
 
             <div class="form-group">
-              <label>Game Date</label>
-              <input
+              <app-form-input
+                label="Game Date"
                 type="date"
-                pInputText
-                [value]="newReport.gameDate"
-                (input)="updateNewReportGameDate(getInputValue($event))"
+                [ngModel]="newReport.gameDate"
+                (change)="updateNewReportGameDate($event)"
                 class="w-full"
                 aria-label="Game date"
-              />
+              ></app-form-input>
             </div>
 
             <div class="form-group">
-              <label>Executive Summary</label>
-              <textarea
-                pInputTextarea
-                [value]="newReport.executiveSummary"
-                (input)="updateNewReportText('executiveSummary', getInputValue($event))"
+              <app-textarea
+                label="Executive Summary"
+                [ngModel]="newReport.executiveSummary"
+                (change)="updateNewReportText('executiveSummary', $event)"
                 rows="4"
                 placeholder="2-3 paragraph overview of the opponent..."
                 class="w-full"
                 aria-label="Executive summary"
-              ></textarea>
+              ></app-textarea>
             </div>
 
             <div class="form-section">
               <h4>Offensive Game Plan</h4>
               <div class="form-group">
-                <label>Attack Points</label>
-                <textarea
-                  pInputTextarea
-                  [value]="newReport.attackPoints"
-                  (input)="updateNewReportText('attackPoints', getInputValue($event))"
+                <app-textarea
+                  label="Attack Points"
+                  [ngModel]="newReport.attackPoints"
+                  (change)="updateNewReportText('attackPoints', $event)"
                   rows="2"
                   placeholder="Where to attack their defense (one per line)"
                   class="w-full"
                   aria-label="Attack points"
-                ></textarea>
+                ></app-textarea>
               </div>
               <div class="form-group">
-                <label>Plays to Run</label>
-                <textarea
-                  pInputTextarea
-                  [value]="newReport.playsToRun"
-                  (input)="updateNewReportText('playsToRun', getInputValue($event))"
+                <app-textarea
+                  label="Plays to Run"
+                  [ngModel]="newReport.playsToRun"
+                  (change)="updateNewReportText('playsToRun', $event)"
                   rows="2"
                   placeholder="Specific plays from playbook (one per line)"
                   class="w-full"
                   aria-label="Plays to run"
-                ></textarea>
+                ></app-textarea>
               </div>
             </div>
 
             <div class="form-section">
               <h4>Defensive Game Plan</h4>
               <div class="form-group">
-                <label>Coverage Adjustments</label>
-                <textarea
-                  pInputTextarea
-                  [value]="newReport.coverageAdjustments"
-                  (input)="updateNewReportText('coverageAdjustments', getInputValue($event))"
+                <app-textarea
+                  label="Coverage Adjustments"
+                  [ngModel]="newReport.coverageAdjustments"
+                  (change)="updateNewReportText('coverageAdjustments', $event)"
                   rows="2"
                   placeholder="Coverage changes needed (one per line)"
                   class="w-full"
                   aria-label="Coverage adjustments"
-                ></textarea>
+                ></app-textarea>
               </div>
               <div class="form-group">
-                <label>Blitz Plan</label>
-                <textarea
-                  pInputTextarea
-                  [value]="newReport.blitzPlan"
-                  (input)="updateNewReportText('blitzPlan', getInputValue($event))"
+                <app-textarea
+                  label="Blitz Plan"
+                  [ngModel]="newReport.blitzPlan"
+                  (change)="updateNewReportText('blitzPlan', $event)"
                   rows="2"
                   placeholder="When and how to blitz (one per line)"
                   class="w-full"
                   aria-label="Blitz plan"
-                ></textarea>
+                ></app-textarea>
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label>Share With</label>
-                <p-select
+                <app-select
+                  label="Share With"
                   [options]="shareOptions"
-                  (onChange)="updateNewReportSharedWith($event.value)"
+                  (change)="updateNewReportSharedWith($event)"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
               <div class="form-group checkbox-group">
-                <label>
-                  <input
-                    type="checkbox"
-                    [checked]="newReport.requiredReading"
-                    (change)="updateNewReportRequiredReading(isChecked($event))"
-                    aria-label="Mark report as required reading"
-                  />
-                  Mark as required reading
-                </label>
+                <app-checkbox
+                  label="Mark as required reading"
+                  [ngModel]="newReport.requiredReading"
+                  (change)="updateNewReportRequiredReading($event.checked)"
+                  aria-label="Mark report as required reading"
+                ></app-checkbox>
               </div>
             </div>
           </div>
@@ -382,83 +373,75 @@
           />
           <div class="opponent-form">
             <div class="form-group">
-              <label>Team Name</label>
-              <input
-                type="text"
-                pInputText
-                [value]="newOpponent.teamName"
-                (input)="updateNewOpponentText('teamName', getInputValue($event))"
+              <app-form-input
+                label="Team Name"
+                [ngModel]="newOpponent.teamName"
+                (change)="updateNewOpponentText('teamName', $event)"
                 placeholder="e.g., Phoenix Flames"
                 class="w-full"
                 aria-label="Opponent team name"
-              />
+              ></app-form-input>
             </div>
             <div class="form-group">
-              <label>Conference/League</label>
-              <input
-                type="text"
-                pInputText
-                [value]="newOpponent.conference"
-                (input)="updateNewOpponentText('conference', getInputValue($event))"
+              <app-form-input
+                label="Conference/League"
+                [ngModel]="newOpponent.conference"
+                (change)="updateNewOpponentText('conference', $event)"
                 placeholder="e.g., Western Division"
                 class="w-full"
                 aria-label="Conference or league"
-              />
+              ></app-form-input>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Wins</label>
-                <input
+                <app-form-input
+                  label="Wins"
                   type="number"
-                  pInputText
-                  [value]="newOpponent.wins"
-                  (input)="updateNewOpponentRecord('wins', getInputValue($event))"
+                  [ngModel]="newOpponent.wins"
+                  (change)="updateNewOpponentRecord('wins', $event)"
                   min="0"
                   class="w-full"
                   aria-label="Opponent wins"
-                />
+                ></app-form-input>
               </div>
               <div class="form-group">
-                <label>Losses</label>
-                <input
+                <app-form-input
+                  label="Losses"
                   type="number"
-                  pInputText
-                  [value]="newOpponent.losses"
-                  (input)="updateNewOpponentRecord('losses', getInputValue($event))"
+                  [ngModel]="newOpponent.losses"
+                  (change)="updateNewOpponentRecord('losses', $event)"
                   min="0"
                   class="w-full"
                   aria-label="Opponent losses"
-                />
+                ></app-form-input>
               </div>
             </div>
             <div class="form-group">
-              <label>Head Coach</label>
-              <input
-                type="text"
-                pInputText
-                [value]="newOpponent.headCoach"
-                (input)="updateNewOpponentText('headCoach', getInputValue($event))"
+              <app-form-input
+                label="Head Coach"
+                [ngModel]="newOpponent.headCoach"
+                (change)="updateNewOpponentText('headCoach', $event)"
                 class="w-full"
                 aria-label="Head coach"
-              />
+              ></app-form-input>
             </div>
             <div class="form-group">
-              <label>Offensive Style</label>
-              <p-select
+              <app-select
+                label="Offensive Style"
                 [options]="offensiveStyles"
-                (onChange)="updateNewOpponentText('offensiveStyle', $event.value)"
+                (change)="updateNewOpponentText('offensiveStyle', $event)"
                 placeholder="Select style"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-group">
-              <label>Defensive Style</label>
-              <p-select
+              <app-select
+                label="Defensive Style"
                 [options]="defensiveStyles"
-                (onChange)="updateNewOpponentText('defensiveStyle', $event.value)"
+                (change)="updateNewOpponentText('defensiveStyle', $event)"
                 placeholder="Select style"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
           </div>
           <app-dialog-footer

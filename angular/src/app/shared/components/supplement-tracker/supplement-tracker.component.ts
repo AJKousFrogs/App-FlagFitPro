@@ -33,10 +33,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { FormInputComponent } from "../form-input/form-input.component";
+import { SelectComponent } from "../select/select.component";
 import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
-import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
@@ -190,10 +190,10 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Tag,
+    StatusTagComponent,
     SkeletonLoaderComponent,
-    InputText,
-    Select,
+    FormInputComponent,
+    SelectComponent,
     ButtonComponent,
     IconButtonComponent,
     EmptyStateComponent,

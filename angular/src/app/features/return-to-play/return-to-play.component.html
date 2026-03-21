@@ -83,10 +83,10 @@
                 <span>Overall Progress</span>
                 <span>{{ protocol.progressPercentage }}% Complete</span>
               </div>
-              <p-progressBar
+              <app-progress-bar
                 [value]="protocol.progressPercentage"
                 [showValue]="false"
-              ></p-progressBar>
+              ></app-progress-bar>
             </div>
           </app-card-shell>
 
@@ -197,14 +197,14 @@
                   let i = $index
                 ) {
                   <div class="criterion-item">
-                    <input
-                      type="checkbox"
+                    <app-checkbox
                       [id]="'criterion-' + i"
-                      [checked]="protocol.criteriaCompleted[i]"
-                      (change)="updateCriterion(i, { checked: isChecked($event) })"
+                      [ngModel]="protocol.criteriaCompleted[i]"
+                      (change)="updateCriterion(i, { checked: $event.checked })"
                       [attr.aria-label]="criterion"
-                    />
-                    <label [for]="'criterion-' + i">{{ criterion }}</label>
+                    >
+                      <span>{{ criterion }}</span>
+                    </app-checkbox>
                   </div>
                 }
               </div>
@@ -298,29 +298,28 @@
                     let i = $index
                   ) {
                     <div class="activity-check">
-                      <input
-                        type="checkbox"
+                      <app-checkbox
                         [id]="'activity-' + i"
-                        [checked]="isActivitySelected(activity)"
-                        (change)="toggleTodayCheckinActivity(activity, isChecked($event))"
+                        [ngModel]="isActivitySelected(activity)"
+                        (change)="toggleTodayCheckinActivity(activity, $event.checked)"
                         [attr.aria-label]="activity"
-                      />
-                      <label [for]="'activity-' + i">{{ activity }}</label>
+                      >
+                        <span>{{ activity }}</span>
+                      </app-checkbox>
                     </div>
                   }
                 </div>
               </div>
 
               <div class="notes-section">
-                <label for="checkin-notes">Notes</label>
-                <textarea
-                  pInputTextarea
+                <app-textarea
+                  label="Notes"
                   id="checkin-notes"
-                  [value]="todayCheckin.notes"
-                  (input)="updateTodayCheckinNotes(getInputValue($event))"
+                  [ngModel]="todayCheckin.notes"
+                  (change)="updateTodayCheckinNotes($event)"
                   rows="2"
                   placeholder="Any observations, tightness, or concerns..."
-                ></textarea>
+                ></app-textarea>
               </div>
 
               <app-button
@@ -361,10 +360,10 @@
               title="Recent Check-ins"
               headerIcon="pi-history"
             >
-              <p-table
-                [value]="recentCheckins()"
+              <app-table
+                [data]="recentCheckins()"
                 [rows]="5"
-                class="p-datatable-sm"
+                styleClass="p-datatable-sm"
               >
                 <ng-template #header>
                   <tr>
@@ -388,7 +387,7 @@
                     <td class="notes-cell">{{ checkin.notes || "-" }}</td>
                   </tr>
                 </ng-template>
-              </p-table>
+              </app-table>
             </app-card-shell>
           }
         }
@@ -436,28 +435,28 @@
           <!-- Location & Severity Row -->
           <div class="form-row two-col">
             <div class="form-field">
-              <label for="injury-location">Injury Location *</label>
-              <p-select
+              <app-select
+                label="Injury Location *"
                 id="injury-location"
                 [options]="injuryLocations"
-                (onChange)="updateNewProtocolField('injuryLocation', $event.value)"
+                (change)="updateNewProtocolField('injuryLocation', $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select location"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-field">
-              <label for="severity">Severity *</label>
-              <p-select
+              <app-select
+                label="Severity *"
                 id="severity"
                 [options]="severityLevels"
-                (onChange)="updateProtocolSeverity($event.value)"
+                (change)="updateProtocolSeverity($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select severity"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
           </div>
 
@@ -490,43 +489,35 @@
 
           <!-- Medical Notes -->
           <div class="form-field">
-            <label for="medical-notes"
-              >Medical Professional Notes (optional)</label
-            >
-            <textarea
-              pInputTextarea
+            <app-textarea
+              label="Medical Professional Notes (optional)"
               id="medical-notes"
-              [value]="newProtocol.medicalNotes"
-              (input)="updateProtocolMedicalNotes(getInputValue($event))"
+              [ngModel]="newProtocol.medicalNotes"
+              (change)="updateProtocolMedicalNotes($event)"
               rows="2"
               placeholder="Diagnosed by team physio. MRI confirmed..."
-            ></textarea>
+            ></app-textarea>
           </div>
 
           <!-- Acknowledgments -->
           <div class="acknowledgments">
             <div class="ack-item">
-              <input
+              <app-checkbox
                 id="understand"
-                type="checkbox"
-                [checked]="newProtocol.understandProtocol"
-                (change)="updateProtocolToggle('understandProtocol', isChecked($event))"
-              />
-              <label for="understand"
-                >I understand this protocol and will follow it
-                responsibly</label
+                [ngModel]="newProtocol.understandProtocol"
+                (change)="updateProtocolToggle('understandProtocol', $event.checked)"
               >
+                <span>I understand this protocol and will follow it responsibly</span>
+              </app-checkbox>
             </div>
             <div class="ack-item">
-              <input
+              <app-checkbox
                 id="notify"
-                type="checkbox"
-                [checked]="newProtocol.notifyCoach"
-                (change)="updateProtocolToggle('notifyCoach', isChecked($event))"
-              />
-              <label for="notify"
-                >Coach will be notified of my recovery status</label
+                [ngModel]="newProtocol.notifyCoach"
+                (change)="updateProtocolToggle('notifyCoach', $event.checked)"
               >
+                <span>Coach will be notified of my recovery status</span>
+              </app-checkbox>
             </div>
           </div>
         </div>

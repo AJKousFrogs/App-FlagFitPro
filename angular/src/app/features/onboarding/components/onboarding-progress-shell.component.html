@@ -1,19 +1,19 @@
 <div class="progress-section">
-  <p-progressBar
-    [value]="completionStats.percent"
+  <app-progress-bar
+    [value]="completionStats().percent"
     [showValue]="false"
     class="onboarding-progress"
-  ></p-progressBar>
+  ></app-progress-bar>
   <div class="progress-info">
-    <span class="progress-text">{{ completionStats.percent }}% complete</span>
+    <span class="progress-text">{{ completionStats().percent }}% complete</span>
     <span class="progress-meta">
-      {{ completionStats.completed }} / {{ completionStats.total }}
+      {{ completionStats().completed }} / {{ completionStats().total }}
       required tasks done
     </span>
-    <span class="progress-meta">Now: Step {{ stepPosition }} - {{ currentStepLabel }}</span>
-    @if (lastSaved) {
-      <span class="auto-save-indicator" [class.saving]="isSaving">
-        @if (isSaving) {
+    <span class="progress-meta">Now: Step {{ stepPosition() }} - {{ currentStepLabel() }}</span>
+    @if (lastSaved()) {
+      <span class="auto-save-indicator" [class.saving]="isSaving()">
+        @if (isSaving()) {
           <i class="pi pi-spin pi-spinner"></i> Saving...
         } @else {
           <i class="pi pi-check-circle"></i> Draft saved
@@ -23,7 +23,7 @@
   </div>
 </div>
 
-@if (hasPendingRequirements) {
+@if (hasPendingRequirements()) {
   <app-alert
     class="completion-checklist"
     variant="warning"
@@ -32,12 +32,12 @@
   >
     <div class="checklist-body">
       <div class="checklist-items">
-        @for (item of pendingRequirementLabels; track item) {
+        @for (item of pendingRequirementLabels(); track item) {
           <span class="checklist-item">{{ item }}</span>
         }
-        @if (completionStats.remaining > 4) {
+        @if (completionStats().remaining > 4) {
           <span class="checklist-item more"
-            >+{{ completionStats.remaining - 4 }} more</span
+            >+{{ completionStats().remaining - 4 }} more</span
           >
         }
       </div>
@@ -47,12 +47,12 @@
 
 <p-stepper
   class="onboarding-stepper"
-  [value]="currentStep"
+  [value]="currentStep()"
   (valueChange)="onStepperValueChange($event)"
   [linear]="false"
 >
   <p-step-list>
-    @for (step of steps; track $index) {
+    @for (step of steps(); track $index) {
       <p-step [value]="$index">
         <ng-template #content>
           <div class="step-with-icon">

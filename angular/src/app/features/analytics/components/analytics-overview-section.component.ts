@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { DevelopmentGoal, Metric } from "../analytics.models";
@@ -12,7 +12,7 @@ import { DevelopmentGoal, Metric } from "../analytics.models";
   imports: [
     CommonModule,
     RouterModule,
-    ProgressBar,
+    ProgressBarComponent,
     CardShellComponent,
     EmptyStateComponent,
   ],

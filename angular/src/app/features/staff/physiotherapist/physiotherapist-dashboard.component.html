@@ -62,62 +62,32 @@
           </div>
 
           <!-- Main Tabs -->
-          <p-tabs [value]="0">
-            <p-tablist>
-              <p-tab [value]="0">
-                <i class="pi pi-users"></i>
-                Athletes Overview
-              </p-tab>
-              <p-tab [value]="1">
-                <i class="pi pi-sync"></i>
-                Return to Play
-              </p-tab>
-              <p-tab [value]="2">
-                <i class="pi pi-exclamation-triangle"></i>
-                Risk Assessment
-              </p-tab>
-              <p-tab [value]="3">
-                <i class="pi pi-history"></i>
-                Injury History
-              </p-tab>
-              <p-tab [value]="4">
-                <i class="pi pi-comments"></i>
-                Shared Insights
-              </p-tab>
-            </p-tablist>
-
-            <p-tabpanels>
-              <!-- Athletes Overview -->
-              <p-tabpanel [value]="0">
+          <app-tabs [value]="0">
+            <div *appTabPanel="let panel; header: 'Athletes Overview'; value: 0; icon: 'pi-users'">
                 <div class="athletes-section">
                   <div class="section-header">
                     <h3>Athletes Under Care</h3>
                     <div class="filter-group">
-                      <label for="clearance-filter" class="sr-only"
-                        >Filter by clearance status</label
-                      >
-                      <p-select
+                      <app-select
                         inputId="clearance-filter"
                         [options]="clearanceFilterOptions"
                         [ngModel]="clearanceFilter"
-                        (onChange)="onClearanceFilterChange($event.value)"
+                        (change)="onClearanceFilterChange($event)"
                         placeholder="Filter by status"
                         [showClear]="true"
                         [attr.aria-label]="
                           'Filter athletes by clearance status'
                         "
-                      ></p-select>
+                      ></app-select>
                     </div>
                   </div>
 
-                  <p-table
-                    [value]="filteredAthletes()"
+                  <app-table
+                    [data]="filteredAthletes()"
                     [paginator]="true"
                     [rows]="10"
                     [rowsPerPageOptions]="[10, 25, 50]"
-                    [virtualScroll]="filteredAthletes().length > 50"
-                    [virtualScrollItemSize]="46"
-                    class="p-datatable-sm"
+                    styleClass="p-datatable-sm"
                   >
                     <ng-template #header>
                       <tr>
@@ -220,12 +190,11 @@
                         </td>
                       </tr>
                     </ng-template>
-                  </p-table>
+                  </app-table>
                 </div>
-              </p-tabpanel>
+            </div>
 
-              <!-- Return to Play -->
-              <p-tabpanel [value]="1">
+            <div *appTabPanel="let panel; header: 'Return to Play'; value: 1; icon: 'pi-sync'">
                 <app-physio-rtp-section
                   [items]="rtpData()"
                   [phases]="rtpPhases"
@@ -235,30 +204,27 @@
                   (updateProgress)="handleRtpProgressUpdate($event)"
                   (viewReport)="handleRtpReportView($event)"
                 />
-              </p-tabpanel>
+            </div>
 
-              <!-- Risk Assessment -->
-              <p-tabpanel [value]="2">
+            <div *appTabPanel="let panel; header: 'Risk Assessment'; value: 2; icon: 'pi-exclamation-triangle'">
                 <app-physio-risk-section
                   [items]="riskIndicators()"
                   [athleteName]="getAthleteName.bind(this)"
                   [riskSeverity]="getRiskSeverity.bind(this)"
                   (viewPositionRisks)="viewPositionRisks($event)"
                 />
-              </p-tabpanel>
+            </div>
 
-              <!-- Injury History -->
-              <p-tabpanel [value]="3">
+            <div *appTabPanel="let panel; header: 'Injury History'; value: 3; icon: 'pi-history'">
                 <app-physio-history-section
                   [selectedAthlete]="selectedHistoryAthlete"
                   [athleteOptions]="athleteSelectOptions()"
                   [history]="currentInjuryHistory()"
                   (athleteChange)="onHistoryAthleteChange($event)"
                 />
-              </p-tabpanel>
+            </div>
 
-              <!-- Shared Insights -->
-              <p-tabpanel [value]="4">
+            <div *appTabPanel="let panel; header: 'Shared Insights'; value: 4; icon: 'pi-comments'">
                 <div class="insights-section">
                   <div class="section-header">
                     <h3>Team Insights & Communication</h3>
@@ -344,9 +310,8 @@
                     </div>
                   }
                 </div>
-              </p-tabpanel>
-            </p-tabpanels>
-          </p-tabs>
+            </div>
+          </app-tabs>
         }
 
         <!-- Athlete Details Dialog -->
@@ -510,28 +475,28 @@
           />
           <div class="report-form">
             <div class="form-group">
-              <label for="report-type-select">Report Type</label>
-              <p-select
+              <app-select
+                label="Report Type"
                 inputId="report-type-select"
                 [options]="reportTypes"
                 [ngModel]="selectedReportType"
-                (onChange)="onReportTypeChange($event.value)"
+                (change)="onReportTypeChange($event)"
                 placeholder="Select report type"
                 class="w-full"
                 [attr.aria-label]="'Select report type'"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-group">
-              <label for="report-athlete-select">Athlete</label>
-              <p-select
+              <app-select
+                label="Athlete"
                 inputId="report-athlete-select"
                 [options]="athleteSelectOptions()"
                 [ngModel]="reportAthleteId"
-                (onChange)="onReportAthleteChange($event.value)"
+                (change)="onReportAthleteChange($event)"
                 placeholder="Select athlete"
                 class="w-full"
                 [attr.aria-label]="'Select athlete for report'"
-              ></p-select>
+              ></app-select>
             </div>
           </div>
           <app-dialog-footer

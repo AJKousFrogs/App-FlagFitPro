@@ -66,15 +66,13 @@
               "
             >
               <div class="item-checkbox">
-                <input
-                  type="checkbox"
-                  class="supplement-checkbox"
-                  [checked]="supp.taken"
-                  (click)="$event.stopPropagation()"
+                <app-checkbox
+                  [ngModel]="supp.taken"
                   (change)="toggleSupplement(supp)"
+                  [binary]="true"
                   [id]="group.key + '-' + supp.id"
                   [attr.aria-label]="supp.name"
-                />
+                ></app-checkbox>
               </div>
               <div class="item-info">
                 <span class="item-name">{{ supp.name }}</span>
@@ -82,11 +80,12 @@
                   <span class="item-dosage">{{ supp.dosage }}</span>
                 }
               </div>
-              <p-tag
+              <app-status-tag
                 [value]="supp.category | titlecase"
                 [severity]="categorySeverityMap[supp.category] || 'secondary'"
                 class="category-tag"
-              ></p-tag>
+                size="sm"
+              ></app-status-tag>
             </div>
           }
         </div>
@@ -122,46 +121,42 @@
   />
   <form class="supplement-dialog-form" [formGroup]="newSupplementFormGroup">
     <div class="form-field">
-      <label for="suppName">Supplement Name *</label>
-      <input
+      <app-form-input
+        label="Supplement Name *"
         id="suppName"
-        type="text"
-        pInputText
         formControlName="name"
         placeholder="e.g., Vitamin B12"
-      />
+      ></app-form-input>
     </div>
 
     <div class="form-field">
-      <label for="suppDosage">Dosage</label>
-      <input
+      <app-form-input
+        label="Dosage"
         id="suppDosage"
-        type="text"
-        pInputText
         formControlName="dosage"
         placeholder="e.g., 500mg"
-      />
+      ></app-form-input>
     </div>
 
     <div class="form-row two-col">
       <div class="form-field">
-        <label for="suppTiming">Timing</label>
-        <p-select
+        <app-select
+          label="Timing"
           id="suppTiming"
           [options]="timingOptions"
           formControlName="timing"
           placeholder="Select timing"
-        ></p-select>
+        ></app-select>
       </div>
 
       <div class="form-field">
-        <label for="suppCategory">Category</label>
-        <p-select
+        <app-select
+          label="Category"
           id="suppCategory"
           [options]="categoryOptions"
           formControlName="category"
           placeholder="Select category"
-        ></p-select>
+        ></app-select>
       </div>
     </div>
   </form>

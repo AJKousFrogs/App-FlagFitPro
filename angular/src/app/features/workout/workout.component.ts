@@ -11,7 +11,7 @@ import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
-import { Checkbox } from "primeng/checkbox";
+import { CheckboxComponent } from "../../shared/components/checkbox/checkbox.component";
 
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -50,7 +50,7 @@ interface Workout {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Checkbox,
+    CheckboxComponent,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -103,17 +103,14 @@ interface Workout {
                     </div>
                   </div>
                   <div class="exercise-actions">
-                    <p-checkbox
+                    <app-checkbox
                       [ngModel]="exercise.completed"
-                      (onChange)="onExerciseCompletedChange(exercise, $event.checked)"
+                      (change)="onExerciseCompletedChange(exercise, $event.checked)"
                       [binary]="true"
-                      variant="filled"
                       inputId="exercise-{{ exercise.id }}"
                     >
-                    </p-checkbox>
-                    <label for="exercise-{{ exercise.id }}">
                       Mark {{ exercise.name }} as complete
-                    </label>
+                    </app-checkbox>
                   </div>
                 </div>
               }

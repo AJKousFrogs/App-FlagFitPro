@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
@@ -20,7 +20,7 @@ interface SupplementComplianceView {
 @Component({
   selector: "app-nutritionist-supplement-section",
   standalone: true,
-  imports: [CommonModule, ProgressBar, CardShellComponent, StatusTagComponent],
+  imports: [CommonModule, ProgressBarComponent, CardShellComponent, StatusTagComponent],
   templateUrl: "./nutritionist-supplement-section.component.html",
   styleUrl: "./nutritionist-supplement-section.component.scss",
 })

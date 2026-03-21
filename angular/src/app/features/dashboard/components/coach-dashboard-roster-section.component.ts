@@ -1,12 +1,12 @@
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
-import { TableModule } from "primeng/table";
 import { Tooltip } from "primeng/tooltip";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { TableComponent } from "../../../shared/components/table/table.component";
 import {
   getMappedStatusSeverity,
   playerStatusSeverityMap,
@@ -19,14 +19,13 @@ export type CoachDashboardPlayerFilter = "all" | "starters" | "injured" | "at_ri
   selector: "app-coach-dashboard-roster-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DecimalPipe,
-    TableModule,
     Tooltip,
     Avatar,
     Badge,
     ButtonComponent,
     StatusTagComponent,
+    TableComponent
   ],
   templateUrl: "./coach-dashboard-roster-section.component.html",
   styleUrl: "./coach-dashboard-roster-section.component.scss",

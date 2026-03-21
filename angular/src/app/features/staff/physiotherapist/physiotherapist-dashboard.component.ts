@@ -12,10 +12,9 @@ import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-
-import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TableComponent } from "../../../shared/components/table/table.component";
+import { TabsComponent, AppTabPanelDirective } from "../../../shared/components/tabs/tabs.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -210,13 +209,10 @@ const RTP_PHASES = [
     PhysioHistorySectionComponent,
     PhysioRiskSectionComponent,
     PhysioRtpSectionComponent,
-    Select,
-    TableModule,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    SelectComponent,
+    TableComponent,
+    TabsComponent,
+    AppTabPanelDirective,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,

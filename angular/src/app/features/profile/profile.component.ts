@@ -10,7 +10,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
+import { TabsComponent, AppTabPanelDirective } from "../../shared/components/tabs/tabs.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
 import { UI_LIMITS } from "../../core/constants/app.constants";
@@ -61,11 +61,8 @@ interface PendingInvitation {
   imports: [
     CommonModule,
     RouterModule,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    TabsComponent,
+    AppTabPanelDirective,
     MainLayoutComponent,
     PageErrorStateComponent,
     AlertComponent,

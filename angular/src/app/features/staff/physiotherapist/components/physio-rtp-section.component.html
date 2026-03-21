@@ -43,7 +43,7 @@
               <div class="metric">
                 <span class="metric-label">Pain Level</span>
                 <div class="metric-bar">
-                  <p-progressBar
+                  <app-progress-bar
                     [value]="latestPain()(rtp) * 10"
                     [showValue]="false"
                   />
@@ -53,7 +53,7 @@
               <div class="metric">
                 <span class="metric-label">Function Score</span>
                 <div class="metric-bar">
-                  <p-progressBar
+                  <app-progress-bar
                     [value]="rtp.progressMetrics.functionScore"
                     [showValue]="false"
                   />
@@ -63,7 +63,7 @@
               <div class="metric">
                 <span class="metric-label">Strength Recovery</span>
                 <div class="metric-bar">
-                  <p-progressBar
+                  <app-progress-bar
                     [value]="rtp.progressMetrics.strengthRecovery"
                     [showValue]="false"
                   />
@@ -73,7 +73,7 @@
               <div class="metric">
                 <span class="metric-label">Confidence</span>
                 <div class="metric-bar">
-                  <p-progressBar
+                  <app-progress-bar
                     [value]="rtp.progressMetrics.confidenceLevel * 10"
                     [showValue]="false"
                   />

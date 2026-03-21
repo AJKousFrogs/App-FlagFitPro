@@ -71,39 +71,15 @@
 
             <!-- Profile Tabs -->
             <div class="profile-tabs-container">
-              <p-tabs [(value)]="activeTab">
-                <p-tablist>
-                  <p-tab value="overview">
-                    <i class="pi pi-chart-line"></i>
-                    <span class="tab-label">Overview</span>
-                  </p-tab>
-                  <p-tab value="achievements">
-                    <i class="pi pi-trophy"></i>
-                    <span class="tab-label">Achievements</span>
-                  </p-tab>
-                  <p-tab value="statistics">
-                    <i class="pi pi-chart-bar"></i>
-                    <span class="tab-label">Statistics</span>
-                  </p-tab>
-                  <p-tab value="invitations">
-                    <i class="pi pi-envelope"></i>
-                    <span class="tab-label">Invitations</span>
-                    @if (pendingInvitations().length > 0) {
-                      <span class="invitation-badge">{{
-                        pendingInvitations().length
-                      }}</span>
-                    }
-                  </p-tab>
-                </p-tablist>
-                <p-tabpanels>
-                  <p-tabpanel value="overview">
+              <app-tabs [value]="activeTab()" (valueChange)="activeTab.set($event.toString())">
+                <div *appTabPanel="let panel; header: 'Overview'; value: 'overview'; icon: 'pi-chart-line'">
                     @defer (when activeTab() === 'overview') {
                       <app-profile-overview-section [activities]="activities()" />
                     } @placeholder {
                       <app-loading [visible]="true" message="Loading overview..." variant="skeleton" />
                     }
-                  </p-tabpanel>
-                  <p-tabpanel value="achievements">
+                </div>
+                <div *appTabPanel="let panel; header: 'Achievements'; value: 'achievements'; icon: 'pi-trophy'">
                     @defer (when activeTab() === 'achievements') {
                       <app-profile-achievements-section
                         [achievements]="achievements()"
@@ -111,8 +87,8 @@
                     } @placeholder {
                       <app-loading [visible]="true" message="Loading achievements..." variant="skeleton" />
                     }
-                  </p-tabpanel>
-                  <p-tabpanel value="statistics">
+                </div>
+                <div *appTabPanel="let panel; header: 'Statistics'; value: 'statistics'; icon: 'pi-chart-bar'">
                     @defer (when activeTab() === 'statistics') {
                       <app-profile-statistics-section
                         [performanceStats]="performanceStats()"
@@ -120,8 +96,8 @@
                     } @placeholder {
                       <app-loading [visible]="true" message="Loading statistics..." variant="skeleton" />
                     }
-                  </p-tabpanel>
-                  <p-tabpanel value="invitations">
+                </div>
+                <div *appTabPanel="let panel; header: 'Invitations'; value: 'invitations'; icon: 'pi-envelope'">
                     @defer (when activeTab() === 'invitations') {
                       <app-profile-invitations-section
                         [loading]="loadingInvitations()"
@@ -134,9 +110,8 @@
                     } @placeholder {
                       <app-loading [visible]="true" message="Loading invitations..." variant="skeleton" />
                     }
-                  </p-tabpanel>
-                </p-tabpanels>
-              </p-tabs>
+                </div>
+              </app-tabs>
             </div>
           } @placeholder {
             <section class="page-state-card ds-card-surface">

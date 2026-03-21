@@ -5,8 +5,8 @@
 >
   <form [formGroup]="privacyForm()" class="privacy-controls-form">
     <div class="form-field">
-      <label for="profileVisibility" class="form-label">Profile Visibility</label>
-      <p-select
+      <app-select
+        label="Profile Visibility"
         id="profileVisibility"
         formControlName="profileVisibility"
         [options]="visibilityOptions()"
@@ -14,14 +14,7 @@
         optionValue="value"
         placeholder="Select visibility"
         appendTo="body"
-      >
-        <ng-template #item let-option>
-          <div class="visibility-option">
-            <span class="visibility-label">{{ option.label }}</span>
-            <span class="visibility-desc">{{ option.description }}</span>
-          </div>
-        </ng-template>
-      </p-select>
+      ></app-select>
     </div>
     <div class="settings-toggle-row">
       <label id="settings-showStats-label" class="form-label"

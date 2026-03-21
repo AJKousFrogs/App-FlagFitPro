@@ -29,20 +29,9 @@ import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 
 // PrimeNG Components
-import {
-  Accordion,
-  AccordionPanel,
-  AccordionHeader,
-  AccordionContent,
-} from "primeng/accordion";
 import { Badge } from "primeng/badge";
 import { Chip } from "primeng/chip";
 import { DatePicker } from "primeng/datepicker";
-
-import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
-
-import { Select } from "primeng/select";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -66,6 +55,11 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { InputNumberComponent } from "../../../shared/components/input-number/input-number.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { AccordionComponent, AppAccordionPanelDirective } from "../../../shared/components/accordion/accordion.component";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 import { TravelFlightSeveritySectionComponent } from "./components/travel-flight-severity-section.component";
 import { TravelFlightTodayProtocolSectionComponent } from "./components/travel-flight-today-protocol-section.component";
 
@@ -102,13 +96,12 @@ interface FlightTripForm {
     RouterModule,
     Chip,
     DatePicker,
-    InputNumber,
-    InputText,
-    Select,
-    Accordion,
-    AccordionPanel,
-    AccordionHeader,
-    AccordionContent,
+    FormInputComponent,
+    InputNumberComponent,
+    SelectComponent,
+    AccordionComponent,
+    AppAccordionPanelDirective,
+    CheckboxComponent,
     Badge,
     ButtonComponent,
     CardShellComponent,

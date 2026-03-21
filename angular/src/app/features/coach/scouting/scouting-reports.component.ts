@@ -8,13 +8,14 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TableComponent } from "../../../shared/components/table/table.component";
+import { TabsComponent, AppTabPanelDirective } from "../../../shared/components/tabs/tabs.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -149,16 +150,14 @@ interface NewOpponentForm {
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
-    InputText,
-    Select,
-    TableModule,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    FormInputComponent,
+    SelectComponent,
+    TableComponent,
+    TabsComponent,
+    AppTabPanelDirective,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
+    CheckboxComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
     PageHeaderComponent,

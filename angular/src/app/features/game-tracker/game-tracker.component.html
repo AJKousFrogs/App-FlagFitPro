@@ -64,40 +64,37 @@
               ></p-datepicker>
             </div>
             <div class="form-field">
-              <label for="gameTime">Game Time</label>
-              <input
+              <app-form-input
+                label="Game Time"
                 id="gameTime"
                 type="time"
-                pInputText
                 formControlName="gameTime"
-              />
+              ></app-form-input>
             </div>
             <div class="form-field">
-              <label for="opponent">Opponent Team</label>
-              <input
+              <app-form-input
+                label="Opponent Team"
                 id="opponent"
                 type="text"
-                pInputText
                 formControlName="opponent"
                 placeholder="Enter team name"
-              />
+              ></app-form-input>
             </div>
             <div class="form-field">
-              <label for="location">Location</label>
-              <input
+              <app-form-input
+                label="Location"
                 id="location"
                 type="text"
-                pInputText
                 formControlName="location"
                 placeholder="Enter location"
-              />
+              ></app-form-input>
             </div>
           </div>
           <!-- Row 2: Home/Away, Weather, Temperature, Field Conditions -->
           <div class="form-row four-col">
             <div class="form-field">
-              <label for="homeAway">Home/Away</label>
-              <p-select
+              <app-select
+                label="Home/Away"
                 id="homeAway"
                 formControlName="homeAway"
                 [options]="homeAwayOptions"
@@ -105,11 +102,11 @@
                 optionValue="value"
                 appendTo="body"
               >
-              </p-select>
+              </app-select>
             </div>
             <div class="form-field">
-              <label for="weather">Weather Conditions</label>
-              <p-select
+              <app-select
+                label="Weather Conditions"
                 id="weather"
                 formControlName="weather"
                 [options]="weatherOptions"
@@ -117,12 +114,12 @@
                 optionValue="value"
                 appendTo="body"
               >
-              </p-select>
+              </app-select>
             </div>
             <div class="form-field">
-              <label for="temperature">Temperature</label>
-              <div class="temperature-field">
-                <p-inputNumber
+              <div class="temperature-field-wrapper">
+                <app-input-number
+                  label="Temperature"
                   id="temperature"
                   formControlName="temperature"
                   [min]="temperatureUnit === 'F' ? 0 : -20"
@@ -130,7 +127,7 @@
                   [suffix]="temperatureUnit === 'F' ? '°F' : '°C'"
                   class="temperature-input"
                 >
-                </p-inputNumber>
+                </app-input-number>
                 <div class="unit-toggle-switch">
                   <span
                     class="unit-label"
@@ -160,8 +157,8 @@
               </div>
             </div>
             <div class="form-field">
-              <label for="fieldConditions">Field Conditions</label>
-              <p-select
+              <app-select
+                label="Field Conditions"
                 id="fieldConditions"
                 formControlName="fieldConditions"
                 [options]="fieldConditionOptions"
@@ -169,7 +166,7 @@
                 optionValue="value"
                 appendTo="body"
               >
-              </p-select>
+              </app-select>
             </div>
           </div>
           <div class="form-actions">
@@ -194,25 +191,25 @@
         <ng-container header-actions>
           <div class="score-display">
             <div class="score-group">
-              <label>Our Score:</label>
-              <p-inputNumber
-                (onInput)="onTeamScoreChange($event.value ?? null)"
+              <app-input-number
+                label="Our Score:"
+                (change)="onTeamScoreChange($event)"
                 [min]="0"
                 [showButtons]="true"
                 class="score-input"
               >
-              </p-inputNumber>
+              </app-input-number>
             </div>
             <span class="score-separator">-</span>
             <div class="score-group">
-              <label>Opponent:</label>
-              <p-inputNumber
-                (onInput)="onOpponentScoreChange($event.value ?? null)"
+              <app-input-number
+                label="Opponent:"
+                (change)="onOpponentScoreChange($event)"
                 [min]="0"
                 [showButtons]="true"
                 class="score-input"
               >
-              </p-inputNumber>
+              </app-input-number>
             </div>
           </div>
         </ng-container>
@@ -250,8 +247,8 @@
         <form [formGroup]="playForm" (ngSubmit)="submitPlay()">
           <div class="form-grid">
             <div class="form-field">
-              <label for="half">Half</label>
-              <p-select
+              <app-select
+                label="Half"
                 inputId="half"
                 formControlName="half"
                 [options]="halfOptions"
@@ -259,11 +256,11 @@
                 optionValue="value"
                 [attr.aria-label]="'Select half'"
               >
-              </p-select>
+              </app-select>
             </div>
             <div class="form-field">
-              <label for="timeRemaining">Time Remaining (seconds)</label>
-              <p-inputNumber
+              <app-input-number
+                label="Time Remaining (seconds)"
                 inputId="timeRemaining"
                 formControlName="timeRemaining"
                 [min]="0"
@@ -271,11 +268,11 @@
                 [showButtons]="true"
                 [attr.aria-label]="'Time remaining in seconds'"
               >
-              </p-inputNumber>
+              </app-input-number>
             </div>
             <div class="form-field">
-              <label for="down">Down</label>
-              <p-inputNumber
+              <app-input-number
+                label="Down"
                 inputId="down"
                 formControlName="down"
                 [min]="1"
@@ -283,22 +280,22 @@
                 [showButtons]="true"
                 [attr.aria-label]="'Down number'"
               >
-              </p-inputNumber>
+              </app-input-number>
             </div>
             <div class="form-field">
-              <label for="distance">Distance (yards)</label>
-              <p-inputNumber
+              <app-input-number
+                label="Distance (yards)"
                 inputId="distance"
                 formControlName="distance"
                 [min]="0"
                 [showButtons]="true"
                 [attr.aria-label]="'Distance in yards'"
               >
-              </p-inputNumber>
+              </app-input-number>
             </div>
             <div class="form-field">
-              <label for="yardLine">Yard Line</label>
-              <p-inputNumber
+              <app-input-number
+                label="Yard Line"
                 inputId="yardLine"
                 formControlName="yardLine"
                 [min]="1"
@@ -306,7 +303,7 @@
                 [showButtons]="true"
                 [attr.aria-label]="'Yard line'"
               >
-              </p-inputNumber>
+              </app-input-number>
             </div>
           </div>
           <!-- Play Type Selection -->
@@ -381,8 +378,8 @@
               <h4>Pass Play Details</h4>
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="quarterbackId">Quarterback</label>
-                  <p-select
+                  <app-select
+                    label="Quarterback"
                     inputId="quarterbackId"
                     formControlName="quarterbackId"
                     [options]="players()"
@@ -392,11 +389,11 @@
                     [filter]="true"
                     [attr.aria-label]="'Select quarterback'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
                 <div class="form-field">
-                  <label for="receiverId">Receiver</label>
-                  <p-select
+                  <app-select
+                    label="Receiver"
                     inputId="receiverId"
                     formControlName="receiverId"
                     [options]="players()"
@@ -406,11 +403,11 @@
                     [filter]="true"
                     [attr.aria-label]="'Select receiver'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
                 <div class="form-field">
-                  <label for="routeType">Route Type</label>
-                  <p-select
+                  <app-select
+                    label="Route Type"
                     inputId="routeType"
                     formControlName="routeType"
                     [options]="routeTypeOptions"
@@ -419,22 +416,22 @@
                     placeholder="Select route"
                     [attr.aria-label]="'Select route type'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
                 <div class="form-field">
-                  <label for="routeDepth">Route Depth (yards)</label>
-                  <p-inputNumber
+                  <app-input-number
+                    label="Route Depth (yards)"
                     inputId="routeDepth"
                     formControlName="routeDepth"
                     [min]="0"
                     [showButtons]="true"
                     [attr.aria-label]="'Route depth in yards'"
                   >
-                  </p-inputNumber>
+                  </app-input-number>
                 </div>
                 <div class="form-field">
-                  <label for="snapAccuracy">Snap Accuracy</label>
-                  <p-select
+                  <app-select
+                    label="Snap Accuracy"
                     inputId="snapAccuracy"
                     formControlName="snapAccuracy"
                     [options]="accuracyOptions"
@@ -443,11 +440,11 @@
                     placeholder="Select accuracy"
                     [attr.aria-label]="'Select snap accuracy'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
                 <div class="form-field">
-                  <label for="throwAccuracy">Throw Accuracy</label>
-                  <p-select
+                  <app-select
+                    label="Throw Accuracy"
                     inputId="throwAccuracy"
                     formControlName="throwAccuracy"
                     [options]="accuracyOptions"
@@ -456,7 +453,7 @@
                     placeholder="Select accuracy"
                     [attr.aria-label]="'Select throw accuracy'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
               </div>
               <!-- Pass Outcome Selection -->
@@ -482,8 +479,8 @@
                 <div class="drop-analysis-section">
                   <div class="form-grid">
                     <div class="form-field">
-                      <label for="dropSeverity">Drop Severity</label>
-                      <p-select
+                      <app-select
+                        label="Drop Severity"
                         inputId="dropSeverity"
                         formControlName="dropSeverity"
                         [options]="dropSeverityOptions"
@@ -492,11 +489,11 @@
                         placeholder="Select severity"
                         [attr.aria-label]="'Select drop severity'"
                       >
-                      </p-select>
+                      </app-select>
                     </div>
                     <div class="form-field">
-                      <label for="dropReason">Drop Reason</label>
-                      <p-select
+                      <app-select
+                        label="Drop Reason"
                         inputId="dropReason"
                         formControlName="dropReason"
                         [options]="dropReasonOptions"
@@ -505,7 +502,7 @@
                         placeholder="Select reason"
                         [attr.aria-label]="'Select drop reason'"
                       >
-                      </p-select>
+                      </app-select>
                     </div>
                   </div>
                 </div>
@@ -518,8 +515,8 @@
               <h4>Run Play Details</h4>
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="ballCarrierId">Ball Carrier</label>
-                  <p-select
+                  <app-select
+                    label="Ball Carrier"
                     inputId="ballCarrierId"
                     formControlName="ballCarrierId"
                     [options]="players()"
@@ -529,18 +526,18 @@
                     [filter]="true"
                     [attr.aria-label]="'Select ball carrier'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
                 <div class="form-field">
-                  <label for="yardsGained">Yards Gained</label>
-                  <p-inputNumber
+                  <app-input-number
+                    label="Yards Gained"
                     inputId="yardsGained"
                     formControlName="yardsGained"
                     [min]="0"
                     [showButtons]="true"
                     [attr.aria-label]="'Yards gained'"
                   >
-                  </p-inputNumber>
+                  </app-input-number>
                 </div>
               </div>
             </div>
@@ -551,8 +548,8 @@
               <h4>Flag Pull Details</h4>
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="defenderId">Defender</label>
-                  <p-select
+                  <app-select
+                    label="Defender"
                     inputId="defenderId"
                     formControlName="defenderId"
                     [options]="players()"
@@ -562,11 +559,11 @@
                     [filter]="true"
                     [attr.aria-label]="'Select defender'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
                 <div class="form-field">
-                  <label for="ballCarrierIdFlag">Ball Carrier</label>
-                  <p-select
+                  <app-select
+                    label="Ball Carrier"
                     inputId="ballCarrierIdFlag"
                     formControlName="ballCarrierIdFlag"
                     [options]="players()"
@@ -576,11 +573,11 @@
                     [filter]="true"
                     [attr.aria-label]="'Select ball carrier'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
                 <div class="form-field">
-                  <label for="isSuccessful">Successful Pull</label>
-                  <p-select
+                  <app-select
+                    label="Successful Pull"
                     inputId="isSuccessful"
                     formControlName="isSuccessful"
                     [options]="successOptions"
@@ -589,15 +586,15 @@
                     placeholder="Select outcome"
                     [attr.aria-label]="'Select if pull was successful'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
               </div>
               <!-- Miss Analysis (Conditional) -->
               @if (playForm.get("isSuccessful")?.value === false) {
                 <div class="miss-analysis-section">
                   <div class="form-field">
-                    <label for="missReason">Miss Reason</label>
-                    <p-select
+                    <app-select
+                      label="Miss Reason"
                       inputId="missReason"
                       formControlName="missReason"
                       [options]="missReasonOptions"
@@ -606,7 +603,7 @@
                       placeholder="Select reason"
                       [attr.aria-label]="'Select miss reason'"
                     >
-                    </p-select>
+                    </app-select>
                   </div>
                 </div>
               }
@@ -618,8 +615,8 @@
               <h4>Interception Details</h4>
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="interceptorId">Interceptor</label>
-                  <p-select
+                  <app-select
+                    label="Interceptor"
                     inputId="interceptorId"
                     formControlName="interceptorId"
                     [options]="players()"
@@ -629,7 +626,7 @@
                     [filter]="true"
                     [attr.aria-label]="'Select interceptor'"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
               </div>
             </div>
@@ -640,8 +637,8 @@
               <h4>Pass Deflection Details</h4>
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="deflectedBy">Deflected By</label>
-                  <p-select
+                  <app-select
+                    label="Deflected By"
                     id="deflectedBy"
                     formControlName="deflectedBy"
                     [options]="players()"
@@ -650,7 +647,7 @@
                     placeholder="Select defender"
                     [filter]="true"
                   >
-                  </p-select>
+                  </app-select>
                 </div>
               </div>
             </div>
@@ -658,15 +655,14 @@
           <!-- Play Notes -->
           <div class="form-section">
             <div class="form-field">
-              <label for="playNotes">Play Notes (Optional)</label>
-              <textarea
+              <app-textarea
+                label="Play Notes (Optional)"
                 id="playNotes"
-                pInputTextarea
                 formControlName="playNotes"
                 rows="2"
                 placeholder="Add any additional details about this play..."
               >
-              </textarea>
+              </app-textarea>
             </div>
           </div>
           <div class="form-actions">
@@ -687,11 +683,11 @@
     <!-- Recent Plays -->
     @if (activeGameId() && plays().length > 0) {
       <app-card-shell title="Recent Plays" class="plays-list-card">
-        <p-table
-          [value]="plays()"
+        <app-table
+          [data]="plays()"
           [paginator]="true"
           [rows]="10"
-          class="table-standard"
+          styleClass="table-standard"
         >
           <ng-template #header>
             <tr>
@@ -724,7 +720,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </app-table>
       </app-card-shell>
     }
 
@@ -771,11 +767,11 @@
 
       <!-- Games Table -->
       @else {
-        <p-table
-          [value]="games()"
+        <app-table
+          [data]="games()"
           [paginator]="true"
           [rows]="10"
-          class="table-standard"
+          styleClass="table-standard"
         >
           <ng-template #header>
             <tr>
@@ -831,7 +827,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </app-table>
       }
     </app-card-shell>
   </div>

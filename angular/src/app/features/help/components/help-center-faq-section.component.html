@@ -2,19 +2,16 @@
   title="Frequently Asked Questions"
   headerIcon="pi-question-circle"
 >
-  <p-accordion [multiple]="true">
+  <app-accordion [multiple]="true">
     @for (category of categories(); track category) {
-      <p-accordion-panel [value]="category">
-        <p-accordion-header>{{ category }}</p-accordion-header>
-        <p-accordion-content>
+      <div *appAccordionPanel="let panel; header: category; value: category">
           @for (topic of getTopicsByCategory(category); track topic.id) {
             <div class="faq-item">
               <h4>{{ topic.title }}</h4>
               <p>{{ topic.content }}</p>
             </div>
           }
-        </p-accordion-content>
-      </p-accordion-panel>
+      </div>
     }
-  </p-accordion>
+  </app-accordion>
 </app-card-shell>

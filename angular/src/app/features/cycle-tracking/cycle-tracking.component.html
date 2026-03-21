@@ -277,18 +277,12 @@
           <div class="symptoms-form">
             <div class="symptoms-grid">
               @for (symptom of symptomOptions; track symptom.value) {
-                <div class="symptom-option">
-                  <input
-                    type="checkbox"
-                    [id]="'symptom-' + symptom.value"
-                    [checked]="todaySymptoms.symptoms.includes(symptom.value)"
-                    (change)="onTodaySymptomToggle(symptom.value, isChecked($event))"
-                    [attr.aria-label]="symptom.label"
-                  />
-                  <label [for]="'symptom-' + symptom.value">{{
-                    symptom.label
-                  }}</label>
-                </div>
+                <app-checkbox
+                  [label]="symptom.label"
+                  [binary]="true"
+                  [ngModel]="todaySymptoms.symptoms.includes(symptom.value)"
+                  (change)="onTodaySymptomToggle(symptom.value, $event.checked)"
+                ></app-checkbox>
               }
             </div>
 
@@ -335,10 +329,10 @@
               [actionHandler]="openLogDialog"
             />
           } @else {
-            <p-table
-              [value]="cycleHistory()"
+            <app-table
+              [data]="cycleHistory()"
               [rows]="5"
-              class="p-datatable-sm"
+              styleClass="p-datatable-sm"
             >
               <ng-template #header>
                 <tr>
@@ -368,7 +362,7 @@
                   </td>
                 </tr>
               </ng-template>
-            </p-table>
+            </app-table>
 
             <div class="cycle-stats">
               <span
@@ -414,15 +408,15 @@
 
             <div class="privacy-option">
               <label for="retention">Data Retention</label>
-              <p-select
+              <app-select
                 id="retention"
                 [options]="retentionOptions"
-                (onChange)="onPrivacyRetentionChange($event.value)"
+                (change)="onPrivacyRetentionChange($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Auto-delete data older than..."
                 class="retention-select"
-              ></p-select>
+              ></app-select>
             </div>
 
             <div class="privacy-actions">
@@ -516,33 +510,25 @@
             <label>Symptoms (select all that apply)</label>
             <div class="symptoms-checkboxes">
               @for (symptom of symptomOptions; track symptom.value) {
-                <div class="symptom-checkbox">
-                  <input
-                    type="checkbox"
-                    [id]="'log-symptom-' + symptom.value"
-                    [checked]="newPeriod.symptoms.includes(symptom.value)"
-                    (change)="onNewPeriodSymptomToggle(symptom.value, isChecked($event))"
-                    [attr.aria-label]="symptom.label"
-                  />
-                  <label [for]="'log-symptom-' + symptom.value">{{
-                    symptom.label
-                  }}</label>
-                </div>
+                <app-checkbox
+                  [label]="symptom.label"
+                  [binary]="true"
+                  [ngModel]="newPeriod.symptoms.includes(symptom.value)"
+                  (change)="onNewPeriodSymptomToggle(symptom.value, $event.checked)"
+                ></app-checkbox>
               }
             </div>
           </div>
 
           <!-- Notes -->
           <div class="form-field">
-            <label for="period-notes">Notes (optional)</label>
-            <textarea
-              pInputTextarea
-              id="period-notes"
-              [value]="newPeriod.notes"
-              (input)="onNewPeriodNotesChange(getInputValue($event))"
+            <app-textarea
+              label="Notes (optional)"
+              [ngModel]="newPeriod.notes"
+              (change)="onNewPeriodNotesChange($event)"
               rows="2"
               placeholder="Any additional notes..."
-            ></textarea>
+            ></app-textarea>
           </div>
         </div>
 

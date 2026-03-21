@@ -5,7 +5,15 @@
     <app-button [variant]="playerFilter() === 'injured' ? 'danger' : 'text'" size="sm" (clicked)="setFilter('injured')">Injured</app-button>
   </div>
 
-  <p-table [value]="filteredPlayers()" [paginator]="filteredPlayers().length > 10" [rows]="10" class="p-datatable-sm" [rowHover]="true">
+  <app-table
+    [data]="filteredPlayers()"
+    [paginator]="filteredPlayers().length > 10"
+    [rows]="10"
+    styleClass="p-datatable-sm"
+    [rowHover]="true"
+    selectionMode="single"
+    (rowSelect)="openPlayer($event.playerId)"
+  >
     <ng-template #header>
       <tr>
         <th pSortableColumn="playerName">Player</th>
@@ -19,7 +27,7 @@
       </tr>
     </ng-template>
     <ng-template #body let-player>
-      <tr (click)="openPlayer(player.playerId)" class="clickable-row">
+      <tr [pSelectableRow]="player" class="clickable-row">
         <td>
           <div class="player-cell">
             <p-avatar [label]="player.avatarInitials" shape="circle" [class]="getAvatarClass(player)"></p-avatar>
@@ -85,5 +93,5 @@
         </td>
       </tr>
     </ng-template>
-  </p-table>
+  </app-table>
 </div>

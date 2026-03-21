@@ -288,13 +288,11 @@
         <!-- History Table -->
         @if (activeTab() === "history") {
           <app-card-shell class="history-card" title="Injury History">
-            <p-table
-              [value]="injuries()"
+            <app-table
+              [data]="injuries()"
               [paginator]="true"
               [rows]="10"
               [rowsPerPageOptions]="[10, 25, 50]"
-              [virtualScroll]="injuries().length > 50"
-              [virtualScrollItemSize]="46"
               [scrollable]="true"
             >
               <ng-template #header>
@@ -321,7 +319,7 @@
                   <td>{{ injury.daysInProtocol || "-" }}</td>
                 </tr>
               </ng-template>
-            </p-table>
+            </app-table>
           </app-card-shell>
         }
 
@@ -409,8 +407,8 @@
         />
         <form [formGroup]="reportFormGroup" class="report-form">
           <div class="form-field">
-            <label for="player">Player</label>
-            <p-select
+            <app-select
+              label="Player"
               inputId="player"
               [options]="playerOptions()"
               formControlName="playerId"
@@ -420,7 +418,7 @@
               [filter]="true"
               class="w-full"
               [attr.aria-label]="'Select player'"
-            ></p-select>
+            ></app-select>
           </div>
 
           <div class="form-row">
@@ -435,40 +433,40 @@
               ></p-datepicker>
             </div>
             <div class="form-field">
-              <label for="injuryTime">Time of Injury</label>
-              <p-select
+              <app-select
+                label="Time of Injury"
                 inputId="injuryTime"
                 [options]="timeOptions"
                 formControlName="injuryTime"
                 optionLabel="label"
                 optionValue="value"
                 [attr.aria-label]="'Select time of injury'"
-              ></p-select>
+              ></app-select>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-field">
-              <label for="bodyPart">Body Part</label>
-              <p-select
+              <app-select
+                label="Body Part"
                 inputId="bodyPart"
                 [options]="bodyPartOptions"
                 formControlName="bodyPart"
                 optionLabel="label"
                 optionValue="value"
                 [attr.aria-label]="'Select body part'"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-field">
-              <label for="injuryType">Injury Type</label>
-              <p-select
+              <app-select
+                label="Injury Type"
                 inputId="injuryType"
                 [options]="injuryTypeOptions"
                 formControlName="injuryType"
                 optionLabel="label"
                 optionValue="value"
                 [attr.aria-label]="'Select injury type'"
-              ></p-select>
+              ></app-select>
             </div>
           </div>
 
@@ -531,66 +529,65 @@
           </div>
 
           <div class="form-field">
-            <label for="howHappened">How did it happen?</label>
-            <p-select
+            <app-select
+              label="How did it happen?"
               inputId="howHappened"
               [options]="howHappenedOptions"
               formControlName="howHappened"
               optionLabel="label"
               optionValue="value"
               [attr.aria-label]="'Select how injury happened'"
-            ></p-select>
+            ></app-select>
           </div>
 
           <div class="form-field">
-            <label for="description">Description</label>
-            <textarea
-              pTextarea
+            <app-textarea
+              label="Description"
               id="description"
               formControlName="description"
               placeholder="Describe what happened..."
               rows="3"
-            ></textarea>
+            ></app-textarea>
           </div>
 
           <div class="form-field">
             <label>Immediate Action Taken</label>
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <p-checkbox
+                <app-checkbox
                   formControlName="actionIceApplied"
                   [binary]="true"
-                  variant="filled"
                   inputId="actIce"
-                ></p-checkbox>
-                <label for="actIce">Ice applied</label>
+                >
+                  <span>Ice applied</span>
+                </app-checkbox>
               </div>
               <div class="checkbox-option">
-                <p-checkbox
+                <app-checkbox
                   formControlName="actionRemovedFromActivity"
                   [binary]="true"
-                  variant="filled"
                   inputId="actRemoved"
-                ></p-checkbox>
-                <label for="actRemoved">Player removed from activity</label>
+                >
+                  <span>Player removed from activity</span>
+                </app-checkbox>
               </div>
               <div class="checkbox-option">
-                <p-checkbox
+                <app-checkbox
                   formControlName="actionMedicalContacted"
                   [binary]="true"
-                  variant="filled"
                   inputId="actMedical"
-                ></p-checkbox>
-                <label for="actMedical">Medical professional contacted</label>
+                >
+                  <span>Medical professional contacted</span>
+                </app-checkbox>
               </div>
               <div class="checkbox-option">
-                <p-checkbox
+                <app-checkbox
                   formControlName="actionSentForImaging"
                   [binary]="true"
-                  variant="filled"
                   inputId="actImaging"
-                ></p-checkbox>
-                <label for="actImaging">Sent for imaging</label>
+                >
+                  <span>Sent for imaging</span>
+                </app-checkbox>
               </div>
             </div>
           </div>
@@ -625,41 +622,40 @@
         />
         <form [formGroup]="checkinFormGroup" class="checkin-form">
           <div class="form-field">
-            <label>Pain Level (0 = no pain, 10 = severe)</label>
-            <p-inputNumber
+            <app-input-number
+              label="Pain Level (0 = no pain, 10 = severe)"
               formControlName="painLevel"
               [min]="0"
               [max]="10"
               [showButtons]="true"
-            ></p-inputNumber>
+            ></app-input-number>
           </div>
           <div class="form-field">
-            <label>Function Level (0 = none, 10 = full)</label>
-            <p-inputNumber
+            <app-input-number
+              label="Function Level (0 = none, 10 = full)"
               formControlName="functionLevel"
               [min]="0"
               [max]="10"
               [showButtons]="true"
-            ></p-inputNumber>
+            ></app-input-number>
           </div>
           <div class="form-field">
-            <label>Confidence Level (0 = none, 10 = full)</label>
-            <p-inputNumber
+            <app-input-number
+              label="Confidence Level (0 = none, 10 = full)"
               formControlName="confidenceLevel"
               [min]="0"
               [max]="10"
               [showButtons]="true"
-            ></p-inputNumber>
+            ></app-input-number>
           </div>
           <div class="form-field">
-            <label for="checkinNotes">Notes</label>
-            <textarea
-              pTextarea
+            <app-textarea
+              label="Notes"
               id="checkinNotes"
               formControlName="notes"
               placeholder="How did today go?"
               rows="3"
-            ></textarea>
+            ></app-textarea>
           </div>
         </form>
 

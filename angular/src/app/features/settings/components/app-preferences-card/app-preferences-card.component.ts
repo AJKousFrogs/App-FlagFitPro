@@ -5,7 +5,7 @@ import {
   output,
 } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { Select } from "primeng/select";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { CardShellComponent } from "../../../../shared/components/ui-components";
 
 type ThemeOption = {
@@ -24,7 +24,7 @@ type LanguageOption = {
 @Component({
   selector: "app-app-preferences-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, Select, CardShellComponent],
+  imports: [ReactiveFormsModule, SelectComponent, CardShellComponent],
   templateUrl: "./app-preferences-card.component.html",
   styleUrl: "./app-preferences-card.component.scss",
 })

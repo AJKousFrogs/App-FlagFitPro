@@ -19,12 +19,12 @@ import {
 
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { DatePicker } from "primeng/datepicker";
-import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
-import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
-import { Textarea } from "primeng/textarea";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
+import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { TableComponent } from "../../shared/components/table/table.component";
+import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -123,12 +123,12 @@ interface Play {
   imports: [
     ReactiveFormsModule,
     CardShellComponent,
-    InputText,
-    Textarea,
-    InputNumber,
+    FormInputComponent,
+    TextareaComponent,
+    InputNumberComponent,
     DatePicker,
-    Select,
-    TableModule,
+    SelectComponent,
+    TableComponent,
     RadioButton,
     MainLayoutComponent,
     PageHeaderComponent,

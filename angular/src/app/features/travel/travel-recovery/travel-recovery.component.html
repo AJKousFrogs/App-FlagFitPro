@@ -114,22 +114,21 @@
             >
               <div class="form-grid form-controls-full">
                 <div class="form-field">
-                  <label>Trip Name</label>
-                  <input
-                    pInputText
-                    [value]="tripForm.tripName"
-                    (input)="updateTripFormText('tripName', getInputValue($event))"
+                  <app-form-input
+                    label="Trip Name"
+                    [ngModel]="tripForm.tripName"
+                    (change)="updateTripFormText('tripName', $event)"
                     placeholder="e.g., World Championships 2025"
                     aria-label="Trip name"
-                  />
+                  ></app-form-input>
                 </div>
 
                 <div class="form-field">
-                  <label for="departure-timezone">Home Timezone</label>
-                  <p-select
+                  <app-select
+                    label="Home Timezone"
                     inputId="departure-timezone"
                     [ngModel]="tripForm.departureTimezone"
-                    (onChange)="updateTripFormTimezone('departureTimezone', $event.value)"
+                    (change)="updateTripFormTimezone('departureTimezone', $event)"
                     [options]="timezones"
                     optionLabel="label"
                     optionValue="value"
@@ -138,15 +137,15 @@
                     filterBy="label"
                     class="w-full"
                     [attr.aria-label]="'Select your home timezone'"
-                  ></p-select>
+                  ></app-select>
                 </div>
 
                 <div class="form-field">
-                  <label for="arrival-timezone">Destination Timezone</label>
-                  <p-select
+                  <app-select
+                    label="Destination Timezone"
                     inputId="arrival-timezone"
                     [ngModel]="tripForm.arrivalTimezone"
-                    (onChange)="updateTripFormTimezone('arrivalTimezone', $event.value)"
+                    (change)="updateTripFormTimezone('arrivalTimezone', $event)"
                     [options]="timezones"
                     optionLabel="label"
                     optionValue="value"
@@ -155,7 +154,7 @@
                     filterBy="label"
                     class="w-full"
                     [attr.aria-label]="'Select destination timezone'"
-                  ></p-select>
+                  ></app-select>
                 </div>
 
                 <div class="form-field">
@@ -203,30 +202,30 @@
                 </div>
 
                 <div class="form-field">
-                  <label for="flight-duration">Flight Duration (hours)</label>
-                  <p-inputNumber
+                  <app-input-number
+                    label="Flight Duration (hours)"
                     inputId="flight-duration"
                     [ngModel]="tripForm.flightDuration"
-                    (ngModelChange)="updateTripFormNumber('flightDuration', $event ?? null)"
+                    (change)="updateTripFormNumber('flightDuration', $event)"
                     [min]="1"
                     [max]="30"
                     [showButtons]="true"
                     suffix=" hrs"
                     [attr.aria-label]="'Flight duration in hours'"
-                  ></p-inputNumber>
+                  ></app-input-number>
                 </div>
 
                 <div class="form-field">
-                  <label for="layovers">Number of Layovers</label>
-                  <p-inputNumber
+                  <app-input-number
+                    label="Number of Layovers"
                     inputId="layovers"
                     [ngModel]="tripForm.layovers"
-                    (ngModelChange)="updateTripFormNumber('layovers', $event ?? null)"
+                    (change)="updateTripFormNumber('layovers', $event)"
                     [min]="0"
                     [max]="5"
                     [showButtons]="true"
                     [attr.aria-label]="'Number of layovers'"
-                  ></p-inputNumber>
+                  ></app-input-number>
                 </div>
               </div>
 
@@ -265,10 +264,10 @@
               title="Full Recovery Timeline"
               headerIcon="pi-calendar"
             >
-              <p-accordion [multiple]="true">
+              <app-accordion [multiple]="true">
                 @for (protocol of recoveryProtocol(); track protocol.day) {
-                  <p-accordion-panel [value]="'day-' + protocol.day">
-                    <p-accordion-header>
+                  <div *appAccordionPanel="let panel; header: ''; value: 'day-' + protocol.day">
+                    <ng-template #header>
                       <div class="timeline-header">
                         <span class="timeline-day">
                           @if (protocol.day < 0) {
@@ -291,73 +290,71 @@
                           <p-badge value="Today" severity="info"></p-badge>
                         }
                       </div>
-                    </p-accordion-header>
-                    <p-accordion-content>
-                      <div class="timeline-content">
-                        <div class="timeline-summary">
-                          <div class="meta-row">
-                            <i
-                              class="pi pi-moon meta-row__icon"
-                              aria-hidden="true"
-                            ></i>
-                            <span class="meta-row__text"
-                              >Sleep: {{ protocol.sleepWindow.bedTime }} -
-                              {{ protocol.sleepWindow.wakeTime }}</span
-                            >
-                          </div>
-                          <div class="meta-row">
-                            <i
-                              class="pi pi-bolt meta-row__icon"
-                              aria-hidden="true"
-                            ></i>
-                            <span class="meta-row__text"
-                              >Training:
-                              {{
-                                protocol.trainingGuidelines.allowedIntensity
-                                  | titlecase
-                              }}
-                              ({{ protocol.trainingGuidelines.maxDuration }}min
-                              max)</span
-                            >
-                          </div>
-                          <div class="meta-row">
-                            <i
-                              class="pi pi-tint meta-row__icon"
-                              aria-hidden="true"
-                            ></i>
-                            <span class="meta-row__text"
-                              >Hydration:
-                              {{
-                                protocol.hydrationTarget / 1000
-                                  | number: "1.1-1"
-                              }}L</span
-                            >
-                          </div>
+                    </ng-template>
+                    <div class="timeline-content">
+                      <div class="timeline-summary">
+                        <div class="meta-row">
+                          <i
+                            class="pi pi-moon meta-row__icon"
+                            aria-hidden="true"
+                          ></i>
+                          <span class="meta-row__text"
+                            >Sleep: {{ protocol.sleepWindow.bedTime }} -
+                            {{ protocol.sleepWindow.wakeTime }}</span
+                          >
                         </div>
-
-                        <div class="timeline-recommendations">
-                          @for (
-                            rec of protocol.recommendations.slice(
-                              0,
-                              UI_LIMITS.RECOMMENDATIONS_PREVIEW
-                            );
-                            track rec.action
-                          ) {
-                            <div class="mini-rec">
-                              <span
-                                class="rec-bullet"
-                                [class]="'importance-' + rec.importance"
-                                >●</span
-                              >
-                              {{ rec.action }}
-                            </div>
-                          }
+                        <div class="meta-row">
+                          <i
+                            class="pi pi-bolt meta-row__icon"
+                            aria-hidden="true"
+                          ></i>
+                          <span class="meta-row__text"
+                            >Training:
+                            {{
+                              protocol.trainingGuidelines.allowedIntensity
+                                | titlecase
+                            }}
+                            ({{ protocol.trainingGuidelines.maxDuration }}min
+                            max)</span
+                          >
+                        </div>
+                        <div class="meta-row">
+                          <i
+                            class="pi pi-tint meta-row__icon"
+                            aria-hidden="true"
+                          ></i>
+                          <span class="meta-row__text"
+                            >Hydration:
+                            {{
+                              protocol.hydrationTarget / 1000
+                                | number: "1.1-1"
+                            }}L</span
+                          >
                         </div>
                       </div>
-                    </p-accordion-content>
-                  </p-accordion-panel>
+
+                      <div class="timeline-recommendations">
+                        @for (
+                          rec of protocol.recommendations.slice(
+                            0,
+                            UI_LIMITS.RECOMMENDATIONS_PREVIEW
+                          );
+                          track rec.action
+                        ) {
+                          <div class="mini-rec">
+                            <span
+                              class="rec-bullet"
+                              [class]="'importance-' + rec.importance"
+                              >●</span
+                            >
+                            {{ rec.action }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
                 }
-              </p-accordion>
+              </app-accordion>
             </app-card-shell>
 
             <!-- Travel Checklist -->
@@ -366,42 +363,37 @@
               title="Travel Checklist"
               headerIcon="pi-check-square"
             >
-              <p-accordion>
+              <app-accordion>
                 @for (category of travelChecklist; track category.category) {
-                  <p-accordion-panel [value]="category.category">
-                    <p-accordion-header>{{
-                      category.category
-                    }}</p-accordion-header>
-                    <p-accordion-content>
+                  <div *appAccordionPanel="let panel; header: category.category; value: category.category">
                       <div class="checklist-items">
                         @for (item of category.items; track item.id) {
                           <div
                             class="checklist-item"
                             [class.essential]="item.essential"
                           >
-                            <input
-                              type="checkbox"
+                            <app-checkbox
                               [id]="'travel-' + category.category + '-' + item.id"
-                              [checked]="item.packed"
-                              (change)="updateTravelChecklistPacked(category.category, item.id, isChecked($event))"
+                              [ngModel]="item.packed"
+                              (change)="updateTravelChecklistPacked(category.category, item.id, $event.checked)"
                               [attr.aria-label]="item.item"
-                            />
-                            <label [for]="'travel-' + category.category + '-' + item.id" [class.packed]="item.packed">
-                              {{ item.item }}
-                              @if (item.essential) {
-                                <span class="essential-badge">Essential</span>
-                              }
-                            </label>
+                            >
+                                <span [class.packed]="item.packed">
+                                  {{ item.item }}
+                                  @if (item.essential) {
+                                    <span class="essential-badge">Essential</span>
+                                  }
+                                </span>
+                            </app-checkbox>
                             @if (item.notes) {
                               <span class="item-note">{{ item.notes }}</span>
                             }
                           </div>
                         }
                       </div>
-                    </p-accordion-content>
-                  </p-accordion-panel>
+                  </div>
                 }
-              </p-accordion>
+              </app-accordion>
             </app-card-shell>
           </div>
         } @else if (travelType() === "car") {
@@ -417,24 +409,21 @@
               >
                 <div class="form-grid form-controls-full">
                   <div class="form-field">
-                    <label>Trip Name</label>
-                    <input
-                      pInputText
-                      [value]="carTripForm.tripName"
-                      (input)="updateCarTripText('tripName', getInputValue($event))"
+                    <app-form-input
+                      label="Trip Name"
+                      [ngModel]="carTripForm.tripName"
+                      (change)="updateCarTripText('tripName', $event)"
                       placeholder="e.g., Regional Tournament Drive"
                       aria-label="Car trip name"
-                    />
+                    ></app-form-input>
                   </div>
 
                   <div class="form-field">
-                    <label for="car-duration"
-                      >Estimated Drive Duration (hours)</label
-                    >
-                    <p-inputNumber
+                    <app-input-number
+                      label="Estimated Drive Duration (hours)"
                       inputId="car-duration"
                       [ngModel]="carTripForm.duration"
-                      (ngModelChange)="updateCarTripDuration($event ?? null)"
+                      (change)="updateCarTripDuration($event)"
                       [min]="1"
                       [max]="18"
                       [showButtons]="true"
@@ -442,21 +431,16 @@
                       [attr.aria-label]="
                         'Estimated car travel duration in hours'
                       "
-                    ></p-inputNumber>
+                    ></app-input-number>
                   </div>
 
                   <div class="form-field">
-                    <label>Are you driving?</label>
-                    <div class="driver-toggle">
-                      <input
-                        id="car-is-driver"
-                        type="checkbox"
-                        [checked]="carTripForm.isDriver"
-                        (change)="updateCarTripDriver(isChecked($event))"
-                        [attr.aria-label]="'Are you driving this trip'"
-                      />
-                      <label for="car-is-driver">Yes, I'm driving</label>
-                    </div>
+                    <app-checkbox
+                      label="Yes, I'm driving"
+                      [ngModel]="carTripForm.isDriver"
+                      (change)="updateCarTripDriver($event.checked)"
+                      [attr.aria-label]="'Are you driving this trip'"
+                    ></app-checkbox>
                   </div>
 
                   <div class="form-field">
@@ -665,16 +649,12 @@
                   subtitle="Percussion therapy for circulation"
                   headerIcon="pi-bolt"
                 >
-                  <p-accordion>
+                  <app-accordion>
                     @for (
                       protocol of massageGunProtocols;
                       track protocol.timing
                     ) {
-                      <p-accordion-panel [value]="protocol.timing">
-                        <p-accordion-header>{{
-                          getMassageTimingLabel(protocol.timing)
-                        }}</p-accordion-header>
-                        <p-accordion-content>
+                      <div *appAccordionPanel="let panel; header: getMassageTimingLabel(protocol.timing); value: protocol.timing">
                           <div class="massage-protocol">
                             <div class="protocol-summary">
                               <app-status-tag
@@ -726,10 +706,9 @@
                               <small>{{ protocol.evidenceBase }}</small>
                             </div>
                           </div>
-                        </p-accordion-content>
-                      </p-accordion-panel>
+                      </div>
                     }
-                  </p-accordion>
+                  </app-accordion>
                 </app-card-shell>
 
                 <!-- Seated Exercises -->
@@ -832,13 +811,9 @@
                   subtitle="Scientific backing for these protocols"
                   headerIcon="pi-book"
                 >
-                  <p-accordion>
+                  <app-accordion>
                     @for (research of researchSummary; track research.topic) {
-                      <p-accordion-panel [value]="research.topic">
-                        <p-accordion-header>{{
-                          research.topic
-                        }}</p-accordion-header>
-                        <p-accordion-content>
+                      <div *appAccordionPanel="let panel; header: research.topic; value: research.topic">
                           <div class="research-item">
                             <p class="finding">{{ research.finding }}</p>
                             <div class="source">
@@ -862,10 +837,9 @@
                               {{ research.recommendation }}
                             </div>
                           </div>
-                        </p-accordion-content>
-                      </p-accordion-panel>
+                      </div>
                     }
-                  </p-accordion>
+                  </app-accordion>
                 </app-card-shell>
 
                 <!-- Car Travel Checklist -->
@@ -874,40 +848,33 @@
                   title="Car Travel Checklist"
                   headerIcon="pi-check-square"
                 >
-                  <p-accordion>
+                  <app-accordion>
                     @for (
                       category of carTravelChecklist;
                       track category.category
                     ) {
-                      <p-accordion-panel [value]="category.category">
-                        <p-accordion-header>{{
-                          category.category
-                        }}</p-accordion-header>
-                        <p-accordion-content>
+                      <div *appAccordionPanel="let panel; header: category.category; value: category.category">
                           <div class="checklist-items">
                             @for (item of category.items; track item.id) {
                               <div
                                 class="checklist-item"
                                 [class.essential]="item.essential"
                               >
-                                  <input
-                                    type="checkbox"
+                                  <app-checkbox
                                     [id]="'car-' + category.category + '-' + item.id"
-                                    [checked]="item.packed"
-                                    (change)="updateCarChecklistPacked(category.category, item.id, isChecked($event))"
+                                    [ngModel]="item.packed"
+                                    (change)="updateCarChecklistPacked(category.category, item.id, $event.checked)"
                                     [attr.aria-label]="item.item"
-                                  />
-                                <label
-                                  [for]="'car-' + category.category + '-' + item.id"
-                                  [class.packed]="item.packed"
-                                >
-                                  {{ item.item }}
-                                  @if (item.essential) {
-                                    <span class="essential-badge"
-                                      >Essential</span
-                                    >
-                                  }
-                                </label>
+                                  >
+                                    <span [class.packed]="item.packed">
+                                      {{ item.item }}
+                                      @if (item.essential) {
+                                        <span class="essential-badge"
+                                          >Essential</span
+                                        >
+                                      }
+                                    </span>
+                                  </app-checkbox>
                                 @if (item.notes) {
                                   <span class="item-note">{{
                                     item.notes
@@ -916,10 +883,9 @@
                               </div>
                             }
                           </div>
-                        </p-accordion-content>
-                      </p-accordion-panel>
+                      </div>
                     }
-                  </p-accordion>
+                  </app-accordion>
                 </app-card-shell>
               </div>
             }

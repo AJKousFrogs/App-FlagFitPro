@@ -9,13 +9,14 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
+import { TabsComponent, AppTabPanelDirective } from "../../../shared/components/tabs/tabs.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { Textarea } from "primeng/textarea";
 
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
@@ -156,16 +157,14 @@ interface PreCompForm {
     DialogHeaderComponent,
     DialogFooterComponent,
     CardShellComponent,
-    InputText,
-    ProgressBar,
-    Select,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    FormInputComponent,
+    ProgressBarComponent,
+    SelectComponent,
+    TabsComponent,
+    AppTabPanelDirective,
+    CheckboxComponent,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     AlertComponent,

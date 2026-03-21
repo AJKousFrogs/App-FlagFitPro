@@ -15,7 +15,7 @@
           <div class="stat-block__value">{{ attendanceRate() }}%</div>
         </div>
       </div>
-      <p-table [value]="playerGameStats()" [paginator]="true" [rows]="10" class="p-datatable-sm">
+      <app-table [data]="playerGameStats()" [paginator]="true" [rows]="10" styleClass="p-datatable-sm">
         <ng-template #header>
           <tr>
             <th>Date</th>
@@ -50,7 +50,7 @@
             <td>{{ game.interceptions }}</td>
           </tr>
         </ng-template>
-      </p-table>
+      </app-table>
     </p-tabpanel>
 
     <p-tabpanel header="Season Stats">
@@ -160,7 +160,7 @@
             </div>
           </div>
           <h4>Season Breakdown</h4>
-          <p-table [value]="playerMultiSeasonStats()?.seasons || []" [paginator]="true" [rows]="5">
+          <app-table [data]="playerMultiSeasonStats()?.seasons || []" [paginator]="true" [rows]="5">
             <ng-template #header>
               <tr>
                 <th>Season</th>
@@ -181,7 +181,7 @@
                 <td>{{ season.totalTouchdowns }}</td>
               </tr>
             </ng-template>
-          </p-table>
+          </app-table>
         </div>
       }
     </p-tabpanel>

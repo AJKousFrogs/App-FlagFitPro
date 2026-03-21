@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import {
   AppDialogComponent,
@@ -22,7 +22,7 @@ type ExportOptions = {
   imports: [
     FormsModule,
     AppDialogComponent,
-    ProgressBar,
+    ProgressBarComponent,
     ToggleSwitch,
     DialogHeaderComponent,
     DialogFooterComponent,

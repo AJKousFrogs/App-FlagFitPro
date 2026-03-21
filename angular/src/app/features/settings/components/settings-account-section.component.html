@@ -20,28 +20,23 @@
   >
     <form [formGroup]="profileForm()" class="settings-profile-form ui-stack-md">
       <div class="form-field">
-        <label for="settings-displayName" class="form-label">Display Name</label>
-        <input
+        <app-form-input
+          label="Display Name"
           id="settings-displayName"
-          name="displayName"
-          type="text"
-          pInputText
           formControlName="displayName"
           placeholder="Enter your display name"
           autocomplete="name"
-        />
+        ></app-form-input>
       </div>
       <div class="form-field">
-        <label for="settings-email" class="form-label">Email</label>
-        <input
+        <app-form-input
+          label="Email"
           id="settings-email"
-          name="email"
           type="email"
-          pInputText
           formControlName="email"
           placeholder="Enter your email"
           autocomplete="email"
-        />
+        ></app-form-input>
       </div>
       <div class="form-field">
         <label for="settings-dob" class="form-label">Date of Birth</label>
@@ -89,8 +84,8 @@
       </div>
       <div class="form-row two-columns">
         <div class="form-field">
-          <label for="settings-position" class="form-label">Position</label>
-          <p-select
+          <app-select
+            label="Position"
             inputId="settings-position"
             formControlName="position"
             [options]="positionOptions()"
@@ -99,55 +94,48 @@
             placeholder="Select your position"
             appendTo="body"
             [attr.aria-label]="'Select your position'"
-          ></p-select>
+          ></app-select>
         </div>
         <div class="form-field">
-          <label for="settings-jerseyNumber" class="form-label">Jersey Number</label>
-          <input
+          <app-form-input
+            label="Jersey Number"
             id="settings-jerseyNumber"
-            name="jerseyNumber"
-            type="text"
-            pInputText
             formControlName="jerseyNumber"
             placeholder="#55"
             maxlength="3"
             autocomplete="off"
-          />
+          ></app-form-input>
         </div>
       </div>
       <div class="form-row two-columns">
         <div class="form-field">
-          <label for="settings-height" class="form-label">Height (cm)</label>
-          <input
+          <app-form-input
+            label="Height (cm)"
             id="settings-height"
-            name="height"
             type="number"
-            pInputText
             formControlName="heightCm"
             placeholder="175"
             min="100"
             max="250"
             autocomplete="off"
-          />
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="settings-weight" class="form-label">Weight (kg)</label>
-          <input
+          <app-form-input
+            label="Weight (kg)"
             id="settings-weight"
-            name="weight"
             type="number"
-            pInputText
             formControlName="weightKg"
             placeholder="70"
             min="30"
             max="200"
             autocomplete="off"
-          />
+          ></app-form-input>
         </div>
       </div>
       <div class="form-field">
-        <label for="settings-team" class="form-label">Team</label>
-        <p-select
+        <app-select
+          label="Team"
           inputId="settings-team"
           formControlName="teamId"
           [options]="availableTeams()"
@@ -155,29 +143,24 @@
           optionValue="value"
           placeholder="Select your team"
           appendTo="body"
-          (onChange)="teamChange.emit($event.value)"
+          (change)="teamChange.emit($event)"
           [attr.aria-label]="'Select your team'"
-        ></p-select>
-        <small class="form-help field-hint">
-          <i class="pi pi-info-circle"></i>
-          Select your team or request to create a new one
-        </small>
+          hint="Select your team or request to create a new one"
+        ></app-select>
       </div>
       <div class="form-field">
-        <label for="settings-phone" class="form-label">Phone Number</label>
-        <input
+        <app-form-input
+          label="Phone Number"
           id="settings-phone"
-          name="phone"
           type="tel"
-          pInputText
           formControlName="phone"
           placeholder="Enter your phone number"
           autocomplete="tel"
-        />
+        ></app-form-input>
       </div>
       <div class="form-field">
-        <label for="settings-country" class="form-label">Country</label>
-        <p-select
+        <app-select
+          label="Country"
           inputId="settings-country"
           formControlName="country"
           [options]="countryOptions()"
@@ -187,7 +170,7 @@
           [filter]="true"
           filterPlaceholder="Search countries..."
           appendTo="body"
-        ></p-select>
+        ></app-select>
       </div>
     </form>
   </app-card-shell>

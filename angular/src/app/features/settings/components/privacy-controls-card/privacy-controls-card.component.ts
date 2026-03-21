@@ -7,7 +7,7 @@ import {
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Divider } from "primeng/divider";
-import { Select } from "primeng/select";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import {
   ButtonComponent,
@@ -25,7 +25,7 @@ type VisibilityOption = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    Select,
+    SelectComponent,
     ToggleSwitch,
     Divider,
     RouterLink,

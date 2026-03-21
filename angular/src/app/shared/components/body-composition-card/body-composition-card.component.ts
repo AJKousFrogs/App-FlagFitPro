@@ -22,7 +22,7 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { InputNumber } from "primeng/inputnumber";
+import { InputNumberComponent } from "../input-number/input-number.component";
 
 import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
@@ -59,7 +59,7 @@ interface BodyCompositionData {
     ButtonComponent,
     Tooltip,
     DecimalPipe,
-    InputNumber,
+    InputNumberComponent,
     EmptyStateComponent,
     CardShellComponent,
     AppDialogComponent,
@@ -227,81 +227,71 @@ interface BodyCompositionData {
 
         <!-- Weight (Required) -->
         <div class="form-field">
-          <label for="weight">Weight (kg) *</label>
-          <p-inputNumber
+          <app-input-number
+            label="Weight (kg) *"
             id="weight"
             [ngModel]="measurementForm.weight"
-            (ngModelChange)="onMeasurementInput('weight', $event)"
+            (change)="onMeasurementInput('weight', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
-            mode="decimal"
             placeholder="e.g., 75.5"
-            class="w-full"
-          ></p-inputNumber>
+          ></app-input-number>
         </div>
 
         <!-- Body Fat -->
         <div class="form-field">
-          <label for="bodyFat">Body Fat (%)</label>
-          <p-inputNumber
+          <app-input-number
+            label="Body Fat (%)"
             id="bodyFat"
             [ngModel]="measurementForm.bodyFat"
-            (ngModelChange)="onMeasurementInput('bodyFat', $event)"
+            (change)="onMeasurementInput('bodyFat', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
-            mode="decimal"
             [min]="1"
             [max]="60"
             placeholder="e.g., 15.0"
-            class="w-full"
-          ></p-inputNumber>
+          ></app-input-number>
         </div>
 
         <!-- Muscle Mass -->
         <div class="form-field">
-          <label for="muscleMass">Muscle Mass (kg)</label>
-          <p-inputNumber
+          <app-input-number
+            label="Muscle Mass (kg)"
             id="muscleMass"
             [ngModel]="measurementForm.muscleMass"
-            (ngModelChange)="onMeasurementInput('muscleMass', $event)"
+            (change)="onMeasurementInput('muscleMass', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
-            mode="decimal"
             placeholder="e.g., 35.0"
-            class="w-full"
-          ></p-inputNumber>
+          ></app-input-number>
         </div>
 
         <!-- Body Water -->
         <div class="form-field">
-          <label for="bodyWater">Body Water (%)</label>
-          <p-inputNumber
+          <app-input-number
+            label="Body Water (%)"
             id="bodyWater"
             [ngModel]="measurementForm.bodyWater"
-            (ngModelChange)="onMeasurementInput('bodyWater', $event)"
+            (change)="onMeasurementInput('bodyWater', $event)"
             [minFractionDigits]="1"
             [maxFractionDigits]="1"
-            mode="decimal"
             [min]="30"
             [max]="80"
             placeholder="e.g., 55.0"
-            class="w-full"
-          ></p-inputNumber>
+          ></app-input-number>
         </div>
 
         <!-- BMR -->
         <div class="form-field">
-          <label for="bmr">Basal Metabolic Rate (kcal)</label>
-          <p-inputNumber
+          <app-input-number
+            label="Basal Metabolic Rate (kcal)"
             id="bmr"
             [ngModel]="measurementForm.basalMetabolicRate"
-            (ngModelChange)="onMeasurementInput('basalMetabolicRate', $event)"
-            mode="decimal"
+            (change)="onMeasurementInput('basalMetabolicRate', $event)"
             [min]="800"
             [max]="4000"
             placeholder="e.g., 1800"
-            class="w-full"
-          ></p-inputNumber>
+          ></app-input-number>
         </div>
       </div>
 

@@ -30,29 +30,8 @@
           />
         } @else {
 
-        <p-tabs [value]="0">
-          <p-tablist>
-            <p-tab [value]="0">
-              <i class="pi pi-file"></i>
-              My Reports
-            </p-tab>
-            <p-tab [value]="1">
-              <i class="pi pi-chart-line"></i>
-              Wellness Overview
-            </p-tab>
-            <p-tab [value]="2">
-              <i class="pi pi-calendar"></i>
-              Pre-Competition
-            </p-tab>
-            <p-tab [value]="3">
-              <i class="pi pi-comments"></i>
-              Team Insights
-            </p-tab>
-          </p-tablist>
-
-          <p-tabpanels>
-            <!-- My Reports -->
-            <p-tabpanel [value]="0">
+        <app-tabs [value]="0">
+          <div *appTabPanel="let panel; header: 'My Reports'; value: 0; icon: 'pi-file'">
               <app-psychology-reports-list-section
                 [reports]="generatedReports()"
                 [reportIcon]="getReportIcon.bind(this)"
@@ -62,10 +41,9 @@
                 (downloadCsv)="downloadReport($event, 'csv')"
                 (deleteReport)="deleteReport($event)"
               />
-            </p-tabpanel>
+          </div>
 
-            <!-- Wellness Overview -->
-            <p-tabpanel [value]="1">
+          <div *appTabPanel="let panel; header: 'Wellness Overview'; value: 1; icon: 'pi-chart-line'">
               <app-psychology-wellness-section
                 [data]="currentWellnessData()"
                 [selectedPeriod]="selectedPeriod"
@@ -76,10 +54,9 @@
                 [screenTimeSeverity]="getScreenTimeSeverity.bind(this)"
                 (periodChange)="updateSelectedPeriod($event)"
               />
-            </p-tabpanel>
+          </div>
 
-            <!-- Pre-Competition -->
-            <p-tabpanel [value]="2">
+          <div *appTabPanel="let panel; header: 'Pre-Competition'; value: 2; icon: 'pi-calendar'">
               <div class="precomp-section">
                 <div class="section-header">
                   <h3>Pre-Competition Mental State</h3>
@@ -198,12 +175,12 @@
                             <div class="readiness">
                               <span>Readiness:</span>
                               <div class="readiness-bar">
-                                <p-progressBar
+                                <app-progress-bar
                                   [value]="
                                     report.selfAssessment.readinessRating * 10
                                   "
                                   [showValue]="false"
-                                ></p-progressBar>
+                                ></app-progress-bar>
                                 <span
                                   >{{
                                     report.selfAssessment.readinessRating
@@ -248,10 +225,9 @@
                   />
                 }
               </div>
-            </p-tabpanel>
+          </div>
 
-            <!-- Shared Insights -->
-            <p-tabpanel [value]="3">
+          <div *appTabPanel="let panel; header: 'Team Insights'; value: 3; icon: 'pi-comments'">
               <div class="insights-section">
                 <div class="section-header">
                   <h3>Team Insights & Communication</h3>
@@ -335,9 +311,8 @@
                   </div>
                 }
               </div>
-            </p-tabpanel>
-          </p-tabpanels>
-        </p-tabs>
+          </div>
+        </app-tabs>
         }
 
         <!-- Generate Report Dialog -->
@@ -359,25 +334,25 @@
           />
           <div class="generate-form">
             <div class="form-group">
-              <label>Report Type</label>
-              <p-select
+              <app-select
+                label="Report Type"
                 [options]="reportTypeOptions"
                 [ngModel]="newReport.type"
-                (onChange)="updateNewReportType($event.value)"
+                (change)="updateNewReportType($event)"
                 placeholder="Select report type"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
 
             <div class="form-group">
-              <label>Time Period</label>
-              <p-select
+              <app-select
+                label="Time Period"
                 [options]="timePeriods"
                 [ngModel]="newReport.period"
-                (onChange)="updateNewReportPeriod($event.value)"
+                (change)="updateNewReportPeriod($event)"
                 placeholder="Select period"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
 
             <div class="privacy-settings">
@@ -388,113 +363,91 @@
 
               <div class="checkbox-grid">
                 <div class="checkbox-item">
-                  <input
-                    id="wellness"
-                    type="checkbox"
-                    [checked]="privacySettings.includeWellnessScores"
-                    (change)="updatePrivacySetting('includeWellnessScores', isChecked($event))"
-                  />
-                  <label for="wellness">Wellness scores</label>
+                  <app-checkbox
+                    label="Wellness scores"
+                    [ngModel]="privacySettings.includeWellnessScores"
+                    (change)="updatePrivacySetting('includeWellnessScores', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="sleep"
-                    type="checkbox"
-                    [checked]="privacySettings.includeSleepData"
-                    (change)="updatePrivacySetting('includeSleepData', isChecked($event))"
-                  />
-                  <label for="sleep">Sleep data</label>
+                  <app-checkbox
+                    label="Sleep data"
+                    [ngModel]="privacySettings.includeSleepData"
+                    (change)="updatePrivacySetting('includeSleepData', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="training"
-                    type="checkbox"
-                    [checked]="privacySettings.includeTrainingLoad"
-                    (change)="updatePrivacySetting('includeTrainingLoad', isChecked($event))"
-                  />
-                  <label for="training">Training load</label>
+                  <app-checkbox
+                    label="Training load"
+                    [ngModel]="privacySettings.includeTrainingLoad"
+                    (change)="updatePrivacySetting('includeTrainingLoad', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="performance"
-                    type="checkbox"
-                    [checked]="privacySettings.includePerformanceData"
-                    (change)="updatePrivacySetting('includePerformanceData', isChecked($event))"
-                  />
-                  <label for="performance">Performance data</label>
+                  <app-checkbox
+                    label="Performance data"
+                    [ngModel]="privacySettings.includePerformanceData"
+                    (change)="updatePrivacySetting('includePerformanceData', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="injuries"
-                    type="checkbox"
-                    [checked]="privacySettings.includeInjuryHistory"
-                    (change)="updatePrivacySetting('includeInjuryHistory', isChecked($event))"
-                  />
-                  <label for="injuries">Injury history</label>
+                  <app-checkbox
+                    label="Injury history"
+                    [ngModel]="privacySettings.includeInjuryHistory"
+                    (change)="updatePrivacySetting('includeInjuryHistory', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="ai"
-                    type="checkbox"
-                    [checked]="privacySettings.includeAINotes"
-                    (change)="updatePrivacySetting('includeAINotes', isChecked($event))"
-                  />
-                  <label for="ai">AI-generated patterns</label>
+                  <app-checkbox
+                    label="AI-generated patterns"
+                    [ngModel]="privacySettings.includeAINotes"
+                    (change)="updatePrivacySetting('includeAINotes', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="personal"
-                    type="checkbox"
-                    [checked]="privacySettings.includePersonalNotes"
-                    (change)="updatePrivacySetting('includePersonalNotes', isChecked($event))"
-                  />
-                  <label for="personal">Personal notes</label>
+                  <app-checkbox
+                    label="Personal notes"
+                    [ngModel]="privacySettings.includePersonalNotes"
+                    (change)="updatePrivacySetting('includePersonalNotes', $event.checked)"
+                  ></app-checkbox>
                 </div>
               </div>
 
               <div class="anonymization-options">
                 <h5>Anonymization Options</h5>
                 <div class="checkbox-item">
-                  <input
-                    id="anonTeam"
-                    type="checkbox"
-                    [checked]="privacySettings.anonymizeTeamName"
-                    (change)="updatePrivacySetting('anonymizeTeamName', isChecked($event))"
-                  />
-                  <label for="anonTeam">Hide team name</label>
+                  <app-checkbox
+                    label="Hide team name"
+                    [ngModel]="privacySettings.anonymizeTeamName"
+                    (change)="updatePrivacySetting('anonymizeTeamName', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="anonCoach"
-                    type="checkbox"
-                    [checked]="privacySettings.anonymizeCoachNames"
-                    (change)="updatePrivacySetting('anonymizeCoachNames', isChecked($event))"
-                  />
-                  <label for="anonCoach">Hide coach names</label>
+                  <app-checkbox
+                    label="Hide coach names"
+                    [ngModel]="privacySettings.anonymizeCoachNames"
+                    (change)="updatePrivacySetting('anonymizeCoachNames', $event.checked)"
+                  ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
-                  <input
-                    id="removeDates"
-                    type="checkbox"
-                    [checked]="privacySettings.removeDates"
-                    (change)="updatePrivacySetting('removeDates', isChecked($event))"
-                  />
-                  <label for="removeDates">Show relative dates only</label>
+                  <app-checkbox
+                    label="Show relative dates only"
+                    [ngModel]="privacySettings.removeDates"
+                    (change)="updatePrivacySetting('removeDates', $event.checked)"
+                  ></app-checkbox>
                 </div>
               </div>
             </div>
 
             <div class="form-group">
-              <label for="notes">Personal Notes (optional)</label>
-              <textarea
+              <app-textarea
+                label="Personal Notes (optional)"
                 id="notes"
-                pInputTextarea
-                [value]="newReport.notes"
-                (input)="updateNewReportNotes(getInputValue($event))"
+                [ngModel]="newReport.notes"
+                (change)="updateNewReportNotes($event)"
                 rows="3"
                 placeholder="Add any context or notes for your psychologist..."
-                class="w-full"
-              ></textarea>
+              ></app-textarea>
             </div>
           </div>
           <app-dialog-footer
@@ -526,51 +479,46 @@
           />
           <div class="precomp-form">
             <div class="form-group">
-              <label>Competition Name</label>
-              <input
-                type="text"
-                pInputText
-                [value]="newPreComp.name"
-                (input)="updateNewPreCompText('name', getInputValue($event))"
+              <app-form-input
+                label="Competition Name"
+                [ngModel]="newPreComp.name"
+                (change)="updateNewPreCompText('name', $event)"
                 placeholder="e.g., Regional Championships"
                 class="w-full"
                 aria-label="Competition name"
-              />
+              ></app-form-input>
             </div>
             <div class="form-group">
-              <label>Significance</label>
-              <p-select
+              <app-select
+                label="Significance"
                 [options]="significanceOptions"
                 [ngModel]="newPreComp.significance"
-                (onChange)="updateNewPreCompSignificance($event.value)"
+                (change)="updateNewPreCompSignificance($event)"
                 placeholder="Select importance"
                 class="w-full"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-group">
-              <label>Readiness Rating (1-10)</label>
-              <input
+              <app-form-input
+                label="Readiness Rating (1-10)"
                 type="number"
-                pInputText
-                [value]="newPreComp.readiness"
-                (input)="updateNewPreCompReadiness(getInputValue($event))"
+                [ngModel]="newPreComp.readiness"
+                (change)="updateNewPreCompReadiness($event)"
                 min="1"
                 max="10"
                 class="w-full"
                 aria-label="Readiness rating from one to ten"
-              />
+              ></app-form-input>
             </div>
             <div class="form-group">
-              <label>Biggest Concern (optional)</label>
-              <input
-                type="text"
-                pInputText
-                [value]="newPreComp.concern"
-                (input)="updateNewPreCompText('concern', getInputValue($event))"
+              <app-form-input
+                label="Biggest Concern (optional)"
+                [ngModel]="newPreComp.concern"
+                (change)="updateNewPreCompText('concern', $event)"
                 placeholder="What's on your mind?"
                 class="w-full"
                 aria-label="Biggest concern"
-              />
+              ></app-form-input>
             </div>
           </div>
           <app-dialog-footer

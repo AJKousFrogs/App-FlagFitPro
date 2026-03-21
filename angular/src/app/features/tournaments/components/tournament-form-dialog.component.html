@@ -1,16 +1,16 @@
 <app-dialog
-  [visible]="visible"
+  [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
   [blockScroll]="true"
   [styleClass]="'tournament-dialog'"
-  [ariaLabel]="dialogTitle"
+  [ariaLabel]="dialogTitle()"
 >
-  <app-dialog-header icon="trophy" [title]="dialogTitle" (close)="onClose()" />
-  <form [formGroup]="form" class="tournament-form form-controls-full">
-    @if (isPlayer && !editingTournament) {
+  <app-dialog-header icon="trophy" [title]="dialogTitle()" (close)="onClose()" />
+  <form [formGroup]="form()" class="tournament-form form-controls-full">
+    @if (isPlayer() && !editingTournament()) {
       <div class="visibility-info-banner">
         <app-alert
           variant="warning"
@@ -21,7 +21,7 @@
         />
       </div>
     }
-    @if (isCoachOrAdmin && !editingTournament) {
+    @if (isCoachOrAdmin() && !editingTournament()) {
       <div class="visibility-info-banner">
         <app-alert
           variant="info"
@@ -32,7 +32,7 @@
         />
       </div>
     }
-    @if (editingTournament && isPersonalTournament) {
+    @if (editingTournament() && isPersonalTournament()) {
       <div class="visibility-info-banner">
         <app-alert
           variant="warning"
@@ -51,48 +51,77 @@
       </div>
       <div class="form-row">
         <div class="form-field full-width">
-          <label for="tournament-name">
-            <i class="pi pi-tag"></i>
-            {{ isPlayer ? "Game Day Name" : "Tournament Name" }}
-            <span class="required">*</span>
-          </label>
-          <input pInputText id="tournament-name" formControlName="name" placeholder="e.g., Adria Bowl 2026" class="w-full" autocomplete="off" />
+          <app-form-input
+            [label]="isPlayer() ? 'Game Day Name' : 'Tournament Name'"
+            [required]="true"
+            prefixIcon="pi-tag"
+            formControlName="name"
+            placeholder="e.g., Adria Bowl 2026"
+            autocomplete="off"
+          ></app-form-input>
         </div>
       </div>
       <div class="form-row two-col">
         <div class="form-field">
-          <label for="tournament-shortName"><i class="pi pi-bookmark"></i> Short Name</label>
-          <input pInputText id="tournament-shortName" formControlName="short_name" placeholder="e.g., Adria Bowl" autocomplete="off" />
+          <app-form-input
+            label="Short Name"
+            prefixIcon="pi-bookmark"
+            formControlName="short_name"
+            placeholder="e.g., Adria Bowl"
+            autocomplete="off"
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="tournament-teams"><i class="pi pi-users"></i> Expected Teams</label>
-          <p-inputNumber inputId="tournament-teams" formControlName="expected_teams" [min]="2" [max]="100" placeholder="Number of teams" class="w-full"></p-inputNumber>
+          <app-input-number
+            label="Expected Teams"
+            inputId="tournament-teams"
+            formControlName="expected_teams"
+            [min]="2"
+            [max]="100"
+            placeholder="Number of teams"
+          ></app-input-number>
         </div>
       </div>
-    </div>
+      </div>
 
-    <div class="form-section">
+      <div class="form-section">
       <div class="section-header">
         <i class="pi pi-map-marker"></i>
         <span>Location</span>
       </div>
       <div class="form-row two-col">
         <div class="form-field">
-          <label for="tournament-country"><i class="pi pi-globe"></i> Country</label>
-          <input pInputText id="tournament-country" formControlName="country" placeholder="e.g., Croatia" autocomplete="country-name" />
+          <app-form-input
+            label="Country"
+            prefixIcon="pi-globe"
+            formControlName="country"
+            placeholder="e.g., Croatia"
+            autocomplete="country-name"
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="tournament-location"><i class="pi pi-building"></i> City</label>
-          <input pInputText id="tournament-location" formControlName="location" placeholder="e.g., Zagreb" autocomplete="address-level2" />
+          <app-form-input
+            label="City"
+            prefixIcon="pi-building"
+            formControlName="location"
+            placeholder="e.g., Zagreb"
+            autocomplete="address-level2"
+          ></app-form-input>
         </div>
       </div>
       <div class="form-row">
         <div class="form-field full-width">
-          <label for="tournament-venue"><i class="pi pi-home"></i> Venue / Stadium</label>
-          <input pInputText id="tournament-venue" formControlName="venue" placeholder="e.g., Stadium Name or Sports Complex" autocomplete="off" />
+          <app-form-input
+            label="Venue / Stadium"
+            prefixIcon="pi-home"
+            formControlName="venue"
+            placeholder="e.g., Stadium Name or Sports Complex"
+            autocomplete="off"
+          ></app-form-input>
         </div>
       </div>
-    </div>
+      </div>
+
 
     <div class="form-section">
       <div class="section-header">
@@ -143,17 +172,18 @@
       <div class="form-row two-col">
         <div class="form-field">
           <label for="tournament-type"><i class="pi pi-flag"></i> Tournament Type</label>
-          <p-select inputId="tournament-type" formControlName="tournament_type" [options]="tournamentTypes" optionLabel="label" optionValue="value" placeholder="Select type" class="w-full" appendTo="body"></p-select>
+          <app-select inputId="tournament-type" formControlName="tournament_type" [options]="tournamentTypes()" optionLabel="label" optionValue="value" placeholder="Select type" class="w-full" appendTo="body"></app-select>
         </div>
         <div class="form-field">
           <label for="tournament-level"><i class="pi pi-star"></i> Competition Level</label>
-          <p-select inputId="tournament-level" formControlName="competition_level" [options]="competitionLevels" optionLabel="label" optionValue="value" placeholder="Select level" class="w-full" appendTo="body"></p-select>
+          <app-select inputId="tournament-level" formControlName="competition_level" [options]="competitionLevels()" optionLabel="label" optionValue="value" placeholder="Select level" class="w-full" appendTo="body"></app-select>
         </div>
       </div>
       <div class="form-row">
         <div class="form-field full-width checkbox-field">
-          <p-checkbox formControlName="is_home_tournament" [binary]="true" variant="filled" inputId="homeTournament"></p-checkbox>
-          <label for="homeTournament" class="checkbox-label"><i class="pi pi-home"></i> This is a home tournament (we are hosting)</label>
+          <app-checkbox formControlName="is_home_tournament" [binary]="true" inputId="homeTournament">
+            <i class="pi pi-home"></i> This is a home tournament (we are hosting)
+          </app-checkbox>
         </div>
       </div>
     </div>
@@ -165,22 +195,42 @@
       </div>
       <div class="form-row two-col">
         <div class="form-field">
-          <label for="tournament-website"><i class="pi pi-globe"></i> Official Website</label>
-          <input pInputText id="tournament-website" formControlName="website_url" placeholder="https://tournament-website.com" autocomplete="url" />
+          <app-form-input
+            label="Official Website"
+            prefixIcon="pi-globe"
+            formControlName="website_url"
+            placeholder="https://tournament-website.com"
+            autocomplete="url"
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="tournament-instagram"><i class="pi pi-instagram"></i> Instagram</label>
-          <input pInputText id="tournament-instagram" formControlName="instagram_url" placeholder="https://instagram.com/tournament" autocomplete="off" />
+          <app-form-input
+            label="Instagram"
+            prefixIcon="pi-instagram"
+            formControlName="instagram_url"
+            placeholder="https://instagram.com/tournament"
+            autocomplete="off"
+          ></app-form-input>
         </div>
       </div>
       <div class="form-row two-col">
         <div class="form-field">
-          <label for="tournament-facebook"><i class="pi pi-facebook"></i> Facebook</label>
-          <input pInputText id="tournament-facebook" formControlName="facebook_url" placeholder="https://facebook.com/event/..." autocomplete="off" />
+          <app-form-input
+            label="Facebook"
+            prefixIcon="pi-facebook"
+            formControlName="facebook_url"
+            placeholder="https://facebook.com/event/..."
+            autocomplete="off"
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="tournament-registration"><i class="pi pi-file-edit"></i> Registration Link</label>
-          <input pInputText id="tournament-registration" formControlName="registration_url" placeholder="https://registration-form.com" autocomplete="off" />
+          <app-form-input
+            label="Registration Link"
+            prefixIcon="pi-file-edit"
+            formControlName="registration_url"
+            placeholder="https://registration-form.com"
+            autocomplete="off"
+          ></app-form-input>
         </div>
       </div>
     </div>
@@ -192,22 +242,42 @@
       </div>
       <div class="form-row two-col">
         <div class="form-field">
-          <label for="tournament-venue-map"><i class="pi pi-map-marker"></i> Venue Location (Google Maps)</label>
-          <input pInputText id="tournament-venue-map" formControlName="venue_maps_url" placeholder="https://maps.google.com/..." autocomplete="off" />
+          <app-form-input
+            label="Venue Location (Google Maps)"
+            prefixIcon="pi-map-marker"
+            formControlName="venue_maps_url"
+            placeholder="https://maps.google.com/..."
+            autocomplete="off"
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="tournament-hotel-map"><i class="pi pi-building"></i> Hotel Location (Google Maps)</label>
-          <input pInputText id="tournament-hotel-map" formControlName="hotel_maps_url" placeholder="https://maps.google.com/..." autocomplete="off" />
+          <app-form-input
+            label="Hotel Location (Google Maps)"
+            prefixIcon="pi-building"
+            formControlName="hotel_maps_url"
+            placeholder="https://maps.google.com/..."
+            autocomplete="off"
+          ></app-form-input>
         </div>
       </div>
       <div class="form-row two-col">
         <div class="form-field">
-          <label for="tournament-hotel-name"><i class="pi pi-home"></i> Recommended Hotel</label>
-          <input pInputText id="tournament-hotel-name" formControlName="hotel_name" placeholder="e.g., Hotel Ambassador" autocomplete="off" />
+          <app-form-input
+            label="Recommended Hotel"
+            prefixIcon="pi-home"
+            formControlName="hotel_name"
+            placeholder="e.g., Hotel Ambassador"
+            autocomplete="off"
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="tournament-hotel-booking"><i class="pi pi-external-link"></i> Hotel Booking Link</label>
-          <input pInputText id="tournament-hotel-booking" formControlName="hotel_booking_url" placeholder="https://booking.com/..." autocomplete="off" />
+          <app-form-input
+            label="Hotel Booking Link"
+            prefixIcon="pi-external-link"
+            formControlName="hotel_booking_url"
+            placeholder="https://booking.com/..."
+            autocomplete="off"
+          ></app-form-input>
         </div>
       </div>
     </div>
@@ -219,18 +289,33 @@
       </div>
       <div class="form-row two-col">
         <div class="form-field">
-          <label for="tournament-contact-name"><i class="pi pi-user"></i> Contact Person</label>
-          <input pInputText id="tournament-contact-name" formControlName="contact_name" placeholder="e.g., John Smith" autocomplete="off" />
+          <app-form-input
+            label="Contact Person"
+            prefixIcon="pi-user"
+            formControlName="contact_name"
+            placeholder="e.g., John Smith"
+            autocomplete="off"
+          ></app-form-input>
         </div>
         <div class="form-field">
-          <label for="tournament-contact-email"><i class="pi pi-envelope"></i> Contact Email</label>
-          <input pInputText id="tournament-contact-email" formControlName="contact_email" placeholder="contact@tournament.com" autocomplete="email" />
+          <app-form-input
+            label="Contact Email"
+            prefixIcon="pi-envelope"
+            formControlName="contact_email"
+            placeholder="contact@tournament.com"
+            autocomplete="email"
+          ></app-form-input>
         </div>
       </div>
       <div class="form-row">
         <div class="form-field full-width">
-          <label for="tournament-notes"><i class="pi pi-pencil"></i> Notes & Additional Information</label>
-          <textarea pTextarea id="tournament-notes" formControlName="notes" rows="3" placeholder="Travel tips, dress code, parking info, special requirements..." class="w-full" autocomplete="off"></textarea>
+          <app-textarea
+            label="Notes & Additional Information"
+            formControlName="notes"
+            rows="3"
+            placeholder="Travel tips, dress code, parking info, special requirements..."
+            autocomplete="off"
+          ></app-textarea>
         </div>
       </div>
     </div>
@@ -241,7 +326,7 @@
     cancelLabel="Cancel"
     primaryLabel="Save"
     primaryIcon="check"
-    [loading]="loading"
+    [loading]="loading()"
     (primary)="save.emit()"
     (cancel)="onClose()"
   />

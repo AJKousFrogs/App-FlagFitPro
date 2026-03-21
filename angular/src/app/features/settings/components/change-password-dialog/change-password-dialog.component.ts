@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { Password } from "primeng/password";
 import { AlertComponent } from "../../../../shared/components/alert/alert.component";
+import { PasswordInputComponent } from "../../../../shared/components/password-input/password-input.component";
 import {
   AppDialogComponent,
   DialogFooterComponent,
@@ -14,7 +14,7 @@ import {
   imports: [
     ReactiveFormsModule,
     AppDialogComponent,
-    Password,
+    PasswordInputComponent,
     AlertComponent,
     DialogHeaderComponent,
     DialogFooterComponent,

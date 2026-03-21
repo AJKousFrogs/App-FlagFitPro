@@ -2,11 +2,10 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  output,
 } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { Step, StepList, Stepper } from "primeng/stepper";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 
@@ -26,27 +25,27 @@ type CompletionStats = {
   selector: "app-onboarding-progress-shell",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBar, Stepper, StepList, Step, AlertComponent],
+  imports: [CommonModule, ProgressBarComponent, Stepper, StepList, Step, AlertComponent],
   templateUrl: "./onboarding-progress-shell.component.html",
   styleUrl: "./onboarding-progress-shell.component.scss",
 })
 export class OnboardingProgressShellComponent {
-  @Input() completionStats: CompletionStats = {
+  completionStats = input<CompletionStats>({
     completed: 0,
     total: 0,
     percent: 0,
     remaining: 0,
-  };
-  @Input() currentStep = 0;
-  @Input() stepPosition = "";
-  @Input() currentStepLabel = "Setup";
-  @Input() lastSaved: string | Date | null = null;
-  @Input() isSaving = false;
-  @Input() hasPendingRequirements = false;
-  @Input() pendingRequirementLabels: string[] = [];
-  @Input() steps: OnboardingStepSummary[] = [];
+  });
+  currentStep = input(0);
+  stepPosition = input("");
+  currentStepLabel = input("Setup");
+  lastSaved = input<string | Date | null>(null);
+  isSaving = input(false);
+  hasPendingRequirements = input(false);
+  pendingRequirementLabels = input<string[]>([]);
+  steps = input<OnboardingStepSummary[]>([]);
 
-  @Output() stepperChange = new EventEmitter<number>();
+  stepperChange = output<number>();
 
   onStepperValueChange(value: number | undefined): void {
     if (typeof value === "number") {

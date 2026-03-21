@@ -1,13 +1,12 @@
-import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
+import { InputNumberComponent } from "../../../shared/components/input-number/input-number.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 
 @Component({
   selector: "app-tournament-budget-dialog-content",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputNumber, InputText],
+  imports: [ReactiveFormsModule, InputNumberComponent, FormInputComponent],
   templateUrl: "./tournament-budget-dialog-content.component.html",
   styleUrl: "./tournament-budget-dialog-content.component.scss",
 })

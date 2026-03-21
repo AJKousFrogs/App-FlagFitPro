@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { InputNumber } from "primeng/inputnumber";
+import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
 
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
@@ -70,7 +70,7 @@ interface WellnessMetric {
     FormsModule,
     RouterModule,
     MainLayoutComponent,
-    InputNumber,
+    InputNumberComponent,
     AppLoadingComponent,
     ButtonComponent,
     PageHeaderComponent,
@@ -103,10 +103,10 @@ interface WellnessMetric {
       }
 
       <!-- Content -->
-      <div
-        *ngIf="!isPageLoading() && !hasPageError()"
-        class="wellness-page elite-phase2-shell ui-page-shell ui-page-stack"
-      >
+      @if (!isPageLoading() && !hasPageError()) {
+        <div
+          class="wellness-page elite-phase2-shell ui-page-shell ui-page-stack"
+        >
           <app-page-header
             title="Wellness & Recovery"
             subtitle="Track your health, recovery, and wellness metrics"
@@ -304,11 +304,11 @@ interface WellnessMetric {
                 </h4>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label for="sleepHours">Sleep Hours</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Sleep Hours"
                       inputId="sleepHours"
                       [ngModel]="checkInData.sleepHours"
-                      (ngModelChange)="onCheckInFieldChange('sleepHours', $event ?? null)"
+                      (change)="onCheckInFieldChange('sleepHours', $event)"
                       [min]="0"
                       [max]="24"
                       [showButtons]="true"
@@ -316,20 +316,20 @@ interface WellnessMetric {
                       [maxFractionDigits]="1"
                       placeholder="Hours"
                       [attr.aria-label]="'Sleep hours'"
-                    ></p-inputNumber>
+                    ></app-input-number>
                   </div>
                   <div class="checkin-item">
-                    <label for="sleepQuality">Sleep Quality (1-10)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Sleep Quality (1-10)"
                       inputId="sleepQuality"
                       [ngModel]="checkInData.sleepQuality"
-                      (ngModelChange)="onCheckInFieldChange('sleepQuality', $event ?? null)"
+                      (change)="onCheckInFieldChange('sleepQuality', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Quality"
                       [attr.aria-label]="'Sleep quality from 1 to 10'"
-                    ></p-inputNumber>
+                    ></app-input-number>
                   </div>
                 </div>
               </div>
@@ -341,24 +341,24 @@ interface WellnessMetric {
                 </h4>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label for="energyLevel">Energy Level (1-10)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Energy Level (1-10)"
                       inputId="energyLevel"
                       [ngModel]="checkInData.energyLevel"
-                      (ngModelChange)="onCheckInFieldChange('energyLevel', $event ?? null)"
+                      (change)="onCheckInFieldChange('energyLevel', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Level"
                       [attr.aria-label]="'Energy level from 1 to 10'"
-                    ></p-inputNumber>
+                    ></app-input-number>
                   </div>
                   <div class="checkin-item">
-                    <label for="soreness">Muscle Soreness (1-10)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Muscle Soreness (1-10)"
                       inputId="soreness"
                       [ngModel]="checkInData.soreness"
-                      (ngModelChange)="onCheckInFieldChange('soreness', $event ?? null)"
+                      (change)="onCheckInFieldChange('soreness', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -366,35 +366,31 @@ interface WellnessMetric {
                       [attr.aria-label]="
                         'Muscle soreness from 1 to 10, where 1 is no soreness and 10 is very sore'
                       "
-                    ></p-inputNumber>
-                    <small class="help-text"
-                      >1 = No soreness, 10 = Very sore</small
-                    >
+                      hint="1 = No soreness, 10 = Very sore"
+                    ></app-input-number>
                   </div>
                 </div>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label for="hydrationGlasses"
-                      >Hydration (glasses of water)</label
-                    >
-                    <p-inputNumber
+                    <app-input-number
+                      label="Hydration (glasses of water)"
                       inputId="hydrationGlasses"
                       [ngModel]="checkInData.hydration"
-                      (ngModelChange)="onCheckInFieldChange('hydration', $event ?? null)"
+                      (change)="onCheckInFieldChange('hydration', $event)"
                       [min]="0"
                       [max]="20"
                       [showButtons]="true"
                       placeholder="Glasses (8oz)"
                       [attr.aria-label]="'Number of glasses of water consumed'"
-                    ></p-inputNumber>
-                    <small class="help-text">Target: 8+ glasses daily</small>
+                      hint="Target: 8+ glasses daily"
+                    ></app-input-number>
                   </div>
                   <div class="checkin-item">
-                    <label for="restingHR">Resting Heart Rate (BPM)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Resting Heart Rate (BPM)"
                       inputId="restingHR"
                       [ngModel]="checkInData.restingHR"
-                      (ngModelChange)="onCheckInFieldChange('restingHR', $event ?? null)"
+                      (change)="onCheckInFieldChange('restingHR', $event)"
                       [min]="40"
                       [max]="120"
                       [showButtons]="true"
@@ -402,10 +398,8 @@ interface WellnessMetric {
                       [attr.aria-label]="
                         'Resting heart rate in beats per minute'
                       "
-                    ></p-inputNumber>
-                    <small class="help-text"
-                      >Elevated HR may indicate fatigue</small
-                    >
+                      hint="Elevated HR may indicate fatigue"
+                    ></app-input-number>
                   </div>
                 </div>
               </div>
@@ -417,24 +411,24 @@ interface WellnessMetric {
                 </h4>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label for="mood">Mood (1-10)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Mood (1-10)"
                       inputId="mood"
                       [ngModel]="checkInData.mood"
-                      (ngModelChange)="onCheckInFieldChange('mood', $event ?? null)"
+                      (change)="onCheckInFieldChange('mood', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Mood"
                       [attr.aria-label]="'Mood level from 1 to 10'"
-                    ></p-inputNumber>
+                    ></app-input-number>
                   </div>
                   <div class="checkin-item">
-                    <label for="stress">Stress Level (1-10)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Stress Level (1-10)"
                       inputId="stress"
                       [ngModel]="checkInData.stress"
-                      (ngModelChange)="onCheckInFieldChange('stress', $event ?? null)"
+                      (change)="onCheckInFieldChange('stress', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -442,19 +436,17 @@ interface WellnessMetric {
                       [attr.aria-label]="
                         'Stress level from 1 to 10, where 1 is very relaxed and 10 is very stressed'
                       "
-                    ></p-inputNumber>
-                    <small class="help-text"
-                      >1 = Very relaxed, 10 = Very stressed</small
-                    >
+                      hint="1 = Very relaxed, 10 = Very stressed"
+                    ></app-input-number>
                   </div>
                 </div>
                 <div class="checkin-row">
                   <div class="checkin-item">
-                    <label for="motivation">Training Motivation (1-10)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Training Motivation (1-10)"
                       inputId="motivation"
                       [ngModel]="checkInData.motivation"
-                      (ngModelChange)="onCheckInFieldChange('motivation', $event ?? null)"
+                      (change)="onCheckInFieldChange('motivation', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -462,14 +454,14 @@ interface WellnessMetric {
                       [attr.aria-label]="
                         'Training motivation level from 1 to 10'
                       "
-                    ></p-inputNumber>
+                    ></app-input-number>
                   </div>
                   <div class="checkin-item">
-                    <label for="readiness">Readiness to Train (1-10)</label>
-                    <p-inputNumber
+                    <app-input-number
+                      label="Readiness to Train (1-10)"
                       inputId="readiness"
                       [ngModel]="checkInData.readiness"
-                      (ngModelChange)="onCheckInFieldChange('readiness', $event ?? null)"
+                      (change)="onCheckInFieldChange('readiness', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -477,7 +469,7 @@ interface WellnessMetric {
                       [attr.aria-label]="
                         'Readiness to train level from 1 to 10'
                       "
-                    ></p-inputNumber>
+                    ></app-input-number>
                   </div>
                 </div>
               </div>

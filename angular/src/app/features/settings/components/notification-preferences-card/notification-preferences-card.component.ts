@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { Select } from "primeng/select";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import {
   CardShellComponent,
@@ -12,7 +12,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    Select,
+    SelectComponent,
     ToggleSwitch,
     CardShellComponent,
     ControlRowComponent,

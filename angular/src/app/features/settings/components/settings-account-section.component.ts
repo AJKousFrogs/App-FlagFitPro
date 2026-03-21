@@ -1,8 +1,7 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -22,10 +21,9 @@ interface SelectOption {
   selector: "app-settings-account-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    InputText,
-    Select,
+    FormInputComponent,
+    SelectComponent,
     ButtonComponent,
     CardShellComponent,
     BirthdayInputSuggestionDirective,

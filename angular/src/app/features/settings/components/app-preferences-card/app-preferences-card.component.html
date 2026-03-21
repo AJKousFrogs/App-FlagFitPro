@@ -38,8 +38,8 @@
       </small>
     </div>
     <div class="form-field language-field">
-      <label for="language" class="form-label">Language</label>
-      <p-select
+      <app-select
+        label="Language"
         id="language"
         formControlName="language"
         [options]="languageOptions()"
@@ -49,26 +49,7 @@
         class="language-selector"
         appendTo="body"
         [showClear]="false"
-      >
-        <ng-template #selectedItem let-selected>
-          @if (selected) {
-            <div class="lang-selected">
-              <span class="lang-flag">{{ selected.flag }}</span>
-              <span class="lang-label">{{ selected.label }}</span>
-            </div>
-          }
-        </ng-template>
-        <ng-template #item let-lang>
-          <div class="lang-item">
-            <span class="lang-flag">{{ lang.flag }}</span>
-            <div class="lang-details">
-              <span class="lang-label">{{ lang.label }}</span>
-              <span class="lang-native">{{ lang.native }}</span>
-            </div>
-            <i class="pi pi-check lang-check"></i>
-          </div>
-        </ng-template>
-      </p-select>
+      ></app-select>
       <div class="language-hint-box">
         <i class="pi pi-info-circle"></i>
         <span>

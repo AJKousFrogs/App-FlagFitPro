@@ -36,15 +36,13 @@
 
     @if (currentStatus() === "declined" || currentStatus() === "tentative") {
       <div class="form-field">
-        <label>Reason (optional)</label>
-        <textarea
-          pTextarea
+        <app-textarea
+          label="Reason (optional)"
           formControlName="reason"
           rows="2"
           placeholder="Let your coach know why..."
-          class="w-full"
           aria-label="Reason for unavailability"
-        ></textarea>
+        ></app-textarea>
       </div>
     }
 
@@ -73,34 +71,30 @@
       </div>
 
       <div class="form-field">
-        <p-checkbox
+        <app-checkbox
+          label="I need accommodation"
           formControlName="accommodationNeeded"
           [binary]="true"
-          variant="filled"
           inputId="accommodation"
-          label="I need accommodation"
-        ></p-checkbox>
+        ></app-checkbox>
       </div>
 
       <div class="form-field">
-        <p-checkbox
+        <app-checkbox
+          label="I need transportation"
           formControlName="transportationNeeded"
           [binary]="true"
-          variant="filled"
           inputId="transportation"
-          label="I need transportation"
-        ></p-checkbox>
+        ></app-checkbox>
       </div>
 
       <div class="form-field">
-        <label>Dietary Restrictions</label>
-        <input
-          pInputText
+        <app-form-input
+          label="Dietary Restrictions"
           formControlName="dietaryRestrictions"
           placeholder="Any dietary needs..."
-          class="w-full"
           aria-label="Dietary restrictions"
-        />
+        ></app-form-input>
       </div>
     }
 

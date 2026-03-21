@@ -1,11 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionHeader,
-  AccordionPanel,
-} from "primeng/accordion";
+import { AccordionComponent, AppAccordionPanelDirective } from "../../../shared/components/accordion/accordion.component";
 
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
@@ -20,10 +15,8 @@ interface HelpTopic {
   selector: "app-help-center-faq-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    Accordion,
-    AccordionPanel,
-    AccordionHeader,
-    AccordionContent,
+    AccordionComponent,
+    AppAccordionPanelDirective,
     CardShellComponent,
   ],
   templateUrl: "./help-center-faq-section.component.html",

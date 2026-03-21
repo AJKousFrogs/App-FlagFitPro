@@ -6,15 +6,15 @@
     [attr.data-mode]="activeMode()"
   >
     <header class="elite-topbar" aria-label="Global navigation">
-      <p-menubar [model]="menuItems" styleClass="interactive-surface elite-menubar">
-        <ng-template #start>
+      <app-menubar [model]="menuItems" styleClass="interactive-surface elite-menubar">
+        <div start>
           <div class="brand-block" aria-label="product identity">
             <span class="brand-eyebrow">FlagFit Pro</span>
             <strong class="brand-title">Elite Athletic Command Center</strong>
           </div>
-        </ng-template>
+        </div>
 
-        <ng-template #end>
+        <div end>
           <app-button
             variant="secondary"
             size="sm"
@@ -25,8 +25,8 @@
           >
             <span>{{ theme() === "dark" ? "Light" : "Dark" }}</span>
           </app-button>
-        </ng-template>
-      </p-menubar>
+        </div>
+      </app-menubar>
 
       <p-breadcrumb
         [model]="breadcrumbItems"
@@ -80,10 +80,7 @@
         >
           <header>
             <span class="type-caption">{{ kpi.label }}</span>
-            <p-tag
-              [severity]="kpi.status"
-              [value]="kpi.status === 'danger' ? 'Critical' : (kpi.status | titlecase)"
-            ></p-tag>
+            <app-status-tag [severity]="kpi.status" [value]="kpi.status === 'danger' ? 'Critical' : (kpi.status | titlecase)"></app-status-tag>
           </header>
 
           <div class="kpi-value-row">
@@ -136,7 +133,7 @@
                   <strong>{{ item.athlete }}</strong>
                   <small>{{ item.unit }}</small>
                 </div>
-                <p-tag [severity]="getSeverityTag(item.severity)" [value]="item.severity"></p-tag>
+                <app-status-tag [severity]="getSeverityTag(item.severity)" [value]="item.severity"></app-status-tag>
               </div>
             </ng-template>
           </p-dataView>
@@ -173,16 +170,13 @@
             />
           </div>
 
-          <p-table
-            [value]="filteredQueue()"
+          <app-table
+            [data]="filteredQueue()"
             [paginator]="true"
             [rows]="3"
             [first]="tableFirst()"
-            (onPage)="onTablePageChange($event)"
-            sortMode="multiple"
-            responsiveLayout="scroll"
-            role="grid"
-            ariaLabel="Priority queue table"
+            (page)="onTablePageChange($event)"
+            styleClass="interactive-surface queue-table"
           >
             <ng-template #header>
               <tr>
@@ -204,7 +198,7 @@
               >
                 <td>{{ row.athlete }}</td>
                 <td>
-                  <p-tag [severity]="getSeverityTag(row.severity)" [value]="row.severity"></p-tag>
+                  <app-status-tag [severity]="getSeverityTag(row.severity)" [value]="row.severity"></app-status-tag>
                 </td>
                 <td>{{ row.issue }}</td>
                 <td>{{ row.eta }}</td>
@@ -219,14 +213,7 @@
                 </td>
               </tr>
             </ng-template>
-          </p-table>
-
-          <p-paginator
-            [first]="tableFirst()"
-            [rows]="3"
-            [totalRecords]="filteredQueue().length"
-            (onPageChange)="onTablePageChange($event)"
-          ></p-paginator>
+          </app-table>
         </app-card-shell>
 
         <app-card-shell title="Training & Event Timeline" class="elite-card">
@@ -422,7 +409,7 @@
 
       @if (selectedQueueItem(); as item) {
         <div class="drawer-content">
-          <p-tag [severity]="getSeverityTag(item.severity)" [value]="item.severity"></p-tag>
+          <app-status-tag [severity]="getSeverityTag(item.severity)" [value]="item.severity"></app-status-tag>
           <h4>{{ item.athlete }}</h4>
           <p>{{ item.issue }}</p>
           <div class="drawer-meta">

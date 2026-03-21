@@ -1,6 +1,6 @@
 import { TitleCasePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Select } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -14,7 +14,7 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TitleCasePipe,
-    Select,
+    SelectComponent,
     Tooltip,
     ButtonComponent,
     IconButtonComponent,

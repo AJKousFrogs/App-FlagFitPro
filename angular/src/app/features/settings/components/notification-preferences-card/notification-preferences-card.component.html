@@ -102,7 +102,7 @@
       title="Digest Frequency"
       description="How often to bundle non-urgent notifications"
     >
-      <p-select
+      <app-select
         formControlName="digestFrequency"
         [options]="[
           { label: 'Real-time (Instant)', value: 'realtime' },
@@ -112,7 +112,7 @@
         optionLabel="label"
         optionValue="value"
         placeholder="Select frequency"
-      ></p-select>
+      ></app-select>
     </app-control-row>
 
     <div class="notification-section-header">
