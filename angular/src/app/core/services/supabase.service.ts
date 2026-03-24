@@ -285,8 +285,45 @@ export class SupabaseService {
    * Get auth token
    */
   async getToken(): Promise<string | null> {
-    const { data } = await this.supabase.auth.getSession();
-    return data.session?.access_token ?? null;
+    try {
+      const { data, error } = await this.supabase.auth.getSession();
+
+      if (error) {
+        this.logger.warn("[Supabase] Error getting session token", { error });
+        return null;
+      }
+
+      const session = data.session;
+      if (!session) {
+        return null;
+      }
+
+      const expiresAt = session.expires_at;
+      const now = Math.floor(Date.now() / 1000);
+
+      if (expiresAt && expiresAt - now < 60) {
+        this.logger.debug("[Supabase] Token expiring soon, refreshing session");
+
+        const { data: refreshData, error: refreshError } =
+          await this.supabase.auth.refreshSession();
+
+        if (refreshError || !refreshData.session) {
+          this.logger.warn("[Supabase] Failed to refresh session token", {
+            error: refreshError,
+          });
+          return null;
+        }
+
+        return refreshData.session.access_token;
+      }
+
+      return session.access_token;
+    } catch (error) {
+      this.logger.error("[Supabase] Exception getting session token", {
+        error,
+      });
+      return null;
+    }
   }
 
   // ==========================================================

@@ -49,9 +49,8 @@ import { ButtonComponent } from "../button/button.component";
 
           <!-- Description -->
           <p id="cookie-description" class="cookie-description">
-            We use cookies to make the app work properly and to understand how
-            you use it. We're a volunteer sports club with zero budget — we
-            don't sell your data or show ads.
+            We use essential cookies to run FlagFit Pro and optional analytics
+            to improve it. No ads and no data sales.
             <a routerLink="/privacy-policy" class="cookie-link"
               >Read our Privacy Policy</a
             >
@@ -149,13 +148,14 @@ import { ButtonComponent } from "../button/button.component";
             </app-button>
           </div>
 
-          <!-- Club Info -->
-          <p class="cookie-footer">
-            <span class="club-name">Športno društvo Žabe</span> ·
-            <a href="mailto:merlin@ljubljanafrogs.si" class="cookie-link"
-              >merlin&#64;ljubljanafrogs.si</a
-            >
-          </p>
+          @if (showDetails()) {
+            <p class="cookie-footer">
+              <span class="club-name">Športno društvo Žabe</span> ·
+              <a href="mailto:merlin@ljubljanafrogs.si" class="cookie-link"
+                >merlin&#64;ljubljanafrogs.si</a
+              >
+            </p>
+          }
         </div>
       </div>
     }

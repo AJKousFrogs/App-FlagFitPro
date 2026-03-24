@@ -30,11 +30,12 @@
 /* TIER 3: Components - PrimeNG mapping, integration */
 @use "./scss/components/index" as *;
 
-/* TIER 4: Pages - enhancement styles */
-@use "./scss/pages/index" as *;
+/* TIER 4: Always-on page accessibility fixes */
+@use "./scss/pages/color-contrast-fixes";
 
-/* TIER 5: Overrides - documented exceptions, color guards */
-@use "./assets/styles/overrides" as *;
+/* TIER 5: Always-on overrides required for accessibility and platform behavior */
+@use "./assets/styles/overrides/exceptions";
+@use "./assets/styles/overrides/color-guards";
 
 /* ============================================
    ALL @IMPORT RULES (Must come after @use)

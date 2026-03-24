@@ -1,12 +1,10 @@
 import { HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { from, switchMap } from "rxjs";
-import { AuthService } from "../services/auth.service";
 import { LoggerService } from "../services/logger.service";
 import { SupabaseService } from "../services/supabase.service";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
   const logger = inject(LoggerService);
   const supabaseService = inject(SupabaseService);
 
@@ -15,7 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.url.includes("supabase.co/rest/")) {
     // Use async getToken() to ensure we have a valid (non-expired) token
     return from(
-      supabaseService.waitForInit().then(() => authService.getToken()),
+      supabaseService.waitForInit().then(() => supabaseService.getToken()),
     ).pipe(
       switchMap((token) => {
         const headers: Record<string, string> = {
@@ -49,7 +47,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // For API endpoints, wait for auth initialization and add Authorization header
   return from(
-    supabaseService.waitForInit().then(() => authService.getToken()),
+    supabaseService.waitForInit().then(() => supabaseService.getToken()),
   ).pipe(
     switchMap((token) => {
       if (token) {

@@ -20,19 +20,20 @@ import { Injectable, inject } from "@angular/core";
 import { PreloadingStrategy, Route } from "@angular/router";
 import { Observable, of, timer } from "rxjs";
 import { mergeMap } from "rxjs";
-import { AuthService } from "../services/auth.service";
+import { SupabaseService } from "../services/supabase.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthAwarePreloadStrategy implements PreloadingStrategy {
-  private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseService);
 
   preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {
     const preload = route.data?.["preload"];
     const priority = route.data?.["priority"];
     const entry = route.data?.["entry"];
-    const isAuthenticated = this.authService.isAuthenticated();
+    const isAuthenticated =
+      this.supabaseService.isAuthenticated() || !!this.supabaseService.session();
 
     // v2.1: only explicitly opted-in routes should preload.
     if (preload !== true) {

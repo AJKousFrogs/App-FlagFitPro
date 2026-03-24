@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
+import { DeferredGlobalStylesComponent } from "./shared/components/deferred-global-styles/deferred-global-styles.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
 import { ConfirmDialog } from "primeng/confirmdialog";
@@ -21,6 +22,7 @@ import { ThemeService } from "./core/services/theme.service";
     RouterOutlet,
     SkipToContentComponent,
     CookieConsentBannerComponent,
+    DeferredGlobalStylesComponent,
     LoadingOverlayComponent,
     ConfirmDialog,
     ToastComponent,
@@ -34,7 +36,10 @@ import { ThemeService } from "./core/services/theme.service";
     >
       <router-outlet></router-outlet>
     </main>
-    @defer (on idle) {
+    @defer (on timer(300ms)) {
+      <app-deferred-global-styles />
+    }
+    @defer (on timer(1800ms)) {
       <app-cookie-consent-banner />
     }
     <app-loading-overlay />

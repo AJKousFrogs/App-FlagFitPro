@@ -3,13 +3,13 @@ import { inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { throwError } from "rxjs";
 import { catchError } from "rxjs";
-import { AuthService } from "../services/auth.service";
 import { LoggerService } from "../services/logger.service";
+import { SupabaseService } from "../services/supabase.service";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const authService = inject(AuthService);
   const logger = inject(LoggerService);
+  const supabaseService = inject(SupabaseService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -23,7 +23,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status === 401) {
         // Unauthorized - check if user is logged out
-        const isAuthenticated = authService.isAuthenticated();
+        const isAuthenticated =
+          supabaseService.isAuthenticated() || !!supabaseService.session();
 
         if (isAuthenticated) {
           // User thinks they're authenticated but server rejected - session expired
@@ -34,7 +35,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           // Only redirect if not already on login/auth pages
           const currentUrl = router.url;
           if (!currentUrl.includes("/login") && !currentUrl.includes("/auth")) {
-            authService.logout().subscribe();
+            void supabaseService.signOut().catch((signOutError) => {
+              logger.warn("[ErrorInterceptor] Sign out after 401 failed", {
+                error: signOutError,
+              });
+            });
             router.navigate(["/login"], {
               queryParams: { message: "session_expired" },
             });

@@ -232,46 +232,7 @@ export class AuthService {
   }
 
   async getToken(): Promise<string | null> {
-    try {
-      // Force refresh session to ensure we have the latest token
-      const { data, error } =
-        await this.supabaseService.client.auth.getSession();
-
-      if (error) {
-        this.logger.warn("[Auth] Error getting session:", error);
-        return null;
-      }
-
-      // Check if token is expired or about to expire (within 60 seconds)
-      if (data.session) {
-        const expiresAt = data.session.expires_at;
-        const now = Math.floor(Date.now() / 1000);
-
-        if (expiresAt && expiresAt - now < 60) {
-          // Token expired or expiring soon, try to refresh
-          this.logger.debug("[Auth] Token expiring soon, attempting refresh");
-
-          const { data: refreshData, error: refreshError } =
-            await this.supabaseService.client.auth.refreshSession();
-
-          if (!refreshError && refreshData.session) {
-            return refreshData.session.access_token;
-          } else {
-            this.logger.warn("[Auth] Failed to refresh session:", refreshError);
-            // CRITICAL FIX: If refresh fails, the token is invalid - return null
-            // This prevents sending an expired token that will fail with 401
-            return null;
-          }
-        }
-
-        return data.session.access_token;
-      }
-
-      return null;
-    } catch (error) {
-      this.logger.error("[Auth] Exception getting token:", error);
-      return null;
-    }
+    return this.supabaseService.getToken();
   }
 
   getUser(): User | null {

@@ -42,7 +42,7 @@ export const appConfig: ApplicationConfig = {
 
     // Angular 21+: Zoneless is the default change-detection mode.
     // Keep provideZoneChangeDetection() out unless explicit Zone.js compatibility is required.
-    provideClientHydration(),
+    ...(environment.devtools.hydration ? [provideClientHydration()] : []),
 
     // Angular 21: Enhanced routing with component input binding and smart preloading
     // View transitions DISABLED: was causing UI lag; re-add withViewTransitions() if smooth transitions needed
