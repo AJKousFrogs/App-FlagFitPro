@@ -16,6 +16,7 @@ import {
   RouterOutlet,
 } from "@angular/router";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
+import { DeferredFeedbackStylesComponent } from "./shared/components/deferred-feedback-styles/deferred-feedback-styles.component";
 import { DeferredGlobalStylesComponent } from "./shared/components/deferred-global-styles/deferred-global-styles.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
@@ -40,6 +41,7 @@ type RouteEntry =
     RouterOutlet,
     SkipToContentComponent,
     CookieConsentBannerComponent,
+    DeferredFeedbackStylesComponent,
     DeferredGlobalStylesComponent,
     LoadingOverlayComponent,
     ConfirmDialog,
@@ -58,6 +60,9 @@ type RouteEntry =
       @defer (on timer(300ms)) {
         <app-deferred-global-styles />
       }
+    }
+    @defer (when shouldLoadDeferredFeedbackStyles()) {
+      <app-deferred-feedback-styles />
     }
     @defer (when shouldLoadCookieBanner()) {
       <app-cookie-consent-banner />
@@ -79,6 +84,14 @@ export class AppComponent {
   private readonly router = inject(Router);
   private readonly cookieConsentService = inject(CookieConsentService);
   private readonly prefersReducedMotion = signal(false);
+  private readonly currentUrlPath = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(() => this.getCurrentUrlPath()),
+      startWith(this.getCurrentUrlPath()),
+    ),
+    { initialValue: this.getCurrentUrlPath() },
+  );
   private readonly activeRouteEntry = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -88,17 +101,23 @@ export class AppComponent {
     { initialValue: this.getCurrentRouteEntry() },
   );
   private readonly cookieBannerReady = signal(false);
+  private readonly feedbackStylesReady = signal(false);
   private cookieBannerTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private feedbackStylesTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   readonly animationsDisabled = computed(
     () =>
       this.prefersReducedMotion() ||
       this.animationModuleType === "NoopAnimations",
   );
+  readonly isLandingRoute = computed(() => this.currentUrlPath() === "/");
   readonly shouldLoadDeferredGlobalStyles = computed(() => {
     const entry = this.activeRouteEntry();
     return entry === "hub" || entry === "internal";
   });
+  readonly shouldLoadDeferredFeedbackStyles = computed(
+    () => this.feedbackStylesReady(),
+  );
   readonly shouldLoadCookieBanner = computed(
     () =>
       this.cookieBannerReady() && this.cookieConsentService.showBanner(),
@@ -110,6 +129,7 @@ export class AppComponent {
   constructor() {
     this.applyPlatformClasses();
     this.initReducedMotionPreference();
+    this.initFeedbackStylesScheduling();
     this.initCookieBannerScheduling();
   }
 
@@ -172,6 +192,32 @@ export class AppComponent {
     });
   }
 
+  private initFeedbackStylesScheduling(): void {
+    this.destroyRef.onDestroy(() => this.clearFeedbackStylesTimer());
+
+    effect(() => {
+      if (this.feedbackStylesReady()) {
+        return;
+      }
+
+      if (!this.isLandingRoute()) {
+        this.clearFeedbackStylesTimer();
+        this.feedbackStylesReady.set(true);
+        return;
+      }
+
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      this.clearFeedbackStylesTimer();
+      this.feedbackStylesTimer = window.setTimeout(() => {
+        this.feedbackStylesReady.set(true);
+        this.feedbackStylesTimer = null;
+      }, 2200);
+    });
+  }
+
   private scheduleCookieBanner(entry: RouteEntry): void {
     if (typeof window === "undefined") {
       return;
@@ -195,6 +241,15 @@ export class AppComponent {
     this.cookieBannerTimer = null;
   }
 
+  private clearFeedbackStylesTimer(): void {
+    if (this.feedbackStylesTimer === null) {
+      return;
+    }
+
+    clearTimeout(this.feedbackStylesTimer);
+    this.feedbackStylesTimer = null;
+  }
+
   private getCurrentRouteEntry(): RouteEntry {
     let snapshot: ActivatedRouteSnapshot | null = this.router.routerState
       .snapshot.root;
@@ -209,5 +264,11 @@ export class AppComponent {
     }
 
     return entry;
+  }
+
+  private getCurrentUrlPath(): string {
+    const [pathWithHash] = this.router.url.split("?");
+    const [path] = pathWithHash.split("#");
+    return path || "/";
   }
 }

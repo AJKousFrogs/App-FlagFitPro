@@ -1,6 +1,6 @@
 @font-face {
     font-family: primeicons;
-    font-display: block;
+    font-display: swap;
     src: url('./fonts/primeicons.woff2') format('woff2'), url('./fonts/primeicons.woff') format('woff');
     font-weight: normal;
     font-style: normal;
