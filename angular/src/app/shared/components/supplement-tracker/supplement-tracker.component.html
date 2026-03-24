@@ -70,7 +70,7 @@
                   [ngModel]="supp.taken"
                   (change)="toggleSupplement(supp)"
                   [binary]="true"
-                  [id]="group.key + '-' + supp.id"
+                  [inputId]="group.key + '-' + supp.id"
                   [attr.aria-label]="supp.name"
                 ></app-checkbox>
               </div>

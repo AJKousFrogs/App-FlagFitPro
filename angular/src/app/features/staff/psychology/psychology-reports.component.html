@@ -482,7 +482,7 @@
               <app-form-input
                 label="Competition Name"
                 [ngModel]="newPreComp.name"
-                (change)="updateNewPreCompText('name', $event.value)"
+                (valueChange)="updateNewPreCompText('name', $event)"
                 placeholder="e.g., Regional Championships"
                 class="w-full"
                 aria-label="Competition name"
@@ -493,7 +493,7 @@
                 label="Significance"
                 [options]="significanceOptions"
                 [ngModel]="newPreComp.significance"
-                (change)="updateNewPreCompSignificance($event.value)"
+                (change)="updateNewPreCompSignificance($event)"
                 placeholder="Select importance"
                 class="w-full"
               ></app-select>
@@ -503,7 +503,7 @@
                 label="Readiness Rating (1-10)"
                 type="number"
                 [ngModel]="newPreComp.readiness"
-                (change)="updateNewPreCompReadiness($event.value)"
+                (valueChange)="updateNewPreCompReadiness($event)"
                 min="1"
                 max="10"
                 class="w-full"
@@ -514,7 +514,7 @@
               <app-form-input
                 label="Biggest Concern (optional)"
                 [ngModel]="newPreComp.concern"
-                (change)="updateNewPreCompText('concern', $event.value)"
+                (valueChange)="updateNewPreCompText('concern', $event)"
                 placeholder="What's on your mind?"
                 class="w-full"
                 aria-label="Biggest concern"

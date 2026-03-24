@@ -745,23 +745,28 @@ export class NutritionService {
     }
 
     try {
-      // Try to call the AI nutrition edge function
-      const { data, error } =
-        await this.supabaseService.client.functions.invoke(
-          "ai-nutrition-suggestions",
+      const functionNames = [
+        "ai-suggestions-free",
+        "ai-nutrition-suggestions",
+      ];
+
+      for (const functionName of functionNames) {
+        const { data, error } = await this.supabaseService.client.functions.invoke(
+          functionName,
           {
             body: { userId },
           },
         );
 
-      if (error) {
-        this.logger.debug(
-          "[Nutrition] AI edge function not available, using rule-based suggestions",
-        );
-        return this.generateRuleBasedSuggestions();
+        if (!error) {
+          return data?.data || data?.suggestions || [];
+        }
       }
 
-      return data?.suggestions || [];
+      this.logger.debug(
+        "[Nutrition] AI edge function not available, using rule-based suggestions",
+      );
+      return this.generateRuleBasedSuggestions();
     } catch {
       // Fall back to rule-based suggestions
       return this.generateRuleBasedSuggestions();

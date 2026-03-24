@@ -34,6 +34,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { CheckboxComponent } from "../checkbox/checkbox.component";
 import { FormInputComponent } from "../form-input/form-input.component";
 import { SelectComponent } from "../select/select.component";
 import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
@@ -190,7 +191,9 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
+    CheckboxComponent,
     StatusTagComponent,
     SkeletonLoaderComponent,
     FormInputComponent,

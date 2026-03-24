@@ -1,9 +1,9 @@
 // Supabase Edge Function: Enable Leaked Password Protection
-// This function checks passwords against the Have I Been Pwned API
-// to prevent users from using passwords that have been compromised in data breaches
+// This function provides an application-level password breach check using the
+// Have I Been Pwned API. It is intentionally public so signup can validate a
+// password before the user has a session.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -80,42 +80,6 @@ serve(async (req) => {
   }
 
   try {
-    // Get authorization header
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Missing authorization header" }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
-
-    // Initialize Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      },
-    );
-
-    // Verify user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseClient.auth.getUser();
-
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     // Parse request body
     const body: RequestBody = await req.json();
     const { password, action = "check" } = body;
@@ -151,7 +115,8 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({
             enabled: true,
-            message: "Leaked password protection is enabled and active.",
+            message:
+              "Application-level leaked password protection is active.",
             provider: "Have I Been Pwned API",
           }),
           {
@@ -165,7 +130,7 @@ serve(async (req) => {
           JSON.stringify({
             enabled: true,
             message:
-              "Leaked password protection is already enabled. Use 'check' action to validate passwords.",
+              "Application-level leaked password protection is already active. Use 'check' to validate passwords.",
           }),
           {
             status: 200,

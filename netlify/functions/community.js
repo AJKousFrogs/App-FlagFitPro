@@ -23,6 +23,37 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   return parsed;
 };
 
+const COMMUNITY_USER_SELECT = `
+  id,
+  email,
+  full_name,
+  first_name,
+  last_name,
+  profile_photo_url,
+  profile_picture
+`;
+
+const getCommunityUserName = (user) => {
+  if (!user) {
+    return "Unknown User";
+  }
+
+  if (typeof user.full_name === "string" && user.full_name.trim()) {
+    return user.full_name.trim();
+  }
+
+  const firstName =
+    typeof user.first_name === "string" ? user.first_name.trim() : "";
+  const lastName =
+    typeof user.last_name === "string" ? user.last_name.trim() : "";
+  const combinedName = [firstName, lastName].filter(Boolean).join(" ");
+
+  return combinedName || "Unknown User";
+};
+
+const getCommunityUserAvatar = (user) =>
+  user?.profile_photo_url || user?.profile_picture || null;
+
 // Get community feed from database with privacy filtering
 const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
   try {
@@ -35,10 +66,7 @@ const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
         `
         *,
         users:user_id (
-          id,
-          email,
-          name,
-          avatar_url
+          ${COMMUNITY_USER_SELECT}
         )
       `,
       )
@@ -115,8 +143,8 @@ const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
     return (posts || []).map((post) => ({
       id: post.id,
       author: post.users?.email || post.user_id,
-      authorName: post.users?.name || "Unknown User",
-      authorAvatar: post.users?.avatar_url || null,
+      authorName: getCommunityUserName(post.users),
+      authorAvatar: getCommunityUserAvatar(post.users),
       content: post.content,
       title: post.title || null,
       timestamp: post.created_at,
@@ -150,9 +178,7 @@ const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
         `
         user_id,
         users:user_id (
-          id,
-          name,
-          avatar_url
+          ${COMMUNITY_USER_SELECT}
         )
       `,
       )
@@ -169,8 +195,8 @@ const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
       if (!userStats[userId]) {
         userStats[userId] = {
           userId,
-          name: post.users?.name || "Unknown User",
-          avatar: post.users?.avatar_url || null,
+          name: getCommunityUserName(post.users),
+          avatar: getCommunityUserAvatar(post.users),
           posts: 0,
           likes: 0,
           comments: 0,
@@ -268,10 +294,7 @@ const createPost = async (userId, postData) => {
         `
         *,
         users:user_id (
-          id,
-          name,
-          email,
-          avatar_url
+          ${COMMUNITY_USER_SELECT}
         )
       `,
       )
@@ -285,8 +308,8 @@ const createPost = async (userId, postData) => {
     return {
       id: newPost.id,
       author: newPost.users?.email || userId,
-      authorName: newPost.users?.name || "Unknown User",
-      authorAvatar: newPost.users?.avatar_url || null,
+      authorName: getCommunityUserName(newPost.users),
+      authorAvatar: getCommunityUserAvatar(newPost.users),
       content: newPost.content,
       title: newPost.title,
       timestamp: newPost.created_at,
@@ -392,10 +415,7 @@ const getPostComments = async (postId, userId = null) => {
         `
         *,
         users:user_id (
-          id,
-          name,
-          email,
-          avatar_url
+          ${COMMUNITY_USER_SELECT}
         )
       `,
       )
@@ -423,9 +443,9 @@ const getPostComments = async (postId, userId = null) => {
 
     return (comments || []).map((comment) => ({
       id: comment.id,
-      author: comment.users?.name || "Unknown User",
-      authorInitials: getInitials(comment.users?.name || "??"),
-      authorAvatar: comment.users?.avatar_url || null,
+      author: getCommunityUserName(comment.users),
+      authorInitials: getInitials(getCommunityUserName(comment.users)),
+      authorAvatar: getCommunityUserAvatar(comment.users),
       content: comment.content,
       timeAgo: getRelativeTime(new Date(comment.created_at)),
       likes: comment.likes_count || 0,
@@ -462,10 +482,7 @@ const addComment = async (userId, postId, content) => {
         `
         *,
         users:user_id (
-          id,
-          name,
-          email,
-          avatar_url
+          ${COMMUNITY_USER_SELECT}
         )
       `,
       )
@@ -480,9 +497,9 @@ const addComment = async (userId, postId, content) => {
 
     return {
       id: newComment.id,
-      author: newComment.users?.name || "Unknown User",
-      authorInitials: getInitials(newComment.users?.name || "??"),
-      authorAvatar: newComment.users?.avatar_url || null,
+      author: getCommunityUserName(newComment.users),
+      authorInitials: getInitials(getCommunityUserName(newComment.users)),
+      authorAvatar: getCommunityUserAvatar(newComment.users),
       content: newComment.content,
       timeAgo: "Just now",
       likes: 0,

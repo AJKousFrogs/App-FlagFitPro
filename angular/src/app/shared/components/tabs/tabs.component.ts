@@ -22,15 +22,15 @@ export class AppTabPanelDirective {
   disabled = input(false, { alias: "appTabPanelDisabled" });
 
   public templateRef = inject(TemplateRef);
-  }
+}
 
-  @Component({
+@Component({
   selector: "app-tabs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TabsModule],
   template: `
-    <p-tabs [value]="value()" (valueChange)="valueChange.emit($event)">
+    <p-tabs [value]="value()" (valueChange)="onValueChange($event)">
       <p-tablist>
         @for (panel of panels(); track panel.value()) {
           <p-tab [value]="panel.value()" [disabled]="panel.disabled()">
@@ -63,4 +63,12 @@ export class TabsComponent {
   valueChange = output<string | number>();
 
   panels = contentChildren(AppTabPanelDirective);
+
+  protected onValueChange(value: string | number | undefined): void {
+    if (value === undefined) {
+      return;
+    }
+
+    this.valueChange.emit(value);
+  }
 }
