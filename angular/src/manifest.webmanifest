@@ -5,7 +5,7 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#10b981",
+  "theme_color": "#036d35",
   "orientation": "portrait-primary",
   "scope": "/",
   "id": "/",
@@ -41,21 +41,15 @@
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-192x192.svg",
+      "src": "/assets/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-384x384.svg",
-      "sizes": "384x384",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/assets/icons/icon-512x512.svg",
+      "src": "/assets/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
