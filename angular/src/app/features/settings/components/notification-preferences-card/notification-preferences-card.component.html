@@ -9,7 +9,7 @@
       title="Email Notifications"
       description="Receive updates and alerts via email"
     >
-      <p-toggleswitch formControlName="emailNotifications"></p-toggleswitch>
+      <app-toggle-switch formControlName="emailNotifications"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -17,7 +17,7 @@
       title="Push Notifications"
       description="Get instant alerts on your device"
     >
-      <p-toggleswitch formControlName="pushNotifications"></p-toggleswitch>
+      <app-toggle-switch formControlName="pushNotifications"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -25,7 +25,7 @@
       title="Training Reminders"
       description="Daily reminders for scheduled workouts"
     >
-      <p-toggleswitch formControlName="trainingReminders"></p-toggleswitch>
+      <app-toggle-switch formControlName="trainingReminders"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -33,7 +33,7 @@
       title="Wellness Reminders"
       description="Daily wellness check-in reminders"
     >
-      <p-toggleswitch formControlName="wellnessReminders"></p-toggleswitch>
+      <app-toggle-switch formControlName="wellnessReminders"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -41,7 +41,7 @@
       title="Game Alerts"
       description="Notifications about upcoming games"
     >
-      <p-toggleswitch formControlName="gameAlerts"></p-toggleswitch>
+      <app-toggle-switch formControlName="gameAlerts"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -49,7 +49,7 @@
       title="Team Announcements"
       description="Important team news and updates"
     >
-      <p-toggleswitch formControlName="teamAnnouncements"></p-toggleswitch>
+      <app-toggle-switch formControlName="teamAnnouncements"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -57,7 +57,7 @@
       title="Coach Messages"
       description="Direct messages from your coach"
     >
-      <p-toggleswitch formControlName="coachMessages"></p-toggleswitch>
+      <app-toggle-switch formControlName="coachMessages"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -65,7 +65,7 @@
       title="Achievement Alerts"
       description="Celebrate your milestones and badges"
     >
-      <p-toggleswitch formControlName="achievementAlerts"></p-toggleswitch>
+      <app-toggle-switch formControlName="achievementAlerts"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -73,7 +73,7 @@
       title="Tournament Alerts"
       description="Bracket updates, schedules, and results"
     >
-      <p-toggleswitch formControlName="tournamentAlerts"></p-toggleswitch>
+      <app-toggle-switch formControlName="tournamentAlerts"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -81,7 +81,7 @@
       title="Injury Risk Alerts"
       description="Warnings when overtraining is detected"
     >
-      <p-toggleswitch formControlName="injuryRiskAlerts"></p-toggleswitch>
+      <app-toggle-switch formControlName="injuryRiskAlerts"></app-toggle-switch>
     </app-control-row>
 
     <app-control-row
@@ -89,7 +89,7 @@
       title="In-App Notifications"
       description="Show notifications in the notification center"
     >
-      <p-toggleswitch formControlName="inAppNotifications"></p-toggleswitch>
+      <app-toggle-switch formControlName="inAppNotifications"></app-toggle-switch>
     </app-control-row>
 
     <div class="notification-section-header">
@@ -125,7 +125,7 @@
       title="Enable Quiet Hours"
       description="Silence non-urgent notifications at night"
     >
-      <p-toggleswitch formControlName="quietHoursEnabled"></p-toggleswitch>
+      <app-toggle-switch formControlName="quietHoursEnabled"></app-toggle-switch>
     </app-control-row>
 
     @if (notificationForm().get("quietHoursEnabled")?.value) {

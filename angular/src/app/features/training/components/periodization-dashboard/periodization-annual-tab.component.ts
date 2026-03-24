@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import {
   Accordion,
   AccordionContent,
@@ -36,6 +36,6 @@ interface TimelineEvent {
   styleUrl: "./periodization-annual-tab.component.scss",
 })
 export class PeriodizationAnnualTabComponent {
-  @Input() timeline: TimelineEvent[] = [];
-  @Input() phases: PhaseConfig[] = [];
+  timeline = input<TimelineEvent[]>([]);
+  phases = input<PhaseConfig[]>([]);
 }

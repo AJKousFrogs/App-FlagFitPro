@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from "@angular/core
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 import { Tooltip } from "primeng/tooltip";
+import { TableModule } from "primeng/table";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -25,7 +26,8 @@ export type CoachDashboardPlayerFilter = "all" | "starters" | "injured" | "at_ri
     Badge,
     ButtonComponent,
     StatusTagComponent,
-    TableComponent
+    TableComponent,
+    TableModule
   ],
   templateUrl: "./coach-dashboard-roster-section.component.html",
   styleUrl: "./coach-dashboard-roster-section.component.scss",

@@ -4,14 +4,14 @@
 >
   <app-accordion [multiple]="true">
     @for (category of categories(); track category) {
-      <div *appAccordionPanel="let panel; header: category; value: category">
+      <ng-template appAccordionPanel [header]="category" [value]="category">
           @for (topic of getTopicsByCategory(category); track topic.id) {
             <div class="faq-item">
               <h4>{{ topic.title }}</h4>
               <p>{{ topic.content }}</p>
             </div>
           }
-      </div>
+      </ng-template>
     }
   </app-accordion>
 </app-card-shell>

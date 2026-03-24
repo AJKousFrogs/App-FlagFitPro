@@ -423,14 +423,14 @@
 
           <div class="form-row">
             <div class="form-field">
-              <label for="injuryDate">Injury Date</label>
-              <p-datepicker
+              <app-date-picker
+                label="Injury Date"
                 inputId="injuryDate"
                 formControlName="injuryDate"
                 [showIcon]="true"
                 dateFormat="M d, yy"
                 [attr.aria-label]="'Select injury date'"
-              ></p-datepicker>
+              ></app-date-picker>
             </div>
             <div class="form-field">
               <app-select
@@ -475,22 +475,22 @@
               <label>Side</label>
               <div class="radio-group">
                 <div class="radio-option">
-                  <p-radioButton
+                  <app-radio-button
                     name="side"
                     value="left"
                     formControlName="side"
                     inputId="sideLeft"
-                  ></p-radioButton>
-                  <label for="sideLeft">Left</label>
+                    label="Left"
+                  ></app-radio-button>
                 </div>
                 <div class="radio-option">
-                  <p-radioButton
+                  <app-radio-button
                     name="side"
                     value="right"
                     formControlName="side"
                     inputId="sideRight"
-                  ></p-radioButton>
-                  <label for="sideRight">Right</label>
+                    label="Right"
+                  ></app-radio-button>
                 </div>
               </div>
             </div>
@@ -498,31 +498,31 @@
               <label>Severity (player assessment)</label>
               <div class="radio-group">
                 <div class="radio-option">
-                  <p-radioButton
+                  <app-radio-button
                     name="severity"
                     value="mild"
                     formControlName="severity"
                     inputId="sevMild"
-                  ></p-radioButton>
-                  <label for="sevMild">Mild</label>
+                    label="Mild"
+                  ></app-radio-button>
                 </div>
                 <div class="radio-option">
-                  <p-radioButton
+                  <app-radio-button
                     name="severity"
                     value="moderate"
                     formControlName="severity"
                     inputId="sevMod"
-                  ></p-radioButton>
-                  <label for="sevMod">Moderate</label>
+                    label="Moderate"
+                  ></app-radio-button>
                 </div>
                 <div class="radio-option">
-                  <p-radioButton
+                  <app-radio-button
                     name="severity"
                     value="severe"
                     formControlName="severity"
                     inputId="sevSev"
-                  ></p-radioButton>
-                  <label for="sevSev">Severe</label>
+                    label="Severe"
+                  ></app-radio-button>
                 </div>
               </div>
             </div>

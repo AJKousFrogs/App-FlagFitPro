@@ -317,9 +317,9 @@
                   id="checkin-notes"
                   [ngModel]="todayCheckin.notes"
                   (change)="updateTodayCheckinNotes($event)"
-                  rows="2"
+                  [rows]="2"
                   placeholder="Any observations, tightness, or concerns..."
-                ></app-textarea>
+                  ></app-textarea>
               </div>
 
               <app-button
@@ -494,7 +494,7 @@
               id="medical-notes"
               [ngModel]="newProtocol.medicalNotes"
               (change)="updateProtocolMedicalNotes($event)"
-              rows="2"
+              [rows]="2"
               placeholder="Diagnosed by team physio. MRI confirmed..."
             ></app-textarea>
           </div>

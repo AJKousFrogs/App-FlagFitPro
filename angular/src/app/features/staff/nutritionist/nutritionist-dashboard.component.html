@@ -72,13 +72,12 @@
                     <h3>Athletes Under Care</h3>
                     <div class="search-box">
                       <app-form-input
-                        prefixIcon="pi-search"
-                        [ngModel]="searchQuery"
-                        (change)="onSearchQueryChange($event)"
-                        placeholder="Search athletes..."
-                        aria-label="Search athletes"
+                      prefixIcon="pi-search"
+                      [ngModel]="searchQuery"
+                      (change)="onSearchQueryChange($event.value)"
+                      placeholder="Search athletes..."
+                      aria-label="Search athletes"
                       ></app-form-input>
-                    </div>
                   </div>
 
                   <app-table
@@ -420,7 +419,7 @@
               <app-form-input
                 label="Tournament Name"
                 [ngModel]="newTournament.name"
-                (change)="onNewTournamentNameChange($event)"
+                (change)="onNewTournamentNameChange($event.value)"
                 placeholder="e.g., National Championships"
                 class="w-full"
                 aria-label="Tournament name"
@@ -431,7 +430,7 @@
                 <app-form-input
                   label="Location"
                   [ngModel]="newTournament.location"
-                  (change)="onNewTournamentLocationChange($event)"
+                  (change)="onNewTournamentLocationChange($event.value)"
                   placeholder="City, Country"
                   class="w-full"
                   aria-label="Tournament location"
@@ -442,7 +441,7 @@
                   label="Expected Games"
                   type="number"
                   [ngModel]="newTournament.expectedGames"
-                  (change)="onNewTournamentExpectedGamesChange($event)"
+                  (change)="onNewTournamentExpectedGamesChange($event.value)"
                   class="w-full"
                   aria-label="Expected number of games"
                 ></app-form-input>
@@ -454,7 +453,7 @@
                   label="Expected Temperature (°C)"
                   type="number"
                   [ngModel]="newTournament.temperature"
-                  (change)="onNewTournamentTemperatureChange($event)"
+                  (change)="onNewTournamentTemperatureChange($event.value)"
                   class="w-full"
                   aria-label="Expected temperature in Celsius"
                 ></app-form-input>
@@ -464,7 +463,7 @@
                   label="Humidity (%)"
                   type="number"
                   [ngModel]="newTournament.humidity"
-                  (change)="onNewTournamentHumidityChange($event)"
+                  (change)="onNewTournamentHumidityChange($event.value)"
                   class="w-full"
                   aria-label="Expected humidity percentage"
                 ></app-form-input>

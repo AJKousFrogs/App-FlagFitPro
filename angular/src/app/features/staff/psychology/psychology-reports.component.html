@@ -338,7 +338,7 @@
                 label="Report Type"
                 [options]="reportTypeOptions"
                 [ngModel]="newReport.type"
-                (change)="updateNewReportType($event)"
+                (change)="updateNewReportType($event.value)"
                 placeholder="Select report type"
                 class="w-full"
               ></app-select>
@@ -349,7 +349,7 @@
                 label="Time Period"
                 [options]="timePeriods"
                 [ngModel]="newReport.period"
-                (change)="updateNewReportPeriod($event)"
+                (change)="updateNewReportPeriod($event.value)"
                 placeholder="Select period"
                 class="w-full"
               ></app-select>
@@ -445,7 +445,7 @@
                 id="notes"
                 [ngModel]="newReport.notes"
                 (change)="updateNewReportNotes($event)"
-                rows="3"
+                [rows]="3"
                 placeholder="Add any context or notes for your psychologist..."
               ></app-textarea>
             </div>
@@ -482,7 +482,7 @@
               <app-form-input
                 label="Competition Name"
                 [ngModel]="newPreComp.name"
-                (change)="updateNewPreCompText('name', $event)"
+                (change)="updateNewPreCompText('name', $event.value)"
                 placeholder="e.g., Regional Championships"
                 class="w-full"
                 aria-label="Competition name"
@@ -493,7 +493,7 @@
                 label="Significance"
                 [options]="significanceOptions"
                 [ngModel]="newPreComp.significance"
-                (change)="updateNewPreCompSignificance($event)"
+                (change)="updateNewPreCompSignificance($event.value)"
                 placeholder="Select importance"
                 class="w-full"
               ></app-select>
@@ -503,7 +503,7 @@
                 label="Readiness Rating (1-10)"
                 type="number"
                 [ngModel]="newPreComp.readiness"
-                (change)="updateNewPreCompReadiness($event)"
+                (change)="updateNewPreCompReadiness($event.value)"
                 min="1"
                 max="10"
                 class="w-full"
@@ -514,7 +514,7 @@
               <app-form-input
                 label="Biggest Concern (optional)"
                 [ngModel]="newPreComp.concern"
-                (change)="updateNewPreCompText('concern', $event)"
+                (change)="updateNewPreCompText('concern', $event.value)"
                 placeholder="What's on your mind?"
                 class="w-full"
                 aria-label="Biggest concern"

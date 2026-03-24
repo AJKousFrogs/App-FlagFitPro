@@ -1,0 +1,97 @@
+import { CommonModule } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  input,
+  output,
+  signal,
+  computed,
+} from "@angular/core";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
+import { RadioButtonModule, RadioButtonClickEvent } from "primeng/radiobutton";
+
+@Component({
+  selector: "app-radio-button",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, RadioButtonModule, FormsModule],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RadioButtonComponent),
+      multi: true,
+    },
+  ],
+  template: `
+    <div class="app-radio-button-wrapper flex align-items-center gap-2">
+      <p-radioButton
+        [name]="name()"
+        [value]="value()"
+        [inputId]="inputId()"
+        [disabled]="isDisabled()"
+        [(ngModel)]="modelValue"
+        (onClick)="onClick($event)"
+        styleClass="app-radio-button"
+      ></p-radioButton>
+      @if (label()) {
+        <label [for]="inputId()" class="cursor-pointer" [class.text-gray-500]="isDisabled()">
+          {{ label() }}
+        </label>
+      }
+    </div>
+  `,
+  styles: [`
+    :host {
+      display: inline-block;
+    }
+    .app-radio-button-wrapper {
+      display: flex;
+      align-items: center;
+    }
+  `]
+})
+export class RadioButtonComponent<T = unknown> implements ControlValueAccessor {
+  // Inputs
+  name = input<string>("");
+  value = input<T | null>(null);
+  label = input<string>("");
+  disabled = input(false);
+  inputId = input<string>(`app-radio-${Math.random().toString(36).substr(2, 9)}`);
+
+  // Outputs
+  click = output<RadioButtonClickEvent>();
+
+  // Internal
+  protected modelValue = signal<any>(null);
+  private _cvaDisabled = signal(false);
+
+  protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
+
+  // ControlValueAccessor
+  private onModelChange: (value: any) => void = () => {};
+  private onModelTouched: () => void = () => {};
+
+  onClick(event: RadioButtonClickEvent) {
+    this.modelValue.set(this.value());
+    this.onModelChange(this.value());
+    this.click.emit(event);
+    this.onModelTouched();
+  }
+
+  writeValue(value: any): void {
+    this.modelValue.set(value);
+  }
+
+  registerOnChange(fn: (value: any) => void): void {
+    this.onModelChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onModelTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this._cvaDisabled.set(isDisabled);
+  }
+}

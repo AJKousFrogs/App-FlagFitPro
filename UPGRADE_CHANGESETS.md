@@ -1,5 +1,40 @@
 # UPGRADE_CHANGESETS
 
+Date: 2026-03-22
+
+## PR-6: Tooling Unification and CI Correctness
+
+### What changed
+- Unified package management to `npm@11.4.2` project-wide.
+  - Added `packageManager` to root `package.json`.
+  - Removed all `pnpm` references and artifacts (metadata, documentation).
+- Aligned all GitHub Workflows to Node 22 LTS.
+  - Updated `release.yml`, `scheduled.yml`, `e2e-tests.yml`, and `mobile-responsive.yml`.
+- Standardized CI caching across all workflows to use both `package-lock.json` and `angular/package-lock.json`.
+- Fixed CI `design-system-enforcement` job to correctly install root dependencies required for `stylelint`.
+- Hardened root dependencies:
+  - Fixed security vulnerabilities via `npm audit fix`.
+  - Added `overrides` for `h3` to address deep security vulnerabilities in `netlify-cli`.
+- Fixed documentation inconsistencies:
+  - Updated `LOCAL_DEVELOPMENT_SETUP.md` and `BACKEND_SETUP.md` to reflect `npm` usage.
+  - Corrected `BACKEND_SETUP.md` function examples to use ESM `export const handler`.
+  - Updated `INFRA_AUDIT_REPORT.md` and `UPGRADE_PLAN.md` with latest execution status.
+
+### Why
+- Ensure consistent development environment across all team members and CI.
+- Resolve "split-brain" package manager state that caused non-reproducible builds.
+- Fix CI failures in design system enforcement due to missing root tools.
+- Keep documentation in sync with the actual implementation and ESM standards.
+
+### How verified
+1. `npm run lint` -> PASS
+2. `npm run type-check` -> PASS
+3. `npm run test:unit` -> PASS
+4. `npm run build` -> PASS
+5. Manual audit of all documentation files for `pnpm` references.
+
+---
+
 Date: 2026-03-14
 
 ## PR-5: Dependency Refresh (Patch/Minor)

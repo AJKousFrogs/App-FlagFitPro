@@ -8,7 +8,6 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Divider } from "primeng/divider";
 import { SelectComponent } from "../../../../shared/components/select/select.component";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import {
   ButtonComponent,
   CardShellComponent,
@@ -26,7 +25,7 @@ type VisibilityOption = {
   imports: [
     ReactiveFormsModule,
     SelectComponent,
-    ToggleSwitch,
+
     Divider,
     RouterLink,
     CardShellComponent,

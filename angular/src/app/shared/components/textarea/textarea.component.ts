@@ -79,7 +79,7 @@ export class TextareaComponent implements ControlValueAccessor {
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
 
   // ControlValueAccessor
-  private onModelChange: (value: any) => void = () => {};
+  private onModelChange: (value: string) => void = () => {};
   private onModelTouched: () => void = () => {};
 
   onInput(event: Event) {
@@ -96,11 +96,11 @@ export class TextareaComponent implements ControlValueAccessor {
     this.value.set(value || "");
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: string) => void): void {
     this.onModelChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onModelTouched = fn;
   }
 

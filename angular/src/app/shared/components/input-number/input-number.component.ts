@@ -9,7 +9,7 @@ import {
   computed,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
-import { InputNumberModule } from "primeng/inputnumber";
+import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
 
 @Component({
   selector: "app-input-number",
@@ -101,11 +101,11 @@ export class InputNumberComponent implements ControlValueAccessor {
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
 
   // ControlValueAccessor
-  private onModelChange: (value: any) => void = () => {};
+  private onModelChange: (value: number | null) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onInputValueChange(event: any) {
-    const val = event.value;
+  onInputValueChange(event: InputNumberInputEvent) {
+    const val = event.value as number | null;
     this.onModelChange(val);
     this.change.emit(val);
   }
@@ -114,15 +114,15 @@ export class InputNumberComponent implements ControlValueAccessor {
     this.onModelTouched();
   }
 
-  writeValue(value: number): void {
+  writeValue(value: number | null): void {
     this.value.set(value);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: number | null) => void): void {
     this.onModelChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onModelTouched = fn;
   }
 

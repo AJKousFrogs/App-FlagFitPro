@@ -185,12 +185,16 @@ export class AnalyticsComponent implements AfterViewInit {
     "Agility Tests",
   ];
 
-  onSelectedTimePeriodChange(value: string): void {
-    this.selectedTimePeriod = value;
+  onSelectedTimePeriodChange(value: string | null): void {
+    if (value) {
+      this.selectedTimePeriod = value;
+    }
   }
 
-  onSelectedMetricChange(value: string): void {
-    this.selectedMetric = value;
+  onSelectedMetricChange(value: string | null): void {
+    if (value) {
+      this.selectedMetric = value;
+    }
   }
 
   // Enhanced chart options with zoom, pan, custom tooltips

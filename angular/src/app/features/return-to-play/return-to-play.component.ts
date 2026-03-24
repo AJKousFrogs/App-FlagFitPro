@@ -16,6 +16,7 @@ import {
   DestroyRef,
   signal,
 } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 
@@ -316,6 +317,8 @@ const SEVERITY_LEVELS = [
     ButtonComponent,
     RTPPhaseCelebrationComponent,
     EmptyStateComponent,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: "./return-to-play.component.html",
   styleUrl: "./return-to-play.component.scss",

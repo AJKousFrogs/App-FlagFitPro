@@ -47,5 +47,5 @@ export class MenubarComponent {
   model = input.required<MenuItem[]>();
   styleClass = input<string>("");
 
-  itemTemplate = contentChild<TemplateRef<any>>("item");
+  itemTemplate = contentChild<TemplateRef<{ $implicit: MenuItem; root: boolean }>>("item");
 }

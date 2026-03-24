@@ -11,7 +11,7 @@
 | Requirement | Version    | Check Command       |
 | ----------- | ---------- | ------------------- |
 | Node.js     | ≥ 22.0.0   | `node --version`    |
-| npm/pnpm    | ≥ 10.0.0   | `npm --version`     |
+| npm         | ≥ 10.0.0   | `npm --version`     |
 | Angular CLI | 21.x       | `ng version`        |
 | Git         | Any recent | `git --version`     |
 | Netlify CLI | Latest     | `netlify --version` |
@@ -30,16 +30,16 @@ cd "Flag football HTML - APP"
 # Install root dependencies
 npm install
 
-# Install Angular dependencies (uses pnpm)
+# Install Angular dependencies
 cd angular
-npx pnpm install
+npm install
 cd ..
 
 # Install Netlify CLI globally
 npm install -g netlify-cli
 ```
 
-> **Note:** The Angular folder uses **pnpm** as its package manager. If you don't have pnpm installed globally, you can use `npx pnpm install` which will download and run pnpm automatically.
+> **Note:** The Angular folder uses **npm** as its package manager.
 
 ### 2. Configure Environment
 

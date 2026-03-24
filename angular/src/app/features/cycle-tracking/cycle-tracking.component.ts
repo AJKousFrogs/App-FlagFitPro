@@ -286,6 +286,8 @@ const RETENTION_OPTIONS = [
   { label: "24 months", value: "24" },
 ];
 
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+
 @Component({
   selector: "app-cycle-tracking",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -307,6 +309,8 @@ const RETENTION_OPTIONS = [
     PageHeaderComponent,
     StatusTagComponent,
     EmptyStateComponent,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: "./cycle-tracking.component.html",
   styleUrl: "./cycle-tracking.component.scss",

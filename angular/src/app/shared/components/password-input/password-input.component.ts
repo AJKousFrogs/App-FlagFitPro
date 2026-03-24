@@ -121,11 +121,11 @@ export class PasswordInputComponent implements ControlValueAccessor {
     this.modelValue.set(value || "");
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: string) => void): void {
     this.onModelChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onModelTouched = fn;
   }
 

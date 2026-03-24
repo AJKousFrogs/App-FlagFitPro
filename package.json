@@ -7,6 +7,7 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "packageManager": "npm@11.4.2",
   "scripts": {
     "start": "netlify dev --skip-wait-port",
     "dev": "netlify dev --skip-wait-port",
@@ -165,7 +166,7 @@
     "globals": "^17.3.0",
     "jws": "^4.0.1",
     "madge": "^8.0.0",
-    "netlify-cli": "^24.2.0",
+    "netlify-cli": "^24.4.0",
     "playwright": "^1.58.2",
     "prettier": "^3.8.1",
     "sass": "^1.97.3",
@@ -184,12 +185,14 @@
     "netlify-cli": {
       "jsonwebtoken": "^9.0.3",
       "jws": "^4.0.1",
+      "h3": "^1.15.9",
       "express": {
         "qs": "^6.14.2"
       }
     },
     "jsonwebtoken": {
       "jws": "^4.0.1"
-    }
+    },
+    "h3": "^1.15.9"
   }
 }

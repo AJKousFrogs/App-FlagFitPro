@@ -10,8 +10,8 @@ Repository: `/Users/aljosaursakous/Desktop/Flag football HTML - APP`
 | Area | Detected | Evidence |
 |---|---|---|
 | Node runtime | Engine requires `>=22.0.0`; local runtime `v24.3.0` | `package.json`, `angular/package.json`, `node -v` |
-| Package manager | npm is used in CI/CD and scripts; Angular package metadata still declares `pnpm@10.28.0` | `.github/workflows/*.yml`, `package-lock.json`, `angular/package-lock.json`, `angular/pnpm-lock.yaml`, `angular/package.json` |
-| Frontend framework | Angular 21 standalone app | `angular/package.json` (`@angular/*` `^21.1.3`) |
+| Package manager | npm@11.4.2 (unified across root and angular) | `package.json`, `angular/package.json`, `package-lock.json`, `angular/package-lock.json` |
+| Frontend framework | Angular 21 standalone app | `angular/package.json` (`@angular/*` `^21.2.4`) |
 | TypeScript | `^5.9.3` (root and angular) | `package.json`, `angular/package.json` |
 | UI libs | PrimeNG 21 + Prime Icons + Prime UIX themes + Chart.js | `angular/package.json` |
 | Styling | SCSS + stylelint + custom design-token lint | `angular/angular.json`, `stylelint.config.js`, `scripts/lint-design-tokens.js` |
@@ -405,15 +405,18 @@ watch
 
 Resolved in-repo during this upgrade:
 - Removed/neutralized hardcoded credential material in key scripts and env template files.
-- Aligned GitHub Actions Node runtime versions to Node 22 where inconsistent.
-- Fixed release workflow security script reference.
+- Aligned GitHub Actions Node runtime versions to Node 22 across all workflows (CI, Release, Scheduled, E2E, Mobile).
+- Fixed release workflow security script reference (using `security:check`).
 - Fixed CI lint guard path (`src` path under angular working directory).
-- Added workflow cache dependency paths for dual lockfile installs in e2e/mobile workflows.
+- Added workflow cache dependency paths for dual lockfile installs across all workflows.
 - Added Supabase migration for missing FK covering index (`knowledge_base_entries.kb_merlin_approved_by`).
-- Consolidated duplicated ESLint override block and standardized Angular package manager metadata to npm.
+- Consolidated duplicated ESLint override block.
+- Standardized project-wide package manager to npm@11.4.2 and removed pnpm artifacts.
+- Fixed root dependency security vulnerabilities (except deep netlify-cli nested h3).
+- Added packageManager field to root package.json for consistency.
+- Fixed CI design-system-enforcement job to install root dependencies required for stylelint.
 
 Still pending (risk-managed / requires additional context or network access):
-- Live dependency upgrade run (`npm outdated`/`npm audit`) requires network connectivity.
 - Supabase auth leaked-password protection must be enabled in project settings (dashboard-side).
 - Supabase RLS initplan policy rewrites are still pending (higher-change DB policy edits).
 

@@ -1,6 +1,5 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "../../guards/auth.guard";
-import { gameTrackerPrefetchResolver } from "../../resolvers/game-tracker-prefetch.resolver";
 
 export const gameRoutes: Routes = [
   {

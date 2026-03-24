@@ -158,47 +158,45 @@
                 </div>
 
                 <div class="form-field">
-                  <label for="departure-date">Departure Date</label>
-                  <p-datepicker
+                  <app-date-picker
+                    label="Departure Date"
                     inputId="departure-date"
                     [ngModel]="tripForm.departureDate"
-                    (onSelect)="updateTripFormDate('departureDate', $event)"
+                    (select)="updateTripFormDate('departureDate', $event)"
                     [showIcon]="true"
                     [minDate]="minDate"
                     dateFormat="dd/mm/yy"
                     class="w-full"
                     [attr.aria-label]="'Select departure date'"
-                  ></p-datepicker>
+                  ></app-date-picker>
                 </div>
 
                 <div class="form-field">
-                  <label for="arrival-date">Arrival Date</label>
-                  <p-datepicker
+                  <app-date-picker
+                    label="Arrival Date"
                     inputId="arrival-date"
                     [ngModel]="tripForm.arrivalDate"
-                    (onSelect)="updateTripFormDate('arrivalDate', $event)"
+                    (select)="updateTripFormDate('arrivalDate', $event)"
                     [showIcon]="true"
                     [minDate]="tripForm.departureDate || minDate"
                     dateFormat="dd/mm/yy"
                     class="w-full"
                     [attr.aria-label]="'Select arrival date'"
-                  ></p-datepicker>
+                  ></app-date-picker>
                 </div>
 
                 <div class="form-field">
-                  <label for="competition-date"
-                    >Competition Date (Optional)</label
-                  >
-                  <p-datepicker
+                  <app-date-picker
+                    label="Competition Date (Optional)"
                     inputId="competition-date"
                     [ngModel]="tripForm.competitionDate"
-                    (onSelect)="updateTripFormDate('competitionDate', $event)"
+                    (select)="updateTripFormDate('competitionDate', $event)"
                     [showIcon]="true"
                     [minDate]="tripForm.arrivalDate || minDate"
                     dateFormat="dd/mm/yy"
                     class="w-full"
                     [attr.aria-label]="'Select competition date (optional)'"
-                  ></p-datepicker>
+                  ></app-date-picker>
                 </div>
 
                 <div class="form-field">
@@ -444,13 +442,11 @@
                   </div>
 
                   <div class="form-field">
-                    <label for="car-competition-date"
-                      >Competition Date (Optional)</label
-                    >
-                    <p-datepicker
+                    <app-date-picker
+                      label="Competition Date (Optional)"
                       inputId="car-competition-date"
                       [ngModel]="carTripForm.competitionDate"
-                      (onSelect)="updateCarTripDate($event)"
+                      (select)="updateCarTripDate($event)"
                       [showIcon]="true"
                       [minDate]="minDate"
                       dateFormat="dd/mm/yy"
@@ -458,7 +454,7 @@
                       [attr.aria-label]="
                         'Select competition date for car trip (optional)'
                       "
-                    ></p-datepicker>
+                    ></app-date-picker>
                   </div>
                 </div>
 

@@ -9,6 +9,8 @@ import { EmptyStateComponent } from "../../../shared/components/empty-state/empt
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+
 @Component({
   selector: "app-analytics-charts-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +24,8 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
     EmptyStateComponent,
     LazyChartComponent,
     AppLoadingComponent,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: "./analytics-charts-section.component.html",
   styleUrl: "./analytics-charts-section.component.scss",
@@ -69,6 +73,6 @@ export class AnalyticsChartsSectionComponent {
 
   resetPerformanceChart = output<void>();
   exportPerformanceChart = output<void>();
-  selectedTimePeriodChange = output<string>();
-  selectedMetricChange = output<string>();
+  selectedTimePeriodChange = output<string | null>();
+  selectedMetricChange = output<string | null>();
 }

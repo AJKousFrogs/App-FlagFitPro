@@ -6,19 +6,20 @@ import {
   contentChildren,
   TemplateRef,
   Directive,
-  contentChild,
+  inject,
 } from "@angular/core";
 import { AccordionModule } from "primeng/accordion";
 
 @Directive({
-  selector: "[appAccordionPanel]",
+  selector: "ng-template[appAccordionPanel]",
   standalone: true,
 })
 export class AppAccordionPanelDirective {
   header = input.required<string>();
   value = input.required<string | number>();
   disabled = input(false);
-  template = contentChild(TemplateRef);
+  
+  public templateRef = inject(TemplateRef);
 }
 
 @Component({
@@ -32,9 +33,7 @@ export class AppAccordionPanelDirective {
         <p-accordion-panel [value]="panel.value()" [disabled]="panel.disabled()">
           <p-accordion-header>{{ panel.header() }}</p-accordion-header>
           <p-accordion-content>
-            @if (panel.template()) {
-              <ng-container [ngTemplateOutlet]="panel.template()!"></ng-container>
-            }
+            <ng-container [ngTemplateOutlet]="panel.templateRef"></ng-container>
           </p-accordion-content>
         </p-accordion-panel>
       }

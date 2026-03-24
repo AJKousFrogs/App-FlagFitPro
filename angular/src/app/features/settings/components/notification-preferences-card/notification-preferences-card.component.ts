@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { SelectComponent } from "../../../../shared/components/select/select.component";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import {
   CardShellComponent,
   ControlRowComponent,
@@ -13,7 +12,7 @@ import {
   imports: [
     ReactiveFormsModule,
     SelectComponent,
-    ToggleSwitch,
+
     CardShellComponent,
     ControlRowComponent,
   ],

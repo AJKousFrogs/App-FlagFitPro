@@ -526,7 +526,7 @@
               label="Notes (optional)"
               [ngModel]="newPeriod.notes"
               (change)="onNewPeriodNotesChange($event)"
-              rows="2"
+              [rows]="2"
               placeholder="Any additional notes..."
             ></app-textarea>
           </div>

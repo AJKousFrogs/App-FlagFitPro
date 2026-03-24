@@ -17,7 +17,7 @@ FlagFit Pro uses **Netlify Functions** (serverless) as the backend API layer, co
 
 - [ ] Supabase project created with credentials
 - [ ] Node.js version 22 or higher installed
-- [ ] npm or pnpm package manager installed
+- [ ] npm package manager installed
 - [ ] Netlify CLI installed (for local development)
 - [ ] Environment variables configured
 
@@ -255,11 +255,11 @@ AI responses are classified into safety tiers:
 
 ```javascript
 // netlify/functions/my-function.js
-const { baseHandler } = require("./utils/base-handler.js");
-const { createSuccessResponse } = require("./utils/error-handler.js");
-const { supabaseAdmin } = require("./supabase-client.js");
+import { baseHandler } from "./utils/base-handler.js";
+import { createSuccessResponse } from "./utils/error-handler.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "my-function",
     allowedMethods: ["GET"],
@@ -303,7 +303,7 @@ curl http://localhost:8888/api/my-function \
 
 The `netlify.toml` file configures:
 
-1. **Build command**: `cd angular && npm ci && npm run build`
+1. **Build command**: `npm ci && cd angular && npm ci --legacy-peer-deps && npm run build`
 2. **Publish directory**: `angular/dist/flagfit-pro/browser`
 3. **API redirects**: `/api/*` → `/.netlify/functions/*`
 4. **Security headers**: CSP, HSTS, X-Frame-Options

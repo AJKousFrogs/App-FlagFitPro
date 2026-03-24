@@ -31,7 +31,7 @@ import { UI_LIMITS } from "@core/constants";
 // PrimeNG Components
 import { Badge } from "primeng/badge";
 import { Chip } from "primeng/chip";
-import { DatePicker } from "primeng/datepicker";
+import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -95,7 +95,7 @@ interface FlightTripForm {
     FormsModule,
     RouterModule,
     Chip,
-    DatePicker,
+    DatePickerComponent,
     FormInputComponent,
     InputNumberComponent,
     SelectComponent,

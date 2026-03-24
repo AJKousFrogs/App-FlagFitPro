@@ -7,10 +7,9 @@ import {
   output,
   signal,
   computed,
-  model,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
-import { SelectModule } from "primeng/select";
+import { SelectModule, SelectChangeEvent } from "primeng/select";
 
 @Component({
   selector: "app-select",
@@ -65,10 +64,10 @@ import { SelectModule } from "primeng/select";
     }
   `]
 })
-export class SelectComponent implements ControlValueAccessor {
+export class SelectComponent<T = unknown> implements ControlValueAccessor {
   // Inputs
   label = input<string>("");
-  options = input.required<any[]>();
+  options = input.required<T[]>();
   optionLabel = input<string>("label");
   optionValue = input<string>("value");
   placeholder = input<string>("Select an option");
@@ -80,7 +79,7 @@ export class SelectComponent implements ControlValueAccessor {
   inputId = input<string>(`app-select-${Math.random().toString(36).substr(2, 9)}`);
   styleClass = input<string>("");
   panelStyleClass = input<string>("");
-  appendTo = input<any>("body");
+  appendTo = input<string | HTMLElement>("body");
   hint = input<string>("");
 
   // Outputs
@@ -96,7 +95,7 @@ export class SelectComponent implements ControlValueAccessor {
   private onModelChange: (value: any) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onSelectChange(event: any) {
+  onSelectChange(event: SelectChangeEvent) {
     this.onModelChange(event.value);
     this.change.emit(event.value);
     this.onModelTouched();
@@ -110,11 +109,11 @@ export class SelectComponent implements ControlValueAccessor {
     this.value.set(value);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: any) => void): void {
     this.onModelChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onModelTouched = fn;
   }
 

@@ -5,6 +5,7 @@ import {
   signal,
   computed,
 } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -201,6 +202,8 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     EmptyStateComponent,
     DatePipe,
     Tooltip,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: "./performance-tracking.component.html",
 
@@ -766,7 +769,8 @@ export class PerformanceTrackingComponent {
     this.newPerformance = { ...this.newPerformance, [field]: value ?? null };
   }
 
-  updatePerformanceNotes(value: string | null | undefined): void {
+  updatePerformanceNotes(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
     this.newPerformance = { ...this.newPerformance, notes: value ?? "" };
   }
 

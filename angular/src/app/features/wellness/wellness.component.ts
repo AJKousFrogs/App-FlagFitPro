@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
 
@@ -68,6 +68,7 @@ interface WellnessMetric {
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     MainLayoutComponent,
     InputNumberComponent,
@@ -308,7 +309,7 @@ interface WellnessMetric {
                       label="Sleep Hours"
                       inputId="sleepHours"
                       [ngModel]="checkInData.sleepHours"
-                      (change)="onCheckInFieldChange('sleepHours', $event)"
+                      (valueChange)="onCheckInFieldChange('sleepHours', $event.value)"
                       [min]="0"
                       [max]="24"
                       [showButtons]="true"
@@ -323,7 +324,7 @@ interface WellnessMetric {
                       label="Sleep Quality (1-10)"
                       inputId="sleepQuality"
                       [ngModel]="checkInData.sleepQuality"
-                      (change)="onCheckInFieldChange('sleepQuality', $event)"
+                      (valueChange)="onCheckInFieldChange('sleepQuality', $event.value)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -345,7 +346,7 @@ interface WellnessMetric {
                       label="Energy Level (1-10)"
                       inputId="energyLevel"
                       [ngModel]="checkInData.energyLevel"
-                      (change)="onCheckInFieldChange('energyLevel', $event)"
+                      (valueChange)="onCheckInFieldChange('energyLevel', $event.value)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -358,7 +359,7 @@ interface WellnessMetric {
                       label="Muscle Soreness (1-10)"
                       inputId="soreness"
                       [ngModel]="checkInData.soreness"
-                      (change)="onCheckInFieldChange('soreness', $event)"
+                      (valueChange)="onCheckInFieldChange('soreness', $event.value)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -376,7 +377,7 @@ interface WellnessMetric {
                       label="Hydration (glasses of water)"
                       inputId="hydrationGlasses"
                       [ngModel]="checkInData.hydration"
-                      (change)="onCheckInFieldChange('hydration', $event)"
+                      (valueChange)="onCheckInFieldChange('hydration', $event.value)"
                       [min]="0"
                       [max]="20"
                       [showButtons]="true"
@@ -390,7 +391,7 @@ interface WellnessMetric {
                       label="Resting Heart Rate (BPM)"
                       inputId="restingHR"
                       [ngModel]="checkInData.restingHR"
-                      (change)="onCheckInFieldChange('restingHR', $event)"
+                      (valueChange)="onCheckInFieldChange('restingHR', $event.value)"
                       [min]="40"
                       [max]="120"
                       [showButtons]="true"
@@ -415,7 +416,7 @@ interface WellnessMetric {
                       label="Mood (1-10)"
                       inputId="mood"
                       [ngModel]="checkInData.mood"
-                      (change)="onCheckInFieldChange('mood', $event)"
+                      (valueChange)="onCheckInFieldChange('mood', $event.value)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -428,7 +429,7 @@ interface WellnessMetric {
                       label="Stress Level (1-10)"
                       inputId="stress"
                       [ngModel]="checkInData.stress"
-                      (change)="onCheckInFieldChange('stress', $event)"
+                      (valueChange)="onCheckInFieldChange('stress', $event.value)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -446,7 +447,7 @@ interface WellnessMetric {
                       label="Training Motivation (1-10)"
                       inputId="motivation"
                       [ngModel]="checkInData.motivation"
-                      (change)="onCheckInFieldChange('motivation', $event)"
+                      (valueChange)="onCheckInFieldChange('motivation', $event.value)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -461,7 +462,7 @@ interface WellnessMetric {
                       label="Readiness to Train (1-10)"
                       inputId="readiness"
                       [ngModel]="checkInData.readiness"
-                      (change)="onCheckInFieldChange('readiness', $event)"
+                      (valueChange)="onCheckInFieldChange('readiness', $event.value)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -488,8 +489,9 @@ interface WellnessMetric {
               </div>
             </div>
             </app-card-shell>
+          </div>
         </div>
-      </div>
+      }
     </app-main-layout>
   `,
   styleUrl: "./wellness.component.scss",
@@ -534,12 +536,6 @@ export class WellnessComponent {
   readonly completedMetricsCount = signal<number>(0);
   readonly totalMetricsCount = signal<number>(4);
 
-  /**
-   * Check-in form data - initialized to null/undefined to require explicit user input
-   * This ensures athletes consciously enter their actual values rather than
-   * accidentally submitting pre-filled defaults, which could lead to inaccurate
-   * ACWR calculations and injury risk assessments.
-   */
   checkInData: {
     sleepHours: number | null;
     sleepQuality: number | null;
@@ -567,30 +563,21 @@ export class WellnessComponent {
   readonly chartOptions = DEFAULT_CHART_OPTIONS;
 
   constructor() {
-    // Initialize on construction (Angular 21 pattern)
     this.initializePage();
   }
 
-  /**
-   * Initialize page with error handling
-   */
   private initializePage(): void {
     this.isPageLoading.set(true);
     this.hasPageError.set(false);
-    // Load profile data to determine female athlete status (for cycle tracking visibility)
     this.profileService.loadProfileData();
     this.loadWellnessData();
   }
 
-  /**
-   * Retry loading the page
-   */
   retryLoad(): void {
     this.initializePage();
   }
 
   loadWellnessData(): void {
-    // Fetch wellness data from service
     this.wellnessService
       .getWellnessData("7d")
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -605,7 +592,6 @@ export class WellnessComponent {
               this.wellnessService.getWellnessScore(latestData);
             const status = this.wellnessService.getWellnessStatus(overallScore);
 
-            // Update stats with real data
             this.wellnessStats.set([
               {
                 label: "Sleep Quality",
@@ -655,7 +641,6 @@ export class WellnessComponent {
               },
             ]);
 
-            // Build chart data from last 7 days
             const sortedData = [...response.data].sort(
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
             );
@@ -690,10 +675,8 @@ export class WellnessComponent {
               ],
             });
 
-            // Generate wellness alerts based on the data
             this.generateWellnessAlerts(response.data);
           } else {
-            // Fallback to default data if no data available
             this.loadFallbackData();
           }
         },
@@ -701,7 +684,6 @@ export class WellnessComponent {
           this.isPageLoading.set(false);
           this.logger.error("Error loading wellness data:", err);
 
-          // Check if it's a critical error that should show error state
           if (err?.status === 401 || err?.status === 403) {
             this.hasPageError.set(true);
             this.pageErrorMessage.set(
@@ -713,19 +695,16 @@ export class WellnessComponent {
               "The server is temporarily unavailable. Please try again later.",
             );
           } else {
-            // For non-critical errors, show fallback data instead of error state
             this.loadFallbackData();
           }
         },
       });
   }
 
-  // Centralized UX copy for no data state
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
   private loadFallbackData(): void {
-    // Use short placeholder for stat cards to fit in responsive layout
-    const noDataValue = "—"; // Em dash for empty state
+    const noDataValue = "—";
     this.wellnessStats.set([
       {
         label: "Sleep Quality",
@@ -789,8 +768,6 @@ export class WellnessComponent {
   }
 
   openCheckIn(): void {
-    // Scroll to the daily check-in card. Guard in case the view child isn't
-    // available yet in the current render.
     const cardElement =
       this.checkinCard()?.nativeElement ??
       document.querySelector<HTMLElement>(".checkin-card-anchor");
@@ -829,7 +806,6 @@ export class WellnessComponent {
   }
 
   submitCheckIn(): void {
-    // Validate required inputs - ensure athlete has entered their actual data
     if (
       this.checkInData.sleepHours === null ||
       this.checkInData.sleepHours <= 0
@@ -838,7 +814,6 @@ export class WellnessComponent {
       return;
     }
 
-    // Validate that at least sleep quality and energy are provided for meaningful data
     if (this.checkInData.sleepQuality === null) {
       this.toastService.warn("Please enter your sleep quality rating");
       return;
@@ -851,19 +826,16 @@ export class WellnessComponent {
 
     this.isSubmitting.set(true);
 
-    // Convert form data to wellness entry format matching WellnessData interface
-    // The service maps 'sleep' -> 'sleep_quality' in the database
     const wellnessData = {
-      sleep: this.checkInData.sleepQuality, // 1-10 rating (service maps to sleep_quality in DB)
-      sleepHours: this.checkInData.sleepHours, // actual hours of sleep (stored in sleep_hours column)
-      energy: this.checkInData.energyLevel, // 1-10 rating
-      soreness: this.checkInData.soreness, // 1-10 rating
-      hydration: this.checkInData.hydration, // glasses of water
-      mood: this.checkInData.mood, // 1-10 rating
-      stress: this.checkInData.stress, // 1-10 rating
-      motivation: this.checkInData.motivation, // 1-10 rating
+      sleep: this.checkInData.sleepQuality,
+      sleepHours: this.checkInData.sleepHours,
+      energy: this.checkInData.energyLevel,
+      soreness: this.checkInData.soreness,
+      hydration: this.checkInData.hydration,
+      mood: this.checkInData.mood,
+      stress: this.checkInData.stress,
+      motivation: this.checkInData.motivation,
       date: new Date().toISOString().split("T")[0],
-      // Note: restingHR and readiness are stored via notes field (not yet in database schema)
       notes:
         this.checkInData.restingHR || this.checkInData.readiness
           ? `${this.checkInData.restingHR ? `RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.restingHR && this.checkInData.readiness ? ", " : ""}${this.checkInData.readiness ? `Readiness: ${this.checkInData.readiness}/10` : ""}`
@@ -876,7 +848,6 @@ export class WellnessComponent {
         this.isSubmitting.set(false);
         if (response.success) {
           this.toastService.success(TOAST.SUCCESS.WELLNESS_CHECKIN_SAVED);
-          // Reset form to empty state (no pre-filled values)
           this.checkInData = {
             sleepHours: null,
             sleepQuality: null,
@@ -889,7 +860,6 @@ export class WellnessComponent {
             motivation: null,
             readiness: null,
           };
-          // Reload wellness data to show updated stats
           this.loadWellnessData();
         } else {
           this.toastService.error(
@@ -901,17 +871,15 @@ export class WellnessComponent {
         this.isSubmitting.set(false);
         this.logger.error("Error submitting wellness check-in:", err);
 
-        // Check if we should queue this action for offline sync
         if (this.offlineQueue.shouldQueue(err)) {
-          const _actionId = this.offlineQueue.queueAction(
+          this.offlineQueue.queueAction(
             "wellness_checkin",
             wellnessData,
             "high",
-          ); // Action ID available for tracking
+          );
           this.toastService.info(
             "You're offline. Check-in queued for sync when connection is restored.",
           );
-          // Reset form even if queued (no pre-filled values)
           this.checkInData = {
             sleepHours: null,
             sleepQuality: null,
@@ -934,9 +902,6 @@ export class WellnessComponent {
     return metric.label;
   }
 
-  /**
-   * Generate wellness alerts based on current data
-   */
   private generateWellnessAlerts(data: WellnessData[]): void {
     const alerts: WellnessAlert[] = [];
 
@@ -944,7 +909,6 @@ export class WellnessComponent {
       const latest = data[0];
       const previous = data[1];
 
-      // Check for rapid weight loss
       if (latest.weight && previous.weight) {
         const weightDiff = previous.weight - latest.weight;
         if (weightDiff > 2) {
@@ -960,9 +924,8 @@ export class WellnessComponent {
         }
       }
 
-      // Check for elevated resting HR
       if (latest.resting_hr && latest.resting_hr > 70) {
-        const baseline = 60; // typical athletic baseline
+        const baseline = 60;
         const diff = latest.resting_hr - baseline;
         if (diff > 10) {
           alerts.push({
@@ -976,7 +939,6 @@ export class WellnessComponent {
       }
     }
 
-    // Check for high soreness + magnesium gap
     const latestData = data[0];
     if (typeof latestData?.soreness === "number" && latestData.soreness >= 7) {
       alerts.push({
@@ -1005,9 +967,6 @@ export class WellnessComponent {
     }
   }
 
-  /**
-   * Dismiss an alert
-   */
   dismissAlert(alertId: string): void {
     this.wellnessAlerts.update((alerts) =>
       alerts.filter((a) => a.id !== alertId),

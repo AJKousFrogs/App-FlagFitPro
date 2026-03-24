@@ -12,7 +12,7 @@
     styleClass="p-datatable-sm"
     [rowHover]="true"
     selectionMode="single"
-    (rowSelect)="openPlayer($event.playerId)"
+    (rowSelect)="openPlayer($event.data.id)"
   >
     <ng-template #header>
       <tr>

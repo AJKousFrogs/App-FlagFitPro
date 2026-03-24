@@ -6,9 +6,8 @@ import {
   input,
   output,
   TemplateRef,
-  computed,
 } from "@angular/core";
-import { TableModule } from "primeng/table";
+import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent } from "primeng/table";
 
 @Component({
   selector: "app-table",
@@ -62,22 +61,22 @@ import { TableModule } from "primeng/table";
 
         <!-- Body Template -->
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-          <tr [pSelectableRow]="rowData">
-            @if (bodyTemplate()) {
-              <ng-container
-                *ngTemplateOutlet="
-                  bodyTemplate()!;
-                  context: { $implicit: rowData, columns: columns }
-                "
-              ></ng-container>
-            } @else {
+          @if (bodyTemplate()) {
+            <ng-container
+              *ngTemplateOutlet="
+                bodyTemplate()!;
+                context: { $implicit: rowData, columns: columns }
+              "
+            ></ng-container>
+          } @else {
+            <tr [pSelectableRow]="rowData">
               @for (col of columns; track col.field) {
                 <td>
                   {{ rowData[col.field] }}
                 </td>
               }
-            }
-          </tr>
+            </tr>
+          }
         </ng-template>
 
         <!-- Empty Message Template -->
@@ -106,9 +105,9 @@ import { TableModule } from "primeng/table";
     `,
   ],
 })
-export class TableComponent {
+export class TableComponent<T = unknown> {
   // Inputs
-  data = input.required<any[]>();
+  data = input.required<T[]>();
   columns = input<{ field: string; header: string }[]>([]);
   loading = input(false);
   paginator = input(false);
@@ -122,7 +121,7 @@ export class TableComponent {
   rowHover = input(true);
   dataKey = input<string | undefined>(undefined);
   selectionMode = input<"single" | "multiple" | null>(null);
-  selection = input<any | any[] | null>(null);
+  selection = input<T | T[] | null>(null);
   emptyMessage = input("No records found");
   styleClass = input("");
   sortMode = input<"single" | "multiple">("single");
@@ -131,30 +130,27 @@ export class TableComponent {
   scrollable = input(false);
 
   // Template Inputs
-  bodyTemplate = contentChild<TemplateRef<any>>("body");
-  headerTemplate = contentChild<TemplateRef<any>>("header");
+  bodyTemplate = contentChild<TemplateRef<{ $implicit: T; columns: unknown[] }>>("body");
+  headerTemplate = contentChild<TemplateRef<{ $implicit: unknown[] }>>("header");
 
   // Outputs
-  selectionChange = output<any | any[]>();
-  rowSelect = output<any>();
-  rowUnselect = output<any>();
-  page = output<any>();
+  selectionChange = output<T | T[]>();
+  rowSelect = output<TableRowSelectEvent<T>>();
+  rowUnselect = output<TableRowUnSelectEvent<T>>();
+  page = output<TablePageEvent>();
 
   // Internal State for Two-Way Binding shim
-  // Since we use signals for input, we need a mutable property for p-table [(selection)]
-  // We'll sync it via effect() if needed, but for now we'll just use a getter/setter approach
-  // or a simple property initialized from input.
-  // Actually, p-table writes to this property.
-  // So we need a writable property.
-  protected _selection: any;
+  protected _selection: T | T[] | null = null;
 
   get selectionValue() {
     return this.selection() ?? this._selection;
   }
 
-  set selectionValue(val: any) {
+  set selectionValue(val: T | T[] | null) {
     this._selection = val;
-    this.selectionChange.emit(val);
+    if (val !== null) {
+      this.selectionChange.emit(val);
+    }
   }
 
   protected _first = 0;

@@ -1,4 +1,5 @@
 import { Component, input, output } from "@angular/core";
+import { DecimalPipe } from "@angular/common";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
@@ -20,6 +21,7 @@ interface AvailabilityOption {
     CheckboxComponent,
     FormInputComponent,
     TextareaComponent,
+    DecimalPipe,
   ],
   templateUrl: "./tournament-availability-dialog-content.component.html",
   styleUrl: "./tournament-availability-dialog-content.component.scss",

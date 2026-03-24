@@ -7,29 +7,30 @@ import {
   contentChildren,
   TemplateRef,
   Directive,
-  contentChild,
+  inject,
 } from "@angular/core";
 import { TabsModule } from "primeng/tabs";
 
 @Directive({
-  selector: "[appTabPanel]",
+  selector: "ng-template[appTabPanel]",
   standalone: true,
 })
 export class AppTabPanelDirective {
-  header = input.required<string>();
-  value = input.required<string | number>();
-  icon = input<string>();
-  disabled = input(false);
-  template = contentChild(TemplateRef);
-}
+  header = input.required<string>({ alias: "appTabPanelHeader" });
+  value = input.required<string | number>({ alias: "appTabPanelValue" });
+  icon = input<string>("", { alias: "appTabPanelIcon" });
+  disabled = input(false, { alias: "appTabPanelDisabled" });
 
-@Component({
+  public templateRef = inject(TemplateRef);
+  }
+
+  @Component({
   selector: "app-tabs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, TabsModule],
   template: `
-    <p-tabs [value]="value()" (valueChange)="valueChange.emit($event)" [styleClass]="styleClass()">
+    <p-tabs [value]="value()" (valueChange)="valueChange.emit($event)">
       <p-tablist>
         @for (panel of panels(); track panel.value()) {
           <p-tab [value]="panel.value()" [disabled]="panel.disabled()">
@@ -43,9 +44,7 @@ export class AppTabPanelDirective {
       <p-tabpanels>
         @for (panel of panels(); track panel.value()) {
           <p-tabpanel [value]="panel.value()">
-            @if (panel.template()) {
-              <ng-container [ngTemplateOutlet]="panel.template()!"></ng-container>
-            }
+            <ng-container [ngTemplateOutlet]="panel.templateRef"></ng-container>
           </p-tabpanel>
         }
       </p-tabpanels>

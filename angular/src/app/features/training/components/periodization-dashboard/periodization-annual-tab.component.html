@@ -1,13 +1,13 @@
 <div class="annual-timeline">
   <p-timeline
-    [value]="timeline"
+    [value]="timeline()"
     layout="horizontal"
     class="phase-timeline"
   >
     <ng-template #marker let-event>
       <span
         class="timeline-marker"
-        [style.background-color]="event.color"
+        [attr.data-marker-color]="event.color"
       >
         <i [class]="event.icon"></i>
       </span>
@@ -24,7 +24,7 @@
 <p-divider></p-divider>
 
 <p-accordion [multiple]="true">
-  @for (phase of phases; track phase.type) {
+  @for (phase of phases(); track phase.type) {
     <p-accordion-panel [value]="phase.type">
       <p-accordion-header>{{ phase.name }}</p-accordion-header>
       <p-accordion-content>
