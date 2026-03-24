@@ -1,5 +1,7 @@
-@use "scss/components/dialog-overrides";
-@use "scss/pages/premium-essential";
-@use "scss/pages/ui-standardization";
-@use "scss/pages/elite-command-center";
-@use "assets/styles/overrides/component-overrides";
+@use "scss/design-system/elite-command-center.tokens" as *;
+@use "scss/design-system/elite-phase2-layout" as *;
+@use "scss/components/dialog-overrides" as *;
+@use "scss/pages/premium-essential" as *;
+@use "scss/pages/ui-standardization" as *;
+@use "scss/pages/elite-command-center" as *;
+@use "assets/styles/overrides/component-overrides" as *;

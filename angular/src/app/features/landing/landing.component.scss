@@ -9,6 +9,19 @@
 /* ===== HERO SECTION ===== */
 @use "styles/mixins" as *;
 
+:host {
+  --font-family-sans:
+    "SF Pro Display",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  --ds-font-family-sans: var(--font-family-sans);
+  --font-family-display: var(--font-family-sans);
+  font-family: var(--font-family-sans);
+}
+
 .hero-section {
   position: relative;
   min-height: 100vh;
@@ -220,6 +233,9 @@
 }
 
 .hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-2) var(--space-5);
   background: linear-gradient(
     135deg,
@@ -231,7 +247,18 @@
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  text-transform: var(--ds-text-transform-uppercase);
   animation: badge-glow 2s ease-in-out infinite alternate;
+}
+
+.hero-badge-marker {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-brand-primary);
+  box-shadow: 0 0 0 var(--border-2)
+    rgba(var(--color-brand-primary-rgb), 0.18);
 }
 
 @keyframes badge-glow {
@@ -556,6 +583,11 @@
   transition: transform var(--transition-normal);
 }
 
+.feature-icon-glyph {
+  font-size: var(--ds-font-size-2xl);
+  line-height: 1;
+}
+
 .feature-icon-analytics {
   background: linear-gradient(
     135deg,
@@ -640,11 +672,11 @@
     gap: var(--space-3);
   }
 
-  i {
+  .feature-card-arrow {
     transition: transform var(--transition-fast);
   }
 
-  &:hover i {
+  &:hover .feature-card-arrow {
     transform: translateX(var(--space-1));
   }
 }
@@ -680,8 +712,8 @@
   font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-4);
 
-  i,
-  span {
+  .footer-logo-mark,
+  .footer-logo-text {
     background: linear-gradient(
       135deg,
       var(--color-brand-primary) 0%,
@@ -692,7 +724,7 @@
     background-clip: text;
   }
 
-  i {
+  .footer-logo-mark {
     font-size: var(--ds-font-size-3xl);
   }
 }

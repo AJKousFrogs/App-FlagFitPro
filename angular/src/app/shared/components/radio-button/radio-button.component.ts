@@ -57,33 +57,33 @@ export class RadioButtonComponent<T = unknown> implements ControlValueAccessor {
   value = input<T | null>(null);
   label = input<string>("");
   disabled = input(false);
-  inputId = input<string>(`app-radio-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`app-radio-${Math.random().toString(36).slice(2, 11)}`);
 
   // Outputs
   click = output<RadioButtonClickEvent>();
 
   // Internal
-  protected modelValue = signal<any>(null);
+  protected modelValue = signal<T | null>(null);
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
 
   // ControlValueAccessor
-  private onModelChange: (value: any) => void = () => {};
+  private onModelChange: (value: T | null) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onClick(event: RadioButtonClickEvent) {
+  onClick(event: RadioButtonClickEvent): void {
     this.modelValue.set(this.value());
     this.onModelChange(this.value());
     this.click.emit(event);
     this.onModelTouched();
   }
 
-  writeValue(value: any): void {
+  writeValue(value: T | null): void {
     this.modelValue.set(value);
   }
 
-  registerOnChange(fn: (value: any) => void): void {
+  registerOnChange(fn: (value: T | null) => void): void {
     this.onModelChange = fn;
   }
 

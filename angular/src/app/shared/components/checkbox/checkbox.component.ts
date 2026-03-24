@@ -60,7 +60,7 @@ export class CheckboxComponent<T = unknown> implements ControlValueAccessor {
   value = input<T | null>(null);
   binary = input(true);
   disabled = input(false);
-  inputId = input<string>(`app-checkbox-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`app-checkbox-${Math.random().toString(36).slice(2, 11)}`);
   labelPosition = input<"left" | "right">("right");
 
   // Outputs

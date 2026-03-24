@@ -13,6 +13,7 @@ import {
 import { Router, RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
 
 @Component({
   selector: "app-landing",
@@ -44,7 +45,10 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
             <div class="hero-logo">
               <span class="merlin-icon">🏈</span>
             </div>
-            <div class="hero-badge"><i class="pi pi-trophy" aria-hidden="true"></i> Pro Platform</div>
+            <div class="hero-badge">
+              <span class="hero-badge-marker" aria-hidden="true"></span>
+              Olympic-ready platform
+            </div>
           </div>
 
           <!-- Olympic Countdown Timer -->
@@ -99,7 +103,6 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
           <div class="hero-actions animate-item animate-delay-4">
             <app-button
               size="lg"
-              iconLeft="pi-arrow-right"
               routerLink="/register"
               (mouseover)="preloadRegisterRoute()"
               (focusin)="preloadRegisterRoute()"
@@ -109,7 +112,6 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
             <app-button
               variant="outlined"
               size="lg"
-              iconLeft="pi-sign-in"
               routerLink="/login"
               (mouseover)="preloadLoginRoute()"
               (focusin)="preloadLoginRoute()"
@@ -161,14 +163,16 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
                   class="feature-icon-wrapper"
                   [class]="'feature-icon-' + feature.id"
                 >
-                  <i [class]="'pi ' + feature.icon"></i>
+                  <span class="feature-icon-glyph" aria-hidden="true">{{
+                    feature.glyph
+                  }}</span>
                 </div>
               </div>
               <h3 class="feature-card-title">{{ feature.title }}</h3>
               <p class="feature-card-description">{{ feature.description }}</p>
               <div class="feature-card-link">
                 <span>Learn more</span>
-                <i class="pi pi-arrow-right"></i>
+                <span class="feature-card-arrow" aria-hidden="true">→</span>
               </div>
             </app-card-shell>
           }
@@ -183,8 +187,8 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
           <!-- Brand -->
           <div class="footer-brand">
             <div class="footer-logo">
-              <i class="pi pi-football"></i>
-              <span>FlagFit Pro</span>
+              <span class="footer-logo-mark" aria-hidden="true">🏈</span>
+              <span class="footer-logo-text">FlagFit Pro</span>
             </div>
             <p class="footer-tagline">
               The ultimate training and competition platform for flag football
@@ -271,42 +275,42 @@ export class LandingComponent implements OnInit {
       title: "Performance Analytics",
       description:
         "Track every training session and game statistic. Get insights that help you identify strengths and areas for improvement.",
-      icon: "pi-chart-bar",
+      glyph: "📊",
     },
     {
       id: "tournament",
       title: "Tournament System",
       description:
         "Join competitive tournaments, climb leaderboards, and compete against the best players in your region.",
-      icon: "pi-trophy",
+      glyph: "🏆",
     },
     {
       id: "community",
       title: "Community Hub",
       description:
         "Connect with players, coaches, and teams. Share strategies, celebrate wins, and build lasting relationships.",
-      icon: "pi-users",
+      glyph: "👥",
     },
     {
       id: "training",
       title: "Training Programs",
       description:
         "Access structured workouts and skill development plans designed by professional coaches and trainers.",
-      icon: "pi-bolt",
+      glyph: "⚡",
     },
     {
       id: "ai-coach",
       title: "Merlin AI - Merlin",
       description:
         "Get personalized training advice from Merlin, your Merlin AI. Ask questions, get drill recommendations, and improve faster.",
-      icon: "pi-sparkles",
+      glyph: "✦",
     },
     {
       id: "progress",
       title: "Progress Reports",
       description:
         "Get detailed weekly and monthly reports on your development. Visualize your journey from beginner to elite athlete.",
-      icon: "pi-chart-line",
+      glyph: "📈",
     },
   ];
 
@@ -402,6 +406,7 @@ export class LandingComponent implements OnInit {
 
     const route = featureRoutes[featureId];
     if (route) {
+      ensurePrimeIconsStylesheet();
       // Navigate to register first (since these are protected routes)
       this.router.navigate(["/register"], {
         queryParams: { redirect: route },
@@ -410,6 +415,8 @@ export class LandingComponent implements OnInit {
   }
 
   preloadRegisterRoute(): void {
+    ensurePrimeIconsStylesheet();
+
     if (this.hasPrefetchedRegisterRoute) {
       return;
     }
@@ -419,6 +426,8 @@ export class LandingComponent implements OnInit {
   }
 
   preloadLoginRoute(): void {
+    ensurePrimeIconsStylesheet();
+
     if (this.hasPrefetchedLoginRoute) {
       return;
     }

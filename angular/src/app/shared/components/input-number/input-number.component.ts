@@ -78,7 +78,7 @@ export class InputNumberComponent implements ControlValueAccessor {
   step = input<number>(1);
   disabled = input(false);
   required = input(false);
-  inputId = input<string>(`app-input-number-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`app-input-number-${Math.random().toString(36).slice(2, 11)}`);
   styleClass = input<string>("");
   inputStyleClass = input<string>("");
   showButtons = input(false);

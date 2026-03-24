@@ -60,6 +60,16 @@
         --font-family-sans: "Poppins", system-ui, sans-serif;
       }
 
+      .route-landing {
+        --font-family-sans:
+          "SF Pro Display",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          system-ui,
+          sans-serif;
+      }
+
       /* Prevent FOUC (Flash of Unstyled Content) */
       html {
         font-family: var(--font-family-sans);
@@ -120,6 +130,25 @@
         }
       }
     </style>
+    <script>
+      (function () {
+        var pathname = window.location.pathname || "/";
+        if (pathname === "/") {
+          document.documentElement.classList.add("route-landing");
+          return;
+        }
+
+        if (document.getElementById("app-primeicons-stylesheet")) {
+          return;
+        }
+
+        var link = document.createElement("link");
+        link.id = "app-primeicons-stylesheet";
+        link.rel = "stylesheet";
+        link.href = "/assets/styles/vendor/primeicons/primeicons.css";
+        document.head.appendChild(link);
+      })();
+    </script>
     <script>
       (function () {
         var root = document.documentElement;

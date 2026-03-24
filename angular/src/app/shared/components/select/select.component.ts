@@ -11,6 +11,8 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
 import { SelectModule, SelectChangeEvent } from "primeng/select";
 
+type SelectValue = SelectChangeEvent["value"];
+
 @Component({
   selector: "app-select",
   standalone: true,
@@ -76,40 +78,40 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   filter = input(false);
   filterBy = input<string>("label");
   showClear = input(false);
-  inputId = input<string>(`app-select-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`app-select-${Math.random().toString(36).slice(2, 11)}`);
   styleClass = input<string>("");
   panelStyleClass = input<string>("");
   appendTo = input<string | HTMLElement>("body");
   hint = input<string>("");
 
   // Outputs
-  change = output<any>();
+  change = output<SelectValue>();
 
   // Internal
-  protected value = signal<any>(null);
+  protected value = signal<SelectValue>(null);
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
 
   // ControlValueAccessor
-  private onModelChange: (value: any) => void = () => {};
+  private onModelChange: (value: SelectValue) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onSelectChange(event: SelectChangeEvent) {
+  onSelectChange(event: SelectChangeEvent): void {
     this.onModelChange(event.value);
     this.change.emit(event.value);
     this.onModelTouched();
   }
 
-  onBlur() {
+  onBlur(): void {
     this.onModelTouched();
   }
 
-  writeValue(value: any): void {
+  writeValue(value: SelectValue): void {
     this.value.set(value);
   }
 
-  registerOnChange(fn: (value: any) => void): void {
+  registerOnChange(fn: (value: SelectValue) => void): void {
     this.onModelChange = fn;
   }
 

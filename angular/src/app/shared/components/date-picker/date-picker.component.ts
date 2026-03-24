@@ -76,7 +76,7 @@ export class DatePickerComponent implements ControlValueAccessor {
   showIcon = input(true);
   disabled = input(false);
   required = input(false);
-  inputId = input<string>(`app-datepicker-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`app-datepicker-${Math.random().toString(36).slice(2, 11)}`);
   styleClass = input<string>("");
   inputStyleClass = input<string>("");
   appendTo = input<string | HTMLElement | "body" | null>("body");

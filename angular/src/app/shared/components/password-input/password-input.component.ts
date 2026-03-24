@@ -86,7 +86,7 @@ export class PasswordInputComponent implements ControlValueAccessor {
   required = input(false);
   disabled = input(false);
   hint = input<string>("");
-  inputId = input<string>(`password-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`password-${Math.random().toString(36).slice(2, 11)}`);
   styleClass = input<string>("");
   inputStyleClass = input<string>("");
   autocomplete = input<string>("off");

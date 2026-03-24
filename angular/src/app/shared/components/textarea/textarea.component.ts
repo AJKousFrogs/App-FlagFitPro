@@ -65,7 +65,7 @@ export class TextareaComponent implements ControlValueAccessor {
   autoResize = input(false);
   disabled = input(false);
   required = input(false);
-  inputId = input<string>(`app-textarea-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`app-textarea-${Math.random().toString(36).slice(2, 11)}`);
   styleClass = input<string>("");
   hint = input<string>("");
 

@@ -53,7 +53,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor {
   // Inputs
   label = input<string>("");
   disabled = input(false);
-  inputId = input<string>(`app-toggle-${Math.random().toString(36).substr(2, 9)}`);
+  inputId = input<string>(`app-toggle-${Math.random().toString(36).slice(2, 11)}`);
 
   // Outputs
   change = output<ToggleSwitchChangeEvent>();

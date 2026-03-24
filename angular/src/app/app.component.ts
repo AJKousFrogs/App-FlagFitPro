@@ -25,6 +25,7 @@ import { filter, map, startWith } from "rxjs";
 import { ToastComponent } from "./shared/components/toast/toast.component";
 import { CookieConsentService } from "./core/services/cookie-consent.service";
 import { ThemeService } from "./core/services/theme.service";
+import { ensurePrimeIconsStylesheet } from "./core/utils/primeicons-loader";
 
 type RouteEntry =
   | "deeplink"
@@ -102,8 +103,8 @@ export class AppComponent {
   );
   private readonly cookieBannerReady = signal(false);
   private readonly feedbackStylesReady = signal(false);
-  private cookieBannerTimer: ReturnType<typeof window.setTimeout> | null = null;
-  private feedbackStylesTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private cookieBannerTimer: number | null = null;
+  private feedbackStylesTimer: number | null = null;
 
   readonly animationsDisabled = computed(
     () =>
@@ -128,6 +129,8 @@ export class AppComponent {
 
   constructor() {
     this.applyPlatformClasses();
+    this.syncRouteClasses();
+    this.initPrimeIconsLoading();
     this.initReducedMotionPreference();
     this.initFeedbackStylesScheduling();
     this.initCookieBannerScheduling();
@@ -169,6 +172,27 @@ export class AppComponent {
     };
     mediaQuery.addEventListener("change", onChange);
     this.destroyRef.onDestroy(() => mediaQuery.removeEventListener("change", onChange));
+  }
+
+  private initPrimeIconsLoading(): void {
+    effect(() => {
+      if (!this.isLandingRoute()) {
+        ensurePrimeIconsStylesheet();
+      }
+    });
+  }
+
+  private syncRouteClasses(): void {
+    effect(() => {
+      if (typeof document === "undefined") {
+        return;
+      }
+
+      document.documentElement.classList.toggle(
+        "route-landing",
+        this.isLandingRoute(),
+      );
+    });
   }
 
   private initCookieBannerScheduling(): void {
@@ -237,7 +261,7 @@ export class AppComponent {
       return;
     }
 
-    clearTimeout(this.cookieBannerTimer);
+    window.clearTimeout(this.cookieBannerTimer);
     this.cookieBannerTimer = null;
   }
 
@@ -246,7 +270,7 @@ export class AppComponent {
       return;
     }
 
-    clearTimeout(this.feedbackStylesTimer);
+    window.clearTimeout(this.feedbackStylesTimer);
     this.feedbackStylesTimer = null;
   }
 

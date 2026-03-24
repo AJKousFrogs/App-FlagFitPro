@@ -18,9 +18,12 @@ export class AppAccordionPanelDirective {
   header = input.required<string>();
   value = input.required<string | number>();
   disabled = input(false);
-  
+
   public templateRef = inject(TemplateRef);
 }
+
+type AccordionValue = string | number;
+type AccordionModelValue = AccordionValue | string[] | number[] | null;
 
 @Component({
   selector: "app-accordion",
@@ -48,7 +51,7 @@ export class AppAccordionPanelDirective {
 })
 export class AccordionComponent {
   multiple = input(false);
-  value = input<any>(null);
+  value = input<AccordionModelValue>(null);
 
   panels = contentChildren(AppAccordionPanelDirective);
 }

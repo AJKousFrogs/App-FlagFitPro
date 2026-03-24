@@ -101,7 +101,7 @@ export class OfflineQueueService {
     },
   ): string {
     const action: QueuedAction = {
-      id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `action_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
       type,
       payload,
       timestamp: new Date(),

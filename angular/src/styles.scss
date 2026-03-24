@@ -17,8 +17,6 @@
 
 /* TIER 1: Tokens + design-system typography/states/utilities (single source) */
 @use "./scss/design-system/index" as *;
-@use "./scss/design-system/elite-command-center.tokens";
-@use "./scss/design-system/elite-phase2-layout";
 @use "./scss/design-system/elite-phase2-auth";
 /* TIER 2: Utilities - mixins, responsive, layout, typography-system */
 @use "./scss/utilities" as *;
@@ -43,9 +41,6 @@
    ALL @IMPORT RULES (Must come after @use)
    ============================================ */
 
-/* PrimeIcons (optimized local copy: woff2/woff only) */
-@import "./assets/styles/vendor/primeicons/primeicons.css";
-
 /* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library
  * This saves ~50-80KB in bundle size
  */
@@ -64,6 +59,18 @@ body {
   overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
+}
+
+html.route-landing {
+  --font-family-sans:
+    "SF Pro Display",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  --ds-font-family-sans: var(--font-family-sans);
+  --font-family-display: var(--font-family-sans);
 }
 
 /* Mobile-specific: Prevent scroll when sidebar is open */
