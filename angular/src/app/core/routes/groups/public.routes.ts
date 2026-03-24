@@ -7,7 +7,7 @@ export const publicRoutes: Routes = [
       import("../../../features/landing/landing.component").then(
         (m) => m.LandingComponent,
       ),
-    data: { preload: true, priority: "high", entry: "internal" }, // Landing page loads immediately
+    data: { preload: true, priority: "high", entry: "public" }, // Landing page loads immediately
   },
   {
     path: "login",
@@ -15,7 +15,7 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/login/login.component").then(
         (m) => m.LoginComponent,
       ),
-    data: { preload: true, priority: "medium", entry: "internal" }, // Auth pages preload after delay
+    data: { preload: false, entry: "public" }, // On-demand from public CTAs to reduce landing-page background JS
   },
   {
     path: "register",
@@ -23,7 +23,7 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/register/register.component").then(
         (m) => m.RegisterComponent,
       ),
-    data: { preload: true, priority: "medium", entry: "internal" },
+    data: { preload: false, entry: "public" }, // On-demand from public CTAs to reduce landing-page background JS
   },
   {
     path: "reset-password",
@@ -79,7 +79,7 @@ export const publicRoutes: Routes = [
       import("../../../features/legal/legal-doc.component").then(
         (m) => m.LegalDocComponent,
       ),
-    data: { preload: false, legalDoc: "terms", entry: "internal" },
+    data: { preload: false, legalDoc: "terms", entry: "public" },
     title: "Terms of Use - FlagFit Pro",
   },
   {
@@ -88,7 +88,7 @@ export const publicRoutes: Routes = [
       import("../../../features/legal/legal-doc.component").then(
         (m) => m.LegalDocComponent,
       ),
-    data: { preload: false, legalDoc: "privacy", entry: "internal" },
+    data: { preload: false, legalDoc: "privacy", entry: "public" },
     title: "Privacy Policy - FlagFit Pro",
   },
   {

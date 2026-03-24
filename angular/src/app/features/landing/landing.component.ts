@@ -23,17 +23,19 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
       <div class="hero-background">
         <div class="hero-gradient-1"></div>
         <div class="hero-gradient-2"></div>
-        <div class="hero-particles">
-          @for (particle of particles; track particle.id) {
-            <div
-              class="particle"
-              [style.left.%]="particle.x"
-              [style.top.%]="particle.y"
-              [style.animation-delay]="particle.delay + 's'"
-              [style.animation-duration]="particle.duration + 's'"
-            ></div>
-          }
-        </div>
+        @if (particles().length > 0) {
+          <div class="hero-particles">
+            @for (particle of particles(); track particle.id) {
+              <div
+                class="particle"
+                [style.left.%]="particle.x"
+                [style.top.%]="particle.y"
+                [style.animation-delay]="particle.delay + 's'"
+                [style.animation-duration]="particle.duration + 's'"
+              ></div>
+            }
+          </div>
+        }
       </div>
 
       <div class="hero-container">
@@ -99,6 +101,9 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
               size="lg"
               iconLeft="pi-arrow-right"
               routerLink="/register"
+              (mouseover)="preloadRegisterRoute()"
+              (focusin)="preloadRegisterRoute()"
+              (touchstart)="preloadRegisterRoute()"
               >Get Started Free</app-button
             >
             <app-button
@@ -106,6 +111,9 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
               size="lg"
               iconLeft="pi-sign-in"
               routerLink="/login"
+              (mouseover)="preloadLoginRoute()"
+              (focusin)="preloadLoginRoute()"
+              (touchstart)="preloadLoginRoute()"
               >Sign In</app-button
             >
           </div>
@@ -219,8 +227,14 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
   styleUrl: "./landing.component.scss",
 })
 export class LandingComponent implements OnInit {
+  private readonly heroRevealDelayMs = 100;
+  private readonly particleRevealDelayMs = 700;
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private hasPrefetchedRegisterRoute = false;
+  private hasPrefetchedLoginRoute = false;
+  private heroRevealTimer: ReturnType<typeof setTimeout> | null = null;
+  private particleRevealTimer: ReturnType<typeof setTimeout> | null = null;
 
   // ViewChild reference for scroll operation
   private readonly featuresSection =
@@ -228,6 +242,7 @@ export class LandingComponent implements OnInit {
 
   // Signals for reactive state
   isLoaded = signal(false);
+  particles = signal<LandingParticle[]>([]);
 
   // Olympic countdown - LA 2028 Opening Ceremony: July 14, 2028
   olympicCountdown = signal({
@@ -249,15 +264,6 @@ export class LandingComponent implements OnInit {
     { value: "5v5", label: "Olympic Format" },
     { value: "∞", label: "Your Potential" },
   ];
-
-  // Particle data for background animation
-  particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    delay: Math.random() * 5,
-    duration: 10 + Math.random() * 10,
-  }));
 
   features = [
     {
@@ -308,9 +314,26 @@ export class LandingComponent implements OnInit {
     // Trigger animations after component renders
     afterNextRender(() => {
       // Small delay to ensure DOM is ready
-      setTimeout(() => {
+      this.heroRevealTimer = setTimeout(() => {
         this.isLoaded.set(true);
-      }, 100);
+        this.heroRevealTimer = null;
+      }, this.heroRevealDelayMs);
+
+      if (this.shouldDeferParticles()) {
+        this.particleRevealTimer = setTimeout(() => {
+          this.particles.set(this.createParticles());
+          this.particleRevealTimer = null;
+        }, this.particleRevealDelayMs);
+      }
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.heroRevealTimer) {
+        clearTimeout(this.heroRevealTimer);
+      }
+      if (this.particleRevealTimer) {
+        clearTimeout(this.particleRevealTimer);
+      }
     });
   }
 
@@ -385,4 +408,63 @@ export class LandingComponent implements OnInit {
       });
     }
   }
+
+  preloadRegisterRoute(): void {
+    if (this.hasPrefetchedRegisterRoute) {
+      return;
+    }
+
+    this.hasPrefetchedRegisterRoute = true;
+    void import("../auth/register/register.component");
+  }
+
+  preloadLoginRoute(): void {
+    if (this.hasPrefetchedLoginRoute) {
+      return;
+    }
+
+    this.hasPrefetchedLoginRoute = true;
+    void import("../auth/login/login.component");
+  }
+
+  private shouldDeferParticles(): boolean {
+    if (typeof window === "undefined" || !("matchMedia" in window)) {
+      return false;
+    }
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const isTouchPrimary = window.matchMedia(
+      "(hover: none), (pointer: coarse)",
+    ).matches;
+
+    return !prefersReducedMotion && !isTouchPrimary;
+  }
+
+  private createParticles(): LandingParticle[] {
+    if (typeof window === "undefined" || !("matchMedia" in window)) {
+      return [];
+    }
+
+    const particleCount = window.matchMedia("(max-width: 80rem)").matches
+      ? 10
+      : 14;
+
+    return Array.from({ length: particleCount }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 10 + Math.random() * 10,
+    }));
+  }
+}
+
+interface LandingParticle {
+  id: number;
+  x: number;
+  y: number;
+  delay: number;
+  duration: number;
 }

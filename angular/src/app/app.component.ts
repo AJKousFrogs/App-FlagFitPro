@@ -3,17 +3,35 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  effect,
   inject,
   signal,
 } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
+import { toSignal } from "@angular/core/rxjs-interop";
+import {
+  ActivatedRouteSnapshot,
+  NavigationEnd,
+  Router,
+  RouterOutlet,
+} from "@angular/router";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
 import { DeferredGlobalStylesComponent } from "./shared/components/deferred-global-styles/deferred-global-styles.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
 import { ConfirmDialog } from "primeng/confirmdialog";
+import { filter, map, startWith } from "rxjs";
 import { ToastComponent } from "./shared/components/toast/toast.component";
+import { CookieConsentService } from "./core/services/cookie-consent.service";
 import { ThemeService } from "./core/services/theme.service";
+
+type RouteEntry =
+  | "deeplink"
+  | "hub"
+  | "internal"
+  | "legacy"
+  | "public"
+  | null;
 
 @Component({
   selector: "app-root",
@@ -36,10 +54,12 @@ import { ThemeService } from "./core/services/theme.service";
     >
       <router-outlet></router-outlet>
     </main>
-    @defer (on timer(300ms)) {
-      <app-deferred-global-styles />
+    @if (shouldLoadDeferredGlobalStyles()) {
+      @defer (on timer(300ms)) {
+        <app-deferred-global-styles />
+      }
     }
-    @defer (on timer(1800ms)) {
+    @defer (when shouldLoadCookieBanner()) {
       <app-cookie-consent-banner />
     }
     <app-loading-overlay />
@@ -55,12 +75,33 @@ export class AppComponent {
   private readonly animationModuleType = inject(ANIMATION_MODULE_TYPE, {
     optional: true,
   });
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  private readonly cookieConsentService = inject(CookieConsentService);
   private readonly prefersReducedMotion = signal(false);
+  private readonly activeRouteEntry = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(() => this.getCurrentRouteEntry()),
+      startWith(this.getCurrentRouteEntry()),
+    ),
+    { initialValue: this.getCurrentRouteEntry() },
+  );
+  private readonly cookieBannerReady = signal(false);
+  private cookieBannerTimer: ReturnType<typeof window.setTimeout> | null = null;
 
   readonly animationsDisabled = computed(
     () =>
       this.prefersReducedMotion() ||
       this.animationModuleType === "NoopAnimations",
+  );
+  readonly shouldLoadDeferredGlobalStyles = computed(() => {
+    const entry = this.activeRouteEntry();
+    return entry === "hub" || entry === "internal";
+  });
+  readonly shouldLoadCookieBanner = computed(
+    () =>
+      this.cookieBannerReady() && this.cookieConsentService.showBanner(),
   );
 
   // Side-effect: ensures ThemeService initializes on bootstrap so theme (light/dark) applies before first paint
@@ -69,6 +110,7 @@ export class AppComponent {
   constructor() {
     this.applyPlatformClasses();
     this.initReducedMotionPreference();
+    this.initCookieBannerScheduling();
   }
 
   private applyPlatformClasses(): void {
@@ -106,5 +148,66 @@ export class AppComponent {
       this.prefersReducedMotion.set(event.matches);
     };
     mediaQuery.addEventListener("change", onChange);
+    this.destroyRef.onDestroy(() => mediaQuery.removeEventListener("change", onChange));
+  }
+
+  private initCookieBannerScheduling(): void {
+    this.destroyRef.onDestroy(() => this.clearCookieBannerTimer());
+
+    effect(() => {
+      const entry = this.activeRouteEntry();
+      const shouldShowBanner = this.cookieConsentService.showBanner();
+
+      if (!shouldShowBanner) {
+        this.clearCookieBannerTimer();
+        this.cookieBannerReady.set(false);
+        return;
+      }
+
+      if (this.cookieBannerReady()) {
+        return;
+      }
+
+      this.scheduleCookieBanner(entry);
+    });
+  }
+
+  private scheduleCookieBanner(entry: RouteEntry): void {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    this.clearCookieBannerTimer();
+
+    const delay = entry === "hub" || entry === "internal" ? 2500 : 4500;
+    this.cookieBannerTimer = window.setTimeout(() => {
+      this.cookieBannerReady.set(true);
+      this.cookieBannerTimer = null;
+    }, delay);
+  }
+
+  private clearCookieBannerTimer(): void {
+    if (this.cookieBannerTimer === null) {
+      return;
+    }
+
+    clearTimeout(this.cookieBannerTimer);
+    this.cookieBannerTimer = null;
+  }
+
+  private getCurrentRouteEntry(): RouteEntry {
+    let snapshot: ActivatedRouteSnapshot | null = this.router.routerState
+      .snapshot.root;
+    let entry: RouteEntry = null;
+
+    while (snapshot) {
+      const currentEntry = snapshot.data["entry"];
+      if (typeof currentEntry === "string") {
+        entry = currentEntry as RouteEntry;
+      }
+      snapshot = snapshot.firstChild ?? null;
+    }
+
+    return entry;
   }
 }

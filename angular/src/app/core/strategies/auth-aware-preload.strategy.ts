@@ -27,6 +27,7 @@ import { SupabaseService } from "../services/supabase.service";
 })
 export class AuthAwarePreloadStrategy implements PreloadingStrategy {
   private supabaseService = inject(SupabaseService);
+  private readonly slowNetworkTypes = new Set(["slow-2g", "2g", "3g"]);
 
   preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {
     const preload = route.data?.["preload"];
@@ -45,6 +46,11 @@ export class AuthAwarePreloadStrategy implements PreloadingStrategy {
       return of(null);
     }
 
+    // Avoid background prefetching on constrained connections or save-data mode.
+    if (this.shouldAvoidPreloadOnCurrentNetwork()) {
+      return of(null);
+    }
+
     if (priority === "high") {
       return load();
     }
@@ -54,5 +60,22 @@ export class AuthAwarePreloadStrategy implements PreloadingStrategy {
     }
 
     return timer(3000).pipe(mergeMap(() => load()));
+  }
+
+  private shouldAvoidPreloadOnCurrentNetwork(): boolean {
+    if (typeof navigator === "undefined") {
+      return false;
+    }
+
+    const connection = (navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }).connection;
+
+    if (!connection) {
+      return false;
+    }
+
+    return connection.saveData === true ||
+      this.slowNetworkTypes.has(connection.effectiveType ?? "");
   }
 }
