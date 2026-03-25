@@ -61,7 +61,9 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
       <section class="app-shell__main app-main" aria-label="Application content">
         <div class="app-shell__page">
           <app-offline-banner></app-offline-banner>
-          <app-smart-breadcrumbs class="app-shell__breadcrumbs"></app-smart-breadcrumbs>
+          @if (!mobileNav()) {
+            <app-smart-breadcrumbs class="app-shell__breadcrumbs"></app-smart-breadcrumbs>
+          }
           <div class="app-shell__content-stack">
             <ng-content></ng-content>
           </div>

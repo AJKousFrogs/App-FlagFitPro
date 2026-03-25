@@ -16,9 +16,10 @@
   );
   border-top: var(--border-1) solid var(--color-border-secondary);
   display: none;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   padding: 0 var(--space-2) var(--safe-area-bottom);
+  gap: var(--space-1);
   z-index: var(--z-modal);
   box-sizing: border-box;
   backdrop-filter: blur(var(--blur-sm));
@@ -28,6 +29,11 @@
     box-shadow var(--motion-feedback-duration-fast) var(--ease-standard),
     background-color var(--motion-feedback-duration-fast)
       var(--ease-standard);
+}
+
+.bottom-nav > app-nav-item {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .bottom-nav.hidden {

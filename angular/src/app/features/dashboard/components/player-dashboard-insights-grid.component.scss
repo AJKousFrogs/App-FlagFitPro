@@ -4,7 +4,7 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--layout-gap-lg);
 }
 
@@ -21,10 +21,10 @@
 }
 
 .week-progress {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-2);
   margin-bottom: var(--space-4);
-  padding: 0 var(--space-2);
 }
 
 .day-column {
@@ -95,7 +95,7 @@
 
 .quick-actions-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
   gap: var(--space-3);
   align-items: stretch;
 }
@@ -147,6 +147,21 @@
 }
 
 @media (max-width: 640px) {
+  .dashboard-grid {
+    gap: var(--space-4);
+  }
+
+  .week-progress {
+    gap: var(--space-1);
+  }
+
+  .day-indicator {
+    width: var(--space-8);
+    height: var(--space-8);
+    min-width: var(--space-8);
+    min-height: var(--space-8);
+  }
+
   .quick-actions-grid {
     grid-template-columns: 1fr;
   }

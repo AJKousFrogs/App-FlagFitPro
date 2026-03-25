@@ -71,18 +71,31 @@ app-close-button.announcement-close-btn {
 }
 
 @media (max-width: 640px) {
+  .announcement-banner {
+    align-items: flex-start;
+    padding: var(--space-4);
+  }
+
   .announcement-content {
-    flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .announcement-text {
-    flex-wrap: wrap;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .announcement-message {
+    line-height: var(--ds-line-height-body);
   }
 
   .announcement-meta {
     width: 100%;
     margin-top: var(--space-1);
-    margin-left: calc(var(--space-10) + var(--space-3));
+    margin-left: 0;
+  }
+
+  app-close-button.announcement-close-btn {
+    align-self: stretch;
   }
 }

@@ -24,7 +24,6 @@
         gap: var(--layout-page-section-gap-tight);
         padding: 0;
         max-width: 100%;
-        margin: 0 auto;
       }
 
       /* ==========================================
@@ -195,21 +194,20 @@
        ========================================== */
       @media (max-width: 640px) {
         .player-dashboard {
-          padding: var(--space-3);
-          gap: var(--space-5);
+          gap: var(--space-4);
         }
 
         .welcome-wrapper {
           flex-direction: column;
-          text-align: center;
-        }
-
-        .merlin-avatar {
-          margin: 0 auto;
+          align-items: flex-start;
         }
 
         .welcome-actions {
-          justify-content: center;
+          width: 100%;
+        }
+
+        .welcome-actions app-button {
+          flex: 1 1 100%;
         }
 
       }

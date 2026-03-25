@@ -306,6 +306,22 @@ app-close-button.sidebar-close-btn {
     width: 100%;
   }
 
+  .sidebar-logo,
+  .user-section,
+  .sidebar-footer {
+    padding-inline: var(--space-3);
+  }
+
+  .nav-section {
+    gap: var(--space-3);
+    padding-inline: var(--space-2);
+  }
+
+  .nav-group-title,
+  .me-group-header {
+    padding-inline: var(--space-3);
+  }
+
   // Close button NOT shown at tablet width
   app-close-button.sidebar-close-btn {
     display: none;
@@ -325,13 +341,47 @@ app-close-button.sidebar-close-btn {
     transform: translateX(-100%);
     width: var(--app-shell-mobile-drawer-width);
     max-width: var(--app-shell-mobile-drawer-width);
-    box-shadow: none; /* Enhanced shadow for mobile */
+    border-right: var(--border-1) solid var(--color-border-secondary);
+    border-top-right-radius: var(--radius-2xl);
+    border-bottom-right-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
     will-change: transform; /* Optimize animation performance */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 
   .sidebar.sidebar-open {
     transform: translateX(0);
+  }
+
+  .sidebar-logo {
+    min-height: auto;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .user-section,
+  .sidebar-footer {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .nav-section {
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3) var(--space-4);
+  }
+
+  .nav-group-title {
+    padding-inline: var(--space-3);
+  }
+
+  .nav-group {
+    gap: var(--space-1);
+  }
+
+  .me-group-container {
+    padding-top: var(--space-3);
+  }
+
+  .me-group-header {
+    padding-inline: var(--space-3);
   }
 
   app-close-button.sidebar-close-btn {

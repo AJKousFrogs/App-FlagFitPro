@@ -62,9 +62,10 @@
   flex-direction: column;
   justify-content: center;
   gap: var(--space-1);
-  padding: var(--space-2);
-  min-width: var(--avatar-size-2xl); /* var(--header-height) */
-  min-height: var(--touch-target-md);
+  padding: var(--space-2) var(--space-1);
+  min-width: 0;
+  min-height: calc(var(--touch-target-md) - var(--space-1));
+  flex: 1 1 0;
 }
 
 .nav-item--menu {
@@ -159,7 +160,7 @@
 
 .nav-item--bottom .nav-item-icon i,
 .nav-item--menu .nav-item-icon i {
-  font-size: var(--ds-font-size-2xl);
+  font-size: var(--ds-font-size-xl);
 }
 
 .nav-badge {
@@ -172,8 +173,8 @@
 .nav-item--bottom .nav-item-label {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-02em);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .nav-item--menu .nav-item-label {
@@ -196,8 +197,12 @@
 }
 
 @include respond-to(sm) {
+  .nav-item--sidebar {
+    padding: var(--space-3);
+    min-height: 2.75rem;
+  }
+
   .nav-item--bottom {
-    min-width: var(--avatar-size-xl); /* 3.5rem */
     padding: var(--space-1);
   }
 }
