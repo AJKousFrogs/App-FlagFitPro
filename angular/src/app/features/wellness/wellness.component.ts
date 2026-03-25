@@ -109,9 +109,7 @@ interface WellnessMetric {
 
       <!-- Content -->
       @if (!isPageLoading() && !hasPageError()) {
-        <div
-          class="wellness-page elite-phase2-shell ui-page-shell ui-page-stack"
-        >
+        <div class="wellness-page ui-page-shell ui-page-stack">
           <app-page-header
             title="Wellness & Recovery"
             subtitle="Track your health, recovery, and wellness metrics"

@@ -1277,7 +1277,6 @@ $ds-font-weight-extrabold: 800;
   --content-max-width-lg: 56.25rem; /* 900px */
   --content-max-width-xl: 80rem; /* 1280px */
   --content-max-width-2xl: 90rem; /* 1440px */
-  --page-container-max-width: var(--layout-page-max-width);
 
   /* Font Aliases */
   --font-family: var(--font-family-sans);
@@ -2249,6 +2248,18 @@ body.light-theme {
   display: flex;
   flex-direction: column;
   gap: var(--space-4); /* 16px - tighter spacing */
+}
+
+@media (max-width: 48rem) {
+  .section-stack {
+    gap: var(--space-5); /* 20px */
+  }
+}
+
+@media (max-width: 30rem) {
+  .section-stack {
+    gap: var(--space-4); /* 16px */
+  }
 }
 
 /* List Stack - Standard vertical spacing for list items */

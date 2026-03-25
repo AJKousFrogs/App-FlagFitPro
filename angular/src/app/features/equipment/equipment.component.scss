@@ -5,17 +5,9 @@
 // Design System Compliant
 // ============================================================================
 
-.equipment-page {
-  width: 100%;
-  gap: var(--layout-page-section-gap);
-}
-
 /* Uses shared .header-actions from _dashboard.scss */
 
 .equipment-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--layout-page-section-gap);
   min-width: 0;
 }
 
@@ -166,14 +158,6 @@
 }
 
 @include respond-to(md) {
-  .equipment-page {
-    padding: 0;
-  }
-
-  .equipment-content {
-    gap: var(--layout-page-section-gap-tight);
-  }
-
   .summary-grid {
     grid-template-columns: 1fr;
   }

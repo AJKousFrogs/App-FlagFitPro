@@ -38,45 +38,41 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
     ScrollToTopComponent,
   ],
   template: `
-    <div class="app-shell dashboard-container">
+    <div class="app-shell">
+      <app-sidebar
+        #sidebar
+        class="app-shell__sidebar"
+        [collapsed]="sidebarCollapsed()"
+        [mobileViewport]="mobileNav()"
+      ></app-sidebar>
+
       <app-header
         class="app-shell__header"
         [sidebarCollapsed]="sidebarCollapsed()"
         [mobileNav]="mobileNav()"
         (toggleSidebar)="toggleSidebar()"
       ></app-header>
-      
+
       <app-mobile-header
-        class="mobile-header"
+        class="app-shell__mobile-header"
         (toggleSidebar)="toggleSidebar()"
       ></app-mobile-header>
 
-      <div class="app-shell__main">
-        <app-sidebar
-          #sidebar
-          class="app-shell__sidebar"
-          [collapsed]="sidebarCollapsed()"
-          [mobileViewport]="mobileNav()"
-        ></app-sidebar>
-
-        <section class="app-shell__content" aria-label="Application content">
-          <div class="app-main">
-            <div class="page-container">
-              <app-offline-banner></app-offline-banner>
-              <app-smart-breadcrumbs class="app-shell__breadcrumbs"></app-smart-breadcrumbs>
-              <div class="page-content content-wrapper">
-                <ng-content></ng-content>
-              </div>
-            </div>
+      <section class="app-shell__main app-main" aria-label="Application content">
+        <div class="app-shell__page">
+          <app-offline-banner></app-offline-banner>
+          <app-smart-breadcrumbs class="app-shell__breadcrumbs"></app-smart-breadcrumbs>
+          <div class="app-shell__content-stack">
+            <ng-content></ng-content>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
       <!-- Quick Actions FAB (hidden on mobile, bottom nav takes over) -->
       <app-quick-actions-fab class="desktop-only"></app-quick-actions-fab>
 
       <!-- Mobile Bottom Navigation -->
-      <footer class="app-footer">
+      <footer class="app-shell__footer">
         <app-bottom-nav></app-bottom-nav>
       </footer>
 

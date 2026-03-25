@@ -221,13 +221,6 @@
     margin: 0 auto;
   }
 
-  // Alias for backward compatibility
-  .section-stack {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-
   // ============================================
   // DASHBOARD GRID (Decision 8.1)
   // ============================================

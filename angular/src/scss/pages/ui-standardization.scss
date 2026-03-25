@@ -35,37 +35,6 @@
    ================================================================ */
 
 /* ================================
-   PAGE CONTAINER
-   Max width + consistent gutters
-   ================================ */
-.page-container {
-  width: 100%;
-  max-width: var(--layout-width-4xl);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
-
-  @include respond-to(md) {
-    padding: 0 var(--space-4);
-  }
-
-  @include respond-to(sm) {
-    padding: 0 var(--space-3);
-  }
-}
-
-
-/* ================================
-   SECTION STACK
-   1.5rem spacing between major sections
-   ================================ */
-.section-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6); /* 1.5rem */
-}
-
-
-/* ================================
    CARD STACK
    12-1rem internal stack spacing
    ================================ */
@@ -621,10 +590,6 @@
     --p-dialog-footer-padding: var(--space-3); /* 0.75rem */
   }
 
-  .section-stack {
-    gap: var(--space-5); /* 1.25rem */
-  }
-
   .toolbar-row {
     flex-wrap: wrap;
   }
@@ -643,13 +608,6 @@
     --p-card-body-gap: var(--space-2); /* 0.5rem */
   }
 
-  .section-stack {
-    gap: var(--space-4); /* 1rem */
-  }
-
-  .page-container {
-    padding: 0 var(--space-3); /* 0.75rem */
-  }
 }
 
 /* ================================================================

@@ -215,25 +215,27 @@
    PAGE LAYOUT UTILITIES
    ================================================================ */
 .ui-page-shell {
-  width: min(100%, var(--layout-page-max-width));
+  --ui-page-shell-max-width: var(--layout-page-max-width);
+
+  width: min(100%, var(--ui-page-shell-max-width));
   margin-inline: auto;
   padding: var(--layout-page-padding-y) var(--layout-page-padding-x);
 }
 
 .ui-page-shell--narrow {
-  width: min(100%, var(--layout-page-max-width-narrow));
+  --ui-page-shell-max-width: var(--layout-page-max-width-narrow);
 }
 
 .ui-page-shell--content-md {
-  width: min(100%, var(--content-max-width-md));
+  --ui-page-shell-max-width: var(--content-max-width-md);
 }
 
 .ui-page-shell--content-lg {
-  width: min(100%, var(--content-max-width-lg));
+  --ui-page-shell-max-width: var(--content-max-width-lg);
 }
 
 .ui-page-shell--wide {
-  width: min(100%, var(--layout-page-max-width-wide));
+  --ui-page-shell-max-width: var(--layout-page-max-width-wide);
 }
 
 .ui-page-stack {
@@ -256,6 +258,10 @@
 
 .ui-section-card--compact {
   padding: var(--component-card-padding-compact);
+}
+
+.page-state-card {
+  min-block-size: var(--size-240);
 }
 
 .ui-page-hero {

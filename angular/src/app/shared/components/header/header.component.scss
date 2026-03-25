@@ -25,21 +25,9 @@
 }
 
 .app-header-shell {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
+  display: block;
+  min-inline-size: 0;
   min-height: var(--app-shell-header-height);
-  border-bottom: var(--border-1) solid
-    color-mix(in srgb, var(--surface-border) 86%, transparent);
-  background: color-mix(
-    in srgb,
-    var(--surface-ground) 88%,
-    var(--surface-card) 12%
-  );
-  backdrop-filter: blur(var(--blur-sm));
-  box-shadow: 0 var(--border-1) 0 var(--color-border-subtle);
-  padding: 0 var(--space-4);
-  gap: var(--header-inline-gap);
 }
 
 // PrimeNG toolbar: _component-overrides.scss (DS-EXC-004)

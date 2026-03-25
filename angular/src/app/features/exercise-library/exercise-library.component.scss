@@ -11,10 +11,6 @@
 
 @include stat-block;
 
-.page-state-card {
-  min-height: var(--size-240);
-}
-
 .library-summary {
   display: flex;
   justify-content: space-between;

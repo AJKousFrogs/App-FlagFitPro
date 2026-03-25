@@ -1,48 +1,59 @@
-/**
- * Main Layout Component Styles
- * Responsive layout with sidebar, header, and content area
- */
-
-@use "styles/variables" as *;
 @use "styles/mixins" as *;
 
 :host {
   display: block;
-  height: 100%;
-  min-height: 0;
+  min-block-size: 100%;
+  min-inline-size: 0;
 }
 
 .app-shell {
+  --bottom-nav-height: var(--space-16);
+
   display: grid;
   grid-template-columns: var(--app-shell-sidebar-width) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
-  height: 100vh;
-  height: 100dvh;
-  width: 100%;
-  overflow: hidden;
+  grid-template-rows: var(--app-shell-header-height) minmax(0, 1fr);
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main";
+  inline-size: 100%;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  overflow: clip;
   isolation: isolate;
   background: var(--surface-ground);
-
-  --bottom-nav-height: var(--space-16);
-  --page-shell-max-width: var(--app-shell-content-max-width);
 }
 
 :host(.app-shell--sidebar-collapsed) .app-shell {
-  grid-template-columns: var(--app-shell-sidebar-width-collapsed) minmax(0, 1fr);
+  grid-template-columns:
+    var(--app-shell-sidebar-width-collapsed)
+    minmax(0, 1fr);
 }
 
-.app-shell__header,
-.mobile-header {
+.app-shell__sidebar {
+  grid-area: sidebar;
+  min-inline-size: 0;
+  min-block-size: 0;
+  z-index: 2;
+}
+
+.app-shell__header {
+  grid-area: header;
+  min-inline-size: 0;
+  min-block-size: 0;
+  z-index: 3;
+}
+
+.app-shell__mobile-header {
   display: none;
 }
 
 .app-shell__main {
-  display: grid;
-  grid-template-rows: var(--app-shell-header-height) minmax(0, 1fr);
-  min-height: 0;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
+  grid-area: main;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: auto;
+  overflow-x: clip;
+  scrollbar-gutter: stable;
   background:
     linear-gradient(
       180deg,
@@ -51,99 +62,117 @@
     );
 }
 
-.app-shell__header {
-  display: block;
-}
-
-.app-shell__sidebar {
-  min-width: 0;
-  min-height: 0;
-}
-
-.app-shell__content {
-  min-width: 0;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.app-main {
-  height: 100%;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-gutter: stable;
-}
-
-.page-container {
-  width: min(100%, var(--page-shell-max-width));
-  margin-inline: auto;
-  min-width: 0;
-}
-
-.content-wrapper,
-.page-content {
-  min-width: 0;
-}
-
-.page-content {
-  min-width: 0;
+.app-shell__page {
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap-tight);
-  padding: 0 0 calc(var(--app-shell-gutter-block) * 2);
-  width: 100%;
-  max-width: 100%;
+  min-inline-size: 0;
+  min-block-size: 100%;
+  padding:
+    var(--app-shell-gutter-block)
+    var(--app-shell-gutter-inline)
+    calc(var(--app-shell-gutter-block) * 2);
 }
 
-.app-footer {
+.app-shell__breadcrumbs,
+.app-shell__content-stack {
+  min-inline-size: 0;
+}
+
+.app-shell__breadcrumbs {
+  inline-size: min(100%, var(--app-shell-content-max-width));
+  margin-inline: auto;
+}
+
+.app-shell__content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap-tight);
+  inline-size: 100%;
+}
+
+.app-shell__content-stack > * {
+  min-inline-size: 0;
+}
+
+.app-shell__content-stack > :where(.ui-page-shell) {
+  inline-size: min(100%, var(--ui-page-shell-max-width));
+  margin-inline: auto;
+  padding: 0;
+}
+
+.app-shell__content-stack > :where(:not(.ui-page-shell)) {
+  inline-size: min(100%, var(--app-shell-content-max-width));
+  margin-inline: auto;
+}
+
+.app-shell__footer {
   display: block;
 }
 
-// Desktop-only elements (Quick Actions FAB)
 .desktop-only {
   display: block;
 
-  // Hide on mobile - bottom nav handles navigation
   @include respond-to(md) {
     display: none;
   }
 }
 
-@include respond-to(lg) {
-  .app-shell {
-    --page-shell-max-width: 100%;
-  }
-}
-
 @include respond-to(md) {
   .app-shell {
-    grid-template-rows: var(--app-shell-header-height-mobile) minmax(0, 1fr);
-
-    --app-shell-sidebar-track: var(--space-0);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows:
+      var(--app-shell-header-height-mobile)
+      minmax(0, 1fr);
+    grid-template-areas:
+      "mobile-header"
+      "main";
   }
 
-  .page-content {
-    padding-bottom: calc(
-      var(--app-shell-gutter-block) + var(--bottom-nav-height) + var(--safe-area-bottom)
+  .app-shell__header {
+    display: none;
+  }
+
+  .app-shell__sidebar {
+    grid-area: auto;
+    inline-size: 0;
+    block-size: 0;
+  }
+
+  .app-shell__mobile-header {
+    display: block;
+    grid-area: mobile-header;
+    min-inline-size: 0;
+    min-block-size: 0;
+    z-index: 3;
+  }
+
+  .app-shell__main {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .app-shell__page {
+    padding-block-end: calc(
+      var(--app-shell-gutter-block) +
+      var(--bottom-nav-height) +
+      var(--safe-area-bottom)
     );
   }
 }
 
-// Animations
 .app-shell {
   @include fade-in;
   @include respect-motion-preference;
 }
 
-// Print styles
 @media print {
-  .dashboard-container {
+  .app-shell {
     display: block;
-    min-height: auto;
-    height: auto;
+    min-block-size: auto;
   }
 
-  .page-content {
+  .app-shell__page {
     padding: 0;
   }
 

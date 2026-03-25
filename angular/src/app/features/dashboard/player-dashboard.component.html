@@ -15,7 +15,7 @@
 
       <!-- Dashboard Content -->
       @if (!isLoading() && !hasError()) {
-        <div class="player-dashboard section-stack elite-phase2-shell ui-page-shell ui-page-stack">
+        <div class="player-dashboard ui-page-shell ui-page-stack">
           <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
           @if (needsProgramAssignment()) {
             <app-player-dashboard-setup-card

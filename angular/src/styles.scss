@@ -332,8 +332,7 @@ button {
 /* Safari: Fix for elements with absolute positioning escaping containers */
 @supports (-webkit-appearance: none) {
   /* Ensure main layout containers create proper stacking contexts */
-  .dashboard-container,
-  .main-content,
+  .app-shell,
   .player-dashboard,
   .coach-dashboard,
   [class*="-dashboard"],

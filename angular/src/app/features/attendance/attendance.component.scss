@@ -5,17 +5,9 @@
 
 @use "styles/mixins" as *;
 
-.attendance-page {
-  width: 100%;
-  gap: var(--layout-page-section-gap);
-}
-
 /* Uses shared .header-actions from _dashboard.scss */
 
 .attendance-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--layout-page-section-gap);
   min-width: 0;
 }
 
@@ -248,14 +240,6 @@
 }
 
 @include respond-to(md) {
-  .attendance-page {
-    padding: 0;
-  }
-
-  .attendance-content {
-    gap: var(--layout-page-section-gap-tight);
-  }
-
   .filter-actions {
     width: 100%;
   }

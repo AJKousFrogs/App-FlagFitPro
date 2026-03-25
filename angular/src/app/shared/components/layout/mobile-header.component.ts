@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, output } from "@angular/core";
 import { HeaderSearchWidgetComponent } from "../header/header-search-widget.component";
 
 @Component({
@@ -21,5 +21,5 @@ import { HeaderSearchWidgetComponent } from "../header/header-search-widget.comp
   styleUrl: "./mobile-header.component.scss",
 })
 export class MobileHeaderComponent {
-  @Output() toggleSidebar = new EventEmitter<void>();
+  readonly toggleSidebar = output<void>();
 }

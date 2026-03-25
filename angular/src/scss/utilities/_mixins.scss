@@ -152,22 +152,6 @@
   font-size: $font-size;
 }
 
-// Standard page container with tokenized padding and responsive scale.
-@mixin page-container($max-width: var(--page-container-max-width)) {
-  padding: var(--space-6);
-  max-width: $max-width;
-  margin: 0 auto;
-  width: 100%;
-
-  @include respond-to(md) {
-    padding: var(--space-4);
-  }
-
-  @include respond-to(sm) {
-    padding: var(--space-3);
-  }
-}
-
 // Canonical stat block pattern (value + label).
 @mixin stat-block {
   .stat-block {

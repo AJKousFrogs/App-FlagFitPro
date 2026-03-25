@@ -308,8 +308,11 @@
     max-height: var(--header-height, 4rem);
     gap: var(--space-6);
     box-shadow: var(--shadow-1);
-    display: flex;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
     align-items: center;
+    inline-size: 100%;
+    min-inline-size: 0;
 
     // Safari fix: Ensure proper stacking context and prevent z-index leaking
     position: relative;
@@ -337,6 +340,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      min-width: 0;
 
       // Safari fix: Ensure children don't escape bounds
       position: relative;
@@ -348,6 +352,19 @@
       * {
         text-decoration: none;
       }
+    }
+
+    .p-toolbar-start {
+      justify-self: start;
+    }
+
+    .p-toolbar-center {
+      justify-self: stretch;
+      inline-size: 100%;
+    }
+
+    .p-toolbar-end {
+      justify-self: end;
     }
 
     @include respond-to(md) {
