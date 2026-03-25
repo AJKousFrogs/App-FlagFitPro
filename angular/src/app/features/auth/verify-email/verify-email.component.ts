@@ -6,12 +6,13 @@ import {
   signal,
 } from "@angular/core";
 
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "../../../core/services/toast.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
+import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -64,13 +65,14 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
               styleClass="status-message status-message--success"
             />
             <p class="verified-message">
-              Your email has been verified. You can now access all features.
+              Your email has been verified. We’ll take you straight into
+              onboarding so you can finish setting up your profile.
             </p>
             <app-button
-              iconLeft="pi-home"
-              routerLink="/dashboard"
+              iconLeft="pi-arrow-right"
+              routerLink="/onboarding"
               [fullWidth]="true"
-              >Go to Dashboard</app-button
+              >Continue to Onboarding</app-button
             >
           </div>
         } @else if (verificationError()) {
@@ -102,7 +104,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
             />
             <p class="pending-message">
               We've sent a verification link to your email address. Please click
-              the link to verify your account.
+              the link to verify your account before starting onboarding.
             </p>
             <app-button
               iconLeft="pi-send"
@@ -124,7 +126,6 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
 })
 export class VerifyEmailComponent implements OnInit {
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
   private authFlowDataService = inject(AuthFlowDataService);
 
@@ -153,6 +154,9 @@ export class VerifyEmailComponent implements OnInit {
       const session = this.authFlowDataService.getCurrentSession();
       if (session?.user?.email_confirmed_at) {
         this.isVerified.set(true);
+        setTimeout(() => {
+          void this.redirectAfterVerification(false);
+        }, 2000);
       }
       return;
     }
@@ -220,7 +224,8 @@ export class VerifyEmailComponent implements OnInit {
 
           // Redirect to dashboard after 2 seconds
           setTimeout(() => {
-            this.router.navigate(["/dashboard"]);
+            this.authFlowDataService.clearPendingVerificationEmail();
+            void this.redirectAfterVerification(true);
           }, 2000);
         } else {
           // Email not confirmed yet (shouldn't happen normally)
@@ -234,10 +239,10 @@ export class VerifyEmailComponent implements OnInit {
         );
       }
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Verification failed. Please try again.";
+      const message = getErrorMessage(
+        error,
+        "Verification failed. Please try again.",
+      );
       this.verificationError.set(message);
     } finally {
       this.isVerifying.set(false);
@@ -254,6 +259,7 @@ export class VerifyEmailComponent implements OnInit {
       // Get email from current user or stored email
       const email =
         this.userEmail() ||
+        this.authFlowDataService.getPendingVerificationEmail() ||
         this.authFlowDataService.getCurrentUser()?.email ||
         null;
 
@@ -268,7 +274,7 @@ export class VerifyEmailComponent implements OnInit {
       // Resend verification email using Supabase
       const { error } = await this.authFlowDataService.resendVerificationEmail({
         email,
-        redirectTo: `${window.location.origin}/verify-email`,
+        redirectTo: this.authFlowDataService.getEmailVerificationRedirectUrl(),
       });
 
       if (error) {
@@ -280,13 +286,28 @@ export class VerifyEmailComponent implements OnInit {
         "Email Sent",
       );
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Failed to send verification email. Please try again.";
+      const message = getErrorMessage(
+        error,
+        "Failed to send verification email. Please try again.",
+      );
       this.toastService.error(message);
     } finally {
       this.isResending.set(false);
+    }
+  }
+
+  private async redirectAfterVerification(
+    preferOnboarding: boolean,
+  ): Promise<void> {
+    try {
+      const destination = await this.authFlowDataService.resolvePostAuthRedirect(
+        {
+          fallbackRoute: preferOnboarding ? "/onboarding" : "/dashboard",
+        },
+      );
+      this.router.navigateByUrl(destination);
+    } catch {
+      this.router.navigate([preferOnboarding ? "/onboarding" : "/dashboard"]);
     }
   }
 }

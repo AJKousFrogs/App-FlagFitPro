@@ -24,7 +24,9 @@ export interface RecoveryBlock {
 export class GameDayRecoveryService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
-  private recoveryBlocksUnavailable = false;
+  // recovery_blocks is backend-managed in the live project. Browser-side
+  // probing drifts from the live schema/RLS contract and only creates console noise.
+  private recoveryBlocksUnavailable = true;
 
   /**
    * Check if player had game today and trigger recovery protocol

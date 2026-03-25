@@ -203,6 +203,67 @@ test.describe("Smoke Test - App Shell", () => {
     await expect(heading).toBeVisible({ timeout: 5000 });
   });
 
+  test("should display reset-password page correctly", async ({ page }) => {
+    await page.goto(`${BASE_URL}/reset-password`);
+    await dismissCookieBanner(page);
+
+    await expect(page.locator('input[type="email"]')).toBeVisible({
+      timeout: 5000,
+    });
+    await expect(page.locator('button[type="submit"]')).toBeVisible({
+      timeout: 5000,
+    });
+    await expect(page.locator("h1")).toContainText(/reset password/i);
+  });
+
+  test("should display verify-email page in pending state", async ({
+    page,
+  }) => {
+    await page.goto(`${BASE_URL}/verify-email`);
+    await dismissCookieBanner(page);
+
+    await expect(page.locator("h1")).toContainText(/verify your email/i, {
+      timeout: 5000,
+    });
+    await expect(page.getByRole("button", { name: /resend verification/i }))
+      .toBeVisible({
+        timeout: 5000,
+      });
+  });
+
+  test("should show update-password invalid state without recovery tokens", async ({
+    page,
+  }) => {
+    await page.goto(`${BASE_URL}/update-password`);
+    await dismissCookieBanner(page);
+
+    await expect(page.locator("h1")).toContainText(/set new password/i, {
+      timeout: 5000,
+    });
+    await expect(page.getByText(/invalid or has expired/i)).toBeVisible({
+      timeout: 5000,
+    });
+    await expect(
+      page.getByRole("link", { name: /request new reset link/i }),
+    ).toBeVisible({
+      timeout: 5000,
+    });
+  });
+
+  test("should show accept-invitation invalid state without a token", async ({
+    page,
+  }) => {
+    await page.goto(`${BASE_URL}/accept-invitation`);
+    await dismissCookieBanner(page);
+
+    await expect(page.locator("h1")).toContainText(/team invitation/i, {
+      timeout: 5000,
+    });
+    await expect(page.getByText(/invalid invitation link/i)).toBeVisible({
+      timeout: 5000,
+    });
+  });
+
   test("should keep header and sidebar stable while only content scrolls", async ({
     page,
   }) => {

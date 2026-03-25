@@ -3,10 +3,12 @@ import { CanActivateFn, Router } from "@angular/router";
 import { AuthService } from "../services/auth.service";
 import { LoggerService } from "../services/logger.service";
 import { SupabaseService } from "../services/supabase.service";
+import { AuthFlowDataService } from "../../features/auth/services/auth-flow-data.service";
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const supabaseService = inject(SupabaseService);
+  const authFlowDataService = inject(AuthFlowDataService);
   const router = inject(Router);
   const logger = inject(LoggerService);
 
@@ -65,6 +67,27 @@ export const authGuard: CanActivateFn = async (route, state) => {
     } catch (err) {
       logger.error("[AuthGuard] Exception checking session:", err);
     }
+  }
+
+  const sessionUser =
+    supabaseService.session()?.user ?? supabaseService.currentUser();
+  const emailConfirmed = !!sessionUser?.email_confirmed_at;
+
+  if ((hasSession || isAuthenticated) && !emailConfirmed) {
+    logger.info("[AuthGuard] Blocking unverified session from app shell", {
+      url: state.url,
+      email: sessionUser?.email,
+    });
+    authFlowDataService.storePendingVerificationEmail(sessionUser?.email);
+    try {
+      await authFlowDataService.signOut();
+    } catch (error) {
+      logger.warn("[AuthGuard] Failed to clear unverified session cleanly", {
+        error,
+      });
+    }
+    router.navigate(["/verify-email"]);
+    return false;
   }
 
   if (hasSession || isAuthenticated) {

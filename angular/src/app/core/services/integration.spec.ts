@@ -158,7 +158,7 @@ describe("Integration Tests", () => {
         authService.login({ email: "test@example.com", password: "password" }),
       );
 
-      expect(loginResult.success).toBe(true);
+      expect(loginResult.user.email).toBe("test@example.com");
 
       // Check auth state
       expect(authService.isAuthenticated()).toBe(true);
@@ -198,7 +198,7 @@ describe("Integration Tests", () => {
         }),
       );
 
-      expect(result.success).toBe(true);
+      expect(result.user.email).toBe("new@example.com");
       expect(result.message).toContain("verify");
     });
   });

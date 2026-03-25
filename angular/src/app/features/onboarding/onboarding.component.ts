@@ -31,8 +31,8 @@ import {
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { AuthFlowDataService } from "../auth/services/auth-flow-data.service";
 import { RosterService } from "../roster/roster.service";
 import { OnboardingProgressShellComponent } from "./components/onboarding-progress-shell.component";
 import { OnboardingDataService } from "./services/onboarding-data.service";
@@ -52,7 +52,6 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
     CommonModule,
     RouterModule,
     CardShellComponent,
-    MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
     OnboardingProgressShellComponent,
@@ -77,6 +76,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private rosterService = inject(RosterService);
   private api = inject(ApiService);
   private platform = inject(PlatformService);
+  private authFlowDataService = inject(AuthFlowDataService);
 
   isCompleting = signal(false);
   isLoading = signal(true);
@@ -239,8 +239,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const { error } =
-        await this.onboardingDataService.resendVerificationEmail(user.email);
+      const { error } = await this.onboardingDataService.resendVerificationEmail(
+        user.email,
+        this.authFlowDataService.getEmailVerificationRedirectUrl(),
+      );
 
       if (error) {
         throw error;
@@ -745,11 +747,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       setTimeout(() => {
         // Check for post-onboarding redirect (e.g., team invitation)
-        const postOnboardingRedirect = this.platform.getSessionStorage(
-          "postOnboardingRedirect",
-        );
+        const postOnboardingRedirect =
+          this.authFlowDataService.consumePostOnboardingRedirect();
         if (postOnboardingRedirect) {
-          this.platform.removeSessionStorage("postOnboardingRedirect");
           this.router.navigateByUrl(postOnboardingRedirect);
         } else {
           // Redirect based on user type

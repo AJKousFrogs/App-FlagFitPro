@@ -36,6 +36,7 @@ export class OverrideLoggingService {
   private readonly authService = inject(AuthService);
   private usersTableUnavailable = false;
   private notificationsUnavailable = false;
+  private readonly directPlayerNotificationWritesSupported = false;
 
   /**
    * Log coach override of AI recommendation
@@ -87,6 +88,13 @@ export class OverrideLoggingService {
     overrideId: string,
     override: Omit<CoachOverride, "id" | "createdAt">,
   ): Promise<void> {
+    if (!this.directPlayerNotificationWritesSupported) {
+      this.logger.debug(
+        "[OverrideLogging] Skipping direct browser player notification write; backend-managed notification flow required",
+      );
+      return;
+    }
+
     try {
       // Get coach name for notification (use 'users' table - profiles doesn't exist)
       let coachName = "Your coach";

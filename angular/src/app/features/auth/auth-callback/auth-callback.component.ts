@@ -14,6 +14,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
+import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -119,7 +120,9 @@ export class AuthCallbackComponent implements OnInit {
       if (session) {
         this.success.set(true);
         this.successMessage.set("You are already signed in!");
-        setTimeout(() => this.router.navigate(["/dashboard"]), 1500);
+        setTimeout(() => {
+          void this.redirectAfterAuth();
+        }, 1500);
       } else {
         this.error.set(
           "No authentication data found. Please try signing in again.",
@@ -226,10 +229,10 @@ export class AuthCallbackComponent implements OnInit {
       // Handle different auth types
       await this.handleAuthType(type, data.session.user);
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Authentication failed. Please try again.";
+      const message = getErrorMessage(
+        error,
+        "Authentication failed. Please try again.",
+      );
       this.logger.error("[Auth] Token processing error", { error, type });
       this.error.set(message);
       this.isProcessing.set(false);
@@ -256,7 +259,14 @@ export class AuthCallbackComponent implements OnInit {
         // Notify other tabs (like onboarding) that email is verified
         this.broadcastEmailVerified();
         // Check if user needs onboarding
-        setTimeout(() => this.redirectAfterAuth(), 1500);
+        this.authFlowDataService.clearPendingVerificationEmail();
+        setTimeout(
+          () =>
+            this.redirectAfterAuth({
+              fallbackRoute: "/onboarding",
+            }),
+          1500,
+        );
         break;
 
       case "recovery":
@@ -265,6 +275,7 @@ export class AuthCallbackComponent implements OnInit {
           "Please set your new password.",
           "Reset Verified",
         );
+        this.authFlowDataService.markPasswordRecoveryIntent();
         // Redirect to update password page
         setTimeout(() => this.router.navigate(["/update-password"]), 1500);
         break;
@@ -300,21 +311,21 @@ export class AuthCallbackComponent implements OnInit {
    * Redirect user after successful authentication
    * Checks if onboarding is needed
    */
-  private async redirectAfterAuth(): Promise<void> {
-    const user = this.authFlowDataService.getCurrentUser();
-
-    if (user) {
-      // Check if user has completed onboarding
-      const { data: userData } =
-        await this.authFlowDataService.getUserOnboardingStatus(user.id);
-
-      if (userData && !userData.onboarding_completed) {
-        this.router.navigate(["/onboarding"]);
-      } else {
-        this.router.navigate(["/dashboard"]);
-      }
-    } else {
-      this.router.navigate(["/dashboard"]);
+  private async redirectAfterAuth(options?: {
+    fallbackRoute?: string;
+  }): Promise<void> {
+    try {
+      const destination = await this.authFlowDataService.resolvePostAuthRedirect(
+        {
+          fallbackRoute: options?.fallbackRoute,
+        },
+      );
+      this.router.navigateByUrl(destination);
+    } catch (error) {
+      this.logger.warn("[Auth] Falling back to dashboard after callback", {
+        error,
+      });
+      this.router.navigate([options?.fallbackRoute ?? "/dashboard"]);
     }
   }
 

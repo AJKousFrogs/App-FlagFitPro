@@ -164,6 +164,61 @@ export interface TodayViewModel {
   };
 }
 
+type SessionResolutionState = {
+  success?: boolean;
+  status?: string;
+  override?: {
+    type?: string;
+    reason?: string;
+  } | null;
+};
+
+type ConfidenceSessionResolutionState = {
+  success?: boolean;
+  status?: string;
+  hasProgram?: boolean;
+  hasSessionTemplate?: boolean;
+  override?: string | null;
+};
+
+function resolveSessionStatus(
+  sessionResolution: SessionResolutionState | undefined,
+  confidenceSessionResolution: ConfidenceSessionResolutionState | undefined,
+): string {
+  const primaryStatus = sessionResolution?.status;
+  const fallbackStatus = confidenceSessionResolution?.status;
+  const exceptionalStatus =
+    [primaryStatus, fallbackStatus].find(
+      (value): value is string =>
+        typeof value === "string" &&
+        value.trim().length > 0 &&
+        value !== "resolved",
+    ) ?? null;
+
+  if (exceptionalStatus) {
+    return exceptionalStatus;
+  }
+
+  return primaryStatus || fallbackStatus || "unknown";
+}
+
+function resolveOverrideType(
+  sessionResolution: SessionResolutionState | undefined,
+  confidenceSessionResolution: ConfidenceSessionResolutionState | undefined,
+): string | null {
+  const primaryOverride =
+    sessionResolution?.override &&
+    typeof sessionResolution.override.type === "string"
+      ? sessionResolution.override.type
+      : null;
+  const fallbackOverride =
+    typeof confidenceSessionResolution?.override === "string"
+      ? confidenceSessionResolution.override
+      : null;
+
+  return primaryOverride || fallbackOverride || null;
+}
+
 /**
  * Resolve TODAY screen state from protocol JSON
  *
@@ -206,24 +261,27 @@ export function resolveTodayState(
   const readiness = cm.readiness || {};
   const acwr = cm.acwr || {};
   const sessionRes = cm.sessionResolution || {};
+  const status = resolveSessionStatus(sr, sessionRes);
+  const overrideType = resolveOverrideType(sr, sessionRes);
 
   // ========================================================================
   // PRIORITY 1: Session Resolution Failure (excluding external_program and no_program)
   // ========================================================================
-  const status = sr.status || sessionRes.status || "unknown";
   if (
     (sr.success === false || sessionRes.success === false) &&
     status !== "external_program" &&
     status !== "no_program"
   ) {
+    const failureMessage =
+      status === "no_template"
+        ? "No session found for today. Program not configured for this date. Contact your coach."
+        : "Unable to resolve training session. Contact your coach.";
+
     return {
       trainingAllowed: false,
       errorState: {
         reason_code: "SESSION_RESOLUTION_FAILED",
-        message:
-          status === "no_template"
-            ? "No session found for today. Program not configured for this date. Contact your coach."
-            : "Unable to resolve training session. Contact your coach.",
+        message: failureMessage,
         cta: {
           label: "Contact Coach",
           action: "contact_coach",
@@ -233,7 +291,7 @@ export function resolveTodayState(
         {
           type: "error",
           style: "red",
-          text: "No session found for today. Program not configured for this date. Contact your coach.",
+          text: failureMessage,
           ctas: [
             {
               label: "Contact Coach",
@@ -254,7 +312,7 @@ export function resolveTodayState(
   if (
     status === "no_program" ||
     (cm.hasActiveProgram === false &&
-      sessionRes.hasProgram === false &&
+      sessionRes.hasProgram !== true &&
       status !== "external_program")
   ) {
     return {
@@ -338,7 +396,7 @@ export function resolveTodayState(
   // ========================================================================
   if (
     cm.injuryProtocolActive === true ||
-    sr.override?.type === "rehab_protocol"
+    overrideType === "rehab_protocol"
   ) {
     // Check if team activity exists (even if excluded)
     const hasTeamActivity =
@@ -447,7 +505,7 @@ export function resolveTodayState(
   // ========================================================================
   if (
     protocolJson.weather_override === true ||
-    sr.override?.type === "weather_override"
+    overrideType === "weather_override"
   ) {
     const banners: TodayViewModel["banners"] = [
       {
@@ -512,7 +570,7 @@ export function resolveTodayState(
   // PRIORITY 6: Flag Football Practice
   // PROMPT 2.11: Practice day determined ONLY from sessionResolution.override (which comes from teamActivity)
   // ========================================================================
-  if (sr.override?.type === "flag_practice") {
+  if (overrideType === "flag_practice") {
     const teamActivity = protocolJson.teamActivity;
     const practiceTime = teamActivity?.startTimeLocal || "18:00";
     const practiceLocation = teamActivity?.location;
@@ -606,7 +664,7 @@ export function resolveTodayState(
   // PRIORITY 7: Film Room / Team Activity
   // PROMPT 2.11: Film room determined ONLY from sessionResolution.override (which comes from teamActivity)
   // ========================================================================
-  if (sr.override?.type === "film_room") {
+  if (overrideType === "film_room") {
     const teamActivity = protocolJson.teamActivity;
     const filmRoomTime = teamActivity?.startTimeLocal || "10:00";
     const filmRoomLocation = teamActivity?.location;
@@ -653,7 +711,7 @@ export function resolveTodayState(
   // ========================================================================
   // PRIORITY 8: Taper Period
   // ========================================================================
-  if (protocolJson.taper_active === true || sr.override?.type === "taper") {
+  if (protocolJson.taper_active === true || overrideType === "taper") {
     const banners: TodayViewModel["banners"] = [
       {
         type: "info",

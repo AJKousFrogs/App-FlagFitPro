@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { getTeamInvitationRpcError } from "../../team/utils/team-invitation-rpc.utils";
 import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
@@ -171,20 +172,32 @@ export class ProfileDataService {
   async acceptInvitation(invitationId: string): Promise<{
     error: { message?: string } | null;
   }> {
-    const { error } = await this.supabaseService.client.rpc(
+    const { data, error } = await this.supabaseService.client.rpc(
       "accept_team_invitation",
       { p_invitation_id: invitationId },
     );
-    return { error };
+    return {
+      error: getTeamInvitationRpcError(
+        data,
+        error,
+        "Failed to accept invitation.",
+      ),
+    };
   }
 
   async declineInvitation(invitationId: string): Promise<{
     error: { message?: string } | null;
   }> {
-    const { error } = await this.supabaseService.client.rpc(
+    const { data, error } = await this.supabaseService.client.rpc(
       "decline_team_invitation",
       { p_invitation_id: invitationId },
     );
-    return { error };
+    return {
+      error: getTeamInvitationRpcError(
+        data,
+        error,
+        "Failed to decline invitation.",
+      ),
+    };
   }
 }

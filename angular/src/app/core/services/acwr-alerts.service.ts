@@ -63,6 +63,7 @@ export class AcwrAlertsService {
   private readonly coachNotificationEnabled = signal<boolean>(true);
   private usersTableUnavailable = false;
   private notificationsUnavailable = false;
+  private readonly directNotificationWritesSupported = false;
 
   // Alert counters - readonly computed signal
   public readonly alertStats = computed(() => {
@@ -209,23 +210,24 @@ export class AcwrAlertsService {
 
     // Save notification to database
     const user = this.authService.getUser();
-    if (user?.id) {
+    if (user?.id && this.directNotificationWritesSupported) {
       try {
         if (!this.notificationsUnavailable) {
           const { error: notificationError } = await this.supabaseService.client
             .from("notifications")
             .insert({
-          user_id: user.id,
-          type: "acwr_alert",
-          title: `Load Alert: ${alert.type.replace(/_/g, " ")}`,
-          message: alert.message,
-          data: {
-            alertId: alert.id,
-            severity: alert.severity,
-            recommendation: alert.recommendation,
-            acwrValue: alert.acwrValue,
-          },
-        });
+              user_id: user.id,
+              notification_type: "acwr_alert",
+              title: `Load Alert: ${alert.type.replace(/_/g, " ")}`,
+              message: alert.message,
+              is_read: false,
+              data: {
+                alertId: alert.id,
+                severity: alert.severity,
+                recommendation: alert.recommendation,
+                acwrValue: alert.acwrValue,
+              },
+            });
 
           if (notificationError) {
             const status = Number((notificationError as { status?: number }).status);
@@ -277,6 +279,13 @@ export class AcwrAlertsService {
     const user = this.authService.getUser();
     if (!user?.id) return;
 
+    if (!this.directNotificationWritesSupported) {
+      this.logger.debug(
+        "[AcwrAlerts] Skipping direct browser coach notification writes; backend-managed notification flow required",
+      );
+      return;
+    }
+
     try {
       // Get team ID and coaches using centralized service
       const teamId = this.teamMembershipService.teamId();
@@ -287,10 +296,11 @@ export class AcwrAlertsService {
         // Create database notification for each coach (always succeeds)
         const coachNotifications = coaches.map((coach) => ({
           user_id: coach.userId,
-          type: "player_alert",
+          notification_type: "player_alert",
           title: `Critical Alert: ${alert.playerName}`,
           message: alert.message,
           priority: alert.severity === "critical" ? "high" : "normal",
+          is_read: false,
           data: {
             alertId: alert.id,
             playerId: alert.playerId,

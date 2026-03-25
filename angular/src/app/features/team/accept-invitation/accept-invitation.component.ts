@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
@@ -13,7 +14,9 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
+import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { ToastService } from "../../../core/services/toast.service";
+import { PlatformService } from "../../../core/services/platform.service";
 import { formatDate } from "../../../shared/utils/date.utils";
 import { TeamInvitationDataService } from "../services/team-invitation-data.service";
 
@@ -22,7 +25,7 @@ interface InvitationData {
   teamId: string;
   teamName: string;
   inviterName: string;
-  inviterEmail: string;
+  invitedEmail: string;
   role: string;
   position: string | null;
   jerseyNumber: number | null;
@@ -39,7 +42,7 @@ interface InvitationData {
  *
  * Database tables involved:
  * - team_invitations: Stores invitation records with tokens
- * - team_members: Where accepted invitations create new records
+ * - team_members: Where accepted invitations create new records via RPC
  * - teams: For team information display
  */
 @Component({
@@ -84,13 +87,18 @@ interface InvitationData {
                 >.
               }
             </p>
-            <app-button iconLeft="pi-sign-in" routerLink="/login"
+            <app-button
+              iconLeft="pi-sign-in"
+              routerLink="/login"
+              [queryParams]="authRedirectQueryParams()"
+            >
               >Sign In</app-button
             >
             <app-button
               variant="outlined"
               iconLeft="pi-user-plus"
               routerLink="/register"
+              [queryParams]="authRedirectQueryParams()"
               >Create Account</app-button
             >
           </div>
@@ -198,6 +206,7 @@ export class AcceptInvitationComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
   private teamInvitationDataService = inject(TeamInvitationDataService);
+  private platform = inject(PlatformService);
 
   isLoading = signal(true);
   isProcessing = signal(false);
@@ -209,10 +218,14 @@ export class AcceptInvitationComponent implements OnInit {
   teamName = signal("");
   currentUrl = signal("");
   invitationToken = signal<string | null>(null);
+  authRedirectQueryParams = computed<Record<string, string> | null>(() => {
+    const returnUrl = this.currentUrl();
+    return returnUrl ? { returnUrl } : null;
+  });
 
   ngOnInit(): void {
     // Store current URL for return after login
-    this.currentUrl.set(window.location.pathname + window.location.search);
+    this.currentUrl.set(this.getCurrentRelativeUrl());
 
     // Get invitation token from query params
     const token = this.route.snapshot.queryParams["token"];
@@ -331,7 +344,7 @@ export class AcceptInvitationComponent implements OnInit {
         teamId: invitation.team_id,
         teamName: teamNameValue,
         inviterName: inviterName,
-        inviterEmail: invitation.email,
+        invitedEmail: invitation.email,
         role: invitation.role || "player",
         position: invitation.position,
         jerseyNumber: invitation.jersey_number,
@@ -370,48 +383,22 @@ export class AcceptInvitationComponent implements OnInit {
       return;
     }
 
+    if (this.hasInvitationEmailMismatch(currentUser.email, invitation.invitedEmail)) {
+      this.toastService.warn(
+        `This invitation was sent to ${invitation.invitedEmail}. Sign out and sign in with that email to accept it.`,
+        "Wrong Account",
+      );
+      return;
+    }
+
     this.isProcessing.set(true);
 
     try {
-      // Start a transaction-like operation
-      // 1. Update invitation status to 'accepted'
       const { error: updateError } =
         await this.teamInvitationDataService.acceptInvitation(invitation.id);
 
       if (updateError) {
         throw updateError;
-      }
-
-      // 2. Create team_members record
-      const { error: memberError } =
-        await this.teamInvitationDataService.createTeamMember({
-          teamId: invitation.teamId,
-          userId: currentUser.id,
-          role: invitation.role || "player",
-          position: invitation.position,
-          jerseyNumber: invitation.jerseyNumber,
-        });
-
-      if (memberError) {
-        // If member creation fails, try to revert invitation status
-        await this.teamInvitationDataService.revertInvitation(invitation.id);
-
-        // Check if user is already a member
-        if (memberError.code === "23505") {
-          // Unique violation
-          this.toastService.info(
-            "You are already a member of this team.",
-            "Already a Member",
-          );
-          this.router.navigate(["/roster"]);
-          return;
-        }
-
-        throw memberError;
-      }
-
-      if ((invitation.role || "player") === "player") {
-        await this.syncRosterPlayer(currentUser.id, invitation);
       }
 
       this.isAccepted.set(true);
@@ -425,10 +412,10 @@ export class AcceptInvitationComponent implements OnInit {
         this.router.navigate(["/roster"]);
       }, 2000);
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Failed to accept invitation. Please try again.";
+      const message = getErrorMessage(
+        error,
+        "Failed to accept invitation. Please try again.",
+      );
       this.toastService.error(message);
     } finally {
       this.isProcessing.set(false);
@@ -464,10 +451,10 @@ export class AcceptInvitationComponent implements OnInit {
         this.router.navigate(["/dashboard"]);
       }, 2000);
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Failed to decline invitation. Please try again.";
+      const message = getErrorMessage(
+        error,
+        "Failed to decline invitation. Please try again.",
+      );
       this.toastService.error(message);
     } finally {
       this.isProcessing.set(false);
@@ -496,101 +483,33 @@ export class AcceptInvitationComponent implements OnInit {
     }
   }
 
-  private async syncRosterPlayer(
-    userId: string,
-    invitation: InvitationData,
-  ): Promise<void> {
-    const { profile, error: profileError } =
-      await this.teamInvitationDataService.fetchUserProfile(userId);
-
-    if (profileError) {
-      throw new Error(
-        profileError.message || "Failed to load player profile for roster sync.",
-      );
+  private getCurrentRelativeUrl(): string {
+    const browserLocation = this.platform.getWindow()?.location;
+    if (browserLocation) {
+      return `${browserLocation.pathname}${browserLocation.search}`;
     }
 
-    const displayName =
-      profile?.full_name?.trim() ||
-      [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
-      this.teamInvitationDataService.getCurrentUser()?.email ||
-      "Player";
-
-    const teamPlayerPayload = {
-      team_id: invitation.teamId,
-      user_id: userId,
-      name: displayName,
-      position: invitation.position || profile?.position || "Unknown",
-      jersey_number: invitation.jerseyNumber ?? profile?.jersey_number ?? null,
-      country: profile?.country || null,
-      age: this.calculateAge(profile?.date_of_birth || null),
-      height: profile?.height_cm ? `${profile.height_cm} cm` : null,
-      weight: profile?.weight_kg ? `${profile.weight_kg} kg` : null,
-      email: profile?.email || this.teamInvitationDataService.getCurrentUser()?.email || null,
-      phone: profile?.phone || null,
-      status: "active",
-      updated_at: new Date().toISOString(),
-    };
-
-    const { player, error: teamPlayerError } =
-      await this.teamInvitationDataService.fetchTeamPlayer({
-        userId,
-        teamId: invitation.teamId,
-      });
-
-    if (teamPlayerError) {
-      throw new Error(
-        teamPlayerError.message || "Failed to load team roster record.",
-      );
-    }
-
-    if (player?.id) {
-      const { error } = await this.teamInvitationDataService.updateTeamPlayer(
-        player.id,
-        teamPlayerPayload,
-      );
-
-      if (error) {
-        throw new Error(
-          error.message || "Failed to update team roster record.",
-        );
-      }
-
-      return;
-    }
-
-    const { error } = await this.teamInvitationDataService.insertTeamPlayer({
-      ...teamPlayerPayload,
-      created_by: userId,
-    });
-
-    if (error) {
-      throw new Error(
-        error.message || "Failed to create team roster record.",
-      );
-    }
+    const token = this.route.snapshot.queryParams["token"];
+    return token
+      ? `/accept-invitation?token=${encodeURIComponent(token)}`
+      : "/accept-invitation";
   }
 
-  private calculateAge(dateOfBirth: string | null): number | null {
-    if (!dateOfBirth) {
-      return null;
+  private hasInvitationEmailMismatch(
+    currentUserEmail: string | undefined,
+    invitedEmail: string,
+  ): boolean {
+    const normalizedCurrentUserEmail = this.normalizeEmail(currentUserEmail);
+    const normalizedInvitedEmail = this.normalizeEmail(invitedEmail);
+
+    if (!normalizedCurrentUserEmail || !normalizedInvitedEmail) {
+      return false;
     }
 
-    const birthDate = new Date(dateOfBirth);
-    if (Number.isNaN(birthDate.getTime())) {
-      return null;
-    }
+    return normalizedCurrentUserEmail !== normalizedInvitedEmail;
+  }
 
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
+  private normalizeEmail(email: string | undefined | null): string {
+    return email?.trim().toLowerCase() || "";
   }
 }

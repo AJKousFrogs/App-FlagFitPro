@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import type { Session } from "@supabase/supabase-js";
+import { PlatformService } from "../../../core/services/platform.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
@@ -8,7 +9,12 @@ import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 })
 export class AuthFlowDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private readonly platform = inject(PlatformService);
   private usersTableUnavailable = false;
+  private readonly postOnboardingRedirectKey = "postOnboardingRedirect";
+  private readonly pendingVerificationEmailKey = "pendingVerificationEmail";
+  private readonly passwordRecoveryIntentKey = "passwordRecoveryIntentAt";
+  private readonly passwordRecoveryIntentMaxAgeMs = 10 * 60 * 1000;
 
   getCurrentUser() {
     return this.supabaseService.getCurrentUser();
@@ -16,6 +22,110 @@ export class AuthFlowDataService {
 
   getCurrentSession() {
     return this.supabaseService.getSession();
+  }
+
+  storePostOnboardingRedirect(route: string | null | undefined): boolean {
+    const normalizedRoute = this.normalizeInternalRoute(route);
+    if (!normalizedRoute) {
+      return false;
+    }
+
+    return this.platform.setSessionStorage(
+      this.postOnboardingRedirectKey,
+      normalizedRoute,
+    );
+  }
+
+  consumePostOnboardingRedirect(): string | null {
+    const storedRoute = this.normalizeInternalRoute(
+      this.platform.getSessionStorage(this.postOnboardingRedirectKey),
+    );
+
+    this.platform.removeSessionStorage(this.postOnboardingRedirectKey);
+    return storedRoute;
+  }
+
+  storePendingVerificationEmail(email: string | null | undefined): boolean {
+    const normalizedEmail = this.normalizeEmail(email);
+    if (!normalizedEmail) {
+      return false;
+    }
+
+    return this.platform.setSessionStorage(
+      this.pendingVerificationEmailKey,
+      normalizedEmail,
+    );
+  }
+
+  getPendingVerificationEmail(): string | null {
+    return this.normalizeEmail(
+      this.platform.getSessionStorage(this.pendingVerificationEmailKey),
+    );
+  }
+
+  clearPendingVerificationEmail(): boolean {
+    return this.platform.removeSessionStorage(this.pendingVerificationEmailKey);
+  }
+
+  markPasswordRecoveryIntent(): boolean {
+    return this.platform.setSessionStorage(
+      this.passwordRecoveryIntentKey,
+      Date.now().toString(),
+    );
+  }
+
+  hasActivePasswordRecoveryIntent(): boolean {
+    const storedValue = this.platform.getSessionStorage(
+      this.passwordRecoveryIntentKey,
+    );
+    const intentTimestamp = Number(storedValue);
+
+    if (!Number.isFinite(intentTimestamp)) {
+      if (storedValue) {
+        this.clearPasswordRecoveryIntent();
+      }
+      return false;
+    }
+
+    const isFresh =
+      Date.now() - intentTimestamp <= this.passwordRecoveryIntentMaxAgeMs;
+
+    if (!isFresh) {
+      this.clearPasswordRecoveryIntent();
+    }
+
+    return isFresh;
+  }
+
+  clearPasswordRecoveryIntent(): boolean {
+    return this.platform.removeSessionStorage(this.passwordRecoveryIntentKey);
+  }
+
+  async resolvePostAuthRedirect(options?: {
+    returnUrl?: string | null;
+    allowReturnUrlBypassOnboarding?: boolean;
+    fallbackRoute?: string;
+  }): Promise<string> {
+    const fallbackRoute =
+      this.normalizeInternalRoute(options?.fallbackRoute) ?? "/dashboard";
+    const returnUrl = this.normalizeInternalRoute(options?.returnUrl);
+    const user = this.getCurrentUser();
+
+    if (!user) {
+      return returnUrl ?? this.consumePostOnboardingRedirect() ?? fallbackRoute;
+    }
+
+    const { data: userData } = await this.getUserOnboardingStatus(user.id);
+    const onboardingIncomplete = userData?.onboarding_completed === false;
+
+    if (
+      onboardingIncomplete &&
+      !(options?.allowReturnUrlBypassOnboarding && returnUrl)
+    ) {
+      return "/onboarding";
+    }
+
+    return returnUrl ?? this.consumePostOnboardingRedirect() ?? fallbackRoute;
   }
 
   async updateAuthUser(payload: Record<string, unknown>) {
@@ -71,11 +181,11 @@ export class AuthFlowDataService {
   }
 
   async getSession(): Promise<{
-    data: { session: unknown | null };
+    data: { session: Session | null };
     error: { message?: string } | null;
   }> {
     const { data, error } = await this.supabaseService.client.auth.getSession();
-    return { data, error };
+    return { data: { session: data.session }, error };
   }
 
   async getUserOnboardingStatus(userId: string): Promise<{
@@ -90,13 +200,81 @@ export class AuthFlowDataService {
       .from("users")
       .select("onboarding_completed")
       .eq("id", userId)
-      .single();
+      .maybeSingle();
 
-    if (error && isBenignSupabaseQueryError(error)) {
+    if (error && this.isMissingUsersTableError(error)) {
       this.usersTableUnavailable = true;
       return { data: null, error: null };
     }
 
     return { data: data ?? null, error };
+  }
+
+  buildAppUrl(path: string): string {
+    const normalizedPath = this.normalizePath(path);
+    const browserWindow = this.platform.getWindow();
+    if (!browserWindow) {
+      return normalizedPath;
+    }
+
+    return `${browserWindow.location.origin}${normalizedPath}`;
+  }
+
+  getEmailVerificationRedirectUrl(): string {
+    return this.buildAppUrl("/auth/callback");
+  }
+
+  private normalizeInternalRoute(
+    route: string | null | undefined,
+  ): string | null {
+    if (typeof route !== "string") {
+      return null;
+    }
+
+    const normalizedRoute = route.trim();
+    if (
+      !normalizedRoute ||
+      !normalizedRoute.startsWith("/") ||
+      normalizedRoute.startsWith("//")
+    ) {
+      return null;
+    }
+
+    return normalizedRoute;
+  }
+
+  private normalizePath(path: string): string {
+    const trimmed = path.trim();
+    if (!trimmed) {
+      return "/";
+    }
+
+    return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  }
+
+  private normalizeEmail(email: string | null | undefined): string | null {
+    if (typeof email !== "string") {
+      return null;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    return normalizedEmail ? normalizedEmail : null;
+  }
+
+  private isMissingUsersTableError(error: unknown): boolean {
+    if (
+      !isBenignSupabaseQueryError(error) ||
+      !error ||
+      typeof error !== "object"
+    ) {
+      return false;
+    }
+
+    const code = (error as { code?: string }).code;
+    if (code === "PGRST116") {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -393,29 +393,23 @@ export class RegisterComponent {
       name: rawName,
       email: rawEmail,
       password: this.registerForm.value.password,
+      redirectTo: this.authFlowDataService.getEmailVerificationRedirectUrl(),
     };
 
     this.authService
       .register(registerData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.toastService.success(TOAST.SUCCESS.ACCOUNT_CREATED);
-            // Check for returnUrl (e.g., from team invitation)
-            const returnUrl = this.route.snapshot.queryParams["returnUrl"];
-            // New users should go to onboarding first, then returnUrl
-            if (returnUrl && !returnUrl.includes("onboarding")) {
-              // Store returnUrl for after onboarding
-              sessionStorage.setItem("postOnboardingRedirect", returnUrl);
-            }
-            // Always send new users to onboarding first
-            this.router.navigate(["/onboarding"]);
-          } else {
-            this.toastService.error(
-              response.error || TOAST.ERROR.REGISTRATION_FAILED,
-            );
+        next: () => {
+          this.toastService.success(TOAST.SUCCESS.ACCOUNT_CREATED);
+          // Check for returnUrl (e.g., from team invitation)
+          const returnUrl = this.route.snapshot.queryParams["returnUrl"];
+          // New users should go to onboarding first, then returnUrl
+          if (returnUrl && !returnUrl.includes("onboarding")) {
+            this.authFlowDataService.storePostOnboardingRedirect(returnUrl);
           }
+          this.authFlowDataService.storePendingVerificationEmail(rawEmail);
+          this.router.navigate(["/verify-email"]);
           this.isLoading.set(false);
         },
         error: (error) => {

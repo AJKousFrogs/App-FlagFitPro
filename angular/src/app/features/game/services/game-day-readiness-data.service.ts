@@ -1,4 +1,5 @@
 import { Injectable, inject } from "@angular/core";
+import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 
 @Injectable({
@@ -6,6 +7,8 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 })
 export class GameDayReadinessDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly directCoachNotificationWritesSupported = false;
 
   async submitReadinessEntry(
     readinessData: Record<string, unknown>,
@@ -22,15 +25,22 @@ export class GameDayReadinessDataService {
     message: string;
     data: Record<string, unknown>;
   }): Promise<{ error: { message?: string } | null }> {
+    if (!this.directCoachNotificationWritesSupported) {
+      this.logger.debug(
+        "[GameDayReadiness] Skipping direct browser coach notification write; backend-managed notification flow required",
+      );
+      return { error: null };
+    }
+
     const { error } = await this.supabaseService.client
       .from("notifications")
       .insert({
         user_id: input.userId,
-        type: "readiness_alert",
+        notification_type: "readiness_alert",
         title: "⚠️ Low Game Day Readiness",
         message: input.message,
         data: input.data,
-        read: false,
+        is_read: false,
       });
 
     return { error };

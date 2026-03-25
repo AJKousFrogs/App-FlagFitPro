@@ -34,6 +34,7 @@ export class MissingDataDetectionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private notificationsUnavailable = false;
+  private readonly directCoachReminderWritesSupported = false;
 
   /**
    * Check if player has missing wellness data
@@ -102,6 +103,13 @@ export class MissingDataDetectionService {
    */
   async checkAndCreateCoachReminders(teamId: string): Promise<void> {
     if (this.notificationsUnavailable) {
+      return;
+    }
+
+    if (!this.directCoachReminderWritesSupported) {
+      this.logger.debug(
+        "[MissingData] Skipping direct browser coach reminder writes; backend-managed notification flow required",
+      );
       return;
     }
 

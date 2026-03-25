@@ -25,7 +25,9 @@ export interface LoadCap {
 export class AcwrSpikeDetectionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
-  private loadCapsUnavailable = false;
+  // load_caps is backend-managed in the live project and is not safe to query
+  // directly from the browser against the current schema/policies.
+  private loadCapsUnavailable = true;
 
   /**
    * Check for ACWR spike and create load cap if needed

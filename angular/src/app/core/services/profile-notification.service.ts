@@ -119,7 +119,9 @@ export class ProfileNotificationService {
       );
     }
 
-    this.saveProfileNotificationToDatabase(missingFields, percentage);
+    if (hasLoadedProfileData) {
+      this.saveProfileNotificationToDatabase(missingFields, percentage);
+    }
 
     this.hasShownNotification.set(true);
   }

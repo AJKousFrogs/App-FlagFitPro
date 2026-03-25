@@ -24,6 +24,7 @@ const mockSupabaseService = {
   currentUser: vi.fn(() => null),
   session: vi.fn(() => null),
   userId: vi.fn(() => null),
+  getToken: vi.fn(),
   signIn: vi.fn(),
   signUp: vi.fn(),
   signOut: vi.fn(),
@@ -141,8 +142,8 @@ describe("AuthService", () => {
 
       const response = await firstValueFrom(service.login(validCredentials));
 
-      expect(response.success).toBe(true);
-      expect(response.data).toBeDefined();
+      expect(response.user.email).toBe("test@example.com");
+      expect(response.session).toEqual(mockSession);
       expect((mockSupabaseService as any).signIn).toHaveBeenCalledWith(
         validCredentials.email,
         validCredentials.password,
@@ -218,12 +219,13 @@ describe("AuthService", () => {
         service.register(validRegistration),
       );
 
-      expect(response.success).toBe(true);
+      expect(response.user.email).toBe("newuser@example.com");
       expect(response.message).toContain("verify");
       expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
         validRegistration.email,
         validRegistration.password,
         { name: validRegistration.name, full_name: validRegistration.name },
+        { emailRedirectTo: undefined },
       );
     });
 
@@ -270,6 +272,31 @@ describe("AuthService", () => {
           full_name: "New User",
           role: "coach",
           teamId: "team-123",
+        },
+        { emailRedirectTo: undefined },
+      );
+    });
+
+    it("should forward an explicit signup redirect URL", async () => {
+      (mockSupabaseService as any).signUp.mockResolvedValue({
+        data: { user: mockNewUser, session: null },
+        error: null,
+      });
+
+      await firstValueFrom(
+        service.register({
+          ...validRegistration,
+          redirectTo: "https://webflagfootballfrogs.netlify.app/auth/callback",
+        }),
+      );
+
+      expect((mockSupabaseService as any).signUp).toHaveBeenCalledWith(
+        validRegistration.email,
+        validRegistration.password,
+        { name: validRegistration.name, full_name: validRegistration.name },
+        {
+          emailRedirectTo:
+            "https://webflagfootballfrogs.netlify.app/auth/callback",
         },
       );
     });
@@ -334,17 +361,15 @@ describe("AuthService", () => {
 
       const response = await firstValueFrom(service.getCurrentUser());
 
-      expect(response.success).toBe(true);
-      expect((response.data as User).email).toBe("test@example.com");
+      expect(response?.email).toBe("test@example.com");
     });
 
-    it("should return error when no user found", async () => {
+    it("should return null when no user found", async () => {
       (mockSupabaseService as any).currentUser.mockReturnValue(null);
 
       const response = await firstValueFrom(service.getCurrentUser());
 
-      expect(response.success).toBe(false);
-      expect(response.error).toBe("No user found");
+      expect(response).toBeNull();
     });
 
     it("should check auth status correctly", () => {
@@ -362,14 +387,7 @@ describe("AuthService", () => {
     });
 
     it("should get token from Supabase", async () => {
-      const mockSession = {
-        access_token: "mock-jwt-token",
-        expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
-      };
-      (mockSupabaseService.client.auth.getSession as any).mockResolvedValue({
-        data: { session: mockSession },
-        error: null,
-      });
+      (mockSupabaseService as any).getToken.mockResolvedValue("mock-jwt-token");
 
       const token = await service.getToken();
 
@@ -377,10 +395,7 @@ describe("AuthService", () => {
     });
 
     it("should return null token when not authenticated", async () => {
-      (mockSupabaseService.client.auth.getSession as any).mockResolvedValue({
-        data: { session: null },
-        error: null,
-      });
+      (mockSupabaseService as any).getToken.mockResolvedValue(null);
 
       const token = await service.getToken();
 
@@ -496,8 +511,8 @@ describe("AuthService", () => {
 
       const response = await firstValueFrom(service.getCurrentUser());
 
-      expect(response.success).toBe(true);
-      const user = response.data as User;
+      expect(response).not.toBeNull();
+      const user = response as User;
       expect(user.name).toBe("test@example.com"); // Falls back to email
       expect(user.role).toBe("user"); // Falls back to default role
     });
@@ -515,8 +530,8 @@ describe("AuthService", () => {
 
       const response = await firstValueFrom(service.getCurrentUser());
 
-      expect(response.success).toBe(true);
-      const user = response.data as User;
+      expect(response).not.toBeNull();
+      const user = response as User;
       expect(user.email).toBe("");
     });
   });

@@ -30,7 +30,9 @@ export interface OwnershipTransition {
 export class OwnershipTransitionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
-  private transitionsUnavailable = false;
+  // ownership_transitions is backend-managed in the live project; direct
+  // browser access is currently schema-drifted and policy-incompatible.
+  private transitionsUnavailable = true;
 
   /**
    * Log ownership transition

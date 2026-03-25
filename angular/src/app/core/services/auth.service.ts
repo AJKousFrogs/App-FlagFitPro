@@ -1,5 +1,6 @@
 import { Injectable, effect, inject, signal, untracked } from "@angular/core";
 import { Router } from "@angular/router";
+import { Session, User as SupabaseUser } from "@supabase/supabase-js";
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, map, tap } from "rxjs";
 import { LoggerService } from "./logger.service";
@@ -23,6 +24,7 @@ export interface User {
   role?: string;
   position?: string;
   avatar_url?: string;
+  emailConfirmed?: boolean;
   isSuperadmin?: boolean;
   user_metadata?: UserMetadata;
 }
@@ -37,19 +39,14 @@ export interface RegisterData {
   email: string;
   password: string;
   name?: string;
+  redirectTo?: string;
   [key: string]: unknown;
 }
 
-interface AuthResponse {
-  success: boolean;
-  data?:
-    | {
-        user: unknown;
-        session?: unknown;
-      }
-    | User;
+export interface AuthSessionResult {
+  user: User;
+  session: Session | null;
   message?: string;
-  error?: string;
 }
 
 @Injectable({
@@ -81,14 +78,7 @@ export class AuthService {
       // Use untracked for state updates to prevent effect from tracking its own writes
       untracked(() => {
         if (user) {
-          const metadata = user.user_metadata as UserMetadata | undefined;
-          const appUser: User = {
-            id: user.id,
-            email: user.email ?? "",
-            name: metadata?.["name"] ?? metadata?.["full_name"] ?? user.email,
-            role: metadata?.["role"] ?? "user",
-            user_metadata: metadata,
-          };
+          const appUser = this.mapSupabaseUser(user);
           this.currentUser.set(appUser);
           this.isAuthenticated.set(true);
         } else {
@@ -104,18 +94,12 @@ export class AuthService {
     // Just check if we have a current session (using signal)
     const session = this.supabaseService.session();
     if (session?.user) {
-      const user: User = {
-        id: session.user.id,
-        email: session.user.email ?? "",
-        name: session.user.user_metadata?.["name"] ?? session.user.email,
-        role: session.user.user_metadata?.["role"] ?? "user",
-      };
-      this.currentUser.set(user);
+      this.currentUser.set(this.mapSupabaseUser(session.user));
       this.isAuthenticated.set(true);
     }
   }
 
-  login(credentials: LoginCredentials): Observable<AuthResponse> {
+  login(credentials: LoginCredentials): Observable<AuthSessionResult> {
     this.isLoading.set(true);
     const normalizedEmail = credentials.email.trim().toLowerCase();
 
@@ -126,12 +110,12 @@ export class AuthService {
         if (response.error) {
           throw new Error(this.mapSupabaseAuthError(response.error.message));
         }
+        if (!response.data.user) {
+          throw new Error("Authentication succeeded without a user session.");
+        }
         return {
-          success: true,
-          data: {
-            user: response.data.user,
-            session: response.data.session,
-          },
+          user: this.mapSupabaseUser(response.data.user),
+          session: response.data.session,
         };
       }),
       catchError((error) => {
@@ -142,11 +126,16 @@ export class AuthService {
     );
   }
 
-  register(data: RegisterData): Observable<AuthResponse> {
+  register(data: RegisterData): Observable<AuthSessionResult> {
     this.isLoading.set(true);
 
     // Extract metadata (everything except email/password)
-    const { email: _email, password: _password, ...metadata } = data;
+    const {
+      email: _email,
+      password: _password,
+      redirectTo,
+      ...metadata
+    } = data;
     const normalizedEmail = data.email.trim().toLowerCase();
     const normalizedMetadata = {
       ...metadata,
@@ -165,18 +154,21 @@ export class AuthService {
         normalizedEmail,
         data.password,
         normalizedMetadata,
+        {
+          emailRedirectTo: redirectTo,
+        },
       ),
     ).pipe(
       map((response) => {
         if (response.error) {
           throw new Error(this.mapSupabaseAuthError(response.error.message));
         }
+        if (!response.data.user) {
+          throw new Error("Registration succeeded without a user record.");
+        }
         return {
-          success: true,
-          data: {
-            user: response.data.user,
-            session: response.data.session,
-          },
+          user: this.mapSupabaseUser(response.data.user),
+          session: response.data.session,
           message: "Please check your email to verify your account.",
         };
       }),
@@ -214,21 +206,16 @@ export class AuthService {
     );
   }
 
-  getCurrentUser(): Observable<AuthResponse> {
+  getCurrentUser(): Observable<User | null> {
     // Use signal instead of property access
     const user = this.supabaseService.currentUser();
     if (user) {
-      const appUser: User = {
-        id: user.id,
-        email: user.email ?? "",
-        name: user.user_metadata?.["name"] ?? user.email,
-        role: user.user_metadata?.["role"] ?? "user",
-      };
+      const appUser = this.mapSupabaseUser(user);
       this.currentUser.set(appUser);
       this.isAuthenticated.set(true);
-      return of({ success: true, data: appUser });
+      return of(appUser);
     }
-    return of({ success: false, error: "No user found" });
+    return of(null);
   }
 
   async getToken(): Promise<string | null> {
@@ -297,17 +284,7 @@ export class AuthService {
       }
 
       if (user) {
-        const metadata = user.user_metadata as UserMetadata | undefined;
-        const appUser: User = {
-          id: user.id,
-          email: user.email ?? "",
-          name: metadata?.["name"] ?? metadata?.["full_name"] ?? user.email,
-          role: metadata?.["role"] ?? "user",
-          position: metadata?.["position"],
-          avatar_url: metadata?.["avatar_url"],
-          user_metadata: metadata,
-        };
-        this.currentUser.set(appUser);
+        this.currentUser.set(this.mapSupabaseUser(user));
         this.isAuthenticated.set(true);
         this.logger.info("[Auth] User refreshed successfully");
       }
@@ -350,5 +327,21 @@ export class AuthService {
         typeof error === "string" ? error : "Authentication failed. Please try again.",
       ),
     );
+  }
+
+  private mapSupabaseUser(user: SupabaseUser): User {
+    const metadata = user.user_metadata as UserMetadata | undefined;
+    const email = user.email ?? "";
+
+    return {
+      id: user.id,
+      email,
+      name: metadata?.["name"] ?? metadata?.["full_name"] ?? email,
+      role: metadata?.["role"] ?? "user",
+      position: metadata?.["position"] as string | undefined,
+      avatar_url: metadata?.["avatar_url"] as string | undefined,
+      emailConfirmed: !!user.email_confirmed_at,
+      user_metadata: metadata,
+    };
   }
 }

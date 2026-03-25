@@ -5,6 +5,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  OnInit,
   signal,
 } from "@angular/core";
 
@@ -21,7 +22,10 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { InputText } from "primeng/inputtext";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
-import { AuthService } from "../../../core/services/auth.service";
+import {
+  AuthService,
+  AuthSessionResult,
+} from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { getErrorMessage } from "../../../shared/utils/error.utils";
@@ -200,7 +204,7 @@ type LoginForm = FormGroup<{
   `,
   styleUrl: "./login.component.scss",
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private authFlowDataService = inject(AuthFlowDataService);
@@ -282,7 +286,7 @@ export class LoginComponent {
   ngOnInit(): void {
     // Redirect if already authenticated
     if (this.authService.checkAuth()) {
-      this.router.navigate(["/dashboard"]);
+      void this.redirectAuthenticatedUser();
     }
   }
 
@@ -315,46 +319,102 @@ export class LoginComponent {
       .login(normalizedCredentials)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: async (response: { success?: boolean; error?: string }) => {
-          if (response.success) {
-            this.toastService.success(TOAST.SUCCESS.LOGIN_SUCCESS);
-            this.submitError.set(null);
-            // Check onboarding status before redirecting
-            const user = this.authService.currentUser();
-            if (user) {
-              const { data: userData } =
-                await this.authFlowDataService.getUserOnboardingStatus(user.id);
-
-              const returnUrl = this.route.snapshot.queryParams["returnUrl"];
-
-              // If onboarding not completed and no specific returnUrl, redirect to onboarding
-              if (userData && !userData.onboarding_completed && !returnUrl) {
-                this.router.navigate(["/onboarding"]);
-              } else {
-                this.router.navigateByUrl(returnUrl || "/dashboard");
-              }
-            } else {
-              // Fallback to dashboard if user check fails
-              const returnUrl = this.route.snapshot.queryParams["returnUrl"];
-              this.router.navigateByUrl(returnUrl || "/dashboard");
-            }
-          } else {
-            this.submitError.set(
-              response.error ||
-                "Your email or password was not accepted. Check your details and try again.",
-            );
-          }
-          this.isLoading.set(false);
+        next: (result) => {
+          void this.handleSuccessfulLogin(result);
         },
         error: (error: Error) => {
-          this.submitError.set(
-            getErrorMessage(
-              error,
-              "Login failed. Check your connection and try again.",
-            ),
-          );
-          this.isLoading.set(false);
+          void this.handleLoginError(error);
         },
       });
+  }
+
+  private async handleSuccessfulLogin(result: AuthSessionResult): Promise<void> {
+    try {
+      if (!result.user.emailConfirmed) {
+        await this.routeToEmailVerification(result.user.email);
+        return;
+      }
+
+      this.toastService.success(TOAST.SUCCESS.LOGIN_SUCCESS);
+      this.submitError.set(null);
+      const destination = await this.authFlowDataService.resolvePostAuthRedirect(
+        {
+          returnUrl: this.route.snapshot.queryParams["returnUrl"] ?? null,
+          allowReturnUrlBypassOnboarding: true,
+        },
+      );
+
+      this.router.navigateByUrl(destination);
+    } catch (error) {
+      this.submitError.set(
+        getErrorMessage(
+          error,
+          "Login succeeded, but we could not finish loading your profile.",
+        ),
+      );
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  private async handleLoginError(error: Error): Promise<void> {
+    const message = getErrorMessage(
+      error,
+      "Login failed. Check your connection and try again.",
+    );
+
+    if (this.isEmailVerificationError(message)) {
+      await this.routeToEmailVerification(
+        this.loginForm.getRawValue().email.trim().toLowerCase(),
+      );
+      return;
+    }
+
+    this.submitError.set(message);
+    this.isLoading.set(false);
+  }
+
+  private async redirectAuthenticatedUser(): Promise<void> {
+    const currentUser = this.authService.getUser();
+    if (!currentUser) {
+      return;
+    }
+
+    if (currentUser.emailConfirmed === false) {
+      await this.routeToEmailVerification(currentUser.email);
+      return;
+    }
+
+    try {
+      const destination = await this.authFlowDataService.resolvePostAuthRedirect(
+        {
+          returnUrl: this.route.snapshot.queryParams["returnUrl"] ?? null,
+          allowReturnUrlBypassOnboarding: true,
+        },
+      );
+      await this.router.navigateByUrl(destination);
+    } catch {
+      await this.router.navigate(["/dashboard"]);
+    }
+  }
+
+  private async routeToEmailVerification(email: string): Promise<void> {
+    this.authFlowDataService.storePendingVerificationEmail(email);
+    try {
+      await this.authFlowDataService.signOut();
+    } catch {
+      // Continue to the verification screen even if local sign-out cleanup fails.
+    }
+    this.submitError.set(null);
+    this.toastService.info(
+      "Please verify your email before signing in.",
+      "Verify Your Email",
+    );
+    await this.router.navigate(["/verify-email"]);
+    this.isLoading.set(false);
+  }
+
+  private isEmailVerificationError(message: string): boolean {
+    return /verify your email|email (not )?confirmed/i.test(message);
   }
 }

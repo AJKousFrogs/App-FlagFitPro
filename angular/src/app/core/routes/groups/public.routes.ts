@@ -63,7 +63,7 @@ export const publicRoutes: Routes = [
       import("../../../features/onboarding/onboarding.component").then(
         (m) => m.OnboardingComponent,
       ),
-    data: { preload: false, entry: "internal" }, // On-demand - one-time use
+    data: { preload: false, entry: "deeplink" }, // One-time setup flow outside the main app shell
   },
   {
     path: "accept-invitation",

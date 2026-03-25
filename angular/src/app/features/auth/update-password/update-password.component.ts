@@ -187,49 +187,54 @@ export class UpdatePasswordComponent implements OnInit {
     this.isCheckingSession.set(true);
 
     try {
+      const hasRecoveryHash = this.hasRecoveryTokensInHash();
+      if (hasRecoveryHash) {
+        this.authFlowDataService.markPasswordRecoveryIntent();
+      }
+
       // Supabase automatically handles the hash fragment and establishes a session
       // when the page loads with recovery tokens
       const { data, error } = await this.authFlowDataService.getSession();
       const session = data.session;
+      const hasRecoveryIntent =
+        this.authFlowDataService.hasActivePasswordRecoveryIntent();
 
       if (error) {
         this.logger.error("Error checking recovery session:", error);
+        this.authFlowDataService.clearPasswordRecoveryIntent();
         this.isValidRecoverySession.set(false);
         return;
       }
 
-      // Check if we have a session (Supabase creates one from recovery tokens)
-      if (session) {
-        // Additional check: see if URL contains recovery type
-        const hash = window.location.hash;
-        const isRecoveryFlow =
-          hash.includes("type=recovery") ||
-          hash.includes("type=password_recovery");
-
-        // If we have a session, we can proceed (either from recovery or existing session)
+      // Only allow sessions that came from a real recovery flow.
+      if (session && (hasRecoveryHash || hasRecoveryIntent)) {
         this.isValidRecoverySession.set(true);
-
-        if (isRecoveryFlow) {
+        if (hasRecoveryHash) {
           this.toastService.info(TOAST.INFO.ENTER_NEW_PASSWORD);
         }
-      } else {
-        // No session - check if URL has recovery tokens that haven't been processed
-        const hash = window.location.hash;
-        if (hash.includes("access_token") && hash.includes("type=recovery")) {
-          // Tokens present but session not established - might need to wait
-          // Try getting session again after a short delay
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          const { data: retryData } =
-            await this.authFlowDataService.getSession();
-          const retrySession = retryData.session;
+        return;
+      }
 
-          this.isValidRecoverySession.set(!!retrySession);
-        } else {
-          this.isValidRecoverySession.set(false);
+      if (!session && hasRecoveryHash) {
+        // No session - check if URL has recovery tokens that haven't been processed
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const { data: retryData } = await this.authFlowDataService.getSession();
+        const retrySession = retryData.session;
+        const hasRetryIntent =
+          this.authFlowDataService.hasActivePasswordRecoveryIntent();
+
+        if (retrySession && hasRetryIntent) {
+          this.isValidRecoverySession.set(true);
+          this.toastService.info(TOAST.INFO.ENTER_NEW_PASSWORD);
+          return;
         }
       }
+
+      this.authFlowDataService.clearPasswordRecoveryIntent();
+      this.isValidRecoverySession.set(false);
     } catch (err) {
       this.logger.error("Error in recovery session check:", err);
+      this.authFlowDataService.clearPasswordRecoveryIntent();
       this.isValidRecoverySession.set(false);
     } finally {
       this.isCheckingSession.set(false);
@@ -321,6 +326,8 @@ export class UpdatePasswordComponent implements OnInit {
         "Password updated successfully! Redirecting to login...",
       );
 
+      this.authFlowDataService.clearPasswordRecoveryIntent();
+
       // Sign out and redirect to login
       await this.authFlowDataService.signOut();
 
@@ -335,5 +342,14 @@ export class UpdatePasswordComponent implements OnInit {
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  private hasRecoveryTokensInHash(): boolean {
+    const hash = window.location.hash;
+    return (
+      hash.includes("access_token") &&
+      (hash.includes("type=recovery") ||
+        hash.includes("type=password_recovery"))
+    );
   }
 }

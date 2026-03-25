@@ -26,12 +26,20 @@ export class OnboardingDataService {
     return { data: data ?? null, error };
   }
 
-  async resendVerificationEmail(email: string): Promise<{
+  async resendVerificationEmail(
+    email: string,
+    redirectTo?: string,
+  ): Promise<{
     error: { message?: string } | null;
   }> {
     const { error } = await this.supabaseService.client.auth.resend({
       type: "signup",
       email,
+      options: redirectTo
+        ? {
+            emailRedirectTo: redirectTo,
+          }
+        : undefined,
     });
     return { error };
   }

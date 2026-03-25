@@ -1,7 +1,17 @@
 @use "styles/mixins" as *;
 
+.onboarding-auth-shell {
+  min-height: 100dvh;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  background:
+    radial-gradient(circle at top, rgba(var(--ds-primary-green-rgb), 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(7, 12, 10, 0.98), rgba(9, 15, 12, 0.94));
+}
+
 .onboarding-page {
   width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
 
   .onboarding-card {
     margin-top: 0;

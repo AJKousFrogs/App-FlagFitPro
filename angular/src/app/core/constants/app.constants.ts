@@ -80,7 +80,7 @@ export const ROUTES = {
   RESET_PASSWORD: "/reset-password",
   UPDATE_PASSWORD: "/update-password",
   VERIFY_EMAIL: "/verify-email",
-  AUTH_CALLBACK: "/auth-callback",
+  AUTH_CALLBACK: "/auth/callback",
   ACCEPT_INVITATION: "/accept-invitation",
 
   // Main navigation

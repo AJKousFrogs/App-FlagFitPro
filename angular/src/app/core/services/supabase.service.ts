@@ -250,12 +250,18 @@ export class SupabaseService {
   /**
    * Sign up with email and password
    */
-  async signUp(email: string, password: string, metadata?: UserMetadata) {
+  async signUp(
+    email: string,
+    password: string,
+    metadata?: UserMetadata,
+    options?: { emailRedirectTo?: string },
+  ) {
     return await this.supabase.auth.signUp({
       email,
       password,
       options: {
         data: metadata,
+        emailRedirectTo: options?.emailRedirectTo,
       },
     });
   }

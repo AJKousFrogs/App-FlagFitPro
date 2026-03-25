@@ -585,4 +585,104 @@ describe("resolveTodayState", () => {
     // Should default to normal day if no errors detected
     expect(result.trainingAllowed).toBe(true);
   });
+
+  it("prefers exceptional metadata status over a resolved session payload", () => {
+    const protocol: ProtocolJson = {
+      id: "test-edge-status",
+      protocol_date: "2026-01-06",
+      confidence_metadata: {
+        sessionResolution: {
+          success: false,
+          status: "no_program",
+          hasProgram: false,
+          hasSessionTemplate: false,
+          override: null,
+        },
+        hasActiveProgram: false,
+      },
+      session_resolution: {
+        success: true,
+        status: "resolved",
+        override: null,
+      },
+    };
+
+    const result = resolveTodayState(protocol, nowLocal);
+
+    expect(result.trainingAllowed).toBe(false);
+    expect(result.errorState?.reason_code).toBe("NO_ACTIVE_PROGRAM");
+    expect(result.banners[0].text).toContain("No training program assigned");
+  });
+
+  it("uses metadata override when the session payload omits the override type", () => {
+    const protocol: ProtocolJson = {
+      id: "test-edge-override",
+      protocol_date: "2026-01-06",
+      readiness_score: 79,
+      confidence_metadata: {
+        readiness: {
+          hasData: true,
+          confidence: "measured",
+        },
+        sessionResolution: {
+          success: true,
+          status: "resolved",
+          hasProgram: true,
+          hasSessionTemplate: true,
+          override: "flag_practice",
+        },
+        hasActiveProgram: true,
+        injuryProtocolActive: false,
+      },
+      session_resolution: {
+        success: true,
+        status: "resolved",
+        override: null,
+      },
+      teamActivity: {
+        type: "practice",
+        startTimeLocal: "19:30",
+        participation: "required",
+      },
+    };
+
+    const result = resolveTodayState(protocol, nowLocal);
+
+    expect(result.trainingAllowed).toBe(true);
+    expect(result.banners[0].text).toContain("Flag Practice Today");
+    expect(result.headerContext?.practiceTime).toBe("19:30");
+  });
+
+  it("uses the generic resolution failure text for non-template failures", () => {
+    const protocol: ProtocolJson = {
+      id: "test-edge-failure",
+      protocol_date: "2026-01-06",
+      confidence_metadata: {
+        sessionResolution: {
+          success: false,
+          status: "service_unavailable",
+          hasProgram: true,
+          hasSessionTemplate: true,
+          override: null,
+        },
+        hasActiveProgram: true,
+      },
+      session_resolution: {
+        success: false,
+        status: "resolved",
+        override: null,
+      },
+    };
+
+    const result = resolveTodayState(protocol, nowLocal);
+
+    expect(result.trainingAllowed).toBe(false);
+    expect(result.errorState?.reason_code).toBe("SESSION_RESOLUTION_FAILED");
+    expect(result.errorState?.message).toBe(
+      "Unable to resolve training session. Contact your coach.",
+    );
+    expect(result.banners[0].text).toBe(
+      "Unable to resolve training session. Contact your coach.",
+    );
+  });
 });

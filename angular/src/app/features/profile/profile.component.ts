@@ -31,6 +31,7 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 import { getInitials } from "../../shared/utils/format.utils";
 import {
   DELETION_MESSAGES,
@@ -875,9 +876,7 @@ export class ProfileComponent implements OnInit {
     } catch (error) {
       this.logger.error("Error accepting invitation:", error);
       this.toastService.error(
-        error instanceof Error
-          ? error.message
-          : TOAST.ERROR.INVITATION_ACCEPT_FAILED,
+        getErrorMessage(error, TOAST.ERROR.INVITATION_ACCEPT_FAILED),
       );
     } finally {
       this.processingInvitation.set(null);
@@ -903,9 +902,7 @@ export class ProfileComponent implements OnInit {
     } catch (error) {
       this.logger.error("Error declining invitation:", error);
       this.toastService.error(
-        error instanceof Error
-          ? error.message
-          : TOAST.ERROR.INVITATION_DECLINE_FAILED,
+        getErrorMessage(error, TOAST.ERROR.INVITATION_DECLINE_FAILED),
       );
     } finally {
       this.processingInvitation.set(null);
