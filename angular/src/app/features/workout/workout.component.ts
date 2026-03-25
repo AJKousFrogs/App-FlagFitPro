@@ -105,7 +105,7 @@ interface Workout {
                   <div class="exercise-actions">
                     <app-checkbox
                       [ngModel]="exercise.completed"
-                      (change)="onExerciseCompletedChange(exercise, $event.checked)"
+                      (checkedChange)="onExerciseCompletedChange(exercise, $event)"
                       [binary]="true"
                       inputId="exercise-{{ exercise.id }}"
                     >

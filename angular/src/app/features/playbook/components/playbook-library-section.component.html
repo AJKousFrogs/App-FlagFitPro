@@ -43,7 +43,7 @@
 
   <p-select
     [options]="categoryOptions()"
-    (onChange)="categoryChange.emit($event.value)"
+    (onChange)="emitCategoryChange($event)"
     optionLabel="label"
     optionValue="value"
     placeholder="Category"
@@ -53,7 +53,7 @@
 
   <p-select
     [options]="statusOptions()"
-    (onChange)="statusChange.emit($event.value)"
+    (onChange)="emitStatusChange($event)"
     optionLabel="label"
     optionValue="value"
     placeholder="Status"

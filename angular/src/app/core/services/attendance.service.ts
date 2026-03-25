@@ -2,9 +2,9 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { ApiService } from "./api.service";
-import { ApiResponse } from "../models/common.models";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { extractApiArray, extractApiPayload } from "../utils/api-response-mapper";
 
 export interface TeamEvent {
   id: string;
@@ -112,7 +112,7 @@ export class AttendanceService {
     return this.apiService
       .get<TeamEvent[]>("/api/attendance/events", params)
       .pipe(
-        map((response: ApiResponse<TeamEvent[]>) => response.data || []),
+        map((response) => extractApiArray<TeamEvent>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch team events:", error);
           return of([]);
@@ -127,7 +127,7 @@ export class AttendanceService {
     return this.apiService
       .post<TeamEvent>("/api/attendance/events", payload)
       .pipe(
-        map((response: ApiResponse<TeamEvent>) => response.data || null),
+        map((response) => extractApiPayload<TeamEvent>(response)),
         catchError((error) => {
           this.logger.error("Failed to create event:", error);
           return of(null);
@@ -145,7 +145,7 @@ export class AttendanceService {
     return this.apiService
       .put<TeamEvent>(`/api/attendance/events/${eventId}`, updates)
       .pipe(
-        map((response: ApiResponse<TeamEvent>) => response.data || null),
+        map((response) => extractApiPayload<TeamEvent>(response)),
         catchError((error) => {
           this.logger.error("Failed to update event:", error);
           return of(null);
@@ -173,7 +173,7 @@ export class AttendanceService {
     return this.apiService
       .get<AttendanceRecord[]>(`/api/attendance/events/${eventId}/attendance`)
       .pipe(
-        map((response: ApiResponse<AttendanceRecord[]>) => response.data || []),
+        map((response) => extractApiArray<AttendanceRecord>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch event attendance:", error);
           return of([]);
@@ -190,7 +190,7 @@ export class AttendanceService {
     return this.apiService
       .post<AttendanceRecord>("/api/attendance/record", payload)
       .pipe(
-        map((response: ApiResponse<AttendanceRecord>) => response.data || null),
+        map((response) => extractApiPayload<AttendanceRecord>(response)),
         catchError((error) => {
           this.logger.error("Failed to record attendance:", error);
           return of(null);
@@ -215,7 +215,7 @@ export class AttendanceService {
         records,
       })
       .pipe(
-        map((response: ApiResponse<AttendanceRecord[]>) => response.data || []),
+        map((response) => extractApiArray<AttendanceRecord>(response)),
         catchError((error) => {
           this.logger.error("Failed to bulk record attendance:", error);
           return of([]);
@@ -235,10 +235,7 @@ export class AttendanceService {
         team_id: teamId,
       })
       .pipe(
-        map(
-          (response: ApiResponse<PlayerAttendanceStats>) =>
-            response.data || null,
-        ),
+        map((response) => extractApiPayload<PlayerAttendanceStats>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch player attendance stats:", error);
           return of(null);
@@ -253,10 +250,7 @@ export class AttendanceService {
     return this.apiService
       .get<PlayerAttendanceStats[]>(`/api/attendance/stats/team/${teamId}`)
       .pipe(
-        map(
-          (response: ApiResponse<PlayerAttendanceStats[]>) =>
-            response.data || [],
-        ),
+        map((response) => extractApiArray<PlayerAttendanceStats>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch team attendance stats:", error);
           return of([]);
@@ -284,7 +278,7 @@ export class AttendanceService {
         reason,
       })
       .pipe(
-        map((response: ApiResponse<AbsenceRequest>) => response.data || null),
+        map((response) => extractApiPayload<AbsenceRequest>(response)),
         catchError((error) => {
           this.logger.error("Failed to submit absence request:", error);
           return of(null);
@@ -302,7 +296,7 @@ export class AttendanceService {
         status: "pending",
       })
       .pipe(
-        map((response: ApiResponse<AbsenceRequest[]>) => response.data || []),
+        map((response) => extractApiArray<AbsenceRequest>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch absence requests:", error);
           return of([]);
@@ -322,7 +316,7 @@ export class AttendanceService {
         status,
       })
       .pipe(
-        map((response: ApiResponse<AbsenceRequest>) => response.data || null),
+        map((response) => extractApiPayload<AbsenceRequest>(response)),
         catchError((error) => {
           this.logger.error("Failed to review absence request:", error);
           return of(null);

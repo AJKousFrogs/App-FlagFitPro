@@ -26,6 +26,7 @@ import {
   SharedInsightFeedService,
 } from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
@@ -348,9 +349,30 @@ export class PhysiotherapistDashboardComponent implements OnInit {
           }>;
         }>("/api/staff-physiotherapist/athletes"),
       );
+      const payload = extractApiPayload<{
+        athletes: Array<{
+          id: string;
+          name: string;
+          position: string;
+          avatarUrl: string;
+          clearanceStatus: "cleared" | "limited" | "not_cleared";
+          activeInjuries: number;
+          currentInjury: {
+            type: string;
+            location: string;
+            grade: string;
+            phase: string;
+            rtpProgress: number;
+            expectedReturn: string;
+          } | null;
+          restrictions: string[];
+          acwr: number | null;
+          riskLevel: "low" | "medium" | "high" | "unknown";
+        }>;
+      }>(response);
 
-      if (response?.data?.athletes) {
-        const athletes: AthletePhysioData[] = response.data.athletes.map(
+      if (payload?.athletes) {
+        const athletes: AthletePhysioData[] = payload.athletes.map(
           (a) => ({
             id: a.id,
             name: a.name,
@@ -377,7 +399,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
         this.athletes.set(athletes);
 
         // Build risk indicators from athlete data
-        const risks: RiskIndicators[] = response.data.athletes.map((a) => ({
+        const risks: RiskIndicators[] = payload.athletes.map((a) => ({
           athleteId: a.id,
           acwrRisk:
             a.riskLevel === "high"
@@ -454,9 +476,26 @@ export class PhysiotherapistDashboardComponent implements OnInit {
           }>;
         }>("/api/staff-physiotherapist/rtp"),
       );
+      const payload = extractApiPayload<{
+        athletes: Array<{
+          athleteId: string;
+          athleteName: string;
+          position: string;
+          injury: {
+            type: string;
+            location: string;
+            grade: string;
+            injuryDate: string;
+          };
+          currentPhase: string;
+          rtpProgress: number;
+          expectedReturn: string;
+          daysRemaining: number | null;
+        }>;
+      }>(response);
 
-      if (response?.data?.athletes) {
-        const rtpList: ReturnToPlayData[] = response.data.athletes.map(
+      if (payload?.athletes) {
+        const rtpList: ReturnToPlayData[] = payload.athletes.map(
           (rtp) => ({
             athleteId: rtp.athleteId,
             injury: {
@@ -514,9 +553,13 @@ export class PhysiotherapistDashboardComponent implements OnInit {
             injuryHistory: Array<{ injury_type: string; injury_date: string }>;
           }>(`/api/staff-physiotherapist/athletes/${athlete.id}`),
         );
+        const payload = extractApiPayload<{
+          activeInjuries: Array<{ injury_type: string; injury_date: string }>;
+          injuryHistory: Array<{ injury_type: string; injury_date: string }>;
+        }>(response);
 
-        if (response?.data) {
-          const allInjuries = [...(response.data.injuryHistory || [])];
+        if (payload) {
+          const allInjuries = [...(payload.injuryHistory || [])];
           const injuryTypes = new Map<string, number>();
           allInjuries.forEach((inj) => {
             injuryTypes.set(
@@ -729,8 +772,8 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     this.loadInjuryHistory();
   }
 
-  onReportTypeChange(value: string): void {
-    this.selectedReportType = value;
+  onReportTypeChange(value: string | null): void {
+    this.selectedReportType = value ?? "recovery";
   }
 
   onReportAthleteChange(value: string | null): void {

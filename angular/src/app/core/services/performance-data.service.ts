@@ -216,8 +216,8 @@ export class PerformanceDataService {
 
     // Load recent measurements
     this.getMeasurements("3m", 1, 10).subscribe({
-      next: (response) => {
-        this._recentMeasurements.set(response.data);
+      next: ({ data }) => {
+        this._recentMeasurements.set(data);
         this.logger.success("[PerformanceData] Loaded recent measurements");
       },
       error: (error) => {
@@ -230,8 +230,8 @@ export class PerformanceDataService {
 
     // Load recent tests
     this.getPerformanceTests("3m").subscribe({
-      next: (response) => {
-        this._recentTests.set(response.data);
+      next: ({ data }) => {
+        this._recentTests.set(data);
         this.logger.success("[PerformanceData] Loaded recent tests");
       },
       error: (error) => {
@@ -241,8 +241,8 @@ export class PerformanceDataService {
 
     // Load today's supplements
     this.getSupplements("1d").subscribe({
-      next: (response) => {
-        this._todaysSupplements.set(response.data);
+      next: ({ data }) => {
+        this._todaysSupplements.set(data);
         this.logger.success("[PerformanceData] Loaded today's supplements");
       },
       error: (error) => {
@@ -982,7 +982,11 @@ export class PerformanceDataService {
       startDate.setMonth(startDate.getMonth() - months);
 
       // Fetch all performance data
-      const [trainingSessions, wellnessLogs, bodyMeasurements] =
+      const [
+        { data: trainingSessionsData },
+        { data: wellnessLogsData },
+        { data: bodyMeasurementsData },
+      ] =
         await Promise.all([
           this.supabaseService.client
             .from("training_sessions")
@@ -1007,9 +1011,13 @@ export class PerformanceDataService {
       const exportData = {
         exportedAt: new Date().toISOString(),
         timeframe,
-        trainingSessions: trainingSessions.data || [],
-        wellnessLogs: wellnessLogs.data || [],
-        bodyMeasurements: bodyMeasurements.data || [],
+        trainingSessions: Array.isArray(trainingSessionsData)
+          ? trainingSessionsData
+          : [],
+        wellnessLogs: Array.isArray(wellnessLogsData) ? wellnessLogsData : [],
+        bodyMeasurements: Array.isArray(bodyMeasurementsData)
+          ? bodyMeasurementsData
+          : [],
       };
 
       if (format === "json") {

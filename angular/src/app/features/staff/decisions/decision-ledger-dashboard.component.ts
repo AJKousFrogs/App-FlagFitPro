@@ -31,7 +31,7 @@ import { EmptyStateComponent } from "@shared/components/empty-state/empty-state.
 import { AppLoadingComponent } from "@shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "@shared/components/page-error-state/page-error-state.component";
 
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { CreateDecisionDialogComponent } from "./create-decision-dialog.component";
 import { DecisionCardComponent } from "./decision-card.component";
@@ -133,7 +133,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
                 <p-select
                   [options]="statusOptions"
                   [ngModel]="filters().status"
-                  (onChange)="onStatusFilterChange($event.value)"
+                  (onChange)="onStatusFilterSelect($event)"
                   placeholder="All Statuses"
                 ></p-select>
               </div>
@@ -143,7 +143,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
                 <p-select
                   [options]="categoryOptions"
                   [ngModel]="filters().decisionCategory"
-                  (onChange)="onCategoryFilterChange($event.value)"
+                  (onChange)="onCategoryFilterSelect($event)"
                   placeholder="All Categories"
                 ></p-select>
               </div>
@@ -153,7 +153,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
                 <p-select
                   [options]="priorityOptions"
                   [ngModel]="filters().reviewPriority"
-                  (onChange)="onPriorityFilterChange($event.value)"
+                  (onChange)="onPriorityFilterSelect($event)"
                   placeholder="All Priorities"
                 ></p-select>
               </div>
@@ -326,21 +326,20 @@ export class DecisionLedgerDashboardComponent implements OnInit {
     await this.decisionService.getDecisions(currentFilters);
   }
 
-  onStatusFilterChange(value: DecisionFilters["status"] | undefined): void {
+  onStatusFilterSelect(event: SelectChangeEvent): void {
+    const value = event.value as DecisionFilters["status"] | undefined;
     this.filters.update((current) => ({ ...current, status: value }));
     this.applyFilters();
   }
 
-  onCategoryFilterChange(
-    value: DecisionFilters["decisionCategory"] | undefined,
-  ): void {
+  onCategoryFilterSelect(event: SelectChangeEvent): void {
+    const value = event.value as DecisionFilters["decisionCategory"] | undefined;
     this.filters.update((current) => ({ ...current, decisionCategory: value }));
     this.applyFilters();
   }
 
-  onPriorityFilterChange(
-    value: DecisionFilters["reviewPriority"] | undefined,
-  ): void {
+  onPriorityFilterSelect(event: SelectChangeEvent): void {
+    const value = event.value as DecisionFilters["reviewPriority"] | undefined;
     this.filters.update((current) => ({ ...current, reviewPriority: value }));
     this.applyFilters();
   }

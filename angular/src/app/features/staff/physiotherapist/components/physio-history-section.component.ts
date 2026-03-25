@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
@@ -25,4 +25,8 @@ export class PhysioHistorySectionComponent {
   readonly history = input.required<InjuryHistoryView | null>();
 
   readonly athleteChange = output<string | null>();
+
+  emitAthleteChange(event: SelectChangeEvent): void {
+    this.athleteChange.emit((event.value as string | null | undefined) ?? null);
+  }
 }

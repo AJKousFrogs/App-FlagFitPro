@@ -23,14 +23,14 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -358,7 +358,7 @@ const TAG_TYPES = [
                 type="text"
                 pInputText
                 [value]="uploadForm.url"
-                (input)="onUploadUrlChange(getInputValue($event))"
+                (input)="onUploadUrlInput($event)"
                 placeholder="https://youtube.com/watch?v=..."
               />
             </div>
@@ -370,7 +370,7 @@ const TAG_TYPES = [
               type="text"
               pInputText
               [value]="uploadForm.title"
-              (input)="onUploadTitleChange(getInputValue($event))"
+              (input)="onUploadTitleInput($event)"
               placeholder="Week 3 vs Panthers - Offense"
             />
           </div>
@@ -401,7 +401,7 @@ const TAG_TYPES = [
             <textarea
               pTextarea
               [value]="uploadForm.description"
-              (input)="onUploadDescriptionChange(getInputValue($event))"
+              (input)="onUploadDescriptionInput($event)"
               rows="3"
               placeholder="Brief description of the film..."
             ></textarea>
@@ -494,7 +494,7 @@ const TAG_TYPES = [
                       type="checkbox"
                       [id]="'player-' + player.id"
                       [checked]="tagForm.playerIds.includes(player.id)"
-                      (change)="onTagPlayerToggle(player.id, isChecked($event))"
+                      (change)="onTagPlayerToggleInput(player.id, $event)"
                     />
                     <label [for]="'player-' + player.id"
                       >{{ player.name }} (#{{ player.number }})</label
@@ -509,7 +509,7 @@ const TAG_TYPES = [
             <label>Link to Play (optional)</label>
             <p-select
               [options]="plays()"
-              (onChange)="onTagPlayIdChange($event.value)"
+              (onChange)="onTagPlaySelect($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select play"
@@ -523,7 +523,7 @@ const TAG_TYPES = [
             <textarea
               pTextarea
               [value]="tagForm.comment"
-              (input)="onTagCommentChange(getInputValue($event))"
+              (input)="onTagCommentInput($event)"
               rows="4"
               placeholder="What should the player learn from this moment?"
             ></textarea>
@@ -751,8 +751,16 @@ export class FilmRoomCoachComponent implements OnInit {
     this.uploadForm = { ...this.uploadForm, url: value };
   }
 
+  onUploadUrlInput(event: Event): void {
+    this.onUploadUrlChange(this.readInputValue(event));
+  }
+
   onUploadTitleChange(value: string): void {
     this.uploadForm = { ...this.uploadForm, title: value };
+  }
+
+  onUploadTitleInput(event: Event): void {
+    this.onUploadTitleChange(this.readInputValue(event));
   }
 
   onUploadTypeChange(value: string): void {
@@ -768,6 +776,10 @@ export class FilmRoomCoachComponent implements OnInit {
 
   onUploadDescriptionChange(value: string): void {
     this.uploadForm = { ...this.uploadForm, description: value };
+  }
+
+  onUploadDescriptionInput(event: Event): void {
+    this.onUploadDescriptionChange(this.readInputValue(event));
   }
 
   onTagTypeChange(value: string): void {
@@ -796,12 +808,24 @@ export class FilmRoomCoachComponent implements OnInit {
     this.tagForm = { ...this.tagForm, playerIds: nextPlayerIds };
   }
 
+  onTagPlayerToggleInput(playerId: string, event: Event): void {
+    this.onTagPlayerToggle(playerId, this.readChecked(event));
+  }
+
   onTagPlayIdChange(value: string | null): void {
     this.tagForm = { ...this.tagForm, playId: value ?? "" };
   }
 
+  onTagPlaySelect(event: SelectChangeEvent): void {
+    this.onTagPlayIdChange(typeof event.value === "string" ? event.value : null);
+  }
+
   onTagCommentChange(value: string): void {
     this.tagForm = { ...this.tagForm, comment: value };
+  }
+
+  onTagCommentInput(event: Event): void {
+    this.onTagCommentChange(this.readInputValue(event));
   }
 
   async loadData(): Promise<void> {
@@ -809,17 +833,24 @@ export class FilmRoomCoachComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          sessions?: FilmSession[];
+          players?: Player[];
+          plays?: { id: string; name: string }[];
+        }>(API_ENDPOINTS.coach.film),
+      );
+      const payload = extractApiPayload<{
         sessions?: FilmSession[];
         players?: Player[];
         plays?: { id: string; name: string }[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coach.film),
-      );
-      if (response?.success && response.data) {
-        this.sessions.set(response.data.sessions || []);
-        this.players.set(response.data.players || []);
-        this.plays.set(response.data.plays || []);
+      }>(response);
+      if (payload) {
+        this.sessions.set(payload.sessions || []);
+        this.players.set(payload.players || []);
+        this.plays.set(payload.plays || []);
+      } else {
+        throw new Error("Film room payload missing");
       }
     } catch (err) {
       this.logger.error("Failed to load film data", err);
@@ -918,12 +949,12 @@ export class FilmRoomCoachComponent implements OnInit {
     this.showTagDialog = false;
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 

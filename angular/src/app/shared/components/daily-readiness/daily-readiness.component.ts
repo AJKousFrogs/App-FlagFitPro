@@ -37,6 +37,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { DailyReadinessFormContentComponent } from "./daily-readiness-form-content.component";
 
 // Centralized wellness constants
@@ -96,7 +97,7 @@ interface DailyState {
           [readinessHint]="readinessHint()"
           [riskFlags]="riskFlags()"
           [lastWeight]="lastWeight()"
-          (sliderChange)="onSliderChange($event.key, $event.value)"
+          (sliderChange)="onSliderStateChange($event)"
           (weightChange)="onWeightChange($event)"
         />
 
@@ -132,7 +133,7 @@ interface DailyState {
           [readinessHint]="readinessHint()"
           [riskFlags]="riskFlags()"
           [lastWeight]="lastWeight()"
-          (sliderChange)="onSliderChange($event.key, $event.value)"
+          (sliderChange)="onSliderStateChange($event)"
           (weightChange)="onWeightChange($event)"
         />
 
@@ -245,7 +246,7 @@ export class DailyReadinessComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (response) => {
-            if (response?.data === null || !response?.data) {
+            if (!extractApiPayload(response)) {
               this.dialogVisible = true;
             }
           },
@@ -370,7 +371,14 @@ export class DailyReadinessComponent implements OnInit {
           this.toastService.error(errorMessage);
           this.saving.set(false);
         },
-      });
+    });
+  }
+
+  onSliderStateChange(change: {
+    key: Exclude<keyof DailyState, "weight_kg">;
+    value: number | number[] | null | undefined;
+  }): void {
+    this.onSliderChange(change.key, change.value);
   }
 
   /**

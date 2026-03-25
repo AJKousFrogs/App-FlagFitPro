@@ -9,7 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -68,7 +68,7 @@ import {
               optionLabel="label"
               optionValue="value"
               placeholder="Choose your primary goal"
-              (onChange)="onGoalValueChange($event.value)"
+              (onChange)="onGoalSelect($event)"
             >
             </p-select>
             <p class="goal-selection__hint">
@@ -435,6 +435,12 @@ export class GoalBasedPlannerComponent {
   onGoalValueChange(value: TrainingGoal | null | undefined): void {
     this.selectedGoal.set(value ?? null);
     this.onGoalChange();
+  }
+
+  onGoalSelect(event: SelectChangeEvent): void {
+    this.onGoalValueChange(
+      (event.value as TrainingGoal | null | undefined) ?? null,
+    );
   }
 
   async generatePlan() {

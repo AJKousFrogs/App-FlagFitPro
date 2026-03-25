@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
 export interface ScoutingTendencyFilterOption {
@@ -46,4 +46,10 @@ export class ScoutingTendenciesSectionComponent {
   readonly tendencies = input<ScoutingTendenciesView | null>(null);
 
   readonly filterChange = output<string | null>();
+
+  emitFilterChange(event: SelectChangeEvent): void {
+    this.filterChange.emit(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
 }

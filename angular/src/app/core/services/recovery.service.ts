@@ -5,6 +5,9 @@ import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
+import {
+  extractApiPayload,
+} from "../utils/api-response-mapper";
 
 // API Endpoints for recovery data
 const API_ENDPOINTS = {
@@ -347,11 +350,15 @@ export class RecoveryService {
           }>(`/api/wellness/checkin?date=${today}`),
         );
 
-        if (!response.success || !response.data) {
+        const data = extractApiPayload<{
+          sleepQuality?: number;
+          energyLevel?: number;
+          stressLevel?: number;
+          muscleSoreness?: number;
+        }>(response);
+        if (!data) {
           throw new Error("No wellness data available for this athlete");
         }
-
-        const data = response.data;
 
         // Calculate recovery metrics from wellness data
         const sleepQuality = data.sleepQuality || 5;
@@ -962,7 +969,9 @@ export class RecoveryService {
       .get<ResearchInsight[]>(API_ENDPOINTS.recovery.researchInsights)
       .pipe(
         map((response) => {
-          if (response.success && response.data) return response.data;
+          const researchInsights =
+            extractApiPayload<ResearchInsight[]>(response);
+          if (Array.isArray(researchInsights)) return researchInsights;
           throw new Error("No research insights available");
         }),
         catchError((error) => {
@@ -983,7 +992,8 @@ export class RecoveryService {
       .get<number[]>(API_ENDPOINTS.recovery.weeklyTrends)
       .pipe(
         map((response) => {
-          if (response.success && response.data) return response.data;
+          const recoveryTrends = extractApiPayload<number[]>(response);
+          if (Array.isArray(recoveryTrends)) return recoveryTrends;
           throw new Error("No recovery trends available");
         }),
         catchError((error) => {
@@ -1004,7 +1014,9 @@ export class RecoveryService {
       .get<Record<string, number>>(API_ENDPOINTS.recovery.protocolEffectiveness)
       .pipe(
         map((response) => {
-          if (response.success && response.data) return response.data;
+          const effectivenessData =
+            extractApiPayload<Record<string, number>>(response);
+          if (effectivenessData) return effectivenessData;
           throw new Error("No effectiveness data available");
         }),
         catchError((error) => {

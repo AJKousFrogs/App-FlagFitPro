@@ -25,10 +25,10 @@ import { EmptyStateComponent } from "../../../shared/components/empty-state/empt
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { DatePicker } from "primeng/datepicker";
-import { InputNumber } from "primeng/inputnumber";
+import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
@@ -37,6 +37,7 @@ import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/uti
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import {
@@ -340,7 +341,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 type="text"
                 pInputText
                 [value]="formData.title"
-                (input)="updateFormDataTextField('title', getInputValue($event))"
+                (input)="onFormDataTextInput('title', $event)"
                 placeholder="e.g., Tuesday Practice - Red Zone Focus"
                 class="w-full"
               />
@@ -361,7 +362,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <p-select
                   inputId="startTime"
                   [options]="timeOptions"
-                  (onChange)="updateFormDataTextField('startTime', $event.value)"
+                  (onChange)="onFormDataTextSelect('startTime', $event)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -371,7 +372,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <p-select
                   inputId="endTime"
                   [options]="timeOptions"
-                  (onChange)="updateFormDataTextField('endTime', $event.value)"
+                  (onChange)="onFormDataTextSelect('endTime', $event)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -383,7 +384,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
               <p-select
                 inputId="location"
                 [options]="locationOptions"
-                (onChange)="updateFormDataTextField('location', $event.value)"
+                (onChange)="onFormDataTextSelect('location', $event)"
                 optionLabel="label"
                 optionValue="value"
                 [editable]="true"
@@ -397,7 +398,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 type="text"
                 pInputText
                 [value]="formData.focus"
-                (input)="updateFormDataTextField('focus', getInputValue($event))"
+                (input)="onFormDataTextInput('focus', $event)"
                 placeholder="e.g., Red zone offense, Defensive rotations"
                 class="w-full"
               />
@@ -431,11 +432,11 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                       type="text"
                       pInputText
                       [value]="activity.title"
-                      (input)="updateActivityTitle(i, getInputValue($event))"
+                      (input)="onActivityTitleInput(i, $event)"
                       class="activity-title-input"
                     />
                     <p-inputNumber
-                      (onInput)="updateActivityDuration(i, $event.value)"
+                      (onInput)="onActivityDurationInput(i, $event)"
                       suffix=" min"
                       [min]="5"
                       [max]="60"
@@ -485,7 +486,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                     type="checkbox"
                     [id]="'eq-' + item.name"
                     [checked]="item.checked"
-                    (change)="updateEquipmentChecked(item.name, isChecked($event))"
+                    (change)="onEquipmentCheckedChange(item.name, $event)"
                   />
                   <label [for]="'eq-' + item.name"
                     >{{ item.name }} ({{ item.quantity }})</label
@@ -501,7 +502,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             <textarea
               pTextarea
               [value]="formData.coachNotes"
-              (input)="updateFormDataTextField('coachNotes', getInputValue($event))"
+              (input)="onFormDataTextInput('coachNotes', $event)"
               placeholder="• Player-specific instructions&#10;• Key coaching points&#10;• Modifications needed"
               rows="4"
             ></textarea>
@@ -555,7 +556,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <p-select
                   inputId="actType"
                   [options]="activityTypeOptions"
-                  (onChange)="updateEditingActivityType($event.value)"
+                  (onChange)="onEditingActivityTypeSelect($event)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -564,7 +565,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <label for="actDuration">Duration (min)</label>
                 <p-inputNumber
                   inputId="actDuration"
-                  (onInput)="updateEditingActivityDuration($event.value)"
+                  (onInput)="onEditingActivityDurationInput($event)"
                   [min]="5"
                   [max]="60"
                 ></p-inputNumber>
@@ -584,7 +585,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                       type="text"
                       pInputText
                       [value]="editingActivity.details[i]"
-                      (input)="updateEditingActivityDetail(i, getInputValue($event))"
+                      (input)="onEditingActivityDetailInput(i, $event)"
                       class="w-full"
                     />
                     <app-button
@@ -611,7 +612,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <textarea
                   pTextarea
                   [value]="editingActivity.plays?.join('\n') ?? ''"
-                  (input)="updatePlays(getInputValue($event))"
+                  (input)="onPlaysInput($event)"
                   placeholder="One play per line"
                   rows="4"
                 ></textarea>
@@ -622,7 +623,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                 <textarea
                   pTextarea
                   [value]="editingActivity.keyPoints?.join('\n') ?? ''"
-                  (input)="updateKeyPoints(getInputValue($event))"
+                  (input)="onKeyPointsInput($event)"
                   placeholder="One point per line"
                   rows="3"
                 ></textarea>
@@ -716,9 +717,10 @@ export class PracticePlannerComponent implements OnInit {
       const response = await firstValueFrom(
         this.api.get<{ practices?: PracticePlan[] }>("/api/coach/practices"),
       );
-      if (response?.success && response.data?.practices) {
-        this.practices.set(response.data.practices);
-      }
+      const practices =
+        extractApiPayload<{ practices?: PracticePlan[] }>(response)
+          ?.practices ?? [];
+      this.practices.set(practices);
     } catch (err) {
       this.logger.error("Failed to load practices", err);
       this.practices.set([]);
@@ -921,12 +923,61 @@ export class PracticePlannerComponent implements OnInit {
     this.formData = { ...this.formData, activities: updatedActivities };
   }
 
-  getInputValue(event: Event): string {
+  onFormDataTextInput(
+    field: "title" | "focus" | "coachNotes",
+    event: Event,
+  ): void {
+    this.updateFormDataTextField(field, this.readInputValue(event));
+  }
+
+  onFormDataTextSelect(
+    field: "startTime" | "endTime" | "location",
+    event: SelectChangeEvent,
+  ): void {
+    this.updateFormDataTextField(
+      field,
+      typeof event.value === "string" ? event.value : "",
+    );
+  }
+
+  onActivityTitleInput(index: number, event: Event): void {
+    this.updateActivityTitle(index, this.readInputValue(event));
+  }
+
+  onActivityDurationInput(index: number, event: InputNumberInputEvent): void {
+    this.updateActivityDuration(index, event.value ?? null);
+  }
+
+  onEquipmentCheckedChange(equipmentName: string, event: Event): void {
+    this.updateEquipmentChecked(equipmentName, this.readChecked(event));
+  }
+
+  onEditingActivityTypeSelect(event: SelectChangeEvent): void {
+    this.updateEditingActivityType(event.value as ActivityType | null | undefined);
+  }
+
+  onEditingActivityDurationInput(event: InputNumberInputEvent): void {
+    this.updateEditingActivityDuration(event.value ?? null);
+  }
+
+  onEditingActivityDetailInput(index: number, event: Event): void {
+    this.updateEditingActivityDetail(index, this.readInputValue(event));
+  }
+
+  onPlaysInput(event: Event): void {
+    this.updatePlays(this.readInputValue(event));
+  }
+
+  onKeyPointsInput(event: Event): void {
+    this.updateKeyPoints(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 

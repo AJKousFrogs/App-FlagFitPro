@@ -13,7 +13,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
@@ -45,7 +45,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
           placeholder="All Positions"
           [showClear]="true"
           class="filter-select"
-          (onChange)="onPositionFilterChange($event.value)"
+          (onChange)="onPositionFilterSelect($event)"
         ></p-select>
 
         <p-select
@@ -53,7 +53,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
           placeholder="All Status"
           [showClear]="true"
           class="filter-select"
-          (onChange)="onStatusFilterChange($event.value)"
+          (onChange)="onStatusFilterSelect($event)"
         ></p-select>
       </div>
 
@@ -130,9 +130,17 @@ export class RosterFiltersComponent {
     this.positionFilterChange.emit(nextValue);
   }
 
+  onPositionFilterSelect(event: SelectChangeEvent): void {
+    this.onPositionFilterChange((event.value as string | null | undefined) ?? null);
+  }
+
   onStatusFilterChange(value: string | null | undefined): void {
     const nextValue = value ?? null;
     this.statusFilter = nextValue;
     this.statusFilterChange.emit(nextValue);
+  }
+
+  onStatusFilterSelect(event: SelectChangeEvent): void {
+    this.onStatusFilterChange((event.value as string | null | undefined) ?? null);
   }
 }

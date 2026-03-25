@@ -10,9 +10,9 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Badge } from "primeng/badge";
-import { InputNumber } from "primeng/inputnumber";
+import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -166,7 +166,7 @@ type ReturnData = { condition: Condition; notes: string };
             <div header-actions class="filter-actions">
               <p-select
                 [options]="typeOptions"
-                (onChange)="onSelectedTypeChange($event.value)"
+                (onChange)="onSelectedTypeSelect($event)"
                 placeholder="All Types"
                 [showClear]="true"
                 class="equipment-filter-select"
@@ -355,7 +355,7 @@ type ReturnData = { condition: Condition; notes: string };
               <input
                 pInputText
                 [value]="newItem.name"
-                (input)="updateNewItemName(getInputValue($event))"
+                (input)="onNewItemNameInput($event)"
                 placeholder="e.g., Home Jersey"
               />
             </div>
@@ -365,7 +365,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <label>Type *</label>
                 <p-select
                   [options]="typeOptions"
-                  (onChange)="updateNewItemType($event.value)"
+                  (onChange)="onNewItemTypeSelect($event)"
                   placeholder="Select type"
                   class="w-full"
                 ></p-select>
@@ -375,7 +375,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <label>Condition</label>
                 <p-select
                   [options]="conditionOptions"
-                  (onChange)="updateNewItemCondition($event.value)"
+                  (onChange)="onNewItemConditionSelect($event)"
                   class="w-full"
                 ></p-select>
               </div>
@@ -387,7 +387,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <input
                   pInputText
                   [value]="newItem.size"
-                  (input)="updateNewItemSize(getInputValue($event))"
+                  (input)="onNewItemSizeInput($event)"
                   placeholder="e.g., Large, 42"
                 />
               </div>
@@ -397,7 +397,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <input
                   pInputText
                   [value]="newItem.color"
-                  (input)="updateNewItemColor(getInputValue($event))"
+                  (input)="onNewItemColorInput($event)"
                   placeholder="e.g., Red"
                 />
               </div>
@@ -406,7 +406,7 @@ type ReturnData = { condition: Condition; notes: string };
             <div class="form-field">
               <label>Total Quantity *</label>
               <p-inputNumber
-                (onInput)="updateNewItemQuantity($event.value)"
+                (onInput)="onNewItemQuantityInput($event)"
                 [min]="1"
               ></p-inputNumber>
             </div>
@@ -416,7 +416,7 @@ type ReturnData = { condition: Condition; notes: string };
               <input
                 pInputText
                 [value]="newItem.description"
-                (input)="updateNewItemDescription(getInputValue($event))"
+                (input)="onNewItemDescriptionInput($event)"
                 placeholder="Optional notes..."
               />
             </div>
@@ -461,7 +461,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <label>Player *</label>
                 <p-select
                   [options]="teamPlayers()"
-                  (onChange)="updateCheckoutPlayerId($event.value)"
+                  (onChange)="onCheckoutPlayerSelect($event)"
                   optionLabel="name"
                   optionValue="id"
                   placeholder="Select player"
@@ -473,7 +473,7 @@ type ReturnData = { condition: Condition; notes: string };
               <div class="form-field">
                 <label>Quantity</label>
                 <p-inputNumber
-                  (onInput)="updateCheckoutQuantity($event.value)"
+                  (onInput)="onCheckoutQuantityInput($event)"
                   [min]="1"
                   [max]="checkoutItem()!.quantity_available"
                 ></p-inputNumber>
@@ -484,7 +484,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <input
                   pInputText
                   [value]="checkoutData.notes"
-                  (input)="updateCheckoutNotes(getInputValue($event))"
+                  (input)="onCheckoutNotesInput($event)"
                   placeholder="Optional..."
                 />
               </div>
@@ -530,7 +530,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <label>Condition at Return *</label>
                 <p-select
                   [options]="conditionOptions"
-                  (onChange)="updateReturnCondition($event.value)"
+                  (onChange)="onReturnConditionSelect($event)"
                   class="w-full"
                 ></p-select>
               </div>
@@ -540,7 +540,7 @@ type ReturnData = { condition: Condition; notes: string };
                 <input
                   pInputText
                   [value]="returnData.notes"
-                  (input)="updateReturnNotes(getInputValue($event))"
+                  (input)="onReturnNotesInput($event)"
                   placeholder="Any damage or issues..."
                 />
               </div>
@@ -700,8 +700,12 @@ export class EquipmentComponent implements OnInit {
     // Computed handles filtering
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | null)?.value ?? "";
+  }
+
+  onSelectedTypeSelect(event: SelectChangeEvent): void {
+    this.onSelectedTypeChange((event.value as ItemType | null | undefined) ?? null);
   }
 
   onSelectedTypeChange(value: ItemType | null): void {
@@ -713,8 +717,20 @@ export class EquipmentComponent implements OnInit {
     this.newItem = { ...this.newItem, name: value ?? "" };
   }
 
+  onNewItemNameInput(event: Event): void {
+    this.updateNewItemName(this.readInputValue(event));
+  }
+
+  onNewItemTypeSelect(event: SelectChangeEvent): void {
+    this.updateNewItemType(event.value as ItemType | null | undefined);
+  }
+
   updateNewItemType(value: ItemType | null | undefined): void {
     this.newItem = { ...this.newItem, item_type: value ?? "jersey" };
+  }
+
+  onNewItemConditionSelect(event: SelectChangeEvent): void {
+    this.updateNewItemCondition(event.value as Condition | null | undefined);
   }
 
   updateNewItemCondition(value: Condition | null | undefined): void {
@@ -725,8 +741,20 @@ export class EquipmentComponent implements OnInit {
     this.newItem = { ...this.newItem, size: value ?? "" };
   }
 
+  onNewItemSizeInput(event: Event): void {
+    this.updateNewItemSize(this.readInputValue(event));
+  }
+
   updateNewItemColor(value: string | null | undefined): void {
     this.newItem = { ...this.newItem, color: value ?? "" };
+  }
+
+  onNewItemColorInput(event: Event): void {
+    this.updateNewItemColor(this.readInputValue(event));
+  }
+
+  onNewItemQuantityInput(event: InputNumberInputEvent): void {
+    this.updateNewItemQuantity(event.value ?? null);
   }
 
   updateNewItemQuantity(value: number | null | undefined): void {
@@ -737,8 +765,22 @@ export class EquipmentComponent implements OnInit {
     this.newItem = { ...this.newItem, description: value ?? "" };
   }
 
+  onNewItemDescriptionInput(event: Event): void {
+    this.updateNewItemDescription(this.readInputValue(event));
+  }
+
+  onCheckoutPlayerSelect(event: SelectChangeEvent): void {
+    this.updateCheckoutPlayerId(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   updateCheckoutPlayerId(value: string | null | undefined): void {
     this.checkoutData = { ...this.checkoutData, player_id: value ?? "" };
+  }
+
+  onCheckoutQuantityInput(event: InputNumberInputEvent): void {
+    this.updateCheckoutQuantity(event.value ?? null);
   }
 
   updateCheckoutQuantity(value: number | null | undefined): void {
@@ -749,12 +791,24 @@ export class EquipmentComponent implements OnInit {
     this.checkoutData = { ...this.checkoutData, notes: value ?? "" };
   }
 
+  onCheckoutNotesInput(event: Event): void {
+    this.updateCheckoutNotes(this.readInputValue(event));
+  }
+
+  onReturnConditionSelect(event: SelectChangeEvent): void {
+    this.updateReturnCondition(event.value as Condition | null | undefined);
+  }
+
   updateReturnCondition(value: Condition | null | undefined): void {
     this.returnData = { ...this.returnData, condition: value ?? "good" };
   }
 
   updateReturnNotes(value: string | null | undefined): void {
     this.returnData = { ...this.returnData, notes: value ?? "" };
+  }
+
+  onReturnNotesInput(event: Event): void {
+    this.updateReturnNotes(this.readInputValue(event));
   }
 
   getTypeIcon(type: string): string {

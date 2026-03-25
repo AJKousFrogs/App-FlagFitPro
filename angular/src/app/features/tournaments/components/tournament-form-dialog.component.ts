@@ -63,6 +63,14 @@ export class TournamentFormDialogComponent {
     this.form()?.get(controlName)?.setValue(this.parseDateInputValue(value));
   }
 
+  onDateInputEvent(controlName: string, event: Event): void {
+    const target = event.target;
+    this.onDateInput(
+      controlName,
+      target instanceof HTMLInputElement ? target.value : "",
+    );
+  }
+
   private formatDateInputValue(value: Date | null): string {
     if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
       return "";

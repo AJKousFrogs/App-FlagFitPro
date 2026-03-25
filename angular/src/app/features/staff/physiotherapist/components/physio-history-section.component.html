@@ -5,7 +5,7 @@
       inputId="history-athlete-select"
       [options]="athleteOptions()"
       [ngModel]="selectedAthlete()"
-      (onChange)="athleteChange.emit($event.value ?? null)"
+      (onChange)="emitAthleteChange($event)"
       placeholder="Select athlete"
       [attr.aria-label]="'Select athlete to view injury history'"
     />

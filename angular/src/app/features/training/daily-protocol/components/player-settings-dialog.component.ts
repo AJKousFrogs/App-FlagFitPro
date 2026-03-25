@@ -22,8 +22,8 @@ import {
 import { FormsModule } from "@angular/forms";
 import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
-import { MultiSelect } from "primeng/multiselect";
-import { Select } from "primeng/select";
+import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -38,7 +38,7 @@ import {
   LoggerService,
   toLogContext,
 } from "../../../../core/services/logger.service";
-import { ApiResponse } from "../../../../core/models/common.models";
+import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
 import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
 import { DesignTokens } from "../../../../shared/models/design-tokens";
 
@@ -126,7 +126,7 @@ interface DayOption {
               id="position"
               [options]="positions"
               [ngModel]="settings.primaryPosition"
-              (onChange)="onPrimaryPositionChange($event.value)"
+              (onChange)="onPrimaryPositionSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Select position"
@@ -145,7 +145,7 @@ interface DayOption {
               id="secondaryPosition"
               [options]="positions"
               [ngModel]="settings.secondaryPosition"
-              (onChange)="onSecondaryPositionChange($event.value)"
+              (onChange)="onSecondaryPositionSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Optional"
@@ -215,7 +215,7 @@ interface DayOption {
                     pInputText
                     type="time"
                     [value]="slot.startTime"
-                    (input)="onSlotStartTimeChange(slot.day, getInputValue($event))"
+                    (input)="onSlotStartTimeInput(slot.day, $event)"
                   />
                 </div>
                 <div class="time-field">
@@ -224,7 +224,7 @@ interface DayOption {
                     pInputText
                     type="time"
                     [value]="slot.endTime"
-                    (input)="onSlotEndTimeChange(slot.day, getInputValue($event))"
+                    (input)="onSlotEndTimeInput(slot.day, $event)"
                   />
                 </div>
                 @if (settings.primaryPosition === "quarterback") {
@@ -234,7 +234,7 @@ interface DayOption {
                       pInputText
                       type="number"
                       [value]="slot.expectedThrows ?? ''"
-                      (input)="onSlotExpectedThrowsChange(slot.day, getInputValue($event))"
+                      (input)="onSlotExpectedThrowsInput(slot.day, $event)"
                       placeholder="40-50"
                       min="0"
                       max="200"
@@ -251,7 +251,7 @@ interface DayOption {
               <p-select
                 [options]="availableDays"
                 [ngModel]="selectedNewDay"
-                (onChange)="onSelectedNewDayChange($event.value)"
+                (onChange)="onSelectedNewDaySelect($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Add practice day..."
@@ -285,7 +285,7 @@ interface DayOption {
                   pInputText
                   type="time"
                   [value]="slot.time"
-                  (input)="onRoutineTimeChange(slot.id, getInputValue($event))"
+                  (input)="onRoutineTimeInput(slot.id, $event)"
                   class="routine-time-input"
                 />
               </div>
@@ -302,7 +302,7 @@ interface DayOption {
             <p-multiselect
               [options]="allDays"
               [value]="settings.preferredTrainingDays"
-              (onChange)="onPreferredTrainingDaysChange($event.value)"
+              (onChange)="onPreferredTrainingDaysSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Select days"
@@ -315,7 +315,7 @@ interface DayOption {
               id="gymAccess"
               type="checkbox"
               [checked]="settings.hasGymAccess"
-              (change)="onHasGymAccessChange(isChecked($event))"
+              (change)="onHasGymAccessToggle($event)"
             />
             <label for="gymAccess">I have gym access</label>
           </div>
@@ -325,7 +325,7 @@ interface DayOption {
               id="fieldAccess"
               type="checkbox"
               [checked]="settings.hasFieldAccess"
-              (change)="onHasFieldAccessChange(isChecked($event))"
+              (change)="onHasFieldAccessToggle($event)"
             />
             <label for="fieldAccess">I have field access</label>
           </div>
@@ -336,7 +336,7 @@ interface DayOption {
               id="warmupFocus"
               [options]="warmupFocusOptions"
               [ngModel]="settings.warmupFocus"
-              (onChange)="onWarmupFocusChange($event.value)"
+              (onChange)="onWarmupFocusSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Auto (use position)"
@@ -488,27 +488,33 @@ export class PlayerSettingsDialogComponent {
 
   async loadSettings(): Promise<void> {
     try {
-      const response: ApiResponse<
+      const response = await firstValueFrom(
+        this.api.get<
+          Partial<PlayerSettings> & {
+            availabilitySchedule?: FlagPracticeSlot[];
+            birthDate?: string;
+          }
+        >(API_ENDPOINTS.playerSettings.get),
+      );
+      const payload = extractApiPayload<
         Partial<PlayerSettings> & {
           availabilitySchedule?: FlagPracticeSlot[];
           birthDate?: string;
         }
-      > = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.playerSettings.get),
-      );
-      if (response?.success && response.data) {
+      >(response);
+      if (payload) {
         // Map availabilitySchedule from API to flagPracticeSchedule in component
         const availabilitySchedule =
-          response.data.availabilitySchedule ||
-          response.data.flagPracticeSchedule ||
+          payload.availabilitySchedule ||
+          payload.flagPracticeSchedule ||
           [];
 
         this.settings = {
           ...this.settings,
-          ...response.data,
+          ...payload,
           flagPracticeSchedule: availabilitySchedule, // Map API field to component field
-          birthDate: response.data.birthDate
-            ? new Date(response.data.birthDate)
+          birthDate: payload.birthDate
+            ? new Date(payload.birthDate)
             : undefined,
         };
         this.updatePositionDescription();
@@ -528,11 +534,23 @@ export class PlayerSettingsDialogComponent {
     this.updatePositionDescription();
   }
 
+  onPrimaryPositionSelect(event: SelectChangeEvent): void {
+    if (typeof event.value === "string") {
+      this.onPrimaryPositionChange(event.value);
+    }
+  }
+
   onSecondaryPositionChange(value: string | null): void {
     this.settings = {
       ...this.settings,
       secondaryPosition: value ?? undefined,
     };
+  }
+
+  onSecondaryPositionSelect(event: SelectChangeEvent): void {
+    this.onSecondaryPositionChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   onBirthDateChange(value: Date | null): void {
@@ -554,6 +572,10 @@ export class PlayerSettingsDialogComponent {
     if (slot) this.updateSlotDuration(slot);
   }
 
+  onSlotStartTimeInput(day: number, event: Event): void {
+    this.onSlotStartTimeChange(day, this.readInputValue(event));
+  }
+
   onSlotEndTimeChange(day: number, value: string): void {
     this.settings = {
       ...this.settings,
@@ -563,6 +585,10 @@ export class PlayerSettingsDialogComponent {
     };
     const slot = this.settings.flagPracticeSchedule.find((s) => s.day === day);
     if (slot) this.updateSlotDuration(slot);
+  }
+
+  onSlotEndTimeInput(day: number, event: Event): void {
+    this.onSlotEndTimeChange(day, this.readInputValue(event));
   }
 
   onSlotExpectedThrowsChange(day: number, value: number | string | null): void {
@@ -583,8 +609,18 @@ export class PlayerSettingsDialogComponent {
     };
   }
 
+  onSlotExpectedThrowsInput(day: number, event: Event): void {
+    this.onSlotExpectedThrowsChange(day, this.readInputValue(event));
+  }
+
   onSelectedNewDayChange(value: number | null): void {
     this.selectedNewDay = value;
+  }
+
+  onSelectedNewDaySelect(event: SelectChangeEvent): void {
+    this.onSelectedNewDayChange(
+      typeof event.value === "number" ? event.value : null,
+    );
   }
 
   onRoutineTimeChange(slotId: string, value: string): void {
@@ -596,6 +632,10 @@ export class PlayerSettingsDialogComponent {
     };
   }
 
+  onRoutineTimeInput(slotId: string, event: Event): void {
+    this.onRoutineTimeChange(slotId, this.readInputValue(event));
+  }
+
   onPreferredTrainingDaysChange(value: number[] | null): void {
     this.settings = {
       ...this.settings,
@@ -603,23 +643,43 @@ export class PlayerSettingsDialogComponent {
     };
   }
 
+  onPreferredTrainingDaysSelect(event: MultiSelectChangeEvent): void {
+    this.onPreferredTrainingDaysChange(
+      (event.value as number[] | null | undefined) ?? null,
+    );
+  }
+
   onHasGymAccessChange(value: boolean): void {
     this.settings = { ...this.settings, hasGymAccess: value };
+  }
+
+  onHasGymAccessToggle(event: Event): void {
+    this.onHasGymAccessChange(this.readChecked(event));
   }
 
   onHasFieldAccessChange(value: boolean): void {
     this.settings = { ...this.settings, hasFieldAccess: value };
   }
 
+  onHasFieldAccessToggle(event: Event): void {
+    this.onHasFieldAccessChange(this.readChecked(event));
+  }
+
   onWarmupFocusChange(value: string | null): void {
     this.settings = { ...this.settings, warmupFocus: value };
   }
 
-  getInputValue(event: Event): string {
+  onWarmupFocusSelect(event: SelectChangeEvent): void {
+    this.onWarmupFocusChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 

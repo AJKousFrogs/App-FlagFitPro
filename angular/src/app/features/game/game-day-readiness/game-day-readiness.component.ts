@@ -107,7 +107,7 @@ interface ReadinessMetric {
                   [min]="1"
                   [max]="10"
                   [step]="1"
-                  (onChange)="updateMetric(metric.key, $event.value || 1)"
+                  (onChange)="onMetricChange(metric.key, $event)"
                 ></p-slider>
                 <p class="metric-description">{{ metric.description }}</p>
                 @if (metric.value < 5) {
@@ -531,6 +531,10 @@ export class GameDayReadinessComponent implements OnInit {
     const current = this.metrics();
     const updated = current.map((m) => (m.key === key ? { ...m, value } : m));
     this.metrics.set(updated);
+  }
+
+  onMetricChange(key: string, event: { value?: number | null }): void {
+    this.updateMetric(key, event.value || 1);
   }
 
   onNotesInput(event: Event): void {

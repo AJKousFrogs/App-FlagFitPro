@@ -93,6 +93,7 @@ export class InputNumberComponent implements ControlValueAccessor {
 
   // Outputs
   change = output<number | null>();
+  valueChange = output<number | null>();
 
   // Internal
   protected value = signal<number | null>(null);
@@ -104,13 +105,14 @@ export class InputNumberComponent implements ControlValueAccessor {
   private onModelChange: (value: number | null) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onInputValueChange(event: InputNumberInputEvent) {
+  onInputValueChange(event: InputNumberInputEvent): void {
     const val = event.value as number | null;
     this.onModelChange(val);
     this.change.emit(val);
+    this.valueChange.emit(val);
   }
 
-  onBlur() {
+  onBlur(): void {
     this.onModelTouched();
   }
 

@@ -21,7 +21,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
@@ -29,7 +29,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -180,19 +180,19 @@ const ROUTES = [
               pInputText
               placeholder="Search plays..."
               [value]="searchQuery"
-              (input)="onSearchQueryChange(getInputValue($event))"
+              (input)="onSearchQueryInput($event)"
             />
           </span>
           <p-select
             [options]="formationOptions"
-            (onChange)="onFormationFilterChange($event.value)"
+            (onChange)="onFormationFilterSelect($event)"
             placeholder="Formation"
             [showClear]="true"
             class="playbook-filter-select"
           ></p-select>
           <p-select
             [options]="situationOptions"
-            (onChange)="onSituationFilterChange($event.value)"
+            (onChange)="onSituationFilterSelect($event)"
             placeholder="Situation"
             [showClear]="true"
             class="playbook-filter-select"
@@ -434,7 +434,7 @@ const ROUTES = [
                   pInputText
                   [value]="playForm.name"
                   [readonly]="isViewing()"
-                  (input)="onPlayNameChange(getInputValue($event))"
+                  (input)="onPlayNameInput($event)"
                   placeholder="e.g., Mesh Right"
                   class="w-full"
                 />
@@ -445,7 +445,7 @@ const ROUTES = [
                 <p-select
                   inputId="formation"
                   [options]="formationOptions"
-                  (onChange)="onPlayFormationChange($event.value)"
+                  (onChange)="onPlayFormationSelect($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select formation"
@@ -459,7 +459,7 @@ const ROUTES = [
                 <p-select
                   inputId="situation"
                   [options]="situationOptions"
-                  (onChange)="onPlaySituationChange($event.value)"
+                  (onChange)="onPlaySituationSelect($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select situation"
@@ -523,7 +523,7 @@ const ROUTES = [
                       pTextarea
                       [value]="assignment.instructions[0]"
                       [readonly]="isViewing()"
-                      (input)="onAssignmentInstructionChange(i, getInputValue($event))"
+                      (input)="onAssignmentInstructionInput(i, $event)"
                       placeholder="Instructions for this position..."
                       rows="2"
                     ></textarea>
@@ -536,7 +536,7 @@ const ROUTES = [
                 pTextarea
                 [value]="playForm.coachNotes"
                 [readonly]="isViewing()"
-                (input)="onPlayCoachNotesChange(getInputValue($event))"
+                (input)="onPlayCoachNotesInput($event)"
                 placeholder="When to call this play, key coaching points..."
                 rows="4"
               ></textarea>
@@ -760,23 +760,40 @@ export class PlaybookManagerComponent implements OnInit {
     this.searchQuery = value;
   }
 
+  onSearchQueryInput(event: Event): void {
+    this.onSearchQueryChange(this.readInputValue(event));
+  }
+
   onFormationFilterChange(value: string | null): void {
     this.formationFilter = value;
+  }
+
+  onFormationFilterSelect(event: SelectChangeEvent): void {
+    this.onFormationFilterChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   onSituationFilterChange(value: string | null): void {
     this.situationFilter = value;
   }
 
+  onSituationFilterSelect(event: SelectChangeEvent): void {
+    this.onSituationFilterChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   async loadData(): Promise<void> {
     this.isLoading.set(true);
 
     try {
-      const response: ApiResponse<{ plays?: Play[] }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coach.playbook),
+      const response = await firstValueFrom(
+        this.api.get<{ plays?: Play[] }>(API_ENDPOINTS.coach.playbook),
       );
-      if (response?.success && response.data?.plays) {
-        this.plays.set(response.data.plays);
+      const payload = extractApiPayload<{ plays?: Play[] }>(response);
+      if (payload?.plays) {
+        this.plays.set(payload.plays);
       }
     } catch (err) {
       this.logger.error("Failed to load playbook", err);
@@ -809,12 +826,28 @@ export class PlaybookManagerComponent implements OnInit {
     this.playForm = { ...this.playForm, name: value };
   }
 
+  onPlayNameInput(event: Event): void {
+    this.onPlayNameChange(this.readInputValue(event));
+  }
+
   onPlayFormationChange(value: string | null): void {
     this.playForm = { ...this.playForm, formation: value ?? "trips-right" };
   }
 
+  onPlayFormationSelect(event: SelectChangeEvent): void {
+    this.onPlayFormationChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   onPlaySituationChange(value: string | null): void {
     this.playForm = { ...this.playForm, situation: value ?? "base" };
+  }
+
+  onPlaySituationSelect(event: SelectChangeEvent): void {
+    this.onPlaySituationChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   onPlayTypeChange(value: "offense" | "defense" | "special"): void {
@@ -835,11 +868,19 @@ export class PlaybookManagerComponent implements OnInit {
     };
   }
 
+  onAssignmentInstructionInput(index: number, event: Event): void {
+    this.onAssignmentInstructionChange(index, this.readInputValue(event));
+  }
+
   onPlayCoachNotesChange(value: string): void {
     this.playForm = { ...this.playForm, coachNotes: value };
   }
 
-  getInputValue(event: Event): string {
+  onPlayCoachNotesInput(event: Event): void {
+    this.onPlayCoachNotesChange(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;

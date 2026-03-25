@@ -3,6 +3,11 @@ import { Observable, of } from "rxjs";
 import { catchError, map, tap } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
+import {
+  extractApiPayload,
+  isApiResponse,
+  isSuccessfulApiResponse,
+} from "../utils/api-response-mapper";
 
 /**
  * Risk levels for AI responses
@@ -140,11 +145,17 @@ export class AiChatService {
       .post<ChatApiResponse>(API_ENDPOINTS.aiChat.send, request)
       .pipe(
         map((response) => {
-          if (!response.success || !response.data) {
-            throw new Error(response.error || "Failed to get AI response");
+          const data = extractApiPayload<ChatApiResponse>(response);
+          const wrappedFailure =
+            isApiResponse(response) && !isSuccessfulApiResponse(response);
+          if (wrappedFailure || !data) {
+            throw new Error(
+              isApiResponse(response)
+                ? response.error || "Failed to get AI response"
+                : "Failed to get AI response",
+            );
           }
 
-          const data = response.data;
           const riskLevel = this.normalizeRiskLevel(data.risk_level);
           const sessionId = data.chat_session_id || data.session_id || "";
 
@@ -213,16 +224,20 @@ export class AiChatService {
       .get<{ messages: ChatMessage[] }>(API_ENDPOINTS.aiChat.session(sessionId))
       .pipe(
         map((response) => {
-          if (response.success && response.data) {
-            const session: ChatSession = {
-              id: sessionId,
-              startedAt: new Date(),
-              messages: response.data.messages || [],
-            };
-            this.currentSession.set(session);
-            return session;
+          const data = extractApiPayload<{ messages: ChatMessage[] }>(response);
+          const wrappedFailure =
+            isApiResponse(response) && !isSuccessfulApiResponse(response);
+          if (wrappedFailure || !data) {
+            return null;
           }
-          return null;
+
+          const session: ChatSession = {
+            id: sessionId,
+            startedAt: new Date(),
+            messages: data.messages || [],
+          };
+          this.currentSession.set(session);
+          return session;
         }),
         catchError(() => {
           // Start fresh session if load fails

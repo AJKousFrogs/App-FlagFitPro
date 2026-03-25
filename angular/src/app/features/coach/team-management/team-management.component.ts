@@ -21,7 +21,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -92,7 +92,7 @@ interface TeamSettings {
                   type="text"
                   pInputText
                   [value]="teamSettings().name"
-                  (input)="onTeamNameChange(getInputValue($event))"
+                  (input)="onTeamNameInput($event)"
                   class="w-full"
                 />
               </div>
@@ -104,7 +104,7 @@ interface TeamSettings {
                     type="color"
                     class="color-input"
                     [value]="toHexColor(teamSettings().primaryColor, '#16a34a')"
-                    (input)="onPrimaryColorChange(getInputValue($event))"
+                    (input)="onPrimaryColorInput($event)"
                   />
                   <span class="color-code">{{
                     teamSettings().primaryColor
@@ -116,7 +116,7 @@ interface TeamSettings {
                     type="color"
                     class="color-input"
                     [value]="toHexColor(teamSettings().secondaryColor, '#0f172a')"
-                    (input)="onSecondaryColorChange(getInputValue($event))"
+                    (input)="onSecondaryColorInput($event)"
                   />
                   <span class="color-code">{{
                     teamSettings().secondaryColor
@@ -131,7 +131,7 @@ interface TeamSettings {
                   type="text"
                   pInputText
                   [value]="teamSettings().league"
-                  (input)="onLeagueChange(getInputValue($event))"
+                  (input)="onLeagueInput($event)"
                   class="w-full"
                 />
               </div>
@@ -143,7 +143,7 @@ interface TeamSettings {
                   type="text"
                   pInputText
                   [value]="teamSettings().homeField"
-                  (input)="onHomeFieldChange(getInputValue($event))"
+                  (input)="onHomeFieldInput($event)"
                   class="w-full"
                 />
               </div>
@@ -158,7 +158,7 @@ interface TeamSettings {
                   type="checkbox"
                   id="reqWellness"
                   [checked]="teamSettings().preferences.requireWellnessCheckin"
-                  (change)="onPreferenceChange('requireWellnessCheckin', isChecked($event))"
+                  (change)="onPreferenceToggle('requireWellnessCheckin', $event)"
                 />
                 <label for="reqWellness"
                   >Require wellness check-in before practice</label
@@ -170,7 +170,7 @@ interface TeamSettings {
                   type="checkbox"
                   id="autoRsvp"
                   [checked]="teamSettings().preferences.autoSendRsvpReminders"
-                  (change)="onPreferenceChange('autoSendRsvpReminders', isChecked($event))"
+                  (change)="onPreferenceToggle('autoSendRsvpReminders', $event)"
                 />
                 <label for="autoRsvp"
                   >Auto-send RSVP reminders 24 hours before events</label
@@ -182,7 +182,7 @@ interface TeamSettings {
                   type="checkbox"
                   id="allowAnalytics"
                   [checked]="teamSettings().preferences.allowPlayersViewAnalytics"
-                  (change)="onPreferenceChange('allowPlayersViewAnalytics', isChecked($event))"
+                  (change)="onPreferenceToggle('allowPlayersViewAnalytics', $event)"
                 />
                 <label for="allowAnalytics"
                   >Allow players to see team analytics</label
@@ -194,7 +194,7 @@ interface TeamSettings {
                   type="checkbox"
                   id="reqApproval"
                   [checked]="teamSettings().preferences.requireCoachApprovalPosts"
-                  (change)="onPreferenceChange('requireCoachApprovalPosts', isChecked($event))"
+                  (change)="onPreferenceToggle('requireCoachApprovalPosts', $event)"
                 />
                 <label for="reqApproval"
                   >Require coach approval for community posts</label
@@ -241,24 +241,55 @@ export class TeamManagementComponent implements OnInit {
     this.loadSettings();
   }
 
+  onTeamNameInput(event: Event): void {
+    this.onTeamNameChange(this.readInputValue(event));
+  }
+
   onTeamNameChange(value: string): void {
     this.teamSettings.update((settings) => ({ ...settings, name: value }));
+  }
+
+  onPrimaryColorInput(event: Event): void {
+    this.onPrimaryColorChange(this.readInputValue(event));
   }
 
   onPrimaryColorChange(value: string): void {
     this.teamSettings.update((settings) => ({ ...settings, primaryColor: value }));
   }
 
+  onSecondaryColorInput(event: Event): void {
+    this.onSecondaryColorChange(this.readInputValue(event));
+  }
+
   onSecondaryColorChange(value: string): void {
     this.teamSettings.update((settings) => ({ ...settings, secondaryColor: value }));
+  }
+
+  onLeagueInput(event: Event): void {
+    this.onLeagueChange(this.readInputValue(event));
   }
 
   onLeagueChange(value: string): void {
     this.teamSettings.update((settings) => ({ ...settings, league: value }));
   }
 
+  onHomeFieldInput(event: Event): void {
+    this.onHomeFieldChange(this.readInputValue(event));
+  }
+
   onHomeFieldChange(value: string): void {
     this.teamSettings.update((settings) => ({ ...settings, homeField: value }));
+  }
+
+  onPreferenceToggle(
+    key:
+      | "requireWellnessCheckin"
+      | "autoSendRsvpReminders"
+      | "allowPlayersViewAnalytics"
+      | "requireCoachApprovalPosts",
+    event: Event,
+  ): void {
+    this.onPreferenceChange(key, this.readChecked(event));
   }
 
   onPreferenceChange(
@@ -278,7 +309,7 @@ export class TeamManagementComponent implements OnInit {
     }));
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;
@@ -286,7 +317,7 @@ export class TeamManagementComponent implements OnInit {
     return "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
       return target.checked;
@@ -304,10 +335,12 @@ export class TeamManagementComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<{ settings?: TeamSettings }> =
-        await firstValueFrom(this.api.get(API_ENDPOINTS.teamManagement));
-      if (response?.success && response.data?.settings) {
-        this.teamSettings.set(response.data.settings);
+      const response = await firstValueFrom(
+        this.api.get<{ settings?: TeamSettings }>(API_ENDPOINTS.teamManagement),
+      );
+      const payload = extractApiPayload<{ settings?: TeamSettings }>(response);
+      if (payload?.settings) {
+        this.teamSettings.set(payload.settings);
       }
     } catch (err) {
       this.logger.error("Failed to load team settings", err);

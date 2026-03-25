@@ -4,6 +4,10 @@ import { Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../utils/api-response-mapper";
 
 /**
  * Training Session Status Enum
@@ -492,7 +496,7 @@ export class TrainingDataService {
       .pipe(
         map((response) => {
           // API returns { success: true, data: session } from createSuccessResponse
-          const session = response.data;
+          const session = extractApiPayload<TrainingSession>(response);
           if (session) {
             this.logger.info(
               "Training session updated successfully:",
@@ -554,7 +558,7 @@ export class TrainingDataService {
       }>(`${apiUrl}/training-sessions/${id}`)
       .pipe(
         map((response) => {
-          if (response.success) {
+          if (isSuccessfulApiResponse(response)) {
             this.logger.info("Training session soft-deleted successfully:", id);
             return true;
           }

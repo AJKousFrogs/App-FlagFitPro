@@ -46,7 +46,7 @@ import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import {
   Workout,
 } from "../../core/models/training.models";
@@ -188,13 +188,17 @@ export class TrainingComponent {
    */
   private async loadAchievementsData(): Promise<void> {
     try {
-      const response: ApiResponse<{ achievements?: AchievementApiRecord[] }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.achievements.list),
+      const response = await firstValueFrom(
+        this.api.get<{ achievements?: AchievementApiRecord[] }>(
+          API_ENDPOINTS.achievements.list,
+        ),
       );
-      if (response?.success && response.data) {
+      const achievementsPayload = extractApiPayload<{
+        achievements?: AchievementApiRecord[];
+      }>(response);
+      if (achievementsPayload) {
         const earned =
-          response.data.achievements?.filter(
+          achievementsPayload.achievements?.filter(
             (a) => a.earned,
           ) || [];
         this.totalAchievements.set(earned.length);
@@ -218,12 +222,16 @@ export class TrainingComponent {
       }
 
       // Load streaks
-      const streaksResponse: ApiResponse<{ streaks?: AchievementStreak[] }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.achievements.streaks),
+      const streaksResponse = await firstValueFrom(
+        this.api.get<{ streaks?: AchievementStreak[] }>(
+          API_ENDPOINTS.achievements.streaks,
+        ),
       );
-      if (streaksResponse?.success && streaksResponse.data?.streaks) {
-        const trainingStreak = streaksResponse.data.streaks.find(
+      const streaksPayload = extractApiPayload<{
+        streaks?: AchievementStreak[];
+      }>(streaksResponse);
+      if (streaksPayload?.streaks) {
+        const trainingStreak = streaksPayload.streaks.find(
           (s) => s.streak_type === "training",
         );
         this.streakCount.set(trainingStreak?.current_streak || 0);
@@ -263,12 +271,12 @@ export class TrainingComponent {
    */
   private async loadPlayerPosition(): Promise<void> {
     try {
-      const response: ApiResponse<{ position?: string }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.playerSettings.get),
+      const response = await firstValueFrom(
+        this.api.get<{ position?: string }>(API_ENDPOINTS.playerSettings.get),
       );
-      if (response?.success && response.data?.position) {
-        const position = response.data.position;
+      const payload = extractApiPayload<{ position?: string }>(response);
+      if (payload?.position) {
+        const position = payload.position;
         this.playerPosition.set(position);
         this.configurePositionUI(position);
       } else {

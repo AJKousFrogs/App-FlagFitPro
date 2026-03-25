@@ -16,6 +16,7 @@ import { Skeleton } from "primeng/skeleton";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
+import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
 import {
   AppDialogComponent,
@@ -56,6 +57,20 @@ interface Stats {
   tournaments_completed: number;
   total_achievements: number;
   total_points: number;
+}
+
+interface AchievementsPayload {
+  achievements?: Achievement[];
+  grouped?: Record<string, Achievement[]>;
+  summary?: { total: number; earned: number; points: number };
+}
+
+interface StreaksPayload {
+  streaks?: Streak[];
+}
+
+interface StatsPayload {
+  stats?: Stats;
 }
 
 @Component({
@@ -473,38 +488,18 @@ export class AchievementsPanelComponent {
   async loadAchievements(): Promise<boolean> {
     try {
       const response = await firstValueFrom(
-        this.api.get<{
-          achievements?: Achievement[];
-          grouped?: Record<string, Achievement[]>;
-          summary?: { total: number; earned: number; points: number };
-        }>("/api/achievements"),
+        this.api.get<AchievementsPayload>("/api/achievements"),
       );
-      if (response?.success && response.data) {
-        this.achievements.set(response.data.achievements || []);
-        this.grouped.set(response.data.grouped || {});
-        if (response.data.summary) {
+      const payload = extractApiPayload<AchievementsPayload>(response);
+
+      if (payload) {
+        this.achievements.set(payload.achievements || []);
+        this.grouped.set(payload.grouped || {});
+        if (payload.summary) {
           this.summary.set({
-            totalEarned: response.data.summary.earned,
-            totalAvailable: response.data.summary.total,
-            totalPoints: response.data.summary.points,
-          });
-        }
-      } else if (
-        (response as unknown as { achievements?: Achievement[] })?.achievements
-      ) {
-        // Direct response without wrapper (legacy format)
-        const legacyResponse = response as unknown as {
-          achievements?: Achievement[];
-          grouped?: Record<string, Achievement[]>;
-          summary?: { total: number; earned: number; points: number };
-        };
-        this.achievements.set(legacyResponse.achievements || []);
-        this.grouped.set(legacyResponse.grouped || {});
-        if (legacyResponse.summary) {
-          this.summary.set({
-            totalEarned: legacyResponse.summary.earned,
-            totalAvailable: legacyResponse.summary.total,
-            totalPoints: legacyResponse.summary.points,
+            totalEarned: payload.summary.earned,
+            totalAvailable: payload.summary.total,
+            totalPoints: payload.summary.points,
           });
         }
       }
@@ -518,14 +513,11 @@ export class AchievementsPanelComponent {
   async loadStreaks(): Promise<boolean> {
     try {
       const response = await firstValueFrom(
-        this.api.get<{ streaks?: Streak[] }>("/api/achievements/streaks"),
+        this.api.get<StreaksPayload>("/api/achievements/streaks"),
       );
-      if (response?.success && response.data) {
-        this.streaks.set(response.data.streaks || []);
-      } else if ((response as unknown as { streaks?: Streak[] })?.streaks) {
-        // Direct response without wrapper (legacy format)
-        const legacyResponse = response as unknown as { streaks?: Streak[] };
-        this.streaks.set(legacyResponse.streaks || []);
+      const payload = extractApiPayload<StreaksPayload>(response);
+      if (payload) {
+        this.streaks.set(payload.streaks || []);
       }
       return true;
     } catch (err) {
@@ -537,14 +529,11 @@ export class AchievementsPanelComponent {
   async loadStats(): Promise<boolean> {
     try {
       const response = await firstValueFrom(
-        this.api.get<{ stats?: Stats }>("/api/achievements/stats"),
+        this.api.get<StatsPayload>("/api/achievements/stats"),
       );
-      if (response?.success && response.data?.stats) {
-        this.stats.set(response.data.stats);
-      } else if ((response as unknown as { stats?: Stats })?.stats) {
-        // Direct response without wrapper (legacy format)
-        const legacyResponse = response as unknown as { stats?: Stats };
-        this.stats.set(legacyResponse.stats || null);
+      const payload = extractApiPayload<StatsPayload>(response);
+      if (payload?.stats) {
+        this.stats.set(payload.stats);
       }
       return true;
     } catch (err) {

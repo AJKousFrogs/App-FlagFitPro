@@ -42,7 +42,7 @@ import { SkeletonLoaderComponent } from "../../shared/components/skeleton-loader
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 
 
-import { from, type Observable } from "rxjs";
+import { from } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
 // Layout & Components
@@ -78,7 +78,11 @@ import {
 // Environment
 
 // Utils
-import { mapDailyProtocolResponse } from "../../core/utils/api-response-mapper";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+  mapDailyProtocolResponse,
+} from "../../core/utils/api-response-mapper";
 import { getDateKey, getTodayISO } from "../../shared/utils/date.utils";
 import {
   ExactTrainingSummary,
@@ -635,19 +639,18 @@ export class TodayComponent {
 
     // Step 1: Try GET first (via Netlify Functions)
     this.api
-      .get<{ success: boolean; data?: ProtocolJson }>(
-        `/api/daily-protocol?date=${today}`,
-      )
+      .get<ProtocolJson>(`/api/daily-protocol?date=${today}`)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (response?.success && response.data) {
+          const payload = extractApiPayload<ProtocolJson>(response);
+          if (payload) {
             // Store full protocol data for UI rendering (includes blocks with exercises)
-            this.fullProtocolData = response.data as unknown as ProtocolApiResponse;
+            this.fullProtocolData = payload as unknown as ProtocolApiResponse;
 
             // Protocol found, resolve state
             // Map API response (camelCase) to resolver format (snake_case)
-            const protocolData = this.mapApiProtocolResponse(response.data);
+            const protocolData = this.mapApiProtocolResponse(payload);
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
@@ -707,15 +710,12 @@ export class TodayComponent {
     this.isGeneratingProtocol.set(true);
 
     this.api
-      .post<{ success: boolean; data?: ProtocolJson }>(
-        "/api/daily-protocol/generate",
-        { date },
-      )
+      .post<ProtocolJson>("/api/daily-protocol/generate", { date })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           this.isGeneratingProtocol.set(false);
-          if (response?.success) {
+          if (isSuccessfulApiResponse(response)) {
             // Generation succeeded, reload via GET
             this.loadTodayData();
           } else {
@@ -941,20 +941,18 @@ export class TodayComponent {
   }
 
   private handleProtocolRequest(
-    request: ReturnType<typeof this.trainingService.generateDailyProtocol>,
+    request: ReturnType<
+      typeof this.trainingService.generateDailyProtocol<Partial<DailyProtocol>>
+    >,
     targetSignal: typeof this.protocol,
     loadingSignal: typeof this.isGeneratingProtocol,
     toast?: { success: string; detail: string },
   ): void {
-    const typedRequest = request as Observable<{
-      success?: boolean;
-      data?: Partial<DailyProtocol>;
-    }>;
-
-    typedRequest.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
-        if (response?.success && response.data) {
-          targetSignal.set(response.data as Partial<DailyProtocol>);
+        const payload = extractApiPayload<Partial<DailyProtocol>>(response);
+        if (payload) {
+          targetSignal.set(payload);
           if (toast) {
             this.toastService.success(toast.detail, toast.success);
             // Announce success to screen readers
@@ -1133,12 +1131,13 @@ export class TodayComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (response?.success) {
+          const payload = extractApiPayload<{ error?: string }>(response);
+          if (isSuccessfulApiResponse(response)) {
             this.toastService.success("You can now proceed with training", "Alert Acknowledged");
             // Refresh protocol to update state
             this.loadTodayData();
           } else {
-            this.toastService.error(response?.error || "Failed to acknowledge alert");
+            this.toastService.error(payload?.error || "Failed to acknowledge alert");
           }
         },
         error: (err) => {

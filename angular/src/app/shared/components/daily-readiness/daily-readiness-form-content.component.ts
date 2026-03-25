@@ -32,4 +32,15 @@ export class DailyReadinessFormContentComponent {
     value: number | number[] | null | undefined;
   }>();
   readonly weightChange = output<number | null | undefined>();
+
+  emitSliderChange(
+    key: Exclude<keyof DailyState, "weight_kg">,
+    value: number | number[] | null | undefined,
+  ): void {
+    this.sliderChange.emit({ key, value });
+  }
+
+  emitWeightChange(value: number | null | undefined): void {
+    this.weightChange.emit(value);
+  }
 }

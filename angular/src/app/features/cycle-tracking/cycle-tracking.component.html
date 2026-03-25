@@ -281,7 +281,7 @@
                   [label]="symptom.label"
                   [binary]="true"
                   [ngModel]="todaySymptoms.symptoms.includes(symptom.value)"
-                  (change)="onTodaySymptomToggle(symptom.value, $event.checked)"
+                  (checkedChange)="onTodaySymptomToggle(symptom.value, $event)"
                 ></app-checkbox>
               }
             </div>
@@ -411,7 +411,7 @@
               <app-select
                 id="retention"
                 [options]="retentionOptions"
-                (change)="onPrivacyRetentionChange($event)"
+                (valueChange)="onPrivacyRetentionChange($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Auto-delete data older than..."
@@ -514,7 +514,7 @@
                   [label]="symptom.label"
                   [binary]="true"
                   [ngModel]="newPeriod.symptoms.includes(symptom.value)"
-                  (change)="onNewPeriodSymptomToggle(symptom.value, $event.checked)"
+                  (checkedChange)="onNewPeriodSymptomToggle(symptom.value, $event)"
                 ></app-checkbox>
               }
             </div>
@@ -525,7 +525,7 @@
             <app-textarea
               label="Notes (optional)"
               [ngModel]="newPeriod.notes"
-              (change)="onNewPeriodNotesChange($event)"
+              (valueChange)="onNewPeriodNotesChange($event)"
               [rows]="2"
               placeholder="Any additional notes..."
             ></app-textarea>

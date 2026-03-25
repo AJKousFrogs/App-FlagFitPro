@@ -89,7 +89,11 @@ export class SettingsAccountSectionComponent {
     control.setValue(parsed);
   }
 
-  getInputValue(event: Event): string {
+  onDateOfBirthInputEvent(event: Event): void {
+    this.onDateOfBirthInput(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     return target instanceof HTMLInputElement ? target.value : "";
   }

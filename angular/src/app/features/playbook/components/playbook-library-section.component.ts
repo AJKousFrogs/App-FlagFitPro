@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -40,6 +40,18 @@ export class PlaybookLibrarySectionComponent {
   readonly statusChange = output<"memorized" | "learning" | null | undefined>();
   readonly selectPlay = output<Play>();
   readonly startQuiz = output<void>();
+
+  emitCategoryChange(event: SelectChangeEvent): void {
+    this.categoryChange.emit(
+      (event.value as PlayCategory | null | undefined) ?? null,
+    );
+  }
+
+  emitStatusChange(event: SelectChangeEvent): void {
+    this.statusChange.emit(
+      (event.value as "memorized" | "learning" | null | undefined) ?? null,
+    );
+  }
 
   getCategoryLabel(category: PlayCategory): string {
     const found = this.categoryOptions().find((item) => item.value === category);

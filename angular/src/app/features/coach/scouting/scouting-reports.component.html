@@ -104,7 +104,7 @@
               <app-select
                 label="Opponent"
                 [options]="opponentFilterOptions()"
-                (change)="updateNewReportOpponent($event)"
+                (valueChange)="updateNewReportOpponent($event)"
                 placeholder="Select opponent"
                 class="w-full"
               ></app-select>
@@ -115,7 +115,7 @@
                 label="Game Date"
                 type="date"
                 [ngModel]="newReport.gameDate"
-                (change)="updateNewReportGameDate($event)"
+                (valueChange)="updateNewReportGameDate($event)"
                 class="w-full"
                 aria-label="Game date"
               ></app-form-input>
@@ -125,7 +125,7 @@
               <app-textarea
                 label="Executive Summary"
                 [ngModel]="newReport.executiveSummary"
-                (change)="updateNewReportText('executiveSummary', $event)"
+                (valueChange)="updateNewReportText('executiveSummary', $event)"
                 rows="4"
                 placeholder="2-3 paragraph overview of the opponent..."
                 class="w-full"
@@ -139,7 +139,7 @@
                 <app-textarea
                   label="Attack Points"
                   [ngModel]="newReport.attackPoints"
-                  (change)="updateNewReportText('attackPoints', $event)"
+                  (valueChange)="updateNewReportText('attackPoints', $event)"
                   rows="2"
                   placeholder="Where to attack their defense (one per line)"
                   class="w-full"
@@ -150,7 +150,7 @@
                 <app-textarea
                   label="Plays to Run"
                   [ngModel]="newReport.playsToRun"
-                  (change)="updateNewReportText('playsToRun', $event)"
+                  (valueChange)="updateNewReportText('playsToRun', $event)"
                   rows="2"
                   placeholder="Specific plays from playbook (one per line)"
                   class="w-full"
@@ -165,7 +165,7 @@
                 <app-textarea
                   label="Coverage Adjustments"
                   [ngModel]="newReport.coverageAdjustments"
-                  (change)="updateNewReportText('coverageAdjustments', $event)"
+                  (valueChange)="updateNewReportText('coverageAdjustments', $event)"
                   rows="2"
                   placeholder="Coverage changes needed (one per line)"
                   class="w-full"
@@ -176,7 +176,7 @@
                 <app-textarea
                   label="Blitz Plan"
                   [ngModel]="newReport.blitzPlan"
-                  (change)="updateNewReportText('blitzPlan', $event)"
+                  (valueChange)="updateNewReportText('blitzPlan', $event)"
                   rows="2"
                   placeholder="When and how to blitz (one per line)"
                   class="w-full"
@@ -190,7 +190,7 @@
                 <app-select
                   label="Share With"
                   [options]="shareOptions"
-                  (change)="updateNewReportSharedWith($event)"
+                  (valueChange)="updateNewReportSharedWith($event)"
                   class="w-full"
                 ></app-select>
               </div>
@@ -198,7 +198,7 @@
                 <app-checkbox
                   label="Mark as required reading"
                   [ngModel]="newReport.requiredReading"
-                  (change)="updateNewReportRequiredReading($event.checked)"
+                  (checkedChange)="updateNewReportRequiredReading($event)"
                   aria-label="Mark report as required reading"
                 ></app-checkbox>
               </div>
@@ -376,7 +376,7 @@
               <app-form-input
                 label="Team Name"
                 [ngModel]="newOpponent.teamName"
-                (change)="updateNewOpponentText('teamName', $event)"
+                (valueChange)="updateNewOpponentText('teamName', $event)"
                 placeholder="e.g., Phoenix Flames"
                 class="w-full"
                 aria-label="Opponent team name"
@@ -386,7 +386,7 @@
               <app-form-input
                 label="Conference/League"
                 [ngModel]="newOpponent.conference"
-                (change)="updateNewOpponentText('conference', $event)"
+                (valueChange)="updateNewOpponentText('conference', $event)"
                 placeholder="e.g., Western Division"
                 class="w-full"
                 aria-label="Conference or league"
@@ -398,7 +398,7 @@
                   label="Wins"
                   type="number"
                   [ngModel]="newOpponent.wins"
-                  (change)="updateNewOpponentRecord('wins', $event)"
+                  (valueChange)="updateNewOpponentRecord('wins', $event)"
                   min="0"
                   class="w-full"
                   aria-label="Opponent wins"
@@ -409,7 +409,7 @@
                   label="Losses"
                   type="number"
                   [ngModel]="newOpponent.losses"
-                  (change)="updateNewOpponentRecord('losses', $event)"
+                  (valueChange)="updateNewOpponentRecord('losses', $event)"
                   min="0"
                   class="w-full"
                   aria-label="Opponent losses"
@@ -420,7 +420,7 @@
               <app-form-input
                 label="Head Coach"
                 [ngModel]="newOpponent.headCoach"
-                (change)="updateNewOpponentText('headCoach', $event)"
+                (valueChange)="updateNewOpponentText('headCoach', $event)"
                 class="w-full"
                 aria-label="Head coach"
               ></app-form-input>
@@ -429,7 +429,7 @@
               <app-select
                 label="Offensive Style"
                 [options]="offensiveStyles"
-                (change)="updateNewOpponentText('offensiveStyle', $event)"
+                (valueChange)="updateNewOpponentText('offensiveStyle', $event)"
                 placeholder="Select style"
                 class="w-full"
               ></app-select>
@@ -438,7 +438,7 @@
               <app-select
                 label="Defensive Style"
                 [options]="defensiveStyles"
-                (change)="updateNewOpponentText('defensiveStyle', $event)"
+                (valueChange)="updateNewOpponentText('defensiveStyle', $event)"
                 placeholder="Select style"
                 class="w-full"
               ></app-select>

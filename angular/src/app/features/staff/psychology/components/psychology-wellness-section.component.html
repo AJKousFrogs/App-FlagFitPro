@@ -4,7 +4,7 @@
     <p-select
       [options]="timePeriods()"
       [ngModel]="selectedPeriod()"
-      (onChange)="periodChange.emit($event.value ?? '30days')"
+      (onChange)="emitPeriodChange($event)"
     ></p-select>
   </div>
 

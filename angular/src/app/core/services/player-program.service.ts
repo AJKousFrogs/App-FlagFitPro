@@ -16,6 +16,7 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, catchError, map, of } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+import { extractApiPayload } from "../utils/api-response-mapper";
 
 // Program ID constants - must match backend and database
 export const PROGRAM_IDS = {
@@ -134,6 +135,15 @@ export class PlayerProgramService {
     return `${apiUrl}/api/player-programs`;
   }
 
+  private extractAssignment(
+    response: AssignmentResponse | null | undefined,
+  ): ProgramAssignment | null {
+    return (
+      extractApiPayload<NonNullable<AssignmentResponse["data"]>>(response)
+        ?.assignment ?? null
+    );
+  }
+
   /**
    * Get current user's active program assignment
    */
@@ -143,12 +153,7 @@ export class PlayerProgramService {
         withCredentials: true,
       })
       .pipe(
-        map((response) => {
-          if (response.success && response.data?.assignment) {
-            return response.data.assignment;
-          }
-          return null;
-        }),
+        map((response) => this.extractAssignment(response)),
         catchError((error) => {
           // Don't log auth/client errors as hard failures for optional assignment lookup
           if ([400, 401, 403, 404].includes(error.status)) {
@@ -200,11 +205,12 @@ export class PlayerProgramService {
       })
       .pipe(
         map((response) => {
-          if (response.success && response.data?.assignment) {
+          const assignment = this.extractAssignment(response);
+          if (assignment) {
             this.logger.info(
-              `[PlayerProgramService] ✅ Assigned program: ${response.data.assignment.program.name}`,
+              `[PlayerProgramService] ✅ Assigned program: ${assignment.program.name}`,
             );
-            return response.data.assignment;
+            return assignment;
           }
           this.logger.warn(
             "[PlayerProgramService] API response missing assignment data",
@@ -267,12 +273,7 @@ export class PlayerProgramService {
         withCredentials: true,
       })
       .pipe(
-        map((response) => {
-          if (response.success && response.data?.assignment) {
-            return response.data.assignment;
-          }
-          return null;
-        }),
+        map((response) => this.extractAssignment(response)),
         catchError((error) => {
           this.logger.error(
             "[PlayerProgramService] Error updating assignment:",

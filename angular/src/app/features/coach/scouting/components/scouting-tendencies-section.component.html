@@ -3,7 +3,7 @@
     <h3>Team Tendencies Analysis</h3>
     <p-select
       [options]="filterOptions()"
-      (onChange)="filterChange.emit($event.value)"
+      (onChange)="emitFilterChange($event)"
       placeholder="Select opponent"
     ></p-select>
   </div>

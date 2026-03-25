@@ -10,9 +10,9 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
-import { InputNumber } from "primeng/inputnumber";
+import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -100,7 +100,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             <div header-actions class="filter-actions">
               <p-select
                 [options]="certificationOptions"
-                (onChange)="onSelectedCertificationChange($event.value)"
+                (onChange)="onSelectedCertificationSelect($event)"
                 placeholder="All Levels"
                 [showClear]="true"
                 class="officials-filter-select"
@@ -343,7 +343,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <input
                 pInputText
                 [value]="officialForm.name"
-                (input)="onOfficialNameChange(getInputValue($event))"
+                (input)="onOfficialNameInput($event)"
                 placeholder="Full name"
               />
             </div>
@@ -354,7 +354,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <input
                   pInputText
                   [value]="officialForm.email"
-                  (input)="onOfficialEmailChange(getInputValue($event))"
+                  (input)="onOfficialEmailInput($event)"
                   type="email"
                   placeholder="email@example.com"
                 />
@@ -365,7 +365,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <input
                   pInputText
                   [value]="officialForm.phone"
-                  (input)="onOfficialPhoneChange(getInputValue($event))"
+                  (input)="onOfficialPhoneInput($event)"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -376,7 +376,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Certification Level</label>
                 <p-select
                   [options]="certificationOptions"
-                  (onChange)="onOfficialCertificationChange($event.value)"
+                  (onChange)="onOfficialCertificationSelect($event)"
                   placeholder="Select level"
                   class="w-full"
                 ></p-select>
@@ -385,7 +385,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <div class="form-field">
                 <label>Years Experience</label>
                 <p-inputNumber
-                  (onInput)="onOfficialYearsExperienceChange($event.value)"
+                  (onInput)="onOfficialYearsExperienceInput($event)"
                   [min]="0"
                 ></p-inputNumber>
               </div>
@@ -396,7 +396,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <input
                 pInputText
                 [value]="officialForm.notes"
-                (input)="onOfficialNotesChange(getInputValue($event))"
+                (input)="onOfficialNotesInput($event)"
                 placeholder="Additional notes..."
               />
             </div>
@@ -439,7 +439,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Game *</label>
                 <p-select
                   [options]="upcomingGames()"
-                  (onChange)="onScheduleGameIdChange($event.value)"
+                  (onChange)="onScheduleGameSelect($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select game"
@@ -451,7 +451,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <label>Role *</label>
                 <p-select
                   [options]="roleOptions"
-                  (onChange)="onScheduleRoleChange($event.value)"
+                  (onChange)="onScheduleRoleSelect($event)"
                   placeholder="Select role"
                   class="w-full"
                 ></p-select>
@@ -460,7 +460,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               <div class="form-field">
                 <label>Payment Amount</label>
                 <p-inputNumber
-                  (onInput)="onSchedulePaymentAmountChange($event.value)"
+                  (onInput)="onSchedulePaymentAmountInput($event)"
                   mode="currency"
                   currency="USD"
                   [min]="0"
@@ -623,6 +623,12 @@ export class OfficialsComponent implements OnInit {
     // Computed handles filtering
   }
 
+  onSelectedCertificationSelect(event: SelectChangeEvent): void {
+    this.onSelectedCertificationChange(
+      (event.value as CertificationLevel | null | undefined) ?? null,
+    );
+  }
+
   onSelectedCertificationChange(value: CertificationLevel | null): void {
     this.selectedCertification = value;
     this.filterOfficials();
@@ -632,12 +638,30 @@ export class OfficialsComponent implements OnInit {
     this.officialForm = { ...this.officialForm, name: value };
   }
 
+  onOfficialNameInput(event: Event): void {
+    this.onOfficialNameChange(this.readInputValue(event));
+  }
+
   onOfficialEmailChange(value: string): void {
     this.officialForm = { ...this.officialForm, email: value };
   }
 
+  onOfficialEmailInput(event: Event): void {
+    this.onOfficialEmailChange(this.readInputValue(event));
+  }
+
   onOfficialPhoneChange(value: string): void {
     this.officialForm = { ...this.officialForm, phone: value };
+  }
+
+  onOfficialPhoneInput(event: Event): void {
+    this.onOfficialPhoneChange(this.readInputValue(event));
+  }
+
+  onOfficialCertificationSelect(event: SelectChangeEvent): void {
+    this.onOfficialCertificationChange(
+      (event.value as CertificationLevel | null | undefined) ?? null,
+    );
   }
 
   onOfficialCertificationChange(value: CertificationLevel | null): void {
@@ -645,6 +669,10 @@ export class OfficialsComponent implements OnInit {
       ...this.officialForm,
       certification_level: value ?? undefined,
     };
+  }
+
+  onOfficialYearsExperienceInput(event: InputNumberInputEvent): void {
+    this.onOfficialYearsExperienceChange(event.value ?? null);
   }
 
   onOfficialYearsExperienceChange(value: number | null): void {
@@ -658,19 +686,39 @@ export class OfficialsComponent implements OnInit {
     this.officialForm = { ...this.officialForm, notes: value };
   }
 
+  onOfficialNotesInput(event: Event): void {
+    this.onOfficialNotesChange(this.readInputValue(event));
+  }
+
+  onScheduleGameSelect(event: SelectChangeEvent): void {
+    this.onScheduleGameIdChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   onScheduleGameIdChange(value: string | null): void {
     this.scheduleForm = { ...this.scheduleForm, game_id: value ?? "" };
+  }
+
+  onScheduleRoleSelect(event: SelectChangeEvent): void {
+    this.onScheduleRoleChange(
+      (event.value as OfficialRole | null | undefined) ?? null,
+    );
   }
 
   onScheduleRoleChange(value: OfficialRole | null): void {
     this.scheduleForm = { ...this.scheduleForm, role: value ?? ("" as OfficialRole) };
   }
 
+  onSchedulePaymentAmountInput(event: InputNumberInputEvent): void {
+    this.onSchedulePaymentAmountChange(event.value ?? null);
+  }
+
   onSchedulePaymentAmountChange(value: number | null): void {
     this.scheduleForm = { ...this.scheduleForm, payment_amount: value ?? 0 };
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;

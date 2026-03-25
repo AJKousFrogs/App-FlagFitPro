@@ -13,6 +13,10 @@ import { throwError, firstValueFrom } from "rxjs";
 import { catchError, map } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import {
+  extractApiArray,
+  extractApiPayload,
+} from "../utils/api-response-mapper";
 
 export interface ACWRData {
   session_date: string;
@@ -56,7 +60,10 @@ export class TrainingMetricsService {
       this.apiService
         .post<{ data: ACWRData[] }>("/api/compute-acwr", { athleteId })
         .pipe(
-          map((response) => response.data?.data || []),
+          map((response) => {
+            const payload = extractApiPayload<{ data?: ACWRData[] }>(response);
+            return Array.isArray(payload?.data) ? payload.data : [];
+          }),
           catchError((error) => {
             this.logger.error("Error fetching ACWR:", error);
             return throwError(() => error);
@@ -97,7 +104,11 @@ export class TrainingMetricsService {
           dataset,
         })
         .pipe(
-          map((response) => response.data || defaultResponse),
+          map(
+            (response) =>
+              extractApiPayload<ImportDatasetResponse>(response) ||
+              defaultResponse,
+          ),
           catchError((error) => {
             this.logger.error("Error importing dataset:", error);
             return throwError(() => error);
@@ -123,7 +134,7 @@ export class TrainingMetricsService {
           startDate: fourWeeksAgo,
         })
         .pipe(
-          map((response) => response.data || []),
+          map((response) => extractApiArray<FlagMetrics>(response) || []),
           catchError((error) => {
             this.logger.error("Error fetching flag metrics:", error);
             return throwError(() => error);

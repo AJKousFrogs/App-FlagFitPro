@@ -11,7 +11,7 @@ import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Chip } from "primeng/chip";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -143,7 +143,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <input
                     type="checkbox"
                     [checked]="aiProcessingEnabled"
-                    (change)="onAiProcessingChange(isChecked($event))"
+                    (change)="onAiProcessingToggle($event)"
                     aria-label="Enable AI-powered recommendations"
                   />
                 </div>
@@ -254,10 +254,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                               type="checkbox"
                               [checked]="team.performanceSharingEnabled"
                               (change)="
-                                onTeamSharingChange(
+                                onTeamSharingToggle(
                                   team.teamId,
                                   'performance',
-                                  isChecked($event)
+                                  $event
                                 )
                               "
                               [attr.aria-label]="'Share performance data for ' + team.teamName"
@@ -273,10 +273,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                               type="checkbox"
                               [checked]="team.healthSharingEnabled"
                               (change)="
-                                onTeamSharingChange(
+                                onTeamSharingToggle(
                                   team.teamId,
                                   'health',
-                                  isChecked($event)
+                                  $event
                                 )
                               "
                               [attr.aria-label]="'Share health data for ' + team.teamName"
@@ -347,7 +347,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select level"
-                    (onChange)="onEmergencyLevelChange($event.value)"
+                    (onChange)="onEmergencyLevelSelect($event)"
                   ></p-select>
                 </div>
               </div>
@@ -417,7 +417,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <input
                     type="checkbox"
                     [checked]="researchOptIn"
-                    (change)="onResearchOptInChange(isChecked($event))"
+                    (change)="onResearchOptInToggle($event)"
                     aria-label="Opt in to research participation"
                   />
                 </div>
@@ -437,7 +437,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <input
                     type="checkbox"
                     [checked]="marketingOptIn"
-                    (change)="onMarketingOptInChange(isChecked($event))"
+                    (change)="onMarketingOptInToggle($event)"
                     aria-label="Opt in to marketing communications"
                   />
                 </div>
@@ -561,7 +561,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               type="text"
               pInputText
               [value]="newContact.name ?? ''"
-              (input)="onNewContactNameChange(getInputValue($event))"
+              (input)="onNewContactNameInput($event)"
               placeholder="Contact name"
             />
           </div>
@@ -572,7 +572,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               type="tel"
               pInputText
               [value]="newContact.phone ?? ''"
-              (input)="onNewContactPhoneChange(getInputValue($event))"
+              (input)="onNewContactPhoneInput($event)"
               placeholder="+1 234 567 8900"
             />
           </div>
@@ -581,7 +581,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <p-select
               id="contactRelationship"
               [ngModel]="newContact.relationship"
-              (onChange)="onNewContactRelationshipChange($event.value)"
+              (onChange)="onNewContactRelationshipSelect($event)"
               [options]="relationshipOptions"
               placeholder="Select relationship"
             ></p-select>
@@ -646,7 +646,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               type="text"
               pInputText
               [value]="deletionReason"
-              (input)="onDeletionReasonChange(getInputValue($event))"
+              (input)="onDeletionReasonInput($event)"
               placeholder="Help us improve..."
             />
           </div>
@@ -656,7 +656,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               type="text"
               pInputText
               [value]="deleteConfirmText"
-              (input)="onDeleteConfirmTextChange(getInputValue($event))"
+              (input)="onDeleteConfirmTextInput($event)"
               placeholder="DELETE"
             />
           </div>
@@ -821,31 +821,53 @@ export class PrivacyControlsComponent implements OnInit {
     }
   }
 
+  onNewContactNameInput(event: Event): void {
+    this.onNewContactNameChange(this.readInputValue(event));
+  }
+
   onNewContactNameChange(value: string): void {
     this.newContact = { ...this.newContact, name: value };
+  }
+
+  onNewContactPhoneInput(event: Event): void {
+    this.onNewContactPhoneChange(this.readInputValue(event));
   }
 
   onNewContactPhoneChange(value: string): void {
     this.newContact = { ...this.newContact, phone: value };
   }
 
+  onNewContactRelationshipSelect(event: SelectChangeEvent): void {
+    this.onNewContactRelationshipChange(
+      typeof event.value === "string" ? event.value : "",
+    );
+  }
+
   onNewContactRelationshipChange(value: string): void {
     this.newContact = { ...this.newContact, relationship: value };
+  }
+
+  onDeletionReasonInput(event: Event): void {
+    this.onDeletionReasonChange(this.readInputValue(event));
   }
 
   onDeletionReasonChange(value: string): void {
     this.deletionReason = value;
   }
 
+  onDeleteConfirmTextInput(event: Event): void {
+    this.onDeleteConfirmTextChange(this.readInputValue(event));
+  }
+
   onDeleteConfirmTextChange(value: string): void {
     this.deleteConfirmText = value;
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
@@ -853,18 +875,40 @@ export class PrivacyControlsComponent implements OnInit {
   // EVENT HANDLERS
   // ============================================================================
 
+  async onAiProcessingToggle(event: Event): Promise<void> {
+    await this.onAiProcessingChange(this.readChecked(event));
+  }
+
   async onAiProcessingChange(enabled: boolean): Promise<void> {
     await this.privacyService.updateAiProcessing(enabled);
     // Refresh consent status after change
     await this.loadAiConsentStatus();
   }
 
+  async onResearchOptInToggle(event: Event): Promise<void> {
+    await this.onResearchOptInChange(this.readChecked(event));
+  }
+
   async onResearchOptInChange(optIn: boolean): Promise<void> {
     await this.privacyService.updateResearchOptIn(optIn);
   }
 
+  async onMarketingOptInToggle(event: Event): Promise<void> {
+    await this.onMarketingOptInChange(this.readChecked(event));
+  }
+
   async onMarketingOptInChange(optIn: boolean): Promise<void> {
     await this.privacyService.updateMarketingOptIn(optIn);
+  }
+
+  async onEmergencyLevelSelect(event: SelectChangeEvent): Promise<void> {
+    const level = event.value as EmergencySharingLevel | undefined;
+
+    if (!level) {
+      return;
+    }
+
+    await this.onEmergencyLevelChange(level);
   }
 
   async onEmergencyLevelChange(level: EmergencySharingLevel): Promise<void> {
@@ -882,6 +926,14 @@ export class PrivacyControlsComponent implements OnInit {
         : { healthSharingEnabled: enabled };
 
     await this.privacyService.updateTeamSharing(teamId, settings);
+  }
+
+  async onTeamSharingToggle(
+    teamId: string,
+    type: "performance" | "health",
+    event: Event,
+  ): Promise<void> {
+    await this.onTeamSharingChange(teamId, type, this.readChecked(event));
   }
 
   // ============================================================================

@@ -17,7 +17,7 @@ import {
 } from "@angular/core";
 import { TitleCasePipe, DecimalPipe } from "@angular/common";
 
-import { Checkbox } from "primeng/checkbox";
+import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -73,7 +73,7 @@ import { TRAINING } from "../../../core/constants/app.constants";
             [binary]="true"
             variant="filled"
             [value]="isSelected()"
-            (onChange)="onSelectionToggle($event.checked)"
+            (onChange)="onSelectionToggleChange($event)"
           ></p-checkbox>
         </div>
       }
@@ -453,5 +453,9 @@ export class RosterPlayerCardComponent {
 
   onSelectionToggle(_checked: boolean | undefined): void {
     this.selectionChange.emit(this.player().id);
+  }
+
+  onSelectionToggleChange(event: CheckboxChangeEvent): void {
+    this.onSelectionToggle(event.checked);
   }
 }

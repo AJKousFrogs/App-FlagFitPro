@@ -295,15 +295,6 @@ export class TravelRecoveryComponent implements OnInit {
     );
   }
 
-  getInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
-      ?.value ?? "";
-  }
-
-  isChecked(event: Event): boolean {
-    return (event.target as HTMLInputElement | null)?.checked ?? false;
-  }
-
   hasActiveCarPlan(): boolean {
     return this.activeCarPlan() !== null;
   }

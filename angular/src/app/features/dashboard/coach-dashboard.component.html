@@ -228,7 +228,7 @@
                 type="text"
                 pInputText
                 [value]="newSession.title"
-                (input)="onNewSessionTitleChange(getInputValue($event))"
+                (input)="onNewSessionTitleInput($event)"
                 placeholder="e.g., Offensive Drills"
                 class="w-full"
                 autocomplete="off"
@@ -238,7 +238,7 @@
               <label for="coach-sessionType">Type</label>
               <p-select
                 inputId="coach-sessionType"
-                (onChange)="onNewSessionTypeChange($event.value)"
+                (onChange)="onNewSessionTypeSelect($event)"
                 [options]="sessionTypes"
                 optionLabel="label"
                 optionValue="value"
@@ -253,7 +253,7 @@
                 name="sessionDate"
                 type="datetime-local"
                 [value]="getNewSessionDateInputValue()"
-                (input)="onNewSessionDateInput(getInputValue($event))"
+                (input)="onNewSessionDateInputEvent($event)"
                 class="w-full"
               />
             </div>
@@ -265,7 +265,7 @@
                 type="number"
                 pInputText
                 [value]="newSession.duration"
-                (input)="onNewSessionDurationChange(getInputValue($event))"
+                (input)="onNewSessionDurationInput($event)"
                 placeholder="90"
                 class="w-full"
                 autocomplete="off"
@@ -278,7 +278,7 @@
                 id="coach-sessionNotes"
                 name="sessionNotes"
                 [value]="newSession.notes"
-                (input)="onNewSessionNotesChange(getInputValue($event))"
+                (input)="onNewSessionNotesInput($event)"
                 placeholder="Session notes..."
                 rows="3"
                 class="w-full"
@@ -321,7 +321,7 @@
                 pTextarea
                 id="messageContent"
                 [value]="teamMessageContent"
-                (input)="onTeamMessageContentChange(getInputValue($event))"
+                (input)="onTeamMessageContentInput($event)"
                 placeholder="Type your message to the team..."
                 rows="5"
                 class="w-full"
@@ -367,7 +367,7 @@
                 pTextarea
                 id="accessMessage"
                 [value]="requestAccessMessage"
-                (input)="onRequestAccessMessageChange(getInputValue($event))"
+                (input)="onRequestAccessMessageInput($event)"
                 placeholder="Type your request message..."
                 rows="4"
                 class="w-full"

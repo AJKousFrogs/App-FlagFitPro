@@ -7,6 +7,7 @@
  * The backend may return either format (or both), and the frontend expects snake_case
  * for most fields to match the ProtocolJson interface.
  */
+import type { ApiResponse } from "../models/common.models";
 
 /** Record type for API response normalization - allows dynamic property access */
 type ApiRecord = Record<string, unknown>;
@@ -339,4 +340,91 @@ export function normalizeApiResponse<T>(
   }
 
   return mapped as T;
+}
+
+/**
+ * Checks whether a value matches the common API response wrapper shape.
+ */
+export function isApiResponse<T>(value: unknown): value is ApiResponse<T> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const record = value as ApiRecord;
+  return (
+    typeof record["success"] === "boolean" ||
+    "data" in record ||
+    "error" in record ||
+    "message" in record
+  );
+}
+
+/**
+ * Checks whether a response is wrapped in the common API shape and marked successful.
+ */
+export function isSuccessfulApiResponse(
+  value: unknown,
+): value is ApiResponse<unknown> {
+  return isApiResponse(value) && value.success;
+}
+
+/**
+ * Extracts the payload from either a wrapped API response or a direct legacy payload.
+ */
+export function extractApiPayload<T>(
+  response: ApiResponse<T> | T | null | undefined,
+): T | null {
+  if (response == null) {
+    return null;
+  }
+
+  if (isApiResponse<T>(response)) {
+    return response.data ?? null;
+  }
+
+  return response;
+}
+
+/**
+ * Extracts an array payload from either a wrapped API response or a direct legacy payload.
+ */
+export function extractApiArray<T>(
+  response: ApiResponse<T[]> | T[] | null | undefined,
+): T[] {
+  const payload = extractApiPayload<T[]>(response);
+  return Array.isArray(payload) ? payload : [];
+}
+
+/**
+ * Extracts an object payload from either a wrapped API response or a direct legacy payload.
+ */
+export function extractApiRecord(
+  response: ApiResponse<ApiRecord> | ApiRecord | null | undefined,
+): ApiRecord | null {
+  const payload = extractApiPayload<ApiRecord>(response);
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return null;
+  }
+  return payload;
+}
+
+/**
+ * Reads the first numeric field that exists on a response payload.
+ */
+export function readNumericField(
+  record: ApiRecord | null | undefined,
+  ...keys: string[]
+): number | null {
+  if (!record) {
+    return null;
+  }
+
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "number") {
+      return value;
+    }
+  }
+
+  return null;
 }

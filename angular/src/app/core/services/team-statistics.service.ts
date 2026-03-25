@@ -3,6 +3,11 @@ import { Observable } from "rxjs";
 import { catchError, map } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
+import {
+  extractApiArray,
+  extractApiPayload,
+  isApiResponse,
+} from "../utils/api-response-mapper";
 import { getInitials } from "../../shared/utils/format.utils";
 
 // ============================================================================
@@ -195,11 +200,12 @@ export class TeamStatisticsService {
       .get<TeamOverviewStats>(API_ENDPOINTS.coach.dashboard, { teamId })
       .pipe(
         map((response) => {
-          if (response.success && response.data) {
+          const payload = extractApiPayload<TeamOverviewStats>(response);
+          if (payload) {
             return {
-              ...response.data,
-              consentInfo: response.data.consentInfo,
-              dataState: response.data.dataState,
+              ...payload,
+              consentInfo: payload.consentInfo,
+              dataState: payload.dataState,
             };
           }
           throw new Error("No team overview data available");
@@ -233,28 +239,44 @@ export class TeamStatisticsService {
       .get<TeamResponse>(API_ENDPOINTS.coach.team, { teamId })
       .pipe(
         map((response) => {
-          if (response.success && response.data) {
-            const data = response.data;
-            if (Array.isArray(data)) {
-              return {
-                members: this.processPlayersData(data),
-                consentInfo: undefined,
-                dataState: undefined,
-              };
-            }
-            // Type narrowing: data is now the object type, not the array
-            const dataObj = data as {
-              members?: PlayerPerformanceStats[];
-              consentInfo?: ConsentInfo;
-              dataState?: string;
+          const payload = extractApiPayload<TeamResponse | PlayerPerformanceStats[]>(
+            response,
+          );
+          const resolvedPayload = isApiResponse(payload)
+            ? extractApiPayload<{
+                members?: PlayerPerformanceStats[];
+                consentInfo?: ConsentInfo;
+                dataState?: string;
+              } | PlayerPerformanceStats[]>(payload)
+            : payload;
+
+          if (Array.isArray(resolvedPayload)) {
+            return {
+              members: this.processPlayersData(resolvedPayload),
+              consentInfo: undefined,
+              dataState: undefined,
             };
-            const members = Array.isArray(dataObj.members)
-              ? dataObj.members
+          }
+
+          const resolvedRecord =
+            resolvedPayload &&
+            !Array.isArray(resolvedPayload) &&
+            !isApiResponse(resolvedPayload)
+              ? (resolvedPayload as {
+                  members?: PlayerPerformanceStats[];
+                  consentInfo?: ConsentInfo;
+                  dataState?: string;
+                })
+              : null;
+
+          if (resolvedRecord) {
+            const members = Array.isArray(resolvedRecord.members)
+              ? resolvedRecord.members
               : [];
             return {
               members: this.processPlayersData(members),
-              consentInfo: dataObj.consentInfo,
-              dataState: dataObj.dataState,
+              consentInfo: resolvedRecord.consentInfo,
+              dataState: resolvedRecord.dataState,
             };
           }
           throw new Error("No team players stats available");
@@ -276,12 +298,9 @@ export class TeamStatisticsService {
       >(API_ENDPOINTS.games.list, { teamId, limit, past: true })
       .pipe(
         map((response) => {
-          if (
-            response.success &&
-            response.data &&
-            Array.isArray(response.data)
-          ) {
-            return this.processGamesData(response.data);
+          const games = extractApiArray<GameResult>(response);
+          if (games.length > 0) {
+            return this.processGamesData(games);
           }
           throw new Error("No recent games data available");
         }),
@@ -303,12 +322,9 @@ export class TeamStatisticsService {
       .get<UpcomingGame[]>(API_ENDPOINTS.coach.games, { teamId, limit })
       .pipe(
         map((response) => {
-          if (
-            response.success &&
-            response.data &&
-            Array.isArray(response.data)
-          ) {
-            return this.processUpcomingGames(response.data);
+          const games = extractApiArray<UpcomingGame>(response);
+          if (games.length > 0) {
+            return this.processUpcomingGames(games);
           }
           throw new Error("No upcoming games data available");
         }),
@@ -330,12 +346,9 @@ export class TeamStatisticsService {
       .get<TrainingSession[]>(API_ENDPOINTS.training.sessions, { teamId, days })
       .pipe(
         map((response) => {
-          if (
-            response.success &&
-            response.data &&
-            Array.isArray(response.data)
-          ) {
-            return response.data;
+          const sessions = extractApiArray<TrainingSession>(response);
+          if (sessions.length > 0) {
+            return sessions;
           }
           throw new Error("No training schedule data available");
         }),
@@ -354,12 +367,9 @@ export class TeamStatisticsService {
       .get<RiskAlert[]>(API_ENDPOINTS.analytics.injuryRisk, { teamId })
       .pipe(
         map((response) => {
-          if (
-            response.success &&
-            response.data &&
-            Array.isArray(response.data)
-          ) {
-            return response.data;
+          const alerts = extractApiArray<RiskAlert>(response);
+          if (alerts.length > 0) {
+            return alerts;
           }
           throw new Error("No risk alerts available");
         }),
@@ -381,12 +391,9 @@ export class TeamStatisticsService {
       .get<TeamMessage[]>(API_ENDPOINTS.community.feed, { teamId, limit })
       .pipe(
         map((response) => {
-          if (
-            response.success &&
-            response.data &&
-            Array.isArray(response.data)
-          ) {
-            return response.data;
+          const messages = extractApiArray<TeamMessage>(response);
+          if (messages.length > 0) {
+            return messages;
           }
           throw new Error("No team messages available");
         }),
@@ -411,8 +418,12 @@ export class TeamStatisticsService {
       }>(API_ENDPOINTS.analytics.performanceTrends, { teamId, weeks })
       .pipe(
         map((response) => {
-          if (response.success && response.data) {
-            return response.data;
+          const payload = extractApiPayload<{
+            labels: string[];
+            scores: number[];
+          }>(response);
+          if (payload) {
+            return payload;
           }
           throw new Error("No performance trend data available");
         }),

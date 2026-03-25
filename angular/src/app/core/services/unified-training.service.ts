@@ -14,7 +14,12 @@ import {
     TrainingSessionRecord,
     UserMetadata,
 } from "../models/api.models";
+import type { ApiResponse } from "../models/common.models";
 import type { SupplementEntry } from "../models/supplement.models";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../utils/api-response-mapper";
 import {
     Achievement,
     ReadinessStatus,
@@ -608,16 +613,16 @@ export class UnifiedTrainingService {
    * Generate a daily protocol for a specific date
    * This creates the exercises with videos for the protocol blocks
    */
-  generateDailyProtocol(date?: string): Observable<unknown> {
+  generateDailyProtocol<T = unknown>(date?: string): Observable<ApiResponse<T>> {
     const targetDate = date || new Date().toISOString().split("T")[0];
-    return this.api.post(API_ENDPOINTS.dailyProtocol.generate, { date: targetDate });
+    return this.api.post<T>(API_ENDPOINTS.dailyProtocol.generate, { date: targetDate });
   }
 
   /**
    * Get protocol for a specific date (for viewing tomorrow's training)
    */
-  getProtocolForDate(date: string): Observable<unknown> {
-    return this.api.get(API_ENDPOINTS.dailyProtocol.byDate(date));
+  getProtocolForDate<T = unknown>(date: string): Observable<ApiResponse<T>> {
+    return this.api.get<T>(API_ENDPOINTS.dailyProtocol.byDate(date));
   }
 
   /**
@@ -794,7 +799,7 @@ export class UnifiedTrainingService {
     const result = await firstValueFrom(
       this.performanceDataService.logMeasurement(measurement),
     );
-    if (result && result.success) {
+    if (isSuccessfulApiResponse(result)) {
       this.refreshAfterMutation();
     }
     return result;
@@ -803,8 +808,8 @@ export class UnifiedTrainingService {
   /**
    * Get wellness for a specific day
    */
-  getWellnessForDay(date: string) {
-    return this.api.get(`/api/wellness/checkin?date=${date}`);
+  getWellnessForDay<T = unknown>(date: string) {
+    return this.api.get<T>(`/api/wellness/checkin?date=${date}`);
   }
 
   // ============================================================================
@@ -900,8 +905,15 @@ export class UnifiedTrainingService {
           readinessScore?: number;
         }>(`/api/wellness/checkin?date=${today}`),
       );
+      const payload = extractApiPayload<{
+        sleepQuality?: number;
+        energyLevel?: number;
+        stressLevel?: number;
+        muscleSoreness?: number;
+        readinessScore?: number;
+      }>(response);
 
-      if (!response.success || !response.data) {
+      if (!payload) {
         return {
           alert: null,
           readinessScore: null,
@@ -911,10 +923,10 @@ export class UnifiedTrainingService {
 
       // Map API response to expected format
       const wellnessData: WellnessCheckinRecord = {
-        sleep_quality: response.data.sleepQuality,
-        energy_level: response.data.energyLevel,
-        stress_level: response.data.stressLevel,
-        soreness_level: response.data.muscleSoreness,
+        sleep_quality: payload.sleepQuality,
+        energy_level: payload.energyLevel,
+        stress_level: payload.stressLevel,
+        soreness_level: payload.muscleSoreness,
       };
 
       const score = calculateReadinessScoreFromWellness(wellnessData);

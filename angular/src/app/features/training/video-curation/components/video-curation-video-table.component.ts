@@ -17,7 +17,7 @@ import {
 // PrimeNG
 import { Avatar } from "primeng/avatar";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -67,7 +67,7 @@ import {
         <p-select
           inputId="position-filter"
           [ngModel]="positionValue()"
-          (onChange)="onPositionFilterChange($event.value)"
+          (onChange)="onPositionFilterSelect($event)"
           [options]="positionOptions"
           placeholder="All Positions"
           [showClear]="true"
@@ -77,7 +77,7 @@ import {
         <p-select
           inputId="status-filter"
           [ngModel]="statusValue()"
-          (onChange)="onStatusFilterChange($event.value)"
+          (onChange)="onStatusFilterSelect($event)"
           [options]="statusOptions"
           placeholder="All Statuses"
           [showClear]="true"
@@ -287,8 +287,18 @@ export class VideoCurationVideoTableComponent {
     this.onFilterChange();
   }
 
+  onPositionFilterSelect(event: SelectChangeEvent): void {
+    this.onPositionFilterChange(
+      (event.value as FlagPosition | null | undefined) ?? null,
+    );
+  }
+
   onStatusFilterChange(value: string | null | undefined): void {
     this.statusValue.set(value ?? null);
     this.onFilterChange();
+  }
+
+  onStatusFilterSelect(event: SelectChangeEvent): void {
+    this.onStatusFilterChange((event.value as string | null | undefined) ?? null);
   }
 }

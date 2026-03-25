@@ -2,8 +2,8 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
-import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
+import { extractApiArray, extractApiPayload } from "../utils/api-response-mapper";
 
 export interface DepthChartTemplate {
   id: string;
@@ -114,9 +114,7 @@ export class DepthChartService {
         team_id: teamId,
       })
       .pipe(
-        map(
-          (response: ApiResponse<DepthChartTemplate[]>) => response.data || [],
-        ),
+        map((response) => extractApiArray<DepthChartTemplate>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch depth charts:", error);
           return of([]);
@@ -133,10 +131,7 @@ export class DepthChartService {
     return this.apiService
       .get<DepthChartWithEntries>(`/api/depth-chart/templates/${templateId}`)
       .pipe(
-        map(
-          (response: ApiResponse<DepthChartWithEntries>) =>
-            response.data || null,
-        ),
+        map((response) => extractApiPayload<DepthChartWithEntries>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch depth chart:", error);
           return of(null);
@@ -165,9 +160,7 @@ export class DepthChartService {
         positions: positionsToCreate,
       })
       .pipe(
-        map(
-          (response: ApiResponse<DepthChartTemplate>) => response.data || null,
-        ),
+        map((response) => extractApiPayload<DepthChartTemplate>(response)),
         catchError((error) => {
           this.logger.error("Failed to create depth chart:", error);
           return of(null);
@@ -188,9 +181,7 @@ export class DepthChartService {
         updates,
       )
       .pipe(
-        map(
-          (response: ApiResponse<DepthChartTemplate>) => response.data || null,
-        ),
+        map((response) => extractApiPayload<DepthChartTemplate>(response)),
         catchError((error) => {
           this.logger.error("Failed to update depth chart:", error);
           return of(null);
@@ -223,7 +214,7 @@ export class DepthChartService {
     return this.apiService
       .put<DepthChartEntry>(API_ENDPOINTS.depthChart.entry(entryId), updates)
       .pipe(
-        map((response: ApiResponse<DepthChartEntry>) => response.data || null),
+        map((response) => extractApiPayload<DepthChartEntry>(response)),
         catchError((error) => {
           this.logger.error("Failed to update depth chart entry:", error);
           return of(null);
@@ -270,7 +261,7 @@ export class DepthChartService {
         depth_order: 1,
       })
       .pipe(
-        map((response: ApiResponse<DepthChartEntry>) => response.data || null),
+        map((response) => extractApiPayload<DepthChartEntry>(response)),
         catchError((error) => {
           this.logger.error("Failed to add position:", error);
           return of(null);
@@ -295,9 +286,7 @@ export class DepthChartService {
         },
       )
       .pipe(
-        map(
-          (response: ApiResponse<DepthChartHistory[]>) => response.data || [],
-        ),
+        map((response) => extractApiArray<DepthChartHistory>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch depth chart history:", error);
           return of([]);
@@ -316,10 +305,7 @@ export class DepthChartService {
         PlayerPositionPreference[]
       >(`/api/depth-chart/player/${playerId}/preferences`)
       .pipe(
-        map(
-          (response: ApiResponse<PlayerPositionPreference[]>) =>
-            response.data || [],
-        ),
+        map((response) => extractApiArray<PlayerPositionPreference>(response)),
         catchError((error) => {
           this.logger.error(
             "Failed to fetch player position preferences:",
@@ -345,10 +331,7 @@ export class DepthChartService {
         updates,
       )
       .pipe(
-        map(
-          (response: ApiResponse<PlayerPositionPreference>) =>
-            response.data || null,
-        ),
+        map((response) => extractApiPayload<PlayerPositionPreference>(response)),
         catchError((error) => {
           this.logger.error(
             "Failed to update player position preference:",
@@ -372,11 +355,10 @@ export class DepthChartService {
       >(`/api/depth-chart/templates/${templateId}/unassigned`, { team_id: teamId })
       .pipe(
         map(
-          (
-            response: ApiResponse<
-              Array<{ id: string; name: string; number?: string }>
-            >,
-          ) => response.data || [],
+          (response) =>
+            extractApiArray<{ id: string; name: string; number?: string }>(
+              response,
+            ),
         ),
         catchError((error) => {
           this.logger.error("Failed to fetch unassigned players:", error);
@@ -394,9 +376,7 @@ export class DepthChartService {
         team_id: teamId,
       })
       .pipe(
-        map(
-          (response: ApiResponse<DepthChartTemplate[]>) => response.data || [],
-        ),
+        map((response) => extractApiArray<DepthChartTemplate>(response)),
         catchError((error) => {
           this.logger.error("Failed to initialize depth charts:", error);
           return of([]);

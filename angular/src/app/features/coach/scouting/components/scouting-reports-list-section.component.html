@@ -4,7 +4,7 @@
     <div class="filter-group">
       <p-select
         [options]="filterOptions()"
-        (onChange)="filterChange.emit($event.value)"
+        (onChange)="emitFilterChange($event)"
         placeholder="Filter by opponent"
         [showClear]="true"
       ></p-select>

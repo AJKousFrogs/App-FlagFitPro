@@ -25,6 +25,7 @@ import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
+import { isSuccessfulApiResponse } from "../../../core/utils/api-response-mapper";
 import { formatTimeOfDay } from "../../utils/format.utils";
 import { ButtonComponent, CardShellComponent } from "../ui-components";
 
@@ -245,7 +246,7 @@ export class HydrationTrackerComponent implements OnInit {
     this.trainingService
       .addHydration(amount)
       .then((result) => {
-        if (result?.success) {
+        if (isSuccessfulApiResponse(result)) {
           const newLog: HydrationLog = {
             id: Date.now().toString(),
             amount,

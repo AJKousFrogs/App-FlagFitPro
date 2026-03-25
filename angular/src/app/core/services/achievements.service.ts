@@ -10,6 +10,11 @@ import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
+import {
+  extractApiPayload,
+  isApiResponse,
+  isSuccessfulApiResponse,
+} from "../utils/api-response-mapper";
 
 export interface Achievement {
   id: string;
@@ -114,10 +119,13 @@ export class AchievementsService {
       }>("/api/achievements")
       .pipe(
         map((response) => {
-          if (!response.success) {
+          const data = extractApiPayload<AchievementsResponse>(response);
+          const wrappedFailure =
+            isApiResponse(response) && !isSuccessfulApiResponse(response);
+          if (wrappedFailure || !data) {
             throw new Error("Failed to load achievements");
           }
-          return response.data;
+          return data;
         }),
         tap((data) => {
           this.achievementsData.set(data);
@@ -155,10 +163,13 @@ export class AchievementsService {
       })
       .pipe(
         map((response) => {
-          if (!response.success) {
+          const data = extractApiPayload<UnlockResult>(response);
+          const wrappedFailure =
+            isApiResponse(response) && !isSuccessfulApiResponse(response);
+          if (wrappedFailure || !data) {
             throw new Error("Failed to unlock achievement");
           }
-          return response.data;
+          return data;
         }),
         tap((result) => {
           if (!result.alreadyUnlocked) {
@@ -225,12 +236,18 @@ export class AchievementsService {
         }>("/api/achievements", { achievementIds, history })
         .pipe(
           map((response) => {
-            if (!response.success) {
+            const data = extractApiPayload<{
+              synced: string[];
+              alreadyUnlocked: string[];
+            }>(response);
+            const wrappedFailure =
+              isApiResponse(response) && !isSuccessfulApiResponse(response);
+            if (wrappedFailure || !data) {
               throw new Error("Failed to sync achievements");
             }
             return {
-              synced: response.data.synced.length,
-              alreadyUnlocked: response.data.alreadyUnlocked.length,
+              synced: data.synced.length,
+              alreadyUnlocked: data.alreadyUnlocked.length,
             };
           }),
           tap((result) => {

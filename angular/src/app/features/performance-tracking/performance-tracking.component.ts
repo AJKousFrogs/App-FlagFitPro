@@ -769,13 +769,8 @@ export class PerformanceTrackingComponent {
     this.newPerformance = { ...this.newPerformance, [field]: value ?? null };
   }
 
-  updatePerformanceNotes(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
+  updatePerformanceNotes(value: string | null | undefined): void {
     this.newPerformance = { ...this.newPerformance, notes: value ?? "" };
-  }
-
-  getInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
   async savePerformance(): Promise<void> {

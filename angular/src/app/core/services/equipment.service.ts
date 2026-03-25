@@ -2,8 +2,8 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { ApiService } from "./api.service";
-import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
+import { extractApiArray, extractApiPayload } from "../utils/api-response-mapper";
 
 export interface EquipmentItem {
   id: string;
@@ -124,7 +124,7 @@ export class EquipmentService {
     return this.apiService
       .get<EquipmentItem[]>("/api/equipment/items", params)
       .pipe(
-        map((response: ApiResponse<EquipmentItem[]>) => response.data || []),
+        map((response) => extractApiArray<EquipmentItem>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch equipment:", error);
           return of([]);
@@ -139,7 +139,7 @@ export class EquipmentService {
     return this.apiService
       .get<EquipmentItem>(`/api/equipment/items/${itemId}`)
       .pipe(
-        map((response: ApiResponse<EquipmentItem>) => response.data || null),
+        map((response) => extractApiPayload<EquipmentItem>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch equipment item:", error);
           return of(null);
@@ -159,7 +159,7 @@ export class EquipmentService {
     return this.apiService
       .post<EquipmentItem>("/api/equipment/items", item)
       .pipe(
-        map((response: ApiResponse<EquipmentItem>) => response.data || null),
+        map((response) => extractApiPayload<EquipmentItem>(response)),
         catchError((error) => {
           this.logger.error("Failed to create equipment item:", error);
           return of(null);
@@ -179,7 +179,7 @@ export class EquipmentService {
     return this.apiService
       .put<EquipmentItem>(`/api/equipment/items/${itemId}`, updates)
       .pipe(
-        map((response: ApiResponse<EquipmentItem>) => response.data || null),
+        map((response) => extractApiPayload<EquipmentItem>(response)),
         catchError((error) => {
           this.logger.error("Failed to update equipment item:", error);
           return of(null);
@@ -214,9 +214,7 @@ export class EquipmentService {
     return this.apiService
       .get<EquipmentAssignment[]>("/api/equipment/assignments", params)
       .pipe(
-        map(
-          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
-        ),
+        map((response) => extractApiArray<EquipmentAssignment>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch equipment assignments:", error);
           return of([]);
@@ -233,9 +231,7 @@ export class EquipmentService {
         EquipmentAssignment[]
       >(`/api/equipment/player/${playerId}/assignments`)
       .pipe(
-        map(
-          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
-        ),
+        map((response) => extractApiArray<EquipmentAssignment>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch player equipment:", error);
           return of([]);
@@ -252,9 +248,7 @@ export class EquipmentService {
     return this.apiService
       .post<EquipmentAssignment>("/api/equipment/checkout", checkout)
       .pipe(
-        map(
-          (response: ApiResponse<EquipmentAssignment>) => response.data || null,
-        ),
+        map((response) => extractApiPayload<EquipmentAssignment>(response)),
         catchError((error) => {
           this.logger.error("Failed to checkout equipment:", error);
           return of(null);
@@ -277,9 +271,7 @@ export class EquipmentService {
         quantity,
       })
       .pipe(
-        map(
-          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
-        ),
+        map((response) => extractApiArray<EquipmentAssignment>(response)),
         catchError((error) => {
           this.logger.error("Failed to bulk checkout equipment:", error);
           return of([]);
@@ -296,9 +288,7 @@ export class EquipmentService {
     return this.apiService
       .post<EquipmentAssignment>("/api/equipment/return", returnData)
       .pipe(
-        map(
-          (response: ApiResponse<EquipmentAssignment>) => response.data || null,
-        ),
+        map((response) => extractApiPayload<EquipmentAssignment>(response)),
         catchError((error) => {
           this.logger.error("Failed to return equipment:", error);
           return of(null);
@@ -313,7 +303,7 @@ export class EquipmentService {
     return this.apiService
       .get<EquipmentSummary>(`/api/equipment/summary/${teamId}`)
       .pipe(
-        map((response: ApiResponse<EquipmentSummary>) => response.data || null),
+        map((response) => extractApiPayload<EquipmentSummary>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch equipment summary:", error);
           return of(null);
@@ -328,7 +318,7 @@ export class EquipmentService {
     return this.apiService
       .get<EquipmentItem[]>(`/api/equipment/alerts/${teamId}`)
       .pipe(
-        map((response: ApiResponse<EquipmentItem[]>) => response.data || []),
+        map((response) => extractApiArray<EquipmentItem>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch equipment alerts:", error);
           return of([]);
@@ -343,9 +333,7 @@ export class EquipmentService {
     return this.apiService
       .get<EquipmentAssignment[]>(`/api/equipment/items/${equipmentId}/history`)
       .pipe(
-        map(
-          (response: ApiResponse<EquipmentAssignment[]>) => response.data || [],
-        ),
+        map((response) => extractApiArray<EquipmentAssignment>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch equipment history:", error);
           return of([]);

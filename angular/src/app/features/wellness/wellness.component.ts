@@ -21,6 +21,10 @@ import { ProfileCompletionService } from "../../core/services/profile-completion
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
+import {
+  extractApiArray,
+  isSuccessfulApiResponse,
+} from "../../core/utils/api-response-mapper";
 import { BodyCompositionCardComponent } from "../../shared/components/body-composition-card/body-composition-card.component";
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
@@ -309,7 +313,7 @@ interface WellnessMetric {
                       label="Sleep Hours"
                       inputId="sleepHours"
                       [ngModel]="checkInData.sleepHours"
-                      (change)="onCheckInFieldChange('sleepHours', $event)"
+                      (valueChange)="onCheckInFieldChange('sleepHours', $event)"
                       [min]="0"
                       [max]="24"
                       [showButtons]="true"
@@ -324,7 +328,7 @@ interface WellnessMetric {
                       label="Sleep Quality (1-10)"
                       inputId="sleepQuality"
                       [ngModel]="checkInData.sleepQuality"
-                      (change)="onCheckInFieldChange('sleepQuality', $event)"
+                      (valueChange)="onCheckInFieldChange('sleepQuality', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -346,7 +350,7 @@ interface WellnessMetric {
                       label="Energy Level (1-10)"
                       inputId="energyLevel"
                       [ngModel]="checkInData.energyLevel"
-                      (change)="onCheckInFieldChange('energyLevel', $event)"
+                      (valueChange)="onCheckInFieldChange('energyLevel', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -359,7 +363,7 @@ interface WellnessMetric {
                       label="Muscle Soreness (1-10)"
                       inputId="soreness"
                       [ngModel]="checkInData.soreness"
-                      (change)="onCheckInFieldChange('soreness', $event)"
+                      (valueChange)="onCheckInFieldChange('soreness', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -377,7 +381,7 @@ interface WellnessMetric {
                       label="Hydration (glasses of water)"
                       inputId="hydrationGlasses"
                       [ngModel]="checkInData.hydration"
-                      (change)="onCheckInFieldChange('hydration', $event)"
+                      (valueChange)="onCheckInFieldChange('hydration', $event)"
                       [min]="0"
                       [max]="20"
                       [showButtons]="true"
@@ -391,7 +395,7 @@ interface WellnessMetric {
                       label="Resting Heart Rate (BPM)"
                       inputId="restingHR"
                       [ngModel]="checkInData.restingHR"
-                      (change)="onCheckInFieldChange('restingHR', $event)"
+                      (valueChange)="onCheckInFieldChange('restingHR', $event)"
                       [min]="40"
                       [max]="120"
                       [showButtons]="true"
@@ -416,7 +420,7 @@ interface WellnessMetric {
                       label="Mood (1-10)"
                       inputId="mood"
                       [ngModel]="checkInData.mood"
-                      (change)="onCheckInFieldChange('mood', $event)"
+                      (valueChange)="onCheckInFieldChange('mood', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -429,7 +433,7 @@ interface WellnessMetric {
                       label="Stress Level (1-10)"
                       inputId="stress"
                       [ngModel]="checkInData.stress"
-                      (change)="onCheckInFieldChange('stress', $event)"
+                      (valueChange)="onCheckInFieldChange('stress', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -447,7 +451,7 @@ interface WellnessMetric {
                       label="Training Motivation (1-10)"
                       inputId="motivation"
                       [ngModel]="checkInData.motivation"
-                      (change)="onCheckInFieldChange('motivation', $event)"
+                      (valueChange)="onCheckInFieldChange('motivation', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -462,7 +466,7 @@ interface WellnessMetric {
                       label="Readiness to Train (1-10)"
                       inputId="readiness"
                       [ngModel]="checkInData.readiness"
-                      (change)="onCheckInFieldChange('readiness', $event)"
+                      (valueChange)="onCheckInFieldChange('readiness', $event)"
                       [min]="1"
                       [max]="10"
                       [showButtons]="true"
@@ -585,9 +589,10 @@ export class WellnessComponent {
         next: (response) => {
           this.isPageLoading.set(false);
           this.hasPageError.set(false);
+          const wellnessEntries = extractApiArray<WellnessData>(response);
 
-          if (response.success && response.data && response.data.length > 0) {
-            const latestData = response.data[0];
+          if (wellnessEntries && wellnessEntries.length > 0) {
+            const latestData = wellnessEntries[0];
             const overallScore =
               this.wellnessService.getWellnessScore(latestData);
             const status = this.wellnessService.getWellnessStatus(overallScore);
@@ -598,7 +603,7 @@ export class WellnessComponent {
                 value: latestData.sleep ? `${latestData.sleep}h` : "N/A",
                 icon: "pi-moon",
                 color: "var(--color-status-info)",
-                trend: this.calculateTrend(response.data, "sleep"),
+                trend: this.calculateTrend(wellnessEntries, "sleep"),
                 trendType: "positive",
               },
               {
@@ -617,7 +622,7 @@ export class WellnessComponent {
                 value: latestData.energy ? `${latestData.energy}/10` : "N/A",
                 icon: "pi-bolt",
                 color: "var(--color-status-warning)",
-                trend: this.calculateTrend(response.data, "energy"),
+                trend: this.calculateTrend(wellnessEntries, "energy"),
                 trendType: "positive",
               },
               {
@@ -641,7 +646,7 @@ export class WellnessComponent {
               },
             ]);
 
-            const sortedData = [...response.data].sort(
+            const sortedData = [...wellnessEntries].sort(
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
             );
 
@@ -675,7 +680,7 @@ export class WellnessComponent {
               ],
             });
 
-            this.generateWellnessAlerts(response.data);
+            this.generateWellnessAlerts(wellnessEntries);
           } else {
             this.loadFallbackData();
           }
@@ -844,9 +849,9 @@ export class WellnessComponent {
 
     this.trainingService
       .submitWellness(wellnessData)
-      .then((response: { success: boolean; error?: string }) => {
+      .then((response) => {
         this.isSubmitting.set(false);
-        if (response.success) {
+        if (isSuccessfulApiResponse(response)) {
           this.toastService.success(TOAST.SUCCESS.WELLNESS_CHECKIN_SAVED);
           this.checkInData = {
             sleepHours: null,
@@ -862,9 +867,7 @@ export class WellnessComponent {
           };
           this.loadWellnessData();
         } else {
-          this.toastService.error(
-            response.error || TOAST.ERROR.CHECKIN_SAVE_FAILED,
-          );
+          this.toastService.error(TOAST.ERROR.CHECKIN_SAVE_FAILED);
         }
       })
       .catch((err) => {

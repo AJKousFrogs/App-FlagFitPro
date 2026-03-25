@@ -47,7 +47,7 @@
             name="dateOfBirth"
             type="date"
             [value]="getDateOfBirthInputValue()"
-            (input)="onDateOfBirthInput(getInputValue($event))"
+            (input)="onDateOfBirthInputEvent($event)"
             [max]="getMaxBirthDateInputValue()"
             placeholder="Select your date of birth"
             class="w-full"
@@ -143,7 +143,7 @@
           optionValue="value"
           placeholder="Select your team"
           appendTo="body"
-          (change)="teamChange.emit($event)"
+          (valueChange)="teamChange.emit($event)"
           [attr.aria-label]="'Select your team'"
           hint="Select your team or request to create a new one"
         ></app-select>

@@ -42,6 +42,7 @@ import { MissingDataDetectionService } from "../../core/services/missing-data-de
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import {
   getProtocolAcwrDisplay,
   getProtocolReadinessPresentation,
@@ -820,33 +821,51 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       .subscribe({
         next: (response) => {
           this.clearLoadingStageTimers();
-          if (response.success && response.data) {
-            this.sessionId = response.data.chat_session_id;
+          const payload = extractApiPayload<{
+            chat_session_id: string;
+            message_id: string;
+            answer_markdown: string;
+            risk_level?: string;
+            citations?: Citation[];
+            suggested_actions?: SuggestedAction[];
+            disclaimer?: string;
+            acwr_safety?: {
+              blocked: boolean;
+              reason: string;
+              current_acwr: number;
+              risk_zone: string;
+            } | null;
+            is_swap_plan: boolean;
+            evidence_grade_explanation?: string | null;
+            intent?: string | null;
+          }>(response);
+          if (payload) {
+            this.sessionId = payload.chat_session_id;
 
             const assistantMessage: ChatMessage = {
-              id: response.data.message_id,
+              id: payload.message_id,
               role: "assistant",
-              content: response.data.answer_markdown,
+              content: payload.answer_markdown,
               timestamp: new Date(),
-              riskLevel: response.data.risk_level,
-              citations: response.data.citations,
-              suggestedActions: response.data.suggested_actions?.slice(
+              riskLevel: payload.risk_level,
+              citations: payload.citations,
+              suggestedActions: payload.suggested_actions?.slice(
                 0,
                 UI_LIMITS.SUGGESTED_ACTIONS_COUNT,
               ),
-              disclaimer: response.data.disclaimer,
-              acwrSafety: response.data.acwr_safety
+              disclaimer: payload.disclaimer,
+              acwrSafety: payload.acwr_safety
                 ? {
-                    blocked: response.data.acwr_safety.blocked,
-                    reason: response.data.acwr_safety.reason,
-                    currentAcwr: response.data.acwr_safety.current_acwr,
-                    riskZone: response.data.acwr_safety.risk_zone,
+                    blocked: payload.acwr_safety.blocked,
+                    reason: payload.acwr_safety.reason,
+                    currentAcwr: payload.acwr_safety.current_acwr,
+                    riskZone: payload.acwr_safety.risk_zone,
                   }
                 : undefined,
-              isSwapPlan: response.data.is_swap_plan,
+              isSwapPlan: payload.is_swap_plan,
               evidenceGradeExplanation:
-                response.data.evidence_grade_explanation || undefined,
-              intent: response.data.intent || undefined,
+                payload.evidence_grade_explanation || undefined,
+              intent: payload.intent || undefined,
               feedbackGiven: null,
               isExpanded: false,
             };

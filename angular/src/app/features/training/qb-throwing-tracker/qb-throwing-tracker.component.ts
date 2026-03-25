@@ -25,7 +25,7 @@ import { DialogFooterComponent } from "../../../shared/components/dialog-footer/
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Slider } from "primeng/slider";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -36,7 +36,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { FeatureFlagsService } from "../../../core/services/feature-flags.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { DIALOG_WIDTHS } from "../../../core/utils/design-tokens.util";
 import { DesignTokens } from "../../../shared/models/design-tokens";
 
@@ -363,7 +363,7 @@ interface SessionTypeOption {
           <p-select
             [options]="sessionTypes"
             [ngModel]="formData.sessionType"
-            (onChange)="onSessionTypeChange($event.value)"
+            (onChange)="onSessionTypeSelect($event)"
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
@@ -450,7 +450,7 @@ interface SessionTypeOption {
               type="checkbox"
               id="warmup"
               [checked]="!!formData.preThrowingWarmupDone"
-              (change)="onPreThrowingWarmupDoneChange(isChecked($event))"
+              (change)="onPreThrowingWarmupDoneToggle($event)"
             />
             <label for="warmup">Pre-throwing warm-up completed (30 min)</label>
           </div>
@@ -460,7 +460,7 @@ interface SessionTypeOption {
               type="checkbox"
               id="armcare"
               [checked]="!!formData.postThrowingArmCareDone"
-              (change)="onPostThrowingArmCareDoneChange(isChecked($event))"
+              (change)="onPostThrowingArmCareDoneToggle($event)"
             />
             <label for="armcare">Post-throwing arm care completed</label>
           </div>
@@ -471,7 +471,7 @@ interface SessionTypeOption {
                 type="checkbox"
                 id="ice"
                 [checked]="!!formData.iceApplied"
-                (change)="onIceAppliedChange(isChecked($event))"
+                (change)="onIceAppliedToggle($event)"
               />
               <label for="ice">Ice applied (recommended for 100+ throws)</label>
             </div>
@@ -484,7 +484,7 @@ interface SessionTypeOption {
           <textarea
             pInputText
             [value]="formData.notes"
-            (input)="onNotesChange(getInputValue($event))"
+            (input)="onNotesInput($event)"
             rows="2"
             placeholder="What did you work on?"
             class="w-full"
@@ -557,25 +557,27 @@ export class QbThrowingTrackerComponent {
 
   async loadData(): Promise<void> {
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          progression?: ProgressionStatus;
+          weeklyStats?: WeeklyStats[];
+          recentSessions?: ThrowingSession[];
+        }>(API_ENDPOINTS.qbThrowing.base),
+      );
+      const data = extractApiPayload<{
         progression?: ProgressionStatus;
         weeklyStats?: WeeklyStats[];
         recentSessions?: ThrowingSession[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.qbThrowing.base),
-      );
-      if (response?.success) {
-        const data = response.data;
-        if (!data) {
-          this.progressionStatus.set(null);
-          this.weeklyStats.set([]);
-          this.recentSessions.set([]);
-          return;
-        }
-        this.progressionStatus.set(data.progression ?? null);
-        this.weeklyStats.set(data.weeklyStats || []);
-        this.recentSessions.set(data.recentSessions || []);
+      }>(response);
+      if (!data) {
+        this.progressionStatus.set(null);
+        this.weeklyStats.set([]);
+        this.recentSessions.set([]);
+        return;
       }
+      this.progressionStatus.set(data.progression ?? null);
+      this.weeklyStats.set(data.weeklyStats || []);
+      this.recentSessions.set(data.recentSessions || []);
     } catch (err) {
       this.logger.error("Failed to load QB throwing data", err);
     }
@@ -592,6 +594,12 @@ export class QbThrowingTrackerComponent {
 
   onSessionTypeChange(value: string | null): void {
     this.updateFormData({ sessionType: value ?? "practice" });
+  }
+
+  onSessionTypeSelect(event: SelectChangeEvent): void {
+    this.onSessionTypeChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   onTotalThrowsChange(value: number | null): void {
@@ -623,19 +631,35 @@ export class QbThrowingTrackerComponent {
     this.updateFormData({ preThrowingWarmupDone: value });
   }
 
+  onPreThrowingWarmupDoneToggle(event: Event): void {
+    this.onPreThrowingWarmupDoneChange(this.readChecked(event));
+  }
+
   onPostThrowingArmCareDoneChange(value: boolean): void {
     this.updateFormData({ postThrowingArmCareDone: value });
+  }
+
+  onPostThrowingArmCareDoneToggle(event: Event): void {
+    this.onPostThrowingArmCareDoneChange(this.readChecked(event));
   }
 
   onIceAppliedChange(value: boolean): void {
     this.updateFormData({ iceApplied: value });
   }
 
+  onIceAppliedToggle(event: Event): void {
+    this.onIceAppliedChange(this.readChecked(event));
+  }
+
   onNotesChange(value: string): void {
     this.updateFormData({ notes: value });
   }
 
-  getInputValue(event: Event): string {
+  onNotesInput(event: Event): void {
+    this.onNotesChange(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;
@@ -643,7 +667,7 @@ export class QbThrowingTrackerComponent {
     return "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
       return target.checked;

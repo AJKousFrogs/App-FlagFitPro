@@ -24,7 +24,7 @@ import {
   input,
   output,
 } from "@angular/core";
-import { Checkbox } from "primeng/checkbox";
+import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
 
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
@@ -32,6 +32,10 @@ import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../../../core/utils/api-response-mapper";
 import { ButtonComponent } from "../button/button.component";
 import { formatTimeMMSS } from "../../utils/format.utils";
 import {
@@ -172,7 +176,7 @@ import { CardShellComponent } from "../card-shell/card-shell.component";
                 <div class="checklist-item">
                   <p-checkbox
                     [ngModel]="equipmentChecked[i]"
-                    (onChange)="onEquipmentCheckChange(i, $event.checked)"
+                    (onChange)="onEquipmentCheckToggle(i, $event)"
                     [binary]="true"
                     variant="filled"
                     [inputId]="'equipment-' + i"
@@ -389,6 +393,10 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
     this.equipmentChecked[index] = !!checked;
   }
 
+  onEquipmentCheckToggle(index: number, event: CheckboxChangeEvent): void {
+    this.onEquipmentCheckChange(index, event.checked);
+  }
+
   onFollowUpRatingChange(value: number | null | undefined): void {
     this.followUpRating = value ?? 0;
   }
@@ -410,13 +418,14 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
           source_message_id: this.session().source_message_id || null,
         }),
       );
+      const payload = extractApiPayload<{ id?: string }>(response);
 
-      if (response?.success && response.data?.id) {
-        this.savedSessionId.set(response.data.id);
+      if (isSuccessfulApiResponse(response) && payload?.id) {
+        this.savedSessionId.set(payload.id);
 
         // Mark as in_progress
         await firstValueFrom(
-          this.apiService.patch(`/api/micro-sessions/${response.data.id}`, {
+          this.apiService.patch(`/api/micro-sessions/${payload.id}`, {
             status: "in_progress",
           }),
         );

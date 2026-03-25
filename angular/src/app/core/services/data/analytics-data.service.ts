@@ -9,6 +9,7 @@ import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { map } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../api.service";
+import { extractApiPayload } from "../../utils/api-response-mapper";
 
 export interface PerformanceTrendsData {
   labels: string[];
@@ -82,12 +83,13 @@ export class AnalyticsDataService {
         athleteId ? { athleteId } : undefined,
       )
       .pipe(
-        map((response) => {
-          if (response.success && response.data) {
-            return response.data;
-          }
-          return { labels: [], values: [] };
-        }),
+        map(
+          (response) =>
+            extractApiPayload<PerformanceTrendsData>(response) || {
+              labels: [],
+              values: [],
+            },
+        ),
       );
   }
 
@@ -98,12 +100,13 @@ export class AnalyticsDataService {
     return this.apiService
       .get<TeamChemistryData>(API_ENDPOINTS.analytics.teamChemistry)
       .pipe(
-        map((response) => {
-          if (response.success && response.data) {
-            return response.data;
-          }
-          return { labels: [], values: [] };
-        }),
+        map(
+          (response) =>
+            extractApiPayload<TeamChemistryData>(response) || {
+              labels: [],
+              values: [],
+            },
+        ),
       );
   }
 
@@ -116,12 +119,13 @@ export class AnalyticsDataService {
         API_ENDPOINTS.analytics.trainingDistribution,
       )
       .pipe(
-        map((response) => {
-          if (response.success && response.data) {
-            return response.data;
-          }
-          return { labels: [], values: [] };
-        }),
+        map(
+          (response) =>
+            extractApiPayload<TrainingDistributionData>(response) || {
+              labels: [],
+              values: [],
+            },
+        ),
       );
   }
 
@@ -132,9 +136,7 @@ export class AnalyticsDataService {
     return this.apiService
       .get<PositionPerformanceData>(API_ENDPOINTS.analytics.positionPerformance)
       .pipe(
-        map((response) =>
-          response.success && response.data ? response.data : null,
-        ),
+        map((response) => extractApiPayload<PositionPerformanceData>(response)),
       );
   }
 
@@ -145,9 +147,7 @@ export class AnalyticsDataService {
     return this.apiService
       .get<InjuryRiskData>(API_ENDPOINTS.analytics.injuryRisk)
       .pipe(
-        map((response) =>
-          response.success && response.data ? response.data : null,
-        ),
+        map((response) => extractApiPayload<InjuryRiskData>(response)),
       );
   }
 
@@ -158,9 +158,7 @@ export class AnalyticsDataService {
     return this.apiService
       .get<SpeedDevelopmentData>(API_ENDPOINTS.analytics.speedDevelopment)
       .pipe(
-        map((response) =>
-          response.success && response.data ? response.data : null,
-        ),
+        map((response) => extractApiPayload<SpeedDevelopmentData>(response)),
       );
   }
 
@@ -174,12 +172,7 @@ export class AnalyticsDataService {
         athleteId ? { athleteId } : undefined,
       )
       .pipe(
-        map((response) => {
-          if (response.success && response.data) {
-            return response.data;
-          }
-          return {};
-        }),
+        map((response) => extractApiPayload<AnalyticsData>(response) || {}),
       );
   }
 }

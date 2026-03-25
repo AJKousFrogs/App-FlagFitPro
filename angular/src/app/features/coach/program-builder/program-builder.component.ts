@@ -20,10 +20,10 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { DatePicker } from "primeng/datepicker";
-import { InputNumber } from "primeng/inputnumber";
+import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -38,12 +38,12 @@ import { DialogFooterComponent } from "../../../shared/components/dialog-footer/
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -434,7 +434,7 @@ const PHASE_PRESETS = [
                 type="text"
                 pInputText
                 [value]="formData.name"
-                (input)="onProgramNameChange(getInputValue($event))"
+                (input)="onProgramNameInput($event)"
                 placeholder="e.g., Spring Championship Prep"
                 class="w-full"
               />
@@ -446,7 +446,7 @@ const PHASE_PRESETS = [
                 pTextarea
                 id="programDesc"
                 [value]="formData.description"
-                (input)="onProgramDescriptionChange(getInputValue($event))"
+                (input)="onProgramDescriptionInput($event)"
                 placeholder="Program goals and focus areas..."
                 rows="3"
               ></textarea>
@@ -467,7 +467,7 @@ const PHASE_PRESETS = [
                 <p-select
                   inputId="duration"
                   [options]="durationOptions"
-                  (onChange)="onProgramDurationWeeksChange($event.value)"
+                  (onChange)="onProgramDurationWeeksSelect($event)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -482,7 +482,7 @@ const PHASE_PRESETS = [
                   type="text"
                   pInputText
                   [value]="formData.goalEvent"
-                  (input)="onProgramGoalEventChange(getInputValue($event))"
+                  (input)="onProgramGoalEventInput($event)"
                   placeholder="e.g., Spring Championship"
                 />
               </div>
@@ -491,7 +491,7 @@ const PHASE_PRESETS = [
                 <p-select
                   inputId="programType"
                   [options]="programTypeOptions"
-                  (onChange)="onProgramTypeChange($event.value)"
+                  (onChange)="onProgramTypeSelect($event)"
                   optionLabel="label"
                   optionValue="value"
                 ></p-select>
@@ -539,14 +539,14 @@ const PHASE_PRESETS = [
                   <span class="day-label">{{ day }}</span>
                   <p-select
                     [options]="sessionTypeOptions"
-                    (onChange)="onWeekTemplateSessionTypeChange(day, $event.value)"
+                    (onChange)="onWeekTemplateSessionTypeSelect(day, $event)"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Session type"
                     class="week-session-select"
                   ></p-select>
                   <p-inputNumber
-                    (onInput)="onWeekTemplateDurationChange(day, $event.value ?? null)"
+                    (onInput)="onWeekTemplateDurationInput(day, $event)"
                     suffix=" min"
                     [min]="0"
                     [max]="180"
@@ -554,7 +554,7 @@ const PHASE_PRESETS = [
                   ></p-inputNumber>
                   <span class="rpe-label">RPE:</span>
                   <p-inputNumber
-                    (onInput)="onWeekTemplateTargetRpeChange(day, $event.value ?? null)"
+                    (onInput)="onWeekTemplateTargetRpeInput(day, $event)"
                     [min]="1"
                     [max]="10"
                     class="week-rpe-input"
@@ -572,7 +572,7 @@ const PHASE_PRESETS = [
                 <input
                   type="checkbox"
                   [checked]="selectAllPlayers"
-                  (change)="onSelectAllPlayersChange(isChecked($event))"
+                  (change)="onSelectAllPlayersToggle($event)"
                   id="selectAll"
                 />
                 <label for="selectAll"
@@ -589,7 +589,7 @@ const PHASE_PRESETS = [
                     <input
                       type="checkbox"
                       [checked]="player.selected"
-                      (change)="onTeamMemberSelectedChange(player.id, isChecked($event))"
+                      (change)="onTeamMemberSelectedToggle(player.id, $event)"
                       [id]="'player-' + player.id"
                       [disabled]="player.status === 'rtp'"
                     />
@@ -828,8 +828,16 @@ export class ProgramBuilderComponent implements OnInit {
     this.formData = { ...this.formData, name: value };
   }
 
+  onProgramNameInput(event: Event): void {
+    this.onProgramNameChange(this.readInputValue(event));
+  }
+
   onProgramDescriptionChange(value: string): void {
     this.formData = { ...this.formData, description: value };
+  }
+
+  onProgramDescriptionInput(event: Event): void {
+    this.onProgramDescriptionChange(this.readInputValue(event));
   }
 
   onProgramStartDateChange(value: Date | null): void {
@@ -837,6 +845,12 @@ export class ProgramBuilderComponent implements OnInit {
       ...this.formData,
       startDate: value ?? this.formData.startDate,
     };
+  }
+
+  onProgramDurationWeeksSelect(event: SelectChangeEvent): void {
+    this.onProgramDurationWeeksChange(
+      typeof event.value === "number" ? event.value : null,
+    );
   }
 
   onProgramDurationWeeksChange(value: number | null): void {
@@ -850,11 +864,28 @@ export class ProgramBuilderComponent implements OnInit {
     this.formData = { ...this.formData, goalEvent: value };
   }
 
+  onProgramGoalEventInput(event: Event): void {
+    this.onProgramGoalEventChange(this.readInputValue(event));
+  }
+
+  onProgramTypeSelect(event: SelectChangeEvent): void {
+    this.onProgramTypeChange(
+      (event.value as ProgramType | null | undefined) ?? null,
+    );
+  }
+
   onProgramTypeChange(value: ProgramType | null): void {
     this.formData = {
       ...this.formData,
       type: value ?? this.formData.type,
     };
+  }
+
+  onWeekTemplateSessionTypeSelect(
+    day: DayOfWeek,
+    event: SelectChangeEvent,
+  ): void {
+    this.onWeekTemplateSessionTypeChange(day, event.value as SessionType);
   }
 
   onWeekTemplateSessionTypeChange(day: DayOfWeek, value: SessionType): void {
@@ -865,6 +896,13 @@ export class ProgramBuilderComponent implements OnInit {
         [day]: { ...this.formData.weekTemplate[day], sessionType: value },
       },
     };
+  }
+
+  onWeekTemplateDurationInput(
+    day: DayOfWeek,
+    event: InputNumberInputEvent,
+  ): void {
+    this.onWeekTemplateDurationChange(day, event.value ?? null);
   }
 
   onWeekTemplateDurationChange(day: DayOfWeek, value: number | null): void {
@@ -878,6 +916,13 @@ export class ProgramBuilderComponent implements OnInit {
         },
       },
     };
+  }
+
+  onWeekTemplateTargetRpeInput(
+    day: DayOfWeek,
+    event: InputNumberInputEvent,
+  ): void {
+    this.onWeekTemplateTargetRpeChange(day, event.value ?? null);
   }
 
   onWeekTemplateTargetRpeChange(day: DayOfWeek, value: number | null): void {
@@ -898,6 +943,10 @@ export class ProgramBuilderComponent implements OnInit {
     this.toggleSelectAll();
   }
 
+  onSelectAllPlayersToggle(event: Event): void {
+    this.onSelectAllPlayersChange(this.readChecked(event));
+  }
+
   onTeamMemberSelectedChange(memberId: string, value: boolean): void {
     this.teamMembers.update((members) =>
       members.map((member) =>
@@ -911,22 +960,27 @@ export class ProgramBuilderComponent implements OnInit {
         .every((m) => m.selected);
   }
 
+  onTeamMemberSelectedToggle(memberId: string, event: Event): void {
+    this.onTeamMemberSelectedChange(memberId, this.readChecked(event));
+  }
+
   async loadData(): Promise<void> {
     this.isLoading.set(true);
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
         programs?: TrainingProgram[];
         teamMembers?: TeamMemberOption[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coach.programs),
+      }>(API_ENDPOINTS.coach.programs),
       );
-      if (response?.success && response.data) {
-        if (response.data.programs) this.programs.set(response.data.programs);
-        if (response.data.teamMembers)
-          this.teamMembers.set(response.data.teamMembers);
-      }
+      const payload = extractApiPayload<{
+        programs?: TrainingProgram[];
+        teamMembers?: TeamMemberOption[];
+      }>(response);
+      this.programs.set(payload?.programs ?? []);
+      this.teamMembers.set(payload?.teamMembers ?? []);
     } catch (err) {
       this.logger.error("Failed to load programs", err);
       this.programs.set([]);
@@ -1127,12 +1181,12 @@ export class ProgramBuilderComponent implements OnInit {
     this.viewProgramDetails(program);
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 

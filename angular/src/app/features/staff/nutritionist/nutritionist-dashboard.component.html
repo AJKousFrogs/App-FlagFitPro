@@ -191,7 +191,7 @@
                     <app-select
                       [options]="athleteSelectOptions()"
                       [ngModel]="selectedAthleteId"
-                      (change)="onSelectedAthleteIdChange($event)"
+                      (valueChange)="onSelectedAthleteIdChange($event)"
                       placeholder="Select athlete"
                     ></app-select>
                   </div>
@@ -362,7 +362,7 @@
                 label="Report Type"
                 [options]="reportTypes"
                 [ngModel]="selectedReportType"
-                (change)="onSelectedReportTypeChange($event)"
+                (valueChange)="onSelectedReportTypeChange($event)"
                 placeholder="Select report type"
                 class="w-full"
               ></app-select>
@@ -372,7 +372,7 @@
                 label="Athlete"
                 [options]="athleteSelectOptions()"
                 [ngModel]="reportAthleteId"
-                (change)="onReportAthleteIdChange($event)"
+                (valueChange)="onReportAthleteIdChange($event)"
                 placeholder="Select athlete"
                 class="w-full"
               ></app-select>
@@ -382,7 +382,7 @@
                 label="Time Period"
                 [options]="timePeriods"
                 [ngModel]="selectedTimePeriod"
-                (change)="onSelectedTimePeriodChange($event)"
+                (valueChange)="onSelectedTimePeriodChange($event)"
                 placeholder="Select period"
                 class="w-full"
               ></app-select>

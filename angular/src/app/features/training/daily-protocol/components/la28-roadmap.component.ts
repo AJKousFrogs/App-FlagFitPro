@@ -22,7 +22,7 @@ import { ProgressBar } from "primeng/progressbar";
 import { Timeline } from "primeng/timeline";
 import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
-import { ApiResponse } from "../../../../core/models/common.models";
+import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 import {
@@ -435,14 +435,12 @@ export class La28RoadmapComponent {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<PlayerCycle[] | null> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.programCycles),
+      const response = await firstValueFrom(
+        this.api.get<PlayerCycle[] | null>(API_ENDPOINTS.programCycles),
       );
-      if (response?.success && response.data) {
-        this.playerCycles.set(response.data);
-      } else if (Array.isArray(response)) {
-        this.playerCycles.set(response);
+      const payload = extractApiPayload<PlayerCycle[] | null>(response);
+      if (Array.isArray(payload)) {
+        this.playerCycles.set(payload);
       } else {
         this.playerCycles.set([]);
         this.logger.info("No program cycles found - showing empty state");

@@ -31,6 +31,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
+import { extractApiArray } from "../../core/utils/api-response-mapper";
 import { formatTimeMMSS } from "../../shared/utils/format.utils";
 import { OfflineQueueService } from "../../core/services/offline-queue.service";
 import { NetworkStatusService } from "../../core/services/network-status.service";
@@ -1081,12 +1082,15 @@ export class GameTrackerComponent implements OnInit {
 
     // Load plays for this game
     this.apiService
-      .get(API_ENDPOINTS.games.plays(game.id))
+      .get<Play[]>(API_ENDPOINTS.games.plays(game.id))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (response.success && Array.isArray(response.data)) {
-            this.plays.set(response.data as Play[]);
+          const plays = extractApiArray<Play>(response);
+          if (plays) {
+            this.plays.set(plays);
+          } else {
+            this.plays.set([]);
           }
         },
         error: () => {

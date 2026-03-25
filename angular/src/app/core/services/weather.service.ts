@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { API_ENDPOINTS, ApiService } from "./api.service";
+import { extractApiPayload } from "../utils/api-response-mapper";
 
 export interface WeatherData {
   temp: number;
@@ -46,9 +47,10 @@ export class WeatherService {
       )
       .pipe(
         map((response) => {
-          if (response.success && response.data) {
+          const weatherData = extractApiPayload<WeatherData>(response);
+          if (weatherData) {
             // Normalize the response data to match WeatherData interface
-            const data = response.data as unknown as Record<string, unknown>;
+            const data = weatherData as unknown as Record<string, unknown>;
             return this.normalizeWeatherData(data);
           }
           return null;

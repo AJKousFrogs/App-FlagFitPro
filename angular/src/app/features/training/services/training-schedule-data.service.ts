@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 
 export interface TrainingSessionRow {
   id: string;
@@ -106,7 +107,9 @@ export class TrainingScheduleDataService {
       const response = await firstValueFrom(
         this.api.get<PlayerProgramAssignmentResponse>("/api/player-programs/me"),
       );
-      activeProgramId = response.data?.assignment?.program_id ?? null;
+      activeProgramId =
+        extractApiPayload<PlayerProgramAssignmentResponse>(response)?.assignment
+          ?.program_id ?? null;
     } catch (error) {
       const message =
         error instanceof Error
@@ -127,7 +130,8 @@ export class TrainingScheduleDataService {
         }),
       );
 
-      const program = response.data?.data;
+      const program =
+        extractApiPayload<TrainingProgramDetailsResponse>(response)?.data;
       const mappedTemplates =
         program?.training_phases
           ?.flatMap((phase) => phase.weeks ?? [])

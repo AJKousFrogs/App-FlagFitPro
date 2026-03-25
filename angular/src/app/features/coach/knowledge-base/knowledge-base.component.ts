@@ -25,7 +25,7 @@ import { PageErrorStateComponent } from "../../../shared/components/page-error-s
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
@@ -33,7 +33,10 @@ import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import {
@@ -679,7 +682,7 @@ const VISIBILITY_OPTIONS = [
               type="text"
               pInputText
               [value]="resourceForm.title"
-              (input)="onResourceTitleChange(getInputValue($event))"
+              (input)="onResourceTitleInput($event)"
               placeholder="Resource title"
             />
           </div>
@@ -688,7 +691,7 @@ const VISIBILITY_OPTIONS = [
             <label>Category</label>
             <p-select
               [options]="categoryOptions"
-              (onChange)="onResourceCategoryChange($event.value)"
+              (onChange)="onResourceCategorySelect($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select category"
@@ -703,7 +706,7 @@ const VISIBILITY_OPTIONS = [
                 type="text"
                 pInputText
                 [value]="resourceForm.url"
-                (input)="onResourceUrlChange(getInputValue($event))"
+                (input)="onResourceUrlInput($event)"
                 placeholder="https://..."
               />
             </div>
@@ -714,7 +717,7 @@ const VISIBILITY_OPTIONS = [
             <textarea
               pTextarea
               [value]="resourceForm.content"
-              (input)="onResourceContentChange(getInputValue($event))"
+              (input)="onResourceContentInput($event)"
               rows="6"
               placeholder="Describe the resource or enter content (Markdown supported)..."
             ></textarea>
@@ -745,7 +748,7 @@ const VISIBILITY_OPTIONS = [
               type="text"
               pInputText
               [value]="resourceForm.tags"
-              (input)="onResourceTagsChange(getInputValue($event))"
+              (input)="onResourceTagsInput($event)"
               placeholder="playbook, strategy, defense"
             />
           </div>
@@ -797,7 +800,7 @@ const VISIBILITY_OPTIONS = [
                   <input
                     type="checkbox"
                     [checked]="reviewForm.overrideQualityGate"
-                    (change)="onReviewOverrideQualityGateChange(isChecked($event))"
+                    (change)="onReviewOverrideQualityGateToggle($event)"
                   />
                   Override quality gate (requires notes)
                 </label>
@@ -811,7 +814,7 @@ const VISIBILITY_OPTIONS = [
                 pTextarea
                 rows="4"
                 [value]="reviewForm.notes"
-                (input)="onReviewNotesChange(getInputValue($event))"
+                (input)="onReviewNotesInput($event)"
                 placeholder="Optional notes (required for override)"
               ></textarea>
             </div>
@@ -1033,16 +1036,34 @@ export class KnowledgeBaseComponent implements OnInit {
     this.resourceForm = { ...this.resourceForm, title: value };
   }
 
+  onResourceTitleInput(event: Event): void {
+    this.onResourceTitleChange(this.readInputValue(event));
+  }
+
   onResourceCategoryChange(value: string | null): void {
     this.resourceForm = { ...this.resourceForm, category: value ?? "" };
+  }
+
+  onResourceCategorySelect(event: SelectChangeEvent): void {
+    this.onResourceCategoryChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   onResourceUrlChange(value: string): void {
     this.resourceForm = { ...this.resourceForm, url: value };
   }
 
+  onResourceUrlInput(event: Event): void {
+    this.onResourceUrlChange(this.readInputValue(event));
+  }
+
   onResourceContentChange(value: string): void {
     this.resourceForm = { ...this.resourceForm, content: value };
+  }
+
+  onResourceContentInput(event: Event): void {
+    this.onResourceContentChange(this.readInputValue(event));
   }
 
   onResourceVisibilityChange(value: string): void {
@@ -1053,15 +1074,27 @@ export class KnowledgeBaseComponent implements OnInit {
     this.resourceForm = { ...this.resourceForm, tags: value };
   }
 
+  onResourceTagsInput(event: Event): void {
+    this.onResourceTagsChange(this.readInputValue(event));
+  }
+
   onReviewOverrideQualityGateChange(value: boolean): void {
     this.reviewForm = { ...this.reviewForm, overrideQualityGate: value };
+  }
+
+  onReviewOverrideQualityGateToggle(event: Event): void {
+    this.onReviewOverrideQualityGateChange(this.readChecked(event));
   }
 
   onReviewNotesChange(value: string): void {
     this.reviewForm = { ...this.reviewForm, notes: value };
   }
 
-  getInputValue(event: Event): string {
+  onReviewNotesInput(event: Event): void {
+    this.onReviewNotesChange(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;
@@ -1069,7 +1102,7 @@ export class KnowledgeBaseComponent implements OnInit {
     return "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
       return target.checked;
@@ -1097,15 +1130,21 @@ export class KnowledgeBaseComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          resources?: KnowledgeResource[];
+          categories?: ResourceCategory[];
+        }>(API_ENDPOINTS.knowledge.base),
+      );
+      const payload = extractApiPayload<{
         resources?: KnowledgeResource[];
         categories?: ResourceCategory[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.knowledge.base),
-      );
-      if (response?.success && response.data) {
-        this.resources.set(response.data.resources || []);
-        this.categories.set(response.data.categories || []);
+      }>(response);
+      if (payload) {
+        this.resources.set(payload.resources || []);
+        this.categories.set(payload.categories || []);
+      } else {
+        throw new Error("Knowledge base payload missing");
       }
     } catch (err) {
       this.logger.error("Failed to load knowledge base", err);
@@ -1207,7 +1246,7 @@ export class KnowledgeBaseComponent implements OnInit {
         ),
       );
 
-      if (!response?.success) {
+      if (!isSuccessfulApiResponse(response)) {
         throw new Error("Failed to submit knowledge entry");
       }
 
@@ -1246,10 +1285,13 @@ export class KnowledgeBaseComponent implements OnInit {
           { limit: 100 },
         ),
       );
-      if (!response?.success) {
+      const payload = extractApiPayload<{ entries?: PendingKnowledgeEntry[] }>(
+        response,
+      );
+      if (!payload) {
         throw new Error("Failed to load pending entries");
       }
-      this.pendingEntries.set(response.data?.entries || []);
+      this.pendingEntries.set(payload.entries || []);
     } catch (error) {
       this.logger.error("Failed to load pending knowledge entries", error);
       this.pendingEntries.set([]);
@@ -1271,10 +1313,13 @@ export class KnowledgeBaseComponent implements OnInit {
           { limit: 100 },
         ),
       );
-      if (!response?.success) {
+      const payload = extractApiPayload<{ entries?: MyKnowledgeSubmission[] }>(
+        response,
+      );
+      if (!payload) {
         throw new Error("Failed to load my submissions");
       }
-      this.mySubmissions.set(response.data?.entries || []);
+      this.mySubmissions.set(payload.entries || []);
     } catch (error) {
       this.logger.error("Failed to load my knowledge submissions", error);
       this.mySubmissions.set([]);
@@ -1306,7 +1351,7 @@ export class KnowledgeBaseComponent implements OnInit {
           { action },
         ),
       );
-      if (!response?.success) {
+      if (!isSuccessfulApiResponse(response)) {
         throw new Error("Review failed");
       }
       this.toastService.success(
@@ -1357,12 +1402,15 @@ export class KnowledgeBaseComponent implements OnInit {
           API_ENDPOINTS.knowledgeGovernance.audit(entryId),
         ),
       );
-      if (!response?.success) {
+      const payload = extractApiPayload<{ events?: KnowledgeReviewEvent[] }>(
+        response,
+      );
+      if (!payload) {
         throw new Error("Failed to load audit timeline");
       }
       this.auditTimelineByEntry.update((state) => ({
         ...state,
-        [entryId]: response.data?.events || [],
+        [entryId]: payload.events || [],
       }));
     } catch (error) {
       this.logger.error("Failed to load audit timeline", error);
@@ -1442,7 +1490,7 @@ export class KnowledgeBaseComponent implements OnInit {
           },
         ),
       );
-      if (!response?.success) {
+      if (!isSuccessfulApiResponse(response)) {
         throw new Error("Review failed");
       }
       this.toastService.success("Entry approved successfully", "Review Complete");

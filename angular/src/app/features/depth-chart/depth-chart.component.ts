@@ -16,7 +16,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
 
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -267,7 +267,7 @@ interface PositionGroup {
             </p>
             <p-select
               [options]="availablePlayersForAssign()"
-              (onChange)="onSelectedPlayerChange({ value: $event.value })"
+              (onChange)="onSelectedPlayerSelect($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select a player"
@@ -483,8 +483,14 @@ export class DepthChartComponent implements OnInit {
     this.showAssignDialog = true;
   }
 
-  onSelectedPlayerChange(event: { value: string | null }): void {
-    this.selectedPlayerId = event.value;
+  onSelectedPlayerChange(value: string | null | undefined): void {
+    this.selectedPlayerId = value ?? null;
+  }
+
+  onSelectedPlayerSelect(event: SelectChangeEvent): void {
+    this.onSelectedPlayerChange(
+      (event.value as string | null | undefined) ?? null,
+    );
   }
 
   assignPlayer(): void {

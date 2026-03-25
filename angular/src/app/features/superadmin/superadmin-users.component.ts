@@ -40,6 +40,9 @@ interface User {
   last_login?: string;
 }
 
+const USER_ROLES = ["player", "coach", "admin", "superadmin"] as const;
+const USER_STATUSES = ["active", "suspended", "pending"] as const;
+
 @Component({
   selector: "app-superadmin-users",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -302,7 +305,7 @@ interface User {
                   id="superadmin-user-role"
                   class="w-full"
                   [value]="editRole"
-                  (change)="editRole = $any($event.target).value"
+                  (change)="onEditRoleChange($event)"
                 >
                   @for (option of roleOptions; track option.value) {
                     <option [value]="option.value">{{ option.label }}</option>
@@ -315,7 +318,7 @@ interface User {
                   id="superadmin-user-status"
                   class="w-full"
                   [value]="editStatus"
-                  (change)="editStatus = $any($event.target).value"
+                  (change)="onEditStatusChange($event)"
                 >
                   @for (option of statusOptions; track option.value) {
                     <option [value]="option.value">{{ option.label }}</option>
@@ -437,6 +440,22 @@ export class SuperadminUsersComponent implements OnInit {
     this.filterUsers();
   }
 
+  onEditRoleChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement | null)?.value;
+
+    if (this.isUserRole(value)) {
+      this.editRole = value;
+    }
+  }
+
+  onEditStatusChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement | null)?.value;
+
+    if (this.isUserStatus(value)) {
+      this.editStatus = value;
+    }
+  }
+
   setRoleFilter(
     role: "all" | "player" | "coach" | "admin" | "superadmin",
   ): void {
@@ -501,5 +520,13 @@ export class SuperadminUsersComponent implements OnInit {
     this.filterUsers();
     this.showEditDialog = false;
     this.toast.success("User details updated locally.", "User Updated");
+  }
+
+  private isUserRole(value: string | undefined): value is User["role"] {
+    return Boolean(value && USER_ROLES.includes(value as User["role"]));
+  }
+
+  private isUserStatus(value: string | undefined): value is User["status"] {
+    return Boolean(value && USER_STATUSES.includes(value as User["status"]));
   }
 }

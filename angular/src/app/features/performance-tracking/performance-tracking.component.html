@@ -304,7 +304,7 @@
             <app-select
               header-actions
               [options]="positionOptions"
-              (change)="onPositionSelectionChange($event)"
+              (valueChange)="onPositionSelectionChange($event)"
               placeholder="Change Position"
               class="position-selector"
             ></app-select>
@@ -508,7 +508,7 @@
                 <app-input-number
                   label="10m Sprint (sec)"
                   id="sprint10"
-                  (change)="updatePerformanceMetric('sprint10', $event)"
+                  (valueChange)="updatePerformanceMetric('sprint10', $event)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   placeholder="e.g., 1.54"
@@ -518,7 +518,7 @@
                 <app-input-number
                   label="20m Sprint (sec)"
                   id="sprint20"
-                  (change)="updatePerformanceMetric('sprint20', $event)"
+                  (valueChange)="updatePerformanceMetric('sprint20', $event)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   placeholder="e.g., 2.89"
@@ -528,7 +528,7 @@
                 <app-input-number
                   label="40-Yard Dash (sec)"
                   id="dash40"
-                  (change)="updatePerformanceMetric('dash40', $event)"
+                  (valueChange)="updatePerformanceMetric('dash40', $event)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   placeholder="e.g., 4.45"
@@ -543,7 +543,7 @@
                 <app-input-number
                   label="Pro Agility 5-10-5 (sec)"
                   id="proAgility"
-                  (change)="updatePerformanceMetric('proAgility', $event)"
+                  (valueChange)="updatePerformanceMetric('proAgility', $event)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   placeholder="e.g., 4.12"
@@ -553,7 +553,7 @@
                 <app-input-number
                   label="L-Drill (sec)"
                   id="lDrill"
-                  (change)="updatePerformanceMetric('lDrill', $event)"
+                  (valueChange)="updatePerformanceMetric('lDrill', $event)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   placeholder="e.g., 6.85"
@@ -563,7 +563,7 @@
                 <app-input-number
                   label="Reactive Agility (sec)"
                   id="reactiveAgility"
-                  (change)="updatePerformanceMetric('reactiveAgility', $event)"
+                  (valueChange)="updatePerformanceMetric('reactiveAgility', $event)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   placeholder="e.g., 1.24"
@@ -578,7 +578,7 @@
                 <app-input-number
                   label="Vertical Jump (in)"
                   id="vertical"
-                  (change)="updatePerformanceMetric('vertical', $event)"
+                  (valueChange)="updatePerformanceMetric('vertical', $event)"
                   placeholder="e.g., 38"
                 ></app-input-number>
               </div>
@@ -586,7 +586,7 @@
                 <app-input-number
                   label="Broad Jump (in)"
                   id="broad"
-                  (change)="updatePerformanceMetric('broad', $event)"
+                  (valueChange)="updatePerformanceMetric('broad', $event)"
                   placeholder="e.g., 122"
                 ></app-input-number>
               </div>
@@ -594,7 +594,7 @@
                 <app-input-number
                   label="RSI (ratio)"
                   id="rsi"
-                  (change)="updatePerformanceMetric('rsi', $event)"
+                  (valueChange)="updatePerformanceMetric('rsi', $event)"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   placeholder="e.g., 2.45"
@@ -609,7 +609,7 @@
                 <app-input-number
                   label="Bench Press 1RM (lbs)"
                   id="bench"
-                  (change)="updatePerformanceMetric('bench', $event)"
+                  (valueChange)="updatePerformanceMetric('bench', $event)"
                   placeholder="e.g., 225"
                 ></app-input-number>
               </div>
@@ -617,7 +617,7 @@
                 <app-input-number
                   label="Back Squat 1RM (lbs)"
                   id="squat"
-                  (change)="updatePerformanceMetric('squat', $event)"
+                  (valueChange)="updatePerformanceMetric('squat', $event)"
                   placeholder="e.g., 315"
                 ></app-input-number>
               </div>
@@ -625,7 +625,7 @@
                 <app-input-number
                   label="Deadlift 1RM (lbs)"
                   id="deadlift"
-                  (change)="updatePerformanceMetric('deadlift', $event)"
+                  (valueChange)="updatePerformanceMetric('deadlift', $event)"
                   placeholder="e.g., 365"
                 ></app-input-number>
               </div>
@@ -638,7 +638,7 @@
                 <app-input-number
                   label="Body Weight (lbs)"
                   id="bodyWeight"
-                  (change)="updatePerformanceMetric('bodyWeight', $event)"
+                  (valueChange)="updatePerformanceMetric('bodyWeight', $event)"
                   placeholder="For relative strength"
                   hint="Used for relative strength calculations"
                 ></app-input-number>
@@ -651,7 +651,7 @@
                 label="Notes (optional)"
                 id="notes"
                 [ngModel]="newPerformance.notes"
-                (change)="updatePerformanceNotes($event)"
+                (valueChange)="updatePerformanceNotes($event)"
                 placeholder="Any notes about this session"
               ></app-form-input>
             </div>

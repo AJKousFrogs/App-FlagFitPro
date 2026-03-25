@@ -57,7 +57,7 @@
             } @else if (isSummaryStep()) {
               @defer (when isSummaryStep()) {
                 <app-onboarding-step-summary
-                  (consentChange)="onConsentChange($event.type, { checked: $event.checked })"
+                  (consentChange)="onSummaryConsentChange($event)"
                 />
               }
             }

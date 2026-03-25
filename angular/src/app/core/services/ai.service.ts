@@ -4,6 +4,7 @@ import { catchError, map, switchMap } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { PrivacySettingsService } from "./privacy-settings.service";
 import { LoggerService } from "./logger.service";
+import { extractApiPayload } from "../utils/api-response-mapper";
 
 interface RecentPerformance {
   type: string;
@@ -96,8 +97,10 @@ export class AIService {
           .post<TrainingSuggestion[]>(API_ENDPOINTS.training.suggestions, params)
           .pipe(
             map((response) => {
-              if (response.success && response.data) {
-                return response.data;
+              const suggestions =
+                extractApiPayload<TrainingSuggestion[]>(response);
+              if (Array.isArray(suggestions)) {
+                return suggestions;
               }
               throw new Error("No training suggestions available");
             }),
@@ -246,10 +249,12 @@ export class AIService {
               })
               .pipe(
                 map((response): CommandResponse => {
-                  if (response.success && response.data) {
+                  const commandResponse =
+                    extractApiPayload<CommandResponse>(response);
+                  if (commandResponse) {
                     return {
-                      message: response.data.message,
-                      actions: response.data.actions,
+                      message: commandResponse.message,
+                      actions: commandResponse.actions,
                     };
                   }
                   return {
@@ -385,8 +390,9 @@ export class AIService {
           .post<ContextInsight[]>("/api/ai/analyze-context", context)
           .pipe(
             map((response) => {
-              if (response.success && response.data) {
-                return response.data;
+              const apiInsights = extractApiPayload<ContextInsight[]>(response);
+              if (Array.isArray(apiInsights)) {
+                return apiInsights;
               }
               return insights;
             }),

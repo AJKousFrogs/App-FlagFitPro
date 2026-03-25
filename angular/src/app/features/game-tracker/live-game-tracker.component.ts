@@ -30,6 +30,7 @@ import { GameTimePipe } from "../../shared/pipes/game-time.pipe";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { extractApiArray } from "../../core/utils/api-response-mapper";
 import { AuthService } from "../../core/services/auth.service";
 import { timer, Subscription } from "rxjs";
 
@@ -421,15 +422,14 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   private loadPlayers(): void {
     // Load players from API or use field players
     this.apiService
-      .get(API_ENDPOINTS.roster.players)
+      .get<FieldPlayer[]>(API_ENDPOINTS.roster.players)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          const data = response?.data;
-          const players = Array.isArray(data) ? data : [];
+          const players = extractApiArray<FieldPlayer>(response);
           // Update active players if available
           if (players.length > 0) {
-            this.activePlayers.set(players as FieldPlayer[]);
+            this.activePlayers.set(players);
           }
         },
         error: () => {

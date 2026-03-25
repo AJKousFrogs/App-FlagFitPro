@@ -74,6 +74,11 @@ export interface PerformanceInsight {
   action?: () => void;
 }
 
+interface NutritionSuggestionPayload {
+  data?: AINutritionSuggestion[];
+  suggestions?: AINutritionSuggestion[];
+}
+
 interface DatabaseNutritionLog {
   id: number;
   user_id: string;
@@ -145,6 +150,25 @@ export class NutritionService {
   readonly totalFatToday = computed(() =>
     this._todaysMeals().reduce((sum, meal) => sum + meal.fat, 0),
   );
+
+  private extractSuggestionPayload(
+    value: unknown,
+  ): AINutritionSuggestion[] {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    if (!value || typeof value !== "object") {
+      return [];
+    }
+
+    const payload = value as NutritionSuggestionPayload;
+    if (Array.isArray(payload.data)) {
+      return payload.data;
+    }
+
+    return Array.isArray(payload.suggestions) ? payload.suggestions : [];
+  }
 
   constructor() {
     // Set up realtime subscription when user logs in/out
@@ -759,7 +783,7 @@ export class NutritionService {
         );
 
         if (!error) {
-          return data?.data || data?.suggestions || [];
+          return this.extractSuggestionPayload(data);
         }
       }
 

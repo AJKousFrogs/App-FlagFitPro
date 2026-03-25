@@ -269,13 +269,13 @@
   <div header-actions class="chart-controls">
     <app-select
       [options]="timePeriods()"
-      (change)="selectedTimePeriodChange.emit($event)"
+      (valueChange)="selectedTimePeriodChange.emit($event)"
       placeholder="Time Period"
       class="w-full md:w-14rem"
     ></app-select>
     <app-select
       [options]="metricOptions()"
-      (change)="selectedMetricChange.emit($event)"
+      (valueChange)="selectedMetricChange.emit($event)"
       placeholder="Metrics"
       class="w-full md:w-14rem"
     ></app-select>

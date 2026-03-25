@@ -5,6 +5,7 @@ import { catchError, map, shareReplay, tap } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 import { ApiResponse } from "../models/common.models";
+import { isSuccessfulApiResponse } from "../utils/api-response-mapper";
 
 /**
  * ExerciseDB Exercise interface
@@ -303,7 +304,7 @@ export class ExerciseDBService {
       >(`${this.baseUrl}/api/exercisedb/import`, params)
       .pipe(
         map((response) => ({
-          success: response.success,
+          success: isSuccessfulApiResponse(response),
           stats: response.stats,
         })),
         tap(() => {
@@ -339,7 +340,7 @@ export class ExerciseDBService {
       >(`${this.baseUrl}/api/exercisedb/approve/${exerciseId}`, approvalData)
       .pipe(
         map((response) => ({
-          success: response.success,
+          success: isSuccessfulApiResponse(response),
           exercise: response.exercise,
         })),
         catchError((error) => {

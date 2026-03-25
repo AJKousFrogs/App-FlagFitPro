@@ -32,6 +32,12 @@ import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { ToastService } from "./toast.service";
 import { UI_LIMITS } from "../constants/app.constants";
+import {
+  extractApiPayload,
+  extractApiRecord,
+  isSuccessfulApiResponse,
+  readNumericField,
+} from "../utils/api-response-mapper";
 
 /**
  * Notification categories specific to flag football app
@@ -545,16 +551,15 @@ export class NotificationStateService implements OnDestroy {
       );
 
       let notifications: Notification[] = [];
+      const payload = extractApiPayload<
+        Notification[] | { notifications?: Notification[]; data?: Notification[] }
+      >(response);
 
       // Handle different response formats
-      if (response && response.data) {
-        if (Array.isArray(response.data)) {
-          notifications = response.data;
-        } else if (
-          typeof response.data === "object" &&
-          response.data !== null
-        ) {
-          const dataObj = response.data as Record<string, unknown>;
+      if (Array.isArray(payload)) {
+        notifications = payload;
+      } else if (payload && typeof payload === "object") {
+          const dataObj = payload as Record<string, unknown>;
           if (
             "notifications" in dataObj &&
             Array.isArray(dataObj["notifications"])
@@ -563,9 +568,6 @@ export class NotificationStateService implements OnDestroy {
           } else if ("data" in dataObj && Array.isArray(dataObj["data"])) {
             notifications = dataObj["data"] as Notification[];
           }
-        }
-      } else if (Array.isArray(response)) {
-        notifications = response as Notification[];
       }
 
       this.notifications.set(notifications);
@@ -619,12 +621,10 @@ export class NotificationStateService implements OnDestroy {
         ),
       );
 
-      if (response.success === false || !response.data) {
+      if (!isSuccessfulApiResponse(response) || !extractApiPayload(response)) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(
-          response.error || "Failed to mark notification as read",
-        );
+        throw new Error("Failed to mark notification as read");
       }
 
       // Refresh badge count to ensure consistency
@@ -671,12 +671,10 @@ export class NotificationStateService implements OnDestroy {
         ),
       );
 
-      if (response.success === false || !response.data) {
+      if (!isSuccessfulApiResponse(response) || !extractApiPayload(response)) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(
-          response.error || "Failed to mark all notifications as read",
-        );
+        throw new Error("Failed to mark all notifications as read");
       }
 
       // Refresh badge count to ensure consistency
@@ -724,12 +722,10 @@ export class NotificationStateService implements OnDestroy {
         ),
       );
 
-      if (response.success === false || !response.data) {
+      if (!isSuccessfulApiResponse(response) || !extractApiPayload(response)) {
         // Revert optimistic update
         this.notifications.set(previousState);
-        throw new Error(
-          response.error || "Failed to mark notifications as read",
-        );
+        throw new Error("Failed to mark notifications as read");
       }
 
       // Refresh badge count to ensure consistency
@@ -768,22 +764,14 @@ export class NotificationStateService implements OnDestroy {
         ),
       );
 
-      let count = 0;
-      if (response && response.data) {
-        const dataObj = response.data as unknown as Record<string, unknown>;
-        if (typeof dataObj["unreadCount"] === "number") {
-          count = dataObj["unreadCount"];
-        } else if (typeof dataObj["count"] === "number") {
-          count = dataObj["count"];
-        }
-      } else if (typeof response === "number") {
-        count = response;
-      } else if (typeof response === "object" && response !== null) {
-        const respObj = response as unknown as Record<string, unknown>;
-        if (typeof respObj["unreadCount"] === "number") {
-          count = respObj["unreadCount"];
-        }
-      }
+      const payload = extractApiPayload<number | Record<string, unknown>>(
+        response,
+      );
+      const count =
+        typeof payload === "number"
+          ? payload
+          : (readNumericField(extractApiRecord(response), "unreadCount", "count") ??
+            0);
 
       // Update notifications to match server count if there's a mismatch
       const currentUnread = this.unreadCount();

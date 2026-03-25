@@ -31,6 +31,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
 import { AiTrainingSchedulerDataService } from "../services/ai-training-scheduler-data.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 
 interface AISuggestion {
   id: string;
@@ -471,7 +472,11 @@ export class AiTrainingSchedulerComponent implements OnInit {
             energyLevel?: number;
           }>(`/api/wellness/checkin?date=${today}`),
         );
-        wellness = response.success ? (response.data ?? null) : null;
+        wellness = extractApiPayload<{
+          sleepQuality?: number;
+          muscleSoreness?: number;
+          energyLevel?: number;
+        }>(response);
       } catch {
         // Wellness API failed, continue with null
       }

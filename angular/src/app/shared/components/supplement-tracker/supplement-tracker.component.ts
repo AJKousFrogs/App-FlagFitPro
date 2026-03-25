@@ -52,6 +52,7 @@ import { API_ENDPOINTS, ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { SupplementDisplay } from "../../../core/models/supplement.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 
 // Use SupplementDisplay for component display logic
 type Supplement = SupplementDisplay;
@@ -310,12 +311,12 @@ export class SupplementTrackerComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (
-            response?.data?.supplements &&
-            response.data.supplements.length > 0
-          ) {
+          const payload = extractApiPayload<{ supplements?: SupplementResponse[] }>(
+            response,
+          );
+          if (payload?.supplements && payload.supplements.length > 0) {
             // Map API response to our interface
-            const mapped: Supplement[] = response.data.supplements.map((s) => ({
+            const mapped: Supplement[] = payload.supplements.map((s) => ({
               id: s.id || s.supplement_id || this.generateId(s.name || ""),
               name: s.name || s.supplement_name || "Unknown",
               dosage: s.dosage || s.dose,

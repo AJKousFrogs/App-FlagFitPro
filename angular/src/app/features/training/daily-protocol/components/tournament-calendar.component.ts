@@ -27,7 +27,7 @@ import { PageErrorStateComponent } from "../../../../shared/components/page-erro
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
@@ -35,7 +35,7 @@ import { Tooltip } from "primeng/tooltip";
 import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { DialogService } from "../../../../core/ui/dialog.service";
-import { ApiResponse } from "../../../../core/models/common.models";
+import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
 import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
 import { DesignTokens } from "../../../../shared/models/design-tokens";
 import {
@@ -283,7 +283,7 @@ interface EventTypeOption {
             pInputText
             id="name"
             [value]="formData.name ?? ''"
-            (input)="onFormNameChange(getInputValue($event))"
+            (input)="onFormNameInput($event)"
             placeholder="e.g., Adria Bowl 2026"
             class="w-full"
           />
@@ -321,7 +321,7 @@ interface EventTypeOption {
               pInputText
               id="country"
               [value]="formData.country ?? ''"
-              (input)="onFormCountryChange(getInputValue($event))"
+              (input)="onFormCountryInput($event)"
               placeholder="e.g., Croatia"
               class="w-full"
             />
@@ -332,7 +332,7 @@ interface EventTypeOption {
               pInputText
               id="city"
               [value]="formData.city ?? ''"
-              (input)="onFormCityChange(getInputValue($event))"
+              (input)="onFormCityInput($event)"
               placeholder="e.g., Zagreb"
               class="w-full"
             />
@@ -345,7 +345,7 @@ interface EventTypeOption {
             id="eventType"
             [options]="eventTypes"
             [ngModel]="formData.eventType"
-            (onChange)="onFormEventTypeChange($event.value)"
+            (onChange)="onFormEventTypeSelect($event)"
             optionLabel="label"
             optionValue="value"
             class="w-full"
@@ -384,7 +384,7 @@ interface EventTypeOption {
             id="isPeakEvent"
             type="checkbox"
             [checked]="!!formData.isPeakEvent"
-            (change)="onFormIsPeakEventChange(isChecked($event))"
+            (change)="onFormIsPeakEventToggle($event)"
           />
           <label for="isPeakEvent">
             <strong>Peak Event</strong> - Maximum taper and preparation
@@ -397,7 +397,7 @@ interface EventTypeOption {
               id="isNationalTeam"
               type="checkbox"
               [checked]="!!formData.isNationalTeamEvent"
-              (change)="onFormIsNationalTeamEventChange(isChecked($event))"
+              (change)="onFormIsNationalTeamEventToggle($event)"
             />
             <label for="isNationalTeam">
               <strong>National Team Event</strong> - Visible to all team members
@@ -411,7 +411,7 @@ interface EventTypeOption {
             pInputText
             id="externalUrl"
             [value]="formData.externalUrl ?? ''"
-            (input)="onFormExternalUrlChange(getInputValue($event))"
+            (input)="onFormExternalUrlInput($event)"
             placeholder="https://..."
             class="w-full"
           />
@@ -423,7 +423,7 @@ interface EventTypeOption {
             pInputText
             id="notes"
             [value]="formData.notes ?? ''"
-            (input)="onFormNotesChange(getInputValue($event))"
+            (input)="onFormNotesInput($event)"
             rows="2"
             placeholder="Any additional notes..."
             class="w-full"
@@ -487,6 +487,10 @@ export class TournamentCalendarComponent {
     this.formData = { ...this.formData, name: value };
   }
 
+  onFormNameInput(event: Event): void {
+    this.onFormNameChange(this.readInputValue(event));
+  }
+
   onFormStartDateChange(value: string | Date | null): void {
     this.formData = { ...this.formData, startDate: value ?? undefined };
   }
@@ -499,8 +503,22 @@ export class TournamentCalendarComponent {
     this.formData = { ...this.formData, country: value };
   }
 
+  onFormCountryInput(event: Event): void {
+    this.onFormCountryChange(this.readInputValue(event));
+  }
+
   onFormCityChange(value: string): void {
     this.formData = { ...this.formData, city: value };
+  }
+
+  onFormCityInput(event: Event): void {
+    this.onFormCityChange(this.readInputValue(event));
+  }
+
+  onFormEventTypeSelect(event: SelectChangeEvent): void {
+    this.onFormEventTypeChange(
+      (event.value as Tournament["eventType"] | null | undefined) ?? null,
+    );
   }
 
   onFormEventTypeChange(value: Tournament["eventType"] | null): void {
@@ -519,24 +537,40 @@ export class TournamentCalendarComponent {
     this.formData = { ...this.formData, isPeakEvent: value };
   }
 
+  onFormIsPeakEventToggle(event: Event): void {
+    this.onFormIsPeakEventChange(this.readChecked(event));
+  }
+
   onFormIsNationalTeamEventChange(value: boolean): void {
     this.formData = { ...this.formData, isNationalTeamEvent: value };
+  }
+
+  onFormIsNationalTeamEventToggle(event: Event): void {
+    this.onFormIsNationalTeamEventChange(this.readChecked(event));
   }
 
   onFormExternalUrlChange(value: string): void {
     this.formData = { ...this.formData, externalUrl: value };
   }
 
+  onFormExternalUrlInput(event: Event): void {
+    this.onFormExternalUrlChange(this.readInputValue(event));
+  }
+
   onFormNotesChange(value: string): void {
     this.formData = { ...this.formData, notes: value };
   }
 
-  getInputValue(event: Event): string {
+  onFormNotesInput(event: Event): void {
+    this.onFormNotesChange(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
@@ -545,11 +579,12 @@ export class TournamentCalendarComponent {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<Tournament[] | null> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.tournamentCalendar.list),
+      const response = await firstValueFrom(
+        this.api.get<Tournament[] | null>(API_ENDPOINTS.tournamentCalendar.list),
       );
-      if (response?.success && response.data) {
-        this.tournaments.set(response.data);
+      const payload = extractApiPayload<Tournament[] | null>(response);
+      if (payload) {
+        this.tournaments.set(payload);
         return;
       }
 

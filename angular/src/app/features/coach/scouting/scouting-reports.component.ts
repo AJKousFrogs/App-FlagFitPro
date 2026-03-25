@@ -20,6 +20,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -313,9 +314,53 @@ export class ScoutingReportsComponent implements OnInit {
         ),
       ]);
 
+      const reportsPayload = extractApiPayload<{
+        reports: Array<{
+          id: string;
+          opponent_name: string;
+          opponent_profile: {
+            city?: string;
+            conference?: string;
+            coach?: string;
+            record?: string;
+          };
+          game_date: string;
+          offensive_notes: string;
+          defensive_notes: string;
+          key_players: Array<{
+            name: string;
+            number: string;
+            position: string;
+            notes: string;
+          }>;
+          tendencies: Record<string, unknown>;
+          game_plan: Record<string, unknown>;
+          status: string;
+          created_at: string;
+          created_by_user?: { full_name: string };
+        }>;
+      }>(reportsRes);
+      const opponentsPayload = extractApiPayload<{
+        opponents: Array<{
+          name: string;
+          opponentTeamId?: string;
+          profile: {
+            city?: string;
+            conference?: string;
+            coach?: string;
+            notes?: string;
+          };
+          tendencies: Record<string, unknown>;
+          gamesPlayed: number;
+          wins: number;
+          losses: number;
+          lastPlayed: string;
+        }>;
+      }>(opponentsRes);
+
       // Transform reports
-      if (reportsRes?.data?.reports) {
-        const reports: ScoutingReport[] = reportsRes.data.reports.map((r) => ({
+      if (reportsPayload?.reports) {
+        const reports: ScoutingReport[] = reportsPayload.reports.map((r) => ({
           id: r.id,
           opponentId: r.opponent_name,
           opponentName: r.opponent_name,
@@ -343,8 +388,8 @@ export class ScoutingReportsComponent implements OnInit {
       }
 
       // Transform opponents
-      if (opponentsRes?.data?.opponents) {
-        const opponents: OpponentProfile[] = opponentsRes.data.opponents.map(
+      if (opponentsPayload?.opponents) {
+        const opponents: OpponentProfile[] = opponentsPayload.opponents.map(
           (o) => ({
             id: o.name.toLowerCase().replace(/\s+/g, "-"),
             teamName: o.name,
@@ -408,8 +453,22 @@ export class ScoutingReportsComponent implements OnInit {
         }>(`/api/scouting/tendencies/${encodeURIComponent(opponentName)}`),
       );
 
-      if (response?.data?.tendencies) {
-        const t = response.data.tendencies;
+      const payload = extractApiPayload<{
+        tendencies: {
+          offensive: {
+            formations: Record<string, number>;
+            playTypes: Record<string, number>;
+            notes?: string[];
+          };
+          defensive: {
+            coverages: Record<string, number>;
+            notes?: string[];
+          };
+        };
+      }>(response);
+
+      if (payload?.tendencies) {
+        const t = payload.tendencies;
         const tendencyData: TeamTendencies = {
           opponentId: opponentName,
           offensive: {
@@ -503,10 +562,10 @@ export class ScoutingReportsComponent implements OnInit {
     this.newReport = { ...this.newReport, [field]: value ?? "" };
   }
 
-  updateNewReportSharedWith(
-    value: "team" | "coaches_only" | null | undefined,
-  ): void {
-    this.newReport = { ...this.newReport, sharedWith: value ?? "team" };
+  updateNewReportSharedWith(value: string | null | undefined): void {
+    const normalizedValue: "team" | "coaches_only" =
+      value === "coaches_only" ? "coaches_only" : "team";
+    this.newReport = { ...this.newReport, sharedWith: normalizedValue };
   }
 
   updateNewReportRequiredReading(value: boolean | null | undefined): void {
@@ -534,15 +593,6 @@ export class ScoutingReportsComponent implements OnInit {
       ...this.newOpponent,
       [field]: Number.isFinite(parsed) ? parsed : 0,
     };
-  }
-
-  getInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
-      ?.value ?? "";
-  }
-
-  isChecked(event: Event): boolean {
-    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   viewReport(report: ScoutingReport): void {
@@ -671,10 +721,11 @@ export class ScoutingReportsComponent implements OnInit {
           },
         }),
       );
+      const payload = extractApiPayload<{ report?: { id?: string } }>(response);
 
       // Add to local list
       const report: ScoutingReport = {
-        id: response?.data?.report?.id || `report${Date.now()}`,
+        id: payload?.report?.id || `report${Date.now()}`,
         opponentId: this.newReport.opponentId,
         opponentName: opponent?.teamName || "Unknown",
         gameDate: new Date(this.newReport.gameDate),

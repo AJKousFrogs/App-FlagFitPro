@@ -65,6 +65,7 @@ export class CheckboxComponent<T = unknown> implements ControlValueAccessor {
 
   // Outputs
   change = output<CheckboxChangeEvent>();
+  checkedChange = output<boolean>();
 
   // Internal
   protected modelValue = signal<boolean | T | null>(false);
@@ -77,10 +78,12 @@ export class CheckboxComponent<T = unknown> implements ControlValueAccessor {
   private onModelChange: (value: boolean | T | null) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onCheckboxChange(event: CheckboxChangeEvent) {
+  onCheckboxChange(event: CheckboxChangeEvent): void {
+    const checked = Boolean(event.checked);
     this.modelValue.set(event.checked);
     this.onModelChange(event.checked);
     this.change.emit(event);
+    this.checkedChange.emit(checked);
     this.onModelTouched();
   }
 

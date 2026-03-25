@@ -22,6 +22,7 @@ import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { extractApiArray } from "../../core/utils/api-response-mapper";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
@@ -602,8 +603,9 @@ export class ExerciseLibraryComponent implements OnInit {
     };
     this.apiService.get<ExerciseApi[]>("/api/exercises").pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
-        if (response.success && response.data) {
-          const mappedExercises: Exercise[] = response.data.map((ex) => {
+        const exercises = extractApiArray<ExerciseApi>(response);
+        if (exercises) {
+          const mappedExercises: Exercise[] = exercises.map((ex) => {
             const positionSpecific = Array.isArray(ex.position_specific)
               ? ex.position_specific
               : ex.position_specific

@@ -338,7 +338,7 @@
                 label="Report Type"
                 [options]="reportTypeOptions"
                 [ngModel]="newReport.type"
-                (change)="updateNewReportType($event.value)"
+                (valueChange)="updateNewReportType($event)"
                 placeholder="Select report type"
                 class="w-full"
               ></app-select>
@@ -349,7 +349,7 @@
                 label="Time Period"
                 [options]="timePeriods"
                 [ngModel]="newReport.period"
-                (change)="updateNewReportPeriod($event.value)"
+                (valueChange)="updateNewReportPeriod($event)"
                 placeholder="Select period"
                 class="w-full"
               ></app-select>
@@ -366,49 +366,49 @@
                   <app-checkbox
                     label="Wellness scores"
                     [ngModel]="privacySettings.includeWellnessScores"
-                    (change)="updatePrivacySetting('includeWellnessScores', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('includeWellnessScores', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="Sleep data"
                     [ngModel]="privacySettings.includeSleepData"
-                    (change)="updatePrivacySetting('includeSleepData', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('includeSleepData', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="Training load"
                     [ngModel]="privacySettings.includeTrainingLoad"
-                    (change)="updatePrivacySetting('includeTrainingLoad', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('includeTrainingLoad', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="Performance data"
                     [ngModel]="privacySettings.includePerformanceData"
-                    (change)="updatePrivacySetting('includePerformanceData', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('includePerformanceData', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="Injury history"
                     [ngModel]="privacySettings.includeInjuryHistory"
-                    (change)="updatePrivacySetting('includeInjuryHistory', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('includeInjuryHistory', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="AI-generated patterns"
                     [ngModel]="privacySettings.includeAINotes"
-                    (change)="updatePrivacySetting('includeAINotes', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('includeAINotes', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="Personal notes"
                     [ngModel]="privacySettings.includePersonalNotes"
-                    (change)="updatePrivacySetting('includePersonalNotes', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('includePersonalNotes', $event)"
                   ></app-checkbox>
                 </div>
               </div>
@@ -419,21 +419,21 @@
                   <app-checkbox
                     label="Hide team name"
                     [ngModel]="privacySettings.anonymizeTeamName"
-                    (change)="updatePrivacySetting('anonymizeTeamName', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('anonymizeTeamName', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="Hide coach names"
                     [ngModel]="privacySettings.anonymizeCoachNames"
-                    (change)="updatePrivacySetting('anonymizeCoachNames', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('anonymizeCoachNames', $event)"
                   ></app-checkbox>
                 </div>
                 <div class="checkbox-item">
                   <app-checkbox
                     label="Show relative dates only"
                     [ngModel]="privacySettings.removeDates"
-                    (change)="updatePrivacySetting('removeDates', $event.checked)"
+                    (checkedChange)="updatePrivacySetting('removeDates', $event)"
                   ></app-checkbox>
                 </div>
               </div>
@@ -444,7 +444,7 @@
                 label="Personal Notes (optional)"
                 id="notes"
                 [ngModel]="newReport.notes"
-                (change)="updateNewReportNotes($event)"
+                (valueChange)="updateNewReportNotes($event)"
                 [rows]="3"
                 placeholder="Add any context or notes for your psychologist..."
               ></app-textarea>
@@ -493,7 +493,7 @@
                 label="Significance"
                 [options]="significanceOptions"
                 [ngModel]="newPreComp.significance"
-                (change)="updateNewPreCompSignificance($event)"
+                (valueChange)="updateNewPreCompSignificance($event)"
                 placeholder="Select importance"
                 class="w-full"
               ></app-select>

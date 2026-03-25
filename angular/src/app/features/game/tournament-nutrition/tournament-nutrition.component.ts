@@ -33,7 +33,7 @@ import { Router } from "@angular/router";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { Checkbox } from "primeng/checkbox";
+import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Tooltip } from "primeng/tooltip";
@@ -445,6 +445,13 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     checked: boolean | undefined,
   ): void {
     game.isReferee = !!checked;
+  }
+
+  onEditGameRefereeToggle(
+    game: GameSchedule,
+    event: CheckboxChangeEvent,
+  ): void {
+    this.onEditGameRefereeChange(game, event.checked);
   }
 
   async generateNutritionPlan(): Promise<void> {

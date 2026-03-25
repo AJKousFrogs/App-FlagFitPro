@@ -135,7 +135,7 @@
             id="tournament-startDate"
             type="date"
             [value]="getDateInputValue('start_date_obj')"
-            (input)="onDateInput('start_date_obj', $any($event.target).value)"
+            (input)="onDateInputEvent('start_date_obj', $event)"
             class="w-full"
           />
         </div>
@@ -145,7 +145,7 @@
             id="tournament-endDate"
             type="date"
             [value]="getDateInputValue('end_date_obj')"
-            (input)="onDateInput('end_date_obj', $any($event.target).value)"
+            (input)="onDateInputEvent('end_date_obj', $event)"
             class="w-full"
           />
         </div>
@@ -157,7 +157,7 @@
             id="tournament-deadline"
             type="date"
             [value]="getDateInputValue('registration_deadline_obj')"
-            (input)="onDateInput('registration_deadline_obj', $any($event.target).value)"
+            (input)="onDateInputEvent('registration_deadline_obj', $event)"
             class="w-full"
           />
         </div>

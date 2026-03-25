@@ -30,10 +30,10 @@ import { StepperComponent } from "@shared/components/stepper/stepper.component";
 import { ButtonComponent } from "@shared/components/button/button.component";
 import { AppDialogComponent } from "@shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "@shared/components/dialog-header/dialog-header.component";
-import { Checkbox } from "primeng/checkbox";
+import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
 
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
@@ -92,7 +92,7 @@ import { Textarea } from "primeng/textarea";
                 inputId="athlete-select"
                 [options]="athletes()"
                 [ngModel]="formData.athleteId"
-                (onChange)="onAthleteChange($event.value)"
+                (onChange)="onAthleteSelect($event)"
                 optionLabel="name"
                 optionValue="id"
                 placeholder="Select an athlete"
@@ -122,7 +122,7 @@ import { Textarea } from "primeng/textarea";
                 inputId="decision-type-select"
                 [options]="decisionTypeOptions"
                 [ngModel]="formData.decisionType"
-                (onChange)="onDecisionTypeValueChange($event.value)"
+                (onChange)="onDecisionTypeSelect($event)"
                 placeholder="Select decision type"
                 class="w-full"
                 [attr.aria-label]="'Select decision type'"
@@ -179,7 +179,7 @@ import { Textarea } from "primeng/textarea";
                 <div class="data-point-item">
                   <p-checkbox
                     [ngModel]="point.selected"
-                    (onChange)="onDataPointToggle(point.label, $event.checked)"
+                    (onChange)="onDataPointToggle(point.label, $event)"
                     [binary]="true"
                     variant="filled"
                     [inputId]="point.id"
@@ -251,7 +251,7 @@ import { Textarea } from "primeng/textarea";
                 inputId="review-trigger-select"
                 [options]="reviewTriggerOptions"
                 [ngModel]="formData.reviewTrigger"
-                (onChange)="onReviewTriggerValueChange($event.value)"
+                (onChange)="onReviewTriggerSelect($event)"
                 placeholder="Select review trigger"
                 class="w-full"
                 [attr.aria-label]="'Select review trigger'"
@@ -614,12 +614,14 @@ export class CreateDecisionDialogComponent {
     this.formData.decisionBasis.constraints.push("");
   }
 
-  onAthleteChange(value: string | null | undefined): void {
-    this.formData.athleteId = value ?? "";
+  onAthleteSelect(event: SelectChangeEvent): void {
+    this.formData.athleteId =
+      typeof event.value === "string" ? event.value : "";
   }
 
-  onDecisionTypeValueChange(value: DecisionType | null | undefined): void {
-    this.formData.decisionType = value ?? ("other" as DecisionType);
+  onDecisionTypeSelect(event: SelectChangeEvent): void {
+    this.formData.decisionType =
+      (event.value as DecisionType | null | undefined) ?? ("other" as DecisionType);
     this.onDecisionTypeChange();
   }
 
@@ -628,8 +630,8 @@ export class CreateDecisionDialogComponent {
     this.formData.decisionSummary = input?.value ?? "";
   }
 
-  onDataPointToggle(label: string, checked: boolean | undefined): void {
-    const isChecked = !!checked;
+  onDataPointToggle(label: string, event: CheckboxChangeEvent): void {
+    const isChecked = Boolean(event.checked);
     const current = this.formData.decisionBasis.dataPoints;
 
     if (isChecked && !current.includes(label)) {
@@ -646,8 +648,9 @@ export class CreateDecisionDialogComponent {
     this.formData.decisionBasis.constraints[index] = input?.value ?? "";
   }
 
-  onReviewTriggerValueChange(value: ReviewTrigger | null | undefined): void {
-    this.formData.reviewTrigger = value ?? ("in_7d" as ReviewTrigger);
+  onReviewTriggerSelect(event: SelectChangeEvent): void {
+    this.formData.reviewTrigger =
+      (event.value as ReviewTrigger | null | undefined) ?? ("in_7d" as ReviewTrigger);
     this.onReviewTriggerChange();
   }
 

@@ -45,7 +45,7 @@ import {
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getInitials } from "../../../shared/utils/format.utils";
@@ -387,16 +387,20 @@ export class InjuryManagementComponent implements OnInit {
 
     try {
       // Use staff-physiotherapist API for injury data
-      const response: ApiResponse<{ athletes?: AthleteInjurySummary[] }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.staffPhysiotherapist.athletes),
+      const response = await firstValueFrom(
+        this.api.get<{ athletes?: AthleteInjurySummary[] }>(
+          API_ENDPOINTS.staffPhysiotherapist.athletes,
+        ),
       );
-      if (response?.success && response.data?.athletes) {
+      const payload = extractApiPayload<{ athletes?: AthleteInjurySummary[] }>(
+        response,
+      );
+      if (payload?.athletes) {
         // Transform athlete injury data to component format
         const injuries: InjuryRecord[] = [];
         const playerOpts: { label: string; value: string }[] = [];
 
-        for (const athlete of response.data.athletes) {
+        for (const athlete of payload.athletes) {
           playerOpts.push({ label: athlete.name, value: athlete.id });
 
           if (athlete.currentInjury) {
@@ -433,6 +437,9 @@ export class InjuryManagementComponent implements OnInit {
 
         this.injuries.set(injuries);
         this.playerOptions.set(playerOpts);
+      } else {
+        this.injuries.set([]);
+        this.playerOptions.set([]);
       }
     } catch (err) {
       this.logger.error(

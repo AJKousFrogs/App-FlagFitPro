@@ -22,7 +22,7 @@ import { ToastService } from "../../core/services/toast.service";
 
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
@@ -271,11 +271,12 @@ export class PlaybookComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const response = (await firstValueFrom(
-        this.api.get(API_ENDPOINTS.playbook.list),
-      )) as ApiResponse<{ plays: Play[] }>;
-      if (response?.success && response.data?.plays) {
-        this.plays.set(response.data.plays);
+      const response = await firstValueFrom(
+        this.api.get<{ plays?: Play[] }>(API_ENDPOINTS.playbook.list),
+      );
+      const payload = extractApiPayload<{ plays?: Play[] }>(response);
+      if (payload?.plays) {
+        this.plays.set(payload.plays);
       }
     } catch (err) {
       this.logger.error("Failed to load playbook data", err);

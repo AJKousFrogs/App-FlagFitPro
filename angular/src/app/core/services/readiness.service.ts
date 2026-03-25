@@ -34,6 +34,10 @@ import { EvidenceConfigService } from "./evidence-config.service";
 import { LoggerService } from "./logger.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
 import {
+  extractApiArray,
+  extractApiPayload,
+} from "../utils/api-response-mapper";
+import {
   mapEvidenceCitations,
   getPresetDisplay,
 } from "../../shared/utils/evidence-info.utils";
@@ -179,7 +183,11 @@ export class ReadinessService {
     return this.apiService
       .post<ReadinessResponse>("/api/calc-readiness", {})
       .pipe(
-        map((res) => res.data || ({} as ReadinessResponse)),
+        map(
+          (response) =>
+            extractApiPayload<ReadinessResponse>(response) ||
+            ({} as ReadinessResponse),
+        ),
         tap((res) => this.current.set(res)),
         catchError((error) => {
           this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
@@ -204,7 +212,11 @@ export class ReadinessService {
     return this.apiService
       .post<ReadinessResponse>("/api/calc-readiness", { day })
       .pipe(
-        map((res) => res.data || ({} as ReadinessResponse)),
+        map(
+          (response) =>
+            extractApiPayload<ReadinessResponse>(response) ||
+            ({} as ReadinessResponse),
+        ),
         tap((res) => this.current.set(res)),
         catchError((error) => {
           this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
@@ -224,7 +236,7 @@ export class ReadinessService {
     return this.apiService
       .get<ReadinessHistory[]>("/api/readiness-history", { athleteId, days })
       .pipe(
-        map((res) => res.data || []),
+        map((response) => extractApiArray<ReadinessHistory>(response)),
         tap((history) => {
           this.history.set(history);
         }),

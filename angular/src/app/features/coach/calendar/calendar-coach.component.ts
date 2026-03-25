@@ -22,7 +22,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
 
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -34,7 +34,10 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../../../core/utils/api-response-mapper";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -442,7 +445,7 @@ const RECURRING_OPTIONS = [
               type="text"
               pInputText
               [value]="eventForm.title"
-              (input)="onEventTextFieldChange('title', getInputValue($event))"
+              (input)="onEventTextInput('title', $event)"
               placeholder="Tuesday Practice"
             />
           </div>
@@ -460,7 +463,7 @@ const RECURRING_OPTIONS = [
               <label>Start Time</label>
               <p-select
                 [options]="timeOptions"
-                (onChange)="onEventTextFieldChange('startTime', $event.value)"
+                (onChange)="onEventTextSelect('startTime', $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
@@ -471,7 +474,7 @@ const RECURRING_OPTIONS = [
               <label>End Time</label>
               <p-select
                 [options]="timeOptions"
-                (onChange)="onEventTextFieldChange('endTime', $event.value)"
+                (onChange)="onEventTextSelect('endTime', $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
@@ -485,7 +488,7 @@ const RECURRING_OPTIONS = [
               id="multiDay"
               type="checkbox"
               [checked]="eventForm.isMultiDay"
-              (change)="onEventToggleChange('isMultiDay', isChecked($event))"
+              (change)="onEventToggle('isMultiDay', $event)"
             />
             <label for="multiDay">Multi-day event (e.g., tournament)</label>
           </div>
@@ -494,7 +497,7 @@ const RECURRING_OPTIONS = [
             <label>Location</label>
             <p-select
               [options]="locations"
-              (onChange)="onEventTextFieldChange('location', $event.value)"
+              (onChange)="onEventTextSelect('location', $event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select location"
@@ -507,7 +510,7 @@ const RECURRING_OPTIONS = [
             <textarea
               pTextarea
               [value]="eventForm.description"
-              (input)="onEventTextFieldChange('description', getInputValue($event))"
+              (input)="onEventTextInput('description', $event)"
               rows="3"
               placeholder="Regular practice. Focus on red zone offense..."
             ></textarea>
@@ -520,7 +523,7 @@ const RECURRING_OPTIONS = [
                 id="requireRsvp"
                 type="checkbox"
                 [checked]="eventForm.requireRsvp"
-                (change)="onEventToggleChange('requireRsvp', isChecked($event))"
+                (change)="onEventToggle('requireRsvp', $event)"
               />
               <label for="requireRsvp">Require RSVP</label>
             </div>
@@ -529,7 +532,7 @@ const RECURRING_OPTIONS = [
                 id="sendReminder"
                 type="checkbox"
                 [checked]="eventForm.sendReminder"
-                (change)="onEventToggleChange('sendReminder', isChecked($event))"
+                (change)="onEventToggle('sendReminder', $event)"
               />
               <label for="sendReminder"
                 >Send automatic reminder 24h before</label
@@ -563,7 +566,7 @@ const RECURRING_OPTIONS = [
                 id="notifyPlayers"
                 type="checkbox"
                 [checked]="eventForm.notifyPlayers"
-                (change)="onEventToggleChange('notifyPlayers', isChecked($event))"
+                (change)="onEventToggle('notifyPlayers', $event)"
               />
               <label for="notifyPlayers"
                 >Send notification to all players</label
@@ -574,7 +577,7 @@ const RECURRING_OPTIONS = [
                 id="notifyParents"
                 type="checkbox"
                 [checked]="eventForm.notifyParents"
-                (change)="onEventToggleChange('notifyParents', isChecked($event))"
+                (change)="onEventToggle('notifyParents', $event)"
               />
               <label for="notifyParents">Include parents/guardians</label>
             </div>
@@ -942,13 +945,11 @@ export class CalendarCoachComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<{ events?: TeamEvent[] }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coachCalendar.list),
+      const response = await firstValueFrom(
+        this.api.get<{ events?: TeamEvent[] }>(API_ENDPOINTS.coachCalendar.list),
       );
-      if (response?.success && response.data) {
-        this.events.set(response.data.events || []);
-      }
+      const payload = extractApiPayload<{ events?: TeamEvent[] }>(response);
+      this.events.set(payload?.events ?? []);
     } catch (err) {
       this.logger.error("Failed to load calendar data", err);
       this.events.set([]);
@@ -995,11 +996,40 @@ export class CalendarCoachComponent implements OnInit {
     this.eventForm = { ...this.eventForm, date: value ?? null };
   }
 
+  onEventTextInput(
+    field: "title" | "description",
+    event: Event,
+  ): void {
+    this.onEventTextFieldChange(field, this.readInputValue(event));
+  }
+
+  onEventTextSelect(
+    field: "startTime" | "endTime" | "location",
+    event: SelectChangeEvent,
+  ): void {
+    this.onEventTextFieldChange(
+      field,
+      typeof event.value === "string" ? event.value : "",
+    );
+  }
+
   onEventTextFieldChange(
     field: "title" | "startTime" | "endTime" | "location" | "description",
     value: string | null | undefined,
   ): void {
     this.eventForm = { ...this.eventForm, [field]: value ?? "" };
+  }
+
+  onEventToggle(
+    field:
+      | "isMultiDay"
+      | "requireRsvp"
+      | "sendReminder"
+      | "notifyPlayers"
+      | "notifyParents",
+    event: Event,
+  ): void {
+    this.onEventToggleChange(field, this.readChecked(event));
   }
 
   onEventToggleChange(
@@ -1018,12 +1048,12 @@ export class CalendarCoachComponent implements OnInit {
     this.eventForm = { ...this.eventForm, recurring: value ?? "none" };
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
@@ -1107,10 +1137,10 @@ export class CalendarCoachComponent implements OnInit {
       if (this.isEditing() && this.selectedEvent()) {
         // Update existing event
         const selectedEventId = this.selectedEvent()?.id;
-        const response: ApiResponse<unknown> = await firstValueFrom(
+        const response = await firstValueFrom(
           this.api.put(API_ENDPOINTS.coachCalendar.update(selectedEventId || ""), eventData),
         );
-        if (response?.success) {
+        if (isSuccessfulApiResponse(response)) {
           this.toastService.success(
             `${this.eventForm.title} has been updated`,
             "Event Updated",
@@ -1119,10 +1149,10 @@ export class CalendarCoachComponent implements OnInit {
         }
       } else {
         // Create new event
-        const response: ApiResponse<unknown> = await firstValueFrom(
+        const response = await firstValueFrom(
           this.api.post(API_ENDPOINTS.coachCalendar.create, eventData),
         );
-        if (response?.success) {
+        if (isSuccessfulApiResponse(response)) {
           this.toastService.success(
             `${this.eventForm.title} has been created`,
             "Event Created",
@@ -1185,10 +1215,10 @@ export class CalendarCoachComponent implements OnInit {
     }
 
     try {
-      const response: ApiResponse<unknown> = await firstValueFrom(
+      const response = await firstValueFrom(
         this.api.delete(API_ENDPOINTS.coachCalendar.delete(event.id)),
       );
-      if (response?.success) {
+      if (isSuccessfulApiResponse(response)) {
         this.toastService.success(
           `${event.title} has been cancelled`,
           "Event Cancelled",

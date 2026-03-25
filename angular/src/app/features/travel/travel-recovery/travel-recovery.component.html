@@ -117,7 +117,7 @@
                   <app-form-input
                     label="Trip Name"
                     [ngModel]="tripForm.tripName"
-                    (change)="updateTripFormText('tripName', $event)"
+                    (valueChange)="updateTripFormText('tripName', $event)"
                     placeholder="e.g., World Championships 2025"
                     aria-label="Trip name"
                   ></app-form-input>
@@ -128,7 +128,7 @@
                     label="Home Timezone"
                     inputId="departure-timezone"
                     [ngModel]="tripForm.departureTimezone"
-                    (change)="updateTripFormTimezone('departureTimezone', $event)"
+                    (valueChange)="updateTripFormTimezone('departureTimezone', $event)"
                     [options]="timezones"
                     optionLabel="label"
                     optionValue="value"
@@ -145,7 +145,7 @@
                     label="Destination Timezone"
                     inputId="arrival-timezone"
                     [ngModel]="tripForm.arrivalTimezone"
-                    (change)="updateTripFormTimezone('arrivalTimezone', $event)"
+                    (valueChange)="updateTripFormTimezone('arrivalTimezone', $event)"
                     [options]="timezones"
                     optionLabel="label"
                     optionValue="value"
@@ -204,7 +204,7 @@
                     label="Flight Duration (hours)"
                     inputId="flight-duration"
                     [ngModel]="tripForm.flightDuration"
-                    (change)="updateTripFormNumber('flightDuration', $event)"
+                    (valueChange)="updateTripFormNumber('flightDuration', $event)"
                     [min]="1"
                     [max]="30"
                     [showButtons]="true"
@@ -218,7 +218,7 @@
                     label="Number of Layovers"
                     inputId="layovers"
                     [ngModel]="tripForm.layovers"
-                    (change)="updateTripFormNumber('layovers', $event)"
+                    (valueChange)="updateTripFormNumber('layovers', $event)"
                     [min]="0"
                     [max]="5"
                     [showButtons]="true"
@@ -373,7 +373,7 @@
                             <app-checkbox
                               [id]="'travel-' + category.category + '-' + item.id"
                               [ngModel]="item.packed"
-                              (change)="updateTravelChecklistPacked(category.category, item.id, $event.checked)"
+                              (checkedChange)="updateTravelChecklistPacked(category.category, item.id, $event)"
                               [attr.aria-label]="item.item"
                             >
                                 <span [class.packed]="item.packed">
@@ -410,7 +410,7 @@
                     <app-form-input
                       label="Trip Name"
                       [ngModel]="carTripForm.tripName"
-                      (change)="updateCarTripText('tripName', $event)"
+                      (valueChange)="updateCarTripText('tripName', $event)"
                       placeholder="e.g., Regional Tournament Drive"
                       aria-label="Car trip name"
                     ></app-form-input>
@@ -421,7 +421,7 @@
                       label="Estimated Drive Duration (hours)"
                       inputId="car-duration"
                       [ngModel]="carTripForm.duration"
-                      (change)="updateCarTripDuration($event)"
+                      (valueChange)="updateCarTripDuration($event)"
                       [min]="1"
                       [max]="18"
                       [showButtons]="true"
@@ -436,7 +436,7 @@
                     <app-checkbox
                       label="Yes, I'm driving"
                       [ngModel]="carTripForm.isDriver"
-                      (change)="updateCarTripDriver($event.checked)"
+                      (checkedChange)="updateCarTripDriver($event)"
                       [attr.aria-label]="'Are you driving this trip'"
                     ></app-checkbox>
                   </div>
@@ -859,7 +859,7 @@
                                   <app-checkbox
                                     [id]="'car-' + category.category + '-' + item.id"
                                     [ngModel]="item.packed"
-                                    (change)="updateCarChecklistPacked(category.category, item.id, $event.checked)"
+                                    (checkedChange)="updateCarChecklistPacked(category.category, item.id, $event)"
                                     [attr.aria-label]="item.item"
                                   >
                                     <span [class.packed]="item.packed">

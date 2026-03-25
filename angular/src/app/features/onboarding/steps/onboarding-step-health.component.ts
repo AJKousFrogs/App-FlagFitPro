@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 import { INJURY_AREAS, INJURY_HISTORY_OPTIONS } from "../constants/onboarding-options";
@@ -31,8 +31,8 @@ const SEVERITY_OPTIONS = [
         <label>Current Injuries or Pain Areas</label>
         <p class="field-hint">Add any areas where you're currently experiencing pain or recovering from injury</p>
         <div class="injury-input-row">
-          <p-select [options]="injuryAreas" (onChange)="onInjuryAreaChange($event.value)" placeholder="Select area" class="injury-area-select"></p-select>
-          <p-select [options]="severityOptions" (onChange)="onInjurySeverityChange($event.value)" placeholder="Severity" class="injury-severity-select"></p-select>
+          <p-select [options]="injuryAreas" (onChange)="onInjuryAreaSelect($event)" placeholder="Select area" class="injury-area-select"></p-select>
+          <p-select [options]="severityOptions" (onChange)="onInjurySeveritySelect($event)" placeholder="Severity" class="injury-severity-select"></p-select>
           <app-icon-button icon="pi-plus" [disabled]="!newInjury().area" (clicked)="addCurrentInjury()" ariaLabel="Add injury" tooltip="Add" />
         </div>
         @if (state.formData.currentInjuries.length > 0) {
@@ -97,12 +97,18 @@ export class OnboardingStepHealthComponent {
     this.state.formData.currentInjuries.splice(index, 1);
   }
 
-  onInjuryAreaChange(value: string | null | undefined): void {
-    this.newInjury.update((injury) => ({ ...injury, area: value ?? "" }));
+  onInjuryAreaSelect(event: SelectChangeEvent): void {
+    this.newInjury.update((injury) => ({
+      ...injury,
+      area: typeof event.value === "string" ? event.value : "",
+    }));
   }
 
-  onInjurySeverityChange(value: string | null | undefined): void {
-    const severity = value === "moderate" || value === "severe" ? value : "minor";
+  onInjurySeveritySelect(event: SelectChangeEvent): void {
+    const severity =
+      event.value === "moderate" || event.value === "severe"
+        ? event.value
+        : "minor";
     this.newInjury.update((injury) => ({ ...injury, severity }));
   }
 

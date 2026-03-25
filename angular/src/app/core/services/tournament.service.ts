@@ -3,6 +3,11 @@ import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { firstValueFrom } from "rxjs";
+import {
+  extractApiPayload,
+  isApiResponse,
+  isSuccessfulApiResponse,
+} from "../utils/api-response-mapper";
 
 // Tournament visibility scope
 export type TournamentVisibilityScope = "team" | "personal";
@@ -164,7 +169,9 @@ export class TournamentService {
         this.apiService.get<{ tournaments: Tournament[] }>(endpoint),
       );
 
-      const tournaments = response.data?.tournaments || [];
+      const tournaments =
+        extractApiPayload<{ tournaments: Tournament[] }>(response)
+          ?.tournaments || [];
       this.tournaments.set(tournaments);
       return tournaments;
     } catch (err) {
@@ -190,7 +197,9 @@ export class TournamentService {
         ),
       );
 
-      const tournament = response.data?.tournament || null;
+      const tournament =
+        extractApiPayload<{ tournament: Tournament }>(response)?.tournament ||
+        null;
       this.selectedTournament.set(tournament);
       return tournament;
     } catch (err) {
@@ -219,7 +228,10 @@ export class TournamentService {
         ),
       );
 
-      const tournament = response.data?.tournament;
+      const tournament =
+        extractApiPayload<{ tournament: Tournament; message: string }>(
+          response,
+        )?.tournament;
       if (tournament) {
         // Add to local state
         this.tournaments.update((current) => [...current, tournament]);
@@ -253,7 +265,10 @@ export class TournamentService {
         ),
       );
 
-      const tournament = response.data?.tournament;
+      const tournament =
+        extractApiPayload<{ tournament: Tournament; message: string }>(
+          response,
+        )?.tournament;
       if (tournament) {
         // Update in local state
         this.tournaments.update((current) =>
@@ -285,11 +300,18 @@ export class TournamentService {
     this.error.set(null);
 
     try {
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.apiService.delete<{ message: string }>(
           `/api/tournaments?id=${id}`,
         ),
       );
+      const deleteError =
+        isApiResponse(response) && typeof response.error === "string"
+          ? response.error
+          : undefined;
+      if (isApiResponse(response) && !isSuccessfulApiResponse(response)) {
+        throw new Error(deleteError || "Failed to delete tournament");
+      }
 
       // Remove from local state
       this.tournaments.update((current) => current.filter((t) => t.id !== id));

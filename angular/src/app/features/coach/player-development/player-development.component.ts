@@ -27,7 +27,7 @@ import { PageErrorStateComponent } from "../../../shared/components/page-error-s
 import { DatePicker } from "primeng/datepicker";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -40,7 +40,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
@@ -164,7 +164,7 @@ const COMPARE_OPTIONS = [
             <p-select
               inputId="player-select"
               [options]="playerOptions()"
-              (onChange)="onSelectedPlayerIdChange($event.value)"
+              (onChange)="onSelectedPlayerSelect($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
@@ -177,7 +177,7 @@ const COMPARE_OPTIONS = [
             <p-select
               inputId="compare-select"
               [options]="compareOptions"
-              (onChange)="onCompareToValueChange($event.value)"
+              (onChange)="onCompareToValueSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Position Avg"
@@ -358,7 +358,7 @@ const COMPARE_OPTIONS = [
               <p-select
                 inputId="metric-filter"
                 [options]="physicalMetrics"
-                (onChange)="onSelectedMetricChange($event.value)"
+                (onChange)="onSelectedMetricSelect($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
@@ -367,7 +367,7 @@ const COMPARE_OPTIONS = [
               <p-select
                 inputId="period-filter"
                 [options]="periodOptions"
-                (onChange)="onSelectedPeriodChange($event.value)"
+                (onChange)="onSelectedPeriodSelect($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Period"
@@ -484,7 +484,7 @@ const COMPARE_OPTIONS = [
             <p-select
               inputId="goal-player-select"
               [options]="playerOptions()"
-              (onChange)="onGoalPlayerIdChange($event.value)"
+              (onChange)="onGoalPlayerSelect($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
@@ -518,7 +518,7 @@ const COMPARE_OPTIONS = [
               <p-select
                 inputId="goal-metric-select"
                 [options]="physicalMetrics"
-                (onChange)="onGoalMetricChange($event.value)"
+                (onChange)="onGoalMetricSelect($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
@@ -532,7 +532,7 @@ const COMPARE_OPTIONS = [
                 type="text"
                 pInputText
                 [value]="goalForm.currentValue"
-                (input)="onGoalCurrentValueChange(getInputValue($event))"
+                (input)="onGoalCurrentValueInput($event)"
                 placeholder="e.g., 4.52s"
               />
             </div>
@@ -545,7 +545,7 @@ const COMPARE_OPTIONS = [
                 type="text"
                 pInputText
                 [value]="goalForm.targetValue"
-                (input)="onGoalTargetValueChange(getInputValue($event))"
+                (input)="onGoalTargetValueInput($event)"
                 placeholder="e.g., 4.45s"
               />
             </div>
@@ -566,7 +566,7 @@ const COMPARE_OPTIONS = [
             <textarea
               pTextarea
               [value]="goalForm.notes"
-              (input)="onGoalNotesChange(getInputValue($event))"
+              (input)="onGoalNotesInput($event)"
               rows="3"
               placeholder="Additional notes..."
             ></textarea>
@@ -685,7 +685,7 @@ const COMPARE_OPTIONS = [
             <textarea
               pTextarea
               [value]="noteContent"
-              (input)="onNoteContentChange(getInputValue($event))"
+              (input)="onNoteContentInput($event)"
               rows="5"
               placeholder="Enter your development notes..."
             ></textarea>
@@ -724,7 +724,7 @@ const COMPARE_OPTIONS = [
               type="text"
               pInputText
               [value]="assessmentSkill"
-              (input)="onAssessmentSkillChange(getInputValue($event))"
+              (input)="onAssessmentSkillInput($event)"
               placeholder="e.g. Route Running"
             />
           </div>
@@ -736,7 +736,7 @@ const COMPARE_OPTIONS = [
               min="0"
               max="100"
               [value]="assessmentScore"
-              (input)="onAssessmentScoreChange(getInputValue($event))"
+              (input)="onAssessmentScoreInput($event)"
               placeholder="0-100"
             />
           </div>
@@ -934,8 +934,20 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.onPlayerChange();
   }
 
+  onSelectedPlayerSelect(event: SelectChangeEvent): void {
+    this.onSelectedPlayerIdChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   onCompareToValueChange(value: string | null): void {
     this.compareToValue = value ?? "position-avg";
+  }
+
+  onCompareToValueSelect(event: SelectChangeEvent): void {
+    this.onCompareToValueChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   onSelectedMetricChange(value: string | null): void {
@@ -943,9 +955,21 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.onMetricChange();
   }
 
+  onSelectedMetricSelect(event: SelectChangeEvent): void {
+    this.onSelectedMetricChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   onSelectedPeriodChange(value: string | null): void {
     this.selectedPeriod = value ?? "6-months";
     this.onMetricChange();
+  }
+
+  onSelectedPeriodSelect(event: SelectChangeEvent): void {
+    this.onSelectedPeriodChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   async loadData(): Promise<void> {
@@ -953,16 +977,22 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          players?: Player[];
+          goals?: DevelopmentGoal[];
+        }>(API_ENDPOINTS.coach.playerDevelopment),
+      );
+      const payload = extractApiPayload<{
         players?: Player[];
         goals?: DevelopmentGoal[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coach.playerDevelopment),
-      );
-      if (response?.success && response.data) {
-        this.players.set(response.data.players || []);
-        this.goals.set(response.data.goals || []);
+      }>(response);
+      if (payload) {
+        this.players.set(payload.players || []);
+        this.goals.set(payload.goals || []);
         this.syncSelectionFromRoute();
+      } else {
+        throw new Error("Player development payload missing");
       }
     } catch (err) {
       this.logger.error("Failed to load player development data", err);
@@ -1011,6 +1041,12 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.goalForm = { ...this.goalForm, playerId: value ?? "" };
   }
 
+  onGoalPlayerSelect(event: SelectChangeEvent): void {
+    this.onGoalPlayerIdChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   onGoalCategoryChange(value: "physical" | "skill" | "stats" | "compliance"): void {
     this.goalForm = { ...this.goalForm, category: value };
   }
@@ -1025,12 +1061,26 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.goalForm = { ...this.goalForm, metric: value ?? "" };
   }
 
+  onGoalMetricSelect(event: SelectChangeEvent): void {
+    this.onGoalMetricChange(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   onGoalCurrentValueChange(value: string): void {
     this.goalForm = { ...this.goalForm, currentValue: value };
   }
 
+  onGoalCurrentValueInput(event: Event): void {
+    this.onGoalCurrentValueChange(this.readInputValue(event));
+  }
+
   onGoalTargetValueChange(value: string): void {
     this.goalForm = { ...this.goalForm, targetValue: value };
+  }
+
+  onGoalTargetValueInput(event: Event): void {
+    this.onGoalTargetValueChange(this.readInputValue(event));
   }
 
   onGoalDueDateChange(value: Date | null): void {
@@ -1041,19 +1091,35 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.goalForm = { ...this.goalForm, notes: value };
   }
 
+  onGoalNotesInput(event: Event): void {
+    this.onGoalNotesChange(this.readInputValue(event));
+  }
+
   onNoteContentChange(value: string): void {
     this.noteContent = value;
+  }
+
+  onNoteContentInput(event: Event): void {
+    this.onNoteContentChange(this.readInputValue(event));
   }
 
   onAssessmentSkillChange(value: string): void {
     this.assessmentSkill = value;
   }
 
+  onAssessmentSkillInput(event: Event): void {
+    this.onAssessmentSkillChange(this.readInputValue(event));
+  }
+
   onAssessmentScoreChange(value: string): void {
     this.assessmentScore = value;
   }
 
-  getInputValue(event: Event): string {
+  onAssessmentScoreInput(event: Event): void {
+    this.onAssessmentScoreChange(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
   }

@@ -149,7 +149,6 @@ interface SessionType {
                 formControlName="sessionDate"
                 class="date-input"
                 [max]="today"
-                (change)="onSessionDateChangeFromEvent($event)"
               />
               <small>Select the date when this session actually occurred</small>
             </div>
@@ -701,15 +700,6 @@ export class TrainingLogComponent implements OnInit {
 
   toggleDetails(): void {
     this.showDetails.update((value) => !value);
-  }
-
-  onSessionDateChange(date: string): void {
-    this.sessionForm.patchValue({ sessionDate: date });
-    void this.updateOverrideMessage();
-  }
-
-  onSessionDateChangeFromEvent(event: Event): void {
-    this.onSessionDateChange((event.target as HTMLInputElement).value);
   }
 
   private async loadExistingSession(sessionId: string): Promise<void> {

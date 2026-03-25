@@ -68,7 +68,8 @@
               <div class="item-checkbox">
                 <app-checkbox
                   [ngModel]="supp.taken"
-                  (change)="toggleSupplement(supp)"
+                  (click)="$event.stopPropagation()"
+                  (checkedChange)="toggleSupplement(supp)"
                   [binary]="true"
                   [inputId]="group.key + '-' + supp.id"
                   [attr.aria-label]="supp.name"

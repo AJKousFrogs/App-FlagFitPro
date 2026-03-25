@@ -17,9 +17,9 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
 import { ButtonComponent } from "@shared/components/button/button.component";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
-import { Checkbox } from "primeng/checkbox";
+import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
@@ -106,7 +106,7 @@ import type {
             inputId="review-outcome-select"
             [options]="reviewOutcomeOptions"
             [ngModel]="formData.reviewOutcome"
-            (onChange)="onReviewOutcomeChange($event.value)"
+            (onChange)="onReviewOutcomeSelect($event)"
             placeholder="Select review outcome"
             class="w-full"
             [attr.aria-label]="'Select review outcome'"
@@ -148,7 +148,7 @@ import type {
           <div class="outcome-item">
             <p-checkbox
               [ngModel]="formData.outcomeData.goalAchieved"
-              (onChange)="onGoalAchievedChange($event.checked)"
+              (onChange)="onGoalAchievedChange($event)"
               [binary]="true"
               variant="filled"
               inputId="goal-achieved"
@@ -281,8 +281,9 @@ export class ReviewDecisionDialogComponent {
     this.formData.outcomeData.unintendedConsequences.splice(index, 1);
   }
 
-  onReviewOutcomeChange(value: ReviewOutcome | null | undefined): void {
-    this.formData.reviewOutcome = value ?? ("maintained" as ReviewOutcome);
+  onReviewOutcomeSelect(event: SelectChangeEvent): void {
+    this.formData.reviewOutcome =
+      (event.value as ReviewOutcome | null | undefined) ?? ("maintained" as ReviewOutcome);
     this.onOutcomeChange();
   }
 
@@ -295,8 +296,8 @@ export class ReviewDecisionDialogComponent {
     this.formData.reviewNotes = input?.value ?? "";
   }
 
-  onGoalAchievedChange(checked: boolean | undefined): void {
-    this.formData.outcomeData.goalAchieved = !!checked;
+  onGoalAchievedChange(event: CheckboxChangeEvent): void {
+    this.formData.outcomeData.goalAchieved = Boolean(event.checked);
   }
 
   onConsequenceInput(index: number, event: Event): void {

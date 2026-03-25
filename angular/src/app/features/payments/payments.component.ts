@@ -31,7 +31,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
@@ -473,26 +473,36 @@ export class PaymentsComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          summary?: AccountSummary;
+          fees?: Fee[];
+          history?: PaymentRecord[];
+          instructions?: PaymentInstructions;
+        }>(API_ENDPOINTS.payments),
+      );
+      const payload = extractApiPayload<{
         summary?: AccountSummary;
         fees?: Fee[];
         history?: PaymentRecord[];
         instructions?: PaymentInstructions;
-      }> = await firstValueFrom(this.api.get(API_ENDPOINTS.payments));
-      if (response?.success && response.data) {
-        if (response.data.summary) {
-          this.accountSummary.set(response.data.summary);
+      }>(response);
+      if (payload) {
+        if (payload.summary) {
+          this.accountSummary.set(payload.summary);
         }
-        if (response.data.fees) {
-          this.fees.set(response.data.fees);
+        if (payload.fees) {
+          this.fees.set(payload.fees);
         }
-        if (response.data.history) {
-          this.paymentHistory.set(response.data.history);
+        if (payload.history) {
+          this.paymentHistory.set(payload.history);
           this.currentHistoryPage.set(1);
         }
-        if (response.data.instructions) {
-          this.paymentInstructions.set(response.data.instructions);
+        if (payload.instructions) {
+          this.paymentInstructions.set(payload.instructions);
         }
+      } else {
+        throw new Error("Payment payload missing");
       }
     } catch (err) {
       this.logger.error("Failed to load payment data", err);

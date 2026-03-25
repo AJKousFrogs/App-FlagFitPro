@@ -39,7 +39,7 @@ import {
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
@@ -379,19 +379,23 @@ export class ReturnToPlayComponent implements OnInit {
 
   async loadData(): Promise<void> {
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          activeProtocol?: ActiveProtocol;
+          checkins?: DailyCheckin[];
+        }>(API_ENDPOINTS.returnToPlay.base),
+      );
+      const payload = extractApiPayload<{
         activeProtocol?: ActiveProtocol;
         checkins?: DailyCheckin[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.returnToPlay.base),
-      );
-      if (response?.success && response.data) {
-        if (response.data.activeProtocol) {
-          this.activeProtocol.set(response.data.activeProtocol);
+      }>(response);
+      if (payload) {
+        if (payload.activeProtocol) {
+          this.activeProtocol.set(payload.activeProtocol);
         }
-        if (response.data.checkins) {
-          this.recentCheckins.set(response.data.checkins);
-          this.updateChartData(response.data.checkins);
+        if (payload.checkins) {
+          this.recentCheckins.set(payload.checkins);
+          this.updateChartData(payload.checkins);
         }
       }
     } catch (err) {
@@ -516,7 +520,7 @@ export class ReturnToPlayComponent implements OnInit {
     }
   }
 
-  updateCriterion(index: number, event: { checked?: boolean }): void {
+  updateCriterion(index: number, checked: boolean | null | undefined): void {
     const protocol = this.activeProtocol();
     if (!protocol) return;
 
@@ -524,7 +528,7 @@ export class ReturnToPlayComponent implements OnInit {
     this.activeProtocol.update((p) => {
       if (!p) return p;
       const newCriteria = [...p.criteriaCompleted];
-      newCriteria[index] = event.checked ?? false;
+      newCriteria[index] = checked ?? false;
       return { ...p, criteriaCompleted: newCriteria };
     });
 
@@ -533,7 +537,7 @@ export class ReturnToPlayComponent implements OnInit {
       .post(API_ENDPOINTS.returnToPlay.criterion, {
         protocolId: protocol.id,
         criterionIndex: index,
-        completed: event.checked,
+        completed: checked ?? false,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         error: (err) => this.logger.error("Failed to update criterion", err),
@@ -611,6 +615,18 @@ export class ReturnToPlayComponent implements OnInit {
     };
   }
 
+  onPainLevelChange(event: { value?: number | null }): void {
+    this.updateTodayCheckinMetric("painLevel", event.value);
+  }
+
+  onFunctionScoreChange(event: { value?: number | null }): void {
+    this.updateTodayCheckinMetric("functionScore", event.value);
+  }
+
+  onConfidenceLevelChange(event: { value?: number | null }): void {
+    this.updateTodayCheckinMetric("confidenceLevel", event.value);
+  }
+
   updateTodayCheckinActivities(value: string[] | null | undefined): void {
     this.todayCheckin = {
       ...this.todayCheckin,
@@ -651,6 +667,13 @@ export class ReturnToPlayComponent implements OnInit {
     this.updateProtocolDate(field, this.parseDateInputValue(value));
   }
 
+  onProtocolDateInput(
+    field: "injuryDate" | "targetReturnDate",
+    event: Event,
+  ): void {
+    this.updateProtocolDateInput(field, this.readInputValue(event));
+  }
+
   updateProtocolMedicalNotes(value: string | null | undefined): void {
     this.newProtocol = { ...this.newProtocol, medicalNotes: value ?? "" };
   }
@@ -674,13 +697,9 @@ export class ReturnToPlayComponent implements OnInit {
     return this.todayCheckin.activitiesCompleted.includes(activity);
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
       ?.value ?? "";
-  }
-
-  isChecked(event: Event): boolean {
-    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   getProtocolDateInputValue(

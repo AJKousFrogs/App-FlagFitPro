@@ -53,7 +53,7 @@
           <input
             type="date"
             [value]="getDateInputValue('arrivalDate')"
-            (input)="onDateInput('arrivalDate', $any($event.target).value)"
+            (input)="onDateInputEvent('arrivalDate', $event)"
             placeholder="When do you arrive?"
             class="w-full"
           />
@@ -63,7 +63,7 @@
           <input
             type="date"
             [value]="getDateInputValue('departureDate')"
-            (input)="onDateInput('departureDate', $any($event.target).value)"
+            (input)="onDateInputEvent('departureDate', $event)"
             placeholder="When do you leave?"
             class="w-full"
           />

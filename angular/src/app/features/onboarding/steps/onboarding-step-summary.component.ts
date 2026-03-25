@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { CheckboxModule } from "primeng/checkbox";
+import { CheckboxModule, type CheckboxChangeEvent } from "primeng/checkbox";
 import { FormsModule } from "@angular/forms";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
@@ -177,7 +177,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <div class="consent-checkbox-wrapper">
               <p-checkbox [value]="state.formData.consentTermsOfService" [binary]="true" variant="filled"
                 inputId="consent-terms" name="consentTermsOfService"
-                (onChange)="onConsentTermsChange($event.checked)" />
+                (onChange)="onConsentTermsChange($event)" />
               <label for="consent-terms" class="consent-label">
                 I accept the <a [routerLink]="['/terms']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Terms of Service</a>
                 <span class="required-indicator">*</span>
@@ -189,7 +189,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <div class="consent-checkbox-wrapper">
               <p-checkbox [value]="state.formData.consentPrivacyPolicy" [binary]="true" variant="filled"
                 inputId="consent-privacy" name="consentPrivacyPolicy"
-                (onChange)="onConsentPrivacyChange($event.checked)" />
+                (onChange)="onConsentPrivacyChange($event)" />
               <label for="consent-privacy" class="consent-label">
                 I accept the <a [routerLink]="['/privacy']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Privacy Policy</a>
                 <span class="required-indicator">*</span>
@@ -201,7 +201,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <div class="consent-checkbox-wrapper">
               <p-checkbox [value]="state.formData.consentDataUsage" [binary]="true" variant="filled"
                 inputId="consent-data" name="consentDataUsage"
-                (onChange)="onConsentDataUsageChange($event.checked)" />
+                (onChange)="onConsentDataUsageChange($event)" />
               <label for="consent-data" class="consent-label">
                 I consent to my data being used to personalize my training experience
                 <span class="consent-hint">(required for app functionality)</span>
@@ -214,7 +214,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <div class="consent-checkbox-wrapper">
               <p-checkbox [value]="state.formData.consentAICoach" [binary]="true" variant="filled"
                 inputId="consent-ai" name="consentAICoach"
-                (onChange)="onConsentAiCoachChange($event.checked)" />
+                (onChange)="onConsentAiCoachChange($event)" />
               <label for="consent-ai" class="consent-label">
                 I consent to Merlin AI providing personalized advice based on my training and wellness data
                 <span class="consent-hint">(optional)</span>
@@ -226,7 +226,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <div class="consent-checkbox-wrapper">
               <p-checkbox [value]="state.formData.consentEmailUpdates" [binary]="true" variant="filled"
                 inputId="consent-email" name="consentEmailUpdates"
-                (onChange)="onConsentEmailUpdatesChange($event.checked)" />
+                (onChange)="onConsentEmailUpdatesChange($event)" />
               <label for="consent-email" class="consent-label">
                 I want to receive email updates about new features and tips
                 <span class="consent-hint">(optional)</span>
@@ -258,33 +258,37 @@ export class OnboardingStepSummaryComponent {
   readonly state = inject(OnboardingStateService);
   readonly consentChange = output<{ type: string; checked: boolean }>();
 
-  onConsentTermsChange(checked: boolean | undefined): void {
-    const nextValue = !!checked;
+  onConsentTermsChange(event: CheckboxChangeEvent): void {
+    const nextValue = this.getCheckedValue(event);
     this.state.formData.consentTermsOfService = nextValue;
     this.consentChange.emit({ type: "Terms of Service", checked: nextValue });
   }
 
-  onConsentPrivacyChange(checked: boolean | undefined): void {
-    const nextValue = !!checked;
+  onConsentPrivacyChange(event: CheckboxChangeEvent): void {
+    const nextValue = this.getCheckedValue(event);
     this.state.formData.consentPrivacyPolicy = nextValue;
     this.consentChange.emit({ type: "Privacy Policy", checked: nextValue });
   }
 
-  onConsentDataUsageChange(checked: boolean | undefined): void {
-    const nextValue = !!checked;
+  onConsentDataUsageChange(event: CheckboxChangeEvent): void {
+    const nextValue = this.getCheckedValue(event);
     this.state.formData.consentDataUsage = nextValue;
     this.consentChange.emit({ type: "Data Usage", checked: nextValue });
   }
 
-  onConsentAiCoachChange(checked: boolean | undefined): void {
-    const nextValue = !!checked;
+  onConsentAiCoachChange(event: CheckboxChangeEvent): void {
+    const nextValue = this.getCheckedValue(event);
     this.state.formData.consentAICoach = nextValue;
     this.consentChange.emit({ type: "Merlin AI", checked: nextValue });
   }
 
-  onConsentEmailUpdatesChange(checked: boolean | undefined): void {
-    const nextValue = !!checked;
+  onConsentEmailUpdatesChange(event: CheckboxChangeEvent): void {
+    const nextValue = this.getCheckedValue(event);
     this.state.formData.consentEmailUpdates = nextValue;
     this.consentChange.emit({ type: "Email Updates", checked: nextValue });
+  }
+
+  private getCheckedValue(event: CheckboxChangeEvent): boolean {
+    return Boolean(event.checked);
   }
 }

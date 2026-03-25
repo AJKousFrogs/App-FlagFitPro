@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from "@angular/core";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
+import { extractApiPayload } from "../utils/api-response-mapper";
 
 export interface NextGenBaselineStats {
   mean: number;
@@ -78,7 +79,9 @@ export class NextGenMetricsService {
       })
       .subscribe({
         next: (response) => {
-          this.loadPreview.set(response.data?.next_gen ?? null);
+          this.loadPreview.set(
+            extractApiPayload<LoadManagementResponse>(response)?.next_gen ?? null,
+          );
           this.loading.set(false);
         },
         error: (error: Error) => {

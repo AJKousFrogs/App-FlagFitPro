@@ -15,8 +15,8 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 import { InputText } from "primeng/inputtext";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { Select } from "primeng/select";
-import { MultiSelect } from "primeng/multiselect";
+import { Select, type SelectChangeEvent } from "primeng/select";
+import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Chip } from "primeng/chip";
@@ -149,7 +149,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="body-part-filter"
                         [options]="bodyPartOptions()"
-                        (onChange)="updateSelectedBodyPart($event.value)"
+                        (onChange)="onSelectedBodyPartSelect($event)"
                         placeholder="All Body Parts"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by body part'"
@@ -160,7 +160,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="equipment-filter"
                         [options]="equipmentOptions()"
-                        (onChange)="updateSelectedEquipment($event.value)"
+                        (onChange)="onSelectedEquipmentSelect($event)"
                         placeholder="All Equipment"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by equipment'"
@@ -171,7 +171,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="position-filter"
                         [options]="positionOptions"
-                        (onChange)="updateSelectedPosition($event.value)"
+                        (onChange)="onSelectedPositionSelect($event)"
                         placeholder="All Positions"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by position'"
@@ -182,7 +182,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="category-filter"
                         [options]="categoryOptions()"
-                        (onChange)="updateSelectedCategory($event.value)"
+                        (onChange)="onSelectedCategorySelect($event)"
                         placeholder="All Categories"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by category'"
@@ -193,7 +193,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="status-filter"
                         [options]="statusOptions"
-                        (onChange)="updateSelectedStatus($event.value)"
+                        (onChange)="onSelectedStatusSelect($event)"
                         [attr.aria-label]="'Filter by status'"
                       ></p-select>
                     </div>
@@ -351,7 +351,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <label>Body Parts to Import</label>
                       <p-multiSelect
                         [options]="importBodyPartOptions"
-                        (onChange)="updateImportBodyParts($event.value)"
+                        (onChange)="onImportBodyPartsSelect($event)"
                         placeholder="Select body parts (leave empty for all)"
                         display="chip"
                         class="import-multiselect"
@@ -364,7 +364,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         inputId="import-equipment-filter"
                         [options]="importEquipmentOptions"
-                        (onChange)="updateImportEquipment($event.value)"
+                        (onChange)="onImportEquipmentSelect($event)"
                         placeholder="All equipment"
                         [showClear]="true"
                         [attr.aria-label]="'Filter import by equipment'"
@@ -375,7 +375,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                         <input
                           type="checkbox"
                           [checked]="autoApprove"
-                          (change)="updateAutoApprove(isChecked($event))"
+                          (change)="onAutoApproveToggle($event)"
                         />
                         Auto-approve high relevance exercises (8+)
                       </label>
@@ -767,7 +767,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                   type="range"
                   class="relevance-slider"
                   [value]="approvalData.flag_football_relevance"
-                  (input)="updateApprovalRelevance(getInputNumberValue($event))"
+                  (input)="onApprovalRelevanceInput($event)"
                   [min]="1"
                   [max]="10"
                   [step]="1"
@@ -782,7 +782,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-select
                   inputId="approval-category"
                   [options]="ffCategoryOptions"
-                  (onChange)="updateApprovalCategory($event.value)"
+                  (onChange)="onApprovalCategorySelect($event)"
                   placeholder="Select category"
                   [attr.aria-label]="'Select flag football category'"
                 ></p-select>
@@ -793,7 +793,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-multiSelect
                   inputId="approval-focus"
                   [options]="trainingFocusOptions"
-                  (onChange)="updateApprovalTrainingFocus($event.value)"
+                  (onChange)="onApprovalTrainingFocusSelect($event)"
                   placeholder="Select training focuses"
                   display="chip"
                   [attr.aria-label]="'Select training focus areas'"
@@ -805,7 +805,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-multiSelect
                   inputId="approval-positions"
                   [options]="positionOptions"
-                  (onChange)="updateApprovalApplicablePositions($event.value)"
+                  (onChange)="onApprovalApplicablePositionsSelect($event)"
                   placeholder="Select positions"
                   display="chip"
                   [attr.aria-label]="'Select applicable positions'"
@@ -817,7 +817,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <p-select
                   inputId="approval-difficulty"
                   [options]="difficultyOptions"
-                  (onChange)="updateApprovalDifficulty($event.value)"
+                  (onChange)="onApprovalDifficultySelect($event)"
                   placeholder="Select difficulty"
                   [attr.aria-label]="'Select difficulty level'"
                 ></p-select>
@@ -830,7 +830,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                     pInputText
                     type="number"
                     [value]="approvalData.recommended_sets"
-                    (input)="updateApprovalRecommendedSets(getInputValue($event))"
+                    (input)="onApprovalRecommendedSetsInput($event)"
                     placeholder="e.g., 3"
                   />
                 </div>
@@ -839,7 +839,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                   <input
                     pInputText
                     [value]="approvalData.recommended_reps"
-                    (input)="updateApprovalRecommendedReps(getInputValue($event))"
+                    (input)="onApprovalRecommendedRepsInput($event)"
                     placeholder="e.g., 8-12"
                   />
                 </div>
@@ -1065,9 +1065,21 @@ export class ExerciseDBManagerComponent implements OnInit {
     this.applyFilters();
   }
 
+  onSelectedBodyPartSelect(event: SelectChangeEvent): void {
+    this.updateSelectedBodyPart(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   updateSelectedEquipment(value: string | null | undefined): void {
     this.selectedEquipment = value ?? null;
     this.applyFilters();
+  }
+
+  onSelectedEquipmentSelect(event: SelectChangeEvent): void {
+    this.updateSelectedEquipment(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   updateSelectedPosition(value: string | null | undefined): void {
@@ -1075,9 +1087,21 @@ export class ExerciseDBManagerComponent implements OnInit {
     this.applyFilters();
   }
 
+  onSelectedPositionSelect(event: SelectChangeEvent): void {
+    this.updateSelectedPosition(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   updateSelectedCategory(value: string | null | undefined): void {
     this.selectedCategory = value ?? null;
     this.applyFilters();
+  }
+
+  onSelectedCategorySelect(event: SelectChangeEvent): void {
+    this.updateSelectedCategory(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   updateSelectedStatus(value: string | null | undefined): void {
@@ -1085,16 +1109,38 @@ export class ExerciseDBManagerComponent implements OnInit {
     this.applyFilters();
   }
 
+  onSelectedStatusSelect(event: SelectChangeEvent): void {
+    this.updateSelectedStatus(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   updateImportBodyParts(value: string[] | null | undefined): void {
     this.importBodyParts = value ?? [];
+  }
+
+  onImportBodyPartsSelect(event: MultiSelectChangeEvent): void {
+    this.updateImportBodyParts(
+      (event.value as string[] | null | undefined) ?? null,
+    );
   }
 
   updateImportEquipment(value: string | null | undefined): void {
     this.importEquipment = value ?? null;
   }
 
+  onImportEquipmentSelect(event: SelectChangeEvent): void {
+    this.updateImportEquipment(
+      typeof event.value === "string" ? event.value : null,
+    );
+  }
+
   updateAutoApprove(value: boolean | null | undefined): void {
     this.autoApprove = value ?? false;
+  }
+
+  onAutoApproveToggle(event: Event): void {
+    this.updateAutoApprove(this.readChecked(event));
   }
 
   updateApprovalRelevance(value: number | null | undefined): void {
@@ -1104,8 +1150,18 @@ export class ExerciseDBManagerComponent implements OnInit {
     };
   }
 
+  onApprovalRelevanceInput(event: Event): void {
+    this.updateApprovalRelevance(this.readInputNumberValue(event));
+  }
+
   updateApprovalCategory(value: string | null | undefined): void {
     this.approvalData = { ...this.approvalData, ff_category: value ?? "" };
+  }
+
+  onApprovalCategorySelect(event: SelectChangeEvent): void {
+    this.updateApprovalCategory(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   updateApprovalTrainingFocus(value: string[] | null | undefined): void {
@@ -1113,6 +1169,12 @@ export class ExerciseDBManagerComponent implements OnInit {
       ...this.approvalData,
       ff_training_focus: value ?? [],
     };
+  }
+
+  onApprovalTrainingFocusSelect(event: MultiSelectChangeEvent): void {
+    this.updateApprovalTrainingFocus(
+      (event.value as string[] | null | undefined) ?? null,
+    );
   }
 
   updateApprovalApplicablePositions(
@@ -1124,11 +1186,23 @@ export class ExerciseDBManagerComponent implements OnInit {
     };
   }
 
+  onApprovalApplicablePositionsSelect(event: MultiSelectChangeEvent): void {
+    this.updateApprovalApplicablePositions(
+      (event.value as string[] | null | undefined) ?? null,
+    );
+  }
+
   updateApprovalDifficulty(value: string | null | undefined): void {
     this.approvalData = {
       ...this.approvalData,
       difficulty_level: value ?? "Intermediate",
     };
+  }
+
+  onApprovalDifficultySelect(event: SelectChangeEvent): void {
+    this.updateApprovalDifficulty(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   updateApprovalRecommendedSets(value: string | null | undefined): void {
@@ -1139,6 +1213,10 @@ export class ExerciseDBManagerComponent implements OnInit {
     };
   }
 
+  onApprovalRecommendedSetsInput(event: Event): void {
+    this.updateApprovalRecommendedSets(this.readInputValue(event));
+  }
+
   updateApprovalRecommendedReps(value: string | null | undefined): void {
     this.approvalData = {
       ...this.approvalData,
@@ -1146,16 +1224,20 @@ export class ExerciseDBManagerComponent implements OnInit {
     };
   }
 
-  getInputValue(event: Event): string {
+  onApprovalRecommendedRepsInput(event: Event): void {
+    this.updateApprovalRecommendedReps(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
-  getInputNumberValue(event: Event): number | null {
-    const value = Number(this.getInputValue(event));
+  private readInputNumberValue(event: Event): number | null {
+    const value = Number(this.readInputValue(event));
     return Number.isFinite(value) ? value : null;
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 

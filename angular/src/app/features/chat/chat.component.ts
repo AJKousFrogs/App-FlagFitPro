@@ -431,7 +431,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onMessageFieldInput(event: Event): void {
-    const inputValue = this.getInputValue(event);
+    const inputValue = this.readInputValue(event);
     this.newMessage = inputValue;
     this.updateMentionSuggestions(inputValue);
   }
@@ -440,7 +440,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.memberSearchQuery = value;
   }
 
-  getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;

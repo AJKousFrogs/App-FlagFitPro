@@ -27,7 +27,7 @@ import { DialogHeaderComponent } from "../../shared/components/dialog-header/dia
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { InputNumber } from "primeng/inputnumber";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
@@ -35,7 +35,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -127,7 +127,7 @@ const EVENT_TYPE_CONFIG: Record<
           <p-select
             [options]="typeFilterOptions"
             [ngModel]="selectedType"
-            (onChange)="onSelectedTypeChange($event.value)"
+            (onChange)="onSelectedTypeSelect($event)"
             optionLabel="label"
             optionValue="value"
             placeholder="All Events"
@@ -387,7 +387,7 @@ const EVENT_TYPE_CONFIG: Record<
                     type="checkbox"
                     id="needsRide"
                     [checked]="rsvpForm.needsRide"
-                    (change)="onRsvpNeedsRideChange(isChecked($event))"
+                    (change)="onRsvpNeedsRideToggle($event)"
                   />
                   <label for="needsRide">I need a ride</label>
                 </div>
@@ -397,7 +397,7 @@ const EVENT_TYPE_CONFIG: Record<
                     type="checkbox"
                     id="canProvideRide"
                     [checked]="rsvpForm.canProvideRide"
-                    (change)="onRsvpCanProvideRideChange(isChecked($event))"
+                    (change)="onRsvpCanProvideRideToggle($event)"
                   />
                   <label for="canProvideRide"
                     >I can provide a ride ({{
@@ -426,7 +426,7 @@ const EVENT_TYPE_CONFIG: Record<
                 pTextarea
                 id="notes"
                 [value]="rsvpForm.notes"
-                (input)="onRsvpNotesChange(getInputValue($event))"
+                (input)="onRsvpNotesInput($event)"
                 placeholder="Any notes for the coach..."
                 rows="2"
               ></textarea>
@@ -532,17 +532,19 @@ export class TeamCalendarComponent implements OnInit {
     this.selectedType = value;
   }
 
+  onSelectedTypeSelect(event: SelectChangeEvent): void {
+    this.onSelectedTypeChange((event.value as EventType | null | undefined) ?? null);
+  }
+
   async loadData(): Promise<void> {
     this.isLoading.set(true);
 
     try {
-      const response: ApiResponse<{ events?: TeamEvent[] }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.teamCalendar.list),
+      const response = await firstValueFrom(
+        this.api.get<{ events?: TeamEvent[] }>(API_ENDPOINTS.teamCalendar.list),
       );
-      if (response?.success && response.data?.events) {
-        this.events.set(response.data.events);
-      }
+      const payload = extractApiPayload<{ events?: TeamEvent[] }>(response);
+      this.events.set(payload?.events ?? []);
     } catch (err) {
       this.logger.error("Failed to load calendar data", err);
       // No team events scheduled
@@ -577,8 +579,16 @@ export class TeamCalendarComponent implements OnInit {
     this.rsvpForm = { ...this.rsvpForm, needsRide: value };
   }
 
+  onRsvpNeedsRideToggle(event: Event): void {
+    this.onRsvpNeedsRideChange(this.readChecked(event));
+  }
+
   onRsvpCanProvideRideChange(value: boolean): void {
     this.rsvpForm = { ...this.rsvpForm, canProvideRide: value };
+  }
+
+  onRsvpCanProvideRideToggle(event: Event): void {
+    this.onRsvpCanProvideRideChange(this.readChecked(event));
   }
 
   onRsvpRideSeatsChange(value: number | null): void {
@@ -589,7 +599,11 @@ export class TeamCalendarComponent implements OnInit {
     this.rsvpForm = { ...this.rsvpForm, notes: value };
   }
 
-  getInputValue(event: Event): string {
+  onRsvpNotesInput(event: Event): void {
+    this.onRsvpNotesChange(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;
@@ -597,7 +611,7 @@ export class TeamCalendarComponent implements OnInit {
     return "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
       return target.checked;

@@ -11,6 +11,10 @@ import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import {
+  extractApiArray,
+  extractApiPayload,
+} from "../utils/api-response-mapper";
 
 export type TrainingGoal =
   | "speed"
@@ -1007,7 +1011,7 @@ export class TrainingPlanService {
         }),
       );
 
-      return (response.data || []).map(
+      return extractApiArray<FixtureResponse>(response).map(
         (f: FixtureResponse) => new Date(f.game_start),
       );
     } catch (error) {
@@ -1039,8 +1043,8 @@ export class TrainingPlanService {
           },
         }),
       );
-
-      if (response && response.data && response.data.success !== false) {
+      const saveResult = extractApiPayload<PlanSaveResponse>(response);
+      if (saveResult && saveResult.success !== false) {
         this.currentPlan.set(plan);
         this.loading.set(false);
         return true;
@@ -1074,8 +1078,8 @@ export class TrainingPlanService {
         this.apiService.get<WeeklyTrainingPlan>("/api/training/plan", params),
       );
 
-      if (response && response.data) {
-        const plan = response.data as WeeklyTrainingPlan;
+      const plan = extractApiPayload<WeeklyTrainingPlan>(response);
+      if (plan) {
         this.currentPlan.set(plan);
         this.loading.set(false);
         return plan;
@@ -1105,7 +1109,7 @@ export class TrainingPlanService {
         ),
       );
 
-      return response.data || [];
+      return extractApiArray<WeeklyTrainingPlan>(response);
     } catch (error) {
       this.logger.error("Error fetching plan history:", error);
       return [];
@@ -1129,7 +1133,8 @@ export class TrainingPlanService {
         this.currentPlan.set(null);
       }
 
-      return !!(response && response.data && response.data.success !== false);
+      const deleteResult = extractApiPayload<PlanSaveResponse>(response);
+      return Boolean(deleteResult && deleteResult.success !== false);
     } catch (error) {
       this.logger.error("Error deleting training plan:", error);
       return false;

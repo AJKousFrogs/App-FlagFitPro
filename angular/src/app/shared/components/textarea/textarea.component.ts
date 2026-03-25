@@ -71,6 +71,7 @@ export class TextareaComponent implements ControlValueAccessor {
 
   // Outputs
   change = output<string>();
+  valueChange = output<string>();
 
   // Internal
   protected value = signal<string>("");
@@ -82,13 +83,14 @@ export class TextareaComponent implements ControlValueAccessor {
   private onModelChange: (value: string) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onInput(event: Event) {
+  onInput(event: Event): void {
     const val = (event.target as HTMLTextAreaElement).value;
     this.onModelChange(val);
     this.change.emit(val);
+    this.valueChange.emit(val);
   }
 
-  onBlur() {
+  onBlur(): void {
     this.onModelTouched();
   }
 

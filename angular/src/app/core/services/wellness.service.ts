@@ -6,6 +6,11 @@ import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeEvent, RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
+import {
+  extractApiPayload,
+  isApiResponse,
+  isSuccessfulApiResponse,
+} from "../utils/api-response-mapper";
 
 export interface WellnessData {
   id?: number;
@@ -393,11 +398,19 @@ export class WellnessService {
       }>("/api/wellness/checkin", payload)
       .pipe(
         map((response) => {
-          if (response.success) {
+          const data = extractApiPayload<unknown>(response);
+          const responseError =
+            isApiResponse(response) && typeof response.error === "string"
+              ? response.error
+              : undefined;
+          if (
+            !isApiResponse(response) ||
+            isSuccessfulApiResponse(response)
+          ) {
             this.logger.success("[Wellness] Entry saved via API");
-            return { success: true, data: response.data };
+            return { success: true, data };
           }
-          throw new Error(response.error || "Failed to save wellness");
+          throw new Error(responseError || "Failed to save wellness");
         }),
         tap((result) => {
           // Refresh wellness data after successful post
@@ -595,8 +608,8 @@ export class WellnessService {
    */
   private loadWellnessData(): void {
     this.getWellnessData("30d").subscribe({
-      next: (response) => {
-        if (response.success) {
+      next: ({ success }) => {
+        if (success) {
           this.logger.success("[Wellness] Loaded wellness data from database");
         }
       },

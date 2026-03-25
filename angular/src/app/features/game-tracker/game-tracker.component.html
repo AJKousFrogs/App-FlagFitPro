@@ -193,7 +193,7 @@
             <div class="score-group">
               <app-input-number
                 label="Our Score:"
-                (change)="onTeamScoreChange($event)"
+                (valueChange)="onTeamScoreChange($event)"
                 [min]="0"
                 [showButtons]="true"
                 class="score-input"
@@ -204,7 +204,7 @@
             <div class="score-group">
               <app-input-number
                 label="Opponent:"
-                (change)="onOpponentScoreChange($event)"
+                (valueChange)="onOpponentScoreChange($event)"
                 [min]="0"
                 [showButtons]="true"
                 class="score-input"

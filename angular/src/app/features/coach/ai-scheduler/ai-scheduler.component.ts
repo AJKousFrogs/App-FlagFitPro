@@ -19,7 +19,7 @@ import {
 } from "@angular/core";
 import { ToastService } from "../../../core/services/toast.service";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -27,7 +27,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -168,7 +168,7 @@ const PRACTICE_DURATIONS = [
                   <p-select
                     inputId="event-select"
                     [options]="upcomingEvents()"
-                    (onChange)="onEventIdChange($event.value)"
+                    (onChange)="onEventSelect($event)"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select upcoming event"
@@ -199,7 +199,7 @@ const PRACTICE_DURATIONS = [
                       type="checkbox"
                       [id]="'focus-' + area.value"
                       [checked]="formData.focusAreas.includes(area.value)"
-                      (change)="onFocusAreaToggle(area.value, isChecked($event))"
+                      (change)="onFocusAreaToggleInput(area.value, $event)"
                       [disabled]="
                         formData.focusAreas.length >= 3 &&
                         !formData.focusAreas.includes(area.value)
@@ -225,7 +225,7 @@ const PRACTICE_DURATIONS = [
                       type="checkbox"
                       [id]="'day-' + day.value"
                       [checked]="formData.availableDays.includes(day.value)"
-                      (change)="onAvailableDayToggle(day.value, isChecked($event))"
+                      (change)="onAvailableDayToggleInput(day.value, $event)"
                     />
                     <label [for]="'day-' + day.value">{{ day.label }}</label>
                   </div>
@@ -238,7 +238,7 @@ const PRACTICE_DURATIONS = [
                   <p-select
                     inputId="practice-duration"
                     [options]="practiceDurations"
-                    (onChange)="onDurationChange($event.value)"
+                    (onChange)="onDurationSelect($event)"
                     optionLabel="label"
                     optionValue="value"
                     [attr.aria-label]="'Select practice duration'"
@@ -249,7 +249,7 @@ const PRACTICE_DURATIONS = [
                   <p-select
                     inputId="facility-select"
                     [options]="facilities()"
-                    (onChange)="onFacilityChange($event.value)"
+                    (onChange)="onFacilitySelect($event)"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select facility"
@@ -265,7 +265,7 @@ const PRACTICE_DURATIONS = [
                     type="checkbox"
                     id="considerRtp"
                     [checked]="formData.considerRtp"
-                    (change)="onConsiderRtpChange(isChecked($event))"
+                    (change)="onConsiderRtpToggle($event)"
                   />
                   <label for="considerRtp"
                     >🏥 {{ rtpPlayerCount() }} players in RTP ({{
@@ -278,7 +278,7 @@ const PRACTICE_DURATIONS = [
                     type="checkbox"
                     id="considerAcwr"
                     [checked]="formData.considerAcwr"
-                    (change)="onConsiderAcwrChange(isChecked($event))"
+                    (change)="onConsiderAcwrToggle($event)"
                   />
                   <label for="considerAcwr"
                     >⚠️ {{ highAcwrCount() }} players with elevated ACWR (reduce
@@ -290,7 +290,7 @@ const PRACTICE_DURATIONS = [
                     type="checkbox"
                     id="weatherAdjust"
                     [checked]="formData.weatherAdjust"
-                    (change)="onWeatherAdjustChange(isChecked($event))"
+                    (change)="onWeatherAdjustToggle($event)"
                   />
                   <label for="weatherAdjust"
                     >🌧️ Weather-adjusted (indoor alternatives)</label
@@ -618,6 +618,10 @@ export class AiSchedulerComponent implements OnInit {
     this.formData = { ...this.formData, eventId: value ?? "" };
   }
 
+  onEventSelect(event: SelectChangeEvent): void {
+    this.onEventIdChange(typeof event.value === "string" ? event.value : null);
+  }
+
   onFocusAreasChange(value: string[] | null): void {
     this.formData = { ...this.formData, focusAreas: value ?? [] };
   }
@@ -637,6 +641,10 @@ export class AiSchedulerComponent implements OnInit {
       ...this.formData,
       focusAreas: this.formData.focusAreas.filter((v) => v !== value),
     };
+  }
+
+  onFocusAreaToggleInput(value: string, event: Event): void {
+    this.onFocusAreaToggle(value, this.readChecked(event));
   }
 
   onAvailableDaysChange(value: string[] | null): void {
@@ -660,27 +668,51 @@ export class AiSchedulerComponent implements OnInit {
     };
   }
 
+  onAvailableDayToggleInput(value: string, event: Event): void {
+    this.onAvailableDayToggle(value, this.readChecked(event));
+  }
+
   onDurationChange(value: string | null): void {
     this.formData = { ...this.formData, duration: value ?? this.formData.duration };
+  }
+
+  onDurationSelect(event: SelectChangeEvent): void {
+    this.onDurationChange(typeof event.value === "string" ? event.value : null);
   }
 
   onFacilityChange(value: string | null): void {
     this.formData = { ...this.formData, facility: value ?? "" };
   }
 
+  onFacilitySelect(event: SelectChangeEvent): void {
+    this.onFacilityChange(typeof event.value === "string" ? event.value : null);
+  }
+
   onConsiderRtpChange(value: boolean): void {
     this.formData = { ...this.formData, considerRtp: value };
+  }
+
+  onConsiderRtpToggle(event: Event): void {
+    this.onConsiderRtpChange(this.readChecked(event));
   }
 
   onConsiderAcwrChange(value: boolean): void {
     this.formData = { ...this.formData, considerAcwr: value };
   }
 
+  onConsiderAcwrToggle(event: Event): void {
+    this.onConsiderAcwrChange(this.readChecked(event));
+  }
+
   onWeatherAdjustChange(value: boolean): void {
     this.formData = { ...this.formData, weatherAdjust: value };
   }
 
-  isChecked(event: Event): boolean {
+  onWeatherAdjustToggle(event: Event): void {
+    this.onWeatherAdjustChange(this.readChecked(event));
+  }
+
+  private readChecked(event: Event): boolean {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
       return target.checked;
@@ -690,13 +722,13 @@ export class AiSchedulerComponent implements OnInit {
 
   async loadData(): Promise<void> {
     try {
-      const response: ApiResponse<{ events?: TargetEvent[] }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coach.eventsUpcoming),
+      const response = await firstValueFrom(
+        this.api.get<{ events?: TargetEvent[] }>(
+          API_ENDPOINTS.coach.eventsUpcoming,
+        ),
       );
-      if (response?.success && response.data?.events) {
-        this.events.set(response.data.events);
-      }
+      const payload = extractApiPayload<{ events?: TargetEvent[] }>(response);
+      this.events.set(payload?.events ?? []);
     } catch (err) {
       this.logger.error("Failed to load events", err);
       this.events.set([]);

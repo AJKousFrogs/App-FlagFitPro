@@ -36,7 +36,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { DIALOG_WIDTHS } from "../../core/utils/design-tokens.util";
 import { DesignTokens } from "../../shared/models/design-tokens";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -393,22 +393,27 @@ export class CycleTrackingComponent implements OnInit {
 
   async loadData(): Promise<void> {
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          status?: CycleStatus;
+          history?: CycleEntry[];
+          acwr?: number;
+        }>(API_ENDPOINTS.cycleTracking.base),
+      );
+      const payload = extractApiPayload<{
         status?: CycleStatus;
         history?: CycleEntry[];
         acwr?: number;
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.cycleTracking.base),
-      );
-      if (response?.success && response.data) {
-        if (response.data.status) {
-          this.cycleStatus.set(response.data.status);
+      }>(response);
+      if (payload) {
+        if (payload.status) {
+          this.cycleStatus.set(payload.status);
         }
-        if (response.data.history) {
-          this.cycleHistory.set(response.data.history);
+        if (payload.history) {
+          this.cycleHistory.set(payload.history);
         }
-        if (response.data.acwr) {
-          this.baseAcwr.set(response.data.acwr);
+        if (payload.acwr) {
+          this.baseAcwr.set(payload.acwr);
         }
       }
     } catch (err) {
@@ -712,22 +717,6 @@ export class CycleTrackingComponent implements OnInit {
   getMonthName(dateStr: string): string {
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-US", { month: "long" });
-  }
-
-  getInputValue(event: Event): string {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      return target.value;
-    }
-    return "";
-  }
-
-  isChecked(event: Event): boolean {
-    const target = event.target;
-    if (target instanceof HTMLInputElement) {
-      return target.checked;
-    }
-    return false;
   }
 
   private getEmptyPeriodForm() {

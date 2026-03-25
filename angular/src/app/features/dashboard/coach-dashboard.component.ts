@@ -10,7 +10,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { forkJoin } from "rxjs";
 import { firstValueFrom } from "rxjs";
@@ -650,8 +650,18 @@ export class CoachDashboardComponent {
     this.newSession = { ...this.newSession, title: value };
   }
 
+  onNewSessionTitleInput(event: Event): void {
+    this.onNewSessionTitleChange(this.readInputValue(event));
+  }
+
   onNewSessionTypeChange(value: string | null): void {
     this.newSession = { ...this.newSession, type: value ?? "practice" };
+  }
+
+  onNewSessionTypeSelect(event: SelectChangeEvent): void {
+    this.onNewSessionTypeChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   getNewSessionDateInputValue(): string {
@@ -677,6 +687,10 @@ export class CoachDashboardComponent {
     this.newSession = { ...this.newSession, date: parsedDate };
   }
 
+  onNewSessionDateInputEvent(event: Event): void {
+    this.onNewSessionDateInput(this.readInputValue(event));
+  }
+
   onNewSessionDurationChange(value: number | string): void {
     const parsedValue =
       typeof value === "number" ? value : Number.parseInt(value, 10);
@@ -688,8 +702,16 @@ export class CoachDashboardComponent {
     };
   }
 
+  onNewSessionDurationInput(event: Event): void {
+    this.onNewSessionDurationChange(this.readInputValue(event));
+  }
+
   onNewSessionNotesChange(value: string): void {
     this.newSession = { ...this.newSession, notes: value };
+  }
+
+  onNewSessionNotesInput(event: Event): void {
+    this.onNewSessionNotesChange(this.readInputValue(event));
   }
 
   createSession(): void {
@@ -712,6 +734,10 @@ export class CoachDashboardComponent {
 
   onTeamMessageContentChange(value: string): void {
     this.teamMessageContent = value;
+  }
+
+  onTeamMessageContentInput(event: Event): void {
+    this.onTeamMessageContentChange(this.readInputValue(event));
   }
 
   async sendTeamMessage(): Promise<void> {
@@ -782,7 +808,11 @@ export class CoachDashboardComponent {
     this.requestAccessMessage = value;
   }
 
-  getInputValue(event: Event): string {
+  onRequestAccessMessageInput(event: Event): void {
+    this.onRequestAccessMessageChange(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;

@@ -7,7 +7,7 @@ import {
   Output,
 } from "@angular/core";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { ChannelType } from "../../../core/services/channel.service";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
@@ -56,11 +56,11 @@ export class ChatCreateChannelDialogComponent {
   }
 
   onChannelNameInput(event: Event): void {
-    this.channelName = this.getInputValue(event);
+    this.channelName = this.readInputValue(event);
   }
 
   onChannelDescriptionInput(event: Event): void {
-    this.channelDescription = this.getInputValue(event);
+    this.channelDescription = this.readInputValue(event);
   }
 
   onChannelTypeChange(value: ChannelType | null): void {
@@ -70,8 +70,20 @@ export class ChatCreateChannelDialogComponent {
     }
   }
 
+  onChannelTypeSelect(event: SelectChangeEvent): void {
+    this.onChannelTypeChange(
+      (event.value as ChannelType | null | undefined) ?? null,
+    );
+  }
+
   onChannelPositionChange(value: string | null): void {
     this.channelPosition = value ?? "";
+  }
+
+  onChannelPositionSelect(event: SelectChangeEvent): void {
+    this.onChannelPositionChange(
+      typeof event.value === "string" ? event.value : null,
+    );
   }
 
   onCreate(): void {
@@ -87,7 +99,7 @@ export class ChatCreateChannelDialogComponent {
     });
   }
 
-  private getInputValue(event: Event): string {
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (
       target instanceof HTMLInputElement ||

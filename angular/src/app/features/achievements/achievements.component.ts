@@ -25,7 +25,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -623,18 +623,22 @@ export class AchievementsComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          achievements?: AchievementApiRecord[];
+          leaderboard?: LeaderboardEntry[];
+        }>(API_ENDPOINTS.achievements.list),
+      );
+      const payload = extractApiPayload<{
         achievements?: AchievementApiRecord[];
         leaderboard?: LeaderboardEntry[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.achievements.list),
-      );
-      if (response?.success && response.data) {
-        if (response.data.achievements) {
-          this.achievements.set(response.data.achievements);
+      }>(response);
+      if (payload) {
+        if (payload.achievements) {
+          this.achievements.set(payload.achievements);
         }
-        if (response.data.leaderboard) {
-          this.leaderboard.set(response.data.leaderboard);
+        if (payload.leaderboard) {
+          this.leaderboard.set(payload.leaderboard);
         }
       }
     } catch (err) {

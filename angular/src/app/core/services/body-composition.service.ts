@@ -112,13 +112,14 @@ export class BodyCompositionService {
         .order("timestamp", { ascending: false })
         .limit(limit),
     ).pipe(
-      map((response) => {
+      map(({ data, error }) => {
         this._isLoading.set(false);
-        if (response.error) {
-          this._error.set(response.error.message);
-          return { data: [], error: response.error.message };
+        if (error) {
+          this._error.set(error.message);
+          return { data: [], error: error.message };
         }
-        const measurements = (response.data || []).map((m) =>
+        const measurementRows = Array.isArray(data) ? data : [];
+        const measurements = measurementRows.map((m) =>
           this.transformMeasurement(m),
         );
         this._measurements.set(measurements);
@@ -173,13 +174,14 @@ export class BodyCompositionService {
         .insert(record)
         .select(),
     ).pipe(
-      map((response) => {
-        if (response.error) {
-          return { success: false, error: response.error.message };
+      map(({ data, error }) => {
+        if (error) {
+          return { success: false, error: error.message };
         }
         // Update local state
-        if (response.data?.[0]) {
-          const newMeasurement = this.transformMeasurement(response.data[0]);
+        const insertedMeasurement = Array.isArray(data) ? data[0] : undefined;
+        if (insertedMeasurement) {
+          const newMeasurement = this.transformMeasurement(insertedMeasurement);
           this._measurements.update((prev) => [newMeasurement, ...prev]);
         }
         return { success: true };

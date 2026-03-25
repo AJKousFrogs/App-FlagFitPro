@@ -33,6 +33,7 @@ import { AcwrService } from "./acwr.service";
 import { OwnershipTransitionService } from "./ownership-transition.service";
 import { environment } from "../../../environments/environment";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
+import { isSuccessfulApiResponse } from "../utils/api-response-mapper";
 
 @Injectable({
   providedIn: "root",
@@ -440,7 +441,7 @@ export class AcwrAlertsService {
         ),
       );
 
-      if (response.success) {
+      if (isSuccessfulApiResponse(response)) {
         this.logger.info(
           `[ACWR Alert] Push notification sent to coach ${coachUserId}`,
         );
@@ -488,13 +489,15 @@ export class AcwrAlertsService {
           error?: string;
         }>(emailEndpoint, emailPayload),
       );
+      const responseError =
+        typeof response.error === "string" ? response.error : undefined;
 
-      if (response.success) {
+      if (isSuccessfulApiResponse(response)) {
         this.logger.info(
           `[ACWR Alert] Email notification sent to coach ${coachEmail} (messageId: ${response.messageId})`,
         );
       } else {
-        throw new Error(response.error || "Email notification failed");
+        throw new Error(responseError || "Email notification failed");
       }
     } catch (error: unknown) {
       // Log but don't throw - email failures are acceptable

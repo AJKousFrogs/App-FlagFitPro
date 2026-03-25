@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { COUNTRY_OPTIONS } from "../../../core/constants";
 import { GENDER_OPTIONS } from "../constants/onboarding-options";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
@@ -73,7 +73,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <p-select
             inputId="onboarding-gender"
             [options]="genderOptions"
-            (onChange)="onGenderChange($event.value)"
+            (onChange)="onGenderSelect($event)"
             placeholder="Select gender"
             class="w-full"
             [attr.aria-label]="'Select gender'"
@@ -87,7 +87,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <p-select
             inputId="onboarding-country"
             [options]="countryOptions"
-            (onChange)="onCountryChange($event.value)"
+            (onChange)="onCountrySelect($event)"
             placeholder="Select your country"
             [filter]="true"
             filterPlaceholder="Search countries..."
@@ -181,12 +181,12 @@ export class OnboardingStepPersonalComponent {
     this.onDateOfBirthChange(this.parseDateInputValue(input?.value ?? ""));
   }
 
-  onGenderChange(value: string | null | undefined): void {
-    this.state.formData.gender = value ?? null;
+  onGenderSelect(event: SelectChangeEvent): void {
+    this.state.formData.gender = this.getStringValue(event);
   }
 
-  onCountryChange(value: string | null | undefined): void {
-    this.state.formData.country = value ?? null;
+  onCountrySelect(event: SelectChangeEvent): void {
+    this.state.formData.country = this.getStringValue(event);
   }
 
   onPhoneInput(event: Event): void {
@@ -216,6 +216,10 @@ export class OnboardingStepPersonalComponent {
     const day = String(value.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+  }
+
+  private getStringValue(event: SelectChangeEvent): string | null {
+    return typeof event.value === "string" ? event.value : null;
   }
 
   private parseDateInputValue(value: string): Date | null {

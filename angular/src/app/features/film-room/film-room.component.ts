@@ -22,7 +22,7 @@ import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
 import { firstValueFrom } from "rxjs";
@@ -30,6 +30,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -174,7 +175,7 @@ interface DiscussionMessage {
 
             <p-select
               [options]="statusOptions"
-              (onChange)="onStatusChange($event.value)"
+              (onChange)="onStatusSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Status"
@@ -497,6 +498,12 @@ export class FilmRoomComponent implements OnInit {
     this.selectedStatus.set(value ?? null);
   }
 
+  onStatusSelect(event: SelectChangeEvent): void {
+    this.onStatusChange(
+      (event.value as "watched" | "unwatched" | null | undefined) ?? null,
+    );
+  }
+
   onReplyInput(event: Event): void {
     const input = event.target as HTMLTextAreaElement | null;
     this.replyMessage.set(input?.value ?? "");
@@ -514,11 +521,9 @@ export class FilmRoomComponent implements OnInit {
       const response = await firstValueFrom(
         this.api.get<{ films?: FilmSession[] }>("/api/film-room"),
       );
-      if (response?.success && response.data?.films) {
-        this.films.set(response.data.films);
-      } else {
-        this.films.set([]);
-      }
+      const films =
+        extractApiPayload<{ films?: FilmSession[] }>(response)?.films ?? [];
+      this.films.set(films);
     } catch (err) {
       this.logger.error("Failed to load film room data", err);
       this.films.set([]);

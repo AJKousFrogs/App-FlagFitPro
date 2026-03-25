@@ -18,8 +18,8 @@ import { DialogFooterComponent } from "../../../../shared/components/dialog-foot
 import { DialogHeaderComponent } from "../../../../shared/components/dialog-header/dialog-header.component";
 import { InputText } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
-import { Select } from "primeng/select";
-import { MultiSelect } from "primeng/multiselect";
+import { Select, type SelectChangeEvent } from "primeng/select";
+import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
 
 import { PlaylistForm, VideoOption } from "../video-curation.models";
 import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
@@ -84,7 +84,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
           <p-select
             inputId="playlistPosition"
             [ngModel]="form.position"
-            (onChange)="onPositionChange($event.value)"
+            (onChange)="onPositionSelect($event)"
             [options]="positionOptions"
             placeholder="Select position (optional)"
             [showClear]="true"
@@ -97,7 +97,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
           <p-multiselect
             inputId="playlistFocus"
             [ngModel]="form.focus"
-            (onChange)="onFocusChange($event.value)"
+            (onChange)="onFocusSelect($event)"
             [options]="focusOptions"
             placeholder="Select focus areas"
             [maxSelectedLabels]="3"
@@ -110,7 +110,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
           <p-multiselect
             inputId="playlistVideos"
             [ngModel]="form.videoIds"
-            (onChange)="onVideoIdsChange($event.value)"
+            (onChange)="onVideoIdsSelect($event)"
             [options]="videoOptions()"
             optionLabel="label"
             optionValue="value"
@@ -199,11 +199,27 @@ export class VideoCurationPlaylistDialogComponent {
     this.form.position = value ?? null;
   }
 
+  onPositionSelect(event: SelectChangeEvent): void {
+    this.onPositionChange(
+      (event.value as PlaylistForm["position"] | undefined) ?? null,
+    );
+  }
+
   onFocusChange(value: PlaylistForm["focus"] | undefined): void {
     this.form.focus = value ?? [];
   }
 
+  onFocusSelect(event: MultiSelectChangeEvent): void {
+    this.onFocusChange(
+      (event.value as PlaylistForm["focus"] | undefined) ?? [],
+    );
+  }
+
   onVideoIdsChange(value: string[] | null | undefined): void {
     this.form.videoIds = value ?? [];
+  }
+
+  onVideoIdsSelect(event: MultiSelectChangeEvent): void {
+    this.onVideoIdsChange((event.value as string[] | null | undefined) ?? []);
   }
 }

@@ -45,7 +45,7 @@
             @if (mapping.status === "unmapped") {
               <p-select
                 [options]="availableMappings()"
-                (onChange)="mappingChange.emit({ mapping, value: $event.value })"
+                (onChange)="emitMappingChange(mapping, $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select mapping"

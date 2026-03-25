@@ -51,6 +51,14 @@ export class TournamentAvailabilityDialogContentComponent {
     );
   }
 
+  onDateInputEvent(controlName: string, event: Event): void {
+    const target = event.target;
+    this.onDateInput(
+      controlName,
+      target instanceof HTMLInputElement ? target.value : "",
+    );
+  }
+
   private formatDateInputValue(value: Date | null): string {
     if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
       return "";

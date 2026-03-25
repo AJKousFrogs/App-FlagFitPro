@@ -24,6 +24,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -372,14 +373,6 @@ export class NutritionistDashboardComponent implements OnInit {
     };
   }
 
-  getInputValue(event: Event): string {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      return target.value;
-    }
-    return "";
-  }
-
   protected async loadData(): Promise<void> {
     this.loading.set(true);
     this.loadError.set(null);
@@ -402,9 +395,24 @@ export class NutritionistDashboardComponent implements OnInit {
           }>;
         }>("/api/staff-nutritionist/athletes"),
       );
+      const payload = extractApiPayload<{
+        athletes: Array<{
+          id: string;
+          name: string;
+          position: string;
+          weight: number;
+          bodyFat: number;
+          leanMass: number;
+          hydrationStatus: string;
+          supplementCompliance: number;
+          dailyCalories: number;
+          proteinTarget: number;
+          lastUpdated: string;
+        }>;
+      }>(response);
 
-      if (response?.data?.athletes) {
-        const athletes = response.data.athletes.map((a) => ({
+      if (payload?.athletes) {
+        const athletes = payload.athletes.map((a) => ({
           id: a.id,
           name: a.name,
           position: a.position,
@@ -423,7 +431,7 @@ export class NutritionistDashboardComponent implements OnInit {
         await this.loadSupplementCompliance();
 
         // Load wellness/hydration data
-        this.loadWellnessFromAthletes(response.data.athletes);
+        this.loadWellnessFromAthletes(payload.athletes);
       }
     } catch (error) {
       this.logger.error("Failed to load nutrition data", error);
@@ -452,23 +460,31 @@ export class NutritionistDashboardComponent implements OnInit {
             }>;
           }>(`/api/staff-nutritionist/athletes/${athlete.id}/trends`),
         );
+        const payload = extractApiPayload<{
+          trends: Array<{
+            date: string;
+            weight: number;
+            bodyFat: number;
+            leanMass: number;
+          }>;
+        }>(response);
 
-        if (response?.data?.trends) {
+        if (payload?.trends) {
           compData.set(athlete.id, {
             athleteId: athlete.id,
-            weightHistory: response.data.trends.map((t) => ({
+            weightHistory: payload.trends.map((t) => ({
               date: t.date,
               weight: t.weight,
             })),
-            bodyFatHistory: response.data.trends.map((t) => ({
+            bodyFatHistory: payload.trends.map((t) => ({
               date: t.date,
               percentage: t.bodyFat,
             })),
-            muscleMassHistory: response.data.trends.map((t) => ({
+            muscleMassHistory: payload.trends.map((t) => ({
               date: t.date,
               mass: t.leanMass,
             })),
-            alerts: this.detectAlerts(response.data.trends),
+            alerts: this.detectAlerts(payload.trends),
           });
         }
       } catch {
@@ -520,10 +536,20 @@ export class NutritionistDashboardComponent implements OnInit {
           }>;
         }>("/api/staff-nutritionist/supplements"),
       );
+      const payload = extractApiPayload<{
+        compliance: Array<{
+          athleteId: string;
+          athleteName: string;
+          supplements: string[];
+          compliance: number;
+          takenCount: number;
+          missedCount: number;
+        }>;
+      }>(response);
 
-      if (response?.data?.compliance) {
+      if (payload?.compliance) {
         const supplements: NutritionistSupplementCompliance[] =
-          response.data.compliance.map((c) => ({
+          payload.compliance.map((c) => ({
             athleteId: c.athleteId,
             overallComplianceRate: c.compliance,
             supplements: c.supplements.map((name) => ({

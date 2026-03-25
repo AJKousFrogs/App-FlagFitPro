@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { Checkbox } from "primeng/checkbox";
+import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Skeleton } from "primeng/skeleton";
 
@@ -506,6 +506,10 @@ export class TrainingScheduleComponent implements OnInit {
 
   onShowWeekToggle(checked: boolean | undefined): void {
     this.showWeekNumbers.set(!!checked);
+  }
+
+  onShowWeekToggleChange(event: CheckboxChangeEvent): void {
+    this.onShowWeekToggle(event.checked);
   }
 
   primaryAction(): void {

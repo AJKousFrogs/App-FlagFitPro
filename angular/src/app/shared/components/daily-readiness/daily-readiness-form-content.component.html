@@ -20,7 +20,7 @@
       </div>
       <p-slider
         [ngModel]="state().pain_level"
-        (ngModelChange)="sliderChange.emit({ key: 'pain_level', value: $event })"
+        (ngModelChange)="emitSliderChange('pain_level', $event)"
         [min]="0"
         [max]="10"
         [step]="1"
@@ -43,7 +43,7 @@
       </div>
       <p-slider
         [ngModel]="state().fatigue_level"
-        (ngModelChange)="sliderChange.emit({ key: 'fatigue_level', value: $event })"
+        (ngModelChange)="emitSliderChange('fatigue_level', $event)"
         [min]="0"
         [max]="10"
         [step]="1"
@@ -66,7 +66,7 @@
       </div>
       <p-slider
         [ngModel]="state().sleep_quality"
-        (ngModelChange)="sliderChange.emit({ key: 'sleep_quality', value: $event })"
+        (ngModelChange)="emitSliderChange('sleep_quality', $event)"
         [min]="0"
         [max]="10"
         [step]="1"
@@ -89,7 +89,7 @@
       </div>
       <p-slider
         [ngModel]="state().motivation_level"
-        (ngModelChange)="sliderChange.emit({ key: 'motivation_level', value: $event })"
+        (ngModelChange)="emitSliderChange('motivation_level', $event)"
         [min]="0"
         [max]="10"
         [step]="1"
@@ -110,7 +110,7 @@
       </div>
       <p-inputNumber
         [ngModel]="state().weight_kg"
-        (ngModelChange)="weightChange.emit($event)"
+        (ngModelChange)="emitWeightChange($event)"
         [suffix]="' kg'"
         [min]="30"
         [max]="200"

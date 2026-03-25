@@ -22,7 +22,7 @@
               pInputText
               id="pollQuestion"
               [value]="pollQuestion"
-              (input)="setPollQuestion(getInputValue($event))"
+              (input)="onPollQuestionInput($event)"
               placeholder="What would you like to ask?"
               class="poll-input"
             />
@@ -34,7 +34,7 @@
                 <input
                   pInputText
                   [value]="pollOptions[i]"
-                  (input)="setPollOption(i, getInputValue($event))"
+                  (input)="onPollOptionInput(i, $event)"
                   [placeholder]="'Option ' + (i + 1)"
                   class="poll-input"
                   [attr.aria-label]="'Poll option ' + (i + 1)"
@@ -97,7 +97,7 @@
               pInputText
               id="locationInput"
               [value]="locationInput"
-              (input)="setLocationInput(getInputValue($event))"
+              (input)="onLocationInput($event)"
               placeholder="e.g., Training Field, Stadium, Gym..."
               class="location-input"
             />
@@ -425,7 +425,7 @@
                             pInputText
                             type="text"
                             [value]="post.newComment ?? ''"
-                            (input)="setPostComment(post.id, getInputValue($event))"
+                            (input)="onPostCommentInput(post.id, $event)"
                             placeholder="Write a comment..."
                             class="comment-input"
                             aria-label="Write a comment"

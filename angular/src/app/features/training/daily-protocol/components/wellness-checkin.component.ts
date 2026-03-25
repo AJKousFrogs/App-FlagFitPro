@@ -15,6 +15,10 @@ import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../../../../core/utils/api-response-mapper";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import {
@@ -300,7 +304,7 @@ export interface ReadinessResult {
                     type="checkbox"
                     class="area-checkbox-input"
                     [checked]="formData().sorenessAreas.includes(area)"
-                    (change)="toggleArea(area, isChecked($event))"
+                    (change)="onAreaToggle(area, $event)"
                   />
                   <span>{{ area }}</span>
                 </label>
@@ -362,7 +366,7 @@ export interface ReadinessResult {
           <textarea
             p-textarea
             [value]="formData().notes || ''"
-            (input)="updateFormField('notes', getInputValue($event))"
+            (input)="onNotesInput($event)"
             rows="2"
             placeholder="Any additional notes..."
           ></textarea>
@@ -495,12 +499,13 @@ export class WellnessCheckinComponent implements OnInit {
     try {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
       const response = await firstValueFrom(
-        this.trainingService.getWellnessForDay(targetDate),
+        this.trainingService.getWellnessForDay<WellnessData>(targetDate),
       );
+      const payload = extractApiPayload<WellnessData>(response);
 
-      if (response?.success && response.data) {
-        this.wellnessData.set(response.data as WellnessData);
-        this.formData.set({ ...(response.data as WellnessData) });
+      if (payload) {
+        this.wellnessData.set(payload);
+        this.formData.set({ ...payload });
       }
     } catch (_err) {
       // No existing checkin - that's ok
@@ -539,7 +544,7 @@ export class WellnessCheckinComponent implements OnInit {
           readinessScore: readiness,
         });
 
-      if (response?.success) {
+      if (isSuccessfulApiResponse(response)) {
         this.wellnessData.set(currentFormData);
         this.saveSuccess.set(true);
         this.showDialog.set(false);
@@ -578,6 +583,10 @@ export class WellnessCheckinComponent implements OnInit {
     }
   }
 
+  onAreaToggle(area: string, event: Event): void {
+    this.toggleArea(area, this.readChecked(event));
+  }
+
   updateFormField<K extends keyof WellnessData>(
     field: K,
     value: WellnessData[K],
@@ -604,7 +613,11 @@ export class WellnessCheckinComponent implements OnInit {
     this.updateFormField(field, nextValue);
   }
 
-  getInputValue(event: Event): string {
+  onNotesInput(event: Event): void {
+    this.updateFormField("notes", this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;
@@ -612,7 +625,7 @@ export class WellnessCheckinComponent implements OnInit {
     return "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
       return target.checked;

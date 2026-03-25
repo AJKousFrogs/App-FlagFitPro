@@ -17,7 +17,7 @@ import {
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Chip } from "primeng/chip";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { SelectButton } from "primeng/selectbutton";
 import { Slider } from "primeng/slider";
 
@@ -106,7 +106,7 @@ interface EquipmentOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Select session type"
-              (onChange)="onSessionTypeChange($event.value)"
+              (onChange)="onSessionTypeSelect($event)"
             >
               <ng-template let-option #item>
                 <div class="session-type-option">
@@ -454,6 +454,10 @@ export class SmartTrainingFormComponent implements OnInit {
   onSessionTypeChange(selectedType: string) {
     // Additional logic when session type changes
     this.logger.debug("Session type changed to:", toLogContext(selectedType));
+  }
+
+  onSessionTypeSelect(event: SelectChangeEvent): void {
+    this.onSessionTypeChange((event.value as string | null | undefined) ?? "");
   }
 
   applySuggestion(suggestion: TrainingSuggestion) {

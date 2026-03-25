@@ -48,7 +48,10 @@ import { firstValueFrom, startWith } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../../../core/utils/api-response-mapper";
 import { RosterService } from "../../roster/roster.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -1056,18 +1059,21 @@ export class PaymentManagementComponent implements OnInit {
         return;
       }
 
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          fees?: TeamFee[];
+          balances?: PlayerBalance[];
+          payments?: Payment[];
+        }>(API_ENDPOINTS.coach.payments, { team_id: teamId }),
+      );
+      const payload = extractApiPayload<{
         fees?: TeamFee[];
         balances?: PlayerBalance[];
         payments?: Payment[];
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coach.payments, { team_id: teamId }),
-      );
-      if (response?.success && response.data) {
-        this.fees.set(response.data.fees || []);
-        this.balances.set(response.data.balances || []);
-        this.payments.set(response.data.payments || []);
-      }
+      }>(response);
+      this.fees.set(payload?.fees || []);
+      this.balances.set(payload?.balances || []);
+      this.payments.set(payload?.payments || []);
     } catch (err) {
       this.logger.error("Failed to load payment data", err);
       this.fees.set([]);
@@ -1199,7 +1205,7 @@ export class PaymentManagementComponent implements OnInit {
         }),
       );
 
-      if (response?.success) {
+      if (isSuccessfulApiResponse(response)) {
         this.toastService.success(
           `${feeForm.name} has been created`,
           "Fee Created",
@@ -1238,7 +1244,7 @@ export class PaymentManagementComponent implements OnInit {
         }),
       );
 
-      if (response?.success) {
+      if (isSuccessfulApiResponse(response)) {
         this.toastService.success(
           `Payment of $${paymentForm.amount} has been recorded`,
           "Payment Recorded",

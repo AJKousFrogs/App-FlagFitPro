@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -131,7 +131,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <div header-actions class="filter-actions">
               <p-select
                 [options]="eventTypeOptions"
-                (onChange)="onSelectedEventTypeChange($event.value)"
+                (onChange)="onSelectedEventTypeSelect($event)"
                 placeholder="All Types"
                 [showClear]="true"
                 class="attendance-filter-select"
@@ -328,7 +328,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 type="text"
                 pInputText
                 [value]="newEvent.title"
-                (input)="onNewEventTitleChange(getInputValue($event))"
+                (input)="onNewEventTitleInput($event)"
                 placeholder="e.g., Team Practice"
               />
             </div>
@@ -338,7 +338,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <p-select
                 id="eventType"
                 [options]="eventTypeOptions"
-                (onChange)="onNewEventTypeChange($event.value)"
+                (onChange)="onNewEventTypeSelect($event)"
                 placeholder="Select type"
                 class="w-full"
               ></p-select>
@@ -351,7 +351,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   id="startTime"
                   type="datetime-local"
                   [value]="getNewEventDateTimeInputValue(newEvent.start_time)"
-                  (input)="onNewEventStartTimeInput(getInputValue($event))"
+                  (input)="onNewEventStartTimeInputEvent($event)"
                   class="w-full"
                 />
               </div>
@@ -362,7 +362,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   id="endTime"
                   type="datetime-local"
                   [value]="getNewEventDateTimeInputValue(newEvent.end_time)"
-                  (input)="onNewEventEndTimeInput(getInputValue($event))"
+                  (input)="onNewEventEndTimeInputEvent($event)"
                   class="w-full"
                 />
               </div>
@@ -375,7 +375,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 type="text"
                 pInputText
                 [value]="newEvent.location"
-                (input)="onNewEventLocationChange(getInputValue($event))"
+                (input)="onNewEventLocationInput($event)"
                 placeholder="e.g., Main Field"
               />
             </div>
@@ -386,7 +386,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 id="description"
                 pInputTextarea
                 [value]="newEvent.description"
-                (input)="onNewEventDescriptionChange(getInputValue($event))"
+                (input)="onNewEventDescriptionInput($event)"
                 rows="3"
                 placeholder="Optional details..."
               ></textarea>
@@ -397,7 +397,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 type="checkbox"
                 id="mandatory"
                 [checked]="newEvent.is_mandatory"
-                (change)="onNewEventMandatoryChange(isChecked($event))"
+                (change)="onNewEventMandatoryToggle($event)"
               />
               <label for="mandatory">Mandatory attendance</label>
             </div>
@@ -620,6 +620,12 @@ export class AttendanceComponent implements OnInit {
     // Computed signal handles filtering
   }
 
+  onSelectedEventTypeSelect(event: SelectChangeEvent): void {
+    this.onSelectedEventTypeChange(
+      (event.value as EventType | null | undefined) ?? null,
+    );
+  }
+
   onSelectedEventTypeChange(value: EventType | null): void {
     this.selectedEventType = value;
     this.filterEvents();
@@ -675,6 +681,16 @@ export class AttendanceComponent implements OnInit {
     this.newEvent = { ...this.newEvent, title: value };
   }
 
+  onNewEventTitleInput(event: Event): void {
+    this.onNewEventTitleChange(this.readInputValue(event));
+  }
+
+  onNewEventTypeSelect(event: SelectChangeEvent): void {
+    this.onNewEventTypeChange(
+      (event.value as EventType | null | undefined) ?? null,
+    );
+  }
+
   onNewEventTypeChange(value: EventType | null): void {
     this.newEvent = { ...this.newEvent, event_type: value ?? "practice" };
   }
@@ -687,6 +703,10 @@ export class AttendanceComponent implements OnInit {
     this.onNewEventStartTimeChange(this.parseDateTimeInputValue(value));
   }
 
+  onNewEventStartTimeInputEvent(event: Event): void {
+    this.onNewEventStartTimeInput(this.readInputValue(event));
+  }
+
   onNewEventEndTimeChange(value: Date | null): void {
     this.newEvent = { ...this.newEvent, end_time: value };
   }
@@ -695,19 +715,35 @@ export class AttendanceComponent implements OnInit {
     this.onNewEventEndTimeChange(this.parseDateTimeInputValue(value));
   }
 
+  onNewEventEndTimeInputEvent(event: Event): void {
+    this.onNewEventEndTimeInput(this.readInputValue(event));
+  }
+
   onNewEventLocationChange(value: string): void {
     this.newEvent = { ...this.newEvent, location: value };
+  }
+
+  onNewEventLocationInput(event: Event): void {
+    this.onNewEventLocationChange(this.readInputValue(event));
   }
 
   onNewEventDescriptionChange(value: string): void {
     this.newEvent = { ...this.newEvent, description: value };
   }
 
+  onNewEventDescriptionInput(event: Event): void {
+    this.onNewEventDescriptionChange(this.readInputValue(event));
+  }
+
   onNewEventMandatoryChange(value: boolean): void {
     this.newEvent = { ...this.newEvent, is_mandatory: value };
   }
 
-  getInputValue(event: Event): string {
+  onNewEventMandatoryToggle(event: Event): void {
+    this.onNewEventMandatoryChange(this.readChecked(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;
@@ -715,7 +751,7 @@ export class AttendanceComponent implements OnInit {
     return "";
   }
 
-  isChecked(event: Event): boolean {
+  private readChecked(event: Event): boolean {
     const target = event.target;
     if (target instanceof HTMLInputElement) {
       return target.checked;

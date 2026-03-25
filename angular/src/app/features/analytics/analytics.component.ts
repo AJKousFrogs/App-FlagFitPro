@@ -22,6 +22,7 @@ import { AcwrService } from "../../core/services/acwr.service";
 import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import {
   PlayerGameStats,
   PlayerMultiSeasonStats,
@@ -66,6 +67,22 @@ type AnalyticsChartType =
   | "distribution"
   | "position"
   | "speed";
+
+type AnalyticsSeriesPayload = {
+  labels: string[];
+  values: number[];
+};
+
+type AnalyticsSpeedPayload = {
+  labels: string[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    borderColor?: string;
+    backgroundColor?: string;
+    tension?: number;
+  }>;
+};
 
 @Component({
   selector: "app-analytics",
@@ -430,14 +447,14 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load analytics summary for metrics
     this.apiService
-      .get(API_ENDPOINTS.analytics.summary, { userId: currentUser.id })
+      .get<{ metrics?: Metric[] }>(API_ENDPOINTS.analytics.summary, {
+        userId: currentUser.id,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          if (
-            response.success &&
-            (response.data as { metrics?: Metric[] })?.metrics
-          ) {
-            this.metrics.set((response.data as { metrics: Metric[] }).metrics);
+          const payload = extractApiPayload<{ metrics?: Metric[] }>(response);
+          if (payload?.metrics) {
+            this.metrics.set(payload.metrics);
           } else {
             this.loadFallbackMetrics();
           }
@@ -449,22 +466,20 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load performance trends
     this.apiService
-      .get(API_ENDPOINTS.analytics.performanceTrends, {
+      .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.performanceTrends, {
         userId: currentUser.id,
         weeks: 7,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          if (response.success && response.data) {
+          const payload = extractApiPayload<AnalyticsSeriesPayload>(response);
+          if (payload) {
             this.performanceChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] })
-                .labels,
+              labels: payload.labels,
               datasets: [
                 {
                   label: "Performance Score",
-                  data: (
-                    response.data as { labels: string[]; values: number[] }
-                  ).values,
+                  data: payload.values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "var(--ds-primary-green-subtle)",
                   borderWidth: 3,
@@ -484,19 +499,19 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load team chemistry
     this.apiService
-      .get(API_ENDPOINTS.analytics.teamChemistry, { userId: currentUser.id })
+      .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.teamChemistry, {
+        userId: currentUser.id,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          if (response.success && response.data) {
+          const payload = extractApiPayload<AnalyticsSeriesPayload>(response);
+          if (payload) {
             this.chemistryChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] })
-                .labels,
+              labels: payload.labels,
               datasets: [
                 {
                   label: "Team Chemistry",
-                  data: (
-                    response.data as { labels: string[]; values: number[] }
-                  ).values,
+                  data: payload.values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "var(--p-highlight-background)", // Using rgba for specific opacity
                   borderWidth: 2,
@@ -514,21 +529,19 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load training distribution
     this.apiService
-      .get(API_ENDPOINTS.analytics.trainingDistribution, {
+      .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.trainingDistribution, {
         userId: currentUser.id,
         period: "30days",
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          if (response.success && response.data) {
+          const payload = extractApiPayload<AnalyticsSeriesPayload>(response);
+          if (payload) {
             this.distributionChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] })
-                .labels,
+              labels: payload.labels,
               datasets: [
                 {
-                  data: (
-                    response.data as { labels: string[]; values: number[] }
-                  ).values,
+                  data: payload.values,
                   backgroundColor: COLORS.CHART.slice(
                     0,
                     UI_LIMITS.CHART_COLORS_COUNT,
@@ -547,21 +560,19 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load position performance
     this.apiService
-      .get(API_ENDPOINTS.analytics.positionPerformance, {
+      .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.positionPerformance, {
         userId: currentUser.id,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          if (response.success && response.data) {
+          const payload = extractApiPayload<AnalyticsSeriesPayload>(response);
+          if (payload) {
             this.positionChartData.set({
-              labels: (response.data as { labels: string[]; values: number[] })
-                .labels,
+              labels: payload.labels,
               datasets: [
                 {
                   label: "Performance",
-                  data: (
-                    response.data as { labels: string[]; values: number[] }
-                  ).values,
+                  data: payload.values,
                   backgroundColor: "var(--ds-primary-green)",
                 },
               ],
@@ -577,23 +588,14 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load speed development
     this.apiService
-      .get(API_ENDPOINTS.analytics.speedDevelopment, {
+      .get<AnalyticsSpeedPayload>(API_ENDPOINTS.analytics.speedDevelopment, {
         userId: currentUser.id,
         weeks: 7,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          if (response.success && response.data) {
-            const speedData = response.data as {
-              labels: string[];
-              datasets: Array<{
-                label: string;
-                data: number[];
-                borderColor?: string;
-                backgroundColor?: string;
-                tension?: number;
-              }>;
-            };
+          const speedData = extractApiPayload<AnalyticsSpeedPayload>(response);
+          if (speedData) {
             // Guard against undefined datasets
             if (
               speedData.labels &&
@@ -898,24 +900,29 @@ Tip: Hover over data points to see trend information!`;
     if (!currentUser?.id) return;
 
     this.apiService
-      .get(API_ENDPOINTS.analytics.summary, {
+      .get<{
+        goals?: {
+          id: string;
+          title: string;
+          progress: number;
+          deadline: string;
+        }[];
+      }>(API_ENDPOINTS.analytics.summary, {
         type: "goals",
         userId: currentUser.id,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          const data = response.data as
-            | {
-                goals?: {
-                  id: string;
-                  title: string;
-                  progress: number;
-                  deadline: string;
-                }[];
-              }
-            | undefined;
-          if (response.success && Array.isArray(data?.goals)) {
-            const goals = data.goals.map((g) => ({
+          const payload = extractApiPayload<{
+            goals?: {
+              id: string;
+              title: string;
+              progress: number;
+              deadline: string;
+            }[];
+          }>(response);
+          if (Array.isArray(payload?.goals)) {
+            const goals = payload.goals.map((g) => ({
               ...g,
               deadline: new Date(g.deadline),
             }));
@@ -944,18 +951,20 @@ Tip: Hover over data points to see trend information!`;
 
     // Load from API or use fallback data
     this.apiService
-      .get(API_ENDPOINTS.analytics.summary, {
+      .get<{ gaps?: { area: string; current: number; target: number }[] }>(
+        API_ENDPOINTS.analytics.summary,
+        {
         type: "gap_analysis",
         userId: currentUser.id,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          const data = response.data as
-            | { gaps?: { area: string; current: number; target: number }[] }
-            | undefined;
-          if (response.success && Array.isArray(data?.gaps)) {
+          const payload = extractApiPayload<{
+            gaps?: { area: string; current: number; target: number }[];
+          }>(response);
+          if (Array.isArray(payload?.gaps)) {
             // Map API response to expected format
-            const mappedGaps = data.gaps.map((g) => ({
+            const mappedGaps = payload.gaps.map((g) => ({
               metric: g.area,
               current: g.current,
               benchmark: g.target,

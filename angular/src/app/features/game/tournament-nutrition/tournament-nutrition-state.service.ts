@@ -73,13 +73,17 @@ export class TournamentNutritionStateService {
         return null;
       }
 
+      const hydrationLogs = Array.isArray(hydrationResult.data)
+        ? hydrationResult.data
+        : [];
+
       return {
         tournamentName: planResult.data?.tournament_name || "Tournament Day",
         games: Array.isArray(planResult.data?.games) ? planResult.data.games : [],
         nutritionWindows: Array.isArray(planResult.data?.nutrition_windows)
           ? planResult.data.nutrition_windows
           : [],
-        hydrationLogs: (hydrationResult.data || []).map((log) => ({
+        hydrationLogs: hydrationLogs.map((log) => ({
           time: log.log_time?.slice(0, 5) || "00:00",
           amount: log.fluid_ml || 0,
           type:

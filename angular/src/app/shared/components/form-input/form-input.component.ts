@@ -78,7 +78,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
           [readonly]="readonly()"
           [autocomplete]="autocomplete()"
           [value]="value()"
-          (input)="onInput(getInputValue($event))"
+          (input)="onInputEvent($event)"
           (blur)="onBlur()"
           (focus)="onFocus()"
           [class.has-prefix]="prefixIcon()"
@@ -247,8 +247,12 @@ export class FormInputComponent implements ControlValueAccessor {
     this.valueChange.emit(newValue);
   }
 
-  getInputValue(event: Event): string {
-    return (event.target as HTMLInputElement).value;
+  onInputEvent(event: Event): void {
+    this.onInput(this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
+    return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
   /**

@@ -18,6 +18,10 @@ import {
     LoggerService,
     toLogContext,
 } from "../../core/services/logger.service";
+import {
+    isApiResponse,
+    isSuccessfulApiResponse,
+} from "../../core/utils/api-response-mapper";
 import { PlatformService } from "../../core/services/platform.service";
 import {
     PlayerProgramService,
@@ -541,6 +545,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     }
   }
 
+  onSummaryConsentChange(event: { type: string; checked: boolean }): void {
+    this.onConsentChange(event.type, { checked: event.checked });
+  }
+
   // Wrapper for next step with validation (used by Next button)
   nextStep(): void {
     const validation = this.validateCurrentStep();
@@ -976,11 +984,15 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       const response = await firstValueFrom(
         this.api.post(API_ENDPOINTS.wellness.checkin, payload),
       );
+      const responseError =
+        isApiResponse(response) && typeof response.error === "string"
+          ? response.error
+          : undefined;
 
-      if (!response.success) {
+      if (!isSuccessfulApiResponse(response)) {
         this.logger.warn(
           "[Onboarding] Failed to save current injuries via API:",
-          response.error,
+          responseError,
         );
         // Non-blocking - continue with onboarding
       } else {

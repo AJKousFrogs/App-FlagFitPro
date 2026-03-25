@@ -61,6 +61,7 @@ export class RadioButtonComponent<T = unknown> implements ControlValueAccessor {
 
   // Outputs
   click = output<RadioButtonClickEvent>();
+  valueChange = output<T | null>();
 
   // Internal
   protected modelValue = signal<T | null>(null);
@@ -76,6 +77,7 @@ export class RadioButtonComponent<T = unknown> implements ControlValueAccessor {
     this.modelValue.set(this.value());
     this.onModelChange(this.value());
     this.click.emit(event);
+    this.valueChange.emit(this.value());
     this.onModelTouched();
   }
 

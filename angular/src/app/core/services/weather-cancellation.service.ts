@@ -7,6 +7,7 @@ import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { PrivacySettingsService } from "./privacy-settings.service";
 import { ApiService, API_ENDPOINTS } from "./api.service";
+import { extractApiPayload } from "../utils/api-response-mapper";
 
 /**
  * Weather conditions that trigger cancellation warnings
@@ -433,8 +434,9 @@ export class WeatherCancellationService {
           )
           .pipe(
             map((response) => {
-              if (response.success && response.data) {
-                return response.data;
+              const payload = extractApiPayload<SubstituteWorkout>(response);
+              if (payload) {
+                return payload;
               }
               throw new Error("AI generation failed");
             }),
@@ -1044,7 +1046,10 @@ The exercises are selected to maintain your training goals while adapting to ind
         "/api/player-programs/me",
       ),
     );
-    const activeProgramId = assignmentResponse.data?.assignment?.program_id;
+    const assignmentPayload = extractApiPayload<PlayerProgramAssignmentResponse>(
+      assignmentResponse,
+    );
+    const activeProgramId = assignmentPayload?.assignment?.program_id;
 
     if (!activeProgramId) {
       return [];
@@ -1059,7 +1064,8 @@ The exercises are selected to maintain your training goals while adapting to ind
         },
       ),
     );
-    const program = programResponse.data?.data;
+    const program =
+      extractApiPayload<TrainingProgramDetailsResponse>(programResponse)?.data;
 
     return (
       program?.training_phases

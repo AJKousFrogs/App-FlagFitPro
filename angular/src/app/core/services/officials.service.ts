@@ -2,9 +2,9 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { ApiService } from "./api.service";
-import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
 import { formatDate } from "../../shared/utils/date.utils";
+import { extractApiArray, extractApiPayload } from "../utils/api-response-mapper";
 
 export interface Official {
   id: string;
@@ -106,7 +106,7 @@ export class OfficialsService {
       params["certification_level"] = options.certificationLevel;
 
     return this.apiService.get<Official[]>("/api/officials", params).pipe(
-      map((response: ApiResponse<Official[]>) => response.data || []),
+      map((response) => extractApiArray<Official>(response)),
       catchError((error) => {
         this.logger.error("Failed to fetch officials:", error);
         return of([]);
@@ -119,7 +119,7 @@ export class OfficialsService {
    */
   getOfficial(officialId: string): Observable<Official | null> {
     return this.apiService.get<Official>(`/api/officials/${officialId}`).pipe(
-      map((response: ApiResponse<Official>) => response.data || null),
+      map((response) => extractApiPayload<Official>(response)),
       catchError((error) => {
         this.logger.error("Failed to fetch official:", error);
         return of(null);
@@ -134,7 +134,7 @@ export class OfficialsService {
     official: Omit<Official, "id" | "created_by" | "created_at" | "updated_at">,
   ): Observable<Official | null> {
     return this.apiService.post<Official>("/api/officials", official).pipe(
-      map((response: ApiResponse<Official>) => response.data || null),
+      map((response) => extractApiPayload<Official>(response)),
       catchError((error) => {
         this.logger.error("Failed to create official:", error);
         return of(null);
@@ -154,7 +154,7 @@ export class OfficialsService {
     return this.apiService
       .put<Official>(`/api/officials/${officialId}`, updates)
       .pipe(
-        map((response: ApiResponse<Official>) => response.data || null),
+        map((response) => extractApiPayload<Official>(response)),
         catchError((error) => {
           this.logger.error("Failed to update official:", error);
           return of(null);
@@ -182,7 +182,7 @@ export class OfficialsService {
     return this.apiService
       .get<GameOfficial[]>(`/api/officials/game/${gameId}`)
       .pipe(
-        map((response: ApiResponse<GameOfficial[]>) => response.data || []),
+        map((response) => extractApiArray<GameOfficial>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch game officials:", error);
           return of([]);
@@ -209,7 +209,7 @@ export class OfficialsService {
     return this.apiService
       .get<GameOfficial[]>(`/api/officials/${officialId}/games`, params)
       .pipe(
-        map((response: ApiResponse<GameOfficial[]>) => response.data || []),
+        map((response) => extractApiArray<GameOfficial>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch official games:", error);
           return of([]);
@@ -226,7 +226,7 @@ export class OfficialsService {
     return this.apiService
       .post<GameOfficial>("/api/officials/schedule", request)
       .pipe(
-        map((response: ApiResponse<GameOfficial>) => response.data || null),
+        map((response) => extractApiPayload<GameOfficial>(response)),
         catchError((error) => {
           this.logger.error("Failed to schedule official:", error);
           return of(null);
@@ -249,7 +249,7 @@ export class OfficialsService {
     return this.apiService
       .put<GameOfficial>(`/api/officials/assignments/${assignmentId}`, updates)
       .pipe(
-        map((response: ApiResponse<GameOfficial>) => response.data || null),
+        map((response) => extractApiPayload<GameOfficial>(response)),
         catchError((error) => {
           this.logger.error("Failed to update game official:", error);
           return of(null);
@@ -289,10 +289,7 @@ export class OfficialsService {
         },
       )
       .pipe(
-        map(
-          (response: ApiResponse<OfficialAvailability[]>) =>
-            response.data || [],
-        ),
+        map((response) => extractApiArray<OfficialAvailability>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch official availability:", error);
           return of([]);
@@ -313,10 +310,7 @@ export class OfficialsService {
         availability,
       )
       .pipe(
-        map(
-          (response: ApiResponse<OfficialAvailability>) =>
-            response.data || null,
-        ),
+        map((response) => extractApiPayload<OfficialAvailability>(response)),
         catchError((error) => {
           this.logger.error("Failed to set official availability:", error);
           return of(null);
@@ -339,7 +333,7 @@ export class OfficialsService {
     return this.apiService
       .get<Official[]>("/api/officials/available", params)
       .pipe(
-        map((response: ApiResponse<Official[]>) => response.data || []),
+        map((response) => extractApiArray<Official>(response)),
         catchError((error) => {
           this.logger.error("Failed to fetch available officials:", error);
           return of([]);
@@ -398,7 +392,16 @@ export class OfficialsService {
         }>
       >("/api/officials/payments/summary", params)
       .pipe(
-        map((response) => response.data || []),
+        map((response) =>
+          extractApiArray<{
+            official_id: string;
+            official_name: string;
+            total_games: number;
+            total_payment: number;
+            paid: number;
+            pending: number;
+          }>(response),
+        ),
         catchError((error) => {
           this.logger.error("Failed to fetch payment summary:", error);
           return of([]);
@@ -426,8 +429,9 @@ export class OfficialsService {
       .get<GameResponse[]>(`/api/games`, { teamId, limit: 50 })
       .pipe(
         map((response) => {
-          if (response.success && response.data) {
-            return response.data.map((g) => ({
+          const games = extractApiArray<GameResponse>(response);
+          if (games.length > 0) {
+            return games.map((g) => ({
               label: `${formatDate(g.date || g.game_date || new Date(), "P")} vs ${g.opponent || g.opponent_name || "TBD"}`,
               value: g.id || g.game_id || "",
               date: g.date || g.game_date || "",

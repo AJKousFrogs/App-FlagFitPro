@@ -9,7 +9,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AutoComplete } from "primeng/autocomplete";
 import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import {
   USER_TYPE_OPTIONS,
   STAFF_ROLE_OPTIONS,
@@ -83,7 +83,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-staffRole"
               [options]="staffRoleOptions"
-              (onChange)="onStaffRoleChange($event.value)"
+              (onChange)="onStaffRoleSelect($event)"
               placeholder="Select your role"
               class="w-full"
               [attr.aria-label]="'Select your staff role'"
@@ -188,7 +188,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-position"
               [options]="positions"
-              (onChange)="onPositionChange($event.value)"
+              (onChange)="onPositionSelect($event)"
               placeholder="Select position"
               class="w-full"
               [attr.aria-label]="'Select primary position'"
@@ -202,7 +202,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-secondaryPosition"
               [options]="positions"
-              (onChange)="onSecondaryPositionChange($event.value)"
+              (onChange)="onSecondaryPositionSelect($event)"
               placeholder="Optional"
               [showClear]="true"
               class="w-full"
@@ -256,7 +256,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <p-select
               inputId="onboarding-experience"
               [options]="experienceLevels"
-              (onChange)="onExperienceChange($event.value)"
+              (onChange)="onExperienceSelect($event)"
               placeholder="Select your experience"
               class="w-full"
               [attr.aria-label]="'Select your experience level'"
@@ -298,8 +298,8 @@ export class OnboardingStepRoleComponent {
     this.state.searchTeams(query);
   }
 
-  onStaffRoleChange(value: string | null | undefined): void {
-    this.state.formData.staffRole = value ?? null;
+  onStaffRoleSelect(event: SelectChangeEvent): void {
+    this.state.formData.staffRole = this.getStringValue(event);
   }
 
   onJerseyNumberInput(event: Event): void {
@@ -309,15 +309,19 @@ export class OnboardingStepRoleComponent {
       raw === "" ? null : Number.isFinite(Number(raw)) ? Number(raw) : null;
   }
 
-  onPositionChange(value: string | null | undefined): void {
-    this.state.formData.position = value ?? null;
+  onPositionSelect(event: SelectChangeEvent): void {
+    this.state.formData.position = this.getStringValue(event);
   }
 
-  onSecondaryPositionChange(value: string | null | undefined): void {
-    this.state.formData.secondaryPosition = value ?? null;
+  onSecondaryPositionSelect(event: SelectChangeEvent): void {
+    this.state.formData.secondaryPosition = this.getStringValue(event);
   }
 
-  onExperienceChange(value: string | null | undefined): void {
-    this.state.formData.experience = value ?? null;
+  onExperienceSelect(event: SelectChangeEvent): void {
+    this.state.formData.experience = this.getStringValue(event);
+  }
+
+  private getStringValue(event: SelectChangeEvent): string | null {
+    return typeof event.value === "string" ? event.value : null;
   }
 }

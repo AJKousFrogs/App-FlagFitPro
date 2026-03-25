@@ -33,6 +33,10 @@ import { toLogContext } from "../../core/services/logger.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
+import {
+  extractApiArray,
+  extractApiPayload,
+} from "../../core/utils/api-response-mapper";
 import { AnnouncementsBannerComponent } from "../../shared/components/announcements-banner/announcements-banner.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -349,19 +353,15 @@ export class CommunityComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (response?.data?.posts) {
-            const newPosts = this.mapApiPosts(response.data.posts);
+          const payload = extractApiPayload<CommunityFeedResponse>(response);
+          const newPosts = this.mapApiPosts(payload?.posts ?? []);
 
-            if (newPosts.length > 0) {
-              this.posts.update((posts) => [...posts, ...newPosts]);
-              this.currentPage.set(nextPage);
-            }
+          if (newPosts.length > 0) {
+            this.posts.update((posts) => [...posts, ...newPosts]);
+            this.currentPage.set(nextPage);
+          }
 
-            // Check if we've reached the end
-            if (newPosts.length < this.POSTS_PER_PAGE) {
-              this.hasMorePosts.set(false);
-            }
-          } else {
+          if (!payload?.posts || newPosts.length < this.POSTS_PER_PAGE) {
             this.hasMorePosts.set(false);
           }
           this.isLoadingMore.set(false);
@@ -397,11 +397,8 @@ export class CommunityComponent implements OnInit {
         next: (response) => {
           this.isPageLoading.set(false);
           this.hasPageError.set(false);
-          if (response?.data?.posts) {
-            this.posts.set(this.mapApiPosts(response.data.posts));
-          } else {
-            this.posts.set([]);
-          }
+          const payload = extractApiPayload<CommunityFeedResponse>(response);
+          this.posts.set(this.mapApiPosts(payload?.posts ?? []));
         },
         error: (err) => {
           this.logger.error("Error loading community feed:", err);
@@ -420,20 +417,16 @@ export class CommunityComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (response?.data) {
-            const leaderboardData = Array.isArray(response.data)
-              ? response.data
-              : [];
-            const mappedLeaderboard = leaderboardData.map(
-              (entry: ApiLeaderboardEntry) => ({
-                rank: entry.rank,
-                name: entry.name || "Anonymous",
-                initials: this.getInitialsStr(entry.name || "??"),
-                score: entry.points,
-              }),
-            );
-            this.leaderboard.set(mappedLeaderboard);
-          }
+          const leaderboardData = extractApiArray<ApiLeaderboardEntry>(response);
+          const mappedLeaderboard = leaderboardData.map(
+            (entry: ApiLeaderboardEntry) => ({
+              rank: entry.rank,
+              name: entry.name || "Anonymous",
+              initials: this.getInitialsStr(entry.name || "??"),
+              score: entry.points,
+            }),
+          );
+          this.leaderboard.set(mappedLeaderboard);
         },
         error: (err) => this.logger.error("Error loading leaderboard:", err),
       });
@@ -444,8 +437,9 @@ export class CommunityComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (response?.data?.topics) {
-            this.trendingTopics.set(response.data.topics);
+          const payload = extractApiPayload<TrendingTopicsResponse>(response);
+          if (payload?.topics) {
+            this.trendingTopics.set(payload.topics);
           }
         },
         error: (err) => {
@@ -551,7 +545,12 @@ export class CommunityComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          const data = response?.data;
+          const data = extractApiPayload<{
+            id?: string;
+            authorName?: string;
+            location?: string;
+            content?: string;
+          }>(response);
           if (data) {
             const newPost: Post = {
               id: data.id || Date.now().toString(),
@@ -693,7 +692,8 @@ export class CommunityComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (response) => {
-            const comments = response?.data?.comments;
+            const comments = extractApiPayload<{ comments?: Comment[] }>(response)
+              ?.comments;
             if (comments) {
               this.posts.update((posts) =>
                 posts.map((p) =>
@@ -805,8 +805,8 @@ export class CommunityComponent implements OnInit {
       .subscribe({
         next: (response) => {
           // Replace temp comment with real one from server
-          if (response?.data?.id) {
-            const responseData = response.data;
+          const responseData = extractApiPayload<ApiCommentResponse>(response);
+          if (responseData?.id) {
             this.posts.update((posts) =>
               posts.map((p) =>
                 p.id === post.id
@@ -947,10 +947,11 @@ export class CommunityComponent implements OnInit {
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: (response) => {
-              if (response?.data?.url) {
+              const payload = extractApiPayload<ApiUploadResponse>(response);
+              if (payload?.url) {
                 resolve({
-                  url: response.data.url,
-                  type: response.data.mediaType,
+                  url: payload.url,
+                  type: payload.mediaType,
                 });
               } else {
                 resolve(null);
@@ -977,10 +978,18 @@ export class CommunityComponent implements OnInit {
     this.pollQuestion = value;
   }
 
+  onPollQuestionInput(event: Event): void {
+    this.setPollQuestion(this.readInputValue(event));
+  }
+
   setPollOption(index: number, value: string): void {
     this.pollOptions = this.pollOptions.map((option, i) =>
       i === index ? value : option,
     );
+  }
+
+  onPollOptionInput(index: number, event: Event): void {
+    this.setPollOption(index, this.readInputValue(event));
   }
 
   addOption(): void {
@@ -1068,25 +1077,22 @@ export class CommunityComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (response?.data?.options) {
-            // Update with server response
-            if (response.data) {
-              const pollData = response.data;
-              this.posts.update((posts) =>
-                posts.map((p) => {
-                  if (p.id !== post.id || !p.poll) return p;
-                  return {
-                    ...p,
-                    poll: {
-                      ...p.poll,
-                      options: pollData.options,
-                      totalVotes: pollData.totalVotes,
-                      userVote: optionId,
-                    },
-                  };
-                }),
-              );
-            }
+          const pollData = extractApiPayload<ApiPollVoteResponse>(response);
+          if (pollData?.options) {
+            this.posts.update((posts) =>
+              posts.map((p) => {
+                if (p.id !== post.id || !p.poll) return p;
+                return {
+                  ...p,
+                  poll: {
+                    ...p.poll,
+                    options: pollData.options,
+                    totalVotes: pollData.totalVotes,
+                    userVote: optionId,
+                  },
+                };
+              }),
+            );
           }
           this.toastService.success(TOAST.SUCCESS.VOTE_RECORDED);
         },
@@ -1142,6 +1148,10 @@ export class CommunityComponent implements OnInit {
     this.locationInput = value;
   }
 
+  onLocationInput(event: Event): void {
+    this.setLocationInput(this.readInputValue(event));
+  }
+
   setNewPostContent(value: string): void {
     this.newPostContent = value;
   }
@@ -1152,7 +1162,11 @@ export class CommunityComponent implements OnInit {
     );
   }
 
-  getInputValue(event: Event): string {
+  onPostCommentInput(postId: string, event: Event): void {
+    this.setPostComment(postId, this.readInputValue(event));
+  }
+
+  private readInputValue(event: Event): string {
     const target = event.target;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       return target.value;

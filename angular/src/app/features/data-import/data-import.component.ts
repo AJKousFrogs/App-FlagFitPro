@@ -33,10 +33,14 @@ import { Stepper, StepList, Step } from "primeng/stepper";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import type { ApiResponse } from "../../core/models/common.models";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { ApiResponse } from "../../core/models/common.models";
+import {
+  extractApiPayload,
+  isSuccessfulApiResponse,
+} from "../../core/utils/api-response-mapper";
 
 // ===== Interfaces =====
 interface ImportType {
@@ -323,7 +327,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   [previewStats]="getPreviewStats()"
                   [availableMappings]="availableMappings"
                   [hasUnmappedFields]="hasUnmappedFields()"
-                  (mappingChange)="onMappingChange($event.mapping, $event.value)"
+                  (mappingChange)="onPreviewMappingChange($event)"
                   (back)="previousStep()"
                   (submit)="processImport()"
                 />
@@ -412,11 +416,14 @@ export class DataImportComponent implements OnInit {
 
   async loadWearableStatus(): Promise<void> {
     try {
-      const response = (await firstValueFrom(
-        this.api.get(API_ENDPOINTS.dataImport.wearableStatus),
-      )) as ApiResponse<WearableStatusResponse>;
-      if (response?.success && response.data?.devices) {
-        this.wearableDevices.set(response.data.devices);
+      const response = await firstValueFrom(
+        this.api.get<WearableStatusResponse>(
+          API_ENDPOINTS.dataImport.wearableStatus,
+        ),
+      );
+      const payload = extractApiPayload<WearableStatusResponse>(response);
+      if (payload?.devices) {
+        this.wearableDevices.set(payload.devices);
       }
     } catch (err) {
       this.logger.error("Failed to load wearable status", err);
@@ -446,6 +453,13 @@ export class DataImportComponent implements OnInit {
 
   onMappingChange(mapping: FieldMapping, value: string | null): void {
     mapping.mapsTo = value ?? "";
+  }
+
+  onPreviewMappingChange(event: {
+    mapping: FieldMapping;
+    value: string | null;
+  }): void {
+    this.onMappingChange(event.mapping, event.value);
   }
 
   getAcceptedFormats(): string {
@@ -653,18 +667,19 @@ export class DataImportComponent implements OnInit {
     if (!preview || !type) return;
 
     try {
-      const response = (await firstValueFrom(
-        this.api.post(API_ENDPOINTS.dataImport.process, {
+      const response: ApiResponse<ImportResult> = await firstValueFrom(
+        this.api.post<ImportResult>(API_ENDPOINTS.dataImport.process, {
           type: type.id,
           data: preview.previewData,
           mappings: preview.fieldMappings,
         }),
-      )) as ApiResponse<ImportResult>;
+      );
+      const result = extractApiPayload<ImportResult>(response);
 
-      if (response?.success) {
-        this.importResult.set(response.data ?? null);
+      if (isSuccessfulApiResponse(response) && result) {
+        this.importResult.set(result);
       } else {
-        throw new Error(response?.message || "Import failed");
+        throw new Error("Import failed");
       }
     } catch (_err) {
       // Demo success for development

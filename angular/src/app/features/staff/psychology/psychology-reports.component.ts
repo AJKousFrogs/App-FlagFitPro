@@ -23,6 +23,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -145,6 +146,8 @@ interface PreCompForm {
   readiness: number;
   concern: string;
 }
+
+type PreCompSignificance = PreCompForm["significance"];
 
 @Component({
   selector: "app-psychology-reports",
@@ -354,11 +357,15 @@ export class PsychologyReportsComponent implements OnInit {
   }
 
   updateNewPreCompSignificance(
-    value: "regular" | "important" | "championship" | null | undefined,
+    value: string | null | undefined,
   ): void {
+    const normalizedValue: PreCompSignificance = value === "important" ||
+        value === "championship"
+      ? value
+      : "regular";
     this.newPreComp = {
       ...this.newPreComp,
-      significance: value ?? "regular",
+      significance: normalizedValue,
     };
   }
 
@@ -368,15 +375,6 @@ export class PsychologyReportsComponent implements OnInit {
       ...this.newPreComp,
       readiness: Number.isFinite(parsed) ? parsed : 7,
     };
-  }
-
-  getInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
-      ?.value ?? "";
-  }
-
-  isChecked(event: Event): boolean {
-    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   protected async loadData(): Promise<void> {
@@ -409,9 +407,32 @@ export class PsychologyReportsComponent implements OnInit {
           }>;
         }>("/api/staff-psychology/my-data"),
       );
+      const payload = extractApiPayload<{
+        mentalLogs: Array<{
+          log_date: string;
+          confidence_level: number;
+          focus_level: number;
+          motivation_level: number;
+          anxiety_level: number;
+        }>;
+        wellness: Array<{
+          date: string;
+          mood: number;
+          stress_level: number;
+          sleep_quality: number;
+          motivation_level: number;
+          energy_level: number;
+        }>;
+        assessments: Array<{
+          assessment_type: string;
+          score: number;
+          created_at: string;
+          requires_professional_review: boolean;
+        }>;
+      }>(response);
 
-      if (response?.data) {
-        this.processWellnessData(response.data);
+      if (payload) {
+        this.processWellnessData(payload);
       }
     } catch (error) {
       this.logger.error("Failed to load psychology data", error);

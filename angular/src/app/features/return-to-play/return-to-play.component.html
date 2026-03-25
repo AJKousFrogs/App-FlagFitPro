@@ -200,7 +200,7 @@
                     <app-checkbox
                       [id]="'criterion-' + i"
                       [ngModel]="protocol.criteriaCompleted[i]"
-                      (change)="updateCriterion(i, { checked: $event.checked })"
+                      (checkedChange)="updateCriterion(i, $event)"
                       [attr.aria-label]="criterion"
                     >
                       <span>{{ criterion }}</span>
@@ -240,7 +240,7 @@
                   <label>Pain Level (0-10)</label>
                   <small>0 = No pain, 10 = Severe</small>
                   <p-slider
-                    (onChange)="updateTodayCheckinMetric('painLevel', $event.value)"
+                    (onChange)="onPainLevelChange($event)"
                     [min]="0"
                     [max]="10"
                     [step]="1"
@@ -261,7 +261,7 @@
                   <label>Function Score (%)</label>
                   <small>Compared to pre-injury baseline</small>
                   <p-slider
-                    (onChange)="updateTodayCheckinMetric('functionScore', $event.value)"
+                    (onChange)="onFunctionScoreChange($event)"
                     [min]="0"
                     [max]="100"
                     [step]="5"
@@ -277,7 +277,7 @@
                   <label>Confidence Level (1-10)</label>
                   <small>Trust in injured area</small>
                   <p-slider
-                    (onChange)="updateTodayCheckinMetric('confidenceLevel', $event.value)"
+                    (onChange)="onConfidenceLevelChange($event)"
                     [min]="1"
                     [max]="10"
                     [step]="1"
@@ -301,7 +301,7 @@
                       <app-checkbox
                         [id]="'activity-' + i"
                         [ngModel]="isActivitySelected(activity)"
-                        (change)="toggleTodayCheckinActivity(activity, $event.checked)"
+                        (checkedChange)="toggleTodayCheckinActivity(activity, $event)"
                         [attr.aria-label]="activity"
                       >
                         <span>{{ activity }}</span>
@@ -316,7 +316,7 @@
                   label="Notes"
                   id="checkin-notes"
                   [ngModel]="todayCheckin.notes"
-                  (change)="updateTodayCheckinNotes($event)"
+                  (valueChange)="updateTodayCheckinNotes($event)"
                   [rows]="2"
                   placeholder="Any observations, tightness, or concerns..."
                   ></app-textarea>
@@ -439,7 +439,7 @@
                 label="Injury Location *"
                 id="injury-location"
                 [options]="injuryLocations"
-                (change)="updateNewProtocolField('injuryLocation', $event)"
+                (valueChange)="updateNewProtocolField('injuryLocation', $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select location"
@@ -451,7 +451,7 @@
                 label="Severity *"
                 id="severity"
                 [options]="severityLevels"
-                (change)="updateProtocolSeverity($event)"
+                (valueChange)="updateProtocolSeverity($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select severity"
@@ -469,7 +469,7 @@
                 type="date"
                 [value]="getProtocolDateInputValue('injuryDate')"
                 [max]="getTodayDateInputValue()"
-                (input)="updateProtocolDateInput('injuryDate', getInputValue($event))"
+                (input)="onProtocolDateInput('injuryDate', $event)"
                 class="w-full"
               />
             </div>
@@ -480,7 +480,7 @@
                 type="date"
                 [value]="getProtocolDateInputValue('targetReturnDate')"
                 [min]="getTodayDateInputValue()"
-                (input)="updateProtocolDateInput('targetReturnDate', getInputValue($event))"
+                (input)="onProtocolDateInput('targetReturnDate', $event)"
                 class="w-full"
                 placeholder="Auto-calculated"
               />
@@ -493,7 +493,7 @@
               label="Medical Professional Notes (optional)"
               id="medical-notes"
               [ngModel]="newProtocol.medicalNotes"
-              (change)="updateProtocolMedicalNotes($event)"
+              (valueChange)="updateProtocolMedicalNotes($event)"
               [rows]="2"
               placeholder="Diagnosed by team physio. MRI confirmed..."
             ></app-textarea>
@@ -505,7 +505,7 @@
               <app-checkbox
                 id="understand"
                 [ngModel]="newProtocol.understandProtocol"
-                (change)="updateProtocolToggle('understandProtocol', $event.checked)"
+                (checkedChange)="updateProtocolToggle('understandProtocol', $event)"
               >
                 <span>I understand this protocol and will follow it responsibly</span>
               </app-checkbox>
@@ -514,7 +514,7 @@
               <app-checkbox
                 id="notify"
                 [ngModel]="newProtocol.notifyCoach"
-                (change)="updateProtocolToggle('notifyCoach', $event.checked)"
+                (checkedChange)="updateProtocolToggle('notifyCoach', $event)"
               >
                 <span>Coach will be notified of my recovery status</span>
               </app-checkbox>

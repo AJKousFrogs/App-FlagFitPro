@@ -23,7 +23,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { ApiResponse } from "../../core/models/common.models";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -586,18 +586,22 @@ export class SleepDebtComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const response: ApiResponse<{
+      const response = await firstValueFrom(
+        this.api.get<{
+          sleepHistory?: SleepEntry[];
+          userAge?: number;
+        }>(API_ENDPOINTS.sleepData),
+      );
+      const payload = extractApiPayload<{
         sleepHistory?: SleepEntry[];
         userAge?: number;
-      }> = await firstValueFrom(
-        this.api.get(API_ENDPOINTS.sleepData),
-      );
-      if (response?.success && response.data) {
-        if (response.data.sleepHistory) {
-          this.sleepHistory.set(response.data.sleepHistory);
+      }>(response);
+      if (payload) {
+        if (payload.sleepHistory) {
+          this.sleepHistory.set(payload.sleepHistory);
         }
-        if (response.data.userAge) {
-          this.userAge.set(response.data.userAge);
+        if (payload.userAge) {
+          this.userAge.set(payload.userAge);
         }
       }
     } catch (err) {

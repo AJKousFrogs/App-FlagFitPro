@@ -12,6 +12,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/f
 import { SelectModule, SelectChangeEvent } from "primeng/select";
 
 type SelectValue = SelectChangeEvent["value"];
+type SelectResolvedValue<T> = T extends { value: infer V } ? V | null : T | null;
 
 @Component({
   selector: "app-select",
@@ -86,6 +87,7 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
 
   // Outputs
   change = output<SelectValue>();
+  valueChange = output<SelectResolvedValue<T>>();
 
   // Internal
   protected value = signal<SelectValue>(null);
@@ -100,6 +102,7 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   onSelectChange(event: SelectChangeEvent): void {
     this.onModelChange(event.value);
     this.change.emit(event.value);
+    this.valueChange.emit(this.resolveValue(event.value));
     this.onModelTouched();
   }
 
@@ -121,5 +124,22 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this._cvaDisabled.set(isDisabled);
+  }
+
+  private resolveValue(value: SelectValue): SelectResolvedValue<T> {
+    if (value == null) {
+      return null as SelectResolvedValue<T>;
+    }
+
+    const optionValueKey = this.optionValue();
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      optionValueKey in value
+    ) {
+      return (value as Record<string, unknown>)[optionValueKey] as SelectResolvedValue<T>;
+    }
+
+    return value as SelectResolvedValue<T>;
   }
 }

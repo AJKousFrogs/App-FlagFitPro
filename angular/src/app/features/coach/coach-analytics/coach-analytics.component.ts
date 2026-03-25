@@ -18,7 +18,7 @@ import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import type { ChartOptions } from "chart.js";
 import { Divider } from "primeng/divider";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -118,12 +118,12 @@ interface TeamOption {
           <div class="header-filters">
             <p-select
               [options]="teamOptions"
-              (onChange)="onTeamChange($event.value)"
+              (onChange)="onTeamSelect($event)"
               placeholder="Select Team"
             ></p-select>
             <p-select
               [options]="timeRangeOptions"
-              (onChange)="onTimeRangeChange($event.value)"
+              (onChange)="onTimeRangeSelect($event)"
               placeholder="Select Period"
             ></p-select>
             <app-icon-button
@@ -525,9 +525,17 @@ export class CoachAnalyticsComponent {
     this.loadAnalytics();
   }
 
+  onTeamSelect(event: SelectChangeEvent): void {
+    this.onTeamChange((event.value as string | null | undefined) ?? null);
+  }
+
   onTimeRangeChange(value: string | null | undefined): void {
     this.selectedTimeRange = value ?? "30d";
     this.loadAnalytics();
+  }
+
+  onTimeRangeSelect(event: SelectChangeEvent): void {
+    this.onTimeRangeChange((event.value as string | null | undefined) ?? null);
   }
 
   private initChartOptions(): void {

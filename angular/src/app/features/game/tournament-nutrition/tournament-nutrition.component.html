@@ -149,7 +149,7 @@
                     <label class="referee-label">
                       <p-checkbox
                         [value]="!!game.isReferee"
-                        (onChange)="onEditGameRefereeChange(game, $event.checked)"
+                        (onChange)="onEditGameRefereeToggle(game, $event)"
                         [binary]="true"
                         variant="filled"
                       ></p-checkbox>

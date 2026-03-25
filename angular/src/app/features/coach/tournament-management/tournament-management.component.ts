@@ -26,7 +26,7 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -35,7 +35,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { ApiResponse } from "../../../core/models/common.models";
+import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -512,7 +512,7 @@ const TOURNAMENT_LINEUP_STORAGE_KEY = "flagfit:tournament-lineup:";
                       <span class="slot-position">{{ slot.position }}</span>
                       <p-select
                         [options]="availablePlayers()"
-                        (onChange)="onLineupSlotChange(slot, $event.value)"
+                        (onChange)="onLineupSlotSelect(slot, $event)"
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
@@ -532,7 +532,7 @@ const TOURNAMENT_LINEUP_STORAGE_KEY = "flagfit:tournament-lineup:";
                       <span class="slot-position">{{ slot.position }}</span>
                       <p-select
                         [options]="availablePlayers()"
-                        (onChange)="onLineupSlotChange(slot, $event.value)"
+                        (onChange)="onLineupSlotSelect(slot, $event)"
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
@@ -700,13 +700,13 @@ export class TournamentManagementComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response: ApiResponse<{ tournaments?: Tournament[] }> =
-        await firstValueFrom(
-        this.api.get(API_ENDPOINTS.coach.tournaments),
+      const response = await firstValueFrom(
+        this.api.get<{ tournaments?: Tournament[] }>(
+          API_ENDPOINTS.coach.tournaments,
+        ),
       );
-      if (response?.success && response.data?.tournaments) {
-        this.tournaments.set(response.data.tournaments);
-      }
+      const payload = extractApiPayload<{ tournaments?: Tournament[] }>(response);
+      this.tournaments.set(payload?.tournaments ?? []);
     } catch (err) {
       this.logger.error("Failed to load tournaments", err);
       this.tournaments.set([]);
@@ -804,6 +804,13 @@ export class TournamentManagementComponent implements OnInit {
 
   onLineupSlotChange(slot: LineupSlot, playerId: string | null | undefined): void {
     slot.playerId = playerId ?? null;
+  }
+
+  onLineupSlotSelect(slot: LineupSlot, event: SelectChangeEvent): void {
+    this.onLineupSlotChange(
+      slot,
+      (event.value as string | null | undefined) ?? null,
+    );
   }
 
   onLineupNotesInput(event: Event): void {

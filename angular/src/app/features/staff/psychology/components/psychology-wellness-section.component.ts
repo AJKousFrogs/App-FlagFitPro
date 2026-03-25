@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
+import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 import {
@@ -79,4 +79,8 @@ export class PsychologyWellnessSectionComponent {
   >();
 
   readonly periodChange = output<string>();
+
+  emitPeriodChange(event: SelectChangeEvent): void {
+    this.periodChange.emit((event.value as string | null | undefined) ?? "30days");
+  }
 }
