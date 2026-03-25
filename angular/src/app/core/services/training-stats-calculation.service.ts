@@ -95,6 +95,11 @@ export interface TrainingStatsData {
   providedIn: "root",
 })
 export class TrainingStatsCalculationService {
+  private parseDateOnly(dateString: string): Date {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(year, month - 1, day, 12, 0, 0, 0);
+  }
+
   private trainingDataService = inject(TrainingDataService);
   private logger = inject(LoggerService);
   private acwrService = inject(AcwrService);
@@ -154,7 +159,7 @@ export class TrainingStatsCalculationService {
         );
         query = query.gte(
           "session_date",
-          defaultStartDate.toISOString().split("T")[0],
+          this.formatDateOnly(defaultStartDate),
         );
       }
 
@@ -232,7 +237,7 @@ export class TrainingStatsCalculationService {
         dateRange: {
           startDate: options?.startDate || null,
           endDate: options?.endDate || null,
-          filteredToToday: new Date().toISOString().split("T")[0],
+          filteredToToday: this.formatDateOnly(new Date()),
         },
       };
     } catch (err) {
@@ -256,10 +261,13 @@ export class TrainingStatsCalculationService {
           .filter((d): d is string => Boolean(d))
           .filter((d) => {
             // Validate date is parseable
-            const dateObj = new Date(d);
+            const dateObj = this.parseDateOnly(d);
             return !isNaN(dateObj.getTime());
           })
-          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()),
+          .sort(
+            (a, b) =>
+              this.parseDateOnly(b).getTime() - this.parseDateOnly(a).getTime(),
+          ),
       ),
     ];
 
@@ -269,7 +277,7 @@ export class TrainingStatsCalculationService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const lastSession = new Date(sortedDates[0]);
+    const lastSession = this.parseDateOnly(sortedDates[0]);
     lastSession.setHours(0, 0, 0, 0);
 
     // Check if streak is still active (within last 2 days)
@@ -279,8 +287,8 @@ export class TrainingStatsCalculationService {
     if (daysSinceLastSession > 2) return 0;
 
     for (let i = 1; i < sortedDates.length; i++) {
-      const current = new Date(sortedDates[i - 1]);
-      const prev = new Date(sortedDates[i]);
+      const current = this.parseDateOnly(sortedDates[i - 1]);
+      const prev = this.parseDateOnly(sortedDates[i]);
       const dayDiff = Math.floor(
         (current.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24),
       );
@@ -319,8 +327,8 @@ export class TrainingStatsCalculationService {
     weekEnd.setDate(weekEnd.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
-    const weekStartStr = weekStart.toISOString().split("T")[0];
-    const weekEndStr = weekEnd.toISOString().split("T")[0];
+    const weekStartStr = this.formatDateOnly(weekStart);
+    const weekEndStr = this.formatDateOnly(weekEnd);
 
     const weekSessions = sessions.filter((s) => {
       const sessionDate = s.session_date || s.date;
@@ -362,7 +370,9 @@ export class TrainingStatsCalculationService {
   }
 
   /**
-   * Calculate current streak (consecutive days with training)
+   * Calculate current streak.
+   * A streak stays active when the most recent session is within 2 days
+   * of the reference date and each preceding gap is 2 days or less.
    */
   calculateStreak(
     sessions: TrainingSession[],
@@ -370,31 +380,50 @@ export class TrainingStatsCalculationService {
   ): number {
     const today =
       referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-    const todayStr = today.toISOString().split("T")[0];
+    const todayStr = this.formatDateOnly(today);
 
-    // Filter sessions up to and including today
-    const validSessions = sessions.filter((s) => {
-      const sessionDate = s.session_date || s.date;
-      return sessionDate && sessionDate <= todayStr;
-    });
+    const validSessionDates = [
+      ...new Set(
+        sessions
+          .map((s) => s.session_date || s.date)
+          .filter((date): date is string => Boolean(date))
+          .filter((date) => date <= todayStr)
+          .filter((date) => !isNaN(this.parseDateOnly(date).getTime()))
+          .sort(
+            (a, b) =>
+              this.parseDateOnly(b).getTime() -
+              this.parseDateOnly(a).getTime(),
+          ),
+      ),
+    ];
 
-    let currentStreak = 0;
-    const todayDate = new Date(todayStr);
+    if (validSessionDates.length === 0) {
+      return 0;
+    }
 
-    for (let i = 0; i < 30; i++) {
-      const checkDate = new Date(todayDate);
-      checkDate.setDate(todayDate.getDate() - i);
-      const dateStr = checkDate.toISOString().split("T")[0];
+    const todayDate = this.parseDateOnly(todayStr);
+    const latestSessionDate = this.parseDateOnly(validSessionDates[0]);
+    latestSessionDate.setHours(0, 0, 0, 0);
 
-      const hasSessionOnDate = validSessions.some((s) => {
-        const sessionDate = s.session_date || s.date;
-        return sessionDate === dateStr;
-      });
+    const daysSinceLatestSession = Math.floor(
+      (todayDate.getTime() - latestSessionDate.getTime()) /
+        (1000 * 60 * 60 * 24),
+    );
+    if (daysSinceLatestSession > 2) {
+      return 0;
+    }
 
-      if (hasSessionOnDate) {
+    let currentStreak = 1;
+    for (let i = 1; i < validSessionDates.length; i++) {
+      const current = this.parseDateOnly(validSessionDates[i - 1]);
+      const previous = this.parseDateOnly(validSessionDates[i]);
+      const dayDiff = Math.floor(
+        (current.getTime() - previous.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
+      if (dayDiff <= 2) {
         currentStreak++;
-      } else if (i > 0) {
-        // Don't break streak on first day (today) if no session yet
+      } else {
         break;
       }
     }
@@ -426,8 +455,15 @@ export class TrainingStatsCalculationService {
       dateRange: {
         startDate: null,
         endDate: null,
-        filteredToToday: new Date().toISOString().split("T")[0],
+        filteredToToday: this.formatDateOnly(new Date()),
       },
     };
+  }
+
+  private formatDateOnly(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 }

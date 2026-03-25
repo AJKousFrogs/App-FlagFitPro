@@ -3,21 +3,13 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import webpush from "web-push";
 
 // Netlify Function: Push Notifications API
 // Handles push notification registration, preferences, and sending
 //
 // Implements Web Push Protocol (RFC 8030) with VAPID authentication
 // https://datatracker.ietf.org/doc/html/rfc8030
-
-// Web Push library for sending notifications (optional dep)
-let webpush = null;
-try {
-  const wp = await import("web-push");
-  webpush = wp.default;
-} catch {
-  // web-push not installed, will use fallback
-}
 
 // Initialize VAPID keys if available
 function initializeWebPush() {

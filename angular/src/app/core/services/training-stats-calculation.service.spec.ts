@@ -54,12 +54,12 @@ describe("TrainingStatsCalculationService", () => {
 
     const weekly = service.calculateWeeklyVolume(sessions, referenceDate);
 
-    expect(weekly.weekStart).toBe("2026-01-25");
+    expect(weekly.weekStart).toBe("2026-01-26");
     expect(weekly.weekEnd).toBe("2026-02-01");
-    expect(weekly.sessionCount).toBe(4);
-    expect(weekly.totalDuration).toBe(235);
-    expect(weekly.totalLoad).toBe(1295);
-    expect(weekly.avgIntensity).toBe(5.5);
+    expect(weekly.sessionCount).toBe(3);
+    expect(weekly.totalDuration).toBe(175);
+    expect(weekly.totalLoad).toBe(935);
+    expect(weekly.avgIntensity).toBe(5.3);
   });
 
   it("calculates training streak with <=2 day gaps", () => {
@@ -73,6 +73,6 @@ describe("TrainingStatsCalculationService", () => {
 
     const streak = service.calculateStreak(sessions, referenceDate);
 
-    expect(streak).toBe(2);
+    expect(streak).toBe(3);
   });
 });

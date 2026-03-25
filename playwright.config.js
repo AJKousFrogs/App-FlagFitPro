@@ -1,5 +1,17 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const managedWebServer =
+  process.env.PW_SKIP_WEBSERVER === "1"
+    ? undefined
+    : {
+        command: "node scripts/start-playwright-servers.js",
+        url: "http://localhost:4200",
+        reuseExistingServer: !process.env.CI,
+        timeout: 180 * 1000,
+        stdout: "ignore",
+        stderr: "pipe",
+      };
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
@@ -145,14 +157,7 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: "node scripts/start-playwright-servers.js",
-    url: "http://localhost:4200",
-    reuseExistingServer: !process.env.CI, // Always reuse in local dev, force start in CI
-    timeout: 180 * 1000, // 3 minutes for server startup
-    stdout: "ignore",
-    stderr: "pipe",
-  },
+  webServer: managedWebServer,
   globalSetup: undefined,
   globalTeardown: undefined,
 });

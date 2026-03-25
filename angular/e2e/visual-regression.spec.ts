@@ -24,6 +24,9 @@ const TEST_USER = {
   email: process.env["TEST_USER_EMAIL"] || "aljkous@gmail.com",
   password: process.env["TEST_USER_PASSWORD"] || "Futsal12!!!!",
 };
+const HAS_EXPLICIT_TEST_CREDENTIALS = Boolean(
+  process.env["TEST_USER_EMAIL"] && process.env["TEST_USER_PASSWORD"],
+);
 
 /**
  * Wait for Storybook story to fully render and check for errors
@@ -180,6 +183,11 @@ test.describe.skip("Storybook Components (blocked by SB10 bug)", () => {
 
 test.describe("App Page Visual Regression", () => {
   test.beforeEach(async ({ page }) => {
+    test.skip(
+      !HAS_EXPLICIT_TEST_CREDENTIALS,
+      "Authenticated visual regression requires TEST_USER_EMAIL and TEST_USER_PASSWORD",
+    );
+
     // Navigate to app first, then handle localStorage
     await loginToApp(page);
 

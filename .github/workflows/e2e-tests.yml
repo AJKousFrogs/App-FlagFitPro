@@ -76,6 +76,7 @@ jobs:
         with:
           name: playwright-report
           path: angular/playwright-report/
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Upload test videos
@@ -84,6 +85,7 @@ jobs:
         with:
           name: test-videos
           path: angular/test-results/
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Upload Netlify dev log
@@ -92,4 +94,5 @@ jobs:
         with:
           name: netlify-dev-log
           path: netlify-dev.log
+          if-no-files-found: warn
           retention-days: 7

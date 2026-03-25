@@ -37,12 +37,23 @@ jobs:
           cd angular && npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
+
+      - name: Build Angular app
+        run: cd angular && npm run build
+
+      - name: Start Angular preview server
+        run: |
+          cd angular
+          npm run serve:dist > ../responsive-server.log 2>&1 &
+          timeout 180 bash -c 'until curl -fsS http://127.0.0.1:4200 >/dev/null; do sleep 2; done'
 
       - name: Run responsive tests (shard ${{ matrix.shard }}/3)
         run: npx playwright test tests/responsive/mobile-devices.test.js --project=chromium --shard=${{ matrix.shard }}/3 --reporter=html,json
         env:
           CI: true
+          BASE_URL: http://127.0.0.1:4200
+          PW_SKIP_WEBSERVER: "1"
 
       - name: Upload test results
         if: always()
@@ -50,6 +61,7 @@ jobs:
         with:
           name: playwright-report-shard-${{ matrix.shard }}
           path: playwright-report/
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Upload test results JSON
@@ -58,12 +70,25 @@ jobs:
         with:
           name: test-results-${{ matrix.shard }}
           path: test-results/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload responsive server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-server-log-${{ matrix.shard }}
+          path: responsive-server.log
+          if-no-files-found: warn
           retention-days: 30
 
   visual-regression:
     name: Visual Regression Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ./angular
 
     steps:
       - name: Checkout code
@@ -79,32 +104,35 @@ jobs:
             angular/package-lock.json
 
       - name: Install dependencies
-        run: |
-          npm ci
-          cd angular && npm ci --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
 
       - name: Run visual regression tests
-        run: npx playwright test tests/responsive/visual-regression.test.js --project=chromium --reporter=html
+        run: npx playwright test e2e/visual-regression.spec.ts --project=visual-regression --project=visual-regression-mobile --project=visual-regression-tablet
         env:
           CI: true
+          BASE_URL: http://127.0.0.1:4200
+          TEST_USER_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
 
       - name: Upload visual test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: visual-regression-report
-          path: playwright-report/
+          path: angular/playwright-report/
+          if-no-files-found: warn
           retention-days: 30
 
-      - name: Upload screenshots
+      - name: Upload screenshot diffs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: visual-regression-screenshots
-          path: tests/responsive/**/*.png
+          path: angular/test-results/
+          if-no-files-found: warn
           retention-days: 30
 
   report:
@@ -112,6 +140,8 @@ jobs:
     needs: [responsive-tests, visual-regression]
     runs-on: ubuntu-latest
     if: always()
+    permissions:
+      issues: write
 
     steps:
       - name: Download all artifacts
@@ -154,7 +184,7 @@ jobs:
           retention-days: 90
 
       - name: Comment PR
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |
@@ -196,15 +226,25 @@ jobs:
           timeout 180 bash -c 'until curl -fsS http://127.0.0.1:4200 >/dev/null; do sleep 2; done'
 
       - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v10
+        id: lighthouse
+        uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             http://localhost:4200
             http://localhost:4200/login
             http://localhost:4200/register
           configPath: "./.lighthouserc.json"
-          uploadArtifacts: true
+          uploadArtifacts: false
           temporaryPublicStorage: true
+
+      - name: Upload Lighthouse results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-lighthouse-results-${{ github.run_id }}
+          path: ${{ steps.lighthouse.outputs.resultsPath }}
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Check mobile performance budgets
         run: |
@@ -217,4 +257,5 @@ jobs:
         with:
           name: mobile-performance-log
           path: mobile-performance.log
+          if-no-files-found: warn
           retention-days: 7
