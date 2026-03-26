@@ -1,210 +1,119 @@
 @use "styles/mixins" as *;
 
-/* ================================================================
-   PROFILE COMPONENT STYLES
-   BEM Naming | Modern CSS | Standalone Component
-   Angular 21 + PrimeNG 21 | ViewEncapsulation.None
-   
-   MODERNIZATION:
-   - BEM naming convention (.profile__element--modifier)
-   - Logical properties (margin-inline, padding-block)
-   - Container queries for responsive layouts
-   - clamp() for fluid spacing
-   - Safe area support for mobile
-   - No !important usage
-   - CSS custom properties for configurable sizing
-   
-   Last updated: January 2026
-   ================================================================ */
-
-/* ========== CSS Custom Property Defaults ==========
- * Configurable sizing for profile elements
- * These can be overridden at different breakpoints
- */
-:root {
-  --profile-header-bg-height: var(--grid-card-min-xs);
-  --profile-avatar-size: var(--grid-card-min-xs);
-  --profile-avatar-border-width: calc(var(--space-1) + var(--border-1));
-  --header-height-profile: var(--size-80);
-  --header-height-profile-mobile: var(--button-height-xl);
-  --header-height-profile-xs: var(--touch-target-md);
-}
-
-/* ========== Page Container ==========
- * Uses container query for child responsive layouts
- */
-.profile {
-  container-type: inline-size;
-  inline-size: 100%;
-  overflow-x: hidden;
-}
-
-/* Legacy class support */
-.profile-page {
-  container-type: inline-size;
-  inline-size: 100%;
-  overflow-x: hidden;
-}
-
-/* ========== Deletion Pending Banner ========== */
-.profile-page .profile-deletion-alert {
-  margin: 0;
-}
-
-.profile-page .deletion-alert-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-}
-
-.profile-page .deletion-help-link {
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-warning-text);
-  text-decoration: underline;
-
-  @include ds-hover-state(transparent, $color: var(--color-status-warning));
-}
-
-@include respond-to(sm) {
-  .profile-page .deletion-alert-actions {
-    width: 100%;
-    justify-content: flex-start;
-    align-items: center;
-  }
-}
-
-
-/* ========== Profile Tabs Container ========== 
- * Uses --radius-lg and --shadow-sm to match Dashboard cards
- */
-.profile-page .profile-tabs-container {
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg); // Dashboard: var(--radius-lg)
-  box-shadow: var(--shadow-sm); // Dashboard: var(--shadow-sm)
-  border: var(--border-1) solid var(--color-border-subtle);
-  padding: var(--space-4); // Dashboard: var(--space-4) internal padding
-  overflow: hidden;
+.profile-page.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  max-width: 1200px;
+  margin: 0 auto;
   width: 100%;
-  max-width: 100%;
+  padding-bottom: var(--space-8);
+
+  .bento-item {
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 16px;
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    &.no-padding {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .bento-title {
+      font-size: var(--ds-font-size-lg);
+      font-weight: var(--ds-font-weight-bold);
+      margin-bottom: var(--space-5);
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      
+      i { color: var(--ds-primary-green); font-size: 1.25rem; }
+    }
+  }
+
+  .span-2 { grid-column: span 2; }
+  .full-width { grid-column: 1 / -1; }
+
+  .header-bento {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  /* Bio Bento */
+  .bio-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    text-align: center;
+
+    .jersey-badge {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-primary);
+      color: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: var(--ds-font-weight-bold);
+      box-shadow: var(--shadow-md);
+    }
+
+    .position-tag {
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-bold);
+      color: var(--ds-primary-green);
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .team-link {
+      font-size: var(--ds-font-size-sm);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  /* Stats/Tabs Overrides */
+  ::ng-deep {
+    .stats-bento app-stats-grid .stats-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      padding: var(--space-6);
+    }
+    
+    .tabs-bento app-tabs {
+      .p-tabview-panels { background: transparent !important; }
+    }
+  }
 }
 
-/* ========== PrimeNG Tabs Override ========== */
-// PrimeNG tabs overrides moved to _component-overrides.scss (DS-EXC-014)
-/* ========== Invitation Badge ========== */
-.profile-page .invitation-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--avatar-size-xs);
-  height: var(--avatar-size-xs);
-  padding: 0 var(--space-2);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-on-primary);
-  background: var(--color-status-error);
-  border-radius: var(--radius-md);
-  margin-left: var(--space-2);
-  line-height: var(--ds-line-height-1);
-}
-
-.profile-page .tab-label {
-  color: inherit;
-}
-
-/* ========== Card Shell Overrides for Tab Panels ==========
- * Use public shell tokens instead of styling card-shell internals directly.
- */
-.profile-page .profile-tabs-container app-card-shell {
-  --app-card-shell-header-padding: var(--space-4) var(--space-5)
-    var(--space-3);
-  --app-card-shell-body-padding: 0 var(--space-5) var(--space-4);
-}
-
-/* ========== Overview Content ========== */
-/* ========== Responsive Styles ==========
- * Using container queries for component-level responsiveness
- * Fallback to media queries for broader layout changes
- */
-
-/* Container Query - Tablet */
-@container (width < var(--breakpoint-lg)) {
-  .profile-page .stats-grid,
-  .profile__stats-grid {
+@media (max-width: 1024px) {
+  .profile-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Container Query - Mobile */
-@container (width < var(--breakpoint-md)) {
-  .profile-page,
-  .profile {
-    --profile-header-bg-height: var(--size-120);
-    --profile-avatar-size: var(--size-120);
-    --profile-avatar-border-width: var(--indicator-size-xs);
-  }
-
-  .profile-page .profile-tabs-container,
-  .profile__tabs-container {
     padding: var(--space-4);
-  }
-
-}
-
-/* Media Query Fallback - Tablet */
-@include respond-to(lg) {
-  .profile-page .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    .bio-bento { grid-column: span 2; .bio-content { flex-direction: row; justify-content: center; } }
   }
 }
 
-@include respond-to(md) {
-  .profile-page {
-    --profile-header-bg-height: var(--size-120);
-    --profile-avatar-size: var(--size-120);
-    --profile-avatar-border-width: var(--indicator-size-xs);
-  }
-
-  .profile-page .profile-tabs-container {
-    padding: var(--space-4);
-    border-radius: var(--radius-lg);
-  }
-
-}
-
-/* Mobile */
-@include respond-to(sm) {
-  .profile-page {
-    --profile-header-bg-height: var(--size-100);
-    --profile-avatar-size: var(--size-100);
-    --profile-avatar-border-width: var(--indicator-size-xs);
-  }
-
-  .profile-page .tab-label {
-    display: none;
-  }
-
-  // PrimeNG tabs mobile overrides moved to _component-overrides.scss (DS-EXC-014)
-
-  .profile-page .invitation-badge {
-    margin-left: var(--space-1);
-    min-width: var(--icon-base);
-    height: var(--icon-base);
-    font-size: var(--ds-font-size-compact-md);
-  }
-
-}
-
-/* iPhone 12 Pro and similar (24.375rem) specific fixes */
-@include respond-to(xs) {
-  .profile-page {
-    --profile-header-bg-height: calc(var(--size-80) + var(--space-2) + var(--space-0-5));
-    --profile-avatar-size: calc(var(--size-80) + var(--space-2) + var(--space-0-5));
-    --profile-avatar-border-width: calc(var(--border-2) + var(--border-1));
-  }
-
-  .profile-page .profile-tabs-container {
-    padding: var(--space-3);
+@media (max-width: 768px) {
+  .profile-page.bento-grid {
+    grid-template-columns: 1fr;
+    .bento-item { grid-column: span 1 !important; }
+    .bio-content { flex-direction: column; }
   }
 }

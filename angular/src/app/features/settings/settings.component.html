@@ -13,79 +13,68 @@
       (retry)="retryLoad()"
     ></app-page-error-state>
   } @else {
-    <div class="settings-page ui-page-shell ui-page-stack">
-      <app-page-header
-        title="Settings"
-        subtitle="Manage your account and application preferences"
-        icon="pi-cog"
-      >
-        <app-button
-          iconLeft="pi-save"
-          [loading]="isSavingSettings()"
-          (clicked)="saveSettings()"
-          >Save Changes</app-button
+    <div class="settings-page bento-grid ui-page-shell">
+      <!-- Header (Full Width) -->
+      <div class="bento-item full-width no-padding header-bento">
+        <app-page-header
+          title="Settings"
+          subtitle="Manage your account and application preferences"
+          icon="pi-cog"
         >
-      </app-page-header>
+          <app-button
+            iconLeft="pi-save"
+            [loading]="isSavingSettings()"
+            (clicked)="saveSettings()"
+            size="sm"
+            >Save Changes</app-button
+          >
+        </app-page-header>
+      </div>
 
-      <app-settings-nav-section
-        [items]="settingsNavItems"
-        (selectSection)="scrollToSection($event)"
-      ></app-settings-nav-section>
+      <!-- Navigation Sidebar (Span 1) -->
+      <div class="bento-item settings-nav-card">
+        <h3 class="bento-title"><i class="pi pi-compass"></i> Navigation</h3>
+        <app-settings-nav-section
+          [items]="settingsNavItems"
+          (selectSection)="scrollToSection($event)"
+        ></app-settings-nav-section>
+      </div>
 
-      <!-- Settings Grid -->
-      <div class="settings-grid form-controls-full">
-        <app-settings-account-section
-          [profileForm]="profileForm"
-          [maxBirthDate]="maxBirthDate"
-          [birthdaySuggestion]="birthdaySuggestion()"
-          [calculatedAge]="calculateAge()"
-          [positionOptions]="positionOptions"
-          [availableTeams]="availableTeams()"
-          [countryOptions]="countryOptions"
-          (birthdayInputTyped)="onBirthdayInputTyped($event)"
-          (birthdayInputBlurred)="onBirthdayInputBlurred()"
-          (applyBirthdaySuggestion)="applyBirthdaySuggestion()"
-          (teamChange)="onTeamChange($event ?? null)"
-        />
+      <!-- Settings Content (Span 2) -->
+      <div class="settings-content-column span-2">
+        <div class="bento-item account-card">
+          <h3 class="bento-title"><i class="pi pi-user"></i> Account Profile</h3>
+          <app-settings-account-section
+            [profileForm]="profileForm"
+            [maxBirthDate]="maxBirthDate"
+            [birthdaySuggestion]="birthdaySuggestion()"
+            [calculatedAge]="calculateAge()"
+            [positionOptions]="positionOptions"
+            [availableTeams]="availableTeams()"
+            [countryOptions]="countryOptions"
+            (birthdayInputTyped)="onBirthdayInputTyped($event)"
+            (birthdayInputBlurred)="onBirthdayInputBlurred()"
+            (applyBirthdaySuggestion)="applyBirthdaySuggestion()"
+            (teamChange)="onTeamChange($event ?? null)"
+          />
+        </div>
 
         @defer (on viewport) {
           <!-- Section 2: Notifications -->
-          <div id="notifications-settings" class="settings-section ui-stack-md">
-            <div class="ui-section-heading">
-              <div class="ui-section-heading__content">
-                <h2 class="ui-section-heading__title">
-                  <span class="ui-section-heading__icon">
-                    <i class="pi pi-bell"></i>
-                  </span>
-                  Notifications
-                </h2>
-                <p class="ui-section-heading__description">
-                  Control how and when you receive notifications
-                </p>
-              </div>
-            </div>
-
+          <div id="notifications-settings" class="bento-item notifications-card">
+            <h3 class="bento-title">
+              <i class="pi pi-bell"></i> Notifications
+            </h3>
             <app-notification-preferences-card
               [notificationForm]="notificationForm"
             ></app-notification-preferences-card>
           </div>
 
           <!-- Section 3: Privacy & Security -->
-          <div id="privacy-settings" class="settings-section ui-stack-md">
-            <div class="ui-section-heading">
-              <div class="ui-section-heading__content">
-                <h2 class="ui-section-heading__title">
-                  <span class="ui-section-heading__icon">
-                    <i class="pi pi-lock"></i>
-                  </span>
-                  Privacy & Security
-                </h2>
-                <p class="ui-section-heading__description">
-                  Manage your privacy settings and account security
-                </p>
-              </div>
-            </div>
-
+          <div id="privacy-settings" class="bento-item privacy-card">
+            <h3 class="bento-title">
+              <i class="pi pi-lock"></i> Privacy & Security
+            </h3>
             <app-privacy-controls-card
               [privacyForm]="privacyForm"
               [visibilityOptions]="visibilityOptions"
@@ -94,28 +83,23 @@
           </div>
 
           <!-- Section 4: Preferences -->
-          <div id="preferences-settings" class="settings-section ui-stack-md">
-            <div class="ui-section-heading">
-              <div class="ui-section-heading__content">
-                <h2 class="ui-section-heading__title">
-                  <span class="ui-section-heading__icon">
-                    <i class="pi pi-sliders-h"></i>
-                  </span>
-                  Preferences
-                </h2>
-                <p class="ui-section-heading__description">
-                  Customize your app experience and display options
-                </p>
-              </div>
-            </div>
-
+          <div id="preferences-settings" class="bento-item preferences-card">
+            <h3 class="bento-title">
+              <i class="pi pi-sliders-h"></i> App Preferences
+            </h3>
             <app-app-preferences-card
               [preferencesForm]="preferencesForm"
               [themeOptions]="themeOptions"
               [languageOptions]="languageOptions"
               (themeSelected)="selectTheme($event)"
             ></app-app-preferences-card>
+          </div>
 
+          <!-- Section 5: Security/Danger Zone -->
+          <div class="bento-item security-actions-card">
+            <h3 class="bento-title">
+              <i class="pi pi-shield"></i> Advanced Security
+            </h3>
             <app-security-settings-card
               [isTwoFactorEnabled]="is2FAEnabled()"
               (changePassword)="showChangePasswordDialog = true"
@@ -124,17 +108,6 @@
               (viewSessions)="showSessionsDialog = true; loadSessions()"
               (deleteAccount)="showDeleteAccountDialog = true"
             ></app-security-settings-card>
-          </div>
-        } @placeholder {
-          <div class="settings-section ui-stack-md">
-            <div class="ui-section-heading">
-              <div class="ui-section-heading__content">
-                <h2 class="ui-section-heading__title">Loading more settings…</h2>
-                <p class="ui-section-heading__description">
-                  Additional preferences load when you reach them.
-                </p>
-              </div>
-            </div>
           </div>
         }
       </div>

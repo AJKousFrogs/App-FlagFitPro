@@ -271,260 +271,114 @@ const CATEGORY_LABELS: Record<
   ],
   template: `
     <app-main-layout>
-      <div class="achievements-page ui-page-shell ui-page-stack">
-        <app-page-header
-          title="Achievements"
-          subtitle="Earn badges and points for your training milestones"
-          icon="pi-trophy"
-        ></app-page-header>
-
-        <!-- Stats Overview -->
-        <div class="stats-grid">
-          <app-card-shell class="stat-card highlight">
-            <div class="stat-content">
-              <div class="stat-icon-wrapper">
-                <i class="pi pi-trophy stat-icon"></i>
-              </div>
-              <div class="stat-details stat-block__content stat-block--card">
-                <span class="stat-block__label">Total Points</span>
-                <span class="stat-block__value">{{
-                  totalPoints() | number
-                }}</span>
-                <app-status-tag
-                  [value]="'Top ' + userRankPercentile() + '%'"
-                  severity="info"
-                  size="sm"
-                />
-              </div>
-            </div>
-          </app-card-shell>
-
-          <app-card-shell class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon-wrapper">
-                <span class="stat-emoji">🎖️</span>
-              </div>
-              <div class="stat-details stat-block__content stat-block--card">
-                <span class="stat-block__label">Achievements Unlocked</span>
-                <span class="stat-block__value"
-                  >{{ unlockedCount() }} / {{ totalAchievements() }}</span
-                >
-              </div>
-            </div>
-          </app-card-shell>
-
-          <app-card-shell class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon-wrapper">
-                <i class="pi pi-chart-line stat-icon"></i>
-              </div>
-              <div class="stat-details stat-block__content stat-block--card">
-                <span class="stat-block__label">Progress</span>
-                <span class="stat-block__value">{{ progressPercent() }}%</span>
-                <p-progressBar
-                  [value]="progressPercent()"
-                  [showValue]="false"
-                  class="progress-mini"
-                ></p-progressBar>
-              </div>
-            </div>
-          </app-card-shell>
-
-          <app-card-shell class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon-wrapper">
-                <i class="pi pi-bolt stat-icon"></i>
-              </div>
-              <div class="stat-details stat-block__content stat-block--card">
-                <span class="stat-block__label">Recent Unlock</span>
-                <span class="stat-block__value recent">{{
-                  recentUnlock() ? recentUnlock()!.name : "None yet"
-                }}</span>
-                @if (recentUnlock()) {
-                  <span class="stat-hint">{{
-                    getTimeAgoStr(recentUnlock()!.unlockedAt!)
-                  }}</span>
-                }
-              </div>
-            </div>
-          </app-card-shell>
+      <div class="achievements-page bento-grid ui-page-shell">
+        <!-- Header (Full Width) -->
+        <div class="bento-item full-width no-padding header-bento">
+          <app-page-header
+            title="Achievements"
+            subtitle="Earn badges and points for your training milestones"
+            icon="pi-trophy"
+          ></app-page-header>
         </div>
 
-        <!-- Recent Unlocks -->
+        <!-- Stats Bento (Full Width) -->
+        <div class="bento-item full-width stats-bento">
+          <div class="stats-inner-grid">
+            <div class="stat-box highlight">
+              <span class="lbl">Total Points</span>
+              <span class="val">{{ totalPoints() | number }}</span>
+              <app-status-tag [value]="'Top ' + userRankPercentile() + '%'" severity="info" size="sm" />
+            </div>
+            <div class="stat-box">
+              <span class="lbl">Badges Earned</span>
+              <span class="val">{{ unlockedCount() }} / {{ totalAchievements() }}</span>
+            </div>
+            <div class="stat-box">
+              <span class="lbl">Global Rank</span>
+              <span class="val">#{{ userRank() }}</span>
+            </div>
+            <div class="stat-box progress-box">
+              <span class="lbl">Season Progress</span>
+              <span class="val">{{ progressPercent() }}%</span>
+              <p-progressBar [value]="progressPercent()" [showValue]="false" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Recently Unlocked (Span 2) -->
         @if (recentUnlocks().length > 0) {
-          <app-card-shell class="recent-card" title="Recently Unlocked">
-            <div class="recent-grid">
-              @for (
-                achievement of recentUnlocks().slice(
-                  0,
-                  UI_LIMITS.RECOMMENDATIONS_PREVIEW
-                );
-                track achievement.id
-              ) {
-                <div class="achievement-card unlocked">
-                  <div class="achievement-badge">
-                    <span class="badge-icon">{{ achievement.icon }}</span>
-                    <span class="badge-check"><i class="pi pi-check"></i></span>
-                  </div>
-                  <div class="achievement-info">
+          <div class="bento-item span-2 recent-locks-bento">
+            <h3 class="bento-title"><i class="pi pi-bolt"></i> Recently Unlocked</h3>
+            <div class="recent-list">
+              @for (achievement of recentUnlocks().slice(0, 3); track achievement.id) {
+                <div class="unlock-item">
+                  <span class="icon">{{ achievement.icon }}</span>
+                  <div class="info">
                     <h4>{{ achievement.name }}</h4>
-                    <p>{{ achievement.description }}</p>
-                    <div class="achievement-meta">
-                      <span class="points">+{{ achievement.points }} pts</span>
-                      <span class="date">{{
-                        achievement.unlockedAt | date: "MMM d, y"
-                      }}</span>
-                    </div>
+                    <p>{{ achievement.unlockedAt | date }}</p>
                   </div>
+                  <span class="pts">+{{ achievement.points }}</span>
                 </div>
               }
             </div>
-          </app-card-shell>
+          </div>
         }
 
-        <!-- Achievement Categories -->
-        <app-card-shell class="categories-card">
-          <div class="category-tabs">
-            @for (cat of categories; track cat.value) {
-              <button
-                class="category-tab"
-                [class.active]="selectedCategory() === cat.value"
-                (click)="selectedCategory.set(cat.value)"
-              >
-                <span class="tab-icon">{{ cat.icon }}</span>
-                <span class="tab-label">{{ cat.label }}</span>
-              </button>
+        <!-- Points Leaderboard Preview (Span 1) -->
+        <div class="bento-item leaderboard-preview-bento">
+          <h3 class="bento-title"><i class="pi pi-list"></i> Top Players</h3>
+          <div class="leaderboard-mini">
+            @for (entry of leaderboard().slice(0, 2); track entry.playerId) {
+              <div class="leader-row">
+                <span class="rank">{{ entry.rank }}</span>
+                <span class="name">{{ entry.playerName }}</span>
+                <span class="p">{{ entry.points | number }}</span>
+              </div>
             }
+            <div class="leader-row you">
+              <span class="rank">{{ userRank() }}</span>
+              <span class="name">You</span>
+              <span class="p">{{ totalPoints() | number }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Achievement Gallery (Full Width) -->
+        <div class="bento-item full-width gallery-bento">
+          <div class="gallery-header">
+            <h3 class="bento-title"><i class="pi pi-th-large"></i> Badge Gallery</h3>
+            <div class="category-filters">
+              @for (cat of categories; track cat.value) {
+                <button
+                  class="cat-chip"
+                  [class.active]="selectedCategory() === cat.value"
+                  (click)="selectedCategory.set(cat.value)"
+                >
+                  {{ cat.icon }} {{ cat.label }}
+                </button>
+              }
+            </div>
           </div>
 
-          <div class="achievements-grid">
+          <div class="badges-grid">
             @for (achievement of filteredAchievements(); track achievement.id) {
-              <div
-                class="achievement-card"
-                [class.unlocked]="achievement.isUnlocked"
-                [class.locked]="!achievement.isUnlocked"
-              >
-                <div
-                  class="achievement-badge"
-                  [class.locked]="!achievement.isUnlocked"
-                >
-                  @if (achievement.isUnlocked) {
-                    <span class="badge-icon">{{ achievement.icon }}</span>
-                    <span class="badge-check"><i class="pi pi-check"></i></span>
-                  } @else {
-                    <span class="badge-icon locked">🔒</span>
-                  }
+              <div class="badge-card" [class.locked]="!achievement.isUnlocked">
+                <div class="badge-visual">
+                  <span class="emoji">{{ achievement.icon }}</span>
+                  @if (achievement.isUnlocked) { <i class="pi pi-check-circle check"></i> }
                 </div>
-                <div class="achievement-info">
-                  <h4>{{ achievement.name }}</h4>
-                  <p>{{ achievement.description }}</p>
-
-                  @if (achievement.isUnlocked) {
-                    <div class="achievement-meta">
-                      <span class="points">+{{ achievement.points }} pts</span>
-                      <span class="date">{{
-                        achievement.unlockedAt | date: "MMM d, y"
-                      }}</span>
-                    </div>
-                  } @else if (
-                    achievement.progress !== undefined && achievement.target
-                  ) {
-                    <div class="achievement-progress">
-                      <p-progressBar
-                        [value]="
-                          (achievement.progress / achievement.target) * 100
-                        "
-                        [showValue]="false"
-                        class="progress-achievement"
-                      ></p-progressBar>
-                      <span class="progress-text"
-                        >{{ achievement.progress }}/{{
-                          achievement.target
-                        }}</span
-                      >
-                    </div>
-                    <span class="points pending"
-                      >{{ achievement.points }} pts</span
-                    >
-                  } @else {
-                    <span class="points pending"
-                      >{{ achievement.points }} pts</span
-                    >
+                <h4>{{ achievement.name }}</h4>
+                <p>{{ achievement.description }}</p>
+                <div class="badge-footer">
+                  <span class="pts">{{ achievement.points }} PTS</span>
+                  @if (!achievement.isUnlocked && achievement.target) {
+                    <p-progressBar [value]="(achievement.progress || 0) / achievement.target * 100" [showValue]="false" />
                   }
                 </div>
               </div>
             }
           </div>
-        </app-card-shell>
-
-        <!-- Team Leaderboard -->
-        <app-card-shell
-          class="leaderboard-card"
-          title="Team Leaderboard"
-          headerIcon="pi-trophy"
-        >
-          <div header-actions class="header-filters">
-            <p-select
-              [options]="timeRanges"
-              (onChange)="onTimeRangeChange($event)"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Time Range"
-              class="leaderboard-range-select"
-            ></p-select>
-          </div>
-          <p-table
-            [value]="leaderboard()"
-            [virtualScroll]="leaderboard().length > 50"
-            [virtualScrollItemSize]="46"
-            dataKey="playerId"
-            class="p-datatable-sm"
-          >
-            <ng-template #header>
-              <tr>
-                <th [style.width]="tableColumnWidths.rank">Rank</th>
-                <th>Player</th>
-                <th [style.width]="tableColumnWidths.score">Points</th>
-                <th>Recent Achievement</th>
-              </tr>
-            </ng-template>
-            <ng-template #body let-entry>
-              <tr [class.current-user]="entry.isCurrentUser">
-                <td>
-                  @if (entry.rank === 1) {
-                    <span class="rank-medal">🥇</span>
-                  } @else if (entry.rank === 2) {
-                    <span class="rank-medal">🥈</span>
-                  } @else if (entry.rank === 3) {
-                    <span class="rank-medal">🥉</span>
-                  } @else {
-                    <span class="rank-number">{{ entry.rank }}</span>
-                  }
-                </td>
-                <td>
-                  @if (entry.isCurrentUser) {
-                    <strong>⭐ {{ entry.playerName }}</strong>
-                  } @else {
-                    {{ entry.playerName }}
-                  }
-                </td>
-                <td>
-                  <strong>{{ entry.points | number }}</strong>
-                </td>
-                <td class="recent-achievement">
-                  {{ entry.recentAchievement || "-" }}
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-
-          <div class="leaderboard-footer">
-            <span
-              >Your Rank: #{{ userRank() }} of
-              {{ leaderboard().length }} players</span
-            >
-          </div>
-        </app-card-shell>
+        </div>
       </div>
     </app-main-layout>
   `,

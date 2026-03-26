@@ -1,42 +1,117 @@
 @use "styles/mixins" as *;
 
-.playbook-page {
+.playbook-page.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  max-width: 1200px;
+  margin: 0 auto;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+
+  .bento-item {
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 16px;
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    &.no-padding {
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  .header-bento, .filters-bento {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  /* Play Cards Grid */
+  .play-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-5);
+    padding: var(--space-5);
+  }
+
+  .play-card {
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-base);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--ds-primary-green);
+    }
+
+    .play-diagram-placeholder {
+      position: relative;
+      aspect-ratio: 4/3;
+      background: #1a1a1a; // Dark field background
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      img { width: 100%; height: 100%; object-fit: contain; }
+      
+      .memorized-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--ds-primary-green);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+    }
+
+    .play-info {
+      padding: var(--space-4);
+      
+      .play-name { margin: 0 0 4px; font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
+      .play-category { font-size: var(--ds-font-size-xs); color: var(--color-text-secondary); margin-bottom: 12px; }
+      
+      .play-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        .tag { font-size: 10px; background: var(--ui-surface-subtle); padding: 2px 6px; border-radius: 4px; }
+      }
+    }
+  }
 }
 
-// Responsive
-@include respond-to(md) {
-  .playbook-page {
-    padding: var(--space-3);
+/* Responsive */
+@media (max-width: 1024px) {
+  .playbook-page.bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: var(--space-4);
   }
+}
 
-  .progress-header {
-    flex-direction: column;
-    gap: var(--space-3);
-    align-items: stretch;
-  }
-
-  .progress-stats {
-    justify-content: center;
-  }
-
-  .plays-grid {
+@media (max-width: 768px) {
+  .playbook-page.bento-grid {
     grid-template-columns: 1fr;
-  }
-
-  .filters-row {
-    flex-direction: column;
-    align-items: stretch;
-
-    .filter-search {
-      width: 100%;
-    }
-
-    p-select {
-      width: 100%;
-    }
+    .play-cards-grid { grid-template-columns: 1fr; padding: var(--space-4); }
   }
 }

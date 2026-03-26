@@ -1,27 +1,84 @@
 @use "styles/mixins" as *;
 
-/* ================================================================
-   SETTINGS COMPONENT STYLES
-   Design System Compliant - January 2, 2026
-   ================================================================ */
-
-.settings-page {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip;
-}
-
-.settings-grid {
+.settings-page.bento-grid {
   display: grid;
-  gap: var(--layout-page-section-gap);
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-5);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: var(--space-8);
+  align-items: start;
+
+  .bento-item {
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 16px;
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+
+    &.no-padding {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .bento-title {
+      font-size: var(--ds-font-size-lg);
+      font-weight: var(--ds-font-weight-bold);
+      margin-bottom: var(--space-5);
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      
+      i { color: var(--ds-primary-green); font-size: 1.25rem; }
+    }
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  .header-bento {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .settings-nav-card {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-4));
+  }
+
+  .settings-content-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
 }
 
-.settings-section {
-  scroll-margin-top: var(--space-20);
-  display: flex;
-  flex-direction: column;
-  gap: var(--layout-gap-md);
-  height: 100%;
+/* Tablet Overrides */
+@media (max-width: 1024px) {
+  .settings-page.bento-grid {
+    grid-template-columns: 1fr;
+    
+    .settings-nav-card {
+      position: static;
+    }
+  }
+}
+
+/* Mobile Overrides */
+@media (max-width: 768px) {
+  .settings-page.bento-grid {
+    gap: var(--space-4);
+    padding: var(--space-4);
+
+    .bento-item {
+      padding: var(--space-4);
+    }
+  }
 }
 
 /* ================================================================

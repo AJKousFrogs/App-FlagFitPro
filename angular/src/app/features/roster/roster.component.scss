@@ -1,61 +1,133 @@
 @use "styles/mixins" as *;
 
-/* ================================================================
-   ROSTER COMPONENT STYLES
-   Design System Compliant - January 2, 2026
-   ================================================================ */
-
-.roster-page {
+.roster-page.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  max-width: 1200px;
+  margin: 0 auto;
   width: 100%;
-}
+  padding-bottom: var(--space-8);
 
-.roster-toolbar {
-  padding: 0;
+  .bento-item {
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 16px;
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    &.no-padding {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .bento-title {
+      font-size: var(--ds-font-size-lg);
+      font-weight: var(--ds-font-weight-bold);
+      margin-bottom: var(--space-4);
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      
+      i { color: var(--ds-primary-green); }
+    }
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  .header-bento {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .stats-bento, .toolbar-bento {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  /* Players Section Content */
+  .position-group {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--ui-border-subtle);
+
+    &:last-child { border-bottom: none; }
+  }
+
+  .position-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+
+    i {
+      font-size: 1.25rem;
+      color: var(--ds-primary-green);
+    }
+
+    h4 {
+      margin: 0;
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .count {
+      background: var(--ui-surface-subtle);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      font-size: var(--ds-font-size-xs);
+      font-weight: var(--ds-font-weight-bold);
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .roster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
 }
 
 .header-actions {
   display: flex;
-  align-items: stretch;
-  gap: var(--layout-gap-sm);
-  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
-.header-actions app-button {
-  flex: 0 1 auto;
+/* Tablet: 2 Columns */
+@media (max-width: 1024px) {
+  .roster-page.bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: var(--space-4);
+  }
 }
 
-.position-section {
-  margin-bottom: 0;
-}
+/* Mobile: 1 Column */
+@media (max-width: 768px) {
+  .roster-page.bento-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
 
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--ds-font-size-2xl); /* H2: Section titles - var(--icon-base) */
-  font-weight: var(--ds-font-weight-semibold); /* H2: Semibold (600) */
-  line-height: var(--ds-line-height-tight);
-  margin-bottom: var(--space-6);
-  color: var(--color-text-primary);
-}
+    .bento-item {
+      grid-column: span 1 !important;
+      padding: var(--space-4);
+    }
 
-.section-title i {
-  color: var(--color-brand-primary);
-}
-
-.position-count {
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-regular);
-  color: var(--color-text-secondary);
-}
-
-.roster-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(var(--grid-card-min-lg), 1fr)
-  );
-  gap: var(--layout-gap-lg);
+    .header-actions {
+      width: 100%;
+      app-button { flex: 1; }
+    }
+  }
 }
 
 /* Player Details Modal */

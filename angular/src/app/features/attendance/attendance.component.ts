@@ -14,6 +14,7 @@ import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
+import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -69,415 +70,209 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
+    TableModule
   ],
   template: `
     <app-main-layout>
-      <div class="attendance-page ui-page-shell ui-page-shell--wide ui-page-stack">
-        <app-page-header
-          title="Practice Attendance"
-          subtitle="Track and manage team attendance"
-        >
-          <div class="header-actions">
-            @if (isCoach()) {
-              <app-button iconLeft="pi-plus" (clicked)="openCreateEventDialog()"
-                >Create Event</app-button
-              >
-            }
-          </div>
-        </app-page-header>
-
-        <div class="attendance-content ui-page-stack">
-          <!-- Stats Overview -->
-          <div class="stats-grid">
-            <app-card-shell class="stat-card">
-              <div class="stat-content">
-                <i class="pi pi-calendar stat-icon"></i>
-                <div class="stat-info stat-block__content">
-                  <span class="stat-block__value">{{
-                    upcomingEvents().length
-                  }}</span>
-                  <span class="stat-block__label">Upcoming Events</span>
-                </div>
-              </div>
-            </app-card-shell>
-
-            <app-card-shell class="stat-card">
-              <div class="stat-content">
-                <i class="pi pi-check-circle stat-icon success"></i>
-                <div class="stat-info stat-block__content">
-                  <span class="stat-block__value"
-                    >{{ teamAttendanceRate() }}%</span
-                  >
-                  <span class="stat-block__label">Team Attendance Rate</span>
-                </div>
-              </div>
-            </app-card-shell>
-
-            <app-card-shell class="stat-card">
-              <div class="stat-content">
-                <i class="pi pi-users stat-icon"></i>
-                <div class="stat-info stat-block__content">
-                  <span class="stat-block__value">{{
-                    playerStats().length
-                  }}</span>
-                  <span class="stat-block__label">Players Tracked</span>
-                </div>
-              </div>
-            </app-card-shell>
-          </div>
-
-          <!-- Upcoming Events -->
-          <app-card-shell class="events-card" title="Upcoming Events">
-            <div header-actions class="filter-actions">
-              <p-select
-                [options]="eventTypeOptions"
-                (onChange)="onSelectedEventTypeSelect($event)"
-                placeholder="All Types"
-                [showClear]="true"
-                class="attendance-filter-select"
-              ></p-select>
-            </div>
-
-            @if (filteredEvents().length === 0) {
-              <app-empty-state
-                icon="pi-calendar-times"
-                heading="No upcoming events scheduled"
-                description="Events will appear here when practices, games, or meetings are scheduled."
-              />
-            } @else {
-              <div class="events-list">
-                @for (event of filteredEvents(); track event.id) {
-                  <div class="event-item" (click)="selectEvent(event)">
-                    <div class="event-icon">
-                      <i [class]="getEventIcon(event.event_type)"></i>
-                    </div>
-                    <div class="event-details">
-                      <div class="event-title">{{ event.title }}</div>
-                      <div class="event-meta">
-                        <span>
-                          <i class="pi pi-clock"></i>
-                          {{ event.start_time | date: "MMM d, h:mm a" }}
-                        </span>
-                        @if (event.location) {
-                          <span>
-                            <i class="pi pi-map-marker"></i>
-                            {{ event.location }}
-                          </span>
-                        }
-                      </div>
-                    </div>
-                    <div class="event-actions">
-                      <app-status-tag
-                        [value]="event.is_mandatory ? 'Mandatory' : 'Optional'"
-                        [severity]="event.is_mandatory ? 'danger' : 'info'"
-                        size="sm"
-                      />
-                      @if (isCoach()) {
-                        <app-icon-button
-                          icon="pi-users"
-                          variant="text"
-                          (clicked)="
-                            openAttendanceDialog(event);
-                            $event.stopPropagation()
-                          "
-                          ariaLabel="Manage event attendance"
-                          tooltip="Attendance"
-                        />
-                      } @else {
-                        <app-icon-button
-                          icon="pi-check"
-                          variant="text"
-                          (clicked)="
-                            quickCheckIn(event); $event.stopPropagation()
-                          "
-                          ariaLabel="Quick check-in"
-                          tooltip="Check in"
-                        />
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-          </app-card-shell>
-
-          <!-- Player Attendance Stats (Coach View) -->
-          @if (isCoach()) {
-            <app-card-shell class="stats-card" title="Player Attendance Statistics">
-              <div class="attendance-stats-table-wrapper">
-                <table class="attendance-stats-table">
-                  <thead>
-                    <tr>
-                      <th>Player</th>
-                      <th>Attended</th>
-                      <th>Missed</th>
-                      <th>Excused</th>
-                      <th>Late</th>
-                      <th>Rate</th>
-                      <th>Streak</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (stat of paginatedPlayerStats(); track stat.player_id) {
-                      <tr>
-                        <td>
-                          <div class="player-cell">
-                            <p-avatar
-                              [label]="getInitialsStr(stat.player_name || 'U')"
-                              shape="circle"
-                              size="normal"
-                            ></p-avatar>
-                            <span>{{ stat.player_name || "Unknown" }}</span>
-                          </div>
-                        </td>
-                        <td>
-                          <span class="stat-badge success">{{
-                            stat.events_attended
-                          }}</span>
-                        </td>
-                        <td>
-                          <span class="stat-badge danger">{{
-                            stat.events_missed
-                          }}</span>
-                        </td>
-                        <td>
-                          <span class="stat-badge info">{{
-                            stat.events_excused
-                          }}</span>
-                        </td>
-                        <td>
-                          <span class="stat-badge warning">{{
-                            stat.events_late
-                          }}</span>
-                        </td>
-                        <td>
-                          <div class="rate-cell">
-                            <p-progressBar
-                              [value]="stat.attendance_rate"
-                              [showValue]="false"
-                              class="rate-bar"
-                            ></p-progressBar>
-                            <span>{{ stat.attendance_rate }}%</span>
-                          </div>
-                        </td>
-                        <td>
-                          <span
-                            class="streak-badge"
-                            [class.active]="stat.current_streak > 0"
-                          >
-                            🔥 {{ stat.current_streak }}
-                          </span>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-
-              @if (playerStatsPageCount() > 1) {
-                <div class="attendance-stats-pagination">
-                  <span class="attendance-stats-page-label">
-                    {{ playerStatsPageRangeLabel() }}
-                  </span>
-
-                  <div class="attendance-stats-page-actions">
-                    <app-button
-                      variant="text"
-                      size="sm"
-                      iconLeft="pi-chevron-left"
-                      [disabled]="currentPlayerStatsPage() === 1"
-                      (clicked)="goToPreviousPlayerStatsPage()"
-                      >Previous</app-button
-                    >
-                    <app-button
-                      variant="text"
-                      size="sm"
-                      iconLeft="pi-chevron-right"
-                      [disabled]="currentPlayerStatsPage() === playerStatsPageCount()"
-                      (clicked)="goToNextPlayerStatsPage()"
-                      >Next</app-button
-                    >
-                  </div>
-                </div>
+      <div class="attendance-page bento-grid ui-page-shell">
+        <!-- Header (Full Width) -->
+        <div class="bento-item full-width no-padding header-bento">
+          <app-page-header title="Attendance Tracking" subtitle="Monitor team participation and event check-ins" icon="pi-calendar">
+            <div class="header-actions">
+              @if (isCoach()) {
+                <app-button iconLeft="pi-plus" (clicked)="openCreateEventDialog()" size="sm">Create Event</app-button>
               }
-            </app-card-shell>
-          }
+            </div>
+          </app-page-header>
         </div>
 
-        <!-- Create Event Dialog -->
-        <app-dialog
-          [(visible)]="showCreateEventDialog"
-          [modal]="true"
-          styleClass="attendance-create-dialog"
-          [blockScroll]="true"
-          [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
-          ariaLabel="Create event"
-        >
-          <app-dialog-header
-            icon="calendar-plus"
-            title="Create Event"
-            subtitle="Schedule a new practice, game, meeting, or conditioning session."
-            (close)="showCreateEventDialog = false"
-          />
-          <div class="attendance-dialog-form">
-            <div class="form-field">
-              <label for="eventTitle">Title *</label>
-              <input
-                id="eventTitle"
-                type="text"
-                pInputText
-                [value]="newEvent.title"
-                (input)="onNewEventTitleInput($event)"
-                placeholder="e.g., Team Practice"
-              />
+        <!-- Quick Stats (Full Width) -->
+        <div class="bento-item full-width stats-bento">
+          <div class="stats-inner-grid">
+            <div class="stat-box">
+              <span class="lbl">Upcoming Events</span>
+              <span class="val">{{ upcomingEvents().length }}</span>
             </div>
+            <div class="stat-box highlight">
+              <span class="lbl">Team Attendance</span>
+              <span class="val">{{ teamAttendanceRate() }}%</span>
+            </div>
+            <div class="stat-box">
+              <span class="lbl">Players Tracked</span>
+              <span class="val">{{ playerStats().length }}</span>
+            </div>
+          </div>
+        </div>
 
+        <!-- Upcoming Events (Span 1) -->
+        <div class="bento-item events-bento">
+          <div class="bento-header-row">
+            <h3 class="bento-title"><i class="pi pi-calendar"></i> Events</h3>
+            <p-select [options]="eventTypeOptions" (onChange)="onSelectedEventTypeSelect($event)" placeholder="Type" class="mini-select" />
+          </div>
+          
+          <div class="events-list">
+            @if (filteredEvents().length === 0) {
+              <app-empty-state icon="pi-calendar-times" title="No events" message="Check back later" />
+            } @else {
+              @for (event of filteredEvents().slice(0, 5); track event.id) {
+                <div class="event-item-bento" (click)="selectEvent(event)">
+                  <div class="event-date">
+                    <span class="m">{{ event.start_time | date: 'MMM' }}</span>
+                    <span class="d">{{ event.start_time | date: 'dd' }}</span>
+                  </div>
+                  <div class="event-info">
+                    <span class="title">{{ event.title }}</span>
+                    <span class="time">{{ event.start_time | date: 'h:mm a' }}</span>
+                  </div>
+                  <i class="pi pi-chevron-right"></i>
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Player Attendance List (Span 2) -->
+        <div class="bento-item span-2 players-bento no-padding">
+          <div class="bento-header-row p-5">
+            <h3 class="bento-title"><i class="pi pi-users"></i> Player Performance</h3>
+          </div>
+
+          <p-table [value]="playerStats().slice(0, 10)" class="attendance-table">
+            <ng-template #header>
+              <tr>
+                <th>Player</th>
+                <th>Rate</th>
+                <th>Streak</th>
+                <th>Status</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-stat>
+              <tr>
+                <td>
+                  <div class="player-cell">
+                    <p-avatar [label]="getInitialsStr(stat.player_name || 'U')" shape="circle" size="normal" />
+                    <span>{{ stat.player_name || "Unknown" }}</span>
+                  </div>
+                </td>
+                <td>{{ stat.attendance_rate }}%</td>
+                <td><span class="streak-tag">🔥 {{ stat.current_streak }}</span></td>
+                <td><app-status-tag [value]="stat.attendance_rate > 80 ? 'Reliable' : 'At Risk'" [severity]="stat.attendance_rate > 80 ? 'success' : 'warning'" size="sm" /></td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+      <!-- Create Event Dialog -->
+      <app-dialog
+        [(visible)]="showCreateEventDialog"
+        [modal]="true"
+        styleClass="attendance-create-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
+        ariaLabel="Create event"
+      >
+        <app-dialog-header
+          icon="calendar-plus"
+          title="Create Event"
+          subtitle="Schedule a new practice, game, meeting, or conditioning session."
+          (close)="showCreateEventDialog = false"
+        />
+        <div class="attendance-dialog-form">
+          <div class="form-field">
+            <label for="eventTitle">Title *</label>
+            <input
+              id="eventTitle"
+              type="text"
+              pInputText
+              [value]="newEvent.title"
+              (input)="onNewEventTitleInput($event)"
+              placeholder="e.g., Team Practice"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="eventType">Type *</label>
+            <p-select
+              id="eventType"
+              [options]="eventTypeOptions"
+              (onChange)="onNewEventTypeSelect($event)"
+              placeholder="Select type"
+              class="w-full"
+            ></p-select>
+          </div>
+
+          <div class="form-row two-col">
             <div class="form-field">
-              <label for="eventType">Type *</label>
-              <p-select
-                id="eventType"
-                [options]="eventTypeOptions"
-                (onChange)="onNewEventTypeSelect($event)"
-                placeholder="Select type"
+              <label for="startTime">Start Time *</label>
+              <input
+                id="startTime"
+                type="datetime-local"
+                [value]="getNewEventDateTimeInputValue(newEvent.start_time)"
+                (input)="onNewEventStartTimeInputEvent($event)"
                 class="w-full"
-              ></p-select>
-            </div>
-
-            <div class="form-row two-col">
-              <div class="form-field">
-                <label for="startTime">Start Time *</label>
-                <input
-                  id="startTime"
-                  type="datetime-local"
-                  [value]="getNewEventDateTimeInputValue(newEvent.start_time)"
-                  (input)="onNewEventStartTimeInputEvent($event)"
-                  class="w-full"
-                />
-              </div>
-
-              <div class="form-field">
-                <label for="endTime">End Time</label>
-                <input
-                  id="endTime"
-                  type="datetime-local"
-                  [value]="getNewEventDateTimeInputValue(newEvent.end_time)"
-                  (input)="onNewEventEndTimeInputEvent($event)"
-                  class="w-full"
-                />
-              </div>
-            </div>
-
-            <div class="form-field">
-              <label for="location">Location</label>
-              <input
-                id="location"
-                type="text"
-                pInputText
-                [value]="newEvent.location"
-                (input)="onNewEventLocationInput($event)"
-                placeholder="e.g., Main Field"
               />
             </div>
 
             <div class="form-field">
-              <label for="description">Description</label>
-              <textarea
-                id="description"
-                pInputTextarea
-                [value]="newEvent.description"
-                (input)="onNewEventDescriptionInput($event)"
-                rows="3"
-                placeholder="Optional details..."
-              ></textarea>
-            </div>
-
-            <div class="form-field checkbox-field">
+              <label for="endTime">End Time</label>
               <input
-                type="checkbox"
-                id="mandatory"
-                [checked]="newEvent.is_mandatory"
-                (change)="onNewEventMandatoryToggle($event)"
+                id="endTime"
+                type="datetime-local"
+                [value]="getNewEventDateTimeInputValue(newEvent.end_time)"
+                (input)="onNewEventEndTimeInputEvent($event)"
+                class="w-full"
               />
-              <label for="mandatory">Mandatory attendance</label>
             </div>
           </div>
 
-          <app-dialog-footer
-            dialogFooter
-            cancelLabel="Cancel"
-            primaryLabel="Create Event"
-            primaryIcon="check"
-            [disabled]="!canCreateEvent()"
-            (cancel)="showCreateEventDialog = false"
-            (primary)="createEvent()"
-          />
-        </app-dialog>
+          <div class="form-field">
+            <label for="location">Location</label>
+            <input
+              id="location"
+              type="text"
+              pInputText
+              [value]="newEvent.location"
+              (input)="onNewEventLocationInput($event)"
+              placeholder="e.g., Main Field"
+            />
+          </div>
 
-        <!-- Take Attendance Dialog -->
-        <app-dialog
-          [(visible)]="showAttendanceDialog"
-          [modal]="true"
-          styleClass="attendance-take-dialog"
-          [blockScroll]="true"
-          [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
-          ariaLabel="Take attendance"
-        >
-          <app-dialog-header
-            icon="users"
-            title="Take Attendance"
-            subtitle="Mark each player present, late, excused, or absent for this event."
-            (close)="showAttendanceDialog = false"
-          />
-          @if (selectedEvent()) {
-            <div class="attendance-dialog">
-              <div class="event-summary">
-                <h4>{{ selectedEvent()!.title }}</h4>
-                <p>
-                  {{
-                    selectedEvent()!.start_time
-                      | date: "EEEE, MMM d, y - h:mm a"
-                  }}
-                </p>
-              </div>
+          <div class="form-field">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              pInputTextarea
+              [value]="newEvent.description"
+              (input)="onNewEventDescriptionInput($event)"
+              rows="3"
+              placeholder="Optional details..."
+            ></textarea>
+          </div>
 
-              <div class="attendance-list">
-                @for (record of attendanceRecords(); track record.player_id) {
-                  <div class="attendance-row">
-                    <div class="player-info">
-                      <p-avatar
-                        [label]="getInitialsStr(record.player_name || 'U')"
-                        shape="circle"
-                      ></p-avatar>
-                      <span>{{ record.player_name || "Unknown" }}</span>
-                    </div>
-                    <div class="status-buttons">
-                      @for (status of attendanceStatuses; track status.value) {
-                        <app-button
-                          size="sm"
-                          (clicked)="
-                            updateAttendanceStatus(record, status.value)
-                          "
-                        ></app-button>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-          }
+          <div class="form-field checkbox-field">
+            <input
+              type="checkbox"
+              id="mandatory"
+              [checked]="newEvent.is_mandatory"
+              (change)="onNewEventMandatoryToggle($event)"
+            />
+            <label for="mandatory">Mandatory attendance</label>
+          </div>
+        </div>
 
-          <app-dialog-footer
-            dialogFooter
-            cancelLabel="Close"
-            primaryLabel="Save All"
-            primaryIcon="check"
-            (cancel)="showAttendanceDialog = false"
-            (primary)="saveAttendance()"
-          />
-        </app-dialog>
-      </div>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Create Event"
+          primaryIcon="check"
+          [disabled]="!canCreateEvent()"
+          (cancel)="showCreateEventDialog = false"
+          (primary)="createEvent()"
+        />
+      </app-dialog>
     </app-main-layout>
   `,
   styleUrl: "./attendance.component.scss",

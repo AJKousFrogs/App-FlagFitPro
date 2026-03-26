@@ -17,471 +17,118 @@
 
       <!-- Content -->
       @else {
-        <div class="performance-page ui-page-shell ui-page-shell--wide ui-page-stack">
-          <app-page-header
-            title="Performance Tracking"
-            subtitle="Track and analyze your performance metrics over time"
-            icon="pi-bullseye"
-          >
-            <app-button iconLeft="pi-plus" (clicked)="openLogDialog()"
-              >Log Performance</app-button
+        <div class="performance-page bento-grid ui-page-shell">
+          <!-- Page Header (Full Width) -->
+          <div class="bento-item full-width no-padding header-bento">
+            <app-page-header
+              title="Performance Tracking"
+              subtitle="Track and analyze your performance metrics over time"
+              icon="pi-bullseye"
             >
-          </app-page-header>
-          <app-data-source-banner
-            [dataState]="performanceDataState()"
-            [currentDataPoints]="performanceDataPoints()"
-            [minimumRequired]="performanceMinimumRequired"
-            metricName="performance metrics"
-            [showWhenReal]="true"
-          />
-          <div class="data-freshness">
-            <span class="data-source">
-              Data source: Performance test logs and team benchmarks.
-            </span>
-            @if (lastRefreshed()) {
-              <span class="data-updated">
-                Last updated: {{ lastRefreshed() | date: "short" }}
-              </span>
-            }
+              <app-button iconLeft="pi-plus" (clicked)="openLogDialog()" size="sm"
+                >Log Performance</app-button
+              >
+            </app-page-header>
           </div>
-          @if (nextGenEnabled()) {
-            <app-alert
-              variant="info"
-              density="compact"
-              icon="pi-sparkles"
-              title="Preview"
-              message="Next-gen performance signals are in preview. Keep using legacy metrics until validation completes."
-              styleClass="performance-preview-banner"
-            />
-          }
 
-          <!-- Performance Metrics -->
+          <!-- Data Info (Full Width) -->
+          <div class="bento-item full-width data-info-bento">
+            <app-data-source-banner
+              [dataState]="performanceDataState()"
+              [currentDataPoints]="performanceDataPoints()"
+              [minimumRequired]="performanceMinimumRequired"
+              metricName="performance metrics"
+              [showWhenReal]="true"
+            />
+            <div class="data-freshness">
+              <span class="data-source">Data source: Performance test logs.</span>
+              @if (lastRefreshed()) {
+                <span class="data-updated">Updated: {{ lastRefreshed() | date: "short" }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Quick Metrics (Full Width) -->
           @if (hasData()) {
-            <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
-          } @else {
-            <app-empty-state
-              context="performance"
-              [useCard]="true"
-              [customActionLabel]="'Log First Test'"
-              [actionHandler]="openLogDialog"
-            />
+            <div class="bento-item full-width no-padding stats-bento">
+              <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
+            </div>
           }
 
-          <!-- Team Rankings & Achievement Badges -->
+          <!-- Rankings & Achievements (Span 2) -->
           @if (teamRankings() && teamRankings()!.rankings.length > 0) {
-            <app-card-shell
-              class="team-rankings-card"
-              title="Your Team Rankings"
-              subtitle="See how your latest metrics compare across the team"
-              headerIcon="pi-users"
-            >
-              @if (performanceAchievements().length > 0) {
-                <div header-actions class="badge-summary">
-                  @if (goldBadgeCount() > 0) {
-                    <span class="badge-count gold" pTooltip="Team Leader">
-                      🥇 {{ goldBadgeCount() }}
-                    </span>
-                  }
-                  @if (silverBadgeCount() > 0) {
-                    <span class="badge-count silver" pTooltip="2nd Place">
-                      🥈 {{ silverBadgeCount() }}
-                    </span>
-                  }
-                  @if (bronzeBadgeCount() > 0) {
-                    <span class="badge-count bronze" pTooltip="3rd Place">
-                      🥉 {{ bronzeBadgeCount() }}
-                    </span>
-                  }
-                </div>
-              }
-
-              <!-- Achievement Badges Row -->
-              @if (performanceAchievements().length > 0) {
-                <div class="achievements-row">
-                  <h4 class="achievements-title">
-                    Your Top Performance Badges
-                  </h4>
-                  <div class="achievements-grid">
-                    @for (
-                      achievement of performanceAchievements();
-                      track achievement.id
-                    ) {
-                      <app-achievement-badge
-                        [icon]="getAchievementIcon(achievement.metric)"
-                        [title]="achievement.metricLabel"
-                        [description]="getRankDescription(achievement)"
-                        [tier]="achievement.tier"
-                        [unlocked]="true"
-                        [unlockedDate]="achievement.awardedAt"
-                        [compact]="false"
-                      />
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- Rankings Table -->
-              <div class="rankings-table">
-                <h4 class="rankings-subtitle">How You Compare to Teammates</h4>
-                <div class="rankings-list">
-                  @for (
-                    ranking of teamRankings()!.rankings;
-                    track ranking.metric
-                  ) {
-                    <div
-                      class="ranking-item"
-                      [class.top-three]="ranking.achievementTier"
-                    >
-                      <div class="ranking-metric">
-                        <span
-                          class="rank-badge"
-                          [class]="ranking.achievementTier || 'default'"
-                        >
-                          @if (ranking.achievementTier) {
-                            {{ getRankEmoji(ranking.yourRank) }}
-                          }
-                          {{ formatRank(ranking.yourRank) }}
-                        </span>
-                        <span class="metric-name">{{
-                          ranking.metricLabel
-                        }}</span>
-                      </div>
-                      <div class="ranking-details">
-                        <span class="your-value">
-                          {{ ranking.yourValue
-                          }}{{
-                            ranking.isLowerBetter
-                              ? "s"
-                              : getMetricUnit(ranking.metric)
-                          }}
-                        </span>
-                        <span class="rank-of-total">
-                          of {{ ranking.totalPlayers }} players
-                        </span>
-                      </div>
-                      <div
-                        class="gap-from-leader"
-                        [class.is-leader]="ranking.yourRank === 1"
-                      >
-                        @if (ranking.yourRank === 1) {
-                          <span class="leader-badge"><i class="pi pi-trophy" aria-hidden="true"></i> Team Leader!</span>
-                        } @else {
-                          <span class="gap-text">{{
-                            ranking.gapFormatted
-                          }}</span>
-                        }
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <!-- Strongest/Weakest Summary -->
-              <div class="performance-summary">
-                @if (teamRankings()!.strongestMetric) {
-                  <div class="metric-summary-row metric-summary-row--success">
-                    <i
-                      class="pi pi-arrow-up metric-summary-row__icon"
-                      aria-hidden="true"
-                    ></i>
-                    <div class="metric-summary-row__content">
-                      <span class="metric-summary-row__label"
-                        >Your Strongest</span
-                      >
-                      <span class="metric-summary-row__value">
-                        {{ teamRankings()!.strongestMetric!.metricLabel }}
-                        (Top
-                        {{
-                          100 - teamRankings()!.strongestMetric!.percentile + 1
-                        }}%)
-                      </span>
-                    </div>
-                  </div>
-                }
-                @if (
-                  teamRankings()!.weakestMetric &&
-                  teamRankings()!.weakestMetric !==
-                    teamRankings()!.strongestMetric
-                ) {
-                  <div class="metric-summary-row metric-summary-row--muted">
-                    <i
-                      class="pi pi-arrow-down metric-summary-row__icon"
-                      aria-hidden="true"
-                    ></i>
-                    <div class="metric-summary-row__content">
-                      <span class="metric-summary-row__label"
-                        >Room to Improve</span
-                      >
-                      <span class="metric-summary-row__value">
-                        {{ teamRankings()!.weakestMetric!.metricLabel }}
-                        ({{ teamRankings()!.weakestMetric!.gapFormatted }})
-                      </span>
-                    </div>
+            <div class="bento-item span-2 team-rankings-bento">
+              <h3 class="bento-title"><i class="pi pi-users"></i> Team Rankings</h3>
+              <div class="rankings-list">
+                @for (ranking of teamRankings()!.rankings.slice(0, 5); track ranking.metric) {
+                  <div class="ranking-item">
+                    <span class="rank-badge" [class]="ranking.achievementTier || 'default'">#{{ ranking.yourRank }}</span>
+                    <span class="metric-name">{{ ranking.metricLabel }}</span>
+                    <span class="your-value">{{ ranking.yourValue }}{{ getMetricUnit(ranking.metric) }}</span>
                   </div>
                 }
               </div>
-            </app-card-shell>
-          } @else if (hasTeam() && hasData()) {
-            <app-card-shell class="team-rankings-card">
-              <app-empty-state
-                icon="pi-users"
-                heading="Team rankings not available yet"
-                description="Once more teammates log performance tests, you'll see how your latest results compare."
-              />
-            </app-card-shell>
+            </div>
           }
 
-          <!-- Performance Charts -->
-          <div class="charts-grid">
-            @defer (on viewport) {
-              <app-card-shell class="chart-card" title="Performance Over Time">
-                @if (nextGenEnabled()) {
-                  <span header-actions class="chart-preview-badge">Preview</span>
-                }
-                @if (performanceChartData()) {
-                  <app-lazy-chart
-                    type="line"
-                    [data]="performanceChartData()"
-                    [options]="chartOptions"
-                  ></app-lazy-chart>
-                } @else {
-                  <app-empty-state
-                    icon="pi-chart-line"
-                    heading="Performance trend unavailable"
-                    description="Log at least 2 performance tests to see your progress over time."
-                  />
-                }
-              </app-card-shell>
-            } @placeholder {
-              <app-card-shell class="chart-card">
-                <app-loading
-                  [visible]="true"
-                  variant="skeleton"
-                  message="Loading performance chart..."
-                />
-              </app-card-shell>
-            }
-
-            @defer (on viewport) {
-              <app-card-shell
-                class="chart-card"
-                title="Speed Metrics (10yd, 20yd, 40yd)"
-              >
-                @if (nextGenEnabled()) {
-                  <span header-actions class="chart-preview-badge">Preview</span>
-                }
-                @if (speedChartData()) {
-                  <app-lazy-chart
-                    type="bar"
-                    [data]="speedChartData()"
-                    [options]="chartOptions"
-                  ></app-lazy-chart>
-                } @else {
-                  <app-empty-state
-                    icon="pi-bolt"
-                    heading="Speed metrics unavailable"
-                    description="Log your 10-yard, 20-yard, or 40-yard times to see speed metrics."
-                  />
-                }
-              </app-card-shell>
-            } @placeholder {
-              <app-card-shell class="chart-card">
-                <app-loading
-                  [visible]="true"
-                  variant="skeleton"
-                  message="Loading speed metrics..."
-                />
-              </app-card-shell>
+          <!-- Trend Chart (Span 1) -->
+          <div class="bento-item performance-chart-bento">
+            <h3 class="bento-title"><i class="pi pi-chart-line"></i> Progress Trend</h3>
+            @if (performanceChartData()) {
+              <app-lazy-chart type="line" [data]="performanceChartData()" [options]="chartOptions" />
             }
           </div>
 
-          <!-- Position Benchmark Comparison -->
-          <app-card-shell
-            class="benchmark-card"
-            [title]="selectedPosition() + ' Position Benchmarks'"
-            headerIcon="pi-bullseye"
-          >
-            <app-select
-              header-actions
-              [options]="positionOptions"
-              (valueChange)="onPositionSelectionChange($event)"
-              placeholder="Change Position"
-              class="position-selector"
-            ></app-select>
-            @if (nextGenEnabled()) {
-              <p class="benchmark-preview-note">
-                Next-gen benchmarks are in preview. Use current benchmarks for
-                decisions until validation completes.
-              </p>
-            }
-            @if (positionBenchmarks().length > 0) {
-              <div class="benchmarks-list">
-                @for (
-                  benchmark of positionBenchmarks();
-                  track benchmark.metric
-                ) {
-                  <div class="benchmark-item">
-                    <div class="benchmark-metric">
-                      <span class="metric-name">{{ benchmark.metric }}</span>
-                      <span class="metric-values">
-                        You: {{ benchmark.current
-                        }}{{ benchmark.unit }} &nbsp;|&nbsp; Elite:
-                        {{ benchmark.elite }}{{ benchmark.unit }}
-                      </span>
-                    </div>
-                    <div class="benchmark-progress">
-                      <p-progressBar
-                        [value]="benchmark.percentOfElite"
-                        [showValue]="false"
-                        class="benchmark-bar"
-                      ></p-progressBar>
-                      <span class="gap-text"
-                        >({{ benchmark.gapFromElite }} away)</span
-                      >
-                    </div>
+          <!-- Position Benchmarks (Span 1) -->
+          <div class="bento-item benchmark-bento">
+            <h3 class="bento-title"><i class="pi pi-bullseye"></i> {{ selectedPosition() }} Benchmarks</h3>
+            <div class="benchmarks-list">
+              @for (benchmark of positionBenchmarks().slice(0, 4); track benchmark.metric) {
+                <div class="benchmark-item">
+                  <span class="metric-name">{{ benchmark.metric }}</span>
+                  <p-progressBar [value]="benchmark.percentOfElite" [showValue]="false" />
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Training Priorities (Span 2) -->
+          <div class="bento-item span-2 priorities-bento">
+            <h3 class="bento-title"><i class="pi pi-search"></i> Focus Areas</h3>
+            <div class="priorities-grid">
+              @for (gap of gapAnalysis().slice(0, 2); track gap.metric) {
+                <div class="priority-card">
+                  <div class="priority-header">
+                    <span class="metric">{{ gap.metric }}</span>
+                    <app-status-tag [value]="gap.gapPercentage.toFixed(1) + '% gap'" severity="warning" size="sm" />
                   </div>
-                }
-              </div>
-            } @else {
-              <app-empty-state
-                icon="pi-bullseye"
-                heading="Benchmark comparison locked"
-                description="Log your performance tests to compare against elite position benchmarks."
-              />
-            }
-          </app-card-shell>
+                  <ul class="rec-list">
+                    @for (rec of gap.recommendations.slice(0, 2); track rec) {
+                      <li>{{ rec }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </div>
 
-          <!-- Gap Analysis & Training Priorities -->
-          <app-card-shell
-            class="gap-analysis-card"
-            title="Your Training Priorities"
-            subtitle="Recommended focus areas based on current performance gaps"
-            headerIcon="pi-search"
-          >
-            @if (gapAnalysis().length === 0) {
-              <app-empty-state
-                icon="pi-chart-bar"
-                heading="No Gap Analysis Available"
-                description="Log performance metrics to see your training priorities and recommendations."
-              />
-            } @else {
-              <p-accordion>
-                @for (gap of gapAnalysis(); track gap.metric; let i = $index) {
-                  <p-accordionpanel [value]="'gap-' + i">
-                    <ng-template #header>
-                      <div class="priority-header">
-                        <span class="priority-number"
-                          >Priority #{{ i + 1 }}:</span
-                        >
-                        <span class="priority-metric">{{ gap.metric }}</span>
-                        <app-status-tag
-                          [value]="gap.gapPercentage.toFixed(1) + '% gap'"
-                          [severity]="
-                            gap.gapPercentage > 10
-                              ? 'danger'
-                              : gap.gapPercentage > 5
-                                ? 'warning'
-                                : 'info'
-                          "
-                          size="sm"
-                        />
-                      </div>
-                    </ng-template>
-                    <ng-template #content>
-                      <div class="priority-content">
-                        <div class="gap-stats">
-                          <span class="gap-stat"
-                            >Gap: {{ gap.gap.toFixed(2) }} from elite</span
-                          >
-                          <span class="gap-stat"
-                            >Current: {{ gap.current }}</span
-                          >
-                          <span class="gap-stat">Target: {{ gap.target }}</span>
-                        </div>
-                        <div class="recommendations">
-                          <span class="rec-label">🎯 Recommended Focus:</span>
-                          <ul>
-                            @for (rec of gap.recommendations; track rec) {
-                              <li>{{ rec }}</li>
-                            }
-                          </ul>
-                        </div>
-                        <a
-                          routerLink="/training/videos"
-                          [queryParams]="{ category: gap.metric }"
-                          class="video-link"
-                        >
-                          <i class="pi pi-video"></i> View Related Training
-                          Videos →
-                        </a>
-                      </div>
-                    </ng-template>
-                  </p-accordionpanel>
-                }
-              </p-accordion>
-            }
-          </app-card-shell>
-
-          <!-- Performance History Table -->
-          <app-card-shell
-            class="table-card"
-            title="Performance History"
-            subtitle="Recent logged tests and overall scores"
-            headerIcon="pi-history"
-          >
-            @if (performanceHistory().length === 0) {
-              <app-empty-state
-                [icon]="noDataMessage.icon"
-                [heading]="noDataMessage.title"
-                [description]="noDataMessage.reason"
-                actionLabel="Log performance"
-                actionIcon="pi-plus"
-                [actionHandler]="openLogDialogHandler"
-              />
-            } @else {
-              <app-table
-                [data]="performanceHistory()"
-                [paginator]="true"
-                [rows]="10"
-                [scrollable]="true"
-              >
-                <ng-template #header>
-                  <tr>
-                    <th>Date</th>
-                    <th>10m</th>
-                    <th>20m</th>
-                    <th>40yd</th>
-                    <th>5-10-5</th>
-                    <th>Vert</th>
-                    <th>Broad</th>
-                    <th>Squat</th>
-                    <th>Dead</th>
-                    <th>Score</th>
-                  </tr>
-                </ng-template>
-                <ng-template #body let-record>
-                  <tr>
-                    <td>{{ record.date }}</td>
-                    <td>{{ record.sprint10 || "-" }}</td>
-                    <td>{{ record.sprint20 || "-" }}</td>
-                    <td>{{ record.dash40 }}</td>
-                    <td>{{ record.proAgility || "-" }}</td>
-                    <td>{{ record.vertical }}</td>
-                    <td>{{ record.broad }}</td>
-                    <td>{{ record.squat || "-" }}</td>
-                    <td>{{ record.deadlift || "-" }}</td>
-                    <td>
-                      <app-status-tag
-                        [value]="record.score + '%'"
-                        [severity]="getScoreSeverity(record.score)"
-                        size="sm"
-                      />
-                    </td>
-                  </tr>
-                </ng-template>
-              </app-table>
-            }
-          </app-card-shell>
+          <!-- History (Full Width) -->
+          <div class="bento-item full-width history-bento">
+            <h3 class="bento-title"><i class="pi pi-history"></i> Performance History</h3>
+            <app-table [data]="performanceHistory().slice(0, 5)" [scrollable]="true">
+              <ng-template #header>
+                <tr><th>Date</th><th>40yd</th><th>Vert</th><th>Score</th></tr>
+              </ng-template>
+              <ng-template #body let-record>
+                <tr>
+                  <td>{{ record.date }}</td>
+                  <td>{{ record.dash40 }}</td>
+                  <td>{{ record.vertical }}</td>
+                  <td><app-status-tag [value]="record.score + '%'" [severity]="getScoreSeverity(record.score)" size="sm" /></td>
+                </tr>
+              </ng-template>
+            </app-table>
+          </div>
         </div>
 
         <!-- Log Performance Dialog (Extended) -->

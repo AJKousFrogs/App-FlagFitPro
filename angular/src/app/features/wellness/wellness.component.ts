@@ -98,6 +98,85 @@ interface WellnessMetric {
         message="Loading wellness data..."
       ></app-loading>
 
+      <div class="wellness-page bento-grid ui-page-shell ui-page-stack">
+        <!-- Header (Full Width) -->
+        <div class="bento-item full-width no-padding">
+          <app-page-header
+            title="Wellness & Readiness"
+            subtitle="Track your recovery, hydration, and body metrics for peak performance"
+            icon="pi-heart"
+          />
+        </div>
+
+        <!-- Section 1: Alerts & Important Notices (Full Width) -->
+        @if (wellnessAlerts().length > 0) {
+          <div class="bento-item full-width alerts-container">
+            @for (alert of wellnessAlerts(); track alert.id) {
+              <app-alert
+                [variant]="alert.severity === 'danger' ? 'error' : alert.severity"
+                [title]="alert.title"
+                [message]="alert.message"
+                [actionLabel]="alert.actionLabel"
+                (action)="onAlertAction(alert)"
+                class="wellness-alert"
+              />
+            }
+          </div>
+        }
+
+        <!-- Section 2: Core Metrics (Spans 2 columns) -->
+        <div class="bento-item span-2 metrics-overview">
+          <h3 class="bento-title">Readiness Overview</h3>
+          <app-stats-grid [stats]="wellnessStats()" />
+          
+          <div class="metric-confidence-overlay">
+            <app-confidence-indicator
+              [score]="dataConfidenceScore()"
+              [level]="dataConfidenceLevel()"
+              [missingMetrics]="missingConfidenceInputs()"
+            />
+          </div>
+        </div>
+
+        <!-- Section 3: Hydration Tracker (Spans 1 column) -->
+        <div class="bento-item hydration-card">
+          <app-hydration-tracker
+            [currentOunces]="currentHydration()"
+            [targetOunces]="targetHydration()"
+            (addOunces)="onAddHydration($event)"
+          />
+        </div>
+
+        <!-- Section 4: Body Composition (Spans 1 column) -->
+        <div class="bento-item body-comp-card">
+          <app-body-composition-card
+            [weight]="currentWeight()"
+            [bodyFat]="currentBodyFat()"
+            [muscleMass]="currentMuscleMass()"
+            [lastUpdated]="bodyCompLastUpdated()"
+            (updateWeight)="onUpdateWeight()"
+          />
+        </div>
+
+        <!-- Section 5: Supplement Tracker (Spans 2 columns) -->
+        <div class="bento-item span-2 supplements-card">
+          <app-supplement-tracker
+            [supplements]="dailySupplements()"
+            (toggleSupplement)="onToggleSupplement($event)"
+          />
+        </div>
+
+        <!-- Section 6: Historical Trends (Full Width) -->
+        <div class="bento-item full-width charts-section">
+          <app-wellness-charts-section
+            [readinessHistory]="readinessHistory()"
+            [sleepHistory]="sleepHistory()"
+            [sorenessMap]="muscleSorenessMap()"
+          />
+        </div>
+      </div>
+    </app-main-layout>
+  `,
       <!-- Error State -->
       @if (hasPageError()) {
         <app-page-error-state

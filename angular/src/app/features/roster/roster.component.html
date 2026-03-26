@@ -17,38 +17,46 @@
 
       <!-- Content -->
       @else {
-        <div class="roster-page ui-page-shell ui-page-stack">
-          <!-- Page Header -->
-          <app-page-header
-            title="Team Roster"
-            [subtitle]="headerSubtitle()"
-            icon="pi-users"
-          >
-            <div class="header-actions">
-              @if (rosterService.canManageRoster()) {
-                <app-button
-                  variant="outlined"
-                  iconLeft="pi-download"
-                  (clicked)="exportRoster()"
-                  >Export</app-button
-                >
+        <div class="roster-page bento-grid ui-page-shell ui-page-stack">
+          <!-- Page Header (Full Width) -->
+          <div class="bento-item full-width no-padding header-bento">
+            <app-page-header
+              title="Team Roster"
+              [subtitle]="headerSubtitle()"
+              icon="pi-users"
+            >
+              <div class="header-actions">
+                @if (rosterService.canManageRoster()) {
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-download"
+                    (clicked)="exportRoster()"
+                    size="sm"
+                    >Export</app-button
+                  >
 
-                <app-button
-                  iconLeft="pi-briefcase"
-                  variant="outlined"
-                  (clicked)="openTeamWorkspace()"
-                  >Team Workspace</app-button
-                >
+                  <app-button
+                    iconLeft="pi-plus"
+                    (clicked)="openAddPlayer()"
+                    size="sm"
+                    >Add Player</app-button
+                  >
+                }
+              </div>
+            </app-page-header>
+          </div>
 
-                <app-button iconLeft="pi-plus" (clicked)="openAddPlayer()"
-                  >Add Player</app-button
-                >
-              }
+          <!-- Team Overview Stats (Full Width) -->
+          @defer (on viewport) {
+            <div class="bento-item full-width no-padding stats-bento">
+              <app-roster-overview
+                [stats]="rosterService.teamStats()"
+              ></app-roster-overview>
             </div>
-          </app-page-header>
+          }
 
-          <!-- Search and Filter Bar -->
-          <div class="roster-toolbar ui-section-card ui-section-card--compact">
+          <!-- Filters Toolbar (Full Width) -->
+          <div class="bento-item full-width toolbar-bento">
             <app-roster-filters
               [(searchQuery)]="searchQuery"
               [selectedCount]="selectedPlayerIds().size"
@@ -62,184 +70,30 @@
             ></app-roster-filters>
           </div>
 
-          <!-- UX AUDIT FIX: Removed duplicate loading state - page-level app-loading handles initial load -->
-          <!-- rosterService.isLoading() is used for refresh/filter operations, not displayed separately -->
-
-          <!-- Empty State -->
-          @if (
-            !rosterService.isLoading() &&
-            filteredPlayers().length === 0 &&
-            !searchQuery() &&
-            !positionFilter &&
-            !statusFilter
-          ) {
-            <app-empty-state
-              title="No Players Found"
-              message="Your roster is empty. Add players to get started."
-              icon="pi-users"
-              [actionLabel]="
-                rosterService.canManageRoster() ? 'Add First Player' : ''
-              "
-              actionIcon="pi pi-plus"
-              [actionHandler]="
-                rosterService.canManageRoster()
-                  ? openAddPlayer.bind(this)
-                  : null
-              "
-            ></app-empty-state>
-          }
-
-          <!-- No Results State - UX AUDIT FIX: Use EmptyStateComponent for consistency -->
-          @if (
-            !rosterService.isLoading() &&
-            filteredPlayers().length === 0 &&
-            (searchQuery() || positionFilter || statusFilter)
-          ) {
-            <app-empty-state
-              icon="pi-search"
-              title="No players match your filters"
-              message="Try adjusting your search or filter criteria"
-              actionLabel="Clear Filters"
-              actionIcon="pi pi-filter-slash"
-              [actionHandler]="clearFilters.bind(this)"
-            ></app-empty-state>
-          }
-
-          <!-- Content -->
-          @if (
-            !rosterService.isLoading() &&
-            (filteredPlayers().length > 0 ||
-              rosterService.coachingStaff().length > 0)
-          ) {
-            @defer (on viewport) {
-              <!-- Team Overview Stats -->
-              <app-roster-overview
-                [stats]="rosterService.teamStats()"
-              ></app-roster-overview>
-
-              <!-- Coaching Staff -->
-              @if (rosterService.coachingStaffByCategory().coaching.length > 0) {
-                <div class="position-section ui-stack-md">
-                  <div class="ui-section-heading">
-                    <div class="ui-section-heading__content">
-                      <h2 class="ui-section-heading__title">
-                        <span class="ui-section-heading__icon">
-                          <i class="pi pi-users" aria-hidden="true"></i>
-                        </span>
-                        Coaching Staff
-                      </h2>
-                    </div>
-                    <span class="ui-section-count">
-                      {{ rosterService.coachingStaffByCategory().coaching.length }}
-                    </span>
-                  </div>
-                  <div class="roster-grid">
-                    @for (
-                      member of rosterService.coachingStaffByCategory().coaching;
-                      track member.id || member.name
-                    ) {
-                      <app-roster-staff-card
-                        [member]="member"
-                        [showEmail]="rosterService.canManageRoster()"
-                      ></app-roster-staff-card>
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- Medical Staff -->
-              @if (rosterService.coachingStaffByCategory().medical.length > 0) {
-                <div class="position-section ui-stack-md">
-                  <div class="ui-section-heading">
-                    <div class="ui-section-heading__content">
-                      <h2 class="ui-section-heading__title">
-                        <span class="ui-section-heading__icon">
-                          <i class="pi pi-heart" aria-hidden="true"></i>
-                        </span>
-                        Medical Staff
-                      </h2>
-                    </div>
-                    <span class="ui-section-count">
-                      {{ rosterService.coachingStaffByCategory().medical.length }}
-                    </span>
-                  </div>
-                  <div class="roster-grid">
-                    @for (
-                      member of rosterService.coachingStaffByCategory().medical;
-                      track member.id || member.name
-                    ) {
-                      <app-roster-staff-card
-                        [member]="member"
-                        [showEmail]="rosterService.canManageRoster()"
-                      ></app-roster-staff-card>
-                    }
-                  </div>
-                </div>
-              }
-
-              <!-- Performance Staff -->
-              @if (
-                rosterService.coachingStaffByCategory().performance.length > 0
-              ) {
-                <div class="position-section ui-stack-md">
-                  <div class="ui-section-heading">
-                    <div class="ui-section-heading__content">
-                      <h2 class="ui-section-heading__title">
-                        <span class="ui-section-heading__icon">
-                          <i class="pi pi-chart-line" aria-hidden="true"></i>
-                        </span>
-                        Performance Staff
-                      </h2>
-                    </div>
-                    <span class="ui-section-count">
-                      {{
-                        rosterService.coachingStaffByCategory().performance.length
-                      }}
-                    </span>
-                  </div>
-                  <div class="roster-grid">
-                    @for (
-                      member of rosterService.coachingStaffByCategory()
-                        .performance;
-                      track member.id || member.name
-                    ) {
-                      <app-roster-staff-card
-                        [member]="member"
-                        [showEmail]="rosterService.canManageRoster()"
-                      ></app-roster-staff-card>
-                    }
-                  </div>
-                </div>
-              }
-            } @placeholder {
-              <div class="position-section ui-stack-md">
-                <div class="ui-section-heading">
-                  <div class="ui-section-heading__content">
-                    <h2 class="ui-section-heading__title">Loading team overview…</h2>
-                  </div>
-                </div>
+          <!-- Staff Sections (Spans 3 columns) -->
+          @if (!rosterService.isLoading() && rosterService.coachingStaff().length > 0) {
+            <div class="bento-item full-width staff-section">
+              <h3 class="bento-title"><i class="pi pi-users"></i> Team Staff</h3>
+              <div class="roster-grid">
+                @for (member of rosterService.coachingStaff(); track member.id || member.name) {
+                  <app-roster-staff-card
+                    [member]="member"
+                    [showEmail]="rosterService.canManageRoster()"
+                  ></app-roster-staff-card>
+                }
               </div>
-            }
+            </div>
+          }
 
-            @defer (on viewport) {
-              <!-- Players by Position -->
-              @for (
-                positionGroup of filteredPlayersByPosition();
-                track positionGroup.position
-              ) {
-                <div class="position-section ui-stack-md">
-                  <div class="ui-section-heading">
-                    <div class="ui-section-heading__content">
-                      <h2 class="ui-section-heading__title">
-                        <span class="ui-section-heading__icon">
-                          <i [class]="getPositionIcon(positionGroup.position)"></i>
-                        </span>
-                        {{ positionGroup.position }}
-                      </h2>
-                    </div>
-                    <span class="ui-section-count">
-                      {{ positionGroup.players.length }}
-                    </span>
+          <!-- Players Grid (Spans 3 columns) -->
+          <div class="bento-item full-width no-padding players-section">
+            @if (!rosterService.isLoading() && filteredPlayers().length > 0) {
+              @for (positionGroup of filteredPlayersByPosition(); track positionGroup.position) {
+                <div class="position-group">
+                  <div class="position-header">
+                    <i [class]="getPositionIcon(positionGroup.position)"></i>
+                    <h4>{{ positionGroup.position }}</h4>
+                    <span class="count">{{ positionGroup.players.length }}</span>
                   </div>
                   <div class="roster-grid">
                     @for (player of positionGroup.players; track player.id) {
@@ -258,16 +112,19 @@
                   </div>
                 </div>
               }
-            } @placeholder {
-              <div class="position-section ui-stack-md">
-                <div class="ui-section-heading">
-                  <div class="ui-section-heading__content">
-                    <h2 class="ui-section-heading__title">Loading players…</h2>
-                  </div>
-                </div>
+            } @else if (!rosterService.isLoading()) {
+              <div class="p-8">
+                <app-empty-state
+                  icon="pi-search"
+                  title="No players match your filters"
+                  message="Try adjusting your search or filter criteria"
+                  actionLabel="Clear Filters"
+                  actionIcon="pi pi-filter-slash"
+                  (action)="clearFilters()"
+                ></app-empty-state>
               </div>
             }
-          }
+          </div>
         </div>
 
         <!-- Add/Edit Player Dialog -->

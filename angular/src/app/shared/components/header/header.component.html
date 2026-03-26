@@ -1,83 +1,40 @@
 <header class="app-header-shell" role="banner">
-  <p-toolbar
-    [class]="'app-header ' + headerClass()"
-    aria-label="Global header"
-  >
-    <!-- Left Section: Olympics Countdown -->
-    <ng-template #start>
-      <div class="header-start">
-        <!-- Mobile Menu Toggle -->
-        <app-icon-button
-          class="header-menu-toggle"
-          [icon]="sidebarToggleIcon()"
-          [ariaLabel]="sidebarToggleAriaLabel()"
-          [tooltip]="sidebarToggleTooltip()"
-          tooltipPosition="bottom"
-          (clicked)="onToggleSidebar()"
-        />
+  <div class="header-container">
+    <!-- LEFT GROUP: Logo/Menu & Breadcrumbs -->
+    <div class="header-left">
+      <app-icon-button
+        class="mobile-hamburger"
+        [icon]="sidebarToggleIcon()"
+        (clicked)="onToggleSidebar()"
+        [ariaLabel]="sidebarToggleAriaLabel()"
+      />
+      
+      @if (config().showLogo) {
+        <div class="header-logo" routerLink="/" pTooltip="Go to Dashboard">
+          <app-status-tag
+            value="LA28"
+            icon="pi-flag"
+            severity="success"
+            size="sm"
+          />
+        </div>
+      }
 
-        <!-- Olympic Countdown -->
-        @if (config().showLogo) {
-          <div
-            class="olympic-countdown"
-            pTooltip="Countdown to LA 2028 Olympics Opening Ceremony"
-            tooltipPosition="bottom"
-          >
-            <app-status-tag
-              value="LA28"
-              icon="pi-flag"
-              severity="success"
-              size="sm"
-            />
-            <div class="countdown-timer">
-              <span class="countdown-segment">
-                <span class="countdown-value">{{
-                  olympicCountdown().days
-                }}</span>
-                <span class="countdown-unit">D</span>
-              </span>
-              <span class="countdown-sep">:</span>
-              <span class="countdown-segment">
-                <span class="countdown-value">{{
-                  formatNumber(olympicCountdown().hours)
-                }}</span>
-                <span class="countdown-unit">H</span>
-              </span>
-              <span class="countdown-sep">:</span>
-              <span class="countdown-segment">
-                <span class="countdown-value">{{
-                  formatNumber(olympicCountdown().minutes)
-                }}</span>
-                <span class="countdown-unit">M</span>
-              </span>
-              <span class="countdown-sep">:</span>
-              <span class="countdown-segment">
-                <span class="countdown-value">{{
-                  formatNumber(olympicCountdown().seconds)
-                }}</span>
-                <span class="countdown-unit">S</span>
-              </span>
-            </div>
-          </div>
-        }
+      @if (config().showBreadcrumbs) {
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <span class="breadcrumb-item">{{ currentSection() }}</span>
+          @if (currentPage()) {
+            <i class="pi pi-chevron-right separator" aria-hidden="true"></i>
+            <span class="breadcrumb-item current">{{ currentPage() }}</span>
+          }
+        </nav>
+      }
+    </div>
 
-        <!-- Breadcrumbs (conditional) -->
-        @if (config().showBreadcrumbs) {
-          <nav class="breadcrumbs" aria-label="Breadcrumb">
-            <span class="breadcrumb-item">{{ currentSection() }}</span>
-            @if (currentPage()) {
-              <i class="pi pi-chevron-right separator" aria-hidden="true"></i>
-              <span class="breadcrumb-item current">{{ currentPage() }}</span>
-            }
-          </nav>
-        }
-      </div>
-    </ng-template>
-
-    <!-- Center Section: Global Search -->
-    <ng-template #center>
+    <!-- CENTER GROUP: Global Search (Hidden on Mobile) -->
+    <div class="header-center">
       <div
-        class="header-center"
+        class="search-container"
         (click)="onSearch()"
         (keydown.enter)="onSearch()"
         (keydown.space)="onSearch()"
@@ -86,143 +43,86 @@
         aria-haspopup="dialog"
         aria-label="Open search"
       >
-        <div class="search-launcher-shell">
-          <span class="search-label">Quick Search</span>
-          <p-inputgroup class="search-input-group">
-            <p-inputgroup-addon class="search-icon-addon">
-              <i class="pi pi-search" aria-hidden="true"></i>
-            </p-inputgroup-addon>
-            <input
-              type="text"
-              pInputText
-              id="global-search-input"
-              [placeholder]="searchPlaceholder()"
-              readonly
-              class="search-input"
-            />
-            <p-inputgroup-addon class="search-shortcut-addon">
-              <span class="search-shortcut">
-                <kbd>{{ searchShortcutModifier() }}</kbd><kbd>K</kbd>
-              </span>
-            </p-inputgroup-addon>
-          </p-inputgroup>
-        </div>
+        <i class="pi pi-search" aria-hidden="true"></i>
+        <input
+          type="text"
+          [placeholder]="searchPlaceholder()"
+          readonly
+          class="search-input-stub"
+        />
+        <span class="search-shortcut">
+          <kbd>{{ searchShortcutModifier() }}</kbd><kbd>K</kbd>
+        </span>
       </div>
-    </ng-template>
+    </div>
 
-    <!-- Right Section: Actions -->
-    <ng-template #end>
-      <div class="header-end">
-        <!-- Weather Widget (Compact) -->
-        @if (weatherData()) {
-          <div
-            class="weather-indicator"
-            [class]="getWeatherSeverityClass()"
-            [pTooltip]="weatherTooltip()"
-            tooltipPosition="bottom"
-          >
-            <i [class]="'pi ' + weatherIcon()" aria-hidden="true"></i>
-            <span class="weather-temp">{{ weatherData()!.temp }}°</span>
-            <span class="weather-location">{{ weatherLocation() }}</span>
-          </div>
-        } @else if (weatherLoading()) {
-          <div
-            class="weather-indicator weather-loading"
-            pTooltip="Loading weather..."
-          >
-            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-          </div>
-        }
+    <!-- RIGHT GROUP: Actions & Utilities -->
+    <div class="header-right">
+      <!-- Weather Widget -->
+      @if (weatherData()) {
+        <div
+          class="header-utility weather-widget"
+          [class]="getWeatherSeverityClass()"
+          [pTooltip]="weatherTooltip()"
+          tooltipPosition="bottom"
+        >
+          <i [class]="'pi ' + weatherIcon()" aria-hidden="true"></i>
+          <span class="utility-label">{{ weatherData()!.temp }}°</span>
+        </div>
+      }
 
-        @if (showApiStatus) {
-          <div
-            class="api-health-indicator"
-            [pTooltip]="apiHealthTooltip()"
-            tooltipPosition="bottom"
-          >
-            <app-status-tag
-              [value]="apiHealthLabel()"
-              [severity]="apiHealthSeverity()"
-              icon="pi-database"
-              size="sm"
-            />
-          </div>
-        }
-
-        <!-- Notifications -->
-        <div class="header-icon-btn-wrapper">
-          <app-icon-button
-            icon="pi-bell"
-            variant="text"
-            ariaLabel="Notifications"
-            tooltip="Notifications"
-            tooltipPosition="bottom"
-            (clicked)="toggleNotifications()"
-            class="header-icon-btn"
-          />
+      <!-- Notifications -->
+      <div class="header-utility notifications-trigger" (click)="toggleNotifications()">
+        <div class="icon-badge-container">
+          <i class="pi pi-bell" aria-hidden="true"></i>
           @if (notificationCount() > 0) {
-            <app-badge [overlay]="true" variant="danger" position="top-right">{{
-              notificationCount() > 9 ? "9+" : notificationCount().toString()
-            }}</app-badge>
+            <span class="notification-badge">{{ notificationCount() > 9 ? '9+' : notificationCount() }}</span>
           }
         </div>
-
-        <!-- Settings -->
-        <app-icon-button
-          icon="pi-cog"
-          ariaLabel="Settings"
-          tooltip="Settings"
-          (clicked)="openSettings()"
-        />
-
-        <!-- Help / Keyboard Shortcuts -->
-        <app-icon-button
-          icon="pi-question-circle"
-          ariaLabel="Keyboard shortcuts"
-          tooltip="Keyboard shortcuts (?)"
-          (clicked)="openKeyboardShortcuts()"
-        />
-
-        <!-- Theme Toggle -->
-        <div class="theme-toggle">
-          <app-icon-button
-            [icon]="themeIcon()"
-            [ariaLabel]="themeAriaLabel()"
-            [tooltip]="themeTooltip()"
-            (clicked)="cycleTheme()"
-          />
-          <span class="theme-label">{{ themeLabel() }}</span>
-        </div>
-
-        <!-- User Avatar with Menu -->
-        <div class="user-menu-container">
-          <app-button
-            variant="text"
-            [attr.aria-expanded]="isUserMenuOpen()"
-            [ariaHasPopup]="'menu'"
-            ariaLabel="User menu"
-            [class.user-avatar-btn]="true"
-            (clicked)="toggleUserMenu($event)"
-          >
-            <p-avatar
-              [label]="userInitials()"
-              shape="circle"
-              class="user-avatar"
-            />
-          </app-button>
-
-          <p-menu
-            #userMenu
-            [model]="userMenuItems()"
-            [popup]="true"
-            appendTo="body"
-            class="user-dropdown-menu"
-          />
-        </div>
+        <span class="utility-label">Alerts</span>
       </div>
-    </ng-template>
-  </p-toolbar>
+
+      <!-- Theme Toggle -->
+      <div class="header-utility theme-toggle" (click)="cycleTheme()" [pTooltip]="themeTooltip()">
+        <i [class]="'pi ' + themeIcon()" aria-hidden="true"></i>
+        <span class="utility-label">{{ themeLabel() }}</span>
+      </div>
+
+      <!-- Settings (Desktop Only) -->
+      <app-icon-button
+        class="desktop-only-util"
+        icon="pi-cog"
+        variant="text"
+        ariaLabel="Settings"
+        tooltip="Settings"
+        (clicked)="openSettings()"
+      />
+
+      <!-- User Avatar -->
+      <div class="header-profile" (click)="toggleUserMenu($event)">
+        <p-avatar
+          [label]="userInitials()"
+          shape="circle"
+          class="user-avatar"
+        />
+      </div>
+
+      <p-menu
+        #userMenu
+        [model]="userMenuItems()"
+        [popup]="true"
+        appendTo="body"
+      />
+    </div>
+  </div>
 </header>
+
+<!-- Search Panel -->
+<app-search-panel />
+
+<!-- Notifications Panel -->
+<app-notifications-panel #notificationsPanel />
+
 
 <!-- Search Panel -->
 <app-search-panel />

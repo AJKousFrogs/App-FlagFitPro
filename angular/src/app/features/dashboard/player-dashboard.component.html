@@ -15,17 +15,10 @@
 
       <!-- Dashboard Content -->
       @if (!isLoading() && !hasError()) {
-        <div class="player-dashboard ui-page-shell ui-page-stack">
-          <!-- NO PROGRAM ASSIGNED FALLBACK - Enhanced with Diagnostic Guidance (UX Audit Fix #3) -->
-          @if (needsProgramAssignment()) {
-            <app-player-dashboard-setup-card
-              [hasCompletedOnboarding]="hasCompletedOnboarding()"
-              [actionRequiredMeaning]="getOnboardingActionRequiredMeaning()"
-              (contactCoach)="contactCoach()"
-            />
-          }
-
+        <div class="player-dashboard bento-grid">
+          <!-- Priority Status (Full Width) -->
           <app-player-dashboard-status-stack
+            class="bento-item full-width no-padding"
             [announcement]="announcement()"
             [announcementDismissed]="announcementDismissed()"
             [announcementTimeAgo]="announcementTimeAgo()"
@@ -36,57 +29,38 @@
             (dismissAnnouncement)="dismissAnnouncement()"
           />
 
-          <!-- SECTION 2: Welcome Header with Merlin AI Insight -->
-          <section class="welcome-section">
-            <app-card-shell class="welcome-card">
-              <div class="welcome-wrapper">
-                <div class="merlin-avatar" aria-hidden="true">
-                  <i class="pi pi-sparkles"></i>
+          <!-- SECTION 2: Welcome Header (Spans 2 columns) -->
+          <section class="welcome-section bento-item span-2">
+            <div class="welcome-wrapper">
+              <div class="merlin-avatar" aria-hidden="true">
+                <i class="pi pi-sparkles"></i>
+              </div>
+              <div class="welcome-content">
+                <div class="welcome-header-row">
+                  <h2 class="welcome-greeting">
+                    {{ greeting() }}, {{ userName() }}!
+                  </h2>
                 </div>
-                <div class="welcome-content">
-                  <div class="welcome-header-row">
-                    <h2 class="welcome-greeting">
-                      {{ greeting() }}, {{ userName() }}!
-                    </h2>
-                    <!-- Privacy Status Badge -->
-                    @if (privacySharingStatus().totalMetrics > 0) {
-                      <app-status-tag
-                        [value]="
-                          'Sharing: ' +
-                          privacySharingStatus().sharedMetrics +
-                          '/' +
-                          privacySharingStatus().totalMetrics +
-                          ' metrics'
-                        "
-                        severity="info"
-                        size="sm"
-                        [pTooltip]="
-                          'Manage your data sharing preferences in Settings'
-                        "
-                        tooltipPosition="bottom"
-                        [routerLink]="['/settings/privacy']"
-                        class="status-tag-link"
-                      ></app-status-tag>
-                    }
-                  </div>
-                  <p class="merlin-insight">{{ merlinInsight() }}</p>
-                  <div class="welcome-actions">
-                    <app-button iconLeft="pi-play" routerLink="/todays-practice"
-                      >Start Training</app-button
-                    >
-                    <app-button
-                      iconLeft="pi-comments"
-                      variant="text"
-                      routerLink="/chat"
-                      >Ask Merlin</app-button
-                    >
-                  </div>
+                <p class="merlin-insight">{{ merlinInsight() }}</p>
+                <div class="welcome-actions">
+                  <app-button iconLeft="pi-play" routerLink="/todays-practice" size="sm"
+                    >Start Training</app-button
+                  >
+                  <app-button
+                    iconLeft="pi-comments"
+                    variant="text"
+                    routerLink="/chat"
+                    size="sm"
+                    >Ask Merlin</app-button
+                  >
                 </div>
               </div>
-            </app-card-shell>
+            </div>
           </section>
 
+          <!-- Quick Stats Overview (Spans 1 column) -->
           <app-player-dashboard-stats-overview
+            class="bento-item stats-overview"
             [readinessScore]="dashboardReadinessPresentation().score"
             [readinessLabel]="getReadinessStatus()"
             [readinessSeverity]="getReadinessSeverity()"
@@ -114,8 +88,10 @@
             (navigateToAcwr)="navigateToACWR()"
           />
 
+          <!-- Insights Grid (Spans 2 columns) -->
           @defer (on viewport) {
             <app-player-dashboard-insights-grid
+              class="bento-item span-2 no-padding"
               [weekDays]="weekDays()"
               [weeklyProgress]="weeklyProgress()"
               [quickActions]="quickActions"
@@ -123,13 +99,13 @@
               [chartOptions]="chartOptions"
             />
           } @placeholder {
-            <div class="player-dashboard-insights-placeholder"></div>
+            <div class="player-dashboard-insights-placeholder bento-item span-2"></div>
           }
 
-          <!-- SECTION 5: Today's Schedule Preview (using p-timeline) -->
+          <!-- Today's Schedule Preview (Spans 1 column) -->
           @defer (on viewport) {
             <app-card-shell
-              class="schedule-card"
+              class="bento-item schedule-card"
               title="Today's Schedule"
               headerIcon="pi-clock"
             >
@@ -161,58 +137,52 @@
                         <div class="item-time">{{ item.time }}</div>
                         <div class="item-info">
                           <span class="item-title">{{ item.title }}</span>
-                          <span class="item-duration"
-                            >{{ item.duration }} min</span
-                          >
                         </div>
                       </div>
                     </ng-template>
                   </p-timeline>
-                  @if (todaySchedule().length > 3) {
-                    <p class="more-items">
-                      +{{ todaySchedule().length - 3 }} more items
-                    </p>
-                  }
                   <div class="card-footer-action">
                     <app-button
                       variant="text"
                       iconRight="pi-arrow-right"
                       routerLink="/todays-practice"
+                      size="sm"
                       >View Full Day</app-button
                     >
                   </div>
                 } @else {
                   <div class="empty-schedule">
-                    <app-alert
-                      variant="info"
-                      density="compact"
-                      styleClass="status-message"
-                    >
-                      <div class="empty-content">
-                        <i class="pi pi-calendar empty-icon"></i>
-                        <span>No training scheduled for today</span>
-                      </div>
-                    </app-alert>
-                    <app-button variant="text" routerLink="/training"
-                      >View Full Schedule</app-button
-                    >
+                    <i class="pi pi-calendar-minus empty-icon"></i>
+                    <p class="text-sm text-muted">No training today</p>
                   </div>
                 }
             </app-card-shell>
           } @placeholder {
-            <div class="player-dashboard-schedule-placeholder"></div>
+            <div class="player-dashboard-schedule-placeholder bento-item"></div>
           }
 
-          @defer (on viewport) {
-            <app-player-dashboard-events-section
-              [continuityEvents]="continuityDisplayEvents()"
-              [tomorrowSchedule]="tomorrowSchedule()"
-              [upcomingEvents]="upcomingDisplayEvents()"
-              [schedulePreviewCount]="UI_LIMITS.SCHEDULE_PREVIEW_COUNT"
-              [eventsPreviewCount]="UI_LIMITS.EVENTS_PREVIEW_COUNT"
+          <!-- Setup Card (Full Width if active) -->
+          @if (needsProgramAssignment()) {
+            <app-player-dashboard-setup-card
+              class="bento-item full-width"
+              [hasCompletedOnboarding]="hasCompletedOnboarding()"
+              [actionRequiredMeaning]="getOnboardingActionRequiredMeaning()"
+              (contactCoach)="contactCoach()"
             />
-          } @placeholder {
-            <div class="player-dashboard-events-placeholder"></div>
+          }
+
+          <!-- Critical Wellness Alert (Full Width Bottom) -->
+          @if (missingWellnessStatus()) {
+            <div class="bento-item full-width critical-wellness-card">
+              <app-alert
+                variant="error"
+                title="Critical: Missing Wellness Data"
+                message="Please complete your daily wellness check-in to ensure safe training intensity."
+                icon="pi-exclamation-triangle"
+              >
+                <app-button size="sm" (clicked)="navigateToWellness()">Check-in Now</app-button>
+              </app-alert>
+            </div>
           }
         </div>
       }

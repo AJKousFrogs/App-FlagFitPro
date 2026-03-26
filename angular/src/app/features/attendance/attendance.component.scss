@@ -1,274 +1,146 @@
-// ============================================================================
-// attendance.component Styles
-// Design System Compliant
-// ============================================================================
-
 @use "styles/mixins" as *;
 
-/* Uses shared .header-actions from _dashboard.scss */
-
-.attendance-content {
-  min-width: 0;
-}
-
-.events-card,
-.stats-card {
-  --app-card-shell-header-padding: var(--space-4);
-  --app-card-shell-header-border-bottom: var(--border-1) solid
-    var(--color-border-secondary);
-}
-
-.attendance-filter-select {
-  width: min(100%, var(--input-min-width-lg));
-}
-
-.stat-content {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.stat-icon {
-  font-size: var(--ds-font-size-3xl); /* 2rem/2rem */
-  color: var(--ds-primary-green);
-
-  &.success {
-    color: var(--color-status-success);
-  }
-}
-
-.filter-actions {
-  display: flex;
-  gap: var(--layout-page-section-gap-tight);
-  align-items: center;
-}
-
-.events-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.event-item {
+.attendance-page.bento-grid {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
-  padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--surface-border);
-  cursor: pointer;
-  transition: background-color var(--transition-base);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: var(--space-8);
 
-  &:hover {
-    background-color: var(--surface-hover);
+  .bento-item {
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 16px;
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    &.no-padding {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .bento-title {
+      font-size: var(--ds-font-size-lg);
+      font-weight: var(--ds-font-weight-bold);
+      margin: 0;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      
+      i { color: var(--ds-primary-green); font-size: 1.25rem; }
+    }
   }
 
-  &:last-child {
-    border-bottom: none;
+  .span-2 { grid-column: span 2; }
+  .full-width { grid-column: 1 / -1; }
+
+  .header-bento, .stats-bento {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
   }
-}
 
-.event-icon {
-  width: var(--avatar-size-lg);
-  height: var(--avatar-size-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--ds-primary-green-subtle);
-  border-radius: var(--radius-lg);
-  color: var(--ds-primary-green);
-  font-size: var(--ds-font-size-xl); /* 1.25rem/1.25rem */
-}
-
-.event-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.event-title {
-  font-weight: var(--ds-font-weight-semibold);
-  margin-bottom: var(--space-1);
-  color: var(--color-text-primary);
-}
-
-.event-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  font-size: var(--ds-font-size-md); /* 0.875rem/0.875rem */
-  color: var(--color-text-secondary);
-
-  span {
+  .bento-header-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: var(--space-1);
-  }
-}
-
-.event-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  justify-self: end;
-}
-
-.player-cell {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.stat-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--avatar-size-sm);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-full);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-semibold);
-
-  &.success {
-    background-color: var(--color-status-success-light);
-    color: var(--color-status-success);
+    margin-bottom: var(--space-5);
   }
 
-  &.danger {
-    background-color: var(--color-status-error-light);
-    color: var(--color-status-error);
+  /* Stats Bento */
+  .stats-inner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
   }
 
-  &.warning {
-    background-color: var(--color-status-warning-light);
-    color: var(--color-status-warning-text);
-  }
-
-  &.info {
-    background-color: var(--color-status-info-light);
-    color: var(--color-status-info);
-  }
-}
-
-.rate-cell {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-width: var(--size-96);
-
-  .rate-bar {
-    width: var(--size-80);
-    height: var(--indicator-size-sm);
-    border-radius: var(--radius-sm);
-  }
-}
-
-.streak-badge {
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-full);
-  background-color: var(--surface-secondary);
-  font-size: var(--ds-font-size-md);
-
-  &.active {
-    background-color: var(--color-status-warning-light);
-    color: var(--color-status-warning-text);
-  }
-}
-
-.attendance-dialog-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-/* Form layout: use primitives _forms.scss; add .two-col to form-row in template */
-.attendance-dialog .form-field label {
-  font-weight: var(--ds-font-weight-medium);
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-primary);
-}
-
-.attendance-dialog {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.event-summary {
-  padding: var(--space-4);
-  background-color: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-
-  h4 {
-    margin: 0 0 var(--space-1) 0;
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-semibold);
-  }
-
-  p {
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--ds-font-size-md);
-  }
-}
-
-.attendance-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  max-height: var(--chart-min-height-lg);
-  overflow-y: auto;
-}
-
-.attendance-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3);
-  background-color: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-}
-
-.player-info {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.status-buttons {
-  display: flex;
-  gap: var(--space-2);
-}
-
-@include respond-to(md) {
-  .filter-actions {
-    width: 100%;
-  }
-
-  .attendance-filter-select {
-    width: 100%;
-  }
-
-  .event-item,
-  .attendance-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .event-item {
+  .stat-box {
+    padding: var(--space-4);
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: var(--radius-lg);
     display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .lbl { font-size: var(--ds-font-size-xs); color: var(--color-text-secondary); text-transform: uppercase; }
+    .val { font-size: var(--ds-font-size-xl); font-weight: var(--ds-font-weight-bold); }
+
+    &.highlight { border-color: var(--ds-primary-green); .val { color: var(--ds-primary-green); } }
+  }
+
+  /* Events List */
+  .events-list {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-3);
   }
 
-  .event-actions,
-  .status-buttons {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+  .event-item-bento {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3);
+    background: var(--ui-surface-subtle);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover { background: var(--surface-primary); border-color: var(--ds-primary-green); transform: translateX(4px); }
+
+    .event-date {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--surface-primary);
+      border-radius: 8px;
+      border: 1px solid var(--ui-border-subtle);
+      .m { font-size: 10px; font-weight: var(--ds-font-weight-bold); text-transform: uppercase; color: var(--ds-primary-green); }
+      .d { font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
+    }
+
+    .event-info {
+      flex: 1;
+      .title { display: block; font-size: var(--ds-font-size-sm); font-weight: var(--ds-font-weight-bold); }
+      .time { font-size: 10px; color: var(--color-text-tertiary); }
+    }
+
+    i { font-size: 12px; color: var(--color-text-tertiary); }
   }
 
-  .rate-cell {
-    min-width: 0;
-    flex-direction: column;
-    align-items: flex-start;
+  /* Table */
+  .attendance-table {
+    width: 100%;
+    .player-cell { display: flex; align-items: center; gap: 12px; }
+    .streak-tag { font-size: 12px; font-weight: var(--ds-font-weight-bold); color: #ff9800; }
+  }
+}
+
+@media (max-width: 1024px) {
+  .attendance-page.bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: var(--space-4);
+    .events-bento, .players-bento { grid-column: span 2; }
+  }
+}
+
+@media (max-width: 768px) {
+  .attendance-page.bento-grid {
+    grid-template-columns: 1fr;
+    .bento-item { grid-column: span 1 !important; }
+    .stats-inner-grid { grid-template-columns: 1fr; }
   }
 }

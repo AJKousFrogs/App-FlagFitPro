@@ -8,10 +8,10 @@
 
 .no-program-card {
   inline-size: 100%;
-  background: var(--surface-card);
-  border: var(--border-2) dashed var(--ui-border-default);
-  border-radius: var(--component-card-radius);
-  box-shadow: var(--component-card-shadow);
+  background: var(--surface-primary);
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .no-program-content {
@@ -35,14 +35,13 @@
 
 .no-program-icon {
   display: flex;
-  width: var(--space-16);
-  height: var(--space-16);
+  width: var(--space-14);
+  height: var(--space-14);
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-full);
-  background: var(--ui-surface-subtle);
-  box-shadow: inset 0 0 0 var(--border-1) var(--color-border-subtle);
-  color: var(--color-text-secondary);
+  border-radius: var(--radius-xl);
+  background: rgba(var(--ds-primary-green-rgb), 0.1);
+  color: var(--ds-primary-green);
 }
 
 .no-program-icon i {
@@ -88,15 +87,15 @@
   display: flex;
   align-items: start;
   gap: var(--space-3);
-  padding: var(--space-3);
-  border-left: var(--border-4) solid var(--color-border-primary);
+  padding: var(--space-4);
+  border-left: var(--border-4) solid var(--ui-border-default);
   border-radius: var(--radius-lg);
   background: var(--surface-secondary);
 }
 
 .checklist-item.checklist-action-needed {
-  border-left-color: var(--color-status-warning);
-  background: var(--color-status-warning-bg);
+  border-left-color: var(--ds-primary-green);
+  background: rgba(var(--ds-primary-green-rgb), 0.08);
 }
 
 .checklist-icon {
@@ -110,7 +109,7 @@
 }
 
 .checklist-icon.checklist-complete {
-  background: var(--color-status-success);
+  background: var(--ds-primary-green);
   color: white;
 }
 

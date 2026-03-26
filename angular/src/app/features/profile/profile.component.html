@@ -1,128 +1,61 @@
 <app-main-layout>
-        <div class="profile-page ui-page-shell ui-page-stack">
-        <!-- Deletion Pending Banner - Using Centralized UX Copy -->
-        @if (deletionPending()) {
-          <app-alert
-            variant="warning"
-            [icon]="deletionMessage.icon || null"
-            [title]="deletionMessage.title"
-            [message]="getDeletionReason()"
-            styleClass="profile-deletion-alert"
-          >
-            <div class="deletion-alert-actions">
-              <app-button
-                variant="secondary"
-                size="sm"
-                iconLeft="pi-times"
-                [loading]="cancellingDeletion()"
-                (clicked)="cancelDeletion()"
-              >
-                Cancel Deletion
-              </app-button>
-              <a [href]="deletionMessage.helpLink" class="deletion-help-link">
-                Learn More
-              </a>
-            </div>
-          </app-alert>
-        }
-
-        <!-- Loading State -->
-        @if (isLoading()) {
-          <section class="page-state-card ds-card-surface">
-            <app-loading
-              [visible]="true"
-              message="Loading profile..."
-              variant="skeleton"
-            />
-          </section>
-        }
-
-        <!-- Error State -->
-        @else if (hasError()) {
-          <section class="page-state-card ds-card-surface">
-            <app-page-error-state
-              title="Unable to load profile"
-              [message]="errorMessage()"
-              (retry)="retryLoad()"
-            ></app-page-error-state>
-          </section>
-        } @else {
-          <app-profile-header-section
-            [avatarUrl]="avatarUrl()"
-            [userInitials]="userInitials()"
-            [isUploadingAvatar]="isUploadingAvatar()"
-            [jerseyNumber]="jerseyNumber()"
-            [userName]="userName()"
-            [userPosition]="userPosition()"
-            [teamName]="teamName()"
-            [userEmail]="userEmail()"
-            [memberSince]="memberSince()"
-            [profileCompletionPercentage]="profileCompletion().percentage"
-            [profileCompletionMissingFields]="profileCompletion().missingFields"
-            [missingFieldsPreviewCount]="UI_LIMITS.MISSING_FIELDS_PREVIEW"
-            [deletionPending]="deletionPending()"
-            (fileSelected)="onFileSelected($event)"
-            (shareProfile)="shareProfile()"
-          />
-
-          @defer (on viewport) {
-            <!-- Profile Stats -->
-            <app-stats-grid [stats]="stats()"></app-stats-grid>
-
-            <!-- Profile Tabs -->
-            <div class="profile-tabs-container">
-              <app-tabs [value]="activeTab()" (valueChange)="activeTab.set($event.toString())">
-                <div *appTabPanel="let panel; header: 'Overview'; value: 'overview'; icon: 'pi-chart-line'">
-                    @defer (when activeTab() === 'overview') {
-                      <app-profile-overview-section [activities]="activities()" />
-                    } @placeholder {
-                      <app-loading [visible]="true" message="Loading overview..." variant="skeleton" />
-                    }
-                </div>
-                <div *appTabPanel="let panel; header: 'Achievements'; value: 'achievements'; icon: 'pi-trophy'">
-                    @defer (when activeTab() === 'achievements') {
-                      <app-profile-achievements-section
-                        [achievements]="achievements()"
-                      />
-                    } @placeholder {
-                      <app-loading [visible]="true" message="Loading achievements..." variant="skeleton" />
-                    }
-                </div>
-                <div *appTabPanel="let panel; header: 'Statistics'; value: 'statistics'; icon: 'pi-chart-bar'">
-                    @defer (when activeTab() === 'statistics') {
-                      <app-profile-statistics-section
-                        [performanceStats]="performanceStats()"
-                      />
-                    } @placeholder {
-                      <app-loading [visible]="true" message="Loading statistics..." variant="skeleton" />
-                    }
-                </div>
-                <div *appTabPanel="let panel; header: 'Invitations'; value: 'invitations'; icon: 'pi-envelope'">
-                    @defer (when activeTab() === 'invitations') {
-                      <app-profile-invitations-section
-                        [loading]="loadingInvitations()"
-                        [invitations]="pendingInvitations()"
-                        [processingInvitationId]="processingInvitation()"
-                        (acceptInvitation)="acceptInvitation($event)"
-                        (declineInvitation)="declineInvitation($event)"
-                        (requestNewInvitation)="requestNewInvitation($event)"
-                      />
-                    } @placeholder {
-                      <app-loading [visible]="true" message="Loading invitations..." variant="skeleton" />
-                    }
-                </div>
-              </app-tabs>
-            </div>
-          } @placeholder {
-            <section class="page-state-card ds-card-surface">
-              <app-loading
-                [visible]="true"
-                message="Loading profile details..."
-                variant="skeleton"
-              />
-            </section>
-          }
-        }
+    <div class="profile-page bento-grid ui-page-shell">
+      <!-- Profile Header (Full Width) -->
+      <div class="bento-item full-width no-padding header-bento">
+        <app-profile-header-section
+          [avatarUrl]="avatarUrl()"
+          [userInitials]="userInitials()"
+          [isUploadingAvatar]="isUploadingAvatar()"
+          [jerseyNumber]="jerseyNumber()"
+          [userName]="userName()"
+          [userPosition]="userPosition()"
+          [teamName]="teamName()"
+          [userEmail]="userEmail()"
+          [memberSince]="memberSince()"
+          [profileCompletionPercentage]="profileCompletion().percentage"
+          [profileCompletionMissingFields]="profileCompletion().missingFields"
+          [missingFieldsPreviewCount]="UI_LIMITS.MISSING_FIELDS_PREVIEW"
+          [deletionPending]="deletionPending()"
+          (fileSelected)="onFileSelected($event)"
+          (shareProfile)="shareProfile()"
+        />
       </div>
+
+      <!-- Quick Bio/Status (Span 1) -->
+      <div class="bento-item bio-bento">
+        <h3 class="bento-title"><i class="pi pi-id-card"></i> Athlete Identity</h3>
+        <div class="bio-content">
+          <div class="jersey-badge">#{{ jerseyNumber() || '00' }}</div>
+          <p class="position-tag">{{ userPosition() }}</p>
+          <div class="team-link"><i class="pi pi-users"></i> {{ teamName() }}</div>
+        </div>
+      </div>
+
+      <!-- Profile Stats (Span 2) -->
+      <div class="bento-item span-2 stats-bento no-padding">
+        <app-stats-grid [stats]="stats()"></app-stats-grid>
+      </div>
+
+      <!-- Main Profile Tabs (Full Width) -->
+      <div class="bento-item full-width no-padding tabs-bento">
+        <app-tabs [value]="activeTab()" (valueChange)="activeTab.set($event.toString())">
+          <div *appTabPanel="let panel; header: 'Overview'; value: 'overview'; icon: 'pi-chart-line'">
+              @defer (when activeTab() === 'overview') {
+                <app-profile-overview-section [activities]="activities()" />
+              }
+          </div>
+          <div *appTabPanel="let panel; header: 'Achievements'; value: 'achievements'; icon: 'pi-trophy'">
+              @defer (when activeTab() === 'achievements') {
+                <app-profile-achievements-section [achievements]="achievements()" />
+              }
+          </div>
+          <div *appTabPanel="let panel; header: 'Statistics'; value: 'statistics'; icon: 'pi-chart-bar'">
+              @defer (when activeTab() === 'statistics') {
+                <app-profile-statistics-section [performanceStats]="performanceStats()" />
+              }
+          </div>
+        </app-tabs>
+      </div>
+    </div>
     </app-main-layout>
   

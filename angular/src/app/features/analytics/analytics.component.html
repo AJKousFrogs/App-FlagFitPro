@@ -1,104 +1,83 @@
 <app-main-layout>
-      <!-- Loading State -->
-      <app-loading
-        [visible]="isPageLoading()"
-        variant="skeleton"
-        message="Loading analytics..."
-      ></app-loading>
+  <div class="analytics-page bento-grid ui-page-shell">
+    <!-- Header (Full Width) -->
+    <div class="bento-item full-width no-padding header-bento">
+      <app-page-header
+        title="Athlete Analytics"
+        subtitle="Performance trends, benchmarks, and progress monitoring"
+        icon="pi-chart-bar"
+      ></app-page-header>
+    </div>
 
-      <!-- Error State -->
-      @if (hasPageError()) {
-        <app-page-error-state
-          title="Unable to load analytics"
-          [message]="pageErrorMessage()"
-          (retry)="retryLoad()"
-        ></app-page-error-state>
-      }
+    <!-- Data Status (Full Width) -->
+    <div class="bento-item full-width data-info-bento">
+      <app-data-source-banner
+        [dataState]="analyticsDataState()"
+        [currentData_points]="analyticsDataPoints()"
+        [minimumRequired]="analyticsMinimumRequired"
+        metricName="analytics"
+        [showWhenReal]="true"
+      />
+      <div class="data-freshness">
+        <span class="data-source">Source: Training & Wellness Data.</span>
+        @if (lastRefreshed()) {
+          <span class="data-updated">Last updated: {{ lastRefreshed() | date: "short" }}</span>
+        }
+      </div>
+    </div>
 
-      <!-- Content -->
-      @else {
-        <div
-          class="analytics-page ui-page-shell ui-page-shell--wide ui-page-stack"
-        >
-          <app-page-header
-            title="FlagFit Pro Analytics"
-            subtitle="Performance trends, benchmarks, and athlete progress"
-            icon="pi-chart-bar"
-          ></app-page-header>
-          <app-data-source-banner
-            [dataState]="analyticsDataState()"
-            [currentDataPoints]="analyticsDataPoints()"
-            [minimumRequired]="analyticsMinimumRequired"
-            metricName="analytics"
-            [showWhenReal]="true"
-          />
-          <div class="data-freshness">
-            <span class="data-source">
-              Data source: Training logs, wellness check-ins, and performance
-              tests.
-            </span>
-            @if (lastRefreshed()) {
-              <span class="data-updated">
-                Last updated: {{ lastRefreshed() | date: "short" }}
-              </span>
-            }
-          </div>
-          @defer (on idle) {
-            <app-analytics-overview-section
-              [developmentGoals]="developmentGoals()"
-              [metrics]="metrics()"
-              [goalsPreviewCount]="UI_LIMITS.GOALS_PREVIEW_COUNT"
-            />
-          } @placeholder {
-            <div class="analytics-section analytics-section--placeholder">
-              <p class="data-source">Loading performance summary…</p>
-            </div>
-          }
+    <!-- Overview Section (Full Width Top) -->
+    @defer (on idle) {
+      <div class="bento-item full-width overview-bento no-padding">
+        <app-analytics-overview-section
+          [developmentGoals]="developmentGoals()"
+          [metrics]="metrics()"
+          [goalsPreviewCount]="UI_LIMITS.GOALS_PREVIEW_COUNT"
+        />
+      </div>
+    }
 
-          @defer (on viewport) {
-            <app-analytics-charts-section
-              [performanceChartData]="performanceChartData()"
-              [chemistryChartData]="chemistryChartData()"
-              [distributionChartData]="distributionChartData()"
-              [positionChartData]="positionChartData()"
-              [speedChartData]="speedChartData()"
-              [acwrData]="acwrData()"
-              [noDataMessage]="noDataMessage"
-              [gapAnalysisData]="gapAnalysisData()"
-              [gapAnalysisSummary]="gapAnalysisSummary()"
-              [speedInsights]="speedInsights()"
-              [timePeriods]="timePeriods"
-              [metricOptions]="metricOptions"
-              [lineChartOptions]="lineChartOptions"
-              [radarChartOptions]="radarChartOptions"
-              [doughnutChartOptions]="DOUGHNUT_CHART_OPTIONS"
-              [barChartOptions]="BAR_CHART_OPTIONS"
-              (resetPerformanceChart)="resetChartZoom('performance')"
-              (exportPerformanceChart)="exportChart('performance')"
-              (selectedTimePeriodChange)="onSelectedTimePeriodChange($event)"
-              (selectedMetricChange)="onSelectedMetricChange($event)"
-            />
-          } @placeholder {
-            <div class="analytics-section analytics-section--placeholder">
-              <p class="data-source">Loading charts…</p>
-            </div>
-          }
+    <!-- Primary Charts (Span 2) -->
+    @defer (on viewport) {
+      <div class="bento-item span-2 charts-bento">
+        <h3 class="bento-title"><i class="pi pi-chart-line"></i> Performance Dynamics</h3>
+        <app-analytics-charts-section
+          [performanceChartData]="performanceChartData()"
+          [chemistryChartData]="chemistryChartData()"
+          [distributionChartData]="distributionChartData()"
+          [positionChartData]="positionChartData()"
+          [speedChartData]="speedChartData()"
+          [acwrData]="acwrData()"
+          [noDataMessage]="noDataMessage"
+          [gapAnalysisData]="gapAnalysisData()"
+          [gapAnalysisSummary]="gapAnalysisSummary()"
+          [speedInsights]="speedInsights()"
+          [timePeriods]="timePeriods"
+          [metricOptions]="metricOptions"
+          [lineChartOptions]="lineChartOptions"
+          [radarChartOptions]="radarChartOptions"
+          [doughnutChartOptions]="DOUGHNUT_CHART_OPTIONS"
+          [barChartOptions]="BAR_CHART_OPTIONS"
+          (resetPerformanceChart)="resetChartZoom('performance')"
+          (exportPerformanceChart)="exportChart('performance')"
+          (selectedTimePeriodChange)="onSelectedTimePeriodChange($event)"
+          (selectedMetricChange)="onSelectedMetricChange($event)"
+        />
+      </div>
+    }
 
-          @defer (on viewport) {
-            <app-analytics-player-stats-section
-              [playerGameStats]="playerGameStats()"
-              [playerSeasonStats]="playerSeasonStats()"
-              [playerMultiSeasonStats]="playerMultiSeasonStats()"
-              [gamesMissed]="gamesMissed()"
-              [attendanceRate]="attendanceRate()"
-            />
-          } @placeholder {
-            <div class="analytics-section analytics-section--placeholder">
-              <p class="data-source">Loading player stats…</p>
-            </div>
-          }
-        </div>
-      }
-      <!-- End of @else for content -->
-    </app-main-layout>
-  
+    <!-- Player Stats Summary (Span 1) -->
+    @defer (on viewport) {
+      <div class="bento-item stats-summary-bento">
+        <h3 class="bento-title"><i class="pi pi-user"></i> Athlete Profile Stats</h3>
+        <app-analytics-player-stats-section
+          [playerGameStats]="playerGameStats()"
+          [playerSeasonStats]="playerSeasonStats()"
+          [playerMultiSeasonStats]="playerMultiSeasonStats()"
+          [gamesMissed]="gamesMissed()"
+          [attendanceRate]="attendanceRate()"
+        />
+      </div>
+    }
+  </div>
+</app-main-layout>

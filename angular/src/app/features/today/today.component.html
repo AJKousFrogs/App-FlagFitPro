@@ -72,60 +72,54 @@
        ======================================================================== -->
   @if (!isLoading() && !isGeneratingProtocol()) {
     @if (todayViewModel(); as vm) {
-      <div class="today-page ui-page-shell ui-page-stack">
-        <app-today-summary-header
-          [todayDateLabel]="todayDateLabel()"
-          [readinessDisplay]="readinessDisplay()"
-          [exactTrainingSummary]="exactTrainingSummary()"
-          (logSession)="handleCta('log_session')"
-          (startExactPlan)="scrollToProtocolBlocks()"
-        />
+      <div class="today-page bento-grid ui-page-shell">
+        <!-- Summary Header (Full Width) -->
+        <div class="bento-item full-width no-padding header-bento">
+          <app-today-summary-header
+            [todayDateLabel]="todayDateLabel()"
+            [readinessDisplay]="readinessDisplay()"
+            [exactTrainingSummary]="exactTrainingSummary()"
+            (logSession)="handleCta('log_session')"
+            (startExactPlan)="scrollToProtocolBlocks()"
+          />
+        </div>
 
+        <!-- Status Stack (Span 1 or Full if mobile) -->
         @defer (on viewport) {
-          <app-today-status-stack
-            [errorState]="vm.errorState"
-            [blockingCoachAlertBanner]="blockingCoachAlertBanner()"
-            [blockingCoachAlertPrimaryCta]="blockingCoachAlertPrimaryCta()"
-            [blockingCoachAlertSecondaryCta]="blockingCoachAlertSecondaryCta()"
-            [coachAttribution]="vm.headerContext?.coachAttribution || null"
-            [coachModifiedTime]="coachModifiedTime()"
-            [visibleBanners]="visibleBanners()"
-            [continuityEvents]="continuityEvents()"
-            [acwrBaseline]="vm.acwrBaseline"
-            (ctaClick)="handleCta($event)"
-          />
-        } @placeholder {
-          <app-skeleton-loader
-            variant="block"
-            width="100%"
-            height="calc(var(--size-80) * 0.85)"
-            borderRadius="var(--radius-lg)"
-          />
+          <div class="bento-item status-bento">
+            <h3 class="bento-title"><i class="pi pi-info-circle"></i> Today's Status</h3>
+            <app-today-status-stack
+              [errorState]="vm.errorState"
+              [blockingCoachAlertBanner]="blockingCoachAlertBanner()"
+              [blockingCoachAlertPrimaryCta]="blockingCoachAlertPrimaryCta()"
+              [blockingCoachAlertSecondaryCta]="blockingCoachAlertSecondaryCta()"
+              [coachAttribution]="vm.headerContext?.coachAttribution || null"
+              [coachModifiedTime]="coachModifiedTime()"
+              [visibleBanners]="visibleBanners()"
+              [continuityEvents]="continuityEvents()"
+              [acwrBaseline]="vm.acwrBaseline"
+              (ctaClick)="handleCta($event)"
+            />
+          </div>
         }
 
-        <!-- ====================================================================
-             MAIN EXECUTION BLOCKS (ordered by ViewModel)
-             ==================================================================== -->
+        <!-- Protocol Section (Span 2) -->
         @defer (on viewport) {
-          <app-today-protocol-section
-            [protocol]="protocol()"
-            [blocks]="protocolDisplayBlocks()"
-            [trainingAllowed]="vm.trainingAllowed"
-            [isGenerating]="isGeneratingProtocol()"
-            (refresh)="refreshProtocol()"
-            (generate)="generateProtocol()"
-            (exerciseComplete)="refreshProtocol()"
-          />
-        } @placeholder {
-          <app-skeleton-loader
-            variant="block"
-            width="100%"
-            height="calc(var(--size-80) * 2)"
-            borderRadius="var(--radius-lg)"
-          />
+          <div class="bento-item span-2 protocol-bento no-padding">
+            <app-today-protocol-section
+              [protocol]="protocol()"
+              [blocks]="protocolDisplayBlocks()"
+              [trainingAllowed]="vm.trainingAllowed"
+              [isGenerating]="isGeneratingProtocol()"
+              (refresh)="refreshProtocol()"
+              (generate)="generateProtocol()"
+              (exerciseComplete)="refreshProtocol()"
+            />
+          </div>
         }
       </div>
-    } @else {
+    }
+ @else {
       <!-- No ViewModel - show error -->
       <div class="today-page">
         <app-page-error-state

@@ -1,662 +1,215 @@
-@use "styles/mixins" as *;
-
-/**
- * Header Component Styles
- * ─────────────────────────────────────────────────────────────
- * FIXED: Using default ViewEncapsulation (Emulated)
- * Styles are now properly scoped to this component only
- * ─────────────────────────────────────────────────────────────
- */
-
-/* ================================================================
-   HEADER CONTAINER - EXACT var(--header-height) HEIGHT
-   ================================================================ */
-
 :host {
   display: block;
   position: sticky;
   top: 0;
   z-index: var(--z-index-app-header);
-
-  --header-control-height: var(--button-height-sm);
-  --header-control-radius: var(--radius-lg);
-  --header-inline-gap: var(--space-3);
-  --header-chip-padding-inline: var(--space-3);
+  background: var(--surface-primary);
+  border-bottom: var(--border-1) solid var(--ui-border-subtle);
+  backdrop-filter: blur(var(--blur-md));
 }
 
 .app-header-shell {
   display: block;
-  min-inline-size: 0;
-  min-height: var(--app-shell-header-height);
+  width: 100%;
 }
 
-// PrimeNG toolbar: _component-overrides.scss (DS-EXC-004)
-
-/* ================================================================
-   HEADER SECTIONS
-   ================================================================ */
-
-.header-start {
+.header-container {
   display: flex;
   align-items: center;
-  gap: var(--header-inline-gap);
-  height: var(--app-shell-header-height);
-  min-width: 0;
+  justify-content: space-between;
+  height: var(--header-height);
+  padding: 0 var(--space-6);
+  max-width: var(--layout-page-max-width-wide);
+  margin: 0 auto;
+  gap: var(--space-4);
 }
 
-.header-center {
+.header-left, .header-center, .header-right {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex: 1;
-  max-width: min(100%, 40rem);
-  min-width: clamp(14rem, 30vw, 22rem);
-  height: var(--app-shell-header-height);
-  cursor: pointer;
-  padding: var(--space-1) 0;
-  border-radius: var(--radius-2xl);
-  transition:
-    transform var(--motion-fast) var(--ease-standard),
-    opacity var(--motion-fast) var(--ease-standard);
-
-  @include ds-focus-ring(var(--ds-primary-green), $radius: var(--radius-lg));
-
-  &:hover {
-    transform: translateY(calc(var(--border-1) * -1));
-  }
 }
 
-.header-end {
-  display: flex;
-  align-items: center;
-  gap: var(--header-inline-gap);
-  height: var(--app-shell-header-height);
-  min-width: 0;
+/* LEFT GROUP */
+.header-left {
+  gap: var(--space-4);
+  flex: 0 0 auto;
 }
 
-@include respond-to(xl) {
-  .header-end {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: var(--space-2);
-  }
-
-  .header-center {
-    max-width: var(--element-max-width-md);
-  }
+.mobile-hamburger {
+  display: none;
 }
-
-/* ================================================================
-   MOBILE MENU TOGGLE (hidden by default on desktop)
-   ================================================================ */
-
-// PrimeNG button override moved to _component-overrides.scss (DS-EXC-004)
-.header-menu-toggle {
-  display: flex;
-}
-
-/* ================================================================
-   OLYMPICS COUNTDOWN
-   ================================================================ */
-
-.olympic-countdown {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--header-control-height);
-  padding: 0 var(--header-chip-padding-inline);
-  background: color-mix(in srgb, var(--surface-card) 92%, transparent);
-  border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--header-control-radius);
-  box-shadow: var(--shadow-sm);
-  height: var(--header-control-height);
-  cursor: default;
-}
-
-.countdown-timer {
-  display: flex;
-  align-items: center;
-  gap: calc(
-    var(--space-1) / 4
-  ); /* Intentionally tight for countdown display */
-}
-
-.countdown-segment {
-  display: flex;
-  align-items: baseline;
-  gap: calc(
-    var(--space-1) / 4
-  ); /* Intentionally tight for countdown display */
-}
-
-.countdown-value {
-  font-family: var(
-    --ds-font-family-mono
-  ); /* ds-exception: monospace numerals */
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--ds-letter-spacing-0-02em);
-  line-height: var(--ds-line-height-1);
-}
-
-.countdown-unit {
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary);
-  text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-02em);
-}
-
-.countdown-sep {
-  font-family: var(
-    --ds-font-family-mono
-  ); /* ds-exception: monospace numerals */
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary);
-  opacity: var(--opacity-muted);
-  padding: 0 calc(var(--space-1) / 4);
-  line-height: var(--ds-line-height-1);
-}
-
-/* Olympics Badge: PrimeNG tag in _component-overrides.scss (DS-EXC-004) */
-
-/* ================================================================
-   WEATHER INDICATOR (Compact Header Widget)
-   ================================================================ */
-
-.weather-indicator {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--header-control-height);
-  padding: 0 var(--header-chip-padding-inline);
-  background: color-mix(in srgb, var(--surface-card) 92%, transparent);
-  border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--header-control-radius);
-  box-shadow: var(--shadow-sm);
-  height: var(--header-control-height);
-  cursor: default;
-  transition:
-    border-color var(--motion-fast) var(--ease-standard),
-    background-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
-
-  @include ds-hover-state(
-    var(--surface-hover),
-    $border-color: var(--surface-border)
-  );
-
-  i {
-    font-size: var(--ds-font-size-md);
-    color: var(--color-text-secondary);
-  }
-}
-
-.weather-temp {
-  font-family: var(
-    --ds-font-family-mono
-  ); /* ds-exception: monospace numerals */
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  font-variant-numeric: tabular-nums;
-  line-height: var(--ds-line-height-1);
-}
-
-.weather-location {
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary);
-  max-width: var(--card-min-height-sm); /* var(--size-80) */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Dev-only API health badge */
-.api-health-indicator {
-  display: flex;
-  align-items: center;
-  height: var(--header-control-height);
-}
-
-// Weather severity states
-.weather-excellent {
-  border-color: var(--color-status-success-light);
-
-  i {
-    color: var(--color-status-success);
-  }
-}
-
-.weather-good {
-  border-color: var(--primitive-info-300);
-
-  i {
-    color: var(--primitive-info-500);
-  }
-}
-
-.weather-fair {
-  border-color: var(--primitive-warning-300);
-
-  i {
-    color: var(--primitive-warning-500);
-  }
-}
-
-.weather-poor {
-  border-color: var(--primitive-danger-300);
-  background: var(--primitive-danger-50);
-
-  i {
-    color: var(--primitive-danger-500);
-  }
-}
-
-.weather-loading {
-  min-width: var(--avatar-size-xl); /* 3.5rem */
-  justify-content: center;
-
-  i {
-    color: var(--color-text-secondary);
-  }
-}
-
-/* ================================================================
-   BREADCRUMBS
-   ================================================================ */
 
 .breadcrumbs {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-left: var(--space-4);
-  height: 100%;
+  margin-left: var(--space-2);
 }
 
 .breadcrumb-item {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  opacity: var(--opacity-subtle);
-  margin: 0;
-  padding: 0;
+  white-space: nowrap;
 }
 
 .breadcrumb-item.current {
   color: var(--color-text-primary);
   font-weight: var(--ds-font-weight-medium);
-  opacity: 1;
 }
 
-.separator {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-  opacity: var(--opacity-dimmed);
-}
-
-/* ================================================================
-   SEARCH INPUT GROUP - THE VISUAL ANCHOR
-   ================================================================ */
-
-// PrimeNG input group: _component-overrides.scss (DS-EXC-004)
-
-.search-input {
-  cursor: pointer;
-  min-width: 0;
-  width: 100%;
-}
-
-.search-launcher-shell {
-  display: flex;
-  flex-direction: column;
+/* CENTER GROUP: SEARCH */
+.header-center {
+  flex: 1;
   justify-content: center;
-  gap: var(--space-2);
-  width: 100%;
-  max-width: min(100%, 40rem);
-  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
-}
+  max-width: 600px;
 
-.search-label {
-  display: inline-flex;
-  align-items: center;
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-semibold);
-  letter-spacing: var(--ds-letter-spacing-0-02em);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  opacity: var(--opacity-muted);
-}
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--ui-surface-subtle);
+    border: var(--border-1) solid var(--ui-border-default);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2) var(--space-4);
+    width: 100%;
+    max-width: 400px;
+    cursor: pointer;
+    transition: all var(--transition-base);
 
-.search-input-group {
-  position: relative;
-  min-height: var(--header-control-height);
-  border-radius: var(--radius-xl);
-  border: var(--border-1) solid
-    color-mix(in srgb, var(--surface-border) 72%, var(--ds-primary-green) 28%);
-  background:
-    linear-gradient(
-      130deg,
-      color-mix(
-          in srgb,
-          var(--surface-ground) 82%,
-          var(--ds-primary-green) 18%
-        )
-        0%,
-      var(--surface-ground) 60%
-    );
-  box-shadow:
-    inset 0 var(--border-1) 0 var(--overlay-white-50),
-    var(--shadow-sm);
-  transition:
-    border-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard),
-    background var(--motion-fast) var(--ease-standard);
+    &:hover {
+      border-color: var(--ds-primary-green);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-sm);
+    }
 
-  &:hover,
-  &:focus-within {
-    border-color: color-mix(
-      in srgb,
-      var(--ds-primary-green) 58%,
-      var(--surface-border) 42%
-    );
-    box-shadow:
-      inset 0 var(--border-1) 0 var(--overlay-white-80),
-      var(--shadow-md),
-      0 0 0 var(--space-0-5) rgba(var(--ds-primary-green-rgb), 0.18);
+    i {
+      color: var(--ds-primary-green);
+      font-size: 1rem;
+    }
+
+    input {
+      border: none;
+      background: transparent;
+      flex: 1;
+      font-size: var(--ds-font-size-sm);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      pointer-events: none;
+
+      &::placeholder {
+        color: var(--color-text-tertiary);
+      }
+    }
+
+    .search-shortcut {
+      display: flex;
+      gap: var(--space-1);
+      
+      kbd {
+        background: var(--surface-tertiary);
+        border: var(--border-1) solid var(--ui-border-default);
+        border-radius: var(--radius-sm);
+        padding: 0 var(--space-1-5);
+        font-size: 10px;
+        font-family: var(--ds-font-family-mono);
+        color: var(--color-text-secondary);
+      }
+    }
   }
 }
 
-.search-icon-addon {
-  i {
-    color: var(--ds-primary-green);
-    opacity: var(--opacity-strong);
-  }
+/* RIGHT GROUP */
+.header-right {
+  gap: var(--space-3);
+  flex: 0 0 auto;
 }
 
-.search-input-group .search-input.p-inputtext {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  padding: 0 var(--space-3);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-  letter-spacing: var(--ds-letter-spacing-0-01em);
-
-  &::placeholder {
-    color: color-mix(in srgb, var(--color-text-secondary) 88%, white 12%);
-    opacity: 1;
-    font-weight: var(--ds-font-weight-regular);
-  }
-
-  &:focus-visible {
-    outline: 0;
-  }
-}
-
-/* Search shortcut hint */
-.search-shortcut {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  opacity: var(--opacity-strong);
-}
-
-.search-shortcut kbd {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--tag-height-xs);
-  height: var(--tag-height-xs);
-  padding: 0 calc(var(--space-3) / 2);
-  background: color-mix(in srgb, var(--surface-100) 78%, white 22%);
-  border: var(--border-1) solid color-mix(in srgb, var(--surface-border) 72%, var(--ds-primary-green) 28%);
-  border-radius: var(--radius-sm);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary);
-  line-height: var(--ds-line-height-1);
-  box-shadow: 0 var(--border-1) 0 var(--overlay-white-90);
-}
-
-// PrimeNG input group hover override moved to _component-overrides.scss (DS-EXC-004)
-
-/* ================================================================
-   THEME TOGGLE (UX Audit Fix #14)
-   ================================================================ */
-
-.theme-toggle {
+.header-utility {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: var(--header-control-height);
-  height: var(--header-control-height);
-  padding: var(--space-1);
-  border-radius: var(--header-control-radius);
-  border: var(--border-1) solid var(--surface-border);
-  background: color-mix(in srgb, var(--surface-card) 92%, transparent);
-  box-shadow: var(--shadow-sm);
-  transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
-
-  @include ds-hover-state(var(--surface-hover));
-}
-
-.theme-label {
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary);
-  min-width: var(--space-8);
-  min-height: calc(var(--header-control-height) - var(--space-2));
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
-  background: var(--surface-ground);
-  border: var(--border-1) solid var(--surface-border);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  height: var(--button-height-sm);
 
-  // Visual indicator based on theme
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: var(--space-0-5);
-    top: 50%;
-    transform: translateY(-50%);
-    width: calc(var(--space-1) + var(--space-0-5));
-    height: calc(var(--space-1) + var(--space-0-5));
-    border-radius: var(--radius-full);
-    transition: background-color var(--motion-fast) var(--ease-standard);
+  &:hover {
+    background: var(--ui-surface-subtle);
+    color: var(--ds-primary-green);
   }
 
-  // Light theme indicator
-  :host-context([data-theme="light"]) &,
-  :host-context(.light-theme) & {
-    padding-left: var(--space-3);
-
-    &::before {
-      background: linear-gradient(
-        135deg,
-        var(--primitive-warning-400) 0%,
-        var(--primitive-warning-500) 100%
-      );
-      box-shadow: 0 0 var(--space-1) rgba(var(--primitive-warning-500-rgb), 0.5);
-    }
-  }
-
-  // Dark theme indicator
-  :host-context([data-theme="dark"]) &,
-  :host-context(.dark-theme) & {
-    padding-left: var(--space-3);
-
-    &::before {
-      background: linear-gradient(
-        135deg,
-        var(--color-status-help) 0%,
-        var(--color-staff-coaching) 100%
-      );
-      box-shadow: 0 0 var(--space-1) rgba(var(--color-status-help-rgb), 0.5);
-    }
-  }
-
-  // Auto mode indicator (split gradient)
-  :host-context([data-theme="auto"]) & {
-    padding-left: var(--space-3);
-
-    &::before {
-      background: linear-gradient(
-        90deg,
-        var(--primitive-warning-400) 0%,
-        var(--primitive-warning-400) 50%,
-        var(--color-status-help) 50%,
-        var(--color-status-help) 100%
-      );
-      box-shadow: 0 0 var(--space-1) rgba(var(--color-status-help-rgb), 0.3);
-    }
-  }
+  i { font-size: 1.2rem; }
 }
 
-/* ================================================================
-   USER MENU CONTAINER
-   ================================================================ */
+.utility-label {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+}
 
-.user-menu-container {
+.icon-badge-container {
   position: relative;
   display: flex;
   align-items: center;
-  height: 100%;
 }
 
-.header-icon-btn-wrapper,
-.user-menu-container {
-  flex-shrink: 0;
-}
-
-.user-avatar-btn {
-  min-height: var(--header-control-height);
-  padding-inline: var(--space-1);
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--color-status-error);
+  color: white;
+  font-size: 10px;
+  font-weight: var(--ds-font-weight-bold);
+  min-width: 16px;
+  height: 16px;
   border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--surface-primary);
 }
 
-/* ================================================================
-   HEADER ICON BUTTONS - 2.5rem UNIFORM
-   ================================================================ */
-// PrimeNG button: _component-overrides.scss (DS-EXC-004)
-
-/* ================================================================
-   USER AVATAR - EXACTLY 2.25rem, PERFECT CIRCLE
-   ================================================================ */
-// PrimeNG avatar/button: _component-overrides.scss (DS-EXC-004)
-
-/* ================================================================
-   USER DROPDOWN MENU
-   NOTE: This menu is rendered in an overlay (outside component DOM)
-   These styles should be moved to global styles or use PT API
-   ================================================================ */
-
-/* ================================================================
-   RESPONSIVE: TABLET (48rem - 64rem)
-   ================================================================ */
-
-@include respond-to(lg) {
-  :host {
-    --header-inline-gap: var(--space-2);
-    --header-chip-padding-inline: var(--space-2);
-  }
-
-  .olympic-countdown {
-    padding: 0 var(--space-2);
-  }
-
-  .countdown-value {
-    font-size: var(--ds-font-size-xs);
-  }
-
-  .header-center {
-    min-width: clamp(10rem, 32vw, var(--input-min-width-lg));
-    max-width: min(100%, 32rem);
-  }
-
-  .search-label {
-    display: none;
-  }
-
-  .search-input {
-    min-width: 0;
-  }
-
-  .search-shortcut-addon {
-    display: none;
-  }
-
-  .theme-label {
-    display: none;
-  }
-
-  .weather-indicator {
-    padding: 0 var(--space-2);
-  }
-
-  .weather-location {
-    display: none;
+.header-profile {
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  padding: 2px;
+  
+  &:hover {
+    transform: scale(1.05);
   }
 }
 
-/* ================================================================
-   RESPONSIVE: MOBILE (<48rem)
-   ================================================================ */
-
-@include respond-to(md) {
-  // PrimeNG responsive overrides moved to _component-overrides.scss (DS-EXC-004)
-  .header-start,
-  .header-center,
-  .header-end {
+/* RESPONSIVE OVERRIDES */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 var(--space-4);
     height: var(--header-height-mobile);
   }
 
-  .app-header-shell {
-    min-height: var(--app-shell-header-height-mobile);
+  .mobile-hamburger {
+    display: flex;
   }
 
-  .header-center {
+  .header-center, 
+  .breadcrumbs, 
+  .utility-label,
+  .desktop-only-util {
     display: none;
   }
 
-  .olympic-countdown {
-    display: none;
-  }
-
-  .weather-indicator {
-    display: none;
-  }
-
-  .breadcrumbs {
-    display: none;
-  }
-
-  .theme-label {
-    display: none;
-  }
-
-  .header-end {
-    gap: var(--space-2);
-    margin-left: auto;
-  }
-}
-
-/* ================================================================
-   RESPONSIVE: SMALL MOBILE (<30rem)
-   ================================================================ */
-
-@include respond-to(sm) {
-  .header-end {
+  .header-right {
     gap: var(--space-1);
+
+    &::before {
+      content: '\e908'; // pi-search
+      font-family: 'primeicons';
+      font-size: 1.2rem;
+      padding: var(--space-2);
+      cursor: pointer;
+      color: var(--color-text-secondary);
+    }
   }
 }

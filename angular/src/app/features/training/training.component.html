@@ -1,13 +1,15 @@
 <!-- UX AUDIT FIX: Removed duplicate p-toast - using global toast in app.component.ts -->
     <app-main-layout>
       <div
-        class="training-page ui-page-shell ui-page-stack"
+        class="training-page bento-grid"
         [class.refreshing]="isRefreshing()"
         appSwipeGesture
         [enablePullToRefresh]="true"
         (pullToRefresh)="refreshTrainingData()"
       >
+        <!-- Full Width: Overview Section -->
         <app-training-overview-section
+          class="bento-item full-width no-padding"
           [isRefreshing]="isRefreshing()"
           [streakCount]="streakCount()"
           [positionIcon]="positionIcon()"
@@ -27,43 +29,53 @@
           (selectPriorityWorkout)="startPriorityWorkoutFromSection($event)"
         />
 
+        <!-- Span 2: Training Builder (Primary Focus) -->
         @defer (on viewport) {
-          <!-- Smart Training Session Builder -->
-          <app-training-builder></app-training-builder>
+          <div class="bento-item span-2">
+            <app-training-builder></app-training-builder>
+          </div>
         } @placeholder {
-          <app-stats-grid [stats]="trainingStats().slice(0, 2)"></app-stats-grid>
+          <div class="bento-item span-2 skeleton-placeholder"></div>
         }
 
+        <!-- Span 1: Stats Summary -->
         @defer (on viewport) {
-          <!-- Training Stats Grid -->
-          <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
+          <div class="bento-item stats-item">
+            <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
+          </div>
         } @placeholder {
-          <div class="training-stats-placeholder"></div>
+          <div class="bento-item stats-item skeleton-placeholder"></div>
         }
 
+        <!-- Full Width: Weekly Schedule -->
         @defer (on viewport) {
-          <app-training-schedule-workouts-section
-            [weeklySchedule]="weeklySchedule()"
-            [workouts]="workouts()"
-            [currentDayName]="currentDayName()"
-            (openSchedule)="toggleScheduleView()"
-            (openAllWorkouts)="showAllWorkouts()"
-            (selectWorkout)="startWorkout($event)"
-          />
+          <div class="bento-item full-width">
+            <app-training-schedule-workouts-section
+              [weeklySchedule]="weeklySchedule()"
+              [workouts]="workouts()"
+              [currentDayName]="currentDayName()"
+              (openSchedule)="toggleScheduleView()"
+              (openAllWorkouts)="showAllWorkouts()"
+              (selectWorkout)="startWorkout($event)"
+            />
+          </div>
         } @placeholder {
-          <div class="training-schedule-placeholder"></div>
+          <div class="bento-item full-width skeleton-placeholder"></div>
         }
 
+        <!-- Full Width: Achievements & Progress Footer -->
         @defer (on viewport) {
-          <app-training-footer-section
-            [recentAchievements]="recentAchievements()"
-            [daysUntilOlympics]="daysUntilOlympics()"
-            [overallProgress]="overallProgress()"
-            (openAchievements)="goToAchievements()"
-            (openRoadmap)="goToRoadmap()"
-          />
+          <div class="bento-item full-width no-padding">
+            <app-training-footer-section
+              [recentAchievements]="recentAchievements()"
+              [daysUntilOlympics]="daysUntilOlympics()"
+              [overallProgress]="overallProgress()"
+              (openAchievements)="goToAchievements()"
+              (openRoadmap)="goToRoadmap()"
+            />
+          </div>
         } @placeholder {
-          <div class="training-footer-placeholder"></div>
+          <div class="bento-item full-width skeleton-placeholder"></div>
         }
       </div>
     </app-main-layout>
