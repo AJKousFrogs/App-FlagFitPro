@@ -29,7 +29,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 
-import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -48,13 +47,11 @@ import {
   getProtocolReadinessPresentation,
 } from "../../core/utils/protocol-metrics-presentation";
 import {
-  AIModeExplanationComponent,
   AIModeStatus,
 } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { CloseButtonComponent } from "../../shared/components/close-button/close-button.component";
-import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
@@ -150,15 +147,11 @@ interface AutocompleteSuggestion {
   ],
   imports: [
     ReactiveFormsModule,
-    Tooltip,
     AppDialogComponent,
     MainLayoutComponent,
-    AlertComponent,
+    IconButtonComponent,
     CloseButtonComponent,
-    DailyReadinessComponent,
     MicroSessionComponent,
-    AIModeExplanationComponent,
-    SearchInputComponent,
   ],
   templateUrl: "./ai-coach-chat.component.html",
 

@@ -53,6 +53,14 @@
                 [stats]="rosterService.teamStats()"
               ></app-roster-overview>
             </div>
+          } @placeholder {
+            <div class="bento-item full-width no-padding stats-bento">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading roster overview..."
+              ></app-loading>
+            </div>
           }
 
           <!-- Filters Toolbar (Full Width) -->

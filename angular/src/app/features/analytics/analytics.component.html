@@ -1,5 +1,18 @@
 <app-main-layout>
-  <div class="analytics-page bento-grid ui-page-shell">
+  <app-loading
+    [visible]="isPageLoading()"
+    variant="skeleton"
+    message="Loading analytics..."
+  ></app-loading>
+
+  @if (hasPageError()) {
+    <app-page-error-state
+      title="Unable to load analytics"
+      [message]="pageErrorMessage()"
+      (retry)="retryLoad()"
+    ></app-page-error-state>
+  } @else {
+    <div class="analytics-page bento-grid ui-page-shell">
     <!-- Header (Full Width) -->
     <div class="bento-item full-width no-padding header-bento">
       <app-page-header
@@ -13,7 +26,7 @@
     <div class="bento-item full-width data-info-bento">
       <app-data-source-banner
         [dataState]="analyticsDataState()"
-        [currentData_points]="analyticsDataPoints()"
+        [currentDataPoints]="analyticsDataPoints()"
         [minimumRequired]="analyticsMinimumRequired"
         metricName="analytics"
         [showWhenReal]="true"
@@ -64,6 +77,14 @@
           (selectedMetricChange)="onSelectedMetricChange($event)"
         />
       </div>
+    } @placeholder {
+      <div class="bento-item span-2 charts-bento">
+        <app-loading
+          [visible]="true"
+          variant="skeleton"
+          message="Loading analytics charts..."
+        ></app-loading>
+      </div>
     }
 
     <!-- Player Stats Summary (Span 1) -->
@@ -78,6 +99,15 @@
           [attendanceRate]="attendanceRate()"
         />
       </div>
+    } @placeholder {
+      <div class="bento-item stats-summary-bento">
+        <app-loading
+          [visible]="true"
+          variant="skeleton"
+          message="Loading player stats..."
+        ></app-loading>
+      </div>
     }
-  </div>
+    </div>
+  }
 </app-main-layout>

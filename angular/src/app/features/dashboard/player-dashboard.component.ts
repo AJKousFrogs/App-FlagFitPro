@@ -33,9 +33,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Timeline } from "primeng/timeline";
-import { Tooltip } from "primeng/tooltip";
 import { of } from "rxjs";
 import { catchError } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
@@ -92,7 +90,6 @@ import {
 } from "../../core/utils/protocol-metrics-presentation";
 import { PlayerDashboardDataService } from "./services/player-dashboard-data.service";
 import { PlayerDashboardSetupCardComponent } from "./components/player-dashboard-setup-card.component";
-import { PlayerDashboardEventsSectionComponent } from "./components/player-dashboard-events-section.component";
 import { PlayerDashboardInsightsGridComponent } from "./components/player-dashboard-insights-grid.component";
 import { PlayerDashboardStatsOverviewComponent } from "./components/player-dashboard-stats-overview.component";
 import { PlayerDashboardStatusStackComponent } from "./components/player-dashboard-status-stack.component";
@@ -137,15 +134,12 @@ interface AnnouncementBanner {
     CommonModule,
     RouterModule,
     AlertComponent,
-    StatusTagComponent,
     ButtonComponent,
     CardShellComponent,
-    PlayerDashboardEventsSectionComponent,
     PlayerDashboardSetupCardComponent,
     PlayerDashboardInsightsGridComponent,
 
     DashboardSkeletonComponent,
-    Tooltip,
     Timeline,
     MainLayoutComponent,
     PageErrorStateComponent,

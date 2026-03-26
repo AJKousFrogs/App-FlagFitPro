@@ -11,7 +11,6 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 import { TabsComponent, AppTabPanelDirective } from "../../shared/components/tabs/tabs.component";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -26,10 +25,7 @@ import { ProfileCompletionService } from "../../core/services/profile-completion
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
-import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getErrorMessage } from "../../shared/utils/error.utils";
 import { getInitials } from "../../shared/utils/format.utils";
@@ -38,7 +34,6 @@ import {
   getDeletionMessage,
 } from "../../shared/utils/privacy-ux-copy";
 import { ProfileHeaderSectionComponent } from "./components/profile-header-section.component";
-import { ProfileInvitationsSectionComponent } from "./components/profile-invitations-section.component";
 import { ProfileOverviewSectionComponent } from "./components/profile-overview-section.component";
 import { ProfileAchievementsSectionComponent } from "./components/profile-achievements-section.component";
 import { ProfileStatisticsSectionComponent } from "./components/profile-statistics-section.component";
@@ -65,13 +60,8 @@ interface PendingInvitation {
     TabsComponent,
     AppTabPanelDirective,
     MainLayoutComponent,
-    PageErrorStateComponent,
-    AlertComponent,
-    ButtonComponent,
     StatsGridComponent,
-    AppLoadingComponent,
     ProfileHeaderSectionComponent,
-    ProfileInvitationsSectionComponent,
     ProfileOverviewSectionComponent,
     ProfileAchievementsSectionComponent,
     ProfileStatisticsSectionComponent,

@@ -17,7 +17,6 @@ import {
   signal,
 } from "@angular/core";
 import { ProgressBar } from "primeng/progressbar";
-import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -31,7 +30,6 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { UI_LIMITS } from "../../core/constants";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
 // ===== Interfaces =====
 interface Achievement {
@@ -262,10 +260,8 @@ const CATEGORY_LABELS: Record<
     DatePipe,
     DecimalPipe,
     ProgressBar,
-    Select,
     TableModule,
     StatusTagComponent,
-    CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
   ],

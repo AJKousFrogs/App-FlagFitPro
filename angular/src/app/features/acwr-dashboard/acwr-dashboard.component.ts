@@ -57,7 +57,6 @@ import {
   OwnershipTransitionService,
   OwnershipTransition,
 } from "../../core/services/ownership-transition.service";
-import { OwnershipTransitionBadgeComponent } from "../../shared/components/ownership-transition-badge/ownership-transition-badge.component";
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 import { formatDate } from "../../shared/utils/date.utils";
@@ -66,13 +65,14 @@ import {
   getRiskSeverityFromZone,
 } from "../../shared/utils/risk.utils";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
+import { AlertVariant } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AcwrDashboardDataService } from "./services/acwr-dashboard-data.service";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
 import { DataState } from "../../core/services/data-source.service";
 import { LazyPdfService } from "../../core/services/lazy-pdf.service";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -85,11 +85,10 @@ import { LazyPdfService } from "../../core/services/lazy-pdf.service";
     PageErrorStateComponent,
     AppLoadingComponent,
     ConfidenceIndicatorComponent,
-    OwnershipTransitionBadgeComponent,
     SemanticMeaningRendererComponent,
     MainLayoutComponent,
     DataSourceBannerComponent,
-    AlertComponent,
+    PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
   ],

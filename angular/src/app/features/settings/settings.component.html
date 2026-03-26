@@ -109,6 +109,37 @@
               (deleteAccount)="showDeleteAccountDialog = true"
             ></app-security-settings-card>
           </div>
+        } @placeholder {
+          <div class="settings-defer-placeholder">
+            <div id="notifications-settings" class="bento-item notifications-card">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading notification settings..."
+              ></app-loading>
+            </div>
+            <div id="privacy-settings" class="bento-item privacy-card">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading privacy settings..."
+              ></app-loading>
+            </div>
+            <div id="preferences-settings" class="bento-item preferences-card">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading preferences..."
+              ></app-loading>
+            </div>
+            <div class="bento-item security-actions-card">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading security settings..."
+              ></app-loading>
+            </div>
+          </div>
         }
       </div>
     </div>

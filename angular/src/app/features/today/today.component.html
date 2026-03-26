@@ -101,6 +101,15 @@
               (ctaClick)="handleCta($event)"
             />
           </div>
+        } @placeholder {
+          <div class="bento-item status-bento">
+            <app-skeleton-loader
+              variant="block"
+              width="100%"
+              height="calc(var(--size-80) * 1.6)"
+              borderRadius="var(--radius-lg)"
+            />
+          </div>
         }
 
         <!-- Protocol Section (Span 2) -->
@@ -114,6 +123,15 @@
               (refresh)="refreshProtocol()"
               (generate)="generateProtocol()"
               (exerciseComplete)="refreshProtocol()"
+            />
+          </div>
+        } @placeholder {
+          <div class="bento-item span-2 protocol-bento no-padding">
+            <app-skeleton-loader
+              variant="block"
+              width="100%"
+              height="calc(var(--size-80) * 2)"
+              borderRadius="var(--radius-lg)"
             />
           </div>
         }

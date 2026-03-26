@@ -11,7 +11,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Avatar } from "primeng/avatar";
 import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
 import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { TableModule } from "primeng/table";
@@ -28,8 +27,6 @@ import { AuthService } from "../../core/services/auth.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
@@ -58,14 +55,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     InputText,
     Textarea,
     Select,
-    ProgressBar,
     Avatar,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
     ButtonComponent,
-    CardShellComponent,
-    IconButtonComponent,
     EmptyStateComponent,
     AppDialogComponent,
     DialogHeaderComponent,

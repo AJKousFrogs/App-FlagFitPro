@@ -18,11 +18,7 @@ import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { MenuItem } from "primeng/api";
 import { Avatar } from "primeng/avatar";
-import { InputGroup } from "primeng/inputgroup";
-import { InputGroupAddon } from "primeng/inputgroupaddon";
-import { InputText } from "primeng/inputtext";
 import { Menu } from "primeng/menu";
-import { Toolbar } from "primeng/toolbar";
 import { Tooltip } from "primeng/tooltip";
 import { filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
@@ -34,13 +30,11 @@ import { ThemeService } from "../../../core/services/theme.service";
 import { TrainingStatsCalculationService } from "../../../core/services/training-stats-calculation.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
 import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortcuts.service";
-import { BadgeComponent } from "../badge/badge.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
   WeatherData,
   WeatherService,
 } from "../../../core/services/weather.service";
-import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { NotificationsPanelComponent } from "../notifications-panel/notifications-panel.component";
 import { SearchPanelComponent } from "../search-panel/search-panel.component";
@@ -50,18 +44,12 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    InputText,
-    InputGroup,
-    InputGroupAddon,
     Avatar,
-    ButtonComponent,
     Tooltip,
-    Toolbar,
     Menu,
     SearchPanelComponent,
     NotificationsPanelComponent,
     IconButtonComponent,
-    BadgeComponent,
     StatusTagComponent,
   ],
   templateUrl: "./header.component.html",

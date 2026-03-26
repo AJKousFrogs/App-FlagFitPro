@@ -20,7 +20,12 @@
               <span>{{ todayReadinessScore() }}% Readiness</span>
             </div>
           }
-          <app-icon-button icon="pi-plus" (clicked)="startNewConversation()" tooltip="New Chat" />
+          <app-icon-button
+            icon="pi-plus"
+            ariaLabel="Start new conversation"
+            tooltip="New Chat"
+            (clicked)="startNewConversation()"
+          />
         </div>
       </header>
 
@@ -124,6 +129,5 @@
             </app-dialog>
           }
         }
-      </div>
     </app-main-layout>
   

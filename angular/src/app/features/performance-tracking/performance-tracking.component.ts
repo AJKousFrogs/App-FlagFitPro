@@ -5,14 +5,12 @@ import {
   signal,
   computed,
 } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { Accordion, AccordionPanel } from "primeng/accordion";
 import { ProgressBar } from "primeng/progressbar";
 import { TableComponent } from "../../shared/components/table/table.component";
-import { SelectComponent } from "../../shared/components/select/select.component";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
 import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
@@ -23,9 +21,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { PerformanceTrackingDataService } from "./services/performance-tracking-data.service";
 import { DataState } from "../../core/services/data-source.service";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
@@ -39,9 +35,7 @@ import {
   StatItem,
   StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
-import { AchievementBadgeComponent } from "../../shared/components/achievement-badge/achievement-badge.component";
 import { DataSourceBannerComponent } from "../../shared/components/data-source-banner/data-source-banner.component";
-import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { SimpleChartData } from "../../core/models/chart.models";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -50,7 +44,6 @@ import {
   PerformanceAchievement,
 } from "../../core/services/team-performance-ranking.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
-import { Tooltip } from "primeng/tooltip";
 
 /**
  * Database record shape for performance_records table
@@ -177,19 +170,14 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AppDialogComponent,
-    AlertComponent,
     ButtonComponent,
-    CardShellComponent,
     LazyChartComponent,
     TableComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
-    FormInputComponent,
     InputNumberComponent,
+    FormInputComponent,
     ProgressBar,
-    SelectComponent,
-    Accordion,
-    AccordionPanel,
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
@@ -197,11 +185,8 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     AppLoadingComponent,
     RouterModule,
     StatusTagComponent,
-    AchievementBadgeComponent,
     DataSourceBannerComponent,
-    EmptyStateComponent,
     DatePipe,
-    Tooltip,
     FormsModule,
     ReactiveFormsModule,
   ],
