@@ -144,10 +144,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-item--sidebar .nav-item-icon {
-  width: var(--space-6); /* 1.5rem */
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.nav-item--sidebar .nav-item-icon i {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
 }
 
 .nav-item-icon i {
@@ -158,9 +169,24 @@
     transform var(--transition-fast) var(--ease-standard);
 }
 
+.nav-item--bottom .nav-item-icon,
+.nav-item--menu .nav-item-icon {
+  // Standardized icon container size
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+}
+
 .nav-item--bottom .nav-item-icon i,
 .nav-item--menu .nav-item-icon i {
-  font-size: var(--ds-font-size-xl);
+  // Standardized icon size for bottom nav and menu
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  line-height: 1;
 }
 
 .nav-badge {

@@ -1,0 +1,462 @@
+@use "styles/mixins" as *;
+
+/**
+ * Bento Grid Component - Shared Dashboard Layout System
+ *
+ * Purpose: Eliminate 29+ duplicate bento-item patterns across 16 files
+ * Usage: Apply .bento-grid and .bento-item classes to dashboard layouts
+ *
+ * @layer components
+ * @see FRONTEND_AUDIT_REPORT.md Section 1.2.3
+ *
+ * Architecture:
+ * - Mobile-first responsive design
+ * - Uses CSS Grid with auto-flow
+ * - No !important declarations (uses CSS layers for proper cascade)
+ * - Follows design system spacing tokens
+ */
+
+// Design system tokens and mixins are already available via main styles.scss import
+@use "../utilities" as *;
+
+@layer components {
+  /* ============================================
+     GRID CONTAINER
+     ============================================ */
+
+  /**
+   * Main bento grid container
+   * Creates a responsive 3-column grid that adapts to screen size
+   */
+  .bento-grid {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: var(--space-8);
+
+    /* Default: 3 columns on desktop */
+    grid-template-columns: repeat(3, 1fr);
+
+    /* Tablet: 2 columns */
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      padding: var(--space-4);
+    }
+
+    /* Mobile: 1 column */
+    @include respond-to(sm) {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      padding: var(--space-3);
+    }
+  }
+
+  /**
+   * Dense grid variant - for smaller cards
+   */
+  .bento-grid--dense {
+    gap: var(--space-3);
+
+    @include respond-to(md) {
+      gap: var(--space-3);
+    }
+  }
+
+  /**
+   * Loose grid variant - for larger spacing
+   */
+  .bento-grid--loose {
+    gap: var(--space-6);
+
+    @include respond-to(md) {
+      gap: var(--space-5);
+    }
+  }
+
+  /* ============================================
+     GRID ITEMS
+     ============================================ */
+
+  /**
+   * Individual bento item (card)
+   * Includes standard card styling with hover effects
+   */
+  .bento-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Prevent grid blowout */
+    min-height: 0; /* Prevent grid blowout */
+
+    /* Visual styling */
+    background: var(--surface-primary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: 16px;
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+
+    /* Smooth transitions */
+    transition:
+      transform var(--transition-base),
+      box-shadow var(--transition-base),
+      border-color var(--transition-base);
+
+    /* Hover state */
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Focus state for accessibility */
+    &:focus-within {
+      outline: var(--focus-outline-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    /* Mobile padding adjustment */
+    @include respond-to(sm) {
+      padding: var(--space-4);
+    }
+  }
+
+  /**
+   * Clickable bento item - adds cursor and press effect
+   */
+  .bento-item--clickable {
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+
+  /**
+   * Bento item variants - different visual styles
+   */
+
+  /* Subtle variant - less prominent */
+  .bento-item--subtle {
+    background: var(--ui-surface-subtle);
+    border-color: transparent;
+    box-shadow: none;
+
+    &:hover {
+      background: var(--surface-secondary);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+
+  /* Elevated variant - more shadow */
+  .bento-item--elevated {
+    box-shadow: var(--shadow-md);
+
+    &:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Outlined variant - emphasis on border */
+  .bento-item--outlined {
+    background: transparent;
+    border-width: 2px;
+    border-color: var(--ui-border);
+
+    &:hover {
+      border-color: var(--ui-primary);
+      background: var(--ui-surface-subtle);
+    }
+  }
+
+  /* No padding variant */
+  .bento-item--no-padding {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Compact padding variant */
+  .bento-item--compact {
+    padding: var(--space-3);
+
+    @include respond-to(sm) {
+      padding: var(--space-3);
+    }
+  }
+
+  /* ============================================
+     GRID ITEM SIZING
+     ============================================ */
+
+  /**
+   * Span utilities - control how many columns an item takes
+   * Uses CSS layers to avoid !important
+   */
+
+  .bento-item--span-2 {
+    grid-column: span 2;
+
+    /* Auto-adjust on tablet */
+    @include respond-to(md) {
+      grid-column: span 2;
+    }
+
+    /* Full width on mobile */
+    @include respond-to(sm) {
+      grid-column: span 1;
+    }
+  }
+
+  .bento-item--span-3,
+  .bento-item--full-width {
+    grid-column: 1 / -1;
+  }
+
+  /**
+   * Row span utilities
+   */
+  .bento-item--tall {
+    grid-row: span 2;
+
+    @include respond-to(sm) {
+      grid-row: span 1;
+    }
+  }
+
+  /* ============================================
+     BENTO ITEM CONTENT
+     ============================================ */
+
+  /**
+   * Standard bento item header
+   */
+  .bento-item__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .bento-item__title {
+    font-size: var(--ds-font-size-lg);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+    line-height: var(--line-height-snug);
+  }
+
+  .bento-item__subtitle {
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
+    margin: var(--space-1) 0 0;
+  }
+
+  .bento-item__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /**
+   * Bento item body - main content area
+   */
+  .bento-item__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /**
+   * Bento item footer - action area
+   */
+  .bento-item__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--ui-border-subtle);
+  }
+
+  /* ============================================
+     STATUS INDICATORS
+     ============================================ */
+
+  /**
+   * Visual status indicators for bento items
+   */
+
+  /* Success/positive state */
+  .bento-item--status-success {
+    border-left: 4px solid var(--ui-success);
+  }
+
+  /* Warning state */
+  .bento-item--status-warning {
+    border-left: 4px solid var(--ui-warning);
+  }
+
+  /* Danger/error state */
+  .bento-item--status-danger {
+    border-left: 4px solid var(--ui-danger);
+    background: color-mix(
+      in srgb,
+      var(--ui-danger) 4%,
+      var(--surface-primary)
+    );
+  }
+
+  /* Info state */
+  .bento-item--status-info {
+    border-left: 4px solid var(--ui-info);
+  }
+
+  /* ============================================
+     LOADING STATES
+     ============================================ */
+
+  /**
+   * Loading skeleton for bento items
+   */
+  .bento-item--loading {
+    pointer-events: none;
+
+    .bento-item__title,
+    .bento-item__body {
+      background: var(--ui-surface-subtle);
+      color: transparent;
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* ============================================
+     SPECIAL LAYOUTS
+     ============================================ */
+
+  /**
+   * Alert container within bento grid
+   * Transparent background, no padding
+   */
+  .bento-item--alerts {
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  /**
+   * Stat grid layout within bento item
+   */
+  .bento-item__stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-3);
+  }
+
+  /* ============================================
+     ACCESSIBILITY
+     ============================================ */
+
+  /**
+   * High contrast mode adjustments
+   */
+  @media (prefers-contrast: high) {
+    .bento-item {
+      border-width: 2px;
+    }
+  }
+
+  /**
+   * Reduced motion
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .bento-item,
+    .bento-item--clickable,
+    .bento-item--elevated {
+      transition: none;
+
+      &:hover,
+      &:active {
+        transform: none;
+      }
+    }
+  }
+}
+
+/* ============================================
+   MIGRATION GUIDE
+   ============================================ */
+
+/**
+ * BEFORE (Component-specific):
+ *
+ * // wellness.component.scss
+ * .wellness-page.bento-grid {
+ *   display: grid;
+ *   grid-template-columns: repeat(3, 1fr);
+ *   gap: var(--space-5);
+ *
+ *   .bento-item {
+ *     background: var(--surface-primary);
+ *     border: 1px solid var(--ui-border-subtle);
+ *     border-radius: 16px;
+ *     padding: var(--space-5);
+ *     box-shadow: var(--shadow-sm);
+ *
+ *     &:hover {
+ *       box-shadow: var(--shadow-md);
+ *     }
+ *   }
+ *
+ *   @include respond-to(md) {
+ *     .bento-item {
+ *       grid-column: span 1;
+ *     }
+ *   }
+ * }
+ *
+ *
+ * AFTER (Using shared component):
+ *
+ * // wellness.component.html
+ * <div class="bento-grid">
+ *   <div class="bento-item">
+ *     <div class="bento-item__header">
+ *       <h3 class="bento-item__title">Wellness Metrics</h3>
+ *     </div>
+ *     <div class="bento-item__body">
+ *       <!-- Content here -->
+ *     </div>
+ *   </div>
+ *
+ *   <div class="bento-item bento-item--span-2">
+ *     <!-- Spans 2 columns -->
+ *   </div>
+ *
+ *   <div class="bento-item bento-item--status-danger">
+ *     <!-- With danger status indicator -->
+ *   </div>
+ * </div>
+ *
+ * // wellness.component.scss (minimal custom styles)
+ * // Only add component-specific styles here
+ */

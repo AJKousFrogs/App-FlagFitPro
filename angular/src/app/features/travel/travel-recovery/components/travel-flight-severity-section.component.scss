@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .severity-section {
   margin-bottom: 0;
 }
@@ -124,7 +126,7 @@
   color: var(--ui-text-secondary);
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .severity-content {
     flex-direction: column;
   }

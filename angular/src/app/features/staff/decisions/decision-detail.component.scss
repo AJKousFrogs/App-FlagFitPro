@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .decision-detail {
   padding: var(--space-6);
 }
@@ -129,7 +131,7 @@
   text-align: center;
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .detail-grid {
     grid-template-columns: 1fr;
   }

@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
   position: sticky;
@@ -33,10 +35,28 @@
 .header-left {
   gap: var(--space-4);
   flex: 0 0 auto;
+
+  @include respond-to(md) {
+    gap: var(--space-2);
+  }
 }
 
 .mobile-hamburger {
   display: none;
+  min-width: 44px; // Touch target
+  min-height: 44px;
+
+  @include respond-to(sm) {
+    min-width: 48px; // Larger on mobile
+    min-height: 48px;
+  }
+
+  // Touch feedback
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }
 
 .breadcrumbs {
@@ -183,7 +203,7 @@
 }
 
 /* RESPONSIVE OVERRIDES */
-@media (max-width: 768px) {
+@include respond-to(md) {
   .header-container {
     padding: 0 var(--space-4);
     height: var(--header-height-mobile);

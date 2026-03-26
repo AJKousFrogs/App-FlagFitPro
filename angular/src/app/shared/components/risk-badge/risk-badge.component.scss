@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .risk-badge {
   display: inline-flex;
   align-items: center;
@@ -46,7 +48,7 @@
   animation: risk-badge-pulse 2s infinite;
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .risk-badge.placement-top-right,
   .risk-badge.placement-top-left {
     position: static;

@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .rtp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xl), 1fr));
@@ -127,7 +129,7 @@
   list-style: none;
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .rtp-grid {
     grid-template-columns: 1fr;
   }

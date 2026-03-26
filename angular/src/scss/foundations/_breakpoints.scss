@@ -9,14 +9,14 @@
  *
  * Instead of:
  *   .card { ... }
- *   @include respond-to(md) { .card { ... } }
- *   @include respond-to(lg) { .card { ... } }
+ *   @media (max-width: 768px) { .card { ... } }
+ *   @media (max-width: 1024px) { .card { ... } }
  *
  * Do:
  *   .card {
  *     ...
- *     @include respond-to(md) { ... }
- *     @include respond-to(lg) { ... }
+ *     @media (max-width: 768px) { ... }
+ *     @media (max-width: 1024px) { ... }
  *   }
  *
  * Files with 25+ respond-to blocks (audit):

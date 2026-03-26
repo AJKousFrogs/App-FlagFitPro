@@ -25,6 +25,8 @@
 .hero-section {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh; // Modern: keyboard-aware
+height: 100dvh; // Modern: keyboard-aware
   min-height: 100dvh;
   display: flex;
   flex-direction: column;

@@ -2,6 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+
+  // Ensure proper scrolling behavior
+  min-height: 0;
+  overflow: visible;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 .quick-links {

@@ -7,6 +7,8 @@
 
 .curation-page {
   min-height: 100vh;
+  min-height: 100dvh; // Modern: keyboard-aware
+height: 100dvh; // Modern: keyboard-aware
   min-height: 100dvh;
   background: var(--surface-primary);
   width: 100%;

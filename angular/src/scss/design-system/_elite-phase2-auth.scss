@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 /*
  * Phase-2 Auth Migration Layer
  * Shared premium auth shell for login/register/reset flows.
@@ -8,6 +10,8 @@
   display: grid;
   place-items: center;
   min-height: 100vh;
+  min-height: 100dvh; // Modern: keyboard-aware
+height: 100dvh; // Modern: keyboard-aware
   min-height: 100dvh;
   padding: var(--layout-page-padding-y) var(--layout-page-padding-x);
   background:
@@ -216,7 +220,7 @@
   padding-block: var(--space-1);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .elite-auth-shell {
     place-items: start;
     padding: var(--space-5) var(--space-4);
@@ -232,7 +236,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .elite-auth-shell {
     padding: var(--space-4) var(--space-3);
     padding-top: calc(var(--space-5) + var(--safe-area-top));

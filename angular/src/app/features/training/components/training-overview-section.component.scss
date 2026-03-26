@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .training-overview {
   position: relative;
 }
@@ -251,7 +253,7 @@
   text-transform: var(--ds-text-transform-uppercase);
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .quick-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -270,7 +272,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .quick-actions {
     grid-template-columns: 1fr 1fr;
   }

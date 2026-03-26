@@ -340,41 +340,63 @@ const CATEGORY_LABELS: Record<
         </div>
 
         <!-- Achievement Gallery (Full Width) -->
-        <div class="bento-item full-width gallery-bento">
-          <div class="gallery-header">
-            <h3 class="bento-title"><i class="pi pi-th-large"></i> Badge Gallery</h3>
-            <div class="category-filters">
+        <section class="bento-item full-width gallery-bento" aria-labelledby="gallery-heading">
+          <header class="gallery-header">
+            <h3 id="gallery-heading" class="bento-title">
+              <i class="pi pi-th-large" aria-hidden="true"></i> Badge Gallery
+            </h3>
+            <nav class="category-filters" role="tablist" aria-label="Achievement categories">
               @for (cat of categories; track cat.value) {
                 <button
+                  type="button"
+                  role="tab"
                   class="cat-chip"
                   [class.active]="selectedCategory() === cat.value"
+                  [attr.aria-selected]="selectedCategory() === cat.value"
+                  [attr.aria-label]="'Filter by ' + cat.label + ' achievements'"
                   (click)="selectedCategory.set(cat.value)"
                 >
-                  {{ cat.icon }} {{ cat.label }}
+                  <span aria-hidden="true">{{ cat.icon }}</span> {{ cat.label }}
                 </button>
               }
-            </div>
-          </div>
+            </nav>
+          </header>
 
-          <div class="badges-grid">
+          <div class="badges-grid" role="list" aria-label="Achievement badges">
             @for (achievement of filteredAchievements(); track achievement.id) {
-              <div class="badge-card" [class.locked]="!achievement.isUnlocked">
-                <div class="badge-visual">
-                  <span class="emoji">{{ achievement.icon }}</span>
-                  @if (achievement.isUnlocked) { <i class="pi pi-check-circle check"></i> }
+              <article
+                class="badge-card"
+                [class.locked]="!achievement.isUnlocked"
+                role="listitem"
+                [attr.aria-label]="achievement.name + ': ' + achievement.description + '. ' + achievement.points + ' points. ' + (achievement.isUnlocked ? 'Unlocked' : 'Locked')"
+              >
+                <div class="badge-visual" [attr.aria-hidden]="true">
+                  <!-- Handle both emoji strings and PrimeIcon class names -->
+                  @if (achievement.icon && achievement.icon.startsWith('pi-')) {
+                    <i class="pi {{ achievement.icon }} badge-icon"></i>
+                  } @else {
+                    <span class="emoji" role="img" [attr.aria-label]="achievement.name + ' icon'">{{ achievement.icon }}</span>
+                  }
+                  @if (achievement.isUnlocked) {
+                    <i class="pi pi-check-circle check" [attr.aria-label]="'Unlocked'"></i>
+                  }
                 </div>
                 <h4>{{ achievement.name }}</h4>
                 <p>{{ achievement.description }}</p>
-                <div class="badge-footer">
-                  <span class="pts">{{ achievement.points }} PTS</span>
+                <footer class="badge-footer">
+                  <span class="pts" aria-label="{{ achievement.points }} points">{{ achievement.points }} PTS</span>
                   @if (!achievement.isUnlocked && achievement.target) {
-                    <p-progressBar [value]="(achievement.progress || 0) / achievement.target * 100" [showValue]="false" />
+                    <p-progressBar
+                      [value]="(achievement.progress || 0) / achievement.target * 100"
+                      [showValue]="false"
+                      [attr.aria-label]="'Progress: ' + (achievement.progress || 0) + ' of ' + achievement.target"
+                    />
                   }
-                </div>
-              </div>
+                </footer>
+              </article>
             }
           </div>
-        </div>
+        </section>
       </div>
     </app-main-layout>
   `,

@@ -58,6 +58,19 @@
     }
   }
 
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+  }
+
   .app-focus-ring:focus-visible,
   .focus-ring:focus-visible {
     outline: var(--focus-outline-width) solid var(--color-focus-ring);
@@ -90,6 +103,9 @@
       box-shadow var(--motion-feedback-duration-fast) var(--ease-standard),
       transform var(--motion-feedback-duration-fast) var(--ease-standard);
 
+    // Breathing animation for subtle attention
+    animation: breathe 3s ease-in-out infinite;
+
     i {
       font-size: var(--icon-base);
       color: inherit;
@@ -99,18 +115,26 @@
     &:hover {
       background: var(--close-button-bg-hover);
       color: var(--close-button-color-hover);
+      transform: scale(1.1);
+      animation: none; // Stop breathing on hover
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
 
     &:focus-visible {
       outline: var(--focus-outline-width) solid var(--color-focus-ring);
       outline-offset: var(--focus-outline-offset);
       box-shadow: var(--shadow-focus);
+      animation: none; // Stop breathing on focus
     }
 
     &:disabled {
       opacity: var(--opacity-dimmed);
       cursor: not-allowed;
       pointer-events: none;
+      animation: none; // No animation when disabled
     }
   }
 
@@ -326,17 +350,30 @@
     min-height: var(--component-close-button-size-md);
     border-radius: var(--radius-full);
     color: var(--color-text-secondary);
+    transition: transform var(--motion-feedback-duration-fast) var(--ease-standard),
+      background-color var(--motion-feedback-duration-fast) var(--ease-standard),
+      color var(--motion-feedback-duration-fast) var(--ease-standard);
+
+    // Breathing animation
+    animation: breathe 3s ease-in-out infinite;
   }
 
   .app-toast .p-toast-close-button:hover {
     background: var(--surface-secondary);
     color: var(--color-text-primary);
+    transform: scale(1.1);
+    animation: none; // Stop breathing on hover
+  }
+
+  .app-toast .p-toast-close-button:active {
+    transform: scale(0.95);
   }
 
   .app-toast .p-toast-close-button:focus-visible {
     outline: var(--focus-outline-width) solid var(--color-focus-ring);
     outline-offset: var(--focus-outline-offset);
     box-shadow: var(--shadow-focus);
+    animation: none; // Stop breathing on focus
   }
 
   .toast-content {
@@ -934,6 +971,44 @@
     flex: 1;
     overflow-y: auto;
     padding: 0;
+
+    /* Enhanced empty state styling */
+    .empty-state-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      padding: var(--space-8) var(--space-5);
+
+      .empty-state-icon {
+        width: var(--space-16);
+        height: var(--space-16);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-full);
+        background: var(--ui-surface-subtle);
+        color: var(--color-text-tertiary);
+        font-size: 3rem;
+        margin-bottom: var(--space-4);
+      }
+
+      .empty-state-heading {
+        font-size: var(--font-h3-size);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--space-2);
+      }
+
+      .empty-state-description {
+        font-size: var(--font-body-size);
+        color: var(--color-text-secondary);
+        text-align: center;
+        max-width: 320px;
+        line-height: var(--line-height-normal);
+      }
+    }
   }
 
   .loading-state {
@@ -1213,7 +1288,9 @@
     .app-toast .p-toast-message,
     .skeleton-icon,
     .skeleton-line,
-    .realtime-indicator {
+    .realtime-indicator,
+    .app-close-button,
+    .app-toast .p-toast-close-button {
       animation: none;
       transition: none;
     }

@@ -324,7 +324,7 @@
   // RESPONSIVE TABLE (Decision 35)
   // ============================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-tablet));
       padding: 0 var(--page-padding-tablet);
@@ -359,7 +359,7 @@
     }
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-mobile));
       padding: 0 var(--page-padding-mobile);

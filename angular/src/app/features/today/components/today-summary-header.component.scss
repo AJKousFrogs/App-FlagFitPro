@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -188,7 +190,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .welcome-row {
     flex-direction: column;
     align-items: flex-start;

@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -155,13 +157,13 @@
   letter-spacing: var(--ds-letter-spacing-wide);
 }
 
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .events-strip {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .events-strip {
     grid-template-columns: 1fr;
   }

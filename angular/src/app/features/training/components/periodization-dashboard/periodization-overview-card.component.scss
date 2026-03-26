@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .phase-card {
   margin: 0;
 
@@ -155,7 +157,7 @@
   color: var(--color-text-secondary);
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .phase-header {
     flex-direction: column;
     align-items: flex-start;

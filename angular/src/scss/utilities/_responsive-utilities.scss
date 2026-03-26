@@ -136,7 +136,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     gap: var(--space-3);
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
@@ -154,7 +154,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
   }
 }
@@ -174,7 +174,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     grid-template-columns: repeat(3, 1fr);
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -193,7 +193,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     font-size: get-font-size($tablet-size);
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     font-size: get-font-size($mobile-size);
   }
 }
@@ -223,7 +223,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     padding: $tablet;
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     padding: $mobile;
   }
 }
@@ -238,7 +238,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     margin-bottom: var(--space-6);
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     margin-bottom: var(--space-4);
   }
 }
@@ -257,7 +257,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     padding: var(--space-4);
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     padding: var(--space-3);
     border-radius: get-radius(lg);
   }
@@ -275,10 +275,11 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     max-height: 85vh;
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     width: 100%;
     max-width: 100%;
     max-height: 100vh;
+height: 100dvh; // Modern: keyboard-aware
     border-radius: 0;
     margin: 0;
   }
@@ -294,7 +295,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     width: calc(var(--sidebar-width) - var(--space-2));
   }
 
-  @include respond-to(lg) {
+  @media (max-width: 1024px) {
     position: fixed;
     left: 0;
     top: 0;
@@ -321,7 +322,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
   border-collapse: collapse;
 
   // Desktop/Tablet: Regular table
-  @include respond-above(md) {
+  @media (min-width: 769px) {
     th,
     td {
       padding: var(--space-3) var(--space-4);
@@ -337,7 +338,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
   }
 
   // Mobile: Card layout
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     display: block;
 
     thead {
@@ -391,7 +392,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 
@@ -422,7 +423,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 @mixin bottom-nav {
   display: none;
 
-  @include respond-to(lg) {
+  @media (max-width: 1024px) {
     display: flex;
     position: fixed;
     bottom: 0;
@@ -505,14 +506,14 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
 
 // Responsive text alignment
 .text-center-mobile {
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     text-align: center;
   }
 }
 
 // Responsive flex direction
 .flex-col-mobile {
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     flex-direction: column;
   }
 }

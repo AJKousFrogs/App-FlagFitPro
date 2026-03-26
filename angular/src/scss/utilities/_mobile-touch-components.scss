@@ -28,7 +28,7 @@
   // TOUCH-FRIENDLY BUTTONS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     // All buttons (including PrimeNG)
     button,
     [role="button"],
@@ -120,7 +120,7 @@
   // TOUCH-FRIENDLY FORM INPUTS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     // All text inputs
     input[type="text"],
     input[type="email"],
@@ -234,7 +234,7 @@
   // TOUCH-FRIENDLY CHECKBOXES & RADIOS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     // Native checkboxes and radios
     input[type="checkbox"],
     input[type="radio"] {
@@ -317,7 +317,7 @@
   // TOUCH-FRIENDLY TOGGLES / SWITCHES
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .p-toggleswitch,
     .toggle-switch {
       width: var(--space-12);
@@ -347,7 +347,7 @@
   // TOUCH-FRIENDLY SLIDERS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .p-slider,
     input[type="range"] {
       height: var(--space-2);
@@ -384,7 +384,7 @@
   // TOUCH-FRIENDLY FORM LABELS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     label,
     .p-field-label,
     .form-label {
@@ -408,7 +408,7 @@
   // TOUCH-FRIENDLY FORM GROUPS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .p-field,
     .form-field,
     .form-group {
@@ -459,7 +459,7 @@
   // TOUCH-FRIENDLY LINKS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     a {
       min-height: var(--touch-target-md);
       display: inline-flex;
@@ -484,7 +484,7 @@
   // MOBILE FORM VALIDATION
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     // Invalid state
     .p-invalid,
     .form-control.invalid,
@@ -516,7 +516,7 @@
   // PREVENT IOS ZOOM ON INPUT FOCUS
   // ================================================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     // This is the most important rule for iOS Safari
     input,
     select,

@@ -22,10 +22,6 @@
       box-shadow: var(--shadow-md);
     }
 
-    &.no-padding {
-      padding: 0;
-      overflow: hidden;
-    }
 
     .bento-title {
       font-size: var(--ds-font-size-lg);
@@ -60,11 +56,11 @@
 /* Internal Component Overrides for Analytics */
 ::ng-deep {
   .charts-bento app-analytics-charts-section {
-    .p-card { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+    .p-card { background: transparent; border: none; box-shadow: none; padding: 0; }
   }
 }
 
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .analytics-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
     padding: var(--space-4);
@@ -73,9 +69,9 @@
   }
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .analytics-page.bento-grid {
     grid-template-columns: 1fr;
-    .bento-item { grid-column: span 1 !important; }
+    .bento-item { grid-column: span 1; }
   }
 }

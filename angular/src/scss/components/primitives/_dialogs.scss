@@ -47,6 +47,7 @@
   .dialog-full {
     max-width: 100vw;
     max-height: 100vh;
+height: 100dvh; // Modern: keyboard-aware
     margin: 0;
     border-radius: 0;
   }
@@ -156,6 +157,7 @@
     display: flex;
     flex-direction: column;
     max-height: 100vh;
+height: 100dvh; // Modern: keyboard-aware
     overflow: hidden;
   }
 
@@ -412,7 +414,7 @@
   // MOBILE RESPONSIVE (Decision 35)
   // ============================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .dialog-sm,
     .dialog-md,
     .dialog-lg {

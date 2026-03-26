@@ -1,0 +1,254 @@
+/**
+ * Interaction Utilities - Shared hover, focus, and active states
+ *
+ * Purpose: Eliminate 157+ duplicate hover selectors across 69 files
+ * Usage: Apply utility classes instead of component-specific hover styles
+ *
+ * @layer utilities
+ * @see FRONTEND_AUDIT_REPORT.md Section 1.2.1
+ */
+
+// Design system tokens are already available via main styles.scss import
+
+@layer utilities {
+  /* ============================================
+     HOVER EFFECTS
+     ============================================ */
+
+  /**
+   * Lift effect - adds shadow and slight upward movement
+   * Use for: Cards, bento items, interactive panels
+   */
+  .hover-lift {
+    transition:
+      transform var(--transition-base),
+      box-shadow var(--transition-base);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  /**
+   * Surface highlight - changes background on hover
+   * Use for: List items, menu items, clickable containers
+   */
+  .hover-surface {
+    transition: background-color var(--motion-feedback-duration-fast) var(--ease-standard);
+
+    &:hover {
+      background: var(--surface-secondary);
+    }
+  }
+
+  /**
+   * Surface subtle - lighter background change
+   * Use for: Subtle interactions, secondary actions
+   */
+  .hover-surface-subtle {
+    transition: background-color var(--motion-feedback-duration-fast) var(--ease-standard);
+
+    &:hover {
+      background: var(--ui-surface-subtle);
+    }
+  }
+
+  /**
+   * Scale up - slight zoom effect
+   * Use for: Buttons, icons, interactive elements
+   */
+  .hover-scale {
+    transition: transform var(--transition-base);
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+
+  /**
+   * Brightness - increases brightness on hover
+   * Use for: Images, media thumbnails
+   */
+  .hover-brighten {
+    transition: filter var(--transition-base);
+
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
+
+  /**
+   * Border highlight - shows border on hover
+   * Use for: Cards with subtle interactions
+   */
+  .hover-border {
+    transition: border-color var(--motion-feedback-duration-fast) var(--ease-standard);
+
+    &:hover {
+      border-color: var(--ui-primary);
+    }
+  }
+
+  /**
+   * Opacity - reduces opacity on hover (for disabled look)
+   * Use for: Inactive items, hover-to-hide elements
+   */
+  .hover-dim {
+    transition: opacity var(--transition-base);
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  /* ============================================
+     FOCUS STATES
+     ============================================ */
+
+  /**
+   * Standard focus ring - WCAG 2.1 compliant
+   * Use for: All interactive elements
+   */
+  .focus-ring {
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-outline-offset);
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  /**
+   * Focus ring with inset offset
+   * Use for: Elements with backgrounds that might hide standard ring
+   */
+  .focus-ring-inset {
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--color-focus-ring);
+      outline-offset: calc(var(--focus-outline-offset) * -1);
+      box-shadow: var(--shadow-focus);
+    }
+  }
+
+  /* ============================================
+     ACTIVE/PRESSED STATES
+     ============================================ */
+
+  /**
+   * Scale down - slight press effect
+   * Use for: Buttons, clickable items
+   */
+  .active-press {
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  /**
+   * Darken on press
+   * Use for: Primary actions, important buttons
+   */
+  .active-darken {
+    &:active {
+      filter: brightness(0.95);
+    }
+  }
+
+  /* ============================================
+     DISABLED STATES
+     ============================================ */
+
+  /**
+   * Standard disabled styling
+   * Use for: Disabled buttons, inputs, actions
+   */
+  .disabled-state {
+    &:disabled,
+    &[aria-disabled="true"],
+    &.disabled {
+      opacity: var(--opacity-dimmed);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  /* ============================================
+     COMBINATIONS
+     ============================================ */
+
+  /**
+   * Complete interactive element - combines hover, focus, and active
+   * Use for: Primary interactive elements (buttons, cards, list items)
+   */
+  .interactive {
+    @extend .hover-surface;
+    @extend .focus-ring;
+    @extend .active-press;
+    @extend .disabled-state;
+  }
+
+  /**
+   * Interactive card - combines lift, focus, and press
+   * Use for: Card components, bento items
+   */
+  .interactive-card {
+    @extend .hover-lift;
+    @extend .focus-ring;
+    @extend .active-press;
+    cursor: pointer;
+  }
+
+  /* ============================================
+     ACCESSIBILITY ENHANCEMENTS
+     ============================================ */
+
+  /**
+   * Reduced motion - respects user preference
+   * Auto-applied via @media query
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .hover-lift,
+    .hover-scale,
+    .active-press,
+    .interactive,
+    .interactive-card {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
+
+      &:active {
+        transform: none;
+      }
+    }
+  }
+}
+
+/* ============================================
+   MIGRATION EXAMPLES
+   ============================================ */
+
+/**
+ * BEFORE (Component-specific):
+ *
+ * .my-card {
+ *   &:hover {
+ *     box-shadow: var(--shadow-md);
+ *     transform: translateY(-2px);
+ *   }
+ *
+ *   &:focus-visible {
+ *     outline: 2px solid var(--color-focus-ring);
+ *   }
+ * }
+ *
+ *
+ * AFTER (Using utilities):
+ *
+ * <div class="my-card interactive-card">...</div>
+ *
+ * OR for custom styling:
+ *
+ * <div class="my-card hover-lift focus-ring">...</div>
+ */

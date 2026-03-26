@@ -56,14 +56,14 @@
   }
 
   // Responsive container padding
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .container {
       padding-left: var(--page-padding-tablet);
       padding-right: var(--page-padding-tablet);
     }
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     .container {
       padding-left: var(--page-padding-mobile);
       padding-right: var(--page-padding-mobile);
@@ -204,7 +204,7 @@
   }
 
   // Responsive bento (Decision 35)
-  @include respond-to(lg) {
+  @media (max-width: 1024px) {
     .bento {
       grid-template-columns: repeat(6, 1fr);
     }
@@ -220,7 +220,7 @@
     }
   }
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .bento {
       grid-template-columns: repeat(1, 1fr);
     }
@@ -390,7 +390,7 @@
   // RESPONSIVE VISIBILITY
   // ============================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .hide-mobile {
       display: none;
     }
@@ -402,7 +402,7 @@
     }
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     .hide-xs {
       display: none;
     }
@@ -412,7 +412,7 @@
   // RESPONSIVE GRID OVERRIDES
   // ============================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .grid-cols-2,
     .grid-cols-3,
     .grid-cols-4 {
@@ -424,7 +424,7 @@
     }
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     .md\:grid-cols-2 {
       grid-template-columns: repeat(1, 1fr);
     }

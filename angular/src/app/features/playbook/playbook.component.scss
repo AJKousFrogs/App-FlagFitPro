@@ -22,10 +22,6 @@
       box-shadow: var(--shadow-md);
     }
 
-    &.no-padding {
-      padding: 0;
-      overflow: hidden;
-    }
   }
 
   .full-width { grid-column: 1 / -1; }
@@ -102,14 +98,14 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .playbook-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
     padding: var(--space-4);
   }
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .playbook-page.bento-grid {
     grid-template-columns: 1fr;
     .play-cards-grid { grid-template-columns: 1fr; padding: var(--space-4); }

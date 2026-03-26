@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -169,7 +171,7 @@
   border-left: var(--border-4) solid var(--color-status-warning);
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .merlin-coach-card {
     flex-direction: column;
   }

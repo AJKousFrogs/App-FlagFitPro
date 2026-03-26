@@ -830,6 +830,7 @@
 
   .search-panel {
     max-height: 100vh;
+height: 100dvh; // Modern: keyboard-aware
     max-height: 100dvh;
   }
 

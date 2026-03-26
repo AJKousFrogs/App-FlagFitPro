@@ -37,7 +37,7 @@
     grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
     gap: var(--space-4);
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
       gap: var(--space-3);
     }
@@ -46,7 +46,7 @@
   .stats-grid--2col {
     grid-template-columns: repeat(2, 1fr);
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
     }
   }
@@ -54,11 +54,11 @@
   .stats-grid--3col {
     grid-template-columns: repeat(3, 1fr);
 
-    @include respond-to(md) {
+    @media (max-width: 768px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
     }
   }
@@ -102,7 +102,7 @@
   }
 
   // Consolidated stat-block responsive typography (md, sm)
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .stats-overview .stat-block__label,
     .stat-block--stat-item .stat-block__label {
       font-size: var(--ds-font-size-xs);
@@ -112,7 +112,7 @@
     }
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     .stats-overview .stat-block__value {
       font-size: var(--ds-font-size-2xl);
     }
@@ -185,14 +185,14 @@
     grid-template-columns: repeat(4, 1fr);
   }
 
-  @include respond-to(lg) {
+  @media (max-width: 1024px) {
     .metrics-grid--3col,
     .metrics-grid--4col {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     .metrics-grid,
     .metrics-grid--2col,
     .metrics-grid--3col,
@@ -231,7 +231,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-5);
 
-    @include respond-to(lg) {
+    @media (max-width: 1024px) {
       grid-template-columns: 1fr;
     }
   }
@@ -240,11 +240,11 @@
   .dashboard-grid--3col {
     grid-template-columns: repeat(3, 1fr);
 
-    @include respond-to(lg) {
+    @media (max-width: 1024px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
     }
   }
@@ -259,11 +259,11 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
 
-    @include respond-to(lg) {
+    @media (max-width: 1024px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
       gap: var(--space-2);
     }
@@ -273,19 +273,19 @@
   .stats-overview--6col {
     grid-template-columns: repeat(6, 1fr);
 
-    @include respond-to(xl) {
+    @media (max-width: 1280px) {
       grid-template-columns: repeat(4, 1fr);
     }
 
-    @include respond-to(lg) {
+    @media (max-width: 1024px) {
       grid-template-columns: repeat(3, 1fr);
     }
 
-    @include respond-to(md) {
+    @media (max-width: 768px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
     }
   }
@@ -415,11 +415,11 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
 
-    @include respond-to(lg) {
+    @media (max-width: 1024px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
     }
   }
@@ -495,7 +495,7 @@
     gap: var(--space-4);
     align-items: flex-start;
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       flex-direction: column;
       text-align: center;
     }
@@ -515,7 +515,7 @@
     color: var(--color-text-on-primary);
     flex-shrink: 0;
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       margin: 0 auto;
     }
   }
@@ -547,7 +547,7 @@
     flex-wrap: wrap;
     align-items: center;
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       justify-content: center;
     }
   }
@@ -724,7 +724,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-3);
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
@@ -751,7 +751,7 @@
     width: 100%;
     flex-wrap: wrap;
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -781,7 +781,7 @@
     margin-left: 0;
     white-space: nowrap;
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       margin-left: var(--space-5);
     }
   }

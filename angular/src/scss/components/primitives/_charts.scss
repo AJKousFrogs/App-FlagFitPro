@@ -159,12 +159,12 @@
     margin-bottom: var(--space-6);
     align-items: stretch;
 
-    @include respond-to(md) {
+    @media (max-width: 768px) {
       grid-template-columns: 1fr;
       gap: var(--space-4);
     }
 
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       gap: var(--space-3);
     }
   }
@@ -173,7 +173,7 @@
   // RESPONSIVE BEHAVIOR
   // ============================================
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .chart-container {
       padding: var(--space-3);
       min-height: 11.25rem;
@@ -193,7 +193,7 @@
     }
   }
 
-  @include respond-to(sm) {
+  @media (max-width: 640px) {
     .chart-container {
       padding: var(--space-2);
       min-height: 9.375rem;

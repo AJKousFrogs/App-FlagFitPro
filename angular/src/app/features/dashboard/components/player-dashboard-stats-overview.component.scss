@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -180,7 +182,7 @@
   margin-top: var(--space-3);
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .stats-overview {
     gap: var(--space-2);
   }

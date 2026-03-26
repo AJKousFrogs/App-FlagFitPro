@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .weekly-schedule {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
@@ -100,7 +102,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .weekly-schedule,
   .totals-grid {
     grid-template-columns: 1fr;

@@ -228,6 +228,7 @@
 }
 .h-screen {
   height: 100vh;
+  height: 100dvh; // Modern: keyboard-aware
 }
 .h-auto {
   height: auto;

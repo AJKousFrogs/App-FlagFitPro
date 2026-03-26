@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .risk-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
@@ -120,7 +122,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .risk-grid {
     grid-template-columns: 1fr;
   }

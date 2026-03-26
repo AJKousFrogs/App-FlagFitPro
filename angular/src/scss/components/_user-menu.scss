@@ -1,0 +1,159 @@
+/**
+ * User Menu Component
+ * ===================
+ * Styles for user profile dropdown menu
+ * Fixes alignment, spacing, and icon consistency issues
+ */
+
+.user-menu,
+.profile-menu {
+  background: var(--surface-secondary);
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) 0;
+  box-shadow: var(--shadow-lg);
+  min-width: 200px;
+
+  .menu-item,
+  .p-menuitem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    transition: background var(--transition-fast);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-text-primary);
+
+    &:hover {
+      background: var(--ui-surface-subtle);
+      color: var(--ds-primary-green);
+
+      i, svg {
+        color: var(--ds-primary-green);
+      }
+    }
+
+    &:active {
+      background: var(--ui-surface-muted);
+    }
+
+    // Standardize icon size
+    i, svg, .menu-icon {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+      font-size: 20px;
+      flex-shrink: 0;
+      color: var(--color-text-secondary);
+      transition: color var(--transition-fast);
+
+      // Center icon
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    // Text styling
+    span, .menu-text {
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    // Divider
+    &.menu-divider {
+      padding: 0;
+      margin: var(--space-2) var(--space-4);
+      border-top: 1px solid var(--ui-border-subtle);
+      height: 1px;
+
+      &:hover {
+        background: transparent;
+      }
+    }
+
+    // Danger action (Sign Out)
+    &.menu-item-danger {
+      color: var(--ui-danger);
+
+      i, svg {
+        color: var(--ui-danger);
+      }
+
+      &:hover {
+        background: color-mix(in srgb, var(--ui-danger) 10%, transparent);
+        color: var(--ui-danger);
+
+        i, svg {
+          color: var(--ui-danger);
+        }
+      }
+    }
+  }
+}
+
+// PrimeNG Menu Override
+::ng-deep {
+  .p-menu.user-menu-overlay,
+  .p-menu.profile-menu-overlay {
+    background: var(--surface-secondary);
+    border: 1px solid var(--ui-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2) 0;
+    box-shadow: var(--shadow-lg);
+
+    .p-menuitem-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      color: var(--color-text-primary);
+
+      &:hover {
+        background: var(--ui-surface-subtle);
+
+        .p-menuitem-icon {
+          color: var(--ds-primary-green);
+        }
+      }
+
+      .p-menuitem-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+        color: var(--color-text-secondary);
+      }
+
+      .p-menuitem-text {
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-medium);
+      }
+    }
+  }
+}
+
+// Mobile responsive
+@include respond-to(md) {
+  .user-menu,
+  .profile-menu {
+    min-width: 180px;
+
+    .menu-item,
+    .p-menuitem {
+      padding: var(--space-2-5) var(--space-3);
+
+      i, svg, .menu-icon {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+      }
+
+      span, .menu-text {
+        font-size: var(--ds-font-size-sm);
+      }
+    }
+  }
+}

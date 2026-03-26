@@ -1010,6 +1010,7 @@
       .p-dialog-content {
         border-radius: 0;
         max-height: 100vh;
+height: 100dvh; // Modern: keyboard-aware
       }
     }
   }

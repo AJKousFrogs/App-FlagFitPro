@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .incomplete-data-badge {
   display: inline-flex;
   align-items: center;
@@ -32,7 +34,7 @@
   position: static;
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .incomplete-data-badge.placement-top-right,
   .incomplete-data-badge.placement-top-left {
     position: static;

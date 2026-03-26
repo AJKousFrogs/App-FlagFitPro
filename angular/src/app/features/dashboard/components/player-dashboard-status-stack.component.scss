@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -70,7 +72,7 @@ app-close-button.announcement-close-btn {
   white-space: nowrap;
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .announcement-banner {
     align-items: flex-start;
     padding: var(--space-4);

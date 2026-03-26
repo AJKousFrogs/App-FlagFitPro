@@ -17,10 +17,6 @@
     box-shadow: var(--shadow-sm);
     min-width: 0;
 
-    &.no-padding {
-      padding: 0;
-      overflow: hidden;
-    }
   }
 
   .full-width { grid-column: 1 / -1; }
@@ -170,14 +166,14 @@
   }
 
   ::ng-deep .exercise-paginator {
-    background: transparent !important;
-    border: none !important;
-    padding: var(--space-4) !important;
+    background: transparent;
+    border: none;
+    padding: var(--space-4);
   }
 }
 
 /* Tablet: 2 Columns */
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .exercise-library-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
     padding: var(--space-4);
@@ -185,7 +181,7 @@
 }
 
 /* Mobile: 1 Column */
-@media (max-width: 768px) {
+@include respond-to(md) {
   .exercise-library-page.bento-grid {
     grid-template-columns: 1fr;
 

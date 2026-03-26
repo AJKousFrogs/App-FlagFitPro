@@ -3,7 +3,7 @@
 /**
  * Form Primitives
  * ================
- * 
+ *
  * Standardized form patterns for the design system.
  * See Decision 23 (Forms), 32 (Validation), 54 (Error Summary) in DESIGN_SYSTEM_RULES.md.
  * 
@@ -481,12 +481,12 @@
 
   // Stack at sm breakpoint (is-stacked-at-sm) - use on form-row when you want single column on small screens
   .form-row.is-stacked-at-sm {
-    @include respond-to(sm) {
+    @media (max-width: 640px) {
       grid-template-columns: 1fr;
     }
   }
 
-  @include respond-to(md) {
+  @media (max-width: 768px) {
     .form-row,
     .form-row--2,
     .form-row--3,

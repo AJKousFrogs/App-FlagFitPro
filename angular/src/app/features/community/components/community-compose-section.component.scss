@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -153,7 +155,7 @@
   margin-top: var(--space-3);
 }
 
-@media (max-width: 767px) {
+@include respond-to(md) {
   .create-post-footer {
     align-items: stretch;
     flex-direction: column;

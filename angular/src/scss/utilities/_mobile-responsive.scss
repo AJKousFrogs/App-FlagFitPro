@@ -252,6 +252,8 @@
   // Full viewport height accounting for browser chrome
   .keyboard-viewport {
     min-height: 100vh;
+    min-height: 100dvh; // Modern: keyboard-aware
+height: 100dvh; // Modern: keyboard-aware
     min-height: 100dvh; // Dynamic viewport - excludes keyboard
 
     @supports (height: 100svh) {

@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .decision-ledger-dashboard {
   padding: var(--space-6);
 }
@@ -69,7 +71,7 @@
   text-align: center;
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .stats-grid {
     grid-template-columns: 1fr;
   }

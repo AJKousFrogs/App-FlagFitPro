@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
   width: 100%;
@@ -80,7 +82,7 @@
   display: none;
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .app-card-header {
     gap: var(--space-3);
     align-items: flex-start;

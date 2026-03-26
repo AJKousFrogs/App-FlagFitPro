@@ -27,11 +27,6 @@
       box-shadow: var(--shadow-md);
     }
 
-    &.no-padding {
-      padding: 0;
-      overflow: hidden;
-    }
-
     .bento-title {
       font-size: var(--ds-font-size-lg);
       font-weight: var(--ds-font-weight-bold);
@@ -55,7 +50,7 @@
 }
 
 /* Tablet: 2 Columns */
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .wellness-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
     padding: var(--space-4);
@@ -67,13 +62,13 @@
 }
 
 /* Mobile: 1 Column */
-@media (max-width: 768px) {
+@include respond-to(md) {
   .wellness-page.bento-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
 
     .bento-item {
-      grid-column: span 1 !important;
+      grid-column: span 1;
       padding: var(--space-4);
     }
   }
@@ -172,7 +167,7 @@ app-alert.wellness-route-alert {
 }
 
 .wellness-alert-recommendations {
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
 
   .rec-label {
     font-size: var(--ds-font-size-xs);
@@ -181,19 +176,32 @@ app-alert.wellness-route-alert {
   }
 
   ul {
-    margin: var(--space-2) 0 0 var(--space-4);
+    margin: var(--space-3) 0 0 var(--space-6);
     padding: 0;
-    list-style: disc;
+    list-style: none;
     font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
+
+    li {
+      position: relative;
+      padding-left: var(--space-5);
+
+      &::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--ui-danger);
+      }
+    }
   }
 }
 
 .wellness-alert-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3);
   justify-content: flex-end;
+  margin-top: var(--space-4);
 }
 
 // ===== Responsive =====

@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 /*
  * Phase-2 Migration Layer
  * Applies unified command-center shell behavior to existing pages.
@@ -148,7 +150,7 @@
 }
 
 /* Tablet */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .player-dashboard .dashboard-grid,
   .dashboard-content .dashboard-workspace,
   .training-page .training-grid,
@@ -178,7 +180,7 @@
 }
 
 /* Mobile */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .player-dashboard .stats-overview,
   .player-dashboard .quick-actions-grid,
   .analytics-page .metrics-grid,

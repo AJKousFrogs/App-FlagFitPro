@@ -22,10 +22,6 @@
       box-shadow: var(--shadow-md);
     }
 
-    &.no-padding {
-      padding: 0;
-      overflow: hidden;
-    }
 
     .bento-title {
       font-size: var(--ds-font-size-lg);
@@ -105,7 +101,7 @@
 }
 
 /* Tablet: 2 Columns */
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .roster-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
     padding: var(--space-4);
@@ -113,13 +109,13 @@
 }
 
 /* Mobile: 1 Column */
-@media (max-width: 768px) {
+@include respond-to(md) {
   .roster-page.bento-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
 
     .bento-item {
-      grid-column: span 1 !important;
+      grid-column: span 1;
       padding: var(--space-4);
     }
 

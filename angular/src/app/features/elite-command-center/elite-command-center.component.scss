@@ -359,7 +359,7 @@
 }
 
 /* Desktop Grid and responsive breakpoints */
-@media (max-width: 1023px) {
+@include respond-to(lg) {
   .elite-shell {
     gap: var(--layout-page-section-gap-tight);
   }
@@ -378,7 +378,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@include respond-to(md) {
   .elite-shell {
     gap: var(--space-5);
   }

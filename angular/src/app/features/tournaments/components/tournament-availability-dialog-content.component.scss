@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .availability-dialog {
   display: flex;
   flex-direction: column;
@@ -128,7 +130,7 @@
   color: var(--ds-primary-green);
 }
 
-@media (max-width: 767px) {
+@include respond-to(md) {
   .availability-options,
   .form-grid-2 {
     grid-template-columns: 1fr;

@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -140,13 +142,13 @@
   opacity: var(--opacity-subtle);
 }
 
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .dashboard-grid {
     gap: var(--space-4);
   }
