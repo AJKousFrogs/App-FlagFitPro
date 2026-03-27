@@ -75,8 +75,7 @@ describe("privacy-settings validation and authorization hardening", () => {
     authState.userId = "user-1";
     dbState.hasTeamMembership = false;
     dbState.privacyUpsertError = null;
-    const mod = await import("../../netlify/functions/privacy-settings.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/privacy-settings.js"));
   });
 
   it("returns 422 for non-object JSON body", async () => {

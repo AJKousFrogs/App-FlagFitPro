@@ -27,8 +27,7 @@ describe("season-archive validation hardening", () => {
     vi.resetModules();
     state.role = "coach";
     state.rpcError = null;
-    const mod = await import("../../netlify/functions/season-archive.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/season-archive.js"));
   });
 
   it("returns 422 for non-object payload", async () => {

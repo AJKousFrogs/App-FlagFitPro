@@ -11,6 +11,7 @@ import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
+import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Functions - Performance Data API
 // Handles athlete performance data storage and retrieval using Supabase
@@ -118,10 +119,19 @@ function parseBoundedInt(value, fallback, { min, max, field }) {
 }
 
 function parseJsonObjectBody(rawBody) {
-  let parsed;
   try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
+    return { ok: true, data: sharedParseJsonObjectBody(rawBody) };
+  } catch (error) {
+    if (error?.message === "Request body must be an object") {
+      return {
+        ok: false,
+        response: createErrorResponse(
+          "Request body must be an object",
+          422,
+          "validation_error",
+        ),
+      };
+    }
     return {
       ok: false,
       response: createErrorResponse(
@@ -131,17 +141,6 @@ function parseJsonObjectBody(rawBody) {
       ),
     };
   }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    return {
-      ok: false,
-      response: createErrorResponse(
-        "Request body must be an object",
-        422,
-        "validation_error",
-      ),
-    };
-  }
-  return { ok: true, data: parsed };
 }
 
 async function coachCanAccessAthlete(coachUserId, athleteUserId) {

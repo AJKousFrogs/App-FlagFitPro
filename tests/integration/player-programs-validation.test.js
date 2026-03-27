@@ -41,8 +41,7 @@ describe("player-programs validation hardening", () => {
       data: null,
       error: { code: "PGRST116" },
     };
-    const mod = await import("../../netlify/functions/player-programs.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/player-programs.js"));
   });
 
   it("returns 422 for non-object POST payload", async () => {

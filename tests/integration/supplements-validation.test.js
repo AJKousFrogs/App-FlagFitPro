@@ -110,8 +110,7 @@ describe("supplements validation and mapping", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    const mod = await import("../../netlify/functions/supplements.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/supplements.js"));
   });
 
   it("returns 422 for invalid logs limit", async () => {

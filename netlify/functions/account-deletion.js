@@ -15,6 +15,7 @@ import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getSupabaseClient, supabaseAdmin } from "./supabase-client.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 const handler = async (event, context) => {
   return baseHandler(event, context, {
@@ -76,16 +77,16 @@ const handler = async (event, context) => {
       if (event.httpMethod === "POST") {
         let body;
         try {
-          body = JSON.parse(event.body || "{}");
-        } catch {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error?.message === "Request body must be an object") {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+            );
+          }
           return createErrorResponse("Invalid JSON body", 400, "invalid_json");
-        }
-        if (!body || typeof body !== "object" || Array.isArray(body)) {
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
-          );
         }
 
         const { reason, confirmDelete } = body;

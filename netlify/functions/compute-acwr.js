@@ -10,10 +10,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
-
-function isPlainObject(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 function isValidAthleteId(value) {
   return (
@@ -71,21 +68,20 @@ const handler = async (event, context) => {
     handler: async (event, _context, { userId, requestId }) => {
       let body;
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch {
+        body = parseJsonObjectBody(event.body);
+      } catch (error) {
+        if (error?.message === "Request body must be an object") {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
         return createErrorResponse(
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId,
-        );
-      }
-
-      if (!isPlainObject(body)) {
-        return createErrorResponse(
-          "Request body must be an object",
-          422,
-          "validation_error",
           requestId,
         );
       }

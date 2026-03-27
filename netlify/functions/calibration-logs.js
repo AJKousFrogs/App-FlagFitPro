@@ -4,6 +4,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Netlify Function: Calibration Logs API
@@ -505,10 +506,18 @@ const handler = async (event, context) => {
       if (event.httpMethod === "POST") {
         // Handle POST /api/calibration-logs/outcome
         if (path.includes("/outcome")) {
-          let outcomeData = {};
+          let outcomeData;
           try {
-            outcomeData = JSON.parse(event.body || "{}");
-          } catch (_parseError) {
+            outcomeData = parseJsonObjectBody(event.body);
+          } catch (error) {
+            if (error?.message === "Request body must be an object") {
+              return createErrorResponse(
+                "Request body must be an object",
+                422,
+                "validation_error",
+                requestId,
+              );
+            }
             return createErrorResponse(
               "Invalid JSON in request body",
               400,
@@ -546,10 +555,18 @@ const handler = async (event, context) => {
         }
 
         // Handle POST /api/calibration-logs (log recommendation)
-        let recommendationData = {};
+        let recommendationData;
         try {
-          recommendationData = JSON.parse(event.body || "{}");
-        } catch (_parseError) {
+          recommendationData = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error?.message === "Request body must be an object") {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
           return createErrorResponse(
             "Invalid JSON in request body",
             400,

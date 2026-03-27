@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Hydration API
 // Handles hydration tracking for athletes
@@ -172,10 +173,17 @@ const handler = async (event, context) => {
         if (event.httpMethod === "POST") {
           // Handle POST /api/hydration/log
           if (path.includes("/log") || path.endsWith("/log")) {
-            let hydrationData = {};
+            let hydrationData;
             try {
-              hydrationData = JSON.parse(event.body || "{}");
-            } catch (_parseError) {
+              hydrationData = parseJsonObjectBody(event.body);
+            } catch (error) {
+              if (error?.message === "Request body must be an object") {
+                return createErrorResponse(
+                  "Request body must be an object",
+                  422,
+                  "validation_error",
+                );
+              }
               return createErrorResponse(
                 "Invalid JSON in request body",
                 400,

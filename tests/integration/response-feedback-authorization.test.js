@@ -138,8 +138,7 @@ describe("response-feedback authorization", () => {
     state.coachMembershipExists = false;
     state.messageMissing = false;
     state.feedbackQueryErrorMessage = null;
-    const mod = await import("../../netlify/functions/response-feedback.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/response-feedback.js"));
   });
 
   it("blocks athlete feedback submission for another user's message", async () => {

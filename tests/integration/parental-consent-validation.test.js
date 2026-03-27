@@ -98,8 +98,7 @@ describe("parental-consent public verification validation", () => {
   beforeEach(async () => {
     vi.resetModules();
     state.insertError = false;
-    const mod = await import("../../netlify/functions/parental-consent.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/parental-consent.js"));
   });
 
   it("rejects invalid token format with 400", async () => {

@@ -3,7 +3,8 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createErrorResponse } from "./utils/error-handler.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Sports Science Research Sync Function
@@ -1176,12 +1177,11 @@ async function handleResearchRequest(evt) {
     const endpoint = segments[0] || "search";
 
     const params = evt.queryStringParameters || {};
-    let body = {};
-    try {
-      body = evt.body ? JSON.parse(evt.body) : {};
-    } catch (_parseError) {
-      return handleValidationError("Invalid JSON in request body");
+    const parsedBody = tryParseJsonObjectBody(evt.body);
+    if (!parsedBody.ok) {
+      return parsedBody.error;
     }
+    const body = parsedBody.data;
 
     let result;
 

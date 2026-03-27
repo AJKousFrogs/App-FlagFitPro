@@ -101,8 +101,7 @@ describe("wellness-checkin error sanitization", () => {
     vi.resetModules();
     state.getError = null;
     state.upsertError = null;
-    const mod = await import("../../netlify/functions/wellness-checkin.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/wellness-checkin.js"));
   });
 
   it("returns sanitized 500 when check-in query fails", async () => {

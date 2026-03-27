@@ -103,8 +103,24 @@ describe("inactive-player-notify validation and authorization hardening", () => 
     authState.role = "coach";
     dbState.sameTeam = true;
     dbState.updateError = null;
-    const mod = await import("../../netlify/functions/inactive-player-notify.js");
-    handler = mod.handler;
+    ({ handler } = await import(
+      "../../netlify/functions/inactive-player-notify.js"
+    ));
+  });
+
+  it("returns 422 for malformed JSON payload", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/inactive-player-notify",
+        headers: { authorization: "Bearer test-token" },
+        body: "{",
+      },
+      {},
+    );
+    expect(response.statusCode).toBe(422);
+    const payload = JSON.parse(response.body);
+    expect(payload.error?.code).toBe("validation_error");
   });
 
   it("returns 422 for non-object payload", async () => {

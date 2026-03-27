@@ -3,6 +3,7 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Netlify Function: Response Feedback
@@ -532,21 +533,38 @@ const handler = async (event, context) => {
         .filter(Boolean);
       const resource = pathParts[0] || "";
       const resourceId = pathParts[1] || null;
+      const parseBody = () => {
+        try {
+          return { ok: true, body: parseJsonObjectBody(event.body) };
+        } catch (error) {
+          return {
+            ok: false,
+            response:
+              error?.message === "Request body must be an object"
+                ? createErrorResponse(
+                    "Request body must be an object",
+                    422,
+                    "validation_error",
+                    requestId,
+                  )
+                : createErrorResponse(
+                    "Invalid JSON",
+                    400,
+                    "invalid_json",
+                    requestId,
+                  ),
+          };
+        }
+      };
 
       try {
         // POST /api/response-feedback - Submit athlete feedback
-  if (method === "POST" && !resource) {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
-              requestId,
-            );
+        if (method === "POST" && !resource) {
+          const parsedBody = parseBody();
+          if (!parsedBody.ok) {
+            return parsedBody.response;
           }
+          const body = parsedBody.body;
 
           const { messageId, wasHelpful, feedbackText, categories } = body;
 
@@ -610,17 +628,11 @@ const handler = async (event, context) => {
 
         // POST /api/response-feedback/coach - Submit coach feedback
         if (method === "POST" && resource === "coach") {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
-              requestId,
-            );
+          const parsedBody = parseBody();
+          if (!parsedBody.ok) {
+            return parsedBody.response;
           }
+          const body = parsedBody.body;
 
           const {
             messageId,

@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getSupabaseClient } from "./supabase-client.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Privacy Settings API
@@ -267,17 +268,16 @@ const handler = async (event, context) => {
       if (event.httpMethod === "PUT") {
         let body;
         try {
-          body = JSON.parse(event.body || "{}");
-        } catch {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error?.message === "Request body must be an object") {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+            );
+          }
           return createErrorResponse("Invalid JSON body", 400, "invalid_json");
-        }
-
-        if (!isPlainObject(body)) {
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
-          );
         }
 
         const { settings: newSettings, teamId, teamSettings } = body;

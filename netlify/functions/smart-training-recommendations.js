@@ -3,6 +3,7 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Smart Training Recommendations
 // Integrates tournaments, ACWR, RPE, injuries, and periodization
@@ -525,21 +526,16 @@ const handler = async (event, context) => {
         let targetDate = new Date();
 
         if (event.httpMethod === "POST") {
-          try {
-            const body = JSON.parse(event.body || "{}");
-            if (body.athleteId) {
-              ({ athleteId } = body);
-            }
-            if (body.date) {
-              targetDate = new Date(body.date);
-            }
-          } catch {
-            return createErrorResponse(
-              "Request body must be valid JSON",
-              400,
-              "validation_error",
-              requestId,
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body);
+          if (!parsedBody.ok) {
+            return parsedBody.error;
+          }
+          const body = parsedBody.data;
+          if (body.athleteId) {
+            ({ athleteId } = body);
+          }
+          if (body.date) {
+            targetDate = new Date(body.date);
           }
         } else {
           const params = event.queryStringParameters || {};

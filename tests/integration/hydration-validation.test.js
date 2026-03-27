@@ -49,8 +49,39 @@ describe("hydration validation hardening", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    const mod = await import("../../netlify/functions/hydration.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/hydration.js"));
+  });
+
+  it("returns 400 for malformed JSON payloads", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/hydration/log",
+        headers: { authorization: "Bearer test-token" },
+        body: "{",
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(400);
+    const payload = JSON.parse(response.body);
+    expect(payload.error?.code).toBe("invalid_json");
+  });
+
+  it("returns 422 for non-object hydration payloads", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/hydration/log",
+        headers: { authorization: "Bearer test-token" },
+        body: JSON.stringify(["bad"]),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
+    const payload = JSON.parse(response.body);
+    expect(payload.error?.code).toBe("validation_error");
   });
 
   it("returns 422 for malformed history days query", async () => {

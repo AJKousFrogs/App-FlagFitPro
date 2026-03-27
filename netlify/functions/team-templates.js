@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Netlify Function: Team Templates
@@ -528,21 +529,38 @@ rateLimitType,
       const templateId =
         pathParts[0] && subPath !== "from-inbox" ? pathParts[0] : null;
       const action = pathParts[1] || null;
+      const parseBody = () => {
+        try {
+          return { ok: true, body: parseJsonObjectBody(event.body) };
+        } catch (error) {
+          return {
+            ok: false,
+            response:
+              error?.message === "Request body must be an object"
+                ? createErrorResponse(
+                    "Request body must be an object",
+                    422,
+                    "validation_error",
+                    requestId,
+                  )
+                : createErrorResponse(
+                    "Invalid JSON in request body",
+                    400,
+                    "invalid_json",
+                    requestId,
+                  ),
+          };
+        }
+      };
 
       try {
         // POST /api/team-templates/from-inbox - Create from inbox item
         if (method === "POST" && subPath === "from-inbox") {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-              requestId,
-            );
+          const parsedBody = parseBody();
+          if (!parsedBody.ok) {
+            return parsedBody.response;
           }
+          const body = parsedBody.body;
 
           if (!body.inbox_item_id) {
             return createErrorResponse(
@@ -565,17 +583,11 @@ rateLimitType,
 
         // POST /api/team-templates/:id/assign - Assign template to athletes
         if (method === "POST" && templateId && action === "assign") {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-              requestId,
-            );
+          const parsedBody = parseBody();
+          if (!parsedBody.ok) {
+            return parsedBody.response;
           }
+          const body = parsedBody.body;
 
           if (
             !body.athlete_ids ||
@@ -631,17 +643,11 @@ rateLimitType,
 
         // POST /api/team-templates - Create new template
         if (method === "POST" && !templateId) {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-              requestId,
-            );
+          const parsedBody = parseBody();
+          if (!parsedBody.ok) {
+            return parsedBody.response;
           }
+          const body = parsedBody.body;
 
           // Validate required fields
           if (
@@ -674,17 +680,11 @@ rateLimitType,
 
         // PATCH /api/team-templates/:id - Update template
         if (method === "PATCH" && templateId) {
-          let body;
-          try {
-            body = JSON.parse(event.body || "{}");
-          } catch {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-              requestId,
-            );
+          const parsedBody = parseBody();
+          if (!parsedBody.ok) {
+            return parsedBody.response;
           }
+          const body = parsedBody.body;
 
           const template = await updateTemplate(templateId, teamIds, body);
           return createSuccessResponse(template, requestId);

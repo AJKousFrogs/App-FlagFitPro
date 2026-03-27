@@ -98,8 +98,7 @@ describe("coach calendar validation", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    const mod = await import("../../netlify/functions/coach.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/coach.js"));
   });
 
   it("returns 400 for invalid JSON body on calendar POST", async () => {

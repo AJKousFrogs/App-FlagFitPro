@@ -1,7 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { validate, validateRequestBody, VALIDATION_RULES } from "./validation.js";
-import { sanitizeObject } from "./utils/input-validator.js";
+import { parseJsonObjectBody, sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError, handleNotFoundError, handleAuthorizationError } from "./utils/error-handler.js";
 import { checkTeamMembership as _checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -877,19 +877,19 @@ const handler = async (event, context) => {
       let body = {};
       if (event.body && ["POST", "PUT", "DELETE"].includes(event.httpMethod)) {
         try {
-          body = JSON.parse(event.body);
-        } catch (_parseError) {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error?.message === "Request body must be an object") {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+            );
+          }
           return createErrorResponse(
             "Invalid JSON in request body",
             400,
             "invalid_json",
-          );
-        }
-        if (!body || typeof body !== "object" || Array.isArray(body)) {
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
           );
         }
       }

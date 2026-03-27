@@ -152,8 +152,7 @@ describe("team-templates authorization and error hardening", () => {
     state.athleteMemberships = [{ user_id: "athlete-1" }];
     state.listError = null;
     state.assignmentError = null;
-    const mod = await import("../../netlify/functions/team-templates.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/team-templates.js"));
   });
 
   it("returns 403 when assigning a template from a team the coach does not manage", async () => {

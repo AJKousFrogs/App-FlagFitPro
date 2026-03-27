@@ -120,8 +120,7 @@ describe("scouting validation and update hardening", () => {
   beforeEach(async () => {
     vi.resetModules();
     state.lastUpdatePayload = null;
-    const mod = await import("../../netlify/functions/scouting.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/scouting.js"));
   });
 
   it("returns 400 invalid_json for invalid JSON body", async () => {

@@ -5,12 +5,9 @@ import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 const VALID_STATUSES = new Set(["not_started", "in_progress", "completed"]);
-
-function isPlainObject(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
 
 function isUuid(value) {
   return (
@@ -33,15 +30,11 @@ const handler = async (event, context) =>
           return getCycles(supabase, userId);
         }
 
-        let payload = {};
-        try {
-          payload = JSON.parse(evt.body || "{}");
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+        const parsedPayload = tryParseJsonObjectBody(evt.body);
+        if (!parsedPayload.ok) {
+          return parsedPayload.error;
         }
-        if (!isPlainObject(payload)) {
-          return handleValidationError("Request body must be an object");
-        }
+        const payload = parsedPayload.data;
         return updateCycleStatus(supabase, userId, payload);
       } catch (error) {
         console.error("Program cycles error:", error);

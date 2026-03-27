@@ -4,6 +4,7 @@ import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/e
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Attendance API
 // Handles practice attendance tracking, events, and absence requests
@@ -664,8 +665,15 @@ const handler = async (event, context) => {
       let body = {};
       if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
         try {
-          body = JSON.parse(event.body);
-        } catch {
+          body = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error?.message === "Request body must be an object") {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+            );
+          }
           return createErrorResponse("Invalid JSON", 400, ErrorType.VALIDATION);
         }
       }

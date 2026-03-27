@@ -127,8 +127,7 @@ describe("notification-digest send idempotency", () => {
   beforeEach(async () => {
     vi.resetModules();
     mockCtx.digestInsertError = null;
-    const mod = await import("../../netlify/functions/notification-digest.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/notification-digest.js"));
   });
 
   it("returns success with duplicate flag when digest_history unique conflict occurs", async () => {

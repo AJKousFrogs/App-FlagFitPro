@@ -3,6 +3,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Scouting Reports API
 // Handles opponent scouting, game plans, and tendency analysis
@@ -408,21 +409,22 @@ async function handleRequest(event, _context, { userId }) {
       return parsed;
     };
     const parseJsonBody = () => {
-      let parsedBody;
       try {
-        parsedBody = JSON.parse(event.body || "{}");
-      } catch {
-        return { ok: false, body: null, code: "invalid_json" };
-      }
-      if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) {
+        return { ok: true, body: parseJsonObjectBody(event.body) };
+      } catch (error) {
         return {
           ok: false,
           body: null,
-          code: "validation_error",
-          error: "Request body must be an object",
+          code:
+            error?.message === "Request body must be an object"
+              ? "validation_error"
+              : "invalid_json",
+          error:
+            error?.message === "Request body must be an object"
+              ? "Request body must be an object"
+              : undefined,
         };
       }
-      return { ok: true, body: parsedBody };
     };
 
     try {

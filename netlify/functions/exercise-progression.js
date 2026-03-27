@@ -1,6 +1,7 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Exercise Progression Calculator
@@ -150,12 +151,11 @@ const handler = async (event, context) =>
     requireAuth: true,
     handler: async (evt, _ctx, { userId, supabase }) => {
       try {
-        let payload = {};
-        try {
-          payload = JSON.parse(evt.body || "{}");
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+        const parsedPayload = tryParseJsonObjectBody(evt.body);
+        if (!parsedPayload.ok) {
+          return parsedPayload.error;
         }
+        const payload = parsedPayload.data;
 
         const validationError = validatePayload(payload);
         if (validationError) {

@@ -33,8 +33,7 @@ describe("calc-readiness validation and authorization", () => {
     vi.resetModules();
     authState.userId = "athlete-1";
     authState.role = "player";
-    const mod = await import("../../netlify/functions/calc-readiness.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/calc-readiness.js"));
   });
 
   it("returns 422 for non-object JSON body", async () => {

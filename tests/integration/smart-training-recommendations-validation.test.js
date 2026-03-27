@@ -134,8 +134,39 @@ describe("smart-training-recommendations authorization and validation hardening"
     vi.resetModules();
     state.role = "player";
     state.throwTrainingProgramError = false;
-    const mod = await import("../../netlify/functions/smart-training-recommendations.js");
-    handler = mod.handler;
+    ({ handler } = await import(
+      "../../netlify/functions/smart-training-recommendations.js"
+    ));
+  });
+
+  it("returns 422 for malformed POST JSON", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/smart-training-recommendations",
+        body: "{",
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
+    const body = JSON.parse(response.body);
+    expect(body.error?.code).toBe("validation_error");
+  });
+
+  it("returns 422 for non-object POST JSON", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/smart-training-recommendations",
+        body: JSON.stringify(["bad"]),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
+    const body = JSON.parse(response.body);
+    expect(body.error?.code).toBe("validation_error");
   });
 
   it("returns 403 for cross-athlete access by non-coach", async () => {

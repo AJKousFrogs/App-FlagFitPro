@@ -363,6 +363,22 @@ function parseJsonObjectBody(rawBody, { allowEmpty = true } = {}) {
   return parsed;
 }
 
+function tryParseJsonObjectBody(rawBody, options) {
+  try {
+    return {
+      ok: true,
+      data: parseJsonObjectBody(rawBody, options),
+      error: null,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      data: null,
+      error: handleValidationError(error?.message || "Invalid request body"),
+    };
+  }
+}
+
 /**
  * Common validation schemas for reuse
  */
@@ -386,6 +402,7 @@ export {
   sanitizeObject,
   parseAndValidateBody,
   parseJsonObjectBody,
+  tryParseJsonObjectBody,
   validateQueryParams,
   PATTERNS,
   VALIDATORS,
@@ -398,6 +415,7 @@ export default {
   sanitizeObject,
   parseAndValidateBody,
   parseJsonObjectBody,
+  tryParseJsonObjectBody,
   validateQueryParams,
   PATTERNS,
   VALIDATORS,

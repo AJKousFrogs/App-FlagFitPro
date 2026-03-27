@@ -168,8 +168,7 @@ describe("performance-data cross-athlete authorization", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    const mod = await import("../../netlify/functions/performance-data.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/performance-data.js"));
   });
 
   it("blocks player from reading another athlete wellness by athleteId", async () => {
@@ -238,5 +237,16 @@ describe("performance-data cross-athlete authorization", () => {
     );
 
     expect(response.statusCode).toBe(400);
+  });
+
+  it("returns 422 for non-object JSON in measurements POST", async () => {
+    state.currentUserId = "player-1";
+
+    const response = await handler(
+      buildMutationEvent("POST", "measurements", "null"),
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
   });
 });

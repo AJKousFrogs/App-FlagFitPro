@@ -9,11 +9,8 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
-
-function isPlainObject(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
 
 function isUuid(value) {
   return (
@@ -42,15 +39,11 @@ const handler = async (event, context) =>
         );
       }
 
-      let body = {};
-      try {
-        body = JSON.parse(event.body || "{}");
-      } catch (_parseError) {
-        return handleValidationError("Invalid JSON in request body");
+      const parsedBody = tryParseJsonObjectBody(event.body);
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
-      if (!isPlainObject(body)) {
-        return handleValidationError("Request body must be an object");
-      }
+      const body = parsedBody.data;
       const { season_id } = body;
 
       if (!isUuid(season_id)) {

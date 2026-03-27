@@ -8,6 +8,7 @@ import nodemailer from "nodemailer";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Initialize email transporter
 function getEmailTransporter() {
@@ -373,13 +374,16 @@ const sendEmailRequest = async (event, _context, { userId }) => {
 
   let payload = {};
   try {
-    payload = JSON.parse(event.body || "{}");
-  } catch {
+    payload = parseJsonObjectBody(event.body);
+  } catch (error) {
+    if (error?.message === "Request body must be an object") {
+      return createErrorResponse(
+        "Request body must be an object",
+        422,
+        "validation_error",
+      );
+    }
     return createErrorResponse("Invalid JSON body", 400, "invalid_json");
-  }
-
-  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
-    return createErrorResponse("Request body must be an object", 422, "validation_error");
   }
 
   const {

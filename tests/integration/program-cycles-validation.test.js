@@ -67,8 +67,7 @@ describe("program-cycles validation hardening", () => {
     dbState.cyclesError = null;
     dbState.playerCyclesData = [];
     dbState.upsertError = null;
-    const mod = await import("../../netlify/functions/program-cycles.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/program-cycles.js"));
   });
 
   it("returns 422 for non-object POST payload", async () => {

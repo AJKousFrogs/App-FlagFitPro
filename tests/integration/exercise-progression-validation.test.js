@@ -53,8 +53,7 @@ describe("exercise-progression validation hardening", () => {
   beforeEach(async () => {
     vi.resetModules();
     mockState.exercisesError = null;
-    const mod = await import("../../netlify/functions/exercise-progression.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/exercise-progression.js"));
   });
 
   it("returns 422 for non-object JSON payload", async () => {

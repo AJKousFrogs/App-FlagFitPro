@@ -115,8 +115,7 @@ describe("notification-digest validation and role hardening", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    const mod = await import("../../netlify/functions/notification-digest.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/notification-digest.js"));
   });
 
   it("rejects invalid digest type with 422", async () => {

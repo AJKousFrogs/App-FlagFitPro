@@ -35,8 +35,7 @@ describe("calibration-logs validation and authorization hardening", () => {
     vi.resetModules();
     authState.userId = "athlete-1";
     authState.role = "player";
-    const mod = await import("../../netlify/functions/calibration-logs.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/calibration-logs.js"));
   });
 
   it("returns 422 for non-object recommendation payload", async () => {

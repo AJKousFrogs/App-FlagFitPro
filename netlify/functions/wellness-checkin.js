@@ -4,7 +4,8 @@ import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consen
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createErrorResponse } from "./utils/error-handler.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 
 function isOptionalSchemaError(error) {
@@ -138,12 +139,11 @@ const handler = async (event, context) =>
           return getCheckin(supabaseAdmin, userId, athleteId, date, requestId);
         }
 
-        let payload = {};
-        try {
-          payload = JSON.parse(evt.body || "{}");
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+        const parsedPayload = tryParseJsonObjectBody(evt.body);
+        if (!parsedPayload.ok) {
+          return parsedPayload.error;
         }
+        const payload = parsedPayload.data;
         return saveCheckin(supabaseAdmin, userId, payload, requestId);
       } catch (error) {
         console.error("Wellness checkin error:", error);

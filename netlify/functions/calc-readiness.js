@@ -5,6 +5,7 @@ import { detectACWRTrigger } from "./utils/safety-override.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Calculate Readiness Score
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
@@ -408,14 +409,12 @@ const handler = async (event, context) => {
         bodyLength: event.body?.length,
       });
 
-      let body;
-      try {
-        body = JSON.parse(event.body || "{}");
-        console.log("[calc-readiness] Parsed body:", body);
-      } catch (_e) {
-        console.error("[calc-readiness] JSON parse error:", _e);
-        return handleValidationError("Invalid JSON in request body");
+      const parsedBody = tryParseJsonObjectBody(event.body);
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      const body = parsedBody.data;
+      console.log("[calc-readiness] Parsed body:", body);
 
       if (!isPlainObject(body)) {
         return handleValidationError("Request body must be an object");

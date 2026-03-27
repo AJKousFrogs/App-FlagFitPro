@@ -3,6 +3,7 @@ import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import {
   getIsoDateString,
   getIsoDayOfWeek,
@@ -599,14 +600,13 @@ const legacyDailyProtocolHandler = async (event) => {
     }
 
     if (httpMethod === "POST") {
-      let payload = {};
-      try {
-        payload = body ? JSON.parse(body) : {};
-      } catch (_parseError) {
+      const parsedPayload = tryParseJsonObjectBody(body);
+      if (!parsedPayload.ok) {
         return withHeaders(
-          handleValidationError("Invalid JSON in request body"),
+          parsedPayload.error,
         );
       }
+      const payload = parsedPayload.data;
 
       switch (endpoint) {
         case "generate":

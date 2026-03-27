@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -68,13 +69,16 @@ function getRestrictedFeatures(consent) {
 
 function parseJsonBody(body) {
   try {
-    const parsed = JSON.parse(body || "{}");
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return { ok: false, data: null, reason: "Request body must be an object" };
-    }
-    return { ok: true, data: parsed };
-  } catch {
-    return { ok: false, data: null, reason: "Invalid JSON body" };
+    return { ok: true, data: sharedParseJsonObjectBody(body) };
+  } catch (error) {
+    return {
+      ok: false,
+      data: null,
+      reason:
+        error?.message === "Request body must be an object"
+          ? "Request body must be an object"
+          : "Invalid JSON body",
+    };
   }
 }
 

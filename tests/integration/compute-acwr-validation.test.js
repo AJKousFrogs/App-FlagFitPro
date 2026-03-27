@@ -36,8 +36,7 @@ describe("compute-acwr validation and authorization", () => {
     vi.resetModules();
     authState.userId = "athlete-1";
     authState.role = "player";
-    const mod = await import("../../netlify/functions/compute-acwr.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/compute-acwr.js"));
   });
 
   it("returns 422 for non-object JSON body", async () => {

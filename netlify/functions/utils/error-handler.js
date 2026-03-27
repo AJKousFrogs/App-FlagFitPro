@@ -36,13 +36,15 @@ const ALLOWED_ORIGINS = [
   "http://localhost:8888", // Netlify Dev proxy
 ];
 
+const DEFAULT_DEV_ORIGIN = "http://localhost:4200";
+
 const getCorsOrigin = (requestOrigin) => {
   // In development, allow all origins
   if (
     process.env.NODE_ENV === "development" ||
     process.env.NETLIFY_DEV === "true"
   ) {
-    return requestOrigin || "*";
+    return requestOrigin || DEFAULT_DEV_ORIGIN;
   }
   // In production, validate against allowed origins
   if (requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin)) {
@@ -52,13 +54,25 @@ const getCorsOrigin = (requestOrigin) => {
   return ALLOWED_ORIGINS[0];
 };
 
+function getCorsHeaders(eventOrOrigin = null) {
+  const requestOrigin =
+    typeof eventOrOrigin === "string"
+      ? eventOrOrigin
+      : eventOrOrigin?.headers?.origin || eventOrOrigin?.headers?.Origin || null;
+
+  return {
+    ...CORS_HEADERS,
+    "Access-Control-Allow-Origin": getCorsOrigin(requestOrigin),
+  };
+}
+
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin":
-    process.env.NODE_ENV === "development" ? "*" : ALLOWED_ORIGINS[0],
+  "Access-Control-Allow-Origin": getCorsOrigin(null),
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Credentials": "true",
   "Content-Type": "application/json",
+  Vary: "Origin",
 };
 
 /**
@@ -524,6 +538,7 @@ export { ErrorType,
   CORS_HEADERS,
   ALLOWED_ORIGINS,
   getCorsOrigin,
+  getCorsHeaders,
   createErrorResponse,
   createSuccessResponse,
   handleAuthenticationError,

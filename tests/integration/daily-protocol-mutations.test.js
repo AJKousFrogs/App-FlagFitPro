@@ -161,8 +161,37 @@ describe("daily-protocol mutations", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    const mod = await import("../../netlify/functions/daily-protocol.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/daily-protocol.js"));
+  });
+
+  it("returns 422 for malformed JSON request bodies", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/api/daily-protocol/complete",
+        headers: { authorization: "Bearer test-token" },
+        body: "{bad-json",
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
+  });
+
+  it("returns 422 for non-object JSON request bodies", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/api/daily-protocol/complete",
+        headers: { authorization: "Bearer test-token" },
+        body: "null",
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
   });
 
   it("treats repeated complete calls as idempotent and avoids duplicate completion logs", async () => {

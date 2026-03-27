@@ -149,8 +149,7 @@ describe("coach communications validation", () => {
   beforeEach(async () => {
     vi.resetModules();
     state.targetPlayerActive = true;
-    const mod = await import("../../netlify/functions/coach.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/coach.js"));
   });
 
   it("rejects non-object payloads for team messages", async () => {

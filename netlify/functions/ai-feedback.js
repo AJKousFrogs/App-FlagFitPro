@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Netlify Function: AI Feedback
@@ -56,17 +57,17 @@ const handler = async (event, context) => {
 async function handleCreateFeedback(event, userId, requestId) {
   let body;
   try {
-    body = JSON.parse(event.body || "{}");
-  } catch {
+    body = parseJsonObjectBody(event.body);
+  } catch (error) {
+    if (error?.message === "Request body must be an object") {
+      return createErrorResponse(
+        "Request body must be an object",
+        422,
+        "validation_error",
+        requestId,
+      );
+    }
     return createErrorResponse("Invalid JSON", 400, "invalid_json", requestId);
-  }
-  if (!body || typeof body !== "object" || Array.isArray(body)) {
-    return createErrorResponse(
-      "Request body must be an object",
-      422,
-      "validation_error",
-      requestId,
-    );
   }
 
   const {

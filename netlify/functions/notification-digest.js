@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
 
 const VALID_DIGEST_TYPES = new Set(["daily", "weekly", "monthly"]);
 const COACH_ROLES = new Set([
@@ -102,20 +103,16 @@ const validatePreferenceUpdates = (updates) => {
 };
 
 const parseJsonObjectBody = (rawBody) => {
-  let parsed;
   try {
-    parsed = JSON.parse(rawBody || "{}");
-  } catch {
+    return sharedParseJsonObjectBody(rawBody);
+  } catch (parseError) {
+    if (parseError?.message === "Request body must be an object") {
+      throw parseError;
+    }
     const error = new Error("Invalid JSON");
     error.code = "invalid_json";
     throw error;
   }
-
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Request body must be an object");
-  }
-
-  return parsed;
 };
 
 /**

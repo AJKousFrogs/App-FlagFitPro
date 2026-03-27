@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Supplements API
 // Handles supplement logging (read-only for AI - no dosing recommendations)
@@ -213,10 +214,17 @@ const handler = async (event, context) => {
         if (event.httpMethod === "POST") {
           // Handle POST /api/supplements/log
           if (path.includes("/log") || path.endsWith("/log")) {
-            let supplementData = {};
+            let supplementData;
             try {
-              supplementData = JSON.parse(event.body || "{}");
-            } catch (_parseError) {
+              supplementData = parseJsonObjectBody(event.body);
+            } catch (error) {
+              if (error?.message === "Request body must be an object") {
+                return createErrorResponse(
+                  "Request body must be an object",
+                  422,
+                  "validation_error",
+                );
+              }
               return createErrorResponse(
                 "Invalid JSON in request body",
                 400,

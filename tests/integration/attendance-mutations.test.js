@@ -152,8 +152,7 @@ describe("attendance mutations validation", () => {
       absenceInsertError: null,
       invalidTeamPlayers: [],
     };
-    const mod = await import("../../netlify/functions/attendance.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/attendance.js"));
   });
 
   it("rejects invalid attendance status with 422", async () => {

@@ -1,4 +1,5 @@
 import { CORS_HEADERS } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Request Validation Middleware for Netlify Functions
@@ -472,8 +473,7 @@ function createValidationErrorResponse(errors, statusCode = 400) {
  */
 function validateRequestBody(body, schemaName) {
   try {
-    // Parse JSON
-    const data = JSON.parse(body);
+    const data = parseJsonObjectBody(body);
 
     // Sanitize input
     const sanitizedData = sanitize(data);
@@ -522,11 +522,15 @@ function validateRequestBody(body, schemaName) {
       data: sanitizedData,
       response: null,
     };
-  } catch (_error) {
+  } catch (error) {
     return {
       valid: false,
       data: null,
-      response: createValidationErrorResponse(["Invalid JSON in request body"]),
+      response: createValidationErrorResponse([
+        error?.message === "Request body must be an object"
+          ? "Request body must be an object"
+          : "Invalid JSON in request body",
+      ]),
     };
   }
 }

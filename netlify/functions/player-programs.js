@@ -43,6 +43,7 @@ import {
   handleConflictError,
   ErrorType,
 } from "./utils/error-handler.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Program ID constants - these match the database
 const PROGRAM_IDS = {
@@ -213,15 +214,11 @@ async function handlePost(event, context, { userId }) {
   const supabase = getSupabaseClient();
 
   // Parse body
-  let body;
-  try {
-    body = JSON.parse(event.body || "{}");
-  } catch {
-    return handleValidationError("Invalid JSON body");
+  const parsedBody = tryParseJsonObjectBody(event.body);
+  if (!parsedBody.ok) {
+    return parsedBody.error;
   }
-  if (!isPlainObject(body)) {
-    return handleValidationError("Request body must be an object");
-  }
+  const body = parsedBody.data;
 
   const { program_id, start_date, status = "active", force = false } = body;
 
@@ -389,15 +386,11 @@ async function handlePut(event, context, { userId }) {
   }
 
   // Parse body
-  let body;
-  try {
-    body = JSON.parse(event.body || "{}");
-  } catch {
-    return handleValidationError("Invalid JSON body");
+  const parsedBody = tryParseJsonObjectBody(event.body);
+  if (!parsedBody.ok) {
+    return parsedBody.error;
   }
-  if (!isPlainObject(body)) {
-    return handleValidationError("Request body must be an object");
-  }
+  const body = parsedBody.data;
 
   const { status, end_date, program_id, notes, modifications } = body;
   if (

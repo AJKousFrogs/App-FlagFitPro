@@ -7,6 +7,7 @@ import { isGroqConfigured, generateCoachingResponse, generateClarifyingQuestion 
 import { processSmartQuery, searchKnowledgeHybrid, recordFeedbackWithLearning as _recordFeedbackWithLearning, getLearnedPreferences as _getLearnedPreferences, getPendingCheckins as _getPendingCheckins, updateCheckinStatus, buildCheckinMessage, summarizeConversation as _summarizeConversation, ROUTING_ACTIONS } from "./utils/smart-ai-service.js";
 import { isEmbeddingServiceAvailable } from "./utils/embedding-service.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * Netlify Function: AI Chat
@@ -3154,24 +3155,20 @@ const handler = async (event, context) => {
         // Parse request body
         let analysisContext;
         try {
-          analysisContext = JSON.parse(event.body || "{}");
-        } catch {
+          analysisContext = parseJsonObjectBody(event.body);
+        } catch (error) {
+          if (error?.message === "Request body must be an object") {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
           return createErrorResponse(
             "Invalid JSON in request body",
             400,
             "invalid_json",
-            requestId,
-          );
-        }
-        if (
-          !analysisContext ||
-          typeof analysisContext !== "object" ||
-          Array.isArray(analysisContext)
-        ) {
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
             requestId,
           );
         }
@@ -3210,20 +3207,20 @@ const handler = async (event, context) => {
       // Parse request body
       let body;
       try {
-        body = JSON.parse(event.body || "{}");
-      } catch {
+        body = parseJsonObjectBody(event.body);
+      } catch (error) {
+        if (error?.message === "Request body must be an object") {
+          return createErrorResponse(
+            "Request body must be an object",
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
         return createErrorResponse(
           "Invalid JSON in request body",
           400,
           "invalid_json",
-          requestId,
-        );
-      }
-      if (!body || typeof body !== "object" || Array.isArray(body)) {
-        return createErrorResponse(
-          "Request body must be an object",
-          422,
-          "validation_error",
           requestId,
         );
       }

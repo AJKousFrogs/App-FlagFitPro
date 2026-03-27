@@ -31,8 +31,7 @@ describe("send-email validation hardening", () => {
       GMAIL_APP_PASSWORD: "app-password",
     };
     authState.userId = "user-admin";
-    const mod = await import("../../netlify/functions/send-email.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/send-email.js"));
   });
 
   it("returns 400 for invalid JSON body", async () => {

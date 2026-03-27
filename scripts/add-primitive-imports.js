@@ -12,7 +12,7 @@ for (const file of files) {
   let content = fs.readFileSync(file, 'utf-8');
 
   if (!content.includes('@use "styles/mixins"')) {
-    content = '@use "styles/mixins" as *;\n\n' + content;
+    content = `@use "styles/mixins" as *;\n\n${content}`;
     fs.writeFileSync(file, content, 'utf-8');
     console.log(`✓ Added import to ${path.basename(file)}`);
     modified++;

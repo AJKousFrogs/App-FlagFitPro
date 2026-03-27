@@ -153,8 +153,7 @@ describe("season-reports validation and authorization hardening", () => {
     state.teamMembers = [{ user_id: "player-1", role: "player" }];
     state.teamMembersError = null;
     state.insertError = null;
-    const mod = await import("../../netlify/functions/season-reports.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/season-reports.js"));
   });
 
   it("returns 422 for non-object payload", async () => {

@@ -5,6 +5,7 @@ import { supabaseAdmin, db } from "./supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { DataState } from "./utils/data-state.js";
 import { getUserRole, requireRole, logViolation } from "./utils/authorization-guard.js";
+import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Coach API
 // Handles coach-specific operations: dashboard, team management, training analytics
@@ -60,16 +61,12 @@ const parseJsonBody = (body) => {
     return {};
   }
   try {
-    const parsed = JSON.parse(body);
-    if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
+    return sharedParseJsonObjectBody(body);
+  } catch (err) {
+    if (err?.message === "Request body must be an object") {
       const validationError = new Error("Request body must be an object");
       validationError.isValidation = true;
       throw validationError;
-    }
-    return parsed;
-  } catch (err) {
-    if (err?.isValidation) {
-      throw err;
     }
     const parseError = new Error("Invalid JSON in request body");
     parseError.isInvalidJson = true;

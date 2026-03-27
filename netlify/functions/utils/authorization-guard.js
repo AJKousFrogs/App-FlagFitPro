@@ -3,6 +3,25 @@ import { createErrorResponse } from "./error-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./role-sets.js";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
+function normalizeRequestBodyForAudit(body) {
+  if (!body) {
+    return null;
+  }
+
+  if (typeof body !== "string") {
+    return body;
+  }
+
+  try {
+    return JSON.parse(body);
+  } catch (_error) {
+    return {
+      parse_error: "INVALID_JSON_BODY",
+      raw_body: body.slice(0, 4000),
+    };
+  }
+}
+
 /**
  * Authorization Guard Utility
  * Implements AUTHORIZATION_AND_GUARDRAILS_CONTRACT_v1
@@ -166,11 +185,7 @@ async function logViolation(
       user_agent: requestInfo.userAgent,
       request_path: requestInfo.path,
       request_method: requestInfo.method,
-      request_body: requestInfo.body
-        ? typeof requestInfo.body === "string"
-          ? JSON.parse(requestInfo.body)
-          : requestInfo.body
-        : null,
+      request_body: normalizeRequestBodyForAudit(requestInfo.body),
     });
   } catch (error) {
     console.error("[Authorization] Failed to log violation:", error);

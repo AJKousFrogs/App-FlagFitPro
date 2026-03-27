@@ -239,8 +239,7 @@ describe("games authorization guardrails", () => {
     state.currentUserId = "u-player";
     state.insertedEvents = [];
     state.duplicateEvent = null;
-    const mod = await import("../../netlify/functions/games.js");
-    handler = mod.handler;
+    ({ handler } = await import("../../netlify/functions/games.js"));
   });
 
   it("blocks direct team-game details read for non-team members", async () => {

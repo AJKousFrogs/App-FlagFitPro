@@ -12,6 +12,12 @@
  * - Rate limit headers in responses
  */
 
+import {
+  createErrorResponse,
+  ErrorType,
+  getCorsHeaders,
+} from "./error-handler.js";
+
 // Rate limit configuration
 // Can be overridden via environment variables
 const RATE_LIMITS = {
@@ -59,7 +65,7 @@ const rateLimitStore = new Map();
 
 // Cleanup expired entries every 5 minutes
 const CLEANUP_INTERVAL = 5 * 60 * 1000;
-setInterval(() => {
+const cleanupTimer = setInterval(() => {
   const now = Date.now();
   let cleaned = 0;
   for (const [key, data] of rateLimitStore.entries()) {
@@ -72,6 +78,17 @@ setInterval(() => {
     console.log(`[RATE LIMITER] Cleaned ${cleaned} expired entries`);
   }
 }, CLEANUP_INTERVAL);
+cleanupTimer.unref?.();
+
+function getClientIp(event) {
+  return (
+    event.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    event.headers?.["X-Forwarded-For"]?.split(",")[0]?.trim() ||
+    event.headers?.["x-real-ip"] ||
+    event.headers?.["X-Real-IP"] ||
+    "unknown"
+  );
+}
 
 /**
  * Check if a request is within rate limits
@@ -146,12 +163,7 @@ function checkRateLimit(identifier, options = RATE_LIMITS.DEFAULT) {
  */
 function applyRateLimit(event, limitType = "DEFAULT", userId = null) {
   // Get client identifier
-  const ip =
-    event.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() ||
-    event.headers?.["X-Forwarded-For"]?.split(",")[0]?.trim() ||
-    event.headers?.["x-real-ip"] ||
-    event.headers?.["X-Real-IP"] ||
-    "unknown";
+  const ip = getClientIp(event);
 
   // Create composite identifier (IP + optional userId for stricter limits)
   const identifier = userId ? `${ip}:${userId}` : ip;
@@ -165,25 +177,25 @@ function applyRateLimit(event, limitType = "DEFAULT", userId = null) {
   if (!result.allowed) {
     console.warn(`[RATE LIMIT] Exceeded for ${identifier} (${limitType})`);
 
-    return {
-      statusCode: 429,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Content-Type": "application/json",
-        "Retry-After": String(result.retryAfter),
-        "X-RateLimit-Limit": String(limit.maxRequests),
-        "X-RateLimit-Remaining": "0",
-        "X-RateLimit-Reset": String(Math.ceil(result.resetAt / 1000)),
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Rate limit exceeded",
-        code: "rate_limit_exceeded",
+    const response = createErrorResponse(
+      `Too many requests. Please try again in ${result.retryAfter} seconds.`,
+      429,
+      ErrorType.RATE_LIMIT,
+      {
         retryAfter: result.retryAfter,
-        message: `Too many requests. Please try again in ${result.retryAfter} seconds.`,
-      }),
+      },
+    );
+
+    response.headers = {
+      ...response.headers,
+      ...getCorsHeaders(event),
+      "Retry-After": String(result.retryAfter),
+      "X-RateLimit-Limit": String(limit.maxRequests),
+      "X-RateLimit-Remaining": "0",
+      "X-RateLimit-Reset": String(Math.ceil(result.resetAt / 1000)),
     };
+
+    return response;
   }
 
   // Return null to indicate request is allowed

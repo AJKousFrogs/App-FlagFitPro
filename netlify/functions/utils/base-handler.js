@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { checkEnvVars, getSupabaseClient, runWithAuthContext } from "../utils/supabase-client.js";
-import { createErrorResponse, handleServerError, logFunctionCall, CORS_HEADERS } from "./error-handler.js";
+import { createErrorResponse, handleServerError, logFunctionCall, getCorsHeaders } from "./error-handler.js";
 import { authenticateRequest } from "./auth-helper.js";
 import { applyRateLimit, getRateLimitHeaders } from "./rate-limiter.js";
 
@@ -45,6 +45,27 @@ function generateRequestId() {
   return `req_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
 }
 
+function getClientIdentifier(event, userId = null) {
+  const clientIp =
+    event.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    event.headers?.["X-Forwarded-For"]?.split(",")[0]?.trim() ||
+    event.headers?.["x-real-ip"] ||
+    event.headers?.["X-Real-IP"] ||
+    "unknown";
+
+  return userId ? `${clientIp}:${userId}` : clientIp;
+}
+
+function withStandardHeaders(response, event) {
+  return {
+    ...response,
+    headers: {
+      ...(response?.headers || {}),
+      ...getCorsHeaders(event),
+    },
+  };
+}
+
 /**
  * Base handler middleware
  *
@@ -72,6 +93,7 @@ async function baseHandler(event, context, options = {}) {
 
   // Generate unique request ID for tracking
   const requestId = event.headers?.["x-request-id"] || generateRequestId();
+  const corsHeaders = getCorsHeaders(event);
 
   // Performance monitoring - start timer
   const startTime = Date.now();
@@ -88,13 +110,15 @@ async function baseHandler(event, context, options = {}) {
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
       body: "",
     };
   }
 
   // Log function call
   logFunctionCall(functionName, event);
+
+  let userId = null;
 
   try {
     // Check environment variables unless the handler explicitly allows
@@ -105,29 +129,29 @@ async function baseHandler(event, context, options = {}) {
 
     // Validate HTTP method
     if (!allowedMethods.includes(event.httpMethod)) {
-      return createErrorResponse(
-        `Method not allowed. Use ${allowedMethods.join(" or ")}.`,
-        405,
-        "method_not_allowed",
-        requestId,
+      const methodNotAllowedResponse = withStandardHeaders(
+        createErrorResponse(
+          `Method not allowed. Use ${allowedMethods.join(" or ")}.`,
+          405,
+          "method_not_allowed",
+          { requestId },
+        ),
+        event,
       );
-    }
-
-    // Apply rate limiting
-    const rateLimitResponse = applyRateLimit(event, rateLimitType);
-    if (rateLimitResponse) {
-      return rateLimitResponse;
+      methodNotAllowedResponse.headers["X-Request-Id"] = requestId;
+      return methodNotAllowedResponse;
     }
 
     // Authenticate request (if required)
-    let userId = null;
     let authToken = null;
     let authUser = null;
     let supabase = null;
     if (requireAuth) {
       const auth = await authenticateRequest(event);
       if (!auth.success) {
-        return auth.error;
+        const authError = withStandardHeaders(auth.error, event);
+        authError.headers["X-Request-Id"] = requestId;
+        return authError;
       }
       userId = auth.user.id;
       authToken = auth.token;
@@ -142,6 +166,15 @@ async function baseHandler(event, context, options = {}) {
 
     if (!supabase) {
       supabase = getSupabaseClient(null);
+    }
+
+    // Apply rate limiting after authentication so authenticated handlers use
+    // the composite IP:user key that the limiter supports.
+    const rateLimitResponse = applyRateLimit(event, rateLimitType, userId);
+    if (rateLimitResponse) {
+      const limitedResponse = withStandardHeaders(rateLimitResponse, event);
+      limitedResponse.headers["X-Request-Id"] = requestId;
+      return limitedResponse;
     }
 
     const executeHandler = () =>
@@ -210,25 +243,18 @@ async function baseHandler(event, context, options = {}) {
       timestamp: new Date().toISOString(),
     });
 
-    // Get client IP for rate limit headers
-    const clientIp =
-      event.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() ||
-      event.headers?.["x-real-ip"] ||
-      "unknown";
-    const rateLimitIdentifier = userId ? `${clientIp}:${userId}` : clientIp;
+    const rateLimitIdentifier = getClientIdentifier(event, userId);
     const rateLimitHeaders = getRateLimitHeaders(
       rateLimitIdentifier,
       rateLimitType,
     );
 
     // Add performance, tracking, and rate limit headers to response
-    if (response && response.headers) {
-      response.headers["X-Response-Time"] = `${duration}ms`;
-      response.headers["X-Function-Name"] = functionName;
-      response.headers["X-Request-Id"] = requestId;
-      // Add rate limit headers
-      Object.assign(response.headers, rateLimitHeaders);
-    }
+    response = withStandardHeaders(response, event);
+    response.headers["X-Response-Time"] = `${duration}ms`;
+    response.headers["X-Function-Name"] = functionName;
+    response.headers["X-Request-Id"] = requestId;
+    Object.assign(response.headers, rateLimitHeaders);
 
     // Alert on slow responses (>1000ms)
     if (duration > 1000) {
@@ -253,10 +279,14 @@ async function baseHandler(event, context, options = {}) {
 
     const errorResponse = handleServerError(error, functionName);
     // Add request ID to error response for debugging
-    if (errorResponse && errorResponse.headers) {
-      errorResponse.headers["X-Request-Id"] = requestId;
-    }
-    return errorResponse;
+    const normalizedErrorResponse = withStandardHeaders(errorResponse, event);
+    normalizedErrorResponse.headers["X-Request-Id"] = requestId;
+    const rateLimitIdentifier = getClientIdentifier(event, userId);
+    Object.assign(
+      normalizedErrorResponse.headers,
+      getRateLimitHeaders(rateLimitIdentifier, rateLimitType),
+    );
+    return normalizedErrorResponse;
   }
 }
 

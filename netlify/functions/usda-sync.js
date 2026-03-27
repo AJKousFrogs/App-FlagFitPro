@@ -4,6 +4,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { createErrorResponse } from "./utils/error-handler.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 /**
  * USDA FoodData Central API Sync Function
@@ -257,9 +258,10 @@ async function handleSync(event) {
 
   let body = {};
   try {
-    body = JSON.parse(event.body || "{}");
+    // Preserve legacy behavior for sync requests: invalid bodies fall back to defaults.
+    body = parseJsonObjectBody(event.body);
   } catch (_e) {
-    // Use defaults
+    body = {};
   }
 
   const {

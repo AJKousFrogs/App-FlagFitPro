@@ -6,6 +6,7 @@ import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consen
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Wellness API
 // Handles wellness check-ins and wellness data retrieval
@@ -241,10 +242,17 @@ const handler = async (event, context) => {
         if (event.httpMethod === "POST") {
           // Handle POST /api/wellness/checkin
           if (path.includes("/checkin") || path.endsWith("/checkin")) {
-            let checkinData = {};
+            let checkinData;
             try {
-              checkinData = JSON.parse(event.body || "{}");
-            } catch (_parseError) {
+              checkinData = parseJsonObjectBody(event.body);
+            } catch (error) {
+              if (error?.message === "Request body must be an object") {
+                return createErrorResponse(
+                  "Request body must be an object",
+                  422,
+                  "validation_error",
+                );
+              }
               return createErrorResponse(
                 "Invalid JSON in request body",
                 400,
