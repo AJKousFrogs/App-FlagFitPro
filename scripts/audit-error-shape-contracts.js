@@ -14,9 +14,17 @@ function listFunctionFiles() {
     .map((name) => path.join(FUNCTIONS_DIR, name));
 }
 
+function hasExportedHandler(source) {
+  return (
+    /\bexport\s+const\s+handler\b/.test(source) ||
+    /\bexport\s*\{\s*handler\b/.test(source) ||
+    /\bexport\s+default\s+createRuntimeV2Handler\(\s*handler\s*\)/.test(source)
+  );
+}
+
 function analyze(filePath) {
   const source = fs.readFileSync(filePath, "utf8");
-  const hasHandlerExport = source.includes("export const handler");
+  const hasHandlerExport = hasExportedHandler(source);
   if (!hasHandlerExport) {
     return null;
   }

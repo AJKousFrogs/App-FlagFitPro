@@ -1114,7 +1114,7 @@ const handler = async (event, context) =>
   event.httpMethod === "POST"
     ? baseHandler(event, context, {
         functionName: "research-sync",
-        allowedMethods: ["GET", "POST"],
+        allowedMethods: ["POST"],
         rateLimitType: "UPDATE",
         requireAuth: true,
         handler: async (evt, _ctx, { requestId }) => {
@@ -1150,7 +1150,7 @@ const handler = async (event, context) =>
       })
     : baseHandler(event, context, {
         functionName: "research-sync",
-        allowedMethods: ["GET", "POST"],
+        allowedMethods: ["GET"],
         rateLimitType: "READ",
         requireAuth: false,
         handler: async (evt, _ctx, { requestId }) => {

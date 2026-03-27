@@ -336,9 +336,13 @@ export const routeAnimations: AnimationTriggerMetadata = trigger(
  * ></router-outlet>
  */
 export function getRouteAnimationState(outlet: any): string {
+  if (!outlet?.isActivated) {
+    return "fade";
+  }
+
   return (
-    outlet?.activatedRouteData?.["animation"] ||
-    outlet?.activatedRoute?.snapshot?.data?.["animation"] ||
+    outlet.activatedRouteData?.["animation"] ||
+    outlet.activatedRoute?.snapshot?.data?.["animation"] ||
     "fade"
   );
 }

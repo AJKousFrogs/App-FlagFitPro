@@ -564,7 +564,7 @@ const handler = async (event, context) =>
   event.httpMethod === "POST"
     ? baseHandler(event, context, {
         functionName: "usda-sync",
-        allowedMethods: ["GET", "POST"],
+        allowedMethods: ["POST"],
         rateLimitType: "UPDATE",
         requireAuth: true,
         handler: async (evt) => {
@@ -608,7 +608,7 @@ const handler = async (event, context) =>
       })
     : baseHandler(event, context, {
         functionName: "usda-sync",
-        allowedMethods: ["GET", "POST"],
+        allowedMethods: ["GET"],
         rateLimitType: "READ",
         requireAuth: false,
         handler: async (evt) => {

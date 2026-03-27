@@ -22,47 +22,59 @@ function getFiles() {
     .map((name) => path.join(FUNCTIONS_DIR, name));
 }
 
-function parseAllowedMethods(source) {
-  const match = source.match(/allowedMethods\s*:\s*\[([^\]]+)\]/);
-  if (!match) {
-    return [];
-  }
-  return [...match[1].matchAll(/"(GET|POST|PUT|PATCH|DELETE)"/g)].map(
-    (m) => m[1],
+function hasExportedHandler(source) {
+  return (
+    /\bexport\s+const\s+handler\b/.test(source) ||
+    /\bexport\s*\{\s*handler\b/.test(source) ||
+    /\bexport\s+default\s+createRuntimeV2Handler\(\s*handler\s*\)/.test(source)
   );
-}
-
-function parseRateLimitTypeLiteral(source) {
-  const match = source.match(/rateLimitType\s*:\s*"([A-Z_]+)"/);
-  return match ? match[1] : null;
 }
 
 function isMutating(methods) {
   return methods.some((m) => m !== "GET");
 }
 
+function parseHandlerConfigs(source) {
+  const allowedMatches = [...source.matchAll(/allowedMethods\s*:\s*\[([^\]]+)\]/g)];
+
+  return allowedMatches.map((match, index) => {
+    const methods = [
+      ...match[1].matchAll(/"(GET|POST|PUT|PATCH|DELETE)"/g),
+    ].map((methodMatch) => methodMatch[1]);
+    const currentIndex = match.index ?? 0;
+    const nextIndex = allowedMatches[index + 1]?.index ?? Number.POSITIVE_INFINITY;
+    const blockSource = source.slice(currentIndex, nextIndex);
+    const rateLiteralMatch = blockSource.match(
+      /rateLimitType\s*:\s*"([A-Z_]+)"/,
+    );
+    const rateConfigMatch =
+      rateLiteralMatch ||
+      blockSource.match(/rateLimitType\s*:\s*[^,\n]+/) ||
+      blockSource.match(/\brateLimitType\s*,/);
+
+    return {
+      allowedMethods: methods,
+      hasRateConfig: Boolean(rateConfigMatch),
+      rateLiteral: rateLiteralMatch?.[1] || null,
+    };
+  });
+}
+
 function analyze(filePath) {
   const source = fs.readFileSync(filePath, "utf8");
-  if (!source.includes("export const handler")) {
+  if (!hasExportedHandler(source)) {
     return null;
   }
 
   const usesBase = source.includes("baseHandler(");
   const usesFactory = source.includes("createHandler(");
-  const allowedMethods = parseAllowedMethods(source);
-  const rateLiteral = parseRateLimitTypeLiteral(source);
-  const hasRateConfig =
-    /rateLimitType\s*:/.test(source) || /rateLimitType\s*,/.test(source);
-  const mutating = isMutating(allowedMethods);
+  const configs = parseHandlerConfigs(source);
 
   return {
     file: path.relative(ROOT, filePath),
     usesBase,
     usesFactory,
-    allowedMethods,
-    rateLiteral,
-    hasRateConfig,
-    mutating,
+    configs,
   };
 }
 
@@ -79,24 +91,37 @@ function main() {
       continue;
     }
 
-    if (!item.hasRateConfig) {
-      warnings.push(
-        `${item.file}: no explicit rateLimitType (falls back to READ/defaults)`,
-      );
+    if (item.configs.length === 0) {
+      warnings.push(`${item.file}: no allowedMethods config detected`);
+      continue;
     }
 
-    if (item.rateLiteral && !VALID_RATE_LIMIT_TYPES.has(item.rateLiteral)) {
-      severe.push(
-        `${item.file}: invalid rateLimitType '${item.rateLiteral}' (allowed: ${Array.from(
-          VALID_RATE_LIMIT_TYPES,
-        ).join(", ")})`,
-      );
-    }
+    for (const config of item.configs) {
+      if (!config.hasRateConfig) {
+        warnings.push(
+          `${item.file}: no explicit rateLimitType for [${config.allowedMethods.join(", ")}]`,
+        );
+      }
 
-    if (item.mutating && item.rateLiteral === "READ") {
-      warnings.push(
-        `${item.file}: mutating allowedMethods with READ rateLimitType`,
-      );
+      if (
+        config.rateLiteral &&
+        !VALID_RATE_LIMIT_TYPES.has(config.rateLiteral)
+      ) {
+        severe.push(
+          `${item.file}: invalid rateLimitType '${config.rateLiteral}' for [${config.allowedMethods.join(", ")}] (allowed: ${Array.from(
+            VALID_RATE_LIMIT_TYPES,
+          ).join(", ")})`,
+        );
+      }
+
+      if (
+        isMutating(config.allowedMethods) &&
+        config.rateLiteral === "READ"
+      ) {
+        warnings.push(
+          `${item.file}: mutating allowedMethods [${config.allowedMethods.join(", ")}] with READ rateLimitType`,
+        );
+      }
     }
   }
 
