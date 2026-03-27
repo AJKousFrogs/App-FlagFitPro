@@ -22,7 +22,7 @@
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
   border: var(--border-1) solid var(--color-border-subtle);
-  box-shadow: inset 0 0 0 var(--border-1) rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 var(--border-1) var(--overlay-white-15);
 }
 
 .welcome-text {

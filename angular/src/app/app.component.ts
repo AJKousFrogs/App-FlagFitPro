@@ -26,6 +26,10 @@ import { ToastComponent } from "./shared/components/toast/toast.component";
 import { CookieConsentService } from "./core/services/cookie-consent.service";
 import { ThemeService } from "./core/services/theme.service";
 import { ensurePrimeIconsStylesheet } from "./core/utils/primeicons-loader";
+import {
+  routeAnimations,
+  getRouteAnimationState,
+} from "./core/animations/route-animations";
 
 type RouteEntry =
   | "deeplink"
@@ -48,14 +52,16 @@ type RouteEntry =
     ConfirmDialog,
     ToastComponent,
   ],
+  animations: [routeAnimations],
   template: `
     <app-skip-to-content />
     <main
       id="main-content"
       tabindex="-1"
       [@.disabled]="animationsDisabled()"
+      [@routeAnimations]="getRouteAnimationState(outlet)"
     >
-      <router-outlet></router-outlet>
+      <router-outlet #outlet="outlet"></router-outlet>
     </main>
     @if (shouldLoadDeferredGlobalStyles()) {
       @defer (on timer(300ms)) {
@@ -134,6 +140,14 @@ export class AppComponent {
     this.initReducedMotionPreference();
     this.initFeedbackStylesScheduling();
     this.initCookieBannerScheduling();
+  }
+
+  /**
+   * Gets animation state for route transitions
+   * Used by [@routeAnimations] trigger in template
+   */
+  getRouteAnimationState(outlet: RouterOutlet): string {
+    return getRouteAnimationState(outlet);
   }
 
   private applyPlatformClasses(): void {

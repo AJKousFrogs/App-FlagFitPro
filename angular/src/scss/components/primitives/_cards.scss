@@ -189,6 +189,24 @@
   }
 
   // ============================================
+  // MOBILE TOUCH IMPROVEMENTS
+  // ============================================
+
+  @include respond-to(md) {
+    .card--interactive {
+      // Ensure touch-friendly sizing on mobile
+      min-height: 44px;
+
+      // Touch feedback on mobile devices
+      @media (hover: none) and (pointer: coarse) {
+        &:active {
+          transform: scale(0.98);
+        }
+      }
+    }
+  }
+
+  // ============================================
   // REDUCED MOTION (Decision 51)
   // ============================================
 
@@ -197,8 +215,23 @@
       transition: none;
     }
 
+    .card--interactive:hover,
     .card--interactive:active {
       transform: none;
+    }
+  }
+
+  // ============================================
+  // HIGH CONTRAST MODE
+  // ============================================
+
+  @media (forced-colors: active) {
+    .card {
+      border-width: 2px;
+    }
+
+    .card--interactive:focus-visible {
+      outline: 3px solid CanvasText;
     }
   }
 }

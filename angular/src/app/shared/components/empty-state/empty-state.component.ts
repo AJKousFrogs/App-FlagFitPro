@@ -18,6 +18,10 @@ export type EmptyStateContext =
   | "nutrition"
   | "recovery"
   | "measurements"
+  | "games"
+  | "tournaments"
+  | "events"
+  | "teams"
   | "generic";
 
 const CONTEXT_CONFIGS: Record<
@@ -77,6 +81,42 @@ const CONTEXT_CONFIGS: Record<
     actionIcon: "pi pi-plus",
     route: "/profile",
     benefits: ["Track weight and body composition", "Monitor muscle mass changes", "Set and track body goals", "Correlate with performance"],
+  },
+  games: {
+    icon: "pi-flag",
+    title: "No Games Yet",
+    message: "Start tracking game statistics to analyze performance, identify trends, and improve your team strategy.",
+    actionLabel: "Add Game",
+    actionIcon: "pi pi-plus",
+    route: "/games/add",
+    benefits: ["Track game statistics and outcomes", "Analyze player performance trends", "Review plays and formations", "Monitor team progress over the season"],
+  },
+  tournaments: {
+    icon: "pi-trophy",
+    title: "No Tournaments Scheduled",
+    message: "Add upcoming tournaments to plan nutrition, travel logistics, and prepare your team for competition.",
+    actionLabel: "Add Tournament",
+    actionIcon: "pi pi-plus",
+    route: "/tournaments/add",
+    benefits: ["Plan nutrition and hydration strategies", "Coordinate travel and accommodation", "Track tournament performance", "Monitor player workload across multiple games"],
+  },
+  events: {
+    icon: "pi-calendar-plus",
+    title: "No Events Scheduled",
+    message: "Create events to organize team activities, practices, meetings, and other important dates.",
+    actionLabel: "Create Event",
+    actionIcon: "pi pi-plus",
+    route: "/calendar/add",
+    benefits: ["Keep everyone informed of team activities", "Track attendance and participation", "Coordinate schedules effectively", "Build team cohesion through organized events"],
+  },
+  teams: {
+    icon: "pi-users",
+    title: "No Teams Yet",
+    message: "Create or join a team to start tracking performance, managing rosters, and collaborating with teammates.",
+    actionLabel: "Create Team",
+    actionIcon: "pi pi-plus",
+    route: "/teams/create",
+    benefits: ["Manage team roster and roles", "Track collective performance metrics", "Coordinate team activities", "Share insights with coaches and staff"],
   },
   generic: {
     icon: "pi-database",

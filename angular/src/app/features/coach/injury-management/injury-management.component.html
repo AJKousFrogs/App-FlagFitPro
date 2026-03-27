@@ -290,6 +290,7 @@
           <app-card-shell class="history-card" title="Injury History">
             <app-table
               [data]="injuries()"
+              [loading]="isLoading()"
               [paginator]="true"
               [rows]="10"
               [rowsPerPageOptions]="[10, 25, 50]"

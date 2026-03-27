@@ -9,7 +9,7 @@ export const profileRoutes: Routes = [
         (m) => m.ProfileComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // User profile - on demand
+    data: { preload: false, entry: "internal", animation: "fadeScale" }, // User profile - on demand
   },
   {
     path: "settings",
@@ -18,7 +18,7 @@ export const profileRoutes: Routes = [
         (m) => m.SettingsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Settings - on demand
+    data: { preload: false, entry: "internal", animation: "fadeScale" }, // Settings - on demand
   },
   {
     path: "settings/profile",
@@ -27,7 +27,7 @@ export const profileRoutes: Routes = [
         (m) => m.SettingsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Settings - on demand
+    data: { preload: false, entry: "internal", animation: "fadeScale" }, // Settings - on demand
   },
   {
     path: "settings/privacy",
@@ -37,6 +37,6 @@ export const profileRoutes: Routes = [
       ),
     canActivate: [authGuard],
     title: "Privacy Controls - FlagFit Pro",
-    data: { entry: "internal" },
+    data: { entry: "internal", animation: "fadeScale" },
   },
 ];

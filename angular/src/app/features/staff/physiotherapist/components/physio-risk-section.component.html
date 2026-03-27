@@ -91,6 +91,17 @@
           </app-button>
         </div>
       </app-card-shell>
+    } @empty {
+      <app-empty-state
+        context="training"
+        customTitle="No Risk Assessment Data"
+        customMessage="Athletes need at least 28 days of training data (acute: 7 days, chronic: 28 days) to calculate injury risk metrics. Start logging training sessions to enable ACWR calculations."
+        customActionLabel="View Athletes"
+        [showBenefits]="false"
+        [showMinimumInfo]="true"
+        [minimumEntries]="28"
+        metricName="ACWR"
+      />
     }
   </div>
 </div>

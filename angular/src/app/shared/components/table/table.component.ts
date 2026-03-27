@@ -79,6 +79,19 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
           }
         </ng-template>
 
+        <!-- Loading Body Template -->
+        <ng-template pTemplate="loadingbody">
+          <tr *ngFor="let _ of [].constructor(rows())">
+            <td [attr.colspan]="columns().length" style="padding: 0; border: none;">
+              <div class="skeleton-table__row">
+                @for (col of columns(); track col.field) {
+                  <div class="skeleton-table__cell"></div>
+                }
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
         <!-- Empty Message Template -->
         <ng-template pTemplate="emptymessage">
           <tr>

@@ -11,7 +11,12 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingScheduleComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high", entry: "hub" },
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "hub",
+      animation: "slideLeft",
+    },
   },
   {
     path: "training/workspace",
@@ -20,7 +25,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: false, entry: "internal" },
+    data: { preload: false, entry: "internal", animation: "slideLeft" },
   },
   {
     path: "training/builder",

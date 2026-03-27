@@ -39,6 +39,10 @@
     /* Default: 3 columns on desktop */
     grid-template-columns: repeat(3, 1fr);
 
+    /* Ensure grid doesn't create overflow */
+    min-width: 0;
+    overflow: visible;
+
     /* Tablet: 2 columns */
     @include respond-to(md) {
       grid-template-columns: repeat(2, 1fr);
@@ -97,6 +101,9 @@
     border-radius: 16px;
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
+
+    /* Ensure content can scroll if needed */
+    overflow: visible;
 
     /* Smooth transitions */
     transition:
@@ -267,6 +274,23 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+    min-height: 0; // Allow content to shrink and scroll if needed
+    overflow: visible; // Allow overflow by default
+  }
+
+  /**
+   * Scrollable bento item body variant
+   * Use when content needs to scroll within the card
+   */
+  .bento-item__body--scrollable {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+    scroll-behavior: smooth;
+    max-height: 400px; // Default max height
+
+    @include respond-to(md) {
+      max-height: 300px;
+    }
   }
 
   /**

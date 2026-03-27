@@ -724,6 +724,55 @@
   max-width: var(--element-max-width-sm);
 }
 
+/* Empty state wrapper - ensures consistent height across components */
+.empty-state-wrapper {
+  min-height: var(--chart-min-height-md);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.empty-state-wrapper.inline {
+  min-height: var(--chart-min-height-sm);
+}
+
+/* Empty state card - for bordered empty states */
+.empty-state-card {
+  border: var(--border-2) dashed var(--color-border-secondary);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    135deg,
+    var(--surface-secondary) 0%,
+    var(--surface-tertiary) 100%
+  );
+  padding: var(--space-8) var(--space-6);
+}
+
+/* Table-specific empty state height */
+.table-empty-state {
+  min-height: var(--chart-min-height-md);
+}
+
+/* Compact empty state for mobile/small spaces */
+.empty-state--compact {
+  min-height: var(--chart-min-height-sm);
+  padding: var(--space-6) var(--space-4);
+}
+
+.empty-state--compact .empty-state__icon {
+  font-size: var(--font-h3-size);
+  margin-bottom: var(--space-3);
+}
+
+.empty-state--compact .empty-state__title {
+  font-size: var(--font-body-sm-size);
+}
+
+.empty-state--compact .empty-state__description {
+  font-size: var(--font-body-sm-size);
+}
+
 /* ================================================================
    END OF UI STANDARDIZATION LAYER
    ================================================================ */

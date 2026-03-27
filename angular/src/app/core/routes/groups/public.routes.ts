@@ -7,7 +7,7 @@ export const publicRoutes: Routes = [
       import("../../../features/landing/landing.component").then(
         (m) => m.LandingComponent,
       ),
-    data: { preload: true, priority: "high", entry: "public" }, // Landing page loads immediately
+    data: { preload: true, priority: "high", entry: "public", animation: "fade" }, // Landing page loads immediately
   },
   {
     path: "login",
@@ -15,7 +15,7 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/login/login.component").then(
         (m) => m.LoginComponent,
       ),
-    data: { preload: false, entry: "public" }, // On-demand from public CTAs to reduce landing-page background JS
+    data: { preload: false, entry: "public", animation: "slideUp" }, // On-demand from public CTAs to reduce landing-page background JS
   },
   {
     path: "register",
@@ -23,7 +23,7 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/register/register.component").then(
         (m) => m.RegisterComponent,
       ),
-    data: { preload: false, entry: "public" }, // On-demand from public CTAs to reduce landing-page background JS
+    data: { preload: false, entry: "public", animation: "slideUp" }, // On-demand from public CTAs to reduce landing-page background JS
   },
   {
     path: "reset-password",
@@ -31,7 +31,7 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/reset-password/reset-password.component").then(
         (m) => m.ResetPasswordComponent,
       ),
-    data: { preload: false, entry: "deeplink" }, // On-demand - rarely accessed
+    data: { preload: false, entry: "deeplink", animation: "slideUp" }, // On-demand - rarely accessed
   },
   {
     path: "update-password",

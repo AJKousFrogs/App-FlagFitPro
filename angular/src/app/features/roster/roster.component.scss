@@ -11,8 +11,8 @@
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -54,7 +54,7 @@
   /* Players Section Content */
   .position-group {
     padding: var(--space-6);
-    border-bottom: 1px solid var(--ui-border-subtle);
+    border-bottom: var(--border-1) solid var(--ui-border-subtle);
 
     &:last-child { border-bottom: none; }
   }
@@ -80,7 +80,7 @@
 
     .count {
       background: var(--ui-surface-subtle);
-      padding: 2px 10px;
+      padding: var(--space-0-5) var(--space-2-5);
       border-radius: var(--radius-full);
       font-size: var(--ds-font-size-xs);
       font-weight: var(--ds-font-weight-bold);

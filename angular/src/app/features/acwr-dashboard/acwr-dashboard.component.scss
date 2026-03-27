@@ -11,8 +11,8 @@
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-xl);
     padding: var(--space-6);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -58,7 +58,7 @@
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    border: 8px solid var(--ui-border-default);
+    border: var(--border-8) solid var(--ui-border-default);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -66,9 +66,9 @@
     position: relative;
 
     .ratio-value { font-size: 2.5rem; font-weight: var(--ds-font-weight-bold); line-height: 1; }
-    .ratio-label { font-size: 10px; font-weight: var(--ds-font-weight-bold); color: var(--color-text-tertiary); letter-spacing: 0.1em; }
-    
-    .confidence-indicator-bento { position: absolute; bottom: -10px; background: var(--surface-primary); border-radius: var(--radius-full); padding: 2px; }
+    .ratio-label { font-size: var(--font-caption-size); font-weight: var(--ds-font-weight-bold); color: var(--color-text-tertiary); letter-spacing: 0.1em; }
+
+    .confidence-indicator-bento { position: absolute; bottom: calc(-1 * var(--space-2-5)); background: var(--surface-primary); border-radius: var(--radius-full); padding: var(--space-0-5); }
 
     &.ratio-circle--sweet-spot { border-color: var(--color-status-success); }
     &.ratio-circle--elevated-risk { border-color: var(--color-status-warning); }
@@ -78,7 +78,7 @@
 
   .risk-summary {
     flex: 1;
-    .risk-badge { display: inline-block; padding: 4px 12px; border-radius: var(--radius-full); font-weight: var(--ds-font-weight-bold); font-size: var(--ds-font-size-sm); margin-bottom: 12px; }
+    .risk-badge { display: inline-block; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); font-weight: var(--ds-font-weight-bold); font-size: var(--ds-font-size-sm); margin-bottom: var(--space-3); }
     .risk-text { margin: 0; color: var(--color-text-secondary); line-height: 1.6; }
 
     .risk-badge--sweet-spot { background: var(--color-status-success-subtle); color: var(--color-status-success); }
@@ -91,12 +91,12 @@
     align-items: center;
     justify-content: space-between;
     padding-top: var(--space-6);
-    border-top: 1px solid var(--ui-border-subtle);
+    border-top: var(--border-1) solid var(--ui-border-subtle);
     
     .load-metric-box {
       flex: 1;
       text-align: center;
-      .lbl { display: block; font-size: var(--ds-font-size-xs); color: var(--color-text-tertiary); margin-bottom: 4px; }
+      .lbl { display: block; font-size: var(--ds-font-size-xs); color: var(--color-text-tertiary); margin-bottom: var(--space-1); }
       .val { font-size: var(--ds-font-size-lg); font-weight: var(--ds-font-weight-bold); }
     }
     .load-divider-icon { padding: 0 var(--space-4); color: var(--color-text-tertiary); }
@@ -105,14 +105,14 @@
   /* Progression */
   .progression-content {
     text-align: center;
-    .pct-change { font-size: 2.5rem; font-weight: var(--ds-font-weight-bold); color: var(--color-status-success); margin-bottom: 4px; }
+    .pct-change { font-size: 2.5rem; font-weight: var(--ds-font-weight-bold); color: var(--color-status-success); margin-bottom: var(--space-1); }
     &.unsafe .pct-change { color: var(--color-status-error); }
-    .prog-desc { font-size: var(--ds-font-size-sm); color: var(--color-text-secondary); margin-bottom: 24px; }
+    .prog-desc { font-size: var(--ds-font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-6); }
     
     .week-compare {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: var(--space-2);
       .w-item { display: flex; justify-content: space-between; font-size: var(--ds-font-size-xs); .l { color: var(--color-text-tertiary); } .v { font-weight: var(--ds-font-weight-bold); } }
     }
   }
@@ -122,18 +122,18 @@
     padding: var(--space-5);
     border-radius: var(--radius-lg);
     background: var(--ui-surface-subtle);
-    
-    .rec-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; i { font-size: 1.5rem; } h4 { margin: 0; } }
-    p { margin-bottom: 16px; color: var(--color-text-secondary); }
+
+    .rec-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); i { font-size: 1.5rem; } h4 { margin: 0; } }
+    p { margin-bottom: var(--space-4); color: var(--color-text-secondary); }
     
     .mod-list {
       margin: 0; padding: 0; list-style: none;
-      li { display: flex; align-items: center; gap: 8px; font-size: var(--ds-font-size-sm); margin-bottom: 8px; i { color: var(--ds-primary-green); } }
+      li { display: flex; align-items: center; gap: var(--space-2); font-size: var(--ds-font-size-sm); margin-bottom: var(--space-2); i { color: var(--ds-primary-green); } }
     }
 
-    &.rec--danger-zone { border-left: 4px solid var(--color-status-error); }
-    &.rec--elevated-risk { border-left: 4px solid var(--color-status-warning); }
-    &.rec--sweet-spot { border-left: 4px solid var(--color-status-success); }
+    &.rec--danger-zone { border-left: var(--border-4) solid var(--color-status-error); }
+    &.rec--elevated-risk { border-left: var(--border-4) solid var(--color-status-warning); }
+    &.rec--sweet-spot { border-left: var(--border-4) solid var(--color-status-success); }
   }
 
   /* Guide */
@@ -146,8 +146,8 @@
       padding: var(--space-4);
       border-radius: var(--radius-lg);
       text-align: center;
-      span { font-weight: var(--ds-font-weight-bold); display: block; margin-bottom: 4px; }
-      p { margin: 0; font-size: 10px; text-transform: uppercase; }
+      span { font-weight: var(--ds-font-weight-bold); display: block; margin-bottom: var(--space-1); }
+      p { margin: 0; font-size: var(--font-caption-size); text-transform: uppercase; }
       
       &.u { background: var(--color-status-info-subtle); color: var(--color-status-info); }
       &.s { background: var(--color-status-success-subtle); color: var(--color-status-success); }
@@ -159,7 +159,7 @@
   .action-buttons-stack {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
   }
 }
 

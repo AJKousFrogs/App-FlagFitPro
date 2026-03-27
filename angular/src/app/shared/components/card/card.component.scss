@@ -41,6 +41,11 @@
   }
 }
 
+.card-default:active {
+  box-shadow: var(--shadow-sm);
+  transform: scale(0.995);
+}
+
 /* Elevated Card - BORDERLESS */
 .card-elevated {
   border: none;
@@ -54,6 +59,11 @@
   }
 }
 
+.card-elevated:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: var(--shadow-md);
+}
+
 /* Outlined Card - Keep border for this specific variant only */
 .card-outlined {
   border: var(--border-1) solid var(--color-border-subtle);
@@ -65,6 +75,12 @@
     border-color: var(--ds-primary-green);
     box-shadow: var(--shadow-sm);
   }
+}
+
+.card-outlined:active {
+  border-color: var(--ds-primary-green);
+  box-shadow: none;
+  transform: scale(0.995);
 }
 
 /* Interactive Card - BORDERLESS */
@@ -127,6 +143,13 @@
   }
 }
 
+.card-gradient:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow:
+    0 var(--space-2) calc(var(--space-5) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.3),
+    var(--shadow-md);
+}
+
 /* Session Card (with accent bar) */
 .card-session {
   border: var(--border-1) solid var(--color-border-secondary);
@@ -141,6 +164,12 @@
       var(--shadow-md);
     border-color: var(--ds-primary-green);
   }
+}
+
+.card-session:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--ds-primary-green);
 }
 
 /* ================================
@@ -351,6 +380,12 @@
    ================================ */
 
 @media (hover: none) and (pointer: coarse) {
+  .card-default:active,
+  .card-outlined:active,
+  .card-gradient:active {
+    transform: scale(0.98);
+  }
+
   .card-interactive:active,
   .card-elevated:active,
   .card-session:active {

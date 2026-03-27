@@ -14,7 +14,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
-  border: var(--border-1) solid rgba(255, 255, 255, 0.12);
+  border: var(--border-1) solid var(--overlay-white-15);
   border-radius: var(--component-card-radius);
   background: linear-gradient(
     135deg,

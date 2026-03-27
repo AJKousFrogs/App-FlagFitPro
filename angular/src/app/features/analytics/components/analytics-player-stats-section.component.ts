@@ -26,4 +26,5 @@ export class AnalyticsPlayerStatsSectionComponent {
   playerMultiSeasonStats = input<PlayerMultiSeasonStats | null>(null);
   gamesMissed = input(0);
   attendanceRate = input(0);
+  isLoading = input(false);
 }

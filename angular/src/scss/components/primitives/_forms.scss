@@ -252,10 +252,18 @@
       color var(--transition-fast);
   }
 
-  .form-field__action:hover,
-  .form-field__toggle:hover {
-    background: var(--state-layer-primary);
-    color: var(--color-brand-primary);
+  // Hover only on hover-capable devices (Decision 52)
+  @media (hover: hover) and (pointer: fine) {
+    .form-field__action:hover,
+    .form-field__toggle:hover {
+      background: var(--state-layer-primary);
+      color: var(--color-brand-primary);
+    }
+  }
+
+  .form-field__action:active,
+  .form-field__toggle:active {
+    transform: scale(0.95);
   }
 
   .form-field__action:focus-visible,
@@ -326,6 +334,39 @@
   .form-check__input:focus-visible + .form-check__box {
     box-shadow: var(--shadow-focus);
     border-color: var(--color-brand-primary);
+  }
+
+  // Hover state only on hover-capable devices (Decision 52)
+  @media (hover: hover) and (pointer: fine) {
+    .form-check__input:hover + .form-check__box {
+      background: var(--color-surface-hover);
+      border-color: var(--color-border);
+    }
+
+    .form-check__input:checked:hover + .form-check__box {
+      background: var(--ds-primary-green-hover);
+      border-color: var(--ds-primary-green-hover);
+    }
+  }
+
+  .form-check__input:active + .form-check__box {
+    transform: scale(0.95);
+  }
+
+  // Touch device optimization
+  @media (hover: none) and (pointer: coarse) {
+    .form-check__input:active + .form-check__box {
+      transform: scale(0.92);
+    }
+  }
+
+  // Larger click area for checkboxes/radios (Decision 42)
+  // Touch target minimum 44px (--touch-target-md)
+  .form-check__box::before {
+    content: "";
+    position: absolute;
+    inset: calc((var(--touch-target-md) - 1.125rem) / -2);
+    cursor: pointer;
   }
 
   .form-check__label {
@@ -481,12 +522,12 @@
 
   // Stack at sm breakpoint (is-stacked-at-sm) - use on form-row when you want single column on small screens
   .form-row.is-stacked-at-sm {
-    @media (max-width: 640px) {
+    @include respond-to(sm) {
       grid-template-columns: 1fr;
     }
   }
 
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     .form-row,
     .form-row--2,
     .form-row--3,
@@ -573,7 +614,32 @@
     background: var(--color-surface-secondary);
     border: var(--border-1) solid var(--color-border-default);
     font-size: var(--font-body-sm-size);
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
+    user-select: none;
+  }
+
+  // Interactive addon (clickable)
+  .form-input-addon--interactive {
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--color-surface-hover);
+        border-color: var(--color-border-focus);
+      }
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-ring-offset);
+    }
   }
 
   .form-input-addon--start {

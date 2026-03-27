@@ -10,7 +10,12 @@ export const dashboardRoutes: Routes = [
         (m) => m.TodayComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high", entry: "internal" },
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      animation: "fade",
+    },
   },
   {
     path: "dashboard",
@@ -19,7 +24,12 @@ export const dashboardRoutes: Routes = [
         (m) => m.DashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "internal" },
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      animation: "fade",
+    },
   },
   {
     path: "elite-command-center",
@@ -34,7 +44,12 @@ export const dashboardRoutes: Routes = [
         (m) => m.PlayerDashboardComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high", entry: "internal" },
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      animation: "fade",
+    },
   },
   {
     path: "athlete-dashboard",

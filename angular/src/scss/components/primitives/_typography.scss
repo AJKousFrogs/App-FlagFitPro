@@ -62,7 +62,7 @@
 
   .subsection-title {
     font-size: var(--font-h3-size);
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--font-weight-semibold); // Changed from regular for consistency
     line-height: var(--line-height-base);
     color: var(--color-text-primary);
     margin: 0;
@@ -70,7 +70,7 @@
 
   .group-title {
     font-size: var(--font-h4-size);
-    font-weight: var(--font-weight-light);
+    font-weight: var(--font-weight-medium); // Changed from light for better readability
     line-height: var(--line-height-base);
     color: var(--color-text-primary);
     margin: 0;
@@ -177,9 +177,17 @@
     text-decoration: none;
     transition: color var(--motion-fast) var(--ease-standard);
 
-    &:hover {
+    // Hover only on hover-capable devices (Decision 52)
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--ds-primary-green-hover);
+        text-decoration: underline;
+      }
+    }
+
+    &:active {
       color: var(--ds-primary-green-hover);
-      text-decoration: underline;
+      opacity: var(--opacity-muted);
     }
 
     &:focus-visible {

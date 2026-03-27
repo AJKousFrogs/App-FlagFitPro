@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from "@angular/core
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 
 export interface ScoutingOpponentPlayerView {
   name: string;
@@ -27,7 +28,7 @@ export interface ScoutingOpponentProfileView {
 @Component({
   selector: "app-scouting-opponents-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip, ButtonComponent, CardShellComponent],
+  imports: [CommonModule, Tooltip, ButtonComponent, CardShellComponent, EmptyStateComponent],
   templateUrl: "./scouting-opponents-section.component.html",
   styleUrl: "./scouting-opponents-section.component.scss",
 })

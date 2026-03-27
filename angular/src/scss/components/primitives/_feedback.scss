@@ -65,19 +65,32 @@
     background: none;
     border: none;
     padding: var(--space-1);
+    min-width: 44px; // Touch target minimum
+    min-height: 44px;
     cursor: pointer;
     color: inherit;
     opacity: var(--opacity-subtle);
     transition: opacity var(--motion-fast) var(--ease-standard);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    &:hover {
-      opacity: 1;
+    // Hover only on hover-capable devices
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        opacity: 1;
+      }
     }
 
     &:focus-visible {
       outline: var(--focus-ring-width) solid var(--color-focus-ring);
       outline-offset: var(--focus-ring-offset);
       border-radius: var(--radius-sm);
+    }
+
+    &:active {
+      opacity: 1;
+      transform: scale(0.95);
     }
   }
 

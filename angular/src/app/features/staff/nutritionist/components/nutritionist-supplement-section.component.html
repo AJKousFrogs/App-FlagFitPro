@@ -44,6 +44,14 @@
           </div>
         }
       </app-card-shell>
+    } @empty {
+      <app-empty-state
+        context="nutrition"
+        customTitle="No Supplement Data Yet"
+        customMessage="Athletes haven't logged supplement intake yet. Compliance tracking will appear here once data is available."
+        customActionLabel="View Athletes"
+        [showBenefits]="false"
+      />
     }
   </div>
 </div>

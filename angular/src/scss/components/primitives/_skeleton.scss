@@ -6,13 +6,56 @@
  *
  * Canonical patterns for loading states when content is fetched.
  * Use .loading-placeholder for chart/card/block placeholders.
- * Use .skeleton-* (in _feedback.scss) for shimmer blocks.
+ * Use .skeleton-* for structured loading patterns (tables, cards, lists).
+ *
+ * USAGE:
+ *   <div class="skeleton-table">
+ *     <div class="skeleton-table__row" *ngFor="let row of [1,2,3,4,5]">
+ *       <div class="skeleton-table__cell"></div>
+ *       <div class="skeleton-table__cell"></div>
+ *       <div class="skeleton-table__cell"></div>
+ *     </div>
+ *   </div>
+ *
+ * PATTERNS:
+ *   .skeleton-table        - Table with loading rows
+ *   .skeleton-card         - Card with loading content
+ *   .skeleton-list         - List with loading items
  *
  * RULE: Feature components should NOT redefine .loading-placeholder.
  * Only add local overrides (min-height, padding) when needed.
  */
 
 @layer primitives {
+  // ============================================
+  // SHIMMER ANIMATION
+  // ============================================
+
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  // ============================================
+  // BASE SKELETON ELEMENT
+  // ============================================
+
+  .skeleton-base {
+    background: linear-gradient(
+      90deg,
+      var(--ui-surface-subtle) 25%,
+      var(--ui-surface-muted) 50%,
+      var(--ui-surface-subtle) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--radius-md);
+  }
+
   // ============================================
   // LOADING PLACEHOLDER
   // Chart/card/block placeholder while data loads.
@@ -38,5 +81,188 @@
   .loading-placeholder--lg {
     padding: var(--space-10);
     min-height: var(--chart-min-height-md, 12rem);
+  }
+
+  // ============================================
+  // SKELETON TABLE
+  // ============================================
+
+  .skeleton-table {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .skeleton-table__row {
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr 1fr;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .skeleton-table__cell {
+    @extend .skeleton-base;
+    height: var(--space-5);
+    border-radius: var(--radius-sm);
+  }
+
+  // Variant for narrow cells (actions, icons)
+  .skeleton-table__cell--narrow {
+    grid-column: span 1;
+    max-width: var(--space-12);
+  }
+
+  // Variant for wide cells (descriptions)
+  .skeleton-table__cell--wide {
+    grid-column: span 2;
+  }
+
+  // ============================================
+  // SKELETON CARD
+  // ============================================
+
+  .skeleton-card {
+    background: var(--surface-primary);
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .skeleton-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .skeleton-card__avatar {
+    @extend .skeleton-base;
+    width: var(--space-12);
+    height: var(--space-12);
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+
+  .skeleton-card__title {
+    @extend .skeleton-base;
+    height: var(--space-5);
+    width: 60%;
+    border-radius: var(--radius-sm);
+  }
+
+  .skeleton-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .skeleton-card__line {
+    @extend .skeleton-base;
+    height: var(--space-4);
+    border-radius: var(--radius-sm);
+  }
+
+  .skeleton-card__line--short {
+    width: 40%;
+  }
+
+  .skeleton-card__line--medium {
+    width: 70%;
+  }
+
+  .skeleton-card__line--full {
+    width: 100%;
+  }
+
+  // ============================================
+  // SKELETON LIST
+  // ============================================
+
+  .skeleton-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .skeleton-list__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--surface-primary);
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .skeleton-list__icon {
+    @extend .skeleton-base;
+    width: var(--space-10);
+    height: var(--space-10);
+    border-radius: var(--radius-lg);
+    flex-shrink: 0;
+  }
+
+  .skeleton-list__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .skeleton-list__title {
+    @extend .skeleton-base;
+    height: var(--space-4);
+    width: 50%;
+    border-radius: var(--radius-sm);
+  }
+
+  .skeleton-list__subtitle {
+    @extend .skeleton-base;
+    height: var(--space-3);
+    width: 70%;
+    border-radius: var(--radius-sm);
+  }
+
+  // ============================================
+  // SKELETON DASHBOARD STATS
+  // ============================================
+
+  .skeleton-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .skeleton-stat {
+    @extend .skeleton-card;
+    min-height: 100px;
+  }
+
+  .skeleton-stat__value {
+    @extend .skeleton-base;
+    height: var(--space-8);
+    width: 60%;
+    margin-bottom: var(--space-2);
+    border-radius: var(--radius-md);
+  }
+
+  .skeleton-stat__label {
+    @extend .skeleton-base;
+    height: var(--space-4);
+    width: 80%;
+    border-radius: var(--radius-sm);
+  }
+
+  // ============================================
+  // REDUCED MOTION (Accessibility)
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-base {
+      animation: none;
+      background: var(--ui-surface-subtle);
+    }
   }
 }

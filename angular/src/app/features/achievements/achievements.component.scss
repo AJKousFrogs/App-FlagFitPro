@@ -67,7 +67,7 @@
     &.highlight {
       background: var(--gradient-primary);
       color: white;
-      .lbl { color: rgba(255,255,255,0.8); }
+      .lbl { color: var(--overlay-white-80); }
     }
 
     &.progress-box {

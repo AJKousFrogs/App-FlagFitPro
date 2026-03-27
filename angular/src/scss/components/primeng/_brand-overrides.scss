@@ -45,6 +45,7 @@
       &:active:not(:disabled) {
         background: var(--p-button-primary-active-background);
         border-color: var(--p-button-primary-active-background);
+        transform: scale(0.98);
       }
     }
 
@@ -129,6 +130,35 @@
     .p-button-icon {
       display: inline-flex;
       align-items: center;
+    }
+
+    // Loading state
+    &.p-button-loading,
+    &[data-loading="true"],
+    &.loading {
+      position: relative;
+      pointer-events: none;
+      color: transparent !important;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 1rem;
+        height: 1rem;
+        margin: -0.5rem 0 0 -0.5rem;
+        border: 0.125rem solid currentColor;
+        border-top-color: transparent;
+        border-radius: var(--radius-full);
+        animation: button-loading-spin 0.8s linear infinite;
+      }
+    }
+  }
+
+  @keyframes button-loading-spin {
+    to {
+      transform: rotate(360deg);
     }
   }
 
@@ -1570,8 +1600,20 @@
       cursor: pointer;
       transition: background-color var(--motion-fast) var(--ease-standard);
 
-      &:hover {
-        background: var(--surface-overlay-light);
+      // Hover only on hover-capable devices (Decision 52)
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: var(--surface-overlay-light);
+        }
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-focus-ring);
+        outline-offset: var(--focus-ring-offset);
       }
     }
 

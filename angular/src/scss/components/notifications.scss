@@ -913,15 +913,26 @@
     transition:
       background-color var(--motion-feedback-duration-fast)
         var(--ease-standard),
-      color var(--motion-feedback-duration-fast) var(--ease-standard);
+      color var(--motion-feedback-duration-fast) var(--ease-standard),
+      transform var(--motion-feedback-duration-fast) var(--ease-standard);
   }
 
-  .mark-read-btn:hover,
-  .clear-read-btn:hover,
-  .settings-btn:hover,
-  .view-all-btn:hover {
-    background: var(--surface-secondary);
-    color: var(--color-text-primary);
+  @media (hover: hover) and (pointer: fine) {
+    .mark-read-btn:hover,
+    .clear-read-btn:hover,
+    .settings-btn:hover,
+    .view-all-btn:hover {
+      background: var(--surface-secondary);
+      color: var(--color-text-primary);
+    }
+  }
+
+  .mark-read-btn:active,
+  .clear-read-btn:active,
+  .settings-btn:active,
+  .view-all-btn:active {
+    background: var(--color-surface-active);
+    transform: scale(0.97);
   }
 
   .category-filter {
@@ -951,16 +962,31 @@
     font-size: var(--font-caption-size);
     font-weight: var(--font-weight-medium);
     cursor: pointer;
+    transition:
+      background-color var(--motion-feedback-duration-fast)
+        var(--ease-standard),
+      color var(--motion-feedback-duration-fast) var(--ease-standard),
+      transform var(--motion-feedback-duration-fast) var(--ease-standard);
   }
 
-  .filter-tab:hover {
-    background: var(--surface-secondary);
-    color: var(--color-text-primary);
+  @media (hover: hover) and (pointer: fine) {
+    .filter-tab:hover {
+      background: var(--surface-secondary);
+      color: var(--color-text-primary);
+    }
+  }
+
+  .filter-tab:active {
+    transform: scale(0.97);
   }
 
   .filter-tab.active {
     background: var(--ui-primary);
     color: var(--color-text-on-primary);
+  }
+
+  .filter-tab.active:active {
+    transform: scale(0.98);
   }
 
   .filter-tab.active .tab-badge {
@@ -1087,14 +1113,30 @@
       opacity var(--motion-feedback-duration-fast) var(--ease-standard);
   }
 
-  .notification-item:hover {
-    background: var(--surface-secondary);
+  // Hover state only on hover-capable devices (Decision 52)
+  @media (hover: hover) and (pointer: fine) {
+    .notification-item:hover {
+      background: var(--surface-secondary);
+    }
   }
 
   .notification-item:focus-visible {
     outline: var(--focus-outline-width) solid var(--color-focus-ring);
     outline-offset: calc(var(--focus-outline-offset) * -1);
     background: var(--surface-secondary);
+  }
+
+  // Active state (touch/click feedback)
+  .notification-item:active {
+    background: var(--color-surface-active);
+    transform: scale(0.995);
+  }
+
+  // Touch device optimization
+  @media (hover: none) and (pointer: coarse) {
+    .notification-item:active {
+      transform: scale(0.99);
+    }
   }
 
   .notification-item.unread {

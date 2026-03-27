@@ -30,7 +30,28 @@
   .table-wrapper {
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+    scroll-behavior: smooth;
+    scrollbar-width: thin; // Firefox
+    scrollbar-color: var(--ui-border-default) transparent;
+
+    // Custom scrollbar for WebKit browsers
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--ui-border-default);
+      border-radius: var(--radius-full);
+
+      &:hover {
+        background: var(--ui-border);
+      }
+    }
   }
 
   // ============================================
@@ -68,6 +89,19 @@
         &:hover {
           background: var(--color-surface-hover);
         }
+      }
+
+      // Keyboard focus-visible (accessibility)
+      &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-focus-ring);
+        outline-offset: calc(-1 * var(--focus-ring-width));
+        position: relative;
+        z-index: 1;
+      }
+
+      // Active state (touch feedback)
+      &:active {
+        background: var(--color-surface-active);
       }
 
       // Selected row
@@ -118,6 +152,19 @@
         &:hover {
           background: var(--color-surface-hover);
         }
+      }
+
+      // Keyboard focus-visible (accessibility)
+      &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-focus-ring);
+        outline-offset: calc(-1 * var(--focus-ring-width));
+        position: relative;
+        z-index: 1;
+      }
+
+      // Active state (touch feedback)
+      &:active {
+        background: var(--color-surface-active);
       }
 
       &.p-highlight {
@@ -240,6 +287,7 @@
     justify-content: center;
     padding: var(--space-10) var(--space-6);
     text-align: center;
+    min-height: var(--chart-min-height-md); // Consistent height across all tables
   }
 
   .table-empty__icon {
@@ -274,7 +322,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: rgba(255, 255, 255, 0.7);
+      background: var(--surface-overlay);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -328,6 +376,9 @@
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-tablet));
       padding: 0 var(--page-padding-tablet);
+      // Ensure smooth horizontal scrolling on mobile
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
     }
 
     // Stack cells on mobile for simple tables
@@ -357,12 +408,34 @@
         }
       }
     }
+
+    // Ensure default tables scroll horizontally on mobile
+    .table-default,
+    .table-compact {
+      min-width: 600px; // Minimum width to enable horizontal scroll
+
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        white-space: nowrap;
+        min-width: 100px;
+      }
+    }
   }
 
   @media (max-width: 640px) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-mobile));
       padding: 0 var(--page-padding-mobile);
+    }
+
+    // Further optimize for small mobile screens
+    .table-default,
+    .table-compact {
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--ds-font-size-sm);
+      }
     }
   }
 

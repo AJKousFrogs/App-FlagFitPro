@@ -58,7 +58,10 @@ height: 100dvh; // Modern: keyboard-aware
 
   .dialog-scrollable {
     max-height: 70vh;
+    max-height: 70dvh; // Modern: keyboard-aware
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+    scroll-behavior: smooth;
   }
 
   .dialog-content {
@@ -185,9 +188,13 @@ height: 100dvh; // Modern: keyboard-aware
     bottom: 0;
     height: auto;
     max-height: 80vh;
+    max-height: 80dvh; // Modern: keyboard-aware
     border-top: var(--border-1) solid var(--color-border-default);
     border-radius: var(--component-dialog-radius) var(--component-dialog-radius)
       0 0;
+
+    // Add safe area padding for mobile devices with notches
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   .drawer__header {
@@ -233,7 +240,10 @@ height: 100dvh; // Modern: keyboard-aware
   .drawer__content {
     flex: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+    scroll-behavior: smooth;
     padding: var(--component-dialog-padding);
+    min-height: 0; // Prevent content from expanding parent
   }
 
   .drawer__footer {
@@ -262,8 +272,24 @@ height: 100dvh; // Modern: keyboard-aware
   }
 
   // ============================================
-  // MODAL ANIMATIONS
+  // MODAL ANIMATIONS (Enhanced - Week 3 Phase 3A)
   // ============================================
+  //
+  // DEFAULT ANIMATIONS:
+  //   .dialog-enter        - Scale + fade in (300ms)
+  //   .dialog-leave        - Scale + fade out (150ms)
+  //   .drawer-enter--*     - Directional slide animations
+  //   .backdrop-enter      - Fade in backdrop
+  //
+  // ENHANCED VARIANTS:
+  //   .dialog-enter--bounce   - Spring/bounce effect for emphasis
+  //   .dialog-enter--slide    - Slide + fade compound animation
+  //   .dialog-content-stagger - Stagger child elements (50ms increment)
+  //
+
+  // --------------------------------------------
+  // Dialog: Default Scale + Fade
+  // --------------------------------------------
 
   .dialog-enter {
     animation: dialog-scale-in var(--motion-base) var(--ease-decelerate);
@@ -295,8 +321,107 @@ height: 100dvh; // Modern: keyboard-aware
     }
   }
 
+  // --------------------------------------------
+  // Dialog: Bounce Variant (for emphasis)
+  // --------------------------------------------
+  // Use for important confirmations, success messages
+  // Example: delete confirmation, payment success
+
+  .dialog-enter--bounce {
+    animation: dialog-bounce-in var(--motion-base) var(--ease-micro-bounce);
+  }
+
+  @keyframes dialog-bounce-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.85) translateY(-1rem);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.02) translateY(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  // --------------------------------------------
+  // Dialog: Slide Variant (compound animation)
+  // --------------------------------------------
+  // Combines slide + fade for more sophisticated entrance
+  // Use for contextual dialogs, detail views
+
+  .dialog-enter--slide {
+    animation: dialog-slide-in var(--motion-base) var(--ease-decelerate);
+  }
+
+  @keyframes dialog-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // --------------------------------------------
+  // Dialog Content: Stagger Animation
+  // --------------------------------------------
+  // Apply to dialog content wrapper to stagger child elements
+  // Example: <div class="dialog-content-stagger"><h3>Title</h3><p>Body</p></div>
+
+  .dialog-content-stagger > * {
+    animation: dialog-child-fade-in var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .dialog-content-stagger > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .dialog-content-stagger > *:nth-child(2) {
+    animation-delay: 50ms;
+  }
+  .dialog-content-stagger > *:nth-child(3) {
+    animation-delay: 100ms;
+  }
+  .dialog-content-stagger > *:nth-child(4) {
+    animation-delay: 150ms;
+  }
+  .dialog-content-stagger > *:nth-child(5) {
+    animation-delay: 200ms;
+  }
+  .dialog-content-stagger > *:nth-child(6) {
+    animation-delay: 250ms;
+  }
+
+  @keyframes dialog-child-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // --------------------------------------------
+  // Drawer: Directional Slide Animations
+  // --------------------------------------------
+
   .drawer-enter--right {
     animation: drawer-slide-right var(--motion-base) var(--ease-decelerate);
+  }
+
+  .drawer-enter--left {
+    animation: drawer-slide-left var(--motion-base) var(--ease-decelerate);
+  }
+
+  .drawer-enter--bottom {
+    animation: drawer-slide-bottom var(--motion-base) var(--ease-decelerate);
   }
 
   @keyframes drawer-slide-right {
@@ -308,8 +433,34 @@ height: 100dvh; // Modern: keyboard-aware
     }
   }
 
+  @keyframes drawer-slide-left {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes drawer-slide-bottom {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  // --------------------------------------------
+  // Backdrop Animations
+  // --------------------------------------------
+
   .backdrop-enter {
     animation: backdrop-fade-in var(--motion-base) var(--ease-standard);
+  }
+
+  .backdrop-leave {
+    animation: backdrop-fade-out var(--motion-fast) var(--ease-accelerate);
   }
 
   @keyframes backdrop-fade-in {
@@ -318,6 +469,15 @@ height: 100dvh; // Modern: keyboard-aware
     }
     to {
       opacity: 1;
+    }
+  }
+
+  @keyframes backdrop-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
     }
   }
 
@@ -420,12 +580,31 @@ height: 100dvh; // Modern: keyboard-aware
     .dialog-lg {
       max-width: calc(100vw - var(--space-6));
       margin: var(--space-3);
+      max-height: calc(100vh - var(--space-8));
+      max-height: calc(100dvh - var(--space-8)); // Modern: keyboard-aware
+    }
+
+    .dialog-scrollable {
+      max-height: calc(100vh - 200px);
+      max-height: calc(100dvh - 200px); // Modern: keyboard-aware
     }
 
     .drawer--right,
     .drawer--left {
       width: 100vw;
       max-width: 100vw;
+    }
+
+    .drawer--bottom {
+      // Ensure bottom drawer doesn't go above keyboard on mobile
+      max-height: 90vh;
+      max-height: 90dvh; // Modern: keyboard-aware
+
+      .drawer__content {
+        // Allow content to scroll within the drawer
+        max-height: calc(90vh - 120px);
+        max-height: calc(90dvh - 120px); // Modern: keyboard-aware
+      }
     }
 
     .confirm-dialog__actions {
@@ -436,6 +615,13 @@ height: 100dvh; // Modern: keyboard-aware
         width: 100%;
       }
     }
+
+    // Ensure dialog content is scrollable on mobile
+    .dialog-content,
+    .drawer__content {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
   }
 
   // ============================================
@@ -444,10 +630,18 @@ height: 100dvh; // Modern: keyboard-aware
 
   @media (prefers-reduced-motion: reduce) {
     .dialog-enter,
+    .dialog-enter--bounce,
+    .dialog-enter--slide,
     .dialog-leave,
     .drawer-enter--right,
-    .backdrop-enter {
+    .drawer-enter--left,
+    .drawer-enter--bottom,
+    .backdrop-enter,
+    .backdrop-leave,
+    .dialog-content-stagger > * {
       animation: none;
+      opacity: 1;
+      transform: none;
     }
 
     .drawer__close,

@@ -4,6 +4,7 @@ import { ProgressBar } from "primeng/progressbar";
 
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
+import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 
 interface RiskIndicatorView {
@@ -25,6 +26,7 @@ interface RiskIndicatorView {
     ProgressBar,
     ButtonComponent,
     CardShellComponent,
+    EmptyStateComponent,
     StatusTagComponent,
   ],
   templateUrl: "./physio-risk-section.component.html",

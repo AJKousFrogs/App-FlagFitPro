@@ -11,8 +11,8 @@
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -42,7 +42,7 @@
     gap: var(--space-2);
     padding: var(--space-4) var(--space-2);
     background: var(--ui-surface-subtle);
-    border: 1px solid var(--ui-border-default);
+    border: var(--border-1) solid var(--ui-border-default);
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition: all var(--transition-base);
@@ -61,14 +61,14 @@
     &:hover {
       border-color: var(--cat-color, var(--ds-primary-green));
       background: var(--surface-primary);
-      transform: translateY(-2px);
+      transform: translateY(calc(-1 * var(--space-0-5)));
     }
 
     &.active {
       background: var(--surface-primary);
       border-color: var(--cat-color, var(--ds-primary-green));
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border-width: 2px;
+      border-width: var(--border-2);
       color: var(--color-text-primary);
     }
   }
@@ -83,14 +83,14 @@
 
   .exercise-card {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 12px;
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
     transition: all var(--transition-base);
 
     &:hover {
-      transform: translateY(-4px);
+      transform: translateY(calc(-1 * var(--space-1)));
       box-shadow: var(--shadow-md);
       border-color: var(--ds-primary-green);
     }
@@ -116,18 +116,18 @@
       position: absolute;
       top: var(--space-2);
       right: var(--space-2);
-      padding: 2px 8px;
+      padding: var(--space-0-5) var(--space-2);
       border-radius: var(--radius-full);
-      font-size: 10px;
+      font-size: var(--font-caption-size);
       font-weight: var(--ds-font-weight-bold);
       text-transform: uppercase;
       background: rgba(0,0,0,0.6);
       color: white;
       backdrop-filter: blur(4px);
 
-      &[data-difficulty="beginner"] { border-left: 3px solid var(--color-status-success); }
-      &[data-difficulty="intermediate"] { border-left: 3px solid var(--color-status-warning); }
-      &[data-difficulty="advanced"] { border-left: 3px solid var(--color-status-error); }
+      &[data-difficulty="beginner"] { border-left: var(--border-3) solid var(--color-status-success); }
+      &[data-difficulty="intermediate"] { border-left: var(--border-3) solid var(--color-status-warning); }
+      &[data-difficulty="advanced"] { border-left: var(--border-3) solid var(--color-status-error); }
     }
 
     .ex-info {
@@ -157,11 +157,11 @@
     }
 
     .ex-tag {
-      font-size: 10px;
+      font-size: var(--font-caption-size);
       background: var(--ui-surface-subtle);
       color: var(--color-text-secondary);
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: var(--space-0-5) var(--space-1-5);
+      border-radius: var(--radius-sm);
     }
   }
 

@@ -36,6 +36,7 @@ export class CoachDashboardRosterSectionComponent {
   readonly filteredPlayers = input.required<PlayerPerformanceStats[]>();
   readonly playerFilter = input.required<CoachDashboardPlayerFilter>();
   readonly overrideCounts = input.required<Record<string, number>>();
+  readonly isLoading = input(false);
 
   readonly filterChange = output<CoachDashboardPlayerFilter>();
   readonly selectPlayer = output<string>();

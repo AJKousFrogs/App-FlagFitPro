@@ -90,6 +90,16 @@
           >
         </div>
       </app-card-shell>
+    } @empty {
+      <app-empty-state
+        context="teams"
+        customTitle="No Opponents in Database"
+        customMessage="Add opponent teams to track their strategies, key players, and prepare scouting reports for upcoming games."
+        customActionLabel="Add Opponent"
+        customActionIcon="pi-plus"
+        [actionHandler]="addOpponent.emit.bind(addOpponent)"
+        [showBenefits]="true"
+      />
     }
   </div>
 </div>

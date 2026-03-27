@@ -1,0 +1,483 @@
+@use "styles/mixins" as *;
+
+/**
+ * Animation Primitives
+ * ====================
+ *
+ * Reusable animation utilities for consistent motion design.
+ * See Week 1 Phase 1B of v3.1 improvements.
+ *
+ * USAGE:
+ *   <div class="fade-in">Fades in on mount</div>
+ *   <div class="slide-up delay-100">Slides up with delay</div>
+ *   <ul class="stagger-children">
+ *     <li>Item 1 (0ms delay)</li>
+ *     <li>Item 2 (50ms delay)</li>
+ *     <li>Item 3 (100ms delay)</li>
+ *   </ul>
+ *
+ * ANIMATION CLASSES:
+ *   .fade-in          - Opacity 0 → 1
+ *   .fade-out         - Opacity 1 → 0
+ *   .slide-up         - TranslateY(20px) → 0
+ *   .slide-down       - TranslateY(-20px) → 0
+ *   .slide-left       - TranslateX(20px) → 0
+ *   .slide-right      - TranslateX(-20px) → 0
+ *   .scale-in         - Scale(0.95) → 1
+ *   .scale-out        - Scale(1) → 0.95
+ *   .stagger-children - Delays children by 50ms each
+ *
+ * DELAY MODIFIERS:
+ *   .delay-50   - 50ms delay
+ *   .delay-100  - 100ms delay
+ *   .delay-150  - 150ms delay
+ *   .delay-200  - 200ms delay
+ *
+ * DURATION MODIFIERS:
+ *   .duration-fast      - 150ms
+ *   .duration-base      - 250ms (default)
+ *   .duration-slow      - 350ms
+ */
+
+@layer primitives {
+  // ============================================
+  // KEYFRAME DEFINITIONS
+  // ============================================
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-5));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(calc(-1 * var(--space-5)));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-left {
+    from {
+      opacity: 0;
+      transform: translateX(var(--space-5));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-right {
+    from {
+      opacity: 0;
+      transform: translateX(calc(-1 * var(--space-5)));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes scale-out {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  // ============================================
+  // ANIMATION UTILITY CLASSES
+  // ============================================
+
+  .fade-in {
+    animation: fade-in var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .fade-out {
+    animation: fade-out var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .slide-up {
+    animation: slide-up var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .slide-down {
+    animation: slide-down var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .slide-left {
+    animation: slide-left var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .slide-right {
+    animation: slide-right var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .scale-in {
+    animation: scale-in var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .scale-out {
+    animation: scale-out var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  // ============================================
+  // STAGGER CHILDREN (Enhanced - Week 3 Phase 3A)
+  // ============================================
+  //
+  // AUTOMATIC STAGGER (up to 30 items):
+  //   <ul class="stagger-children">
+  //     <li>Item 1 (auto-delay 0ms)</li>
+  //     <li>Item 2 (auto-delay 50ms)</li>
+  //     ...
+  //   </ul>
+  //
+  // UNLIMITED STAGGER (with CSS variables):
+  //   <ul class="stagger-children-unlimited">
+  //     <li style="--stagger-index: 0">Item 1</li>
+  //     <li style="--stagger-index: 1">Item 2</li>
+  //     <li style="--stagger-index: 2">Item 3</li>
+  //     <!-- Works with 100+ items -->
+  //   </ul>
+  //
+  // STAGGER VARIANTS:
+  //   .stagger-children-fast  - 30ms delay increment
+  //   .stagger-children-slow  - 80ms delay increment
+  //
+
+  // Default stagger (50ms increment, automatic nth-child)
+  .stagger-children > * {
+    animation: slide-up var(--motion-base) var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+  .stagger-children > *:nth-child(9) { animation-delay: 400ms; }
+  .stagger-children > *:nth-child(10) { animation-delay: 450ms; }
+  .stagger-children > *:nth-child(11) { animation-delay: 500ms; }
+  .stagger-children > *:nth-child(12) { animation-delay: 550ms; }
+  .stagger-children > *:nth-child(13) { animation-delay: 600ms; }
+  .stagger-children > *:nth-child(14) { animation-delay: 650ms; }
+  .stagger-children > *:nth-child(15) { animation-delay: 700ms; }
+  .stagger-children > *:nth-child(16) { animation-delay: 750ms; }
+  .stagger-children > *:nth-child(17) { animation-delay: 800ms; }
+  .stagger-children > *:nth-child(18) { animation-delay: 850ms; }
+  .stagger-children > *:nth-child(19) { animation-delay: 900ms; }
+  .stagger-children > *:nth-child(20) { animation-delay: 950ms; }
+  .stagger-children > *:nth-child(21) { animation-delay: 1000ms; }
+  .stagger-children > *:nth-child(22) { animation-delay: 1050ms; }
+  .stagger-children > *:nth-child(23) { animation-delay: 1100ms; }
+  .stagger-children > *:nth-child(24) { animation-delay: 1150ms; }
+  .stagger-children > *:nth-child(25) { animation-delay: 1200ms; }
+  .stagger-children > *:nth-child(26) { animation-delay: 1250ms; }
+  .stagger-children > *:nth-child(27) { animation-delay: 1300ms; }
+  .stagger-children > *:nth-child(28) { animation-delay: 1350ms; }
+  .stagger-children > *:nth-child(29) { animation-delay: 1400ms; }
+  .stagger-children > *:nth-child(30) { animation-delay: 1450ms; }
+
+  // Unlimited stagger via CSS variables (for 30+ items)
+  .stagger-children-unlimited > * {
+    --stagger-index: 0; // Default, should be overridden
+    --stagger-increment: 50ms;
+    animation: slide-up var(--motion-base) var(--ease-standard);
+    animation-delay: calc(var(--stagger-index) * var(--stagger-increment));
+    animation-fill-mode: both;
+  }
+
+  // Fast stagger variant (30ms increment)
+  .stagger-children-fast > * {
+    --stagger-index: 0;
+    --stagger-increment: 30ms;
+    animation: slide-up var(--motion-fast) var(--ease-standard);
+    animation-delay: calc(var(--stagger-index) * var(--stagger-increment));
+    animation-fill-mode: both;
+  }
+
+  // Slow stagger variant (80ms increment)
+  .stagger-children-slow > * {
+    --stagger-index: 0;
+    --stagger-increment: 80ms;
+    animation: slide-up var(--motion-slow) var(--ease-standard);
+    animation-delay: calc(var(--stagger-index) * var(--stagger-increment));
+    animation-fill-mode: both;
+  }
+
+  // ============================================
+  // DELAY MODIFIERS
+  // ============================================
+
+  .delay-50 {
+    animation-delay: 50ms;
+  }
+
+  .delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .delay-150 {
+    animation-delay: 150ms;
+  }
+
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .delay-500 {
+    animation-delay: 500ms;
+  }
+
+  // ============================================
+  // DURATION MODIFIERS
+  // ============================================
+
+  .duration-fast {
+    animation-duration: var(--motion-fast);
+  }
+
+  .duration-base {
+    animation-duration: var(--motion-base);
+  }
+
+  .duration-slow {
+    animation-duration: var(--motion-slow);
+  }
+
+  // ============================================
+  // NUMBER/STAT ANIMATIONS (Week 3 Phase 3A)
+  // ============================================
+  //
+  // Animations for highlighting stat changes and number updates.
+  // Use with appAnimateNumber directive for complete effect.
+  //
+  // USAGE:
+  //   <span [appAnimateNumber]="score" class="stat-highlight">0</span>
+  //   <div class="stat-pulse">
+  //     <span [appAnimateNumber]="count">0</span>
+  //   </div>
+  //
+
+  // Highlight flash when stat changes (green for positive)
+  .stat-highlight {
+    animation: stat-flash var(--motion-base) var(--ease-standard);
+  }
+
+  @keyframes stat-flash {
+    0% {
+      background: transparent;
+    }
+    50% {
+      background: var(--ds-primary-green-ultra-subtle);
+      transform: scale(1.05);
+    }
+    100% {
+      background: transparent;
+      transform: scale(1);
+    }
+  }
+
+  // Pulse effect for important stats
+  .stat-pulse {
+    animation: stat-pulse 2s var(--ease-standard) infinite;
+  }
+
+  @keyframes stat-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+  }
+
+  // Increase indicator (arrow up animation)
+  .stat-increase {
+    position: relative;
+
+    &::after {
+      content: "↑";
+      position: absolute;
+      right: -1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-status-success);
+      font-size: 0.875rem;
+      animation: stat-arrow-up var(--motion-base) var(--ease-decelerate);
+    }
+  }
+
+  @keyframes stat-arrow-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(-50%);
+    }
+  }
+
+  // Decrease indicator (arrow down animation)
+  .stat-decrease {
+    position: relative;
+
+    &::after {
+      content: "↓";
+      position: absolute;
+      right: -1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-status-error);
+      font-size: 0.875rem;
+      animation: stat-arrow-down var(--motion-base) var(--ease-decelerate);
+    }
+  }
+
+  @keyframes stat-arrow-down {
+    from {
+      opacity: 0;
+      transform: translateY(-0.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(-50%);
+    }
+  }
+
+  // Number change flash (generic color)
+  .stat-change {
+    animation: stat-change-flash var(--motion-base) var(--ease-standard);
+  }
+
+  @keyframes stat-change-flash {
+    0% {
+      color: inherit;
+    }
+    50% {
+      color: var(--ds-primary-green);
+    }
+    100% {
+      color: inherit;
+    }
+  }
+
+  // Shimmer effect for loading stats
+  .stat-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-surface-secondary) 0%,
+      var(--color-surface-hover) 50%,
+      var(--color-surface-secondary) 100%
+    );
+    background-size: 200% 100%;
+    animation: stat-shimmer 1.5s ease-in-out infinite;
+  }
+
+  @keyframes stat-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  // ============================================
+  // REDUCED MOTION (Accessibility)
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in,
+    .fade-out,
+    .slide-up,
+    .slide-down,
+    .slide-left,
+    .slide-right,
+    .scale-in,
+    .scale-out,
+    .stagger-children > *,
+    .stat-highlight,
+    .stat-pulse,
+    .stat-change,
+    .stat-shimmer {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .stat-increase::after,
+    .stat-decrease::after {
+      animation: none;
+      opacity: 1;
+    }
+  }
+}
+
